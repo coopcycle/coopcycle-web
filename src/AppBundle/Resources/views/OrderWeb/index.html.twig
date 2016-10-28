@@ -1,0 +1,77 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% form_theme address_form 'bootstrap_3_layout.html.twig' %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+
+  <div class="col-xs-12">
+
+    <div class="page-header">
+      <h1>Ma commande</h1>
+    </div>
+
+    {% if cart %}
+
+    <form method="post">
+
+      <div class="list-group">
+        {% for item in cart.items %}
+        <a href="#" class="list-group-item js-add-to-cart" data-product-id="{{ item.id }}">
+          {{ item.name }} x {{ item.quantity }}
+          <span class="pull-right">{{ item.price * item.quantity }} €</span>
+        </a>
+        {% endfor %}
+      </div>
+
+      <div>
+        <strong>Total : {{ cart.total }} €</strong>
+      </div>
+
+       <hr>
+
+      {#
+      <div>
+        Adresse de livraison : {{ address }}
+        <div class="pull-right">
+          Modifier
+        </div>
+      </div>
+      #}
+
+      <h2>Choisissez une adresse de livraison</h2>
+
+      {% if addresses is empty %}
+        {{ form_widget(address_form) }}
+      {% else %}
+        {% for address in addresses %}
+        <div class="radio">
+          <label>
+            <input type="radio" name="deliveryAddress" value="{{ address.id }}">
+            {{ address.streetAddress }} {{ address.postalCode }}
+          </label>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      <hr>
+
+      <button type="submit" class="btn btn-block btn-primary">Commander</button>
+
+    </form>
+
+    {% else %}
+
+    Pas de commande en cours.
+
+    {% endif %}
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

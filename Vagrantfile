@@ -7,7 +7,9 @@ Vagrant.configure("2") do |config|
 
     # Configure shared folders
     config.vm.synced_folder ".", "/var/www/coursiers",
-        owner: "www-data", group: "www-data"
+        owner: "www-data",
+        group: "www-data",
+        mount_options: ["dmode=775,fmode=664"]
 
     # Configure VirtualBox environment
     config.vm.provider :virtualbox do |v|

@@ -1,0 +1,73 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-xs-12">
+    <form class="form-inline" method="POST" id="address-search-form">
+      <input type="hidden" id="latitude" name="latitude">
+      <input type="hidden" id="longitude" name="longitude">
+      <input type="hidden" id="address" name="address">
+      <div class="form-group">
+        <label class="sr-only" for="address-search">Entrez votre adresse</label>
+        <input type="text" class="form-control" id="address-search" placeholder="Entrez votre adresse">
+      </div>
+      <button type="submit" class="btn btn-primary">Rechercher des restaurants</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function initMap() {
+  var addressSearch = document.getElementById('address-search');
+  var latitude = document.getElementById('latitude');
+  var longitude = document.getElementById('longitude');
+  var address = document.getElementById('address');
+
+  var options = {
+    // types: ['cities'],
+    componentRestrictions: {
+      country: "fr"
+    }
+  };
+  var autocomplete = new google.maps.places.Autocomplete(addressSearch, options);
+
+  $('#address-search-form').on('submit', function(e) {
+    if (latitude.value === '' || longitude.value === '') {
+      $('#address-search').focus();
+      return false;
+    }
+
+    return true;
+  });
+
+  autocomplete.addListener('place_changed', function() {
+
+    var place = autocomplete.getPlace();
+    if (!place.geometry) {
+      window.alert("Autocomplete's returned place contains no geometry");
+      return;
+    }
+
+    console.log(place);
+
+    latitude.value = place.geometry.location.lat();
+    longitude.value = place.geometry.location.lng();
+
+    if (place.address_components) {
+      address.value = [
+        (place.address_components[0] && place.address_components[0].short_name || ''),
+        (place.address_components[1] && place.address_components[1].short_name || ''),
+        (place.address_components[2] && place.address_components[2].short_name || '')
+      ].join(' ');
+    }
+
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
+  async defer></script>
+{% endblock %}

@@ -2,16 +2,50 @@
 # http://symfony.com/doc/current/book/security.html
 security:
 
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_CUSTOMER: ROLE_USER
+        ROLE_COURIER: ROLE_CUSTOMER
+        ROLE_RESTAURANT: ROLE_USER
+        ROLE_ADMIN: ROLE_COURIER
+
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory:
-            memory: ~
+        fos_userbundle:
+            id: fos_user.user_provider.username
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        api_login:
+            pattern:  ^/api/login
+            stateless: true
+            anonymous: true
+            form_login:
+                check_path:               /api/login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                require_previous_session: false
+
+        api_orders:
+            pattern:   ^/api/orders
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+        web:
+            pattern:            ^/
+            form_login:
+                provider:       fos_userbundle
+            logout: true
+            anonymous: ~
 
         main:
             anonymous: ~
@@ -22,3 +56,13 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/profile/restaurant, roles: ROLE_RESTAURANT }
+        - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }

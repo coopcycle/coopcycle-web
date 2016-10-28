@@ -33,7 +33,14 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "dunglas/action-bundle": "^0.3",
         "nelmio/cors-bundle": "^1.4",
-        "phpdocumentor/reflection-docblock": "^3.0"
+        "phpdocumentor/reflection-docblock": "^3.0",
+        "lexik/jwt-authentication-bundle": "^2.0",
+        "jsor/doctrine-postgis": "^1.1",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
+        "league/geotools": "@stable",
+        "gedmo/doctrine-extensions": "^2.4",
+        "snc/redis-bundle": "2.0.0",
+        "knplabs/knp-time-bundle": "^1.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

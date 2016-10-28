@@ -5,9 +5,9 @@
     - nginx
     - ANXS.postgresql
     - geerlingguy.php
-    # - nodejs
     - DavidWittman.redis # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
-    - tersmitten.phpredis
     - redis-tools
-    # TODO enable redis PHP package
-    # - weareinteractive.pm2
+    # - tersmitten.phpredis # TODO Use phpize, ./configure, make && make install
+    # - phpredis-enable
+    - nodejs
+    - weareinteractive.pm2

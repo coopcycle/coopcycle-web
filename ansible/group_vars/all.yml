@@ -30,10 +30,18 @@ php_packages:
 nodejs:
   version: 6.x
 
+pm2_service_name: pm2
+pm2_startup: systemd
+pm2_apps:
+  - run: pm2-dev.json
+    path: "/var/www/coursiers"
+    # env:
+    #   NODE_ENV: dev
+
 redis_version: 3.2.1
 redis_bind: 127.0.0.1
 
-phpredis_version: develop
+phpredis_version: "php7"
 
 postgresql_version: 9.4
 postgresql_encoding: "UTF-8"
