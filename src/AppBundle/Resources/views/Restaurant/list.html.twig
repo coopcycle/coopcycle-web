@@ -1,0 +1,24 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+  {% for restaurant in restaurants %}
+  <div class="col-sm-6 col-md-4">
+
+    <div class="thumbnail">
+      {# <img src="..." alt="..."> #}
+      <div class="caption">
+        <h3>{{ restaurant.name }}</h3>
+        <p>...</p>
+        <p>
+          <a href="{{ path('restaurant', {'id': restaurant.id}) }}" class="btn btn-primary" role="button">Voir</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

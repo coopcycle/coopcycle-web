@@ -1,0 +1,48 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+
+  <div class="col-xs-12">
+
+    <div class="page-header">
+      <h1>Commandes</h1>
+    </div>
+
+    <table class="table table-hover">
+      <thead>
+        <th>#</th>
+        <th>Restaurant</th>
+        <th>Montant</th>
+        <th>Date</th>
+        <th>Statut</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.restaurant.name }}</td>
+          <td>{{ order.total }} €</td>
+          <td>{{ order.createdAt|ago }}</td>
+          <td><span class="label label-info">{{ order.status }}</span></td>
+          <td>
+            <form method="POST" action="{{ path('profile_restaurant_order', {id: order.id}) }}">
+              <input type="hidden" name="status" value="{{ next_status[order.id] }}">
+              <button type="submit" class="btn btn-xs btn-primary">{{ next_status[order.id] }}</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

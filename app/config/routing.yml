@@ -1,7 +1,18 @@
 api:
     resource: '.'
     type:     'api_platform'
+    prefix:   '/api'
+
+api_login_check:
+    path: /api/login_check
 
 app:
     resource: '@AppBundle/Action/'
+    type:     'annotation'
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+web:
+    resource: '@AppBundle/Controller/'
     type:     'annotation'

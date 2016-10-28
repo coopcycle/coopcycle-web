@@ -7,3 +7,15 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+  # my.order_listener:
+  #       class: "AppBundle\EventListener\OrderListener"
+  #       arguments: [ "@security.token_storage" ]
+  #       tags:
+  #           - { name: "kernel.event_listener", event: "api.pre_create", method: "onPreCreate" }
+  #           - { name: "kernel.event_listener", event: "api.post_create", method: "onPostCreate" }
+
+  my.jwt_listener:
+    class: AppBundle\EventListener\JwtListener
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }

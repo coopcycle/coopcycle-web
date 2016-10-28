@@ -1,0 +1,50 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+
+  <div class="col-xs-12 col-sm-8">
+
+    <div class="page-header">
+      <h1>{{ restaurant.name }}</h1>
+    </div>
+
+    <div class="list-group">
+      {% for product in restaurant.products %}
+      <a href="#" class="list-group-item js-add-to-cart" data-product-id="{{ product.id }}">
+        {{ product.name }}
+        <span class="pull-right">{{ product.price }} €</span>
+      </a>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <div class="col-xs-12 col-sm-4">
+    <h2>Panier</h2>
+    <p>Livraison : {{ address }}</p>
+    <div id="cart"></div>
+    <hr>
+    <a href="{{ path('order') }}" class="btn btn-block btn-primary">Commander</a>
+    {# <h2>Panier</h2>
+    <div class="list-group">
+      {% for item in cart.items %}
+      <li class="list-group-item">{{ item.name }}</li>
+      {% endfor %}
+    </div> #}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.AppData = window.AppData || {};
+window.AppData.Cart = {
+  addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
+  items: {{ cart.items|json_encode()|raw }}
+}
+</script>
+{% endblock %}

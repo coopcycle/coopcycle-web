@@ -1,0 +1,56 @@
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Menu</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Coursiers</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="{{ path('restaurants') }}">Restaurants</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if app.user %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{ app.user.username }} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ path('fos_user_profile_show') }}">Mon compte</a></li>
+              <li><a href="{{ path('profile_orders') }}">Mes commandes</a></li>
+              <li><a href="{{ path('profile_addresses') }}">Mes adresses</a></li>
+              {% if is_granted('ROLE_RESTAURANT') %}
+              <li role="separator" class="divider"></li>
+              <li><a href="{{ path('profile_restaurant_orders') }}">Mes commandes</a></li>
+              <li><a href="#">Mes plats</a></li>
+              {% endif %}
+              <li role="separator" class="divider"></li>
+              <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li>
+            <a href="{{ path('fos_user_security_login') }}">Connexion</a>
+          </li>
+        {% endif %}
+      </ul>
+      {#
+      {% set cart = app.session.get('cart') %}
+      {% if cart is not empty %}
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="{{ path('restaurant', {'id': cart.restaurantId}) }}">Mon panier</a>
+        </li>
+      </ul>
+      {% endif %}
+      #}
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,8 @@
+{
+  "apps": [{
+    "name": "coursiers-realtime",
+    "script": "./nodejs/server.js",
+    "cwd": "/var/www/coursiers/current",
+    "exec_mode": "fork_mode"
+  }]
+}

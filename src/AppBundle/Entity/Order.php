@@ -1,0 +1,272 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * An order is a confirmation of a transaction (a receipt), which can contain multiple line items, each represented by an Offer that has been accepted by the customer.
+ *
+ * @see http://schema.org/Order Documentation on Schema.org
+ *
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
+ * @ORM\Table(name="order_")
+ * @ApiResource(iri="http://schema.org/Order")
+ */
+class Order
+{
+    const STATUS_PLACED = 'PLACED';
+    const STATUS_ACCEPTED = 'ACCEPTED';
+    const STATUS_READY = 'READY';
+    const STATUS_PICKED = 'PICKED';
+    const STATUS_ACCIDENT = 'ACCIDENT';
+    const STATUS_DELIVERED = 'DELIVERED';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     */
+    private $id;
+
+    /**
+     * @var Person Party placing the order or paying the invoice.
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="ApiUser")
+     * _@ApiProperty(iri="https://schema.org/person")
+     */
+    private $customer;
+
+    /**
+     * @var Restaurant
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="Restaurant")
+     * @ApiProperty(iri="https://schema.org/restaurant")
+     */
+    private $restaurant;
+
+    /**
+     * @var OrderItem The item ordered.
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToMany(targetEntity="OrderItem", cascade={"persist"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+     */
+    private $orderedItem;
+
+    /**
+     * @var DeliveryAddress
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="DeliveryAddress")
+     * @ApiProperty(iri="https://schema.org/place")
+     */
+    private $deliveryAddress;
+
+    /**
+     * @var string
+     *
+     * @Groups({"order"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
+
+    public function __construct() {
+        $this->status = self::STATUS_PLACED;
+        $this->orderedItem = new ArrayCollection();
+    }
+
+    /**
+     * Sets id.
+     *
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Gets id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Sets customer.
+     *
+     * @param ApiUser $customer
+     *
+     * @return $this
+     */
+    public function setCustomer(ApiUser $customer)
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * Gets customer.
+     *
+     * @return ApiUser
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * Sets orderedItem.
+     *
+     * @param OrderItem $orderedItem
+     *
+     * @return $this
+     */
+    public function setOrderedItem($orderedItem = null)
+    {
+        $this->orderedItem = $orderedItem;
+
+        return $this;
+    }
+
+    /**
+     * Gets orderedItem.
+     *
+     * @return OrderItem
+     */
+    public function getOrderedItem()
+    {
+        return $this->orderedItem;
+    }
+
+    public function addOrderedItem(OrderItem $orderedItem)
+    {
+        $this->orderedItem->add($orderedItem);
+
+        return $this;
+    }
+
+    /**
+     * Sets restaurant.
+     *
+     * @param Restaurant $restaurant
+     *
+     * @return $this
+     */
+    public function setRestaurant(Restaurant $restaurant)
+    {
+        $this->restaurant = $restaurant;
+
+        return $this;
+    }
+
+    /**
+     * Gets restaurant.
+     *
+     * @return Restaurant
+     */
+    public function getRestaurant()
+    {
+        return $this->restaurant;
+    }
+
+    /**
+     * Sets deliveryAddress.
+     *
+     * @param DeliveryAddress $deliveryAddress
+     *
+     * @return $this
+     */
+    public function setDeliveryAddress(DeliveryAddress $deliveryAddress)
+    {
+        $this->deliveryAddress = $deliveryAddress;
+
+        return $this;
+    }
+
+    /**
+     * Gets deliveryAddress.
+     *
+     * @return DeliveryAddress
+     */
+    public function getDeliveryAddress()
+    {
+        return $this->deliveryAddress;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+
+
+    public function getTotal()
+    {
+        $total = 0;
+        foreach ($this->orderedItem as $orderedItem) {
+            $total += $orderedItem->getProduct()->getPrice() * $orderedItem->getQuantity();
+        }
+
+        return $total;
+    }
+
+    /**
+     * Gets the value of status.
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Sets the value of status.
+     *
+     * @param string $status the status
+     *
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+}
