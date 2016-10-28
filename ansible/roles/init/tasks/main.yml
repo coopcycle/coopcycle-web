@@ -1,0 +1,28 @@
+---
+  - name: Update apt
+    become: yes
+    apt:  update_cache=yes
+
+  - name: Install system packages
+    become: yes
+    apt:  pkg={{ item }} state=latest
+    with_items:
+      - curl
+      - wget
+      - build-essential
+      - python-software-properties
+
+  - name: Add DotDeb repository for PHP7
+    apt_repository: repo='deb http://packages.dotdeb.org jessie all' state=present filename='dotdeb'
+
+  - name: Add GPG key for DotDeb repository
+    apt_key: url=https://www.dotdeb.org/dotdeb.gpg state=present
+
+  - name: Update apt again
+    become: yes
+    apt:  update_cache=yes
+
+  - name: Install extra packages
+    become: yes
+    apt:  pkg={{ item }} state=latest
+    with_items: "{{ sys_packages }}"

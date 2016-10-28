@@ -1,0 +1,52 @@
+---
+become_method: sudo
+doc_root: /var/www/coursiers/web
+main_domain: coursiers2.dev
+db_name: coursiers
+sys_packages:
+  - mcrypt
+  - vim
+
+php_version: "7.0"
+php_enable_php_fpm: true
+php_fpm_listen: "/var/run/php7-fpm.sock"
+php_webserver_daemon: "nginx"
+php_packages:
+  - php7.0-common
+  - php7.0-cli
+  - php7.0-dev
+  - php7.0-fpm
+  - libpcre3-dev
+  - php7.0-gd
+  - php7.0-curl
+  - php7.0-imap
+  - php7.0-json
+  - php7.0-opcache
+  - php7.0-xml
+  - php7.0-mbstring
+  - php7.0-apcu
+  - php7.0-pgsql
+
+nodejs:
+  version: 6.x
+
+redis_version: 3.2.1
+redis_bind: 127.0.0.1
+
+phpredis_version: develop
+
+postgresql_version: 9.4
+postgresql_encoding: "UTF-8"
+postgresql_locale: "en_US.UTF-8"
+postgresql_ctype: "en_US.UTF-8"
+postgresql_admin_user: "postgres"
+postgresql_default_auth_method: "trust"
+postgresql_ext_install_postgis: yes
+postgresql_databases:
+  - name: "{{ db_name }}"
+    owner: postgres
+    postgis: yes
+postgresql_database_extensions:
+  - db: "{{ db_name }}"
+    extensions:
+      - postgis

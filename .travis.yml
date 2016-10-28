@@ -1,0 +1,9 @@
+sudo: required
+
+services:
+    - docker
+
+script:
+    - docker-compose build
+    - docker-compose run web composer install -o -n
+    - docker-compose run web bin/console security:check

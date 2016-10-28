@@ -1,0 +1,13 @@
+- hosts: all
+  become: yes
+  roles:
+    - init
+    - nginx
+    - ANXS.postgresql
+    - geerlingguy.php
+    # - nodejs
+    - DavidWittman.redis # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
+    - tersmitten.phpredis
+    - redis-tools
+    # TODO enable redis PHP package
+    # - weareinteractive.pm2

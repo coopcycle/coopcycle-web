@@ -1,0 +1,4 @@
+---
+- name: Install Redis tools
+  sudo: yes
+  apt:  pkg=redis-tools state=latest
