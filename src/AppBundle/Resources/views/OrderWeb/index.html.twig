@@ -74,6 +74,7 @@
 {% endblock %}
 
 {% block scripts %}
+{% if addresses is empty %}
 <script>
 var inputMap = {
   postal_code: 'form_postalCode',
@@ -106,4 +107,5 @@ function initMap() {
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
   async defer></script>
+{% endif %}
 {% endblock %}
