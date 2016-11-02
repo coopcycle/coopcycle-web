@@ -89,10 +89,12 @@ class OrderWebController extends Controller
             ->add('longitude', HiddenType::class, array('mapped' => false))
             ->getForm();
 
-        list($latitude, $longitude) = $this->decodeGeoHash($request);
+        if ($request->getSession()->has('geohash')) {
+            list($latitude, $longitude) = $this->decodeGeoHash($request);
+            $addressForm->get('latitude')->setData($latitude);
+            $addressForm->get('longitude')->setData($longitude);
+        }
 
-        $addressForm->get('latitude')->setData($latitude);
-        $addressForm->get('longitude')->setData($longitude);
         $addressForm->get('streetAddress')->setData($request->getSession()->get('address'));
 
         $addressForm->handleRequest($request);
