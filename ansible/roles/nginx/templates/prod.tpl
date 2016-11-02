@@ -31,7 +31,7 @@ server {
 
     location / {
         # try to serve file directly, fallback to app.php
-        try_files $uri /app_dev.php$is_args$args;
+        try_files $uri /app.php$is_args$args;
     }
     # PROD
     location ~ ^/app\.php(/|$) {

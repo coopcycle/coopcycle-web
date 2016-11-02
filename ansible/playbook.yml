@@ -7,7 +7,7 @@
     - geerlingguy.php
     - DavidWittman.redis # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
     - redis-tools
-    # - tersmitten.phpredis # TODO Use phpize, ./configure, make && make install
-    # - phpredis-enable
+    - alexsegura.phpredis
+    - phpredis-enable
     - nodejs
-    - weareinteractive.pm2
+    # - weareinteractive.pm2

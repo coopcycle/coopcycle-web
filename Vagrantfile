@@ -20,6 +20,6 @@ Vagrant.configure("2") do |config|
     # Provision the box
     config.vm.provision :ansible do |ansible|
         ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
-        ansible.playbook = "ansible/vagrant.yml"
+        ansible.playbook = "ansible/playbook.yml"
     end
 end
