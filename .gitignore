@@ -14,5 +14,7 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
+/web/js/app.js
+/web/js/app.js.map
 /.vagrant/
 /node_modules/
