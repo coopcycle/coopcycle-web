@@ -27,6 +27,7 @@ php_packages:
   - php7.0-mbstring
   - php7.0-apcu
   - php7.0-pgsql
+  - php7.0-zip
 
 nodejs:
   version: 6.x
