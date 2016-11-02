@@ -82,11 +82,13 @@ class OrderWebController extends Controller
         $deliveryAddress = new DeliveryAddress();
 
         $addressForm = $this->createFormBuilder($deliveryAddress)
-            ->add('name', TextType::class)
+            // ->add('name', TextType::class)
             ->add('streetAddress', TextType::class)
             ->add('postalCode', TextType::class)
-            ->add('latitude', HiddenType::class, array('mapped' => false))
-            ->add('longitude', HiddenType::class, array('mapped' => false))
+            ->add('addressLocality', TextType::class)
+            ->add('description', TextType::class, ['required' => false])
+            ->add('latitude', HiddenType::class, ['mapped' => false, 'required' => true])
+            ->add('longitude', HiddenType::class, ['mapped' => false, 'required' => true])
             ->getForm();
 
         if ($request->getSession()->has('geohash')) {
