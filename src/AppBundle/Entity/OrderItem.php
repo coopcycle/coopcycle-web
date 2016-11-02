@@ -42,6 +42,15 @@ class OrderItem
     private $quantity;
 
     /**
+     * @var Order
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderedItem")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $order;
+
+    /**
      * Sets id.
      *
      * @param int $id
@@ -111,5 +120,29 @@ class OrderItem
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * Sets order.
+     *
+     * @param Order $order
+     *
+     * @return $this
+     */
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Gets order.
+     *
+     * @return Order
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 }
