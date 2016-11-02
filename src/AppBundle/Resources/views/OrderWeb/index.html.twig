@@ -74,4 +74,36 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+var inputMap = {
+  postal_code: 'form_postalCode',
+  locality: 'form_addressLocality'
+};
+function initMap() {
+  var addressInput = document.getElementById('form_streetAddress');
+  var latitudeInput = document.getElementById('form_latitude');
+  var longitudeInput = document.getElementById('form_longitude');
+
+  var options = {
+    componentRestrictions: {
+      country: "fr"
+    }
+  };
+  var autocomplete = new google.maps.places.Autocomplete(addressInput, options);
+  autocomplete.addListener('place_changed', function() {
+    var place = autocomplete.getPlace();
+    latitudeInput.value = place.geometry.location.lat();
+    longitudeInput.value = place.geometry.location.lng();
+    for (var i = 0; i < place.address_components.length; i++) {
+      var addressType = place.address_components[i].types[0];
+      var value = place.address_components[i].long_name;
+      if (inputMap[addressType]) {
+        document.getElementById(inputMap[addressType]).value = value;
+      }
+    }
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
+  async defer></script>
 {% endblock %}
