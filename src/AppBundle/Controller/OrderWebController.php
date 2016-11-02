@@ -154,7 +154,7 @@ class OrderWebController extends Controller
     }
 
     /**
-     * @Route("/order", name="order_confirm")
+     * @Route("/order/confirm/{id}", name="order_confirm")
      * @Template()
      */
     public function confirmAction($id, Request $request)
