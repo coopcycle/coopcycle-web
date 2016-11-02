@@ -2,6 +2,7 @@
 become_method: sudo
 doc_root: /var/www/coursiers/web
 main_domain: coursiers2.dev
+nginx_template: dev.tpl
 db_name: coursiers
 sys_packages:
   - mcrypt

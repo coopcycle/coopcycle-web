@@ -11,6 +11,6 @@
 
   - name: Add site
     sudo: yes
-    template: src=coursiers.tpl dest=/etc/nginx/conf.d/{{ main_domain }}.conf
+    template: src={{ nginx_template }} dest=/etc/nginx/conf.d/{{ main_domain }}.conf
     notify: restart nginx
 
