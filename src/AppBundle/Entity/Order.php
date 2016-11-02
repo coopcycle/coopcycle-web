@@ -16,7 +16,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
  * @ORM\Table(name="order_")
- * @ApiResource(iri="http://schema.org/Order")
+ * @ApiResource(iri="http://schema.org/Order",
+ *   attributes={"denormalization_context"={"groups"={"order"}}}
+ * )
  */
 class Order
 {
@@ -58,8 +60,7 @@ class Order
      * @var OrderItem The item ordered.
      *
      * @Groups({"order"})
-     * @ORM\ManyToMany(targetEntity="OrderItem", cascade={"persist"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+     * @ORM\OneToMany(targetEntity="OrderItem", mappedBy="order", cascade={"all"})
      */
     private $orderedItem;
 
@@ -152,8 +153,12 @@ class Order
      *
      * @return $this
      */
-    public function setOrderedItem($orderedItem = null)
+    public function setOrderedItem($orderedItem)
     {
+        $orderedItem = array_map(function($orderedItem) {
+            return $orderedItem->setOrder($this);
+        }, $orderedItem);
+
         $this->orderedItem = $orderedItem;
 
         return $this;
@@ -171,6 +176,7 @@ class Order
 
     public function addOrderedItem(OrderItem $orderedItem)
     {
+        $orderedItem->setOrder($this);
         $this->orderedItem->add($orderedItem);
 
         return $this;
@@ -233,8 +239,6 @@ class Order
     {
         return $this->updatedAt;
     }
-
-
 
     public function getTotal()
     {
