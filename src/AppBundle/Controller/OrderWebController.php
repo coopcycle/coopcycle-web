@@ -57,7 +57,6 @@ class OrderWebController extends Controller
 
         $order = new Order();
         $order->setRestaurant($restaurant);
-        $order->setCustomer($this->getUser());
         $order->setDeliveryAddress($deliveryAddress);
 
         foreach ($cart->getItems() as $item) {
@@ -72,20 +71,6 @@ class OrderWebController extends Controller
         }
 
         return $order;
-    }
-
-    private function addToGeoHash(Order $order)
-    {
-        $redis = $this->container->get('snc_redis.default');
-
-        $coords = GeoUtils::asGeoCoordinates($order->getRestaurant()->getGeo());
-
-        $redis->geoadd(
-            'GeoSet',
-            $coords->getLatitude(),
-            $coords->getLongitude(),
-            'order:'.$order->getId()
-        );
     }
 
     /**
@@ -138,8 +123,6 @@ class OrderWebController extends Controller
 
             $this->getManager('DeliveryAddress')->flush();
             $this->getManager('Order')->flush();
-
-            $this->addToGeoHash($order);
 
             $request->getSession()->remove('cart');
 
