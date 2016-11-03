@@ -17,6 +17,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
  * @ORM\Table(name="order_")
  * @ApiResource(iri="http://schema.org/Order",
+ *   collectionOperations={
+ *     "get"={"method"="GET"},
+ *     "post"={"method"="POST"}
+ *   },
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *     "accept"={"route_name"="order_accept"}
+ *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order"}},
  *     "normalization_context"={"groups"={"order", "place"}}
@@ -46,9 +54,14 @@ class Order
      *
      * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="ApiUser")
-     * _@ApiProperty(iri="https://schema.org/person")
      */
     private $customer;
+
+    /**
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="ApiUser")
+     */
+    private $courier;
 
     /**
      * @var Restaurant
@@ -147,6 +160,30 @@ class Order
     public function getCustomer()
     {
         return $this->customer;
+    }
+
+    /**
+     * Sets courier.
+     *
+     * @param ApiUser $courier
+     *
+     * @return $this
+     */
+    public function setCourier(ApiUser $courier)
+    {
+        $this->courier = $courier;
+
+        return $this;
+    }
+
+    /**
+     * Gets courier.
+     *
+     * @return ApiUser
+     */
+    public function getCourier()
+    {
+        return $this->courier;
     }
 
     /**
