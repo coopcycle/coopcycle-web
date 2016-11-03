@@ -2,74 +2,154 @@
 
 namespace AppBundle\Controller;
 
-use Dunglas\ApiBundle\Controller\ResourceController;
+use AppBundle\Utils\Cart;
+use AppBundle\Entity\DeliveryAddress;
+use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Order;
+use AppBundle\Entity\OrderItem;
+use AppBundle\Entity\GeoCoordinates;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Dunglas\ApiBundle\JsonLd\Response;
+use League\Geotools\Geotools;
+use League\Geotools\Coordinate\Coordinate;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class OrderController /* extends ResourceController */
+class OrderController extends Controller
 {
-    /**
-     * Customize the AppBundle:Custom:custom action
-     */
-    public function updateStatusAction($id, Request $request)
+    use DoctrineTrait;
+
+    private function getCart(Request $request)
     {
-        // $redis = new \Redis();
-        // if (!$redis->connect('127.0.0.1', 6379)) {
-        //     return new Response('Could not connect to Redis');
-        // }
-
-        // $data = json_decode($request->getContent(), true);
-        // $coordinates = $data['coordinates'];
-
-        $resource = $this->getResource($request);
-        $object = $this->findOrThrowNotFound($resource, $id);
-
-        // $redis->geoadd('Couriers', $coordinates['latitude'], $coordinates['longitude'], "courier_{$id}");
-
-        return new Response();
+        return $request->getSession()->get('cart');
     }
 
-    // /**
-    //  * @ApiDoc(section = "Courier")
-    //  */
-    // public function getCoordinatesAction(Request $request)
-    // {
-    //     $redis = new \Redis();
-    //     if (!$redis->connect('127.0.0.1', 6379)) {
-    //         return new Response('Could not connect to Redis');
-    //     }
+    private function getAddresses()
+    {
+        return $this->getRepository('DeliveryAddress')->findBy(array('customer' => $this->getUser()));
+    }
 
-    //     $distance = $request->query->get('distance');
-    //     $latitude = $request->query->get('latitude');
-    //     $longitude = $request->query->get('longitude');
+    private function decodeGeoHash(Request $request)
+    {
+        $geotools = new Geotools();
 
-    //     $data = array();
+        $geohash = $request->getSession()->get('geohash');
 
-    //     // $couriers = $redis->georadius('Couriers', 0, -1);
-    //     // foreach ($couriers as $courierKey) {
-    //     //     $geopos = $redis->geopos('Couriers', $courierKey);
-    //     //     $geopos = current($geopos);
-    //     //     $geopos = array_map('floatval', $geopos);
-    //     //     $data[] = array(
-    //     //         'name' => $courierKey,
-    //     //         'coordinate' => $geopos,
-    //     //     );
-    //     // }
+        $decoded = $geotools->geohash()->decode($geohash);
 
-    //     $couriers = $redis->georadius('Couriers', $latitude, $longitude, $distance, 'm', array('WITHCOORD'));
+        return array(
+            $latitude = $decoded->getCoordinate()->getLatitude(),
+            $longitude = $decoded->getCoordinate()->getLongitude(),
+        );
+    }
 
-    //     $data = array_map(function($courier) {
-    //         return array(
-    //             'name' => $courier[0],
-    //             'coordinate' => array_map('floatval', $courier[1]),
-    //         );
-    //     }, $couriers);
+    private function createOrder(Request $request, DeliveryAddress $deliveryAddress)
+    {
+        $cart = $this->getCart($request);
 
-    //     return new Response(
-    //         $this->get('serializer')->normalize($data, 'json')
-    //     );
+        $productRepository = $this->getRepository('Product');
+        $restaurantRepository = $this->getRepository('Restaurant');
 
-    //     // return new Response(print_r($response, 1));
-    // }
+        $restaurant = $restaurantRepository->find($cart->getRestaurantId());
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->setDeliveryAddress($deliveryAddress);
+
+        foreach ($cart->getItems() as $item) {
+
+            $product = $productRepository->find($item['id']);
+
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($product);
+            $orderItem->setQuantity($item['quantity']);
+
+            $order->addOrderedItem($orderItem);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @Route("/order", name="order")
+     * @Template()
+     */
+    public function indexAction(Request $request)
+    {
+        $deliveryAddress = new DeliveryAddress();
+
+        $addressForm = $this->createFormBuilder($deliveryAddress)
+            // ->add('name', TextType::class)
+            ->add('streetAddress', TextType::class)
+            ->add('postalCode', TextType::class)
+            ->add('addressLocality', TextType::class)
+            ->add('description', TextType::class, ['required' => false])
+            ->add('latitude', HiddenType::class, ['mapped' => false, 'required' => true])
+            ->add('longitude', HiddenType::class, ['mapped' => false, 'required' => true])
+            ->getForm();
+
+        if ($request->getSession()->has('geohash')) {
+            list($latitude, $longitude) = $this->decodeGeoHash($request);
+            $addressForm->get('latitude')->setData($latitude);
+            $addressForm->get('longitude')->setData($longitude);
+        }
+
+        $addressForm->get('streetAddress')->setData($request->getSession()->get('address'));
+
+        $addressForm->handleRequest($request);
+
+        if ($addressForm->isSubmitted() && $addressForm->isValid()) {
+
+            $deliveryAddress = $addressForm->getData();
+            $latitude = $addressForm->get('latitude')->getData();
+            $longitude = $addressForm->get('longitude')->getData();
+
+            $deliveryAddress->setCustomer($this->getUser());
+            $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
+
+            $this->getManager('DeliveryAddress')->persist($deliveryAddress);
+
+        } elseif ($addressForm->isSubmitted() && !$addressForm->isValid()) {
+            // TODO
+        }
+
+        if ($request->isMethod('POST')) {
+
+            if ($request->request->has('deliveryAddress')) {
+                $deliveryAddress = $this->getRepository('DeliveryAddress')->find($request->request->get('deliveryAddress'));
+            }
+
+            $order = $this->createOrder($request, $deliveryAddress);
+            $this->getManager('Order')->persist($order);
+
+            $this->getManager('DeliveryAddress')->flush();
+            $this->getManager('Order')->flush();
+
+            $request->getSession()->remove('cart');
+
+            return $this->redirectToRoute('order_confirm', array('id' => $order->getId()));
+        }
+
+        return array(
+            'address_form' => $addressForm->createView(),
+            'addresses' => $this->getAddresses(),
+            'cart' => $this->getCart($request),
+        );
+    }
+
+    /**
+     * @Route("/order/confirm/{id}", name="order_confirm")
+     * @Template()
+     */
+    public function confirmAction($id, Request $request)
+    {
+        $order = $this->getRepository('Order')->find($id);
+
+        return array(
+            'order' => $order,
+        );
+    }
 }
