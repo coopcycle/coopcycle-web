@@ -3,7 +3,6 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Order;
-use AppBundle\Utils\GeoUtils;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
