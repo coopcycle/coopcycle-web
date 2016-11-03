@@ -12,59 +12,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * The geographic coordinates of a place or event.
  *
  * @see http://schema.org/GeoCoordinates Documentation on Schema.org
- * _@ApiProperty(iri="http://schema.org/GeoCoordinates")
  */
 class GeoCoordinates
 {
     /**
-     * @var int
-     *
-     * _@ORM\Column(type="integer")
-     * _@ORM\Id
-     * _@ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var float The latitude of a location. For example `37.42242`.
      *
-     * @Groups({"customer"})
+     * @Groups({"place"})
      * @Assert\Type(type="float")
-     * _@ApiProperty(iri="https://schema.org/latitude")
      */
     private $latitude;
 
     /**
      * @var float The longitude of a location. For example `-122.08585`.
      *
-     * @Groups({"customer"})
+     * @Groups({"place"})
      * @Assert\Type(type="float")
-     * _@ApiProperty(iri="https://schema.org/longitude")
      */
     private $longitude;
 
-    /**
-     * Sets id.
-     *
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function __construct($latitude = null, $longitude = null)
     {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Gets id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
+        $this->latitude = (float) $latitude;
+        $this->longitude = (float) $longitude;
     }
 
     /**
@@ -76,7 +46,7 @@ class GeoCoordinates
      */
     public function setLatitude($latitude)
     {
-        $this->latitude = $latitude;
+        $this->latitude = (float) $latitude;
 
         return $this;
     }
@@ -100,7 +70,7 @@ class GeoCoordinates
      */
     public function setLongitude($longitude)
     {
-        $this->longitude = $longitude;
+        $this->longitude = (float) $longitude;
 
         return $this;
     }

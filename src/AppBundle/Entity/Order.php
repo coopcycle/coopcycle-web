@@ -17,7 +17,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
  * @ORM\Table(name="order_")
  * @ApiResource(iri="http://schema.org/Order",
- *   attributes={"denormalization_context"={"groups"={"order"}}}
+ *   attributes={
+ *     "denormalization_context"={"groups"={"order"}},
+ *     "normalization_context"={"groups"={"order", "place"}}
+ *   }
  * )
  */
 class Order
@@ -50,7 +53,7 @@ class Order
     /**
      * @var Restaurant
      *
-     * @Groups({"order"})
+     * @Groups({"order", "place"})
      * @ORM\ManyToOne(targetEntity="Restaurant")
      * @ApiProperty(iri="https://schema.org/restaurant")
      */

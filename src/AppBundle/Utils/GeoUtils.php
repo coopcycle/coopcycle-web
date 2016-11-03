@@ -13,10 +13,12 @@ class GeoUtils
         $latitude = $matches[1];
         $longitude = $matches[2];
 
-        $geo = new GeoCoordinates();
-        $geo->setLatitude($latitude);
-        $geo->setLongitude($longitude);
+        return new GeoCoordinates($latitude, $longitude);
+    }
 
-        return $geo;
+    public static function asPoint(GeoCoordinates $coordinates)
+    {
+        // SRID=4326;POINT(48.8758246 2.37003870000001)
+        return "POINT({$coordinates->getLatitude()} {$coordinates->getLongitude()})";
     }
 }
