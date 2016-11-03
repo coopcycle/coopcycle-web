@@ -7,6 +7,7 @@ use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Entity\GeoCoordinates;
 use AppBundle\Utils\GeoUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -108,7 +109,7 @@ class OrderWebController extends Controller
             $longitude = $addressForm->get('longitude')->getData();
 
             $deliveryAddress->setCustomer($this->getUser());
-            $deliveryAddress->setGeo("POINT({$latitude} {$longitude})");
+            $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
 
             $this->getManager('DeliveryAddress')->persist($deliveryAddress);
 

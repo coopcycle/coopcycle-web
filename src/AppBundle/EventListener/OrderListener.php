@@ -53,8 +53,13 @@ class OrderListener
         $entity = $args->getObject();
 
         if ($entity instanceof Order) {
-            $coords = GeoUtils::asGeoCoordinates($entity->getRestaurant()->getGeo());
-            $this->redis->geoadd('GeoSet', $coords->getLatitude(), $coords->getLongitude(), 'order:'.$entity->getId());
+            $restaurant = $entity->getRestaurant();
+            $this->redis->geoadd(
+                'GeoSet',
+                $restaurant->getGeo()->getLatitude(),
+                $restaurant->getGeo()->getLongitude(),
+                'order:'.$entity->getId()
+            );
         }
     }
 }
