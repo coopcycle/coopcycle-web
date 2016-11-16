@@ -1,0 +1,33 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block title %}AppBundle:Index:index{% endblock %}
+
+{% block body %}
+<div class="row">
+
+  <div class="col-xs-12">
+
+    <table class="table">
+    {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.restaurant.name }}</td>
+        <td>{{ order.total }} €</td>
+        <td>{{ order.createdAt|ago }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+
+  {# <div class="col-xs-12 col-sm-4">
+    <h2>Panier</h2>
+    <div id="cart"></div>
+    <hr>
+    <a href="{{ path('order') }}" class="btn btn-block btn-primary">Commander</a>
+  </div> #}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

@@ -14,18 +14,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdminController extends Controller
 {
+    use DoctrineTrait;
+
     /**
+     * @Route("/admin/orders", methods={"GET"})
      * @Template()
      */
-    public function indexAction(Request $request)
+    public function ordersAction(Request $request)
     {
-        // $orderManager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Order');
-        // $orderRepository = $orderManager->getRepository('AppBundle\\Entity\\Order');
-
-        // $orders = $orderRepository->findBy(array('customer' => $this->getUser()));
+        $orders = $this->getRepository('Order')->findAll();
 
         return array(
-            // 'orders' => $orders,
+            'orders' => $orders,
         );
     }
 }
