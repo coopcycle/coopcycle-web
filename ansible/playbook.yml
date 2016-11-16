@@ -10,4 +10,4 @@
     - alexsegura.phpredis
     - phpredis-enable
     - nodejs
-    # - weareinteractive.pm2
+    - weareinteractive.pm2
