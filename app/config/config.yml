@@ -95,6 +95,14 @@ lexik_jwt_authentication:
     public_key_path:  %jwt_public_key_path%
     pass_phrase:      %jwt_key_pass_phrase%
     token_ttl:        %jwt_token_ttl%
+    token_extractors:
+        authorization_header:      # look for a token as Authorization Header
+            enabled: true
+            prefix:  Bearer
+            name:    Authorization
+        query_parameter:           # check token in query string parameter
+            enabled: true
+            name:    token
 
 snc_redis:
     clients:
