@@ -20,13 +20,11 @@ var redis = require('redis').createClient();
 
 var connectionIDCounter = 0;
 var connections = [];
-var pubSubClients = [];
 
 // WebSocket server
 wsServer.on('request', function(request) {
 
     var connection = request.accept(null, request.origin);
-    var pubSubClient = require('redis').createClient();
     var username;
     var courierID;
     var timeoutID;
@@ -35,13 +33,8 @@ wsServer.on('request', function(request) {
     connection.id = connectionIDCounter++;
 
     connections.push(connection);
-    pubSubClients.push(pubSubClient);
 
     console.log('New connection with id = ' + connection.id);
-
-    pubSubClient.on("error", function (err) {
-      console.log("Redis error " + err);
-    });
 
     // TODO Use setTimeout
     // var timeoutID = setTimeout(pollRedis, 500);
@@ -100,29 +93,86 @@ wsServer.on('request', function(request) {
 
     var onOrderFound = function(order) {
       console.log(order);
-      connection.sendUTF(JSON.stringify(order));
+      connection.sendUTF(JSON.stringify({
+        type: 'order',
+        order: order
+      }));
+    }
+
+    var onError = function(name, message) {
+      connection.sendUTF(JSON.stringify({
+        type: 'error',
+        error: {
+          name: name,
+          message: message
+        }
+      }));
     }
 
     connection.on('message', function(message) {
       if (message.type === 'utf8') {
         message = JSON.parse(message.utf8Data);
-        if (message.type === 'updateCoordinates') {
-          jwt.verify(message.token, cert, function(err, user) {
-            if (!err) {
-              username = user.username;
-              courierID = message.user.id;
-              connection.courierID = courierID;
-              console.log('Updating position for courier "' + courierID + '" in Redis...');
-              redis.geoadd('GeoSet', message.coordinates.latitude, message.coordinates.longitude, 'courier:' + courierID);
-              if (!timeoutID) {
-                console.log('Start polling Redis for courier ' + courierID);
-                timeoutID = setTimeout(pollRedis.bind(null, courierID, onOrderFound), 500);
-              }
-            } else {
-              console.log('Could not verify token', err);
+        jwt.verify(message.token, cert, function(err, user) {
+
+          if (!err) {
+
+            username = user.username;
+            courierID = message.user.id;
+            connection.courierID = courierID;
+
+            // if (message.type === 'getStatus') {
+            //   // connection.sendUTF(JSON.stringify({
+            //   //   type: 'status',
+            //   //   status: order
+            //   // }));
+            // }
+
+            if (message.type === 'updateCoordinates') {
+
+              var statusKey = 'Courier:'+courierID+':status';
+
+              redis.get(statusKey, function(err, status) {
+
+                console.log('Courier ' + courierID + ', updating position for courier "' + courierID + '" in Redis...');
+                console.log('Courier ' + courierID + ', status = ' + status);
+
+                connection.sendUTF(JSON.stringify({
+                  type: 'status',
+                  status: status
+                }));
+
+                if (!status) {
+                  status = 'AVAILABLE';
+                  redis.set(statusKey, status);
+                }
+
+                if (status === 'AVAILABLE') {
+                  redis.geoadd('GeoSet',
+                    message.coordinates.latitude,
+                    message.coordinates.longitude,
+                    'courier:' + courierID
+                  );
+                  if (!timeoutID) {
+                    console.log('Start polling Redis for courier ' + courierID);
+                    timeoutID = setTimeout(pollRedis.bind(null, courierID, onOrderFound), 500);
+                  }
+                }
+
+                if (status === 'BUSY') {
+                  redis.geoadd('OrdersPicked',
+                    message.coordinates.latitude,
+                    message.coordinates.longitude,
+                    'courier:' + courierID
+                  );
+                }
+              });
             }
-          });
-        }
+
+          } else {
+            console.log('Could not verify token', err);
+            onError(err.name, err.message);
+          }
+        });
       }
     });
 
@@ -132,16 +182,11 @@ wsServer.on('request', function(request) {
       clearTimeout(timeoutID);
 
       console.log('Removing courier "' + courierID + '" from Redis...');
-      pubSubClient.unsubscribe("orders");
       redis.zrem('GeoSet', 'courier:' + courierID);
 
       var connectionsIndex = connections.indexOf(connection);
-      var pubSubClientsIndex = pubSubClients.indexOf(pubSubClient);
       if (-1 !== connectionsIndex) {
         connections.splice(connectionsIndex, 1);
-      }
-      if (-1 !== pubSubClientsIndex) {
-        pubSubClients.splice(pubSubClientsIndex, 1);
       }
 
       // clearInterval(connection.intervalID);
@@ -155,8 +200,6 @@ process.on('SIGINT', function () {
     if (connection) {
       console.log('Removing courier "' + connection.courierID + '" from Redis...');
       redis.zrem('GeoSet', 'courier:' + connection.courierID);
-      console.log('Unsubscribing connection "' + connection.id + '" from Redis...');
-      pubSubClients[connection.id].unsubscribe("orders");
     }
   });
 });

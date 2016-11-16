@@ -43,7 +43,7 @@ class Me
         if ($orderId) {
             $order = $this->orderRepository->find($orderId);
             return new Response(
-                $this->serializer->serialize($order, 'json')
+                $this->serializer->serialize($order, 'jsonld')
             );
         }
 
