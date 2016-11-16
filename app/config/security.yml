@@ -40,6 +40,13 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        api_me:
+            pattern:   ^/api/me
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         web:
             pattern:            ^/
             form_login:
@@ -61,6 +68,7 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurant, roles: ROLE_RESTAURANT }
