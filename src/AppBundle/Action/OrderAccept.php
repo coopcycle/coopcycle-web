@@ -6,30 +6,10 @@ use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class OrderAccept
 {
-    private $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
-
-    private function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
-    }
+    use OrderActionTrait;
 
     /**
      * @Route(
@@ -41,21 +21,29 @@ class OrderAccept
      */
     public function __invoke($data)
     {
-        // API Platform retrieves the PHP entity using the data provider then (for POST and
-        // PUT method) deserializes user data in it. Then passes it to the action. Here $data
-        // is an instance of Book having the given ID. By convention, the action's parameter
-        // must be called $data.
-
         // TODO Check if order is not accepted yet, etc...
 
-        if ($user = $this->getUser()) {
-            if ($user->hasRole('ROLE_COURIER')) {
-                $data->setCourier($user);
-            }
-        }
+        $user = $this->getUser();
 
-        // API Platform will automatically validate, persist (if you use Doctrine) and serialize an entity
-        // for you. If you prefer to do it yourself, return an instance of Symfony\Component\HttpFoundation\Response
+        if ($user->hasRole('ROLE_COURIER')) {
+
+            $data->setCourier($user);
+
+            // message.coordinates.latitude, message.coordinates.longitude, 'courier:' + courierID);
+
+            $this->redis->set('Courier:'.$user->getId().':status', 'BUSY');
+            $this->redis->set('Courier:'.$user->getId().':order', $data->getId());
+
+            $this->redis->zrem('GeoSet',
+                'order:'.$data->getId(),
+                'courier:'.$user->getId()
+            );
+
+            // $this->redis->geoadd('OrdersPicked',
+            //     'order:'.$data->getId(),
+            //     'courier:'.$user->getId()
+            // );
+        }
 
         return $data;
     }

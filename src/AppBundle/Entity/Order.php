@@ -23,7 +23,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
- *     "accept"={"route_name"="order_accept"}
+ *     "accept"={"route_name"="order_accept"},
+ *     "pick"={"route_name"="order_pick"},
+ *     "deliver"={"route_name"="order_deliver"},
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order"}},
