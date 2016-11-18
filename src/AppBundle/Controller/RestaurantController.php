@@ -41,6 +41,8 @@ class RestaurantController extends Controller
         $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
         $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');
 
+        $perPage = 15;
+
         if ($request->query->has('geohash')) {
 
             $geotools = new Geotools();
@@ -51,9 +53,9 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $matches = $repository->findNearby($latitude, $longitude);
+            $matches = $repository->findNearby($latitude, $longitude, 1500, $perPage);
         } else {
-            $matches = $repository->findAll();
+            $matches = $repository->findBy([], ['name' => 'ASC'], $perPage);
         }
 
         return array(

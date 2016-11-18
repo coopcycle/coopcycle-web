@@ -18,6 +18,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   }
  * )
+ * @ORM\Table(
+ *     options={"spatial_indexes"={"idx_restaurant_geo"}},
+ *     indexes={
+ *         @ORM\Index(name="idx_restaurant_geo", columns={"geo"}, flags={"spatial"})
+ *     }
+ * )
  */
 class Restaurant extends FoodEstablishment
 {
@@ -26,7 +32,7 @@ class Restaurant extends FoodEstablishment
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      */
     private $id;
 

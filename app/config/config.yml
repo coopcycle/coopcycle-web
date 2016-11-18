@@ -65,6 +65,7 @@ doctrine:
             string_functions:
                 ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin
                 ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
+                ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
 
 # Swiftmailer Configuration
 swiftmailer:

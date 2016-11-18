@@ -39,6 +39,11 @@ services:
         calls:
             - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
+    postgis.event_subscriber:
+        class: Jsor\Doctrine\PostGIS\Event\DBALSchemaEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
     # gedmo.listener.sluggable:
     #     class: Gedmo\Sluggable\SluggableListener
     #     tags:

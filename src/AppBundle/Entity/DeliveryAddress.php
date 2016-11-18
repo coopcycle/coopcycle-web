@@ -12,6 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @see http://schema.org/Place Documentation on Schema.org
  *
  * @ORM\Entity
+ * @ORM\Table(
+ *     options={"spatial_indexes"={"idx_delivery_address_geo"}},
+ *     indexes={
+ *         @ORM\Index(name="idx_delivery_address_geo", columns={"geo"}, flags={"spatial"})
+ *     }
+ * )
  * @ApiResource
  */
 class DeliveryAddress extends Place

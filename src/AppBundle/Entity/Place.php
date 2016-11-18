@@ -21,7 +21,7 @@ abstract class Place extends PostalAddress
      * @var GeoCoordinates The geo coordinates of the place.
      *
      * @Groups({"place"})
-     * @ORM\Column(type="geography", nullable=true)
+     * @ORM\Column(type="geography", nullable=true, options={"geometry_type"="GEOMETRY", "srid"=4326})
      */
     private $geo;
 
