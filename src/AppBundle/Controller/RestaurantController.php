@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RestaurantController extends Controller
 {
+    const ITEMS_PER_PAGE = 15;
+
     private function getCart(Request $request, Restaurant $restaurant)
     {
         if (!$cart = $request->getSession()->get('cart')) {
@@ -41,7 +43,7 @@ class RestaurantController extends Controller
         $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
         $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');
 
-        $perPage = 15;
+        $page = $request->query->getInt('page', 1);
 
         if ($request->query->has('geohash')) {
 
@@ -53,21 +55,29 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $matches = $repository->findNearby($latitude, $longitude, 1500, $perPage);
+            $count = $repository->countNearby($latitude, $longitude, 1500);
+            $pages = ceil($count / self::ITEMS_PER_PAGE);
+
+            $offset = ($page - 1) * self::ITEMS_PER_PAGE;
+            $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
+
         } else {
             $matches = $repository->findBy([], ['name' => 'ASC'], $perPage);
         }
 
         return array(
             'restaurants' => $matches,
+            'page' => $page,
+            'pages' => $pages,
+            'geohash' => $request->query->get('geohash'),
         );
     }
 
     /**
-     * @Route("/restaurant/{id}", name="restaurant")
+     * @Route("/restaurant/{id}-{slug}", name="restaurant")
      * @Template()
      */
-    public function indexAction($id, Request $request)
+    public function indexAction($id, $slug, Request $request)
     {
         $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
         $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');

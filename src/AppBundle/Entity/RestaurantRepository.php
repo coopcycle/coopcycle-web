@@ -7,7 +7,7 @@ use Doctrine\ORM\Query\Expr;
 
 class RestaurantRepository extends EntityRepository
 {
-    public function findNearby($latitude, $longitude, $distance = 5000, $limit = 10, $offset = 0)
+    private function createNearbyQueryBuilder($latitude, $longitude, $distance = 5000)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -21,6 +21,7 @@ class RestaurantRepository extends EntityRepository
             'r.geo'
         ));
 
+        // Add calculated distance field
         $qb->addSelect($dist . ' AS HIDDEN distance');
 
         $within = new Expr\Func('ST_DWithin', array(
@@ -33,6 +34,22 @@ class RestaurantRepository extends EntityRepository
             $within,
             $qb->expr()->literal(true)
         ));
+
+        return $qb;
+    }
+
+    public function countNearby($latitude, $longitude, $distance = 5000, $limit = 10, $offset = 0)
+    {
+        $qb = $this->createNearbyQueryBuilder($latitude, $longitude, $distance);
+
+        $qb->select($qb->expr()->count('r'));
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findNearby($latitude, $longitude, $distance = 5000, $limit = 10, $offset = 0)
+    {
+        $qb = $this->createNearbyQueryBuilder($latitude, $longitude, $distance);
 
         $qb
             ->setFirstResult($offset)

@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
             new Snc\RedisBundle\SncRedisBundle(),
             new Knp\Bundle\TimeBundle\KnpTimeBundle(),
+            new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             new AppBundle\AppBundle(),
         ];
 
