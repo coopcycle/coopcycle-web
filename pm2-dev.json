@@ -2,7 +2,12 @@
   "apps": [{
     "name": "coursiers-realtime",
     "script": "./nodejs/server.js",
-    "cwd": "/var/www/coursiers",
-    "exec_mode": "fork_mode"
+    "watch": ["./nodejs/server.js"],
+    "watch_options" : {
+      "usePolling": true,
+      "ignorePermissionErrors": true,
+      "followSymlinks": false,
+      "interval": 400
+    }
   }]
 }
