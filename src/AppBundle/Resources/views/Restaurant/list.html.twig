@@ -10,8 +10,8 @@
     <div class="thumbnail">
       {# <img src="..." alt="..."> #}
       <div class="caption">
-        <h3>{{ restaurant.name }}</h3>
-        <p>...</p>
+        <h3>{{ restaurant.name|truncate(16, false, '…') }}</h3>
+        <p>{{ restaurant.streetAddress }}</p>
         <p>
           <a href="{{ path('restaurant', {'id': restaurant.id}) }}" class="btn btn-primary" role="button">Voir</a>
         </p>
