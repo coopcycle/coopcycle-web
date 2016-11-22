@@ -1,8 +1,10 @@
-var WebSocketServer = require('websocket').server;
+var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
 var jwt = require('jsonwebtoken');
 var _ = require('underscore');
+
+var cert = fs.readFileSync(__dirname + '/../var/jwt/public.pem');
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
@@ -12,29 +14,50 @@ server.listen(8000, function() {});
 
 // create the server
 wsServer = new WebSocketServer({
-    httpServer: server
+    server: server,
+    verifyClient: function (info, cb) {
+
+      var token = info.req.headers.authorization;
+      if (!token) {
+        console.log('No JWT found in request');
+        return cb(false, 401, 'Unauthorized');
+      }
+
+      token = token.substring('Bearer '.length);
+
+      jwt.verify(token, cert, function (err, decoded) {
+        if (err) {
+          console.log('Invalid JWT', err);
+          cb(false, 401, 'Unauthorized');
+        } else {
+          // info.req.user = decoded //[1]
+          console.log('JWT verified successfully', decoded);
+          cb(true);
+        }
+      });
+
+    }
 });
 
-var cert = fs.readFileSync(__dirname + '/../var/jwt/public.pem');
 var redis = require('redis').createClient();
 
 var connectionIDCounter = 0;
 var connections = [];
 
 // WebSocket server
-wsServer.on('request', function(request) {
+wsServer.on('connection', function(ws) {
 
-    var connection = request.accept(null, request.origin);
+    // var connection = request.accept(null, request.origin);
     var username;
     var courierID;
     var timeoutID;
 
     // Store a reference to the connection using an incrementing ID
-    connection.id = connectionIDCounter++;
+    ws.id = connectionIDCounter++;
 
-    connections.push(connection);
+    connections.push(ws);
 
-    console.log('New connection with id = ' + connection.id);
+    console.log('New connection with id = ' + ws.id);
 
     // TODO Use setTimeout
     // var timeoutID = setTimeout(pollRedis, 500);
@@ -93,14 +116,14 @@ wsServer.on('request', function(request) {
 
     var onOrderFound = function(order) {
       console.log(order);
-      connection.sendUTF(JSON.stringify({
+      ws.send(JSON.stringify({
         type: 'order',
         order: order
       }));
     }
 
     var onError = function(name, message) {
-      connection.sendUTF(JSON.stringify({
+      ws.send(JSON.stringify({
         type: 'error',
         error: {
           name: name,
@@ -109,82 +132,65 @@ wsServer.on('request', function(request) {
       }));
     }
 
-    connection.on('message', function(message) {
-      if (message.type === 'utf8') {
-        message = JSON.parse(message.utf8Data);
-        jwt.verify(message.token, cert, function(err, user) {
+    ws.on('message', function(messageText) {
 
-          if (!err) {
+      var message = JSON.parse(messageText);
 
-            username = user.username;
-            courierID = message.user.id;
-            connection.courierID = courierID;
+      if (message.type === 'updateCoordinates') {
 
-            // if (message.type === 'getStatus') {
-            //   // connection.sendUTF(JSON.stringify({
-            //   //   type: 'status',
-            //   //   status: order
-            //   // }));
-            // }
+        courierID = message.user.id;
+        ws.courierID = courierID;
 
-            if (message.type === 'updateCoordinates') {
+        var statusKey = 'Courier:'+courierID+':status';
 
-              var statusKey = 'Courier:'+courierID+':status';
+        redis.get(statusKey, function(err, status) {
 
-              redis.get(statusKey, function(err, status) {
+          console.log('Courier ' + courierID + ', updating position for courier "' + courierID + '" in Redis...');
+          console.log('Courier ' + courierID + ', status = ' + status);
 
-                console.log('Courier ' + courierID + ', updating position for courier "' + courierID + '" in Redis...');
-                console.log('Courier ' + courierID + ', status = ' + status);
+          ws.send(JSON.stringify({
+            type: 'status',
+            status: status
+          }));
 
-                connection.sendUTF(JSON.stringify({
-                  type: 'status',
-                  status: status
-                }));
+          if (!status) {
+            status = 'AVAILABLE';
+            redis.set(statusKey, status);
+          }
 
-                if (!status) {
-                  status = 'AVAILABLE';
-                  redis.set(statusKey, status);
-                }
-
-                if (status === 'AVAILABLE') {
-                  redis.geoadd('GeoSet',
-                    message.coordinates.latitude,
-                    message.coordinates.longitude,
-                    'courier:' + courierID
-                  );
-                  if (!timeoutID) {
-                    console.log('Start polling Redis for courier ' + courierID);
-                    timeoutID = setTimeout(pollRedis.bind(null, courierID, onOrderFound), 500);
-                  }
-                }
-
-                if (status === 'BUSY') {
-                  redis.geoadd('OrdersPicked',
-                    message.coordinates.latitude,
-                    message.coordinates.longitude,
-                    'courier:' + courierID
-                  );
-                }
-              });
+          if (status === 'AVAILABLE') {
+            redis.geoadd('GeoSet',
+              message.coordinates.latitude,
+              message.coordinates.longitude,
+              'courier:' + courierID
+            );
+            if (!timeoutID) {
+              console.log('Start polling Redis for courier ' + courierID);
+              timeoutID = setTimeout(pollRedis.bind(null, courierID, onOrderFound), 500);
             }
+          }
 
-          } else {
-            console.log('Could not verify token', err);
-            onError(err.name, err.message);
+          if (status === 'BUSY') {
+            redis.geoadd('OrdersPicked',
+              message.coordinates.latitude,
+              message.coordinates.longitude,
+              'courier:' + courierID
+            );
           }
         });
       }
+
     });
 
-    connection.on('close', function() {
+    ws.on('close', function() {
 
-      console.log('Connection ' + connection.id + ' closed !');
+      console.log('Connection ' + ws.id + ' closed !');
       clearTimeout(timeoutID);
 
       console.log('Removing courier "' + courierID + '" from Redis...');
       redis.zrem('GeoSet', 'courier:' + courierID);
 
-      var connectionsIndex = connections.indexOf(connection);
+      var connectionsIndex = connections.indexOf(ws);
       if (-1 !== connectionsIndex) {
         connections.splice(connectionsIndex, 1);
       }
