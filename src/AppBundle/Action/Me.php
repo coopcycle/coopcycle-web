@@ -25,6 +25,10 @@ class Me
         $user = $this->getUser();
         $status = $this->redis->get('Courier:'.$user->getId().':status');
 
+        if (!$status) {
+            $status = 'AVAILABLE';
+        }
+
         return new JsonResponse(['status' => $status]);
     }
 

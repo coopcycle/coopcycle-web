@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -39,10 +40,14 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Recipe
      * @Groups({"restaurant"})
-     * @ORM\ManyToMany(targetEntity="Product")
+     * @ORM\ManyToMany(targetEntity="Product", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $products;
+
+    public function __construct() {
+        $this->products = new ArrayCollection();
+    }
 
     /**
      * Sets id.
@@ -90,5 +95,12 @@ class Restaurant extends FoodEstablishment
     public function getProducts()
     {
         return $this->products;
+    }
+
+    public function addProduct(Product $product)
+    {
+        $this->products->add($product);
+
+        return $this;
     }
 }
