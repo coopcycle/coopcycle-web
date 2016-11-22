@@ -9,11 +9,20 @@ use AppBundle\Entity;
 
 class ImportRestaurantsCommand extends ContainerAwareCommand
 {
+    private $restaurantManager;
+    private $restaurantRepository;
+
     protected function configure()
     {
         $this
             ->setName('app:import-restaurants')
             ->setDescription('Imports restaurants from TourPedia.');
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->restaurantManager = $this->getContainer()->get('doctrine')->getManagerForClass('AppBundle\\Entity\\Restaurant');
+        $this->restaurantRepository = $this->restaurantManager->getRepository('AppBundle\\Entity\\Restaurant');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -33,29 +42,71 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
 
         $restaurants = json_decode(file_get_contents($filename), true);
 
-        $restaurantManager = $this->getContainer()->get('doctrine')->getManagerForClass('AppBundle\\Entity\\Restaurant');
-        $restaurantRepository = $restaurantManager->getRepository('AppBundle\\Entity\\Restaurant');
+        $output->writeln(sprintf('Loaded %d restaurants from JSON file', count($restaurants)));
 
-        $i = 0;
         foreach ($restaurants as $item) {
 
-            $restaurant = new Entity\Restaurant();
-            $restaurant
-                ->setName($item['name'])
-                ->setStreetAddress($item['address'])
-                ->setAddressLocality($item['location'])
-                ->setGeo(new Entity\GeoCoordinates($item['lat'], $item['lng']));
+            if (!$restaurant = $this->restaurantRepository->findOneByName($item['name'])) {
 
-            if (!$restaurantRepository->findOneByName($restaurant->getName())) {
-                $output->writeln(sprintf('Saving restaurant "%s"', $restaurant->getName()));
-                $restaurantManager->persist($restaurant);
-                if ((++$i % 20) === 0) {
-                    $restaurantManager->flush();
-                    $output->writeln('Flush...');
-                }
+                $output->writeln(sprintf('Adding restaurant "%s"', $item['name']));
+
+                $restaurant = new Entity\Restaurant();
+                $restaurant
+                    ->setName($item['name'])
+                    ->setStreetAddress($item['address'])
+                    ->setAddressLocality($item['location'])
+                    ->setGeo(new Entity\GeoCoordinates($item['lat'], $item['lng']));
             }
+
+            if (count($restaurant->getProducts()) === 0) {
+                $output->writeln(sprintf('Adding products to restaurant "%s"', $restaurant->getName()));
+                $this->addProducts($restaurant);
+            } else {
+                $output->writeln(sprintf('Skipping restaurant "%s"', $item['name']));
+                $this->restaurantManager->detach($restaurant);
+                continue;
+            }
+
+            $this->restaurantManager->persist($restaurant);
+
+            if ($this->getScheduledOperations() > 100) {
+                $this->restaurantManager->flush();
+                $this->restaurantManager->clear();
+                $output->writeln('Flush...');
+            }
+
+
         }
 
-        $restaurantManager->flush();
+        $this->restaurantManager->flush();
+    }
+
+    private function getScheduledOperations()
+    {
+        return count($this->restaurantManager->getUnitOfWork()->getScheduledEntityInsertions())
+            + count($this->restaurantManager->getUnitOfWork()->getScheduledEntityUpdates())
+            + count($this->restaurantManager->getUnitOfWork()->getScheduledCollectionUpdates());
+    }
+
+    private function addProducts(Entity\Restaurant $restaurant)
+    {
+        $pizza = new Entity\Product();
+        $pizza
+            ->setName('Pizza')
+            ->setPrice(12.90);
+
+        $hamburger = new Entity\Product();
+        $hamburger
+            ->setName('Hamburger')
+            ->setPrice(10.90);
+
+        $salad = new Entity\Product();
+        $salad
+            ->setName('Salad')
+            ->setPrice(4.90);
+
+        $restaurant->addProduct($pizza);
+        $restaurant->addProduct($hamburger);
+        $restaurant->addProduct($salad);
     }
 }
