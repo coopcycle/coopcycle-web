@@ -13,7 +13,8 @@
     "redis": "^2.6.2",
     "socket.io": "^1.4.8",
     "underscore": "^1.8.3",
-    "websocket": "^1.0.23"
+    "websocket": "^1.0.23",
+    "ws": "^1.1.1"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
