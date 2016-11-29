@@ -6,6 +6,10 @@ api:
 api_login_check:
     path: /api/login_check
 
+gesdinet_jwt_refresh_token:
+    path:     /api/token/refresh
+    defaults: { _controller: gesdinet.jwtrefreshtoken:refresh }
+
 app:
     resource: '@AppBundle/Action/'
     type:     'annotation'

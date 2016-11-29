@@ -105,6 +105,9 @@ lexik_jwt_authentication:
             enabled: true
             name:    token
 
+gesdinet_jwt_refresh_token:
+    user_provider: fos_user.user_provider.username_email
+
 snc_redis:
     clients:
         default:
