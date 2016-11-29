@@ -62,7 +62,8 @@ class RestaurantController extends Controller
             $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
 
         } else {
-            $matches = $repository->findBy([], ['name' => 'ASC'], $perPage);
+            $pages = 1;
+            $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
         }
 
         return array(
