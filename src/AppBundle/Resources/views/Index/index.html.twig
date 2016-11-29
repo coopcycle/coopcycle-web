@@ -28,7 +28,7 @@ function initMap() {
   var address = document.getElementById('address');
 
   var options = {
-    // types: ['cities'],
+    types: ['address'],
     componentRestrictions: {
       country: "fr"
     }
@@ -64,6 +64,11 @@ function initMap() {
     }
 
   });
+
+  setTimeout(function() {
+    addressSearch.focus();
+  }, 300);
+
 }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
