@@ -1,14 +1,13 @@
 {
-    "name": "api-platform/api-platform",
-    "license": "MIT",
+    "name": "coopcycle/coopcycle-web",
+    "license": "Peer Production License",
     "type": "project",
-    "description": "The API Platform framework",
-    "homepage": "https://api-platform.com",
+    "description": "CoopCycle platform.",
+    "homepage": "https://coopcycle.org",
     "authors": [
         {
-            "name": "Kévin Dunglas",
-            "email": "dunglas@gmail.com",
-            "homepage": "https://dunglas.fr"
+            "name": "Alexandre Segura",
+            "email": "mex.zktk@gmail.com"
         }
     ],
     "autoload": {
@@ -83,9 +82,6 @@
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
-        },
-        "branch-alias": {
-            "dev-master": "2.0-dev"
         }
     }
 }
