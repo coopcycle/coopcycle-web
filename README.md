@@ -6,6 +6,10 @@ Prerequisites
 
 * Install [VirtualBox](https://www.virtualbox.org/) & [Vagrant](https://docs.vagrantup.com/v2/installation/index.html)
 * Install [Ansible](http://docs.ansible.com/intro_installation.html#installation).
+* Install Ansible roles with Ansible Galaxy
+```
+$ ansible-galaxy install -r ansible/requirements.yml
+```
 * Install PHP, Composer, and Node
 
 How to install
