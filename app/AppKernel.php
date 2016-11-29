@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
+            new Gesdinet\JWTRefreshTokenBundle\GesdinetJWTRefreshTokenBundle(),
             new Snc\RedisBundle\SncRedisBundle(),
             new Knp\Bundle\TimeBundle\KnpTimeBundle(),
             new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
