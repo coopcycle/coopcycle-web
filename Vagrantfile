@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
     config.vm.network :private_network, ip: "192.168.33.7"
 
     # Configure shared folders
-    config.vm.synced_folder ".", "/var/www/coursiers",
+    config.vm.synced_folder ".", "/var/www/coopcycle",
         owner: "www-data",
         group: "www-data",
         mount_options: ["dmode=775,fmode=664"]

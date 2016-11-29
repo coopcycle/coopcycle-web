@@ -1,7 +1,7 @@
 ---
 become_method: sudo
-doc_root: /var/www/coursiers/web
-main_domain: coursiers2.dev
+doc_root: /var/www/coopcycle/web
+main_domain: coopcycle.dev
 nginx_template: dev.tpl
 db_name: coursiers
 sys_packages:
@@ -37,7 +37,7 @@ pm2_service_name: pm2
 pm2_startup: systemd
 pm2_apps:
   - run: pm2-dev.json
-    path: "/var/www/coursiers"
+    path: "/var/www/coopcycle"
     # env:
     #   NODE_ENV: dev
 
