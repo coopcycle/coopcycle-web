@@ -18,3 +18,4 @@
 /web/js/app.js.map
 /.vagrant/
 /node_modules/
+.DS_Store
