@@ -3,18 +3,50 @@
 {% block title %}AppBundle:Index:index{% endblock %}
 
 {% block body %}
-<div class="row">
-  <div class="col-xs-12">
-    <form class="form-inline" method="POST" id="address-search-form">
-      <input type="hidden" id="latitude" name="latitude">
-      <input type="hidden" id="longitude" name="longitude">
-      <input type="hidden" id="address" name="address">
-      <div class="form-group">
-        <label class="sr-only" for="address-search">Entrez votre adresse</label>
-        <input type="text" class="form-control" id="address-search" placeholder="Entrez votre adresse" size="48">
+<section id="search">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <form class="form-inline" method="POST" id="address-search-form">
+          <input type="hidden" id="latitude" name="latitude">
+          <input type="hidden" id="longitude" name="longitude">
+          <input type="hidden" id="address" name="address">
+          <div class="form-group">
+            <label class="sr-only" for="address-search">Entrez votre adresse</label>
+            <input type="text" class="form-control" id="address-search" placeholder="Entrez votre adresse" size="48">
+          </div>
+          <button type="submit" class="btn btn-success">Rechercher des restaurants</button>
+        </form>
       </div>
-      <button type="submit" class="btn btn-primary">Rechercher des restaurants</button>
-    </form>
+    </div>
+  </div>
+</section>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>C'est quoi ?</h2>
+      <p>
+        Le projet <strong>CoopCycle</strong> a pour objectif de créer une plateforme de livraison de repas à vélo <strong>open-source</strong>,
+        offrant les mêmes fonctionnalités que les platformes propriétaires.
+      </p>
+      <p>
+        L'idée est de <strong>décentraliser</strong> ce genre de services, afin que, dans chaque ville,
+        les livreurs à vélo souhaitant se regrouper en collectif et/ou en coopérative puissent détenir
+        la plateforme pour laquelle ils travaillent.
+      </p>
+      <p>
+        Le <a href="https://github.com/coopcycle">code</a> est placé sous la <a href="https://wiki.p2pfoundation.net/Peer_Production_License">Peer Production License</a>,
+        ce qui signifie qu'il ne peut être utilisé que dans le cadre d'une entreprise ou une collectivité appartenant à ses travailleurs,
+        et que tous les gains financiers, excédents, bénéfices et avantages produits par l'entreprise ou le collectif sont répartis
+        entre les ouvriers-propriétaires.
+      </p>
+      <h2>C'est prêt ?</h2>
+      <p>
+        Non, le projet vient tout juste de démarrer !
+        <br>
+        Ce site est une démo, vous pouvez passer des commandes mais personne ne viendra vous livrer.
+      </p>
+    </div>
   </div>
 </div>
 {% endblock %}
