@@ -9,6 +9,9 @@ server {
     # prevents 502 bad gateway error
     large_client_header_buffers 8 32k;
 
+    # Fix bug to serve static files on shared folders
+    sendfile off;
+
     location /realtime {
 
         proxy_set_header Accept-Encoding "";
