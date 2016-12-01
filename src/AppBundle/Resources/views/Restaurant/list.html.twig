@@ -3,27 +3,29 @@
 {% block title %}AppBundle:Index:index{% endblock %}
 
 {% block body %}
-<div class="row">
-  {% include "AppBundle:Restaurant:pagination.html.twig" %}
-</div>
-<div class="row">
-  {% for restaurant in restaurants %}
-  <div class="col-sm-6 col-md-4">
-
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-        <p>{{ restaurant.streetAddress }}</p>
-        <p>
-          <a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}" class="btn btn-primary" role="button">Voir</a>
-        </p>
-      </div>
-    </div>
-
+<div class="container">
+  <div class="row">
+    {% include "AppBundle:Restaurant:pagination.html.twig" %}
   </div>
-  {% endfor %}
-</div>
-<div class="row">
-  {% include "AppBundle:Restaurant:pagination.html.twig" %}
+  <div class="row">
+    {% for restaurant in restaurants %}
+    <div class="col-sm-6 col-md-4">
+
+      <div class="thumbnail">
+        <div class="caption">
+          <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
+          <p>{{ restaurant.streetAddress }}</p>
+          <p>
+            <a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}" class="btn btn-primary" role="button">Voir</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+  <div class="row">
+    {% include "AppBundle:Restaurant:pagination.html.twig" %}
+  </div>
 </div>
 {% endblock %}

@@ -1,0 +1,12 @@
+body {
+    font-family: "Arvo", Helvetica, Arial, sans-serif;
+}
+
+#topnav {
+    margin-bottom: 0;
+}
+
+#search {
+    padding: 40px 0;
+    background-color: #ecf0f1;
+}
