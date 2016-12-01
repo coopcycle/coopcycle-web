@@ -15,7 +15,6 @@
       {% for address in addresses %}
       <a href="#" class="list-group-item">
         {{ address.streetAddress }}
-        {# <span class="pull-right">{{ order.total }} €</span> #}
       </a>
       {% endfor %}
     </div>
@@ -23,13 +22,6 @@
     <a class="btn btn-success" href="{{ path('profile_address_new') }}">Ajouter</a>
 
   </div>
-
-  {# <div class="col-xs-12 col-sm-4">
-    <h2>Panier</h2>
-    <div id="cart"></div>
-    <hr>
-    <a href="{{ path('order') }}" class="btn btn-block btn-primary">Commander</a>
-  </div> #}
 
 </div>
 {% endblock %}
