@@ -1,8 +1,8 @@
 {
   "apps": [{
-    "name": "coursiers-realtime",
+    "name": "coopcycle-dispatch",
     "script": "./nodejs/server.js",
-    "cwd": "/var/www/coursiers/current",
+    "cwd": "/var/www/coopcycle/current",
     "exec_mode": "fork_mode"
   }]
 }
