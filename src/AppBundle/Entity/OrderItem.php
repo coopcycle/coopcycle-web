@@ -44,7 +44,6 @@ class OrderItem
     /**
      * @var Order
      *
-     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderedItem")
      * @ORM\JoinColumn(nullable=false)
      */
