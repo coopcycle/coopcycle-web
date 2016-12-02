@@ -12,8 +12,8 @@ server {
     server_name {{ main_domain }};
     root {{ doc_root }};
 
-    ssl_certificate /etc/letsencrypt/live/coopcycle.org/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/coopcycle.org/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/{{ main_domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ main_domain }}/privkey.pem;
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl_prefer_server_ciphers on;

@@ -42,7 +42,8 @@
         "knplabs/knp-time-bundle": "^1.7",
         "twig/extensions": "^1.4",
         "cocur/slugify": "^2.3",
-        "gesdinet/jwt-refresh-token-bundle": "^0.1.8"
+        "gesdinet/jwt-refresh-token-bundle": "^0.1.8",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

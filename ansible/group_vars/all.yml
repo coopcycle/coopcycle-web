@@ -43,8 +43,7 @@ pm2_apps:
 
 redis_version: 3.2.1
 redis_bind: 127.0.0.1
-
-phpredis_version: "php7"
+redis_logfile: /var/log/redis/redis-server.log
 
 postgresql_version: 9.4
 postgresql_encoding: "UTF-8"

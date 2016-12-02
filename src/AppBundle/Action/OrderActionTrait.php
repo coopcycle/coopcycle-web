@@ -3,7 +3,7 @@
 namespace AppBundle\Action;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Snc\RedisBundle\Client\Phpredis\Client as Redis;
+use Predis\Client as Redis;
 use Symfony\Component\Serializer\SerializerInterface;
 use AppBundle\Entity\OrderRepository;
 

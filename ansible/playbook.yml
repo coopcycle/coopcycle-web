@@ -7,7 +7,5 @@
     - geerlingguy.php
     - DavidWittman.redis # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
     - redis-tools
-    - alexsegura.phpredis
-    - phpredis-enable
     - nodejs
     - { role: alexsegura.pm2, become: no }

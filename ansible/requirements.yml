@@ -7,10 +7,6 @@
 - src: geerlingguy.php
   version: 3.3.0
 
-- src: https://github.com/alexsegura/ansible-phpredis
-  version: phpize
-  name: alexsegura.phpredis
-
 - src: https://github.com/alexsegura/ansible-pm2
   version: fix.startup
   name: alexsegura.pm2

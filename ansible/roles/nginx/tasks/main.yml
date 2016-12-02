@@ -6,11 +6,11 @@
     apt_repository: repo="deb http://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
 
   - name: Install nginx
-    sudo: yes
+    become: yes
     apt:  pkg=nginx state=installed update_cache=true
 
   - name: Add site
-    sudo: yes
+    become: yes
     template: src={{ nginx_template }} dest=/etc/nginx/conf.d/{{ main_domain }}.conf
     notify: restart nginx
 
