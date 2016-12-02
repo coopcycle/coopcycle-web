@@ -1,6 +1,6 @@
 {
   "apps": [{
-    "name": "coursiers-realtime",
+    "name": "coopcycle-dispatch",
     "script": "./nodejs/server.js",
     "watch": ["./nodejs/server.js"],
     "watch_options" : {
