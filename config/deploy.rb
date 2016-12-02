@@ -5,7 +5,7 @@ set :user, 'capistrano'
 set :use_sudo, false
 
 set :application, 'coursiers'
-set :repo_url, 'git@gitlab.com:coursiers-coop/web2.git'
+set :repo_url, 'git@github.com:coopcycle/coopcycle-web.git'
 # set :linked_files, %w{app/config/parameters.yml app/logs/prod.log}
 set :linked_dirs, %w{var/jwt}
 
