@@ -6,13 +6,14 @@ use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Predis\Client as Redis;
 
 class OrderListener
 {
     private $tokenStorage;
     private $redis;
 
-    public function __construct(TokenStorageInterface $tokenStorage, \Redis $redis) {
+    public function __construct(TokenStorageInterface $tokenStorage, Redis $redis) {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
     }

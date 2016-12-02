@@ -111,6 +111,6 @@ gesdinet_jwt_refresh_token:
 snc_redis:
     clients:
         default:
-            type: phpredis
+            type: predis
             alias: default
-            dsn: redis://localhost
+            dsn: redis://127.0.0.1:6379
