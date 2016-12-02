@@ -5,7 +5,10 @@ import Cart from './Cart.jsx';
 var cart = document.getElementById('cart');
 if (cart) {
   var cartComponent = render(
-    <Cart items={window.AppData.Cart.items} addToCartURL={window.AppData.Cart.addToCartURL} />,
+    <Cart
+        items={window.AppData.Cart.items}
+        addToCartURL={window.AppData.Cart.addToCartURL}
+        removeFromCartURL={window.AppData.Cart.removeFromCartURL} />,
     cart
   );
   $('.js-add-to-cart').on('click', function(e) {

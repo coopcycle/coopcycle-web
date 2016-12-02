@@ -48,9 +48,20 @@ class Cart
         );
     }
 
+    public function removeProduct(Product $product)
+    {
+        foreach ($this->items as $key => $item) {
+            if ($item['id'] === $product->getId()) {
+                unset($this->items[$key]);
+                break;
+            }
+        }
+    }
+
     public function getItems()
     {
-        return $this->items;
+        // Make sure this is a zero-indexed array, for proper JSON serialization
+        return array_values($this->items);
     }
 
     public function getTotal()
@@ -63,7 +74,7 @@ class Cart
     public function toArray()
     {
         return array(
-            'items' => $this->items,
+            'items' => $this->getItems(),
         );
     }
 }
