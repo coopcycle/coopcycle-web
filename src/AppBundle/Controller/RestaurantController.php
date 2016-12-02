@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RestaurantController extends Controller
 {
+    use DoctrineTrait;
+
     const ITEMS_PER_PAGE = 15;
 
     private function getCart(Request $request, Restaurant $restaurant)
@@ -112,6 +114,24 @@ class RestaurantController extends Controller
 
         $cart = $this->getCart($request, $restaurant);
         $cart->addProduct($product);
+        $this->saveCart($request, $cart);
+
+        return new JsonResponse($cart->toArray());
+    }
+
+    /**
+     * @Route("/restaurant/{id}/cart/{product}", methods={"DELETE"}, name="restaurant_remove_from_cart")
+     */
+    public function removeFromCartAction($id, $product, Request $request)
+    {
+        $restaurantRepository = $this->getRepository('Restaurant');
+        $productRepository = $this->getRepository('Product');
+
+        $restaurant = $restaurantRepository->find($id);
+        $product = $productRepository->find($product);
+
+        $cart = $this->getCart($request, $restaurant);
+        $cart->removeProduct($product);
         $this->saveCart($request, $cart);
 
         return new JsonResponse($cart->toArray());

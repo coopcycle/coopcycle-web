@@ -10,3 +10,7 @@ body {
     padding: 40px 0;
     background-color: #ecf0f1;
 }
+
+#cart .list-group-item .close {
+    margin-left: 10px;
+}
