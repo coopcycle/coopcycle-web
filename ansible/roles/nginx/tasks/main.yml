@@ -9,6 +9,11 @@
     become: yes
     apt:  pkg=nginx state=installed update_cache=true
 
+  - name: Create webockets.conf file
+    become: yes
+    template: src=websockets.tpl dest=/etc/nginx/websockets.conf
+    notify: restart nginx
+
   - name: Add site
     become: yes
     template: src={{ nginx_template }} dest=/etc/nginx/conf.d/{{ main_domain }}.conf

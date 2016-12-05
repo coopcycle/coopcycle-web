@@ -16,7 +16,7 @@ set :format, :pretty
 set :log_level, :info
 set :keep_releases, 3
 
-set :pm2_config, "current/pm2.json"
+set :pm2_config, "current/pm2.config.js"
 
 # set :permission_method, "acl"
 # set :file_permissions_users, ["capistrano"]
@@ -75,7 +75,7 @@ namespace :deploy do
   task :restart_pm2 do
     on roles :all do
       within deploy_to do
-        execute :pm2, 'startOrRestart', fetch(:pm2_config)
+        execute :pm2, 'startOrRestart', '--env', 'production', fetch(:pm2_config)
       end
     end
   end

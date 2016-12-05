@@ -28,4 +28,13 @@ class AdminController extends Controller
             'orders' => $orders,
         );
     }
+
+    /**
+     * @Route("/admin/tracking", methods={"GET"})
+     * @Template()
+     */
+    public function trackingAction(Request $request)
+    {
+        return array();
+    }
 }
