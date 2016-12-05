@@ -1,8 +1,0 @@
-{
-  "apps": [{
-    "name": "coopcycle-dispatch",
-    "script": "./nodejs/server.js",
-    "cwd": "/var/www/coopcycle/current",
-    "exec_mode": "fork_mode"
-  }]
-}

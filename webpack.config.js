@@ -1,13 +1,18 @@
 module.exports = {
-  entry: [
-    './js/index.jsx'
-  ],
+  entry: {
+    cart: './js/app/cart/index.jsx',
+    tracking: './js/app/tracking/index.js'
+  },
   output: {
     path: __dirname + '/web/js',
-    filename: "app.js"
+    filename: "[name].js",
   },
   module: {
     loaders: [
+      {
+        test: /\.json$/,
+        loader: "json-loader"
+      },
       {
         test: /\.jsx?/,
         include: __dirname + '/js',

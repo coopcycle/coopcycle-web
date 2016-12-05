@@ -14,8 +14,8 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
-/web/js/app.js
-/web/js/app.js.map
+/web/js/*
+!web/js/.gitkeep
 /.vagrant/
 /node_modules/
 .DS_Store
