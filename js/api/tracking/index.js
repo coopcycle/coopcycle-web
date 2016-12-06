@@ -1,22 +1,29 @@
-var app = require('http').createServer(handler)
+var app = require('http').createServer(handler);
+var url = require('url') ;
 var io = require('socket.io')(app, {path: '/tracking/socket.io'});
 var fs = require('fs');
 var _ = require('underscore');
 var Promise = require('promise');
 var redis = require('redis').createClient();
+var Mustache = require('mustache');
 
 app.listen(8001);
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
+function handler(req, res) {
+  fs.readFile(__dirname + '/index.html', function (err, data) {
     if (err) {
       res.writeHead(500);
       return res.end('Error loading index.html');
     }
 
+    var params = url.parse(req.url, true).query;
+
+    var output = Mustache.render(data.toString('utf8'), {
+      zoom: params.zoom || 13
+    });
+
     res.writeHead(200);
-    res.end(data);
+    res.end(output);
   });
 }
 
