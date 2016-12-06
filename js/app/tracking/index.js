@@ -7,6 +7,7 @@ var center = {
   lat: 48.857498,
   lng: 2.335402
 };
+var zoom = window.mapZoom || 13;
 
 function addMarker(key, position, isCourier) {
   var marker = _.find(markers, function(marker) {
@@ -71,7 +72,7 @@ function removeMarkersByKeys(keys) {
 window.initMap = function() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: center,
-    zoom: 13
+    zoom: zoom
   });
 
   var hostname = window.location.hostname;
