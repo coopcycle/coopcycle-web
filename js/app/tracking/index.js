@@ -1,4 +1,5 @@
 var MarkerIcons = require('fontawesome-markers');
+var _ = require('underscore');
 
 var map;
 var markers = [];

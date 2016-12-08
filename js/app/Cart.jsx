@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'underscore';
 import CartItem from './CartItem.jsx';
 
 class Cart extends React.Component
