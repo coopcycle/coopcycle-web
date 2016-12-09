@@ -13,7 +13,7 @@ var env = argv.env || 'development';
 var apps = [{
   name: "coopcycle-dispatch",
   script: "./js/api/dispatch/index.js",
-  watch: ["./js/api/dispatch/index.js"],
+  watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
 }, {
   name: "coopcycle-tracking",
   script: "./js/api/tracking/index.js",

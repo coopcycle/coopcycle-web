@@ -23,13 +23,40 @@ class Me
     public function statusAction()
     {
         $user = $this->getUser();
-        $status = $this->redis->get('Courier:'.$user->getId().':status');
 
-        if (!$status) {
-            $status = 'AVAILABLE';
+        $status = 'AVAILABLE';
+
+        // Check if courier has accepted an order previously
+        $order = $this->orderRepository->findOneBy([
+            'courier' => $user,
+            'status' => ['ACCEPTED', 'PICKED'],
+        ]);
+
+        if (null !== $order) {
+            $status = 'DELIVERING';
         }
 
-        return new JsonResponse(['status' => $status]);
+        $data = [
+            'status' => $status,
+        ];
+
+        if (null !== $order) {
+            $data['order'] = [
+                'id' => $order->getId(),
+                'status' => $order->getStatus(),
+                'restaurant' => [
+                    'longitude' => $order->getRestaurant()->getGeo()->getLongitude(),
+                    'latitude' => $order->getRestaurant()->getGeo()->getLatitude(),
+
+                ],
+                'deliveryAddress' => [
+                    'longitude' => $order->getDeliveryAddress()->getGeo()->getLongitude(),
+                    'latitude' => $order->getDeliveryAddress()->getGeo()->getLatitude(),
+                ],
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     /**

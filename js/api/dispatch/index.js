@@ -1,19 +1,45 @@
 var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
-var jwt = require('jsonwebtoken');
 var pg = require('pg');
 var _ = require('underscore');
 var Promise = require('promise');
-var unserialize = require('locutus/php/var/unserialize');
+var YAML = require('js-yaml');
+var Sequelize = require('sequelize');
+var Promise = require('promise');
 
-var cert = fs.readFileSync(__dirname + '/../../../var/jwt/public.pem');
+var ROOT_DIR = __dirname + '/../../..';
+var CONFIG = {};
+
+console.log('---------------------');
+console.log('- STARTING DISPATCH -');
+console.log('---------------------');
+
+try {
+  var yaml = YAML.safeLoad(fs.readFileSync(ROOT_DIR + '/app/config/parameters.yml', 'utf8'));
+  CONFIG = yaml.parameters;
+} catch (e) {
+  console.log(e);
+}
+
+var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
+
 var pgPool = new pg.Pool({
-  user: 'postgres',
-  database: 'coursiers',
-  password: ''
+  host: CONFIG.database_host,
+  port: CONFIG.database_port,
+  user: CONFIG.database_user,
+  password: CONFIG.database_password,
+  database: CONFIG.database_name,
 });
+
 var redis = require('redis').createClient();
+var redisPubSub = require('redis').createClient();
+
+var sequelize = new Sequelize(CONFIG.database_name, CONFIG.database_user, CONFIG.database_password, {
+  host: CONFIG.database_host,
+  dialect: 'postgres',
+  logging: false,
+});
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
@@ -21,181 +47,166 @@ var server = http.createServer(function(request, response) {
 });
 server.listen(8000, function() {});
 
+var Db = require('../Db')(sequelize);
 
-var CourierUtils = require('../CourierUtils');
-var courierUtils = new CourierUtils(redis);
+var Courier = require('../models/Courier').Courier;
+Courier.init(redis, redisPubSub);
 
-var connections = [];
+var Order = require('../models/Order').Order;
+Order.init(redis, sequelize, Db);
 
-function nextOrder() {
-  rotateListTimeout = setTimeout(rotateList, 1000);
-}
+var OrderDispatcher = require('../models/OrderDispatcher');
+var orderDispatcher = new OrderDispatcher(redis, Order.Registry);
 
-function findCourier(courierID) {
-  return _.find(connections, function(courier) {
-    return courier.id === courierID;
-  });
-}
+var UserService = require('../UserService');
+var userService = new UserService(pgPool);
 
-function getOrderCoords(orderID) {
-  return new Promise(function(resolve, reject) {
-    redis.geopos('GeoSet', 'order:' + orderID, function(err, results) {
-      resolve({
-        latitude: parseFloat(results[0][0]),
-        longitude: parseFloat(results[0][1])
-      })
-    });
-  });
-}
+var TokenVerifier = require('../TokenVerifier');
+var tokenVerifier = new TokenVerifier(cert, userService, Db);
 
-// ---
+/* Order dispatch loop */
 
-var rotateListTimeout;
-var rotateList = function() {
-  redis.rpoplpush('Orders', 'Orders', function(err, orderID) {
+orderDispatcher.setHandler(function(order, next) {
 
-    if (!orderID) {
-      console.log('No orders to process yet');
-      return nextOrder();
+  console.log('Trying to dispatch order #' + order.id);
+
+  Courier.nearestForOrder(order, 10 * 1000).then(function(courier) {
+
+    if (!courier) {
+      console.log('No couriers nearby');
+      return next();
     }
 
-    console.log('Looking for courier for order #' + orderID);
-    courierUtils.nearestCouriers(orderID).then(function(results) {
-      if (results.length === 0) {
-        console.log('No couriers nearby');
-        return nextOrder();
-      }
+    console.log('Dispatching order #' + order.id + ' to courier #' + courier.id);
 
-      var couriers = _.map(results, function(result) {
-        var id = parseInt(result[0].substring('courier:'.length), 10);
-        var courier = findCourier(id);
-        courier.status = courier.status || 'AVAILABLE';
-        return courier;
-      });
+    // There is a courier available
+    // Change state to "DISPATCHING" and wait for feedback
+    courier.setOrder(order.id);
+    courier.setState(Courier.DISPATCHING);
 
-      var available = _.filter(couriers, function(courier) {
-        return courier.status === 'AVAILABLE';
-      });
-
-      if (available.length === 0) {
-        console.log('No couriers available');
-        return nextOrder();
-      }
-
-      var courier = _.first(available);
-
-      courier.status = 'BUSY';
-
-      console.log('Removing order #' + orderID + ' from list...');
-      redis.lrem('Orders', 1, orderID, function(err) {
-        if (!err) {
-          getOrderCoords(orderID).then(function(coords) {
-            var order = _.extend({id: orderID}, coords);
-            courier.ws.send(JSON.stringify({
-              type: 'order',
-              order: order
-            }));
-            nextOrder();
-          });
-        }
+    // Remove order from the waiting list
+    redis.lrem('orders:waiting', 0, order.id, function(err) {
+      if (err) throw err;
+      redis.lpush('orders:dispatching', order.id, function(err) {
+        if (err) throw err;
+        // TODO record dispatch event ?
+        courier.send({
+          type: 'order',
+          order: {
+            id: order.id,
+            restaurant: {
+              latitude: order.restaurant.geo.coordinates[0],
+              longitude: order.restaurant.geo.coordinates[1],
+            },
+            deliveryAddress: {
+              latitude: order.delivery_address.geo.coordinates[0],
+              longitude: order.delivery_address.geo.coordinates[1],
+            }
+          }
+        });
+        next();
       });
     });
-
   });
-}
-rotateListTimeout = setTimeout(rotateList, 1000);
+});
+
+// Perform sanity check of Postgres vs Redis ?
+
+Db.Order.findAll({
+  where: {
+    status: {$in: [Order.WAITING, Order.ACCEPTED, Order.PICKED]},
+  },
+  include: [Db.Restaurant, Db.DeliveryAddress]
+}).then(function(orders) {
+
+  var waiting = _.filter(orders, function(order) { return order.status === Order.WAITING });
+  var delivering = _.filter(orders, function(order) { return order.status === Order.ACCEPTED || order.status === Order.PICKED });
+
+  redis.del(['orders:waiting', 'orders:delivering'], function(err) {
+    if (err) throw err;
+
+    var geokeys = [];
+    _.each(orders, function(order) {
+      var deliveryAddress = {
+        latitude: order.delivery_address.geo.coordinates[0],
+        longitude: order.delivery_address.geo.coordinates[1],
+      }
+      geokeys.push(deliveryAddress.longitude);
+      geokeys.push(deliveryAddress.latitude);
+      geokeys.push('delivery_address:' + order.delivery_address.id);
+    });
+
+    if (geokeys.length > 0) {
+      redis.geoadd('delivery_addresses:geo', geokeys);
+    }
+
+    var deliveringIds = delivering.map(function(order) {
+      return order.id;
+    });
+    if (deliveringIds.length > 0) {
+      redis.rpush('orders:delivering', deliveringIds);
+    }
+
+    var waitingIds = waiting.map(function(order) {
+      return order.id;
+    });
+    if (waitingIds.length > 0) {
+      redis.rpush('orders:waiting', waitingIds);
+    }
+
+    // TODO Start server & order loop here
+    console.log('Everything is loaded, starting dispatch loop...');
+    orderDispatcher.start();
+  });
+});
 
 // create the server
 wsServer = new WebSocketServer({
     server: server,
     verifyClient: function (info, cb) {
-
-      var token = info.req.headers.authorization;
-      if (!token) {
-        console.log('No JWT found in request');
-        return cb(false, 401, 'Unauthorized');
-      }
-
-      token = token.substring('Bearer '.length);
-
-      jwt.verify(token, cert, function (err, decoded) {
-        if (err) {
-          console.log('Invalid JWT', err);
-          cb(false, 401, 'Access denied');
-        } else {
-          console.log('JWT verified successfully', decoded);
-          // Token is verified, load user from database
-          pgPool.connect(function (err, client, done) {
-            if (err) throw err;
-            console.log('Decoded token', decoded);
-            client.query('SELECT id, username, roles FROM api_user WHERE username = $1', [decoded.username], function (err, result) {
-              done();
-
-              var user = result.rows[0];
-              user.roles = unserialize(user.roles);
-
-              if (!_.contains(user.roles, 'ROLE_COURIER')) {
-                console.log('User has not enough access rights')
-                return cb(false, 401, 'Access denied');
-              }
-
-              info.req.user = user;
-              cb(true);
-            });
-          });
-        }
-      });
-
-    }
+      tokenVerifier.verify(info, cb);
+    },
 });
+
+var isClosing = false;
 
 // WebSocket server
 wsServer.on('connection', function(ws) {
 
-    var user = ws.upgradeReq.user;
+    var courier = ws.upgradeReq.courier;
+    courier.connect(ws);
+    Courier.Pool.add(courier);
 
-    console.log('User #'+user.id+' connected!');
-
-    var courier = _.extend(user, {ws: ws});
-
-    connections.push(courier);
+    console.log('Courier #' + courier.id + ' connected!');
 
     ws.on('message', function(messageText) {
+
+      if (isClosing) {
+        return;
+      }
 
       var message = JSON.parse(messageText);
 
       if (message.type === 'updateCoordinates') {
-        console.log('Courier ' + courier.id + ', updating position in Redis...');
-        redis.geoadd('GeoSet',
-          message.coordinates.latitude,
-          message.coordinates.longitude,
-          'courier:' + courier.id
-        );
+        console.log('Courier ' + courier.id + ', state = ' + courier.state + ' updating position in Redis...');
+        Courier.updateCoordinates(courier, message.coordinates);
       }
 
     });
 
     ws.on('close', function() {
-
-      console.log('User #' + courier.id + ' disconnected !');
-
-      console.log('Removing courier "' + courier.id + '" from Redis...');
-      redis.zrem('GeoSet', 'courier:' + courier.id);
-
-      var connectionsIndex = connections.indexOf(courier);
-      if (-1 !== connectionsIndex) {
-        connections.splice(connectionsIndex, 1);
-      }
-
-      console.log('Number of connections : ' + _.size(connections));
+      console.log('Courier #' + courier.id + ' disconnected!');
+      Courier.Pool.remove(courier);
+      console.log('Number of couriers connected: ' + Courier.Pool.size());
     });
 });
 
+// Handle restarts
 process.on('SIGINT', function () {
-  _.each(connections, function(connection) {
-    if (connection) {
-      console.log('Removing courier #' + connection.id + ' from Redis...');
-      redis.zrem('GeoSet', 'courier:' + connection.id);
-    }
-  });
+  console.log('---------------------');
+  console.log('- STOPPING DISPATCH -');
+  console.log('---------------------');
+  isClosing = true;
+  orderDispatcher.stop();
+  Courier.Pool.removeAll();
 });
