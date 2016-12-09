@@ -3,7 +3,6 @@ var url = require('url') ;
 var io = require('socket.io')(app, {path: '/tracking/socket.io'});
 var fs = require('fs');
 var _ = require('underscore');
-var Promise = require('promise');
 var redis = require('redis').createClient();
 var Mustache = require('mustache');
 
@@ -28,24 +27,21 @@ function handler(req, res) {
 }
 
 function updateObjects(socket) {
-  var promises = [];
-  redis.zrange('GeoSet', 0, -1, function(err, results) {
-    _.each(results, function(key) {
-      var promise = new Promise(function(resolve, reject) {
-        redis.geopos('GeoSet', key, function(err, result) {
-          resolve({
+  redis.zrange('GeoSet', 0, -1, function(err, keys) {
+    redis.geopos('GeoSet', keys, function(err, values) {
+      var hash = _.object(keys, values);
+      var objects = _.map(hash, function(value, key) {
+          return {
             key: key,
             coords: {
-              lat: parseFloat(result[0][0]),
-              lng: parseFloat(result[0][1])
+              lat: parseFloat(value[0]),
+              lng: parseFloat(value[1])
             }
-          });
-        });
+          }
       });
-      promises.push(promise);
-    });
-    Promise.all(promises).then(function(values) {
-      socket.emit('news', values);
+
+      socket.emit('news', objects);
+
       setTimeout(function() {
         updateObjects(socket);
       }, 1000);
