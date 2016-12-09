@@ -6,6 +6,8 @@ use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class OrderAccept
 {
@@ -25,26 +27,30 @@ class OrderAccept
 
         $user = $this->getUser();
 
-        if ($user->hasRole('ROLE_COURIER')) {
-
-            $data->setCourier($user);
-
-            // message.coordinates.latitude, message.coordinates.longitude, 'courier:' + courierID);
-
-            $this->redis->set('Courier:'.$user->getId().':status', 'BUSY');
-            $this->redis->set('Courier:'.$user->getId().':order', $data->getId());
-
-            $this->redis->zrem('GeoSet',
-                'order:'.$data->getId(),
-                'courier:'.$user->getId()
-            );
-
-            // $this->redis->geoadd('OrdersPicked',
-            //     'order:'.$data->getId(),
-            //     'courier:'.$user->getId()
-            // );
+        // Only couriers can accept orders
+        if (!$user->hasRole('ROLE_COURIER')) {
+            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
         }
 
-        return $data;
+        $order = $data;
+
+        // Order MUST have status = WAITING
+        if ($order->getStatus() !== Order::STATUS_WAITING) {
+
+            // Make sure order is not in the Redis queue anymore
+            // This MAY happen if some user accepted the order and has been disconnected from the WebSocket server
+            $this->redis->lrem('orders:waiting', 0, $order->getId());
+
+            throw new BadRequestHttpException(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
+        }
+
+        $order->setCourier($user);
+        $order->setStatus(Order::STATUS_ACCEPTED);
+
+        $this->redis->lrem('orders:dispatching', 0, $order->getId());
+        $this->redis->lpush('orders:delivering', $order->getId());
+        $this->redis->publish('couriers', $user->getId());
+
+        return $order;
     }
 }

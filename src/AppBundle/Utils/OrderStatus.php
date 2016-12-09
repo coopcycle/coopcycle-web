@@ -7,7 +7,7 @@ use AppBundle\Entity\Order;
 class OrderStatus
 {
     private static $statusMap = array(
-        Order::STATUS_PLACED => Order::STATUS_ACCEPTED,
+        Order::STATUS_WAITING => Order::STATUS_ACCEPTED,
         Order::STATUS_ACCEPTED => Order::STATUS_READY,
         Order::STATUS_READY => Order::STATUS_PICKED,
     );

@@ -35,7 +35,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Order
 {
-    const STATUS_PLACED = 'PLACED';
+    const STATUS_WAITING = 'WAITING';
     const STATUS_ACCEPTED = 'ACCEPTED';
     const STATUS_READY = 'READY';
     const STATUS_PICKED = 'PICKED';
@@ -112,7 +112,7 @@ class Order
     private $updatedAt;
 
     public function __construct() {
-        $this->status = self::STATUS_PLACED;
+        $this->status = self::STATUS_WAITING;
         $this->orderedItem = new ArrayCollection();
     }
 

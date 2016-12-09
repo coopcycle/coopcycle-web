@@ -22,10 +22,22 @@ class OrderPick
      */
     public function __invoke($data)
     {
-        if ($data->getCourier() !== $this->getUser()) {
+        $user = $this->getUser();
+
+        // Only couriers can accept orders
+        if (!$user->hasRole('ROLE_COURIER')) {
+            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
+        }
+
+        $order = $data;
+
+        // Make sure the courier picking order is authorized
+        if ($order->getCourier() !== $this->getUser()) {
             throw new AccessDeniedException();
         }
 
-        return $data;
+        $order->setStatus(Order::STATUS_PICKED);
+
+        return $order;
     }
 }
