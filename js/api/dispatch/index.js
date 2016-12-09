@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 var pg = require('pg');
 var _ = require('underscore');
 var Promise = require('promise');
+var unserialize = require('locutus/php/var/unserialize');
 
 var cert = fs.readFileSync(__dirname + '/../../../var/jwt/public.pem');
 var pgPool = new pg.Pool({
@@ -120,16 +121,25 @@ wsServer = new WebSocketServer({
       jwt.verify(token, cert, function (err, decoded) {
         if (err) {
           console.log('Invalid JWT', err);
-          cb(false, 401, 'Unauthorized');
+          cb(false, 401, 'Access denied');
         } else {
           console.log('JWT verified successfully', decoded);
           // Token is verified, load user from database
           pgPool.connect(function (err, client, done) {
             if (err) throw err;
             console.log('Decoded token', decoded);
-            client.query('SELECT id, username FROM api_user WHERE username = $1', [decoded.username], function (err, result) {
+            client.query('SELECT id, username, roles FROM api_user WHERE username = $1', [decoded.username], function (err, result) {
               done();
-              info.req.user = result.rows[0];
+
+              var user = result.rows[0];
+              user.roles = unserialize(user.roles);
+
+              if (!_.contains(user.roles, 'ROLE_COURIER')) {
+                console.log('User has not enough access rights')
+                return cb(false, 401, 'Access denied');
+              }
+
+              info.req.user = user;
               cb(true);
             });
           });

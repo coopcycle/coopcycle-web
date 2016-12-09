@@ -13,6 +13,7 @@
     "form-data": "^2.1.2",
     "json-loader": "^0.5.4",
     "jsonwebtoken": "^7.1.9",
+    "locutus": "^2.0.6",
     "minimist": "^1.2.0",
     "mustache": "^2.3.0",
     "pg": "^6.1.0",
