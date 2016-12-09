@@ -3,10 +3,11 @@ body {
 }
 
 #topnav {
-    margin-bottom: 0;
+
 }
 
 #search {
+    margin-top: -20px;
     padding: 40px 0;
     background-color: #ecf0f1;
 }
