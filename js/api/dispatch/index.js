@@ -94,14 +94,8 @@ orderDispatcher.setHandler(function(order, next) {
           type: 'order',
           order: {
             id: order.id,
-            restaurant: {
-              latitude: order.restaurant.geo.coordinates[0],
-              longitude: order.restaurant.geo.coordinates[1],
-            },
-            deliveryAddress: {
-              latitude: order.delivery_address.geo.coordinates[0],
-              longitude: order.delivery_address.geo.coordinates[1],
-            }
+            restaurant: order.restaurant.position,
+            deliveryAddress: order.restaurant.position
           }
         });
         next();
@@ -127,12 +121,8 @@ Db.Order.findAll({
 
     var geokeys = [];
     _.each(orders, function(order) {
-      var deliveryAddress = {
-        latitude: order.delivery_address.geo.coordinates[0],
-        longitude: order.delivery_address.geo.coordinates[1],
-      }
-      geokeys.push(deliveryAddress.longitude);
-      geokeys.push(deliveryAddress.latitude);
+      geokeys.push(order.delivery_address.position.longitude);
+      geokeys.push(order.delivery_address.position.latitude);
       geokeys.push('delivery_address:' + order.delivery_address.id);
     });
 
