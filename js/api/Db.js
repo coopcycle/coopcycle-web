@@ -26,7 +26,18 @@ module.exports = function(sequelize) {
       field: 'updated_at',
       type: Sequelize.DATE
     },
-  }, _.extend(sequelizeOptions, {tableName: 'order_'}));
+  }, _.extend(sequelizeOptions, {
+    tableName: 'order_'
+  }));
+
+  var positionGetter = function() {
+    var geo = this.getDataValue('geo');
+
+    return {
+      latitude: geo.coordinates[0],
+      longitude: geo.coordinates[1],
+    };
+  }
 
   Db.Restaurant = sequelize.define('restaurant', {
     name: Sequelize.STRING,
@@ -34,8 +45,13 @@ module.exports = function(sequelize) {
       field: 'street_address',
       type: Sequelize.DATE
     },
-    geo: Sequelize.GEOMETRY
-  }, _.extend(sequelizeOptions, {tableName: 'restaurant'}));
+    geo: Sequelize.GEOMETRY,
+  }, _.extend(sequelizeOptions, {
+    tableName: 'restaurant',
+    getterMethods: {
+      position : positionGetter
+    },
+  }));
 
   Db.DeliveryAddress = sequelize.define('delivery_address', {
     name: Sequelize.STRING,
@@ -44,7 +60,12 @@ module.exports = function(sequelize) {
       type: Sequelize.DATE
     },
     geo: Sequelize.GEOMETRY
-  }, _.extend(sequelizeOptions, {tableName: 'delivery_address'}));
+  }, _.extend(sequelizeOptions, {
+    tableName: 'delivery_address',
+    getterMethods: {
+      position : positionGetter
+    },
+  }));
 
   Db.Order.belongsTo(Db.Restaurant);
   Db.Order.belongsTo(Db.DeliveryAddress);

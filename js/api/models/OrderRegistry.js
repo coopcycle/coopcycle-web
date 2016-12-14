@@ -16,11 +16,9 @@ OrderRegistry.prototype.findById = function(id) {
       return Db.Order.findById(id, {include: [Db.Restaurant, Db.DeliveryAddress]})
         .then(function(order) {
 
-          var restaurant = {
-            latitude: order.restaurant.geo.coordinates[0],
-            longitude: order.restaurant.geo.coordinates[1],
-          }
-          self.redis.geoadd('orders:geo', restaurant.longitude, restaurant.latitude, 'order:' + id, function(err) {
+          var restaurant = order.restaurant;
+
+          self.redis.geoadd('orders:geo', restaurant.position.longitude, restaurant.position.latitude, 'order:' + id, function(err) {
             self.cache[id] = order;
             resolve(order);
           });
