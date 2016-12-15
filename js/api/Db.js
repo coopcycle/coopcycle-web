@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize');
 var _ = require('underscore');
+var unserialize = require('locutus/php/var/unserialize');
 
 var sequelizeOptions = {
   timestamps: false,
@@ -14,7 +15,15 @@ module.exports = function(sequelize) {
   Db.Courier = sequelize.define('courier', {
     username: Sequelize.STRING,
     email: Sequelize.STRING,
-  }, _.extend(sequelizeOptions, {tableName: 'api_user'}));
+    roles: Sequelize.STRING,
+  }, _.extend(sequelizeOptions, {
+    tableName: 'api_user',
+    getterMethods: {
+      roles : function() {
+        return unserialize(this.getDataValue('roles'));
+      }
+    },
+  }));
 
   Db.Order = sequelize.define('order', {
     status: Sequelize.STRING,

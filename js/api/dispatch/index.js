@@ -3,10 +3,8 @@ var http = require('http');
 var fs = require('fs');
 var pg = require('pg');
 var _ = require('underscore');
-var Promise = require('promise');
 var YAML = require('js-yaml');
 var Sequelize = require('sequelize');
-var Promise = require('promise');
 
 var ROOT_DIR = __dirname + '/../../..';
 var CONFIG = {};
@@ -23,14 +21,6 @@ try {
 }
 
 var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
-
-var pgPool = new pg.Pool({
-  host: CONFIG.database_host,
-  port: CONFIG.database_port,
-  user: CONFIG.database_user,
-  password: CONFIG.database_password,
-  database: CONFIG.database_name,
-});
 
 var redis = require('redis').createClient();
 var redisPubSub = require('redis').createClient();
@@ -58,11 +48,8 @@ Order.init(redis, sequelize, Db);
 var OrderDispatcher = require('../models/OrderDispatcher');
 var orderDispatcher = new OrderDispatcher(redis, Order.Registry);
 
-var UserService = require('../UserService');
-var userService = new UserService(pgPool);
-
 var TokenVerifier = require('../TokenVerifier');
-var tokenVerifier = new TokenVerifier(cert, userService, Db);
+var tokenVerifier = new TokenVerifier(cert, Db);
 
 /* Order dispatch loop */
 
