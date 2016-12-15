@@ -1,14 +1,14 @@
 var REDIS;
+var TIMEOUT;
 
 function OrderDispatcher(redis, orderRegistry) {
   REDIS = redis;
   this.orderRegistry = orderRegistry;
-  this.timeout = null;
   this.handler = null;
 }
 
 function next(orderRegistry, handler) {
-  timeout = setTimeout(circularListHandler.bind(null, orderRegistry, handler), 1000);
+  TIMEOUT = setTimeout(circularListHandler.bind(null, orderRegistry, handler), 1000);
 }
 
 function circularListHandler(orderRegistry, handler) {
@@ -33,7 +33,7 @@ OrderDispatcher.prototype.start = function() {
 }
 
 OrderDispatcher.prototype.stop = function() {
-  clearTimeout(this.timeout);
+  clearTimeout(TIMEOUT);
 }
 
 module.exports = OrderDispatcher;
