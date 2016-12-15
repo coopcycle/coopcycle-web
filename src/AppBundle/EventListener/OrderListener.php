@@ -56,8 +56,8 @@ class OrderListener
             $restaurant = $entity->getRestaurant();
             $this->redis->geoadd(
                 'orders:geo',
-                $restaurant->getGeo()->getLatitude(),
                 $restaurant->getGeo()->getLongitude(),
+                $restaurant->getGeo()->getLatitude(),
                 'order:'.$entity->getId()
             );
             $this->redis->lpush(
