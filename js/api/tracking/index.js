@@ -123,7 +123,7 @@ function getOrdersByState(state) {
   }
 }
 
-function updateObjects(socket) {
+function updateObjects() {
 
   console.time("Loading data from Redis");
 
@@ -152,15 +152,10 @@ function updateObjects(socket) {
             }
           });
 
-          console.log(orders);
+          io.sockets.emit('orders', orders);
+          io.sockets.emit('couriers', couriers);
 
-          socket.emit('orders', orders);
-          socket.emit('couriers', couriers);
-
-          setTimeout(function() {
-            updateObjects(socket);
-          }, 1000);
-
+          setTimeout(updateObjects, 500);
         });
       });
 
@@ -168,6 +163,12 @@ function updateObjects(socket) {
 
 }
 
+var started = false;
+
 io.on('connection', function (socket) {
-  updateObjects(socket);
+  if (!started) {
+    console.log('A client is connected, start loop...');
+    started = true;
+    updateObjects();
+  }
 });
