@@ -12,7 +12,7 @@ use League\Geotools\Coordinate\Coordinate;
 class IndexController extends Controller
 {
     /**
-     * @Route("/", methods={"GET"})
+     * @Route("/", methods={"GET"}, name="homepage")
      * @Template()
      */
     public function indexAction()
@@ -21,7 +21,7 @@ class IndexController extends Controller
     }
 
     /**
-     * @Route("/", methods={"POST"})
+     * @Route("/", methods={"POST"}, name="restaurant_search")
      * @Template()
      */
     public function searchAction(Request $request)

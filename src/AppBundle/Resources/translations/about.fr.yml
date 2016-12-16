@@ -1,0 +1,21 @@
+section_1.title: C'est quoi ?
+section_1.paragraph_1: >
+  Le projet <strong>CoopCycle</strong> a pour objectif de créer une plateforme de livraison de repas à vélo <strong>open-source</strong>,
+  offrant les mêmes fonctionnalités que les platformes propriétaires.
+section_1.paragraph_2: >
+  L'idée est de <strong>décentraliser</strong> ce genre de services, afin que, dans chaque ville,
+  les livreurs à vélo souhaitant se regrouper en collectif et/ou en coopérative puissent détenir
+  la plateforme pour laquelle ils travaillent.
+
+section_2.title: En quoi c'est différent ?
+section_2.paragraph_1: >
+  Le <a href="https://github.com/coopcycle">code</a> est placé sous la <a href="https://wiki.p2pfoundation.net/Peer_Production_License">Peer Production License</a>,
+  ce qui signifie qu'il ne peut être utilisé que dans le cadre d'une entreprise ou une collectivité appartenant à ses travailleurs,
+  et que tous les gains financiers, excédents, bénéfices et avantages produits par l'entreprise ou le collectif sont répartis
+  entre les ouvriers-propriétaires.
+
+section_3.title: C'est prêt ?
+section_3.paragraph_1: >
+  Non, le projet vient tout juste de démarrer !
+  <br>
+  Ce site est une démo, vous pouvez passer des commandes mais personne ne viendra vous livrer.
