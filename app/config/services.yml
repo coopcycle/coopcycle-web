@@ -26,6 +26,11 @@ services:
     arguments:
       - AppBundle\Entity\Order
 
+  routing_service:
+    class: AppBundle\Service\Routing\GoogleDirectionsApi
+    arguments:
+      - "%google_api_key%"
+
   twig.extension.text:
     class: Twig_Extensions_Extension_Text
     tags:

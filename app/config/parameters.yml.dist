@@ -25,3 +25,5 @@ parameters:
     jwt_public_key_path:  %kernel.root_dir%/../var/jwt/public.pem    # ssh public key path
     jwt_key_pass_phrase:  'coursiers'                                # ssh key pass phrase
     jwt_token_ttl:        86400
+
+    google_api_key: YOUR_API_KEY
