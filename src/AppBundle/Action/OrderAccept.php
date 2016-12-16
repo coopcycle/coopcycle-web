@@ -48,7 +48,8 @@ class OrderAccept
         $order->setStatus(Order::STATUS_ACCEPTED);
 
         $this->redis->lrem('orders:dispatching', 0, $order->getId());
-        $this->redis->lpush('orders:delivering', $order->getId());
+        $this->redis->hset('orders:delivering', 'order:'.$order->getId(), 'courier:'.$user->getId());
+
         $this->redis->publish('couriers', $user->getId());
 
         return $order;

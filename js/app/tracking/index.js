@@ -7,6 +7,23 @@ var orders = [];
 var couriers = [];
 var deliveryAddresses = [];
 
+var COLORS = {
+  TURQUOISE: '#1ABC9C',
+  GREEN_SEA: '#16A085',
+  EMERALD: '#2ECC71',
+  NEPHRITIS: '#27AE60',
+  PETER_RIVER: '#3498DB',
+  BELIZE_HOLE: '#2980B9',
+  AMETHYST: '#9B59B6',
+  WISTERIA: '#8E44AD',
+  SUN_FLOWER: '#F1C40F',
+  ORANGE: '#F39C12',
+  CARROT: '#E67E22',
+  PUMPKIN: '#D35400',
+  ALIZARIN: '#E74C3C',
+  POMEGRANATE: '#C0392B',
+}
+
 var infoWindows = [];
 var center = {
   lat: 48.857498,
@@ -43,10 +60,12 @@ function addOrder(order) {
   var position = order.coords;
   var color;
 
+  var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))];
+
   switch (order.state) {
     default:
     case 'WAITING':
-      color = '#27ae60';
+      color = '#000';
       break;
     case 'DISPATCHING':
       color = '#2980b9';
@@ -63,7 +82,10 @@ function addOrder(order) {
   if (!marker) {
     marker = {
       key: key,
-      marker: createMarker(position, MarkerIcons.CUTLERY, color)
+      courier: order.courier,
+      color: randomColor,
+      restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor),
+      deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
     };
     //   var circle = new google.maps.Circle({
     //     strokeColor: '#E74C3C',
@@ -77,27 +99,7 @@ function addOrder(order) {
     //   });
     orders.push(marker);
   } else {
-    marker.marker.setIcon(createMarkerIcon(MarkerIcons.CUTLERY, color));
-  }
-}
-
-function addDeliveryAddress(deliveryAddress) {
-
-  var key = deliveryAddress.key;
-  var position = deliveryAddress.coords;
-  var color = '#8E44AD';
-
-  var marker = _.find(deliveryAddresses, function(marker) {
-    return marker.key === key;
-  });
-
-  if (!marker) {
-    marker = {
-      key: key,
-      marker: createMarker(position, MarkerIcons.MAP_MARKER, color)
-    };
-    deliveryAddresses.push(marker);
-  } else {
+    marker.courier = order.courier;
     // marker.marker.setIcon(createMarkerIcon(MarkerIcons.CUTLERY, color));
   }
 }
@@ -108,6 +110,12 @@ function addCourier(key, position) {
     return marker.key === key;
   });
 
+  var order = _.find(orders, function(order) {
+    return order.courier === key;
+  });
+
+  var color = order ? order.color : '#000';
+
   if (!marker) {
 
     var infoWindow = new google.maps.InfoWindow({
@@ -117,7 +125,7 @@ function addCourier(key, position) {
 
     marker = {
       key: key,
-      marker: createMarker(position, MarkerIcons.BICYCLE, '#27ae60'),
+      marker: createMarker(position, MarkerIcons.BICYCLE, color),
     };
 
     marker.marker.addListener('click', function() {
@@ -127,6 +135,7 @@ function addCourier(key, position) {
 
     couriers.push(marker);
   } else {
+    marker.marker.setIcon(createMarkerIcon(MarkerIcons.BICYCLE, color));
     marker.marker.setPosition(position);
   }
 }
@@ -156,7 +165,15 @@ function removeMarkersByKeys(keys, markers) {
     });
     if (-1 !== index) {
       var marker = markers.splice(index, 1);
-      marker[0].marker.setMap(null);
+      if (marker[0].hasOwnProperty('marker')) {
+        marker[0].marker.setMap(null);
+      }
+      if (marker[0].hasOwnProperty('restaurantMarker')) {
+        marker[0].restaurantMarker.setMap(null);
+      }
+      if (marker[0].hasOwnProperty('deliveryAddressMarker')) {
+        marker[0].deliveryAddressMarker.setMap(null);
+      }
     }
   });
 }
@@ -177,14 +194,6 @@ window.initMap = function() {
       removeMissingObjects(data, couriers);
       for (var i = 0; i < data.length; i++) {
         addCourier(data[i].key, data[i].coords);
-      }
-    });
-
-    socket.on('delivery_addresses', function (data) {
-      console.log(data);
-      removeMissingObjects(data, deliveryAddresses);
-      for (var i = 0; i < data.length; i++) {
-        addDeliveryAddress(data[i]);
       }
     });
 
