@@ -1,8 +1,6 @@
 var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
-var pg = require('pg');
-var _ = require('underscore');
 var YAML = require('js-yaml');
 var Sequelize = require('sequelize');
 
@@ -82,7 +80,7 @@ orderDispatcher.setHandler(function(order, next) {
           order: {
             id: order.id,
             restaurant: order.restaurant.position,
-            deliveryAddress: order.restaurant.position
+            deliveryAddress: order.delivery_address.position
           }
         });
         next();
@@ -91,50 +89,10 @@ orderDispatcher.setHandler(function(order, next) {
   });
 });
 
-// Perform sanity check of Postgres vs Redis ?
-
-Db.Order.findAll({
-  where: {
-    status: {$in: [Order.WAITING, Order.ACCEPTED, Order.PICKED]},
-  },
-  include: [Db.Restaurant, Db.DeliveryAddress]
-}).then(function(orders) {
-
-  var waiting = _.filter(orders, function(order) { return order.status === Order.WAITING });
-  var delivering = _.filter(orders, function(order) { return order.status === Order.ACCEPTED || order.status === Order.PICKED });
-
-  redis.del(['orders:waiting', 'orders:delivering'], function(err) {
-    if (err) throw err;
-
-    var geokeys = [];
-    _.each(orders, function(order) {
-      geokeys.push(order.delivery_address.position.longitude);
-      geokeys.push(order.delivery_address.position.latitude);
-      geokeys.push('delivery_address:' + order.delivery_address.id);
-    });
-
-    if (geokeys.length > 0) {
-      redis.geoadd('delivery_addresses:geo', geokeys);
-    }
-
-    var deliveringIds = delivering.map(function(order) {
-      return order.id;
-    });
-    if (deliveringIds.length > 0) {
-      redis.rpush('orders:delivering', deliveringIds);
-    }
-
-    var waitingIds = waiting.map(function(order) {
-      return order.id;
-    });
-    if (waitingIds.length > 0) {
-      redis.rpush('orders:waiting', waitingIds);
-    }
-
-    // TODO Start server & order loop here
-    console.log('Everything is loaded, starting dispatch loop...');
-    orderDispatcher.start();
-  });
+// Load orders in Redis
+Order.load().then(function() {
+  console.log('Everything is loaded, starting dispatch loop...');
+  orderDispatcher.start();
 });
 
 // create the server

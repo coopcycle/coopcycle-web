@@ -38,9 +38,7 @@ class OrderDeliver
 
         $order->setStatus(Order::STATUS_DELIVERED);
 
-        $this->redis->lrem('orders:delivering', 0, $order->getId());
-
-        // TODO Publish message in Redis to
+        $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
 
         return $order;
     }

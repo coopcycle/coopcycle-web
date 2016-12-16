@@ -53,13 +53,30 @@ class OrderListener
         $entity = $args->getObject();
 
         if ($entity instanceof Order) {
+
             $restaurant = $entity->getRestaurant();
+            $deliveryAddress = $entity->getDeliveryAddress();
+
             $this->redis->geoadd(
                 'orders:geo',
                 $restaurant->getGeo()->getLongitude(),
                 $restaurant->getGeo()->getLatitude(),
                 'order:'.$entity->getId()
             );
+
+            $this->redis->geoadd(
+                'restaurants:geo',
+                $restaurant->getGeo()->getLongitude(),
+                $restaurant->getGeo()->getLatitude(),
+                'order:'.$entity->getId()
+            );
+            $this->redis->geoadd(
+                'delivery_addresses:geo',
+                $deliveryAddress->getGeo()->getLongitude(),
+                $deliveryAddress->getGeo()->getLatitude(),
+                'order:'.$entity->getId()
+            );
+
             $this->redis->lpush(
                 'orders:waiting',
                 $entity->getId()
