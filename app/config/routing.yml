@@ -21,3 +21,11 @@ fos_user:
 web:
     resource: '@AppBundle/Controller/'
     type:     'annotation'
+    prefix:   /{_locale}
+
+redirect_to_locale:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /%locale%
+        permanent: false

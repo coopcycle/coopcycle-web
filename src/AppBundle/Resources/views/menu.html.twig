@@ -7,8 +7,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/"><img src="/img/logo.png" width="20" height="20" /></a>
-      <a class="navbar-brand" href="/">CoopCycle</a>
+      <a class="navbar-brand" href="{{ path('homepage') }}"><img src="/img/logo.png" width="20" height="20" /></a>
+      <a class="navbar-brand" href="{{ path('homepage') }}">CoopCycle</a>
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -18,9 +18,31 @@
         </li>
         <li>
             <a href="https://github.com/coopcycle">
-              <i class="fa fa-github fa-lg"></i>  Voir sur GitHub</a>
+              <i class="fa fa-github fa-lg"></i>  {% trans %}View on GitHub{% endtrans %}</a>
         </li>
       </ul>
+
+      {% set locales = {
+        'en': 'English',
+        'fr': 'Français'
+      } %}
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {{ locales[app.request.locale] }} <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {% for locale, label in locales %}
+              {% if locale != app.request.locale %}
+              <li>
+                <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': locale})) }}">{{ label }}</a>
+              </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+
       <ul class="nav navbar-nav navbar-right">
         {% if app.user %}
           <li class="dropdown">
@@ -28,9 +50,9 @@
               {{ app.user.username }} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="{{ path('fos_user_profile_show') }}">Mon compte</a></li>
-              <li><a href="{{ path('profile_orders') }}">Mes commandes</a></li>
-              <li><a href="{{ path('profile_addresses') }}">Mes adresses</a></li>
+              <li><a href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a></li>
+              <li><a href="{{ path('profile_orders') }}">{% trans %}My orders{% endtrans %}</a></li>
+              <li><a href="{{ path('profile_addresses') }}">{% trans %}My addresses{% endtrans %}</a></li>
               {% if is_granted('ROLE_RESTAURANT') %}
               <li role="separator" class="divider"></li>
               <li><a href="{{ path('profile_restaurant_orders') }}">Mes commandes</a></li>
