@@ -54,26 +54,25 @@ function createMarker(position, iconPath, iconFillColor) {
   });
 }
 
+function createCircle(position) {
+  return new google.maps.Circle({
+    strokeColor: '#E74C3C',
+    strokeOpacity: 0.35,
+    strokeWeight: 1,
+    fillColor: '#E74C3C',
+    fillOpacity: 0.15,
+    map: map,
+    center: position,
+    radius: 1500
+  });
+}
+
 function addOrder(order) {
 
   var key = order.key;
   var position = order.coords;
-  var color;
 
   var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))];
-
-  switch (order.state) {
-    default:
-    case 'WAITING':
-      color = '#000';
-      break;
-    case 'DISPATCHING':
-      color = '#2980b9';
-      break;
-    case 'DELIVERING':
-      color = '#e74c3c';
-      break;
-  }
 
   var marker = _.find(orders, function(marker) {
     return marker.key === key;
@@ -86,21 +85,12 @@ function addOrder(order) {
       color: randomColor,
       restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor),
       deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
+      restaurantCircle: createCircle(order.restaurant),
     };
-    //   var circle = new google.maps.Circle({
-    //     strokeColor: '#E74C3C',
-    //     strokeOpacity: 0.8,
-    //     strokeWeight: 1,
-    //     fillColor: '#E74C3C',
-    //     fillOpacity: 0.35,
-    //     map: map,
-    //     center: position,
-    //     radius: 1500
-    //   });
+
     orders.push(marker);
   } else {
     marker.courier = order.courier;
-    // marker.marker.setIcon(createMarkerIcon(MarkerIcons.CUTLERY, color));
   }
 }
 
@@ -173,6 +163,10 @@ function removeMarkersByKeys(keys, markers) {
       }
       if (marker[0].hasOwnProperty('deliveryAddressMarker')) {
         marker[0].deliveryAddressMarker.setMap(null);
+      }
+      if (marker[0].hasOwnProperty('restaurantCircle')) {
+        marker[0].restaurantCircle.setRadius(0);
+        marker[0].restaurantCircle.setMap(null);
       }
     }
   });
