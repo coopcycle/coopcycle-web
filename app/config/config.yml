@@ -90,6 +90,9 @@ fos_user:
     db_driver: orm
     firewall_name: web
     user_class: AppBundle\Entity\ApiUser
+    registration:
+        form:
+            type: AppBundle\Form\RegistrationType
 
 lexik_jwt_authentication:
     private_key_path: %jwt_private_key_path%
