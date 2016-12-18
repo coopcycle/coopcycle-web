@@ -8,6 +8,17 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+  app.form.registration:
+    class: AppBundle\Form\RegistrationType
+    tags:
+      - { name: form.type, alias: app_user_registration }
+
+  my.registration_listener:
+    class: AppBundle\EventListener\RegistrationListener
+    arguments: ['@router']
+    tags:
+      - { name: kernel.event_subscriber }
+
   my.order_listener:
     class: AppBundle\EventListener\OrderListener
     arguments: [ "@security.token_storage", "@snc_redis.default" ]
