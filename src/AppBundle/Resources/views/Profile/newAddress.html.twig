@@ -3,20 +3,17 @@
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block body %}
-<div class="row">
-
-  <div class="col-xs-12 col-sm-8">
-
-    <div class="page-header">
-      <h1>Mes commandes</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="page-header">
+        <h1>Nouvelle adresse</h1>
+      </div>
+      {{ form_start(form) }}
+      {{ form_widget(form) }}
+      {{ form_end(form) }}
     </div>
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
-
   </div>
-
 </div>
 {% endblock %}
 
