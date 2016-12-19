@@ -27,13 +27,36 @@ class ProfileController extends Controller
      */
     public function ordersAction(Request $request)
     {
-        $orderManager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Order');
-        $orderRepository = $orderManager->getRepository('AppBundle\\Entity\\Order');
+        $orderManager = $this->getDoctrine()->getManagerForClass('AppBundle:Order');
+        $orderRepository = $orderManager->getRepository('AppBundle:Order');
 
-        $orders = $orderRepository->findBy(array('customer' => $this->getUser()));
+        $page = $request->query->get('page', 1);
+
+        $qb = $orderRepository->createQueryBuilder('o');
+
+        $qb->select($qb->expr()->count('o'))
+           ->where('o.customer = ?1')
+           ->setParameter(1, $this->getUser());
+
+        $query = $qb->getQuery();
+        $ordersCount = $query->getSingleScalarResult();
+
+        $perPage = 10;
+
+        $pages = ceil($ordersCount / $perPage);
+        $offset = $perPage * ($page - 1);
+
+        $orders = $orderRepository->findBy(
+            ['customer' => $this->getUser()],
+            ['createdAt' => 'DESC'],
+            $perPage,
+            $offset
+        );
 
         return array(
             'orders' => $orders,
+            'page' => $page,
+            'pages' => $pages,
         );
     }
 
