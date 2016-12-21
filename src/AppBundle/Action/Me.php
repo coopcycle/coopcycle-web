@@ -15,6 +15,48 @@ class Me
 
     /**
      * @Route(
+     *     name="me",
+     *     path="/me",
+     * )
+     * @Method("GET")
+     */
+    public function meAction()
+    {
+        $user = $this->getUser();
+
+        $data = $this->serializer->normalize($user);
+
+        // FIXME Exclude those fields in a clean way, using groups
+        unset(
+            $data['plainPassword'],
+            $data['passwordRequestedAt'],
+            $data['password'],
+            $data['salt'],
+            $data['superAdmin'],
+            $data['roles'],
+            $data['confirmationToken'],
+            $data['accountNonExpired'],
+            $data['accountNonLocked'],
+            $data['credentialsNonExpired'],
+            $data['enabled'],
+            $data['groups'],
+            $data['groupNames']
+        );
+
+        if ($user->hasRole('ROLE_CUSTOMER')) {
+            $deliveryAddressRepository = $this->doctrine
+                ->getManagerForClass('AppBundle:DeliveryAddress')
+                ->getRepository('AppBundle:DeliveryAddress');
+
+            $deliveryAddresses = $deliveryAddressRepository->findBy(['customer' => $user]);
+            $data['deliveryAddresses'] = $this->serializer->normalize($deliveryAddresses);
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @Route(
      *     name="me_status",
      *     path="/me/status",
      * )
