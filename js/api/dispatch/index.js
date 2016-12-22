@@ -3,6 +3,7 @@ var http = require('http');
 var fs = require('fs');
 var YAML = require('js-yaml');
 var Sequelize = require('sequelize');
+
 var winston = require('winston');
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
@@ -55,12 +56,12 @@ var tokenVerifier = new TokenVerifier(cert, Db);
 
 orderDispatcher.setHandler(function(order, next) {
 
-  console.log('Trying to dispatch order #' + order.id);
+  winston.info('Trying to dispatch order #' + order.id);
 
   Courier.nearestForOrder(order, 10 * 1000).then(function(courier) {
 
     if (!courier) {
-      console.log('No couriers nearby');
+      winston.debug('No couriers nearby');
       return next();
     }
 

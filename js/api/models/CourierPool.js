@@ -6,13 +6,23 @@ function CourierPool(redis, redisPubSub) {
   this.redis = redis;
 
   redisPubSub.subscribe('couriers');
+  redisPubSub.subscribe('couriers:available');
 
   var self = this;
   redisPubSub.on('message', function(channel, message) {
-    console.log('Courier #' + message + ' has accepted order');
-    var courier = self.findById(message);
-    if (courier) {
-      courier.setState('DELIVERING');
+    if (channel === 'couriers') {
+      console.log('Courier #' + message + ' has accepted order');
+      var courier = self.findById(message);
+      if (courier) {
+        courier.setState('DELIVERING');
+      }
+    }
+    if (channel === 'couriers:available') {
+      console.log('Courier #' + message + ' is available again');
+      var courier = self.findById(message);
+      if (courier) {
+        courier.setState('AVAILABLE');
+      }
     }
   });
 }

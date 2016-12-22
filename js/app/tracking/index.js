@@ -92,7 +92,6 @@ function addOrder(order) {
     var circle = createCircle(order.restaurant, randomColor);
 
     if (order.state === 'WAITING' || order.state === 'DISPATCHING') {
-      console.log('Launching tween...');
       var coords = { radius: 0 };
       var tween = new TWEEN.Tween(coords)
         .easing(TWEEN.Easing.Cubic.Out)
