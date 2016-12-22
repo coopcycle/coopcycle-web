@@ -73,20 +73,6 @@ function createCircle(position, color) {
     radius: 0
   });
 
-  var coords = { radius: 0 };
-  var tween = new TWEEN.Tween(coords)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .to({ radius: 1000 }, 600)
-      .onUpdate(function() {
-          circle.setRadius(this.radius)
-      })
-      .delay(400)
-      .repeat(9)
-      .yoyo(true)
-      .start();
-
-  requestAnimationFrame(animate);
-
   return circle;
 }
 
@@ -102,18 +88,47 @@ function addOrder(order) {
   });
 
   if (!marker) {
+
+    var circle = createCircle(order.restaurant, randomColor);
+
+    if (order.state === 'WAITING' || order.state === 'DISPATCHING') {
+      console.log('Launching tween...');
+      var coords = { radius: 0 };
+      var tween = new TWEEN.Tween(coords)
+        .easing(TWEEN.Easing.Cubic.Out)
+        .to({ radius: 1000 }, 500)
+        .onUpdate(function() {
+            circle.setRadius(this.radius)
+        })
+        .delay(50)
+        .repeat(Infinity)
+        .yoyo(true)
+        .start();
+
+      requestAnimationFrame(animate);
+    }
+
     marker = {
       key: key,
       courier: order.courier,
       color: randomColor,
       restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor),
       deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
-      restaurantCircle: createCircle(order.restaurant, randomColor),
+      restaurantCircle: circle,
+      circleTween: tween,
     };
 
     orders.push(marker);
   } else {
     marker.courier = order.courier;
+    if (order.state === 'DELIVERING') {
+      // TODO Do not call this every time!
+      if (marker.circleTween) {
+        marker.circleTween.stop();
+      }
+      marker.restaurantCircle.setRadius(0);
+      marker.restaurantCircle.setMap(null);
+    }
   }
 }
 
