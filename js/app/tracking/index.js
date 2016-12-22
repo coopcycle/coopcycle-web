@@ -1,5 +1,6 @@
 var MarkerIcons = require('fontawesome-markers');
 var _ = require('underscore');
+var TWEEN = require('tween.js');
 
 var map;
 
@@ -54,17 +55,39 @@ function createMarker(position, iconPath, iconFillColor) {
   });
 }
 
-function createCircle(position) {
-  return new google.maps.Circle({
-    strokeColor: '#E74C3C',
+function animate(time) {
+  requestAnimationFrame(animate);
+  TWEEN.update(time);
+}
+
+function createCircle(position, color) {
+
+  var circle = new google.maps.Circle({
+    strokeColor: color,
     strokeOpacity: 0.35,
     strokeWeight: 1,
-    fillColor: '#E74C3C',
+    fillColor: color,
     fillOpacity: 0.15,
     map: map,
     center: position,
-    radius: 1500
+    radius: 0
   });
+
+  var coords = { radius: 0 };
+  var tween = new TWEEN.Tween(coords)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .to({ radius: 1000 }, 600)
+      .onUpdate(function() {
+          circle.setRadius(this.radius)
+      })
+      .delay(400)
+      .repeat(9)
+      .yoyo(true)
+      .start();
+
+  requestAnimationFrame(animate);
+
+  return circle;
 }
 
 function addOrder(order) {
@@ -85,7 +108,7 @@ function addOrder(order) {
       color: randomColor,
       restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor),
       deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
-      restaurantCircle: createCircle(order.restaurant),
+      restaurantCircle: createCircle(order.restaurant, randomColor),
     };
 
     orders.push(marker);

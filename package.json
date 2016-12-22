@@ -24,6 +24,7 @@
     "redis": "^2.6.2",
     "sequelize": "^3.27.0",
     "socket.io": "^1.7.1",
+    "tween.js": "^16.3.5",
     "underscore": "^1.8.3",
     "winston": "^2.3.0",
     "ws": "^1.1.1",
