@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\RestaurantRepository")
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
+ *     "filters"={"restaurant.search"},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   }
  * )
