@@ -36,7 +36,7 @@ function createMarkerIcon(iconPath, iconFillColor) {
   return {
     path: iconPath,
     origin: new google.maps.Point(0, 0),
-    anchor: new google.maps.Point(16, 16),
+    anchor: new google.maps.Point(30, -30),
     scale: 0.4,
     strokeWeight: 0,
     strokeColor: '#000',
@@ -53,11 +53,6 @@ function createMarker(position, iconPath, iconFillColor) {
     animation: google.maps.Animation.DROP,
     icon: createMarkerIcon(iconPath, iconFillColor),
   });
-}
-
-function animate(time) {
-  requestAnimationFrame(animate);
-  TWEEN.update(time);
 }
 
 function createCircle(position, color) {
@@ -103,6 +98,11 @@ function addOrder(order) {
         .repeat(Infinity)
         .yoyo(true)
         .start();
+
+      var animate = function animate(time) {
+        requestAnimationFrame(animate);
+        TWEEN.update(time);
+      }
 
       requestAnimationFrame(animate);
     }
