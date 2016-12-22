@@ -42,6 +42,12 @@ services:
     arguments:
       - "%google_api_key%"
 
+  restaurant.search_filter:
+    parent: "api_platform.doctrine.orm.search_filter"
+    class: 'AppBundle\Filter\RestaurantFilter'
+    arguments: [ { distance: "exact", coordinate: "exact" } ]
+    tags:  [ { name: 'api_platform.filter', id: 'restaurant.search' } ]
+
   twig.extension.text:
     class: Twig_Extensions_Extension_Text
     tags:
