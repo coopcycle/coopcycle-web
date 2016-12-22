@@ -3,6 +3,8 @@ var http = require('http');
 var fs = require('fs');
 var YAML = require('js-yaml');
 var Sequelize = require('sequelize');
+var winston = require('winston');
+winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
 var ROOT_DIR = __dirname + '/../../..';
 var CONFIG = {};
@@ -123,7 +125,7 @@ wsServer.on('connection', function(ws) {
       var message = JSON.parse(messageText);
 
       if (message.type === 'updateCoordinates') {
-        console.log('Courier ' + courier.id + ', state = ' + courier.state + ' updating position in Redis...');
+        winston.debug('Courier ' + courier.id + ', state = ' + courier.state + ' updating position in Redis...');
         Courier.updateCoordinates(courier, message.coordinates);
       }
 

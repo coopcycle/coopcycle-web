@@ -1,6 +1,9 @@
 var REDIS;
 var TIMEOUT;
 
+var winston = require('winston');
+winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
+
 function OrderDispatcher(redis, orderRegistry) {
   REDIS = redis;
   this.orderRegistry = orderRegistry;
@@ -14,7 +17,7 @@ function next(orderRegistry, handler) {
 function circularListHandler(orderRegistry, handler) {
   REDIS.rpoplpush('orders:waiting', 'orders:waiting', function(err, orderID) {
     if (!orderID) {
-      console.log('No orders to process yet');
+      winston.debug('No orders to process yet');
       return next(orderRegistry, handler);
     }
     orderRegistry.findById(orderID).then(function(order) {
