@@ -15,9 +15,11 @@ OrderRegistry.prototype.findById = function(id) {
     if (!order) {
       return Db.Order.findById(id, {include: [Db.Restaurant, Db.DeliveryAddress]})
         .then(function(order) {
+          if (!order) {
+            return reject('Could not load order #' + id + ' from database, skipping...');
+          }
 
           var restaurant = order.restaurant;
-
           self.redis.geoadd('orders:geo', restaurant.position.longitude, restaurant.position.latitude, 'order:' + id, function(err) {
             if (err) throw err;
             self.cache[id] = order;

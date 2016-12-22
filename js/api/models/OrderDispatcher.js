@@ -21,9 +21,14 @@ function circularListHandler(orderRegistry, handler) {
       winston.debug('No orders to process yet');
       return next(orderRegistry, handler);
     }
-    orderRegistry.findById(orderID).then(function(order) {
-      handler.call(null, order, next.bind(null, orderRegistry, handler));
-    });
+    orderRegistry.findById(orderID)
+      .then(function(order) {
+        handler.call(null, order, next.bind(null, orderRegistry, handler));
+      })
+      .catch(function(err) {
+        winston.error(err);
+        next(orderRegistry, handler);
+      });
   });
 }
 
