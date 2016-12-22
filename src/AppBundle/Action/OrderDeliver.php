@@ -40,6 +40,8 @@ class OrderDeliver
 
         $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
 
+        $this->redis->publish('couriers:available', $user->getId());
+
         return $order;
     }
 }
