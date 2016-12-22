@@ -19,6 +19,7 @@ OrderRegistry.prototype.findById = function(id) {
           var restaurant = order.restaurant;
 
           self.redis.geoadd('orders:geo', restaurant.position.longitude, restaurant.position.latitude, 'order:' + id, function(err) {
+            if (err) throw err;
             self.cache[id] = order;
             resolve(order);
           });

@@ -16,6 +16,7 @@ function next(orderRegistry, handler) {
 
 function circularListHandler(orderRegistry, handler) {
   REDIS.rpoplpush('orders:waiting', 'orders:waiting', function(err, orderID) {
+    if (err) throw err;
     if (!orderID) {
       winston.debug('No orders to process yet');
       return next(orderRegistry, handler);
