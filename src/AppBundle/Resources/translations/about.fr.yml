@@ -19,3 +19,5 @@ section_3.paragraph_1: >
   Non, le projet vient tout juste de démarrer !
   <br>
   Ce site est une démo, vous pouvez passer des commandes mais personne ne viendra vous livrer.
+
+about_bots: Wow ça bouge ! Une démo avec des bots utilisant l'API CoopCycle pour dispatcher les commandes.
