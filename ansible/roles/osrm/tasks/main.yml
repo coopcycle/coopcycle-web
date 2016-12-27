@@ -1,0 +1,109 @@
+---
+# https://github.com/Project-OSRM/osrm-backend/wiki/Building-OSRM#debian-jessie
+  - name: install dependencies
+    become: yes
+    apt: pkg={{ item }} state=latest
+    with_items:
+      - git
+      - g++
+      - cmake
+      - libboost-dev
+      - libboost-filesystem-dev
+      - libboost-thread-dev
+      - libboost-system-dev
+      - libboost-regex-dev
+      - libstxxl-dev
+      - libxml2-dev
+      - libsparsehash-dev
+      - libbz2-dev
+      - zlib1g-dev
+      - libzip-dev
+      - libgomp1
+      - lua5.2
+      - liblua5.2-dev
+      - libluabind-dev
+      - pkg-config
+      - libgdal-dev
+      - libboost-program-options-dev
+      - libboost-iostreams-dev
+      - libboost-test-dev
+      - libtbb-dev
+      - libexpat1-dev
+      - supervisor
+
+  - name: clone repository
+    git:
+      repo: https://github.com/Project-OSRM/osrm-backend.git
+      dest: "{{ osrm_src_dir }}"
+      version: v5.5.2
+      force: true
+
+  - name: create build directory
+    file: dest="{{ osrm_src_dir }}/build" mode=755 owner=root group=root state=directory
+
+  - name: cmake
+    shell:
+      cmake .. -DCMAKE_BUILD_TYPE=Release
+      chdir="{{ osrm_src_dir }}/build"
+
+  - name: cmake build
+    shell:
+      cmake --build .
+      chdir="{{ osrm_src_dir }}/build"
+
+  - name: cmake install
+    become: yes
+    shell:
+      cmake --build . --target install
+      chdir="{{ osrm_src_dir }}/build"
+
+  - name: create home directory
+    file:
+      dest: "{{ osrm_dir }}"
+      mode: 755
+      state: directory
+
+  - name: create STXXL config file
+    template: src=stxxl.j2 dest={{ osrm_dir}}/.stxxl
+
+  - name: create symlinks in home directory
+    file:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      state: link
+    with_items:
+      - src: "{{ osrm_src_dir }}/profiles/bicycle.lua"
+        dest: "{{ osrm_dir }}/profile.lua"
+      - src: "{{ osrm_src_dir }}/profiles/lib"
+        dest: "{{ osrm_dir }}/lib"
+
+  # TODO Download PBF file (smaller)
+
+  - name: download OSM file
+    get_url:
+      url: https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.bz2
+      dest: "{{ osrm_dir }}/paris_france.osm.bz2"
+
+  - name: extract OSM file
+    shell:
+      bzip2 -dk paris_france.osm.bz2
+      chdir="{{ osrm_dir }}"
+      creates=paris_france.osm
+
+  # https://github.com/Project-OSRM/osrm-backend/wiki/Running-OSRM
+
+  - name: extract map
+    shell:
+      osrm-extract paris_france.osm
+      chdir="{{ osrm_dir }}"
+
+  - name: compute travel times
+    shell:
+      osrm-contract paris_france.osrm
+      chdir="{{ osrm_dir }}"
+    notify: restart supervisor
+
+  - name: configure supervisor
+    template: src=supervisor.j2 dest=/etc/supervisor/conf.d/osrm.conf
+    notify: restart supervisor
+

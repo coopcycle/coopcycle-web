@@ -1,0 +1,13 @@
+---
+
+osrm_src_dir: /usr/local/src/osrm
+
+# Store OSM/OSRM files on the host machine in dev,
+# because the VM may lack space
+osrm_dir: /var/www/coopcycle/var/osrm
+
+# /tmp/stxxl
+osrm_stxxl_tmp_dir: /var/www/coopcycle/var/stxxl
+
+# 8G
+osrm_stxxl_size: 5G

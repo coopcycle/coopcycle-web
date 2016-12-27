@@ -9,3 +9,4 @@
     - redis-tools
     - nodejs
     - { role: alexsegura.pm2, become: no }
+    - osrm
