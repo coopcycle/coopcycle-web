@@ -3,7 +3,9 @@
 {% block body %}
 <div class="container">
   <div class="row">
+    <div class="col-xs-12">
     {% include "AppBundle:Restaurant:pagination.html.twig" %}
+    </div>
   </div>
   <div class="row">
     {% for restaurant in restaurants %}

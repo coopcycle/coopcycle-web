@@ -8,7 +8,8 @@ if (cart) {
     <Cart
         items={window.AppData.Cart.items}
         addToCartURL={window.AppData.Cart.addToCartURL}
-        removeFromCartURL={window.AppData.Cart.removeFromCartURL} />,
+        removeFromCartURL={window.AppData.Cart.removeFromCartURL}
+        validateCartURL={window.AppData.Cart.validateCartURL} />,
     cart
   );
   $('.js-add-to-cart').on('click', function(e) {

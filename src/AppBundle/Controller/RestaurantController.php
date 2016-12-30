@@ -82,14 +82,11 @@ class RestaurantController extends Controller
      */
     public function indexAction($id, $slug, Request $request)
     {
-        $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
-        $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');
-
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
         $restaurant = $repository->find($id);
 
         return array(
             'restaurant' => $restaurant,
-            'address' => $request->getSession()->get('address'),
             'cart' => $this->getCart($request, $restaurant),
         );
     }
@@ -135,15 +132,5 @@ class RestaurantController extends Controller
         $this->saveCart($request, $cart);
 
         return new JsonResponse($cart->toArray());
-    }
-
-    /**
-     * @Route("/restaurant/{id}/order")
-     */
-    public function orderAction()
-    {
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException();
-        }
     }
 }

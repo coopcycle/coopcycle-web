@@ -38,15 +38,33 @@ class Cart extends React.Component
           quantity={item.quantity} />
       );
     });
+
+    var cartContent;
+    if (items.length > 0) {
+      cartContent = (
+        <div className="list-group">{items}</div>
+      );
+    } else {
+      cartContent = (
+        <div className="alert alert-warning">Votre panier est vide</div>
+      );
+    }
+
     var sum = _.reduce(this.state.items, function(memo, item) {
       return memo + (item.price * item.quantity);
     }, 0).toFixed(2);
+
+    var btnClasses = ['btn', 'btn-block', 'btn-primary'];
+    if (items.length === 0) {
+      btnClasses.push('disabled');
+    }
+
     return (
       <div className="cart">
-        <div className="list-group">
-        {items}
-        </div>
+        {cartContent}
         <strong>Total {sum} €</strong>
+        <hr />
+        <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
       </div>
     );
   }
