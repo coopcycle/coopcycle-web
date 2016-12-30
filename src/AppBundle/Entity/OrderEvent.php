@@ -73,4 +73,9 @@ class OrderEvent
     {
         return $this->courier;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 }

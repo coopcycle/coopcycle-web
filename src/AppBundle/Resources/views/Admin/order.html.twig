@@ -1,0 +1,30 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block body %}
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        Order #{{ order.id }}
+      </a>
+    </div>
+    <div class="collapse navbar-collapse">
+      <p class="navbar-text navbar-right"><span class="label label-success">{{ order.status }}</span></p>
+    </div>
+  </div>
+</nav>
+<table class="table">
+  <tbody>
+  {% for event in events%}
+  <tr>
+    <td>{{ event.eventName }}</td>
+    <td>{{ event.courier.username }}</td>
+    <td>{{ event.createdAt|date('Y-m-d H:i:s') }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
