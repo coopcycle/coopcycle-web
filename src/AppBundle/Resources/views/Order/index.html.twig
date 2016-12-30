@@ -1,16 +1,23 @@
 {% extends "AppBundle::base.html.twig" %}
 
-{% form_theme address_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form with ['AppBundle:Order:order_fields.html.twig'] %}
 
 {% block body %}
 <div class="container">
+
   <div class="row">
 
     <div class="col-xs-12">
 
       <div class="page-header">
-        <h1>Ma commande</h1>
+        <h2>Ma commande</h2>
       </div>
+
+      <ol class="breadcrumb">
+        <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
+        <li><a href="#">Livraison</a></li>
+        <li class="active">Paiement</li>
+      </ol>
 
       {% if cart %}
 
@@ -31,24 +38,22 @@
 
         <hr>
 
-        <h2>Choisissez une adresse de livraison</h2>
+        <h3>Choisissez une adresse de livraison</h3>
 
-        {% if addresses is empty %}
-          {{ form_widget(address_form) }}
-        {% else %}
-          {% for address in addresses %}
-          <div class="radio">
-            <label>
-              <input type="radio" name="deliveryAddress" value="{{ address.id }}">
-              {{ address.streetAddress }} {{ address.postalCode }}
-            </label>
-          </div>
-          {% endfor %}
-        {% endif %}
+        {{ form_start(form) }}
+          {% if not hasDeliveryAddress %}<div class="hidden">{% endif %}
+          {{ form_widget(form.createDeliveryAddress) }}
+          <hr>
+          {% if not hasDeliveryAddress %}</div>{% endif %}
 
-        <hr>
-
-        <button type="submit" class="btn btn-block btn-primary">Commander</button>
+          {% if form.createDeliveryAddress.vars.value %}
+            {{ form_widget(form.deliveryAddress) }}
+          {% else %}
+            {{ form_widget(form.deliveryAddress) }}
+          {% endif %}
+          <hr>
+          {{ form_widget(form.save, { attr: { class: 'btn-primary btn-block' } }) }}
+        {{ form_end(form) }}
 
       </form>
 
@@ -65,24 +70,38 @@
 {% endblock %}
 
 {% block scripts %}
-{% if addresses is empty %}
-<script>
+
+<script type="text/javascript">
+
 var inputMap = {
-  postal_code: 'form_postalCode',
-  locality: 'form_addressLocality'
+  postal_code: 'order_deliveryAddress_postalCode',
+  locality: 'order_deliveryAddress__addressLocality'
 };
+
+var placeChangedListener;
+
 function initMap() {
-  var addressInput = document.getElementById('form_streetAddress');
-  var latitudeInput = document.getElementById('form_latitude');
-  var longitudeInput = document.getElementById('form_longitude');
+  var addressInput = document.getElementById('order_deliveryAddress_streetAddress');
+  var latitudeInput = document.getElementById('order_deliveryAddress_latitude');
+  var longitudeInput = document.getElementById('order_deliveryAddress_longitude');
+
+  if (!addressInput) {
+    return;
+  }
 
   var options = {
     componentRestrictions: {
       country: "fr"
     }
   };
+
+  if (placeChangedListener) {
+    google.maps.event.removeListener(placeChangedListener);
+  }
+
   var autocomplete = new google.maps.places.Autocomplete(addressInput, options);
-  autocomplete.addListener('place_changed', function() {
+
+  placeChangedListener = autocomplete.addListener('place_changed', function() {
     var place = autocomplete.getPlace();
     latitudeInput.value = place.geometry.location.lat();
     longitudeInput.value = place.geometry.location.lng();
@@ -90,13 +109,32 @@ function initMap() {
       var addressType = place.address_components[i].types[0];
       var value = place.address_components[i].long_name;
       if (inputMap[addressType]) {
-        document.getElementById(inputMap[addressType]).value = value;
+        $('#' + inputMap[addressType]).val(value);
       }
     }
   });
 }
+
+(function() {
+
+  $('input[name="order[createDeliveryAddress]"]').on('change', function(e) {
+    var $form = $(this).closest('form');
+    var data = {};
+    data[$(this).attr('name')] = $(this).val();
+    $.ajax({
+      url : $form.attr('action'),
+      type: $form.attr('method'),
+      data : data,
+      success: function(html) {
+        var $content = $(html).find('#order_deliveryAddress');
+        $('#order_deliveryAddress').replaceWith($content);
+        initMap();
+      }
+    });
+  });
+
+})()
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
   async defer></script>
-{% endif %}
 {% endblock %}

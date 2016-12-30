@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -25,10 +26,14 @@ class ApiUser extends BaseUser
      */
     private $restaurants;
 
+    /**
+     * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer")
+     */
+    private $deliveryAddresses;
+
     public function __construct()
     {
-        parent::__construct();
-        // your own logic
+        $this->deliveryAddresses = new ArrayCollection();
     }
 
     public function setRestaurants($restaurants)
@@ -41,5 +46,17 @@ class ApiUser extends BaseUser
     public function getRestaurants()
     {
         return $this->restaurants;
+    }
+
+    public function setDeliveryAddresses($deliveryAddresses)
+    {
+        $this->deliveryAddresses = $deliveryAddresses;
+
+        return $this;
+    }
+
+    public function getDeliveryAddresses()
+    {
+        return $this->deliveryAddresses;
     }
 }
