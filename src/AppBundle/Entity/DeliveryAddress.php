@@ -32,7 +32,7 @@ class DeliveryAddress extends Place
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ApiUser")
+     * @ORM\ManyToOne(targetEntity="ApiUser", inversedBy="deliveryAddresses")
      */
     private $customer;
 

@@ -1,0 +1,30 @@
+{% extends "bootstrap_3_layout.html.twig" %}
+
+{% block choice_widget_expanded %}
+  {% if name == 'createDeliveryAddress' %}
+    <div class="form-group">
+      <div class="btn-group" data-toggle="buttons">
+      {% for child in form %}
+        {{ form_widget(child, { 'label_attr': {'class': 'btn btn-primary'} }) }}
+      {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {{ parent() }}
+  {% endif %}
+{% endblock choice_widget_expanded %}
+
+{% block radio_widget -%}
+  {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
+  {% if 'btn' in parent_label_class %}
+    {% if checked %}
+      {% set parent_label_class = parent_label_class ~ ' active' %}
+    {% endif %}
+    {{ form_label(form, null, {
+      widget: block('radio_widget', 'form_div_layout.html.twig'),
+      label_attr: {class: parent_label_class}
+    }) }}
+  {% else %}
+    {{ parent() }}
+  {%- endif %}
+{%- endblock radio_widget %}

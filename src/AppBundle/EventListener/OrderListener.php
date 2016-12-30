@@ -39,7 +39,7 @@ class OrderListener
     {
         $entity = $args->getObject();
 
-        if ($entity instanceof Order) {
+        if ($entity instanceof Order && null === $entity->getCustomer()) {
             $customer = $this->getUser();
             $entity->setCustomer($customer);
         }
