@@ -68,6 +68,11 @@
             <a href="{{ path('fos_user_security_login') }}">Connexion</a>
           </li>
         {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+          <li class="active">
+            <a href="{{ path('admin_index') }}">{% trans %}Admin area{% endtrans %}</a>
+          </li>
+        {% endif %}
       </ul>
       {#
       {% set cart = app.session.get('cart') %}

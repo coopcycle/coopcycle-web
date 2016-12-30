@@ -20,4 +20,12 @@ class OrderRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countAll()
+    {
+        return $this->createQueryBuilder('o')
+            ->select('COUNT(o)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

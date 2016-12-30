@@ -1,0 +1,17 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block body %}
+<table class="table">
+{% for user in users %}
+  <tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.roles|join(', ') }}</td>
+  </tr>
+{% endfor %}
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
