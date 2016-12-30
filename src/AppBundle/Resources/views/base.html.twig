@@ -14,6 +14,21 @@
   <body>
     {% include "AppBundle::menu.html.twig" %}
     {% block body %}{% endblock %}
+    <div class="container">
+      <hr>
+      <ul class="list-inline">
+        <li>
+          <a href="https://github.com/coopcycle" target="_blank">
+            <i class="fa fa-github fa-lg"></i>  {% trans %}CoopCycle on GitHub{% endtrans %}
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/coopcycle" target="_blank">
+            <i class="fa fa-twitter fa-lg"></i>  {% trans %}CoopCycle on Twitter{% endtrans %}
+          </a>
+        </li>
+      </ul>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
