@@ -2,13 +2,12 @@
 
 {% block body %}
 <div class="container">
+  <div class="page-header">
+    <h1>{{ restaurant.name }}</h1>
+  </div>
   <div class="row">
 
     <div class="col-xs-12 col-sm-8">
-
-      <div class="page-header">
-        <h1>{{ restaurant.name }}</h1>
-      </div>
 
       <div class="list-group">
         {% for product in restaurant.products %}
@@ -22,11 +21,14 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
-      <h2>{% trans %}Cart{% endtrans %}</h2>
-      <p>Livraison : {{ address }}</p>
-      <div id="cart"></div>
-      <hr>
-      <a href="{{ path('order') }}" class="btn btn-block btn-primary">Commander</a>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans %}Cart{% endtrans %}</h3>
+        </div>
+        <div class="panel-body">
+          <div id="cart"></div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -39,7 +41,8 @@ window.AppData = window.AppData || {};
 window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
   removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'product': '__PRODUCT__'})|raw }}",
-  items: {{ cart.items|json_encode()|raw }}
+  items: {{ cart.items|json_encode()|raw }},
+  validateCartURL: "{{ path('order') }}"
 }
 </script>
 <script src="{{ asset('js/cart.js') }}"></script>
