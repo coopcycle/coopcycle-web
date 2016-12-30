@@ -18,6 +18,7 @@
     "locutus": "^2.0.6",
     "minimist": "^1.2.0",
     "mustache": "^2.3.0",
+    "ngeohash": "^0.6.0",
     "pg": "^6.1.0",
     "pg-hstore": "^2.3.2",
     "promise": "^7.1.1",

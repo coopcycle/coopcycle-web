@@ -1,7 +1,8 @@
 module.exports = {
   entry: {
     cart: './js/app/cart/index.jsx',
-    tracking: './js/app/tracking/index.js'
+    tracking: './js/app/tracking/index.js',
+    homepage: './js/app/homepage/index.js'
   },
   output: {
     path: __dirname + '/web/js',
