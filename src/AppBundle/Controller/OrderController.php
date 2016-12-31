@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Stripe;
 
 class OrderController extends Controller
 {
@@ -72,8 +73,8 @@ class OrderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $order = $form->getData();
-            $deliveryAddress = $form->get('deliveryAddress')->getData();
 
+            $deliveryAddress = $form->get('deliveryAddress')->getData();
             if (null === $deliveryAddress->getId()) {
 
                 $latitude = $form->get('deliveryAddress')->get('latitude')->getData();
@@ -89,9 +90,7 @@ class OrderController extends Controller
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->persist($order);
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->flush();
 
-            $request->getSession()->remove('cart');
-
-            return $this->redirectToRoute('order_confirm', array('id' => $order->getId()));
+            return $this->redirectToRoute('order_payment', ['id' => $order->getId()]);
         }
 
         return array(
@@ -99,6 +98,79 @@ class OrderController extends Controller
             'restaurant' => $order->getRestaurant(),
             'hasDeliveryAddress' => count($this->getUser()->getDeliveryAddresses()) > 0,
             'cart' => $this->getCart($request),
+        );
+    }
+
+    /**
+     * @Route("/order/{id}/payment", name="order_payment")
+     * @Template()
+     */
+    public function paymentAction($id, Request $request)
+    {
+        $order = $this->getDoctrine()
+            ->getRepository('AppBundle:Order')->find($id);
+
+        if ($request->isMethod('POST')) {
+
+            Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+
+            $token = $request->request->get('stripeToken');
+
+            try {
+                $charge = Stripe\Charge::create(array(
+                    "amount" => $order->getTotal() * 100, // Amount in cents
+                    "currency" => "eur",
+                    "source" => $token,
+                    "description" => "Order #".$order->getId()
+                ));
+            } catch (Stripe\Error\Card $e) {
+                return $this->redirectToRoute('order_error', array('id' => $order->getId()));
+            }
+
+            $order->setStatus(Order::STATUS_WAITING);
+
+            $this->getDoctrine()
+                ->getManagerForClass('AppBundle:Order')->flush();
+
+            $redis = $this->get('snc_redis.default');
+
+            $restaurant = $order->getRestaurant();
+            $deliveryAddress = $order->getDeliveryAddress();
+
+            $redis->geoadd(
+                'orders:geo',
+                $restaurant->getGeo()->getLongitude(),
+                $restaurant->getGeo()->getLatitude(),
+                'order:'.$order->getId()
+            );
+
+            $redis->geoadd(
+                'restaurants:geo',
+                $restaurant->getGeo()->getLongitude(),
+                $restaurant->getGeo()->getLatitude(),
+                'order:'.$order->getId()
+            );
+            $redis->geoadd(
+                'delivery_addresses:geo',
+                $deliveryAddress->getGeo()->getLongitude(),
+                $deliveryAddress->getGeo()->getLatitude(),
+                'order:'.$order->getId()
+            );
+
+            $redis->lpush(
+                'orders:waiting',
+                $order->getId()
+            );
+
+            $request->getSession()->remove('cart');
+
+            return $this->redirectToRoute('order_confirm', array('id' => $order->getId()));
+        }
+
+        return array(
+            'order' => $order,
+            'restaurant' => $order->getRestaurant(),
+            'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
         );
     }
 

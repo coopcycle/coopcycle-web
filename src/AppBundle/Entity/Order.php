@@ -23,9 +23,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
+ *     "pay"={"route_name"="order_pay"},
  *     "accept"={"route_name"="order_accept"},
  *     "pick"={"route_name"="order_pick"},
- *     "deliver"={"route_name"="order_deliver"},
+ *     "deliver"={"route_name"="order_deliver"}
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order"}},
@@ -35,6 +36,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Order
 {
+    const STATUS_CREATED = 'CREATED';
     const STATUS_WAITING = 'WAITING';
     const STATUS_ACCEPTED = 'ACCEPTED';
     const STATUS_READY = 'READY';
@@ -112,7 +114,7 @@ class Order
     private $updatedAt;
 
     public function __construct() {
-        $this->status = self::STATUS_WAITING;
+        $this->status = self::STATUS_CREATED;
         $this->orderedItem = new ArrayCollection();
     }
 

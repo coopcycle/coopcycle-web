@@ -38,8 +38,6 @@ class OrderDeliver
 
         $order->setStatus(Order::STATUS_DELIVERED);
 
-        $this->addEvent($order, Order::STATUS_DELIVERED, $user);
-
         $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
 
         $this->redis->publish('couriers:available', $user->getId());

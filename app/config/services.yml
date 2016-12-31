@@ -25,6 +25,8 @@ services:
     tags:
       - { name: "doctrine.event_listener", event: "prePersist" }
       - { name: "doctrine.event_listener", event: "postPersist" }
+      - { name: "doctrine.event_listener", event: "postUpdate" }
+      - { name: "kernel.event_listener", event: "order.payment_success", method: "onPaymentSuccess" }
 
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
@@ -41,6 +43,12 @@ services:
     class: AppBundle\Service\Routing\GoogleDirectionsApi
     arguments:
       - "%google_api_key%"
+
+  payment_service:
+    class: AppBundle\Service\PaymentService
+    arguments:
+      - "%stripe_secret_key%"
+      - "@logger"
 
   restaurant.search_filter:
     parent: "api_platform.doctrine.orm.search_filter"

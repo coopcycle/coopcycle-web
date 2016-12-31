@@ -38,8 +38,6 @@ class OrderPick
 
         $order->setStatus(Order::STATUS_PICKED);
 
-        $this->addEvent($order, Order::STATUS_PICKED, $user);
-
         return $order;
     }
 }

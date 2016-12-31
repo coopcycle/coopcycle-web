@@ -3,8 +3,10 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Order;
+use AppBundle\Entity\OrderEvent;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Predis\Client as Redis;
 
@@ -50,37 +52,54 @@ class OrderListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $entity = $args->getObject();
 
-        if ($entity instanceof Order) {
+    }
 
-            $restaurant = $entity->getRestaurant();
-            $deliveryAddress = $entity->getDeliveryAddress();
+    /**
+     * @param LifecycleEventArgs $args
+     */
+    public function postUpdate(LifecycleEventArgs $args)
+    {
+        $order = $args->getObject();
+        $em = $args->getEntityManager();
 
-            $this->redis->geoadd(
-                'orders:geo',
-                $restaurant->getGeo()->getLongitude(),
-                $restaurant->getGeo()->getLatitude(),
-                'order:'.$entity->getId()
-            );
-
-            $this->redis->geoadd(
-                'restaurants:geo',
-                $restaurant->getGeo()->getLongitude(),
-                $restaurant->getGeo()->getLatitude(),
-                'order:'.$entity->getId()
-            );
-            $this->redis->geoadd(
-                'delivery_addresses:geo',
-                $deliveryAddress->getGeo()->getLongitude(),
-                $deliveryAddress->getGeo()->getLatitude(),
-                'order:'.$entity->getId()
-            );
-
-            $this->redis->lpush(
-                'orders:waiting',
-                $entity->getId()
-            );
+        if ($order instanceof Order) {
+            $orderEvent = new OrderEvent($order, $order->getStatus(), $order->getCourier());
+            $em->persist($orderEvent);
+            $em->flush();
         }
+    }
+
+    public function onPaymentSuccess(Event $event)
+    {
+        $order = $event->getSubject();
+
+        $restaurant = $order->getRestaurant();
+        $deliveryAddress = $order->getDeliveryAddress();
+
+        $this->redis->geoadd(
+            'orders:geo',
+            $restaurant->getGeo()->getLongitude(),
+            $restaurant->getGeo()->getLatitude(),
+            'order:'.$order->getId()
+        );
+
+        $this->redis->geoadd(
+            'restaurants:geo',
+            $restaurant->getGeo()->getLongitude(),
+            $restaurant->getGeo()->getLatitude(),
+            'order:'.$order->getId()
+        );
+        $this->redis->geoadd(
+            'delivery_addresses:geo',
+            $deliveryAddress->getGeo()->getLongitude(),
+            $deliveryAddress->getGeo()->getLatitude(),
+            'order:'.$order->getId()
+        );
+
+        $this->redis->lpush(
+            'orders:waiting',
+            $order->getId()
+        );
     }
 }

@@ -47,8 +47,6 @@ class OrderAccept
         $order->setCourier($user);
         $order->setStatus(Order::STATUS_ACCEPTED);
 
-        $this->addEvent($order, Order::STATUS_ACCEPTED, $user);
-
         $this->redis->lrem('orders:dispatching', 0, $order->getId());
         $this->redis->hset('orders:delivering', 'order:'.$order->getId(), 'courier:'.$user->getId());
 
