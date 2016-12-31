@@ -1,0 +1,71 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div class="page-header">
+        <h2>Ma commande</h2>
+      </div>
+
+      <ol class="breadcrumb">
+        <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
+        <li><a href="#">Livraison</a></li>
+        <li class="active">Paiement</li>
+      </ol>
+
+      <div class="card"></div>
+
+      <hr>
+
+      <form id="payment-form" method="POST" class="form-horizontal">
+        <div class="alert alert-danger hidden"></div>
+        <div class="form-group">
+          <label for="number" class="col-sm-2 control-label">Car number</label>
+          <div class="col-sm-10">
+            <input id="number" class="form-control" type="text" size="20" data-stripe="number">
+            <span class="help-block">
+              Use one of the Stripe <a href="https://stripe.com/docs/testing#cards" target="_blank">test card numbers</a> (ex: 4242424242424242).
+            </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="number" class="col-sm-2 control-label">Expiration (MM/YY)</label>
+          <div class="col-sm-5">
+            <input id="exp_month" class="form-control" type="text" size="2" data-stripe="exp_month">
+          </div>
+          <div class="col-sm-5">
+            <input id="exp_year" class="form-control" type="text" size="2" data-stripe="exp_year">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="number" class="col-sm-2 control-label">CVC</label>
+          <div class="col-sm-10">
+            <input id="cvc" class="form-control" type="text" size="4" data-stripe="cvc">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-block btn-primary">Payer</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ asset('js/order-payment.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  Stripe.setPublishableKey('{{ stripe_publishable_key }}');
+</script>
+<script type="text/javascript" src="{{ asset('js/order-payment.js') }}"></script>
+{% endblock %}
