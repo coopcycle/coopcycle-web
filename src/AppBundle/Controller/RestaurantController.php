@@ -77,7 +77,10 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{id}-{slug}", name="restaurant")
+     * @Route("/restaurant/{id}-{slug}", name="restaurant",
+     *   requirements={"id" = "\d+", "slug" = "([a-z0-9-]+)"},
+     *   defaults={"slug" = ""}
+     * )
      * @Template()
      */
     public function indexAction($id, $slug, Request $request)

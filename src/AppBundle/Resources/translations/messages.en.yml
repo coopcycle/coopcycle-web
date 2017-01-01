@@ -1,0 +1,6 @@
+order.payment.card_number.label: Card number
+order.payment.total: Pay %total% €
+order.payment.card_number.help: >
+  Use one of the Stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card numbers</a> (ex: 4242424242424242).
+
+

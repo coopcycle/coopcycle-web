@@ -1,0 +1,25 @@
+{% set step = 1 %}
+{% if app.request.get('_route') == 'order' or app.request.get('_route') == 'order_delivery' %}
+  {% set step = 2 %}
+{% endif %}
+{% if app.request.get('_route') == 'order_payment' %}
+  {% set step = 3 %}
+{% endif %}
+
+{% if (restaurant is not defined) and (order is defined) %}
+  {% set restaurant = order.restaurant %}
+{% endif %}
+
+<ol class="breadcrumb">
+  <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
+  <li {% if step == 2 %}class="active"{% endif %}>
+    {% if order is defined %}<a href="{{ path('order_delivery', {'id': order.id }) }}">{% endif %}
+    Livraison
+    {% if order is defined %}</a>{% endif %}
+  </li>
+  <li {% if step == 3 %}class="active"{% endif %}>
+    {% if order is defined and order.deliveryAddress is defined %}<a href="{{ path('order_payment', {'id': order.id }) }}">{% endif %}
+    Paiement
+    {% if order is defined and order.deliveryAddress is defined %}</a>{% endif %}
+  </li>
+</ol>

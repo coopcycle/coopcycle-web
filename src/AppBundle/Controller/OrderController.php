@@ -102,6 +102,44 @@ class OrderController extends Controller
     }
 
     /**
+     * @Route("/order/{id}/delivery", name="order_delivery")
+     * @Template("@App/Order/index.html.twig")
+     */
+    public function deliveryAction($id, Request $request)
+    {
+        $order = $this->getDoctrine()
+            ->getRepository('AppBundle:Order')->find($id);
+
+        $form = $this->createForm(OrderType::class, $order);
+
+        if (!$form->isSubmitted()) {
+            if (null !== $order->getDeliveryAddress()) {
+                $form->get('createDeliveryAddress')->setData('0');
+            } else {
+                $form->get('createDeliveryAddress')->setData('1');
+            }
+        }
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $order = $form->getData();
+
+            $this->getDoctrine()->getManagerForClass('AppBundle:Order')->flush();
+
+            return $this->redirectToRoute('order_payment', ['id' => $order->getId()]);
+        }
+
+        return array(
+            'order' => $order,
+            'form' => $form->createView(),
+            'restaurant' => $order->getRestaurant(),
+            'hasDeliveryAddress' => count($this->getUser()->getDeliveryAddresses()) > 0,
+            'cart' => $this->getCart($request),
+        );
+    }
+
+    /**
      * @Route("/order/{id}/payment", name="order_payment")
      * @Template()
      */
