@@ -6,8 +6,12 @@ set :use_sudo, false
 
 set :application, 'coursiers'
 set :repo_url, 'git@github.com:coopcycle/coopcycle-web.git'
-# set :linked_files, %w{app/config/parameters.yml app/logs/prod.log}
-set :linked_dirs, %w{var/jwt}
+
+set :linked_files, fetch(:linked_files, [])
+  .push(fetch(:app_config_path) + '/parameters.yml')
+
+set :linked_dirs, fetch(:linked_dirs, [])
+  .push(fetch(:var_path) + '/sessions', fetch(:var_path) + '/jwt')
 
 set :symfony_directory_structure, 3
 set :sensio_distribution_version, 5
