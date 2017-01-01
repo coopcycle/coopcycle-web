@@ -6,3 +6,8 @@ My account: Mon compte
 My orders: Mes commandes
 My addresses: Mes adresses
 Cart: Panier
+
+order.payment.card_number.label: Numéro de carte
+order.payment.total: Payer %total% €
+order.payment.card_number.help: >
+  Utilisez l'un des <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéros de test</a> Stripe (ex: 4242424242424242).

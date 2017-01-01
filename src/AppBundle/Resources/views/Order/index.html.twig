@@ -13,11 +13,7 @@
         <h2>Ma commande</h2>
       </div>
 
-      <ol class="breadcrumb">
-        <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
-        <li><a href="#">Livraison</a></li>
-        <li class="active">Paiement</li>
-      </ol>
+      {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
       {% if cart %}
 

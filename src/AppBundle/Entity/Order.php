@@ -257,7 +257,7 @@ class Order
      *
      * @return $this
      */
-    public function setDeliveryAddress(DeliveryAddress $deliveryAddress)
+    public function setDeliveryAddress(DeliveryAddress $deliveryAddress = null)
     {
         $this->deliveryAddress = $deliveryAddress;
 
