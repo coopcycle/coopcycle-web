@@ -1,5 +1,13 @@
 {% extends "AppBundle::admin.html.twig" %}
 
+{% set status_label_class = {
+  'CREATED': 'label-info',
+  'WAITING': 'label-primary',
+  'ACCEPTED': 'label-success',
+  'PICKED': 'label-success',
+  'DELIVERED': 'label-success'
+} %}
+
 {% block body %}
 <nav aria-label="...">
   <ul class="pager">
@@ -20,7 +28,7 @@
     <td><a href="{{ path('admin_order', {'id': order.id}) }}">#{{ order.id }}</a></td>
     <td>{{ order.restaurant.name }}</td>
     <td>{{ order.total }} €</td>
-    <td><span class="label label-success">{{ order.status }}</span></td>
+    <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
     <td>{{ order.createdAt|ago }}</td>
   </tr>
   {% endfor %}
