@@ -70,16 +70,13 @@
           </li>
         {% endif %}
       </ul>
-      {#
+
       {% set cart = app.session.get('cart') %}
       {% if cart is not empty %}
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="{{ path('restaurant', {'id': cart.restaurantId}) }}">Mon panier</a>
-        </li>
-      </ul>
+      <a href="{{ path('restaurant', {'id': cart.restaurantId}) }}" class="btn btn-default navbar-btn navbar-right">
+        {% trans %}Cart{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
+      </a>
       {% endif %}
-      #}
     </div>
   </div>
 </nav>
