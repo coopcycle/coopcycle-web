@@ -7,6 +7,7 @@ module.exports = {
     tracking: './js/app/tracking/index.js',
     homepage: './js/app/homepage/index.js',
     'order-payment': './js/app/order/payment.js',
+    'order-tracking': './js/app/order/tracking.js',
   },
   output: {
     path: __dirname + '/web/js',

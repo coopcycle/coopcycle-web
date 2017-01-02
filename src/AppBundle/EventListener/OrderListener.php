@@ -67,6 +67,13 @@ class OrderListener
             $orderEvent = new OrderEvent($order, $order->getStatus(), $order->getCourier());
             $em->persist($orderEvent);
             $em->flush();
+
+            $this->redis->publish('order_events', json_encode([
+                'order' => $order->getId(),
+                'courier' => null !== $order->getCourier() ? $order->getCourier()->getId() : null,
+                'status' => $order->getStatus(),
+                'timestamp' => $orderEvent->getCreatedAt()->getTimestamp(),
+            ]));
         }
     }
 

@@ -94,6 +94,12 @@ class Order
     private $deliveryAddress;
 
     /**
+     * @ORM\OneToMany(targetEntity="OrderEvent", mappedBy="order")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $events;
+
+    /**
      * @var string
      *
      * @Groups({"order"})
@@ -116,6 +122,7 @@ class Order
     public function __construct() {
         $this->status = self::STATUS_CREATED;
         $this->orderedItem = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     /**
@@ -316,5 +323,10 @@ class Order
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getEvents()
+    {
+        return $this->events;
     }
 }

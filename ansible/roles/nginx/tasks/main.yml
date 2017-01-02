@@ -9,7 +9,7 @@
     become: yes
     apt:  pkg=nginx state=installed update_cache=true
 
-  - name: Create webockets.conf file
+  - name: Create websockets.conf file
     become: yes
     template: src=websockets.tpl dest=/etc/nginx/websockets.conf
     notify: restart nginx

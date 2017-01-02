@@ -222,6 +222,8 @@ class OrderController extends Controller
 
         return array(
             'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
+            'google_api_key' => $this->getParameter('google_api_key')
         );
     }
 }
