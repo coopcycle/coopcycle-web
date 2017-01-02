@@ -46,13 +46,22 @@ function createMarkerIcon(iconPath, iconFillColor) {
   }
 }
 
-function createMarker(position, iconPath, iconFillColor) {
-  return new google.maps.Marker({
+function createMarker(position, iconPath, iconFillColor, infoWindow) {
+  var marker = new google.maps.Marker({
     position: position,
     map: map,
     animation: google.maps.Animation.DROP,
     icon: createMarkerIcon(iconPath, iconFillColor),
   });
+
+  if (infoWindow) {
+    marker.addListener('click', function() {
+      closeAllInfoWindows();
+      infoWindow.open(map, marker);
+    });
+  }
+
+  return marker;
 }
 
 function createCircle(position, color) {
@@ -107,11 +116,16 @@ function addOrder(order) {
       requestAnimationFrame(animate);
     }
 
+    var infoWindow = new google.maps.InfoWindow({
+      content: order.key
+    });
+    infoWindows.push(infoWindow);
+
     marker = {
       key: key,
       courier: order.courier,
       color: randomColor,
-      restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor),
+      restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor, infoWindow),
       deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
       restaurantCircle: circle,
       circleTween: tween,
