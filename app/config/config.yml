@@ -117,3 +117,9 @@ snc_redis:
             type: predis
             alias: default
             dsn: redis://127.0.0.1:6379
+
+webfactory_piwik:
+    site_id: 1
+    disabled: %kernel.debug%
+    piwik_host: piwik.coopcycle.org
+    tracker_path: "/piwik.js"
