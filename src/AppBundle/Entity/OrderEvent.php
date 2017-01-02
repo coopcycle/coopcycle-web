@@ -33,7 +33,7 @@ class OrderEvent
     private $eventName;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Order")
+     * @ORM\ManyToOne(targetEntity="Order", inversedBy="events")
      */
     private $order;
 

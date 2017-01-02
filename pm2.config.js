@@ -18,6 +18,10 @@ var apps = [{
   name: "coopcycle-tracking",
   script: "./js/api/tracking/index.js",
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
+}, {
+  name: "coopcycle-order-tracking",
+  script: "./js/api/order/tracking.js",
+  watch: ["./js/api/order/tracking.js"],
 }];
 
 apps = _.map(apps, function(app) {
