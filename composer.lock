@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "675d0f5b9c8d301af76d0a9bbf1aaacc",
-    "content-hash": "dc585aa840a59e385a4f537ff8bf82c9",
+    "hash": "be750c914bc328a78428d98d80a3d36d",
+    "content-hash": "5c9f33da8f05e3b9cad09174ad25e661",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3544,6 +3544,55 @@
                 "templating"
             ],
             "time": "2016-11-23 18:41:40"
+        },
+        {
+            "name": "webfactory/piwik-bundle",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webfactory/piwik-bundle.git",
+                "reference": "9c90aa782134f69df2bc470b259be5cec213992c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webfactory/piwik-bundle/zipball/9c90aa782134f69df2bc470b259be5cec213992c",
+                "reference": "9c90aa782134f69df2bc470b259be5cec213992c",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/symfony": "~2.0|~3.0",
+                "twig/twig": "~1.0"
+            },
+            "require-dev": {
+                "mayflower/php-codebrowser": "~1.1",
+                "pdepend/pdepend": "~1.1",
+                "phploc/phploc": "~2.0",
+                "phpmd/phpmd": "~1.0",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "~0.6",
+                "sebastian/phpcpd": "~2.0",
+                "squizlabs/php_codesniffer": "~1.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Webfactory\\Bundle\\PiwikBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "webfactory GmbH",
+                    "email": "info@webfactory.de",
+                    "homepage": "http://www.webfactory.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Symfony2 Bundle that adds a twig-function for the Piwik tracking code.",
+            "time": "2016-03-15 15:04:15"
         },
         {
             "name": "webmozart/assert",

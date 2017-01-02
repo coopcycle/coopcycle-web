@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Snc\RedisBundle\SncRedisBundle(),
             new Knp\Bundle\TimeBundle\KnpTimeBundle(),
             new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
+            new Webfactory\Bundle\PiwikBundle\WebfactoryPiwikBundle(),
             new AppBundle\AppBundle(),
         ];
 
