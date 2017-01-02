@@ -18,6 +18,6 @@ section_3.title: Is it ready?
 section_3.paragraph_1: >
   No, the project is just starting!
   <br>
-  This website is a demo, you can orders meals but nobody will deliver it.
+  This website is a demo, you can orders meals but nobody will deliver it, deliveries are simulated by bots.
 
 about_bots: It's alive ! A demo with bots using the CoopCycle API to dispat orders.
