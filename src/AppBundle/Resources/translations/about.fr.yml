@@ -18,6 +18,6 @@ section_3.title: C'est prêt ?
 section_3.paragraph_1: >
   Non, le projet vient tout juste de démarrer !
   <br>
-  Ce site est une démo, vous pouvez passer des commandes mais personne ne viendra vous livrer.
+  Ce site est une démo, vous pouvez passer des commandes mais personne ne viendra vous livrer, ou alors peut-être des bots.
 
 about_bots: Wow ça bouge ! Une démo avec des bots utilisant l'API CoopCycle pour dispatcher les commandes.

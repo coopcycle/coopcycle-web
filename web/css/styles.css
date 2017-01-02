@@ -8,8 +8,16 @@ body {
 
 #search {
     margin-top: -20px;
-    padding: 40px 0;
+    padding: 120px 0;
     background-color: #ecf0f1;
+    background-image: url(../img/search-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+#search small {
+    color: #fff;
 }
 
 #cart .list-group-item .close {
