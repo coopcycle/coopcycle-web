@@ -21,3 +21,62 @@ section_3.paragraph_1: >
   This website is a demo, you can orders meals but nobody will deliver it, deliveries are simulated by bots.
 
 about_bots: It's alive ! A demo with bots using the CoopCycle API to dispat orders.
+
+about_page: >
+  <p>
+  In 2016, the so-called collaborative economy began to show its limits :
+  the company Take Eat Easy was placed in judicial liquidation,
+  the strikes of the drivers of VTC multiplied,
+  the working conditions of foodtech workers were denounced.
+  </p>
+  <p>
+  It is time to regain power, to create a fairer Internet, more concerned about its users, and respectful of social rights.
+  </p>
+
+  <h2>Towards a platform cooperativism</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <p>
+      In September 2016, Nathan Schneider proposed to
+      <a href="https://www.theguardian.com/commentisfree/2016/sep/29/save-twitter-buy-platform-shared-ownership" target="_blank">buy Twitter by its users</a>,
+      so that they could decide the orientations of the platform by themselves.
+      </p>
+      <p>Why not?</p>
+      <p>
+      The platforms of the sharing economy are presented as mere actors of relationship, and flee their social responsibilities.
+      </p>
+      <p>
+      It is up to the workers on the platforms to decide on working conditions, tariffs and schedules, on a democratic and open model: this model exists, it is the cooperative.
+      </p>
+      <p>
+      We believe that it is possible to easily create an open-source clone of the foodtech platforms, offering the same level of quality, in order to offer the possibility to cooperatives of workers to set up.
+      </p>
+    </div>
+    <div class="col-md-4">
+      <blockquote class="twitter-tweet" data-lang="fr">
+        <p lang="en" dir="ltr">
+        &quot;Where do you see yourself in five years?&quot;<br>
+        &quot;Running the company.&quot;<br>
+        &quot;So management?&quot;<br>&quot;No…socialism. I&#39;ll run it with the rest of the workers.&quot;
+        </p>
+        &mdash; Existential Comics (@existentialcoms) <a href="https://twitter.com/existentialcoms/status/808497790384906240">13 décembre 2016</a>
+      </blockquote>
+    </div>
+  </div>
+
+  <h2>Think smaller, think local</h2>
+  <p>
+  By 2030, the Web alone could represent the equivalent of the 2008 world energy consumption.<br>
+  Recently, W3C launched the <a href="https://www.w3.org/community/wwca/">Web We Can Afford</a> working group,
+  to address these issues in the context of the upcoming energy crisis.
+  </p>
+  <p>
+  We believe that the delivery of meals by bike is a local activity, specific to each city.<br>
+  It is possible to relocate this type of activity in the form of cooperatives, each cooperative hosting the platform on its own.<br>
+  This should drastically reduce infrastructure costs and therefore energy consumption, while avoiding the centralization of data.
+  </p>
+  <hr>
+  <ul class="list-unstyled">
+    <li><a href="https://ioo.coop/">Internet Of Ownership</a></li>
+    <li><a href="http://platformcoop.net/">Platform Cooperativism</a></li>
+  </ul>

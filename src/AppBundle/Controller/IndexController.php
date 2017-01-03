@@ -10,10 +10,19 @@ use Symfony\Component\HttpFoundation\Request;
 class IndexController extends Controller
 {
     /**
-     * @Route("/", methods={"GET"}, name="homepage")
+     * @Route("/", name="homepage")
      * @Template
      */
     public function indexAction()
+    {
+        return array();
+    }
+
+    /**
+     * @Route("/about", name="about")
+     * @Template
+     */
+    public function aboutAction()
     {
         return array();
     }
