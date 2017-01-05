@@ -71,7 +71,7 @@
 
 var inputMap = {
   postal_code: 'order_deliveryAddress_postalCode',
-  locality: 'order_deliveryAddress__addressLocality'
+  locality: 'order_deliveryAddress_addressLocality'
 };
 
 var placeChangedListener;
@@ -86,6 +86,7 @@ function initMap() {
   }
 
   var options = {
+    types: ['address'],
     componentRestrictions: {
       country: "fr"
     }
@@ -113,6 +114,11 @@ function initMap() {
 
 (function() {
 
+  $('#order_deliveryAddress_streetAddress').on('input', function(e) {
+    $(this).closest('.form-group').removeClass('has-error');
+    $(this).closest('.form-group').find('.help-block').remove();
+  });
+
   $('input[name="order[createDeliveryAddress]"]').on('change', function(e) {
     var $form = $(this).closest('form');
     var data = {};
@@ -131,6 +137,6 @@ function initMap() {
 
 })()
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&signed_in=true&libraries=places&callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&signed_in=true&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

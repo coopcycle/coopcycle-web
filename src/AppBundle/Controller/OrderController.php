@@ -95,6 +95,7 @@ class OrderController extends Controller
 
         return array(
             'form' => $form->createView(),
+            'google_api_key' => $this->getParameter('google_api_key'),
             'restaurant' => $order->getRestaurant(),
             'hasDeliveryAddress' => count($this->getUser()->getDeliveryAddresses()) > 0,
             'cart' => $this->getCart($request),
