@@ -37,16 +37,15 @@
         <h3>Choisissez une adresse de livraison</h3>
 
         {{ form_start(form) }}
-          {% if not hasDeliveryAddress %}<div class="hidden">{% endif %}
-          {{ form_widget(form.createDeliveryAddress) }}
-          <hr>
-          {% if not hasDeliveryAddress %}</div>{% endif %}
-
-          {% if form.createDeliveryAddress.vars.value %}
-            {{ form_widget(form.deliveryAddress) }}
+          {% if not has_delivery_address %}
+            <div class="hidden">
+              {{ form_widget(form.createDeliveryAddress) }}
+            </div>
           {% else %}
-            {{ form_widget(form.deliveryAddress) }}
+            {{ form_widget(form.createDeliveryAddress) }}
           {% endif %}
+          <hr>
+          {{ form_widget(form.deliveryAddress) }}
           <hr>
           {{ form_widget(form.save, { attr: { class: 'btn-primary btn-block' } }) }}
         {{ form_end(form) }}

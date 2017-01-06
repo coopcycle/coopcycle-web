@@ -88,7 +88,7 @@ class Order
      * @var DeliveryAddress
      *
      * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="DeliveryAddress")
+     * @ORM\ManyToOne(targetEntity="DeliveryAddress", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/place")
      */
     private $deliveryAddress;
