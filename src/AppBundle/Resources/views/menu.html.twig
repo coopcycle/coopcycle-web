@@ -19,14 +19,19 @@
         </li>
       </ul>
 
+      {% set default_locale = 'en' %}
       {% set locales = {
         'en': 'English',
         'fr': 'Français'
       } %}
+      {% set current_locale = default_locale %}
+      {% if locales[app.request.locale] is defined %}
+        {% set current_locale = locales[app.request.locale] %}
+      {% endif %}
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            {{ locales[app.request.locale] }} <span class="caret"></span>
+            {{ current_locale }} <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
             {% for locale, label in locales %}
