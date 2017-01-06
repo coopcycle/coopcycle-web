@@ -7,6 +7,7 @@
     <h2>Ma commande</h2>
   </div>
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
+  Livraison : {{ order.deliveryAddress.streetAddress }}
   <div class="row">
     <div class="col-md-6">
       <form id="payment-form" method="POST" class="form-horizontal">
@@ -14,7 +15,7 @@
         <div class="form-group">
           <label for="number" class="col-sm-2 control-label">{% trans %}order.payment.card_number.label{% endtrans %}</label>
           <div class="col-sm-10">
-            <input id="number" class="form-control" type="text" size="20" data-stripe="number">
+            <input id="number" class="form-control" type="text" size="20" data-stripe="number" autocomplete="off">
             <span class="help-block">
               {% trans with { '%total%': order.total } %}order.payment.card_number.help{% endtrans %}
             </span>
@@ -23,16 +24,16 @@
         <div class="form-group">
           <label for="number" class="col-sm-2 control-label">{% trans %}Expiration (MM/YY){% endtrans %}</label>
           <div class="col-sm-5">
-            <input id="exp_month" class="form-control" type="text" size="2" data-stripe="exp_month">
+            <input id="exp_month" class="form-control" type="text" size="2" data-stripe="exp_month" autocomplete="off">
           </div>
           <div class="col-sm-5">
-            <input id="exp_year" class="form-control" type="text" size="2" data-stripe="exp_year">
+            <input id="exp_year" class="form-control" type="text" size="2" data-stripe="exp_year" autocomplete="off">
           </div>
         </div>
         <div class="form-group">
           <label for="number" class="col-sm-2 control-label">{% trans %}CVC{% endtrans %}</label>
           <div class="col-sm-10">
-            <input id="cvc" class="form-control" type="text" size="4" data-stripe="cvc">
+            <input id="cvc" class="form-control" type="text" size="4" data-stripe="cvc" autocomplete="off">
           </div>
         </div>
         <div class="form-group">

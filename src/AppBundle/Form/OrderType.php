@@ -22,27 +22,38 @@ class OrderType extends AbstractType
         $builder
             ->add('createDeliveryAddress', ChoiceType::class, [
                 'choices' => [
-                    'Adresse existante' => 0,
-                    'Nouvelle adresse' => 1,
+                    'Adresse existante' => false,
+                    'Nouvelle adresse' => true,
                 ],
                 'mapped' => false,
                 'expanded' => true,
                 'multiple' => false,
             ])
-            ->add('save', SubmitType::class, array('label' => 'Commander'));
+            ->add('save', SubmitType::class, array('label' => 'Continue to payment'));
 
-        $formModifier = function (FormInterface $form, $order, $createDeliveryAddress = true) {
-            if ($createDeliveryAddress || isset($order) && count($order->getCustomer()->getDeliveryAddresses()) === 0) {
+        $formModifier = function (FormInterface $form, Order $order, $createDeliveryAddress) {
+
+            if (null === $createDeliveryAddress) {
+                $createDeliveryAddress = true;
+                if (null !== $order->getDeliveryAddress()) {
+                    $createDeliveryAddress = false;
+                }
+                if (count($order->getCustomer()->getDeliveryAddresses()) > 0) {
+                    $createDeliveryAddress = false;
+                }
+
+                $form->get('createDeliveryAddress')->setData($createDeliveryAddress);
+            }
+
+            if ($createDeliveryAddress) {
                 $form->add('deliveryAddress', DeliveryAddressType::class);
             } else {
-                $customer = $order->getCustomer();
-
                 $form->add('deliveryAddress', EntityType::class, array(
                     'class' => 'AppBundle:DeliveryAddress',
-                    'query_builder' => function (EntityRepository $e) use ($customer) {
+                    'query_builder' => function (EntityRepository $e) use ($order) {
                         return $e->createQueryBuilder('d')
                             ->where('d.customer = :customer')
-                            ->setParameter('customer', $customer)
+                            ->setParameter('customer', $order->getCustomer())
                             ->orderBy('d.streetAddress', 'ASC');
                     },
                     'choice_label' => function ($deliveryAddress) {
@@ -55,7 +66,7 @@ class OrderType extends AbstractType
         };
 
         $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
+            FormEvents::POST_SET_DATA,
             function (FormEvent $event) use ($formModifier) {
                 $order = $event->getData();
                 $createDeliveryAddress = $event->getForm()->get('createDeliveryAddress')->getData();
