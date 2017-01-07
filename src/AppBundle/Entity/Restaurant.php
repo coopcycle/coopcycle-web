@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A restaurant.
@@ -45,6 +46,15 @@ class Restaurant extends FoodEstablishment
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $products;
+
+    /**
+     * @var string The website of the restaurant.
+     *
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="url")
+     * @ApiProperty(iri="https://schema.org/URL")
+     */
+    private $website;
 
     public function __construct() {
         $this->products = new ArrayCollection();
@@ -101,6 +111,19 @@ class Restaurant extends FoodEstablishment
     public function addProduct(Product $product)
     {
         $this->products->add($product);
+
+        return $this;
+    }
+
+
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    public function setWebsite($website)
+    {
+        $this->website = $website;
 
         return $this;
     }

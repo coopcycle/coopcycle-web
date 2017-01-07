@@ -14,7 +14,8 @@
       <div class="thumbnail">
         <div class="caption">
           <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-          <p>{{ restaurant.streetAddress }}</p>
+          <p>{{ restaurant.streetAddress|default('Address not available'|trans) }}</p>
+          <small>{{ restaurant.servesCuisine }}</small>
           <p>
             <a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}" class="btn btn-primary" role="button">Voir</a>
           </p>
@@ -25,7 +26,9 @@
     {% endfor %}
   </div>
   <div class="row">
+    <div class="col-xs-12">
     {% include "AppBundle:Restaurant:pagination.html.twig" %}
+    </div>
   </div>
 </div>
 {% endblock %}

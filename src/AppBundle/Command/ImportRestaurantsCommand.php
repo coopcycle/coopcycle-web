@@ -11,6 +11,30 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
 {
     private $restaurantManager;
     private $restaurantRepository;
+    private $skipSubCategories = [
+        'Art Gallery',
+        'Bakery',
+        'Bar',
+        'Café',
+        'Candy Store',
+        'Clothing Store',
+        'Cocktail Bar',
+        'Coffee Shop',
+        'Concert Hall',
+        'Coworking Space',
+        'Event Space',
+        'Fast Food Restaurant',
+        'Gourmet Shop',
+        'Hotel',
+        'Hotel Bar',
+        'Ice Cream Shop',
+        'Jazz Club',
+        // 'Lounge',
+        'Office',
+        'Pub',
+        'Tea Room',
+        'Tech Startup',
+    ];
 
     protected function configure()
     {
@@ -33,7 +57,7 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
             mkdir($dirname, 0655, true);
         }
 
-        $filename = "{$dirname}/restaurants.csv";
+        $filename = "{$dirname}/restaurants.json";
 
         if (!file_exists($filename)) {
             $data = file_get_contents('http://tour-pedia.org/api/getPlaces?category=restaurant&location=Paris');
@@ -44,39 +68,59 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
 
         $output->writeln(sprintf('Loaded %d restaurants from JSON file', count($restaurants)));
 
+        $count = 0;
         foreach ($restaurants as $item) {
+
+            if (!isset($item['subCategory'])) {
+                continue;
+            }
+
+            if (in_array($item['subCategory'], $this->skipSubCategories)) {
+                continue;
+            }
+
+            $details = json_decode(file_get_contents($item['details']), true);
 
             if (!$restaurant = $this->restaurantRepository->findOneByName($item['name'])) {
 
                 $output->writeln(sprintf('Adding restaurant "%s"', $item['name']));
 
+                $streetAddress = !empty($item['address']) ? $item['address'] : null;
+                $telephone = !empty($item['phone_number']) ? $item['phone_number'] : null;
+                $website = !empty($details['website']) ? $details['website'] : null;
+
                 $restaurant = new Entity\Restaurant();
                 $restaurant
                     ->setName($item['name'])
-                    ->setStreetAddress($item['address'])
+                    ->setStreetAddress($streetAddress)
                     ->setAddressLocality($item['location'])
+                    ->setServesCuisine($item['subCategory'])
+                    ->setTelephone($telephone)
+                    ->setWebsite($website)
                     ->setGeo(new Entity\GeoCoordinates($item['lat'], $item['lng']));
             }
 
             if (count($restaurant->getProducts()) === 0) {
-                $output->writeln(sprintf('Adding products to restaurant "%s"', $restaurant->getName()));
+                // $output->writeln(sprintf('Adding products to restaurant "%s"', $restaurant->getName()));
                 $this->addProducts($restaurant);
             } else {
-                $output->writeln(sprintf('Skipping restaurant "%s"', $item['name']));
+                // $output->writeln(sprintf('Skipping restaurant "%s"', $item['name']));
                 $this->restaurantManager->detach($restaurant);
                 continue;
             }
 
             $this->restaurantManager->persist($restaurant);
+            $count++;
 
             if ($this->getScheduledOperations() > 100) {
                 $this->restaurantManager->flush();
                 $this->restaurantManager->clear();
                 $output->writeln('Flush...');
             }
-
-
         }
+
+        $output->writeln('');
+        $output->writeln(sprintf('%d restaurants created!', $count));
 
         $this->restaurantManager->flush();
     }
