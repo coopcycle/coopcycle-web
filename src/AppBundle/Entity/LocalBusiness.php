@@ -30,6 +30,14 @@ abstract class LocalBusiness extends Place
     private $openingHours;
 
     /**
+     * @var string The telephone number..
+     *
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="string")
+     */
+    private $telephone;
+
+    /**
      * Sets openingHours.
      *
      * @param string $openingHours
@@ -51,5 +59,17 @@ abstract class LocalBusiness extends Place
     public function getOpeningHours()
     {
         return $this->openingHours;
+    }
+
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+
+        return $this;
     }
 }
