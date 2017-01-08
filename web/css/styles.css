@@ -2,8 +2,8 @@ body {
     font-family: "Arvo", Helvetica, Arial, sans-serif;
 }
 
-#topnav {
-
+.label {
+    font-weight: 400;
 }
 
 #search {
@@ -30,4 +30,40 @@ body {
 
 #payment-form, .card {
     margin: 40px 0;
+}
+
+.restaurant-item:hover {
+    text-decoration: none;
+}
+
+.restaurant-item:hover img {
+    opacity: 0.8;
+}
+
+.menu-item {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-right: 45px;
+}
+
+.menu-item:hover:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\002b";
+    color: #bdc3c7;
+    position: absolute;
+    right: 15px;
+}
+
+.menu-item .menu-item-content {
+    width: 80%;
+}
+
+.menu-item .menu-item-price {
+    width: 20%;
+    text-align: right;
 }

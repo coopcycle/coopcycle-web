@@ -16,36 +16,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @ApiResource(iri="http://schema.org/Product")
  */
-class Product
+class Product extends Thing
 {
+    use RecipeTrait;
+
     /**
      * @var int
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      */
-    private $id;
-
-    /**
-     * @var string A short description of the item.
-     *
-     * @Groups({"restaurant"})
-     * @ORM\Column(nullable=true)
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/description")
-     */
-    private $description;
-
-    /**
-     * @var string The name of the item.
-     *
-     * @Groups({"restaurant"})
-     * @ORM\Column(nullable=true)
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/name")
-     */
-    private $name;
+    protected $id;
 
     /**
      * @var float The offer price of a product, or of a price component when attached to PriceSpecification and its subtypes.
@@ -62,21 +44,7 @@ class Product
      * @Assert\Type(type="float")
      * @ApiProperty(iri="https://schema.org/price")
      */
-    private $price;
-
-    /**
-     * Sets id.
-     *
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    protected $price;
 
     /**
      * Gets id.
@@ -86,54 +54,6 @@ class Product
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Sets description.
-     *
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Gets description.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Sets name.
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

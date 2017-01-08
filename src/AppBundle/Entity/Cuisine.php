@@ -9,23 +9,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * The most generic type of item.
- *
- * @see http://schema.org/Thing Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
+ * @ORM\Entity
  */
-abstract class Thing
+class Cuisine
 {
     /**
-     * @var string A description of the item
+     * @var int
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
-     * @ApiProperty(iri="http://schema.org/description")
-     * @Groups({"restaurant"})
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      */
-    protected $description;
+    private $id;
 
     /**
      * @var string The name of the item
@@ -38,27 +33,13 @@ abstract class Thing
     protected $name;
 
     /**
-     * Sets description.
+     * Gets id.
      *
-     * @param string $description
-     *
-     * @return $this
+     * @return int
      */
-    public function setDescription($description)
+    public function getId()
     {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Gets description.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
+        return $this->id;
     }
 
     /**
