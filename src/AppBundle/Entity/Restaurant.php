@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -56,22 +57,10 @@ class Restaurant extends FoodEstablishment
      */
     private $website;
 
-    public function __construct() {
-        $this->products = new ArrayCollection();
-    }
-
-    /**
-     * Sets id.
-     *
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function __construct()
     {
-        $this->id = $id;
-
-        return $this;
+        $this->products = new ArrayCollection();
+        parent::__construct();
     }
 
     /**
@@ -108,13 +97,25 @@ class Restaurant extends FoodEstablishment
         return $this->products;
     }
 
+    /**
+     * Gets products.
+     *
+     * @return Product
+     */
+    public function getProductsByCategory($recipeCategory)
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq("recipe_category", $recipeCategory));
+
+        return $this->products->matching($criteria);
+    }
+
     public function addProduct(Product $product)
     {
         $this->products->add($product);
 
         return $this;
     }
-
 
     public function getWebsite()
     {

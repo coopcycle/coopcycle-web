@@ -9,14 +9,25 @@
 
     <div class="col-xs-12 col-sm-8">
 
-      <div class="list-group">
-        {% for product in restaurant.products %}
-        <a href="#" class="list-group-item js-add-to-cart" data-product-id="{{ product.id }}">
-          {{ product.name }}
-          <span class="pull-right">{{ product.price }} €</span>
-        </a>
-        {% endfor %}
-      </div>
+      {% set groups = {
+        'Entrées': appetizers,
+        'Plats': main_courses,
+        'Desserts': desserts
+      } %}
+
+      {% for category, products in groups %}
+        {% if products|length > 0 %}
+        <h2>{{ category }}</h2>
+        <div class="list-group">
+          {% for product in products %}
+          <a href="#" class="list-group-item menu-item js-add-to-cart" data-product-id="{{ product.id }}">
+            <span class="menu-item-content">{{ product.name }}</span>
+            <span class="menu-item-price">{{ product.price }} €</span>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
 
     </div>
 

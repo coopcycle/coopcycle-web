@@ -23,7 +23,7 @@ abstract class Place extends PostalAddress
      * @Groups({"place"})
      * @ORM\Column(type="geography", nullable=true, options={"geometry_type"="GEOMETRY", "srid"=4326})
      */
-    private $geo;
+    protected $geo;
 
     /**
      * Sets geo.

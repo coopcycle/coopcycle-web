@@ -24,7 +24,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressCountry")
      */
-    private $addressCountry;
+    protected $addressCountry;
 
     /**
      * @var string The locality. For example, Mountain View.
@@ -33,7 +33,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
-    private $addressLocality;
+    protected $addressLocality;
 
     /**
      * @var string The region. For example, CA.
@@ -42,7 +42,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressRegion")
      */
-    private $addressRegion;
+    protected $addressRegion;
 
     /**
      * @var string The name of the item.
@@ -61,7 +61,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/postalCode")
      */
-    private $postalCode;
+    protected $postalCode;
 
     /**
      * @var string The post office box number for PO box addresses.
@@ -70,7 +70,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/postOfficeBoxNumber")
      */
-    private $postOfficeBoxNumber;
+    protected $postOfficeBoxNumber;
 
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
@@ -80,7 +80,7 @@ abstract class PostalAddress
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/streetAddress")
      */
-    private $streetAddress;
+    protected $streetAddress;
 
     /**
      * Sets addressCountry.

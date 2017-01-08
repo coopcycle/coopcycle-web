@@ -11,16 +11,37 @@
     {% for restaurant in restaurants %}
     <div class="col-sm-6 col-md-4">
 
-      <div class="thumbnail">
+      {% set cuisineNames = [] %}
+      {% for cuisine in restaurant.servesCuisine %}
+        {% set cuisineNames = cuisineNames|merge([cuisine.name]) %}
+      {% endfor %}
+
+      {% set cuisineImage = 'default' %}
+      {% set cuisineImages = [] %}
+      {% for cuisine in restaurant.servesCuisine %}
+        {% for image in images %}
+          {% if image == cuisine.name|slugify %}
+            {% set cuisineImages = cuisineImages|merge([image]) %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% if cuisineImages|length > 0 %}
+        {% set cuisineImage = random(cuisineImages) %}
+      {% endif %}
+
+      <a class="thumbnail restaurant-item" href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
+        <img src="{{ asset('img/cuisine/' ~ cuisineImage ~ '.jpg') }}" alt="{{ restaurant.name }}">
         <div class="caption">
           <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-          <p>{{ restaurant.streetAddress|default('Address not available'|trans) }}</p>
-          <small>{{ restaurant.servesCuisine }}</small>
+          <small>{{ restaurant.streetAddress|default('Address not available'|trans) }}</small>
           <p>
-            <a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}" class="btn btn-primary" role="button">Voir</a>
+            {% for cuisineName in cuisineNames %}
+            <span class="label label-info">{{ cuisineName }}</span>
+            {% endfor %}
           </p>
         </div>
-      </div>
+      </a>
 
     </div>
     {% endfor %}

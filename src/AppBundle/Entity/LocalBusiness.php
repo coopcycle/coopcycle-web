@@ -27,7 +27,7 @@ abstract class LocalBusiness extends Place
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/openingHours")
      */
-    private $openingHours;
+    protected $openingHours;
 
     /**
      * @var string The telephone number..
@@ -35,7 +35,7 @@ abstract class LocalBusiness extends Place
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      */
-    private $telephone;
+    protected $telephone;
 
     /**
      * Sets openingHours.

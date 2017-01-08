@@ -7,6 +7,7 @@ use AppBundle\Entity\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
@@ -45,6 +46,16 @@ class RestaurantController extends Controller
         $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
         $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');
 
+        $finder = new Finder();
+        $finder->files()
+            ->in($this->getParameter('kernel.root_dir') . '/../web/img/cuisine')
+            ->name('*.jpg');
+
+        $images = [];
+        foreach ($finder as $file) {
+            $images[] = $file->getBasename('.jpg');
+        }
+
         $page = $request->query->getInt('page', 1);
 
         if ($request->query->has('geohash')) {
@@ -73,6 +84,7 @@ class RestaurantController extends Controller
             'page' => $page,
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
+            'images' => $images,
         );
     }
 
@@ -90,6 +102,9 @@ class RestaurantController extends Controller
 
         return array(
             'restaurant' => $restaurant,
+            'appetizers' => $restaurant->getProductsByCategory('Entrées'),
+            'main_courses' => $restaurant->getProductsByCategory('Plats'),
+            'desserts' => $restaurant->getProductsByCategory('Desserts'),
             'cart' => $this->getCart($request, $restaurant),
         );
     }
