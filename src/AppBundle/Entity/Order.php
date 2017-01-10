@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -299,6 +300,22 @@ class Order
         }
 
         return $total;
+    }
+
+    public function getDeliveryTime()
+    {
+        if ($this->status === self::STATUS_DELIVERED) {
+            $criteria = Criteria::create()
+                ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DELIVERED));
+
+            $deliveredEvent = $this->events->matching($criteria)->first();
+            $diff = $deliveredEvent->getCreatedAt()->diff($this->getCreatedAt());
+
+            $hours = $diff->format('%h');
+            $minutes = $diff->format('%i');
+
+            return $hours > 0 ? "{$hours}h {$minutes}min" : "{$minutes}min";
+        }
     }
 
     /**

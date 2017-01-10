@@ -1,10 +1,10 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% set status_label_class = {
-  'CREATED': 'label-info',
-  'WAITING': 'label-primary',
-  'ACCEPTED': 'label-success',
-  'PICKED': 'label-success',
+  'CREATED': 'label-default',
+  'WAITING': 'label-danger',
+  'ACCEPTED': 'label-primary',
+  'PICKED': 'label-info',
   'DELIVERED': 'label-success'
 } %}
 
@@ -22,17 +22,26 @@
   </ul>
 </nav>
 <table class="table">
-<tbody>
+  <thead>
+    <th>#</th>
+    <th>Status</th>
+    <th>Restaurant</th>
+    <th>Price</th>
+    <th>Created</th>
+    <th>Delivery time</th>
+  </thead>
+  <tbody>
   {% for order in orders %}
   <tr>
     <td><a href="{{ path('admin_order', {'id': order.id}) }}">#{{ order.id }}</a></td>
+    <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
     <td>{{ order.restaurant.name }}</td>
     <td>{{ order.total }} €</td>
-    <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
     <td>{{ order.createdAt|ago }}</td>
+    <td>{{ order.deliveryTime }}</td>
   </tr>
   {% endfor %}
-</tbody>
+  </tbody>
 </table>
 {% endblock %}
 

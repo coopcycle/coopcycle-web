@@ -61,13 +61,8 @@ class AdminController extends Controller
             ->getRepository('AppBundle:Order')
             ->find($id);
 
-        $events = $users = $this->getDoctrine()
-            ->getRepository('AppBundle:OrderEvent')
-            ->findBy(['order' => $order], ['createdAt' => 'DESC']);
-
         return array(
             'order' => $order,
-            'events' => $events,
         );
     }
 
