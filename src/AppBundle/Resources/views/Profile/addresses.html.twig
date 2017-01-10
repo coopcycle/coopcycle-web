@@ -1,23 +1,17 @@
-{% extends "AppBundle::base.html.twig" %}
+{% extends "AppBundle::profile.html.twig" %}
 
-{% block body %}
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="page-header">
-        <h1>Mes adresses</h1>
-      </div>
-      <div class="list-group">
-        {% for address in addresses %}
-        <a href="#" class="list-group-item">
-          {{ address.streetAddress }}
-        </a>
-        {% endfor %}
-      </div>
-      <a class="btn btn-success" href="{{ path('profile_address_new') }}">Ajouter</a>
-    </div>
-  </div>
+{% block content %}
+<div class="page-header">
+  <h1>Mes adresses</h1>
 </div>
+<div class="list-group">
+  {% for address in addresses %}
+  <a href="#" class="list-group-item">
+    {{ address.streetAddress }}
+  </a>
+  {% endfor %}
+</div>
+<a class="btn btn-success" href="{{ path('profile_address_new') }}">Ajouter</a>
 {% endblock %}
 
 {% block scripts %}
