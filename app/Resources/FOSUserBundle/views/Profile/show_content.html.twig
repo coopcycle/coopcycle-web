@@ -1,0 +1,18 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+<div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a></li>
+  </ol>
+  <div class="row">
+    <div class="col-md-3">
+      {% include "AppBundle:Profile:nav.html.twig" %}
+    </div>
+    <div class="col-md-9">
+      <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+      <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,7 +1,11 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% block body %}
-  <div class="container">
-    {% block fos_user_content %}{% endblock %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      {% block fos_user_content %}{% endblock %}
+    </div>
   </div>
+</div>
 {% endblock %}

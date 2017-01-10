@@ -1,27 +1,21 @@
-{% extends "AppBundle::base.html.twig" %}
+{% extends "AppBundle::profile.html.twig" %}
 
-{% block body %}
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="page-header">
-        <h1>Mes commandes</h1>
-      </div>
-      <table class="table">
-        <tbody>
-        {% for order in orders %}
-        <tr>
-          <td>{{ order.restaurant.name }}</td>
-          <td>{{ order.createdAt|ago }}</td>
-          <td><span class="pull-right">{{ order.total }} €</span></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% include "AppBundle:Profile:orders.pagination.html.twig" %}
-    </div>
-  </div>
+{% block content %}
+<div class="page-header">
+  <h1>Mes commandes</h1>
 </div>
+<table class="table">
+  <tbody>
+  {% for order in orders %}
+  <tr>
+    <td>{{ order.restaurant.name }}</td>
+    <td>{{ order.createdAt|ago }}</td>
+    <td><span class="pull-right">{{ order.total }} €</span></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "AppBundle:Profile:orders.pagination.html.twig" %}
 {% endblock %}
 
 {% block scripts %}
