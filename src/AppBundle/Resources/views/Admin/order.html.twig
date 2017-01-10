@@ -15,10 +15,10 @@
 </nav>
 <table class="table">
   <tbody>
-  {% for event in events%}
+  {% for event in order.events %}
   <tr>
     <td>{{ event.eventName }}</td>
-    <td>{{ event.courier.username }}</td>
+    <td>{% if event.courier is not empty %}{{ event.courier.username }}{% endif %}</td>
     <td>{{ event.createdAt|date('Y-m-d H:i:s') }}</td>
   </tr>
   {% endfor %}
