@@ -58,7 +58,7 @@ orderDispatcher.setHandler(function(order, next) {
 
   winston.info('Trying to dispatch order #' + order.id);
 
-  Courier.nearestForOrder(order, 10 * 1000).then(function(courier) {
+  Courier.nearestForOrder(order, 3000).then(function(courier) {
 
     if (!courier) {
       winston.debug('No couriers nearby');
