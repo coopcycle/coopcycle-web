@@ -30,7 +30,7 @@ class Routing
         list($originLat, $originLng) = explode(',', $origin);
         list($destinationLat, $destinationLng) = explode(',', $destination);
 
-        $data = file_get_contents("http://localhost:5000/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}");
+        $data = file_get_contents("http://localhost:5000/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
 
         return new JsonResponse($data, 200, [], true);
     }
