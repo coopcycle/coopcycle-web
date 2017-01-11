@@ -1,0 +1,30 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block content %}
+
+<h2>Order #{{ order.id }}</h2>
+
+<div class="well well-sm">
+  <span class="label label-success">{{ order.status }}</span>
+</div>
+
+<div class="well well-sm">
+  <h5>{{ order.restaurant.name }}</h5>
+  <p>{{ order.restaurant.streetAddress }}</p>
+</div>
+
+<table class="table">
+  <tbody>
+  {% for event in order.events %}
+  <tr>
+    <td>{{ event.eventName }}</td>
+    <td>{% if event.courier is not empty %}{{ event.courier.username }}{% endif %}</td>
+    <td>{{ event.createdAt|date('Y-m-d H:i:s') }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

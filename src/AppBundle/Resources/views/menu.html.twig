@@ -55,11 +55,6 @@
               <li><a href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a></li>
               <li><a href="{{ path('profile_orders') }}">{% trans %}My orders{% endtrans %}</a></li>
               <li><a href="{{ path('profile_addresses') }}">{% trans %}My addresses{% endtrans %}</a></li>
-              {% if is_granted('ROLE_RESTAURANT') %}
-              <li role="separator" class="divider"></li>
-              <li><a href="{{ path('profile_restaurant_orders') }}">Mes commandes</a></li>
-              <li><a href="#">Mes plats</a></li>
-              {% endif %}
               <li role="separator" class="divider"></li>
               <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
             </ul>

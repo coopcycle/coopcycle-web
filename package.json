@@ -11,6 +11,7 @@
   "dependencies": {
     "async": "^2.1.4",
     "card": "^2.1.1",
+    "chart.js": "^2.4.0",
     "fontawesome-markers": "^4.6.1",
     "form-data": "^2.1.2",
     "js-yaml": "^3.7.0",

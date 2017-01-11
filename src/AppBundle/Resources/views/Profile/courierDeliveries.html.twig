@@ -1,0 +1,69 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ asset('css/circle.css') }}">
+{% endblock %}
+
+{% block content %}
+{% set status_label_class = {
+  'CREATED': 'label-default',
+  'WAITING': 'label-danger',
+  'ACCEPTED': 'label-primary',
+  'PICKED': 'label-info',
+  'DELIVERED': 'label-success'
+} %}
+
+<p class="text-center">Average delivery time</p>
+<div class="c100 p80 center">
+  <span>{{ avg_delivery_time }}</span>
+  <div class="slice"><div class="bar"></div><div class="fill"></div></div>
+</div>
+<hr>
+<canvas id="myChart" width="100" height="33"></canvas>
+<hr>
+
+<table class="table">
+  <thead>
+    <th>#</th>
+    <th>Status</th>
+    <th>Restaurant</th>
+    <th>Created</th>
+    <th class="text-right">Delivery time</th>
+  </thead>
+  <tbody>
+  {% for order in orders %}
+  <tr>
+    <td><a href="{{ path('profile_order', {id: order.id}) }}">#{{ order.id }}</a></td>
+    <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
+    <td>{{ order.restaurant.name }}</td>
+    <td>{{ order.createdAt|ago }}</td>
+    <td class="text-right">{{ order.deliveryTime }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+
+  {% set labels = [] %}
+  {% set pickup_data = [] %}
+  {% set delivery_data = [] %}
+
+  {% for item in delivery_times %}
+    {% set labels = labels|merge(['Order #' ~ item.id]) %}
+    {% set pickup_data = pickup_data|merge([item.pickup_time]) %}
+    {% set delivery_data = delivery_data|merge([item.delivery_time]) %}
+  {% endfor %}
+  <script>
+  window.AppData = window.AppData || {};
+  window.AppData.DeliveryTimes = {
+    labels: {{ labels|json_encode()|raw }},
+    data: {
+      pickup: {{ pickup_data|json_encode()|raw }},
+      delivery: {{ delivery_data|json_encode()|raw }}
+    }
+  }
+  </script>
+  <script src="{{ asset('js/profile-deliveries.js') }}"></script>
+{% endblock %}

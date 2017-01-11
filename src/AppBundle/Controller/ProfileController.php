@@ -61,6 +61,20 @@ class ProfileController extends Controller
     }
 
     /**
+     * @Route("/profile/orders/{id}", name="profile_order")
+     * @Template()
+     */
+    public function orderAction($id, Request $request)
+    {
+        $order = $this->getDoctrine()->getRepository('AppBundle:Order')
+            ->find($id);
+
+        return array(
+            'order' => $order,
+        );
+    }
+
+    /**
      * @Route("/profile/addresses", name="profile_addresses")
      * @Template()
      */
@@ -111,42 +125,26 @@ class ProfileController extends Controller
     }
 
     /**
+     * @Route("/profile/deliveries", name="profile_courier_deliveries")
      * @Template()
      */
-    public function restaurantOrdersAction(Request $request)
+    public function courierDeliveriesAction(Request $request)
     {
-        $restaurants = $this->getUser()->getRestaurants();
+        $deliveryTimes = $this->getDoctrine()->getRepository('AppBundle:Order')
+            ->getDeliveryTimes($this->getUser());
 
-        $orders = $this->getRepository('Order')->findByRestaurants($restaurants);
+        $avgDeliveryTime = $this->getDoctrine()->getRepository('AppBundle:Order')
+            ->getAverageDeliveryTime($this->getUser());
 
-        $nextStatus = array();
-        foreach ($orders as $order) {
-            $nextStatus[$order->getId()] = OrderStatus::getNext($order);
-        }
+        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->findBy(
+            ['courier' => $this->getUser()],
+            ['createdAt' => 'DESC']
+        );
 
-        return array(
+        return [
             'orders' => $orders,
-            'next_status' => $nextStatus
-        );
-    }
-
-    /**
-     * @Template()
-     */
-    public function restaurantOrderAction($id, Request $request)
-    {
-        $order = $this->getRepository('Order')->find($id);
-
-        if ($request->isMethod('POST')) {
-            $status = $request->request->get('status');
-            $order->setStatus($status);
-            $this->getManager('Order')->flush();
-
-            return $this->redirectToRoute('profile_restaurant_orders');
-        }
-
-        return array(
-            'order' => $order
-        );
+            'avg_delivery_time' => $avgDeliveryTime,
+            'delivery_times' => $deliveryTimes,
+        ];
     }
 }
