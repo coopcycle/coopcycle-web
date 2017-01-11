@@ -8,6 +8,7 @@ module.exports = {
     homepage: './js/app/homepage/index.js',
     'order-payment': './js/app/order/payment.js',
     'order-tracking': './js/app/order/tracking.js',
+    'profile-deliveries': './js/app/profile/deliveries.js',
   },
   output: {
     path: __dirname + '/web/js',

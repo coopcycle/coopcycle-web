@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Order;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -44,10 +45,17 @@ class AdminController extends Controller
 
         $orders = $orderRepository->findBy([], ['createdAt' => 'DESC'], $limit, $offset);
 
+        $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
+        $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
+        $picked = $orderRepository->countByStatus(Order::STATUS_PICKED);
+
         return array(
             'page' => $page,
             'pages' => $pages,
             'orders' => $orders,
+            'waiting_count' => $waiting,
+            'accepted_count' => $accepted,
+            'picked_count' => $picked,
         );
     }
 

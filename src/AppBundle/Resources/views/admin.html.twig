@@ -10,6 +10,7 @@
       crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    {% block styles %}{% endblock %}
   </head>
   <body>
     {% include "AppBundle::menu.html.twig" %}
