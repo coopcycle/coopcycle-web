@@ -5,9 +5,12 @@
     <title>CoopCycle - Tracking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Arvo:400,700">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
       crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/leaflet-beautify-marker.css" />
     <link rel="stylesheet" href="/css/styles.css">
     <style>
     html, body {
@@ -16,13 +19,12 @@
       padding: 0;
       margin: 0;
     }
-    #map {
-      margin: 0 auto;
-      width: 100%;
-      height: 100%;
-    }
     #wrap {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
       display: flex;
+      -webkit-flex-direction: row;
       flex-direction: row;
       width: 100%;
       height: 100%;
@@ -30,12 +32,29 @@
       margin: 0;
     }
     #wrap .map {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-flex: 7.5;
+      -webkit-flex: 7.5;
+      -ms-flex: 7.5;
       flex: 7.5;
     }
+    #map {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+    }
     #wrap .menu {
+      -webkit-box-flex: 2.5;
+      -webkit-flex: 2.5;
+      -ms-flex: 2.5;
       flex: 2.5;
       overflow: auto;
-      background-color: #34495e;
+      background-color: #333;
+      border-left: 1px solid #fff;
     }
     #order-list {
       padding: 10px;
@@ -58,7 +77,5 @@
       window.mapZoom = {{ zoom }};
     </script>
     <script src="/js/tracking.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&callback=initMap"
-      async defer></script>
   </body>
 </html>
