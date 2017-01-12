@@ -4,12 +4,9 @@ import OrderList from './OrderList.jsx';
 
 var _ = require('underscore');
 var TWEEN = require('tween.js');
+var L = require('leaflet-providers');
 
-var MarkerIcons = {
-  "CUTLERY":"M23.04-62.135v23.04q0 2.196-1.278 3.996t-3.33 2.52v28.044q0 1.872-1.368 3.24t-3.24 1.368h-4.608q-1.872 0-3.24-1.368t-1.368-3.24v-28.044q-2.052-.72-3.33-2.52t-1.278-3.996v-23.04q0-.936.684-1.62t1.62-.684 1.62.684.684 1.62v14.976q0 .936.684 1.62t1.62.684 1.62-.684.684-1.62v-14.976q0-.936.684-1.62t1.62-.684 1.62.684.684 1.62v14.976q0 .936.684 1.62t1.62.684 1.62-.684.684-1.62v-14.976q0-.936.684-1.62t1.62-.684 1.62.684.684 1.62zm27.648 0v57.6q0 1.872-1.368 3.24t-3.24 1.368h-4.608q-1.872 0-3.24-1.368t-1.368-3.24v-18.432h-8.064q-.468 0-.81-.342t-.342-.81v-28.8q0-4.752 3.384-8.136t8.136-3.384h9.216q.936 0 1.62.684t.684 1.62z",
-  "MAP_MARKER":"M27.648-41.399q0-3.816-2.7-6.516t-6.516-2.7-6.516 2.7-2.7 6.516 2.7 6.516 6.516 2.7 6.516-2.7 2.7-6.516zm9.216 0q0 3.924-1.188 6.444l-13.104 27.864q-.576 1.188-1.71 1.872t-2.43.684-2.43-.684-1.674-1.872l-13.14-27.864q-1.188-2.52-1.188-6.444 0-7.632 5.4-13.032t13.032-5.4 13.032 5.4 5.4 13.032z",
-  "BICYCLE":"M27.432-22.967h-11.304q-1.44 0-2.07-1.26t.234-2.412l6.768-9.036q-2.34-1.116-4.932-1.116-4.752 0-8.136 3.384t-3.384 8.136 3.384 8.136 8.136 3.384q4.14 0 7.308-2.61t3.996-6.606zm-6.696-4.608h6.696q-.648-3.06-2.7-5.328zm17.28 0l10.368-13.824h-17.28l-3.564 4.752q3.78 3.708 4.536 9.072h5.94zm40.32 2.304q0-4.752-3.384-8.136t-8.136-3.384q-2.16 0-4.356.864l6.264 9.36q.54.828.36 1.764t-.972 1.44q-.54.396-1.296.396-1.26 0-1.908-1.044l-6.264-9.36q-3.348 3.42-3.348 8.1 0 4.752 3.384 8.136t8.136 3.384 8.136-3.384 3.384-8.136zm4.608 0q0 6.66-4.734 11.394t-11.394 4.734-11.394-4.734-4.734-11.394q0-3.492 1.422-6.606t3.942-5.382l-2.34-3.528-12.708 16.884q-.648.936-1.836.936h-7.092q-.828 5.904-5.364 9.864t-10.584 3.96q-6.66 0-11.394-4.734t-4.734-11.394 4.734-11.394 11.394-4.734q4.104 0 7.74 1.98l4.932-6.588h-8.064q-.936 0-1.62-.684t-.684-1.62.684-1.62 1.62-.684h13.824v4.608h15.66l-3.06-4.608h-7.992q-.936 0-1.62-.684t-.684-1.62.684-1.62 1.62-.684h9.216q1.188 0 1.908 1.008l9.612 14.4q3.276-1.584 6.912-1.584 6.66 0 11.394 4.734t4.734 11.394z"
-}
+require('beautifymarker');
 
 var map;
 
@@ -49,50 +46,40 @@ var center = {
 };
 var zoom = window.mapZoom || 13;
 
-function createMarkerIcon(iconPath, iconFillColor) {
-  return {
-    path: iconPath,
-    origin: new google.maps.Point(0, 0),
-    anchor: new google.maps.Point(30, -30),
-    scale: 0.4,
-    strokeWeight: 0,
-    strokeColor: '#000',
-    strokeOpacity: 1,
-    fillColor: iconFillColor,
-    fillOpacity: 1,
-  }
+function createMarkerIcon(icon, iconShape, color) {
+  return L.BeautifyIcon.icon({
+    icon: icon,
+    iconShape: iconShape,
+    borderColor: color,
+    textColor: color,
+    backgroundColor: 'transparent'
+  });
 }
 
-function createMarker(position, iconPath, iconFillColor, infoWindow) {
-  var marker = new google.maps.Marker({
-    position: position,
-    map: map,
-    animation: google.maps.Animation.DROP,
-    icon: createMarkerIcon(iconPath, iconFillColor),
-  });
+function createMarker(position, icon, iconShape, color) {
 
-  if (infoWindow) {
-    marker.addListener('click', function() {
-      closeAllInfoWindows();
-      infoWindow.open(map, marker);
-    });
-  }
+  var marker = L.marker([position.lat, position.lng], {
+    icon: createMarkerIcon(icon, iconShape, color)
+  }).addTo(map);
+
+  // if (infoWindow) {
+  //   marker.addListener('click', function() {
+  //     closeAllInfoWindows();
+  //     infoWindow.open(map, marker);
+  //   });
+  // }
 
   return marker;
 }
 
 function createCircle(position, color) {
 
-  var circle = new google.maps.Circle({
-    strokeColor: color,
-    strokeOpacity: 0.35,
-    strokeWeight: 1,
+  var circle = L.circle([position.lat, position.lng], {
+    color: color,
     fillColor: color,
     fillOpacity: 0.15,
-    map: map,
-    center: position,
     radius: 0
-  });
+  }).addTo(map);
 
   return circle;
 }
@@ -110,11 +97,13 @@ function addOrder(order) {
 
   if (!marker) {
 
-    var circle = createCircle(order.restaurant, randomColor);
+    var circle;
+    var tween;
 
     if (order.state === 'WAITING' || order.state === 'DISPATCHING') {
-      var coords = { radius: 0 };
-      var tween = new TWEEN.Tween(coords)
+      circle = createCircle(order.restaurant, randomColor);
+
+      tween = new TWEEN.Tween({ radius: 0 })
         .easing(TWEEN.Easing.Cubic.Out)
         .to({ radius: 1000 }, 500)
         .onUpdate(function() {
@@ -133,10 +122,10 @@ function addOrder(order) {
       requestAnimationFrame(animate);
     }
 
-    var infoWindow = new google.maps.InfoWindow({
-      content: order.key
-    });
-    infoWindows.push(infoWindow);
+    // var infoWindow = new google.maps.InfoWindow({
+    //   content: order.key
+    // });
+    // infoWindows.push(infoWindow);
 
     orderList.setItem(key, Object.assign(order, {
       color: randomColor
@@ -146,8 +135,8 @@ function addOrder(order) {
       key: key,
       courier: order.courier,
       color: randomColor,
-      restaurantMarker: createMarker(order.restaurant, MarkerIcons.CUTLERY, randomColor, infoWindow),
-      deliveryAddressMarker: createMarker(order.deliveryAddress, MarkerIcons.MAP_MARKER, randomColor),
+      restaurantMarker: createMarker(order.restaurant, 'cutlery', 'marker', randomColor),
+      deliveryAddressMarker: createMarker(order.deliveryAddress, 'user', 'marker', randomColor),
       restaurantCircle: circle,
       circleTween: tween,
     };
@@ -156,12 +145,15 @@ function addOrder(order) {
   } else {
     marker.courier = order.courier;
     if (order.state === 'DELIVERING') {
-      // TODO Do not call this every time!
       if (marker.circleTween) {
         marker.circleTween.stop();
+        marker.circleTween = null;
       }
-      marker.restaurantCircle.setRadius(0);
-      marker.restaurantCircle.setMap(null);
+      if (marker.restaurantCircle) {
+        marker.restaurantCircle.setRadius(0);
+        map.removeLayer(marker.restaurantCircle);
+        marker.restaurantCircle = null;
+      }
     }
 
     orderList.setItem(key, order);
@@ -178,29 +170,29 @@ function addCourier(key, position) {
     return order.courier === key;
   });
 
-  var color = order ? order.color : '#000';
+  var color = order ? order.color : '#fff';
 
   if (!marker) {
 
-    var infoWindow = new google.maps.InfoWindow({
-      content: key
-    });
-    infoWindows.push(infoWindow);
+    // var infoWindow = new google.maps.InfoWindow({
+    //   content: key
+    // });
+    // infoWindows.push(infoWindow);
 
     marker = {
       key: key,
-      marker: createMarker(position, MarkerIcons.BICYCLE, color),
+      marker: createMarker(position, 'bicycle', 'circle', color)
     };
 
-    marker.marker.addListener('click', function() {
-      closeAllInfoWindows();
-      infoWindow.open(map, marker.marker);
-    });
+    // marker.marker.addListener('click', function() {
+    //   closeAllInfoWindows();
+    //   infoWindow.open(map, marker.marker);
+    // });
 
     couriers.push(marker);
   } else {
-    marker.marker.setIcon(createMarkerIcon(MarkerIcons.BICYCLE, color));
-    marker.marker.setPosition(position);
+    marker.marker.setLatLng([position.lat, position.lng]).update();
+    marker.marker.setIcon(createMarkerIcon('bicycle', 'circle', color));
   }
 }
 
@@ -231,51 +223,52 @@ function removeMarkersByKeys(keys, markers) {
       console.log('Removing marker ' + key);
       var marker = markers.splice(index, 1);
       if (marker[0].hasOwnProperty('marker')) {
-        marker[0].marker.setMap(null);
+        map.removeLayer(marker[0].marker);
       }
       if (marker[0].hasOwnProperty('restaurantMarker')) {
-        marker[0].restaurantMarker.setMap(null);
+        map.removeLayer(marker[0].restaurantMarker);
       }
       if (marker[0].hasOwnProperty('deliveryAddressMarker')) {
-        marker[0].deliveryAddressMarker.setMap(null);
+        map.removeLayer(marker[0].deliveryAddressMarker);
       }
-      if (marker[0].hasOwnProperty('restaurantCircle')) {
+      if (marker[0].hasOwnProperty('restaurantCircle') && marker[0].restaurantCircle) {
         marker[0].restaurantCircle.setRadius(0);
-        marker[0].restaurantCircle.setMap(null);
+        map.removeLayer(marker[0].restaurantCircle);
       }
       orderList.removeItem(key);
     }
   });
 }
 
-window.initMap = function() {
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: center,
-    zoom: zoom
+map = L.map('map').setView([center.lat, center.lng], zoom);
+// L.tileLayer.provider('OpenStreetMap.BlackAndWhite').addTo(map);
+
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>'
+}).addTo(map);
+
+var hostname = window.location.hostname;
+
+setTimeout(function() {
+
+  var socket = io('//' + hostname, {path: '/tracking/socket.io'});
+
+  socket.on('couriers', function (data) {
+    removeMissingObjects(data, couriers);
+    for (var i = 0; i < data.length; i++) {
+      addCourier(data[i].key, data[i].coords);
+    }
   });
 
-  var hostname = window.location.hostname;
+  socket.on('orders', function (data) {
+    removeMissingObjects(data, orders);
+    for (var i = 0; i < data.length; i++) {
+      addOrder(data[i]);
+    }
+  });
 
-  setTimeout(function() {
-
-    var socket = io('//' + hostname, {path: '/tracking/socket.io'});
-
-    socket.on('couriers', function (data) {
-      removeMissingObjects(data, couriers);
-      for (var i = 0; i < data.length; i++) {
-        addCourier(data[i].key, data[i].coords);
-      }
-    });
-
-    socket.on('orders', function (data) {
-      removeMissingObjects(data, orders);
-      for (var i = 0; i < data.length; i++) {
-        addOrder(data[i]);
-      }
-    });
-
-  }, 1000);
-}
+}, 1000);
 
 orderList = render(
   <OrderList
@@ -286,24 +279,22 @@ orderList = render(
         return marker.key === order.key;
       });
 
-      var bounds = new google.maps.LatLngBounds();
+      var bounds = [];
 
-      bounds.extend(marker.restaurantMarker.position);
-      bounds.extend(marker.deliveryAddressMarker.position);
+      bounds.push(marker.restaurantMarker);
+      bounds.push(marker.deliveryAddressMarker);
 
       if (marker.courier) {
         var courierMarker = _.find(couriers, function(marker) {
           return marker.key === order.courier;
         });
         if (courierMarker) {
-          bounds.extend(courierMarker.marker.position);
+          bounds.push(courierMarker.marker);
         }
       }
 
-      map.fitBounds(bounds);
-      google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
-        map.setCenter(bounds.getCenter());
-      });
+      var group = new L.featureGroup(bounds);
+      map.fitBounds(group.getBounds());
 
     }} />,
   document.getElementById('order-list')
