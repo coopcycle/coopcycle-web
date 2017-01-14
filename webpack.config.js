@@ -4,7 +4,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 module.exports = {
   entry: {
     cart: './js/app/cart/index.jsx',
-    tracking: './js/app/tracking/index.js',
+    tracking: './js/app/tracking/index.jsx',
     homepage: './js/app/homepage/index.js',
     'order-payment': './js/app/order/payment.js',
     'order-tracking': './js/app/order/tracking.js',
