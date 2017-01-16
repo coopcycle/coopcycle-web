@@ -6,6 +6,7 @@
 
 {% set status_label_class = {
   'CREATED': 'label-default',
+  'CANCELED': 'label-default',
   'WAITING': 'label-danger',
   'ACCEPTED': 'label-primary',
   'PICKED': 'label-info',
@@ -62,6 +63,7 @@
     <th>Price</th>
     <th>Created</th>
     <th>Delivery time</th>
+    <th></th>
   </thead>
   <tbody>
   {% for order in orders %}
@@ -72,6 +74,7 @@
     <td>{{ order.total }} €</td>
     <td>{{ order.createdAt|ago }}</td>
     <td>{{ order.deliveryTime }}</td>
+    <td><a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">Cancel</a></td>
   </tr>
   {% endfor %}
   </tbody>
