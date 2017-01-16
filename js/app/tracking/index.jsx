@@ -1,12 +1,28 @@
 import React from 'react';
 import {render} from 'react-dom';
 import OrderList from './OrderList.jsx';
+import 'whatwg-fetch';
 
 var _ = require('underscore');
 var TWEEN = require('tween.js');
 var L = require('leaflet-providers');
-
+var Polyline = require('polyline');
 require('beautifymarker');
+
+var toPolylineCoordinates = function(polyline) {
+  var steps = Polyline.decode(polyline);
+  var polylineCoords = [];
+
+  for (var i = 0; i < steps.length; i++) {
+    var tempLocation = new L.LatLng(
+      steps[i][0],
+      steps[i][1]
+    );
+    polylineCoords.push(tempLocation);
+  }
+
+  return polylineCoords;
+}
 
 var map;
 
@@ -139,6 +155,7 @@ function addOrder(order) {
       deliveryAddressMarker: createMarker(order.deliveryAddress, 'user', 'marker', randomColor),
       restaurantCircle: circle,
       circleTween: tween,
+      polyline: null,
     };
 
     orders.push(marker);
@@ -279,8 +296,15 @@ orderList = render(
         return marker.key === order.key;
       });
 
-      var bounds = [];
+      _.each(orders, (marker) => {
+        if (marker.polyline) {
+          map.removeLayer(marker.polyline);
+          marker.polyline = null;
+        }
+      });
 
+      // Fit map to bounds
+      var bounds = [];
       bounds.push(marker.restaurantMarker);
       bounds.push(marker.deliveryAddressMarker);
 
@@ -295,6 +319,27 @@ orderList = render(
 
       var group = new L.featureGroup(bounds);
       map.fitBounds(group.getBounds());
+
+      // Draw polyline
+      var restaurant = marker.restaurantMarker.getLatLng();
+      var deliveryAddress = marker.deliveryAddressMarker.getLatLng();
+
+      var originParam = [restaurant.lat, restaurant.lng].join(',');
+      var destinationParam = [deliveryAddress.lat, deliveryAddress.lng].join(',');
+
+      fetch('/api/routing/route?origin=' + originParam + '&destination=' + destinationParam)
+        .then((response) => {
+          response.json().then((data) => {
+            var route = toPolylineCoordinates(data.routes[0].geometry);
+            marker.polyline = new L.Polyline(route, {
+              color: marker.color,
+              weight: 3,
+              opacity: 0.5,
+              smoothFactor: 1
+            });
+            map.addLayer(marker.polyline);
+          });
+        });
 
     }} />,
   document.getElementById('order-list')
