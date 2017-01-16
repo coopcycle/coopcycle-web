@@ -1,10 +1,12 @@
 # Load DSL and set up stages
 require "capistrano/setup"
 
-require 'capistrano/ssh_doctor'
-
 # Include default deployment tasks
 require "capistrano/deploy"
+
+# Load the SCM plugin appropriate to your project:
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
 
 # Include Symfony tasks
 require 'capistrano/file-permissions'

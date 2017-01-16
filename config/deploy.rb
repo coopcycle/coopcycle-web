@@ -1,6 +1,3 @@
-# config valid only for current version of Capistrano
-lock '3.6.1'
-
 set :user, 'capistrano'
 set :use_sudo, false
 
