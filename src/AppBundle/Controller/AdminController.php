@@ -43,7 +43,10 @@ class AdminController extends Controller
 
         $offset = $limit * ($page - 1);
 
-        $orders = $orderRepository->findBy([], ['createdAt' => 'DESC'], $limit, $offset);
+        $orders = $orderRepository->findBy([], [
+            'updatedAt' => 'DESC',
+            'createdAt' => 'DESC'
+        ], $limit, $offset);
 
         $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
         $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
@@ -65,13 +68,34 @@ class AdminController extends Controller
      */
     public function orderAction($id, Request $request)
     {
-        $order = $users = $this->getDoctrine()
+        $order = $this->getDoctrine()
             ->getRepository('AppBundle:Order')
             ->find($id);
 
         return array(
             'order' => $order,
         );
+    }
+
+    /**
+     * @Route("/admin/orders/{id}/cancel", name="order_cancel")
+     * @Template
+     */
+    public function orderCancelAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManagerForClass('AppBundle:Order');
+
+        $order = $this->getDoctrine()
+            ->getRepository('AppBundle:Order')
+            ->find($id);
+
+        $order->setStatus(Order::STATUS_CANCELED);
+
+        $em->flush();
+
+        $this->get('snc_redis.default')->lrem('orders:waiting', 0, $order->getId());
+
+        return $this->redirectToRoute('admin_orders');
     }
 
     /**

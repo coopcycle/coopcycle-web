@@ -44,6 +44,7 @@ class Order
     const STATUS_PICKED = 'PICKED';
     const STATUS_ACCIDENT = 'ACCIDENT';
     const STATUS_DELIVERED = 'DELIVERED';
+    const STATUS_CANCELED = 'CANCELED';
 
     /**
      * @var int
