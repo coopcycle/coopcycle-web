@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -97,8 +98,12 @@ class RestaurantController extends Controller
      */
     public function indexAction($id, $slug, Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $restaurant = $repository->find($id);
+        $restaurant = $this->getDoctrine()
+            ->getRepository('AppBundle:Restaurant')->find($id);
+
+        if (!$restaurant) {
+            throw new NotFoundHttpException();
+        }
 
         return array(
             'restaurant' => $restaurant,
@@ -114,20 +119,21 @@ class RestaurantController extends Controller
      */
     public function addToCartAction($id, Request $request)
     {
-        $restaurantManager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
-        $restaurantRepository = $restaurantManager->getRepository('AppBundle\\Entity\\Restaurant');
-
-        $productManager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Product');
-        $productRepository = $productManager->getRepository('AppBundle\\Entity\\Product');
-
-        $restaurant = $restaurantRepository->find($id);
-
-        // TODO Check if product belongs to restaurant
-
-        $productId = $request->request->get('product');
-        $product = $productRepository->find($productId);
+        $restaurant = $this->getDoctrine()
+            ->getRepository('AppBundle:Restaurant')->find($id);
 
         $cart = $this->getCart($request, $restaurant);
+
+        if (!$request->request->has('product')) {
+
+            return new JsonResponse($cart->toArray());
+        }
+
+        // TODO Check if product belongs to restaurant
+        $productId = $request->request->get('product');
+        $product = $this->getDoctrine()
+            ->getRepository('AppBundle:Product')->find($productId);
+
         $cart->addProduct($product);
         $this->saveCart($request, $cart);
 
