@@ -62,6 +62,10 @@ class OrderController extends Controller
      */
     public function indexAction(Request $request)
     {
+        if (null === $this->getCart($request)) {
+            return [];
+        }
+
         $order = $this->createOrderFromRequest($request);
 
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {

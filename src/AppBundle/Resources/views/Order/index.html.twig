@@ -1,6 +1,8 @@
 {% extends "AppBundle::base.html.twig" %}
 
-{% form_theme form with ['AppBundle:Order:order_fields.html.twig'] %}
+{% if form is defined %}
+  {% form_theme form with ['AppBundle:Order:order_fields.html.twig'] %}
+{% endif %}
 
 {% block body %}
 <div class="container">
@@ -13,9 +15,9 @@
         <h2>Ma commande</h2>
       </div>
 
-      {% include 'AppBundle:Order:breadcrumb.html.twig' %}
+      {% if cart is defined %}
 
-      {% if cart %}
+      {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
       <form method="post">
 
@@ -53,9 +55,9 @@
       </form>
 
       {% else %}
-
+      <div class="alert alert-warning">
       Pas de commande en cours.
-
+      </div>
       {% endif %}
 
     </div>
@@ -65,7 +67,7 @@
 {% endblock %}
 
 {% block scripts %}
-
+{% if cart is defined %}
 <script type="text/javascript">
 
 var inputMap = {
@@ -138,4 +140,5 @@ function initMap() {
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&signed_in=true&libraries=places&callback=initMap"
   async defer></script>
+{% endif %}
 {% endblock %}
