@@ -9,26 +9,9 @@ var L = require('leaflet-providers');
 var Polyline = require('polyline');
 require('beautifymarker');
 
-var toPolylineCoordinates = function(polyline) {
-  var steps = Polyline.decode(polyline);
-  var polylineCoords = [];
-
-  for (var i = 0; i < steps.length; i++) {
-    var tempLocation = new L.LatLng(
-      steps[i][0],
-      steps[i][1]
-    );
-    polylineCoords.push(tempLocation);
-  }
-
-  return polylineCoords;
-}
-
 var map;
-
 var orders = [];
 var couriers = [];
-var deliveryAddresses = [];
 var orderList;
 
 var LABELS = {
@@ -62,6 +45,59 @@ var center = {
 };
 var zoom = window.mapZoom || 13;
 
+function toPolylineCoordinates(polyline) {
+  var steps = Polyline.decode(polyline);
+  var polylineCoords = [];
+
+  for (var i = 0; i < steps.length; i++) {
+    var tempLocation = new L.LatLng(
+      steps[i][0],
+      steps[i][1]
+    );
+    polylineCoords.push(tempLocation);
+  }
+
+  return polylineCoords;
+}
+
+function fitToLayers() {
+  var bounds = [];
+  _.each(orders, (marker) => {
+    bounds.push(marker.restaurantMarker);
+    bounds.push(marker.deliveryAddressMarker);
+  });
+  _.each(couriers, (marker) => {
+    bounds.push(marker.marker);
+  });
+  var group = new L.featureGroup(bounds);
+  map.fitBounds(group.getBounds());
+}
+
+function removePolylines() {
+  _.each(orders, (marker) => {
+    if (marker.polyline) {
+      map.removeLayer(marker.polyline);
+      marker.polyline = null;
+    }
+  });
+}
+
+function hideOtherOrders(key) {
+  _.each(orders, (marker) => {
+    if (marker.key !== key) {
+      map.removeLayer(marker.layerGroup);
+    } else {
+      map.addLayer(marker.layerGroup);
+    }
+  });
+}
+
+function showAllOrders() {
+  _.each(orders, (marker) => {
+    map.addLayer(marker.layerGroup);
+  });
+}
+
 function createMarkerIcon(icon, iconShape, color) {
   return L.BeautifyIcon.icon({
     icon: icon,
@@ -76,7 +112,7 @@ function createMarker(position, icon, iconShape, color) {
 
   var marker = L.marker([position.lat, position.lng], {
     icon: createMarkerIcon(icon, iconShape, color)
-  }).addTo(map);
+  });
 
   // if (infoWindow) {
   //   marker.addListener('click', function() {
@@ -147,16 +183,23 @@ function addOrder(order) {
       color: randomColor
     }));
 
+    var restaurantMarker = createMarker(order.restaurant, 'cutlery', 'marker', randomColor);
+    var deliveryAddressMarker = createMarker(order.deliveryAddress, 'user', 'marker', randomColor);
+    var layerGroup = L.layerGroup([restaurantMarker, deliveryAddressMarker]);
+
     marker = {
       key: key,
       courier: order.courier,
       color: randomColor,
-      restaurantMarker: createMarker(order.restaurant, 'cutlery', 'marker', randomColor),
-      deliveryAddressMarker: createMarker(order.deliveryAddress, 'user', 'marker', randomColor),
+      restaurantMarker: restaurantMarker,
+      deliveryAddressMarker: deliveryAddressMarker,
       restaurantCircle: circle,
       circleTween: tween,
       polyline: null,
+      layerGroup: layerGroup,
     };
+
+    layerGroup.addTo(map);
 
     orders.push(marker);
   } else {
@@ -196,10 +239,14 @@ function addCourier(key, position) {
     // });
     // infoWindows.push(infoWindow);
 
+    var courierMarker = createMarker(position, 'bicycle', 'circle', color);
+
     marker = {
       key: key,
-      marker: createMarker(position, 'bicycle', 'circle', color)
+      marker: courierMarker
     };
+
+    courierMarker.addTo(map);
 
     // marker.marker.addListener('click', function() {
     //   closeAllInfoWindows();
@@ -289,38 +336,21 @@ setTimeout(function() {
 
 orderList = render(
   <OrderList
+    onReset={() => {
+      removePolylines();
+      showAllOrders();
+      fitToLayers();
+    }}
     onItemClick={(order) => {
       console.log('Zoom to order', order.key);
+
+      removePolylines();
+      hideOtherOrders(order.key);
 
       var marker = _.find(orders, function(marker) {
         return marker.key === order.key;
       });
 
-      _.each(orders, (marker) => {
-        if (marker.polyline) {
-          map.removeLayer(marker.polyline);
-          marker.polyline = null;
-        }
-      });
-
-      // Fit map to bounds
-      var bounds = [];
-      bounds.push(marker.restaurantMarker);
-      bounds.push(marker.deliveryAddressMarker);
-
-      if (marker.courier) {
-        var courierMarker = _.find(couriers, function(marker) {
-          return marker.key === order.courier;
-        });
-        if (courierMarker) {
-          bounds.push(courierMarker.marker);
-        }
-      }
-
-      var group = new L.featureGroup(bounds);
-      map.fitBounds(group.getBounds());
-
-      // Draw polyline
       var restaurant = marker.restaurantMarker.getLatLng();
       var deliveryAddress = marker.deliveryAddressMarker.getLatLng();
 
@@ -330,6 +360,23 @@ orderList = render(
       fetch('/api/routing/route?origin=' + originParam + '&destination=' + destinationParam)
         .then((response) => {
           response.json().then((data) => {
+
+            // Fit map to bounds
+            var bounds = [];
+            bounds.push(marker.restaurantMarker);
+            bounds.push(marker.deliveryAddressMarker);
+            if (marker.courier) {
+              var courierMarker = _.find(couriers, function(marker) {
+                return marker.key === order.courier;
+              });
+              if (courierMarker) {
+                bounds.push(courierMarker.marker);
+              }
+            }
+            var group = new L.featureGroup(bounds);
+            map.fitBounds(group.getBounds());
+
+            // Draw polyline
             var route = toPolylineCoordinates(data.routes[0].geometry);
             marker.polyline = new L.Polyline(route, {
               color: marker.color,
@@ -338,6 +385,7 @@ orderList = render(
               smoothFactor: 1
             });
             map.addLayer(marker.polyline);
+
           });
         });
 
