@@ -30,8 +30,12 @@ class OrderList extends React.Component
     }
   }
   onItemClick(order) {
+    this.setState({active: order.key});
     this.props.onItemClick(order);
-    this.setState({key: order.key});
+  }
+  onItemClose() {
+    this.setState({active: null});
+    this.props.onReset();
   }
   render() {
     var items = _.map(this.state.items, (item, key) => {
@@ -42,8 +46,9 @@ class OrderList extends React.Component
           color={item.color}
           state={item.state}
           order={item}
-          active={this.state.key === key}
-          onClick={this.props.onItemClick.bind(this, item)} />
+          active={this.state.active === key}
+          onClick={this.onItemClick.bind(this, item)}
+          onClose={this.onItemClose.bind(this)} />
       );
     });
 
