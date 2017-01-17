@@ -19,4 +19,13 @@ order.payment.total: Payer %total% €
 order.payment.card_number.help: >
   Utilisez l'un des <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéros de test</a> Stripe (ex: 4242424242424242).
 
+demo.disclaimer: >
+  Bienvenue ! Ce site est une démo propulsée par des bots imitant les coursiers.
+  Vous pouvez passer commander auprès des restaurants et voir une simulation de livraison.
+
+search.help: >
+  Cherchez dans les quartiers de Paris : %links%
+
+meta.title: Plateforme de livraison de repas open source. Seulement pour les sociétés coopératives.
+
 About: À propos

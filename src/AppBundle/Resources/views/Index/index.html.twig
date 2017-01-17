@@ -15,9 +15,20 @@
           </div>
         </form>
         <small>
-          * {% trans with {'%link%': '<a href="http://tour-pedia.org/about/" target="_blank">TourPedia</a>'} %}
-            Data imported from %link%
-          {% endtrans %}
+          {% set examples = {
+            'Oberkampf': path('restaurants', { geohash: 'u09typ9kp93' }),
+            'Châtelet': path('restaurants', { geohash: 'u09tvqjrnvr' }),
+            'Opéra': path('restaurants', { geohash: 'u09tvpgsem8' }),
+            'République': path('restaurants', { geohash: 'u09wjb108ub' }),
+          } %}
+          {% set links = [] %}
+          {% for name, path in examples %}
+            {% set link %}
+              <a href="{{ path }}" class="btn btn-info btn-xs"><span>{{ name }}</span></a>
+            {% endset %}
+            {% set links = links|merge([link]) %}
+          {% endfor %}
+          * {% trans with { '%links%': links|join(' ') } %}search.help{% endtrans %}
         </small>
       </div>
     </div>

@@ -6,6 +6,14 @@ body {
     font-weight: 400;
 }
 
+#banner {
+    padding: 10px 0;
+    background-color: #E74C3C;
+    color: #fff;
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
 #search {
     margin-top: -20px;
     padding: 120px 0;
@@ -14,6 +22,10 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+}
+
+#address-search-form {
+    margin-bottom: 10px;
 }
 
 #search small {

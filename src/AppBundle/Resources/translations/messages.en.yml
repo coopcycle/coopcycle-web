@@ -3,4 +3,11 @@ order.payment.total: Pay %total% €
 order.payment.card_number.help: >
   Use one of the Stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card numbers</a> (ex: 4242424242424242).
 
+demo.disclaimer: >
+  Welcome! This website is a demo powered by bots mimicking couriers.
+  You can order meals and watch a simulation of delivery.
 
+search.help: >
+  Search restaurants in Paris area : %links%
+
+meta.title: Open-source foodtech. Only for worker-owned business.
