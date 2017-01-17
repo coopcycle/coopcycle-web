@@ -119,7 +119,7 @@ class OrderController extends Controller
     public function paymentAction(Request $request)
     {
         if (!$request->getSession()->has('deliveryAddress')) {
-            throw new BadRequestHttpException('No deliveryAddress found in session');
+            return $this->redirectToRoute('order');
         }
 
         $order = $this->createOrderFromRequest($request);
