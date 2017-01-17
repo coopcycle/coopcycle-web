@@ -341,11 +341,27 @@ orderList = render(
       showAllOrders();
       fitToLayers();
     }}
+    onItemMouseEnter={(order) => {
+      var markers = _.reject(orders, function(marker) {
+        return marker.key === order.key;
+      });
+      setTimeout(() => {
+        _.each(markers, (marker) => {
+          marker.layerGroup.eachLayer(function(layer) {
+            layer.setOpacity(0.3);
+          })
+        });
+      }, 200);
+    }}
+    onItemMouseLeave={() => {
+      _.each(orders, function(marker) {
+        marker.layerGroup.eachLayer(function(layer) {
+          layer.setOpacity(1);
+        })
+      });
+    }}
     onItemClick={(order) => {
       console.log('Zoom to order', order.key);
-
-      removePolylines();
-      hideOtherOrders(order.key);
 
       var marker = _.find(orders, function(marker) {
         return marker.key === order.key;
@@ -360,6 +376,9 @@ orderList = render(
       fetch('/api/routing/route?origin=' + originParam + '&destination=' + destinationParam)
         .then((response) => {
           response.json().then((data) => {
+
+            removePolylines();
+            hideOtherOrders(order.key);
 
             // Fit map to bounds
             var bounds = [];
