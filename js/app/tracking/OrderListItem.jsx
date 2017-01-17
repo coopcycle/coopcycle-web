@@ -15,6 +15,14 @@ class OrderListItem extends React.Component
     e.preventDefault();
     this.props.onClick(this.props.order);
   }
+  onMouseEnter(e) {
+    e.preventDefault();
+    this.props.onMouseEnter(this.props.order);
+  }
+  onMouseLeave(e) {
+    e.preventDefault();
+    this.props.onMouseLeave();
+  }
   onClose(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -40,7 +48,10 @@ class OrderListItem extends React.Component
     }
 
     return (
-      <li style={{borderColor: this.props.color}} className={itemClassName.join(' ')} href="#" onClick={this.onClick.bind(this)}>
+      <li style={{borderColor: this.props.color}} className={itemClassName.join(' ')} href="#"
+        onClick={this.onClick.bind(this)}
+        onMouseEnter={this.onMouseEnter.bind(this)}
+        onMouseLeave={this.onMouseLeave.bind(this)}>
         {closeButton}
         <h5>
           <span style={{color: this.props.color}}>{this.props.id}</span>

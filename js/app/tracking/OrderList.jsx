@@ -48,7 +48,9 @@ class OrderList extends React.Component
           order={item}
           active={this.state.active === key}
           onClick={this.onItemClick.bind(this, item)}
-          onClose={this.onItemClose.bind(this)} />
+          onClose={this.onItemClose.bind(this)}
+          onMouseEnter={this.props.onItemMouseEnter.bind(this)}
+          onMouseLeave={this.props.onItemMouseLeave.bind(this)} />
       );
     });
 
