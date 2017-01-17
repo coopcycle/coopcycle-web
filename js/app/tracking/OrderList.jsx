@@ -53,9 +53,9 @@ class OrderList extends React.Component
     });
 
     return (
-      <div className="list-group">
+      <ul className="list-unstyled">
         {items}
-      </div>
+      </ul>
     );
   }
 }
