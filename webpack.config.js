@@ -11,6 +11,7 @@ module.exports = {
     'profile-deliveries': './js/app/profile/deliveries.js',
   },
   output: {
+    publicPath: "/js",
     path: __dirname + '/web/js',
     filename: "[name].js",
   },
@@ -40,6 +41,11 @@ module.exports = {
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
-      new ExtractTextPlugin("[name].css"),
-  ]
+      new ExtractTextPlugin("[name].css")
+  ],
+  devServer: {
+      contentBase: __dirname + '/web',
+      stats: 'minimal',
+      compress: true
+  }
 };

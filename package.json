@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack -d -w"
+    "watch": "webpack -d -w",
+    "webpack-dev-server": "webpack-dev-server --content-base=web/"
   },
   "author": "",
   "license": "ISC",
@@ -50,6 +51,7 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "style-loader": "^0.13.1",
-    "webpack": "^2.2.0"
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^1.16.2"
   }
 }

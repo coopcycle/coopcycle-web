@@ -88,12 +88,18 @@
           <div id="order-list"></div>
         </aside>
     </div>
-
     <script src="/tracking/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
       window.mapZoom = {{ zoom }};
     </script>
-    <script src="/js/tracking.js"></script>
+    {{#dev}}
+      <script src="http://localhost:8080/js/tracking.js"></script>
+      <script src="http://localhost:8080/webpack-dev-server.js"></script>
+    {{/dev}}
+    {{^dev}}
+      <script src="/js/tracking.js"></script>
+    {{/dev}}
+
   </body>
 </html>

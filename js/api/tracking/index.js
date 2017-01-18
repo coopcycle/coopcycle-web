@@ -13,6 +13,8 @@ console.log('---------------------');
 
 app.listen(8001);
 
+var env = process.env.NODE_ENV || 'development';
+
 function handler(req, res) {
   fs.readFile(__dirname + '/index.html', function (err, data) {
     if (err) {
@@ -23,6 +25,7 @@ function handler(req, res) {
     var params = url.parse(req.url, true).query;
 
     var output = Mustache.render(data.toString('utf8'), {
+      dev: env === 'development',
       zoom: params.zoom || 13
     });
 
