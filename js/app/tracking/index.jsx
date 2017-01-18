@@ -334,16 +334,19 @@ setTimeout(function() {
 
 }, 1000);
 
+var activeKey = null;
+
 orderList = render(
   <OrderList
     onReset={() => {
+      activeKey = null;
       removePolylines();
       showAllOrders();
       fitToLayers();
     }}
     onItemMouseEnter={(order) => {
       var markers = _.reject(orders, function(marker) {
-        return marker.key === order.key;
+        return marker.key === order.key || marker.key === activeKey;
       });
       setTimeout(() => {
         _.each(markers, (marker) => {
@@ -366,6 +369,8 @@ orderList = render(
       var marker = _.find(orders, function(marker) {
         return marker.key === order.key;
       });
+
+      activeKey = order.key;
 
       var restaurant = marker.restaurantMarker.getLatLng();
       var deliveryAddress = marker.deliveryAddressMarker.getLatLng();
