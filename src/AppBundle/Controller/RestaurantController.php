@@ -14,6 +14,9 @@ use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
+ */
 class RestaurantController extends Controller
 {
     use DoctrineTrait;
