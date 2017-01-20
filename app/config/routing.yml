@@ -21,7 +21,6 @@ fos_user:
 web:
     resource: '@AppBundle/Controller/'
     type:     'annotation'
-    prefix:   /{_locale}
 
 redirect_to_locale:
     path: /

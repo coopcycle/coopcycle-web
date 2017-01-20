@@ -3,5 +3,7 @@
 
 User-agent: *
 Disallow: /*/restaurant/*/cart
-Disallow: /*/order
-Disallow: /*/order/*
+Disallow: /login
+Disallow: /logout
+Disallow: /order
+Disallow: /order/*

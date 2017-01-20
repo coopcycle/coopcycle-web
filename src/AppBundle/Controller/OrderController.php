@@ -20,6 +20,9 @@ use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Stripe;
 
+/**
+ * @Route("/order")
+ */
 class OrderController extends Controller
 {
     use DoctrineTrait;
@@ -57,7 +60,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/order", name="order")
+     * @Route("/", name="order")
      * @Template()
      */
     public function indexAction(Request $request)
@@ -113,7 +116,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/order/payment", name="order_payment")
+     * @Route("/payment", name="order_payment")
      * @Template()
      */
     public function paymentAction(Request $request)
@@ -172,7 +175,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/order/{id}/confirm", name="order_confirm")
+     * @Route("/{id}/confirm", name="order_confirm")
      * @Template()
      */
     public function confirmAction($id, Request $request)
