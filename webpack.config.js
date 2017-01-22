@@ -7,7 +7,7 @@ module.exports = {
     tracking: './js/app/tracking/index.jsx',
     homepage: './js/app/homepage/index.js',
     'order-payment': './js/app/order/payment.js',
-    'order-tracking': './js/app/order/tracking.js',
+    'order-tracking': ['whatwg-fetch', './js/app/order/tracking.jsx'],
     'profile-deliveries': './js/app/profile/deliveries.js',
   },
   output: {

@@ -61,7 +61,7 @@ class OrderEvent
 
     public function getOrder()
     {
-        return $this->customer;
+        return $this->order;
     }
 
     public function getEventName()

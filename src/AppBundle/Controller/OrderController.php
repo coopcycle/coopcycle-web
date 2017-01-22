@@ -164,7 +164,7 @@ class OrderController extends Controller
             $request->getSession()->remove('cart');
             $request->getSession()->remove('deliveryAddress');
 
-            return $this->redirectToRoute('order_confirm', array('id' => $order->getId()));
+            return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
         }
 
         return array(

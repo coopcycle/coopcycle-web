@@ -22,12 +22,13 @@ class OrderType extends AbstractType
         $builder
             ->add('createDeliveryAddress', ChoiceType::class, [
                 'choices' => [
-                    'Adresse existante' => false,
-                    'Nouvelle adresse' => true,
+                    'Existing address' => false,
+                    'New address' => true,
                 ],
                 'mapped' => false,
                 'expanded' => true,
                 'multiple' => false,
+                'choice_translation_domain' => true,
             ])
             ->add('save', SubmitType::class, array('label' => 'Continue to payment'));
 

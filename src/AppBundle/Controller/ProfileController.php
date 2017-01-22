@@ -41,7 +41,7 @@ class ProfileController extends Controller
         $query = $qb->getQuery();
         $ordersCount = $query->getSingleScalarResult();
 
-        $perPage = 10;
+        $perPage = 15;
 
         $pages = ceil($ordersCount / $perPage);
         $offset = $perPage * ($page - 1);
@@ -62,15 +62,27 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/orders/{id}", name="profile_order")
-     * @Template()
+     * @Template("@App/Order/details.html.twig")
      */
     public function orderAction($id, Request $request)
     {
-        $order = $this->getDoctrine()->getRepository('AppBundle:Order')
-            ->find($id);
+        $order = $this->getDoctrine()
+            ->getRepository('AppBundle:Order')->find($id);
+
+        $events = [];
+        foreach ($order->getEvents() as $event) {
+            $events[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
 
         return array(
             'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
+            'order_events_json' => $this->get('serializer')->serialize($events, 'json'),
+            'layout' => 'AppBundle::profile.html.twig',
+            'breadcrumb_path' => 'profile_orders'
         );
     }
 

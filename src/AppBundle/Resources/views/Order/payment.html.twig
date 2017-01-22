@@ -4,10 +4,10 @@
 <div class="container">
 
   <div class="page-header">
-    <h2>Ma commande</h2>
+    <h2>{% trans %}My order{% endtrans %}</h2>
   </div>
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
-  Livraison : {{ order.deliveryAddress.streetAddress }}
+  {% trans %}<strong>Delivery</strong>{% endtrans %} {{ order.deliveryAddress.streetAddress }}
   <div class="row">
     <div class="col-md-6">
       <form id="payment-form" method="POST" class="form-horizontal">

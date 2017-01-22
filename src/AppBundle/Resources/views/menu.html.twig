@@ -55,7 +55,7 @@
               <li><a href="{{ path('profile_orders') }}">{% trans %}My orders{% endtrans %}</a></li>
               <li><a href="{{ path('profile_addresses') }}">{% trans %}My addresses{% endtrans %}</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+              <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
             </ul>
           </li>
         {% else %}
