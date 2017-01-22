@@ -3,6 +3,13 @@ order.payment.total: Pay %total% €
 order.payment.card_number.help: >
   Use one of the Stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card numbers</a> (ex: 4242424242424242).
 
+order.status.CREATED: Created
+order.status.CANCELED: Canceled
+order.status.WAITING: Waiting
+order.status.ACCEPTED: Accepted
+order.status.PICKED: Picked
+order.status.DELIVERED: Delivered
+
 demo.disclaimer: >
   Welcome! This website is a demo powered by bots mimicking couriers.
   You can order meals and watch a simulation of delivery.

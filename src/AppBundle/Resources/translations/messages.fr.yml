@@ -3,21 +3,39 @@ Data imported from %link%: Données importées depuis %link%
 Search for restaurants: Rechercher des restaurants
 View on GitHub: Voir sur GitHub
 My account: Mon compte
+My order: Ma commande
 My orders: Mes commandes
 My addresses: Mes adresses
 Cart: Panier
 Order: Commande
+Orders: Commandes
 Additional information: Informations supplémentaires
 Postal code: Code postal
 City: Ville
 Street address: Adresse
 Please select an address in the dropdown: Veuillez sélectionner une adresse dans la liste déroulante
 Address not available: Adresse indisponible
+Not registered yet?: Pas encore enregistré ?
+Create your account: Créez votre compte.
+History: Historique
+My deliveries: Mes livraisons
+Choose a delivery address: Choisissez une adresse de livraison
+Existing address: Adresse existante
+New address: Nouvelle adresse
+Delivery: Livraison
+Payment: Paiement
 
 order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total% €
 order.payment.card_number.help: >
   Utilisez l'un des <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéros de test</a> Stripe (ex: 4242424242424242).
+
+order.status.CREATED: Créée
+order.status.CANCELED: Annulée
+order.status.WAITING: En attente
+order.status.ACCEPTED: Acceptée
+order.status.PICKED: Récupérée
+order.status.DELIVERED: Livrée
 
 demo.disclaimer: >
   Bienvenue ! Ce site est une démo propulsée par des bots imitant les coursiers.

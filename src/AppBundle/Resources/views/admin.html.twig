@@ -1,40 +1,25 @@
-<!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
-  <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}CoopCycle - Admin{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Arvo:400,700">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    {% block styles %}{% endblock %}
-  </head>
-  <body>
-    {% include "AppBundle::menu.html.twig" %}
-    <div class="container">
-      <ol class="breadcrumb">
-        <li><a href="{{ path('admin_index') }}">Admin area</a></li>
-      </ol>
-      <div class="row">
-        <div class="col-md-3">
-          <div class="list-group">
-            <a href="{{ path('admin_dashboard') }}" class="list-group-item">{% trans %}Dashboard{% endtrans %}</a>
-            <a href="{{ path('admin_orders') }}" class="list-group-item">{% trans %}Orders{% endtrans %}</a>
-            <a href="{{ path('admin_users') }}" class="list-group-item">{% trans %}Users{% endtrans %}</a>
-          </div>
-        </div>
-        <div class="col-md-9">
-          {% block body %}{% endblock %}
-        </div>
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+<div class="container">
+
+  <ol class="breadcrumb">
+    <li><a href="{{ path('admin_index') }}">{% trans %}Admin area{% endtrans %}</a></li>
+    {% block breadcrumb %}{% endblock %}
+  </ol>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <a href="{{ path('admin_dashboard') }}" class="list-group-item">{% trans %}Dashboard{% endtrans %}</a>
+        <a href="{{ path('admin_orders') }}" class="list-group-item">{% trans %}Orders{% endtrans %}</a>
+        <a href="{{ path('admin_users') }}" class="list-group-item">{% trans %}Users{% endtrans %}</a>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-      crossorigin="anonymous"></script>
-    {% block scripts %}{% endblock %}
-  </body>
-</html>
+    <div class="col-md-9">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -64,16 +64,27 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/orders/{id}", name="admin_order")
-     * @Template
+     * @Template("@App/Order/details.html.twig")
      */
     public function orderAction($id, Request $request)
     {
         $order = $this->getDoctrine()
-            ->getRepository('AppBundle:Order')
-            ->find($id);
+            ->getRepository('AppBundle:Order')->find($id);
+
+        $events = [];
+        foreach ($order->getEvents() as $event) {
+            $events[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
 
         return array(
             'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
+            'order_events_json' => $this->get('serializer')->serialize($events, 'json'),
+            'layout' => 'AppBundle::admin.html.twig',
+            'breadcrumb_path' => 'admin_orders'
         );
     }
 

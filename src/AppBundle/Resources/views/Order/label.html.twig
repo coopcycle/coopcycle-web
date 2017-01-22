@@ -1,0 +1,10 @@
+{% set status_label_class = {
+  'CREATED': 'label-default',
+  'CANCELED': 'label-default',
+  'WAITING': 'label-danger',
+  'ACCEPTED': 'label-primary',
+  'PICKED': 'label-info',
+  'DELIVERED': 'label-success'
+} %}
+{% set trans_key = 'order.status.' ~ order.status %}
+<span class="label {{ status_label_class[order.status] }}">{{ trans_key|trans }}</span>

@@ -1,13 +1,18 @@
 {% extends "AppBundle::profile.html.twig" %}
 
+{% block breadcrumb %}
+<li>{% trans %}Orders{% endtrans %}</li>
+{% endblock %}
+
 {% block content %}
-<div class="page-header">
-  <h1>Mes commandes</h1>
-</div>
+<h1>{% trans %}My orders{% endtrans %}</h1>
+{% include "AppBundle:Profile:orders.pagination.html.twig" %}
 <table class="table">
   <tbody>
   {% for order in orders %}
   <tr>
+    <td width="10%"><a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a></td>
+    <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
     <td>{{ order.restaurant.name }}</td>
     <td>{{ order.createdAt|ago }}</td>
     <td><span class="pull-right">{{ order.total }} €</span></td>
@@ -15,7 +20,6 @@
   {% endfor %}
   </tbody>
 </table>
-{% include "AppBundle:Profile:orders.pagination.html.twig" %}
 {% endblock %}
 
 {% block scripts %}

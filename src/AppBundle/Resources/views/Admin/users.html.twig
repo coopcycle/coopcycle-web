@@ -1,6 +1,10 @@
 {% extends "AppBundle::admin.html.twig" %}
 
-{% block body %}
+{% block breadcrumb %}
+<li>{% trans %}Users{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
 <table class="table">
 {% for user in users %}
   <tr>
