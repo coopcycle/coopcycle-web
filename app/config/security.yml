@@ -77,9 +77,7 @@ security:
         - { path: ^/api/token/check, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
-        - { path: "^/([a-z]{2}/)?order", roles: IS_AUTHENTICATED_FULLY }
-        - { path: "^/([a-z]{2}/)?profile/restaurant", roles: ROLE_RESTAURANT }
-        - { path: "^/([a-z]{2}/)?profile", roles: IS_AUTHENTICATED_FULLY }
-        - { path: "^/profile", roles: IS_AUTHENTICATED_FULLY }
-        - { path: "^/([a-z]{2}/)?admin", roles: ROLE_ADMIN }
-        - { path: "^/admin", roles: ROLE_ADMIN }
+        - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
+        - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }

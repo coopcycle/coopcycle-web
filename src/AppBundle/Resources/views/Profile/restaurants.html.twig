@@ -1,0 +1,33 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Restaurants{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<h1>{% trans %}My restaurants{% endtrans %}</h1>
+
+{% if restaurants|length > 0 %}
+  <table class="table">
+    <tbody>
+    {% for restaurant in restaurants %}
+    <tr>
+      <td width="10%"><a href="{{ path('profile_restaurant_edit', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+      <td>{{ restaurant.name }}</td>
+      <td>{{ restaurant.streetAddress }}</td>
+      <td>{{ restaurant.products|length }}</td>
+      <td><a href="{{ path('profile_restaurant_menu', { id: restaurant.id }) }}" class="btn btn-xs btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-warning">{% trans %}You don't have any restaurants yet{% endtrans %}</div>
+{% endif %}
+
+<a href="{{ path('profile_restaurant_new') }}" class="btn btn-success">{% trans %}Create restaurant{% endtrans %}</a>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

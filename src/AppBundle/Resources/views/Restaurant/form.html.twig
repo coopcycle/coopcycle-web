@@ -1,0 +1,78 @@
+{% extends layout %}
+
+{% form_theme form 'AppBundle:Form:menu.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
+<li>{% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+
+<h1>
+  {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}
+  {% if restaurant.id is not empty %}
+  <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-sm btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a>
+  {% endif %}
+</h1>
+<hr>
+
+{{ form_start(form) }}
+
+  {{ form_row(form.name) }}
+  {{ form_row(form.website) }}
+  <div id="cuisines" data-prototype="{{ form_widget(form.servesCuisine.vars.prototype)|e('html_attr') }}">
+    {{ form_label(form.servesCuisine) }}
+    {% for cuisine in form.servesCuisine %}
+      {{ form_widget(cuisine) }}
+    {% endfor %}
+  </div>
+  <button class="btn btn-sm btn-success" data-toggle="add-cuisine" data-target="#cuisines">Ajouter</button>
+  {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
+  {% do form.servesCuisine.setRendered %}
+  <hr>
+  {{ form_row(form.streetAddress) }}
+  {{ form_row(form.postalCode) }}
+  {{ form_row(form.addressLocality) }}
+  {{ form_row(form.telephone) }}
+
+  {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+
+function addForm($container) {
+  var prototype = $container.data('prototype');
+  var index = $container
+    .find('select')
+    .filter(function() {
+      return this.name.match(/^restaurant\[servesCuisine\]/);
+    })
+    .length;
+
+  var form = prototype.replace(/__name__/g, index);
+
+  $container.append(form);
+}
+
+$(function() {
+  $(document).on('click', '[data-remove]', function(e) {
+    e.preventDefault();
+    $(e.target).closest('.form-group').remove();
+  });
+
+  $('[data-toggle="add-cuisine"]').on('click', function(e) {
+    e.preventDefault();
+    var selector = $(e.target).data('target');
+    var $target = $(selector);
+    addForm($target);
+  });
+});
+</script>
+<script src="{{ asset('js/profile-restaurant.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&signed_in=true&libraries=places&callback=initMap" async defer></script>
+{% endblock %}
