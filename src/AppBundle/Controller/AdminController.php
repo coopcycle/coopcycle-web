@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
+use AppBundle\Form\RestaurantMenuType;
+use AppBundle\Form\RestaurantType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -12,10 +14,14 @@ use Symfony\Component\HttpFoundation\Request;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class AdminController extends Controller
 {
+    const ITEMS_PER_PAGE = 20;
+
     use DoctrineTrait;
+    use RestaurantTrait;
 
     /**
      * @Route("/admin", name="admin_index")
@@ -36,17 +42,15 @@ class AdminController extends Controller
 
         $countAll = $orderRepository->countAll();
 
-        $limit = 20;
-
-        $pages = ceil($countAll / $limit);
+        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
         $page = $request->query->get('p', 1);
 
-        $offset = $limit * ($page - 1);
+        $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
         $orders = $orderRepository->findBy([], [
             'updatedAt' => 'DESC',
             'createdAt' => 'DESC'
-        ], $limit, $offset);
+        ], self::ITEMS_PER_PAGE, $offset);
 
         $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
         $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
@@ -131,5 +135,59 @@ class AdminController extends Controller
         return array(
             'users' => $users,
         );
+    }
+
+    /**
+     * @Route("/admin/restaurants", name="admin_restaurants")
+     * @Template
+     */
+    public function restaurantsAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
+
+        $countAll = $repository
+            ->createQueryBuilder('r')->select('COUNT(r)')
+            ->getQuery()->getSingleScalarResult();
+
+        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
+        $page = $request->query->get('p', 1);
+
+        $offset = self::ITEMS_PER_PAGE * ($page - 1);
+
+        $restaurants = $repository->findBy([], [
+            'id' => 'DESC',
+        ], self::ITEMS_PER_PAGE, $offset);
+
+        return array(
+            'restaurants' => $restaurants,
+            'page' => $page,
+            'pages' => $pages,
+        );
+    }
+
+    /**
+     * @Route("/admin/restaurant/{id}", name="admin_restaurant")
+     * @Template("@App/Restaurant/form.html.twig")
+     */
+    public function restaurantAction($id, Request $request)
+    {
+        return $this->editRestaurantAction($id, $request, 'AppBundle::admin.html.twig', [
+            'success' => 'admin_restaurants',
+            'restaurants' => 'admin_restaurants',
+            'menu' => 'admin_restaurant_menu',
+        ]);
+    }
+
+    /**
+     * @Route("/admin/restaurant/{id}/menu", name="admin_restaurant_menu")
+     * @Template("@App/Restaurant/form-menu.html.twig")
+     */
+    public function restaurantMenuAction($id, Request $request)
+    {
+        return $this->editMenuAction($id, $request, 'AppBundle::admin.html.twig', [
+            'success' => 'admin_restaurants',
+            'restaurants' => 'admin_restaurants',
+            'restaurant' => 'admin_restaurant',
+        ]);
     }
 }

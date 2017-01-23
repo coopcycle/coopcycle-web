@@ -52,7 +52,6 @@ class Restaurant extends FoodEstablishment
      * @var string The website of the restaurant.
      *
      * @ORM\Column(nullable=true)
-     * @Assert\Type(type="url")
      * @ApiProperty(iri="https://schema.org/URL")
      */
     private $website;
@@ -113,6 +112,13 @@ class Restaurant extends FoodEstablishment
     public function addProduct(Product $product)
     {
         $this->products->add($product);
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product)
+    {
+        $this->products->removeElement($product);
 
         return $this;
     }

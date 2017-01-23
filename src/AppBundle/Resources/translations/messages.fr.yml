@@ -24,6 +24,14 @@ Existing address: Adresse existante
 New address: Nouvelle adresse
 Delivery: Livraison
 Payment: Paiement
+Restaurants: Restaurants
+My restaurants: Mes restaurants
+Add a product: Ajouter un produit
+Edit menu: Modifier le menu
+Name: Nom
+Price: Prix
+Category: Catégorie
+Save: Sauvegarder
 
 order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total% €

@@ -50,18 +50,7 @@
 
 <hr>
 
-<nav aria-label="...">
-  <ul class="pager">
-    {% set prev_page = (page > 1) ? page - 1 : 1 %}
-    <li class="previous {% if page == 1 %}disabled{% endif %}">
-      <a href="{{ path('admin_orders', {'p': prev_page}) }}"><span aria-hidden="true">&larr;</span> Précédent</a>
-    </li>
-    {% set next_page = (page < pages) ? page + 1 : page %}
-    <li class="next {% if page == pages %}disabled{% endif %}">
-      <a href="{{ path('admin_orders', {'p': next_page}) }}">Suivant <span aria-hidden="true">&rarr;</span></a>
-    </li>
-  </ul>
-</nav>
+{% include "AppBundle:Admin:pagination.html.twig" %}
 <table class="table">
   <thead>
     <th>#</th>

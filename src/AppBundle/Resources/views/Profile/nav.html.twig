@@ -3,6 +3,9 @@
   {% if is_granted('ROLE_COURIER') %}
   <a href="{{ path('profile_courier_deliveries') }}" class="list-group-item">{% trans %}My deliveries{% endtrans %}</a>
   {% endif %}
+  {% if is_granted('ROLE_RESTAURANT') %}
+  <a href="{{ path('profile_restaurants') }}" class="list-group-item">{% trans %}My restaurants{% endtrans %}</a>
+  {% endif %}
   <a href="{{ path('profile_orders') }}" class="list-group-item">{% trans %}My orders{% endtrans %}</a>
   <a href="{{ path('profile_addresses') }}" class="list-group-item">{% trans %}My addresses{% endtrans %}</a>
   <a href="{{ path('fos_user_security_logout') }}" class="list-group-item list-group-item-danger"><span>

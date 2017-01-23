@@ -21,7 +21,7 @@ class ApiUser extends BaseUser
     protected $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Restaurant")
+     * @ORM\ManyToMany(targetEntity="Restaurant", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $restaurants;
@@ -34,6 +34,7 @@ class ApiUser extends BaseUser
     public function __construct()
     {
         $this->deliveryAddresses = new ArrayCollection();
+        $this->restaurants = new ArrayCollection();
     }
 
     public function setRestaurants($restaurants)
@@ -41,6 +42,18 @@ class ApiUser extends BaseUser
         $this->restaurants = $restaurants;
 
         return $this;
+    }
+
+    public function addRestaurant(Restaurant $restaurant)
+    {
+        $this->restaurants->add($restaurant);
+
+        return $this;
+    }
+
+    public function ownsRestaurant(Restaurant $restaurant)
+    {
+        return $this->restaurants->contains($restaurant);
     }
 
     public function getRestaurants()

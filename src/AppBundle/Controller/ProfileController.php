@@ -4,8 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Product;
 use AppBundle\Entity\DeliveryAddress;
+use AppBundle\Form\RestaurantMenuType;
+use AppBundle\Form\RestaurantType;
 use AppBundle\Utils\OrderStatus;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -20,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 class ProfileController extends Controller
 {
     use DoctrineTrait;
+    use RestaurantTrait;
 
     /**
      * @Route("/profile/orders", name="profile_orders")
@@ -158,5 +163,57 @@ class ProfileController extends Controller
             'avg_delivery_time' => $avgDeliveryTime,
             'delivery_times' => $deliveryTimes,
         ];
+    }
+
+    /**
+     * @Route("/profile/restaurants", name="profile_restaurants")
+     * @Template()
+     */
+    public function restaurantsAction(Request $request)
+    {
+        $restaurants = $this->getUser()->getRestaurants();
+
+        return [
+            'restaurants' => $restaurants,
+        ];
+    }
+
+    /**
+     * @Route("/profile/restaurants/new", name="profile_restaurant_new")
+     * @Template("@App/Restaurant/form.html.twig")
+     */
+    public function newRestaurantAction(Request $request)
+    {
+        return $this->editRestaurantAction(null, $request, 'AppBundle::profile.html.twig', [
+            'success' => 'profile_restaurants',
+            'restaurants' => 'profile_restaurants',
+            'menu' => 'profile_restaurant_menu',
+        ]);
+    }
+
+    /**
+     * @Route("/profile/restaurants/{id}", name="profile_restaurant_edit")
+     * @Template("@App/Restaurant/form.html.twig")
+     */
+    public function restaurantEditAction($id, Request $request)
+    {
+        return $this->editRestaurantAction($id, $request, 'AppBundle::profile.html.twig', [
+            'success' => 'profile_restaurants',
+            'restaurants' => 'profile_restaurants',
+            'menu' => 'profile_restaurant_menu',
+        ]);
+    }
+
+    /**
+     * @Route("/profile/restaurants/{id}/menu", name="profile_restaurant_menu")
+     * @Template("@App/Restaurant/form-menu.html.twig")
+     */
+    public function restaurantMenuAction($id, Request $request)
+    {
+        return $this->editMenuAction($id, $request, 'AppBundle::profile.html.twig', [
+            'success' => 'profile_restaurants',
+            'restaurants' => 'profile_restaurants',
+            'restaurant' => 'profile_restaurant_edit',
+        ]);
     }
 }
