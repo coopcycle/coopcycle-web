@@ -1,0 +1,14 @@
+---
+become_method: su
+doc_root: /var/www/coopcycle/current/web
+main_domain: coopcycle.org
+nginx_template: prod.tpl
+pm2_apps:
+  - run: pm2.config.js
+    path: "/var/www/coopcycle/current"
+    args: "--env production"
+
+osrm_user: root
+osrm_dir: /opt/osrm
+osrm_stxxl_tmp_dir: /tmp/stxxl
+osrm_stxxl_size: 10G
