@@ -1,0 +1,18 @@
+AppBundle\Entity\Product:
+  product_{1..3}:
+    name: <name()>
+    price: <numberBetween(5, 10)>.99
+
+AppBundle\Entity\Restaurant:
+  restaurant_1:
+    name: 'Nodaiwa'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    products: [ "@product_1", "@product_2", "@product_3" ]
+  restaurant_2:
+    name: 'Café Barjot'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    products: [ "@product_1", "@product_2", "@product_3" ]
+  restaurant_3:
+    name: 'La Cantina Clandestina'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    products: [ "@product_1", "@product_2", "@product_3" ]

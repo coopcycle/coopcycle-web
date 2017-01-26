@@ -55,7 +55,7 @@ $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 * Run `npm run start` to launch `webpack-dev-server`
 
 How to provision a server
----------------------------------
+-------------------------
 
 The same Ansible roles used to provision the virtual machine are used to provision the server.
 

@@ -35,6 +35,8 @@ class ApiUser extends BaseUser
     {
         $this->deliveryAddresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
+
+        parent::__construct();
     }
 
     public function setRestaurants($restaurants)
