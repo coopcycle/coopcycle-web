@@ -73,8 +73,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         return $this->kernel->getContainer();
     }
 
-
-
     /**
      * @BeforeScenario
      */
