@@ -5,8 +5,10 @@
     - nginx
     - ANXS.postgresql
     - geerlingguy.php
-    - DavidWittman.redis # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
+    # FIXME
+    # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
+    - DavidWittman.redis
     - redis-tools
     - nodejs
-    - { role: alexsegura.pm2, become: no }
+    - weareinteractive.pm2
     - osrm
