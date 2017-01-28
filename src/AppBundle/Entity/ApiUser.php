@@ -27,7 +27,7 @@ class ApiUser extends BaseUser
     private $restaurants;
 
     /**
-     * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer")
+     * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer", cascade={"all"})
      */
     private $deliveryAddresses;
 
@@ -61,6 +61,13 @@ class ApiUser extends BaseUser
     public function getRestaurants()
     {
         return $this->restaurants;
+    }
+
+    public function addDeliveryAddress(DeliveryAddress $deliveryAddress)
+    {
+        $this->deliveryAddresses->add($deliveryAddress);
+
+        return $this;
     }
 
     public function setDeliveryAddresses($deliveryAddresses)

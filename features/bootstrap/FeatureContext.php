@@ -2,6 +2,7 @@
 
 use AppBundle\Entity\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\DeliveryAddress;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -149,6 +150,29 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given the user :username has delivery address:
+     */
+    public function theUserHasDeliveryAddress($username, TableNode $table)
+    {
+        $data = $table->getRowsHash();
+
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $em = $this->doctrine->getManagerForClass('AppBundle:DeliveryAddress');
+
+        $user = $userManager->findUserByUsername($username);
+
+        list($lat, $lng) = $data['geo'];
+
+        $address = new DeliveryAddress();
+        $address->setStreetAddress($data['streetAddress']);
+        $address->setGeo(new GeoCoordinates($lat, $lng));
+
+        $user->addDeliveryAddress($address);
+
+        $em->flush();
+    }
+
+    /**
      * @Given the user :username is authenticated
      */
     public function theUserIsAuthenticated($username)
@@ -166,6 +190,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      * @When I send an authenticated :method request to :url
      */
     public function iSendAnAuthenticatedRequestTo($method, $url, PyStringNode $body = null)
+    {
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
+        $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When I send an authenticated :method request to :url with body:
+     */
+    public function iSendAnAuthenticatedRequestToWithBody($method, $url, PyStringNode $body)
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);

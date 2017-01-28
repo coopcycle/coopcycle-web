@@ -46,6 +46,7 @@ before_script:
   - php bin/console doctrine:schema:create --env=test
   # - psql -U postgres -d coursiers -f tests/AppBundle/Resources/sql/restaurants.sql > /dev/null
   - php bin/console server:start
+  - cp phpunit.xml.dist phpunit.xml
   # Install JavaScript stuff
   # - npm install
   # - node_modules/.bin/webpack -p
@@ -57,6 +58,5 @@ before_script:
   # - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:v5.5.4 osrm-routed /data/paris_france.osrm
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
-  - cp phpunit.xml.dist phpunit.xml
   - phpunit
   - php vendor/bin/behat -f progress
