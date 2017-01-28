@@ -16,9 +16,12 @@ Vagrant.configure("2") do |config|
         v.customize [ "modifyvm", :id, "--memory", 2048 ]
     end
 
-    # Provision the box
+    # Provision the box with Ansible
     config.vm.provision :ansible do |ansible|
         ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
         ansible.playbook = "ansible/playbook.yml"
+    end
+    # Just install Docker
+    config.vm.provision "docker" do |d|
     end
 end
