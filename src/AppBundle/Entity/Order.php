@@ -235,6 +235,26 @@ class Order
         return $this;
     }
 
+    public function addProduct(Product $product, $quantity)
+    {
+        $orderedItem = null;
+        foreach ($this->orderedItem as $item) {
+            if ($item->getProduct() === $product) {
+                $orderedItem = $item;
+                break;
+            }
+        }
+        if (null === $orderedItem) {
+            $orderedItem = new OrderItem();
+            $orderedItem->setOrder($this);
+            $orderedItem->setProduct($product);
+
+            $this->orderedItem->add($orderedItem);
+        }
+
+        $orderedItem->setQuantity($orderedItem->getQuantity() + $quantity);
+    }
+
     /**
      * Sets restaurant.
      *

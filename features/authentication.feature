@@ -50,7 +50,7 @@ Feature: Authenticate
       | password | 123456            |
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
-    And I send an authenticated "GET" request to "/api/me"
+    And the user "bob" sends a "GET" request to "/api/me"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
