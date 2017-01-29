@@ -1,6 +1,7 @@
 <?php
 
 use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\DeliveryAddress;
 use Behat\Behat\Context\Context;
@@ -46,7 +47,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
     private $restContext;
 
-    private $jwt;
+    private $tokens;
 
     /**
      * Initializes context.
@@ -57,6 +58,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function __construct(ManagerRegistry $doctrine, HttpCallResultPool $httpCallResultPool)
     {
+        $this->tokens = [];
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
@@ -82,6 +84,17 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $environment = $scope->getEnvironment();
 
         $this->restContext = $environment->getContext('Sanpi\Behatch\Context\RestContext');
+    }
+
+    /**
+     * @Given the redis database is empty
+     */
+    public function theRedisDatabaseIsEmpty()
+    {
+        $redis = $this->getContainer()->get('snc_redis.default');
+        foreach ($redis->keys('*') as $key) {
+            $redis->del($key);
+        }
     }
 
     /**
@@ -150,6 +163,51 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given the user :username is loaded:
+     */
+    public function theUserWithUsernameIsLoaded($username, TableNode $table)
+    {
+        $data = $table->getRowsHash();
+
+        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
+        $manipulator->create($username, $data['password'], $data['email'], true, false);
+    }
+
+    /**
+     * @Given the courier is loaded:
+     */
+    public function theCourierIsLoaded(TableNode $table)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $data = $table->getRowsHash();
+
+        $this->theUserIsLoaded($table);
+
+        $user = $userManager->findUserByUsername($data['username']);
+        $user->addRole('ROLE_COURIER');
+
+        $userManager->updateUser($user);
+    }
+
+    /**
+     * @Given the courier :username is loaded:
+     */
+    public function theCourierWithUsernameIsLoaded($username, TableNode $table)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $data = $table->getRowsHash();
+
+        $this->theUserWithUsernameIsLoaded($username, $table);
+
+        $user = $userManager->findUserByUsername($username);
+        $user->addRole('ROLE_COURIER');
+
+        $userManager->updateUser($user);
+    }
+
+    /**
      * @Given the user :username has delivery address:
      */
     public function theUserHasDeliveryAddress($username, TableNode $table)
@@ -183,7 +241,32 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $user = $userManager->findUserByUsername($username);
         $token = $jwtManager->create($user);
 
-        $this->jwt = $token;
+        $this->tokens[$username] = $token;
+    }
+
+    /**
+     * @Given the user :username has ordered at restaurant :restaurantName
+     */
+    public function theUserHasOrderedAtRestaurant($username, $restaurantName)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $restaurantRepository = $this->doctrine->getRepository('AppBundle:Restaurant');
+        $orderManager = $this->doctrine->getManagerForClass('AppBundle:Order');
+
+        $user = $userManager->findUserByUsername($username);
+        $restaurant = $restaurantRepository->findOneByName($restaurantName);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->setCustomer($user);
+        $order->setStatus(Order::STATUS_WAITING);
+
+        foreach ($restaurant->getProducts() as $product) {
+            $order->addProduct($product, 1);
+        }
+
+        $orderManager->persist($order);
+        $orderManager->flush();
     }
 
     /**
@@ -202,5 +285,67 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When the user :username sends a :method request to :url
+     */
+    public function theUserSendsARequestTo($username, $method, $url)
+    {
+        if (!isset($this->tokens[$username])) {
+            throw new \RuntimeException("User {$username} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
+        $this->restContext->iSendARequestTo($method, $url);
+    }
+
+    /**
+     * @When the user :username sends a :method request to :url with body:
+     */
+    public function theUserSendsARequestToWithBody($username, $method, $url, PyStringNode $body)
+    {
+        if (!isset($this->tokens[$username])) {
+            throw new \RuntimeException("User {$username} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
+        $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @Given the last order from user :username has status :status
+     */
+    public function theLastOrderFromUserHasStatus($username, $status)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+
+        $order = $this->doctrine->getRepository('AppBundle:Order')
+            ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
+
+        $order->setStatus($status);
+
+        $this->doctrine->getManagerForClass('AppBundle:Order')->flush();
+    }
+
+    /**
+     * @Given the last order from user :customer is accepted by courier :courier
+     */
+    public function theLastOrderFromUserIsAcceptedByCourier($customerUsername, $courierUsername)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $customer = $userManager->findUserByUsername($customerUsername);
+        $courier = $userManager->findUserByUsername($courierUsername);
+
+        $order = $this->doctrine->getRepository('AppBundle:Order')
+            ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
+
+        $order->setStatus(Order::STATUS_ACCEPTED);
+        $order->setCourier($courier);
+
+        $this->doctrine->getManagerForClass('AppBundle:Order')->flush();
     }
 }

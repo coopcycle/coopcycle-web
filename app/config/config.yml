@@ -117,7 +117,7 @@ snc_redis:
         default:
             type: predis
             alias: default
-            dsn: redis://127.0.0.1:6379
+            dsn: redis://127.0.0.1:6379/0
 
 webfactory_piwik:
     site_id: 1
