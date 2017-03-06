@@ -9,7 +9,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @ApiResource
+ * @ApiResource(
+ *   collectionOperations={
+ *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } }
+ *   },
+ *   attributes={
+ *     "normalization_context"={ "groups"={"user"} }
+ *   }
+ * )
  */
 class ApiUser extends BaseUser
 {
