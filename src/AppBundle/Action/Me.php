@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -14,45 +15,16 @@ class Me
     use OrderActionTrait;
 
     /**
-     * @Route(
-     *     name="me",
-     *     path="/me",
-     * )
+     * @Route(path="/me", name="me",
+     *  defaults={
+     *   "_api_resource_class"=ApiUser::class,
+     *   "_api_collection_operation_name"="me",
+     * })
      * @Method("GET")
      */
     public function meAction()
     {
-        $user = $this->getUser();
-
-        $data = $this->serializer->normalize($user);
-
-        // FIXME Exclude those fields in a clean way, using groups
-        unset(
-            $data['plainPassword'],
-            $data['passwordRequestedAt'],
-            $data['password'],
-            $data['salt'],
-            $data['superAdmin'],
-            $data['roles'],
-            $data['confirmationToken'],
-            $data['accountNonExpired'],
-            $data['accountNonLocked'],
-            $data['credentialsNonExpired'],
-            $data['enabled'],
-            $data['groups'],
-            $data['groupNames']
-        );
-
-        if ($user->hasRole('ROLE_CUSTOMER')) {
-            $deliveryAddressRepository = $this->doctrine
-                ->getManagerForClass('AppBundle:DeliveryAddress')
-                ->getRepository('AppBundle:DeliveryAddress');
-
-            $deliveryAddresses = $deliveryAddressRepository->findBy(['customer' => $user]);
-            $data['deliveryAddresses'] = $this->serializer->normalize($deliveryAddresses);
-        }
-
-        return new JsonResponse($data);
+        return $this->getUser();
     }
 
     /**

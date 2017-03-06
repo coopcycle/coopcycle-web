@@ -1,0 +1,8 @@
+AppBundle\Entity\ApiUser:
+  attributes:
+    username:
+      groups: ['user']
+    email:
+      groups: ['user']
+    deliveryAddresses:
+      groups: ['user']
