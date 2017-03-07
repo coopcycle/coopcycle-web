@@ -34,6 +34,12 @@ services:
       - { name: "doctrine.event_listener", event: "postUpdate" }
       - { name: "kernel.event_listener", event: "order.payment_success", method: "onPaymentSuccess" }
 
+  my.order_normalizer:
+    class: AppBundle\Serializer\OrderNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
