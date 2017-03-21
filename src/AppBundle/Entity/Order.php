@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *     "get"={"method"="GET"},
  *     "pay"={"route_name"="order_pay"},
  *     "accept"={"route_name"="order_accept"},
+ *     "decline"={"route_name"="order_decline"},
  *     "pick"={"route_name"="order_pick"},
  *     "deliver"={"route_name"="order_deliver"}
  *   },
