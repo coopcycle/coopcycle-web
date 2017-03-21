@@ -70,7 +70,8 @@ Feature: Orders
         "streetAddress": "1, rue de Rivoli",
         "name":null
       },
-      "status": "CREATED"
+      "status": "CREATED",
+      "total": 30.97
     }
     """
 
@@ -115,7 +116,8 @@ Feature: Orders
       },
       "orderedItem": @array@,
       "deliveryAddress": null,
-      "status": "ACCEPTED"
+      "status": "ACCEPTED",
+      "total": 29.97
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -146,7 +148,8 @@ Feature: Orders
       },
       "orderedItem": @array@,
       "deliveryAddress": null,
-      "status": "PICKED"
+      "status": "PICKED",
+      "total": 29.97
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -177,7 +180,8 @@ Feature: Orders
       },
       "orderedItem": @array@,
       "deliveryAddress": null,
-      "status": "DELIVERED"
+      "status": "DELIVERED",
+      "total": 29.97
     }
     """
 
