@@ -32,8 +32,20 @@ Courier.prototype.setOrder = function(order) {
   this.order = order;
 }
 
-Courier.prototype.addDeclinedOrder = function(order) {
-  this.declinedOrders.push(order);
+Courier.prototype.declineOrder = function(order) {
+  if (this.order !== order) {
+    console.log('Order #' + order + ' was not dispatched to courier #' + this.id);
+    return;
+  }
+  REDIS.lrem('orders:dispatching', 0, order, (err) => {
+    if (err) throw err;
+    REDIS.lpush('orders:waiting', order, (err) => {
+      if (err) throw err;
+      this.order = null;
+      this.state = Courier.UNKNOWN;
+      this.declinedOrders.push(order);
+    });
+  });
 }
 
 Courier.prototype.hasDeclinedOrder = function(order) {
@@ -74,25 +86,29 @@ Courier.nearestForOrder = function(order, distance) {
         return resolve(null);
       }
 
-      // TODO async is useless
-      async.filter(matches, function(match, cb) {
+      // Keep only available couriers
+      var results = _.filter(matches, (match) => {
         var key = match[0];
         var courier = Courier.Pool.findByKey(key);
         if (!courier) {
           console.log('Courier ' + key + ' not found in pool');
-          return cb(null, false);
+          return false;
         }
-        cb(null, courier.isAvailable() && !courier.hasDeclinedOrder(order.id));
-      }, function(err, results) {
-        if (results.length === 0) {
-          return resolve(null);
-        }
-        console.log('There are ' + results.length + ' couriers available');
-        var first = results[0];
-        var key = first[0];
-        resolve(Courier.Pool.findByKey(key));
+
+        return courier.isAvailable() && !courier.hasDeclinedOrder(order.id);
       });
 
+      if (results.length === 0) {
+        return resolve(null);
+      }
+
+      console.log('There are ' + results.length + ' couriers available');
+
+      // Return nearest courier
+      var first = results[0];
+      var key = first[0];
+
+      return resolve(Courier.Pool.findByKey(key));
     });
   });
 }

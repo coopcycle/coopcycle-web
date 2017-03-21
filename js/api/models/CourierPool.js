@@ -7,6 +7,7 @@ function CourierPool(redis, redisPubSub) {
 
   redisPubSub.subscribe('couriers');
   redisPubSub.subscribe('couriers:available');
+  redisPubSub.subscribe('orders:declined');
 
   var self = this;
   redisPubSub.on('message', function(channel, message) {
@@ -23,6 +24,12 @@ function CourierPool(redis, redisPubSub) {
       if (courier) {
         courier.setState('AVAILABLE');
       }
+    }
+    if (channel === 'orders:declined') {
+      var data = JSON.parse(message);
+      console.log('Courier #' + data.courier + ' has declined order #' + data.order);
+      var courier = self.findById(data.courier);
+      courier.declineOrder(data.order);
     }
   });
 }
