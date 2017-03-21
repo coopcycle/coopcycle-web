@@ -56,13 +56,11 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "id": @integer@,
+      "@context": "/api/contexts/ApiUser",
+      "@id": "/api/api_users/1",
+      "@type": "ApiUser",
+      "deliveryAddresses": [],
       "username": "bob",
-      "usernameCanonical": "bob",
-      "email": "bob@coopcycle.org",
-      "emailCanonical": "bob@coopcycle.org",
-      "lastLogin": @string@,
-      "restaurants": [],
-      "deliveryAddresses": []
+      "email": "bob@coopcycle.org"
     }
     """
