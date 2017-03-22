@@ -96,10 +96,10 @@ fos_user:
             type: AppBundle\Form\RegistrationType
 
 lexik_jwt_authentication:
-    private_key_path: %jwt_private_key_path%
-    public_key_path:  %jwt_public_key_path%
-    pass_phrase:      %jwt_key_pass_phrase%
-    token_ttl:        %jwt_token_ttl%
+    private_key_path: "%jwt_private_key_path%"
+    public_key_path:  "%jwt_public_key_path%"
+    pass_phrase:      "%jwt_key_pass_phrase%"
+    token_ttl:        "%jwt_token_ttl%"
     token_extractors:
         authorization_header:      # look for a token as Authorization Header
             enabled: true
@@ -121,6 +121,6 @@ snc_redis:
 
 webfactory_piwik:
     site_id: 1
-    disabled: %kernel.debug%
+    disabled: "%kernel.debug%"
     piwik_host: piwik.coopcycle.org
     tracker_path: "/piwik.js"
