@@ -51,7 +51,7 @@ before_script:
   - php bin/console server:start 127.0.0.1:8080
   - cp phpunit.xml.dist phpunit.xml
   # Install JavaScript stuff
-  - pm2 start pm2.config.js
+  - pm2 start pm2.config.js --env=test
   # - node_modules/.bin/webpack -p
   # # Install OSRM
   # - mkdir -p var/osrm
