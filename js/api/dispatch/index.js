@@ -1,36 +1,60 @@
 var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
-var YAML = require('js-yaml');
 var Sequelize = require('sequelize');
 
 var winston = require('winston');
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
 var ROOT_DIR = __dirname + '/../../..';
-var CONFIG = {};
 
 console.log('---------------------');
 console.log('- STARTING DISPATCH -');
 console.log('---------------------');
 
+console.log('NODE_ENV = ' + process.env.NODE_ENV)
+
+var envMap = {
+  production: 'prod',
+  development: 'dev',
+  test: 'test'
+}
+
+var ConfigLoader = require('../ConfigLoader');
+
 try {
-  var yaml = YAML.safeLoad(fs.readFileSync(ROOT_DIR + '/app/config/parameters.yml', 'utf8'));
-  CONFIG = yaml.parameters;
+
+  var configFile = 'config.yml';
+  if (envMap[process.env.NODE_ENV]) {
+    configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
+  }
+
+  var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
+  var config = configLoader.load();
+
 } catch (e) {
-  console.log(e);
+  throw e;
 }
 
 var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
 
-var redis = require('redis').createClient();
-var redisPubSub = require('redis').createClient();
-
-var sequelize = new Sequelize(CONFIG.database_name, CONFIG.database_user, CONFIG.database_password, {
-  host: CONFIG.database_host,
-  dialect: 'postgres',
-  logging: false,
+var redis = require('redis').createClient({
+  url: config.snc_redis.clients.default.dsn
 });
+var redisPubSub = require('redis').createClient({
+  url: config.snc_redis.clients.default.dsn
+});
+
+var sequelize = new Sequelize(
+  config.doctrine.dbal.dbname,
+  config.doctrine.dbal.user,
+  config.doctrine.dbal.password,
+  {
+    host: config.doctrine.dbal.host,
+    dialect: 'postgres',
+    logging: false,
+  }
+);
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server

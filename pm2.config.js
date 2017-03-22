@@ -42,6 +42,9 @@ apps = _.map(apps, function(app) {
     },
     env_production : {
       NODE_ENV: "production"
+    },
+    env_test : {
+      NODE_ENV: "test"
     }
   })
 });
