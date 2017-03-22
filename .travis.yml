@@ -25,10 +25,13 @@ env:
 
 before_install:
   - sudo apt-get update -qq
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
 install:
   # Remove error could not access file "$libdir/postgis-2.3": No such file or directory
   - sudo apt-get install -y $(apt-cache search postgis | awk '/^postgresql-9\.[2-6]-postgis-2.3/{printf " "$1}' )
   - sudo service postgresql restart
+  - npm install
+  - npm install -g pm2
 
 before_script:
   # Configure JSON Web Token
@@ -45,10 +48,10 @@ before_script:
   - composer install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
   # - psql -U postgres -d coursiers -f tests/AppBundle/Resources/sql/restaurants.sql > /dev/null
-  - php bin/console server:start
+  - php bin/console server:start 127.0.0.1:8080
   - cp phpunit.xml.dist phpunit.xml
   # Install JavaScript stuff
-  # - npm install
+  - pm2 start pm2.config.js
   # - node_modules/.bin/webpack -p
   # # Install OSRM
   # - mkdir -p var/osrm
@@ -60,3 +63,4 @@ script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
   - phpunit
   - php vendor/bin/behat -f progress
+  - node node_modules/.bin/mocha js/tests/
