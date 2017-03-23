@@ -45,8 +45,8 @@ Order.load = function() {
         var deliveryAddresses = [];
         var restaurants = [];
         _.each(orders, function(order) {
-          deliveryAddresses.push(order.delivery_address.position.longitude);
-          deliveryAddresses.push(order.delivery_address.position.latitude);
+          deliveryAddresses.push(order.deliveryAddress.position.longitude);
+          deliveryAddresses.push(order.deliveryAddress.position.latitude);
           deliveryAddresses.push('order:' + order.id);
 
           restaurants.push(order.restaurant.position.longitude);
@@ -56,7 +56,7 @@ Order.load = function() {
         if (deliveryAddresses.length > 0) {
           REDIS.geoadd('delivery_addresses:geo', deliveryAddresses);
         }
-        if (deliveryAddresses.length > 0) {
+        if (restaurants.length > 0) {
           REDIS.geoadd('restaurants:geo', restaurants);
         }
 
@@ -75,6 +75,8 @@ Order.load = function() {
         if (waitingIds.length > 0) {
           REDIS.rpush('orders:waiting', waitingIds);
         }
+
+        // TODO Use Promise.all
 
         resolve();
       });
