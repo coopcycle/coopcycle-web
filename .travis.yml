@@ -9,7 +9,6 @@ matrix:
 
 services:
   - postgresql
-  - redis-server
   - docker
 
 addons:
@@ -32,6 +31,8 @@ install:
   - sudo service postgresql restart
   - npm install
   - npm install -g pm2
+  # Install Redis via Docker to have Redis > 3.2
+  - docker run -t -d -p 6379:6379 redis:3.2
 
 before_script:
   # Configure JSON Web Token
