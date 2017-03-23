@@ -71,7 +71,7 @@ module.exports = function(sequelize) {
     name: Sequelize.STRING,
     streetAddress: {
       field: 'street_address',
-      type: Sequelize.DATE
+      type: Sequelize.STRING
     },
     geo: Sequelize.GEOMETRY,
   }, _.extend(sequelizeOptions, {

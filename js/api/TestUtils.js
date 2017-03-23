@@ -11,13 +11,7 @@ var _ = require('underscore');
 var rootDir = fs.realpathSync(__dirname + '/../../');
 var pgCleaner = new DatabaseCleaner('postgresql', {
   postgresql: {
-    skipTables: [
-      'cuisine',
-      'product',
-      'restaurant',
-      'restaurant_cuisine',
-      'restaurant_product'
-    ],
+    skipTables: [],
     strategy: 'truncation'
   }
 });
@@ -155,7 +149,17 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
   });
 }
 
-TestUtils.prototype.createRandomOrder = function(username, restaurantName) {
+TestUtils.prototype.createRestaurant = function(name, coordinates) {
+  var Restaurant = this.db.Restaurant;
+
+  return Restaurant.create({
+    id: 1, // FIXME Postgres SEQUENCE does not work
+    name: name,
+    geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
+  });
+}
+
+TestUtils.prototype.createRandomOrder = function(username, restaurant) {
 
   var Restaurant = this.db.Restaurant;
   var Order = this.db.Order;
@@ -164,66 +168,84 @@ TestUtils.prototype.createRandomOrder = function(username, restaurantName) {
 
   return new Promise(function (resolve, reject) {
 
-    Promise.all([
-      Customer.findOne({ where: { username: username } }),
-      Restaurant.findOne({ where: { name: restaurantName } })
-    ])
-    .then(function(results) {
-
-      var customer = results[0];
-      var restaurant = results[1];
-
-      customer.getDeliveryAddresses()
-        .then(function(deliveryAddresses) {
-          return _.first(deliveryAddresses);
-        })
-        .then(function(deliveryAddress) {
-          restaurant.getProducts()
-            .then(function(products) {
-              var numberOfProducts = _.random(2, 5);
-              var cart = [];
-              if (products.length > 0) {
-                while (cart.length < numberOfProducts) {
-                  cart.push(_.first(_.shuffle(products)));
+    Customer.findOne({ where: { username: username } })
+      .then(function(customer) {
+        customer.getDeliveryAddresses()
+          .then(function(deliveryAddresses) {
+            return _.first(deliveryAddresses);
+          })
+          .then(function(deliveryAddress) {
+            restaurant.getProducts()
+              .then(function(products) {
+                var numberOfProducts = _.random(2, 5);
+                var cart = [];
+                if (products.length > 0) {
+                  while (cart.length < numberOfProducts) {
+                    cart.push(_.first(_.shuffle(products)));
+                  }
                 }
-              }
 
-              return cart;
-            })
-            .then(function(products) {
-              Order.create({
-                id: 1,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                return cart;
               })
-              .then(function(order) {
-                return order.setCustomer(customer);
-              })
-              .then(function(order) {
-                return order.setRestaurant(restaurant);
-              })
-              .then(function(order) {
-                return order.setDeliveryAddress(deliveryAddress);
-              })
-              .then(function(order) {
-                redis.lpush('orders:waiting', order.id, (err) => {
-                  if (err) reject(err);
-                  resolve(order);
+              .then(function(products) {
+                Order.create({
+                  id: 1,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .then(function(order) {
+                  return order.setCustomer(customer);
+                })
+                .then(function(order) {
+                  return order.setRestaurant(restaurant);
+                })
+                .then(function(order) {
+                  return order.setDeliveryAddress(deliveryAddress);
+                })
+                .then(function(order) {
+                  redis.lpush('orders:waiting', order.id, function(err) {
+                    if (err) return reject(err);
+                    resolve(order);
+                  });
+                })
+                .catch(function(e) {
+                  reject(e);
                 });
+              })
+              .catch(function(e) {
+                reject(e);
               });
-            })
-            .catch(function(e) {
-              console.log(e);
-            });
-        })
-        .catch(function(e) {
-          console.log(e);
+          })
+          .catch(function(e) {
+            reject(e);
+          });
         });
-
-      })
-
   });
 
 }
+
+// Check Redis version on Travis, to skip tests using geo commands
+// Code borrowed from https://github.com/NodeRedis/node_redis
+TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version) {
+
+  // Wait until a connection has established (otherwise a timeout is going to be triggered at some point)
+  if (Object.keys(connection.server_info).length === 0) {
+      throw new Error('Version check not possible as the client is not yet ready or did not expose the version');
+  }
+
+  // Return true if the server version >= desired_version
+  var version = connection.server_info.versions;
+  for (var i = 0; i < 3; i++) {
+      if (version[i] > desired_version[i]) {
+          return true;
+      }
+      if (version[i] < desired_version[i]) {
+          if (this.skip) this.skip();
+          return false;
+      }
+  }
+
+  return true;
+};
 
 module.exports = TestUtils;

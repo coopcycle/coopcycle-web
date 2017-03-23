@@ -11,10 +11,7 @@ var config = configLoader.load();
 
 var utils = new TestUtils(config);
 
-before(function() {
-
-  this.timeout(10000);
-
+var initUsers = function() {
   return new Promise(function(resolve, reject) {
     utils.cleanDb()
       .then(function() {
@@ -25,10 +22,17 @@ before(function() {
       })
       .catch(reject);
   });
-});
+}
 
-describe('Connect to WebSocket without JWT', function() {
-  it('should return 401 Unauthorized', function() {
+describe('Connect to WebSocket', function() {
+
+  before(function() {
+    this.timeout(10000);
+
+    return initUsers();
+  });
+
+  it('should return 401 Unauthorized without JWT', function() {
     return new Promise(function (resolve, reject) {
       var ws = new WebSocket('http://localhost:8000');
       ws.onopen = reject;
@@ -38,10 +42,8 @@ describe('Connect to WebSocket without JWT', function() {
       }
     });
   });
-});
 
-describe('Connect to WebSocket with JWT as customer', function() {
-  it('should return 401 Unauthorized', function() {
+  it('should return 401 Unauthorized with JWT as customer', function() {
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('bill');
       var ws = new WebSocket('http://localhost:8000', {
@@ -56,10 +58,8 @@ describe('Connect to WebSocket with JWT as customer', function() {
       }
     });
   });
-});
 
-describe('Connect to WebSocket with JWT as courier', function() {
-  it('should authorize connection', function() {
+  it('should authorize connection with JWT as courier', function() {
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('sarah');
       var ws = new WebSocket('http://localhost:8000', {
@@ -67,7 +67,10 @@ describe('Connect to WebSocket with JWT as courier', function() {
           Authorization: 'Bearer ' + token
         }
       });
-      ws.onopen = resolve;
+      ws.onopen = function() {
+        ws.close();
+        resolve()
+      };
       ws.onerror = function(e) {
         reject(e.message);
       };
