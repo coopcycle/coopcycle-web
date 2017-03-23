@@ -107,7 +107,7 @@ orderDispatcher.setHandler(function(order, next) {
           order: {
             id: order.id,
             restaurant: order.restaurant.position,
-            deliveryAddress: order.delivery_address.position
+            deliveryAddress: order.deliveryAddress.position
           }
         });
         next();

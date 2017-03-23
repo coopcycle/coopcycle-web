@@ -26,11 +26,6 @@ OrderRegistry.prototype.findById = function(id) {
             resolve(order);
           });
 
-          // var deliveryAddress = {
-          //   latitude: order.delivery_address.geo.coordinates[0],
-          //   longitude: order.delivery_address.geo.coordinates[1],
-          // }
-          // self.redis.geoadd('delivery_address:geo', deliveryAddress.longitude, deliveryAddress.latitude, 'order:' + id);
         });
     }
     resolve(order);
