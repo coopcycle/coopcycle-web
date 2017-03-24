@@ -100,6 +100,8 @@ class AdminController extends Controller
     {
         $em = $this->getDoctrine()->getManagerForClass('AppBundle:Order');
 
+        // TODO Check status = WAITING
+
         $order = $this->getDoctrine()
             ->getRepository('AppBundle:Order')
             ->find($id);
