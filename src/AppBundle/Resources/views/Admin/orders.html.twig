@@ -70,7 +70,13 @@
     <td>{{ order.total }} €</td>
     <td>{{ order.createdAt|ago }}</td>
     <td>{{ order.deliveryTime }}</td>
-    <td><a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">Cancel</a></td>
+    <td>
+    {% if order.status == 'WAITING' %}
+    <a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">Cancel</a>
+    {% else %}
+    <a class="btn btn-xs btn-danger pull-right disabled">Cancel</a>
+    {% endif %}
+    </td>
   </tr>
   {% endfor %}
   </tbody>
