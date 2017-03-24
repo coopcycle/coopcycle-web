@@ -17,6 +17,9 @@
               <div class="form-group">
                   <label for="password">{{ 'security.login.password'|trans }}</label>
                   <input class="form-control" type="password" id="password" name="_password" required="required" />
+                  <a class="help-block" href="{{ path('fos_user_resetting_request') }}">
+                    {% trans from 'messages' %}Forgot password?{% endtrans %}
+                  </a>
               </div>
               <div class="form-group">
                 <div class="checkbox">

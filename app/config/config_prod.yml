@@ -26,3 +26,8 @@ monolog:
             max_files: 7
         console:
             type:  console
+
+fos_user:
+    registration:
+        confirmation:
+            enabled: true
