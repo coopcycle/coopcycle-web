@@ -33,5 +33,8 @@ monolog:
         #    type:   chromephp
         #    level:  info
 
-#swiftmailer:
-#    delivery_address: me@example.com
+# Uncomment to send emails in dev
+# fos_user:
+#     registration:
+#         confirmation:
+#             enabled: true

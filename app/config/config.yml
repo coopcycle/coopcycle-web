@@ -74,6 +74,8 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
+    port:      "%mailer_port%"
+    encryption: "%mailer_encryption%"
     spool:     { type: memory }
 
 # Nelmio CORS
@@ -91,6 +93,9 @@ fos_user:
     db_driver: orm
     firewall_name: web
     user_class: AppBundle\Entity\ApiUser
+    from_email:
+        address:        "%transactional_address%"
+        sender_name:    "%transactional_sender_name%"
     registration:
         form:
             type: AppBundle\Form\RegistrationType

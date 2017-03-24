@@ -15,6 +15,8 @@ parameters:
     mailer_host:       127.0.0.1
     mailer_user:       ~
     mailer_password:   ~
+    mailer_port:       ~
+    mailer_encryption: ~
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
@@ -30,3 +32,6 @@ parameters:
 
     stripe_secret_key: YOUR_STRIPE_SECRET_KEY
     stripe_publishable_key: YOUR_STRIPE_PUBLISHABLE_KEY
+
+    transactional_address: transactional@coopcycle.dev
+    transactional_sender_name: CoopCycle
