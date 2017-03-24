@@ -11,9 +11,7 @@ var config = configLoader.load();
 
 var utils = new TestUtils(config);
 
-var baseURL = process.env.COOPCYCLE_BASE_URL || 'http://coopcycle.dev';
-
-function initDb() {
+function init() {
   return new Promise(function(resolve, reject) {
     utils.cleanDb()
       .then(function() {
@@ -24,7 +22,8 @@ function initDb() {
                 lng: 2.359207
               });
             }),
-            utils.createUser('sarah', ['ROLE_COURIER'])
+            utils.createUser('sarah', ['ROLE_COURIER']),
+            utils.createUser('bob', ['ROLE_COURIER'])
           ])
           .then(resolve)
           .catch((e) => reject(e));
@@ -33,7 +32,7 @@ function initDb() {
   });
 }
 
-describe('Connect to dispatch WebSocket with order waiting', function() {
+describe('With one order waiting', function() {
 
   before(function() {
 
@@ -43,7 +42,7 @@ describe('Connect to dispatch WebSocket with order waiting', function() {
     utils.serverVersionAtLeast.call(this, utils.redis, [3, 2, 0]);
 
     return new Promise(function(resolve, reject) {
-      initDb()
+      init()
         .then(function() {
           return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
         })
@@ -57,7 +56,7 @@ describe('Connect to dispatch WebSocket with order waiting', function() {
     });
   });
 
-  it('should receive a message', function() {
+  it('order should be dispatched to courier', function() {
 
     this.timeout(5000);
 
@@ -90,9 +89,92 @@ describe('Connect to dispatch WebSocket with order waiting', function() {
       ws.onerror = function(e) {
         reject(e.message);
       };
-      ws.onclose = function() {
-        reject('WebSocket closed unexpectedly');
-      };
     });
   });
+});
+
+describe('With several users connected', function() {
+
+  before(function() {
+
+    this.timeout(20000);
+
+    // Skip test on if Redis < 3.2 (Travis)
+    utils.serverVersionAtLeast.call(this, utils.redis, [3, 2, 0]);
+
+    return new Promise(function(resolve, reject) {
+      init()
+        .then(resolve)
+        .catch(function(e) {
+          reject(e);
+        })
+    });
+  });
+
+  it('new order should be dispatched to closest courier', function() {
+
+    this.timeout(5000);
+
+    var createWebSocket = function(username, coordinates) {
+
+      var ws = new WebSocket('http://localhost:8000', {
+        headers: {
+          Authorization: 'Bearer ' + utils.createJWT(username)
+        }
+      });
+
+      ws.onopen = function() {
+        assert.equal(WebSocket.OPEN, ws.readyState);
+
+        ws.send(JSON.stringify({
+          type: "updateCoordinates",
+          coordinates: coordinates
+        }));
+      };
+
+      return ws;
+    }
+
+    return new Promise(function (resolve, reject) {
+
+      var sarah = createWebSocket('sarah', { latitude: 48.883083, longitude: 2.344276 });
+      var bob = createWebSocket('bob', { latitude: 48.884053, longitude: 2.333172 });
+
+      sarah.onerror = bob.onerror = function(e) {
+        reject(e.message);
+      };
+
+      sarah.onmessage = function(e) {
+        assert.equal('message', e.type);
+
+        var data = JSON.parse(e.data);
+        assert.equal('order', data.type);
+        assert.equal(1, data.order.id);
+
+        sarah.close();
+        bob.close();
+        resolve();
+      }
+
+      bob.onmessage = function(e) {
+        assert.equal('message', e.type);
+
+        var data = JSON.parse(e.data);
+        if ('order' === data.type) {
+          sarah.close();
+          bob.close();
+          reject('Farest courier should not receive order');
+        }
+      }
+
+      utils.createRestaurant('Awesome Pizza', {
+        latitude: 48.884550, longitude: 2.341358
+      })
+      .then(function(restaurant) {
+        utils.createRandomOrder('bill', restaurant)
+      });
+
+    });
+  });
+
 });
