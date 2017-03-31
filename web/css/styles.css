@@ -16,12 +16,44 @@ body {
 
 #search {
     margin-top: -20px;
-    padding: 120px 0;
+    padding: 100px 0;
     background-color: #ecf0f1;
     background-image: url(../pattern.svg);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+}
+
+#tracking-demo {
+    background-color: #111;
+    margin: 30px 0;
+    padding: 30px 0;
+    color: #2ECC71;
+}
+
+.homepage-top {
+    padding-bottom: 40px;
+}
+
+.homepage-description {
+    font-size: 18px;
+    margin: 40px 0 30px;
+}
+
+.homepage-card {
+    padding: 0 40px;
+    margin-bottom: 40px;
+}
+.homepage-card > h2 {
+    margin-bottom: 30px;
+}
+.homepage-card > p {
+    font-size: 16px;
+}
+
+.budget-participatif-logo {
+    float: left;
+    margin-right: 30px;
 }
 
 #address-search-form {

@@ -1,6 +1,7 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% block body %}
+
 <section id="search">
   <div class="container">
     <div class="row">
@@ -34,35 +35,79 @@
     </div>
   </div>
 </section>
+
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-4">
-
-      <h2>{% trans from "about" %}section_1.title{% endtrans %}</h2>
-      <p>{% trans from "about" %}section_1.paragraph_1{% endtrans %}</p>
-      <p>{% trans from "about" %}section_1.paragraph_2{% endtrans %}</p>
-
-      <h2>{% trans from "about" %}section_2.title{% endtrans %}</h2>
-      <p>{% trans from "about" %}section_2.paragraph_1{% endtrans %}</p>
-
-      <h2>{% trans from "about" %}section_3.title{% endtrans %}</h2>
-      <p>{% trans from "about" %}section_3.paragraph_1{% endtrans %}</p>
-
+  <section class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="homepage-description">
+        <p class="text-center">
+        {% trans from "about" %}description{% endtrans %}
+        </p>
+      </div>
     </div>
-    <div class="col-xs-12 col-sm-8">
-      <div id="map-wrapper">
-        <div class="embed-responsive embed-responsive-4by3">
-          <iframe class="embed-responsive-item" src="/tracking?zoom=13"></iframe>
+  </section>
+  <section class="row homepage-top">
+    <div class="col-md-6">
+      <div class="homepage-card">
+        <div class="text-center">
+          <img width="80" src="{{ asset('img/network.svg') }}" />
+        </div>
+        <h2 class="text-center">{% trans from "about" %}section_1.title{% endtrans %}</h2>
+        <p class="text-justify">{% trans from "about" %}section_1.paragraph_1{% endtrans %}</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="homepage-card">
+        <div class="text-center">
+          <img width="80" src="{{ asset('img/crowd.svg') }}" />
+        </div>
+        <h2 class="text-center">{% trans from "about" %}section_2.title{% endtrans %}</h2>
+        <p class="text-justify">{% trans from "about" %}section_2.paragraph_1{% endtrans %}</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section id="support">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img class="budget-participatif-logo" width="100" src="{{ asset('img/budget-participatif-paris.jpeg') }}" />
+            {% trans from "about" %}support.text{% endtrans %}
+            <a target="_blank"
+              href="https://budgetparticipatif.paris.fr/bp/jsp/site/Portal.jsp?page=idee&campagne=D&idee=2143" class="btn btn-success">
+              {% trans from "about" %}support.button{% endtrans %}
+            </a>
+          </div>
         </div>
       </div>
-      <p>{% trans from "about" %}about_bots{% endtrans %}</p>
     </div>
   </div>
+</section>
+
+<section id="tracking-demo">
+  <div class="container">
+    <div>{% trans from "about" %}about_bots{% endtrans %}</div>
+    <div id="map-wrapper">
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="/tracking?zoom=13"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <section class="text-center">
+    <p>{% trans from "about" %}contributing.text{% endtrans %}</p>
+  </section>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ asset('js/homepage.js') }}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqNf8X0elLLXv5yeh0btsYpq47eCzIAw&libraries=places&callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

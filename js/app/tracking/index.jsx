@@ -304,7 +304,7 @@ function removeMarkersByKeys(keys, markers) {
   });
 }
 
-map = L.map('map').setView([center.lat, center.lng], zoom);
+map = L.map('map', { scrollWheelZoom: false }).setView([center.lat, center.lng], zoom);
 // L.tileLayer.provider('OpenStreetMap.BlackAndWhite').addTo(map);
 
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
