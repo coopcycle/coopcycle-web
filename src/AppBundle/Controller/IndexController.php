@@ -18,7 +18,9 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        return array(
+            'google_api_key' => $this->getParameter('google_api_key'),
+        );
     }
 
     /**
