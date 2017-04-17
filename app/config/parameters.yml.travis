@@ -20,6 +20,7 @@ parameters:
     google_api_key: YOUR_API_KEY
     stripe_secret_key: YOUR_STRIPE_SECRET_KEY
     stripe_publishable_key: YOUR_STRIPE_PUBLISHABLE_KEY
+    stripe_connect_client_id: YOUR_STRIPE_CONNECT_CLIENT_ID
     transactional_address: test@coopcycle.org
     transactional_sender_name: CoopCycle
     redis_host: 127.0.0.1

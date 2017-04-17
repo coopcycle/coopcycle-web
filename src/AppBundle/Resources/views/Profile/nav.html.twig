@@ -1,14 +1,30 @@
-<div class="list-group">
-  <a href="{{ path('fos_user_profile_show') }}" class="list-group-item">{% trans %}My account{% endtrans %}</a>
-  {% if is_granted('ROLE_COURIER') %}
-  <a href="{{ path('profile_courier_deliveries') }}" class="list-group-item">{% trans %}My deliveries{% endtrans %}</a>
-  {% endif %}
-  {% if is_granted('ROLE_RESTAURANT') %}
-  <a href="{{ path('profile_restaurants') }}" class="list-group-item">{% trans %}My restaurants{% endtrans %}</a>
-  {% endif %}
-  <a href="{{ path('profile_orders') }}" class="list-group-item">{% trans %}My orders{% endtrans %}</a>
-  <a href="{{ path('profile_addresses') }}" class="list-group-item">{% trans %}My addresses{% endtrans %}</a>
-  <a href="{{ path('fos_user_security_logout') }}" class="list-group-item list-group-item-danger"><span>
-    {% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}
-  </a>
+<div class="panel panel-default">
+  <div class="panel-heading"><i class="fa fa-user"></i>  {% trans %}User{% endtrans %}</div>
+  <div class="list-group">
+    <a href="{{ path('fos_user_profile_show') }}" class="list-group-item">{% trans %}My account{% endtrans %}</a>
+    <a href="{{ path('profile_orders') }}" class="list-group-item">{% trans %}My orders{% endtrans %}</a>
+    <a href="{{ path('profile_addresses') }}" class="list-group-item">{% trans %}My addresses{% endtrans %}</a>
+    <a href="{{ path('fos_user_security_logout') }}" class="list-group-item list-group-item-danger"><span>
+      {% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}
+    </a>
+  </div>
 </div>
+
+{% if is_granted('ROLE_COURIER') %}
+<div class="panel panel-default">
+  <div class="panel-heading"><i class="fa fa-bicycle"></i>  {% trans %}Courier{% endtrans %}</div>
+  <div class="list-group">
+    <a href="{{ path('profile_courier_deliveries') }}" class="list-group-item">{% trans %}My deliveries{% endtrans %}</a>
+  </div>
+</div>
+{% endif %}
+
+{% if is_granted('ROLE_RESTAURANT') %}
+<div class="panel panel-default">
+  <div class="panel-heading"><i class="fa fa-cutlery"></i>  {% trans %}Merchant{% endtrans %}</div>
+  <div class="list-group">
+    <a href="{{ path('profile_restaurants') }}" class="list-group-item">{% trans %}My restaurants{% endtrans %}</a>
+    <a href="{{ path('profile_payment') }}" class="list-group-item">{% trans %}Payment{% endtrans %}</a>
+  </div>
+</div>
+{% endif %}

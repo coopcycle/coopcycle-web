@@ -209,4 +209,21 @@ class ProfileController extends Controller
             'restaurant' => 'profile_restaurant_edit',
         ]);
     }
+
+    /**
+     * @Route("/profile/payment", name="profile_payment")
+     * @Template()
+     */
+    public function paymentAction(Request $request)
+    {
+        $stripeParams = $this->getUser()->getStripeParams();
+
+        $stripeClientId = $this->getParameter('stripe_connect_client_id');
+        $stripeAuthorizeURL = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$stripeClientId.'&scope=read_write';
+
+        return [
+            'stripe_authorize_url' => $stripeAuthorizeURL,
+            'stripe_user_id' => $stripeParams ? $stripeParams->getUserId() : null
+        ];
+    }
 }

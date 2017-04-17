@@ -90,6 +90,13 @@ class Restaurant extends FoodEstablishment
      */
     private $website;
 
+    /**
+     * @var string The website of the restaurant.
+     *
+     * @ORM\ManyToOne(targetEntity="StripeParams")
+     */
+    private $stripeParams;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -276,5 +283,17 @@ class Restaurant extends FoodEstablishment
     public function getServesCuisine()
     {
         return $this->servesCuisine;
+    }
+
+    public function getStripeParams()
+    {
+        return $this->stripeParams;
+    }
+
+    public function setStripeParams(StripeParams $stripeParams)
+    {
+        $this->stripeParams = $stripeParams;
+
+        return $this;
     }
 }
