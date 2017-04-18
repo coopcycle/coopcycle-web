@@ -1,0 +1,25 @@
+parameters:
+    database_driver: pdo_pgsql
+    database_host: 127.0.0.1
+    database_port: 5432
+    database_name: coopcycle
+    database_user: postgres
+    database_password: ~
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+    mailer_port:       ~
+    mailer_encryption: ~
+    secret: ThisTokenIsNotSoSecretChangeIt
+    cors_allow_origin: 'http://localhost'
+    jwt_private_key_path: '%kernel.root_dir%/../var/jwt/private.pem'
+    jwt_public_key_path: '%kernel.root_dir%/../var/jwt/public.pem'
+    jwt_key_pass_phrase: coursiers
+    jwt_token_ttl: 86400
+    google_api_key: YOUR_API_KEY
+    stripe_secret_key: YOUR_STRIPE_SECRET_KEY
+    stripe_publishable_key: YOUR_STRIPE_PUBLISHABLE_KEY
+    transactional_address: test@coopcycle.org
+    transactional_sender_name: CoopCycle
+    redis_host: 127.0.0.1
