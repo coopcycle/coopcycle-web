@@ -40,15 +40,15 @@ before_script:
   - openssl genrsa -out var/jwt/private.pem 4096
   - openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
   # Configure PostgreSQL
-  - psql -U postgres -c 'CREATE DATABASE coursiers_test;'
-  - psql -U postgres -d coursiers_test -c 'CREATE EXTENSION postgis;'
-  - psql -U postgres -d coursiers_test -c 'CREATE EXTENSION postgis_topology;'
+  - psql -U postgres -c 'CREATE DATABASE coopcycle_test;'
+  - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis;'
+  - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis_topology;'
   # Install PHP app
   - composer self-update
-  - cp app/config/parameters.yml.dist app/config/parameters.yml
+  - cp app/config/parameters.yml.travis app/config/parameters.yml
   - composer install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
-  # - psql -U postgres -d coursiers_test -f tests/AppBundle/Resources/sql/restaurants.sql > /dev/null
+  # - psql -U postgres -d coopcycle_test -f tests/AppBundle/Resources/sql/restaurants.sql > /dev/null
   - php bin/console server:start 127.0.0.1:8080
   - cp phpunit.xml.dist phpunit.xml
   # Install JavaScript stuff
