@@ -58,6 +58,11 @@ $ ansible-galaxy install -r ansible/requirements.yml
 ```
 vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create'
 ```
+* Create an admin user
+```
+vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:create admin'
+vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:promote admin ROLE_ADMIN'
+```
 * Add a host to the `/etc/hosts` file:
 ```
 192.168.33.7 coopcycle.dev
@@ -79,6 +84,11 @@ docker-compose up -d
 ```
 docker-compose run php bin/console doctrine:database:create
 docker-compose run php bin/console doctrine:schema:create
+```
+* Create an admin user
+```
+docker-compose run php bin/console fos:user:create admin
+docker-compose run php bin/console fos:user:promote admin ROLE_ADMIN
 ```
 * Pre-process the OpenStreeMap data for OSRM
 ```
