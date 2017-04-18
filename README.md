@@ -50,7 +50,6 @@ wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O 
 ```
 $ ansible-galaxy install -r ansible/requirements.yml
 ```
-```
 * Install PHP, Composer, and Node
 * Run `composer install`
 * Run `npm install`
