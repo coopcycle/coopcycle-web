@@ -3,9 +3,36 @@ var url = require('url') ;
 var io = require('socket.io')(app, {path: '/tracking/socket.io'});
 var fs = require('fs');
 var _ = require('underscore');
-var redis = require('redis').createClient();
 var Mustache = require('mustache');
 var Promise = require('promise');
+
+var ROOT_DIR = __dirname + '/../../..';
+
+var envMap = {
+  production: 'prod',
+  development: 'dev',
+  test: 'test'
+}
+
+var ConfigLoader = require('../ConfigLoader');
+
+try {
+
+  var configFile = 'config.yml';
+  if (envMap[process.env.NODE_ENV]) {
+    configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
+  }
+
+  var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
+  var config = configLoader.load();
+
+} catch (e) {
+  throw e;
+}
+
+var redis = require('redis').createClient({
+  url: config.snc_redis.clients.default.dsn
+});
 
 console.log('---------------------');
 console.log('- STARTING TRACKING -');
