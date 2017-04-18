@@ -1,0 +1,20 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Deliveries{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <table class="table">
+  {% for delivery in deliveries %}
+    <tr>
+      <td>{{ delivery.originAddress.streetAddress }}</td>
+      <td>{{ delivery.deliveryAddress.streetAddress }}</td>
+      <td>{{ (delivery.distance / 1000)|round(2) }} Km</td>
+      <td><i class="fa fa-clock-o"></i> {{ (delivery.duration / 60)|round }} Min</td>
+      <td>{{ delivery.date|date('d/m/Y H:i') }}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> Add</a>
+{% endblock %}

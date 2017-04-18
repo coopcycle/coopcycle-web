@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "antd": "^2.9.3",
     "async": "^2.1.4",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
     "card": "^2.1.1",

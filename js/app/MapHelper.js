@@ -3,7 +3,7 @@ var Polyline = require('polyline');
 var BeautifyMarker = require('beautifymarker');
 
 function init(id, center, zoom) {
-  var map = L.map(id).setView([center.lat, center.lng], zoom);
+  var map = L.map(id, { scrollWheelZoom: false }).setView([center.lat, center.lng], zoom);
 
   L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
     maxZoom: 18,

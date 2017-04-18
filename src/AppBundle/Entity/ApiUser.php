@@ -10,6 +10,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity
  * @ApiResource(
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *   },
  *   collectionOperations={
  *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } }
  *   },
@@ -37,6 +40,11 @@ class ApiUser extends BaseUser
      * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer", cascade={"all"})
      */
     private $deliveryAddresses;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Address", mappedBy="user", cascade={"all"})
+     */
+    private $addresses;
 
     public function __construct()
     {
@@ -87,5 +95,24 @@ class ApiUser extends BaseUser
     public function getDeliveryAddresses()
     {
         return $this->deliveryAddresses;
+    }
+
+    public function addAddress(Address $addresses)
+    {
+        $this->addresses->add($addresses);
+
+        return $this;
+    }
+
+    public function setAddresses($addresses)
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function getAddresses()
+    {
+        return $this->addresses;
     }
 }

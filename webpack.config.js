@@ -10,6 +10,7 @@ module.exports = {
     'order-tracking': ['whatwg-fetch', './js/app/order/tracking.jsx'],
     'profile-deliveries': './js/app/profile/deliveries.js',
     'profile-restaurant': './js/app/profile/restaurant.js',
+    'delivery-form': './js/app/delivery/form.jsx',
   },
   output: {
     publicPath: "/js",

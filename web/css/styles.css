@@ -111,3 +111,10 @@ body {
     width: 20%;
     text-align: right;
 }
+
+.ant-calendar-picker {
+    margin-right: 5px;
+}
+.ant-form-item {
+    margin-bottom: 0;
+}
