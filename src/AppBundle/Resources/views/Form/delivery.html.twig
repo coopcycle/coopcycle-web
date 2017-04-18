@@ -1,0 +1,52 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block _delivery_originAddress_streetAddress_row %}
+{% spaceless %}
+  <div class="form-row {% if not form.vars.valid %}has-error{% endif %}">
+    <div class="input-group">
+      <div class="input-group-addon"><i class="fa fa-cube"></i></div>
+      {{ form_widget(form) }}
+    </div>
+    {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+  </div>
+{% endspaceless %}
+{% endblock %}
+
+{% block _delivery_deliveryAddress_streetAddress_row %}
+{% spaceless %}
+  <div class="form-row {% if not form.vars.valid %}has-error{% endif %}">
+    <div class="input-group">
+      <div class="input-group-addon"><i class="fa fa-flag"></i></div>
+      {{ form_widget(form) }}
+    </div>
+    {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+  </div>
+{% endspaceless %}
+{% endblock %}
+
+{% block _delivery_date_row %}
+{% spaceless %}
+  {{ block('hidden_widget') }}
+  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
+    {{ form_label(form) }}
+    <div class="col-sm-10">
+      <div id="datetimepicker" {% if not form.vars.valid %}data-has-error="true"{% endif %}></div>
+      {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+    </div>
+  </div>
+{% endspaceless %}
+{% endblock %}
+
+{% block _delivery_distance_row %}
+{% spaceless %}
+  <label class="control-label">{{ translation_domain is same as(false) ? 'Distance' : 'Distance'|trans({}, translation_domain) }}</label>
+  <p class="form-control-static"><span id="delivery_distance"></span></p>
+{% endspaceless %}
+{% endblock %}
+
+{% block _delivery_duration_row %}
+{% spaceless %}
+  <label class="control-label">{{ translation_domain is same as(false) ? 'Duration' : 'Duration'|trans({}, translation_domain) }}</label>
+  <p class="form-control-static"><span id="delivery_duration"></span></p>
+{% endspaceless %}
+{% endblock %}

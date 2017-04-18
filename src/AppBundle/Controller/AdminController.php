@@ -3,13 +3,17 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\GeoCoordinates;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Restaurant;
+use AppBundle\Form\DeliveryType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
@@ -204,5 +208,71 @@ class AdminController extends Controller
             'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
         ]);
+    }
+
+    /**
+     * @Route("/admin/deliveries", name="admin_deliveries")
+     * @Template()
+     */
+    public function deliveriesAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Delivery');
+
+        return [
+            'deliveries' => $repository->findAll(),
+        ];
+    }
+
+    /**
+     * @Route("/admin/deliveries/new", name="admin_deliveries_new")
+     * @Template()
+     */
+    public function newDeliveryAction(Request $request)
+    {
+        $delivery = new Delivery();
+
+        $form = $this->createForm(DeliveryType::class, $delivery);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+
+            $delivery = $form->getData();
+
+            $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
+
+            if ($delivery->getDate() < new \DateTime()) {
+                $form->get('date')->addError(new FormError('The date is in the past'));
+            }
+
+            if ($form->isValid()) {
+
+                $originLat = $form->get('originAddress')->get('latitude')->getData();
+                $originLng = $form->get('originAddress')->get('longitude')->getData();
+
+                $deliveryLat = $form->get('deliveryAddress')->get('latitude')->getData();
+                $deliveryLng = $form->get('deliveryAddress')->get('longitude')->getData();
+
+                $response = file_get_contents("http://localhost:5000/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
+
+                $data = json_decode($response, true);
+
+                $delivery->setDistance((int) $data['routes'][0]['distance']);
+                $delivery->setDuration((int) $data['routes'][0]['duration']);
+
+                $delivery->getOriginAddress()->setGeo(new GeoCoordinates($originLat, $originLng));
+                $delivery->getDeliveryAddress()->setGeo(new GeoCoordinates($deliveryLat, $deliveryLng));
+
+                $em->persist($delivery);
+                $em->flush();
+
+                return $this->redirectToRoute('admin_deliveries');
+            }
+        }
+
+        return [
+            'google_api_key' => $this->getParameter('google_api_key'),
+            'form' => $form->createView(),
+        ];
     }
 }
