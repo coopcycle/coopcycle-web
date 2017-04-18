@@ -40,7 +40,7 @@ $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 * Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
 ```
 mkdir -p var/osrm
-wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -P var/osrm
+wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
 ```
 
 ### Using Vagrant
@@ -50,10 +50,15 @@ wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -P 
 ```
 $ ansible-galaxy install -r ansible/requirements.yml
 ```
+```
 * Install PHP, Composer, and Node
 * Run `composer install`
 * Run `npm install`
 * Run `vagrant up`
+* Create the database schema
+```
+vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create'
+```
 * Add a host to the `/etc/hosts` file:
 ```
 192.168.33.7 coopcycle.dev
@@ -78,8 +83,8 @@ docker-compose run php bin/console doctrine:schema:create
 ```
 * Pre-process the OpenStreeMap data for OSRM
 ```
-docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/paris_france.osm.pbf
-docker-compose run osrm osrm-contract /data/paris_france.osrm
+docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+docker-compose run osrm osrm-contract /data/data.osrm
 ```
 
 * Open the platform in your browser

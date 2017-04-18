@@ -37,7 +37,7 @@ services:
     volumes:
       - './var/osrm:/data'
     environment:
-      OSRM_FILENAME: paris_france.osrm
+      OSRM_FILENAME: data.osrm
 
   php:
     build: './docker/php'
