@@ -21,13 +21,13 @@ module.exports = {
       // Extract css files
       {
           test: /\.css$/,
-          loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader' })
+          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
       },
       // Optionally extract less files
       // or any other compile-to-css language
       {
           test: /\.less$/,
-          loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader!less-loader' })
+          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!less-loader' })
       },
       {
         test: /\.json$/,
