@@ -35,3 +35,5 @@ parameters:
 
     transactional_address: transactional@coopcycle.dev
     transactional_sender_name: CoopCycle
+
+    redis_host: 127.0.0.1
