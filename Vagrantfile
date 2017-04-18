@@ -16,12 +16,17 @@ Vagrant.configure("2") do |config|
         v.customize [ "modifyvm", :id, "--memory", 2048 ]
     end
 
+    config.vm.provision :hosts do |provisioner|
+        provisioner.add_host '127.0.0.1', ['postgres', 'redis']
+    end
+
+    # Just install Docker
+    config.vm.provision "docker" do |d|
+    end
+
     # Provision the box with Ansible
     config.vm.provision :ansible do |ansible|
         ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
         ansible.playbook = "ansible/playbook.yml"
-    end
-    # Just install Docker
-    config.vm.provision "docker" do |d|
     end
 end
