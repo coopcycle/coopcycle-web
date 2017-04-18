@@ -3,7 +3,7 @@ become_method: sudo
 doc_root: /var/www/coopcycle/web
 main_domain: coopcycle.dev
 nginx_template: dev.tpl
-db_name: coursiers
+db_name: coopcycle
 sys_packages:
   - mcrypt
   - vim
@@ -60,3 +60,5 @@ postgresql_database_extensions:
   - db: "{{ db_name }}"
     extensions:
       - postgis
+
+osrm_root_dir: /var/www/coopcycle/var/osrm

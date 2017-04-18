@@ -11,4 +11,4 @@
     - redis-tools
     - nodejs
     - weareinteractive.pm2
-    - osrm
+    - osrm-docker
