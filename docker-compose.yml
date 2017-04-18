@@ -1,16 +1,61 @@
-web:
-    build: .
-    links:
-        - database
-    volumes:
-        - .:/app
-    ports:
-        - 80:80
+version: '2.1'
+services:
 
-database:
-    image: mysql
+  postgres:
+    restart: always
+    image: mdillon/postgis:9.4-alpine
     environment:
-        MYSQL_ROOT_PASSWORD: changeme
-        MYSQL_DATABASE: api_platform
-        MYSQL_USER: api_platform
-        MYSQL_PASSWORD: api_platform
+      POSTGRES_DB: coopcycle
+
+  redis:
+    restart: always
+    image: redis:alpine
+
+  nodejs:
+    build: './docker/nodejs'
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8002:8002'
+    volumes:
+      - './:/srv/coopcycle'
+
+  webpack:
+    build: './docker/webpack'
+    ports:
+      - '8080:8080'
+    volumes:
+      - './:/srv/coopcycle'
+
+  osrm:
+    build: './docker/osrm'
+    ports:
+      - '5000:5000'
+    volumes:
+      - './var/osrm:/data'
+    environment:
+      OSRM_FILENAME: paris_france.osrm
+
+  php:
+    build: './docker/php'
+    depends_on:
+      - postgres
+    environment:
+      SYMFONY_ENV: 'dev'
+    volumes:
+      - './:/srv/coopcycle'
+
+  nginx:
+    image: 'nginx:1.11-alpine'
+    depends_on:
+      - php
+      - nodejs
+    ports:
+      - '80:80'
+    volumes_from:
+      - php
+    volumes:
+      - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
