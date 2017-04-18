@@ -24,4 +24,4 @@ snc_redis:
         default:
             type: predis
             alias: default
-            dsn: redis://127.0.0.1:6379/1
+            dsn: redis://%redis_host%:6379/1
