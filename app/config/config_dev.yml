@@ -7,7 +7,7 @@ framework:
         strict_requirements: true
     profiler: { only_exceptions: false }
     assets:
-        base_urls: ['http://localhost:8080']
+        base_urls: ['http://192.168.99.100:8080']
 
 web_profiler:
     toolbar: true

@@ -23,28 +23,34 @@ It also provides a routing service with [OSRM](http://project-osrm.org/).
 
 [API documentation](https://coopcycle.org/api/docs)
 
-Prerequisites
--------------
-
-* Install [VirtualBox](https://www.virtualbox.org/) & [Vagrant](https://docs.vagrantup.com/v2/installation/index.html)
-* Install [Ansible](http://docs.ansible.com/intro_installation.html#installation).
-* Install Ansible roles with Ansible Galaxy
-```
-$ ansible-galaxy install -r ansible/requirements.yml
-```
-* Install PHP, Composer, and Node
-
 How to develop
 --------------
 
-You can run the platform locally using Vagrant.
+Developement environment comes in two flavors: Vagrant & Docker.
 
+### Prerequisites
+
+* Install [VirtualBox](https://www.virtualbox.org/)
 * Generate the SSH keys for JSON Web Token:
 ```
 $ mkdir -p var/jwt
 $ openssl genrsa -out var/jwt/private.pem -aes256 4096
 $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 ```
+* Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
+```
+mkdir -p var/osrm
+wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -P var/osrm
+```
+
+### Using Vagrant
+
+* Install [Vagrant](https://docs.vagrantup.com/v2/installation/index.html) & [Ansible](http://docs.ansible.com/intro_installation.html#installation).
+* Install Ansible roles with Ansible Galaxy
+```
+$ ansible-galaxy install -r ansible/requirements.yml
+```
+* Install PHP, Composer, and Node
 * Run `composer install`
 * Run `npm install`
 * Run `vagrant up`
@@ -53,6 +59,33 @@ $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 192.168.33.7 coopcycle.dev
 ```
 * Run `npm run start` to launch `webpack-dev-server`
+
+### Using Docker
+
+* Create a Docker Machine if needed
+```
+docker-machine create -d virtualbox
+eval $(docker-machine env default)
+```
+* Start the Docker containers
+```
+docker-compose up -d
+```
+* Create the database
+```
+docker-compose run php bin/console doctrine:database:create
+docker-compose run php bin/console doctrine:schema:create
+```
+* Pre-process the OpenStreeMap data for OSRM
+```
+docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/paris_france.osm.pbf
+docker-compose run osrm osrm-contract /data/paris_france.osrm
+```
+
+* Open the platform in your browser
+```
+open http://`docker-machine ip`
+```
 
 How to provision a server
 -------------------------
@@ -84,5 +117,6 @@ License
 -------
 
 The code is licensed under the [Peer Production License](https://wiki.p2pfoundation.net/Peer_Production_License), meaning you can use this software provided:
+
 * You are a worker-owned business or worker-owned collective
 * All financial gain, surplus, profits and benefits produced by the business or collective are distributed among the worker-owners
