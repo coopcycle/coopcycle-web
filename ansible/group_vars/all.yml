@@ -1,12 +1,42 @@
 ---
-become_method: sudo
-doc_root: /var/www/coopcycle/web
-main_domain: coopcycle.dev
-nginx_template: dev.tpl
+
+symfony_env: dev
+node_env: development
+
+coopcycle_web_dir: /var/www/coopcycle/web
+coopcycle_domain: coopcycle.dev
+
 db_name: coopcycle
-sys_packages:
-  - mcrypt
-  - vim
+
+nginx_snippets:
+  websocket_proxy:
+    - proxy_set_header Accept-Encoding ""
+    - proxy_set_header X-Real-IP $remote_addr
+    - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
+    - proxy_set_header X-NginX-Proxy true
+    - proxy_http_version 1.1
+    - proxy_set_header Upgrade $http_upgrade
+    - proxy_set_header Connection "upgrade"
+    - proxy_set_header Host $host
+    - proxy_buffers 8 32k
+    - proxy_buffer_size 64k
+    - proxy_set_header X-Forwarded-Proto $scheme
+  ssl_params:
+    - ssl_protocols TLSv1 TLSv1.1 TLSv1.2
+    - ssl_prefer_server_ciphers on
+    - ssl_dhparam /etc/ssl/certs/dhparam.pem
+    - ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'
+    - ssl_session_timeout 1d
+    - ssl_session_cache shared:SSL:50m
+    - ssl_stapling on
+    - ssl_stapling_verify on
+    - add_header Strict-Transport-Security max-age=15768000
+
+nginx_sites:
+  coopcycle:
+    template: "nginx/templates/{{ symfony_env }}.conf.j2"
+    server_name: "{{ coopcycle_domain }}"
+    root: "{{ coopcycle_web_dir }}"
 
 php_version: "7.0"
 php_enable_php_fpm: true
@@ -39,7 +69,7 @@ pm2_cmds: []
 pm2_apps:
   - run: pm2.config.js
     path: "/var/www/coopcycle"
-    args: "--env development"
+    args: "--env {{ node_env }}"
 
 redis_version: 3.2.1
 redis_bind: 127.0.0.1

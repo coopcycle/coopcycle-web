@@ -1,19 +1,50 @@
+upstream realtime {
+    server 127.0.0.1:8000;
+}
+
+upstream tracking {
+    server 127.0.0.1:8001;
+}
+
+upstream order-tracking {
+    server 127.0.0.1:8002;
+}
+
 server {
 
     listen 80;
-    server_name {{ main_domain }};
-    root {{ doc_root }};
+    server_name {{ item.value.server_name }};
+    root {{ item.value.root }};
 
     # Fix bug to serve static files on shared folders
     sendfile off;
 
-    # WebSocket endpoints
-    include /etc/nginx/websockets.conf;
+    # Prevents 502 bad gateway error
+    large_client_header_buffers 8 32k;
+
+    location /realtime {
+        include snippets/websocket_proxy.conf;
+        proxy_pass http://realtime;
+        proxy_redirect off;
+    }
+
+    location /tracking {
+        include snippets/websocket_proxy.conf;
+        proxy_pass http://tracking;
+        proxy_redirect off;
+    }
+
+    location /order-tracking {
+        include snippets/websocket_proxy.conf;
+        proxy_pass http://order-tracking;
+        proxy_redirect off;
+    }
 
     location / {
         # try to serve file directly, fallback to app.php
         try_files $uri /app_dev.php$is_args$args;
     }
+
     # DEV
     # This rule should only be placed on your development environment
     # In production, don't include this and don't deploy app_dev.php or config.php
@@ -38,6 +69,6 @@ server {
       return 404;
     }
 
-    error_log /var/log/nginx/{{ main_domain }}.error.log;
-    access_log /var/log/nginx/{{ main_domain }}.access.log;
+    error_log /var/log/nginx/{{ item.value.server_name }}.error.log;
+    access_log /var/log/nginx/{{ item.value.server_name }}.access.log;
 }

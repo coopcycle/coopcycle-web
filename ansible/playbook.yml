@@ -2,9 +2,9 @@
   become: yes
   roles:
     - init
-    - nginx
     - ANXS.postgresql
     - geerlingguy.php
+    - jdauphant.nginx
     # FIXME
     # Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
     - DavidWittman.redis

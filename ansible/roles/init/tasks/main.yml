@@ -25,4 +25,6 @@
   - name: Install extra packages
     become: yes
     apt:  pkg={{ item }} state=latest
-    with_items: "{{ sys_packages }}"
+    with_items:
+      - mcrypt
+      - vim
