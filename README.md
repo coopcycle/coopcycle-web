@@ -91,6 +91,27 @@ docker-compose run osrm osrm-contract /data/data.osrm
 open http://`docker-machine ip`
 ```
 
+Testing
+-------
+
+* Create the test database
+
+With Vagrant
+```
+vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:database:create --env=test'
+vagrant ssh -c 'psql -U postgres -d coopcycle_test -c "CREATE EXTENSION postgis;"'
+vagrant ssh -c 'psql -U postgres -d coopcycle_test -c "CREATE EXTENSION postgis_topology;"'
+vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create --env=test'
+```
+
+* Launch the Behat tests
+
+With Vagrant
+```
+sudo -u www-data php /var/www/coopcycle/vendor/bin/behat
+```
+
+
 How to provision a server
 -------------------------
 

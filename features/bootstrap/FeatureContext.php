@@ -13,7 +13,7 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\SchemaTool;
-use Sanpi\Behatch\HttpCall\HttpCallResultPool;
+use Behatch\HttpCall\HttpCallResultPool;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -83,7 +83,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $environment = $scope->getEnvironment();
 
-        $this->restContext = $environment->getContext('Sanpi\Behatch\Context\RestContext');
+        $this->restContext = $environment->getContext('Behatch\Context\RestContext');
     }
 
     /**
