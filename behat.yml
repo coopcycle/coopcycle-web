@@ -6,8 +6,8 @@ default:
       contexts:
         - FeatureContext: { doctrine: "@doctrine" }
         - Behat\MinkExtension\Context\MinkContext
-        - Sanpi\Behatch\Context\RestContext
-        - Sanpi\Behatch\Context\JsonContext
+        - Behatch\Context\RestContext
+        - Behatch\Context\JsonContext
         - Fidry\AliceBundleExtension\Context\Doctrine\AliceORMContext
   extensions:
     Behat\Symfony2Extension:
