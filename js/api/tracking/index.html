@@ -93,11 +93,11 @@
       window.mapZoom = {{ zoom }};
     </script>
     {{#dev}}
-      <script src="http://192.168.99.100:8080/js/tracking.js"></script>
-      <script src="http://192.168.99.100:8080/webpack-dev-server.js"></script>
+    <script src="{{ assets_base_url }}/js/tracking.js"></script>
+    <script src="{{ assets_base_url }}/webpack-dev-server.js"></script>
     {{/dev}}
     {{^dev}}
-      <script src="/js/tracking.js"></script>
+    <script src="/js/tracking.js"></script>
     {{/dev}}
 
   </body>

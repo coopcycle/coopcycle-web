@@ -53,6 +53,7 @@ function handler(req, res) {
 
     var output = Mustache.render(data.toString('utf8'), {
       dev: env === 'development',
+      assets_base_url: process.env.ASSETS_BASE_URL || '',
       zoom: params.zoom || 13
     });
 
