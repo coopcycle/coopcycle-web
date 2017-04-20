@@ -62,7 +62,7 @@ vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:sch
 ```
 192.168.33.7 coopcycle.dev
 ```
-* Run `npm run start` to launch `webpack-dev-server`
+* Run `npm run watch` to launch `webpack-dev-server`
 
 ### Using Docker
 
