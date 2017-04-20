@@ -6,4 +6,6 @@ node_env: production
 coopcycle_web_dir: /var/www/coopcycle/current/web
 coopcycle_domain: coopcycle.org
 
+pm2_user: root
+
 osrm_root_dir: /opt/osrm
