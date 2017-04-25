@@ -7,17 +7,26 @@
 {% block content %}
 {% include "AppBundle:Admin:pagination.html.twig" %}
 <table class="table">
-{% for restaurant in restaurants %}
-  <tr>
-    <td><a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
-    <td>{{ restaurant.name }}</td>
-    <td>{{ restaurant.streetAddress }}</td>
-    <td>
-      <a href="{{ path('admin_restaurant_menu', { id: restaurant.id }) }}" class="btn btn-xs btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a>
-    </td>
-  </tr>
-{% endfor %}
+{% if restaurants|length > 0 %}
+  {% for restaurant in restaurants %}
+    <tr>
+      <td><a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+      <td>{{ restaurant.name }}</td>
+      <td>{{ restaurant.streetAddress }}</td>
+      <td>
+        <a href="{{ path('admin_restaurant_menu', { id: restaurant.id }) }}" class="btn btn-xs btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}There are no restaurants yet.{% endtrans %}
+  <a href="{{ path('admin_restaurant_new') }}">{% trans %}Create a new restaurant{% endtrans %}</a>
+  </div>
+{% endif %}
 </table>
+{% include "AppBundle:Admin:pagination.html.twig" %}
+<a href="{{ path('admin_restaurant_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Add a restaurant{% endtrans %}</a>
 {% endblock %}
 
 {% block scripts %}
