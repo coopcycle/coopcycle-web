@@ -181,6 +181,19 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/restaurants/new", name="admin_restaurant_new")
+     * @Template("@App/Restaurant/form.html.twig")
+     */
+    public function newRestaurantAction(Request $request)
+    {
+        return $this->editRestaurantAction(null, $request, 'AppBundle::admin.html.twig', [
+            'success' => 'admin_restaurants',
+            'restaurants' => 'admin_restaurants',
+            'menu' => 'admin_restaurant_menu',
+        ]);
+    }
+
+    /**
      * @Route("/admin/restaurant/{id}/menu", name="admin_restaurant_menu")
      * @Template("@App/Restaurant/form-menu.html.twig")
      */
