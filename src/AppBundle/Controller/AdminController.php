@@ -277,4 +277,14 @@ class AdminController extends Controller
             'form' => $form->createView(),
         ];
     }
+
+    /**
+     * @Route("/admin/zones", name="admin_zones")
+     * @Template()
+     */
+    public function zonesAction(Request $request)
+    {
+        return [
+        ];
+    }
 }

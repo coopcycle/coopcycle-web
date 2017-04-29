@@ -1,0 +1,15 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Zones{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="embed-responsive embed-responsive-16by9">
+  <div class="embed-responsive-item" id="map"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ asset('/js/zones.js') }}"></script>
+{% endblock %}

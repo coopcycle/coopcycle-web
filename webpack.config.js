@@ -11,6 +11,7 @@ module.exports = {
     'profile-deliveries': './js/app/profile/deliveries.js',
     'profile-restaurant': './js/app/profile/restaurant.js',
     'delivery-form': './js/app/delivery/form.jsx',
+    zones: './js/app/zones/index.jsx',
   },
   output: {
     publicPath: "/js",
