@@ -40,6 +40,10 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  'AppBundle\Action\Routing':
+    class: AppBundle\Action\Routing
+    arguments: [ '%osrm_host%' ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:

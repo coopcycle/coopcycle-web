@@ -229,6 +229,8 @@ class AdminController extends Controller
      */
     public function newDeliveryAction(Request $request)
     {
+        $osrmHost = $this->getParameter('osrm_host');
+
         $delivery = new Delivery();
 
         $form = $this->createForm(DeliveryType::class, $delivery);
@@ -253,7 +255,7 @@ class AdminController extends Controller
                 $deliveryLat = $form->get('deliveryAddress')->get('latitude')->getData();
                 $deliveryLng = $form->get('deliveryAddress')->get('longitude')->getData();
 
-                $response = file_get_contents("http://localhost:5000/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
+                $response = file_get_contents("http://{$osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
 
                 $data = json_decode($response, true);
 

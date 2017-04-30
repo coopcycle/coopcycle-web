@@ -12,6 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Routing
 {
+    private $osrmHost;
+
+    public function __construct($osrmHost)
+    {
+        $this->osrmHost = $osrmHost;
+    }
+
     /**
      * @Route(
      *     path="/routing/route",
@@ -30,7 +37,7 @@ class Routing
         list($originLat, $originLng) = explode(',', $origin);
         list($destinationLat, $destinationLng) = explode(',', $destination);
 
-        $data = file_get_contents("http://localhost:5000/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
+        $data = file_get_contents('http://' . $this->osrmHost. "/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
 
         return new JsonResponse($data, 200, [], true);
     }
