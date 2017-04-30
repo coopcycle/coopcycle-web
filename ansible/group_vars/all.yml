@@ -34,6 +34,12 @@ nginx_snippets:
     - ssl_stapling_verify on
     - add_header Strict-Transport-Security max-age=15768000
 
+nginx_configs:
+  upstream:
+    - upstream realtime       { server 127.0.0.1:8000; }
+    - upstream tracking       { server 127.0.0.1:8001; }
+    - upstream order-tracking { server 127.0.0.1:8002; }
+
 nginx_sites:
   coopcycle:
     template: "nginx/templates/{{ symfony_env }}.conf.j2"
