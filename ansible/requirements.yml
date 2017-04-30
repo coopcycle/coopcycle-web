@@ -7,3 +7,6 @@
 - src: weareinteractive.pm2
 
 - src: jdauphant.nginx
+  version: 2.7.7
+
+- src: debops.docker

@@ -1,41 +1,18 @@
-set :user, 'capistrano'
-set :use_sudo, false
-
-set :application, 'coursiers'
 set :repo_url, 'git@github.com:coopcycle/coopcycle-web.git'
 
 set :linked_files, fetch(:linked_files, [])
   .push(fetch(:app_config_path) + '/parameters.yml')
 
 set :linked_dirs, fetch(:linked_dirs, [])
-  .push(fetch(:var_path) + '/sessions', fetch(:var_path) + '/jwt')
+  .push(fetch(:var_path) + '/sessions', fetch(:var_path) + '/jwt', fetch(:web_path) + '/images')
 
 set :symfony_directory_structure, 3
 set :sensio_distribution_version, 5
 
 set :format, :pretty
 set :log_level, :info
-set :keep_releases, 3
 
 set :pm2_config, "current/pm2.config.js"
-
-# set :permission_method, "acl"
-# set :file_permissions_users, ["capistrano"]
-# set :file_permissions_groups, ["www-data"]
-
-# namespace :deploy do
-#   task :updated do
-#     on roles :all do
-#       # Create log file with capistrano user to avoid
-#       log_file = shared_path.join(fetch(:log_path)).join('prod.log')
-#       execute :touch, log_file
-
-#       Rake::Task["symfony:set_permissions"].reenable
-#       Rake::Task["deploy:set_permissions:chmod"].reenable
-#       invoke "symfony:set_permissions"
-#     end
-#   end
-# end
 
 # read https://github.com/capistrano/symfony/pull/37
 namespace :symfony do
@@ -50,7 +27,6 @@ namespace :symfony do
 end
 
 SSHKit.config.command_map[:webpack] = "node_modules/.bin/webpack"
-SSHKit.config.command_map[:composer] = "php #{shared_path.join("composer.phar")}"
 
 namespace :deploy do
 
@@ -76,8 +52,14 @@ namespace :deploy do
   task :restart_pm2 do
     on roles :all do
       within deploy_to do
-        execute :pm2, 'startOrRestart', '--env', 'production', fetch(:pm2_config)
+        execute :pm2, 'restart', '--env', 'production', fetch(:pm2_config)
       end
+    end
+  end
+
+  before :starting, :map_composer_command do
+    on roles(:app) do |server|
+      SSHKit.config.command_map[:composer] = "#{shared_path.join("composer.phar")}"
     end
   end
 
@@ -90,34 +72,3 @@ namespace :deploy do
   after :finished, 'restart_pm2'
 
 end
-
-# Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
-
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
-
-# Default value for :scm is :git
-# set :scm, :git
-
-# Default value for :format is :airbrussh.
-# set :format, :airbrussh
-
-# You can configure the Airbrussh format using :format_options.
-# These are the defaults.
-# set :format_options, command_output: true, log_file: 'log/capistrano.log', color: :auto, truncate: :auto
-
-# Default value for :pty is false
-# set :pty, true
-
-# Default value for :linked_files is []
-# append :linked_files, 'config/database.yml', 'config/secrets.yml'
-
-# Default value for linked_dirs is []
-# append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
-
-# Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
-
-# Default value for keep_releases is 5
-# set :keep_releases, 5

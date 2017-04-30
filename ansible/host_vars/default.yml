@@ -1,0 +1,33 @@
+---
+
+# Host vars used by Vagrant
+
+symfony_env: dev
+node_env: development
+
+nginx_sites:
+  coopcycle:
+    template: "nginx/templates/{{ symfony_env }}.conf.j2"
+    server_name: "coopcycle.dev"
+    root: "/var/www/coopcycle/web"
+
+pm2_user: vagrant
+pm2_apps:
+  - run: pm2.config.js
+    path: "/var/www/coopcycle"
+    args: "--env {{ node_env }}"
+    env:
+      ASSETS_BASE_URL: "http://localhost:8080"
+
+redis_bind: 127.0.0.1
+
+postgresql_databases:
+  - name: "coopcycle"
+    owner: postgres
+    postgis: yes
+postgresql_database_extensions:
+  - db: "coopcycle"
+    extensions:
+      - postgis
+
+osrm_root_dir: /var/www/coopcycle/var/osrm

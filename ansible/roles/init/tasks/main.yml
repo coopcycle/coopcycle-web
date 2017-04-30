@@ -5,12 +5,13 @@
 
   - name: Install system packages
     become: yes
-    apt:  pkg={{ item }} state=latest
+    apt: pkg={{ item }} state=latest
     with_items:
       - curl
       - wget
       - build-essential
       - python-software-properties
+      - git
 
   - name: Add DotDeb repository for PHP7
     apt_repository: repo='deb http://packages.dotdeb.org jessie all' state=present filename='dotdeb'
@@ -20,11 +21,11 @@
 
   - name: Update apt again
     become: yes
-    apt:  update_cache=yes
+    apt: update_cache=yes
 
   - name: Install extra packages
     become: yes
-    apt:  pkg={{ item }} state=latest
+    apt: pkg={{ item }} state=latest
     with_items:
       - mcrypt
       - vim

@@ -1,15 +1,5 @@
 ---
 
-symfony_env: dev
-node_env: development
-
-coopcycle_web_dir: /var/www/coopcycle/web
-coopcycle_domain: coopcycle.dev
-
-webpack_baseurl: "http://localhost:8080"
-
-db_name: coopcycle
-
 nginx_snippets:
   websocket_proxy:
     - proxy_set_header Accept-Encoding ""
@@ -40,12 +30,6 @@ nginx_configs:
     - upstream tracking       { server 127.0.0.1:8001; }
     - upstream order-tracking { server 127.0.0.1:8002; }
 
-nginx_sites:
-  coopcycle:
-    template: "nginx/templates/{{ symfony_env }}.conf.j2"
-    server_name: "{{ coopcycle_domain }}"
-    root: "{{ coopcycle_web_dir }}"
-
 php_version: "7.0"
 php_enable_php_fpm: true
 php_fpm_listen: "/var/run/php7-fpm.sock"
@@ -71,19 +55,11 @@ php_packages:
 nodejs:
   version: 6.x
 
-pm2_user: vagrant
 pm2_service_name: pm2
 pm2_version: "^2.4"
 pm2_cmds: []
-pm2_apps:
-  - run: pm2.config.js
-    path: "/var/www/coopcycle"
-    args: "--env {{ node_env }}"
-    env:
-      ASSETS_BASE_URL: "{{ webpack_baseurl }}"
 
 redis_version: 3.2.1
-redis_bind: 127.0.0.1
 redis_logfile: /var/log/redis/redis-server.log
 
 postgresql_version: 9.4
@@ -93,13 +69,3 @@ postgresql_ctype: "en_US.UTF-8"
 postgresql_admin_user: "postgres"
 postgresql_default_auth_method: "trust"
 postgresql_ext_install_postgis: yes
-postgresql_databases:
-  - name: "{{ db_name }}"
-    owner: postgres
-    postgis: yes
-postgresql_database_extensions:
-  - db: "{{ db_name }}"
-    extensions:
-      - postgis
-
-osrm_root_dir: /var/www/coopcycle/var/osrm

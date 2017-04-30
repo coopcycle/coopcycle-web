@@ -2,20 +2,14 @@
   become: yes
   roles:
     - init
-
-- hosts: web
-  become: yes
-  roles:
+    # web
     - geerlingguy.php
     - jdauphant.nginx
     - nodejs
     - weareinteractive.pm2
-
-- hosts: db
-  become: yes
-  roles:
+    # db
     - ANXS.postgresql
+    # FIXME Failed to reload sysctl: sysctl: permission denied on key 'vm.overcommit_memory
     - DavidWittman.redis
     - redis-tools
-    - debops.docker
     - osrm-docker

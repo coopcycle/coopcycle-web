@@ -28,7 +28,7 @@ apps = _.map(apps, function(app) {
   if (env === 'production') {
     delete app.watch;
     app = _.extend(app, {
-      cwd: "/var/www/coopcycle/current",
+      cwd: __dirname,
     });
   } else {
     app = _.extend(app, {
