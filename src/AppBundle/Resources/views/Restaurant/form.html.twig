@@ -1,6 +1,6 @@
 {% extends layout %}
 
-{% form_theme form 'AppBundle:Form:menu.html.twig' %}
+{% form_theme form 'AppBundle:Form:restaurant.html.twig' %}
 
 {% block breadcrumb %}
 <li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
@@ -19,8 +19,18 @@
 
 {{ form_start(form) }}
 
-  {{ form_row(form.name) }}
-  {{ form_row(form.website) }}
+  <div class="row">
+    <div class="col-sm-4">
+      {{ form_row(form.imageFile) }}
+    </div>
+    <div class="col-sm-8">
+      {{ form_row(form.name) }}
+      {{ form_row(form.website) }}
+    </div>
+  </div>
+
+  <hr>
+
   <div id="cuisines" data-prototype="{{ form_widget(form.servesCuisine.vars.prototype)|e('html_attr') }}">
     {{ form_label(form.servesCuisine) }}
     {% for cuisine in form.servesCuisine %}
@@ -30,7 +40,9 @@
   <button class="btn btn-sm btn-success" data-toggle="add-cuisine" data-target="#cuisines">Ajouter</button>
   {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
   {% do form.servesCuisine.setRendered %}
+
   <hr>
+
   {{ form_row(form.streetAddress) }}
   {{ form_row(form.postalCode) }}
   {{ form_row(form.addressLocality) }}

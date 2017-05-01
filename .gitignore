@@ -14,6 +14,8 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
+/web/images/*
+!web/images/.gitkeep
 /web/js/*
 !web/js/.gitkeep
 /.vagrant/

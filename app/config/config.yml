@@ -38,6 +38,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form_themes:
+        - 'VichUploaderBundle:Form:fields.html.twig'
 
 # Doctrine Configuration
 doctrine:
@@ -129,3 +131,16 @@ webfactory_piwik:
     disabled: "%kernel.debug%"
     piwik_host: piwik.coopcycle.org
     tracker_path: "/piwik.js"
+
+vich_uploader:
+    db_driver: orm
+    mappings:
+        restaurant_image:
+            uri_prefix: /images/restaurants
+            upload_destination: '%kernel.root_dir%/../web/images/restaurants'
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2

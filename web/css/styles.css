@@ -118,3 +118,31 @@ body {
 .ant-form-item {
     margin-bottom: 0;
 }
+
+form[name="restaurant"] #restaurant_imageFile_file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.image-uploader {
+    position: relative;
+    width: 230px;
+    height: 230px;
+    border: 1px dashed black;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.image-uploader > label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+}

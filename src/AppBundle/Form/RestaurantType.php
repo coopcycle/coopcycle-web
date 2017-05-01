@@ -19,6 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\GeoCoordinates;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class RestaurantType extends AbstractType
 {
@@ -49,6 +51,10 @@ class RestaurantType extends AbstractType
             ->add('addressLocality', TextType::class, ['label' => 'City'])
             ->add('latitude', HiddenType::class, ['mapped' => false])
             ->add('longitude', HiddenType::class, ['mapped' => false])
+            ->add('imageFile', VichImageType::class, [
+                'required' => false,
+                'download_link' => false,
+            ])
             ;
 
         $constraints = [
@@ -58,6 +64,7 @@ class RestaurantType extends AbstractType
 
         // Make sure latitude/longitude is valid
         $latLngListener = function (FormEvent $event) use ($constraints) {
+            $restaurant = $event->getData();
             $form = $event->getForm();
 
             $streetAddress = $form->get('streetAddress')->getData();
@@ -71,8 +78,10 @@ class RestaurantType extends AbstractType
                 $latitudeViolations = $validator->validate($latitude, $constraints);
                 $longitudeViolations = $validator->validate($longitude, $constraints);
 
-                if (count($latitudeViolations) > 0 || count($longitudeViolations) > 0) {
-                  $form->get('streetAddress')
+                if (count($latitudeViolations) === 0 && count($longitudeViolations) === 0) {
+                    $restaurant->setGeo(new GeoCoordinates($latitude, $longitude));
+                } else {
+                    $form->get('streetAddress')
                     ->addError(new FormError('Please select an address in the dropdown'));
                 }
             }
