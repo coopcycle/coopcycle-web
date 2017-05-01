@@ -23,16 +23,3 @@
 {{ form_rest(form) }}
 {% endspaceless %}
 {% endblock %}
-
-{% block _restaurant_servesCuisine_entry_widget %}
-{% spaceless %}
-<div class="form-group row">
-  <div class="col-sm-11">
-  {{ form_widget(form) }}
-  </div>
-  <div class="col-sm-1">
-    <button type="button" class="btn btn-danger pull-right" data-remove><span class="glyphicon glyphicon-remove-sign"></span></button>
-  </div>
-</div>
-{% endspaceless %}
-{% endblock %}
