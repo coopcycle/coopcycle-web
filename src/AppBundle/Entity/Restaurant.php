@@ -53,6 +53,7 @@ class Restaurant extends FoodEstablishment
 
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
+     * @Assert\File(maxSize = "1024k")
      * @var File
      */
     private $imageFile;
