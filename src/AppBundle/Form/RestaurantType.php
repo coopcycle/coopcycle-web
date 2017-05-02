@@ -88,6 +88,14 @@ class RestaurantType extends AbstractType
         };
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, $latLngListener);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+            $restaurant = $event->getData();
+            if (null !== $restaurant) {
+                $form = $event->getForm();
+                $form->get('latitude')->setData($restaurant->getGeo()->getLatitude());
+                $form->get('longitude')->setData($restaurant->getGeo()->getLongitude());
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
