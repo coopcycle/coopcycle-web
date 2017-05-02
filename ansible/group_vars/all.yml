@@ -1,5 +1,7 @@
 ---
 
+nginx_http_params:
+  - client_max_body_size 5m
 nginx_snippets:
   websocket_proxy:
     - proxy_set_header Accept-Encoding ""
@@ -35,6 +37,7 @@ php_enable_php_fpm: true
 php_fpm_listen: "/var/run/php7-fpm.sock"
 php_webserver_daemon: "nginx"
 php_date_timezone: "Europe/Paris"
+php_upload_max_filesize: "5M"
 php_packages:
   - php7.0-common
   - php7.0-cli
