@@ -17,6 +17,7 @@ server {
     {% if item.value.ssl is defined and item.value.ssl == True %}
 
     listen [::]:443 ssl;
+    listen 443 ssl;
     include snippets/ssl_params.conf;
 
     ssl_certificate /etc/letsencrypt/live/{{ item.value.server_name }}/fullchain.pem;
