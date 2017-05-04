@@ -33,7 +33,8 @@ class ProductType extends AbstractType
                 ),
                 'label' => 'Category'
             ))
-            ->add('name', TextareaType::class)
+            ->add('name', TextType::class)
+            ->add('description', TextareaType::class)
             ->add('price', MoneyType::class)
             ;
     }

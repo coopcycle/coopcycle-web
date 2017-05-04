@@ -99,8 +99,11 @@ class RestaurantType extends AbstractType
             $restaurant = $event->getData();
             if (null !== $restaurant) {
                 $form = $event->getForm();
-                $form->get('latitude')->setData($restaurant->getGeo()->getLatitude());
-                $form->get('longitude')->setData($restaurant->getGeo()->getLongitude());
+                if ($geo = $restaurant->getGeo()) {
+                    $form->get('latitude')->setData($geo->getLatitude());
+                    $form->get('longitude')->setData($geo->getLongitude());
+                }
+
             }
         });
     }
