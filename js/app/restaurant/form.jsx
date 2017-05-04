@@ -1,3 +1,8 @@
+import OpeningHours from './OpeningHours.jsx'
+import React from 'react';
+import { render } from 'react-dom';
+import moment from 'moment';
+
 var inputMap = {
   postal_code: 'restaurant_postalCode',
   locality: 'restaurant_addressLocality'
@@ -41,3 +46,34 @@ window.initMap = function() {
     }
   });
 }
+
+
+
+var entriesCount = $('input[name^="restaurant[openingHours]"]').length
+
+function onRowAdd() {
+  // grab the prototype template
+  var newWidget = $('#opening-hours').attr('data-prototype');
+  // replace the "__name__" used in the id and name of the prototype
+  // with a number that's unique to your emails
+  // end name attribute looks like name="contact[emails][2]"
+  newWidget = newWidget.replace(/__name__/g, entriesCount);
+  entriesCount++;
+
+  $('form[name="restaurant"]').append(newWidget)
+}
+
+
+let defaultValue = []
+$('input[name^="restaurant[openingHours]"]').each((index, el) => {
+  defaultValue.push($(el).val())
+})
+
+const openingHoursValue = $('#restaurant_openingHours').val()
+
+render(<OpeningHours
+  value={defaultValue}
+  onChange={(key, value) => $('#restaurant_openingHours_' + key).val(value)} //$('#restaurant_openingHours').val(JSON.stringify(value))}
+  onRowAdd={onRowAdd} />,
+  document.getElementById('opening-hours')
+);
