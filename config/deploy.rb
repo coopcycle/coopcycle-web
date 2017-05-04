@@ -57,6 +57,12 @@ namespace :deploy do
     end
   end
 
+  task :migrate do
+    on roles(:db) do
+      symfony_console('doctrine:migrations:migrate', '--no-interaction')
+    end
+  end
+
   before :starting, :map_composer_command do
     on roles(:app) do |server|
       SSHKit.config.command_map[:composer] = "#{shared_path.join("composer.phar")}"
@@ -66,6 +72,7 @@ namespace :deploy do
   after :starting, 'composer:install_executable'
 
   after :updated, 'symfony:fix_file_permissions'
+  after :updated, 'migrate'
   after :updated, 'npm_install'
   after :updated, 'webpack'
 
