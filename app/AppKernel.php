@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             new Webfactory\Bundle\PiwikBundle\WebfactoryPiwikBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
+            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new AppBundle\AppBundle(),
         ];
 

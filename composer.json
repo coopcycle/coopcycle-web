@@ -47,7 +47,8 @@
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
         "stripe/stripe-php": "^4.3",
         "webfactory/piwik-bundle": "^2.3",
-        "vich/uploader-bundle": "^1.5"
+        "vich/uploader-bundle": "^1.5",
+        "doctrine/doctrine-migrations-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
