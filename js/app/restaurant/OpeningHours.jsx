@@ -102,7 +102,7 @@ export default class extends React.Component {
     rows.splice(key, 1, row);
     this.setState({ rows });
 
-    this.props.onChange(key, this.rowToString(row))
+    this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
   onEndChange(key, date, timeString) {
@@ -115,7 +115,7 @@ export default class extends React.Component {
     rows.splice(key, 1, row);
     this.setState({ rows });
 
-    this.props.onChange(key, this.rowToString(row))
+    this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
   onCheckboxChange(key, weekdayKey, e) {
@@ -129,7 +129,7 @@ export default class extends React.Component {
     rows.splice(key, 1, row);
     this.setState({ rows });
 
-    this.props.onChange(key, this.rowToString(row))
+    this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
   isWeekdayChecked(row, weekdayKey) {

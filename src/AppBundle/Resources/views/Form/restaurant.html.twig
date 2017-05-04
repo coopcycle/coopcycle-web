@@ -33,5 +33,10 @@
   {% for row in form %}
     {{ form_widget(form) }}
   {% endfor %}
-  <div id="opening-hours" data-prototype="{{ form_widget(form.vars.prototype)|e }}"></div>
+  <div id="opening-hours-text">
+  {% for row in form %}
+    <p class="help-block">{{ row.vars.value }}</p>
+  {% endfor %}
+  </div>
+  <div id="opening-hours"></div>
 {% endblock %}

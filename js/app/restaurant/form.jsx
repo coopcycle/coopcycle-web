@@ -2,6 +2,7 @@ import OpeningHours from './OpeningHours.jsx'
 import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
+import _ from 'underscore';
 
 var inputMap = {
   postal_code: 'restaurant_postalCode',
@@ -47,20 +48,18 @@ window.initMap = function() {
   });
 }
 
-
-
 var entriesCount = $('input[name^="restaurant[openingHours]"]').length
 
 function onRowAdd() {
   // grab the prototype template
-  var newWidget = $('#opening-hours').attr('data-prototype');
+  var newWidget = $('#restaurant_openingHours').attr('data-prototype');
   // replace the "__name__" used in the id and name of the prototype
   // with a number that's unique to your emails
   // end name attribute looks like name="contact[emails][2]"
   newWidget = newWidget.replace(/__name__/g, entriesCount);
   entriesCount++;
 
-  $('form[name="restaurant"]').append(newWidget)
+  $('#restaurant_openingHours').append(newWidget)
 }
 
 
@@ -73,7 +72,14 @@ const openingHoursValue = $('#restaurant_openingHours').val()
 
 render(<OpeningHours
   value={defaultValue}
-  onChange={(key, value) => $('#restaurant_openingHours_' + key).val(value)} //$('#restaurant_openingHours').val(JSON.stringify(value))}
+  onChange={(rows) => {
+    $('#opening-hours-text').empty();
+    _.each(rows, (value, key) => {
+      $('#restaurant_openingHours_' + key).val(value)
+      const $text = $('<p>').addClass('help-block').text(value)
+      $('#opening-hours-text').append($text)
+    })
+  }}
   onRowAdd={onRowAdd} />,
   document.getElementById('opening-hours')
 );
