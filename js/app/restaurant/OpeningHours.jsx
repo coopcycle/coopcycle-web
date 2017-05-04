@@ -245,17 +245,18 @@ export default class extends React.Component {
 
   addRow(e) {
     e.preventDefault();
-    const rows = this.state.rows;
+    const rows = this.state.rows
     rows.push(this.createRowData())
     this.setState({ rows })
     this.props.onRowAdd()
   }
 
   removeRow(key, e) {
-    e.preventDefault();
-    let rows = this.state.rows;
-    rows.splice(key, 1);
+    e.preventDefault()
+    let rows = this.state.rows
+    rows.splice(key, 1)
     this.setState({ rows })
+    this.props.onRowRemove(key)
   }
 
   render() {

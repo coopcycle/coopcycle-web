@@ -62,6 +62,10 @@ function onRowAdd() {
   $('#restaurant_openingHours').append(newWidget)
 }
 
+function onRowRemove(index) {
+  $('#restaurant_openingHours_' + index).remove()
+  $('#opening-hours-text > p').get(index).remove()
+}
 
 let defaultValue = []
 $('input[name^="restaurant[openingHours]"]').each((index, el) => {
@@ -80,6 +84,7 @@ render(<OpeningHours
       $('#opening-hours-text').append($text)
     })
   }}
-  onRowAdd={onRowAdd} />,
+  onRowAdd={onRowAdd}
+  onRowRemove={onRowRemove} />,
   document.getElementById('opening-hours')
 );
