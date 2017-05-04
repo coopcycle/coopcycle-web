@@ -43,6 +43,10 @@
 
   <hr>
 
+  {{ form_row(form.openingHours) }}
+
+  <hr>
+
   {{ form_row(form.streetAddress) }}
   {{ form_row(form.postalCode) }}
   {{ form_row(form.addressLocality) }}
@@ -85,6 +89,6 @@ $(function() {
   });
 });
 </script>
-<script src="{{ asset('js/profile-restaurant.js') }}"></script>
+<script src="{{ asset('js/restaurant-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

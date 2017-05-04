@@ -23,8 +23,7 @@ abstract class LocalBusiness extends Place
      *             - Here is an example: `<time itemprop="openingHours" datetime="Tu,Th 16:00-20:00">Tuesdays and Thursdays 4-8pm</time>`.
      *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
      *
-     * @ORM\Column(nullable=true)
-     * @Assert\Type(type="string")
+     * @ORM\Column(type="json_array", nullable=true)
      * @ApiProperty(iri="https://schema.org/openingHours")
      */
     protected $openingHours;

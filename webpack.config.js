@@ -9,7 +9,7 @@ module.exports = {
     'order-payment': './js/app/order/payment.js',
     'order-tracking': ['whatwg-fetch', './js/app/order/tracking.jsx'],
     'profile-deliveries': './js/app/profile/deliveries.js',
-    'profile-restaurant': './js/app/profile/restaurant.js',
+    'restaurant-form': './js/app/restaurant/form.jsx',
     'delivery-form': './js/app/delivery/form.jsx',
   },
   output: {

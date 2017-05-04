@@ -45,6 +45,13 @@ class RestaurantType extends AbstractType
             ))
             // LocalBusiness
             ->add('telephone', TextType::class, ['required' => false])
+            ->add('openingHours', CollectionType::class, [
+                'entry_type' => HiddenType::class,
+                'required' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+            ])
             // PostalAddress
             ->add('streetAddress', TextType::class)
             ->add('postalCode', TextType::class)

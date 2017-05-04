@@ -28,3 +28,10 @@
   {{ form_row(form.delete) }}
   {% endif %}
 {% endblock %}
+
+{% block _restaurant_openingHours_row %}
+  {% for row in form %}
+    {{ form_widget(form) }}
+  {% endfor %}
+  <div id="opening-hours" data-prototype="{{ form_widget(form.vars.prototype)|e }}"></div>
+{% endblock %}
