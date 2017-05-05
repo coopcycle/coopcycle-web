@@ -19,6 +19,6 @@ default:
       sessions:
         default:
           symfony2: ~
-    Sanpi\Behatch\Extension: ~
+    Behatch\Extension: ~
     Fidry\AliceBundleExtension\Extension:
-            fixtures_base_path: ~
+      fixtures_base_path: ~
