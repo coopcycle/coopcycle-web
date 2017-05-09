@@ -243,4 +243,26 @@ class ProfileController extends Controller
             'stripe_user_id' => $stripeParams ? $stripeParams->getUserId() : null
         ];
     }
+
+    /**
+     * @Route("/profile/restaurants/{id}/orders", name="profile_restaurant_orders")
+     * @Template()
+     */
+    public function restaurantOrdersAction($id, Request $request)
+    {
+        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
+        $orderRepo = $this->getDoctrine()->getRepository('AppBundle:Order');
+
+        $restaurant = $restaurantRepo->find($id);
+        $orders = $orderRepo->findBy(['restaurant' => $restaurant], ['createdAt' => 'DESC']);
+
+        $this->checkAccess($restaurant);
+
+        return [
+            'restaurant' => $restaurant,
+            'orders' => $orders,
+            'restaurants_route' => 'profile_restaurants',
+            'restaurant_route' => 'profile_restaurant_edit',
+        ];
+    }
 }
