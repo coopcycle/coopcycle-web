@@ -1,0 +1,53 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
+<li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+<li>Orders</li>
+{% endblock %}
+
+{% block content %}
+
+<h1>{% trans %}Orders{% endtrans %}</h1>
+
+{% if orders|length > 0 %}
+  {% for order in orders %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-6">
+            <ul class="list-group">
+              {% for item in order.orderedItem %}
+              <li class="list-group-item">{{ item.quantity }} x {{ item.name }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <p class="text-right">
+               <i class="fa fa-money" aria-hidden="true"></i>  <strong>{{ order.total }} €</strong>
+            </p>
+            <p class="text-right">
+              <i class="fa fa-clock-o" aria-hidden="true"></i>  {{ order.delivery.date|localizeddate('medium', 'short') }}
+            </p>
+            {#
+            <p class="text-right"><i class="fa fa-calendar" aria-hidden="true"></i>  {{ order.createdAt|ago }}</p>
+            #}
+          </div>
+        </div>
+        {#
+        <div class="pull-right">
+          <button class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i>  {% trans %}Reject{% endtrans %}</button>
+          <button class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i>  {% trans %}Accept{% endtrans %}</button>
+        </div>
+        #}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-warning">{% trans %}You don't have any orders yet{% endtrans %}</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
