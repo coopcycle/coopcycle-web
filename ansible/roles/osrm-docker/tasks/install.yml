@@ -1,0 +1,45 @@
+---
+
+- name: install dependencies
+  become: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - supervisor
+
+- name: make sure directory exists
+  file:
+    path: "{{ osrm_server.root_dir }}"
+    state: directory
+    mode: 0755
+
+- debug:
+    var: osrm_server.root_dir
+
+- name: check if PBF file is present
+  stat: path={{ osrm_server.root_dir }}/data.osm.pbf
+  register: pbf_file
+
+- name: check if the Road Network is extracted
+  stat: path={{ osrm_server.root_dir }}/data.osrm
+  register: osrm_file
+
+- name: check if the Hierarchy is created
+  stat: path={{ osrm_server.root_dir }}/data.osrm.core
+  register: osrm_core_file
+
+- name: extract the Road Network
+  when: pbf_file.stat.exists == True and osrm_file.stat.exists == False
+  shell:
+    docker run -t -v {{ osrm_server.root_dir }}:/data osrm/osrm-backend osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+
+- name: create the Hierarchy
+  when: pbf_file.stat.exists == True and osrm_core_file.stat.exists == False
+  shell:
+    docker run -t -v {{ osrm_server.root_dir }}:/data osrm/osrm-backend osrm-contract /data/data.osrm
+
+- name: configure supervisor
+  when: pbf_file.stat.exists == True and osrm_core_file.stat.exists == True
+  template:
+    src: supervisor.j2
+    dest: "/etc/supervisor/conf.d/osrm_{{ osrm_server.name }}.conf"
+  notify: restart supervisor

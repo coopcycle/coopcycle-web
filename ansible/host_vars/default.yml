@@ -30,4 +30,7 @@ postgresql_database_extensions:
     extensions:
       - postgis
 
-osrm_root_dir: /var/www/coopcycle/var/osrm
+osrm_servers:
+  - root_dir: /var/www/coopcycle/var/osrm
+    port: 5000
+    name: default
