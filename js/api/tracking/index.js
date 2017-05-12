@@ -38,7 +38,10 @@ console.log('---------------------');
 console.log('- STARTING TRACKING -');
 console.log('---------------------');
 
-app.listen(8001);
+console.log('NODE_ENV = ' + process.env.NODE_ENV)
+console.log('PORT = ' + process.env.PORT)
+
+app.listen(process.env.PORT || 8001);
 
 var env = process.env.NODE_ENV || 'development';
 

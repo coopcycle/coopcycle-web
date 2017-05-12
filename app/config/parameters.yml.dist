@@ -40,3 +40,7 @@ parameters:
     redis_dsn: redis://%redis_host%:6379/0
 
     osrm_host: "osrm:5000"
+
+    ws_dispatch_port: "8000"
+    ws_tracking_port: "8001"
+    ws_order_tracking_port: "8002"

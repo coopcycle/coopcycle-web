@@ -41,6 +41,9 @@ console.log('---------------------------');
 console.log('- STARTING ORDER TRACKING -');
 console.log('---------------------------');
 
+console.log('NODE_ENV = ' + process.env.NODE_ENV)
+console.log('PORT = ' + process.env.PORT)
+
 var started = false;
 var orders = {};
 
@@ -55,7 +58,7 @@ redisPubSub.on('message', function(channel, message) {
   }
 });
 
-app.listen(8002);
+app.listen(process.env.PORT || 8002);
 
 function handler(req, res) {
   fs.readFile(__dirname + '/index.html', function (err, data) {
