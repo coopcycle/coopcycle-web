@@ -30,23 +30,23 @@ try {
   throw e;
 }
 
-var appName = config.parameters.ws_app_name || 'default';
+var appName = config.parameters['app.name'] || 'default';
 
 var apps = [{
   name: "coopcycle-dispatch-" + appName,
   script: "./js/api/dispatch/index.js",
   watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
-  port: config.parameters.ws_dispatch_port || 8000
+  port: config.parameters['app.dispatch_port'] || 8000
 }, {
   name: "coopcycle-tracking-" + appName,
   script: "./js/api/tracking/index.js",
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
-  port: config.parameters.ws_tracking_port || 8001
+  port: config.parameters['app.tracking_port'] || 8001
 }, {
   name: "coopcycle-order-tracking-" + appName,
   script: "./js/api/order/tracking.js",
   watch: ["./js/api/order/tracking.js"],
-  port: config.parameters.ws_order_tracking_port || 8002
+  port: config.parameters['app.order_tracking_port'] || 8002
 }];
 
 apps = _.map(apps, function(app) {
