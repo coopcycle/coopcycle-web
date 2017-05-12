@@ -37,5 +37,6 @@ parameters:
     transactional_sender_name: CoopCycle
 
     redis_host: redis
+    redis_dsn: redis://%redis_host%:6379/0
 
     osrm_host: "osrm:5000"
