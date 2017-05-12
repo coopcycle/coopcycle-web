@@ -64,7 +64,13 @@ ConfigLoader.prototype.load = function() {
   var parameters = data.parameters;
   delete data.parameters;
 
-  return replaceParameters(data, parameters);
+  parameters = replaceParameters(parameters, parameters);
+
+  data = replaceParameters(data, parameters);
+
+  data.parameters = parameters;
+
+  return data;
 }
 
 module.exports = ConfigLoader;

@@ -13,6 +13,7 @@ console.log('- STARTING DISPATCH -');
 console.log('---------------------');
 
 console.log('NODE_ENV = ' + process.env.NODE_ENV)
+console.log('PORT = ' + process.env.PORT)
 
 var envMap = {
   production: 'prod',
@@ -60,7 +61,7 @@ var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-server.listen(8000, function() {});
+server.listen(process.env.PORT || 8000, function() {});
 
 var Db = require('../Db')(sequelize);
 

@@ -1,5 +1,6 @@
 var argv = require('minimist')(process.argv.slice(2));
 var _ = require('underscore');
+var ConfigLoader = require('./js/api/ConfigLoader');
 
 var watchOptions = {
   usePolling: true,
@@ -10,18 +11,42 @@ var watchOptions = {
 
 var env = argv.env || 'development';
 
+var ROOT_DIR = __dirname;
+
+var envMap = {
+  production: 'prod',
+  development: 'dev',
+  test: 'test'
+}
+
+try {
+  var configFile = 'config.yml';
+  if (envMap[process.env.NODE_ENV]) {
+    configFile = 'config_' + envMap[env] + '.yml';
+  }
+  var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
+  var config = configLoader.load();
+} catch (e) {
+  throw e;
+}
+
+var appName = config.parameters.ws_app_name || 'default';
+
 var apps = [{
-  name: "coopcycle-dispatch",
+  name: "coopcycle-dispatch-" + appName,
   script: "./js/api/dispatch/index.js",
   watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
+  port: config.parameters.ws_dispatch_port || 8000
 }, {
-  name: "coopcycle-tracking",
+  name: "coopcycle-tracking-" + appName,
   script: "./js/api/tracking/index.js",
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
+  port: config.parameters.ws_tracking_port || 8001
 }, {
-  name: "coopcycle-order-tracking",
+  name: "coopcycle-order-tracking-" + appName,
   script: "./js/api/order/tracking.js",
   watch: ["./js/api/order/tracking.js"],
+  port: config.parameters.ws_order_tracking_port || 8002
 }];
 
 apps = _.map(apps, function(app) {
@@ -39,12 +64,15 @@ apps = _.map(apps, function(app) {
   return _.extend(app, {
     env: {
       NODE_ENV: "development",
+      PORT: app.port
     },
     env_production : {
-      NODE_ENV: "production"
+      NODE_ENV: "production",
+      PORT: app.port
     },
     env_test : {
-      NODE_ENV: "test"
+      NODE_ENV: "test",
+      PORT: app.port
     }
   })
 });
