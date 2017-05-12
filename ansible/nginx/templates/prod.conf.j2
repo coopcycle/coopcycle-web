@@ -40,19 +40,19 @@ server {
 
     location /realtime {
         include snippets/websocket_proxy.conf;
-        proxy_pass http://realtime;
+        proxy_pass {{ item.value.upstreams.dispatch }};
         proxy_redirect off;
     }
 
     location /tracking {
         include snippets/websocket_proxy.conf;
-        proxy_pass http://tracking;
+        proxy_pass {{ item.value.upstreams.tracking }};
         proxy_redirect off;
     }
 
     location /order-tracking {
         include snippets/websocket_proxy.conf;
-        proxy_pass http://order-tracking;
+        proxy_pass {{ item.value.upstreams.order_tracking }};
         proxy_redirect off;
     }
 

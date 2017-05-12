@@ -10,6 +10,10 @@ nginx_sites:
     template: "nginx/templates/{{ symfony_env }}.conf.j2"
     server_name: "coopcycle.dev"
     root: "/var/www/coopcycle/web"
+    upstreams:
+      dispatch: "http://realtime"
+      tracking: http://tracking
+      order_tracking: http://order-tracking
 
 pm2_user: vagrant
 pm2_apps:
