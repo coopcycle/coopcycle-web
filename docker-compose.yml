@@ -12,7 +12,9 @@ services:
     image: redis:alpine
 
   nodejs:
-    build: './docker/nodejs'
+    build:
+      dockerfile: './docker/nodejs/Dockerfile'
+      context: '.'
     depends_on:
       - postgres
       - redis
