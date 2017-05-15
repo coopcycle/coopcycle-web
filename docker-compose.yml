@@ -40,7 +40,9 @@ services:
       OSRM_FILENAME: data.osrm
 
   php:
-    build: './docker/php'
+    build:
+      dockerfile: './docker/php/Dockerfile'
+      context: '.'
     depends_on:
       - postgres
     environment:
