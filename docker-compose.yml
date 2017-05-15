@@ -26,7 +26,9 @@ services:
       - './:/srv/coopcycle'
 
   webpack:
-    build: './docker/webpack'
+    build:
+      dockerfile: './docker/webpack/Dockerfile'
+      context: '.'
     ports:
       - '8080:8080'
     volumes:
