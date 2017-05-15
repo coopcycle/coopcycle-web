@@ -8,4 +8,4 @@ COPY docker/nodejs/start.sh /
 
 WORKDIR /srv/coopcycle
 
-CMD ["/start.sh"]
+CMD /start.sh
