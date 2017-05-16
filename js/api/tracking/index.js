@@ -42,7 +42,7 @@ console.log('---------------------');
 
 console.log('NODE_ENV = ' + process.env.NODE_ENV);
 console.log('PORT = ' + process.env.PORT);
-console.log('ASSETS URL = ' + config.parameters['env(ASSETS_BASE_URL)']);
+console.log('ASSETS URL = ' + process.env.ASSETS_BASE_URL);
 
 app.listen(process.env.PORT || 8001);
 
@@ -57,7 +57,7 @@ function handler(req, res) {
 
     var output = Mustache.render(data.toString('utf8'), {
       dev: env === 'development',
-      assets_base_url: config.parameters['env(ASSETS_BASE_URL)'] || '',
+      assets_base_url: process.env.ASSETS_BASE_URL || '',
       zoom: params.zoom || 13
     });
 
@@ -103,7 +103,7 @@ function addDeliveryAddressCoords(orders) {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
-        })
+        });
       });
       resolve(ordersWithCoords);
     });
@@ -138,7 +138,7 @@ function getOrdersByState(state) {
             key: orderKey,
             state: state,
             courier: courierKey,
-          }
+          };
         });
         resolve(orders);
       });
@@ -150,7 +150,7 @@ function getOrdersByState(state) {
           return {
             key: 'order:' + id,
             state: state,
-          }
+          };
         });
         resolve(orders);
       });
@@ -184,7 +184,7 @@ function updateObjects() {
                 lng: parseFloat(value[0]),
                 lat: parseFloat(value[1])
               }
-            }
+            };
           });
 
           io.sockets.emit('orders', orders);

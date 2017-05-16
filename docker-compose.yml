@@ -24,6 +24,8 @@ services:
       - '8002:8002'
     volumes:
       - './:/srv/coopcycle'
+    environment:
+      ASSETS_BASE_URL: http://192.168.99.100:8080
 
   webpack:
     build:
