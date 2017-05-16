@@ -16,7 +16,15 @@
       <td>{{ restaurant.name }}</td>
       <td>{{ restaurant.streetAddress }}</td>
       <td>{{ restaurant.products|length }}</td>
-      <td><a href="{{ path('profile_restaurant_menu', { id: restaurant.id }) }}" class="btn btn-xs btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a></td>
+      <td class="text-right">
+        <a href="{{ path('profile_restaurant_edit', { id: restaurant.id }) }}" class="btn btn-xs btn-primary">{% trans %}Edit{% endtrans %}</a>
+      </td>
+      <td class="text-right">
+        <a href="{{ path('profile_restaurant_menu', { id: restaurant.id }) }}" class="btn btn-xs btn-primary">{% trans %}Edit menu{% endtrans %}</a>
+      </td>
+      <td class="text-right">
+        <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">{% trans %}View{% endtrans %}</a>
+      </td>
     </tr>
     {% endfor %}
     </tbody>

@@ -104,12 +104,32 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
 
+        $translator = $this->get('translator');
+
         if (!$restaurant) {
             throw new NotFoundHttpException();
         }
 
+        $now = new \DateTime();
+        $nextOpeningDate = $restaurant->getNextOpeningDate();
+
+        if ($now->format('Y-m-d') === $nextOpeningDate->format('Y-m-d')) {
+            $dates[] = $translator->trans('Today');
+        }
+        $dates[] = $translator->trans('Tomorrow');
+
+        $times = [];
+        $date = clone $nextOpeningDate;
+
+        while ($restaurant->isOpen($date)) {
+            $date->modify('+15 minutes');
+            $times[] = $date->format('H:i');
+        }
+
         return array(
             'restaurant' => $restaurant,
+            'dates' => $dates,
+            'times' => $times,
             'appetizers' => $restaurant->getProductsByCategory('Entrées'),
             'main_courses' => $restaurant->getProductsByCategory('Plats'),
             'desserts' => $restaurant->getProductsByCategory('Desserts'),
