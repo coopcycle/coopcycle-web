@@ -96,6 +96,7 @@ docker-compose run php bin/console fos:user:create admin
 docker-compose run php bin/console fos:user:promote admin ROLE_ADMIN
 ```
 * Pre-process the OpenStreeMap data for OSRM
+NB: this may take a lot of memory, so you may need to increase the resource allocated to the docker VM on OSX in Virtualbox to 2go ([how-to](https://superuser.com/questions/926339/how-to-change-the-ram-allocated-to-an-os-in-virtualbox?answertab=votes#tab-top)) .
 ```
 docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 docker-compose run osrm osrm-contract /data/data.osrm
