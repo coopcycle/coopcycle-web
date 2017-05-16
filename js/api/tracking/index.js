@@ -12,9 +12,11 @@ var envMap = {
   production: 'prod',
   development: 'dev',
   test: 'test'
-}
+};
 
 var ConfigLoader = require('../ConfigLoader');
+
+var env = process.env.NODE_ENV || 'development';
 
 try {
 
@@ -38,12 +40,11 @@ console.log('---------------------');
 console.log('- STARTING TRACKING -');
 console.log('---------------------');
 
-console.log('NODE_ENV = ' + process.env.NODE_ENV)
-console.log('PORT = ' + process.env.PORT)
+console.log('NODE_ENV = ' + process.env.NODE_ENV);
+console.log('PORT = ' + process.env.PORT);
+console.log('ASSETS URL = ' + config.parameters['env(ASSETS_BASE_URL)']);
 
 app.listen(process.env.PORT || 8001);
-
-var env = process.env.NODE_ENV || 'development';
 
 function handler(req, res) {
   fs.readFile(__dirname + '/index.html', function (err, data) {
@@ -56,7 +57,7 @@ function handler(req, res) {
 
     var output = Mustache.render(data.toString('utf8'), {
       dev: env === 'development',
-      assets_base_url: process.env.ASSETS_BASE_URL || '',
+      assets_base_url: config.parameters['env(ASSETS_BASE_URL)'] || '',
       zoom: params.zoom || 13
     });
 
@@ -80,7 +81,7 @@ function addRestaurantCoords(orders) {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
-        })
+        });
       });
       resolve(ordersWithCoords);
     });
