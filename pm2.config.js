@@ -23,6 +23,10 @@ try {
   var configFile = 'config.yml';
   if (envMap[process.env.NODE_ENV]) {
     configFile = 'config_' + envMap[env] + '.yml';
+    console.log('Config file : ' + configFile);
+  }
+  else {
+      console.log('No config file loaded');
   }
   var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
   var config = configLoader.load();
@@ -74,7 +78,7 @@ apps = _.map(apps, function(app) {
       NODE_ENV: "test",
       PORT: app.port
     }
-  })
+  });
 });
 
 module.exports = {
