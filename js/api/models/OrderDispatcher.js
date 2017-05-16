@@ -34,15 +34,15 @@ function circularListHandler(orderRegistry, handler) {
 
 OrderDispatcher.prototype.setHandler = function(handler) {
   this.handler = handler;
-}
+};
 
 OrderDispatcher.prototype.start = function() {
   this.stop();
   circularListHandler(this.orderRegistry, this.handler);
-}
+};
 
 OrderDispatcher.prototype.stop = function() {
   clearTimeout(TIMEOUT);
-}
+};
 
 module.exports = OrderDispatcher;
