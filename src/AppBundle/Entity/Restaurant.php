@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\TimeRange;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -191,5 +192,41 @@ class Restaurant extends FoodEstablishment
     public function getImageFile()
     {
         return $this->imageFile;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOpen(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            if ($timeRange->isOpen($now)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getNextOpeningDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $dates = [];
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            $dates[] = $timeRange->getNextOpeningDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
     }
 }

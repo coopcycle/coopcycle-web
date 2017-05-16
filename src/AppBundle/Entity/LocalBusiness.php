@@ -50,6 +50,13 @@ abstract class LocalBusiness extends Place
         return $this;
     }
 
+    public function addOpeningHour($openingHour)
+    {
+        $this->openingHours[] = $openingHour;
+
+        return $this;
+    }
+
     /**
      * Gets openingHours.
      *

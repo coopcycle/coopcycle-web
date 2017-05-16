@@ -2,9 +2,24 @@
 
 {% block body %}
 <div class="container">
+
   <div class="page-header">
     <h1>{{ restaurant.name }}</h1>
   </div>
+
+  <nav class="navbar">
+      {% for timeRange in restaurant.openingHours %}
+      <p class="navbar-text">{{ timeRange }}</p>
+      {% endfor %}
+      <p class="navbar-text">
+        {% if restaurant.isOpen %}
+        <span class="label label-success">{% trans %}Open{% endtrans %}</span>
+        {% else %}
+        <span class="label label-warning">{% trans %}Closed{% endtrans %}</span>
+        {% endif %}
+      </p>
+  </nav>
+
   <div class="row">
 
     <div class="col-xs-12 col-sm-8">
@@ -32,6 +47,28 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
+      <div class="row">
+        <div class="col-sm-6">
+          <select class="form-control">
+            {% for date in dates %}
+              <option>{{ date }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <select class="form-control">
+            {% for time in times %}
+              <option>{{ time }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <hr>
+      {#
+      <p class="text-center">
+      {{ restaurant.nextOpeningDate|date('d/m H:i') }}
+      </p>
+      #}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{% trans %}Cart{% endtrans %}</h3>
