@@ -12,9 +12,11 @@ var envMap = {
   production: 'prod',
   development: 'dev',
   test: 'test'
-}
+};
 
 var ConfigLoader = require('../ConfigLoader');
+
+var env = process.env.NODE_ENV || 'development';
 
 try {
 
@@ -38,12 +40,11 @@ console.log('---------------------');
 console.log('- STARTING TRACKING -');
 console.log('---------------------');
 
-console.log('NODE_ENV = ' + process.env.NODE_ENV)
-console.log('PORT = ' + process.env.PORT)
+console.log('NODE_ENV = ' + process.env.NODE_ENV);
+console.log('PORT = ' + process.env.PORT);
+console.log('ASSETS URL = ' + process.env.ASSETS_BASE_URL);
 
 app.listen(process.env.PORT || 8001);
-
-var env = process.env.NODE_ENV || 'development';
 
 function handler(req, res) {
   fs.readFile(__dirname + '/index.html', function (err, data) {
@@ -80,7 +81,7 @@ function addRestaurantCoords(orders) {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
-        })
+        });
       });
       resolve(ordersWithCoords);
     });
@@ -102,7 +103,7 @@ function addDeliveryAddressCoords(orders) {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
-        })
+        });
       });
       resolve(ordersWithCoords);
     });
@@ -137,7 +138,7 @@ function getOrdersByState(state) {
             key: orderKey,
             state: state,
             courier: courierKey,
-          }
+          };
         });
         resolve(orders);
       });
@@ -149,7 +150,7 @@ function getOrdersByState(state) {
           return {
             key: 'order:' + id,
             state: state,
-          }
+          };
         });
         resolve(orders);
       });
@@ -183,7 +184,7 @@ function updateObjects() {
                 lng: parseFloat(value[0]),
                 lat: parseFloat(value[1])
               }
-            }
+            };
           });
 
           io.sockets.emit('orders', orders);

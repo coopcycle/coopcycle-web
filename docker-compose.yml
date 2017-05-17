@@ -12,7 +12,9 @@ services:
     image: redis:alpine
 
   nodejs:
-    build: './docker/nodejs'
+    build:
+      dockerfile: './docker/nodejs/Dockerfile'
+      context: '.'
     depends_on:
       - postgres
       - redis
@@ -22,9 +24,13 @@ services:
       - '8002:8002'
     volumes:
       - './:/srv/coopcycle'
+    environment:
+      ASSETS_BASE_URL: http://192.168.99.100:8080
 
   webpack:
-    build: './docker/webpack'
+    build:
+      dockerfile: './docker/webpack/Dockerfile'
+      context: '.'
     ports:
       - '8080:8080'
     volumes:
@@ -32,6 +38,7 @@ services:
 
   osrm:
     build: './docker/osrm'
+    mem_limit: 2g
     ports:
       - '5000:5000'
     volumes:
