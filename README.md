@@ -43,6 +43,10 @@ mkdir -p var/osrm
 wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
 ```
 
+* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and paste it [in the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L31)
+
+* If you want to pass orders, create a Stripe account and enter your test credentials in [the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L33)
+
 ### Using Vagrant
 
 * Install [Vagrant](https://docs.vagrantup.com/v2/installation/index.html) & [Ansible](http://docs.ansible.com/intro_installation.html#installation).
