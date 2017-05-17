@@ -5,13 +5,6 @@
     <title>{% block title %}CoopCycle - {{ 'meta.title'|trans }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Arvo:400,700">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
-    <link rel="stylesheet" href="/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/antd.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/leaflet-beautify-marker.css" />
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     {% block styles %}{% endblock %}
   </head>
@@ -42,10 +35,7 @@
         </li>
       </ul>
     </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-      crossorigin="anonymous"></script>
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
     {% block scripts %}{% endblock %}
     {% if app.environment == "dev" %}
     <script src="{{ asset('webpack-dev-server.js') }}"></script>
