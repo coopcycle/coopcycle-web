@@ -89,9 +89,8 @@ eval $(docker-machine env default)
 ```
 docker-compose up -d
 ```
-* Create the database
+* Create the database schema
 ```
-docker-compose run php bin/console doctrine:database:create
 docker-compose run php bin/console doctrine:schema:create
 ```
 * Create an admin user
