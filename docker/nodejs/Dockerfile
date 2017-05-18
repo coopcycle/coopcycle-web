@@ -8,4 +8,7 @@ COPY docker/nodejs/start.sh /
 
 WORKDIR /srv/coopcycle
 
+COPY package.json /srv/coopcycle
+RUN npm install
+
 CMD /start.sh
