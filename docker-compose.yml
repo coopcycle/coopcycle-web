@@ -24,6 +24,7 @@ services:
       - '8002:8002'
     volumes:
       - './:/srv/coopcycle'
+      - '/srv/coopcycle/node_modules'
     environment:
       ASSETS_BASE_URL: http://192.168.99.100:8080
 
@@ -35,6 +36,7 @@ services:
       - '8080:8080'
     volumes:
       - './:/srv/coopcycle'
+      - 'node_modules:/srv/coopcycle/node_modules'
 
   osrm:
     build: './docker/osrm'
@@ -68,3 +70,6 @@ services:
       - php
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
+
+volumes:
+  node_modules:
