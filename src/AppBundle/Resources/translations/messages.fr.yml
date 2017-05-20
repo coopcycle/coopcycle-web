@@ -50,7 +50,7 @@ order.status.DELIVERED: Livrée
 
 demo.disclaimer: >
   Bienvenue ! Ce site est une démo propulsée par des bots imitant les coursiers.
-  Vous pouvez passer commander auprès des restaurants et voir une simulation de livraison.
+  Vous pouvez passer commande auprès des restaurants et voir une simulation de livraison.
 
 search.help: >
   Cherchez dans les quartiers de Paris : %links%
