@@ -68,7 +68,7 @@ apps = _.map(apps, function(app) {
     env: {
       NODE_ENV: "development",
       PORT: app.port,
-      ASSETS_BASE_URL: config.framework.assets.base_urls['0']
+      ASSETS_BASE_URL: config.framework.assets.base_urls ? config.framework.assets.base_urls['0'] : ''
     },
     env_production : {
       NODE_ENV: "production",
@@ -78,7 +78,7 @@ apps = _.map(apps, function(app) {
     env_test : {
       NODE_ENV: "test",
       PORT: app.port,
-      ASSETS_BASE_URL: config.framework.assets.base_urls['0']
+      ASSETS_BASE_URL: config.framework.assets.base_urls ? config.framework.assets.base_urls['0'] : ''
     }
   });
 });
