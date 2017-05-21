@@ -21,12 +21,11 @@ var envMap = {
 
 try {
   var configFile = 'config.yml';
-  if (envMap[process.env.NODE_ENV]) {
+  if (envMap[env]) {
     configFile = 'config_' + envMap[env] + '.yml';
     console.log('Config file : ' + configFile);
-  }
-  else {
-      console.log('No config file loaded');
+  } else {
+    console.log('No config file loaded');
   }
   var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
   var config = configLoader.load();
@@ -68,15 +67,18 @@ apps = _.map(apps, function(app) {
   return _.extend(app, {
     env: {
       NODE_ENV: "development",
-      PORT: app.port
+      PORT: app.port,
+      ASSETS_BASE_URL: config.framework.assets.base_urls['0']
     },
     env_production : {
       NODE_ENV: "production",
-      PORT: app.port
+      PORT: app.port,
+      ASSETS_BASE_URL: ''
     },
     env_test : {
       NODE_ENV: "test",
-      PORT: app.port
+      PORT: app.port,
+      ASSETS_BASE_URL: config.framework.assets.base_urls['0']
     }
   });
 });
