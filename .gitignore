@@ -20,10 +20,13 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
+/web/css/
+/web/fonts/
 /web/images/*
 !web/images/.gitkeep
-/web/js/*
-!web/js/.gitkeep
+/web/js/
 /.vagrant/
 /node_modules/
 .DS_Store
+*.sublime-workspace
+*.sublime-project

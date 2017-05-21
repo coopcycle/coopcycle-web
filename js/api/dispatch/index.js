@@ -12,14 +12,14 @@ console.log('---------------------');
 console.log('- STARTING DISPATCH -');
 console.log('---------------------');
 
-console.log('NODE_ENV = ' + process.env.NODE_ENV)
-console.log('PORT = ' + process.env.PORT)
+console.log('NODE_ENV = ' + process.env.NODE_ENV);
+console.log('PORT = ' + process.env.PORT);
 
 var envMap = {
   production: 'prod',
   development: 'dev',
   test: 'test'
-}
+};
 
 var ConfigLoader = require('../ConfigLoader');
 
