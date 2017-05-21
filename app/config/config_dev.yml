@@ -1,17 +1,13 @@
 imports:
     - { resource: config.yml }
 
-# This is the default for Docker
-parameters:
-    env(ASSETS_BASE_URL): http://192.168.99.100:8080
-
 framework:
     router:
         resource: "%kernel.root_dir%/config/routing_dev.yml"
         strict_requirements: true
     profiler: { only_exceptions: false }
     assets:
-        base_urls: [ "%env(ASSETS_BASE_URL)%" ]
+        base_urls: [ "%webpack.dev_server.base_url%" ]
 
 web_profiler:
     toolbar: true
