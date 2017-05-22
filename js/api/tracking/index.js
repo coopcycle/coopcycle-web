@@ -2,6 +2,8 @@ var app = require('http').createServer(handler);
 var url = require('url') ;
 var io = require('socket.io')(app, {path: '/tracking/socket.io'});
 var fs = require('fs');
+var path = require('path');
+var url = require('url');
 var _ = require('underscore');
 var Mustache = require('mustache');
 var Promise = require('promise');
@@ -16,8 +18,6 @@ var envMap = {
 
 var ConfigLoader = require('../ConfigLoader');
 
-var env = process.env.NODE_ENV || 'development';
-
 try {
 
   var configFile = 'config.yml';
@@ -25,9 +25,19 @@ try {
     configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
   }
 
-  var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
+  var configLoader = new ConfigLoader(path.join(ROOT_DIR, '/app/config/', configFile));
   var config = configLoader.load();
 
+} catch (e) {
+  throw e;
+}
+
+try {
+    // load manifest.json in production
+    if (process.env.NODE_ENV === 'production') {
+      var manifestPath = path.resolve(config.framework.assets.json_manifest_path),
+          jsonManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    }
 } catch (e) {
   throw e;
 }
@@ -56,8 +66,16 @@ function handler(req, res) {
     var params = url.parse(req.url, true).query;
 
     var output = Mustache.render(data.toString('utf8'), {
-      dev: env === 'development',
-      assets_base_url: process.env.ASSETS_BASE_URL || '',
+      dev: process.env.NODE_ENV === 'development',
+      getAssetUrl: function () {
+        return function(filePath) {
+          if (process.env.NODE_ENV === 'production' && jsonManifest.hasOwnProperty(filePath)) {
+            filePath = jsonManifest[filePath];
+          }
+          var assets_base_url = process.env.ASSETS_BASE_URL || '';
+          return url.resolve(assets_base_url, filePath);
+        };
+      },
       zoom: params.zoom || 13
     });
 
