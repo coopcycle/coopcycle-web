@@ -1,23 +1,36 @@
+var path = require("path");
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var WebpackAssetsManifest = require('webpack-assets-manifest');
 
-module.exports = {
+if (process.env.NODE_ENV === 'production') {
+  var jsFilename = "[name].[chunkhash].js",
+      cssFilename = "[name].[contenthash].css";
+
+}
+else {
+  var jsFilename = "[name].js",
+      cssFilename = "[name].css";
+}
+
+var webpackConfig = {
   entry: {
-    'bootstrap': 'bootstrap',
-    'cart': './js/app/cart/index.jsx',
-    'homepage': './js/app/homepage/index.js',
-    'order-payment': './js/app/order/payment.js',
-    'order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
-    'profile-deliveries': './js/app/profile/deliveries.js',
-    'restaurant-form': './js/app/restaurant/form.jsx',
-    'delivery-form': './js/app/delivery/form.jsx',
-    'styles': './assets/css/main.scss',
-    'tracking': [ './assets/css/tracking.scss', './js/app/tracking/index.jsx' ]
+    'css/styles': './assets/css/main.scss',
+    'css/tracking': './assets/css/tracking.scss',
+    'js/bootstrap': 'bootstrap',
+    'js/cart': './js/app/cart/index.jsx',
+    'js/homepage': './js/app/homepage/index.js',
+    'js/order-payment': './js/app/order/payment.js',
+    'js/order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
+    'js/profile-deliveries': './js/app/profile/deliveries.js',
+    'js/restaurant-form': './js/app/restaurant/form.jsx',
+    'js/delivery-form': './js/app/delivery/form.jsx',
+    'js/tracking': './js/app/tracking/index.jsx',
   },
   output: {
     publicPath: "/",
     path: __dirname + '/web',
-    filename: "js/[name].js",
+    filename: jsFilename
   },
   resolve: {
     alias: {
@@ -28,7 +41,10 @@ module.exports = {
     loaders: [
       {
           test: /\.scss$/,
-          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!sass-loader' })
+          loader: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: ['css-loader', 'sass-loader']
+          })
       },
       {
           test: /\.css$/,
@@ -36,7 +52,7 @@ module.exports = {
       },
       {
           test: /\.(eot|ttf|woff|woff2)$/,
-          loader: 'file-loader?name=fonts/[name].[ext]'
+          loader: 'file-loader?name=css/fonts/[name].[ext]'
       },
       {
           test: /\.(svg|png)$/,
@@ -51,7 +67,7 @@ module.exports = {
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
-      new ExtractTextPlugin({filename: "css/[name].css", allChunks: true}),
+      new ExtractTextPlugin({filename: cssFilename, allChunks: true}),
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery"
@@ -65,3 +81,11 @@ module.exports = {
       public: '192.168.99.100:8080'
   }
 };
+
+if (process.env.NODE_ENV === 'production') {
+  webpackConfig.plugins.push(new WebpackAssetsManifest({
+    writeToDisk: true
+  }));
+}
+
+module.exports = webpackConfig;

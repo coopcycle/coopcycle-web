@@ -7,7 +7,7 @@ var watchOptions = {
   ignorePermissionErrors: true,
   followSymlinks: false,
   interval: 400
-}
+};
 
 var env = argv.env || 'development';
 
@@ -17,7 +17,7 @@ var envMap = {
   production: 'prod',
   development: 'dev',
   test: 'test'
-}
+};
 
 try {
   var configFile = 'config.yml';
@@ -85,4 +85,4 @@ apps = _.map(apps, function(app) {
 
 module.exports = {
   apps: apps
-}
+};

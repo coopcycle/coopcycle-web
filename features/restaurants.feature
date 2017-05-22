@@ -26,6 +26,8 @@ Feature: Manage restaurants
     """
 
   Scenario: Search restaurants
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116&distance=1500"
     Then the response status code should be 200
