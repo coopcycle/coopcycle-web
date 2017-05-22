@@ -7,6 +7,8 @@
 /config/deploy/*
 !config/deploy/.gitkeep
 /phpunit.xml
+
+# Dev temp files
 /var/*
 !/var/cache
 /var/cache/*
@@ -19,14 +21,20 @@
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 /vendor/
+
+# Build with webpack
 /web/bundles/
 /web/css/
 /web/fonts/
 /web/images/*
 !web/images/.gitkeep
 /web/js/
+/web/manifest.json
+
 /.vagrant/
 /node_modules/
 .DS_Store
+
+# Sublime text editor stuff
 *.sublime-workspace
 *.sublime-project

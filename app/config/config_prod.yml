@@ -1,7 +1,9 @@
 imports:
     - { resource: config.yml }
 
-#framework:
+framework:
+    assets:
+        json_manifest_path: '%kernel.root_dir%/../web/js/manifest.json'
 #    validation:
 #        cache: validator.mapping.cache.doctrine.apc
 #    serializer:

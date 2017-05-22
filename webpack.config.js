@@ -1,5 +1,6 @@
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
   entry: {
@@ -17,7 +18,7 @@ module.exports = {
   output: {
     publicPath: "/",
     path: __dirname + '/web',
-    filename: "js/[name].js",
+    filename: "js/[name].[hash].js",
   },
   resolve: {
     alias: {
@@ -36,7 +37,7 @@ module.exports = {
       },
       {
           test: /\.(eot|ttf|woff|woff2)$/,
-          loader: 'file-loader?name=fonts/[name].[ext]'
+          loader: 'file-loader?name=css/fonts/[name].[ext]'
       },
       {
           test: /\.(svg|png)$/,
@@ -51,11 +52,12 @@ module.exports = {
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
-      new ExtractTextPlugin({filename: "css/[name].css", allChunks: true}),
+      new ExtractTextPlugin({filename: "css/[name].[hash].css", allChunks: true}),
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery"
-      })
+      }),
+      new ManifestPlugin({writeToDisk: true})
   ],
   devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
