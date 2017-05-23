@@ -18,7 +18,7 @@ module.exports = {
   output: {
     publicPath: "/",
     path: __dirname + '/web',
-    filename: "js/[name].[hash].js",
+    filename: "js/[name].[chunkhash].js",
   },
   resolve: {
     alias: {
@@ -52,7 +52,7 @@ module.exports = {
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
-      new ExtractTextPlugin({filename: "css/[name].[hash].css", allChunks: true}),
+      new ExtractTextPlugin({filename: "css/[name].[contenthash].css", allChunks: true}),
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery"
