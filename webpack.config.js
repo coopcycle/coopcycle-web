@@ -1,3 +1,4 @@
+var path = require("path");
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var WebpackAssetsManifest = require('webpack-assets-manifest');
@@ -78,7 +79,11 @@ var webpackConfig = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  webpackConfig.plugins.push(new WebpackAssetsManifest({writeToDisk: true}));
+  var manifest = new WebpackAssetsManifest({writeToDisk: true});
+  manifest.getAssetKey = function (name, filename) {
+    return path.join(path.dirname(filename), name) + this.getExtension(filename);
+  };
+  webpackConfig.plugins.push(manifest);
 }
 
 module.exports = webpackConfig;

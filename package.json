@@ -61,7 +61,7 @@
     "sass-loader": "^6.0.5",
     "style-loader": "^0.13.1",
     "webpack": "^2.2.0",
-    "webpack-assets-manifest": "^0.6.2",
+    "webpack-assets-manifest": "git+https://git@github.com/Atala/webpack-assets-manifest.git#getAssetKey",
     "webpack-dev-server": "^1.16.2"
   }
 }
