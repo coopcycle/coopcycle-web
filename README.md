@@ -85,6 +85,8 @@ vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:pro
 docker-machine create -d virtualbox
 eval $(docker-machine env default)
 ```
+* Change the webpack dev server URL [here](https://github.com/coopcycle/coopcycle-web/blob/b8e13a27b22c543a63ec3d22d4e906d5676ab1cb/app/config/parameters.yml.dist#L51) with `<docker_machine_ip>:8080`
+
 * Start the Docker containers
 ```
 docker-compose up -d
