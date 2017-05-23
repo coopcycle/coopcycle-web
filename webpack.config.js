@@ -1,6 +1,6 @@
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var ManifestPlugin = require('webpack-manifest-plugin');
+var WebpackAssetsManifest = require('webpack-assets-manifest');
 
 module.exports = {
   entry: {
@@ -57,7 +57,7 @@ module.exports = {
         $: "jquery",
         jQuery: "jquery"
       }),
-      new ManifestPlugin({writeToDisk: true})
+      new WebpackAssetsManifest({writeToDisk: true})
   ],
   devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
