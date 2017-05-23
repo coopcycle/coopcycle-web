@@ -2,7 +2,17 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var WebpackAssetsManifest = require('webpack-assets-manifest');
 
-module.exports = {
+if (process.env.NODE_ENV === 'production') {
+  var jsFilename = "js/[name].[chunkhash].js",
+      cssFilename = "css/[name].[contenthash].css";
+
+}
+else {
+  var jsFilename = "js/[name].js",
+      cssFilename = "css/[name].css";
+}
+
+var webpackConfig = {
   entry: {
     'bootstrap': 'bootstrap',
     'cart': './js/app/cart/index.jsx',
@@ -18,7 +28,7 @@ module.exports = {
   output: {
     publicPath: "/",
     path: __dirname + '/web',
-    filename: "js/[name].[chunkhash].js",
+    filename: jsFilename
   },
   resolve: {
     alias: {
@@ -52,12 +62,11 @@ module.exports = {
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
-      new ExtractTextPlugin({filename: "css/[name].[contenthash].css", allChunks: true}),
+      new ExtractTextPlugin({filename: cssFilename, allChunks: true}),
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery"
-      }),
-      new WebpackAssetsManifest({writeToDisk: true})
+      })
   ],
   devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
@@ -67,3 +76,9 @@ module.exports = {
       public: '192.168.99.100:8080'
   }
 };
+
+if (process.env.NODE_ENV === 'production') {
+  webpackConfig.plugins.push(new WebpackAssetsManifest({writeToDisk: true}));
+}
+
+module.exports = webpackConfig;
