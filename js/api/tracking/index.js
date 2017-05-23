@@ -2,6 +2,7 @@ var app = require('http').createServer(handler);
 var url = require('url') ;
 var io = require('socket.io')(app, {path: '/tracking/socket.io'});
 var fs = require('fs');
+var url = require('url');
 var _ = require('underscore');
 var Mustache = require('mustache');
 var Promise = require('promise');
@@ -57,7 +58,12 @@ function handler(req, res) {
 
     var output = Mustache.render(data.toString('utf8'), {
       dev: env === 'development',
-      assets_base_url: process.env.ASSETS_BASE_URL || '',
+      getAssetUrl: function () {
+        return function(filePath) {
+          var assets_base_url = process.env.ASSETS_BASE_URL || '';
+          return url.resolve(assets_base_url, filePath);
+        };
+      },
       zoom: params.zoom || 13
     });
 
