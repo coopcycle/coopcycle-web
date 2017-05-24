@@ -18,13 +18,11 @@ var envMap = {
 
 var ConfigLoader = require('../ConfigLoader');
 
-var env = 'production' || 'development';
-
 try {
 
   var configFile = 'config.yml';
-  if (envMap[env]) {
-    configFile = 'config_' + envMap[env] + '.yml';
+  if (envMap[process.env.NODE_ENV]) {
+    configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
   }
 
   var configLoader = new ConfigLoader(path.join(ROOT_DIR, '/app/config/', configFile));
@@ -36,10 +34,9 @@ try {
 
 try {
     // load manifest.json in production
-    if (envMap[env] === 'prod') {
-      var manifestPath = config.framework.assets.json_manifest_path, // manifest path relative to symphony config
-          manifestAbsolutePath = path.join(ROOT_DIR, '/app/', manifestPath);
-          jsonManifest = JSON.parse(fs.readFileSync(manifestAbsolutePath, 'utf8'));
+    if (process.env.NODE_ENV === 'production') {
+      var manifestPath = path.resolve(config.framework.assets.json_manifest_path),
+          jsonManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     }
 } catch (e) {
   throw e;
@@ -69,10 +66,10 @@ function handler(req, res) {
     var params = url.parse(req.url, true).query;
 
     var output = Mustache.render(data.toString('utf8'), {
-      dev: env === 'development',
+      dev: process.env.NODE_ENV === 'development',
       getAssetUrl: function () {
         return function(filePath) {
-          if (env === 'production' && jsonManifest.hasOwnProperty(filePath)) {
+          if (process.env.NODE_ENV === 'production' && jsonManifest.hasOwnProperty(filePath)) {
             filePath = jsonManifest[filePath];
           }
           var assets_base_url = process.env.ASSETS_BASE_URL || '';
