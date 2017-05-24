@@ -4,27 +4,28 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var WebpackAssetsManifest = require('webpack-assets-manifest');
 
 if (process.env.NODE_ENV === 'production') {
-  var jsFilename = "js/[name].[chunkhash].js",
-      cssFilename = "css/[name].[contenthash].css";
+  var jsFilename = "[name].[chunkhash].js",
+      cssFilename = "[name].[contenthash].css";
 
 }
 else {
-  var jsFilename = "js/[name].js",
-      cssFilename = "css/[name].css";
+  var jsFilename = "[name].js",
+      cssFilename = "[name].css";
 }
 
 var webpackConfig = {
   entry: {
-    'bootstrap': 'bootstrap',
-    'cart': './js/app/cart/index.jsx',
-    'homepage': './js/app/homepage/index.js',
-    'order-payment': './js/app/order/payment.js',
-    'order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
-    'profile-deliveries': './js/app/profile/deliveries.js',
-    'restaurant-form': './js/app/restaurant/form.jsx',
-    'delivery-form': './js/app/delivery/form.jsx',
-    'styles': './assets/css/main.scss',
-    'tracking': [ './assets/css/tracking.scss', './js/app/tracking/index.jsx' ]
+    'css/styles': './assets/css/main.scss',
+    'css/tracking': './assets/css/tracking.scss'
+    'js/bootstrap': 'bootstrap',
+    'js/cart': './js/app/cart/index.jsx',
+    'js/homepage': './js/app/homepage/index.js',
+    'js/order-payment': './js/app/order/payment.js',
+    'js/order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
+    'js/profile-deliveries': './js/app/profile/deliveries.js',
+    'js/restaurant-form': './js/app/restaurant/form.jsx',
+    'js/delivery-form': './js/app/delivery/form.jsx',
+    'js/tracking': './js/app/tracking/index.jsx',
   },
   output: {
     publicPath: "/",
@@ -40,7 +41,10 @@ var webpackConfig = {
     loaders: [
       {
           test: /\.scss$/,
-          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!sass-loader' })
+          loader: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: ['css-loader', 'sass-loader']
+          })
       },
       {
           test: /\.css$/,
@@ -79,11 +83,9 @@ var webpackConfig = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  var manifest = new WebpackAssetsManifest({writeToDisk: true});
-  manifest.getAssetKey = function (name, filename) {
-    return path.join(path.dirname(filename), name) + this.getExtension(filename);
-  };
-  webpackConfig.plugins.push(manifest);
+  webpackConfig.plugins.push(new WebpackAssetsManifest({
+    writeToDisk: true
+  }));
 }
 
 module.exports = webpackConfig;
