@@ -64,6 +64,7 @@ ConfigLoader.prototype.load = function() {
   var parameters = data.parameters;
   delete data.parameters;
 
+  parameters['kernel.root_dir'] = path.resolve(this.dirname, '../');
   parameters = replaceParameters(parameters, parameters);
 
   data = replaceParameters(data, parameters);

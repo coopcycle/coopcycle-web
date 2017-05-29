@@ -25,7 +25,6 @@ framework:
         engines: ['twig']
     default_locale:  "en"
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
