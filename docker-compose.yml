@@ -58,6 +58,7 @@ services:
       context: '.'
     depends_on:
       - postgres
+      - redis
     environment:
       SYMFONY_ENV: 'dev'
     volumes:
