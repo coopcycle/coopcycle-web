@@ -222,16 +222,11 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
         });
   });
 
-}
+};
 
 // Check Redis version on Travis, to skip tests using geo commands
 // Code borrowed from https://github.com/NodeRedis/node_redis
 TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version) {
-
-  // Wait until a connection has established (otherwise a timeout is going to be triggered at some point)
-  if (Object.keys(connection.server_info).length === 0) {
-      throw new Error('Version check not possible as the client is not yet ready or did not expose the version');
-  }
 
   // Return true if the server version >= desired_version
   var version = connection.server_info.versions;
