@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: coopcycle
     volumes:
-      - './var/postgres_data:/var/lib/postgresql/data'
+      - 'pg_data:/var/lib/postgresql/data'
 
   redis:
     restart: always
@@ -73,3 +73,4 @@ services:
 
 volumes:
   node_modules:
+  pg_data:
