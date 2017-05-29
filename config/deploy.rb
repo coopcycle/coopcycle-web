@@ -26,7 +26,7 @@ namespace :symfony do
   end
 end
 
-SSHKit.config.command_map[:webpack] = "node_modules/.bin/webpack"
+SSHKit.config.command_map[:webpack] = "NODE_ENV=production node_modules/.bin/webpack"
 
 namespace :deploy do
 

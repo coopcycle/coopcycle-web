@@ -51,7 +51,7 @@
     "bootstrap": "^3.3.7",
     "css-loader": "^0.26.1",
     "database-cleaner": "^1.2.0",
-    "extract-text-webpack-plugin": "^2.0.0-beta.5",
+    "extract-text-webpack-plugin": "^2.0",
     "file-loader": "^0.11.1",
     "jquery": "^3.2.1",
     "mocha": "^3.2.0",
@@ -61,6 +61,7 @@
     "sass-loader": "^6.0.5",
     "style-loader": "^0.13.1",
     "webpack": "^2.2.0",
+    "webpack-assets-manifest": "^0.6.2",
     "webpack-dev-server": "^1.16.2"
   }
 }

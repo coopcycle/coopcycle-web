@@ -12,6 +12,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Behatch\HttpCall\HttpCallResultPool;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -84,6 +85,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $environment = $scope->getEnvironment();
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function clearData()
+    {
+        $purger = new ORMPurger($this->getContainer()->get('doctrine')->getManager());
+        $purger->purge();
     }
 
     /**
