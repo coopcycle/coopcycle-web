@@ -3,9 +3,13 @@ services:
 
   postgres:
     restart: always
-    image: mdillon/postgis:9.4-alpine
+    build:
+      dockerfile: './docker/postgres/Dockerfile'
+      context: '.'
     environment:
       POSTGRES_DB: coopcycle
+    ports:
+      - '5432:5432'
     volumes:
       - 'pg_data:/var/lib/postgresql/data'
 
