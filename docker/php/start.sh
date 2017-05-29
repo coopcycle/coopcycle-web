@@ -10,6 +10,14 @@ else
     composer install --prefer-dist --no-progress --no-suggest
 fi
 
+php bin/console doctrine:database:create --if-not-exists --env=dev
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=dev
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
+
+php bin/console doctrine:database:create --if-not-exists --env=test
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
+
 # Permissions hack because setfacl does not work on Mac and Windows
 chown -R www-data var/cache \
     && chown -R www-data var/logs \

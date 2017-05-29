@@ -1,34 +1,45 @@
 var assert = require('assert');
 var fs = require('fs');
 var WebSocket = require('ws');
-var Promise = require('promise');
 
 var ConfigLoader = require('../api/ConfigLoader');
-var TestUtils = require('../api/TestUtils');
+var TestUtils = require('./utils');
 
 var configLoader = new ConfigLoader('app/config/config_test.yml');
 var config = configLoader.load();
 
 var utils = new TestUtils(config);
 
+var redisVersionCheck = new Promise(function (resolve, reject) {
+    utils.redis.on('ready', function () {
+        if(utils.serverVersionAtLeast(utils.redis, [3, 2, 0])) {
+          resolve();
+        } else {
+          reject('Redis version nok');
+        }
+      });
+  });
+
 function init() {
   return new Promise(function(resolve, reject) {
-    utils.cleanDb()
-      .then(function() {
-          Promise.all([
-            utils.createUser('bill').then(function() {
-              return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
-                lat: 48.855799,
-                lng: 2.359207
-              });
-            }),
-            utils.createUser('sarah', ['ROLE_COURIER']),
-            utils.createUser('bob', ['ROLE_COURIER'])
-          ])
+    utils.waitServerUp('127.0.0.1', 8000)
+         .then(function () {
+            return utils.cleanDb();
+          })
+         .then(function() {
+            return Promise.all([
+                utils.createUser('bill').then(function() {
+                  return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
+                    lat: 48.855799,
+                    lng: 2.359207
+                  });
+                }),
+                utils.createUser('sarah', ['ROLE_COURIER']),
+                utils.createUser('bob', ['ROLE_COURIER'])
+              ]);
+          })
           .then(resolve)
           .catch((e) => reject(e));
-      })
-      .catch((e) => reject(e));
   });
 }
 
@@ -38,18 +49,21 @@ describe('With one order waiting', function() {
 
     this.timeout(60000);
 
-    return new Promise(function(resolve, reject) {
-      init()
-        .then(function() {
-          return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
-        })
-        .then(function(restaurant) {
-          return utils.createRandomOrder('bill', restaurant)
-        })
-        .then(resolve)
-        .catch(function(e) {
-          reject(e);
-        })
+    return new Promise(function (resolve, reject) {
+        redisVersionCheck
+          .then(function () {
+            return init();
+          })
+          .then(function() {
+                return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
+            })
+          .then(function(restaurant) {
+            utils.createRandomOrder('bill', restaurant);
+          })
+          .then(resolve)
+          .catch(function(e) {
+              reject(e);
+          });
     });
   });
 
@@ -81,7 +95,7 @@ describe('With one order waiting', function() {
 
         ws.close();
         resolve();
-      }
+      };
       ws.onerror = function(e) {
         reject(e.message);
       };
@@ -95,12 +109,15 @@ describe('With several users connected', function() {
 
     this.timeout(30000);
 
-    return new Promise(function(resolve, reject) {
-      init()
+    return new Promise(function (resolve, reject) {
+      redisVersionCheck
+        .then(function () {
+          return init();
+        })
         .then(resolve)
         .catch(function(e) {
-          reject(e);
-        })
+            reject(e);
+        });
     });
   });
 
@@ -126,7 +143,7 @@ describe('With several users connected', function() {
       };
 
       return ws;
-    }
+    };
 
     return new Promise(function (resolve, reject) {
 
@@ -146,7 +163,7 @@ describe('With several users connected', function() {
         sarah.close();
         bob.close();
         resolve();
-      }
+      };
 
       bob.onmessage = function(e) {
         assert.equal('message', e.type);
@@ -157,13 +174,13 @@ describe('With several users connected', function() {
           bob.close();
           reject('Farest courier should not receive order');
         }
-      }
+      };
 
       utils.createRestaurant('Awesome Pizza', {
         latitude: 48.884550, longitude: 2.341358
       })
       .then(function(restaurant) {
-        utils.createRandomOrder('bill', restaurant)
+        utils.createRandomOrder('bill', restaurant);
       });
 
     });
