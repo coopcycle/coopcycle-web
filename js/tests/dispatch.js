@@ -36,10 +36,7 @@ describe('With one order waiting', function() {
 
   before(function() {
 
-    this.timeout(20000);
-
-    // Skip test on if Redis < 3.2 (Travis)
-    utils.serverVersionAtLeast.call(this, utils.redis, [3, 2, 0]);
+    this.timeout(60000);
 
     return new Promise(function(resolve, reject) {
       init()
@@ -47,7 +44,7 @@ describe('With one order waiting', function() {
           return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
         })
         .then(function(restaurant) {
-          utils.createRandomOrder('bill', restaurant)
+          return utils.createRandomOrder('bill', restaurant)
         })
         .then(resolve)
         .catch(function(e) {
@@ -58,7 +55,7 @@ describe('With one order waiting', function() {
 
   it('order should be dispatched to courier', function() {
 
-    this.timeout(5000);
+    this.timeout(30000);
 
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('sarah');
@@ -81,7 +78,6 @@ describe('With one order waiting', function() {
         var data = JSON.parse(e.data);
 
         assert.equal('order', data.type);
-        assert.equal(1, data.order.id);
 
         ws.close();
         resolve();
@@ -97,10 +93,7 @@ describe('With several users connected', function() {
 
   before(function() {
 
-    this.timeout(20000);
-
-    // Skip test on if Redis < 3.2 (Travis)
-    utils.serverVersionAtLeast.call(this, utils.redis, [3, 2, 0]);
+    this.timeout(30000);
 
     return new Promise(function(resolve, reject) {
       init()
@@ -149,7 +142,6 @@ describe('With several users connected', function() {
 
         var data = JSON.parse(e.data);
         assert.equal('order', data.type);
-        assert.equal(1, data.order.id);
 
         sarah.close();
         bob.close();

@@ -8,11 +8,19 @@
   <table class="table">
   {% for delivery in deliveries %}
     <tr>
-      <td>{{ delivery.originAddress.streetAddress }}</td>
-      <td>{{ delivery.deliveryAddress.streetAddress }}</td>
+      <td>
+        {{ delivery.originAddress.streetAddress }}
+        <br>
+        {{ delivery.deliveryAddress.streetAddress }}
+      </td>
       <td>{{ (delivery.distance / 1000)|round(2) }} Km</td>
       <td><i class="fa fa-clock-o"></i> {{ (delivery.duration / 60)|round }} Min</td>
-      <td>{{ delivery.date|date('d/m/Y H:i') }}</td>
+      <td>{{ delivery.date|date('d/m H:i') }}</td>
+      <td class="text-right">
+        {% if delivery.order is not empty %}
+          <a href="{{ path('admin_order', { id: delivery.order.id }) }}">{% trans %}Order{% endtrans %}</a>
+        {% endif %}
+      </td>
     </tr>
   {% endfor %}
   </table>

@@ -59,13 +59,12 @@ class Me
                 'id' => $order->getId(),
                 'status' => $order->getStatus(),
                 'restaurant' => [
-                    'longitude' => $order->getRestaurant()->getGeo()->getLongitude(),
-                    'latitude' => $order->getRestaurant()->getGeo()->getLatitude(),
-
+                    'longitude' => $order->getDelivery()->getOriginAddress()->getGeo()->getLongitude(),
+                    'latitude' => $order->getDelivery()->getOriginAddress()->getGeo()->getLatitude(),
                 ],
                 'deliveryAddress' => [
-                    'longitude' => $order->getDeliveryAddress()->getGeo()->getLongitude(),
-                    'latitude' => $order->getDeliveryAddress()->getGeo()->getLatitude(),
+                    'longitude' => $order->getDelivery()->getDeliveryAddress()->getGeo()->getLongitude(),
+                    'latitude' => $order->getDelivery()->getDeliveryAddress()->getGeo()->getLatitude(),
                 ],
             ];
         }

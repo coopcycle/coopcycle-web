@@ -7,7 +7,8 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
     this.state = {
-      items: props.items
+      items: props.items,
+      date: props.date
     };
   }
   removeItem(item) {
@@ -21,7 +22,15 @@ class Cart extends React.Component
   }
   addProductById(id) {
     $.post(this.props.addToCartURL, {
-      product: id
+      product: id,
+      date: this.state.date
+    }).then((cart) => {
+      this.setState({items: cart.items});
+    });
+  }
+  onDateChange(dateString) {
+    $.post(this.props.addToCartURL, {
+      date: dateString
     }).then((cart) => {
       this.setState({items: cart.items});
     });

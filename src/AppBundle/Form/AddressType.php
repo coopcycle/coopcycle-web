@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\GeoCoordinates;
 
 class AddressType extends AbstractType
 {
@@ -21,6 +22,14 @@ class AddressType extends AbstractType
     {
         $builder
             ->add('streetAddress', TextType::class)
+            ->add('postalCode', TextType::class)
+            ->add('addressLocality', TextType::class, [
+                'label' => 'City'
+            ])
+            // ->add('description', TextType::class, [
+            //     'required' => false,
+            //     'label' => 'Additional information'
+            // ])
             ->add('latitude', HiddenType::class, [
                 'mapped' => false,
             ])
@@ -36,6 +45,7 @@ class AddressType extends AbstractType
         // Make sure latitude/longitude is valid
         $latLngListener = function (FormEvent $event) use ($constraints) {
             $form = $event->getForm();
+            $address = $event->getData();
 
             $streetAddress = $form->get('streetAddress')->getData();
             if (!empty($streetAddress)) {
@@ -49,8 +59,10 @@ class AddressType extends AbstractType
                 $longitudeViolations = $validator->validate($longitude, $constraints);
 
                 if (count($latitudeViolations) > 0 || count($longitudeViolations) > 0) {
-                  $form->get('streetAddress')
-                    ->addError(new FormError('Please select an address in the dropdown'));
+                    $form->get('streetAddress')
+                        ->addError(new FormError('Please select an address in the dropdown'));
+                } else {
+                    $address->setGeo(new GeoCoordinates($latitude, $longitude));
                 }
             }
         };

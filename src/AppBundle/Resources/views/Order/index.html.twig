@@ -19,6 +19,13 @@
 
       {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <i class="fa fa-clock-o fa-lg"></i>  <strong>{% trans %}Delivery{% endtrans %}</strong>
+          <span class="pull-right">{{ cart.date|date('Y-m-d H:i') }}</span>
+        </div>
+      </div>
+
       <form method="post">
 
         <div class="list-group">

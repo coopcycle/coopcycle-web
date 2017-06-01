@@ -49,14 +49,14 @@
     <div class="col-xs-12 col-sm-4">
       <div class="row">
         <div class="col-sm-6">
-          <select class="form-control">
-            {% for date in dates %}
-              <option>{{ date }}</option>
+          <select class="form-control" id="cart-date">
+            {% for label,date in dates %}
+              <option value="{{ date|date('Y-m-d') }}">{{ label }}</option>
             {% endfor %}
           </select>
         </div>
         <div class="col-sm-6">
-          <select class="form-control">
+          <select class="form-control" id="cart-time">
             {% for time in times %}
               <option>{{ time }}</option>
             {% endfor %}
@@ -90,6 +90,7 @@ window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
   removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'product': '__PRODUCT__'})|raw }}",
   items: {{ cart.items|json_encode()|raw }},
+  date: "{{ cart.date|date('Y-m-d H:i:s') }}",
   validateCartURL: "{{ path('order') }}"
 }
 </script>

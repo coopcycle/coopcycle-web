@@ -47,21 +47,17 @@ class OrderType extends AbstractType
             }
 
             if ($createDeliveryAddress) {
-                $form->add('deliveryAddress', DeliveryAddressType::class);
+                $form->add('deliveryAddress', AddressType::class, [ 'mapped' => false ]);
             } else {
                 $form->add('deliveryAddress', EntityType::class, array(
-                    'class' => 'AppBundle:DeliveryAddress',
-                    'query_builder' => function (EntityRepository $e) use ($order) {
-                        return $e->createQueryBuilder('d')
-                            ->where('d.customer = :customer')
-                            ->setParameter('customer', $order->getCustomer())
-                            ->orderBy('d.streetAddress', 'ASC');
-                    },
+                    'class' => 'AppBundle:Address',
+                    'choices' => $order->getCustomer()->getAddresses(),
                     'choice_label' => function ($deliveryAddress) {
                         return $deliveryAddress->getStreetAddress();
                     },
                     'expanded' => true,
                     'multiple' => false,
+                    'mapped' => false
                 ));
             }
         };

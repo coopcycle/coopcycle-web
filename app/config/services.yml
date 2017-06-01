@@ -27,7 +27,7 @@ services:
 
   my.order_listener:
     class: AppBundle\EventListener\OrderListener
-    arguments: [ "@security.token_storage", "@snc_redis.default" ]
+    arguments: [ "@security.token_storage", "@snc_redis.default", "%osrm_host%" ]
     tags:
       - { name: "doctrine.event_listener", event: "prePersist" }
       - { name: "doctrine.event_listener", event: "postPersist" }
