@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
@@ -56,6 +57,10 @@ class OrderController extends Controller
             $order->addOrderedItem($orderItem);
         }
 
+        $delivery = new Delivery($order);
+        $delivery->setDate($cart->getDate());
+        $delivery->setOriginAddress($restaurant->getAddress());
+
         return $order;
     }
 
@@ -74,9 +79,9 @@ class OrderController extends Controller
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
             $deliveryAddress = $request->getSession()->get('deliveryAddress');
             $deliveryAddress = $this->getDoctrine()
-                ->getManagerForClass('AppBundle:DeliveryAddress')->merge($deliveryAddress);
+                ->getManagerForClass('AppBundle:Address')->merge($deliveryAddress);
 
-            $order->setDeliveryAddress($deliveryAddress);
+            $order->getDelivery()->setDeliveryAddress($deliveryAddress);
         }
 
         $form = $this->createForm(OrderType::class, $order);
@@ -86,19 +91,17 @@ class OrderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $order = $form->getData();
-            $deliveryAddress = $order->getDeliveryAddress();
+            $deliveryAddress = $form->get('deliveryAddress')->getData();
 
             $createDeliveryAddress = $form->get('createDeliveryAddress')->getData();
             if ($createDeliveryAddress) {
 
-                $latitude = $form->get('deliveryAddress')->get('latitude')->getData();
-                $longitude = $form->get('deliveryAddress')->get('longitude')->getData();
+                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
+                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
 
-                $deliveryAddress->setCustomer($this->getUser());
-                $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
+                $this->getUser()->addAddress($deliveryAddress);
 
-                $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->persist($deliveryAddress);
-                $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->flush();
+                $this->getDoctrine()->getManagerForClass('AppBundle:ApiUser')->flush();
             }
 
             $request->getSession()->set('deliveryAddress', $deliveryAddress);
@@ -110,7 +113,7 @@ class OrderController extends Controller
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key'),
             'restaurant' => $order->getRestaurant(),
-            'has_delivery_address' => count($this->getUser()->getDeliveryAddresses()) > 0,
+            'has_delivery_address' => count($this->getUser()->getAddresses()) > 0,
             'cart' => $this->getCart($request),
         );
     }
@@ -129,9 +132,9 @@ class OrderController extends Controller
 
         $deliveryAddress = $request->getSession()->get('deliveryAddress');
         $deliveryAddress = $this->getDoctrine()
-            ->getManagerForClass('AppBundle:DeliveryAddress')->merge($deliveryAddress);
+            ->getManagerForClass('AppBundle:Address')->merge($deliveryAddress);
 
-        $order->setDeliveryAddress($deliveryAddress);
+        $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
 

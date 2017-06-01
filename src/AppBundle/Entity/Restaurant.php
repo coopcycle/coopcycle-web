@@ -40,7 +40,7 @@ class Restaurant extends FoodEstablishment
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -64,6 +64,11 @@ class Restaurant extends FoodEstablishment
      * @var string
      */
     private $imageName;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Address")
+     */
+    private $address;
 
     /**
      * @var string The website of the restaurant.
@@ -162,6 +167,18 @@ class Restaurant extends FoodEstablishment
     public function getImageName()
     {
         return $this->imageName;
+    }
+
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    public function setAddress(Address $address)
+    {
+        $this->address = $address;
+
+        return $this;
     }
 
     /**

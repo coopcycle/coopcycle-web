@@ -5,9 +5,10 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Product;
-use AppBundle\Entity\DeliveryAddress;
+use AppBundle\Entity\Address;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Form\AddressType;
 use AppBundle\Utils\OrderStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -97,13 +98,8 @@ class ProfileController extends Controller
      */
     public function addressesAction(Request $request)
     {
-        $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\DeliveryAddress');
-        $repository = $manager->getRepository('AppBundle\\Entity\\DeliveryAddress');
-
-        $addresses = $repository->findBy(array('customer' => $this->getUser()));
-
         return array(
-            'addresses' => $addresses,
+            'addresses' => $this->getUser()->getAddresses(),
         );
     }
 
@@ -113,23 +109,19 @@ class ProfileController extends Controller
      */
     public function newAddressAction(Request $request)
     {
-        $address = new DeliveryAddress();
+        $address = new Address();
 
-        $form = $this->createFormBuilder($address)
-            ->add('name', TextType::class)
-            ->add('streetAddress', TextType::class)
-            ->add('postalCode', TextType::class)
-            ->add('save', SubmitType::class, array('label' => 'Sauvegarder'))
-            ->getForm();
+        $form = $this->createForm(AddressType::class, $address);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $address = $form->getData();
-            $address->setCustomer($this->getUser());
 
-            $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\DeliveryAddress');
+            $this->getUser()->addAddress($address);
+
+            $manager = $this->getDoctrine()->getManagerForClass(Address::class);
             $manager->persist($address);
             $manager->flush();
 
@@ -137,6 +129,7 @@ class ProfileController extends Controller
         }
 
         return array(
+            'google_api_key' => $this->getParameter('google_api_key'),
             'form' => $form->createView(),
         );
     }

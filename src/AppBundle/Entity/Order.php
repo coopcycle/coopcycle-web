@@ -53,7 +53,7 @@ class Order
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -91,7 +91,6 @@ class Order
     /**
      * @var DeliveryAddress
      *
-     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="DeliveryAddress", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/place")
      */
@@ -110,6 +109,12 @@ class Order
      * @ORM\Column(type="string", nullable=true)
      */
     private $status;
+
+    /**
+     * @Groups({"order"})
+     * @ORM\OneToOne(targetEntity="Delivery", mappedBy="order", cascade={"all"})
+     */
+    private $delivery;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -375,5 +380,17 @@ class Order
     public function getEvents()
     {
         return $this->events;
+    }
+
+    public function getDelivery()
+    {
+        return $this->delivery;
+    }
+
+    public function setDelivery(Delivery $delivery)
+    {
+        $this->delivery = $delivery;
+
+        return $this;
     }
 }

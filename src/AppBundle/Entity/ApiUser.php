@@ -26,7 +26,7 @@ class ApiUser extends BaseUser
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
@@ -42,13 +42,15 @@ class ApiUser extends BaseUser
     private $deliveryAddresses;
 
     /**
-     * @ORM\OneToMany(targetEntity="Address", mappedBy="user", cascade={"all"})
+     * @ORM\ManyToMany(targetEntity="Address", cascade={"all"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $addresses;
 
     public function __construct()
     {
         $this->deliveryAddresses = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
 
         parent::__construct();

@@ -17,6 +17,7 @@ var webpackConfig = {
   entry: {
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
+    'js/address-form': './js/app/address/form.jsx',
     'js/bootstrap': 'bootstrap',
     'js/cart': './js/app/cart/index.jsx',
     'js/homepage': './js/app/homepage/index.js',

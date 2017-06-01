@@ -16,7 +16,9 @@ Feature: Orders
       """
       {
         "restaurant": "/api/restaurants/1",
-        "deliveryAddress": "/api/delivery_addresses/1",
+        "delivery": {
+          "deliveryAddress": "/api/addresses/4"
+        },
         "orderedItem": [{
           "product":  "/api/products/1",
           "quantity": 1
@@ -31,47 +33,58 @@ Feature: Orders
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/Order",
-      "@id": "/api/orders/1",
-      "@type": "http://schema.org/Order",
-      "customer": "/api/api_users/1",
+      "@context":"/api/contexts/Order",
+      "@id":@string@,
+      "@type":"http://schema.org/Order",
+      "customer":"/api/api_users/1",
       "courier":null,
       "restaurant":{
-        "@id": "/api/restaurants/1",
-        "@type": "http://schema.org/Restaurant",
-        "geo":{
-          "latitude":48.864577,
-          "longitude":2.333338
-        },
-        "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
-        "name": "Nodaiwa"
+        "@id":"/api/restaurants/1",
+        "@type":"http://schema.org/Restaurant",
+        "geo":null,
+        "streetAddress":null,
+        "name":"Nodaiwa"
       },
       "orderedItem":[
         {
-          "@id": "/api/order_items/1",
-          "@type": "http://schema.org/OrderItem",
-          "product": "/api/products/1",
+          "@id":"/api/order_items/1",
+          "@type":"http://schema.org/OrderItem",
+          "product":"/api/products/1",
           "quantity":1
         },
         {
-          "@id": "/api/order_items/2",
-          "@type": "http://schema.org/OrderItem",
-          "product": "/api/products/2",
+          "@id":"/api/order_items/2",
+          "@type":"http://schema.org/OrderItem",
+          "product":"/api/products/2",
           "quantity":2
         }
       ],
-      "deliveryAddress":{
-        "@id": "/api/delivery_addresses/1",
-        "@type": "DeliveryAddress",
-        "geo":{
-          "latitude":0,
-          "longitude":0
+      "status":"CREATED",
+      "delivery":{
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "originAddress":{
+          "@id":"/api/addresses/1",
+          "@type":"Address",
+          "geo":{
+            "latitude":48.864577,
+            "longitude":2.333338
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null
         },
-        "streetAddress": "1, rue de Rivoli",
-        "name":null
+        "deliveryAddress":{
+          "@id":"/api/addresses/4",
+          "@type":"Address",
+          "geo":{
+            "latitude":48.855799,
+            "longitude":2.359207
+          },
+          "streetAddress":"1, rue de Rivoli",
+          "name":null
+        }
       },
-      "status": "CREATED",
-      "total": 30.97
+      "total":30.97
     }
     """
 
@@ -82,6 +95,9 @@ Feature: Orders
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | geo           | 48.855799, 2.359207 |
     And the user "bob" has ordered at restaurant "Nodaiwa"
     And the courier is loaded:
       | email    | sarah@coopcycle.org |
@@ -100,24 +116,44 @@ Feature: Orders
     """
     {
       "@context": "/api/contexts/Order",
-      "@id": "/api/orders/1",
+      "@id":@string@,
       "@type": "http://schema.org/Order",
-      "customer": "/api/api_users/1",
-      "courier": "/api/api_users/2",
+      "customer":@string@,
+      "courier":@string@,
       "restaurant":{
-        "@id": "/api/restaurants/1",
-        "@type": "http://schema.org/Restaurant",
-        "geo":{
-          "latitude":48.864577,
-          "longitude":2.333338
-        },
-        "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
-        "name": "Nodaiwa"
+        "@id":@string@,
+        "@type":"http://schema.org/Restaurant",
+        "geo":null,
+        "streetAddress":null,
+        "name":"Nodaiwa"
       },
-      "orderedItem": @array@,
-      "deliveryAddress": null,
-      "status": "ACCEPTED",
-      "total": 29.97
+      "orderedItem":@array@,
+      "total":29.97,
+      "delivery":{
+        "@id":@string@,
+        "@type":"http://schema.org/ParcelDelivery",
+        "originAddress":{
+          "@id":@string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.864577,
+            "longitude":2.333338
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null
+        },
+        "deliveryAddress":{
+          "@id": @string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.855799,
+            "longitude":2.359207
+          },
+          "streetAddress":"1, rue de Rivoli",
+          "name":null
+        }
+      },
+      "status":"ACCEPTED"
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -132,24 +168,44 @@ Feature: Orders
     """
     {
       "@context": "/api/contexts/Order",
-      "@id": "/api/orders/1",
+      "@id":@string@,
       "@type": "http://schema.org/Order",
-      "customer": "/api/api_users/1",
-      "courier": "/api/api_users/2",
+      "customer":@string@,
+      "courier":@string@,
       "restaurant":{
-        "@id": "/api/restaurants/1",
-        "@type": "http://schema.org/Restaurant",
-        "geo":{
-          "latitude":48.864577,
-          "longitude":2.333338
-        },
-        "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
-        "name": "Nodaiwa"
+        "@id":@string@,
+        "@type":"http://schema.org/Restaurant",
+        "geo":null,
+        "streetAddress":null,
+        "name":"Nodaiwa"
       },
-      "orderedItem": @array@,
-      "deliveryAddress": null,
-      "status": "PICKED",
-      "total": 29.97
+      "orderedItem":@array@,
+      "total":29.97,
+      "delivery":{
+        "@id":@string@,
+        "@type":"http://schema.org/ParcelDelivery",
+        "originAddress":{
+          "@id":@string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.864577,
+            "longitude":2.333338
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null
+        },
+        "deliveryAddress":{
+          "@id": @string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.855799,
+            "longitude":2.359207
+          },
+          "streetAddress":"1, rue de Rivoli",
+          "name":null
+        }
+      },
+      "status":"PICKED"
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -164,24 +220,44 @@ Feature: Orders
     """
     {
       "@context": "/api/contexts/Order",
-      "@id": "/api/orders/1",
+      "@id":@string@,
       "@type": "http://schema.org/Order",
-      "customer": "/api/api_users/1",
-      "courier": "/api/api_users/2",
+      "customer":@string@,
+      "courier":@string@,
       "restaurant":{
-        "@id": "/api/restaurants/1",
-        "@type": "http://schema.org/Restaurant",
-        "geo":{
-          "latitude":48.864577,
-          "longitude":2.333338
-        },
-        "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
-        "name": "Nodaiwa"
+        "@id":@string@,
+        "@type":"http://schema.org/Restaurant",
+        "geo":null,
+        "streetAddress":null,
+        "name":"Nodaiwa"
       },
-      "orderedItem": @array@,
-      "deliveryAddress": null,
-      "status": "DELIVERED",
-      "total": 29.97
+      "orderedItem":@array@,
+      "total":29.97,
+      "delivery":{
+        "@id":@string@,
+        "@type":"http://schema.org/ParcelDelivery",
+        "originAddress":{
+          "@id":@string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.864577,
+            "longitude":2.333338
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null
+        },
+        "deliveryAddress":{
+          "@id": @string@,
+          "@type":"Address",
+          "geo":{
+            "latitude":48.855799,
+            "longitude":2.359207
+          },
+          "streetAddress":"1, rue de Rivoli",
+          "name":null
+        }
+      },
+      "status":"DELIVERED"
     }
     """
 
@@ -191,6 +267,9 @@ Feature: Orders
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | geo           | 48.855799, 2.359207 |
     And the user "bob" has ordered at restaurant "Nodaiwa"
     And the last order from user "bob" has status "ACCEPTED"
     And the courier "sarah" is loaded:
@@ -212,6 +291,9 @@ Feature: Orders
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | geo           | 48.855799, 2.359207 |
     And the user "bob" has ordered at restaurant "Nodaiwa"
     And the user "bill" is loaded:
       | email    | bill@coopcycle.org |
@@ -232,6 +314,9 @@ Feature: Orders
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | geo           | 48.855799, 2.359207 |
     And the courier "bill" is loaded:
       | email    | bill@coopcycle.org |
       | password | 123456              |

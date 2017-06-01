@@ -34,21 +34,29 @@ class Delivery extends Intangible
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
+     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $originAddress;
 
     /**
+     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $deliveryAddress;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Order", inversedBy="delivery")
+     * @ORM\JoinColumn(name="order_id", referencedColumnName="id")
+     */
+    private $order;
 
     /**
      * @Assert\NotBlank()
@@ -65,6 +73,14 @@ class Delivery extends Intangible
      * @ORM\Column(type="integer")
      */
     private $duration;
+
+    public function __construct(Order $order = null)
+    {
+        if ($order) {
+            $order->setDelivery($this);
+            $this->order = $order;
+        }
+    }
 
     /**
      * Gets id.
@@ -112,6 +128,18 @@ class Delivery extends Intangible
         return $this;
     }
 
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
     public function getDistance()
     {
         return $this->distance;
@@ -134,5 +162,10 @@ class Delivery extends Intangible
         $this->duration = $duration;
 
         return $this;
+    }
+
+    public function isCalculated()
+    {
+        return null !== $this->duration && null !== $this->distance;
     }
 }

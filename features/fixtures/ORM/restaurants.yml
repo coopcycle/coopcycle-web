@@ -11,19 +11,27 @@ AppBundle\Entity\Product:
     name: <name()>
     price: <numberBetween(5, 10)>.99
 
+AppBundle\Entity\Address:
+  address_1:
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_2"
+  address_3:
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_3"
+
 AppBundle\Entity\Restaurant:
   restaurant_1:
     name: 'Nodaiwa'
-    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     products: [ "@product_1", "@product_2", "@product_3" ]
-    geo: "@geo_1"
+    address: "@address_1"
   restaurant_2:
     name: 'Café Barjot'
-    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     products: [ "@product_1", "@product_2", "@product_3" ]
-    geo: "@geo_2"
+    address: "@address_2"
   restaurant_3:
     name: 'La Cantina Clandestina'
-    streetAddress: '17, rue Milton 75009 Paris 9ème'
     products: [ "@product_1", "@product_2", "@product_3" ]
-    geo: "@geo_3"
+    address: "@address_3"

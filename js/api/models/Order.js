@@ -33,7 +33,18 @@ Order.load = function() {
       where: {
         status: {$in: [Order.WAITING, Order.ACCEPTED, Order.PICKED]},
       },
-      include: [Db.Restaurant, Db.DeliveryAddress, Db.Courier]
+      include: [
+        Db.Restaurant,
+        { model: Db.User, as: 'courier' },
+        { model: Db.User, as: 'customer' },
+        {
+          model: Db.Delivery,
+          include: [
+            { model: Db.Address, as: 'originAddress' },
+            { model: Db.Address, as: 'deliveryAddress' }
+          ]
+        }
+      ]
     }).then(function(orders) {
 
       var waiting = _.filter(orders, function(order) { return order.status === Order.WAITING });
@@ -45,12 +56,12 @@ Order.load = function() {
         var deliveryAddresses = [];
         var restaurants = [];
         _.each(orders, function(order) {
-          deliveryAddresses.push(order.deliveryAddress.position.longitude);
-          deliveryAddresses.push(order.deliveryAddress.position.latitude);
+          deliveryAddresses.push(order.delivery.deliveryAddress.position.longitude);
+          deliveryAddresses.push(order.delivery.deliveryAddress.position.latitude);
           deliveryAddresses.push('order:' + order.id);
 
-          restaurants.push(order.restaurant.position.longitude);
-          restaurants.push(order.restaurant.position.latitude);
+          restaurants.push(order.delivery.originAddress.position.longitude);
+          restaurants.push(order.delivery.originAddress.position.latitude);
           restaurants.push('order:' + order.id);
         });
         if (deliveryAddresses.length > 0) {

@@ -219,7 +219,7 @@ class AdminController extends Controller
         $repository = $this->getDoctrine()->getRepository('AppBundle:Delivery');
 
         return [
-            'deliveries' => $repository->findAll(),
+            'deliveries' => $repository->findBy([], ['date' => 'DESC']),
         ];
     }
 
