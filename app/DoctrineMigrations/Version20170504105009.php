@@ -31,7 +31,6 @@ class Version20170504105009 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE restaurant ALTER opening_hours TYPE VARCHAR(255)');
         $this->addSql('ALTER TABLE restaurant ALTER opening_hours DROP DEFAULT');
     }
