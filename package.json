@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/polyline": "^0.2.0",
     "antd": "^2.9.3",
     "async": "^2.1.4",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
