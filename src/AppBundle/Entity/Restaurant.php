@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\TimeRange;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -53,6 +54,17 @@ class Restaurant extends FoodEstablishment
     private $products;
 
     /**
+     * @var string The cuisine of the restaurant.
+     *
+     * @ORM\ManyToMany(targetEntity="Cuisine", cascade={"persist"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
+     * @ORM\OrderBy({"name"="ASC"})
+     * @ApiProperty(iri="https://schema.org/servesCuisine")
+     * @Groups({"restaurant"})
+     */
+    protected $servesCuisine;
+
+    /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
      * @Assert\File(maxSize = "1024k")
      * @var File
@@ -81,7 +93,7 @@ class Restaurant extends FoodEstablishment
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        parent::__construct();
+        $this->servesCuisine = new ArrayCollection();
     }
 
     /**
@@ -245,5 +257,24 @@ class Restaurant extends FoodEstablishment
         sort($dates);
 
         return array_shift($dates);
+    }
+
+    public function setServesCuisine($servesCuisine)
+    {
+        $this->servesCuisine = $servesCuisine;
+
+        return $this;
+    }
+
+    public function addServesCuisine($servesCuisine)
+    {
+        $this->servesCuisine->add($servesCuisine);
+
+        return $this;
+    }
+
+    public function getServesCuisine()
+    {
+        return $this->servesCuisine;
     }
 }

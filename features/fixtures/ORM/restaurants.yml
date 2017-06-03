@@ -1,4 +1,4 @@
-AppBundle\Entity\GeoCoordinates:
+AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
     __construct: [ "48.864577", "2.333338" ]
   geo_2:
