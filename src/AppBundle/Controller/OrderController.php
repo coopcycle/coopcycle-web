@@ -175,19 +175,4 @@ class OrderController extends Controller
             'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
         );
     }
-
-    /**
-     * @Route("/{id}/confirm", name="order_confirm")
-     * @Template()
-     */
-    public function confirmAction($id, Request $request)
-    {
-        $order = $this->getRepository('Order')->find($id);
-
-        return array(
-            'order' => $order,
-            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'google_api_key' => $this->getParameter('google_api_key')
-        );
-    }
 }
