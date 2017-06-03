@@ -10,7 +10,7 @@
   </head>
   <body>
     {% include "AppBundle::menu.html.twig" %}
-    <section id="banner">
+    {# <section id="banner">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 text-center">
@@ -18,23 +18,24 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> #}
     {% block body %}{% endblock %}
-    <div class="container text-center">
-      <hr>
-      <ul class="list-inline">
-        <li>
-          <a href="https://github.com/coopcycle" target="_blank">
-            <i class="fa fa-github fa-lg"></i>  {% trans %}GitHub{% endtrans %}
-          </a>
-        </li>
-        <li>
-          <a href="https://twitter.com/coopcycle" target="_blank">
-            <i class="fa fa-twitter fa-lg"></i>  {% trans %}Twitter{% endtrans %}
-          </a>
-        </li>
-      </ul>
-    </div>
+    <footer>
+      <div class="container text-center">
+        <ul class="list-inline">
+          <li>
+            <a href="#" target="_blank">
+              {% trans %}Contact us{% endtrans %}
+            </a>
+          </li>
+          <li>
+            <a href="#" target="_blank">
+              {% trans %}Terms of service{% endtrans %}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </footer>
     <script src="{{ asset('js/bootstrap.js') }}"></script>
     {% block scripts %}{% endblock %}
     {% if app.environment == "dev" %}
