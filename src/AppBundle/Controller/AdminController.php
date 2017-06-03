@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Form\DeliveryType;

@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 use Polyline;
 
 class GoogleDirectionsApi implements RoutingInterface

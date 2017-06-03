@@ -1,6 +1,6 @@
 <?php
 
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;

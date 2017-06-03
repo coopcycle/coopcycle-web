@@ -97,7 +97,7 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
                     ->setServesCuisine($item['subCategory'])
                     ->setTelephone($telephone)
                     ->setWebsite($website)
-                    ->setGeo(new Entity\GeoCoordinates($item['lat'], $item['lng']));
+                    ->setGeo(new Entity\Base\GeoCoordinates($item['lat'], $item['lng']));
             }
 
             if (count($restaurant->getProducts()) === 0) {

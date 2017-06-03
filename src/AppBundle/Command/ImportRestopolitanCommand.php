@@ -104,7 +104,7 @@ class ImportRestopolitanCommand extends ContainerAwareCommand
                 // ->setServesCuisine($item['subCategory'])
                 // ->setTelephone($telephone)
                 ->setWebsite($website)
-                ->setGeo(new Entity\GeoCoordinates(trim($latitude), trim($longitude)));
+                ->setGeo(new Entity\Base\GeoCoordinates(trim($latitude), trim($longitude)));
 
             foreach ($item['cuisines'] as $cuisineItem) {
                 $cuisineName = trim(rtrim($cuisineItem['name'], ' -'));
