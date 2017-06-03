@@ -37,11 +37,6 @@ class ApiUser extends BaseUser
     private $restaurants;
 
     /**
-     * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer", cascade={"all"})
-     */
-    private $deliveryAddresses;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Address", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
@@ -49,7 +44,6 @@ class ApiUser extends BaseUser
 
     public function __construct()
     {
-        $this->deliveryAddresses = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
 
@@ -78,25 +72,6 @@ class ApiUser extends BaseUser
     public function getRestaurants()
     {
         return $this->restaurants;
-    }
-
-    public function addDeliveryAddress(DeliveryAddress $deliveryAddress)
-    {
-        $this->deliveryAddresses->add($deliveryAddress);
-
-        return $this;
-    }
-
-    public function setDeliveryAddresses($deliveryAddresses)
-    {
-        $this->deliveryAddresses = $deliveryAddresses;
-
-        return $this;
-    }
-
-    public function getDeliveryAddresses()
-    {
-        return $this->deliveryAddresses;
     }
 
     public function addAddress(Address $addresses)

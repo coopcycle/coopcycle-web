@@ -76,50 +76,6 @@
 {% block scripts %}
 {% if cart is defined %}
 <script type="text/javascript">
-
-var inputMap = {
-  postal_code: 'order_deliveryAddress_postalCode',
-  locality: 'order_deliveryAddress_addressLocality'
-};
-
-var placeChangedListener;
-
-function initMap() {
-  var addressInput = document.getElementById('order_deliveryAddress_streetAddress');
-  var latitudeInput = document.getElementById('order_deliveryAddress_latitude');
-  var longitudeInput = document.getElementById('order_deliveryAddress_longitude');
-
-  if (!addressInput) {
-    return;
-  }
-
-  var options = {
-    types: ['address'],
-    componentRestrictions: {
-      country: "fr"
-    }
-  };
-
-  if (placeChangedListener) {
-    google.maps.event.removeListener(placeChangedListener);
-  }
-
-  var autocomplete = new google.maps.places.Autocomplete(addressInput, options);
-
-  placeChangedListener = autocomplete.addListener('place_changed', function() {
-    var place = autocomplete.getPlace();
-    latitudeInput.value = place.geometry.location.lat();
-    longitudeInput.value = place.geometry.location.lng();
-    for (var i = 0; i < place.address_components.length; i++) {
-      var addressType = place.address_components[i].types[0];
-      var value = place.address_components[i].long_name;
-      if (inputMap[addressType]) {
-        $('#' + inputMap[addressType]).val(value);
-      }
-    }
-  });
-}
-
 (function() {
 
   $('#order_deliveryAddress_streetAddress').on('input', function(e) {
@@ -145,6 +101,7 @@ function initMap() {
 
 })()
 </script>
+<script src="{{ asset('js/order-address.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
   async defer></script>
 {% endif %}

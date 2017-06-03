@@ -36,16 +36,17 @@ class OrderType extends AbstractType
 
             if (null === $createDeliveryAddress) {
                 $createDeliveryAddress = true;
-                if (null !== $order->getDeliveryAddress()) {
+                if (null !== $order->getDelivery() && null !== $order->getDelivery()->getDeliveryAddress()) {
                     $createDeliveryAddress = false;
                 }
-                if (count($order->getCustomer()->getDeliveryAddresses()) > 0) {
+                if (count($order->getCustomer()->getAddresses()) > 0) {
                     $createDeliveryAddress = false;
                 }
 
                 $form->get('createDeliveryAddress')->setData($createDeliveryAddress);
             }
 
+            // The deliveryAddress field is not mapped
             if ($createDeliveryAddress) {
                 $form->add('deliveryAddress', AddressType::class, [ 'mapped' => false ]);
             } else {
