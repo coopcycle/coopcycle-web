@@ -3,8 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
@@ -76,15 +76,15 @@ class OrderController extends Controller
 
         $order = $this->createOrderFromRequest($request);
 
+        $form = $this->createForm(OrderType::class, $order);
+
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
             $deliveryAddress = $request->getSession()->get('deliveryAddress');
             $deliveryAddress = $this->getDoctrine()
-                ->getManagerForClass('AppBundle:Address')->merge($deliveryAddress);
+                ->getManagerForClass(Address::class)->merge($deliveryAddress);
 
-            $order->getDelivery()->setDeliveryAddress($deliveryAddress);
+            $form->get('deliveryAddress')->setData($deliveryAddress);
         }
-
-        $form = $this->createForm(OrderType::class, $order);
 
         $form->handleRequest($request);
 

@@ -89,14 +89,6 @@ class Order
     private $orderedItem;
 
     /**
-     * @var DeliveryAddress
-     *
-     * @ORM\ManyToOne(targetEntity="DeliveryAddress", cascade={"persist"})
-     * @ApiProperty(iri="https://schema.org/place")
-     */
-    private $deliveryAddress;
-
-    /**
      * @ORM\OneToMany(targetEntity="OrderEvent", mappedBy="order")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
@@ -284,30 +276,6 @@ class Order
     public function getRestaurant()
     {
         return $this->restaurant;
-    }
-
-    /**
-     * Sets deliveryAddress.
-     *
-     * @param DeliveryAddress $deliveryAddress
-     *
-     * @return $this
-     */
-    public function setDeliveryAddress(DeliveryAddress $deliveryAddress = null)
-    {
-        $this->deliveryAddress = $deliveryAddress;
-
-        return $this;
-    }
-
-    /**
-     * Gets deliveryAddress.
-     *
-     * @return DeliveryAddress
-     */
-    public function getDeliveryAddress()
-    {
-        return $this->deliveryAddress;
     }
 
     public function getCreatedAt()

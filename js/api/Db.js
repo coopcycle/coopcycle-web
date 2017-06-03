@@ -101,20 +101,6 @@ module.exports = function(sequelize) {
     tableName: 'restaurant_product'
   }));
 
-  Db.DeliveryAddress = sequelize.define('deliveryAddress', {
-    name: Sequelize.STRING,
-    streetAddress: {
-      field: 'street_address',
-      type: Sequelize.STRING
-    },
-    geo: Sequelize.GEOMETRY
-  }, _.extend(sequelizeOptions, {
-    tableName: 'delivery_address',
-    getterMethods: {
-      position : positionGetter
-    },
-  }));
-
   Db.Delivery = sequelize.define('delivery', {
     distance: Sequelize.INTEGER,
     duration: Sequelize.INTEGER,

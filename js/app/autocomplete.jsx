@@ -5,6 +5,8 @@ const options = {
   }
 };
 
+let placeChangedListener;
+
 module.exports = (form) => {
 
   if (!window.google) {
@@ -24,9 +26,13 @@ module.exports = (form) => {
     locality: form + '_addressLocality'
   };
 
+  if (placeChangedListener) {
+    google.maps.event.removeListener(placeChangedListener);
+  }
+
   const autocomplete = new google.maps.places.Autocomplete(addressInput, options);
 
-  autocomplete.addListener('place_changed', function() {
+  placeChangedListener = autocomplete.addListener('place_changed', function() {
     var place = autocomplete.getPlace();
     latitudeInput.value = place.geometry.location.lat();
     longitudeInput.value = place.geometry.location.lng();
