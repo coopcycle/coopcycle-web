@@ -45,13 +45,17 @@ class OrderListener
         $entity = $args->getObject();
 
         if ($entity instanceof Order) {
+
             if (null === $entity->getCustomer()) {
-                $customer = $this->getUser();
-                $entity->setCustomer($customer);
+                $entity->setCustomer($this->getUser());
             }
 
             $delivery = $entity->getDelivery();
 
+            // Make sure models are associated
+            $delivery->setOrder($entity);
+
+            // FIXME Date should be mandatory
             if (null === $delivery->getDate()) {
                 // FIXME Make sure the restaurant is opened
                 $delivery->setDate(new \DateTime('+30 minutes'));
