@@ -1,7 +1,9 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Action\Order;
 
+use AppBundle\Action\ActionTrait;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -9,9 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class OrderAccept
+class Accept
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(
@@ -27,8 +29,9 @@ class OrderAccept
 
         $user = $this->getUser();
 
-        // Only couriers can accept orders
-        if (!$user->hasRole('ROLE_COURIER')) {
+        // Only restaurants can accept orders
+        // TODO Remove ROLE_COURIER once Order & Delivery are completely isolated
+        if (!$user->hasRole('ROLE_RESTAURANT') && !$user->hasRole('ROLE_COURIER')) {
             throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
         }
 
@@ -44,8 +47,12 @@ class OrderAccept
             throw new BadRequestHttpException(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
         }
 
-        $order->setCourier($user);
         $order->setStatus(Order::STATUS_ACCEPTED);
+
+        if ($user->hasRole('ROLE_COURIER')) {
+            $order->setCourier($user);
+            $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
+        }
 
         $this->redis->lrem('orders:dispatching', 0, $order->getId());
         $this->redis->hset('orders:delivering', 'order:'.$order->getId(), 'courier:'.$user->getId());

@@ -39,14 +39,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Order
 {
-    const STATUS_CREATED = 'CREATED';
-    const STATUS_WAITING = 'WAITING';
-    const STATUS_ACCEPTED = 'ACCEPTED';
-    const STATUS_READY = 'READY';
-    const STATUS_PICKED = 'PICKED';
-    const STATUS_ACCIDENT = 'ACCIDENT';
-    const STATUS_DELIVERED = 'DELIVERED';
-    const STATUS_CANCELED = 'CANCELED';
+    const STATUS_CREATED    = 'CREATED';
+    const STATUS_WAITING    = 'WAITING';
+    const STATUS_ACCEPTED   = 'ACCEPTED';
+    const STATUS_REFUSED    = 'REFUSED';
+    const STATUS_READY      = 'READY';
+    const STATUS_CANCELED   = 'CANCELED';
 
     /**
      * @var int
@@ -120,7 +118,8 @@ class Order
      */
     private $updatedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->status = self::STATUS_CREATED;
         $this->orderedItem = new ArrayCollection();
         $this->events = new ArrayCollection();

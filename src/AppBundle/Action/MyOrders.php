@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MyOrders
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(

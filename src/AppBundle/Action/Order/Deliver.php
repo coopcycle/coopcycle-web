@@ -1,16 +1,18 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Action\Order;
 
+use AppBundle\Action\ActionTrait;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class OrderDeliver
+class Deliver
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(
@@ -36,7 +38,7 @@ class OrderDeliver
             throw new AccessDeniedException();
         }
 
-        $order->setStatus(Order::STATUS_DELIVERED);
+        $order->getDelivery()->setStatus(Delivery::STATUS_DELIVERED);
 
         $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
 

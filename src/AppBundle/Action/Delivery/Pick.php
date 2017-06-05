@@ -2,7 +2,8 @@
 
 namespace AppBundle\Action\Delivery;
 
-use AppBundle\Entity\Order;
+use AppBundle\Action\ActionTrait;
+use AppBundle\Entity\Delivery;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,14 +30,14 @@ class Pick
             throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
         }
 
-        $order = $data;
+        $delivery = $data;
 
         // Make sure the courier picking order is authorized
-        if ($order->getCourier() !== $this->getUser()) {
+        if ($delivery->getCourier() !== $this->getUser()) {
             throw new AccessDeniedException();
         }
 
-        $order->setStatus(Order::STATUS_PICKED);
+        $delivery->setStatus(Delivery::STATUS_PICKED);
 
         return $order;
     }

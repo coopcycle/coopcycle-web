@@ -45,7 +45,7 @@ class Restaurant extends FoodEstablishment
      * @Assert\Type(type="string")
      * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant"})
+     * @Groups({"restaurant", "order"})
      */
     protected $name;
 
