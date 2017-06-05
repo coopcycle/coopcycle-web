@@ -17,5 +17,4 @@
     - ANXS.postgresql
     - DavidWittman.redis
     - redis-tools
-    - debops.docker
     - osrm-docker

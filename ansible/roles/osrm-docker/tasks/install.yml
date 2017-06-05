@@ -4,7 +4,12 @@
   become: yes
   apt: pkg={{ item }} state=latest
   with_items:
-    - supervisor
+    - python-dev
+    - python-pip
+
+- name: install docker-py
+  pip:
+    name: docker-py
 
 - name: make sure directory exists
   file:
@@ -29,17 +34,38 @@
 
 - name: extract the Road Network
   when: pbf_file.stat.exists == True and osrm_file.stat.exists == False
-  shell:
-    docker run -t -v {{ osrm_server.root_dir }}:/data osrm/osrm-backend osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+  docker_container:
+    name: "osrm_{{ osrm_server.name }}"
+    image: osrm/osrm-backend
+    state: started
+    restart: yes
+    volumes:
+      - "{{ osrm_server.root_dir }}:/data"
+    ports:
+      - "{{ osrm_server.port }}:{{ osrm_server.port }}"
+    command: "osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf"
 
 - name: create the Hierarchy
   when: pbf_file.stat.exists == True and osrm_core_file.stat.exists == False
-  shell:
-    docker run -t -v {{ osrm_server.root_dir }}:/data osrm/osrm-backend osrm-contract /data/data.osrm
+  docker_container:
+    name: "osrm_{{ osrm_server.name }}"
+    image: osrm/osrm-backend
+    state: started
+    restart: yes
+    volumes:
+      - "{{ osrm_server.root_dir }}:/data"
+    ports:
+      - "{{ osrm_server.port }}:{{ osrm_server.port }}"
+    command: "osrm-contract /data/data.osrm"
 
-- name: configure supervisor
-  when: pbf_file.stat.exists == True and osrm_core_file.stat.exists == True
-  template:
-    src: supervisor.j2
-    dest: "/etc/supervisor/conf.d/osrm_{{ osrm_server.name }}.conf"
-  notify: restart supervisor
+- name: start server
+  docker_container:
+    name: "osrm_{{ osrm_server.name }}"
+    image: osrm/osrm-backend
+    state: started
+    restart: yes
+    volumes:
+      - "{{ osrm_server.root_dir }}:/data"
+    ports:
+      - "{{ osrm_server.port }}:{{ osrm_server.port }}"
+    command: "osrm-routed -p {{ osrm_server.port }} /data/data.osrm"
