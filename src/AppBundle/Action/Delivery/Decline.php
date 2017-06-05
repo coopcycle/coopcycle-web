@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
+use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\GenericEvent;

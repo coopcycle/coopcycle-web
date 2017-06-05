@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Me
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(path="/me", name="me",

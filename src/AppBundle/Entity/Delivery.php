@@ -23,13 +23,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "deliver"={"route_name"="delivery_deliver"}
  *   },
  *   attributes={
- *     "denormalization_context"={"groups"={"order"}},
- *     "normalization_context"={"groups"={"order", "place"}}
+ *     "denormalization_context"={"groups"={"delivery"}},
+ *     "normalization_context"={"groups"={"delivery", "place"}}
  *   }
  * )
  */
 class Delivery extends Intangible
 {
+    const STATUS_WAITING    = 'WAITING';
+    const STATUS_DISPATCHED = 'DISPATCHED';
+    const STATUS_PICKED     = 'PICKED';
+    const STATUS_DELIVERED  = 'DELIVERED';
+    const STATUS_ACCIDENT   = 'ACCIDENT';
+    const STATUS_CANCELED   = 'CANCELED';
+
     /**
      * @var int
      *
@@ -60,6 +67,14 @@ class Delivery extends Intangible
     private $order;
 
     /**
+     * @var string
+     *
+     * @Groups({"order"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $status;
+
+    /**
      * @Assert\NotBlank()
      * @ORM\Column(type="datetime")
      */
@@ -77,6 +92,8 @@ class Delivery extends Intangible
 
     public function __construct(Order $order = null)
     {
+        $this->status = self::STATUS_WAITING;
+
         if ($order) {
             $order->setDelivery($this);
             $this->order = $order;
@@ -168,5 +185,17 @@ class Delivery extends Intangible
     public function isCalculated()
     {
         return null !== $this->duration && null !== $this->distance;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }

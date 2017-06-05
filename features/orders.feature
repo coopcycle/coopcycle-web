@@ -34,37 +34,21 @@ Feature: Orders
     """
     {
       "@context":"/api/contexts/Order",
-      "@id":@string@,
+      "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":"/api/api_users/1",
+      "customer":"@string@.startsWith('/api/api_users')",
       "courier":null,
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
-        "geo":null,
-        "streetAddress":null,
         "name":"Nodaiwa"
       },
-      "orderedItem":[
-        {
-          "@id":"/api/order_items/1",
-          "@type":"http://schema.org/OrderItem",
-          "product":"/api/products/1",
-          "quantity":1
-        },
-        {
-          "@id":"/api/order_items/2",
-          "@type":"http://schema.org/OrderItem",
-          "product":"/api/products/2",
-          "quantity":2
-        }
-      ],
-      "status":"CREATED",
+      "orderedItem":@array@,
       "delivery":{
-        "@id":"/api/deliveries/1",
+        "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "originAddress":{
-          "@id":"/api/addresses/1",
+          "@id":"@string@.startsWith('/api/addresses')",
           "@type":"Address",
           "geo":{
             "latitude":48.864577,
@@ -74,7 +58,7 @@ Feature: Orders
           "name":null
         },
         "deliveryAddress":{
-          "@id":"/api/addresses/4",
+          "@id":"@string@.startsWith('/api/addresses')",
           "@type":"Address",
           "geo":{
             "latitude":48.855799,
@@ -82,9 +66,11 @@ Feature: Orders
           },
           "streetAddress":"1, rue de Rivoli",
           "name":null
-        }
+        },
+        "status":"WAITING"
       },
-      "total":30.97
+      "total":@number@,
+      "status":"CREATED"
     }
     """
 
@@ -118,17 +104,14 @@ Feature: Orders
       "@context": "/api/contexts/Order",
       "@id":@string@,
       "@type": "http://schema.org/Order",
-      "customer":@string@,
-      "courier":@string@,
+      "customer":"@string@.startsWith('/api/api_users')",
+      "courier":"@string@.startsWith('/api/api_users')",
       "restaurant":{
         "@id":@string@,
         "@type":"http://schema.org/Restaurant",
-        "geo":null,
-        "streetAddress":null,
         "name":"Nodaiwa"
       },
       "orderedItem":@array@,
-      "total":29.97,
       "delivery":{
         "@id":@string@,
         "@type":"http://schema.org/ParcelDelivery",
@@ -151,8 +134,10 @@ Feature: Orders
           },
           "streetAddress":"1, rue de Rivoli",
           "name":null
-        }
+        },
+        "status":"DISPATCHED"
       },
+      "total":@number@,
       "status":"ACCEPTED"
     }
     """
@@ -175,12 +160,9 @@ Feature: Orders
       "restaurant":{
         "@id":@string@,
         "@type":"http://schema.org/Restaurant",
-        "geo":null,
-        "streetAddress":null,
         "name":"Nodaiwa"
       },
       "orderedItem":@array@,
-      "total":29.97,
       "delivery":{
         "@id":@string@,
         "@type":"http://schema.org/ParcelDelivery",
@@ -203,9 +185,11 @@ Feature: Orders
           },
           "streetAddress":"1, rue de Rivoli",
           "name":null
-        }
+        },
+        "status":"PICKED"
       },
-      "status":"PICKED"
+      "total":@number@,
+      "status":"ACCEPTED"
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -227,12 +211,9 @@ Feature: Orders
       "restaurant":{
         "@id":@string@,
         "@type":"http://schema.org/Restaurant",
-        "geo":null,
-        "streetAddress":null,
         "name":"Nodaiwa"
       },
       "orderedItem":@array@,
-      "total":29.97,
       "delivery":{
         "@id":@string@,
         "@type":"http://schema.org/ParcelDelivery",
@@ -255,9 +236,11 @@ Feature: Orders
           },
           "streetAddress":"1, rue de Rivoli",
           "name":null
-        }
+        },
+        "status":"DELIVERED"
       },
-      "status":"DELIVERED"
+      "total":@number@,
+      "status":"ACCEPTED"
     }
     """
 

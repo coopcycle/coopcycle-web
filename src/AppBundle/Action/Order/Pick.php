@@ -1,16 +1,18 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Action\Order;
 
+use AppBundle\Action\ActionTrait;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class OrderPick
+class Pick
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(
@@ -36,7 +38,7 @@ class OrderPick
             throw new AccessDeniedException();
         }
 
-        $order->setStatus(Order::STATUS_PICKED);
+        $order->getDelivery()->setStatus(Delivery::STATUS_PICKED);
 
         return $order;
     }
