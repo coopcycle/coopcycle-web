@@ -5,8 +5,9 @@ namespace AppBundle\Entity;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Product;
+use PHPUnit\Framework\TestCase;
 
-class OrderTest extends \PHPUnit_Framework_TestCase
+class OrderTest extends TestCase
 {
     public function testAddProduct()
     {
