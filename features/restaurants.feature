@@ -45,8 +45,6 @@ Feature: Manage restaurants
           "@type":"http://schema.org/Restaurant",
           "products":@array@,
           "servesCuisine":@array@,
-          "geo":null,
-          "streetAddress":null,
           "name":"Café Barjot"
         }
       ],
@@ -81,17 +79,8 @@ Feature: Manage restaurants
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants/12",
       "@type":"http://schema.org/Restaurant",
-      "products":[
-
-      ],
-      "servesCuisine":[
-
-      ],
-      "geo":{
-        "latitude":48.864577,
-        "longitude":2.333338
-      },
-      "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+      "products":@array@,
+      "servesCuisine":@array@,
       "name":"Nodaiwa"
     }
     """

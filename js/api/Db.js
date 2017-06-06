@@ -65,17 +65,9 @@ module.exports = function(sequelize) {
   }));
 
   Db.Restaurant = sequelize.define('restaurant', {
-    name: Sequelize.STRING,
-    streetAddress: {
-      field: 'street_address',
-      type: Sequelize.STRING
-    },
-    geo: Sequelize.GEOMETRY,
+    name: Sequelize.STRING
   }, _.extend(sequelizeOptions, {
-    tableName: 'restaurant',
-    getterMethods: {
-      position : positionGetter
-    },
+    tableName: 'restaurant'
   }));
 
   Db.Product = sequelize.define('product', {
