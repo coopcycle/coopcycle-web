@@ -26,12 +26,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   }
  * )
- * @ORM\Table(
- *     options={"spatial_indexes"={"idx_restaurant_geo"}},
- *     indexes={
- *         @ORM\Index(name="idx_restaurant_geo", columns={"geo"}, flags={"spatial"})
- *     }
- * )
  * @Vich\Uploadable
  */
 class Restaurant extends FoodEstablishment
@@ -44,6 +38,16 @@ class Restaurant extends FoodEstablishment
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+
+    /**
+     * @var string The name of the item
+     *
+     * @Assert\Type(type="string")
+     * @ORM\Column(nullable=true)
+     * @ApiProperty(iri="http://schema.org/name")
+     * @Groups({"restaurant"})
+     */
+    protected $name;
 
     /**
      * @var Recipe
@@ -78,7 +82,7 @@ class Restaurant extends FoodEstablishment
     private $imageName;
 
     /**
-     * @ORM\OneToOne(targetEntity="Address")
+     * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
      */
     private $address;
 
@@ -111,6 +115,30 @@ class Restaurant extends FoodEstablishment
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Sets name.
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

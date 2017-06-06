@@ -123,7 +123,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         foreach ($table as $row) {
             $restaurant = new Restaurant();
             $restaurant->setName($row['name']);
-            $restaurant->setStreetAddress($row['streetAddress']);
 
             if (isset($row['id']) && !empty($row['id'])) {
                 $property = new \ReflectionProperty(Restaurant::class, 'id');
@@ -131,10 +130,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
                 $property->setValue($restaurant, $row['id']);
             }
 
+            $address = new Address();
+
+            $address->setStreetAddress($row['streetAddress']);
+
             if (isset($row['latlng']) && !empty($row['latlng'])) {
                 list($lat, $lng) = explode(',', $row['latlng']);
-                $restaurant->setGeo(new GeoCoordinates($lat, $lng));
+                $address->setGeo(new GeoCoordinates($lat, $lng));
             }
+
+            $restaurant->setAddress($address);
 
             $em->persist($restaurant);
         }
