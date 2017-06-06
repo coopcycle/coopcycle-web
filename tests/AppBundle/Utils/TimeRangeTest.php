@@ -2,9 +2,10 @@
 
 namespace AppBundle\Utils;
 
+use PHPUnit\Framework\TestCase;
 use AppBundle\Utils\TimeRange;
 
-class TimeRangeTest extends \PHPUnit_Framework_TestCase
+class TimeRangeTest extends TestCase
 {
     public function testIsOpen()
     {
