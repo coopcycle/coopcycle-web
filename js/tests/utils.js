@@ -1,4 +1,3 @@
-var Promise = require('promise');
 var exec = require('child_process').exec;
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
@@ -39,7 +38,7 @@ function TestUtils(config) {
   this.cert = {
     key: privateKey,
     passphrase: jwtConfig.pass_phrase
-  }
+  };
 
   var sequelize = new Sequelize(
     config.doctrine.dbal.dbname,
@@ -52,12 +51,12 @@ function TestUtils(config) {
     }
   );
 
-  this.db = require('./Db')(sequelize);
+  this.db = require('../api/Db')(sequelize);
 }
 
 TestUtils.prototype.createJWT = function(username) {
   return jwt.sign({ username: username }, this.cert, { algorithm: 'RS256' });
-}
+};
 
 TestUtils.prototype.cleanDb = function() {
   var pgConfig = this.pgConfig;
@@ -90,39 +89,29 @@ TestUtils.prototype.cleanDb = function() {
         });
     });
   });
-}
+};
 
 TestUtils.prototype.createUser = function(username, roles) {
-  var pgConfig = this.pgConfig;
+  var pgConfig = this.pgConfig,
+      Customer = this.db.Customer;
+  var params = {
+    'username': username,
+    'username_canonical': username,
+    'email': username + '@coopcycle.dev',
+    'email_canonical': username + '@coopcycle.dev',
+    'roles': serialize(roles),
+    'password': '123456',
+    'enabled': true
+  };
+
   return new Promise(function (resolve, reject) {
-
-    var params = [
-      username,
-      username + '@coopcycle.dev',
-      '123456'
-    ]
-
-    var command = 'php ' + rootDir + '/bin/console'
-      + ' --env=test fos:user:create ' + params.join(' ');
-
-    // Execute Symfony command to create user
-    exec(command, function(error, stdout, stderr) {
-      if (error) return reject(error);
-      if (roles && Array.isArray(roles)) {
-        pg.connect(pgConfig, function(err, client, release) {
-          var sql = 'UPDATE api_user SET roles = $1 WHERE username = $2'
-          client.query(sql, [serialize(roles), username], function (err, result) {
-            if (err) throw err;
-            release();
-            resolve();
-          });
-        });
-      } else {
-        resolve();
-      }
+    Customer.create(params)
+            .then(resolve())
+            .catch(function(err) {
+              reject(err.message);
+            });
     });
-  });
-}
+};
 
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
 

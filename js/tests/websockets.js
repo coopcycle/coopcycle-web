@@ -1,10 +1,8 @@
 var assert = require('assert');
 var fs = require('fs');
 var WebSocket = require('ws');
-var Promise = require('promise');
-
 var ConfigLoader = require('../api/ConfigLoader');
-var TestUtils = require('../api/TestUtils');
+var TestUtils = require('./utils');
 
 var configLoader = new ConfigLoader('app/config/config_test.yml');
 var config = configLoader.load();
