@@ -112,7 +112,7 @@ TestUtils.prototype.createUser = function(username, roles) {
           resolve();
         })
         .catch(function(err) {
-          reject(err.message);
+          reject(err.errors);
         });
 });
 };
@@ -133,7 +133,7 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
           customer.addAddress(address).then(resolve);
         })
         .catch(function(err) {
-          reject(err.message)
+          reject(err.errors)
         });
       });
   });

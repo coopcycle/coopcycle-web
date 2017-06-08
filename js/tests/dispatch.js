@@ -49,7 +49,10 @@ describe('With one order waiting', function() {
   before(function() {
 
     return new Promise(function (resolve, reject) {
-        redisVersionCheck.then(init)
+        redisVersionCheck
+          .then(function () {
+            return init();
+          })
           .then(function() {
                 return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
             })
@@ -105,7 +108,10 @@ describe('With several users connected', function() {
   before(function() {
 
       return new Promise(function (resolve, reject) {
-        redisVersionCheck.then(init)
+        redisVersionCheck
+          .then(function () {
+            return init();
+          })
           .then(resolve)
           .catch(function(e) {
               reject(e);
