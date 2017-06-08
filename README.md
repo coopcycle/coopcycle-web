@@ -125,11 +125,21 @@ vagrant ssh -c 'psql -U postgres -d coopcycle_test -c "CREATE EXTENSION postgis_
 vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create --env=test'
 ```
 
+With Docker
+```
+php bin/console doctrine:schema:create --env=test
+```
+
 * Launch the Behat tests
 
 With Vagrant
 ```
 sudo -u www-data php /var/www/coopcycle/vendor/bin/behat
+```
+
+With Docker
+```
+docker-compose run php php vendor/bin/behat
 ```
 
 * Launch the Mocha tests
@@ -140,6 +150,11 @@ With Vagrant
 cd /var/www/coopcycle
 pm2 restart pm2.config.js --env=test
 sudo -u www-data node node_modules/.bin/mocha js/tests
+```
+
+With Docker
+```
+docker-compose run -e SYMFONY_ENV=test -e COOPCYCLE_BASE_URL=http://localhost:8080 -e NODE_ENV=test nodejs /run-tests.sh
 ```
 
 How to provision a server
