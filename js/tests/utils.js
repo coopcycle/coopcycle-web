@@ -6,6 +6,7 @@ var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
 var _ = require('underscore');
+var path = require('path');
 
 var rootDir = fs.realpathSync(__dirname + '/../../');
 var pgCleaner = new DatabaseCleaner('postgresql', {
@@ -32,8 +33,7 @@ function TestUtils(config) {
   });
 
   var jwtConfig = config.lexik_jwt_authentication;
-  var privateKeyPath = jwtConfig.private_key_path.replace('%kernel.root_dir%', rootDir + '/app');
-  var privateKey = fs.readFileSync(privateKeyPath);
+  var privateKey = fs.readFileSync(jwtConfig.private_key_path);
 
   this.cert = {
     key: privateKey,
@@ -93,7 +93,8 @@ TestUtils.prototype.cleanDb = function() {
 
 TestUtils.prototype.createUser = function(username, roles) {
   var pgConfig = this.pgConfig,
-      Customer = this.db.Customer;
+      User = this.db.User;
+
   var params = {
     'username': username,
     'username_canonical': username,
@@ -105,31 +106,30 @@ TestUtils.prototype.createUser = function(username, roles) {
   };
 
   return new Promise(function (resolve, reject) {
-    Customer.create(params)
-            .then(resolve())
-            .catch(function(err) {
-              reject(err.message);
-            });
-    });
+    User.create(params)
+        .then(function() {
+          resolve();
+        })
+        .catch(function(err) {
+          reject(err.message);
+        });
+});
 };
 
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
 
-  var DeliveryAddress = this.db.DeliveryAddress;
-  var Customer = this.db.Customer;
+  var Address = this.db.Address;
+  var User = this.db.User;
 
   return new Promise(function (resolve, reject) {
-    Customer.findOne({ where: { username: username } })
+    User.findOne({ where: { username: username } })
       .then((customer) => {
-        DeliveryAddress.create({
-          id: 1, // FIXME Postgres SEQUENCE does not work
+        Address.create({
           streetAddress: streetAddress,
           geo: { type: 'Point', coordinates: [ geo.lat, geo.lng ]}
         })
-        .then(function(deliveryAddress) {
-          deliveryAddress.setCustomer(customer).then(function() {
-            resolve();
-          })
+        .then(function(address) {
+          customer.addAddress(address).then(resolve);
         })
         .catch(function(err) {
           reject(err.message)
@@ -140,11 +140,21 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
 
 TestUtils.prototype.createRestaurant = function(name, coordinates) {
   var Restaurant = this.db.Restaurant;
+  var Address = this.db.Address;
 
-  return Restaurant.create({
-    id: 1, // FIXME Postgres SEQUENCE does not work
-    name: name,
-    geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
+  return new Promise(function (resolve, reject) {
+
+    Address.create({
+      geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
+    }).then(function(address) {
+      Restaurant.create({ name: name })
+        .then(function(restaurant) {
+          restaurant.setAddress(address).then(function() {
+            resolve(restaurant);
+          })
+        })
+    })
+
   });
 }
 
@@ -152,14 +162,15 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
 
   var Restaurant = this.db.Restaurant;
   var Order = this.db.Order;
-  var Customer = this.db.Customer;
+  var User = this.db.User;
+  var Delivery = this.db.Delivery;
   var redis = this.redis;
 
   return new Promise(function (resolve, reject) {
 
-    Customer.findOne({ where: { username: username } })
+    User.findOne({ where: { username: username } })
       .then(function(customer) {
-        customer.getDeliveryAddresses()
+        customer.getAddresses()
           .then(function(deliveryAddresses) {
             return _.first(deliveryAddresses);
           })
@@ -178,7 +189,6 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
               })
               .then(function(products) {
                 Order.create({
-                  id: 1,
                   createdAt: new Date(),
                   updatedAt: new Date(),
                 })
@@ -189,7 +199,23 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
                   return order.setRestaurant(restaurant);
                 })
                 .then(function(order) {
-                  return order.setDeliveryAddress(deliveryAddress);
+
+                  return Delivery.create({
+                    date: new Date(),
+                    distance: 1000,
+                    duration: 600
+                  }).then(function(delivery) {
+                    return restaurant.getAddress().then(function(restaurantAddress) {
+                      return delivery.setOriginAddress(restaurantAddress);
+                    });
+                  }).then(function(delivery) {
+                    return delivery.setDeliveryAddress(deliveryAddress);
+                  }).then(function(delivery) {
+                    return order.setDelivery(delivery).then(function() {
+                      return order;
+                    });
+                  });
+
                 })
                 .then(function(order) {
                   redis.lpush('orders:waiting', order.id, function(err) {

@@ -4,5 +4,5 @@ AppBundle\Entity\ApiUser:
       groups: ['user']
     email:
       groups: ['user']
-    deliveryAddresses:
+    addresses:
       groups: ['user']

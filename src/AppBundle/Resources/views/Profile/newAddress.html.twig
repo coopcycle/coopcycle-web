@@ -3,19 +3,17 @@
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="page-header">
-        <h1>Nouvelle adresse</h1>
-      </div>
-      {{ form_start(form) }}
-      {{ form_widget(form) }}
-      {{ form_end(form) }}
-    </div>
+  <div class="page-header">
+    <h1>Nouvelle adresse</h1>
   </div>
-</div>
+  {{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+  {{ form_end(form) }}
 {% endblock %}
 
 {% block scripts %}
+  <script src="{{ asset('js/address-form.js') }}"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
+  async defer></script>
 {% endblock %}

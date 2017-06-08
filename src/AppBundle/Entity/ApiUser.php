@@ -26,7 +26,7 @@ class ApiUser extends BaseUser
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
@@ -37,19 +37,22 @@ class ApiUser extends BaseUser
     private $restaurants;
 
     /**
-     * @ORM\OneToMany(targetEntity="DeliveryAddress", mappedBy="customer", cascade={"all"})
-     */
-    private $deliveryAddresses;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Address", mappedBy="user", cascade={"all"})
+     * @ORM\ManyToMany(targetEntity="Address", cascade={"all"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $addresses;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="StripeParams", cascade={"all"})
+     * @ORM\JoinTable(joinColumns={@ORM\JoinColumn(unique=true)})
+     */
+    private $stripeParams;
+
     public function __construct()
     {
-        $this->deliveryAddresses = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
+        $this->stripeParams = new ArrayCollection();
 
         parent::__construct();
     }
@@ -78,25 +81,6 @@ class ApiUser extends BaseUser
         return $this->restaurants;
     }
 
-    public function addDeliveryAddress(DeliveryAddress $deliveryAddress)
-    {
-        $this->deliveryAddresses->add($deliveryAddress);
-
-        return $this;
-    }
-
-    public function setDeliveryAddresses($deliveryAddresses)
-    {
-        $this->deliveryAddresses = $deliveryAddresses;
-
-        return $this;
-    }
-
-    public function getDeliveryAddresses()
-    {
-        return $this->deliveryAddresses;
-    }
-
     public function addAddress(Address $addresses)
     {
         $this->addresses->add($addresses);
@@ -114,5 +98,17 @@ class ApiUser extends BaseUser
     public function getAddresses()
     {
         return $this->addresses;
+    }
+
+    public function getStripeParams()
+    {
+        return count($this->stripeParams) === 0 ? null : $this->stripeParams[0];
+    }
+
+    public function setStripeParams(StripeParams $stripeParams)
+    {
+        $this->stripeParams[0] = $stripeParams;
+
+        return $this;
     }
 }

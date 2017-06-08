@@ -2,7 +2,7 @@
 
 namespace AppBundle\Utils;
 
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 
 class GeoUtils
 {

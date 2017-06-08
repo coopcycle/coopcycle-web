@@ -12,35 +12,15 @@ class RestaurantRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('r');
 
-        $geomFromText = new Expr\Func('ST_GeomFromText', array(
-            $qb->expr()->literal("POINT({$latitude} {$longitude})"),
-            '4326'
-        ));
-
-        $dist = new Expr\Func('ST_Distance', array(
-            $geomFromText,
-            'r.geo'
-        ));
-
-        // Add calculated distance field
-        $qb->addSelect($dist . ' AS HIDDEN distance');
-
-        $within = new Expr\Func('ST_DWithin', array(
-            $geomFromText,
-            'r.geo',
-            $distance
-        ));
-
-        $qb->add('where', $qb->expr()->eq(
-            $within,
-            $qb->expr()->literal(true)
-        ));
+        self::addNearbyQueryClause($qb, $latitude, $longitude, $distance);
 
         return $qb;
     }
 
     public static function addNearbyQueryClause(QueryBuilder $qb, $latitude, $longitude, $distance = 5000)
     {
+        $qb->innerJoin($qb->getRootAlias() . '.address', 'a', Expr\Join::WITH);
+
         $geomFromText = new Expr\Func('ST_GeomFromText', array(
             $qb->expr()->literal("POINT({$latitude} {$longitude})"),
             '4326'
@@ -48,7 +28,7 @@ class RestaurantRepository extends EntityRepository
 
         $dist = new Expr\Func('ST_Distance', array(
             $geomFromText,
-            $qb->getRootAlias() . '.geo'
+            'a.geo'
         ));
 
         // Add calculated distance field
@@ -56,7 +36,7 @@ class RestaurantRepository extends EntityRepository
 
         $within = new Expr\Func('ST_DWithin', array(
             $geomFromText,
-            $qb->getRootAlias() . '.geo',
+            'a.geo',
             $distance
         ));
 

@@ -2,6 +2,15 @@
 
 {% block body %}
 
+{# {% set examples = {
+  'Oberkampf': path('restaurants', { geohash: 'u09typ9kp93' }),
+  'Châtelet': path('restaurants', { geohash: 'u09tvqjrnvr' }),
+  'Opéra': path('restaurants', { geohash: 'u09tvpgsem8' }),
+  'République': path('restaurants', { geohash: 'u09wjb108ub' }),
+} %} #}
+
+{% set examples = {} %}
+
 <section id="search">
   <div class="container">
     <div class="row">
@@ -15,81 +24,20 @@
             </span>
           </div>
         </form>
-        <small>
-          {% set examples = {
-            'Oberkampf': path('restaurants', { geohash: 'u09typ9kp93' }),
-            'Châtelet': path('restaurants', { geohash: 'u09tvqjrnvr' }),
-            'Opéra': path('restaurants', { geohash: 'u09tvpgsem8' }),
-            'République': path('restaurants', { geohash: 'u09wjb108ub' }),
-          } %}
-          {% set links = [] %}
+        <div class="text-center">
+          <small>
           {% for name, path in examples %}
-            {% set link %}
-              <a href="{{ path }}" class="btn btn-info btn-xs"><span>{{ name }}</span></a>
-            {% endset %}
-            {% set links = links|merge([link]) %}
+            <a href="{{ path }}" class="btn btn-info btn-xs"><span>{{ name }}</span></a>
           {% endfor %}
-          * {% trans with { '%links%': links|join(' ') } %}search.help{% endtrans %}
-        </small>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="container">
-  <section class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="homepage-description">
-        <p class="text-center">
-        {% trans from "about" %}description{% endtrans %}
-        </p>
-      </div>
-    </div>
-  </section>
-  <section class="row homepage-top">
-    <div class="col-md-6">
-      <div class="homepage-card">
-        <div class="text-center">
-          <img width="80" src="{{ asset('img/network.svg') }}" />
-        </div>
-        <h2 class="text-center">{% trans from "about" %}section_1.title{% endtrans %}</h2>
-        <p class="text-justify">{% trans from "about" %}section_1.paragraph_1{% endtrans %}</p>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="homepage-card">
-        <div class="text-center">
-          <img width="80" src="{{ asset('img/crowd.svg') }}" />
-        </div>
-        <h2 class="text-center">{% trans from "about" %}section_2.title{% endtrans %}</h2>
-        <p class="text-justify">{% trans from "about" %}section_2.paragraph_1{% endtrans %}</p>
-      </div>
-    </div>
-  </section>
-</div>
-
-<section id="support">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img class="budget-participatif-logo" width="100" src="{{ asset('img/budget-participatif-paris.jpeg') }}" />
-            {% trans from "about" %}support.text{% endtrans %}
-            <a target="_blank"
-              href="https://budgetparticipatif.paris.fr/bp/jsp/site/Portal.jsp?page=idee&campagne=D&idee=2143" class="btn btn-success">
-              {% trans from "about" %}support.button{% endtrans %}
-            </a>
-          </div>
+          </small>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="tracking-demo">
+<section>
   <div class="container">
-    <div>{% trans from "about" %}about_bots{% endtrans %}</div>
     <div id="map-wrapper">
       <div class="embed-responsive embed-responsive-16by9">
         <iframe class="embed-responsive-item" src="/tracking?zoom=13"></iframe>
@@ -97,12 +45,6 @@
     </div>
   </div>
 </section>
-
-<div class="container">
-  <section class="text-center">
-    <p>{% trans from "about" %}contributing.text{% endtrans %}</p>
-  </section>
-</div>
 
 {% endblock %}
 

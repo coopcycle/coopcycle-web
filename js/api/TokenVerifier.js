@@ -25,7 +25,7 @@ TokenVerifier.prototype.verify = function (info, cb) {
     } else {
       console.log('JWT verified successfully', decoded);
       // Token is verified, load user from database
-      self.db.Courier.findOne({where: {username: decoded.username}})
+      self.db.User.findOne({where: {username: decoded.username}})
         .then(function(user) {
 
           if (!user) {

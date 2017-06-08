@@ -45,7 +45,7 @@
   <ul class="list-unstyled">
     <li class="text-center"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>   {{ order.restaurant.name }} {{ order.restaurant.streetAddress }}</li>
     <li class="text-center"><span class="arrow-down">⇣</span></li>
-    <li class="text-center"><i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>   {{ order.deliveryAddress.streetAddress }}</li>
+    <li class="text-center"><i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>   {{ order.delivery.deliveryAddress.streetAddress }}</li>
   </ul>
 </div>
 
@@ -71,5 +71,5 @@ window.__i18n = {
   'History': "{{ 'History'|trans }}"
 }
 </script>
-<script src="{{ asset('/js/order-tracking.js') }}"></script>
+<script src="{{ asset('js/order-tracking.js') }}"></script>
 {% endblock %}

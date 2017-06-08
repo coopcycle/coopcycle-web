@@ -132,6 +132,15 @@ With Vagrant
 sudo -u www-data php /var/www/coopcycle/vendor/bin/behat
 ```
 
+* Launch the Mocha tests
+
+With Vagrant
+
+```
+cd /var/www/coopcycle
+pm2 restart pm2.config.js --env=test
+sudo -u www-data node node_modules/.bin/mocha js/tests
+```
 
 How to provision a server
 -------------------------

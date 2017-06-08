@@ -22,13 +22,4 @@ class IndexController extends Controller
             'google_api_key' => $this->getParameter('google_api_key'),
         );
     }
-
-    /**
-     * @Route("/about", name="about")
-     * @Template
-     */
-    public function aboutAction()
-    {
-        return array();
-    }
 }

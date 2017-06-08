@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Action\Order;
 
+use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -9,9 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class OrderDecline
+class Decline
 {
-    use OrderActionTrait;
+    use ActionTrait;
 
     /**
      * @Route(

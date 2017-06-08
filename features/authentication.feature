@@ -59,7 +59,7 @@ Feature: Authenticate
       "@context": "/api/contexts/ApiUser",
       "@id": "/api/api_users/1",
       "@type": "ApiUser",
-      "deliveryAddresses": [],
+      "addresses": [],
       "username": "bob",
       "email": "bob@coopcycle.org"
     }

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/polyline": "^0.2.0",
     "antd": "^2.9.3",
     "async": "^2.1.4",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
@@ -31,7 +32,6 @@
     "ngeohash": "^0.6.0",
     "pg": "^6.1.0",
     "pg-hstore": "^2.3.2",
-    "polyline": "^0.2.0",
     "promise": "^7.1.1",
     "redis": "^2.6.2",
     "sequelize": "^3.27.0",

@@ -35,6 +35,12 @@ Save: Sauvegarder
 Forgot password?: Mot de passe oublié ?
 Deliveries: Livraisons
 Users: Utilisateurs
+Today: Aujourd'hui
+Tomorrow: Demain
+Edit: Modifier
+View: Voir
+User: Utilisateur
+Merchant: Commerçant
 
 order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total% €

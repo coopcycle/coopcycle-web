@@ -78,10 +78,11 @@ Courier.prototype.toJSON = function() {
 
 Courier.nearestForOrder = function(order, distance) {
 
-  var restaurant = order.restaurant;
+  var address = order.restaurant.address;
 
   return new Promise(function(resolve, reject) {
-    REDIS.georadius('couriers:geo', restaurant.position.longitude, restaurant.position.latitude, distance, "m", 'WITHDIST', 'ASC', function(err, matches) {
+
+    REDIS.georadius('couriers:geo', address.position.longitude, address.position.latitude, distance, "m", 'WITHDIST', 'ASC', function(err, matches) {
       if (!matches) {
         return resolve(null);
       }

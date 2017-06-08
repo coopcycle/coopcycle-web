@@ -8,6 +8,7 @@ use AppBundle\Entity\Product;
 class Cart
 {
     private $restaurantId;
+    private $date;
     private $items = array();
 
     public function __construct(Restaurant $restaurant = null)
@@ -71,9 +72,22 @@ class Cart
         }, 0);
     }
 
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
     public function toArray()
     {
         return array(
+            'date' => $this->date->format('Y-m-d H:i:s'),
             'items' => $this->getItems(),
         );
     }

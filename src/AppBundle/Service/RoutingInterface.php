@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 
 interface RoutingInterface
 {

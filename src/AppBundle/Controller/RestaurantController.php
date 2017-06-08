@@ -104,12 +104,32 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
 
+        $translator = $this->get('translator');
+
         if (!$restaurant) {
             throw new NotFoundHttpException();
         }
 
+        $now = new \DateTime();
+        $nextOpeningDate = $restaurant->getNextOpeningDate();
+
+        if ($now->format('Y-m-d') === $nextOpeningDate->format('Y-m-d')) {
+            $dates[$translator->trans('Today')] = new \DateTime('today');
+        }
+        $dates[$translator->trans('Tomorrow')] = new \DateTime('tomorrow');;
+
+        $times = [];
+        $date = clone $nextOpeningDate;
+
+        while ($restaurant->isOpen($date)) {
+            $date->modify('+15 minutes');
+            $times[] = $date->format('H:i');
+        }
+
         return array(
             'restaurant' => $restaurant,
+            'dates' => $dates,
+            'times' => $times,
             'appetizers' => $restaurant->getProductsByCategory('Entrées'),
             'main_courses' => $restaurant->getProductsByCategory('Plats'),
             'desserts' => $restaurant->getProductsByCategory('Desserts'),
@@ -127,17 +147,20 @@ class RestaurantController extends Controller
 
         $cart = $this->getCart($request, $restaurant);
 
-        if (!$request->request->has('product')) {
+        if ($request->request->has('product')) {
 
-            return new JsonResponse($cart->toArray());
+            // TODO Check if product belongs to restaurant
+            $productId = $request->request->get('product');
+            $product = $this->getDoctrine()
+                ->getRepository('AppBundle:Product')->find($productId);
+
+            $cart->addProduct($product);
         }
 
-        // TODO Check if product belongs to restaurant
-        $productId = $request->request->get('product');
-        $product = $this->getDoctrine()
-            ->getRepository('AppBundle:Product')->find($productId);
+        if ($request->request->has('date')) {
+            $cart->setDate(new \DateTime($request->request->get('date')));
+        }
 
-        $cart->addProduct($product);
         $this->saveCart($request, $cart);
 
         return new JsonResponse($cart->toArray());

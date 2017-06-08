@@ -14,16 +14,16 @@ addons:
   postgresql: '9.4'
 
 language: php
-
-php: '7.0'
-node_js: '6.1'
+php:
+  - '7.0.19'
+  - '7.1.5'
 
 env:
   - SYMFONY_ENV=test COOPCYCLE_BASE_URL=http://localhost:8080
 
 before_install:
   - sudo apt-get update -qq
-  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+  - nvm install 8
 install:
   # Remove error could not access file "$libdir/postgis-2.3": No such file or directory
   - sudo apt-get install -y $(apt-cache search postgis | awk '/^postgresql-9\.[2-5]-postgis-2.3/{printf " "$1}' )
@@ -32,8 +32,15 @@ install:
   - npm install -g pm2
   # Install Redis via Docker to have Redis > 3.2
   - docker run -t -d -p 6379:6379 redis:3.2
+  # Install OSRM
+  - mkdir -p var/osrm
+  - wget https://s3.amazonaws.com/mapzen.odes/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf -P var/osrm
+  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-extract -p /opt/bicycle.lua /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf
+  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-contract /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osrm
+  - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:v5.5.4 osrm-routed /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osrm
 
 before_script:
+  - phpenv config-rm xdebug.ini
   # Configure JSON Web Token
   - mkdir -p var/jwt
   - openssl genrsa -out var/jwt/private.pem 4096
@@ -43,7 +50,6 @@ before_script:
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis;'
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis_topology;'
   # Install PHP app
-  - composer self-update
   - cp app/config/parameters.yml.travis app/config/parameters.yml
   - composer install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
@@ -53,12 +59,7 @@ before_script:
   # Install JavaScript stuff
   - pm2 start pm2.config.js --env=test
   # - node_modules/.bin/webpack -p
-  # # Install OSRM
-  # - mkdir -p var/osrm
-  # - wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -P var/osrm
-  # - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-extract -p /opt/bicycle.lua /data/paris_france.osm.pbf
-  # - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-contract /data/paris_france.osrm
-  # - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:v5.5.4 osrm-routed /data/paris_france.osrm
+
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
   - phpunit

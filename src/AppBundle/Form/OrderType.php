@@ -36,32 +36,29 @@ class OrderType extends AbstractType
 
             if (null === $createDeliveryAddress) {
                 $createDeliveryAddress = true;
-                if (null !== $order->getDeliveryAddress()) {
+                if (null !== $order->getDelivery() && null !== $order->getDelivery()->getDeliveryAddress()) {
                     $createDeliveryAddress = false;
                 }
-                if (count($order->getCustomer()->getDeliveryAddresses()) > 0) {
+                if (count($order->getCustomer()->getAddresses()) > 0) {
                     $createDeliveryAddress = false;
                 }
 
                 $form->get('createDeliveryAddress')->setData($createDeliveryAddress);
             }
 
+            // The deliveryAddress field is not mapped
             if ($createDeliveryAddress) {
-                $form->add('deliveryAddress', DeliveryAddressType::class);
+                $form->add('deliveryAddress', AddressType::class, [ 'mapped' => false ]);
             } else {
                 $form->add('deliveryAddress', EntityType::class, array(
-                    'class' => 'AppBundle:DeliveryAddress',
-                    'query_builder' => function (EntityRepository $e) use ($order) {
-                        return $e->createQueryBuilder('d')
-                            ->where('d.customer = :customer')
-                            ->setParameter('customer', $order->getCustomer())
-                            ->orderBy('d.streetAddress', 'ASC');
-                    },
+                    'class' => 'AppBundle:Address',
+                    'choices' => $order->getCustomer()->getAddresses(),
                     'choice_label' => function ($deliveryAddress) {
                         return $deliveryAddress->getStreetAddress();
                     },
                     'expanded' => true,
                     'multiple' => false,
+                    'mapped' => false
                 ));
             }
         };

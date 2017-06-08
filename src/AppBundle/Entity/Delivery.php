@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Base\Intangible;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -22,33 +23,56 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "deliver"={"route_name"="delivery_deliver"}
  *   },
  *   attributes={
- *     "denormalization_context"={"groups"={"order"}},
- *     "normalization_context"={"groups"={"order", "place"}}
+ *     "denormalization_context"={"groups"={"delivery"}},
+ *     "normalization_context"={"groups"={"delivery", "place"}}
  *   }
  * )
  */
 class Delivery extends Intangible
 {
+    const STATUS_WAITING    = 'WAITING';
+    const STATUS_DISPATCHED = 'DISPATCHED';
+    const STATUS_PICKED     = 'PICKED';
+    const STATUS_DELIVERED  = 'DELIVERED';
+    const STATUS_ACCIDENT   = 'ACCIDENT';
+    const STATUS_CANCELED   = 'CANCELED';
+
     /**
      * @var int
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
+     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $originAddress;
 
     /**
+     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $deliveryAddress;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Order", inversedBy="delivery")
+     * @ORM\JoinColumn(name="order_id", referencedColumnName="id")
+     */
+    private $order;
+
+    /**
+     * @var string
+     *
+     * @Groups({"order"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $status;
 
     /**
      * @Assert\NotBlank()
@@ -65,6 +89,16 @@ class Delivery extends Intangible
      * @ORM\Column(type="integer")
      */
     private $duration;
+
+    public function __construct(Order $order = null)
+    {
+        $this->status = self::STATUS_WAITING;
+
+        if ($order) {
+            $order->setDelivery($this);
+            $this->order = $order;
+        }
+    }
 
     /**
      * Gets id.
@@ -112,6 +146,18 @@ class Delivery extends Intangible
         return $this;
     }
 
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
     public function getDistance()
     {
         return $this->distance;
@@ -132,6 +178,23 @@ class Delivery extends Intangible
     public function setDuration($duration)
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function isCalculated()
+    {
+        return null !== $this->duration && null !== $this->distance;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

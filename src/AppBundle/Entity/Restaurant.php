@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Base\FoodEstablishment;
+use AppBundle\Utils\TimeRange;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -24,12 +26,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   }
  * )
- * @ORM\Table(
- *     options={"spatial_indexes"={"idx_restaurant_geo"}},
- *     indexes={
- *         @ORM\Index(name="idx_restaurant_geo", columns={"geo"}, flags={"spatial"})
- *     }
- * )
  * @Vich\Uploadable
  */
 class Restaurant extends FoodEstablishment
@@ -39,9 +35,19 @@ class Restaurant extends FoodEstablishment
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+
+    /**
+     * @var string The name of the item
+     *
+     * @Assert\Type(type="string")
+     * @ORM\Column(nullable=true)
+     * @ApiProperty(iri="http://schema.org/name")
+     * @Groups({"restaurant", "order"})
+     */
+    protected $name;
 
     /**
      * @var Recipe
@@ -50,6 +56,17 @@ class Restaurant extends FoodEstablishment
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $products;
+
+    /**
+     * @var string The cuisine of the restaurant.
+     *
+     * @ORM\ManyToMany(targetEntity="Cuisine", cascade={"persist"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
+     * @ORM\OrderBy({"name"="ASC"})
+     * @ApiProperty(iri="https://schema.org/servesCuisine")
+     * @Groups({"restaurant"})
+     */
+    protected $servesCuisine;
 
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
@@ -65,6 +82,11 @@ class Restaurant extends FoodEstablishment
     private $imageName;
 
     /**
+     * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
+     */
+    private $address;
+
+    /**
      * @var string The website of the restaurant.
      *
      * @ORM\Column(nullable=true)
@@ -72,10 +94,17 @@ class Restaurant extends FoodEstablishment
      */
     private $website;
 
+    /**
+     * @var string The website of the restaurant.
+     *
+     * @ORM\ManyToOne(targetEntity="StripeParams")
+     */
+    private $stripeParams;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        parent::__construct();
+        $this->servesCuisine = new ArrayCollection();
     }
 
     /**
@@ -86,6 +115,30 @@ class Restaurant extends FoodEstablishment
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Sets name.
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -163,6 +216,18 @@ class Restaurant extends FoodEstablishment
         return $this->imageName;
     }
 
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    public function setAddress(Address $address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
     /**
      * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
      * of 'UploadedFile' is injected into this setter to trigger the  update. If this
@@ -191,5 +256,72 @@ class Restaurant extends FoodEstablishment
     public function getImageFile()
     {
         return $this->imageFile;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOpen(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            if ($timeRange->isOpen($now)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getNextOpeningDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $dates = [];
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            $dates[] = $timeRange->getNextOpeningDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
+    }
+
+    public function setServesCuisine($servesCuisine)
+    {
+        $this->servesCuisine = $servesCuisine;
+
+        return $this;
+    }
+
+    public function addServesCuisine($servesCuisine)
+    {
+        $this->servesCuisine->add($servesCuisine);
+
+        return $this;
+    }
+
+    public function getServesCuisine()
+    {
+        return $this->servesCuisine;
+    }
+
+    public function getStripeParams()
+    {
+        return $this->stripeParams;
+    }
+
+    public function setStripeParams(StripeParams $stripeParams)
+    {
+        $this->stripeParams = $stripeParams;
+
+        return $this;
     }
 }

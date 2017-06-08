@@ -1,5 +1,5 @@
 var L = require('leaflet');
-var Polyline = require('polyline');
+var Polyline = require('@mapbox/polyline');
 var BeautifyMarker = require('beautifymarker');
 
 function init(id, center, zoom) {

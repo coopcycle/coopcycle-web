@@ -1,0 +1,16 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Payment{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <h1>{% trans %}Payment{% endtrans %}</h1>
+  {% if stripe_user_id is not empty %}
+    <div class="alert alert-success">{% trans %}Your Stripe account is connected{% endtrans %}</div>
+  {% endif %}
+  <a href="{{ stripe_authorize_url }}" class="btn btn-success">Connect with Stripe</a>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

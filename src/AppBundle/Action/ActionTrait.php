@@ -11,7 +11,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Service\PaymentService;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 
-trait OrderActionTrait
+trait ActionTrait
 {
     protected $tokenStorage;
     protected $redis;

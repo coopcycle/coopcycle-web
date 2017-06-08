@@ -18,8 +18,9 @@
     {% if order is defined %}</a>{% endif %}
   </li>
   <li {% if step == 3 %}class="active"{% endif %}>
-    {% if order is defined and order.deliveryAddress is defined %}<a href="{{ path('order_payment') }}">{% endif %}
+    {% set is_completed = (order is defined and order.delivery is defined and order.delivery.deliveryAddress is defined) %}
+    {% if is_completed %}<a href="{{ path('order_payment') }}">{% endif %}
     {{ 'Payment'|trans }}
-    {% if order is defined and order.deliveryAddress is defined %}</a>{% endif %}
+    {% if is_completed %}</a>{% endif %}
   </li>
 </ol>

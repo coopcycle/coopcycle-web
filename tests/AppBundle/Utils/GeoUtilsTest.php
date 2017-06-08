@@ -2,10 +2,11 @@
 
 namespace AppBundle\Utils;
 
+use PHPUnit\Framework\TestCase;
 use AppBundle\Utils\GeoUtils;
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 
-class GeoUtilsTest extends \PHPUnit_Framework_TestCase
+class GeoUtilsTest extends TestCase
 {
     public function testAsGeoCoordinates()
     {

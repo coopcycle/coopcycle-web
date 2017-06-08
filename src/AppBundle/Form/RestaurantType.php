@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class RestaurantType extends AbstractType

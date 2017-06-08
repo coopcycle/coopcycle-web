@@ -36,33 +36,30 @@ Feature: Manage restaurants
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/Restaurant",
-      "@id": "/api/restaurants",
-      "@type": "hydra:Collection",
-      "hydra:member": [
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":[
         {
-          "@id": "/api/restaurants/2",
-          "@type": "http://schema.org/Restaurant",
-          "products": @array@,
-          "servesCuisine": [],
-          "geo":{
-            "latitude":48.846656,
-            "longitude":2.369052
-          },
-          "streetAddress": "18, avenue Ledru-Rollin 75012 Paris 12ème",
-          "name": "Café Barjot"
+          "@id":"/api/restaurants/2",
+          "@type":"http://schema.org/Restaurant",
+          "products":@array@,
+          "servesCuisine":@array@,
+          "name":"Café Barjot"
         }
       ],
-      "hydra:totalItems": 1,
-      "hydra:view": {
-        "@id": "@string@.startsWith('/api/restaurants')",
-        "@type": "hydra:PartialCollectionView"
+      "hydra:totalItems":1,
+      "hydra:view":{
+        "@id":"/api/restaurants?coordinate=48.853286%2C2.369116\u0026distance=1500",
+        "@type":"hydra:PartialCollectionView"
       },
-      "hydra:search": {
-        "@type": "hydra:IriTemplate",
-        "hydra:template": "/api/restaurants{?}",
-        "hydra:variableRepresentation": "BasicRepresentation",
-        "hydra:mapping": []
+      "hydra:search":{
+        "@type":"hydra:IriTemplate",
+        "hydra:template":"/api/restaurants{?}",
+        "hydra:variableRepresentation":"BasicRepresentation",
+        "hydra:mapping":[
+
+        ]
       }
     }
     """
@@ -82,17 +79,8 @@ Feature: Manage restaurants
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants/12",
       "@type":"http://schema.org/Restaurant",
-      "products":[
-
-      ],
-      "servesCuisine":[
-
-      ],
-      "geo":{
-        "latitude":48.864577,
-        "longitude":2.333338
-      },
-      "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+      "products":@array@,
+      "servesCuisine":@array@,
       "name":"Nodaiwa"
     }
     """

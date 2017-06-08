@@ -3,11 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
-use AppBundle\Entity\DeliveryAddress;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
-use AppBundle\Entity\GeoCoordinates;
 use AppBundle\Form\OrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -56,6 +56,10 @@ class OrderController extends Controller
             $order->addOrderedItem($orderItem);
         }
 
+        $delivery = new Delivery($order);
+        $delivery->setDate($cart->getDate());
+        $delivery->setOriginAddress($restaurant->getAddress());
+
         return $order;
     }
 
@@ -71,34 +75,32 @@ class OrderController extends Controller
 
         $order = $this->createOrderFromRequest($request);
 
+        $form = $this->createForm(OrderType::class, $order);
+
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
             $deliveryAddress = $request->getSession()->get('deliveryAddress');
             $deliveryAddress = $this->getDoctrine()
-                ->getManagerForClass('AppBundle:DeliveryAddress')->merge($deliveryAddress);
+                ->getManagerForClass(Address::class)->merge($deliveryAddress);
 
-            $order->setDeliveryAddress($deliveryAddress);
+            $form->get('deliveryAddress')->setData($deliveryAddress);
         }
-
-        $form = $this->createForm(OrderType::class, $order);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $order = $form->getData();
-            $deliveryAddress = $order->getDeliveryAddress();
+            $deliveryAddress = $form->get('deliveryAddress')->getData();
 
             $createDeliveryAddress = $form->get('createDeliveryAddress')->getData();
             if ($createDeliveryAddress) {
 
-                $latitude = $form->get('deliveryAddress')->get('latitude')->getData();
-                $longitude = $form->get('deliveryAddress')->get('longitude')->getData();
+                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
+                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
 
-                $deliveryAddress->setCustomer($this->getUser());
-                $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
+                $this->getUser()->addAddress($deliveryAddress);
 
-                $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->persist($deliveryAddress);
-                $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->flush();
+                $this->getDoctrine()->getManagerForClass('AppBundle:ApiUser')->flush();
             }
 
             $request->getSession()->set('deliveryAddress', $deliveryAddress);
@@ -110,7 +112,7 @@ class OrderController extends Controller
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key'),
             'restaurant' => $order->getRestaurant(),
-            'has_delivery_address' => count($this->getUser()->getDeliveryAddresses()) > 0,
+            'has_delivery_address' => count($this->getUser()->getAddresses()) > 0,
             'cart' => $this->getCart($request),
         );
     }
@@ -129,9 +131,9 @@ class OrderController extends Controller
 
         $deliveryAddress = $request->getSession()->get('deliveryAddress');
         $deliveryAddress = $this->getDoctrine()
-            ->getManagerForClass('AppBundle:DeliveryAddress')->merge($deliveryAddress);
+            ->getManagerForClass('AppBundle:Address')->merge($deliveryAddress);
 
-        $order->setDeliveryAddress($deliveryAddress);
+        $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
 
@@ -143,12 +145,27 @@ class OrderController extends Controller
             $token = $request->request->get('stripeToken');
 
             try {
+
+                $transferGroup = "Order#".$order->getId();
+
                 $charge = Stripe\Charge::create(array(
                     "amount" => $order->getTotal() * 100, // Amount in cents
                     "currency" => "eur",
                     "source" => $token,
-                    "description" => "Order #".$order->getId()
+                    "description" => "Order #".$order->getId(),
+                    "transfer_group" => $transferGroup,
                 ));
+
+                // Create a Transfer to a connected account (later):
+                $stripeParams = $order->getRestaurant()->getStripeParams();
+
+                $transfer = \Stripe\Transfer::create(array(
+                  "amount" => (($order->getTotal() * 100) * 0.75),
+                  "currency" => "eur",
+                  "destination" => $stripeParams->getUserId(),
+                  "transfer_group" => $transferGroup,
+                ));
+
             } catch (Stripe\Error\Card $e) {
                 return $this->redirectToRoute('order_error', array('id' => $order->getId()));
             }
@@ -171,21 +188,6 @@ class OrderController extends Controller
             'order' => $order,
             'restaurant' => $order->getRestaurant(),
             'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
-        );
-    }
-
-    /**
-     * @Route("/{id}/confirm", name="order_confirm")
-     * @Template()
-     */
-    public function confirmAction($id, Request $request)
-    {
-        $order = $this->getRepository('Order')->find($id);
-
-        return array(
-            'order' => $order,
-            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'google_api_key' => $this->getParameter('google_api_key')
         );
     }
 }

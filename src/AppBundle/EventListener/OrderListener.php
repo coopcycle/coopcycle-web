@@ -14,10 +14,13 @@ class OrderListener
 {
     private $tokenStorage;
     private $redis;
+    private $osrmHost;
 
-    public function __construct(TokenStorageInterface $tokenStorage, Redis $redis) {
+    public function __construct(TokenStorageInterface $tokenStorage, Redis $redis, $osrmHost)
+    {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
+        $this->osrmHost = $osrmHost;
     }
 
     private function getUser()
@@ -41,9 +44,44 @@ class OrderListener
     {
         $entity = $args->getObject();
 
-        if ($entity instanceof Order && null === $entity->getCustomer()) {
-            $customer = $this->getUser();
-            $entity->setCustomer($customer);
+        if ($entity instanceof Order) {
+
+            if (null === $entity->getCustomer()) {
+                $entity->setCustomer($this->getUser());
+            }
+
+            $delivery = $entity->getDelivery();
+
+            // Make sure models are associated
+            $delivery->setOrder($entity);
+
+            // FIXME Date should be mandatory
+            if (null === $delivery->getDate()) {
+                // FIXME Make sure the restaurant is opened
+                $delivery->setDate(new \DateTime('+30 minutes'));
+            }
+
+            if (null === $delivery->getOriginAddress()) {
+                $delivery->setOriginAddress($entity->getRestaurant()->getAddress());
+            }
+
+            if (!$delivery->isCalculated()) {
+
+                $originLng = $delivery->getOriginAddress()->getGeo()->getLongitude();
+                $originLat = $delivery->getOriginAddress()->getGeo()->getLatitude();
+
+                $deliveryLng = $delivery->getDeliveryAddress()->getGeo()->getLongitude();
+                $deliveryLat = $delivery->getDeliveryAddress()->getGeo()->getLatitude();
+
+                $response = file_get_contents("http://{$this->osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
+                $data = json_decode($response, true);
+
+                $distance = $data['routes'][0]['distance'];
+                $duration = $data['routes'][0]['duration'];
+
+                $delivery->setDistance((int) $distance);
+                $delivery->setDuration((int) $duration);
+            }
         }
     }
 
@@ -82,7 +120,7 @@ class OrderListener
         $order = $event->getSubject();
 
         $restaurant = $order->getRestaurant();
-        $deliveryAddress = $order->getDeliveryAddress();
+        $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
 
         $this->redis->geoadd(
             'orders:geo',

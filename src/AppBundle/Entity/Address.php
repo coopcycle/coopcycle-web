@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Base\Place;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -26,14 +27,9 @@ class Address extends Place
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="ApiUser", inversedBy="addresses")
-     */
-    private $user;
 
     /**
      * Gets id.
@@ -43,17 +39,5 @@ class Address extends Place
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    public function setUser(ApiUser $user)
-    {
-        $this->user = $user;
-
-        return $this;
     }
 }

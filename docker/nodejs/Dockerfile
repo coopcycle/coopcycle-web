@@ -5,6 +5,7 @@ RUN npm install -g pm2
 RUN apk update && apk add --no-cache git
 
 COPY docker/nodejs/start.sh /
+COPY docker/nodejs/run-tests.sh /
 
 WORKDIR /srv/coopcycle
 

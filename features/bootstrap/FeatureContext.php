@@ -1,9 +1,11 @@
 <?php
 
-use AppBundle\Entity\GeoCoordinates;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
+use AppBundle\Entity\Delivery;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -121,7 +123,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         foreach ($table as $row) {
             $restaurant = new Restaurant();
             $restaurant->setName($row['name']);
-            $restaurant->setStreetAddress($row['streetAddress']);
 
             if (isset($row['id']) && !empty($row['id'])) {
                 $property = new \ReflectionProperty(Restaurant::class, 'id');
@@ -129,10 +130,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
                 $property->setValue($restaurant, $row['id']);
             }
 
+            $address = new Address();
+
+            $address->setStreetAddress($row['streetAddress']);
+
             if (isset($row['latlng']) && !empty($row['latlng'])) {
                 list($lat, $lng) = explode(',', $row['latlng']);
-                $restaurant->setGeo(new GeoCoordinates($lat, $lng));
+                $address->setGeo(new GeoCoordinates($lat, $lng));
             }
+
+            $restaurant->setAddress($address);
 
             $em->persist($restaurant);
         }
@@ -225,17 +232,17 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $data = $table->getRowsHash();
 
         $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $em = $this->doctrine->getManagerForClass('AppBundle:DeliveryAddress');
+        $em = $this->doctrine->getManagerForClass('AppBundle:Address');
 
         $user = $userManager->findUserByUsername($username);
 
-        list($lat, $lng) = $data['geo'];
+        list($lat, $lng) = explode(',', $data['geo']);
 
-        $address = new DeliveryAddress();
+        $address = new Address();
         $address->setStreetAddress($data['streetAddress']);
-        $address->setGeo(new GeoCoordinates($lat, $lng));
+        $address->setGeo(new GeoCoordinates(trim($lat), trim($lng)));
 
-        $user->addDeliveryAddress($address);
+        $user->addAddress($address);
 
         $em->flush();
     }
@@ -270,6 +277,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $order->setRestaurant($restaurant);
         $order->setCustomer($user);
         $order->setStatus(Order::STATUS_WAITING);
+
+        $delivery = new Delivery($order);
+        $delivery->setDate(new \DateTime('+30 minutes'));
+        $delivery->setOriginAddress($restaurant->getAddress());
+        $delivery->setDeliveryAddress($user->getAddresses()->first());
 
         foreach ($restaurant->getProducts() as $product) {
             $order->addProduct($product, 1);

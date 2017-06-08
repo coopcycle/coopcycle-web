@@ -60,8 +60,8 @@ var restaurant = {
   lng: order.restaurant.geo.longitude,
 }
 var deliveryAddress = {
-  lat: order.deliveryAddress.geo.latitude,
-  lng: order.deliveryAddress.geo.longitude,
+  lat: order.delivery.deliveryAddress.geo.latitude,
+  lng: order.delivery.deliveryAddress.geo.longitude,
 }
 
 var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#fff');

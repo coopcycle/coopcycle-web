@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Base;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\MappedSuperclass
  */
-abstract class LocalBusiness extends Place
+abstract class LocalBusiness
 {
     /**
      * @var string The opening hours for a business. Opening hours can be specified as a weekly time range, starting with days, then times per day. Multiple days can be listed with commas ',' separating each day. Day or time ranges are specified using a hyphen '-'.
@@ -46,6 +46,13 @@ abstract class LocalBusiness extends Place
     public function setOpeningHours($openingHours)
     {
         $this->openingHours = $openingHours;
+
+        return $this;
+    }
+
+    public function addOpeningHour($openingHour)
+    {
+        $this->openingHours[] = $openingHour;
 
         return $this;
     }

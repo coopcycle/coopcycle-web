@@ -8,34 +8,44 @@ var sequelizeOptions = {
   freezeTableName: true,
 }
 
+var positionGetter = function() {
+  var geo = this.getDataValue('geo');
+  if (geo) {
+    return {
+      latitude: geo.coordinates[0],
+      longitude: geo.coordinates[1],
+    };
+  }
+}
+
+var rolesGetter = function() {
+  var roles = this.getDataValue('roles');
+  if (roles) {
+    return unserialize(this.getDataValue('roles'));
+  }
+}
+
 module.exports = function(sequelize) {
 
   var Db = {}
 
-  Db.Courier = sequelize.define('courier', {
+  Db.User = sequelize.define('user', {
     username: Sequelize.STRING,
     email: Sequelize.STRING,
     roles: Sequelize.STRING,
+    username_canonical: Sequelize.STRING,
+    email_canonical: Sequelize.STRING,
+    password: Sequelize.STRING,
+    enabled: Sequelize.BOOLEAN,
   }, _.extend(sequelizeOptions, {
     tableName: 'api_user',
     getterMethods: {
-      roles : function() {
-        return unserialize(this.getDataValue('roles'));
-      }
+      roles : rolesGetter
     },
   }));
 
-  Db.Customer = sequelize.define('customer', {
-    username: Sequelize.STRING,
-    email: Sequelize.STRING,
-    roles: Sequelize.STRING,
-  }, _.extend(sequelizeOptions, {
-    tableName: 'api_user',
-    getterMethods: {
-      roles : function() {
-        return unserialize(this.getDataValue('roles'));
-      }
-    },
+  Db.UserAddress = sequelize.define('user_address', {}, _.extend(sequelizeOptions, {
+    tableName: 'api_user_address'
   }));
 
   Db.Order = sequelize.define('order', {
@@ -58,27 +68,10 @@ module.exports = function(sequelize) {
     tableName: 'order_item'
   }));
 
-  var positionGetter = function() {
-    var geo = this.getDataValue('geo');
-
-    return {
-      latitude: geo.coordinates[0],
-      longitude: geo.coordinates[1],
-    };
-  }
-
   Db.Restaurant = sequelize.define('restaurant', {
-    name: Sequelize.STRING,
-    streetAddress: {
-      field: 'street_address',
-      type: Sequelize.STRING
-    },
-    geo: Sequelize.GEOMETRY,
+    name: Sequelize.STRING
   }, _.extend(sequelizeOptions, {
-    tableName: 'restaurant',
-    getterMethods: {
-      position : positionGetter
-    },
+    tableName: 'restaurant'
   }));
 
   Db.Product = sequelize.define('product', {
@@ -104,7 +97,15 @@ module.exports = function(sequelize) {
     tableName: 'restaurant_product'
   }));
 
-  Db.DeliveryAddress = sequelize.define('deliveryAddress', {
+  Db.Delivery = sequelize.define('delivery', {
+    distance: Sequelize.INTEGER,
+    duration: Sequelize.INTEGER,
+    date: Sequelize.DATE
+  }, _.extend(sequelizeOptions, {
+    tableName: 'delivery',
+  }));
+
+  Db.Address = sequelize.define('address', {
     name: Sequelize.STRING,
     streetAddress: {
       field: 'street_address',
@@ -112,23 +113,26 @@ module.exports = function(sequelize) {
     },
     geo: Sequelize.GEOMETRY
   }, _.extend(sequelizeOptions, {
-    tableName: 'delivery_address',
+    tableName: 'address',
     getterMethods: {
       position : positionGetter
     },
   }));
 
   Db.Restaurant.belongsToMany(Db.Product, { through: Db.RestaurantProduct });
+  Db.Restaurant.belongsTo(Db.Address);
 
-  Db.Order.belongsTo(Db.Restaurant);
-  Db.Order.belongsTo(Db.DeliveryAddress);
-  Db.Order.belongsTo(Db.Courier);
-  Db.Order.belongsTo(Db.Customer);
+  Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
+  Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
 
   Db.Order.belongsToMany(Db.Product, { through: Db.OrderItem });
+  Db.Order.belongsTo(Db.Restaurant);
+  Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });
+  Db.Order.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
+  Db.Order.hasOne(Db.Delivery);
 
-  Db.DeliveryAddress.belongsTo(Db.Customer);
-  Db.Customer.hasMany(Db.DeliveryAddress, { as: 'DeliveryAddresses' });
+  Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey : 'api_user_id' });
+  Db.Address.belongsToMany(Db.User, { through: Db.UserAddress });
 
   return Db;
 };

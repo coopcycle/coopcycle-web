@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
+use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -29,13 +30,13 @@ class Accept
 
         // Only couriers can accept orders
         if (!$user->hasRole('ROLE_COURIER')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
+            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept delivery', $user->getId()));
         }
 
-        $order = $data;
+        $delivery = $data;
 
         // Order MUST have status = WAITING
-        if ($order->getStatus() !== Order::STATUS_WAITING) {
+        if ($delivery->getStatus() !== Order::STATUS_WAITING) {
 
             // Make sure order is not in the Redis queue anymore
             // This MAY happen if some user accepted the order and has been disconnected from the WebSocket server
@@ -44,8 +45,8 @@ class Accept
             throw new BadRequestHttpException(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
         }
 
-        $order->setCourier($user);
-        $order->setStatus(Order::STATUS_ACCEPTED);
+        $delivery->setCourier($user);
+        $delivery->setStatus(Order::STATUS_DISPATCHED);
 
         $this->redis->lrem('orders:dispatching', 0, $order->getId());
         $this->redis->hset('orders:delivering', 'order:'.$order->getId(), 'courier:'.$user->getId());

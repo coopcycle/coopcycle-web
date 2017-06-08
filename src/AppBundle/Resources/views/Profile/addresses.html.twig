@@ -1,16 +1,17 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block content %}
-<div class="page-header">
-  <h1>Mes adresses</h1>
-</div>
-<div class="list-group">
+<h2>Mes adresses</h2>
+<table class="table">
+  <tbody>
   {% for address in addresses %}
-  <a href="#" class="list-group-item">
-    {{ address.streetAddress }}
-  </a>
+  <tr>
+    <td>{{ address.id }}</td>
+    <td>{{ address.streetAddress }}</td>
+  </tr>
   {% endfor %}
-</div>
+  </tbody>
+</table>
 <a class="btn btn-success" href="{{ path('profile_address_new') }}">Ajouter</a>
 {% endblock %}
 

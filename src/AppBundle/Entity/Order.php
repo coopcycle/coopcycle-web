@@ -39,21 +39,19 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Order
 {
-    const STATUS_CREATED = 'CREATED';
-    const STATUS_WAITING = 'WAITING';
-    const STATUS_ACCEPTED = 'ACCEPTED';
-    const STATUS_READY = 'READY';
-    const STATUS_PICKED = 'PICKED';
-    const STATUS_ACCIDENT = 'ACCIDENT';
-    const STATUS_DELIVERED = 'DELIVERED';
-    const STATUS_CANCELED = 'CANCELED';
+    const STATUS_CREATED    = 'CREATED';
+    const STATUS_WAITING    = 'WAITING';
+    const STATUS_ACCEPTED   = 'ACCEPTED';
+    const STATUS_REFUSED    = 'REFUSED';
+    const STATUS_READY      = 'READY';
+    const STATUS_CANCELED   = 'CANCELED';
 
     /**
      * @var int
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -89,15 +87,6 @@ class Order
     private $orderedItem;
 
     /**
-     * @var DeliveryAddress
-     *
-     * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="DeliveryAddress", cascade={"persist"})
-     * @ApiProperty(iri="https://schema.org/place")
-     */
-    private $deliveryAddress;
-
-    /**
      * @ORM\OneToMany(targetEntity="OrderEvent", mappedBy="order")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
@@ -112,6 +101,12 @@ class Order
     private $status;
 
     /**
+     * @Groups({"order"})
+     * @ORM\OneToOne(targetEntity="Delivery", mappedBy="order", cascade={"all"})
+     */
+    private $delivery;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
@@ -123,7 +118,8 @@ class Order
      */
     private $updatedAt;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->status = self::STATUS_CREATED;
         $this->orderedItem = new ArrayCollection();
         $this->events = new ArrayCollection();
@@ -281,30 +277,6 @@ class Order
         return $this->restaurant;
     }
 
-    /**
-     * Sets deliveryAddress.
-     *
-     * @param DeliveryAddress $deliveryAddress
-     *
-     * @return $this
-     */
-    public function setDeliveryAddress(DeliveryAddress $deliveryAddress = null)
-    {
-        $this->deliveryAddress = $deliveryAddress;
-
-        return $this;
-    }
-
-    /**
-     * Gets deliveryAddress.
-     *
-     * @return DeliveryAddress
-     */
-    public function getDeliveryAddress()
-    {
-        return $this->deliveryAddress;
-    }
-
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -375,5 +347,17 @@ class Order
     public function getEvents()
     {
         return $this->events;
+    }
+
+    public function getDelivery()
+    {
+        return $this->delivery;
+    }
+
+    public function setDelivery(Delivery $delivery)
+    {
+        $this->delivery = $delivery;
+
+        return $this;
     }
 }

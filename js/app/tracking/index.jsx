@@ -6,7 +6,7 @@ import 'whatwg-fetch';
 var _ = require('underscore');
 var TWEEN = require('tween.js');
 var L = require('leaflet-providers');
-var Polyline = require('polyline');
+var Polyline = require('@mapbox/polyline');
 require('beautifymarker');
 
 var map;
