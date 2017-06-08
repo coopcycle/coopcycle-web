@@ -24,10 +24,10 @@ function init() {
   return new Promise(function(resolve, reject) {
     utils.waitServerUp('127.0.0.1', 8000)
          .then(function () {
-            utils.cleanDb();
+            return utils.cleanDb();
           })
          .then(function() {
-            Promise.all([
+            return Promise.all([
                 utils.createUser('bill').then(function() {
                   return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
                     lat: 48.855799,
@@ -36,10 +36,9 @@ function init() {
                 }),
                 utils.createUser('sarah', ['ROLE_COURIER']),
                 utils.createUser('bob', ['ROLE_COURIER'])
-              ])
-              .then(resolve)
-              .catch((e) => reject(e));
+              ]);
           })
+          .then(resolve)
           .catch((e) => reject(e));
   });
 }

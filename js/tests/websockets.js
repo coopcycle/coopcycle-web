@@ -13,7 +13,7 @@ var initUsers = function() {
   return new Promise(function(resolve, reject) {
     utils.waitServerUp('127.0.0.1', 8000)
          .then(function () {
-            utils.cleanDb();
+            return utils.cleanDb();
           })
          .then(function() {
              Promise.all([
@@ -40,7 +40,7 @@ describe('Connect to WebSocket', function() {
       ws.onerror = function(e) {
         assert.equal('unexpected server response (401)', e.message);
         resolve();
-      }
+      };
     });
   });
 
@@ -56,7 +56,7 @@ describe('Connect to WebSocket', function() {
       ws.onerror = function(e) {
         assert.equal('unexpected server response (401)', e.message);
         resolve();
-      }
+      };
     });
   });
 
@@ -70,7 +70,7 @@ describe('Connect to WebSocket', function() {
       });
       ws.onopen = function() {
         ws.close();
-        resolve()
+        resolve();
       };
       ws.onerror = function(e) {
         reject(e.message);
