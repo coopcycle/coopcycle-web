@@ -22,7 +22,10 @@ var redisVersionCheck = new Promise(function (resolve, reject) {
 
 function init() {
   return new Promise(function(resolve, reject) {
-    utils.cleanDb()
+    utils.waitServerUp('127.0.0.1', 8000)
+         .then(function () {
+            utils.cleanDb();
+          })
          .then(function() {
             Promise.all([
                 utils.createUser('bill').then(function() {

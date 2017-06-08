@@ -11,16 +11,19 @@ var utils = new TestUtils(config);
 
 var initUsers = function() {
   return new Promise(function(resolve, reject) {
-    utils.cleanDb()
-      .then(function() {
-          Promise.all([
-            utils.createUser('bill'),
-            utils.createUser('sarah', ['ROLE_COURIER'])
-          ]).then(resolve);
-      })
-      .catch(reject);
-  });
-}
+    utils.waitServerUp('127.0.0.1', 8000)
+         .then(function () {
+            utils.cleanDb();
+          })
+         .then(function() {
+             Promise.all([
+               utils.createUser('bill'),
+               utils.createUser('sarah', ['ROLE_COURIER'])
+             ]).then(resolve);
+         })
+         .catch(reject);
+     });
+};
 
 describe('Connect to WebSocket', function() {
 

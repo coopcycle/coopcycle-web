@@ -2,6 +2,7 @@ var exec = require('child_process').exec;
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
 var fs = require('fs');
+var net = require('net');
 var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
@@ -65,6 +66,7 @@ TestUtils.prototype.cleanDb = function() {
   return new Promise(function(resolve, reject) {
     pg.connect(pgConfig, function(err, client, release) {
 
+
       if (err) return reject(err);
 
       var cleanRedis = new Promise(function(resolve, reject) {
@@ -92,8 +94,7 @@ TestUtils.prototype.cleanDb = function() {
 };
 
 TestUtils.prototype.createUser = function(username, roles) {
-  var pgConfig = this.pgConfig,
-      User = this.db.User;
+  var User = this.db.User;
 
   var params = {
     'username': username,
@@ -256,6 +257,61 @@ TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version
   }
 
   return true;
+};
+
+TestUtils.prototype.waitServerUp = function (host, port, timeout) {
+  /*
+    Wait for the connection to be open at the specified host/port
+    - host : server host
+    - port : server port
+    - timeout : timeout (in milliseconds)
+  */
+
+  var timeout = timeout || 50000,
+      client;
+
+   function cleanUp() {
+       if (client) {
+           client.removeAllListeners('connect');
+           client.removeAllListeners('error');
+           client.end();
+           client.destroy();
+           client.unref();
+       }
+     }
+
+  return new Promise(function (resolve, reject) {
+
+    timeoutId = setTimeout(function () {
+     reject('Unable to connect to server');
+    }, timeout);
+
+    function onConnectCb () {
+      // console.log('Server is up!');
+      clearTimeout(timeoutId);
+      cleanUp();
+      resolve();
+    }
+
+    function onErrorCb (err) {
+      if (err.code === 'ECONNREFUSED') {
+        // console.log('Unable to connect retrying..');
+        setTimeout(doCheck, 200);
+      } else {
+        cleanUp();
+        reject(err);
+      }
+    }
+
+    function doCheck() {
+      client = new net.Socket();
+      client.once('connect', onConnectCb);
+      client.once('error', onErrorCb);
+      client.connect({port: port, host: host});
+    }
+
+    doCheck();
+  });
 };
 
 module.exports = TestUtils;
