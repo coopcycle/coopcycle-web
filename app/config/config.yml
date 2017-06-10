@@ -52,12 +52,14 @@ doctrine:
         charset:  UTF8
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
+
+        # If you don't define this option and you haven't created your database yet,
+        # you may get PDOException errors because Doctrine will try to guess
+        # the database server version automatically and none is available.
+        # http://symfony.com/doc/current/reference/configuration/doctrine.html
+        # Should be fixed in next Doctrine version
+        # https://github.com/doctrine/dbal/pull/2671
+        server_version: 9.4
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"

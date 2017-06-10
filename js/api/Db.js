@@ -33,6 +33,10 @@ module.exports = function(sequelize) {
     username: Sequelize.STRING,
     email: Sequelize.STRING,
     roles: Sequelize.STRING,
+    username_canonical: Sequelize.STRING,
+    email_canonical: Sequelize.STRING,
+    password: Sequelize.STRING,
+    enabled: Sequelize.BOOLEAN,
   }, _.extend(sequelizeOptions, {
     tableName: 'api_user',
     getterMethods: {

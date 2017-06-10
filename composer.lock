@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c208decd23a1dc89e7ab93df9ad67520",
-    "content-hash": "4c4c158618572f3686c917d9085c9291",
+    "hash": "24fa059091188c3444ee8030a53223ec",
+    "content-hash": "4d2b8280febee57f47e9d4d2988a399f",
     "packages": [
         {
             "name": "api-platform/core",
@@ -1177,35 +1177,37 @@
         },
         {
             "name": "dunglas/action-bundle",
-            "version": "v0.3.1",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dunglas/DunglasActionBundle.git",
-                "reference": "3a72abd4ff43cae6e528c0e5973d9e9cc8945a2b"
+                "reference": "7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dunglas/DunglasActionBundle/zipball/3a72abd4ff43cae6e528c0e5973d9e9cc8945a2b",
-                "reference": "3a72abd4ff43cae6e528c0e5973d9e9cc8945a2b",
+                "url": "https://api.github.com/repos/dunglas/DunglasActionBundle/zipball/7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b",
+                "reference": "7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9 <7.2.0",
-                "symfony/config": "~2.8||~3.0",
-                "symfony/dependency-injection": "~2.8||~3.0",
-                "symfony/finder": "~2.8||~3.0",
-                "symfony/http-kernel": "~2.8||~3.0"
+                "php": ">=5.5.9",
+                "symfony/config": "^2.8 || ^3.0",
+                "symfony/dependency-injection": "^2.8 || ^3.0",
+                "symfony/finder": "^2.8 || ^3.0",
+                "symfony/http-kernel": "^2.8 || ^3.0"
             },
             "conflict": {
-                "symfony/framework-bundle": "<2.8.5||>3.0,<3.0.5"
+                "symfony/framework-bundle": "<2.8.5 || >3.0,<3.0.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.0||^4.6",
+                "phpunit/phpunit": "^4.6 || ^5.0",
                 "sensio/framework-extra-bundle": "^3.0.10",
-                "symfony/browser-kit": "~2.8||~3.0",
-                "symfony/console": "~2.8||~3.0",
-                "symfony/expression-language": "~2.8||~3.0",
-                "symfony/framework-bundle": "~2.8||~3.0"
+                "symfony/browser-kit": "^2.8 || ^3.0",
+                "symfony/console": "^2.8 || ^3.0",
+                "symfony/css-selector": "^2.8 || ^3.0",
+                "symfony/expression-language": "^2.8 || ^3.0",
+                "symfony/framework-bundle": "^2.8 || ^3.0",
+                "twig/twig": "^1.28 || ^2.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -1241,7 +1243,7 @@
                 "routing",
                 "symfony"
             ],
-            "time": "2016-09-29 06:34:48"
+            "time": "2017-05-12 12:56:51"
         },
         {
             "name": "egeloen/http-adapter",

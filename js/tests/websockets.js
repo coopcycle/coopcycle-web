@@ -1,10 +1,8 @@
 var assert = require('assert');
 var fs = require('fs');
 var WebSocket = require('ws');
-var Promise = require('promise');
-
 var ConfigLoader = require('../api/ConfigLoader');
-var TestUtils = require('../api/TestUtils');
+var TestUtils = require('./utils');
 
 var configLoader = new ConfigLoader('app/config/config_test.yml');
 var config = configLoader.load();
@@ -13,16 +11,19 @@ var utils = new TestUtils(config);
 
 var initUsers = function() {
   return new Promise(function(resolve, reject) {
-    utils.cleanDb()
-      .then(function() {
-          Promise.all([
-            utils.createUser('bill'),
-            utils.createUser('sarah', ['ROLE_COURIER'])
-          ]).then(resolve);
-      })
-      .catch(reject);
-  });
-}
+    utils.waitServerUp('127.0.0.1', 8000)
+         .then(function () {
+            return utils.cleanDb();
+          })
+         .then(function() {
+             Promise.all([
+               utils.createUser('bill'),
+               utils.createUser('sarah', ['ROLE_COURIER'])
+             ]).then(resolve);
+         })
+         .catch(reject);
+     });
+};
 
 describe('Connect to WebSocket', function() {
 
@@ -39,7 +40,7 @@ describe('Connect to WebSocket', function() {
       ws.onerror = function(e) {
         assert.equal('unexpected server response (401)', e.message);
         resolve();
-      }
+      };
     });
   });
 
@@ -55,7 +56,7 @@ describe('Connect to WebSocket', function() {
       ws.onerror = function(e) {
         assert.equal('unexpected server response (401)', e.message);
         resolve();
-      }
+      };
     });
   });
 
@@ -69,7 +70,7 @@ describe('Connect to WebSocket', function() {
       });
       ws.onopen = function() {
         ws.close();
-        resolve()
+        resolve();
       };
       ws.onerror = function(e) {
         reject(e.message);
