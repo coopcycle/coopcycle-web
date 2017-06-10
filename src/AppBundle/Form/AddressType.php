@@ -68,6 +68,17 @@ class AddressType extends AbstractType
         };
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, $latLngListener);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+            $form = $event->getForm();
+            $address = $event->getData();
+            if (null !== $address) {
+                if ($geo = $address->getGeo()) {
+                    $form->get('latitude')->setData($geo->getLatitude());
+                    $form->get('longitude')->setData($geo->getLongitude());
+                }
+
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

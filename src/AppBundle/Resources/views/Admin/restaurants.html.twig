@@ -12,7 +12,7 @@
     <tr>
       <td><a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
       <td>{{ restaurant.name }}</td>
-      <td>{{ restaurant.streetAddress }}</td>
+      <td>{{ restaurant.address.streetAddress }}</td>
       <td>{{ restaurant.openingHours|join(' ') }}</td>
       <td class="text-right">
         <a href="{{ path('admin_restaurant', { id: restaurant.id }) }}" class="btn btn-xs btn-primary">{% trans %}Edit{% endtrans %}</a>
