@@ -95,6 +95,13 @@ class Restaurant extends FoodEstablishment
     private $website;
 
     /**
+     * @var string The delivery service of the restaurant.
+     *
+     * @ORM\Column(nullable=true)
+     */
+    private $deliveryService;
+
+    /**
      * @var string The website of the restaurant.
      *
      * @ORM\ManyToOne(targetEntity="StripeParams")
@@ -321,6 +328,18 @@ class Restaurant extends FoodEstablishment
     public function setStripeParams(StripeParams $stripeParams)
     {
         $this->stripeParams = $stripeParams;
+
+        return $this;
+    }
+
+    public function getDeliveryService()
+    {
+        return $this->deliveryService;
+    }
+
+    public function setDeliveryService($deliveryService)
+    {
+        $this->deliveryService = $deliveryService;
 
         return $this;
     }

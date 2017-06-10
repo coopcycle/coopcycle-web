@@ -4,23 +4,25 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderEvent;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Predis\Client as Redis;
 
 class OrderListener
 {
     private $tokenStorage;
-    private $redis;
-    private $osrmHost;
+    private $deliveryServiceFactory;
 
-    public function __construct(TokenStorageInterface $tokenStorage, Redis $redis, $osrmHost)
+    public function __construct(TokenStorageInterface $tokenStorage, DeliveryServiceFactory $deliveryServiceFactory)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->redis = $redis;
-        $this->osrmHost = $osrmHost;
+        $this->deliveryServiceFactory = $deliveryServiceFactory;
+    }
+
+    private function getDeliveryService(Order $order)
+    {
+        return $this->deliveryServiceFactory->createForRestaurant($order->getRestaurant());
     }
 
     private function getUser()
@@ -46,14 +48,16 @@ class OrderListener
 
         if ($entity instanceof Order) {
 
+            $order = $entity;
+
             if (null === $entity->getCustomer()) {
-                $entity->setCustomer($this->getUser());
+                $order->setCustomer($this->getUser());
             }
 
-            $delivery = $entity->getDelivery();
+            $delivery = $order->getDelivery();
 
             // Make sure models are associated
-            $delivery->setOrder($entity);
+            $delivery->setOrder($order);
 
             // FIXME Date should be mandatory
             if (null === $delivery->getDate()) {
@@ -66,21 +70,7 @@ class OrderListener
             }
 
             if (!$delivery->isCalculated()) {
-
-                $originLng = $delivery->getOriginAddress()->getGeo()->getLongitude();
-                $originLat = $delivery->getOriginAddress()->getGeo()->getLatitude();
-
-                $deliveryLng = $delivery->getDeliveryAddress()->getGeo()->getLongitude();
-                $deliveryLat = $delivery->getDeliveryAddress()->getGeo()->getLatitude();
-
-                $response = file_get_contents("http://{$this->osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
-                $data = json_decode($response, true);
-
-                $distance = $data['routes'][0]['distance'];
-                $duration = $data['routes'][0]['duration'];
-
-                $delivery->setDistance((int) $distance);
-                $delivery->setDuration((int) $duration);
+                $this->getDeliveryService($order)->calculate($delivery);
             }
         }
     }
@@ -106,12 +96,7 @@ class OrderListener
             $em->persist($orderEvent);
             $em->flush();
 
-            $this->redis->publish('order_events', json_encode([
-                'order' => $order->getId(),
-                'courier' => null !== $order->getCourier() ? $order->getCourier()->getId() : null,
-                'status' => $order->getStatus(),
-                'timestamp' => $orderEvent->getCreatedAt()->getTimestamp(),
-            ]));
+            $this->getDeliveryService($order)->onOrderUpdate($order);
         }
     }
 
@@ -119,32 +104,6 @@ class OrderListener
     {
         $order = $event->getSubject();
 
-        $restaurant = $order->getRestaurant();
-        $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
-
-        $this->redis->geoadd(
-            'orders:geo',
-            $restaurant->getGeo()->getLongitude(),
-            $restaurant->getGeo()->getLatitude(),
-            'order:'.$order->getId()
-        );
-
-        $this->redis->geoadd(
-            'restaurants:geo',
-            $restaurant->getGeo()->getLongitude(),
-            $restaurant->getGeo()->getLatitude(),
-            'order:'.$order->getId()
-        );
-        $this->redis->geoadd(
-            'delivery_addresses:geo',
-            $deliveryAddress->getGeo()->getLongitude(),
-            $deliveryAddress->getGeo()->getLatitude(),
-            'order:'.$order->getId()
-        );
-
-        $this->redis->lpush(
-            'orders:waiting',
-            $order->getId()
-        );
+        $this->getDeliveryService($order)->create($order);
     }
 }

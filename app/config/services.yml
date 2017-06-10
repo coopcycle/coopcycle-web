@@ -27,7 +27,7 @@ services:
 
   my.order_listener:
     class: AppBundle\EventListener\OrderListener
-    arguments: [ "@security.token_storage", "@snc_redis.default", "%osrm_host%" ]
+    arguments: [ "@security.token_storage", "@delivery_service_factory" ]
     tags:
       - { name: "doctrine.event_listener", event: "prePersist" }
       - { name: "doctrine.event_listener", event: "postPersist" }
@@ -44,6 +44,10 @@ services:
     class: AppBundle\Action\Routing
     arguments: [ '%osrm_host%' ]
 
+  'AppBundle\Form\RestaurantType':
+    arguments: [ '@translator', '@delivery_service_factory' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
@@ -54,6 +58,20 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Order
+
+  delivery_service.default:
+    class: AppBundle\Service\DeliveryService\Core
+    arguments: [ "@snc_redis.default", "%osrm_host%" ]
+
+  delivery_service.applicolis:
+    class: AppBundle\Service\DeliveryService\AppliColis
+    arguments: [ "@snc_redis.default", "%osrm_host%" ]
+
+  delivery_service_factory:
+    class: AppBundle\Service\DeliveryService\Factory
+    arguments:
+      - [ "@delivery_service.applicolis" ]
+      - "@delivery_service.default"
 
   routing_service:
     class: AppBundle\Service\Routing\GoogleDirectionsApi

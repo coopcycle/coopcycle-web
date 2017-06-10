@@ -26,8 +26,13 @@
     <div class="col-sm-8">
       {{ form_row(form.name) }}
       {{ form_row(form.website) }}
+      {{ form_row(form.telephone) }}
     </div>
   </div>
+
+  <hr>
+
+  {{ form_row(form.deliveryService) }}
 
   <hr>
 
@@ -47,10 +52,13 @@
 
   <hr>
 
-  {{ form_row(form.streetAddress) }}
-  {{ form_row(form.postalCode) }}
-  {{ form_row(form.addressLocality) }}
-  {{ form_row(form.telephone) }}
+  {{ form_row(form.address.streetAddress) }}
+  {{ form_row(form.address.postalCode) }}
+  {{ form_row(form.address.addressLocality) }}
+  {{ form_widget(form.address.longitude) }}
+  {{ form_widget(form.address.latitude) }}
+  {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
+  {% do form.address.setRendered %}
 
   {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
 

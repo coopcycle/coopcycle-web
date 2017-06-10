@@ -18,3 +18,5 @@ search.help: >
   Search restaurants in Paris area : %links%
 
 meta.title: Open-source foodtech. Only for worker-owned business.
+
+delivery_service.applicolis: AppliColis

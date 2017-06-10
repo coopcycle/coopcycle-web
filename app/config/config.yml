@@ -52,6 +52,8 @@ doctrine:
         charset:  UTF8
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
+        mapping_types:
+            _text: string
 
         # If you don't define this option and you haven't created your database yet,
         # you may get PDOException errors because Doctrine will try to guess

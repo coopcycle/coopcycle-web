@@ -41,6 +41,9 @@ Edit: Modifier
 View: Voir
 User: Utilisateur
 Merchant: Commerçant
+Delivery service: Service de livraison
+
+delivery_service.applicolis: AppliColis
 
 order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total% €
