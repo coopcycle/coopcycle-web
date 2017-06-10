@@ -1,8 +1,8 @@
-var Promise = require('promise');
 var exec = require('child_process').exec;
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
 var fs = require('fs');
+var net = require('net');
 var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
@@ -39,7 +39,7 @@ function TestUtils(config) {
   this.cert = {
     key: privateKey,
     passphrase: jwtConfig.pass_phrase
-  }
+  };
 
   var sequelize = new Sequelize(
     config.doctrine.dbal.dbname,
@@ -52,12 +52,12 @@ function TestUtils(config) {
     }
   );
 
-  this.db = require('./Db')(sequelize);
+  this.db = require('../api/Db')(sequelize);
 }
 
 TestUtils.prototype.createJWT = function(username) {
   return jwt.sign({ username: username }, this.cert, { algorithm: 'RS256' });
-}
+};
 
 TestUtils.prototype.cleanDb = function() {
   var pgConfig = this.pgConfig;
@@ -65,6 +65,7 @@ TestUtils.prototype.cleanDb = function() {
 
   return new Promise(function(resolve, reject) {
     pg.connect(pgConfig, function(err, client, release) {
+
 
       if (err) return reject(err);
 
@@ -90,39 +91,31 @@ TestUtils.prototype.cleanDb = function() {
         });
     });
   });
-}
+};
 
 TestUtils.prototype.createUser = function(username, roles) {
-  var pgConfig = this.pgConfig;
+  var User = this.db.User;
+
+  var params = {
+    'username': username,
+    'username_canonical': username,
+    'email': username + '@coopcycle.dev',
+    'email_canonical': username + '@coopcycle.dev',
+    'roles': serialize(roles),
+    'password': '123456',
+    'enabled': true
+  };
+
   return new Promise(function (resolve, reject) {
-
-    var params = [
-      username,
-      username + '@coopcycle.dev',
-      '123456'
-    ]
-
-    var command = 'php ' + rootDir + '/bin/console'
-      + ' --env=test fos:user:create ' + params.join(' ');
-
-    // Execute Symfony command to create user
-    exec(command, function(error, stdout, stderr) {
-      if (error) return reject(error);
-      if (roles && Array.isArray(roles)) {
-        pg.connect(pgConfig, function(err, client, release) {
-          var sql = 'UPDATE api_user SET roles = $1 WHERE username = $2'
-          client.query(sql, [serialize(roles), username], function (err, result) {
-            if (err) throw err;
-            release();
-            resolve();
-          });
+    User.create(params)
+        .then(function() {
+          resolve();
+        })
+        .catch(function(err) {
+          reject(err.errors);
         });
-      } else {
-        resolve();
-      }
-    });
-  });
-}
+});
+};
 
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
 
@@ -140,7 +133,7 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
           customer.addAddress(address).then(resolve);
         })
         .catch(function(err) {
-          reject(err.message)
+          reject(err.errors)
         });
       });
   });
@@ -245,16 +238,11 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
         });
   });
 
-}
+};
 
 // Check Redis version on Travis, to skip tests using geo commands
 // Code borrowed from https://github.com/NodeRedis/node_redis
 TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version) {
-
-  // Wait until a connection has established (otherwise a timeout is going to be triggered at some point)
-  if (Object.keys(connection.server_info).length === 0) {
-      throw new Error('Version check not possible as the client is not yet ready or did not expose the version');
-  }
 
   // Return true if the server version >= desired_version
   var version = connection.server_info.versions;
@@ -269,6 +257,61 @@ TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version
   }
 
   return true;
+};
+
+TestUtils.prototype.waitServerUp = function (host, port, timeout) {
+  /*
+    Wait for the connection to be open at the specified host/port
+    - host : server host
+    - port : server port
+    - timeout : timeout (in milliseconds)
+  */
+
+  var timeout = timeout || 50000,
+      client;
+
+   function cleanUp() {
+       if (client) {
+           client.removeAllListeners('connect');
+           client.removeAllListeners('error');
+           client.end();
+           client.destroy();
+           client.unref();
+       }
+     }
+
+  return new Promise(function (resolve, reject) {
+
+    timeoutId = setTimeout(function () {
+     reject('Unable to connect to server');
+    }, timeout);
+
+    function onConnectCb () {
+      // console.log('Server is up!');
+      clearTimeout(timeoutId);
+      cleanUp();
+      resolve();
+    }
+
+    function onErrorCb (err) {
+      if (err.code === 'ECONNREFUSED') {
+        // console.log('Unable to connect retrying..');
+        setTimeout(doCheck, 200);
+      } else {
+        cleanUp();
+        reject(err);
+      }
+    }
+
+    function doCheck() {
+      client = new net.Socket();
+      client.once('connect', onConnectCb);
+      client.once('error', onErrorCb);
+      client.connect({port: port, host: host});
+    }
+
+    doCheck();
+  });
 };
 
 module.exports = TestUtils;
