@@ -92,7 +92,8 @@ nelmio_cors:
         expose_headers: ["link"]
         max_age:        3600
     paths:
-        '^/': ~
+        '^/api/':
+            allow_origin: ['*']
 
 fos_user:
     db_driver: orm
