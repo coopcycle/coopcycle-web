@@ -13,6 +13,41 @@ else {
       cssFilename = "[name].css";
 }
 
+var loaders = [
+  {
+    test: /\.scss$/,
+    loader: ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      use: ['css-loader', 'sass-loader']
+    })
+  },
+  {
+    test: /\.css$/,
+    loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
+  },
+  {
+    test: /\.(eot|ttf|woff|woff2)$/,
+    loader: 'file-loader?name=css/fonts/[name].[ext]'
+  },
+  {
+    test: /\.(svg|png)$/,
+    loader: 'file-loader?name=css/images/[name].[ext]'
+  },
+  {
+    test: /\.jsx?/,
+    include: __dirname + '/js',
+    loader: "babel-loader"
+  }
+];
+
+var devServerConfig = {
+  headers: { "Access-Control-Allow-Origin": "*" },
+  contentBase: __dirname + '/web',
+  stats: 'minimal',
+  compress: true,
+  public: '192.168.99.100:8080'
+};
+
 var webpackConfig = {
   entry: {
     'css/styles': './assets/css/main.scss',
@@ -40,32 +75,7 @@ var webpackConfig = {
     }
   },
   module: {
-    loaders: [
-      {
-          test: /\.scss$/,
-          loader: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: ['css-loader', 'sass-loader']
-          })
-      },
-      {
-          test: /\.css$/,
-          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
-      },
-      {
-          test: /\.(eot|ttf|woff|woff2)$/,
-          loader: 'file-loader?name=css/fonts/[name].[ext]'
-      },
-      {
-          test: /\.(svg|png)$/,
-          loader: 'file-loader?name=css/images/[name].[ext]'
-      },
-      {
-        test: /\.jsx?/,
-        include: __dirname + '/js',
-        loader: "babel-loader"
-      }
-    ]
+    loaders: loaders
   },
   // Use the plugin to specify the resulting filename (and add needed behavior to the compiler)
   plugins: [
@@ -75,13 +85,7 @@ var webpackConfig = {
         jQuery: "jquery"
       })
   ],
-  devServer: {
-      headers: { "Access-Control-Allow-Origin": "*" },
-      contentBase: __dirname + '/web',
-      stats: 'minimal',
-      compress: true,
-      public: '192.168.99.100:8080'
-  }
+  devServer: devServerConfig
 };
 
 if (process.env.NODE_ENV === 'production') {
@@ -90,4 +94,28 @@ if (process.env.NODE_ENV === 'production') {
   }));
 }
 
-module.exports = webpackConfig;
+var widgetConfig = {
+  entry: {
+    'js/widget': './js/widget/index.jsx'
+  },
+  output: {
+    library: 'CoopcycleWidget',
+    libraryTarget: 'umd',
+    publicPath: "/",
+    path: __dirname + '/web',
+    filename: 'js/widget.js'
+  },
+  module: {
+    loaders: loaders
+  },
+  plugins: [
+      new ExtractTextPlugin({filename: 'css/widget.css', allChunks: true}),
+  ],
+  devServer: devServerConfig
+};
+
+if (process.env.NODE_ENV === 'development') {
+  widgetConfig.output.path = __dirname + '/widget-demo';
+}
+
+module.exports = [webpackConfig, widgetConfig];
