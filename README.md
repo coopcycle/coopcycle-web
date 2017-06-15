@@ -128,6 +128,16 @@ docker-compose run php bin/console doctrine:migrations:migrate'
 
 ```
 
+How to develop the widget
+--------------
+
+With Docker
+```
+WEBPACK_BASE_DIR=widget-demo/ docker-compose up webpack
+```
+
+The widget demo will be accessible at `http://<docker_machine>:8080`
+
 Testing
 -------
 

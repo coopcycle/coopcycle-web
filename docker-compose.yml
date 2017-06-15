@@ -40,6 +40,8 @@ services:
     volumes:
       - './:/srv/coopcycle'
       - 'node_modules:/srv/coopcycle/node_modules'
+    environment:
+      WEBPACK_BASE_DIR: "${WEBPACK_BASE_DIR}"
 
   osrm:
     build: './docker/osrm'
