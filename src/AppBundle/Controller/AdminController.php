@@ -58,7 +58,7 @@ class AdminController extends Controller
 
         $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
         $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
-        $picked = $orderRepository->countByStatus(Order::STATUS_PICKED);
+        $ready = $orderRepository->countByStatus(Order::STATUS_READY);
 
         return array(
             'page' => $page,
@@ -66,7 +66,7 @@ class AdminController extends Controller
             'orders' => $orders,
             'waiting_count' => $waiting,
             'accepted_count' => $accepted,
-            'picked_count' => $picked,
+            'ready_count' => $ready,
         );
     }
 

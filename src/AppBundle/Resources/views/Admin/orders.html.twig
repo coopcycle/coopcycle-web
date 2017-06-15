@@ -9,16 +9,16 @@
   'CANCELED': 'label-default',
   'WAITING': 'label-danger',
   'ACCEPTED': 'label-primary',
-  'PICKED': 'label-info',
+  'READY': 'label-info',
   'DELIVERED': 'label-success'
 } %}
 
 {% block content %}
 
-{% set total = waiting_count + accepted_count + picked_count %}
+{% set total = waiting_count + accepted_count + ready_count %}
 {% set waiting_percent = total > 0 ? ((waiting_count / total) * 100)|round : 0 %}
 {% set accepted_percent = total > 0 ? ((accepted_count / total) * 100)|round : 0 %}
-{% set picked_percent = total > 0 ? ((picked_count / total) * 100)|round : 0 %}
+{% set ready_percent = total > 0 ? ((ready_count / total) * 100)|round : 0 %}
 
 <div class="row">
   <div class="col-md-4">
@@ -36,9 +36,9 @@
     </div>
   </div>
   <div class="col-md-4">
-    <p class="text-center">Picked</p>
-    <div class="c100 small p{{ picked_percent }} center green">
-      <span>{{ picked_count }}</span>
+    <p class="text-center">Ready</p>
+    <div class="c100 small p{{ ready_percent }} center green">
+      <span>{{ ready_count }}</span>
       <div class="slice"><div class="bar"></div><div class="fill"></div></div>
     </div>
   </div>
