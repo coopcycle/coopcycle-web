@@ -18,7 +18,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         @ORM\Index(name="idx_address_geo", columns={"geo"}, flags={"spatial"})
  *     }
  * )
- * @ApiResource
+ * @ApiResource(iri="http://schema.org/Place",
+ *   collectionOperations={
+ *     "get"={"method"="GET"},
+ *     "create_address"={"route_name"="create_address"}
+ *   },
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *   },
+ * )
  */
 class Address extends Place
 {
