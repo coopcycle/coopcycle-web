@@ -49,7 +49,7 @@ Feature: Orders
         "@type":"http://schema.org/ParcelDelivery",
         "originAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.864577,
             "longitude":2.333338
@@ -59,7 +59,7 @@ Feature: Orders
         },
         "deliveryAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.855799,
             "longitude":2.359207
@@ -117,7 +117,7 @@ Feature: Orders
         "@type":"http://schema.org/ParcelDelivery",
         "originAddress":{
           "@id":@string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.864577,
             "longitude":2.333338
@@ -127,7 +127,7 @@ Feature: Orders
         },
         "deliveryAddress":{
           "@id": @string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.855799,
             "longitude":2.359207
@@ -168,7 +168,7 @@ Feature: Orders
         "@type":"http://schema.org/ParcelDelivery",
         "originAddress":{
           "@id":@string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.864577,
             "longitude":2.333338
@@ -178,7 +178,7 @@ Feature: Orders
         },
         "deliveryAddress":{
           "@id": @string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.855799,
             "longitude":2.359207
@@ -219,7 +219,7 @@ Feature: Orders
         "@type":"http://schema.org/ParcelDelivery",
         "originAddress":{
           "@id":@string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.864577,
             "longitude":2.333338
@@ -229,7 +229,7 @@ Feature: Orders
         },
         "deliveryAddress":{
           "@id": @string@,
-          "@type":"Address",
+          "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.855799,
             "longitude":2.359207
