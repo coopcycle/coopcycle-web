@@ -65,7 +65,7 @@ services:
 
   delivery_service.applicolis:
     class: AppBundle\Service\DeliveryService\AppliColis
-    arguments: [ "@snc_redis.default", "%osrm_host%" ]
+    arguments: [ "@snc_redis.default", "%osrm_host%", "%applicolis_api_base_url%", "%applicolis_api_key%", "@logger" ]
 
   delivery_service_factory:
     class: AppBundle\Service\DeliveryService\Factory

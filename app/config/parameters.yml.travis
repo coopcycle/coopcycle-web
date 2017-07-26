@@ -31,3 +31,5 @@ parameters:
     app.tracking_port: "8001"
     app.order_tracking_port: "8002"
     webpack.dev_server.base_url: http://localhost:8080
+    applicolis_api_key: ~
+    applicolis_api_base_url: ~

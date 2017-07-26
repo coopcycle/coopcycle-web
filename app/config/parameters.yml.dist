@@ -50,3 +50,6 @@ parameters:
     # Change this for development if you are using Docker
     # Ex: http://192.168.99.100:8080
     webpack.dev_server.base_url: http://localhost:8080
+
+    applicolis_api_key: ~
+    applicolis_api_base_url: ~
