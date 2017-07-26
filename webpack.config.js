@@ -2,6 +2,7 @@ var path = require("path");
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var WebpackAssetsManifest = require('webpack-assets-manifest');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 if (process.env.NODE_ENV === 'production') {
   var jsFilename = "[name].[chunkhash].js",
@@ -20,13 +21,13 @@ var webpackConfig = {
     'js/address-form': './js/app/address/form.jsx',
     'js/bootstrap': 'bootstrap',
     'js/cart': './js/app/cart/index.jsx',
+    'js/delivery-form': './js/app/delivery/form.jsx',
     'js/homepage': './js/app/homepage/index.js',
     'js/order-address': './js/app/order/address.jsx',
     'js/order-payment': './js/app/order/payment.js',
     'js/order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
     'js/profile-deliveries': './js/app/profile/deliveries.js',
     'js/restaurant-form': './js/app/restaurant/form.jsx',
-    'js/delivery-form': './js/app/delivery/form.jsx',
     'js/tracking': './js/app/tracking/index.jsx',
   },
   output: {
@@ -72,15 +73,17 @@ var webpackConfig = {
       new ExtractTextPlugin({filename: cssFilename, allChunks: true}),
       new webpack.ProvidePlugin({
         $: "jquery",
-        jQuery: "jquery"
-      })
+        jQuery: "jquery",
+      }),
+      new CopyWebpackPlugin([
+        { from: 'node_modules/coopcycle-js/build/coopcycle.js', to: 'js/coopcycle.js' }
+      ]),
   ],
   devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
       contentBase: __dirname + '/web',
       stats: 'minimal',
       compress: true,
-      public: '192.168.99.100:8080'
   }
 };
 
