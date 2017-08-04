@@ -74,9 +74,9 @@ services:
       - "@delivery_service.default"
 
   routing_service:
-    class: AppBundle\Service\Routing\GoogleDirectionsApi
+    class: AppBundle\Service\Routing\Osrm
     arguments:
-      - "%google_api_key%"
+      - "%osrm_host%"
 
   payment_service:
     class: AppBundle\Service\PaymentService
