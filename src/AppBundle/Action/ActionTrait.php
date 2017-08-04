@@ -9,6 +9,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use AppBundle\Entity\OrderRepository;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Service\PaymentService;
+use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 
 trait ActionTrait
@@ -20,10 +21,11 @@ trait ActionTrait
     protected $doctrine;
     protected $eventDispatcher;
     protected $paymentService;
+    protected $routing;
 
     public function __construct(TokenStorageInterface $tokenStorage, Redis $redis,
         OrderRepository $orderRepository, SerializerInterface $serializer, DoctrineRegistry $doctrine,
-        EventDispatcher $eventDispatcher, PaymentService $paymentService)
+        EventDispatcher $eventDispatcher, PaymentService $paymentService, RoutingInterface $routing)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
@@ -32,6 +34,7 @@ trait ActionTrait
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;
         $this->paymentService = $paymentService;
+        $this->routing = $routing;
     }
 
     protected function getUser()
