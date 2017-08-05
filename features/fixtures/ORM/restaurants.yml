@@ -11,6 +11,24 @@ AppBundle\Entity\Product:
     name: <name()>
     price: <numberBetween(5, 10)>.99
 
+AppBundle\Entity\MenuItem:
+  menu_item_{1..9}:
+    name: <name()>
+    price: <numberBetween(5, 10)>.99
+
+AppBundle\Entity\MenuSection:
+  menu_section_1:
+    name: Plats
+    hasMenuItem: [ "@menu_item_1", "@menu_item_2" ]
+  menu_section_2:
+    name: Desserts
+    hasMenuItem: [ "@menu_item_3" ]
+
+AppBundle\Entity\Menu:
+  menu_1:
+    name: Menu
+    hasMenuSection: [ "@menu_section_1", "@menu_section_2" ]
+
 AppBundle\Entity\Address:
   address_1:
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
@@ -27,6 +45,7 @@ AppBundle\Entity\Restaurant:
     name: 'Nodaiwa'
     products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_1"
+    hasMenu: "@menu_1"
   restaurant_2:
     name: 'Café Barjot'
     products: [ "@product_1", "@product_2", "@product_3" ]
