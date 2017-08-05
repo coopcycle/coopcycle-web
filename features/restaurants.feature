@@ -7,7 +7,6 @@ Feature: Manage restaurants
     And I send a "GET" request to "/api/restaurants"
     Then the response status code should be 200
     And the response should be in JSON
-    And the header "Content-Type" should be equal to "application/ld+json; charset=utf-8"
     And the JSON should match:
     """
     {
@@ -32,7 +31,6 @@ Feature: Manage restaurants
     And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116&distance=1500"
     Then the response status code should be 200
     And the response should be in JSON
-    And the header "Content-Type" should be equal to "application/ld+json; charset=utf-8"
     And the JSON should match:
     """
     {
@@ -45,7 +43,8 @@ Feature: Manage restaurants
           "@type":"http://schema.org/Restaurant",
           "products":@array@,
           "servesCuisine":@array@,
-          "name":"Café Barjot"
+          "name":"Café Barjot",
+          "hasMenu": null
         }
       ],
       "hydra:totalItems":1,
@@ -65,22 +64,42 @@ Feature: Manage restaurants
     """
 
   Scenario: Retrieve a restaurant
-    Given the restaurants are loaded:
-      | id | name    | streetAddress                          | latlng             |
-      | 12 | Nodaiwa | 272, rue Saint Honoré 75001 Paris 1er  | 48.864577,2.333338 |
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
-    And I send a "GET" request to "/api/restaurants/12"
+    And I send a "GET" request to "/api/restaurants/1"
     Then the response status code should be 200
     And the response should be in JSON
-    And the header "Content-Type" should be equal to "application/ld+json; charset=utf-8"
     And the JSON should match:
     """
     {
       "@context":"/api/contexts/Restaurant",
-      "@id":"/api/restaurants/12",
+      "@id":"/api/restaurants/1",
       "@type":"http://schema.org/Restaurant",
       "products":@array@,
       "servesCuisine":@array@,
-      "name":"Nodaiwa"
+      "name":"Nodaiwa",
+      "hasMenu":{
+        "@id":"@string@.startsWith('/api/menus')",
+        "@type":"http://schema.org/Menu",
+        "hasMenuSection":[
+          {
+            "@id":"@string@.startsWith('/api/menu_sections')",
+            "@type":"http://schema.org/MenuSection",
+            "hasMenuItem":@array@,
+            "description":null,
+            "name":@string@
+          },
+          {
+            "@id":"@string@.startsWith('/api/menu_sections')",
+            "@type":"http://schema.org/MenuSection",
+            "hasMenuItem":@array@,
+            "description":null,
+            "name":@string@
+          }
+        ],
+        "description":null,
+        "name":"Menu"
+      }
     }
     """

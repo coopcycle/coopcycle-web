@@ -24,8 +24,15 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   attributes={
  *     "filters"={"restaurant.search"},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={"method"="GET"}
+ *   },
+ *   itemOperations={
+ *     "get"={"method"="GET"}
  *   }
  * )
+
  * @Vich\Uploadable
  */
 class Restaurant extends FoodEstablishment
@@ -107,6 +114,16 @@ class Restaurant extends FoodEstablishment
      * @ORM\ManyToOne(targetEntity="StripeParams")
      */
     private $stripeParams;
+
+    /**
+     * @var string The menu of the restaurant.
+     *
+     * @ORM\OneToOne(targetEntity="Menu", cascade={"all"})
+     * @ORM\JoinColumn(name="menu_id")
+     * @ApiProperty(iri="https://schema.org/Menu")
+     * @Groups({"restaurant"})
+     */
+    private $hasMenu;
 
     public function __construct()
     {
@@ -342,5 +359,10 @@ class Restaurant extends FoodEstablishment
         $this->deliveryService = $deliveryService;
 
         return $this;
+    }
+
+    public function getHasMenu()
+    {
+        return $this->hasMenu;
     }
 }
