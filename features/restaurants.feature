@@ -44,22 +44,12 @@ Feature: Manage restaurants
           "products":@array@,
           "servesCuisine":@array@,
           "name":"Café Barjot",
-          "hasMenu": null
+          "hasMenu":@...@
         }
       ],
       "hydra:totalItems":1,
-      "hydra:view":{
-        "@id":"/api/restaurants?coordinate=48.853286%2C2.369116\u0026distance=1500",
-        "@type":"hydra:PartialCollectionView"
-      },
-      "hydra:search":{
-        "@type":"hydra:IriTemplate",
-        "hydra:template":"/api/restaurants{?}",
-        "hydra:variableRepresentation":"BasicRepresentation",
-        "hydra:mapping":[
-
-        ]
-      }
+      "hydra:view":@...@,
+      "hydra:search":@...@
     }
     """
 

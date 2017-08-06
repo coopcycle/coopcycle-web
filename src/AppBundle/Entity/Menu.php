@@ -39,7 +39,7 @@ class Menu extends CreativeWork
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="MenuSection", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="MenuSection", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      * @ORM\OrderBy({"name"="ASC"})
      * @ApiProperty(iri="https://schema.org/MenuSection")
@@ -64,6 +64,16 @@ class Menu extends CreativeWork
 
     public function getHasMenuSection()
     {
+        return $this->getSections();
+    }
+
+    public function getSections()
+    {
         return $this->hasMenuSection;
+    }
+
+    public function addSection(MenuSection $menuSection)
+    {
+        $this->hasMenuSection->add($menuSection);
     }
 }

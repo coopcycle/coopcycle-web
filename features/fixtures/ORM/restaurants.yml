@@ -22,12 +22,20 @@ AppBundle\Entity\MenuSection:
     hasMenuItem: [ "@menu_item_1", "@menu_item_2" ]
   menu_section_2:
     name: Desserts
-    hasMenuItem: [ "@menu_item_3" ]
+    hasMenuItem: [ "@menu_item_3", "@menu_item_4" ]
+  menu_section_3:
+    name: Entrées
+    hasMenuItem: [ "@menu_item_5", "@menu_item_6" ]
 
 AppBundle\Entity\Menu:
   menu_1:
     name: Menu
     hasMenuSection: [ "@menu_section_1", "@menu_section_2" ]
+  menu_2:
+    name: Menu
+    hasMenuSection: [ "@menu_section_2", "@menu_section_3" ]
+  menu_3:
+    name: Menu
 
 AppBundle\Entity\Address:
   address_1:
@@ -50,7 +58,9 @@ AppBundle\Entity\Restaurant:
     name: 'Café Barjot'
     products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_2"
+    hasMenu: "@menu_2"
   restaurant_3:
     name: 'La Cantina Clandestina'
     products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_3"
+    hasMenu: "@menu_3"
