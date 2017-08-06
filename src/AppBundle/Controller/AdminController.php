@@ -270,9 +270,10 @@ class AdminController extends Controller
                 $deliveryLat = $form->get('deliveryAddress')->get('latitude')->getData();
                 $deliveryLng = $form->get('deliveryAddress')->get('longitude')->getData();
 
-                $response = file_get_contents("http://{$osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
-
-                $data = json_decode($response, true);
+                $data = $this->container->get('routing_service')->getRawResponse(
+                    new GeoCoordinates($originLat, $originLng),
+                    new GeoCoordinates($deliveryLat, $deliveryLng)
+                );
 
                 $delivery->setDistance((int) $data['routes'][0]['distance']);
                 $delivery->setDuration((int) $data['routes'][0]['duration']);
