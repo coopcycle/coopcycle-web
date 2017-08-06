@@ -173,6 +173,15 @@ With Docker
 docker-compose run -e SYMFONY_ENV=test -e COOPCYCLE_BASE_URL=http://localhost:8080 -e NODE_ENV=test nodejs /run-tests.sh
 ```
 
+Tips
+----
+
+Connect to PostgreSQL server through Docker
+
+```
+docker-compose exec postgres psql -U postgres
+```
+
 How to provision a server
 -------------------------
 
