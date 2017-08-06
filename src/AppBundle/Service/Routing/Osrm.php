@@ -3,6 +3,7 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Entity\Base\GeoCoordinates;
+use GuzzleHttp\Client;
 
 /**
  * Example JSON response:
@@ -48,25 +49,43 @@ use AppBundle\Entity\Base\GeoCoordinates;
  */
 class Osrm extends Base
 {
-    private $osrmHost;
+    /**
+     * @var Client
+     */
+    private $client;
 
-    public function __construct($osrmHost)
+    /**
+     * @param Client $client
+     */
+    public function __construct(Client $client)
     {
-        $this->osrmHost = $osrmHost;
+        $this->client = $client;
     }
 
+    /**
+     * @param GeoCoordinates $origin
+     * @param GeoCoordinates $destination
+     * @return array|null
+     */
     public function getRawResponse(GeoCoordinates $origin, GeoCoordinates $destination)
     {
-        $originCoords = implode(',', [ $origin->getLongitude(), $origin->getLatitude() ]);
-        $destinationCoords = implode(',', [ $destination->getLongitude(), $destination->getLatitude() ]);
+        $originCoords = implode(',', [$origin->getLongitude(), $origin->getLatitude()]);
+        $destinationCoords = implode(',', [$destination->getLongitude(), $destination->getLatitude()]);
 
-        $response = file_get_contents('http://' . $this->osrmHost. "/route/v1/bicycle/{$originCoords};{$destinationCoords}?overview=full");
+        $response = $this->client->get('GET', "/route/v1/bicycle/{$originCoords};{$destinationCoords}?overview=full");
 
         if ($response) {
             return json_decode($response, true);
+        } else {
+            return null;
         }
     }
 
+    /**
+     * @param GeoCoordinates $origin
+     * @param GeoCoordinates $destination
+     * @return mixed
+     */
     public function getPolyline(GeoCoordinates $origin, GeoCoordinates $destination)
     {
         $response = $this->getRawResponse($origin, $destination);
@@ -74,6 +93,11 @@ class Osrm extends Base
         return $response['routes'][0]['geometry'];
     }
 
+    /**
+     * @param GeoCoordinates $origin
+     * @param GeoCoordinates $destination
+     * @return mixed
+     */
     public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination)
     {
         $response = $this->getRawResponse($origin, $destination);

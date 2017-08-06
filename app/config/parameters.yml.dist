@@ -53,3 +53,6 @@ parameters:
 
     applicolis_api_key: ~
     applicolis_api_base_url: ~
+
+    # For the guzzle client
+    osrm_url: 'http://osrm:5000'
