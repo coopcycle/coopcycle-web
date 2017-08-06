@@ -82,7 +82,7 @@ services:
   routing_service:
     class: AppBundle\Service\Routing\Osrm
     arguments:
-      - "%osrm_host%"
+      - '@csa_guzzle.client.osrm'
 
   payment_service:
     class: AppBundle\Service\PaymentService
