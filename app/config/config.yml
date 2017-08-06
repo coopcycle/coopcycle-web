@@ -148,3 +148,11 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
+
+csa_guzzle:
+    logger: true
+    clients:
+        osrm:
+            config:
+                base_uri: "http://%osrm_host%"
+                lazy: true

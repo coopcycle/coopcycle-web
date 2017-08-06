@@ -2,7 +2,9 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
+use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,11 +14,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Routing
 {
-    private $osrmHost;
+    /**
+     * @var RoutingInterface
+     */
+    private $routing;
 
-    public function __construct($osrmHost)
+    /**
+     * @param Client $client
+     */
+    public function __construct(RoutingInterface $routing)
     {
-        $this->osrmHost = $osrmHost;
+        $this->routing = $routing;
     }
 
     /**
@@ -26,19 +34,19 @@ class Routing
      * )
      * @Method("GET")
      */
-    public function routeAction(Request $request)
+    public function routeAction(Request $request): JsonResponse
     {
-        // /route/v1/{profile}/{coordinates}?alternatives={true|false}&steps={true|false}&geometries={polyline|polyline6|geojson}&overview={full|simplified|false}&annotations={true|false}
-        // http://router.project-osrm.org/route/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219?overview=false
-
         $origin = $request->query->get('origin');
         $destination = $request->query->get('destination');
 
         list($originLat, $originLng) = explode(',', $origin);
         list($destinationLat, $destinationLng) = explode(',', $destination);
 
-        $data = file_get_contents('http://' . $this->osrmHost. "/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
+        $data = $this->routing->getRawResponse(
+            new GeoCoordinates($originLat, $originLng),
+            new GeoCoordinates($destinationLat, $destinationLng)
+        );
 
-        return new JsonResponse($data, 200, [], true);
+        return new JsonResponse($data);
     }
 }
