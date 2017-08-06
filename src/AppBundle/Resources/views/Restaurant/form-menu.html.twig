@@ -16,32 +16,10 @@
 <hr>
 
 {{ form_start(form) }}
-
-  {% for category in categories %}
-    {% set slug = 'category-' ~ category|slugify %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h2 class="panel-title">{{ category }}</h2>
-      </div>
-      <div class="panel-body">
-        <button class="btn btn-xs btn-success pull-right" data-toggle="add-product" data-target="#{{ slug }}">
-        {% trans %}Add a product{% endtrans %}
-        </button>
-      </div>
-      <div id="{{ slug }}" class="list-group" data-product-category="{{ category }}">
-        {% for product in form.products %}
-          {% if product.vars.value.recipeCategory == category %}
-            {{ form_widget(product) }}
-          {% endif %}
-        {% endfor %}
-        {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
-        {% do form.products.setRendered %}
-      </div>
-    </div>
-  {% endfor %}
-
+  {{ form_row(form.addSection) }}
+  <hr>
+  {{ form_row(form.hasMenuSection, { attr: { class: 'panel-group', role: 'tablist' } }) }}
   {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
-
 {{ form_end(form) }}
 
 {% endblock %}
@@ -49,32 +27,76 @@
 {% block scripts %}
 <script type="text/javascript">
 
-var prototype = '{{ form_widget(form.products.vars.prototype) }}';
-
 function addForm($container) {
-  var category = $container.data('product-category');
-  var index = $('[data-product]').length;
+
+  var prototype = $container.data('prototype');
+  var index = $container.children().length;
 
   var form = prototype.replace(/__name__/g, index);
-
   var $form = $(form);
-  $form.find('select').val(category);
 
   $container.append($form);
 }
 
+function enableForm($form, enable) {
+  if (enable) {
+    $('#add-menu-section').removeAttr('disabled');
+    $form.find('[type="submit"]').removeAttr('disabled');
+  } else {
+    $('#add-menu-section').attr('disabled', true);
+    $form.find('[type="submit"]').attr('disabled', true);
+  }
+}
+
+var addSectionURL = "{{ path('admin_restaurant_menu_add_section', { id: restaurant.id }) }}"
+
 $(function() {
-  $(document).on('click', '.close', function(e) {
+
+  $(document).on('click', '.list-group-item .close', function(e) {
     e.preventDefault();
-    $(e.target).closest('[data-product]').remove();
+    $(e.target).closest('.list-group-item').remove();
   });
 
-  $('[data-toggle="add-product"]').on('click', function(e) {
+  $(document).on('click', '[data-toggle="add-menu-item"]', function(e) {
     e.preventDefault();
     var selector = $(e.target).data('target');
     var $target = $(selector);
     addForm($target);
   });
+
+  $(document).on('click', '[data-toggle="remove-menu-section"]', function(e) {
+    e.preventDefault();
+    var selector = $(e.target).data('target');
+    var $target = $(selector);
+    $target.remove();
+  });
+
+  $(document).on('show.bs.collapse', '[role="tabpanel"] .list-group-item .collapse', function () {
+    $(this).closest('.list-group-item').find('.show-description').remove();
+  });
+
+  $('#add-menu-section').on('click', function(e) {
+    e.preventDefault();
+    var $form = $(this).closest('form');
+
+    enableForm($form, false);
+
+    $.ajax({
+      url : addSectionURL,
+      type: $form.attr('method'),
+      data : $form.serialize()
+    })
+    .then(function(html) {
+      enableForm($form, true);
+      $('#menu_hasMenuSection').replaceWith(
+        $(html).find('#menu_hasMenuSection')
+      );
+    })
+    .catch(function(e) {
+      enableForm($form, true);
+    });
+  })
+
 });
 </script>
 {% endblock %}

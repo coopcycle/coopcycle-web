@@ -1,31 +1,98 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
-{% block _restaurant_menu_products_entry_widget %}
-{% spaceless %}
-<div class="list-group-item" data-product>
-  <div class="hidden">
-    {{ form_widget(form.recipeCategory) }}
+{% block _menu_addSection_row %}
+<div class="form-group row">
+  <div class="col-sm-10">
+    {{ form_widget(form) }}
   </div>
-  <div class="form-group row">
-    <div class="col-sm-8">
-      {{ form_label(form.name) }}
-      {{ form_widget(form.name) }}
-    </div>
-    <div class="col-sm-3">
-      {{ form_label(form.price) }}
-      {{ form_widget(form.price, { attr: { class: 'text-right' } }) }}
-    </div>
-    <div class="col-sm-1">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
+  <div class="col-sm-2">
+    <button type="button" class="btn btn-success pull-right" id="add-menu-section">
+      {% trans %}Add section{% endtrans %}
+    </button>
   </div>
-  <div class="form-group row">
-    <div class="col-sm-8">
-      {{ form_label(form.description) }}
-      {{ form_widget(form.description) }}
-    </div>
-  </div>
-  {{ form_rest(form) }}
 </div>
+{% endblock %}
+
+{% block _menu_hasMenuSection_entry_row %}
+{% spaceless %}
+
+  {% set headingSelector = form.vars.id ~ '_heading' %}
+  {% set collapseSelector = form.vars.id ~ '_collapse' %}
+
+  <div id="{{ form.vars.id }}" class="panel panel-default">
+
+    <div class="panel-heading" role="tab" id="{{ headingSelector }}">
+      <h4 class="panel-title">
+        <a role="button"
+          data-toggle="collapse" data-parent="#menu_hasMenuSection"
+          href="#{{ collapseSelector }}"
+          aria-expanded="true" aria-controls="{{ collapseSelector }}">
+          {# form.vars may be null when used for prototype #}
+          {{ form.vars.data ? form.vars.data.name : '' }}
+          {{ form.vars.data ? '(' ~ form.vars.data.items|length ~ ')' : '' }}
+        </a>
+        <button type="button" class="btn btn-danger btn-xs pull-right"
+          data-toggle="remove-menu-section" data-target="#{{ form.vars.id }}">Delete</button>
+        <button class="btn btn-xs btn-success pull-right"
+          style="margin-right: 15px;"
+          data-toggle="add-menu-item" data-target="#{{ form.hasMenuItem.vars.id }}"><i class="fa fa-plus"></i> Add a new item</button>
+      </h4>
+    </div>
+
+    <div id="{{ collapseSelector }}" class="panel-collapse collapse {% if form.vars.name < 1 %}in{% endif %}" role="tabpanel" aria-labelledby="{{ headingSelector }}">
+      {{ form_row(form.hasMenuItem, { attr: {class: 'list-group', style: 'margin-bottom: 0' } }) }}
+    </div>
+
+  </div>
+
+{% endspaceless %}
+{% endblock %}
+
+{% block _menu_hasMenuSection_entry_hasMenuItem_row %}
+  <div class="list-group">
+    {{- form_label(form) -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+  </div>
+{% endblock %}
+
+{% block _menu_hasMenuSection_entry_hasMenuItem_entry_row %}
+{% spaceless %}
+  {% set containerSelector = form.vars.id ~ '_container' %}
+  <div class="list-group-item">
+    <div class="form-group row">
+      <div class="col-sm-8">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, { attr: {class: 'input-sm' } }) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form_label(form.price) }}
+        {{ form_widget(form.price, { attr: { class: 'input-sm text-right' } }) }}
+      </div>
+      <div class="col-sm-1">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1"><span aria-hidden="true">&times;</span></button>
+      </div>
+    </div>
+    <div class="form-group show-description">
+      <div>
+        <a class="text-muted"
+          data-toggle="collapse" data-target="#{{ containerSelector }}"
+          aria-expanded="false" aria-controls="{{ containerSelector }}">
+          {# form.vars may be null when used for prototype #}
+          {% if form.vars.value and form.vars.value.description %}
+            <i class="fa fa-pencil"></i>  <small>{% trans %}Modify description{% endtrans %}</small>
+          {% else %}
+            <i class="fa fa-plus"></i>  <small>{% trans %}Add description{% endtrans %}</small>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+    <div class="form-group row collapse" id="{{ containerSelector }}">
+      <div class="col-sm-8">
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description, { attr: {class: 'input-sm' } }) }}
+      </div>
+    </div>
+  </div>
 {% endspaceless %}
 {% endblock %}

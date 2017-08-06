@@ -211,6 +211,21 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/restaurant/{id}/menu/add-section", name="admin_restaurant_menu_add_section")
+     * @Template("@App/Restaurant/form-menu.html.twig")
+     */
+    public function addMenuSectionAction($id, Request $request)
+    {
+        $request->attributes->set('_add_menu_section', true);
+
+        return $this->editMenuAction($id, $request, 'AppBundle::admin.html.twig', [
+            'success' => 'admin_restaurants',
+            'restaurants' => 'admin_restaurants',
+            'restaurant' => 'admin_restaurant',
+        ]);
+    }
+
+    /**
      * @Route("/admin/deliveries", name="admin_deliveries")
      * @Template()
      */

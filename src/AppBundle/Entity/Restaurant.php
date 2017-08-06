@@ -363,6 +363,20 @@ class Restaurant extends FoodEstablishment
 
     public function getHasMenu()
     {
+        return $this->getMenu();
+    }
+
+    public function getMenu()
+    {
+        if (!$this->hasMenu) {
+            $this->hasMenu = new Menu();
+        }
+
         return $this->hasMenu;
+    }
+
+    public function setMenu(Menu $menu)
+    {
+        $this->hasMenu = $menu;
     }
 }
