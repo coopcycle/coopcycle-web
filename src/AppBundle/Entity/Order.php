@@ -233,24 +233,21 @@ class Order
         return $this;
     }
 
-    public function addProduct(Product $product, $quantity)
+    public function addMenuItem(MenuItem $menuItem, $quantity)
     {
         $orderedItem = null;
         foreach ($this->orderedItem as $item) {
-            if ($item->getProduct() === $product) {
+            if ($item->getMenuItem() === $menuItem) {
                 $orderedItem = $item;
                 break;
             }
         }
         if (null === $orderedItem) {
-            $orderedItem = new OrderItem();
-            $orderedItem->setOrder($this);
-            $orderedItem->setProduct($product);
-
-            $this->orderedItem->add($orderedItem);
+            $orderedItem = new OrderItem($menuItem, $quantity);
+            $this->addOrderedItem($orderedItem);
+        } else {
+            $orderedItem->setQuantity($orderedItem->getQuantity() + $quantity);
         }
-
-        $orderedItem->setQuantity($orderedItem->getQuantity() + $quantity);
     }
 
     /**
@@ -291,7 +288,7 @@ class Order
     {
         $total = 0;
         foreach ($this->orderedItem as $orderedItem) {
-            $total += $orderedItem->getProduct()->getPrice() * $orderedItem->getQuantity();
+            $total += $orderedItem->getPrice() * $orderedItem->getQuantity();
         }
 
         return $total;

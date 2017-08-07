@@ -90,6 +90,7 @@ class Restaurant extends FoodEstablishment
 
     /**
      * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
+     * @Groups({"restaurant"})
      */
     private $address;
 

@@ -283,8 +283,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($user->getAddresses()->first());
 
-        foreach ($restaurant->getProducts() as $product) {
-            $order->addProduct($product, 1);
+        foreach ($restaurant->getMenu()->getAllItems() as $menuItem) {
+            $order->addMenuItem($menuItem, 1);
         }
 
         $orderManager->persist($order);

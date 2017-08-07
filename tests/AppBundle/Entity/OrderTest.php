@@ -4,38 +4,38 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
-use AppBundle\Entity\Product;
+use AppBundle\Entity\MenuItem;
 use PHPUnit\Framework\TestCase;
 
 class OrderTest extends TestCase
 {
-    public function testAddProduct()
+    public function testAddMenuItem()
     {
         $order = new Order();
 
-        $pizza = new Product();
+        $pizza = new MenuItem();
         $pizza
             ->setName('Pizza')
             ->setPrice(10);
 
-        $salad = new Product();
+        $salad = new MenuItem();
         $salad
             ->setName('Salad')
             ->setPrice(5);
 
-        $order->addProduct($pizza, 1);
-        $order->addProduct($pizza, 3);
+        $order->addMenuItem($pizza, 1);
+        $order->addMenuItem($pizza, 3);
 
-        $order->addProduct($salad, 2);
+        $order->addMenuItem($salad, 2);
 
         $this->assertCount(2, $order->getOrderedItem());
 
         $pizzaItem = $order->getOrderedItem()->filter(function (OrderItem $orderItem) use ($pizza) {
-            return $orderItem->getProduct() === $pizza;
+            return $orderItem->getMenuItem() === $pizza;
         })->first();
 
         $saladItem = $order->getOrderedItem()->filter(function (OrderItem $orderItem) use ($salad) {
-            return $orderItem->getProduct() === $salad;
+            return $orderItem->getMenuItem() === $salad;
         })->first();
 
 
@@ -47,18 +47,18 @@ class OrderTest extends TestCase
     {
         $order = new Order();
 
-        $pizza = new Product();
+        $pizza = new MenuItem();
         $pizza
             ->setName('Pizza')
             ->setPrice(10);
 
-        $salad = new Product();
+        $salad = new MenuItem();
         $salad
             ->setName('Salad')
             ->setPrice(5);
 
-        $order->addProduct($pizza, 4);
-        $order->addProduct($salad, 2);
+        $order->addMenuItem($pizza, 4);
+        $order->addMenuItem($salad, 2);
 
         $this->assertEquals(50, $order->getTotal());
     }
