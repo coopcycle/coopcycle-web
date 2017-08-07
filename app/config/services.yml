@@ -48,7 +48,7 @@ services:
 
   'AppBundle\Action\Routing':
     class: AppBundle\Action\Routing
-    arguments: [ '%osrm_host%' ]
+    arguments: [ '@csa_guzzle.client.osrm' ]
 
   'AppBundle\Form\RestaurantType':
     arguments: [ '@translator', '@delivery_service_factory' ]
@@ -82,7 +82,7 @@ services:
   routing_service:
     class: AppBundle\Service\Routing\Osrm
     arguments:
-      - "%osrm_host%"
+      - '@csa_guzzle.client.osrm'
 
   payment_service:
     class: AppBundle\Service\PaymentService

@@ -270,7 +270,7 @@ class AdminController extends Controller
                 $deliveryLat = $form->get('deliveryAddress')->get('latitude')->getData();
                 $deliveryLng = $form->get('deliveryAddress')->get('longitude')->getData();
 
-                $response = file_get_contents("http://{$osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
+                $response = $this->container->get('csa_guzzle.client.osrm')->request('GET', $this->getParameter('osrm_url')."/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
 
                 $data = json_decode($response, true);
 

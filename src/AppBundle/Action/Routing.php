@@ -4,6 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use GuzzleHttp\Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,11 +13,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Routing
 {
-    private $osrmHost;
+    /**
+     * @var Client
+     */
+    private $client;
 
-    public function __construct($osrmHost)
+    /**
+     * @param Client $client
+     */
+    public function __construct(Client $client)
     {
-        $this->osrmHost = $osrmHost;
+        $this->client = $client;
     }
 
     /**
@@ -26,7 +33,7 @@ class Routing
      * )
      * @Method("GET")
      */
-    public function routeAction(Request $request)
+    public function routeAction(Request $request): JsonResponse
     {
         // /route/v1/{profile}/{coordinates}?alternatives={true|false}&steps={true|false}&geometries={polyline|polyline6|geojson}&overview={full|simplified|false}&annotations={true|false}
         // http://router.project-osrm.org/route/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219?overview=false
@@ -37,7 +44,7 @@ class Routing
         list($originLat, $originLng) = explode(',', $origin);
         list($destinationLat, $destinationLng) = explode(',', $destination);
 
-        $data = file_get_contents('http://' . $this->osrmHost. "/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
+        $data = $this->client->request('GET', "/route/v1/bicycle/{$originLng},{$originLat};{$destinationLng},{$destinationLat}?overview=full");
 
         return new JsonResponse($data, 200, [], true);
     }
