@@ -7,6 +7,7 @@ use AppBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -33,7 +34,17 @@ class Pay
             throw new AccessDeniedException();
         }
 
-        $this->paymentService->createCharge($order, $request);
+        $data = [];
+        $content = $request->getContent();
+        if (!empty($content)){
+            $data = json_decode($content, true);
+        }
+
+        if (!isset($data['stripeToken'])) {
+            throw new BadRequestHttpException('Stripe token is missing');
+        }
+
+        $this->paymentService->createCharge($order, $data['stripeToken']);
 
         $order->setStatus(Order::STATUS_WAITING);
 

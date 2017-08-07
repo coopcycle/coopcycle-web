@@ -5,6 +5,8 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\Model\NameTrait;
+use AppBundle\Entity\Model\PriceTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -17,6 +19,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class OrderItem
 {
+    use NameTrait;
+    use PriceTrait;
+
     /**
      * @var int
      *
@@ -34,6 +39,14 @@ class OrderItem
     private $product;
 
     /**
+     * @var MenuItem
+     *
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="MenuItem")
+     */
+    private $menuItem;
+
+    /**
      * @var int
      *
      * @Groups({"order"})
@@ -48,6 +61,17 @@ class OrderItem
      * @ORM\JoinColumn(nullable=false)
      */
     private $order;
+
+    public function __construct(MenuItem $menuItem = null, $quantity = 1)
+    {
+        $this->menuItem = $menuItem;
+        $this->quantity = $quantity;
+
+        if ($menuItem) {
+            $this->name = $menuItem->getName();
+            $this->price = $menuItem->getPrice();
+        }
+    }
 
     /**
      * Sets id.
@@ -119,6 +143,18 @@ class OrderItem
     public function getProduct()
     {
         return $this->product;
+    }
+
+    public function getMenuItem()
+    {
+        return $this->menuItem;
+    }
+
+    public function setMenuItem(MenuItem $menuItem)
+    {
+        $this->menuItem = $menuItem;
+
+        return $this;
     }
 
     /**

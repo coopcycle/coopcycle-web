@@ -12,7 +12,7 @@ class Cart extends React.Component
     };
   }
   removeItem(item) {
-    let removeFromCartURL = this.props.removeFromCartURL.replace('__PRODUCT__', item.props.id);
+    let removeFromCartURL = this.props.removeFromCartURL.replace('__MENU_ITEM__', item.props.id);
     $.ajax({
       url: removeFromCartURL,
       type: 'DELETE'
@@ -20,9 +20,9 @@ class Cart extends React.Component
       this.setState({items: cart.items});
     });
   }
-  addProductById(id) {
+  addMenuItemById(id) {
     $.post(this.props.addToCartURL, {
-      product: id,
+      menuItem: id,
       date: this.state.date
     }).then((cart) => {
       this.setState({items: cart.items});

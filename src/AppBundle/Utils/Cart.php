@@ -3,7 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Product;
+use AppBundle\Entity\MenuItem;
 
 class Cart
 {
@@ -33,26 +33,26 @@ class Cart
         $this->items = array();
     }
 
-    public function addProduct(Product $product)
+    public function addItem(MenuItem $menuItem)
     {
         foreach ($this->items as $key => $item) {
-            if ($item['id'] === $product->getId()) {
+            if ($item['id'] === $menuItem->getId()) {
                 ++$this->items[$key]['quantity'];
                 return;
             }
         }
         $this->items[] = array(
-            'id' => $product->getId(),
-            'name' => $product->getName(),
-            'price' => $product->getPrice(),
+            'id' => $menuItem->getId(),
+            'name' => $menuItem->getName(),
+            'price' => $menuItem->getPrice(),
             'quantity' => 1,
         );
     }
 
-    public function removeProduct(Product $product)
+    public function removeItem(MenuItem $menuItem)
     {
         foreach ($this->items as $key => $item) {
-            if ($item['id'] === $product->getId()) {
+            if ($item['id'] === $menuItem->getId()) {
                 unset($this->items[$key]);
                 break;
             }

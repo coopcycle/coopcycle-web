@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"delivery"}},
- *     "normalization_context"={"groups"={"delivery", "place"}}
+ *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
  */

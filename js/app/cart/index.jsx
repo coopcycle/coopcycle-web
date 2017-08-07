@@ -25,7 +25,7 @@ if (cart) {
   $('.js-add-to-cart').on('click', function(e) {
     e.preventDefault();
     var $target = $(e.currentTarget);
-    cartComponent.addProductById($target.data('product-id'));
+    cartComponent.addMenuItemById($target.data('menu-item-id'));
   });
 }
 

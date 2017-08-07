@@ -43,6 +43,7 @@ Feature: Manage restaurants
           "@type":"http://schema.org/Restaurant",
           "products":@array@,
           "servesCuisine":@array@,
+          "address":@...@,
           "name":"Café Barjot",
           "hasMenu":@...@
         }
@@ -69,6 +70,16 @@ Feature: Manage restaurants
       "products":@array@,
       "servesCuisine":@array@,
       "name":"Nodaiwa",
+      "address":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":@double@,
+          "longitude":@double@
+        },
+        "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+        "name":null
+      },
       "hasMenu":{
         "@id":"@string@.startsWith('/api/menus')",
         "@type":"http://schema.org/Menu",

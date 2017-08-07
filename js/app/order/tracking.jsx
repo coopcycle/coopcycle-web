@@ -56,8 +56,8 @@ function startWebSocket() {
 map = MapHelper.init('map', center, zoom);
 
 var restaurant = {
-  lat: order.restaurant.geo.latitude,
-  lng: order.restaurant.geo.longitude,
+  lat: order.restaurant.address.geo.latitude,
+  lng: order.restaurant.address.geo.longitude,
 }
 var deliveryAddress = {
   lat: order.delivery.deliveryAddress.geo.latitude,

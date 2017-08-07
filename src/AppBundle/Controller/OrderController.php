@@ -36,8 +36,8 @@ class OrderController extends Controller
     {
         $cart = $this->getCart($request);
 
-        $productRepository = $this->getRepository('Product');
-        $restaurantRepository = $this->getRepository('Restaurant');
+        $menuItemRepository = $this->getDoctrine()->getRepository('AppBundle:MenuItem');
+        $restaurantRepository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
 
         $restaurant = $restaurantRepository->find($cart->getRestaurantId());
 
@@ -46,14 +46,10 @@ class OrderController extends Controller
         $order->setCustomer($this->getUser());
 
         foreach ($cart->getItems() as $item) {
-
-            $product = $productRepository->find($item['id']);
-
-            $orderItem = new OrderItem();
-            $orderItem->setProduct($product);
-            $orderItem->setQuantity($item['quantity']);
-
-            $order->addOrderedItem($orderItem);
+            $menuItem = $menuItemRepository->find($item['id']);
+            $order->addOrderedItem(
+                new OrderItem($menuItem, $item['quantity'])
+            );
         }
 
         $delivery = new Delivery($order);
@@ -128,6 +124,7 @@ class OrderController extends Controller
         }
 
         $order = $this->createOrderFromRequest($request);
+        $paymentService = $this->get('payment_service');
 
         $deliveryAddress = $request->getSession()->get('deliveryAddress');
         $deliveryAddress = $this->getDoctrine()
@@ -140,33 +137,12 @@ class OrderController extends Controller
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->persist($order);
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->flush();
 
-            Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
-
-            $token = $request->request->get('stripeToken');
-
             try {
 
-                $transferGroup = "Order#".$order->getId();
+                $token = $request->request->get('stripeToken');
+                $paymentService->createCharge($order, $token);
 
-                $charge = Stripe\Charge::create(array(
-                    "amount" => $order->getTotal() * 100, // Amount in cents
-                    "currency" => "eur",
-                    "source" => $token,
-                    "description" => "Order #".$order->getId(),
-                    "transfer_group" => $transferGroup,
-                ));
-
-                // Create a Transfer to a connected account (later):
-                $stripeParams = $order->getRestaurant()->getStripeParams();
-
-                $transfer = \Stripe\Transfer::create(array(
-                  "amount" => (($order->getTotal() * 100) * 0.75),
-                  "currency" => "eur",
-                  "destination" => $stripeParams->getUserId(),
-                  "transfer_group" => $transferGroup,
-                ));
-
-            } catch (Stripe\Error\Card $e) {
+            } catch (\Exception $e) {
                 return $this->redirectToRoute('order_error', array('id' => $order->getId()));
             }
 

@@ -130,9 +130,6 @@ class RestaurantController extends Controller
             'restaurant' => $restaurant,
             'dates' => $dates,
             'times' => $times,
-            'appetizers' => $restaurant->getProductsByCategory('Entrées'),
-            'main_courses' => $restaurant->getProductsByCategory('Plats'),
-            'desserts' => $restaurant->getProductsByCategory('Desserts'),
             'cart' => $this->getCart($request, $restaurant),
         );
     }
@@ -147,14 +144,14 @@ class RestaurantController extends Controller
 
         $cart = $this->getCart($request, $restaurant);
 
-        if ($request->request->has('product')) {
+        if ($request->request->has('menuItem')) {
 
             // TODO Check if product belongs to restaurant
-            $productId = $request->request->get('product');
-            $product = $this->getDoctrine()
-                ->getRepository('AppBundle:Product')->find($productId);
+            $menuItemId = $request->request->get('menuItem');
+            $menuItem = $this->getDoctrine()
+                ->getRepository('AppBundle:MenuItem')->find($menuItemId);
 
-            $cart->addProduct($product);
+            $cart->addItem($menuItem);
         }
 
         if ($request->request->has('date')) {
@@ -167,18 +164,18 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{id}/cart/{product}", methods={"DELETE"}, name="restaurant_remove_from_cart")
+     * @Route("/restaurant/{id}/cart/{menuItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
-    public function removeFromCartAction($id, $product, Request $request)
+    public function removeFromCartAction($id, $menuItemId, Request $request)
     {
-        $restaurantRepository = $this->getRepository('Restaurant');
-        $productRepository = $this->getRepository('Product');
-
-        $restaurant = $restaurantRepository->find($id);
-        $product = $productRepository->find($product);
+        $restaurant = $this->getDoctrine()
+            ->getRepository('AppBundle:Restaurant')->find($id);
+        $menuItem = $this->getDoctrine()
+            ->getRepository('AppBundle:MenuItem')->find($menuItemId);
 
         $cart = $this->getCart($request, $restaurant);
-        $cart->removeProduct($product);
+        $cart->removeItem($menuItem);
+
         $this->saveCart($request, $cart);
 
         return new JsonResponse($cart->toArray());

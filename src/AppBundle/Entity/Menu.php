@@ -72,6 +72,19 @@ class Menu extends CreativeWork
         return $this->hasMenuSection;
     }
 
+    public function getAllItems()
+    {
+        $items = new ArrayCollection();
+
+        foreach ($this->hasMenuSection as $section) {
+            foreach ($section->getItems() as $item) {
+                $items->add($item);
+            }
+        }
+
+        return $items;
+    }
+
     public function addSection(MenuSection $menuSection)
     {
         $this->hasMenuSection->add($menuSection);
