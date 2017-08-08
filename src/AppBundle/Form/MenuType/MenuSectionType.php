@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form\MenuType;
 
-use AppBundle\Entity\MenuSection;
+use AppBundle\Entity\Menu\Section;
 use AppBundle\Form\MenuItemType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +15,7 @@ class MenuSectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('hasMenuItem', CollectionType::class, [
+            ->add('items', CollectionType::class, [
                 'entry_type' => MenuItemType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -26,7 +26,7 @@ class MenuSectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => MenuSection::class,
+            'data_class' => Section::class,
         ));
     }
 }

@@ -204,7 +204,7 @@ class AdminController extends Controller
     public function restaurantMenuAction($id, Request $request)
     {
         return $this->editMenuAction($id, $request, 'AppBundle::admin.html.twig', [
-            'success' => 'admin_restaurants',
+            'success' => 'admin_restaurant_menu',
             'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
         ]);

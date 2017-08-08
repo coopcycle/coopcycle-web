@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
+use AppBundle\Entity\MenuSection;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\RestaurantType;
@@ -68,9 +69,11 @@ trait RestaurantTrait
         ];
     }
 
-    private function createMenuForm(Menu $menu)
+    private function createMenuForm(Menu $menu, MenuSection $sectionAdded = null)
     {
-        $form = $this->createForm(MenuType::class, $menu);
+        $form = $this->createForm(MenuType::class, $menu, [
+            'section_added' => $sectionAdded,
+        ]);
         $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
         return $form;
@@ -80,6 +83,7 @@ trait RestaurantTrait
     {
         $em = $this->getDoctrine()->getManagerForClass('AppBundle:Restaurant');
         $addMenuSection = $request->attributes->get('_add_menu_section', false);
+        $sectionAdded = null;
 
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
@@ -93,6 +97,16 @@ trait RestaurantTrait
             $originalSections->add($section);
         }
 
+        $originalItems = new \SplObjectStorage();
+        foreach ($menu->getSections() as $section) {
+            $items = new ArrayCollection();
+            foreach ($section->getItems() as $item) {
+                $items->add($item);
+            }
+
+            $originalItems[$section] = $items;
+        }
+
         $form = $this->createMenuForm($menu);
 
         $form->handleRequest($request);
@@ -102,17 +116,48 @@ trait RestaurantTrait
             $menu = $form->getData();
 
             if ($addMenuSection) {
-                $section = $form->get('addSection')->getData();
-                $menu->addSection($section);
+                $sectionAdded = $form->get('addSection')->getData();
+                $menu->addSection($sectionAdded);
 
-                $form = $this->createMenuForm($menu);
+                $form = $this->createMenuForm($menu, $sectionAdded);
             } else {
-                // Properly remove items from deleted sections
-                foreach ($originalSections as $section) {
-                    if (false === $menu->getSections()->contains($section)) {
-                        foreach ($section->getItems() as $item) {
-                            $section->getItems()->removeElement($item);
-                            $em->remove($item);
+
+                foreach ($originalSections as $originalSection) {
+
+                    // Remove deleted sections
+                    // Remove mapping between section & items
+                    if (false === $menu->getSections()->contains($originalSection)) {
+                        foreach ($originalSection->getItems() as $item) {
+                            // Don't remove the item to keep association with OrderItem
+                            $originalSection->getItems()->removeElement($item);
+                            $item->setSection(null);
+                        }
+
+                        $originalSection->setMenu(null);
+                        $em->remove($originalSection);
+
+                    } else {
+
+                        // Remove mapping between section & deleted item
+                        foreach ($menu->getSections() as $updatedSection) {
+                            if ($updatedSection === $originalSection) {
+                                foreach ($originalItems[$originalSection] as $originalItem) {
+                                    // var_dump('- ITEM : '. $originalItem->getId());
+                                    if (false === $updatedSection->getItems()->contains($originalItem)) {
+                                        $originalSection->getItems()->removeElement($originalItem);
+                                        $originalItem->setSection(null);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Make sure sections & items are mapped
+                foreach ($menu->getSections() as $section) {
+                    foreach ($section->getItems() as $item) {
+                        if (null === $item->getSection()) {
+                            $item->setSection($section);
                         }
                     }
                 }
@@ -122,8 +167,13 @@ trait RestaurantTrait
 
             $em->flush();
 
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('Your changes were saved.')
+            );
+
             if (!$addMenuSection) {
-                return $this->redirectToRoute($routes['success']);
+                return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
             }
         }
 
@@ -131,6 +181,7 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
             'layout' => $layout,
+            'section_added' => $sectionAdded,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
         ];
