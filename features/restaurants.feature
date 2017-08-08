@@ -41,7 +41,6 @@ Feature: Manage restaurants
         {
           "@id":"/api/restaurants/2",
           "@type":"http://schema.org/Restaurant",
-          "products":@array@,
           "servesCuisine":@array@,
           "address":@...@,
           "name":"Café Barjot",
@@ -67,7 +66,6 @@ Feature: Manage restaurants
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants/1",
       "@type":"http://schema.org/Restaurant",
-      "products":@array@,
       "servesCuisine":@array@,
       "name":"Nodaiwa",
       "address":{

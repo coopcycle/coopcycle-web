@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\NameTrait;
 use AppBundle\Entity\Model\PriceTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An order item is a line of an order. It includes the quantity and shipping details of a bought offer.
@@ -15,7 +16,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @see http://schema.org/OrderItem Documentation on Schema.org
  *
  * @ORM\Entity
- * @ApiResource(iri="http://schema.org/OrderItem")
+ * @ORM\EntityListeners({"AppBundle\Entity\Listener\OrderItemListener"})
+ * @ApiResource(iri="http://schema.org/OrderItem",
+ *   attributes={
+ *     "denormalization_context"={"groups"={"order", "order_item"}},
+ *     "normalization_context"={"groups"={"order"}}
+ *   }
+ * )
  */
 class OrderItem
 {
@@ -32,25 +39,21 @@ class OrderItem
     private $id;
 
     /**
-     * @var Product
-     * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="Product")
-     */
-    private $product;
-
-    /**
      * @var MenuItem
      *
-     * @Groups({"order"})
+     * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity="MenuItem")
+     * @ApiProperty(iri="https://schema.org/MenuItem")
+     * @Groups({"order"})
      */
     private $menuItem;
 
     /**
      * @var int
      *
-     * @Groups({"order"})
+     * @Assert\NotBlank()
      * @ORM\Column(type="integer")
+     * @Groups({"order"})
      */
     private $quantity;
 
@@ -62,30 +65,15 @@ class OrderItem
      */
     private $order;
 
-    public function __construct(MenuItem $menuItem = null, $quantity = 1)
-    {
-        $this->menuItem = $menuItem;
-        $this->quantity = $quantity;
-
-        if ($menuItem) {
-            $this->name = $menuItem->getName();
-            $this->price = $menuItem->getPrice();
-        }
-    }
-
-    /**
-     * Sets id.
-     *
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    // FIXME Can't use constructor or denormalization won't work
+    // public function __construct(MenuItem $menuItem = null)
+    // {
+    //     $this->menuItem = $menuItem;
+    //     if ($menuItem) {
+    //         $this->name = $menuItem->getName();
+    //         $this->price = $menuItem->getPrice();
+    //     }
+    // }
 
     /**
      * Gets id.
@@ -122,37 +110,28 @@ class OrderItem
     }
 
     /**
-     * Sets product.
+     * Sets menuItem.
      *
-     * @param Product $product
+     * @param MenuItem $menuItem
      *
      * @return $this
      */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * Gets product.
-     *
-     * @return Product
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
     public function getMenuItem()
     {
         return $this->menuItem;
     }
 
+    /**
+     * Gets menuItem.
+     *
+     * @return MenuItem
+     */
     public function setMenuItem(MenuItem $menuItem)
     {
         $this->menuItem = $menuItem;
+
+        $this->setName($menuItem->getName());
+        $this->setPrice($menuItem->getPrice());
 
         return $this;
     }

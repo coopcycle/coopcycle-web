@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Model;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait NameTrait
@@ -11,9 +12,9 @@ trait NameTrait
     /**
      * @var string The name of the item
      *
-     * @Assert\Type(type="string")
      * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
+     * @Groups({"order"})
      */
     protected $name;
 

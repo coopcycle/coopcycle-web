@@ -6,11 +6,6 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
 
-AppBundle\Entity\Product:
-  product_{1..3}:
-    name: <name()>
-    price: <numberBetween(5, 10)>.99
-
 AppBundle\Entity\MenuItem:
   menu_item_{1..9}:
     name: <name()>
@@ -51,16 +46,13 @@ AppBundle\Entity\Address:
 AppBundle\Entity\Restaurant:
   restaurant_1:
     name: 'Nodaiwa'
-    products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_1"
     hasMenu: "@menu_1"
   restaurant_2:
     name: 'Café Barjot'
-    products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_2"
     hasMenu: "@menu_2"
   restaurant_3:
     name: 'La Cantina Clandestina'
-    products: [ "@product_1", "@product_2", "@product_3" ]
     address: "@address_3"
     hasMenu: "@menu_3"

@@ -20,10 +20,10 @@ Feature: Orders
           "deliveryAddress": "/api/addresses/4"
         },
         "orderedItem": [{
-          "product":  "/api/products/1",
+          "menuItem": "/api/menu_items/1",
           "quantity": 1
         }, {
-          "product":  "/api/products/2",
+          "menuItem": "/api/menu_items/2",
           "quantity": 2
         }]
       }
@@ -43,7 +43,24 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa"
       },
-      "orderedItem":@array@,
+      "orderedItem":[
+        {
+          "@id":"@string@.startsWith('/api/order_items')",
+          "@type":"http://schema.org/OrderItem",
+          "menuItem":"/api/menu_items/1",
+          "quantity":1,
+          "name":@string@,
+          "price":@number@
+        },
+        {
+          "@id":"@string@.startsWith('/api/order_items')",
+          "@type":"http://schema.org/OrderItem",
+          "menuItem":"/api/menu_items/2",
+          "quantity":2,
+          "name":@string@,
+          "price":@number@
+        }
+      ],
       "delivery":{
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",

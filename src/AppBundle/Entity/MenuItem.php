@@ -18,9 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ApiResource(iri="http://schema.org/MenuItem",
- *   attributes={
- *     "normalization_context"={"groups"={"restaurant"}}
- *   },
  *   collectionOperations={},
  *   itemOperations={
  *     "get"={"method"="GET"}
@@ -49,7 +46,6 @@ class MenuItem extends Thing
      *            - Use values from 0123456789 (Unicode 'DIGIT ZERO' (U+0030) to 'DIGIT NINE' (U+0039)) rather than superficially similiar Unicode symbols.
      *
      * @ORM\Column(type="float", nullable=true)
-     * @Assert\Type(type="float")
      * @ApiProperty(iri="https://schema.org/price")
      */
     protected $price;
