@@ -57,14 +57,6 @@ class Restaurant extends FoodEstablishment
     protected $name;
 
     /**
-     * @var Recipe
-     * @Groups({"restaurant"})
-     * @ORM\ManyToMany(targetEntity="Product", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     */
-    private $products;
-
-    /**
      * @var string The cuisine of the restaurant.
      *
      * @ORM\ManyToMany(targetEntity="Cuisine", cascade={"persist"})
@@ -128,7 +120,6 @@ class Restaurant extends FoodEstablishment
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
         $this->servesCuisine = new ArrayCollection();
     }
 
@@ -164,57 +155,6 @@ class Restaurant extends FoodEstablishment
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Sets products.
-     *
-     * @param Product $products
-     *
-     * @return $this
-     */
-    public function setProducts(Product $products = null)
-    {
-        $this->products = $products;
-
-        return $this;
-    }
-
-    /**
-     * Gets products.
-     *
-     * @return Product
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    /**
-     * Gets products.
-     *
-     * @return Product
-     */
-    public function getProductsByCategory($recipeCategory)
-    {
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->eq("recipe_category", $recipeCategory));
-
-        return $this->products->matching($criteria);
-    }
-
-    public function addProduct(Product $product)
-    {
-        $this->products->add($product);
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product)
-    {
-        $this->products->removeElement($product);
-
-        return $this;
     }
 
     public function getWebsite()

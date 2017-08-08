@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Product;
 use AppBundle\Entity\Address;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;

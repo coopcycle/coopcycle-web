@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @see http://schema.org/Order Documentation on Schema.org
  *
  * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
+ * @ORM\EntityListeners({"AppBundle\Entity\Listener\OrderListener"})
  * @ORM\Table(name="order_")
  * @ApiResource(iri="http://schema.org/Order",
  *   collectionOperations={
@@ -243,7 +244,9 @@ class Order
             }
         }
         if (null === $orderedItem) {
-            $orderedItem = new OrderItem($menuItem, $quantity);
+            $orderedItem = new OrderItem();
+            $orderedItem->setMenuItem($menuItem);
+            $orderedItem->setQuantity($quantity);
             $this->addOrderedItem($orderedItem);
         } else {
             $orderedItem->setQuantity($orderedItem->getQuantity() + $quantity);

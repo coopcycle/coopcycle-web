@@ -63,9 +63,10 @@ TestUtils.prototype.cleanDb = function() {
   var pgConfig = this.pgConfig;
   var redis = this.redis;
 
-  return new Promise(function(resolve, reject) {
-    pg.connect(pgConfig, function(err, client, release) {
+  var pool = new pg.Pool(pgConfig)
 
+  return new Promise(function(resolve, reject) {
+    pool.connect(function(err, client, done) {
 
       if (err) return reject(err);
 
@@ -79,7 +80,7 @@ TestUtils.prototype.cleanDb = function() {
       var cleanPg = new Promise(function(resolve, reject) {
         pgCleaner.clean(client, function(err) {
           if (err) reject(err);
-          release();
+          pool.end();
           resolve();
         });
       });
@@ -176,61 +177,44 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
             return _.first(deliveryAddresses);
           })
           .then(function(deliveryAddress) {
-            restaurant.getProducts()
-              .then(function(products) {
-                var numberOfProducts = _.random(2, 5);
-                var cart = [];
-                if (products.length > 0) {
-                  while (cart.length < numberOfProducts) {
-                    cart.push(_.first(_.shuffle(products)));
-                  }
-                }
+            Order.create({
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .then(function(order) {
+              return order.setCustomer(customer);
+            })
+            .then(function(order) {
+              return order.setRestaurant(restaurant);
+            })
+            .then(function(order) {
 
-                return cart;
-              })
-              .then(function(products) {
-                Order.create({
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                })
-                .then(function(order) {
-                  return order.setCustomer(customer);
-                })
-                .then(function(order) {
-                  return order.setRestaurant(restaurant);
-                })
-                .then(function(order) {
-
-                  return Delivery.create({
-                    date: new Date(),
-                    distance: 1000,
-                    duration: 600
-                  }).then(function(delivery) {
-                    return restaurant.getAddress().then(function(restaurantAddress) {
-                      return delivery.setOriginAddress(restaurantAddress);
-                    });
-                  }).then(function(delivery) {
-                    return delivery.setDeliveryAddress(deliveryAddress);
-                  }).then(function(delivery) {
-                    return order.setDelivery(delivery).then(function() {
-                      return order;
-                    });
-                  });
-
-                })
-                .then(function(order) {
-                  redis.lpush('orders:waiting', order.id, function(err) {
-                    if (err) return reject(err);
-                    resolve(order);
-                  });
-                })
-                .catch(function(e) {
-                  reject(e);
+              return Delivery.create({
+                date: new Date(),
+                distance: 1000,
+                duration: 600
+              }).then(function(delivery) {
+                return restaurant.getAddress().then(function(restaurantAddress) {
+                  return delivery.setOriginAddress(restaurantAddress);
                 });
-              })
-              .catch(function(e) {
-                reject(e);
+              }).then(function(delivery) {
+                return delivery.setDeliveryAddress(deliveryAddress);
+              }).then(function(delivery) {
+                return order.setDelivery(delivery).then(function() {
+                  return order;
+                });
               });
+
+            })
+            .then(function(order) {
+              redis.lpush('orders:waiting', order.id, function(err) {
+                if (err) return reject(err);
+                resolve(order);
+              });
+            })
+            .catch(function(e) {
+              reject(e);
+            });
           })
           .catch(function(e) {
             reject(e);

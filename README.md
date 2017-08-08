@@ -170,7 +170,7 @@ sudo -u www-data node node_modules/.bin/mocha js/tests
 
 With Docker
 ```
-docker-compose run -e SYMFONY_ENV=test -e COOPCYCLE_BASE_URL=http://localhost:8080 -e NODE_ENV=test nodejs /run-tests.sh
+docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 ```
 
 Tips
