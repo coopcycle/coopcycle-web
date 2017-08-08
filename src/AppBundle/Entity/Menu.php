@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\CreativeWork;
+use AppBundle\Entity\Menu\Section;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -39,17 +40,14 @@ class Menu extends CreativeWork
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="MenuSection", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     * @ORM\OrderBy({"name"="ASC"})
-     * @ApiProperty(iri="https://schema.org/MenuSection")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\Section", mappedBy="menu", cascade={"all"})
      * @Groups({"restaurant"})
      */
-    private $hasMenuSection;
+    private $sections;
 
     public function __construct()
     {
-        $this->hasMenuSection = new ArrayCollection();
+        $this->sections = new ArrayCollection();
     }
 
     /**
@@ -62,31 +60,37 @@ class Menu extends CreativeWork
         return $this->id;
     }
 
-    public function getHasMenuSection()
-    {
-        return $this->getSections();
-    }
-
     public function getSections()
     {
-        return $this->hasMenuSection;
+        return $this->sections;
+    }
+
+    public function addSection($menuSection)
+    {
+        if ($menuSection instanceof MenuSection) {
+            $section = new Section();
+            $section->setMenu($this);
+            $section->setMenuSection($menuSection);
+
+            $this->sections->add($section);
+        }
+
+        if ($menuSection instanceof Section) {
+            $menuSection->setMenu($this);
+            $this->sections->add($menuSection);
+        }
     }
 
     public function getAllItems()
     {
         $items = new ArrayCollection();
 
-        foreach ($this->hasMenuSection as $section) {
+        foreach ($this->sections as $section) {
             foreach ($section->getItems() as $item) {
                 $items->add($item);
             }
         }
 
         return $items;
-    }
-
-    public function addSection(MenuSection $menuSection)
-    {
-        $this->hasMenuSection->add($menuSection);
     }
 }

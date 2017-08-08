@@ -17,15 +17,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @see http://schema.org/MenuSection Documentation on Schema.org
  *
  * @ORM\Entity
- * @ApiResource(iri="http://schema.org/MenuSection",
- *   attributes={
- *     "normalization_context"={"groups"={"restaurant"}}
- *   },
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={"method"="GET"}
- *   }
- * )
+ * @ORM\Table(name="menu_section_base")
+ * @ApiResource(
+ *  shortName="MenuSectionBase",
+ *  iri="http://schema.org/MenuSection",
+ *  attributes={
+ *    "normalization_context"={"groups"={"restaurant"}}
+ *  },
+ *  collectionOperations={},
+ *  itemOperations={
+ *    "get"={"method"="GET"}
+ *  })
  */
 class MenuSection extends CreativeWork
 {
@@ -39,20 +41,6 @@ class MenuSection extends CreativeWork
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="MenuItem", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     * @ORM\OrderBy({"name"="ASC"})
-     * @ApiProperty(iri="https://schema.org/MenuItem")
-     * @Groups({"restaurant"})
-     */
-    private $hasMenuItem;
-
-    public function __construct()
-    {
-        $this->hasMenuItem = new ArrayCollection();
-    }
-
-    /**
      * Gets id.
      *
      * @return int
@@ -60,20 +48,5 @@ class MenuSection extends CreativeWork
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getHasMenuItem()
-    {
-        return $this->getItems();
-    }
-
-    public function getItems()
-    {
-        return $this->hasMenuItem;
-    }
-
-    public function addItem(MenuItem $item)
-    {
-        $this->hasMenuItem->add($item);
     }
 }

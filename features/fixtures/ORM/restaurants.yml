@@ -6,29 +6,40 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
 
-AppBundle\Entity\MenuItem:
+AppBundle\Entity\MenuSection:
+  menu_section_appetizers:
+    name: Appetizers
+  menu_section_dishes:
+    name: Dishes
+  menu_section_desserts:
+    name: Desserts
+
+AppBundle\Entity\Menu\Item:
   menu_item_{1..9}:
     name: <name()>
     price: <numberBetween(5, 10)>.99
 
-AppBundle\Entity\MenuSection:
+AppBundle\Entity\Menu\Section:
   menu_section_1:
-    name: Plats
-    hasMenuItem: [ "@menu_item_1", "@menu_item_2" ]
+    menuSection: "@menu_section_appetizers"
+    items: [ "@menu_item_1", "@menu_item_2" ]
   menu_section_2:
-    name: Desserts
-    hasMenuItem: [ "@menu_item_3", "@menu_item_4" ]
+    menuSection: "@menu_section_dishes"
+    items: [ "@menu_item_3", "@menu_item_4" ]
   menu_section_3:
-    name: Entrées
-    hasMenuItem: [ "@menu_item_5", "@menu_item_6" ]
+    menuSection: "@menu_section_appetizers"
+    items: [ "@menu_item_5", "@menu_item_6" ]
+  menu_section_4:
+    menuSection: "@menu_section_dishes"
+    items: [ "@menu_item_7", "@menu_item_8" ]
 
 AppBundle\Entity\Menu:
   menu_1:
     name: Menu
-    hasMenuSection: [ "@menu_section_1", "@menu_section_2" ]
+    sections: [ "@menu_section_1", "@menu_section_2" ]
   menu_2:
     name: Menu
-    hasMenuSection: [ "@menu_section_2", "@menu_section_3" ]
+    sections: [ "@menu_section_3", "@menu_section_4" ]
   menu_3:
     name: Menu
 

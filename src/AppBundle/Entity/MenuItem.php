@@ -16,15 +16,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @see http://schema.org/MenuItem Documentation on Schema.org
  *
- * @ORM\Entity
- * @ApiResource(iri="http://schema.org/MenuItem",
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={"method"="GET"}
- *   }
- * )
+ * @ORM\MappedSuperclass
  */
-class MenuItem extends Thing
+abstract class MenuItem extends Thing
 {
     /**
      * @var int

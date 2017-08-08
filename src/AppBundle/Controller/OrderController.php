@@ -47,9 +47,7 @@ class OrderController extends Controller
 
         foreach ($cart->getItems() as $item) {
             $menuItem = $menuItemRepository->find($item['id']);
-            $order->addOrderedItem(
-                new OrderItem($menuItem, $item['quantity'])
-            );
+            $order->addMenuItem($menuItem, $item['quantity']);
         }
 
         $delivery = new Delivery($order);

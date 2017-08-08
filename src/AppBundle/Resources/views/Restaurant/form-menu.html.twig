@@ -15,10 +15,22 @@
 </h1>
 <hr>
 
+<div id="messages">
+{% for message in app.flashes('notice') %}
+  <div class="alert alert-success">
+    {{ message }}
+  </div>
+{% endfor %}
+</div>
+
 {{ form_start(form) }}
+  <div id="add-section-wrapper">
   {{ form_row(form.addSection) }}
-  <hr>
-  {{ form_row(form.hasMenuSection, { attr: { class: 'panel-group', role: 'tablist' } }) }}
+  </div>
+  {{ form_row(form.sections, { attr: {
+    class: 'panel-group',
+    role: 'tablist'
+  } }) }}
   {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
 {{ form_end(form) }}
 
@@ -26,6 +38,10 @@
 
 {% block scripts %}
 <script type="text/javascript">
+
+function collapseAll() {
+  $('#menu_sections .panel-collapse').collapse('hide');
+}
 
 function addForm($container) {
 
@@ -36,21 +52,38 @@ function addForm($container) {
   var $form = $(form);
 
   $container.append($form);
+
+  if (!$container.closest('.collapse').hasClass('in')) {
+    collapseAll();
+    $container.closest('.collapse').collapse('show');
+  }
 }
 
 function enableForm($form, enable) {
   if (enable) {
+    $('#menu_addSection').removeAttr('disabled');
     $('#add-menu-section').removeAttr('disabled');
     $form.find('[type="submit"]').removeAttr('disabled');
   } else {
+    $('#menu_addSection').attr('disabled', true);
     $('#add-menu-section').attr('disabled', true);
     $form.find('[type="submit"]').attr('disabled', true);
   }
 }
 
+function autoDismissMessages() {
+  setTimeout(function() {
+    $('#messages .alert').fadeOut();
+  }, 1000);
+}
+
 var addSectionURL = "{{ path('admin_restaurant_menu_add_section', { id: restaurant.id }) }}"
 
 $(function() {
+
+  var $form = $('form[name="menu"]');
+
+  autoDismissMessages();
 
   $(document).on('click', '.list-group-item .close', function(e) {
     e.preventDefault();
@@ -66,31 +99,75 @@ $(function() {
 
   $(document).on('click', '[data-toggle="remove-menu-section"]', function(e) {
     e.preventDefault();
+
     var selector = $(e.target).data('target');
     var $target = $(selector);
-    $target.remove();
+
+    var $copy = $target.detach();
+
+    var data = $form.serialize();
+    enableForm($form, false);
+
+    $.ajax({
+      url : $form.attr('action'),
+      type: $form.attr('method'),
+      data : data
+    })
+    .then(function(html) {
+      enableForm($form, true);
+      $copy.remove();
+      $('#messages').replaceWith(
+        $(html).find('#messages')
+      );
+      $('#menu_sections').replaceWith(
+        $(html).find('#menu_sections')
+      );
+      $('#add-section-wrapper').replaceWith(
+        $(html).find('#add-section-wrapper')
+      );
+      autoDismissMessages();
+    })
+    .catch(function(e) {
+      enableForm($form, true);
+    });
   });
 
   $(document).on('show.bs.collapse', '[role="tabpanel"] .list-group-item .collapse', function () {
     $(this).closest('.list-group-item').find('.show-description').remove();
   });
 
-  $('#add-menu-section').on('click', function(e) {
+  $(document).on('click', '#add-menu-section', function(e) {
     e.preventDefault();
-    var $form = $(this).closest('form');
 
+    var data = $form.serialize();
     enableForm($form, false);
 
     $.ajax({
       url : addSectionURL,
       type: $form.attr('method'),
-      data : $form.serialize()
+      data : data
     })
     .then(function(html) {
+
       enableForm($form, true);
-      $('#menu_hasMenuSection').replaceWith(
-        $(html).find('#menu_hasMenuSection')
+
+      $('#messages').replaceWith(
+        $(html).find('#messages')
       );
+      $('#menu_sections').replaceWith(
+        $(html).find('#menu_sections')
+      );
+      $('#add-section-wrapper').replaceWith(
+        $(html).find('#add-section-wrapper')
+      );
+      autoDismissMessages();
+
+      var sectionAdded = $('#menu_sections').data('section-added');
+      if (sectionAdded) {
+        var $el = $('[data-menu-section-id="' + sectionAdded + '"]');
+        addForm($('#' + $el.attr('id') + '_items'));
+        $('#menu_sections').removeAttr('data-section-added')
+      }
     })
     .catch(function(e) {
       enableForm($form, true);

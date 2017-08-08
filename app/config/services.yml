@@ -48,6 +48,18 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  app.menu_normalizer:
+    class: AppBundle\Serializer\MenuNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  app.menu_section:
+    class: AppBundle\Serializer\MenuSectionNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   app.menu_item_normalizer:
     class: AppBundle\Serializer\MenuItemNormalizer
     arguments:
