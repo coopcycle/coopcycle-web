@@ -178,8 +178,6 @@ function getOrdersByState(state) {
 
 function updateObjects() {
 
-  console.time("Loading data from Redis");
-
   getOrders()
     .then(function(orders) {
       return addRestaurantCoords(orders);
@@ -191,8 +189,6 @@ function updateObjects() {
 
       redis.zrange('couriers:geo', 0, -1, function(err, keys) {
         redis.geopos('couriers:geo', keys, function(err, values) {
-
-          console.timeEnd("Loading data from Redis");
 
           var hash = _.object(keys, values);
           var couriers = _.map(hash, function(value, key) {

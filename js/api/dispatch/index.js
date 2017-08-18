@@ -81,12 +81,12 @@ var tokenVerifier = new TokenVerifier(cert, Db);
 
 orderDispatcher.setHandler(function(order, next) {
 
-  winston.info('Trying to dispatch order #' + order.id);
+  // winston.info('Trying to dispatch order #' + order.id);
 
   Courier.nearestForOrder(order, 3000).then(function(courier) {
 
     if (!courier) {
-      winston.debug('No couriers nearby');
+      // winston.debug('No couriers nearby');
       return next();
     }
 
