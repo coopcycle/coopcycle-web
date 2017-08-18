@@ -81,8 +81,6 @@ function handler(req, res) {
 
 function updateObjects() {
 
-  console.time("Loading data from Redis");
-
   redis.hgetall('orders:delivering', (err, values) => {
     _.each(values, (courierKey, orderKey) => {
       if (!orders[orderKey]) {
@@ -104,7 +102,6 @@ function updateObjects() {
       });
     });
 
-    console.timeEnd("Loading data from Redis");
     setTimeout(updateObjects, 1000);
   });
 }
