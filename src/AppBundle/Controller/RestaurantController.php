@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Menu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -149,7 +150,7 @@ class RestaurantController extends Controller
             // TODO Check if product belongs to restaurant
             $menuItemId = $request->request->get('menuItem');
             $menuItem = $this->getDoctrine()
-                ->getRepository('AppBundle:MenuItem')->find($menuItemId);
+                ->getRepository(Menu\Item::class)->find($menuItemId);
 
             $cart->addItem($menuItem);
         }
@@ -171,7 +172,7 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
         $menuItem = $this->getDoctrine()
-            ->getRepository('AppBundle:MenuItem')->find($menuItemId);
+            ->getRepository(Menu\Item::class)->find($menuItemId);
 
         $cart = $this->getCart($request, $restaurant);
         $cart->removeItem($menuItem);
