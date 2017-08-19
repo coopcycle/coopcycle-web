@@ -9,6 +9,12 @@ AppBundle\Entity\Base\GeoCoordinates:
     __construct: [ "48.870978", "2.371301" ]
   geo_5:
     __construct: [ "48.875438", "2.373876" ]
+  geo_6:
+    __construct: [ "48.858997", "2.390141" ]
+  geo_7:
+    __construct: [ "48.862145", "2.337870" ]
+  geo_8:
+    __construct: [ "48.892063", "2.360100" ]
 
 AppBundle\Entity\Address:
   address_1:
@@ -26,3 +32,12 @@ AppBundle\Entity\Address:
   address_5:
     streetAddress: '4 Rue Burnouf, 75019 Paris'
     geo: "@geo_5"
+  address_6:
+    streetAddress: '5 Impasse du Pilier 75020 Paris'
+    geo: "@geo_6"
+  address_7:
+    streetAddress: 'Hôtel du Louvre 75001 Paris'
+    geo: "@geo_7"
+  address_8:
+    streetAddress: '42 Rue Marc Seguin 75018 Paris'
+    geo: "@geo_8"
