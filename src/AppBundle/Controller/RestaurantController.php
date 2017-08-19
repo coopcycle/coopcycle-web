@@ -181,4 +181,31 @@ class RestaurantController extends Controller
 
         return new JsonResponse($cart->toArray());
     }
+
+    /**
+     * @Route("/restaurants/map", name="restaurants_map")
+     * @Template()
+     */
+    public function mapAction(Request $request)
+    {
+        $restaurants = array_map(function (Restaurant $restaurant) {
+            return [
+                'name' => $restaurant->getName(),
+                'address' => [
+                    'geo' => [
+                        'latitude'  => $restaurant->getAddress()->getGeo()->getLatitude(),
+                        'longitude' => $restaurant->getAddress()->getGeo()->getLongitude(),
+                    ]
+                ],
+                'url' => $this->generateUrl('restaurant', [
+                    'id' => $restaurant->getId(),
+                    'slug' => $this->get('slugify')->slugify($restaurant->getName())
+                ])
+            ];
+        }, $this->getDoctrine()->getRepository(Restaurant::class)->findAll());
+
+        return [
+            'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
+        ];
+    }
 }
