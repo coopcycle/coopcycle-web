@@ -28,8 +28,8 @@ class RestaurantProvider extends BaseProvider
     /* Restaurants */
 
     protected static $restaurantPrefixes = array(
-        'la casserole', 'l\'assiette', 'la table', 'la chaise', 'la cagette',
-        'l\'aubergine', 'l\'amande',
+        'la casserole', 'l\'assiette', 'la table', 'la chaise', 'la cagette', 'la cuillère',
+        'l\'aubergine', 'l\'amande', 'la patate', 'la boule',
     );
 
     protected static $restaurantSuffixes = array(
