@@ -14,12 +14,12 @@ AppBundle\Entity\MenuSection:
   menu_section_desserts:
     name: Desserts
 
-AppBundle\Entity\Menu\Item:
+AppBundle\Entity\Menu\MenuItem:
   menu_item_{1..9}:
     name: <name()>
     price: <numberBetween(5, 10)>.99
 
-AppBundle\Entity\Menu\Section:
+AppBundle\Entity\Menu\MenuSection:
   menu_section_1:
     menuSection: "@menu_section_appetizers"
     items: [ "@menu_item_1", "@menu_item_2" ]

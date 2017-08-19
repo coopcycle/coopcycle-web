@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form\MenuType;
 
-use AppBundle\Entity\Menu\Section;
+use AppBundle\Entity\Menu\MenuSection;
 use AppBundle\Form\MenuItemType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +26,7 @@ class MenuSectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Section::class,
+            'data_class' => MenuSection::class,
         ));
     }
 }

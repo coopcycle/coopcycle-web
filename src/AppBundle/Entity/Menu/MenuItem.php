@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Menu;
 
-use AppBundle\Entity\MenuItem;
+use AppBundle\Entity\MenuItem as BaseMenuItem;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -21,10 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *    "get"={"method"="GET"}
  *  })
  */
-class Item extends MenuItem
+class MenuItem extends BaseMenuItem
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Section", inversedBy="items")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuSection", inversedBy="items")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $section;
@@ -34,7 +34,7 @@ class Item extends MenuItem
         return $this->section;
     }
 
-    public function setSection(Section $section = null)
+    public function setSection(MenuSection $section = null)
     {
         $this->section = $section;
 

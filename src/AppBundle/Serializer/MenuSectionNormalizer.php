@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
-use AppBundle\Entity\Menu\Section;
+use AppBundle\Entity\Menu\MenuSection;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -32,7 +32,7 @@ class MenuSectionNormalizer implements NormalizerInterface, DenormalizerInterfac
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Section;
+        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof MenuSection;
     }
 
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -42,6 +42,6 @@ class MenuSectionNormalizer implements NormalizerInterface, DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof Section;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof MenuSection;
     }
 }

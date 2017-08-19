@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *    "get"={"method"="GET"}
  *  })
  */
-class Section
+class MenuSection
 {
     /**
      * @var int
@@ -53,7 +53,7 @@ class Section
     private $menuSection;
 
     /**
-     * @ORM\OneToMany(targetEntity="Item", mappedBy="section", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItem", mappedBy="section", cascade={"all"})
      * @ApiProperty(iri="https://schema.org/MenuItem")
      * @Groups({"restaurant"})
      */

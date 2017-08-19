@@ -4,7 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
-use AppBundle\Entity\Menu\Item as MenuItem;
+use AppBundle\Entity\Menu\MenuItem;
 use PHPUnit\Framework\TestCase;
 
 class OrderTest extends TestCase
