@@ -36,13 +36,19 @@
   </div>
 </section>
 
-<section>
+{# <section>
   <div class="container">
     <div id="map-wrapper">
       <div class="embed-responsive embed-responsive-16by9">
-        <iframe class="embed-responsive-item" src="/tracking?zoom=13"></iframe>
+        <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
       </div>
     </div>
+  </div>
+</section> #}
+
+<section id="map">
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
   </div>
 </section>
 
