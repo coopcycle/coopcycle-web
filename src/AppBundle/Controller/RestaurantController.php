@@ -150,7 +150,7 @@ class RestaurantController extends Controller
             // TODO Check if product belongs to restaurant
             $menuItemId = $request->request->get('menuItem');
             $menuItem = $this->getDoctrine()
-                ->getRepository(Menu\Item::class)->find($menuItemId);
+                ->getRepository(Menu\MenuItem::class)->find($menuItemId);
 
             $cart->addItem($menuItem);
         }
@@ -172,7 +172,7 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
         $menuItem = $this->getDoctrine()
-            ->getRepository(Menu\Item::class)->find($menuItemId);
+            ->getRepository(Menu\MenuItem::class)->find($menuItemId);
 
         $cart = $this->getCart($request, $restaurant);
         $cart->removeItem($menuItem);

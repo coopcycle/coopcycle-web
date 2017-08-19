@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
@@ -36,8 +37,8 @@ class OrderController extends Controller
     {
         $cart = $this->getCart($request);
 
-        $menuItemRepository = $this->getDoctrine()->getRepository('AppBundle:MenuItem');
-        $restaurantRepository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
+        $menuItemRepository = $this->getDoctrine()->getRepository(MenuItem::class);
+        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
 
         $restaurant = $restaurantRepository->find($cart->getRestaurantId());
 

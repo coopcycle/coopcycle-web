@@ -42,7 +42,7 @@ class OrderItem
      * @var MenuItem
      *
      * @Assert\NotBlank()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\Item")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem")
      * @ApiProperty(iri="https://schema.org/MenuItem")
      * @Groups({"order"})
      */

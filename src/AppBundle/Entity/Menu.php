@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\CreativeWork;
-use AppBundle\Entity\Menu\Section;
+use AppBundle\Entity\Menu;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -40,7 +40,7 @@ class Menu extends CreativeWork
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\Section", mappedBy="menu", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuSection", mappedBy="menu", cascade={"all"})
      * @Groups({"restaurant"})
      */
     private $sections;
@@ -68,14 +68,14 @@ class Menu extends CreativeWork
     public function addSection($menuSection)
     {
         if ($menuSection instanceof MenuSection) {
-            $section = new Section();
+            $section = new Menu\MenuSection();
             $section->setMenu($this);
             $section->setMenuSection($menuSection);
 
             $this->sections->add($section);
         }
 
-        if ($menuSection instanceof Section) {
+        if ($menuSection instanceof Menu\MenuSection) {
             $menuSection->setMenu($this);
             $this->sections->add($menuSection);
         }
