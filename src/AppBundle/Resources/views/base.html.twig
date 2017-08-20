@@ -10,15 +10,17 @@
   </head>
   <body>
     {% include "AppBundle::menu.html.twig" %}
-    {# <section id="banner">
+    {% block banner %}
+    <section id="banner">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 text-center">
-            <small>{{ 'demo.disclaimer'|trans }}</small>
+            <small>{{ 'demo.disclaimer'|trans|raw }}</small>
           </div>
         </div>
       </div>
-    </section> #}
+    </section>
+    {% endblock %}
     {% block body %}{% endblock %}
     <footer>
       <div class="container text-center">

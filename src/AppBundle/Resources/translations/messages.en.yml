@@ -11,8 +11,11 @@ order.status.PICKED: Picked
 order.status.DELIVERED: Delivered
 
 demo.disclaimer: >
-  Welcome! This website is a demo powered by bots mimicking couriers.
-  You can order meals and watch a simulation of delivery.
+  📢 Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform software
+  <br>
+  🤖 This website is reset on a regular basis. We use bots to simulate activity
+  <br>
+  ⚠️ You can order meals at imaginary restaurants and watch a simulation of delivery.
 
 search.help: >
   Search restaurants in Paris area : %links%

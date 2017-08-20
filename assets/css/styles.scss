@@ -17,11 +17,15 @@ footer {
 }
 
 #banner {
+    $banner-color: #d35400;
     padding: 10px 0;
-    background-color: #E74C3C;
+    background-color: $banner-color;
     color: #fff;
     margin-top: -20px;
     margin-bottom: 20px;
+    a {
+        color: lighten($banner-color, 33.3333%);
+    }
 }
 
 #search {
