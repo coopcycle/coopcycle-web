@@ -33,3 +33,4 @@ parameters:
     webpack.dev_server.base_url: http://localhost:8080
     applicolis_api_key: ~
     applicolis_api_base_url: ~
+    piwik_site_id: ~
