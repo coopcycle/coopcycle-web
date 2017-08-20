@@ -1,5 +1,17 @@
 ---
 
+  - name: install dependencies
+    become: yes
+    apt: pkg={{ item }} state=latest
+    with_items:
+      - python-dev
+      - python-pip
+
+  - name: install docker-py
+    pip:
+      name: docker-py
+      state: latest
+
   - name: install OSRM servers
     include: install.yml
     with_items: "{{ osrm_servers }}"

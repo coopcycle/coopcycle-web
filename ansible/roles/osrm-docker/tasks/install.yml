@@ -10,6 +10,7 @@
 - name: install docker-py
   pip:
     name: docker-py
+    state: latest
 
 - name: make sure directory exists
   file:
