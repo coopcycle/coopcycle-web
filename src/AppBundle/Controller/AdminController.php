@@ -136,7 +136,7 @@ class AdminController extends Controller
     {
         $users = $this->getDoctrine()
             ->getRepository('AppBundle:ApiUser')
-            ->findBy([], ['id' => 'DESC'], 10);
+            ->findBy([], ['id' => 'DESC']);
 
         return array(
             'users' => $users,
