@@ -257,7 +257,7 @@ Feature: Orders
         "status":"DELIVERED"
       },
       "total":@number@,
-      "status":"ACCEPTED"
+      "status":"DELIVERED"
     }
     """
 
