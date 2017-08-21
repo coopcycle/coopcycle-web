@@ -47,6 +47,10 @@ class Order
     const STATUS_READY      = 'READY';
     const STATUS_CANCELED   = 'CANCELED';
 
+    // Hotfix
+    const STATUS_PICKED     = 'PICKED';
+    const STATUS_DELIVERED  = 'DELIVERED';
+
     /**
      * @var int
      *

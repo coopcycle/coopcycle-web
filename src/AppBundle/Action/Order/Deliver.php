@@ -38,6 +38,7 @@ class Deliver
             throw new AccessDeniedException();
         }
 
+        $order->setStatus(Order::STATUS_DELIVERED);
         $order->getDelivery()->setStatus(Delivery::STATUS_DELIVERED);
 
         $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
