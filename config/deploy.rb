@@ -53,6 +53,7 @@ namespace :deploy do
     on roles :all do
       within deploy_to do
         execute :pm2, 'stop', fetch(:pm2_config)
+        execute :pm2, 'delete', fetch(:pm2_config)
         execute :pm2, 'restart', '--env', 'production', fetch(:pm2_config)
       end
     end
