@@ -20,7 +20,7 @@ abstract class PostalAddress
     /**
      * @var string The country. For example, USA. You can also provide the two-letter [ISO 3166-1 alpha-2 country code](http://en.wikipedia.org/wiki/ISO_3166-1).
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, options={"default": "FRANCE"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressCountry")
      */
@@ -55,6 +55,17 @@ abstract class PostalAddress
     private $name;
 
     /**
+     * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
+     *
+     * @Groups({"place"})
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="string")
+     * @ApiProperty(iri="https://schema.org/familyName")
+     * @Assert\NotBlank()
+     */
+    private $familyName;
+
+    /**
      * @var string The postal code. For example, 94043.
      *
      * @ORM\Column(nullable=true)
@@ -81,6 +92,26 @@ abstract class PostalAddress
      * @ApiProperty(iri="https://schema.org/streetAddress")
      */
     protected $streetAddress;
+
+    /**
+     * @var string Second field for street address, typically additional informations.
+     *
+     * @Groups({"place"})
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="string")
+     * @ApiProperty(iri="https://schema.org/streetAddress")
+     */
+    protected $streetAddress2;
+
+    /**
+     * @var string Phone Number, mandatory for delivery.
+     *
+     * @Groups({"place"})
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="string")
+     * @ApiProperty(iri="https://schema.org/streetAddress")
+     */
+    protected $phoneNumber;
 
     /**
      * Sets addressCountry.
@@ -179,6 +210,30 @@ abstract class PostalAddress
     }
 
     /**
+     * Sets familyName.
+     *
+     * @param string $familyName
+     *
+     * @return $this
+     */
+    public function setfamilyName($familyName)
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    /**
+     * Gets familyName.
+     *
+     * @return string
+     */
+    public function getfamilyName()
+    {
+        return $this->familyName;
+    }
+
+    /**
      * Sets postalCode.
      *
      * @param string $postalCode
@@ -248,5 +303,53 @@ abstract class PostalAddress
     public function getStreetAddress()
     {
         return $this->streetAddress;
+    }
+
+    /**
+     * Sets streetAddress2.
+     *
+     * @param string $streetAddress2
+     *
+     * @return $this
+     */
+    public function setStreetAddress2($streetAddress2)
+    {
+        $this->streetAddress2 = $streetAddress2;
+
+        return $this;
+    }
+
+    /**
+     * Gets streetAddress2.
+     *
+     * @return string
+     */
+    public function getStreetAddress2()
+    {
+        return $this->streetAddress2;
+    }
+
+    /**
+     * Sets phoneNumber.
+     *
+     * @param string $phoneNumber
+     *
+     * @return $this
+     */
+    public function setphoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * Gets phoneNumber.
+     *
+     * @return string
+     */
+    public function getphoneNumber()
+    {
+        return $this->phoneNumber;
     }
 }
