@@ -59,7 +59,6 @@ abstract class PostalAddress
     /**
      * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
      *
-     * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @Assert\NotBlank(groups={"delivery_address"})
@@ -100,7 +99,6 @@ abstract class PostalAddress
     /**
      * @var string Second field for street address, typically additional informations.
      *
-     * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/streetAddress")
@@ -110,7 +108,6 @@ abstract class PostalAddress
     /**
      * @var string Phone Number, mandatory for delivery.
      *
-     * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @Assert\NotBlank(groups={"delivery_address"})
