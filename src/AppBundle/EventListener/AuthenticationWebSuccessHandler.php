@@ -20,6 +20,6 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-        return new RedirectResponse($referer);
+        return new RedirectResponse($request->headers->get('referer'));
     }
 }
