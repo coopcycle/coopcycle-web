@@ -2,6 +2,7 @@
 
 namespace AppBundle\Enum;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use MyCLabs\Enum\Enum;
 
 /**
