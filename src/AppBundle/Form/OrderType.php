@@ -33,7 +33,6 @@ class OrderType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Continue to payment'));
 
         $formModifier = function (FormInterface $form, Order $order, $createDeliveryAddress) {
-
             if (null === $createDeliveryAddress) {
                 $createDeliveryAddress = true;
                 if (null !== $order->getDelivery() && null !== $order->getDelivery()->getDeliveryAddress()) {
@@ -80,7 +79,6 @@ class OrderType extends AbstractType
                 $formModifier($parent, $parent->getData(), $createDeliveryAddress);
             }
         );
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -90,4 +88,3 @@ class OrderType extends AbstractType
         ));
     }
 }
-

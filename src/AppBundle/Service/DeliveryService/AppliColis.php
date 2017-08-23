@@ -76,6 +76,5 @@ class AppliColis extends Base
         $this->logger->info('Received response from AppliColis : ' . (string) $body);
 
         // TODO Store delivery info in database
-
     }
 }

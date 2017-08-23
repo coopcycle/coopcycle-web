@@ -33,4 +33,3 @@ class DeliveryType extends AbstractType
         ));
     }
 }
-

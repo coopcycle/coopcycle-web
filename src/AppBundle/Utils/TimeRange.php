@@ -65,7 +65,6 @@ class TimeRange
     private function checkTime(\DateTime $date)
     {
         foreach ($this->timeRanges as $timeRange) {
-
             list($open, $close) = explode('-', $timeRange);
 
             list($startHour, $startMinute) = explode(':', $open);

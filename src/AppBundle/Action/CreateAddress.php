@@ -33,5 +33,4 @@ class CreateAddress
 
         return $data;
     }
-
 }

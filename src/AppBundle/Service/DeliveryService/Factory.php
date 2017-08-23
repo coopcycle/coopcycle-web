@@ -28,7 +28,6 @@ class Factory
         $key = $restaurant->getDeliveryService();
 
         if (!empty($key) && isset($this->services[$key])) {
-
             return $this->services[$key];
         }
 

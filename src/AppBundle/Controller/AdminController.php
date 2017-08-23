@@ -253,7 +253,6 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-
             $delivery = $form->getData();
 
             $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
@@ -263,7 +262,6 @@ class AdminController extends Controller
             }
 
             if ($form->isValid()) {
-
                 $originLat = $form->get('originAddress')->get('latitude')->getData();
                 $originLng = $form->get('originAddress')->get('longitude')->getData();
 

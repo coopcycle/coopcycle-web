@@ -67,7 +67,7 @@ class Cart
 
     public function getTotal()
     {
-        return array_reduce($this->items, function($carry , $item) {
+        return array_reduce($this->items, function ($carry, $item) {
             return $carry + ($item['price'] * $item['quantity']);
         }, 0);
     }

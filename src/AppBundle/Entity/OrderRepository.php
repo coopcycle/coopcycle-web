@@ -98,7 +98,7 @@ class OrderRepository extends EntityRepository
 
     public function findByRestaurants($restaurants)
     {
-        $restaurantIds = array_map(function($restaurant) {
+        $restaurantIds = array_map(function ($restaurant) {
             return $restaurant->getId();
         }, $restaurants->toArray());
 
