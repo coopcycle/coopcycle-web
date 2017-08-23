@@ -4,7 +4,7 @@ import OrderList from './OrderList.jsx';
 import 'whatwg-fetch';
 
 var _ = require('underscore');
-var TWEEN = require('tween.js');
+var TWEEN = require('@tweenjs/tween.js');
 var L = require('leaflet-providers');
 var Polyline = require('@mapbox/polyline');
 require('beautifymarker');
