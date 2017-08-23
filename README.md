@@ -34,7 +34,7 @@ Developement environment comes in two flavors: Vagrant & Docker.
 * Generate the SSH keys for JSON Web Token:
 ```
 $ mkdir -p var/jwt
-$ openssl genrsa -out var/jwt/private.pem -aes256 4096
+$ openssl genrsa -out var/jwt/private.pem -aes256 4096 # stored in `jwt_key_pass_phrase` setting, defaults to 'coursiers'
 $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 ```
 * Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
