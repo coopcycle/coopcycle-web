@@ -1,27 +1,31 @@
 <?php
 
-namespace Test\AppBundle\Form;
+namespace AppBundle\Form;
 
 use AppBundle\Form\AddressType;
 use AppBundle\Entity\Address;
-use Symfony\Component\Form\Test\TypeTestCase;
+use Tests\AppBundle\ContainerAwareUnitTestCase;
 
 
-class AddressTypeTest extends TypeTestCase {
+class AddressTypeTest extends ContainerAwareUnitTestCase {
 
     public function testInValidData () {
         $formData = array(
-            'firstName'=> 'blabla'
+            'name' => 'test',
+            'streetAddress' => 'xxx',
+            'postalCode' => '44300',
+            'addressLocality' => 'Nantes',
+            'phoneNumber' => '45652'
         );
 
         $object = new Address($formData);
 
-        $form = $this->factory->create(AddressType::class);
-        $form->submit($formData);
+        $validator = $this->get('validator');
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($object, $form->getData());
-        $this->assertFalse($form->isValid());
+        $errors = $validator->validate($object);
+
+        $this->assertEquals($errors[0]->getMessage(), "This value should not be blank.");
+
     }
 }
 
