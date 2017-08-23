@@ -57,16 +57,27 @@ class InitDemoCommand extends ContainerAwareCommand
             $this->createUser($username, $params);
         }
 
+        $output->writeln('Creating couriers...');
+        for ($i = 1; $i <= 10; $i++) {
+            $this->createCourier("bot-{$i}");
+        }
+
         $output->writeln('Creating restaurants...');
         $this->createRestaurants($output);
     }
 
     private function createUser($username, $params)
     {
-        $this->userManipulator->create($username, $params['password'], "{$username}@coopcycle.org", true, false);
+        $this->userManipulator->create($username, $params['password'], "{$username}@demo.coopcycle.org", true, false);
         foreach ($params['roles'] as $role) {
             $this->userManipulator->addRole($username, $role);
         }
+    }
+
+    private function createCourier($username)
+    {
+        $this->userManipulator->create($username, $username, "{$username}@demo.coopcycle.org", true, false);
+        $this->userManipulator->addRole($username, 'ROLE_COURIER');
     }
 
     private function createMenuSection($name)
