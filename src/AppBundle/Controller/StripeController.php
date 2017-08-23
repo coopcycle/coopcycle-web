@@ -19,7 +19,7 @@ class StripeController extends Controller
      */
     public function connectAction(Request $request)
     {
-       // curl https://connect.stripe.com/oauth/token \
+        // curl https://connect.stripe.com/oauth/token \
        // -d client_secret=XXX \
        // -d code=AUTHORIZATION_CODE \
        // -d grant_type=authorization_code
@@ -63,5 +63,4 @@ class StripeController extends Controller
 
         return $this->redirectToRoute('profile_payment');
     }
-
 }

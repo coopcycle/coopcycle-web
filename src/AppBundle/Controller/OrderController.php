@@ -83,13 +83,11 @@ class OrderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $order = $form->getData();
             $deliveryAddress = $form->get('deliveryAddress')->getData();
 
             $createDeliveryAddress = $form->get('createDeliveryAddress')->getData();
             if ($createDeliveryAddress) {
-
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
 
@@ -132,15 +130,12 @@ class OrderController extends Controller
         $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
-
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->persist($order);
             $this->getDoctrine()->getManagerForClass('AppBundle:Order')->flush();
 
             try {
-
                 $token = $request->request->get('stripeToken');
                 $paymentService->createCharge($order, $token);
-
             } catch (\Exception $e) {
                 return $this->redirectToRoute('order_error', array('id' => $order->getId()));
             }

@@ -70,7 +70,6 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
 
         $count = 0;
         foreach ($restaurants as $item) {
-
             if (!isset($item['subCategory'])) {
                 continue;
             }
@@ -82,7 +81,6 @@ class ImportRestaurantsCommand extends ContainerAwareCommand
             $details = json_decode(file_get_contents($item['details']), true);
 
             if (!$restaurant = $this->restaurantRepository->findOneByName($item['name'])) {
-
                 $output->writeln(sprintf('Adding restaurant "%s"', $item['name']));
 
                 $streetAddress = !empty($item['address']) ? $item['address'] : null;

@@ -115,7 +115,6 @@ class ProfileController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $address = $form->getData();
 
             $this->getUser()->addAddress($address);

@@ -10,6 +10,7 @@
 namespace AppBundle\Utils\SchemaGenerator\AnnotationGenerator;
 
 use ApiPlatform\SchemaGenerator\AnnotationGenerator\DoctrineOrmAnnotationGenerator as BaseDoctrineOrmAnnotationGenerator;
+
 // use ApiPlatform\SchemaGenerator\CardinalitiesExtractor;
 // use ApiPlatform\SchemaGenerator\TypesGenerator;
 

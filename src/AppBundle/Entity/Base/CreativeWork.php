@@ -16,5 +16,4 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 abstract class CreativeWork extends Thing
 {
-
 }
