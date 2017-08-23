@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Form\AddressType;
+use Symfony\Component\Form\Forms;
 use AppBundle\Entity\Address;
 use Tests\AppBundle\ContainerAwareUnitTestCase;
 
@@ -18,12 +19,18 @@ class AddressTypeTest extends ContainerAwareUnitTestCase {
             'phoneNumber' => '45652'
         );
 
-        $object = new Address($formData);
+        $factory = Forms::createFormFactoryBuilder()->getFormFactory();
+
+        $form = $factory->create(AddressType::class);
+        $form->submit($formData);
+
+        $object = $form->getData();
 
         $validator = $this->get('validator');
 
-        $errors = $validator->validate($object);
+        $errors = $validator->validate($object, null, array('delivery_address'));
 
+        $this->assertEquals($errors[0]->getPropertyPath(), "familyName");
         $this->assertEquals($errors[0]->getMessage(), "This value should not be blank.");
 
     }

@@ -79,6 +79,7 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Address::class,
+            'validation_groups' => array('delivery_address')
         ));
     }
 }

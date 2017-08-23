@@ -31,6 +31,7 @@ abstract class PostalAddress
      *
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
     protected $addressLocality;
@@ -50,6 +51,7 @@ abstract class PostalAddress
      * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/name")
      */
     private $name;
@@ -60,8 +62,8 @@ abstract class PostalAddress
      * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/familyName")
-     * @Assert\NotBlank()
      */
     private $familyName;
 
@@ -70,6 +72,7 @@ abstract class PostalAddress
      *
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/postalCode")
      */
     protected $postalCode;
@@ -89,6 +92,7 @@ abstract class PostalAddress
      * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/streetAddress")
      */
     protected $streetAddress;
@@ -109,6 +113,7 @@ abstract class PostalAddress
      * @Groups({"place"})
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
+     * @Assert\NotBlank(groups={"delivery_address"})
      * @ApiProperty(iri="https://schema.org/streetAddress")
      */
     protected $phoneNumber;
