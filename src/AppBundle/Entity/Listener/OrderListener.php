@@ -73,7 +73,6 @@ class OrderListener
      */
     public function postPersist(Order $order, LifecycleEventArgs $args)
     {
-
     }
 
     /**

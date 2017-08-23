@@ -64,7 +64,6 @@ class RestaurantController extends Controller
         $page = $request->query->getInt('page', 1);
 
         if ($request->query->has('geohash')) {
-
             $geotools = new Geotools();
             $geohash = $request->query->get('geohash');
 
@@ -78,7 +77,6 @@ class RestaurantController extends Controller
 
             $offset = ($page - 1) * self::ITEMS_PER_PAGE;
             $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
-
         } else {
             $pages = 1;
             $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
@@ -117,7 +115,8 @@ class RestaurantController extends Controller
         if ($now->format('Y-m-d') === $nextOpeningDate->format('Y-m-d')) {
             $dates[$translator->trans('Today')] = new \DateTime('today');
         }
-        $dates[$translator->trans('Tomorrow')] = new \DateTime('tomorrow');;
+        $dates[$translator->trans('Tomorrow')] = new \DateTime('tomorrow');
+        ;
 
         $times = [];
         $date = clone $nextOpeningDate;

@@ -22,7 +22,6 @@ class PaymentService
         $this->logger->info('Stripe token: ' . $stripeToken);
 
         try {
-
             $transferGroup = "Order#".$order->getId();
 
             $charge = Stripe\Charge::create(array(
@@ -38,7 +37,6 @@ class PaymentService
 
             // FIXME This should be mandatory
             if ($stripeParams && $stripeParams->getUserId()) {
-
                 $transfer = \Stripe\Transfer::create(array(
                   "amount" => (($order->getTotal() * 100) * 0.75),
                   "currency" => "eur",
@@ -46,7 +44,6 @@ class PaymentService
                   "transfer_group" => $transferGroup,
                 ));
             }
-
         } catch (Stripe\Error\Card $e) {
             throw new \Exception($e);
         }

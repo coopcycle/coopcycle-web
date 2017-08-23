@@ -211,7 +211,7 @@ class Order
      */
     public function setOrderedItem($orderedItem)
     {
-        $orderedItem = array_map(function($orderedItem) {
+        $orderedItem = array_map(function ($orderedItem) {
             return $orderedItem->setOrder($this);
         }, $orderedItem);
 
