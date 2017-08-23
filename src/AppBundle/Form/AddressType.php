@@ -49,7 +49,6 @@ class AddressType extends AbstractType
 
             $streetAddress = $form->get('streetAddress')->getData();
             if (!empty($streetAddress)) {
-
                 $latitude = $form->get('latitude')->getData();
                 $longitude = $form->get('longitude')->getData();
 
@@ -76,7 +75,6 @@ class AddressType extends AbstractType
                     $form->get('latitude')->setData($geo->getLatitude());
                     $form->get('longitude')->setData($geo->getLongitude());
                 }
-
             }
         });
     }
@@ -88,4 +86,3 @@ class AddressType extends AbstractType
         ));
     }
 }
-

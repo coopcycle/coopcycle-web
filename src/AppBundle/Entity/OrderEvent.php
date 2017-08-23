@@ -48,7 +48,8 @@ class OrderEvent
      */
     private $createdAt;
 
-    public function __construct(Order $order, $eventName, ApiUser $courier = null) {
+    public function __construct(Order $order, $eventName, ApiUser $courier = null)
+    {
         $this->order = $order;
         $this->eventName = $eventName;
         $this->courier = $courier;

@@ -38,7 +38,6 @@ class ImportRestopolitanCommand extends ContainerAwareCommand
 
         $files = glob($dirname . '/restaurants_*.json');
         foreach ($files as $filename) {
-
             $data = json_decode(file_get_contents($filename), true);
 
             $restaurants = $data['restaurants'];
@@ -52,7 +51,6 @@ class ImportRestopolitanCommand extends ContainerAwareCommand
     {
         $count = 0;
         foreach ($restaurants as $item) {
-
             if (empty($item['latlng'])) {
                 $output->writeln(sprintf('<comment>No latlng for %s</comment>', $item['canonical_url']));
                 continue;
@@ -66,7 +64,6 @@ class ImportRestopolitanCommand extends ContainerAwareCommand
             $products = [];
             foreach ($item['menu'] as $menuItem) {
                 foreach ($menuItem['dishes'] as $dish) {
-
                     if (empty($dish['price'])) {
                         continue;
                     }

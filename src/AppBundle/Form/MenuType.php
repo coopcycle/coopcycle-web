@@ -33,7 +33,6 @@ class MenuType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-
             $menu = $event->getData();
             $form = $event->getForm();
 

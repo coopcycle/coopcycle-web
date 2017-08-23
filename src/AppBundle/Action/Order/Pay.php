@@ -36,7 +36,7 @@ class Pay
 
         $data = [];
         $content = $request->getContent();
-        if (!empty($content)){
+        if (!empty($content)) {
             $data = json_decode($content, true);
         }
 

@@ -46,7 +46,6 @@ trait RestaurantTrait
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $restaurant = $form->getData();
 
             if ($id === null) {
@@ -112,7 +111,6 @@ trait RestaurantTrait
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $menu = $form->getData();
 
             if ($addMenuSection) {
@@ -121,7 +119,6 @@ trait RestaurantTrait
 
                 $form = $this->createMenuForm($menu, $sectionAdded);
             } else {
-
                 foreach ($originalSections as $originalSection) {
 
                     // Remove deleted sections
@@ -135,7 +132,6 @@ trait RestaurantTrait
 
                         $originalSection->setMenu(null);
                         $em->remove($originalSection);
-
                     } else {
 
                         // Remove mapping between section & deleted item

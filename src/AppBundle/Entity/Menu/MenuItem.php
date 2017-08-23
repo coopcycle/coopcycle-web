@@ -41,5 +41,3 @@ class MenuItem extends BaseMenuItem
         return $this;
     }
 }
-
-
