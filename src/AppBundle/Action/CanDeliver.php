@@ -16,9 +16,6 @@ class CanDeliver
 {
     use ActionTrait;
 
-    const MAX_DISTANCE = 3000;
-    const TOLERANCE_PERCENT = 10;
-
     /**
      * @Route(
      *     name="restaurant_can_deliver",
@@ -37,9 +34,7 @@ class CanDeliver
 
         $distance = $this->routing->getDistance($origin, $destination);
 
-        $max = self::MAX_DISTANCE * (1 + (self::TOLERANCE_PERCENT / 100));
-
-        if ($distance >= $max) {
+        if ($distance > $restaurant->getMaxDistance()) {
             return new JsonResponse('no', 400);
         }
 

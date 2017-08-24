@@ -2,12 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Validator\Constraints as CoopCycleAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -106,6 +108,8 @@ class Order
     private $status;
 
     /**
+     * @Assert\NotNull
+     * @Assert\Valid
      * @Groups({"order"})
      * @ORM\OneToOne(targetEntity="Delivery", mappedBy="order", cascade={"all"})
      */
@@ -361,6 +365,7 @@ class Order
     public function setDelivery(Delivery $delivery)
     {
         $this->delivery = $delivery;
+        $delivery->setOrder($this);
 
         return $this;
     }

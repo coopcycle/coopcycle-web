@@ -43,22 +43,17 @@ class OrderListener
      */
     public function prePersist(Order $order, LifecycleEventArgs $args)
     {
+        $delivery = $order->getDelivery();
+
         // Make sure customer is set
         if (null === $order->getCustomer()) {
             $order->setCustomer($this->getUser());
         }
 
-        $delivery = $order->getDelivery();
-
         // Make sure models are associated
         $delivery->setOrder($order);
 
-        // FIXME Date should be mandatory
-        if (null === $delivery->getDate()) {
-            // FIXME Make sure the restaurant is opened
-            $delivery->setDate(new \DateTime('+30 minutes'));
-        }
-
+        // Make sure originAddress is set
         if (null === $delivery->getOriginAddress()) {
             $delivery->setOriginAddress($order->getRestaurant()->getAddress());
         }

@@ -118,6 +118,8 @@ class Restaurant extends FoodEstablishment
      */
     private $hasMenu;
 
+    private $maxDistance = 3000;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -319,5 +321,17 @@ class Restaurant extends FoodEstablishment
     public function setMenu(Menu $menu)
     {
         $this->hasMenu = $menu;
+    }
+
+    public function getMaxDistance()
+    {
+        return $this->maxDistance;
+    }
+
+    public function setMaxDistance($maxDistance)
+    {
+        $this->maxDistance = $maxDistance;
+
+        return $this;
     }
 }

@@ -7,7 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -82,11 +84,13 @@ class Delivery extends Intangible
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"order"})
      */
     private $distance;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(groups={"order"})
      */
     private $duration;
 
@@ -197,5 +201,21 @@ class Delivery extends Intangible
         $this->status = $status;
 
         return $this;
+    }
+
+    /**
+     * @Assert\Callback(groups={"order"})
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        $order = $this->getOrder();
+        $maxDistance = $order->getRestaurant()->getMaxDistance();
+
+        $constraint = new Assert\LessThan(['value' => $maxDistance]);
+        $context
+            ->getValidator()
+            ->inContext($context)
+            ->atPath('distance')
+            ->validate($this->distance, $constraint, [Constraint::DEFAULT_GROUP]);
     }
 }

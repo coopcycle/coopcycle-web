@@ -102,3 +102,21 @@ Feature: Manage restaurants
       }
     }
     """
+
+  @debug
+  Scenario: Restaurant is deliverable
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/can-deliver/48.855799,2.359207"
+    Then the response status code should be 200
+    And the response should be in JSON
+
+  @debug
+  Scenario: Restaurant is not deliverable
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/can-deliver/48.882305,2.365448"
+    Then the response status code should be 400
+    And the response should be in JSON
