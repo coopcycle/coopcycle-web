@@ -17,6 +17,7 @@ Feature: Orders
       {
         "restaurant": "/api/restaurants/1",
         "delivery": {
+          "date": "+30 minutes",
           "deliveryAddress": "/api/addresses/4"
         },
         "orderedItem": [{
@@ -334,3 +335,50 @@ Feature: Orders
       """
     Then the response status code should be 403
     And the response should be in JSON
+
+  Scenario: Delivery exceeds max distance
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | Louis Blanc         |
+      | geo           | 48.882305, 2.365448 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/orders" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "delivery": {
+          "date": "+30 minutes",
+          "deliveryAddress": "/api/addresses/4"
+        },
+        "orderedItem": [{
+          "menuItem": "/api/menu_items/1",
+          "quantity": 1
+        }, {
+          "menuItem": "/api/menu_items/2",
+          "quantity": 2
+        }]
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ConstraintViolationList",
+      "@type":"ConstraintViolationList",
+      "hydra:title":@string@,
+      "hydra:description":@string@,
+      "violations":[
+        {
+          "propertyPath":"delivery.distance",
+          "message":"This value should be less than 3000."
+        }
+      ]
+    }
+    """

@@ -2,13 +2,34 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Menu\MenuItem;
+use AppBundle\Entity\Restaurant;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
 
 class OrderTest extends TestCase
 {
+    private $validator;
+
+    public function setUp()
+    {
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
+    }
+
+    private function violationsToArray(ConstraintViolationList $errors)
+    {
+        return array_map(function (ConstraintViolation $violation) {
+            return $violation->getPropertyPath();
+        }, $errors->getIterator()->getArrayCopy());
+    }
+
     public function testAddMenuItem()
     {
         $order = new Order();
@@ -61,5 +82,36 @@ class OrderTest extends TestCase
         $order->addMenuItem($salad, 2);
 
         $this->assertEquals(50, $order->getTotal());
+    }
+
+    public function testValidation()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setMaxDistance(3000);
+
+        $delivery = new Delivery();
+
+        $order = new Order();
+        $order->setDelivery($delivery);
+        $order->setRestaurant($restaurant);
+
+        $delivery->setDate(new \DateTime());
+
+        // With "Default" group,
+        // delivery.distance & delivery.duration are optional
+        $errors = $this->validator->validate($order);
+        $this->assertEquals(0, count($errors));
+
+        // With "Order" group,
+        // delivery.distance & delivery.duration are mandatory
+        $errors = $this->validator->validate($order, null, ['order']);
+        $this->assertContains('delivery.distance', $this->violationsToArray($errors));
+
+        // Order is valid
+        $delivery->setDuration(30);
+        $delivery->setDistance(1500);
+
+        $errors = $this->validator->validate($order, null, ['order']);
+        $this->assertEquals(0, count($errors));
     }
 }
