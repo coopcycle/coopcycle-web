@@ -9,6 +9,7 @@ matrix:
 services:
   - postgresql
   - docker
+  - redis-server
 
 addons:
   postgresql: '9.4'
@@ -30,8 +31,6 @@ install:
   - sudo service postgresql restart
   - npm install
   - npm install -g pm2
-  # Install Redis via Docker to have Redis > 3.2
-  - docker run -t -d -p 6379:6379 redis:3.2
   # Install OSRM
   - mkdir -p var/osrm
   - wget https://s3.amazonaws.com/mapzen.odes/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf -P var/osrm
