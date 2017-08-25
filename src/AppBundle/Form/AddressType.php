@@ -21,21 +21,15 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('name', TextType::class, ['label' => 'First Name', 'required' => true])
+            ->add('familyName', TextType::class, ['label' => 'Last Name'])
             ->add('streetAddress', TextType::class)
             ->add('postalCode', TextType::class)
-            ->add('addressLocality', TextType::class, [
-                'label' => 'City'
-            ])
-            // ->add('description', TextType::class, [
-            //     'required' => false,
-            //     'label' => 'Additional information'
-            // ])
-            ->add('latitude', HiddenType::class, [
-                'mapped' => false,
-            ])
-            ->add('longitude', HiddenType::class, [
-                'mapped' => false,
-            ]);
+            ->add('addressLocality', TextType::class, ['label' => 'City'])
+            ->add('streetAddress2', TextType::class, ['required' => false, 'label' => 'Additional information'])
+            ->add('phoneNumber', TextType::class)
+            ->add('latitude', HiddenType::class, ['mapped' => false])
+            ->add('longitude', HiddenType::class, [ 'mapped' => false]);
 
         $constraints = [
             new Constraints\NotBlank(),
@@ -83,6 +77,7 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Address::class,
+            'validation_groups' => array('delivery_address')
         ));
     }
 }
