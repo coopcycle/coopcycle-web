@@ -38,3 +38,6 @@
 # Sublime text editor stuff
 *.sublime-workspace
 *.sublime-project
+
+# PHPStorm stuff
+.idea
