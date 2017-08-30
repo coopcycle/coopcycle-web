@@ -62,6 +62,7 @@ class RestaurantController extends Controller
         }
 
         $page = $request->query->getInt('page', 1);
+        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
         if ($request->query->has('geohash')) {
             $geotools = new Geotools();
@@ -73,14 +74,14 @@ class RestaurantController extends Controller
             $longitude = $decoded->getCoordinate()->getLongitude();
 
             $count = $repository->countNearby($latitude, $longitude, 1500);
-            $pages = ceil($count / self::ITEMS_PER_PAGE);
 
-            $offset = ($page - 1) * self::ITEMS_PER_PAGE;
             $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
         } else {
-            $pages = 1;
+            $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
             $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
         }
+
+        $pages = ceil($count / self::ITEMS_PER_PAGE);
 
         return array(
             'restaurants' => $matches,
