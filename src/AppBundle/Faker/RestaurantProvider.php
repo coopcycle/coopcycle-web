@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Command;
+namespace AppBundle\Faker;
 
 use Faker\Provider\Base as BaseProvider;
 
@@ -9,6 +9,7 @@ class RestaurantProvider extends BaseProvider
     /* Formats */
 
     protected static $restaurantFormats = array(
+        '{{restaurantPrefix}} {{restaurantAdjective}} {{restaurantSuffix}}',
         '{{restaurantPrefix}} {{restaurantSuffix}}',
     );
 
@@ -29,18 +30,30 @@ class RestaurantProvider extends BaseProvider
 
     protected static $restaurantPrefixes = array(
         'la casserole', 'l\'assiette', 'la table', 'la chaise', 'la cagette', 'la cuillère',
-        'l\'aubergine', 'l\'amande', 'la patate', 'la boule',
+        'l\'aubergine', 'l\'amande', 'la patate',
+        'la boule', 'la boîte', 'l\'enclume',
+        'l\'île', 'l\'auberge', 'la cabane',
+    );
+
+    protected static $restaurantAdjectives = array(
+        'rouge', 'noire',
+        'à pois'
     );
 
     protected static $restaurantSuffixes = array(
         'qui danse', 'qui boit', 'qui fume', 'qui rit', 'qui chante',
-        'gourmande', 'joyeuse', 'maline', 'rebelle',
-        'du sud', 'bretonne', 'espagnole'
+        'gourmande', 'joyeuse', 'maline', 'rebelle', 'rêveuse', 'rigolote',
+        'du sud', 'bretonne', 'espagnole', 'gitane', 'orientale',
     );
 
     public function restaurantPrefix()
     {
         return static::randomElement(static::$restaurantPrefixes);
+    }
+
+    public function restaurantAdjective()
+    {
+        return static::randomElement(static::$restaurantAdjectives);
     }
 
     public function restaurantSuffix()

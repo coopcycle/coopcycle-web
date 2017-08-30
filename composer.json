@@ -52,7 +52,8 @@
         "symfony/web-server-bundle": "3.3.*",
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^2.0",
-        "myclabs/php-enum": "^1.5"
+        "myclabs/php-enum": "^1.5",
+        "willdurand/geocoder": "3.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
