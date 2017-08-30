@@ -11,13 +11,20 @@ var config = configLoader.load();
 var utils = new TestUtils(config);
 
 var redisVersionCheck = new Promise(function (resolve, reject) {
+  var checkRedis = function () {
+    if (utils.serverVersionAtLeast(utils.redis, [3, 2, 0])) {
+      resolve();
+    } else {
+      reject('Redis version nok');
+    }
+  };
+  if (!utils.redis.ready) {
     utils.redis.on('ready', function () {
-        if(utils.serverVersionAtLeast(utils.redis, [3, 2, 0])) {
-          resolve();
-        } else {
-          reject('Redis version nok');
-        }
-      });
+      checkRedis();
+    });
+  } else {
+    checkRedis();
+  }
   });
 
 function init() {
