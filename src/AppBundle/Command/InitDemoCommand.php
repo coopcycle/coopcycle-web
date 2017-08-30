@@ -2,13 +2,15 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity;
+use AppBundle\Faker\AddressProvider;
+use AppBundle\Faker\RestaurantProvider;
 use Faker;
-use MarkovPHP;
+use GuzzleHttp\Client;
 use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use AppBundle\Entity;
 
 class InitDemoCommand extends ContainerAwareCommand
 {
@@ -17,14 +19,15 @@ class InitDemoCommand extends ContainerAwareCommand
     private $faker;
     private $fixturesLoader;
     private $menuSections = [];
+    private $client;
 
     private static $users = [
         'admin' => [
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
         ],
-        'restaurant' => [
-            'password' => 'restaurant',
+        'resto' => [
+            'password' => 'resto',
             'roles' => ['ROLE_RESTAURANT']
         ]
     ];
@@ -46,19 +49,37 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $restaurantProvider = new RestaurantProvider($this->faker);
 
+        $client = new Client([
+            'base_uri' => 'https://maps.googleapis.com',
+            'timeout'  => 2.0,
+        ]);
+
+        $apiKey = $this->getContainer()->getParameter('google_api_key');
+        $addressProvider = new AddressProvider($this->faker, $client, $apiKey);
+
         $this->faker->addProvider($restaurantProvider);
         $this->fixturesLoader->addProvider($restaurantProvider);
+
+        $this->faker->addProvider($addressProvider);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Creating users...');
+        $output->writeln('Creating super users...');
         foreach (self::$users as $username => $params) {
             $this->createUser($username, $params);
         }
 
+        $output->writeln('Creating users...');
+        for ($i = 1; $i <= 50; $i++) {
+            $username = "user-{$i}";
+            $user = $this->createUser($username, ['password' => $username]);
+            $user->addAddress($this->faker->randomAddress);
+        }
+        $this->doctrine->getManagerForClass(Entity\ApiUser::class)->flush();
+
         $output->writeln('Creating couriers...');
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
             $this->createCourier("bot-{$i}");
         }
 
@@ -66,12 +87,16 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->createRestaurants($output);
     }
 
-    private function createUser($username, $params)
+    private function createUser($username, array $params = [])
     {
-        $this->userManipulator->create($username, $params['password'], "{$username}@demo.coopcycle.org", true, false);
-        foreach ($params['roles'] as $role) {
-            $this->userManipulator->addRole($username, $role);
+        $user = $this->userManipulator->create($username, $params['password'], "{$username}@demo.coopcycle.org", true, false);
+        if (isset($params['roles'])) {
+            foreach ($params['roles'] as $role) {
+                $this->userManipulator->addRole($username, $role);
+            }
         }
+
+        return $user;
     }
 
     private function createCourier($username)
@@ -118,13 +143,9 @@ class InitDemoCommand extends ContainerAwareCommand
             'menu_section_desserts' => $this->createMenuSection('Desserts'),
         ];
 
-        $addresses = $this->fixturesLoader->load(__DIR__ . '/Resources/addresses.yml');
-
-        foreach ($addresses as $key => $address) {
-            if (0 === strpos($key, 'address_')) {
-                $restaurant = $this->createRestaurant($address);
-                $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
-            }
+        for ($i = 0; $i < 100; $i++) {
+            $restaurant = $this->createRestaurant($this->faker->randomAddress);
+            $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
         }
 
         $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
