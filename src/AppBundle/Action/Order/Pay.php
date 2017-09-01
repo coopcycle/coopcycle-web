@@ -49,12 +49,20 @@ class Pay
             throw new BadRequestHttpException('Stripe token is missing');
         }
 
-        $this->paymentService->createCharge($order, $data['stripeToken']);
+        try {
+            $this->paymentService->createCharge($order, $data['stripeToken']);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException('Could not create charge', $e);
+        }
 
         $order->setStatus(Order::STATUS_WAITING);
 
-        $event = new GenericEvent($order);
-        $this->eventDispatcher->dispatch('order.payment_success', $event);
+        try {
+            $event = new GenericEvent($order);
+            $this->eventDispatcher->dispatch('order.payment_success', $event);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException('Could not dispatch payment success event', $e);
+        }
 
         return $order;
     }
