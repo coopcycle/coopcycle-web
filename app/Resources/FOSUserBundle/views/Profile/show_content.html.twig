@@ -10,8 +10,7 @@
       {% include "AppBundle:Profile:nav.html.twig" %}
     </div>
     <div class="col-md-9">
-      <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
-      <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+        {% include "AppBundle:Profile:profile.html.twig" %}
     </div>
   </div>
 </div>

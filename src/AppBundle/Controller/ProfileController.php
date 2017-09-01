@@ -2,29 +2,48 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\Cart;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
-use AppBundle\Form\RestaurantMenuType;
-use AppBundle\Form\RestaurantType;
+use AppBundle\Entity\ApiUser;
 use AppBundle\Form\AddressType;
-use AppBundle\Utils\OrderStatus;
-use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Form\UpdateProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use League\Geotools\Geotools;
-use League\Geotools\Coordinate\Coordinate;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 
 class ProfileController extends Controller
 {
     use DoctrineTrait;
     use RestaurantTrait;
+
+
+    /**
+     * @Route("/profile/edit", name="profile_edit")
+     * @Template()
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function editProfile(Request $request) {
+
+          $user = $this->getUser();
+
+          $editForm = $this->createForm(UpdateProfileType::class, $user);
+          $editForm->handleRequest($request);
+
+          if ($editForm->isSubmitted() && $editForm->isValid()) {
+              $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+              $userManager->persist($user);
+              $userManager->flush();
+
+              return $this->redirectToRoute('fos_user_profile_show');
+          }
+
+          return array(
+              'form' => $editForm->createView()
+          );
+    }
 
     /**
      * @Route("/profile/orders", name="profile_orders")

@@ -1,11 +1,24 @@
+Given name: Prénom
+Family name: Nom de famille
+Telephone: Numéro de téléphone
+Account type: Type de compte
+Customer: Client
+Courier: Coursier
+Restaurant: Restaurant
 Enter your address: Entrez votre adresse
 Data imported from %link%: Données importées depuis %link%
 Search for restaurants: Rechercher des restaurants
 View on GitHub: Voir sur GitHub
 My account: Mon compte
+Username: Nom d'utilisateur
+Email: Email
 My order: Ma commande
 My orders: Mes commandes
 My addresses: Mes adresses
+New Address: Nouvelle adresse
+Edit profile: Modifier le profil
+Add: Ajouter
+Save: Enregistrer
 Cart: Panier
 Order: Commande
 Orders: Commandes
