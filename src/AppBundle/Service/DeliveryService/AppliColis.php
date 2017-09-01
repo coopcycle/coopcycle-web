@@ -5,6 +5,9 @@ namespace AppBundle\Service\DeliveryService;
 use AppBundle\Entity\Order;
 use Predis\Client as Redis;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Psr7;
 
 class AppliColis extends Base
 {
@@ -63,17 +66,25 @@ class AppliColis extends Base
 
         $this->logger->info('Sending payload to AppliColis API : ' . json_encode($json));
 
-        $r = $this->client->request('POST', '/external-api/course', [
-            'json' => $json,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json'
-            ]
-        ]);
+        try {
 
-        $body = $r->getBody();
+           $r = $this->client->request('POST', '/external-api/course', [
+                'json' => $json,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type' => 'application/json'
+                ]
+            ]);
 
-        $this->logger->info('Received response from AppliColis : ' . (string) $body);
+            $body = $r->getBody();
+
+            $this->logger->info('Received response from AppliColis : ' . (string) $body);
+
+        } catch (ClientException $e) {
+            $this->logger->error(Psr7\str($e->getResponse()));
+        } catch (ServerException $e) {
+            $this->logger->error(Psr7\str($e->getResponse()));
+        }
 
         // TODO Store delivery info in database
     }
