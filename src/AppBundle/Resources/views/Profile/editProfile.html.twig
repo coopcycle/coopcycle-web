@@ -1,0 +1,13 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% trans %}Edit profile{%  endtrans %}</h1>
+    </div>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+    {{ form_end(form) }}
+{% endblock %}

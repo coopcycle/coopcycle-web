@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,6 +32,25 @@ class ApiUser extends BaseUser
     protected $id;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(iri="https://schema.org/givenName")
+    */
+    protected $givenName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(iri="https://schema.org/familyName")
+     */
+    protected $familyName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(iri="https://schema.org/telephone")
+     */
+    protected $telephone;
+
+
+    /**
      * @ORM\ManyToMany(targetEntity="Restaurant", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
@@ -56,6 +76,55 @@ class ApiUser extends BaseUser
 
         parent::__construct();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getGivenName()
+    {
+        return $this->givenName;
+    }
+
+    /**
+     * @param mixed $givenName
+     */
+    public function setGivenName($givenName)
+    {
+        $this->givenName = $givenName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFamilyName()
+    {
+        return $this->familyName;
+    }
+
+    /**
+     * @param mixed $familyName
+     */
+    public function setFamilyName($familyName)
+    {
+        $this->familyName = $familyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    /**
+     * @param mixed $telephone
+     */
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+    }
+
 
     public function setRestaurants($restaurants)
     {

@@ -15,12 +15,13 @@ app:
     type:     'annotation'
     prefix:   '/api'
 
-fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
-
 web:
     resource: '@AppBundle/Controller/'
     type:     'annotation'
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
 
 redirect_to_locale:
     path: /
