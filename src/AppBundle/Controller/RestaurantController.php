@@ -108,6 +108,13 @@ class RestaurantController extends Controller
             throw new NotFoundHttpException();
         }
 
+        if ($slug) {
+            $expectedSlug = $this->get('slugify')->slugify($restaurant->getName());
+            if ($slug !== $expectedSlug) {
+                return $this->redirectToRoute('restaurant', ['id' => $id, 'slug' => $expectedSlug]);
+            }
+        }
+
         $now = new \DateTime();
         $nextOpeningDate = $restaurant->getNextOpeningDate();
 
