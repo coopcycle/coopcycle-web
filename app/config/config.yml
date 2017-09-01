@@ -39,6 +39,8 @@ twig:
     strict_variables: "%kernel.debug%"
     form_themes:
         - 'VichUploaderBundle:Form:fields.html.twig'
+    globals:
+        is_demo: "%is_demo%"
 
 # Doctrine Configuration
 doctrine:

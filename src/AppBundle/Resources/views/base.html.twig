@@ -11,6 +11,7 @@
   <body>
     {% include "AppBundle::menu.html.twig" %}
     {% block banner %}
+    {% if is_demo %}
     <section id="banner">
       <div class="container">
         <div class="row">
@@ -20,6 +21,7 @@
         </div>
       </div>
     </section>
+    {% endif %}
     {% endblock %}
     {% block body %}{% endblock %}
     <footer>

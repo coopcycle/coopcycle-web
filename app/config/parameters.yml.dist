@@ -55,3 +55,5 @@ parameters:
     applicolis_api_base_url: ~
 
     piwik_site_id: ~
+
+    is_demo: false
