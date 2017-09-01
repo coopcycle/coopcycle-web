@@ -80,7 +80,7 @@ vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:pro
 
 ### Using Docker
 
-* Create a Docker Machine if needed
+* Create a Docker Machine if needed - we advise you to use docker for Mac or Docker for Windows instead of a Virtualbox machine.
 ```
 docker-machine create -d virtualbox
 eval $(docker-machine env default)
