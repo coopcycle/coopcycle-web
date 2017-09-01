@@ -28,7 +28,7 @@ services:
       - '8001:8001'
       - '8002:8002'
     volumes:
-      - './:/srv/coopcycle'
+      - './:/srv/coopcycle:cached'
       - 'node_modules:/srv/coopcycle/node_modules'
 
   webpack:
@@ -38,7 +38,7 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - './:/srv/coopcycle'
+      - './:/srv/coopcycle:cached'
       - 'node_modules:/srv/coopcycle/node_modules'
 
   osrm:
@@ -63,7 +63,7 @@ services:
     environment:
       SYMFONY_ENV: 'dev'
     volumes:
-      - './:/srv/coopcycle:rw'
+      - './:/srv/coopcycle:cached'
 
   nginx:
     image: 'nginx:1.11-alpine'
