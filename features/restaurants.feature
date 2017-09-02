@@ -99,11 +99,11 @@ Feature: Manage restaurants
         ],
         "description":null,
         "name":"Menu"
-      }
+      },
+      "openingHours":@array@
     }
     """
 
-  @debug
   Scenario: Restaurant is deliverable
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
@@ -112,7 +112,6 @@ Feature: Manage restaurants
     Then the response status code should be 200
     And the response should be in JSON
 
-  @debug
   Scenario: Restaurant is not deliverable
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
