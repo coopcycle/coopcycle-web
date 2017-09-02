@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A particular physical business or branch of an organization. Examples of LocalBusiness include a restaurant, a particular branch of a restaurant chain, a branch of a bank, a medical practice, a club, a bowling alley, etc.
@@ -25,6 +26,7 @@ abstract class LocalBusiness
      *
      * @ORM\Column(type="json_array", nullable=true)
      * @ApiProperty(iri="https://schema.org/openingHours")
+     * @Groups({"restaurant"})
      */
     protected $openingHours;
 
