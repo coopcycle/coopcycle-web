@@ -59,14 +59,14 @@ AppBundle\Entity\Restaurant:
     name: 'Nodaiwa'
     address: "@address_1"
     hasMenu: "@menu_1"
-    openingHours: ['Mo-Su 11:30-14:30']
+    openingHours: ['Mo-Sa 11:30-14:30']
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
     hasMenu: "@menu_2"
-    openingHours: ['Mo-Su 11:30-14:30']
+    openingHours: ['Mo-Sa 11:30-14:30']
   restaurant_3:
     name: 'La Cantina Clandestina'
     address: "@address_3"
     hasMenu: "@menu_3"
-    openingHours: ['Mo-Su 11:30-14:30']
+    openingHours: ['Mo-Sa 11:30-14:30']

@@ -262,9 +262,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Given the user :username has ordered at restaurant :restaurantName
+     * @Given the user :username has ordered at restaurant :restaurantName for :date
      */
-    public function theUserHasOrderedAtRestaurant($username, $restaurantName)
+    public function theUserHasOrderedAtRestaurantFor($username, $restaurantName, $date)
     {
         $userManager = $this->getContainer()->get('fos_user.user_manager');
         $restaurantRepository = $this->doctrine->getRepository('AppBundle:Restaurant');
@@ -279,7 +279,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $order->setStatus(Order::STATUS_WAITING);
 
         $delivery = new Delivery($order);
-        $delivery->setDate(new \DateTime('+30 minutes'));
+        $delivery->setDate(new \DateTime($date));
         $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($user->getAddresses()->first());
 

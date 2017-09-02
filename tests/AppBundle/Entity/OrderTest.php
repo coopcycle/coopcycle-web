@@ -84,10 +84,11 @@ class OrderTest extends TestCase
         $this->assertEquals(50, $order->getTotal());
     }
 
-    public function testValidation()
+    public function testDistanceValidation()
     {
         $restaurant = new Restaurant();
         $restaurant->setMaxDistance(3000);
+        $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
 
         $delivery = new Delivery();
 
@@ -95,7 +96,7 @@ class OrderTest extends TestCase
         $order->setDelivery($delivery);
         $order->setRestaurant($restaurant);
 
-        $delivery->setDate(new \DateTime());
+        $delivery->setDate(new \DateTime('2017-09-02 12:30:00'));
 
         // With "Default" group,
         // delivery.distance & delivery.duration are optional
@@ -113,5 +114,31 @@ class OrderTest extends TestCase
 
         $errors = $this->validator->validate($order, null, ['order']);
         $this->assertEquals(0, count($errors));
+    }
+
+    public function testDateValidation()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setMaxDistance(3000);
+        $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
+
+        $delivery = new Delivery();
+
+        $order = new Order();
+        $order->setDelivery($delivery);
+        $order->setRestaurant($restaurant);
+
+        $delivery->setDuration(30);
+        $delivery->setDistance(1500);
+
+        // Restaurant is open
+        $delivery->setDate(new \DateTime('2017-09-02 12:30:00'));
+        $errors = $this->validator->validate($order, null, ['order']);
+        $this->assertEquals(0, count($errors));
+
+        // Restaurant is closed
+        $delivery->setDate(new \DateTime('2017-09-03 12:30:00'));
+        $errors = $this->validator->validate($order, null, ['order']);
+        $this->assertContains('delivery.date', $this->violationsToArray($errors));
     }
 }

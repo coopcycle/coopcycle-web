@@ -77,8 +77,9 @@ class Delivery extends Intangible
     private $status;
 
     /**
-     * @Assert\NotBlank()
+     * @Groups({"order"})
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank(groups={"order"})
      */
     private $date;
 
@@ -204,11 +205,14 @@ class Delivery extends Intangible
     }
 
     /**
+     * Custom order validation.
      * @Assert\Callback(groups={"order"})
      */
     public function validate(ExecutionContextInterface $context, $payload)
     {
         $order = $this->getOrder();
+
+        // Validate distance
         $maxDistance = $order->getRestaurant()->getMaxDistance();
 
         $constraint = new Assert\LessThan(['value' => $maxDistance]);
@@ -217,5 +221,13 @@ class Delivery extends Intangible
             ->inContext($context)
             ->atPath('distance')
             ->validate($this->distance, $constraint, [Constraint::DEFAULT_GROUP]);
+
+        // Validate opening hours
+        if (!$order->getRestaurant()->isOpen($this->getDate())) {
+             $context
+                ->buildViolation(sprintf('Restaurant is closed at %s', $this->getDate()->format('Y-m-d H:i:s')))
+                ->atPath('date')
+                ->addViolation();
+        }
     }
 }

@@ -17,7 +17,7 @@ Feature: Orders
       {
         "restaurant": "/api/restaurants/1",
         "delivery": {
-          "date": "+30 minutes",
+          "date": "2017-09-02 12:30:00",
           "deliveryAddress": "/api/addresses/4"
         },
         "orderedItem": [{
@@ -85,10 +85,58 @@ Feature: Orders
           "streetAddress":"1, rue de Rivoli",
           "name":null
         },
-        "status":"WAITING"
+        "status":"WAITING",
+        "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
       "status":"CREATED"
+    }
+    """
+
+  Scenario: Refuse order when restaurant is closed
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | geo           | 48.855799, 2.359207 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/orders" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "delivery": {
+          "date": "2017-09-03 12:00:00",
+          "deliveryAddress": "/api/addresses/4"
+        },
+        "orderedItem": [{
+          "menuItem": "/api/menu_items/1",
+          "quantity": 1
+        }, {
+          "menuItem": "/api/menu_items/2",
+          "quantity": 2
+        }]
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ConstraintViolationList",
+      "@type":"ConstraintViolationList",
+      "hydra:title":@string@,
+      "hydra:description":@string@,
+      "violations":[
+        {
+          "propertyPath":"delivery.date",
+          "message":@string@
+        }
+      ]
     }
     """
 
@@ -102,7 +150,7 @@ Feature: Orders
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
-    And the user "bob" has ordered at restaurant "Nodaiwa"
+    And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
     And the courier is loaded:
       | email    | sarah@coopcycle.org |
       | username | sarah               |
@@ -153,7 +201,8 @@ Feature: Orders
           "streetAddress":"1, rue de Rivoli",
           "name":null
         },
-        "status":"DISPATCHED"
+        "status":"DISPATCHED",
+        "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
       "status":"ACCEPTED"
@@ -204,7 +253,8 @@ Feature: Orders
           "streetAddress":"1, rue de Rivoli",
           "name":null
         },
-        "status":"PICKED"
+        "status":"PICKED",
+        "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
       "status":"ACCEPTED"
@@ -255,7 +305,8 @@ Feature: Orders
           "streetAddress":"1, rue de Rivoli",
           "name":null
         },
-        "status":"DELIVERED"
+        "status":"DELIVERED",
+        "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
       "status":"DELIVERED"
@@ -271,7 +322,7 @@ Feature: Orders
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
-    And the user "bob" has ordered at restaurant "Nodaiwa"
+    And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
     And the last order from user "bob" has status "ACCEPTED"
     And the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
@@ -295,7 +346,7 @@ Feature: Orders
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
-    And the user "bob" has ordered at restaurant "Nodaiwa"
+    And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
     And the user "bill" is loaded:
       | email    | bill@coopcycle.org |
       | password | 123456             |
@@ -324,7 +375,7 @@ Feature: Orders
     And the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
       | password | 123456              |
-    And the user "bob" has ordered at restaurant "Nodaiwa"
+    And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
     And the last order from user "bob" is accepted by courier "bill"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -353,7 +404,7 @@ Feature: Orders
       {
         "restaurant": "/api/restaurants/1",
         "delivery": {
-          "date": "+30 minutes",
+          "date": "2017-09-02 12:30:00",
           "deliveryAddress": "/api/addresses/4"
         },
         "orderedItem": [{
