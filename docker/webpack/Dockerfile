@@ -9,6 +9,7 @@ COPY docker/webpack/start.sh /
 WORKDIR /srv/coopcycle
 
 COPY package.json /srv/coopcycle
+COPY package-lock.json /srv/coopcycle
 RUN npm install
 
 CMD /start.sh
