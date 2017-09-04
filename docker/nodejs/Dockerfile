@@ -7,6 +7,7 @@ RUN npm install -g pm2
 WORKDIR /srv/coopcycle
 
 COPY package.json /srv/coopcycle
+COPY package-lock.json /srv/coopcycle
 RUN npm install
 
 COPY docker/nodejs/start.sh /
