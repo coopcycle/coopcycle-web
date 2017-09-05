@@ -26,10 +26,6 @@ class InitDemoCommand extends ContainerAwareCommand
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
         ],
-        'resto' => [
-            'password' => 'resto',
-            'roles' => ['ROLE_RESTAURANT']
-        ]
     ];
 
     protected function configure()
@@ -146,6 +142,14 @@ class InitDemoCommand extends ContainerAwareCommand
         for ($i = 0; $i < 100; $i++) {
             $restaurant = $this->createRestaurant($this->faker->randomAddress);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
+            $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
+
+            $username = "resto-{$restaurant->getId()}";
+            $user = $this->createUser($username, [
+                'password' => $username,
+                'roles' => ['ROLE_RESTAURANT']
+            ]);
+            $user->addRestaurant($restaurant);
         }
 
         $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
