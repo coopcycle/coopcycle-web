@@ -6,8 +6,8 @@ use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Delivery;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class Pick
 {
@@ -23,22 +23,17 @@ class Pick
      */
     public function __invoke($data)
     {
-        $user = $this->getUser();
-
-        // Only couriers can accept orders
-        if (!$user->hasRole('ROLE_COURIER')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
-        }
+        $this->verifyRole('ROLE_COURIER', 'User #%d cannot pick delivery');
 
         $delivery = $data;
 
         // Make sure the courier picking order is authorized
         if ($delivery->getCourier() !== $this->getUser()) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
 
         $delivery->setStatus(Delivery::STATUS_PICKED);
 
-        return $order;
+        return $delivery;
     }
 }

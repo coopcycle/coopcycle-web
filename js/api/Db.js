@@ -77,7 +77,8 @@ module.exports = function(sequelize) {
   Db.Delivery = sequelize.define('delivery', {
     distance: Sequelize.INTEGER,
     duration: Sequelize.INTEGER,
-    date: Sequelize.DATE
+    date: Sequelize.DATE,
+    status: Sequelize.STRING,
   }, _.extend(sequelizeOptions, {
     tableName: 'delivery',
   }));
@@ -98,12 +99,13 @@ module.exports = function(sequelize) {
 
   Db.Restaurant.belongsTo(Db.Address);
 
+  Db.Delivery.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
+  Db.Delivery.belongsTo(Db.Order);
 
   Db.Order.belongsTo(Db.Restaurant);
   Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });
-  Db.Order.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
   Db.Order.hasOne(Db.Delivery);
 
   Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey : 'api_user_id' });

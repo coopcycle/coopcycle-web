@@ -103,11 +103,8 @@ describe('With one order waiting', function() {
 
         assert.equal('message', e.type);
 
-
         var data = JSON.parse(e.data);
-
-
-        assert.equal('order', data.type);
+        assert.equal('delivery', data.type);
 
         ws.close();
         resolve();
@@ -175,7 +172,7 @@ describe('With several users connected', function() {
         assert.equal('message', e.type);
 
         var data = JSON.parse(e.data);
-        assert.equal('order', data.type);
+        assert.equal('delivery', data.type);
 
         sarah.close();
         bob.close();

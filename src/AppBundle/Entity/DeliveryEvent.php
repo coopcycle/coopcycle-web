@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table
  */
-class OrderEvent
+class DeliveryEvent
 {
     /**
      * @ORM\Column(type="integer")
@@ -25,9 +25,14 @@ class OrderEvent
     private $eventName;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Order", inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="Delivery", inversedBy="events")
      */
-    private $order;
+    private $delivery;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ApiUser")
+     */
+    private $courier;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -35,10 +40,11 @@ class OrderEvent
      */
     private $createdAt;
 
-    public function __construct(Order $order, $eventName)
+    public function __construct(Delivery $delivery, $eventName, ApiUser $courier = null)
     {
-        $this->order = $order;
+        $this->delivery = $delivery;
         $this->eventName = $eventName;
+        $this->courier = $courier;
     }
 
     public function getId()
@@ -46,9 +52,14 @@ class OrderEvent
         return $this->id;
     }
 
-    public function getOrder()
+    public function getDelivery()
     {
-        return $this->order;
+        return $this->delivery;
+    }
+
+    public function getCourier()
+    {
+        return $this->courier;
     }
 
     public function getEventName()

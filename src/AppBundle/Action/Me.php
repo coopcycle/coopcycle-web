@@ -3,7 +3,6 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,13 +39,13 @@ class Me
 
         $status = 'AVAILABLE';
 
-        // Check if courier has accepted an order previously
-        $order = $this->orderRepository->findOneBy([
+        // Check if courier has accepted a delivery previously
+        $delivery = $this->deliveryRepository->findOneBy([
             'courier' => $user,
-            'status' => ['ACCEPTED', 'PICKED'],
+            'status' => ['DISPATCHED', 'PICKED'],
         ]);
 
-        if (null !== $order) {
+        if (null !== $delivery) {
             $status = 'DELIVERING';
         }
 
@@ -54,43 +53,21 @@ class Me
             'status' => $status,
         ];
 
-        if (null !== $order) {
-            $data['order'] = [
-                'id' => $order->getId(),
-                'status' => $order->getStatus(),
+        if (null !== $delivery) {
+            $data['delivery'] = [
+                'id' => $delivery->getId(),
+                'status' => $delivery->getStatus(),
                 'restaurant' => [
-                    'longitude' => $order->getDelivery()->getOriginAddress()->getGeo()->getLongitude(),
-                    'latitude' => $order->getDelivery()->getOriginAddress()->getGeo()->getLatitude(),
+                    'longitude' => $delivery->getOriginAddress()->getGeo()->getLongitude(),
+                    'latitude' => $delivery->getOriginAddress()->getGeo()->getLatitude(),
                 ],
                 'deliveryAddress' => [
-                    'longitude' => $order->getDelivery()->getDeliveryAddress()->getGeo()->getLongitude(),
-                    'latitude' => $order->getDelivery()->getDeliveryAddress()->getGeo()->getLatitude(),
+                    'longitude' => $delivery->getDeliveryAddress()->getGeo()->getLongitude(),
+                    'latitude' => $delivery->getDeliveryAddress()->getGeo()->getLatitude(),
                 ],
             ];
         }
 
         return new JsonResponse($data);
-    }
-
-    /**
-     * @Route(
-     *     name="me_order",
-     *     path="/me/order"
-     * )
-     * @Method("GET")
-     */
-    public function orderAction()
-    {
-        $user = $this->getUser();
-        $orderId = $this->redis->get('Courier:'.$user->getId().':order');
-
-        if ($orderId) {
-            $order = $this->orderRepository->find($orderId);
-            return new Response(
-                $this->serializer->serialize($order, 'jsonld')
-            );
-        }
-
-        return new JsonResponse(null);
     }
 }

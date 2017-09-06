@@ -42,18 +42,18 @@ TokenVerifier.prototype.verify = function (info, cb) {
           var state = Courier.UNKNOWN;
 
           // Check courier status
-          self.db.Order.findOne({
+          self.db.Delivery.findOne({
             where: {
-              status: {$in: ['ACCEPTED', 'PICKED']},
+              status: {$in: ['DISPATCHED', 'PICKED']},
               courier_id: user.id
             }
-          }).then(function(order) {
+          }).then(function(delivery) {
 
-            if (order) {
+            if (delivery) {
               state = Courier.DELIVERING;
-              console.log('Courier #' + user.id + ' was delivering order #' + order.id);
+              console.log('Courier #' + user.id + ' was delivering #' + delivery.id);
             } else {
-              console.log('Courier #' + user.id + ' was not delivering an order');
+              console.log('Courier #' + user.id + ' was not delivering anything');
             }
 
             console.log('Courier #' + user.id + ', setting state = ' + state);

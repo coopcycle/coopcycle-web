@@ -19,7 +19,8 @@ var zoom = window.mapZoom || 13;
 var hostname = window.location.hostname;
 var socket;
 
-var order = window.__order;
+const order = window.__order;
+const delivery = order.delivery;
 
 moment.locale($('html').attr('lang'));
 
@@ -27,7 +28,7 @@ function startWebSocket() {
   socket = io('//' + hostname, {path: '/order-tracking/socket.io'});
 
   socket.on('connect', function() {
-    socket.emit('order', order);
+    socket.emit('delivery', delivery);
   });
 
   socket.on('courier', function (data) {
@@ -41,7 +42,7 @@ function startWebSocket() {
     }
   });
 
-  socket.on('order_event', function (data) {
+  socket.on('delivery_event', function (data) {
     orderEvents.add({
       eventName: data.status,
       timestamp: data.timestamp
@@ -56,12 +57,12 @@ function startWebSocket() {
 map = MapHelper.init('map', center, zoom);
 
 var restaurant = {
-  lat: order.restaurant.address.geo.latitude,
-  lng: order.restaurant.address.geo.longitude,
+  lat: delivery.originAddress.geo.latitude,
+  lng: delivery.originAddress.geo.longitude,
 }
 var deliveryAddress = {
-  lat: order.delivery.deliveryAddress.geo.latitude,
-  lng: order.delivery.deliveryAddress.geo.longitude,
+  lat: delivery.deliveryAddress.geo.latitude,
+  lng: delivery.deliveryAddress.geo.longitude,
 }
 
 var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#fff');
@@ -83,7 +84,7 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
     });
     map.addLayer(polyline);
 
-    if (order.status !== 'DELIVERED' && order.status !== 'CANCELED') {
+    if (delivery.status !== 'DELIVERED' && delivery.status !== 'CANCELED') {
       startWebSocket();
     }
   });
@@ -91,6 +92,6 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
 orderEvents = render(
   <OrderEvents
     i18n={window.__i18n}
-    events={window.__order_events} />,
+    events={window.__delivery_events} />,
   document.getElementById('order-events')
 );
