@@ -337,38 +337,38 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Given the last order from user :username has status :status
+     * @Given the last delivery from user :username has status :status
      */
-    public function theLastOrderFromUserHasStatus($username, $status)
+    public function theLastDeliveryFromUserHasStatus($username, $status)
     {
         $userManager = $this->getContainer()->get('fos_user.user_manager');
 
         $user = $userManager->findUserByUsername($username);
 
-        $order = $this->doctrine->getRepository('AppBundle:Order')
+        $order = $this->doctrine->getRepository(Order::class)
             ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
 
-        $order->setStatus($status);
+        $order->getDelivery()->setStatus($status);
 
-        $this->doctrine->getManagerForClass('AppBundle:Order')->flush();
+        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     /**
-     * @Given the last order from user :customer is accepted by courier :courier
+     * @Given the last delivery from user :customer is dispatched to courier :courier
      */
-    public function theLastOrderFromUserIsAcceptedByCourier($customerUsername, $courierUsername)
+    public function theLastDeliveryFromUserIsDispatchedToCourier($customerUsername, $courierUsername)
     {
         $userManager = $this->getContainer()->get('fos_user.user_manager');
 
         $customer = $userManager->findUserByUsername($customerUsername);
         $courier = $userManager->findUserByUsername($courierUsername);
 
-        $order = $this->doctrine->getRepository('AppBundle:Order')
+        $order = $this->doctrine->getRepository(Order::class)
             ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
 
-        $order->setStatus(Order::STATUS_ACCEPTED);
-        $order->setCourier($courier);
+        $order->getDelivery()->setCourier($courier);
+        $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
 
-        $this->doctrine->getManagerForClass('AppBundle:Order')->flush();
+        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 }

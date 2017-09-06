@@ -68,47 +68,47 @@ var Db = require('../Db')(sequelize);
 var Courier = require('../models/Courier').Courier;
 Courier.init(redis, redisPubSub);
 
-var Order = require('../models/Order').Order;
-Order.init(redis, sequelize, Db);
+var Delivery = require('../models/Delivery');
+Delivery.init(redis, sequelize, Db);
 
-var OrderDispatcher = require('../models/OrderDispatcher');
-var orderDispatcher = new OrderDispatcher(redis, Order.Registry);
+var DeliveryDispatcher = require('../models/DeliveryDispatcher');
+var deliveryDispatcher = new DeliveryDispatcher(redis, Delivery.Registry);
 
 var TokenVerifier = require('../TokenVerifier');
 var tokenVerifier = new TokenVerifier(cert, Db);
 
-/* Order dispatch loop */
+/* Delivery dispatch loop */
 
-orderDispatcher.setHandler(function(order, next) {
+deliveryDispatcher.setHandler(function(delivery, next) {
 
-  // winston.info('Trying to dispatch order #' + order.id);
+  winston.info('Trying to dispatch delivery #' + delivery.id);
 
-  Courier.nearestForOrder(order, 3000).then(function(courier) {
+  Courier.nearestForDelivery(delivery, 3500).then(function(courier) {
 
     if (!courier) {
-      // winston.debug('No couriers nearby');
+      winston.debug('No couriers nearby');
       return next();
     }
 
-    console.log('Dispatching order #' + order.id + ' to courier #' + courier.id);
+    console.log('Dispatching delivery #' + delivery.id + ' to courier #' + courier.id);
 
     // There is a courier available
     // Change state to "DISPATCHING" and wait for feedback
-    courier.setOrder(order.id);
+    courier.setDelivery(delivery.id);
     courier.setState(Courier.DISPATCHING);
 
-    // Remove order from the waiting list
-    redis.lrem('orders:waiting', 0, order.id, function(err) {
+    // Remove delivery from the waiting list
+    redis.lrem('deliveries:waiting', 0, delivery.id, function(err) {
       if (err) throw err;
-      redis.lpush('orders:dispatching', order.id, function(err) {
+      redis.lpush('deliveries:dispatching', delivery.id, function(err) {
         if (err) throw err;
         // TODO record dispatch event ?
         courier.send({
-          type: 'order',
-          order: {
-            id: order.id,
-            restaurant: order.delivery.originAddress.position,
-            deliveryAddress: order.delivery.deliveryAddress.position
+          type: 'delivery',
+          delivery: {
+            id: delivery.id,
+            originAddress: delivery.originAddress.position,
+            deliveryAddress: delivery.deliveryAddress.position
           }
         });
         next();
@@ -117,10 +117,10 @@ orderDispatcher.setHandler(function(order, next) {
   });
 });
 
-// Load orders in Redis
-Order.load().then(function() {
+// Load deliveries in Redis
+Delivery.load().then(function() {
   console.log('Everything is loaded, starting dispatch loop...');
-  orderDispatcher.start();
+  deliveryDispatcher.start();
 });
 
 // create the server
@@ -170,6 +170,6 @@ process.on('SIGINT', function () {
   console.log('- STOPPING DISPATCH -');
   console.log('---------------------');
   isClosing = true;
-  orderDispatcher.stop();
+  deliveryDispatcher.stop();
   Courier.Pool.removeAll();
 });

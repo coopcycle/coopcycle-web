@@ -3,12 +3,11 @@
 namespace AppBundle\Action\Delivery;
 
 use AppBundle\Action\ActionTrait;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Delivery;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class Accept
 {
@@ -24,35 +23,31 @@ class Accept
      */
     public function __invoke($data)
     {
-        // TODO Check if order is not accepted yet, etc...
+        $this->verifyRole('ROLE_COURIER', 'User #%d cannot accept delivery');
 
         $user = $this->getUser();
-
-        // Only couriers can accept orders
-        if (!$user->hasRole('ROLE_COURIER')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept delivery', $user->getId()));
-        }
-
         $delivery = $data;
+        $order = $delivery->getOrder();
 
         // Order MUST have status = WAITING
-        if ($delivery->getStatus() !== Order::STATUS_WAITING) {
+        if ($delivery->getStatus() !== Delivery::STATUS_WAITING) {
 
             // Make sure order is not in the Redis queue anymore
             // This MAY happen if some user accepted the order and has been disconnected from the WebSocket server
-            $this->redis->lrem('orders:waiting', 0, $order->getId());
+            $this->redis->lrem('deliveries:waiting', 0, $order->getId());
 
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
+            throw new BadRequestHttpException(sprintf('Delivery #%d cannot be accepted anymore', $delivery->getId()));
         }
 
         $delivery->setCourier($user);
-        $delivery->setStatus(Order::STATUS_DISPATCHED);
+        $delivery->setStatus(Delivery::STATUS_DISPATCHED);
 
-        $this->redis->lrem('orders:dispatching', 0, $order->getId());
-        $this->redis->hset('orders:delivering', 'order:'.$order->getId(), 'courier:'.$user->getId());
+        $this->redis->lrem('deliveries:dispatching', 0, $order->getId());
+        $this->redis->hset('deliveries:delivering', 'delivery:'.$order->getId(), 'courier:'.$user->getId());
 
+        // FIXME This channel name is not really explicit
         $this->redis->publish('couriers', $user->getId());
 
-        return $order;
+        return $delivery;
     }
 }

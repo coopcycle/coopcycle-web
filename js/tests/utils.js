@@ -201,13 +201,14 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
                 return delivery.setDeliveryAddress(deliveryAddress);
               }).then(function(delivery) {
                 return order.setDelivery(delivery).then(function() {
-                  return order;
+                  return [order, delivery];
                 });
               });
 
             })
-            .then(function(order) {
-              redis.lpush('orders:waiting', order.id, function(err) {
+            .then(function(args) {
+              const [order, delivery] = args;
+              redis.lpush('deliveries:waiting', delivery.id, function(err) {
                 if (err) return reject(err);
                 resolve(order);
               });

@@ -33,7 +33,13 @@ services:
 
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
-    arguments: [ "@security.token_storage", "@delivery_service_factory" ]
+    arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default" ]
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  delivery.entity_listener:
+    class: AppBundle\Entity\Listener\DeliveryListener
+    arguments: [ "@snc_redis.default" ]
     tags:
       - { name: doctrine.orm.entity_listener }
 
@@ -80,6 +86,12 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Order
+
+  my.delivery_repository:
+    class: AppBundle\Entity\DeliveryRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Delivery
 
   delivery_service.default:
     class: AppBundle\Service\DeliveryService\Core

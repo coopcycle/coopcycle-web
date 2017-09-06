@@ -17,27 +17,27 @@ class Core extends Base
         $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
 
         $this->redis->geoadd(
-            'orders:geo',
+            'deliveries:geo',
             $originAddress->getGeo()->getLongitude(),
             $originAddress->getGeo()->getLatitude(),
-            'order:'.$order->getId()
+            'delivery:'.$order->getId()
         );
 
         $this->redis->geoadd(
             'restaurants:geo',
             $originAddress->getGeo()->getLongitude(),
             $originAddress->getGeo()->getLatitude(),
-            'order:'.$order->getId()
+            'delivery:'.$order->getId()
         );
         $this->redis->geoadd(
             'delivery_addresses:geo',
             $deliveryAddress->getGeo()->getLongitude(),
             $deliveryAddress->getGeo()->getLatitude(),
-            'order:'.$order->getId()
+            'delivery:'.$order->getId()
         );
 
         $this->redis->lpush(
-            'orders:waiting',
+            'deliveries:waiting',
             $order->getId()
         );
     }

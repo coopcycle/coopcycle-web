@@ -6,18 +6,18 @@ const LABELS = {
   'DELIVERING': 'label-success',
 }
 
-class OrderListItem extends React.Component
+class DeliveryListItem extends React.Component
 {
   constructor(props) {
     super(props);
   }
   onClick(e) {
     e.preventDefault();
-    this.props.onClick(this.props.order);
+    this.props.onClick(this.props.delivery);
   }
   onMouseEnter(e) {
     e.preventDefault();
-    this.props.onMouseEnter(this.props.order);
+    this.props.onMouseEnter(this.props.delivery);
   }
   onMouseLeave(e) {
     e.preventDefault();
@@ -62,4 +62,4 @@ class OrderListItem extends React.Component
   }
 }
 
-module.exports = OrderListItem;
+module.exports = DeliveryListItem;

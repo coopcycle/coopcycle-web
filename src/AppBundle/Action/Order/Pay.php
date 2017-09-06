@@ -7,9 +7,9 @@ use AppBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class Pay
 {
@@ -29,9 +29,14 @@ class Pay
 
         $order = $data;
 
+        // Order MUST have status = CREATED
+        if ($order->getStatus() !== Order::STATUS_CREATED) {
+            throw new BadRequestHttpException(sprintf('Order #%d cannot be paid anymore', $order->getId()));
+        }
+
         // Make sure the customer paying the order is correct
         if ($order->getCustomer() !== $user) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
 
         $data = [];
