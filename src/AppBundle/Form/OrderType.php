@@ -33,11 +33,16 @@ class OrderType extends AbstractType
             ->add('save', SubmitType::class, array('label' => 'Continue to payment'));
 
         $formModifier = function (FormInterface $form, Order $order, $createDeliveryAddress) {
-            if (null === $createDeliveryAddress) {
+
+            if (null === $createDeliveryAddress) { // User did not click the toogle yet
                 $createDeliveryAddress = true;
+
+                // Address already set on the order
                 if (null !== $order->getDelivery() && null !== $order->getDelivery()->getDeliveryAddress()) {
                     $createDeliveryAddress = false;
                 }
+
+                // User already has addresses saved
                 if (count($order->getCustomer()->getAddresses()) > 0) {
                     $createDeliveryAddress = false;
                 }
@@ -45,7 +50,7 @@ class OrderType extends AbstractType
                 $form->get('createDeliveryAddress')->setData($createDeliveryAddress);
             }
 
-            // The deliveryAddress field is not mapped
+            // The deliveryAddress field is not mapped because we will link the address with the Delivery Entity.
             if ($createDeliveryAddress) {
                 $form->add('deliveryAddress', AddressType::class, [ 'mapped' => false ]);
             } else {
