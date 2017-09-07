@@ -16,11 +16,12 @@ var initUsers = function() {
             return utils.cleanDb();
           })
          .then(function() {
-             Promise.all([
+             return Promise.all([
                utils.createUser('bill'),
                utils.createUser('sarah', ['ROLE_COURIER'])
-             ]).then(resolve);
+             ]);
          })
+         .then(resolve)
          .catch(reject);
      });
 };
