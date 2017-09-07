@@ -2,11 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Base\Place;
+use AppBundle\Entity\Base\BaseAddress;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
@@ -28,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   },
  * )
  */
-class Address extends Place
+class Address extends BaseAddress
 {
     /**
      * @var int
@@ -48,4 +47,5 @@ class Address extends Place
     {
         return $this->id;
     }
+
 }

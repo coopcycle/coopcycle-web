@@ -26,10 +26,14 @@ class AddressType extends AbstractType
             ->add('addressLocality', TextType::class, [
                 'label' => 'City'
             ])
-            // ->add('description', TextType::class, [
-            //     'required' => false,
-            //     'label' => 'Additional information'
-            // ])
+            ->add('description', TextType::class, [
+                'required' => false,
+                'label' => 'Delivery instructions (optional)'
+            ])
+            ->add('floor', TextType::class, [
+                'required' => false,
+                'label' => 'Floor (optional)'
+            ])
             ->add('latitude', HiddenType::class, [
                 'mapped' => false,
             ])

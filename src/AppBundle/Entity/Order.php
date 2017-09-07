@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Validator\Constraints as CoopCycleAssert;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -63,7 +61,7 @@ class Order
     private $id;
 
     /**
-     * @var Person Party placing the order or paying the invoice.
+     * @var ApiUser Party placing the order or paying the invoice.
      *
      * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="ApiUser")
@@ -209,13 +207,13 @@ class Order
     /**
      * Sets orderedItem.
      *
-     * @param OrderItem $orderedItem
+     * @param OrderItem[] $orderedItem
      *
      * @return $this
      */
     public function setOrderedItem($orderedItem)
     {
-        $orderedItem = array_map(function ($orderedItem) {
+        $orderedItem = array_map(function (OrderItem $orderedItem) {
             return $orderedItem->setOrder($this);
         }, $orderedItem);
 
@@ -352,6 +350,9 @@ class Order
         return $this;
     }
 
+    /**
+     * @return ArrayCollection|OrderEvent[]
+    */
     public function getEvents()
     {
         return $this->events;
