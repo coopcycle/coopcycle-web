@@ -19,7 +19,7 @@ OrderRegistry.prototype.findById = function(id) {
             model: Db.Delivery,
             include: [
               { model: Db.Address, as: 'originAddress' },
-              { model: Db.Address, as: 'deliveryAddress' }
+              { model: Db.DeliveryAddress, as: 'deliveryAddress' }
             ]
           },
           {

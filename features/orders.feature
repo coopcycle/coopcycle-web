@@ -76,7 +76,7 @@ Feature: Orders
           "name":null
         },
         "deliveryAddress":{
-          "@id":"@string@.startsWith('/api/addresses')",
+          "@id":"@string@.startsWith('/api/delivery_addresses')",
           "@type":"http://schema.org/Place",
           "geo":{
             "latitude":48.855799,
