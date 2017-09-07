@@ -1,7 +1,7 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block content %}
-<h2>Mes adresses</h2>
+<h2>{%  trans %}My addresses{%  endtrans %}</h2>
 <table class="table">
   <tbody>
   {% for address in addresses %}
@@ -12,7 +12,7 @@
   {% endfor %}
   </tbody>
 </table>
-<a class="btn btn-success" href="{{ path('profile_address_new') }}">Ajouter</a>
+<a class="btn btn-success" href="{{ path('profile_address_new') }}">{% trans %}Add{%  endtrans %}</a>
 {% endblock %}
 
 {% block scripts %}
