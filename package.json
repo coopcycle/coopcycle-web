@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/polyline": "^0.2.0",
+    "@tweenjs/tween.js": "^16.3.5",
     "antd": "^2.9.3",
     "async": "^2.1.4",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
@@ -39,9 +40,8 @@
     "pg-hstore": "^2.3.2",
     "promise": "^7.1.1",
     "redis": "^2.6.2",
-    "sequelize": "^3.27.0",
+    "sequelize": "^4.7.5",
     "socket.io": "^1.7.1",
-    "@tweenjs/tween.js": "^16.3.5",
     "underscore": "^1.8.3",
     "whatwg-fetch": "^2.0.1",
     "winston": "^2.3.0",

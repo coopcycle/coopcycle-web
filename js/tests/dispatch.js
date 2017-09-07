@@ -35,15 +35,16 @@ function init() {
           })
          .then(function() {
             return Promise.all([
-                utils.createUser('bill').then(function() {
-                  return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
-                    lat: 48.855799,
-                    lng: 2.359207
-                  });
-                }),
+                utils.createUser('bill'),
                 utils.createUser('sarah', ['ROLE_COURIER']),
                 utils.createUser('bob', ['ROLE_COURIER'])
               ]);
+          })
+          .then(function() {
+            return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
+              lat: 48.855799,
+              lng: 2.359207
+            });
           })
           .then(resolve)
           .catch((e) => reject(e));
@@ -62,10 +63,10 @@ describe('With one order waiting', function() {
             return init();
           })
           .then(function() {
-                return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
-            })
+            return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
+          })
           .then(function(restaurant) {
-            utils.createRandomOrder('bill', restaurant);
+            return utils.createRandomOrder('bill', restaurant);
           })
           .then(resolve)
           .catch(function(e) {
@@ -80,29 +81,38 @@ describe('With one order waiting', function() {
 
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('sarah');
+
       var ws = new WebSocket('http://localhost:8000', {
         headers: {
           Authorization: 'Bearer ' + token
         }
       });
+
       ws.onopen = function() {
+
         assert.equal(WebSocket.OPEN, ws.readyState);
-        ws.send(JSON.stringify({
+
+        var msg = JSON.stringify({
           type: "updateCoordinates",
           coordinates: { latitude: 48.883083, longitude: 2.344276 }
-        }));
+        });
+        ws.send(msg);
       };
+
       ws.onmessage = function(e) {
 
         assert.equal('message', e.type);
 
+
         var data = JSON.parse(e.data);
+
 
         assert.equal('order', data.type);
 
         ws.close();
         resolve();
       };
+
       ws.onerror = function(e) {
         reject(e.message);
       };
@@ -187,7 +197,7 @@ describe('With several users connected', function() {
         latitude: 48.884550, longitude: 2.341358
       })
       .then(function(restaurant) {
-        utils.createRandomOrder('bill', restaurant);
+        return utils.createRandomOrder('bill', restaurant);
       });
 
     });
