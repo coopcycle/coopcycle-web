@@ -2,24 +2,18 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\Cart;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
-use AppBundle\Entity\OrderItem;
 use AppBundle\Form\OrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use League\Geotools\Geotools;
-use League\Geotools\Coordinate\Coordinate;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Stripe;
+
 
 /**
  * @Route("/order")
@@ -87,12 +81,12 @@ class OrderController extends Controller
             $deliveryAddress = $form->get('deliveryAddress')->getData();
 
             $createDeliveryAddress = $form->get('createDeliveryAddress')->getData();
+
+            $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->persist($deliveryAddress);
+            $this->getDoctrine()->getManagerForClass('AppBundle:DeliveryAddress')->flush();
+
             if ($createDeliveryAddress) {
-                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
-                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
-
                 $this->getUser()->addAddress($deliveryAddress);
-
                 $this->getDoctrine()->getManagerForClass('AppBundle:ApiUser')->flush();
             }
 

@@ -1,4 +1,3 @@
-var exec = require('child_process').exec;
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
 var fs = require('fs');
@@ -7,9 +6,8 @@ var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
 var _ = require('underscore');
-var path = require('path');
 
-var rootDir = fs.realpathSync(__dirname + '/../../');
+
 var pgCleaner = new DatabaseCleaner('postgresql', {
   postgresql: {
     skipTables: [],
@@ -99,6 +97,9 @@ TestUtils.prototype.createUser = function(username, roles) {
 
   var params = {
     'username': username,
+    'given_name': username,
+    'family_name': username,
+    'telephone': '00000',
     'username_canonical': username,
     'email': username + '@coopcycle.dev',
     'email_canonical': username + '@coopcycle.dev',
@@ -107,38 +108,29 @@ TestUtils.prototype.createUser = function(username, roles) {
     'enabled': true
   };
 
-  return new Promise(function (resolve, reject) {
-    User.create(params)
-        .then(function() {
-          resolve();
-        })
-        .catch(function(err) {
-          reject(err.errors);
-        });
-});
+  return User.create(params);
 };
 
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
 
-  var Address = this.db.Address;
-  var User = this.db.User;
+    var Address = this.db.Address;
+    var User = this.db.User;
 
-  return new Promise(function (resolve, reject) {
-    User.findOne({ where: { username: username } })
-      .then((customer) => {
-        Address.create({
-          streetAddress: streetAddress,
-          geo: { type: 'Point', coordinates: [ geo.lat, geo.lng ]}
-        })
-        .then(function(address) {
-          customer.addAddress(address).then(resolve);
-        })
-        .catch(function(err) {
-          reject(err.errors)
-        });
-      });
-  });
+    return new Promise(function (resolve, reject) {
+        var customer = User.findOne({where: {username: username}});
+        var address = Address.create({streetAddress: streetAddress, geo: {type: 'Point', coordinates: [geo.lat, geo.lng]}});
+        Promise.all([customer, address])
+            .then(function (results) {
+                return results[0].addAddress(results[1]);
+            })
+            .then(resolve)
+            .catch(function (err) {
+                var error = err.errors ? err.errors : err;
+                reject(error);
+            });
+    });
 }
+
 
 TestUtils.prototype.createRestaurant = function(name, coordinates) {
   var Restaurant = this.db.Restaurant;
@@ -162,19 +154,24 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
 
 TestUtils.prototype.createRandomOrder = function(username, restaurant) {
 
-  var Restaurant = this.db.Restaurant;
   var Order = this.db.Order;
   var User = this.db.User;
   var Delivery = this.db.Delivery;
+  var DeliveryAddress = this.db.DeliveryAddress;
   var redis = this.redis;
 
   return new Promise(function (resolve, reject) {
 
     User.findOne({ where: { username: username } })
       .then(function(customer) {
-        customer.getAddresses()
-          .then(function(deliveryAddresses) {
-            return _.first(deliveryAddresses);
+          return customer.getAddresses()
+          .then(function(customerAddresses) {
+            var customerAddress = _.first(customerAddresses);
+            return DeliveryAddress.create({
+              streetAddress: customerAddress.streetAddress,
+              geo: {type: 'Point',
+                    coordinates: [customerAddress.position.latitude, customerAddress.position.longitude]}
+            });
           })
           .then(function(deliveryAddress) {
             Order.create({
@@ -203,6 +200,8 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
                 return order.setDelivery(delivery).then(function() {
                   return order;
                 });
+              }).catch(function(e) {
+                reject(e);
               });
 
             })
