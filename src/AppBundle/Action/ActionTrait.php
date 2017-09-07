@@ -7,7 +7,6 @@ use Predis\Client as Redis;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Serializer\SerializerInterface;
 use AppBundle\Entity\OrderRepository;
-use AppBundle\Entity\ApiUser;
 use AppBundle\Service\PaymentService;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
