@@ -3,14 +3,11 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\CreativeWork;
-use AppBundle\Entity\Menu;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * A structured representation of food or drink items available from a FoodEstablishment.

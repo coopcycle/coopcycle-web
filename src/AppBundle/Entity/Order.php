@@ -243,6 +243,7 @@ class Order
     public function addMenuItem(MenuItem $menuItem, $quantity)
     {
         $orderedItem = null;
+
         foreach ($this->orderedItem as $item) {
             if ($item->getMenuItem() === $menuItem) {
                 $orderedItem = $item;
