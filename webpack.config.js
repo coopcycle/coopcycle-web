@@ -1,8 +1,8 @@
-var path = require("path");
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var WebpackAssetsManifest = require('webpack-assets-manifest');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var CommonChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 if (process.env.NODE_ENV === 'production') {
   var jsFilename = "[name].[chunkhash].js",
@@ -16,6 +16,7 @@ else {
 
 var webpackConfig = {
   entry: {
+    'common': [],
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
     'js/address-form': './js/app/address/form.jsx',
@@ -79,6 +80,7 @@ var webpackConfig = {
       new CopyWebpackPlugin([
         { from: 'node_modules/coopcycle-js/build/coopcycle.js', to: 'js/coopcycle.js' }
       ]),
+      new CommonChunkPlugin({ minChunks: 3, name: 'common', filename: 'js/common.js'})
   ],
   devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
