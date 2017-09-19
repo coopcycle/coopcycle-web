@@ -2,4 +2,4 @@
 
 cd /srv/coopcycle
 npm install
-webpack-dev-server --watch-poll --host 0.0.0.0 --content-base=web/
+node_modules/.bin/webpack-dev-server --watch-poll --host 0.0.0.0 --content-base=web/
