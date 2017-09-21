@@ -3,143 +3,73 @@ CoopCycle
 
 [![Build Status](https://travis-ci.org/coopcycle/coopcycle-web.svg?branch=master)](https://travis-ci.org/coopcycle/coopcycle-web)
 
-CoopCycle is a **self-hosted** platform to order meals in your neighborhood and get them delivered by bike couriers. The only difference is the software is [reserved to co-ops](#license).
+CoopCycle is a **self-hosted** platform to order meals in your neighborhood and get them delivered by bike couriers. The only difference with proprietary platforms as Deliveroo or UberEats is that this software is [reserved to co-ops](#license).
 
-The main idea here is to **decentralize** this kind of services, by allowing couriers to **own the platform** they are working for.
+The main idea is to **decentralize** this kind of service and to allow couriers to **own the platform** they are working for.
 In each city, couriers are encouraged to organize into co-ops, and to run their very own version of the software.
 
-The software is still under development, it is not even pre-alpha.
+The software is under active development. If you would like to contribute we will be happy to hear from you! All instructions are [in the Contribute file](CONTRIBUTING.md).
 
-Of course, there is also a [native app](https://github.com/coopcycle/coopcycle-app).
+Coopcycle-web is the main repo, containing the web API, the front-end for the website and the dispatch algorithm : [ Technical Overview ](https://github.com/coopcycle/coopcycle-web/wiki/Technical-Overview). You can see it in action & test it here : https://demo.coopcycle.org
 
-Technical overview
-------------------
+You can find a comprehensive list of our repos here : [ Our repos comprehensive list ](https://github.com/coopcycle/coopcycle-web/wiki/Our-repos-comprehensive-list).
 
-This repository is a monolith containing the platform itself.
-It is basically a PHP application backed by a PostgreSQL database + Redis/Node.js code to power the realtime services.
-It also provides a routing service with [OSRM](http://project-osrm.org/).
-
-![alt tag](https://raw.githubusercontent.com/coopcycle/coopcycle-web/master/docs/img/technical-overview.png)
-
-[API documentation](https://coopcycle.org/api/docs)
-
-How to develop
+How to run a local instance
 --------------
-
-Developement environment comes in two flavors: Vagrant & Docker.
 
 ### Prerequisites
 
-* Install [VirtualBox](https://www.virtualbox.org/)
+* Install [Docker](https://www.docker.com/). On OSX/Windows we advise you to install the latest versions available, which don't rely on Virtualbox.
+
+* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and paste it [in the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L31)
+
+* Create a Stripe account and enter your test credentials in [the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L33)
+
 * Generate the SSH keys for JSON Web Token:
 ```
 $ mkdir -p var/jwt
-$ openssl genrsa -out var/jwt/private.pem -aes256 4096
+$ openssl genrsa -out var/jwt/private.pem -passout pass:courier -aes256 4096
 $ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 ```
+
 * Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
 ```
 mkdir -p var/osrm
 wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
 ```
 
-* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and paste it [in the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L31)
-
-* If you want to pass orders, create a Stripe account and enter your test credentials in [the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L33)
-
-### Using Vagrant
-
-* Install [Vagrant](https://docs.vagrantup.com/v2/installation/index.html) & [Ansible](http://docs.ansible.com/intro_installation.html#installation).
-* Install Vagrant plugins
-```
-vagrant plugin install vagrant-hosts
-vagrant plugin install vagrant-vbguest
-```
-* Install Ansible roles with Ansible Galaxy
-```
-$ ansible-galaxy install -r ansible/requirements.yml
-```
-* Install PHP, Composer, and Node
-* Run `composer install`
-* Run `npm install`
-* Run `vagrant up`
-* Create the database schema
-```
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create'
-```
-* Create an admin user
-```
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:create admin'
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console fos:user:promote admin ROLE_ADMIN'
-```
-* Add a host to the `/etc/hosts` file:
-```
-192.168.33.7 coopcycle.dev
-```
-* Run `npm run watch` to launch `webpack-dev-server`
-
-### Using Docker
-
-* Create a Docker Machine if needed - we advise you to use docker for Mac or Docker for Windows instead of a Virtualbox machine.
-```
-docker-machine create -d virtualbox
-eval $(docker-machine env default)
-```
-* Change the webpack dev server URL [here](https://github.com/coopcycle/coopcycle-web/blob/b8e13a27b22c543a63ec3d22d4e906d5676ab1cb/app/config/parameters.yml.dist#L51) with `<docker_machine_ip>:8080`
-
-* Start the Docker containers
-```
-docker-compose up -d
-```
 * Create the database schema
 ```
 docker-compose run php bin/console doctrine:schema:create
 ```
-* Create an admin user
+
+* Populate the database with users and restaurants.
 ```
-docker-compose run php bin/console fos:user:create admin
-docker-compose run php bin/console fos:user:promote admin ROLE_ADMIN
+docker-compose run php bin/demo
 ```
+
 * Pre-process the OpenStreeMap data for OSRM
-NB: this may take a lot of memory, so you may need to increase the resource allocated to the docker VM on OSX in Virtualbox to 2go ([how-to](https://superuser.com/questions/926339/how-to-change-the-ram-allocated-to-an-os-in-virtualbox?answertab=votes#tab-top)) .
 ```
 docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 docker-compose run osrm osrm-contract /data/data.osrm
 ```
 
+### Run the application
+
+* Start the Docker containers
+```
+docker-compose up
+```
+
 * Open the platform in your browser
 ```
-open http://`docker-machine ip`
-```
-
-### Keeping your database up-to-date
-
-Run Doctrine migrations to keep your database up to date
-
-With Vagrant
-```
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:migrations:migrate'
-
-```
-
-With Docker
-```
-docker-compose run php bin/console doctrine:migrations:migrate
-
+open http://localhost
 ```
 
 Testing
 -------
 
 * Create the test database
-
-With Vagrant
-```
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:database:create --env=test'
-vagrant ssh -c 'psql -U postgres -d coopcycle_test -c "CREATE EXTENSION postgis;"'
-vagrant ssh -c 'psql -U postgres -d coopcycle_test -c "CREATE EXTENSION postgis_topology;"'
-vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:schema:create --env=test'
-```
 
 With Docker
 ```
@@ -148,11 +78,6 @@ docker-compose run php bin/console doctrine:schema:create --env=test
 
 * Launch the Behat tests
 
-With Vagrant
-```
-sudo -u www-data php /var/www/coopcycle/vendor/bin/behat
-```
-
 With Docker
 ```
 docker-compose run php php vendor/bin/behat
@@ -160,52 +85,9 @@ docker-compose run php php vendor/bin/behat
 
 * Launch the Mocha tests
 
-With Vagrant
-
-```
-cd /var/www/coopcycle
-pm2 restart pm2.config.js --env=test
-sudo -u www-data node node_modules/.bin/mocha js/tests
-```
-
 With Docker
 ```
 docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
-```
-
-Tips
-----
-
-Connect to PostgreSQL server through Docker
-
-```
-docker-compose exec postgres psql -U postgres
-```
-
-How to provision a server
--------------------------
-
-The same Ansible roles used to provision the virtual machine are used to provision the server.
-
-Copy `ansible/hosts.dist`
-
-```
-cp ansible/hosts.dist ansible/hosts
-```
-Modify `ansible/hosts.dist` to put your server name and IP address.
-```
-[server_name]
-XXX.XXX.XXX.XXX
-```
-
-Copy `ansible/group_vars/prod.yml.dist`
-```
-cp ansible/group_vars/prod.yml.dist ansible/group_vars/server_name.yml
-```
-
-Run `ansible-playbook` to provision the server.
-```
-ansible-playbook -i ansible/hosts ansible/playbook.yml
 ```
 
 License
