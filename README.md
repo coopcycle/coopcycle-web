@@ -124,7 +124,7 @@ vagrant ssh -c 'sudo -u www-data php /var/www/coopcycle/bin/console doctrine:mig
 
 With Docker
 ```
-docker-compose run php bin/console doctrine:migrations:migrate'
+docker-compose run php bin/console doctrine:migrations:migrate
 
 ```
 
