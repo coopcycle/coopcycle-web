@@ -28,8 +28,8 @@ services:
       - '8001:8001'
       - '8002:8002'
     volumes:
-      - './:/srv/coopcycle'
       - 'node_modules:/srv/coopcycle/node_modules'
+      - './:/srv/coopcycle'
 
   webpack:
     build:
@@ -38,8 +38,8 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - './:/srv/coopcycle'
       - 'node_modules:/srv/coopcycle/node_modules'
+      - './:/srv/coopcycle'
 
   osrm:
     build: './docker/osrm'
