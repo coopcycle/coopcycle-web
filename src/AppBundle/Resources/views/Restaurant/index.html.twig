@@ -28,10 +28,44 @@
         <h2>{{ menuSection.name }}</h2>
         <div class="list-group">
           {% for menuItem in menuSection.items %}
-            <a href="#" class="list-group-item menu-item js-add-to-cart" data-menu-item-id="{{ menuItem.id }}">
+            <a  class="list-group-item menu-item {%  if menuItem.modifiers.count == 0 %}js-add-to-cart{%  endif %}" data-menu-item-id="{{ menuItem.id }}"
+                {%  if menuItem.modifiers.count > 0 %}data-toggle="modal" data-target="#{{ menuItem.id }}-modifiersModal"
+              {%  endif %}
+            >
               <span class="menu-item-content">{{ menuItem.name }}</span>
               <span class="menu-item-price">{{ menuItem.price }} €</span>
-            </a>
+            </a >
+            {%  if menuItem.modifiers.count > 0 %}
+              <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4 class="modal-title">{{ menuItem.name }}</h4>
+                    </div>
+                    <div class="modal-body">
+                      {%  for modifier in  menuItem.modifiers %}
+                          <form data-modifier-id="{{ modifier.id }}">
+                            <h4>{{ modifier.name }}
+                              {%  if modifier.calculusStrategy == 'ADD_MODIFIER_PRICE' %} - {{ modifier.price }}€{% endif %}
+                            </h4>
+                            <div class="list-group">
+                              {%  for choice in modifier.menuItemChoices %}
+                                <div class="list-group-item radio menu-item modifier-item">
+                                    <input value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice" name="{{ modifier.id }}-choice"><label for="{{ choice.id }}-choice">{{ choice.name }}{%  if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}</label>
+                                </div>
+                              {%  endfor %}
+                            </div>
+                          </form>
+                      {%  endfor %}
+                      <button class="js-add-to-cart btn btn-block btn-primary" data-menu-item-id="{{ menuItem.id }}">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {%  endif %}
           {% endfor %}
         </div>
       {% endfor %}
@@ -80,7 +114,7 @@
 window.AppData = window.AppData || {};
 window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
-  removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'menuItemId': '__MENU_ITEM__'})|raw }}",
+  removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
   items: {{ cart.items|json_encode()|raw }},
   date: "{{ cart.date|date('Y-m-d H:i:s') }}",
   validateCartURL: "{{ path('order') }}"
