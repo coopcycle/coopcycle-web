@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -42,7 +43,7 @@ class OrderItem
      * @var MenuItem
      *
      * @Assert\NotBlank()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/MenuItem")
      * @Groups({"order"})
      */
@@ -65,15 +66,16 @@ class OrderItem
      */
     private $order;
 
-    // FIXME Can't use constructor or denormalization won't work
-    // public function __construct(MenuItem $menuItem = null)
-    // {
-    //     $this->menuItem = $menuItem;
-    //     if ($menuItem) {
-    //         $this->name = $menuItem->getName();
-    //         $this->price = $menuItem->getPrice();
-    //     }
-    // }
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItemModifier", mappedBy="orderItem", cascade={"all"})
+     */
+    private $modifiers;
+
+
+     public function __construct(MenuItem $menuItem = null)
+     {
+         $this->modifiers = new ArrayCollection();
+     }
 
     /**
      * Gets id.
@@ -159,4 +161,29 @@ class OrderItem
     {
         return $this->order;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getModifiers()
+    {
+        return $this->modifiers;
+    }
+
+    /**
+     * @param mixed $modifiers
+     */
+    public function setModifiers($modifiers)
+    {
+        $this->modifiers = $modifiers;
+    }
+
+    public function addModifier(OrderItemModifier $orderedItemModifier)
+    {
+        $orderedItemModifier->setOrderItem($this);
+        $this->modifiers->add($orderedItemModifier);
+
+        return $this;
+    }
+
 }
