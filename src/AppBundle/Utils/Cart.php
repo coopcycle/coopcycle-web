@@ -3,12 +3,16 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\MenuItem;
+
 
 class Cart
 {
     private $restaurantId;
     private $date;
+
+    /**
+     * @var CartItem[]
+     */
     private $items = array();
 
     public function __construct(Restaurant $restaurant = null)
@@ -33,42 +37,40 @@ class Cart
         $this->items = array();
     }
 
-    public function addItem(MenuItem $menuItem)
+    public function addItem($menuItem, $quantity = 1, $modifierChoices = [])
     {
-        foreach ($this->items as $key => $item) {
-            if ($item['id'] === $menuItem->getId()) {
-                ++$this->items[$key]['quantity'];
-                return;
-            }
+        $cartItem = new CartItem($menuItem, $quantity, $modifierChoices);
+        $itemKey = $cartItem->getKey();
+
+        if (array_key_exists($itemKey, $this->items)) {
+            $this->items[$itemKey]->update($quantity);
         }
-        $this->items[] = array(
-            'id' => $menuItem->getId(),
-            'name' => $menuItem->getName(),
-            'price' => $menuItem->getPrice(),
-            'quantity' => 1,
-        );
+        else {
+            $this->items[$itemKey] = $cartItem;
+        }
+
+        return $this->items;
+
     }
 
-    public function removeItem(MenuItem $menuItem)
+    public function removeItem($itemKey)
     {
-        foreach ($this->items as $key => $item) {
-            if ($item['id'] === $menuItem->getId()) {
-                unset($this->items[$key]);
-                break;
-            }
+        if (array_key_exists($itemKey, $this->items)) {
+            unset($this->items[$itemKey]);
         }
+
+        return $this->items;
     }
 
     public function getItems()
     {
-        // Make sure this is a zero-indexed array, for proper JSON serialization
-        return array_values($this->items);
+        return $this->items;
     }
 
     public function getTotal()
     {
         return array_reduce($this->items, function ($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
+            return $carry + $item->getTotal();
         }, 0);
     }
 
@@ -84,11 +86,17 @@ class Cart
         return $this;
     }
 
+    public function getNormalizedItems()
+    {
+        // Make sure this is a zero-indexed array, for proper JSON serialization
+        return array_values(array_map(function ($el) { return $el->toArray(); }, $this->items));
+    }
+
     public function toArray()
     {
         return array(
             'date' => $this->date->format('Y-m-d H:i:s'),
-            'items' => $this->getItems(),
+            'items' => $this->getNormalizedItems(),
         );
     }
 }
