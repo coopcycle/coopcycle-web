@@ -28,8 +28,8 @@ How to run a local instance
 * Generate the SSH keys for JSON Web Token:
 ```
 $ mkdir -p var/jwt
-$ openssl genrsa -out var/jwt/private.pem -passout pass:courier -aes256 4096
-$ openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
+$ openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096
+$ openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 ```
 
 * Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
