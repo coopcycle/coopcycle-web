@@ -285,7 +285,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         foreach ($restaurant->getMenu()->getAllItems() as $menuItem) {
             $cartItem = new \AppBundle\Utils\CartItem($menuItem, 1, []);
-            $order->addCartItem($cartItem);
+            $order->addCartItem($cartItem, $menuItem);
         }
 
         $orderManager->persist($order);

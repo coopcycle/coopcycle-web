@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\NameTrait;
 use AppBundle\Entity\Model\PriceTrait;
+use AppBundle\Entity\Menu\MenuItem;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -72,7 +73,7 @@ class OrderItem
     private $modifiers;
 
 
-     public function __construct(MenuItem $menuItem = null)
+     public function __construct()
      {
          $this->modifiers = new ArrayCollection();
      }
