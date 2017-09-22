@@ -7,6 +7,7 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Utils\CartItem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -30,7 +31,7 @@ class OrderTest extends TestCase
         }, $errors->getIterator()->getArrayCopy());
     }
 
-    public function testAddMenuItem()
+    public function testAddCartItem()
     {
         $order = new Order();
 
@@ -44,10 +45,11 @@ class OrderTest extends TestCase
             ->setName('Salad')
             ->setPrice(5);
 
-        $order->addMenuItem($pizza, 1);
-        $order->addMenuItem($pizza, 3);
+        $pizzaItem = new CartItem($pizza, 4);
+        $order->addCartItem($pizzaItem, $pizza);
 
-        $order->addMenuItem($salad, 2);
+        $saladItem = new CartItem($salad, 2);
+        $order->addCartItem($saladItem, $salad);
 
         $this->assertCount(2, $order->getOrderedItem());
 
@@ -78,8 +80,11 @@ class OrderTest extends TestCase
             ->setName('Salad')
             ->setPrice(5);
 
-        $order->addMenuItem($pizza, 4);
-        $order->addMenuItem($salad, 2);
+        $pizzaItem = new CartItem($pizza, 4);
+        $order->addCartItem($pizzaItem, $pizza);
+
+        $saladItem = new CartItem($salad, 2);
+        $order->addCartItem($saladItem, $salad);
 
         $this->assertEquals(50, $order->getTotal());
     }

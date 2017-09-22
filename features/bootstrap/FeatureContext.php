@@ -284,7 +284,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $delivery->setDeliveryAddress($user->getAddresses()->first());
 
         foreach ($restaurant->getMenu()->getAllItems() as $menuItem) {
-            $order->addMenuItem($menuItem, 1);
+            $cartItem = new \AppBundle\Utils\CartItem($menuItem, 1, []);
+            $order->addCartItem($cartItem);
         }
 
         $orderManager->persist($order);
