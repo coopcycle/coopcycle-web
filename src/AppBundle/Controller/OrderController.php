@@ -37,7 +37,6 @@ class OrderController extends Controller
     {
         $cart = $this->getCart($request);
 
-        $menuItemRepository = $this->getDoctrine()->getRepository(MenuItem::class);
         $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
 
         $restaurant = $restaurantRepository->find($cart->getRestaurantId());
@@ -47,8 +46,9 @@ class OrderController extends Controller
         $order->setCustomer($this->getUser());
 
         foreach ($cart->getItems() as $item) {
-            $menuItem = $menuItemRepository->find($item['id']);
-            $order->addMenuItem($menuItem, $item['quantity']);
+            $menuItemRepo = $this->getDoctrine()->getRepository(MenuItem::class);
+            $menuItem = $menuItemRepo->find($item->getMenuItem()->getId());
+            $order->addCartItem($item, $menuItem);
         }
 
         $delivery = new Delivery($order);
