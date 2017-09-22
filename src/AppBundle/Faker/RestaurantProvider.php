@@ -134,6 +134,14 @@ class RestaurantProvider extends BaseProvider
         return static::randomElement(static::$dessertAdditionalIngredients);
     }
 
+    /* Menu Item Modifiers */
+
+    protected static $calculusMethods = array(
+        'ADD_MENUITEM_PRICE',
+        'ADD_MODIFIER_PRICE',
+        'FREE'
+    );
+
     /* API */
 
     public function restaurantName()
@@ -162,5 +170,9 @@ class RestaurantProvider extends BaseProvider
         $format = static::randomElement(static::$dessertFormats);
 
         return ucfirst($this->generator->parse($format));
+    }
+
+    public function calculusMethod() {
+        return static::randomElement(static::$calculusMethods);
     }
 }

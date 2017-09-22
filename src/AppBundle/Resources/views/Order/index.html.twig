@@ -29,10 +29,10 @@
       <form method="post">
 
         <div class="list-group">
-          {% for item in cart.items %}
-          <a href="#" class="list-group-item js-add-to-cart" data-product-id="{{ item.id }}">
-            {{ item.name }} x {{ item.quantity }}
-            <span class="pull-right">{{ item.price * item.quantity }} €</span>
+          {% for item in cart.normalizedItems %}
+          <a href="#" class="list-group-item">
+            {{ item.name }} x {{ item.quantity }}<span class="pull-right">{{ item.total }} €</span><br>
+            {%  if item.modifiersDescription %}{{ item.modifiersDescription }}{%  endif %}
           </a>
           {% endfor %}
         </div>

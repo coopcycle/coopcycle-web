@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+
+use AppBundle\Utils\CartItem;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -240,24 +242,39 @@ class Order
         return $this;
     }
 
-    public function addMenuItem(MenuItem $menuItem, $quantity)
-    {
-        $orderedItem = null;
+    public function addCartItem(CartItem $cartItem, MenuItem $menuItem) {
 
-        foreach ($this->orderedItem as $item) {
-            if ($item->getMenuItem() === $menuItem) {
-                $orderedItem = $item;
-                break;
+        $orderedItem = new OrderItem();
+        $orderedItem->setMenuItem($menuItem);
+        $orderedItem->setQuantity($cartItem->getQuantity());
+        $orderedItem->setPrice($cartItem->getUnitPrice());
+
+        foreach ($cartItem->getModifierChoices() as $modifierId => $selectedMenuItems) {
+
+            $modifier = $menuItem->getModifiers()->filter(function ($element) use ($modifierId) {
+                return $element->getId() == $modifierId;
+            })->first();
+
+            foreach ($selectedMenuItems as $selectedMenuItemId) {
+                $orderedItemModifier = new OrderItemModifier();
+
+                // get the price for each selected menu item (depends on the Modifier's calculus strategy)
+                $menuItem = $modifier->getMenuItemChoices()->filter(
+                    function (\AppBundle\Entity\Menu\MenuItem $element) use ($selectedMenuItemId) {
+                        return $element->getId() == $selectedMenuItemId;
+                    }
+                )->first();
+
+                $orderedItemModifier->setName($menuItem->getName());
+                $orderedItemModifier->setDescription($menuItem->getDescription());
+                $orderedItemModifier->setAdditionalPrice($menuItem->getPrice());
+                $orderedItemModifier->setModifier($modifier);
+                $orderedItem->addModifier($orderedItemModifier);
             }
         }
-        if (null === $orderedItem) {
-            $orderedItem = new OrderItem();
-            $orderedItem->setMenuItem($menuItem);
-            $orderedItem->setQuantity($quantity);
-            $this->addOrderedItem($orderedItem);
-        } else {
-            $orderedItem->setQuantity($orderedItem->getQuantity() + $quantity);
-        }
+
+        $this->addOrderedItem($orderedItem);
+
     }
 
     /**
