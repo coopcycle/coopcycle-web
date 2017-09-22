@@ -25,34 +25,11 @@ How to run a local instance
 
 * Create a Stripe account and enter your test credentials in [the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L33)
 
-* Generate the SSH keys for JSON Web Token:
-```
-$ mkdir -p var/jwt
-$ openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096
-$ openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
+* Run the install scripts
+```sh
+make install
 ```
 
-* Download metro extract for your area from [MapZen](https://mapzen.com/data/metro-extracts/) (example for Paris)
-```
-mkdir -p var/osrm
-wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
-```
-
-* Create the database schema
-```
-docker-compose run php bin/console doctrine:schema:create
-```
-
-* Populate the database with users and restaurants.
-```
-docker-compose run php bin/demo
-```
-
-* Pre-process the OpenStreeMap data for OSRM
-```
-docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
-docker-compose run osrm osrm-contract /data/data.osrm
-```
 
 ### Run the application
 
