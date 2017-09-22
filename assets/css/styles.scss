@@ -1,3 +1,8 @@
+// VARS
+$main-blue: #337ab7;
+$main-blue-light: lighten($main-blue, 20%);
+$banner-color: #d35400;
+
 body {
     font-family: "Arvo", Helvetica, Arial, sans-serif;
 }
@@ -17,7 +22,6 @@ footer {
 }
 
 #banner {
-    $banner-color: #d35400;
     padding: 10px 0;
     background-color: $banner-color;
     color: #fff;
@@ -97,6 +101,18 @@ footer {
     text-align: right;
 }
 
+.modifier-item input[type="radio"] {
+    position: relative;
+    margin-left: 0;
+}
+
+.modifier-item:hover {
+    background-color: $main-blue-light;
+}
+
+.modifier-item__selected {
+    background-color: $main-blue;
+}
 .ant-calendar-picker {
     margin-right: 5px;
 }
