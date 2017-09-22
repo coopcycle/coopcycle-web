@@ -4,12 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\Thing;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A food or drink item listed in a menu or menu section.
@@ -44,6 +39,7 @@ abstract class MenuItem extends Thing
      */
     protected $price;
 
+
     /**
      * Gets id.
      *
@@ -77,4 +73,6 @@ abstract class MenuItem extends Thing
     {
         return $this->price;
     }
+
+
 }

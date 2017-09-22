@@ -2,6 +2,7 @@ AppBundle\Entity\Menu\MenuItem:
   appetizers_{1..5}:
     name: <appetizerName()>
     price: <numberBetween(5, 10)>.99
+    modifiers: [ "@modifier_1" ]
   dishes_{1..5}:
     name: <dishName()>
     price: <numberBetween(5, 10)>.99
@@ -24,3 +25,11 @@ AppBundle\Entity\Menu:
   menu:
     name: Menu
     sections: [ "@menu_section_1", "@menu_section_2", "@menu_section_3" ]
+
+AppBundle\Entity\Menu\MenuItemModifier:
+  modifier_1:
+    name: "Ajoutez un dessert"
+    price: "10"
+    calculusStrategy: <calculusMethod()>
+    menu_item: "@appetizers_1"
+    menuItemChoices: [ "@desserts_1", "@desserts_2", "@desserts_3", "@desserts_4", "@desserts_5" ]

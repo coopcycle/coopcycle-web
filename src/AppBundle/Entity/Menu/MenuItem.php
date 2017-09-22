@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Menu;
 
 use AppBundle\Entity\MenuItem as BaseMenuItem;
+use AppBundle\Entity\Menu\MenuItemModifier;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -29,6 +30,19 @@ class MenuItem extends BaseMenuItem
      */
     private $section;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItemModifier",
+     *                mappedBy="menuItem",
+     *                cascade={"all"},
+     *                fetch="EAGER")
+     */
+    protected $modifiers;
+
+    public function __construct()
+    {
+        $this->modifiers = new ArrayCollection();
+    }
+
     public function getSection()
     {
         return $this->section;
@@ -40,4 +54,14 @@ class MenuItem extends BaseMenuItem
 
         return $this;
     }
+
+    /**
+     * @return ArrayCollection|MenuItemModifier[]
+     */
+    public function getModifiers()
+    {
+        return $this->modifiers;
+    }
+
+
 }

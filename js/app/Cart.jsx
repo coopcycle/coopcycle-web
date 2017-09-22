@@ -12,17 +12,21 @@ class Cart extends React.Component
     };
   }
   removeItem(item) {
-    let removeFromCartURL = this.props.removeFromCartURL.replace('__MENU_ITEM__', item.props.id);
+    console.log(item.props);
+    let removeFromCartUrl = this.props.removeFromCartURL.replace('__ITEM_KEY__', item.props.itemKey);
     $.ajax({
-      url: removeFromCartURL,
-      type: 'DELETE'
+      url: removeFromCartUrl,
+      type: 'DELETE',
     }).then((cart) => {
       this.setState({items: cart.items});
     });
   }
-  addMenuItemById(id) {
+  addMenuItemById(id, modifiers) {
     $.post(this.props.addToCartURL, {
-      menuItem: id,
+      selectedItemData: {
+        menuItemId: id,
+        modifiers: modifiers
+      },
       date: this.state.date
     }).then((cart) => {
       this.setState({items: cart.items});
@@ -42,9 +46,12 @@ class Cart extends React.Component
           cart={this}
           id={item.id}
           key={key}
+          itemKey={item.key}
           name={item.name}
-          price={item.price}
-          quantity={item.quantity} />
+          total={item.total}
+          quantity={item.quantity}
+          modifiersDescription={item.modifiersDescription}
+        />
       );
     });
 
@@ -60,7 +67,7 @@ class Cart extends React.Component
     }
 
     var sum = _.reduce(this.state.items, function(memo, item) {
-      return memo + (item.price * item.quantity);
+      return memo + (item.total);
     }, 0).toFixed(2);
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];

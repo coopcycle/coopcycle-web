@@ -2,25 +2,12 @@
 
 namespace AppBundle\Utils;
 
-use PHPUnit\Framework\TestCase;
-use AppBundle\Utils\Cart;
-use AppBundle\Entity\MenuItem;
-use AppBundle\Entity\Restaurant;
+use AppBundle\BaseTest;
+use AppBundle\Entity\Menu\MenuItem;
 
-class CartTest extends TestCase
+
+class CartTest extends BaseTest
 {
-    private static $itemCounter = 0;
-
-    private function createMenuItem($name, $price)
-    {
-        $item = $this->prophesize(MenuItem::class);
-
-        $item->getId()->willReturn(++self::$itemCounter);
-        $item->getName()->willReturn($name);
-        $item->getPrice()->willReturn($price);
-
-        return $item->reveal();
-    }
 
     public function testTotal()
     {
@@ -35,8 +22,57 @@ class CartTest extends TestCase
 
         $this->assertEquals(25, $cart->getTotal());
 
-        $cart->removeItem($item2);
+        $cartItem = new CartItem($item2, 0, []);
+
+        $cart->removeItem($cartItem->getKeyHash());
 
         $this->assertEquals(5, $cart->getTotal());
+    }
+
+    public function testTotalWithFreeModifier () {
+        $cart = new Cart();
+
+        $item1 = $this->createMenuItem('Item 1', 5);
+        $id1 = $item1->getId();
+        $item2 = $this->createMenuItem('Item 2', 10);
+        $item3 = $this->createMenuItem('Item 3', 10);
+
+        $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'FREE', 5);
+
+        $item1 = $this->doctrine
+                        ->getRepository(MenuItem::class)
+                        ->findOneBy(['id' => $id1]);
+
+        $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
+
+        $this->assertEquals(5, $cart->getTotal());
+    }
+
+    public function testTotalWithPayingModifier () {
+        $cart = new Cart();
+
+        $item1 = $this->createMenuItem('Item 1', 5);
+        $item2 = $this->createMenuItem('Item 2', 10);
+        $item3 = $this->createMenuItem('Item 3', 10);
+
+        $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'ADD_MENUITEM_PRICE', 5);
+
+        $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
+
+        $this->assertEquals(15, $cart->getTotal());
+    }
+
+    public function testTotalWithFlatModifierPrice () {
+        $cart = new Cart();
+
+        $item1 = $this->createMenuItem('Item 1', 5);
+        $item2 = $this->createMenuItem('Item 2', 10);
+        $item3 = $this->createMenuItem('Item 3', 10);
+
+        $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'ADD_MODIFIER_PRICE', 5);
+
+        $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
+
+        $this->assertEquals(10, $cart->getTotal());
     }
 }

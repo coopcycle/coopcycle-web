@@ -37,7 +37,7 @@ class BaseAddress extends Place
     /**
      * @param string $description
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description = null)
     {
         $this->description = $description;
     }
@@ -53,7 +53,7 @@ class BaseAddress extends Place
     /**
      * @param string $floor
      */
-    public function setFloor(string $floor)
+    public function setFloor(string $floor = null)
     {
         $this->floor = $floor;
     }
