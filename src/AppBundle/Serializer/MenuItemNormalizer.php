@@ -20,6 +20,10 @@ class MenuItemNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
 
+        if (!is_array($data)) {
+            return $data;
+        }
+
         $data['offers'] = [
             '@type' => 'http://schema.org/Offer',
             'price' => $object->getPrice(),
