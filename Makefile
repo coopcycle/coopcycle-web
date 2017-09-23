@@ -1,7 +1,6 @@
-SOURCE		:= $(CURDIR)
+
 
 install:
-	@cp $(CURDIR)/app/config/parameters.yml.dist $(CURDIR)/app/config/parameters.yml
 	@printf "\e[0;32mGenerating RSA key to encrypt webtokens..\e[0m\n"
 	@mkdir -p var/jwt
 	@openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096;
