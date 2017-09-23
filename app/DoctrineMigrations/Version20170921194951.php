@@ -18,7 +18,7 @@ class Version20170921194951 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE TABLE menu_item_modifier (id SERIAL NOT NULL, menu_item_id INT DEFAULT NULL, calculus_strategy VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, description VARCHAR(255) DEFAULT NOT NULL, name VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE menu_item_modifier (id SERIAL NOT NULL, menu_item_id INT DEFAULT NULL, calculus_strategy VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, description VARCHAR(255) DEFAULT NULL, name VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_617144A09AB44FE0 ON menu_item_modifier (menu_item_id)');
         $this->addSql('CREATE TABLE menu_item_modifier_menu_item (menu_item_modifier_id INT NOT NULL, menu_item_id INT NOT NULL, PRIMARY KEY(menu_item_modifier_id, menu_item_id))');
         $this->addSql('CREATE INDEX IDX_FDD5FAC8C2E539A ON menu_item_modifier_menu_item (menu_item_modifier_id)');
