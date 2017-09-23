@@ -21,9 +21,9 @@ How to run a local instance
 
 * Install [Docker](https://www.docker.com/). On OSX/Windows we advise you to install the latest versions available, which don't rely on Virtualbox.
 
-* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and paste it [in the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L31)
+* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`. 
 
-* Create a Stripe account and enter your test credentials in [the conf file](https://github.com/coopcycle/coopcycle-web/blob/0c3b628bb268b59b00db501580a2c1dff2a99b05/app/config/parameters.yml.dist#L33)
+* Create a Stripe account and copy your tests credentials. You will be asked for them when running `make install`.
 
 * Run the install scripts
 ```sh
