@@ -11,11 +11,10 @@ install:
 	@wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
 	@docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker-compose run osrm osrm-contract /data/data.osrm
-	@printf "\e[0;32mCreating database schema..\e[0m\n"
+	@printf "\e[0;32mCreating database..\e[0m\n"
 	@docker-compose run php composer install --prefer-dist --no-progress --no-suggest
 	@docker-compose run php bin/console doctrine:database:create --if-not-exists --env=dev
 	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=dev
 	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
-	@docker-compose run php bin/console doctrine:schema:create --env=dev
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose run php bin/demo
