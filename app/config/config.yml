@@ -53,7 +53,15 @@ doctrine:
         password: "%database_password%"
         charset:  UTF8
         types:
-            geography: Jsor\Doctrine\PostGIS\Types\GeographyType
+            geography:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeographyType'
+                commented: false
+            geometry:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
+                commented: false
+            raster:
+                class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
+                commented: false
         mapping_types:
             _text: string
 
