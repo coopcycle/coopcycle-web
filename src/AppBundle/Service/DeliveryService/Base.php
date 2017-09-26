@@ -35,14 +35,4 @@ abstract class Base implements DeliveryServiceInterface
         $delivery->setDistance((int) $distance);
         $delivery->setDuration((int) $duration);
     }
-
-    public function onOrderUpdate(Order $order)
-    {
-        $this->redis->publish('order_events', json_encode([
-            'order' => $order->getId(),
-            'courier' => null !== $order->getCourier() ? $order->getCourier()->getId() : null,
-            'status' => $order->getStatus(),
-            'timestamp' => (new \DateTime())->getTimestamp(),
-        ]));
-    }
 }

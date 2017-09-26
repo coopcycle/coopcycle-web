@@ -1,5 +1,5 @@
 import React from 'react';
-import OrderListItem from './OrderListItem.jsx';
+import DeliveryListItem from './DeliveryListItem.jsx';
 import _ from 'underscore';
 
 class OrderList extends React.Component
@@ -40,12 +40,12 @@ class OrderList extends React.Component
   render() {
     var items = _.map(this.state.items, (item, key) => {
       return (
-        <OrderListItem
+        <DeliveryListItem
           key={key}
           id={key}
           color={item.color}
           state={item.state}
-          order={item}
+          delivery={item}
           active={this.state.active === key}
           onClick={this.onItemClick.bind(this, item)}
           onClose={this.onItemClose.bind(this)}

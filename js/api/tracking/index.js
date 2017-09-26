@@ -84,55 +84,55 @@ function handler(req, res) {
   });
 }
 
-function addRestaurantCoords(orders) {
-  var keys = orders.map(function(order) {
-    return order.key;
+function addRestaurantCoords(deliveries) {
+  var keys = deliveries.map(function(delivery) {
+    return delivery.key;
   });
   return new Promise(function(resolve, reject) {
     if (keys.length === 0) {
       return resolve([]);
     }
     redis.geopos('restaurants:geo', keys, function(err, values) {
-      var ordersWithCoords = orders.map(function(order, index) {
-        return _.extend(order,  {
+      var deliveriesWithCoords = deliveries.map(function(delivery, index) {
+        return _.extend(delivery,  {
           restaurant: {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
         });
       });
-      resolve(ordersWithCoords);
+      resolve(deliveriesWithCoords);
     });
   });
 }
 
-function addDeliveryAddressCoords(orders) {
-  var keys = orders.map(function(order) {
-    return order.key;
+function addDeliveryAddressCoords(deliveries) {
+  var keys = deliveries.map(function(delivery) {
+    return delivery.key;
   });
   return new Promise(function(resolve, reject) {
     if (keys.length === 0) {
       return resolve([]);
     }
     redis.geopos('delivery_addresses:geo', keys, function(err, values) {
-      var ordersWithCoords = orders.map(function(order, index) {
-        return _.extend(order,  {
+      var deliveriesWithCoords = deliveries.map(function(delivery, index) {
+        return _.extend(delivery,  {
           deliveryAddress: {
             lng: parseFloat(values[index][0]),
             lat: parseFloat(values[index][1])
           }
         });
       });
-      resolve(ordersWithCoords);
+      resolve(deliveriesWithCoords);
     });
   });
 }
 
-function getOrders() {
+function getDeliveries() {
   var promises = [
-    getOrdersByState('WAITING'),
-    getOrdersByState('DISPATCHING'),
-    getOrdersByState('DELIVERING'),
+    getDeliveriesByState('WAITING'),
+    getDeliveriesByState('DISPATCHING'),
+    getDeliveriesByState('DELIVERING'),
   ];
 
   return Promise.all(promises).then(function(values) {
@@ -144,33 +144,33 @@ function getOrders() {
   });
 }
 
-function getOrdersByState(state) {
+function getDeliveriesByState(state) {
   if (state === 'DELIVERING') {
     return new Promise(function(resolve, reject) {
-      redis.hgetall('orders:' + state.toLowerCase(), function(err, hash) {
+      redis.hgetall('deliveries:' + state.toLowerCase(), function(err, hash) {
         if (!hash) {
           return resolve([]);
         }
-        var orders = _.map(hash, function(courierKey, orderKey) {
+        var deliveries = _.map(hash, function(courierKey, deliveryKey) {
           return {
-            key: orderKey,
+            key: deliveryKey,
             state: state,
             courier: courierKey,
           };
         });
-        resolve(orders);
+        resolve(deliveries);
       });
     });
   } else {
     return new Promise(function(resolve, reject) {
-      redis.lrange('orders:' + state.toLowerCase(), 0, -1, function(err, ids) {
-        var orders = ids.map(function(id) {
+      redis.lrange('deliveries:' + state.toLowerCase(), 0, -1, function(err, ids) {
+        var deliveries = ids.map(function(id) {
           return {
-            key: 'order:' + id,
+            key: 'delivery:' + id,
             state: state,
           };
         });
-        resolve(orders);
+        resolve(deliveries);
       });
     });
   }
@@ -178,14 +178,14 @@ function getOrdersByState(state) {
 
 function updateObjects() {
 
-  getOrders()
-    .then(function(orders) {
-      return addRestaurantCoords(orders);
+  getDeliveries()
+    .then(function(deliveries) {
+      return addRestaurantCoords(deliveries);
     })
-    .then(function(orders) {
-      return addDeliveryAddressCoords(orders);
+    .then(function(deliveries) {
+      return addDeliveryAddressCoords(deliveries);
     })
-    .then(function(orders) {
+    .then(function(deliveries) {
 
       redis.zrange('couriers:geo', 0, -1, function(err, keys) {
         redis.geopos('couriers:geo', keys, function(err, values) {
@@ -201,7 +201,7 @@ function updateObjects() {
             };
           });
 
-          io.sockets.emit('orders', orders);
+          io.sockets.emit('deliveries', deliveries);
           io.sockets.emit('couriers', couriers);
 
           setTimeout(updateObjects, 500);
