@@ -7,12 +7,12 @@ function CourierPool(redis, redisPubSub) {
 
   redisPubSub.subscribe('couriers');
   redisPubSub.subscribe('couriers:available');
-  redisPubSub.subscribe('orders:declined');
+  redisPubSub.subscribe('deliveries:declined');
 
   var self = this;
   redisPubSub.on('message', function(channel, message) {
     if (channel === 'couriers') {
-      console.log('Courier #' + message + ' has accepted order');
+      console.log('Courier #' + message + ' has accepted delivery');
       var courier = self.findById(message);
       if (courier) {
         courier.setState('DELIVERING');
@@ -25,11 +25,11 @@ function CourierPool(redis, redisPubSub) {
         courier.setState('AVAILABLE');
       }
     }
-    if (channel === 'orders:declined') {
+    if (channel === 'deliveries:declined') {
       var data = JSON.parse(message);
-      console.log('Courier #' + data.courier + ' has declined order #' + data.order);
+      console.log('Courier #' + data.courier + ' has declined delivery #' + data.delivery);
       var courier = self.findById(data.courier);
-      courier.declineOrder(data.order);
+      courier.declineDelivery(data.delivery);
     }
   });
 }
@@ -49,12 +49,12 @@ CourierPool.prototype.remove = function(courier) {
     this.pool.splice(index, 1);
   }
 
-  if (courier.state === 'DISPATCHING' && courier.order) {
-    console.log('Releasing order #' + courier.order);
+  if (courier.state === 'DISPATCHING' && courier.delivery) {
+    console.log('Releasing delivery #' + courier.delivery);
     var redis = this.redis;
-    redis.lrem('orders:dispatching', 0, courier.order, function(err) {
+    redis.lrem('deliveries:dispatching', 0, courier.delivery, function(err) {
       if (err) throw err;
-      redis.lpush('orders:waiting', courier.order, function(err) {
+      redis.lpush('deliveries:waiting', courier.delivery, function(err) {
         if (err) throw err;
       });
     });

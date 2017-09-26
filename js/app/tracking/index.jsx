@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import OrderList from './OrderList.jsx';
+import DeliveryList from './DeliveryList.jsx';
 import 'whatwg-fetch';
 
 var _ = require('underscore');
@@ -10,9 +10,9 @@ var Polyline = require('@mapbox/polyline');
 require('beautifymarker');
 
 var map;
-var orders = [];
+var deliveries = [];
 var couriers = [];
-var orderList;
+var deliveryList;
 
 var LABELS = {
   'WAITING': 'label-default',
@@ -62,7 +62,7 @@ function toPolylineCoordinates(polyline) {
 
 function fitToLayers() {
   var bounds = [];
-  _.each(orders, (marker) => {
+  _.each(deliveries, (marker) => {
     bounds.push(marker.restaurantMarker);
     bounds.push(marker.deliveryAddressMarker);
   });
@@ -74,7 +74,7 @@ function fitToLayers() {
 }
 
 function removePolylines() {
-  _.each(orders, (marker) => {
+  _.each(deliveries, (marker) => {
     if (marker.polyline) {
       map.removeLayer(marker.polyline);
       marker.polyline = null;
@@ -82,8 +82,8 @@ function removePolylines() {
   });
 }
 
-function hideOtherOrders(key) {
-  _.each(orders, (marker) => {
+function hideOtherDeliverys(key) {
+  _.each(deliveries, (marker) => {
     if (marker.key !== key) {
       map.removeLayer(marker.layerGroup);
     } else {
@@ -92,8 +92,8 @@ function hideOtherOrders(key) {
   });
 }
 
-function showAllOrders() {
-  _.each(orders, (marker) => {
+function showAllDeliverys() {
+  _.each(deliveries, (marker) => {
     map.addLayer(marker.layerGroup);
   });
 }
@@ -136,14 +136,14 @@ function createCircle(position, color) {
   return circle;
 }
 
-function addOrder(order) {
+function addDelivery(delivery) {
 
-  var key = order.key;
-  var position = order.coords;
+  var key = delivery.key;
+  var position = delivery.coords;
 
   var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))];
 
-  var marker = _.find(orders, function(marker) {
+  var marker = _.find(deliveries, function(marker) {
     return marker.key === key;
   });
 
@@ -152,8 +152,8 @@ function addOrder(order) {
     var circle;
     var tween;
 
-    if (order.state === 'WAITING' || order.state === 'DISPATCHING') {
-      circle = createCircle(order.restaurant, randomColor);
+    if (delivery.state === 'WAITING' || delivery.state === 'DISPATCHING') {
+      circle = createCircle(delivery.restaurant, randomColor);
 
       tween = new TWEEN.Tween({ radius: 0 })
         .easing(TWEEN.Easing.Cubic.Out)
@@ -175,21 +175,21 @@ function addOrder(order) {
     }
 
     // var infoWindow = new google.maps.InfoWindow({
-    //   content: order.key
+    //   content: delivery.key
     // });
     // infoWindows.push(infoWindow);
 
-    orderList.setItem(key, Object.assign(order, {
+    deliveryList.setItem(key, Object.assign(delivery, {
       color: randomColor
     }));
 
-    var restaurantMarker = createMarker(order.restaurant, 'cutlery', 'marker', randomColor);
-    var deliveryAddressMarker = createMarker(order.deliveryAddress, 'user', 'marker', randomColor);
+    var restaurantMarker = createMarker(delivery.restaurant, 'cutlery', 'marker', randomColor);
+    var deliveryAddressMarker = createMarker(delivery.deliveryAddress, 'user', 'marker', randomColor);
     var layerGroup = L.layerGroup([restaurantMarker, deliveryAddressMarker]);
 
     marker = {
       key: key,
-      courier: order.courier,
+      courier: delivery.courier,
       color: randomColor,
       restaurantMarker: restaurantMarker,
       deliveryAddressMarker: deliveryAddressMarker,
@@ -201,10 +201,10 @@ function addOrder(order) {
 
     layerGroup.addTo(map);
 
-    orders.push(marker);
+    deliveries.push(marker);
   } else {
-    marker.courier = order.courier;
-    if (order.state === 'DELIVERING') {
+    marker.courier = delivery.courier;
+    if (delivery.state === 'DELIVERING') {
       if (marker.circleTween) {
         marker.circleTween.stop();
         marker.circleTween = null;
@@ -216,7 +216,7 @@ function addOrder(order) {
       }
     }
 
-    orderList.setItem(key, order);
+    deliveryList.setItem(key, delivery);
   }
 }
 
@@ -226,11 +226,11 @@ function addCourier(key, position) {
     return marker.key === key;
   });
 
-  var order = _.find(orders, function(order) {
-    return order.courier === key;
+  var delivery = _.find(deliveries, function(delivery) {
+    return delivery.courier === key;
   });
 
-  var color = order ? order.color : '#fff';
+  var color = delivery ? delivery.color : '#fff';
 
   if (!marker) {
 
@@ -299,7 +299,7 @@ function removeMarkersByKeys(keys, markers) {
         marker[0].restaurantCircle.setRadius(0);
         map.removeLayer(marker[0].restaurantCircle);
       }
-      orderList.removeItem(key);
+      deliveryList.removeItem(key);
     }
   });
 }
@@ -325,10 +325,10 @@ setTimeout(function() {
     }
   });
 
-  socket.on('orders', function (data) {
-    removeMissingObjects(data, orders);
+  socket.on('deliveries', function (data) {
+    removeMissingObjects(data, deliveries);
     for (var i = 0; i < data.length; i++) {
-      addOrder(data[i]);
+      addDelivery(data[i]);
     }
   });
 
@@ -336,17 +336,17 @@ setTimeout(function() {
 
 var activeKey = null;
 
-orderList = render(
-  <OrderList
+deliveryList = render(
+  <DeliveryList
     onReset={() => {
       activeKey = null;
       removePolylines();
-      showAllOrders();
+      showAllDeliverys();
       fitToLayers();
     }}
-    onItemMouseEnter={(order) => {
-      var markers = _.reject(orders, function(marker) {
-        return marker.key === order.key || marker.key === activeKey;
+    onItemMouseEnter={(delivery) => {
+      var markers = _.reject(deliveries, function(marker) {
+        return marker.key === delivery.key || marker.key === activeKey;
       });
       setTimeout(() => {
         _.each(markers, (marker) => {
@@ -357,20 +357,20 @@ orderList = render(
       }, 200);
     }}
     onItemMouseLeave={() => {
-      _.each(orders, function(marker) {
+      _.each(deliveries, function(marker) {
         marker.layerGroup.eachLayer(function(layer) {
           layer.setOpacity(1);
         })
       });
     }}
-    onItemClick={(order) => {
-      console.log('Zoom to order', order.key);
+    onItemClick={(delivery) => {
+      console.log('Zoom to delivery', delivery.key);
 
-      var marker = _.find(orders, function(marker) {
-        return marker.key === order.key;
+      var marker = _.find(deliveries, function(marker) {
+        return marker.key === delivery.key;
       });
 
-      activeKey = order.key;
+      activeKey = delivery.key;
 
       var restaurant = marker.restaurantMarker.getLatLng();
       var deliveryAddress = marker.deliveryAddressMarker.getLatLng();
@@ -383,7 +383,7 @@ orderList = render(
           response.json().then((data) => {
 
             removePolylines();
-            hideOtherOrders(order.key);
+            hideOtherDeliverys(delivery.key);
 
             // Fit map to bounds
             var bounds = [];
@@ -391,7 +391,7 @@ orderList = render(
             bounds.push(marker.deliveryAddressMarker);
             if (marker.courier) {
               var courierMarker = _.find(couriers, function(marker) {
-                return marker.key === order.courier;
+                return marker.key === delivery.courier;
               });
               if (courierMarker) {
                 bounds.push(courierMarker.marker);

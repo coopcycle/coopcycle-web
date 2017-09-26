@@ -23,13 +23,6 @@ interface DeliveryServiceInterface
     public function create(Order $order);
 
     /**
-     * Called when an Order is updated.
-     *
-     * @param AppBundle\Entity\Order
-     */
-    public function onOrderUpdate(Order $order);
-
-    /**
      * Calculates distance & duration.
      *
      * @param AppBundle\Entity\Delivery

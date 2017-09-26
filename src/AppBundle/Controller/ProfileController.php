@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -91,11 +92,19 @@ class ProfileController extends Controller
     public function orderAction($id, Request $request)
     {
         $order = $this->getDoctrine()
-            ->getRepository('AppBundle:Order')->find($id);
+            ->getRepository(Order::class)->find($id);
 
-        $events = [];
+        $orderEvents = [];
         foreach ($order->getEvents() as $event) {
-            $events[] = [
+            $orderEvents[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
+
+        $deliveryEvents = [];
+        foreach ($order->getDelivery()->getEvents() as $event) {
+            $deliveryEvents[] = [
                 'eventName' => $event->getEventName(),
                 'timestamp' => $event->getCreatedAt()->getTimestamp()
             ];
@@ -104,7 +113,8 @@ class ProfileController extends Controller
         return array(
             'order' => $order,
             'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'order_events_json' => $this->get('serializer')->serialize($events, 'json'),
+            'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
+            'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
             'layout' => 'AppBundle::profile.html.twig',
             'breadcrumb_path' => 'profile_orders'
         );

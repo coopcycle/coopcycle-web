@@ -30,9 +30,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  *     "get"={"method"="GET"},
  *     "pay"={"route_name"="order_pay"},
  *     "accept"={"route_name"="order_accept"},
- *     "decline"={"route_name"="order_decline"},
- *     "pick"={"route_name"="order_pick"},
- *     "deliver"={"route_name"="order_deliver"}
+ *     "refuse"={"route_name"="order_refuse"},
+ *     "ready"={"route_name"="order_ready"}
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order"}},
@@ -43,15 +42,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Order
 {
     const STATUS_CREATED    = 'CREATED';
-    const STATUS_WAITING    = 'WAITING';
+    const STATUS_WAITING    = 'WAITING'; // FIXME Should be STATUS_PAID
     const STATUS_ACCEPTED   = 'ACCEPTED';
     const STATUS_REFUSED    = 'REFUSED';
     const STATUS_READY      = 'READY';
     const STATUS_CANCELED   = 'CANCELED';
-
-    // Hotfix
-    const STATUS_PICKED     = 'PICKED';
-    const STATUS_DELIVERED  = 'DELIVERED';
 
     /**
      * @var int
@@ -69,12 +64,6 @@ class Order
      * @ORM\ManyToOne(targetEntity="ApiUser")
      */
     private $customer;
-
-    /**
-     * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="ApiUser")
-     */
-    private $courier;
 
     /**
      * @var Restaurant
@@ -135,20 +124,6 @@ class Order
     }
 
     /**
-     * Sets id.
-     *
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Gets id.
      *
      * @return int
@@ -180,30 +155,6 @@ class Order
     public function getCustomer()
     {
         return $this->customer;
-    }
-
-    /**
-     * Sets courier.
-     *
-     * @param ApiUser $courier
-     *
-     * @return $this
-     */
-    public function setCourier(ApiUser $courier)
-    {
-        $this->courier = $courier;
-
-        return $this;
-    }
-
-    /**
-     * Gets courier.
-     *
-     * @return ApiUser
-     */
-    public function getCourier()
-    {
-        return $this->courier;
     }
 
     /**

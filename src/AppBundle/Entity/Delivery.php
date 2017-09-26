@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\Intangible;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\DeliveryRepository")
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={},
  *   itemOperations={
@@ -69,6 +70,12 @@ class Delivery extends Intangible
     private $order;
 
     /**
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="ApiUser")
+     */
+    private $courier;
+
+    /**
      * @var string
      *
      * @Groups({"order"})
@@ -95,6 +102,12 @@ class Delivery extends Intangible
      */
     private $duration;
 
+    /**
+     * @ORM\OneToMany(targetEntity="DeliveryEvent", mappedBy="delivery")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $events;
+
     public function __construct(Order $order = null)
     {
         $this->status = self::STATUS_WAITING;
@@ -103,6 +116,8 @@ class Delivery extends Intangible
             $order->setDelivery($this);
             $this->order = $order;
         }
+
+        $this->events = new ArrayCollection();
     }
 
     /**
@@ -202,6 +217,38 @@ class Delivery extends Intangible
         $this->status = $status;
 
         return $this;
+    }
+
+    /**
+     * Sets courier.
+     *
+     * @param ApiUser $courier
+     *
+     * @return $this
+     */
+    public function setCourier(ApiUser $courier)
+    {
+        $this->courier = $courier;
+
+        return $this;
+    }
+
+    /**
+     * Gets courier.
+     *
+     * @return ApiUser
+     */
+    public function getCourier()
+    {
+        return $this->courier;
+    }
+
+    /**
+     * @return ArrayCollection|OrderEvent[]
+    */
+    public function getEvents()
+    {
+        return $this->events;
     }
 
     /**

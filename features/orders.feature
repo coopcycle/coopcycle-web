@@ -38,7 +38,6 @@ Feature: Orders
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
       "customer":"@string@.startsWith('/api/api_users')",
-      "courier":null,
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
@@ -86,6 +85,7 @@ Feature: Orders
           "name":null
         },
         "status":"WAITING",
+        "courier":null,
         "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
@@ -158,7 +158,7 @@ Feature: Orders
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/orders/1/accept" with body:
+    And the user "sarah" sends a "PUT" request to "/api/deliveries/1/accept" with body:
       """
       {}
       """
@@ -167,50 +167,37 @@ Feature: Orders
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/Order",
-      "@id":@string@,
-      "@type": "http://schema.org/Order",
-      "customer":"@string@.startsWith('/api/api_users')",
+      "@context":"/api/contexts/Delivery",
+      "@id":"@string@.startsWith('/api/deliveries')",
+      "@type":"http://schema.org/ParcelDelivery",
+      "originAddress":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.864577,
+          "longitude":2.333338
+        },
+        "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+        "name":null
+      },
+      "deliveryAddress":{
+        "@id":"/api/addresses/4",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.855799,
+          "longitude":2.359207
+        },
+        "streetAddress":"1, rue de Rivoli",
+        "name":null
+      },
       "courier":"@string@.startsWith('/api/api_users')",
-      "restaurant":{
-        "@id":@string@,
-        "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa"
-      },
-      "orderedItem":@array@,
-      "delivery":{
-        "@id":@string@,
-        "@type":"http://schema.org/ParcelDelivery",
-        "originAddress":{
-          "@id":@string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.864577,
-            "longitude":2.333338
-          },
-          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-          "name":null
-        },
-        "deliveryAddress":{
-          "@id": @string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.855799,
-            "longitude":2.359207
-          },
-          "streetAddress":"1, rue de Rivoli",
-          "name":null
-        },
-        "status":"DISPATCHED",
-        "date":"@string@.startsWith('2017-09-02')"
-      },
-      "total":@number@,
-      "status":"ACCEPTED"
+      "status":"DISPATCHED",
+      "date":"@string@.startsWith('2017-09-02')"
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/orders/1/pick" with body:
+    And the user "sarah" sends a "PUT" request to "/api/deliveries/1/pick" with body:
       """
       {}
       """
@@ -219,50 +206,37 @@ Feature: Orders
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/Order",
-      "@id":@string@,
-      "@type": "http://schema.org/Order",
-      "customer":@string@,
-      "courier":@string@,
-      "restaurant":{
-        "@id":@string@,
-        "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa"
-      },
-      "orderedItem":@array@,
-      "delivery":{
-        "@id":@string@,
-        "@type":"http://schema.org/ParcelDelivery",
-        "originAddress":{
-          "@id":@string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.864577,
-            "longitude":2.333338
-          },
-          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-          "name":null
+      "@context":"/api/contexts/Delivery",
+      "@id":"@string@.startsWith('/api/deliveries')",
+      "@type":"http://schema.org/ParcelDelivery",
+      "originAddress":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.864577,
+          "longitude":2.333338
         },
-        "deliveryAddress":{
-          "@id": @string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.855799,
-            "longitude":2.359207
-          },
-          "streetAddress":"1, rue de Rivoli",
-          "name":null
-        },
-        "status":"PICKED",
-        "date":"@string@.startsWith('2017-09-02')"
+        "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+        "name":null
       },
-      "total":@number@,
-      "status":"ACCEPTED"
+      "deliveryAddress":{
+        "@id":"/api/addresses/4",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.855799,
+          "longitude":2.359207
+        },
+        "streetAddress":"1, rue de Rivoli",
+        "name":null
+      },
+      "courier":"@string@.startsWith('/api/api_users')",
+      "status":"PICKED",
+      "date":"@string@.startsWith('2017-09-02')"
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/orders/1/deliver" with body:
+    And the user "sarah" sends a "PUT" request to "/api/deliveries/1/deliver" with body:
       """
       {}
       """
@@ -271,45 +245,32 @@ Feature: Orders
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/Order",
-      "@id":@string@,
-      "@type": "http://schema.org/Order",
-      "customer":@string@,
-      "courier":@string@,
-      "restaurant":{
-        "@id":@string@,
-        "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa"
-      },
-      "orderedItem":@array@,
-      "delivery":{
-        "@id":@string@,
-        "@type":"http://schema.org/ParcelDelivery",
-        "originAddress":{
-          "@id":@string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.864577,
-            "longitude":2.333338
-          },
-          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-          "name":null
+      "@context":"/api/contexts/Delivery",
+      "@id":"@string@.startsWith('/api/deliveries')",
+      "@type":"http://schema.org/ParcelDelivery",
+      "originAddress":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.864577,
+          "longitude":2.333338
         },
-        "deliveryAddress":{
-          "@id": @string@,
-          "@type":"http://schema.org/Place",
-          "geo":{
-            "latitude":48.855799,
-            "longitude":2.359207
-          },
-          "streetAddress":"1, rue de Rivoli",
-          "name":null
-        },
-        "status":"DELIVERED",
-        "date":"@string@.startsWith('2017-09-02')"
+        "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+        "name":null
       },
-      "total":@number@,
-      "status":"DELIVERED"
+      "deliveryAddress":{
+        "@id":"/api/addresses/4",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "latitude":48.855799,
+          "longitude":2.359207
+        },
+        "streetAddress":"1, rue de Rivoli",
+        "name":null
+      },
+      "courier":"@string@.startsWith('/api/api_users')",
+      "status":"DELIVERED",
+      "date":"@string@.startsWith('2017-09-02')"
     }
     """
 
@@ -323,14 +284,14 @@ Feature: Orders
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
     And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
-    And the last order from user "bob" has status "ACCEPTED"
+    And the last delivery from user "bob" has status "ACCEPTED"
     And the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
       | password | 123456              |
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/orders/1/accept" with body:
+    And the user "sarah" sends a "PUT" request to "/api/deliveries/1/accept" with body:
       """
       {}
       """
@@ -353,14 +314,14 @@ Feature: Orders
     And the user "bill" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bill" sends a "PUT" request to "/api/orders/1/accept" with body:
+    And the user "bill" sends a "PUT" request to "/api/deliveries/1/accept" with body:
       """
       {}
       """
     Then the response status code should be 403
     And the response should be in JSON
 
-  Scenario: Courier cannot pick order not accepted by himself
+  Scenario: Courier cannot pick order not dispatched to himself
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
@@ -376,11 +337,11 @@ Feature: Orders
       | email    | sarah@coopcycle.org |
       | password | 123456              |
     And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
-    And the last order from user "bob" is accepted by courier "bill"
+    And the last delivery from user "bob" is dispatched to courier "bill"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/orders/1/pick" with body:
+    And the user "sarah" sends a "PUT" request to "/api/deliveries/1/pick" with body:
       """
       {}
       """

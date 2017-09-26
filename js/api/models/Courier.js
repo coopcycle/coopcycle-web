@@ -10,8 +10,8 @@ function Courier(data) {
   this.id = data.id;
   this.username = data.username;
   this.ws = undefined;
-  this.order = undefined;
-  this.declinedOrders = [];
+  this.delivery = undefined;
+  this.declinedDeliveries = [];
 }
 
 // Courier states
@@ -28,28 +28,28 @@ Courier.prototype.setState = function(state) {
   this.state = state;
 }
 
-Courier.prototype.setOrder = function(order) {
-  this.order = order;
+Courier.prototype.setDelivery = function(delivery) {
+  this.delivery = delivery;
 }
 
-Courier.prototype.declineOrder = function(order) {
-  if (this.order !== order) {
-    console.log('Order #' + order + ' was not dispatched to courier #' + this.id);
+Courier.prototype.declineDelivery = function(delivery) {
+  if (this.delivery !== delivery) {
+    console.log('Delivery #' + delivery + ' was not dispatched to courier #' + this.id);
     return;
   }
-  REDIS.lrem('orders:dispatching', 0, order, (err) => {
+  REDIS.lrem('deliveries:dispatching', 0, delivery, (err) => {
     if (err) throw err;
-    REDIS.lpush('orders:waiting', order, (err) => {
+    REDIS.lpush('deliveries:waiting', delivery, (err) => {
       if (err) throw err;
-      this.order = null;
+      this.delivery = null;
       this.state = Courier.UNKNOWN;
-      this.declinedOrders.push(order);
+      this.declinedDeliveries.push(delivery);
     });
   });
 }
 
-Courier.prototype.hasDeclinedOrder = function(order) {
-  return _.contains(this.declinedOrders, order);
+Courier.prototype.hasDeclinedDelivery = function(delivery) {
+  return _.contains(this.declinedDeliveries, delivery);
 }
 
 Courier.prototype.isAvailable = function() {
@@ -69,16 +69,16 @@ Courier.prototype.toJSON = function() {
     id: this.id,
     username: this.username,
     state: this.state,
-    order: this.order,
-    declinedOrders: this.declinedOrders,
+    delivery: this.delivery,
+    declinedDeliveries: this.declinedDeliveries,
   }
 }
 
 /** Static methods **/
 
-Courier.nearestForOrder = function(order, distance) {
+Courier.nearestForDelivery = function(delivery, distance) {
 
-  var address = order.restaurant.address;
+  var address = delivery.deliveryAddress;
 
   return new Promise(function(resolve, reject) {
 
@@ -96,7 +96,7 @@ Courier.nearestForOrder = function(order, distance) {
           return false;
         }
 
-        return courier.isAvailable() && !courier.hasDeclinedOrder(order.id);
+        return courier.isAvailable() && !courier.hasDeclinedDelivery(delivery.id);
       });
 
       if (results.length === 0) {

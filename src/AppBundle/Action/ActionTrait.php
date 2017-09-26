@@ -5,8 +5,9 @@ namespace AppBundle\Action;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Predis\Client as Redis;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
-use AppBundle\Entity\OrderRepository;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Service\PaymentService;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
@@ -15,7 +16,7 @@ trait ActionTrait
 {
     protected $tokenStorage;
     protected $redis;
-    protected $orderRepository;
+    protected $deliveryRepository;
     protected $serializer;
     protected $doctrine;
     protected $eventDispatcher;
@@ -23,12 +24,12 @@ trait ActionTrait
     protected $routing;
 
     public function __construct(TokenStorageInterface $tokenStorage, Redis $redis,
-        OrderRepository $orderRepository, SerializerInterface $serializer, DoctrineRegistry $doctrine,
+        DeliveryRepository $deliveryRepository, SerializerInterface $serializer, DoctrineRegistry $doctrine,
         EventDispatcher $eventDispatcher, PaymentService $paymentService, RoutingInterface $routing)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
-        $this->orderRepository = $orderRepository;
+        $this->deliveryRepository = $deliveryRepository;
         $this->serializer = $serializer;
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;
@@ -48,5 +49,14 @@ trait ActionTrait
         }
 
         return $user;
+    }
+
+    protected function verifyRole($role, $message)
+    {
+        $user = $this->getUser();
+
+        if (!$user->hasRole($role)) {
+            throw new AccessDeniedHttpException(sprintf($message, $user->getId()));
+        }
     }
 }

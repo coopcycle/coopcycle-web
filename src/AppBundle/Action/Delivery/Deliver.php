@@ -6,8 +6,8 @@ use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Delivery;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class Deliver
 {
@@ -23,26 +23,22 @@ class Deliver
      */
     public function __invoke($data)
     {
-        $user = $this->getUser();
-
-        // Only couriers can accept orders
-        if (!$user->hasRole('ROLE_COURIER')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot accept order', $user->getId()));
-        }
+        $this->verifyRole('ROLE_COURIER', 'User #%d cannot deliver delivery');
 
         $delivery = $data;
+        $order = $delivery->getOrder();
 
         // Make sure the courier picking order is authorized
         if ($delivery->getCourier() !== $this->getUser()) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
 
         $delivery->setStatus(Delivery::STATUS_DELIVERED);
 
-        $this->redis->hdel('orders:delivering', 'order:'.$order->getId());
+        $this->redis->hdel('deliveries:delivering', 'delivery:'.$order->getId());
 
-        $this->redis->publish('couriers:available', $user->getId());
+        $this->redis->publish('couriers:available', $this->getUser()->getId());
 
-        return $order;
+        return $delivery;
     }
 }

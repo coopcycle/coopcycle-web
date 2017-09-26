@@ -46,15 +46,15 @@ console.log('NODE_ENV = ' + process.env.NODE_ENV);
 console.log('PORT = ' + process.env.PORT);
 
 var started = false;
-var orders = {};
+var deliveries = {};
 
-redisPubSub.subscribe('order_events');
+redisPubSub.subscribe('delivery_events');
 redisPubSub.on('message', function(channel, message) {
-  if (channel === 'order_events') {
+  if (channel === 'delivery_events') {
     var data = JSON.parse(message);
-    var orderKey = 'order:' + data.order;
-    if (orders[orderKey]) {
-      orders[orderKey].socket.emit('order_event', data);
+    var deliveryKey = 'delivery:' + data.delivery;
+    if (deliveries[deliveryKey]) {
+      deliveries[deliveryKey].socket.emit('delivery_event', data);
     }
   }
 });
@@ -81,9 +81,9 @@ function handler(req, res) {
 
 function updateObjects() {
 
-  redis.hgetall('orders:delivering', (err, values) => {
-    _.each(values, (courierKey, orderKey) => {
-      if (!orders[orderKey]) {
+  redis.hgetall('deliveries:delivering', (err, values) => {
+    _.each(values, (courierKey, deliveryKey) => {
+      if (!deliveries[deliveryKey]) {
         return;
       }
 
@@ -92,7 +92,7 @@ function updateObjects() {
 
         if (!coords || coords.length === 0 || !coords[0]) return;
 
-        orders[orderKey].socket.emit('courier', {
+        deliveries[deliveryKey].socket.emit('courier', {
           key: courierKey,
           coords: {
             lng: parseFloat(coords[0][0]),
@@ -114,16 +114,16 @@ io.on('connection', function (socket) {
   }
 
   var key;
-  socket.on('order', function (order) {
-    key = 'order:' + order['@id'].replace('/api/orders/', '');
-    orders[key] = _.extend(order, {
+  socket.on('delivery', function (delivery) {
+    key = 'delivery:' + delivery['@id'].replace('/api/deliveries/', '');
+    deliveries[key] = _.extend(delivery, {
       socket: socket
     });
-    console.log('Clients connected: ' + _.size(orders));
+    console.log('Clients connected: ' + _.size(deliveries));
   });
 
   socket.on('disconnect', function () {
-    delete orders[key];
-    console.log('Clients connected: ' + _.size(orders));
+    delete deliveries[key];
+    console.log('Clients connected: ' + _.size(deliveries));
   });
 });
