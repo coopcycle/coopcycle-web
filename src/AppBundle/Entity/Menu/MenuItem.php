@@ -35,6 +35,7 @@ class MenuItem extends BaseMenuItem
      *                mappedBy="menuItem",
      *                cascade={"all"},
      *                fetch="EAGER")
+     * @Groups({"restaurant"})
      */
     protected $modifiers;
 
