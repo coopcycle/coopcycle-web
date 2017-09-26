@@ -5,15 +5,22 @@ namespace AppBundle\Entity\Menu;
 
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\Thing;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class MenuItemModifier
  * Represent a modifier that can be added to a MenuItem
  *
  * @ORM\Entity()
+ * @ApiResource(
+ *  shortName="MenuItemModifier",
+ *  itemOperations={
+ *    "get"={"method"="GET"}
+ * })
  *
  */
 class MenuItemModifier extends Thing
@@ -31,8 +38,11 @@ class MenuItemModifier extends Thing
      * The strategy to calculate the extra-price involved by adding the modifier.
      *
      * Typically: FREE no extra price, ADD_MENUITEM_PRICE add price of the extra, ADD_MODIFIER_PRICE add the fixed price of the menu item
+     *
      * @var string
+     *
      * @ORM\Column(type="string")
+     * @Groups({"restaurant"})
      *
      */
     protected $calculusStrategy;
@@ -40,6 +50,7 @@ class MenuItemModifier extends Thing
     /**
      * @ORM\Column(type="float")
      * @ApiProperty(iri="https://schema.org/price")
+     * @Groups({"restaurant"})
      */
     protected $price;
 
@@ -58,6 +69,7 @@ class MenuItemModifier extends Thing
      * @ORM\JoinTable(name="menu_item_modifier_menu_item",
      *                joinColumns={@ORM\JoinColumn(name="menu_item_modifier_id", referencedColumnName="id")},
      *                inverseJoinColumns={@ORM\JoinColumn(name="menu_item_id", referencedColumnName="id")})
+     *
      */
     protected $menuItemChoices;
 

@@ -166,3 +166,11 @@ csa_guzzle:
             config:
                 base_uri: "http://%osrm_host%"
                 lazy: true
+
+
+api_platform:
+
+    # ...
+
+    eager_loading:
+        max_joins: 100
