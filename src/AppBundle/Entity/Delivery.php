@@ -57,7 +57,7 @@ class Delivery extends Intangible
 
     /**
      * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="DeliveryAddress", inversedBy="delivery")
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $deliveryAddress;
@@ -132,7 +132,7 @@ class Delivery extends Intangible
         return $this->deliveryAddress;
     }
 
-    public function setDeliveryAddress(Address $deliveryAddress)
+    public function setDeliveryAddress(DeliveryAddress $deliveryAddress)
     {
         $this->deliveryAddress = $deliveryAddress;
 

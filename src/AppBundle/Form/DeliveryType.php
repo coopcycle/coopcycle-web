@@ -7,9 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Delivery;
+
 
 class DeliveryType extends AbstractType
 {
@@ -17,7 +16,7 @@ class DeliveryType extends AbstractType
     {
         $builder
             ->add('originAddress', AddressType::class)
-            ->add('deliveryAddress', AddressType::class)
+            ->add('deliveryAddress', DeliveryAddressType::class)
             ->add('distance', NumberType::class, ['mapped' => false])
             ->add('duration', NumberType::class, ['mapped' => false])
             ->add('date', DateType::class, [

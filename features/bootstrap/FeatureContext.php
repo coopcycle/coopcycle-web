@@ -175,8 +175,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $data = $table->getRowsHash();
 
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->create($data['username'], $data['password'], $data['email'], true, false);
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->createUser();
+
+        $user->setEmail($data['email']);
+        $user->setUsername($data['username']);
+        $user->setgivenName($data['username']);
+        $user->setfamilyName($data['username']);
+        $user->setTelephone('0677886868');
+        $user->setPlainPassword($data['password']);
+        $user->setEnabled(true);
+        $user->addRole('ROLE_CUSTOMER');
+        $userManager->updateUser($user);
     }
 
     /**
@@ -186,8 +197,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $data = $table->getRowsHash();
 
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->create($username, $data['password'], $data['email'], true, false);
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->createUser();
+
+        $user->setEmail($data['email']);
+        $user->setUsername($username);
+        $user->setgivenName($username);
+        $user->setfamilyName($username);
+        $user->setTelephone('0677886868');
+        $user->setPlainPassword($data['password']);
+        $user->setEnabled(true);
+        $user->addRole('ROLE_CUSTOMER');
+        $userManager->updateUser($user);
     }
 
     /**
@@ -244,6 +266,13 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $user->addAddress($address);
 
+        $em = $this->doctrine->getManagerForClass(DeliveryAddress::class);
+        $address = new DeliveryAddress();
+        $address->setStreetAddress($data['streetAddress']);
+        $address->setGeo(new GeoCoordinates(trim($lat), trim($lng)));
+        $em->persist($address);
+        $em->flush();
+
         $em->flush();
     }
 
@@ -281,7 +310,18 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $delivery = new Delivery($order);
         $delivery->setDate(new \DateTime($date));
         $delivery->setOriginAddress($restaurant->getAddress());
-        $delivery->setDeliveryAddress($user->getAddresses()->first());
+
+        $customerAddress = $user->getAddresses()->first();
+
+        $deliveryAddress = new DeliveryAddress();
+        $deliveryAddress->setStreetAddress($customerAddress->getStreetAddress());
+        $deliveryAddress->setGeo($customerAddress->getGeo());
+
+        $delivery->setDeliveryAddress($deliveryAddress);
+
+        $manager = $this->doctrine->getManagerForClass(DeliveryAddress::class);
+        $manager->persist($deliveryAddress);
+        $manager->flush();
 
         foreach ($restaurant->getMenu()->getAllItems() as $menuItem) {
             $cartItem = new \AppBundle\Utils\CartItem($menuItem, 1, []);

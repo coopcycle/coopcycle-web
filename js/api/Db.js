@@ -27,10 +27,13 @@ var rolesGetter = function() {
 
 module.exports = function(sequelize) {
 
-  var Db = {}
+  var Db = {};
 
   Db.User = sequelize.define('user', {
     username: Sequelize.STRING,
+    given_name: Sequelize.STRING,
+    family_name: Sequelize.STRING,
+    telephone: Sequelize.STRING,
     email: Sequelize.STRING,
     roles: Sequelize.STRING,
     username_canonical: Sequelize.STRING,
@@ -47,6 +50,23 @@ module.exports = function(sequelize) {
   Db.UserAddress = sequelize.define('user_address', {}, _.extend(sequelizeOptions, {
     tableName: 'api_user_address'
   }));
+
+  Db.Address = sequelize.define('address', {
+    name: Sequelize.STRING,
+    streetAddress: {
+      field: 'street_address',
+      type: Sequelize.STRING
+    },
+    geo: Sequelize.GEOMETRY
+  }, _.extend(sequelizeOptions, {
+    tableName: 'address',
+    getterMethods: {
+      position : positionGetter
+    },
+  }));
+
+  Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey : 'api_user_id' });
+  Db.Address.belongsToMany(Db.User, { through: Db.UserAddress });
 
   Db.Order = sequelize.define('order', {
     status: Sequelize.STRING,
@@ -82,7 +102,7 @@ module.exports = function(sequelize) {
     tableName: 'delivery',
   }));
 
-  Db.Address = sequelize.define('address', {
+  Db.DeliveryAddress = sequelize.define('delivery_address', {
     name: Sequelize.STRING,
     streetAddress: {
       field: 'street_address',
@@ -90,24 +110,23 @@ module.exports = function(sequelize) {
     },
     geo: Sequelize.GEOMETRY
   }, _.extend(sequelizeOptions, {
-    tableName: 'address',
+    tableName: 'delivery_address',
     getterMethods: {
       position : positionGetter
     },
   }));
 
+
   Db.Restaurant.belongsTo(Db.Address);
 
   Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
-  Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
+  Db.Delivery.belongsTo(Db.DeliveryAddress, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
 
   Db.Order.belongsTo(Db.Restaurant);
   Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });
   Db.Order.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
   Db.Order.hasOne(Db.Delivery);
 
-  Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey : 'api_user_id' });
-  Db.Address.belongsToMany(Db.User, { through: Db.UserAddress });
 
   return Db;
 };
