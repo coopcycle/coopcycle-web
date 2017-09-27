@@ -27,7 +27,7 @@ AppBundle\Entity\Menu:
     sections: [ "@menu_section_1", "@menu_section_2", "@menu_section_3" ]
 
 AppBundle\Entity\Menu\Modifier:
-  additional_desserts_1:
+  additional_desserts_{1..5}:
     name: <dessertName()>
     price: <numberBetween(5, 10)>.99
 
@@ -36,4 +36,4 @@ AppBundle\Entity\Menu\MenuItemModifier:
     name: "Ajoutez un dessert"
     price: "10"
     calculusStrategy: <calculusMethod()>
-    modifierChoices: [ "@additional_desserts_1", "@additional_desserts_2", "@additional_desserts_3", "@additional_desserts_4", "@additional_desserts_"]
+    modifierChoices: [ "@additional_desserts_1", "@additional_desserts_2", "@additional_desserts_3", "@additional_desserts_4", "@additional_desserts_5"]
