@@ -256,7 +256,7 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/restaurants/{id}/orders", name="profile_restaurant_orders")
-     * @Template()
+     * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
     public function restaurantOrdersAction($id, Request $request)
     {

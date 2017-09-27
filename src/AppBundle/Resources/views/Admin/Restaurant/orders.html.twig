@@ -1,4 +1,4 @@
-{% extends "AppBundle::profile.html.twig" %}
+{% extends is_granted('ROLE_ADMIN') ? "AppBundle::admin.html.twig" : "AppBundle::profile.html.twig" %}
 
 {% block breadcrumb %}
 <li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
