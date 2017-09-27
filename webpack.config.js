@@ -16,10 +16,10 @@ else {
 
 var webpackConfig = {
   entry: {
-    'common': ['bootstrap'],
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
     'js/address-form': './js/app/address/form.jsx',
+    'js/common': ['bootstrap'],
     'js/cart': './js/app/cart/index.jsx',
     'js/delivery-form': './js/app/delivery/form.jsx',
     'js/homepage': './js/app/homepage/index.js',
@@ -80,7 +80,7 @@ var webpackConfig = {
         { from: 'node_modules/coopcycle-js/build/coopcycle.js', to: 'js/coopcycle.js' }
       ]),
       new CommonChunkPlugin({
-        name: 'common',
+        name: 'js/common',
         minChunks: 3,
         filename: 'js/' + jsFilename
       })
