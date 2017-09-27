@@ -82,7 +82,7 @@ var webpackConfig = {
       new CommonChunkPlugin({
         name: 'js/common',
         minChunks: 3,
-        filename: 'js/' + jsFilename
+        filename: jsFilename
       })
   ],
   devServer: {
