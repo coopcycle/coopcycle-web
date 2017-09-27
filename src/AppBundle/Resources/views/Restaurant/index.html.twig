@@ -52,7 +52,7 @@
                               {%  if modifier.calculusStrategy == 'ADD_MODIFIER_PRICE' %} - {{ modifier.price }}€{% endif %}
                             </h4>
                             <div class="list-group">
-                              {%  for choice in modifier.menuItemChoices %}
+                              {%  for choice in modifier.modifierChoices %}
                                 <div class="list-group-item radio menu-item modifier-item">
                                     <input value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice" name="{{ modifier.id }}-choice"><label for="{{ choice.id }}-choice">{{ choice.name }}{%  if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}</label>
                                 </div>

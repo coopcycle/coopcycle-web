@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 
 use AppBundle\Entity\Menu\MenuItem;
+use AppBundle\Entity\Menu\Modifier;
 
 class CartItem
 {
@@ -67,24 +68,23 @@ class CartItem
         $modifierNames = array();
         $unitPrice = $this->menuItem->getPrice();
 
-        foreach ($this->modifierChoices as $modifierId => $selectedMenuItems) {
+        foreach ($this->modifierChoices as $modifierId => $selectedModifiers) {
 
-            // get the modifier
-            $modifier = $this->menuItem->getModifiers()->filter(function ($element) use ($modifierId) {
+            $menuItemModifier = $this->menuItem->getModifiers()->filter(function ($element) use ($modifierId) {
                 return $element->getId() == $modifierId;
             })->first();
 
-            foreach ($selectedMenuItems as $menuItemId) {
+            foreach ($selectedModifiers as $modifierId) {
 
                 // get the price for each selected menu item (depends on the Modifier's calculus strategy)
-                $menuItem = $modifier->getMenuItemChoices()->filter(
-                    function (\AppBundle\Entity\Menu\MenuItem $element) use ($menuItemId) {
-                        return $element->getId() == $menuItemId;
+                $modifier = $menuItemModifier->getModifierChoices()->filter(
+                    function (Modifier $element) use ($modifierId) {
+                        return $element->getId() == $modifierId;
                     }
                 )->first();
 
-                $unitPrice += $modifier->getSelectedMenuItemPrice($menuItem);
-                array_push($modifierNames, $menuItem->getName());
+                $unitPrice += $menuItemModifier->getModifierPrice($modifier);
+                array_push($modifierNames, $modifier->getName());
             }
         }
 

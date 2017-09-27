@@ -12,7 +12,7 @@ class CartItem extends React.Component
     return (
       <li className="list-group-item">
         <span>{name}</span>
-        <span className="text-muted">x {this.props.quantity}</span>
+        <span className="text-muted"> x {this.props.quantity}</span>
         <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.cart.removeItem(this)}>
           <span aria-hidden="true">×</span>
         </button>
