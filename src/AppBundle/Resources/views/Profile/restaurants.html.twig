@@ -11,39 +11,7 @@
   <table class="table">
     <tbody>
     {% for restaurant in restaurants %}
-    <tr>
-      <td width="10%"><a href="{{ path('profile_restaurant_edit', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
-      <td>{{ restaurant.name }}</td>
-      <td>{{ restaurant.address.streetAddress }}</td>
-      <td class="text-right">
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {% trans %}Edit{% endtrans %}   <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="{{ path('profile_restaurant_edit', { id: restaurant.id }) }}">
-              {% trans %}Edit{% endtrans %}
-              </a>
-            </li>
-            <li>
-              <a href="{{ path('profile_restaurant_menu', { id: restaurant.id }) }}">
-              {% trans %}Edit menu{% endtrans %}
-              </a>
-            </li>
-            <li>
-              <a href="{{ path('profile_restaurant_orders', { id: restaurant.id }) }}">
-              {% trans %}Manage orders{% endtrans %}
-              </a>
-            </li>
-            <li role="separator" class="divider"></li>
-            <li>
-              <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">{% trans %}View{% endtrans %}</a>
-            </li>
-          </ul>
-        </div>
-      </td>
-    </tr>
+    {% include "AppBundle:Restaurant:list-admin.html.twig" %}
     {% endfor %}
     </tbody>
   </table>
