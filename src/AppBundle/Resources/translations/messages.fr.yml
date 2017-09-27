@@ -42,6 +42,7 @@ Payment: Paiement
 Restaurants: Restaurants
 My restaurants: Mes restaurants
 Add a product: Ajouter un produit
+Edit restaurant: Modifier le restaurant
 Edit menu: Modifier le menu
 Name: Nom
 Price: Prix
@@ -67,6 +68,7 @@ Cancel: Annuler
 Created at: Créé le
 Duration: Durée
 Dashboard: Tableau de bord
+Manage: Gérer
 
 delivery_service.applicolis: AppliColis
 

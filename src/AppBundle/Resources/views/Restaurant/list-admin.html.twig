@@ -1,0 +1,51 @@
+<table class="table">
+  <tbody>
+  {% if restaurants|length > 0 %}
+    {% for restaurant in restaurants %}
+      <tr>
+        <td><a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td>{{ restaurant.name }}</td>
+        <td>{{ restaurant.address.streetAddress }}</td>
+        <td>{{ restaurant.openingHours|join(' ') }}</td>
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">
+                  {% trans %}Edit restaurant{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path('admin_restaurant_menu', { id: restaurant.id }) }}">
+                  {% trans %}Edit menu{% endtrans %}
+                </a>
+              </li>
+              <li role="separator" class="divider"></li>
+              {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
+              <li>
+                <a href="{{ path('profile_restaurant_orders', { id: restaurant.id }) }}">
+                {% trans %}Orders{% endtrans %}
+                </a>
+              </li>
+              {% endif %}
+              {#
+              <li>
+                <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">{% trans %}View{% endtrans %}</a>
+              </li>
+              #}
+            </ul>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info">
+    {% trans %}There are no restaurants yet.{% endtrans %}
+    <a href="{{ path('admin_restaurant_new') }}">{% trans %}Create a new restaurant{% endtrans %}</a>
+    </div>
+  {% endif %}
+  </tbody>
+</table>
