@@ -67,6 +67,7 @@ Delivery.load = function() {
           restaurants.push(delivery.originAddress.position.latitude);
           restaurants.push('delivery:' + delivery.id);
         });
+
         // Execute Redis commands at once
         if (deliveryAddresses.length > 0) {
           REDIS.geoadd('delivery_addresses:geo', deliveryAddresses);
@@ -75,23 +76,23 @@ Delivery.load = function() {
           REDIS.geoadd('restaurants:geo', restaurants);
         }
 
-        var deliveries = [];
+        var deliveringArgs = [];
 
         // Compile Redis commands
         _.each(delivering, function(delivery) {
-          deliveries.push('delivery:' + delivery.id);
-          deliveries.push('courier:' + delivery.courier.id);
+          deliveringArgs.push('delivery:' + delivery.id);
+          deliveringArgs.push('courier:' + delivery.courier.id);
         });
         // Execute Redis commands at once
-        if (deliveries.length > 0) {
-          REDIS.hmset('deliveries:delivering', deliveries);
+        if (deliveringArgs.length > 0) {
+          REDIS.hmset('deliveries:delivering', deliveringArgs);
         }
 
-        var waitingIds = waiting.map(function(delivery) {
+        var waitingArgs = waiting.map(function(delivery) {
           return delivery.id;
         });
-        if (waitingIds.length > 0) {
-          REDIS.rpush('deliveries:waiting', waitingIds);
+        if (waitingArgs.length > 0) {
+          REDIS.rpush('deliveries:waiting', waitingArgs);
         }
 
         // TODO Use Promise.all
