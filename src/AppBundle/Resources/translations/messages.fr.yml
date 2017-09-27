@@ -63,6 +63,10 @@ Delete: Supprimer
 Use the map below to find restaurants: Utilisez la carte ci-dessous pour trouver des restos
 Manage orders: Gérer les commandes
 Create a new restaurant: Créer un nouveau restaurant
+Cancel: Annuler
+Created at: Créé le
+Duration: Durée
+Dashboard: Tableau de bord
 
 delivery_service.applicolis: AppliColis
 
@@ -72,11 +76,9 @@ order.payment.card_number.help: >
   Utilisez l'un des <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéros de test</a> Stripe (ex: 4242424242424242).
 
 order.status.CREATED: Créée
-order.status.CANCELED: Annulée
-order.status.WAITING: En attente
 order.status.ACCEPTED: Acceptée
-order.status.PICKED: Récupérée
-order.status.DELIVERED: Livrée
+order.status.READY: Prête
+order.status.CANCELED: Annulée
 
 delivery.status.WAITING: En attente
 delivery.status.DISPATCHED: Acceptée

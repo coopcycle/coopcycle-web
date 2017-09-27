@@ -22,21 +22,21 @@
 
 <div class="row">
   <div class="col-md-4">
-    <p class="text-center">Waiting</p>
+    <p class="text-center">{% trans %}order.status.WAITING{% endtrans %}</p>
     <div class="c100 small p{{ waiting_percent }} center orange">
       <span>{{ waiting_count }}</span>
       <div class="slice"><div class="bar"></div><div class="fill"></div></div>
     </div>
   </div>
   <div class="col-md-4">
-    <p class="text-center">Accepted</p>
+    <p class="text-center">{% trans %}order.status.ACCEPTED{% endtrans %}</p>
     <div class="c100 small p{{ accepted_percent }} center">
       <span>{{ accepted_count }}</span>
       <div class="slice"><div class="bar"></div><div class="fill"></div></div>
     </div>
   </div>
   <div class="col-md-4">
-    <p class="text-center">Ready</p>
+    <p class="text-center">{% trans %}order.status.READY{% endtrans %}</p>
     <div class="c100 small p{{ ready_percent }} center green">
       <span>{{ ready_count }}</span>
       <div class="slice"><div class="bar"></div><div class="fill"></div></div>
@@ -50,28 +50,32 @@
 <table class="table">
   <thead>
     <th>#</th>
-    <th>Status</th>
-    <th>Restaurant</th>
-    <th>Price</th>
-    <th>Created</th>
-    <th>Delivery time</th>
+    <th>{% trans %}Order{% endtrans %}</th>
+    <th>{% trans %}Delivery{% endtrans %}</th>
+    <th>{% trans %}Restaurant{% endtrans %}</th>
+    <th>{% trans %}Price{% endtrans %}</th>
+    <th>{% trans %}Created at{% endtrans %}</th>
+    <th>{% trans %}Duration{% endtrans %}</th>
     <th></th>
   </thead>
   <tbody>
   {% for order in orders %}
   <tr>
     <td><a href="{{ path('admin_order', {'id': order.id}) }}">#{{ order.id }}</a></td>
-    <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
+    <td>{% include "AppBundle:Order:label.html.twig" %}</td>
+    <td>{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
     <td><a href="{{ path('admin_restaurant', {'id': order.restaurant.id}) }}">{{ order.restaurant.name }}</a></td>
     <td>{{ order.total }} €</td>
     <td>{{ order.createdAt|ago }}</td>
     <td>{{ order.deliveryTime }}</td>
     <td>
-    {% if order.status == 'WAITING' %}
-    <a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">Cancel</a>
+    {% if order.delivery.status == 'WAITING' %}
+    <a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">
     {% else %}
-    <a class="btn btn-xs btn-danger pull-right disabled">Cancel</a>
+    <a class="btn btn-xs btn-danger pull-right disabled">
     {% endif %}
+    {% trans %}Cancel{% endtrans %}
+    </a>
     </td>
   </tr>
   {% endfor %}
