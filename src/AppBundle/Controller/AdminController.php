@@ -79,9 +79,17 @@ class AdminController extends Controller
         $order = $this->getDoctrine()
             ->getRepository('AppBundle:Order')->find($id);
 
-        $events = [];
+        $orderEvents = [];
         foreach ($order->getEvents() as $event) {
-            $events[] = [
+            $orderEvents[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
+
+        $deliveryEvents = [];
+        foreach ($order->getDelivery()->getEvents() as $event) {
+            $deliveryEvents[] = [
                 'eventName' => $event->getEventName(),
                 'timestamp' => $event->getCreatedAt()->getTimestamp()
             ];
@@ -90,7 +98,8 @@ class AdminController extends Controller
         return array(
             'order' => $order,
             'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'order_events_json' => $this->get('serializer')->serialize($events, 'json'),
+            'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
+            'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
             'layout' => 'AppBundle::admin.html.twig',
             'breadcrumb_path' => 'admin_orders'
         );
