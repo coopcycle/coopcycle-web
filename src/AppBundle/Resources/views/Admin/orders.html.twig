@@ -62,7 +62,7 @@
   <tr>
     <td><a href="{{ path('admin_order', {'id': order.id}) }}">#{{ order.id }}</a></td>
     <td><span class="label {{ status_label_class[order.status] }}">{{ order.status }}</span></td>
-    <td>{{ order.restaurant.name }}</td>
+    <td><a href="{{ path('admin_restaurant', {'id': order.restaurant.id}) }}">{{ order.restaurant.name }}</a></td>
     <td>{{ order.total }} €</td>
     <td>{{ order.createdAt|ago }}</td>
     <td>{{ order.deliveryTime }}</td>
