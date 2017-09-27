@@ -56,8 +56,6 @@ class OrderItemModifier
     private $additionalPrice;
 
     /**
-     * The modifier.
-     *
      * @var MenuItemModifier
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItemModifier", cascade={"persist"})
