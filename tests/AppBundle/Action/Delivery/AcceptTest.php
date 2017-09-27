@@ -64,7 +64,7 @@ class AcceptTest extends TestCase
         $delivery->setStatus(Entity\Delivery::STATUS_WAITING);
         $delivery->setOrder($order);
 
-        self::setEntityId($order, 123);
+        self::setEntityId($delivery, 123);
         self::setEntityId($this->user, 456);
 
         $this->user->setRoles(['ROLE_COURIER']);

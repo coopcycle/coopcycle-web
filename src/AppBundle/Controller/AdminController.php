@@ -123,7 +123,7 @@ class AdminController extends Controller
 
         $em->flush();
 
-        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getId());
+        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
 
         return $this->redirectToRoute('admin_orders');
     }
