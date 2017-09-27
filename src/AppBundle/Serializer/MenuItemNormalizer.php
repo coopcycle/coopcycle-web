@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
-use AppBundle\Entity\MenuItem;
+use AppBundle\Entity\Menu\MenuItem;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

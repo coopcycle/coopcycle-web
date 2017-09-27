@@ -34,8 +34,9 @@ class CartTest extends BaseTest
 
         $item1 = $this->createMenuItem('Item 1', 5);
         $id1 = $item1->getId();
-        $item2 = $this->createMenuItem('Item 2', 10);
-        $item3 = $this->createMenuItem('Item 3', 10);
+
+        $item2 = $this->createModifier('Item 2', 10);
+        $item3 = $this->createModifier('Item 3', 10);
 
         $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'FREE', 5);
 
@@ -52,8 +53,8 @@ class CartTest extends BaseTest
         $cart = new Cart();
 
         $item1 = $this->createMenuItem('Item 1', 5);
-        $item2 = $this->createMenuItem('Item 2', 10);
-        $item3 = $this->createMenuItem('Item 3', 10);
+        $item2 = $this->createModifier('Item 2', 10);
+        $item3 = $this->createModifier('Item 3', 10);
 
         $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'ADD_MENUITEM_PRICE', 5);
 
@@ -66,8 +67,8 @@ class CartTest extends BaseTest
         $cart = new Cart();
 
         $item1 = $this->createMenuItem('Item 1', 5);
-        $item2 = $this->createMenuItem('Item 2', 10);
-        $item3 = $this->createMenuItem('Item 3', 10);
+        $item2 = $this->createModifier('Item 2', 10);
+        $item3 = $this->createModifier('Item 3', 10);
 
         $modifier = $this->createMenuItemModifier($item1, [$item2, $item3], 'ADD_MODIFIER_PRICE', 5);
 

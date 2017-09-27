@@ -57,25 +57,21 @@ class MenuItemModifier extends Thing
     /**
      * The menu item this modifier belongs to
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", inversedBy="modifiers", cascade={"persist"})
-     * @ORM\JoinColumn(name="menu_item_id", referencedColumnName="id")
+         * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", inversedBy="modifiers", cascade={"persist"})
      */
     protected $menuItem;
 
     /**
      * The choices the user can select from.
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Menu\MenuItem", cascade={"persist"})
-     * @ORM\JoinTable(name="menu_item_modifier_menu_item",
-     *                joinColumns={@ORM\JoinColumn(name="menu_item_modifier_id", referencedColumnName="id")},
-     *                inverseJoinColumns={@ORM\JoinColumn(name="menu_item_id", referencedColumnName="id")})
-     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\Modifier", mappedBy="menuItemModifier", cascade={"persist"})
+     * @Groups({"restaurant"})
      */
-    protected $menuItemChoices;
+    protected $modifierChoices;
 
     public function __construct()
     {
-        $this->menuItemChoices = new ArrayCollection();
+        $this->modifierChoices = new ArrayCollection();
     }
 
     /**
@@ -113,13 +109,13 @@ class MenuItemModifier extends Thing
     /**
      * @return float
      */
-    public function getSelectedMenuItemPrice($selectedMenuItem)
+    public function getModifierPrice($modifier)
     {
         if ($this->getCalculusStrategy() === 'FREE') {
             $price = (float)0;
         }
         else if ($this->getCalculusStrategy() === 'ADD_MENUITEM_PRICE') {
-            $price = $selectedMenuItem->getPrice();
+            $price = $modifier->getPrice();
         }
         else if ($this->getCalculusStrategy() === 'ADD_MODIFIER_PRICE') {
             $price = $this->getPrice();
@@ -151,17 +147,17 @@ class MenuItemModifier extends Thing
     /**
      * @return mixed
      */
-    public function getMenuItemChoices()
+    public function getModifierChoices()
     {
-        return $this->menuItemChoices;
+        return $this->modifierChoices;
     }
 
     /**
-     * @param mixed $menuItemChoices
+     * @param mixed $modifierChoices
      */
-    public function setMenuItemChoices($menuItemChoices)
+    public function setModifierChoices($modifierChoices)
     {
-        $this->menuItemChoices = $menuItemChoices;
+        $this->modifierChoices = $modifierChoices;
     }
 
     /**
@@ -180,6 +176,9 @@ class MenuItemModifier extends Thing
         $this->menuItem = $menuItem;
     }
 
-
+    public function addModifierChoice(Modifier $modifier) {
+        $modifier->setMenuItemModifier($this);
+        $this->modifierChoices->add($modifier);
+    }
 
 }

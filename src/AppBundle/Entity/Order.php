@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 
+use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Utils\CartItem;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -255,13 +256,13 @@ class Order
                 return $element->getId() == $modifierId;
             })->first();
 
-            foreach ($selectedMenuItems as $selectedMenuItemId) {
+            foreach ($selectedMenuItems as $selectedModifierId) {
                 $orderedItemModifier = new OrderItemModifier();
 
                 // get the price for each selected menu item (depends on the Modifier's calculus strategy)
-                $menuItem = $modifier->getMenuItemChoices()->filter(
-                    function (\AppBundle\Entity\Menu\MenuItem $element) use ($selectedMenuItemId) {
-                        return $element->getId() == $selectedMenuItemId;
+                $menuItem = $modifier->getModifierChoices()->filter(
+                    function (Modifier $element) use ($selectedModifierId) {
+                        return $element->getId() == $selectedModifierId;
                     }
                 )->first();
 

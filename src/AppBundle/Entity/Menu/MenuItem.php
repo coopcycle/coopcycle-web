@@ -33,8 +33,7 @@ class MenuItem extends BaseMenuItem
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItemModifier",
      *                mappedBy="menuItem",
-     *                cascade={"all"},
-     *                fetch="EAGER")
+     *                cascade={"persist"})
      * @Groups({"restaurant"})
      */
     protected $modifiers;
@@ -64,5 +63,17 @@ class MenuItem extends BaseMenuItem
         return $this->modifiers;
     }
 
+    /**
+     * @param mixed $modifiers
+     */
+    public function setModifiers($modifiers)
+    {
+        $this->modifiers = $modifiers;
+    }
+
+    public function addModifier(MenuItemModifier $modifier) {
+        $modifier->setMenuItem($this);
+        $this->modifiers->add($modifier);
+    }
 
 }

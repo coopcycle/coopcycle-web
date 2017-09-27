@@ -115,7 +115,7 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $this->fixturesLoader->setReferences($this->menuSections);
         $objects = $this->fixturesLoader->load(__DIR__ . '/Resources/menu.yml');
-
+//        var_dump($objects);
         return $objects['menu'];
     }
 
