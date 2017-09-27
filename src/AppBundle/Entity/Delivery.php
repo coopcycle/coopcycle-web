@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  *
  * @ORM\Entity(repositoryClass="AppBundle\Entity\DeliveryRepository")
+ * @ORM\EntityListeners({"AppBundle\Entity\Listener\DeliveryListener"})
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={},
  *   itemOperations={
