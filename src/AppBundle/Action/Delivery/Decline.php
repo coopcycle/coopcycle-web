@@ -33,20 +33,18 @@ class Decline
             throw new BadRequestHttpException(sprintf('Delivery #%d cannot be declined anymore', $delivery->getId()));
         }
 
-        $order = $delivery->gerOrder();
-
         // TODO
-        // Make sure the order is actually dispatched to the authenticated user
+        // Make sure the delivery is actually dispatched to the authenticated user
         // Convert deliveries:dispatching to a hash
 
         $message = [
-            'order' => $order->getId(),
+            'delivery' => $delivery->getId(),
             'courier' => $user->getId(),
         ];
 
         $this->redis->publish('deliveries:declined', json_encode($message));
 
-        // TODO Record declined order in database
+        // TODO Record declined delivery in database
 
         return $delivery;
     }

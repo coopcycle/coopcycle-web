@@ -26,7 +26,6 @@ class Deliver
         $this->verifyRole('ROLE_COURIER', 'User #%d cannot deliver delivery');
 
         $delivery = $data;
-        $order = $delivery->getOrder();
 
         // Make sure the courier picking order is authorized
         if ($delivery->getCourier() !== $this->getUser()) {
@@ -35,7 +34,7 @@ class Deliver
 
         $delivery->setStatus(Delivery::STATUS_DELIVERED);
 
-        $this->redis->hdel('deliveries:delivering', 'delivery:'.$order->getId());
+        $this->redis->hdel('deliveries:delivering', 'delivery:'.$delivery->getId());
 
         $this->redis->publish('couriers:available', $this->getUser()->getId());
 

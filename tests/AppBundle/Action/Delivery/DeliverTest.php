@@ -67,7 +67,7 @@ class DeliverTest extends TestCase
         $delivery->setOrder($order);
         $delivery->setCourier($this->user);
 
-        self::setEntityId($order, 123);
+        self::setEntityId($delivery, 123);
         self::setEntityId($this->user, 456);
 
         $this->user->setRoles(['ROLE_COURIER']);
