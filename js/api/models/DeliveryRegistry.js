@@ -17,8 +17,8 @@ DeliveryRegistry.prototype.findById = function(id) {
     ]
   };
   return new Promise(function(resolve, reject) {
-    var delivery = self.cache[id];
-    if (!delivery) {
+    var cached = self.cache[id];
+    if (!cached) {
       return Db.Delivery.findById(id, options)
         .then(function(delivery) {
           if (!delivery) {
@@ -35,7 +35,7 @@ DeliveryRegistry.prototype.findById = function(id) {
 
         });
     }
-    resolve(delivery);
+    resolve(cached);
   });
 }
 
