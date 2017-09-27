@@ -300,4 +300,26 @@ class AdminController extends Controller
             'form' => $form->createView(),
         ];
     }
+
+    /**
+     * @Route("/admin/restaurants/{id}/orders", name="admin_restaurant_orders")
+     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     */
+    public function restaurantOrdersAction($id, Request $request)
+    {
+        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
+        $orderRepo = $this->getDoctrine()->getRepository('AppBundle:Order');
+
+        $restaurant = $restaurantRepo->find($id);
+        $orders = $orderRepo->findBy(['restaurant' => $restaurant], ['createdAt' => 'DESC']);
+
+        $this->checkAccess($restaurant);
+
+        return [
+            'restaurant' => $restaurant,
+            'orders' => $orders,
+            'restaurants_route' => 'admin_restaurants',
+            'restaurant_route' => 'admin_restaurant',
+        ];
+    }
 }
