@@ -10,6 +10,11 @@ order.status.ACCEPTED: Accepted
 order.status.PICKED: Picked
 order.status.DELIVERED: Delivered
 
+delivery.status.WAITING: Waiting
+delivery.status.DISPATCHED: Dispatched
+delivery.status.PICKED: Picked
+delivery.status.DELIVERED: Delivered
+
 demo.disclaimer: >
   📢 Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform software
   <br>
