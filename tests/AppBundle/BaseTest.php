@@ -5,6 +5,7 @@ namespace AppBundle;
 
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
+use AppBundle\Entity\Menu\Modifier;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\DBAL\Logging\EchoSQLLogger;
@@ -59,11 +60,24 @@ abstract class BaseTest extends KernelTestCase
         return $item;
     }
 
+    public function createModifier($name, $price)
+    {
+        $item = new Modifier();
+        $item->setName($name);
+        $item->setPrice($price);
+
+        $manager = $this->doctrine->getManagerForClass(Modifier::class);
+        $manager->persist($item);
+        $manager->flush();
+
+        return $item;
+    }
+
     public function createMenuItemModifier($menuItem, $menuItemChoices, $calculusStrategy, $price)
     {
         $modifier = new MenuItemModifier();
         $modifier->setMenuItem($menuItem);
-        $modifier->setMenuItemChoices($menuItemChoices);
+        $modifier->setModifierChoices($menuItemChoices);
         $modifier->setCalculusStrategy($calculusStrategy);
         $modifier->setPrice($price);
 
