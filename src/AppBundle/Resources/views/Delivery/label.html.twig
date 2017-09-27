@@ -1,0 +1,8 @@
+{% set delivery_label_class = {
+  'WAITING': 'label-default',
+  'DISPATCHED': 'label-info',
+  'PICKED': 'label-primary',
+  'DELIVERED': 'label-success',
+} %}
+{% set trans_key = 'delivery.status.' ~ delivery.status %}
+<span class="label {{ delivery_label_class[delivery.status] }}">{{ trans_key|trans }}</span>

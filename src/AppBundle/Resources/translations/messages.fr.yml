@@ -78,6 +78,11 @@ order.status.ACCEPTED: Acceptée
 order.status.PICKED: Récupérée
 order.status.DELIVERED: Livrée
 
+delivery.status.WAITING: En attente
+delivery.status.DISPATCHED: Acceptée
+delivery.status.PICKED: Récupérée
+delivery.status.DELIVERED: Livrée
+
 demo.disclaimer: >
   📢 Bienvenue sur la démo du logiciel de plateforme <a href="https://coopcycle.org">CoopCycle</a>
   <br>
