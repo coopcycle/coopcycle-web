@@ -126,7 +126,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurant->setAddress($address);
         $restaurant->setMenu($this->createMenu());
         $restaurant->setName($this->faker->restaurantName);
-        $restaurant->addOpeningHour('Mo,Sa 10:00-19:00');
+        $restaurant->addOpeningHour('Mo-Sa 10:00-19:00');
 
         return $restaurant;
     }
