@@ -21,7 +21,8 @@ function circularListHandler(registry, handler) {
       // winston.debug('No deliveries to process yet');
       return next(registry, handler);
     }
-    winston.debug('Dispatching delivery #' + deliveryID);
+
+    // winston.debug('Dispatching delivery #' + deliveryID);
     registry.findById(deliveryID)
       .then(function(delivery) {
         handler.call(null, delivery, next.bind(null, registry, handler));
