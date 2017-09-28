@@ -41,7 +41,8 @@ Feature: Orders
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa"
+        "name":"Nodaiwa",
+        "availabilities":@array@
       },
       "orderedItem":[
         {
