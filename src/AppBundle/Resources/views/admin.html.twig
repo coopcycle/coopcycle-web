@@ -5,29 +5,34 @@
 {% block body %}
 <div class="container">
 
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#admin-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ path('admin_dashboard') }}">{% trans %}Dashboard{% endtrans %}</a>
+      </div>
+      <div class="collapse navbar-collapse" id="admin-navbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ path('admin_orders') }}"><i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}</a></li>
+          <li><a href="{{ path('admin_deliveries') }}"><i class="fa fa-bicycle"></i>  {% trans %}Deliveries{% endtrans %}</a></li>
+          <li><a href="{{ path('admin_restaurants') }}"><i class="fa fa-cutlery"></i>  {% trans %}Restaurants{% endtrans %}</a></li>
+          <li><a href="{{ path('admin_users') }}"><i class="fa fa-user"></i>  {% trans %}Users{% endtrans %}</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}Admin area{% endtrans %}</a></li>
     {% block breadcrumb %}{% endblock %}
   </ol>
 
-  <div class="row">
-    <div class="col-md-3">
-      <div class="list-group">
-        <a href="{{ path('admin_dashboard') }}" class="list-group-item">{% trans %}Dashboard{% endtrans %}</a>
-      </div>
-      <div class="list-group">
-        <a href="{{ path('admin_orders') }}" class="list-group-item">{% trans %}Orders{% endtrans %}</a>
-        <a href="{{ path('admin_deliveries') }}" class="list-group-item">{% trans %}Deliveries{% endtrans %}</a>
-      </div>
-      <div class="list-group">
-        <a href="{{ path('admin_restaurants') }}" class="list-group-item">{% trans %}Restaurants{% endtrans %}</a>
-        <a href="{{ path('admin_users') }}" class="list-group-item">{% trans %}Users{% endtrans %}</a>
-      </div>
-    </div>
-    <div class="col-md-9">
-      {% block content %}{% endblock %}
-    </div>
-  </div>
+  {% block content %}{% endblock %}
 
 </div>
 {% endblock %}
