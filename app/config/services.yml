@@ -60,6 +60,12 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  app.restaurant_normalizer:
+    class: AppBundle\Serializer\RestaurantNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   app.menu_section:
     class: AppBundle\Serializer\MenuSectionNormalizer
     arguments:

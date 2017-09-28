@@ -100,7 +100,8 @@ Feature: Manage restaurants
         "description":null,
         "name":"Menu"
       },
-      "openingHours":@array@
+      "openingHours":@array@,
+      "availabilities":@array@
     }
     """
 
