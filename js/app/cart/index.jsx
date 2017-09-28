@@ -63,3 +63,5 @@ function onDatePickerChange(e) {
 
 $('#cart-date').on('change', onDatePickerChange);
 $('#cart-time').on('change', onDatePickerChange);
+
+cartComponent.onDateChange(dateToString());

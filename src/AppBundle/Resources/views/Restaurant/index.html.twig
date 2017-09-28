@@ -84,17 +84,12 @@
         <div class="col-sm-6">
           <select class="form-control" id="cart-time">
             {% for time in times %}
-              <option>{{ time }}</option>
+              <option {% if cart.date|date('H:i') == time %}selected="selected"{% endif %}>{{ time }}</option>
             {% endfor %}
           </select>
         </div>
       </div>
       <hr>
-      {#
-      <p class="text-center">
-      {{ restaurant.nextOpeningDate|date('d/m H:i') }}
-      </p>
-      #}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{% trans %}Cart{% endtrans %}</h3>
