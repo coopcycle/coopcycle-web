@@ -69,6 +69,7 @@ class OrderItem
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItemModifier", mappedBy="orderItem", cascade={"all"})
+     * @Groups({"order"})
      */
     private $modifiers;
 
