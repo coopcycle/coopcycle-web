@@ -52,7 +52,8 @@ Feature: Orders
           "menuItem":"/api/menu_items/1",
           "quantity":1,
           "name":@string@,
-          "price":@number@
+          "price":@number@,
+          "modifiers": @array@
         },
         {
           "@id":"@string@.startsWith('/api/order_items')",
@@ -60,7 +61,8 @@ Feature: Orders
           "menuItem":"/api/menu_items/2",
           "quantity":2,
           "name":@string@,
-          "price":@number@
+          "price":@number@,
+          "modifiers": @array@
         }
       ],
       "delivery":{
