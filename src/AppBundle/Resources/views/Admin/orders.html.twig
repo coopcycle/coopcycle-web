@@ -69,7 +69,7 @@
     <td>{{ order.createdAt|ago }}</td>
     <td>{{ order.deliveryTime }}</td>
     <td>
-    {% if order.delivery.status == 'WAITING' %}
+    {% if order.status == 'WAITING' %}
     <a href="{{ path('order_cancel', {'id': order.id}) }}" class="btn btn-xs btn-danger pull-right">
     {% else %}
     <a class="btn btn-xs btn-danger pull-right disabled">
