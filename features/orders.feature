@@ -38,6 +38,7 @@ Feature: Orders
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
       "customer":"@string@.startsWith('/api/api_users')",
+      "createdAt": @string@,
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",

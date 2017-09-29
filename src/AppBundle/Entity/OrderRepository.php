@@ -18,6 +18,21 @@ class OrderRepository extends EntityRepository
         return [$hours, $minutes];
     }
 
+    public function getWaitingOrders()
+    {
+        $qb = $this->createQueryBuilder('o');
+        $qb
+            ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
+            ->add('where', $qb->expr()->in('o.status', [
+                Order::STATUS_WAITING,
+                Order::STATUS_ACCEPTED
+            ]))
+            ->orderBy('d.date', 'ASC')
+            ;
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function getDeliveryTimes(ApiUser $courier)
     {
         $qb = $this->getEntityManager()

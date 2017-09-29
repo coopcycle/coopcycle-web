@@ -3,51 +3,44 @@
 {% block breadcrumb %}
 <li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
 <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
-<li>Orders</li>
+<li>{% trans %}Orders{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 
-<h1>{% trans %}Orders{% endtrans %}</h1>
-
-{% if orders|length > 0 %}
-  {% for order in orders %}
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-md-6">
-            <ul class="list-group">
-              {% for item in order.orderedItem %}
-              <li class="list-group-item">{{ item.quantity }} x {{ item.name }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="col-md-6">
-            <p class="text-right">
-               <i class="fa fa-money" aria-hidden="true"></i>  <strong>{{ order.total }} €</strong>
-            </p>
-            <p class="text-right">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>  {{ order.delivery.date|localizeddate('medium', 'short') }}
-            </p>
-            {#
-            <p class="text-right"><i class="fa fa-calendar" aria-hidden="true"></i>  {{ order.createdAt|ago }}</p>
-            #}
-          </div>
-        </div>
-        {#
-        <div class="pull-right">
-          <button class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i>  {% trans %}Reject{% endtrans %}</button>
-          <button class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i>  {% trans %}Accept{% endtrans %}</button>
-        </div>
-        #}
-      </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <div class="alert alert-warning">{% trans %}You don't have any orders yet{% endtrans %}</div>
-{% endif %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="well well-sm"><strong>{% trans %}Today{% endtrans %}</strong></div>
+    <div id="order-list"></div>
+  </div>
+  <div class="col-md-6">
+    <div class="well well-sm"><strong>{% trans %}Tomorrow{% endtrans %}</strong></div>
+    <div class="alert alert-warning">{% trans %}You don't have any orders yet{% endtrans %}</div>
+  </div>
+</div>
 
 {% endblock %}
 
 {% block scripts %}
+<script src="/restaurant-panel/socket.io/socket.io.js"></script>
+<script>
+window.__order_status_i18n = {
+  'CREATED':  "{{ 'order.status.CREATED'|trans }}",
+  'CANCELED': "{{ 'order.status.CANCELED'|trans }}",
+  'WAITING':  "{{ 'order.status.WAITING'|trans }}",
+  'ACCEPTED': "{{ 'order.status.ACCEPTED'|trans }}",
+  'REFUSED':  "{{ 'order.status.REFUSED'|trans }}",
+  'READY':    "{{ 'order.status.READY'|trans }}",
+}
+window.__restaurant = {{ restaurant_json|raw }};
+window.__restaurant = {{ restaurant_json|raw }};
+window.__orders = {{ orders_json|raw }};
+window.__routes = {
+  'order_accept': "{{ path('admin_restaurant_order_accept', { restaurantId: restaurant.id, orderId: '__ORDER_ID__' }) }}",
+  'order_refuse': "{{ path('admin_restaurant_order_refuse', { restaurantId: restaurant.id, orderId: '__ORDER_ID__' }) }}",
+  'order_cancel': "{{ path('admin_restaurant_order_cancel', { restaurantId: restaurant.id, orderId: '__ORDER_ID__' }) }}",
+  'order_ready':  "{{ path('admin_restaurant_order_ready',  { restaurantId: restaurant.id, orderId: '__ORDER_ID__' }) }}"
+};
+</script>
+<script src="{{ asset('js/restaurant-panel.js') }}"></script>
 {% endblock %}
