@@ -3,9 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * Class OrderItemModifier
@@ -13,7 +13,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Links between an OrderItem, a Modifier and a MenuItem (= selected item)
  *
  * @ORM\Entity()
+ * @ApiResource(
+ *   attributes={
+ *     "denormalization_context"={"groups"={"order"}},
+ *     "normalization_context"={"groups"={"order"}}
+ * })
  * @package AppBundle\Entity
+ *
  */
 class OrderItemModifier
 {
@@ -90,7 +96,7 @@ class OrderItemModifier
         return $this->orderItem;
     }
 
-    /**AppBundle\Entity\Menu\MenuItem
+    /*
      * @param OrderItem $orderItem
      */
     public function setOrderItem($orderItem)
