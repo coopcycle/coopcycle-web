@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class AdminController extends Controller
@@ -27,6 +28,21 @@ class AdminController extends Controller
 
     use DoctrineTrait;
     use RestaurantTrait;
+
+    private function cancelOrder(Order $order)
+    {
+        if ($order->getStatus() !== Order::STATUS_WAITING) {
+            throw new BadRequestHttpException(sprintf('Order #%d cannot be canceled', $order->getId()));
+        }
+
+        $order->setStatus(Order::STATUS_CANCELED);
+        $order->getDelivery()->setStatus(Order::STATUS_CANCELED);
+
+        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+        $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+
+        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
+    }
 
     /**
      * @Route("/admin", name="admin_index")
@@ -112,19 +128,11 @@ class AdminController extends Controller
      */
     public function orderCancelAction($id, Request $request)
     {
-        $em = $this->getDoctrine()->getManagerForClass('AppBundle:Order');
-
-        // TODO Check status = WAITING
-
         $order = $this->getDoctrine()
             ->getRepository('AppBundle:Order')
             ->find($id);
 
-        $order->setStatus(Order::STATUS_CANCELED);
-
-        $em->flush();
-
-        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
+        $this->cancelOrder($order);
 
         return $this->redirectToRoute('admin_orders');
     }
@@ -390,8 +398,7 @@ class AdminController extends Controller
         $this->checkAccess($restaurant);
 
         if ($request->isMethod('POST')) {
-            $order->setStatus(Order::STATUS_CANCELED);
-            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+            $this->cancelOrder($order);
         }
 
         return $this->redirectToRoute('admin_restaurant_orders', ['id' => $restaurantId]);
