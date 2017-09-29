@@ -12,12 +12,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 
-
 class ProfileController extends Controller
 {
-    use DoctrineTrait;
+    use AdminTrait;
     use RestaurantTrait;
-
 
     /**
      * @Route("/profile/edit", name="profile_edit")
@@ -258,21 +256,8 @@ class ProfileController extends Controller
      * @Route("/profile/restaurants/{id}/orders", name="profile_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id, Request $request)
+    public function restaurantOrdersAction($id)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository('AppBundle:Order');
-
-        $restaurant = $restaurantRepo->find($id);
-        $orders = $orderRepo->findBy(['restaurant' => $restaurant], ['createdAt' => 'DESC']);
-
-        $this->checkAccess($restaurant);
-
-        return [
-            'restaurant' => $restaurant,
-            'orders' => $orders,
-            'restaurants_route' => 'profile_restaurants',
-            'restaurant_route' => 'profile_restaurant_edit',
-        ];
+        return $this->restaurantOrders($id);
     }
 }

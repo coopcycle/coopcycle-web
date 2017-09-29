@@ -26,8 +26,6 @@ use Stripe;
  */
 class OrderController extends Controller
 {
-    use DoctrineTrait;
-
     private function getCart(Request $request)
     {
         return $request->getSession()->get('cart');

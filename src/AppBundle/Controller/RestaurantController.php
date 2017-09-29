@@ -18,8 +18,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class RestaurantController extends Controller
 {
-    use DoctrineTrait;
-
     const ITEMS_PER_PAGE = 15;
 
     private function getCart(Request $request, Restaurant $restaurant)
