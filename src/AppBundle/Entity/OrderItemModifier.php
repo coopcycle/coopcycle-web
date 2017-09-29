@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class OrderItemModifier
@@ -33,16 +34,18 @@ class OrderItemModifier
     private $orderItem;
 
     /**
-     * Name of the selected menu item
+     * Name of the selected modifier
      *
+     * @Groups({"order"})
      * @ORM\Column(type="string")
      */
     private $name;
 
 
     /**
-     * Description of the selected menu item
+     * Description of the selected modifier
      *
+     * @Groups({"order"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $description;
@@ -58,6 +61,7 @@ class OrderItemModifier
     /**
      * @var MenuItemModifier
      *
+     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItemModifier", cascade={"persist"})
      */
     private $modifier;

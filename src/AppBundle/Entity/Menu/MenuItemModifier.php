@@ -37,7 +37,10 @@ class MenuItemModifier extends Thing
     /**
      * The strategy to calculate the extra-price involved by adding the modifier.
      *
-     * Typically: FREE no extra price, ADD_MENUITEM_PRICE add price of the extra, ADD_MODIFIER_PRICE add the fixed price of the menu item
+     * Possible values:
+     *  - FREE no extra price
+     *  - ADD_MENUITEM_PRICE add price of the extra
+     *  - ADD_MODIFIER_PRICE add the fixed price of the menu item
      *
      * @var string
      *
