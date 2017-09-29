@@ -20,6 +20,7 @@ class InitDemoCommand extends ContainerAwareCommand
     private $fixturesLoader;
     private $menuSections = [];
     private $client;
+    private $redis;
 
     private static $users = [
         'admin' => [
@@ -57,6 +58,8 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->fixturesLoader->addProvider($restaurantProvider);
 
         $this->faker->addProvider($addressProvider);
+
+        $this->redis = $this->getContainer()->get('snc_redis.default');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -81,6 +84,12 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $output->writeln('Creating restaurants...');
         $this->createRestaurants($output);
+
+        $output->writeln('Removing data from Redis...');
+        $keys = $this->redis->keys('*');
+        foreach ($keys as $key) {
+            $this->redis->del($key);
+        }
     }
 
     private function createUser($username, array $params = [])
@@ -115,7 +124,7 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $this->fixturesLoader->setReferences($this->menuSections);
         $objects = $this->fixturesLoader->load(__DIR__ . '/Resources/menu.yml');
-//        var_dump($objects);
+
         return $objects['menu'];
     }
 
