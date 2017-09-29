@@ -69,6 +69,9 @@ Created at: Créé le
 Duration: Durée
 Dashboard: Tableau de bord
 Manage: Gérer
+Admin area: Administration
+Refuse: Refuser
+Accept: Accepter
 
 delivery_service.applicolis: AppliColis
 
@@ -77,8 +80,10 @@ order.payment.total: Payer %total% €
 order.payment.card_number.help: >
   Utilisez l'un des <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéros de test</a> Stripe (ex: 4242424242424242).
 
+order.status.WAITING: En attente
 order.status.CREATED: Créée
 order.status.ACCEPTED: Acceptée
+order.status.REFUSED: Refusée
 order.status.READY: Prête
 order.status.CANCELED: Annulée
 

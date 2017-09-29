@@ -107,6 +107,7 @@ class Order
 
     /**
      * @Gedmo\Timestampable(on="create")
+     * @Groups({"order"})
      * @ORM\Column(type="datetime")
      */
     private $createdAt;

@@ -27,13 +27,13 @@ services:
 
   my.order_listener:
     class: AppBundle\EventListener\OrderListener
-    arguments: [ "@delivery_service_factory" ]
+    arguments: [ "@delivery_service_factory", "@snc_redis.default", "@serializer" ]
     tags:
       - { name: "kernel.event_listener", event: "order.payment_success", method: "onPaymentSuccess" }
 
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
-    arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default" ]
+    arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default", "@serializer" ]
     tags:
       - { name: doctrine.orm.entity_listener }
 

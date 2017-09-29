@@ -6,20 +6,24 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderEvent;
 use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Predis\Client as Redis;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderListener
 {
     private $tokenStorage;
     private $deliveryServiceFactory;
     private $redis;
+    private $serializer;
 
-    public function __construct(TokenStorageInterface $tokenStorage, DeliveryServiceFactory $deliveryServiceFactory, Redis $redis)
+    public function __construct(TokenStorageInterface $tokenStorage, DeliveryServiceFactory $deliveryServiceFactory, Redis $redis, SerializerInterface $serializer)
     {
         $this->tokenStorage = $tokenStorage;
         $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->redis = $redis;
+        $this->serializer = $serializer;
     }
 
     private function getDeliveryService(Order $order)
@@ -71,6 +75,11 @@ class OrderListener
      */
     public function postPersist(Order $order, LifecycleEventArgs $args)
     {
+        $this->redis->publish('order_events', json_encode([
+            'order' => $order->getId(),
+            'status' => $order->getStatus(),
+            'timestamp' => (new \DateTime())->getTimestamp(),
+        ]));
     }
 
     /**

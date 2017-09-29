@@ -28,6 +28,7 @@ var webpackConfig = {
     'js/order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
     'js/profile-deliveries': './js/app/profile/deliveries.js',
     'js/restaurant-form': './js/app/restaurant/form.jsx',
+    'js/restaurant-panel': './js/app/restaurant/panel.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
     'js/tracking': './js/app/tracking/index.jsx',
   },
