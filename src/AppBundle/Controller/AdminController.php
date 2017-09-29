@@ -26,7 +26,7 @@ class AdminController extends Controller
 {
     const ITEMS_PER_PAGE = 20;
 
-    use DoctrineTrait;
+    use AdminTrait;
     use RestaurantTrait;
 
     private function cancelOrder(Order $order)
@@ -314,29 +314,9 @@ class AdminController extends Controller
      * @Route("/admin/restaurants/{id}/orders", name="admin_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id, Request $request)
+    public function restaurantOrdersAction($id)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository('AppBundle:Order');
-
-        $restaurant = $restaurantRepo->find($id);
-        $orders = $orderRepo->getWaitingOrders();
-
-        $this->checkAccess($restaurant);
-
-        $ordersJson = [];
-        foreach ($orders as $order) {
-            $ordersJson[] = $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]);
-        }
-
-        return [
-            'restaurant' => $restaurant,
-            'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
-            'orders' => $orders,
-            'orders_json' => '[' . implode(',', $ordersJson) . ']',
-            'restaurants_route' => 'admin_restaurants',
-            'restaurant_route' => 'admin_restaurant',
-        ];
+        return $this->restaurantOrders($id);
     }
 
     /**
