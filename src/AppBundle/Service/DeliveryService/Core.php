@@ -3,9 +3,20 @@
 namespace AppBundle\Service\DeliveryService;
 
 use AppBundle\Entity\Order;
+use AppBundle\Service\RoutingInterface;
+use Predis\Client as Redis;
 
 class Core extends Base
 {
+    private $redis;
+
+    public function __construct(RoutingInterface $routing, Redis $redis)
+    {
+        parent::__construct($routing);
+
+        $this->redis = $redis;
+    }
+
     public function getKey()
     {
         return 'core';

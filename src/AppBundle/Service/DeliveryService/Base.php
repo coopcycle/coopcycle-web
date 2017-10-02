@@ -5,29 +5,23 @@ namespace AppBundle\Service\DeliveryService;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Service\DeliveryServiceInterface;
-use Predis\Client as Redis;
+use AppBundle\Service\RoutingInterface;
 
 abstract class Base implements DeliveryServiceInterface
 {
-    protected $redis;
-    protected $osrmHost;
+    protected $routing;
 
-    public function __construct(Redis $redis, $osrmHost)
+    public function __construct(RoutingInterface $routing)
     {
-        $this->redis = $redis;
-        $this->osrmHost = $osrmHost;
+        $this->routing = $routing;
     }
 
     public function calculate(Delivery $delivery)
     {
-        $originLng = $delivery->getOriginAddress()->getGeo()->getLongitude();
-        $originLat = $delivery->getOriginAddress()->getGeo()->getLatitude();
-
-        $deliveryLng = $delivery->getDeliveryAddress()->getGeo()->getLongitude();
-        $deliveryLat = $delivery->getDeliveryAddress()->getGeo()->getLatitude();
-
-        $response = file_get_contents("http://{$this->osrmHost}/route/v1/bicycle/{$originLng},{$originLat};{$deliveryLng},{$deliveryLat}?overview=full");
-        $data = json_decode($response, true);
+        $data = $this->routing->getRawResponse(
+            $delivery->getOriginAddress()->getGeo(),
+            $delivery->getDeliveryAddress()->getGeo()
+        );
 
         $distance = $data['routes'][0]['distance'];
         $duration = $data['routes'][0]['duration'];

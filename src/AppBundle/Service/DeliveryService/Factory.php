@@ -25,10 +25,12 @@ class Factory
 
     public function createForRestaurant(Restaurant $restaurant)
     {
-        $key = $restaurant->getDeliveryService();
+        $deliveryService = $restaurant->getDeliveryService();
 
-        if (!empty($key) && isset($this->services[$key])) {
-            return $this->services[$key];
+        if (null !== $deliveryService && isset($this->services[$deliveryService->getType()])) {
+            $object = $this->services[$deliveryService->getType()];
+
+            return $object;
         }
 
         return $this->fallback;

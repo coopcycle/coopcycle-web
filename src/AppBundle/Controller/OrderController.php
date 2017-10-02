@@ -135,7 +135,12 @@ class OrderController extends Controller
                 $token = $request->request->get('stripeToken');
                 $paymentService->createCharge($order, $token);
             } catch (\Exception $e) {
-                return $this->redirectToRoute('order_error', array('id' => $order->getId()));
+                return [
+                    'error' => $e->getMessage(),
+                    'order' => $order,
+                    'restaurant' => $order->getRestaurant(),
+                    'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
+                ];
             }
 
             $order->setStatus(Order::STATUS_WAITING);
