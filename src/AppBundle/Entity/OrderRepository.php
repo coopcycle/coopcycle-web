@@ -18,7 +18,7 @@ class OrderRepository extends EntityRepository
         return [$hours, $minutes];
     }
 
-    public function getWaitingOrders()
+    public function getWaitingOrdersForRestaurant(Restaurant $restaurant)
     {
         $qb = $this->createQueryBuilder('o');
         $qb
@@ -27,6 +27,8 @@ class OrderRepository extends EntityRepository
                 Order::STATUS_WAITING,
                 Order::STATUS_ACCEPTED
             ]))
+            ->add('where', 'o.restaurant = :restaurant')
+            ->setParameter('restaurant', $restaurant)
             ->orderBy('d.date', 'ASC')
             ;
 

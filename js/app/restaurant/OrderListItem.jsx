@@ -62,8 +62,17 @@ class OrderListItem extends React.Component
     const order = this.props.order;
     const id = order['@id'].replace('/api/orders/', '')
 
+    let classNames = [
+      'panel',
+      'panel-default'
+    ]
+
+    if (order.status === 'ACCEPTED') {
+      classNames.push('panel-success')
+    }
+
     return (
-      <div className="panel panel-default">
+      <div className={ classNames.join(' ') }>
         <div className="panel-heading">
           <h3 className="panel-title">Commande #{ id } </h3>
         </div>

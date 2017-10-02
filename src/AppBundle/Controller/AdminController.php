@@ -29,20 +29,7 @@ class AdminController extends Controller
     use AdminTrait;
     use RestaurantTrait;
 
-    private function cancelOrder(Order $order)
-    {
-        if ($order->getStatus() !== Order::STATUS_WAITING) {
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be canceled', $order->getId()));
-        }
 
-        $order->setStatus(Order::STATUS_CANCELED);
-        $order->getDelivery()->setStatus(Order::STATUS_CANCELED);
-
-        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
-        $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
-    }
 
     /**
      * @Route("/admin", name="admin_index")
@@ -120,21 +107,6 @@ class AdminController extends Controller
             'layout' => 'AppBundle::admin.html.twig',
             'breadcrumb_path' => 'admin_orders'
         );
-    }
-
-    /**
-     * @Route("/admin/orders/{id}/cancel", name="order_cancel")
-     * @Template
-     */
-    public function orderCancelAction($id, Request $request)
-    {
-        $order = $this->getDoctrine()
-            ->getRepository('AppBundle:Order')
-            ->find($id);
-
-        $this->cancelOrder($order);
-
-        return $this->redirectToRoute('admin_orders');
     }
 
     /**
@@ -316,93 +288,60 @@ class AdminController extends Controller
      */
     public function restaurantOrdersAction($id)
     {
-        return $this->restaurantOrders($id);
+        return $this->restaurantOrders($id, [
+            'order_accept' => 'admin_order_accept',
+            'order_refuse' => 'admin_order_refuse',
+            'order_cancel' => 'admin_order_cancel',
+            'order_ready'  => 'admin_order_ready',
+        ]);
     }
 
     /**
-     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}/accept", name="admin_restaurant_order_accept")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     * @Route("/admin/orders/{id}/accept", name="admin_order_accept")
+     * @Template
      */
-    public function acceptOrderAction($restaurantId, $orderId, Request $request)
+    public function acceptOrderAction($id, Request $request)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository(Order::class);
-
-        $restaurant = $restaurantRepo->find($restaurantId);
-        $order = $orderRepo->find($orderId);
-
-        $this->checkAccess($restaurant);
-
         if ($request->isMethod('POST')) {
-            $order->setStatus(Order::STATUS_ACCEPTED);
-            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
-        }
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        return $this->redirectToRoute('admin_restaurant_orders', ['id' => $restaurantId]);
+            return $this->acceptOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
     }
 
     /**
-     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}/refuse", name="admin_restaurant_order_refuse")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     * @Route("/admin/orders/{id}/refuse", name="admin_order_refuse")
+     * @Template
      */
-    public function refuseOrderAction($restaurantId, $orderId, Request $request)
+    public function refuseOrderAction($id, Request $request)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository(Order::class);
-
-        $restaurant = $restaurantRepo->find($restaurantId);
-        $order = $orderRepo->find($orderId);
-
-        $this->checkAccess($restaurant);
-
         if ($request->isMethod('POST')) {
-            $order->setStatus(Order::STATUS_REFUSED);
-            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
-        }
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        return $this->redirectToRoute('admin_restaurant_orders', ['id' => $restaurantId]);
+            return $this->refuseOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
     }
 
     /**
-     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}/cancel", name="admin_restaurant_order_cancel")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     * @Route("/admin/orders/{id}/ready", name="admin_order_ready")
+     * @Template
      */
-    public function cancelOrderAction($restaurantId, $orderId, Request $request)
+    public function readyOrderAction($id, Request $request)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository(Order::class);
-
-        $restaurant = $restaurantRepo->find($restaurantId);
-        $order = $orderRepo->find($orderId);
-
-        $this->checkAccess($restaurant);
-
         if ($request->isMethod('POST')) {
-            $this->cancelOrder($order);
-        }
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        return $this->redirectToRoute('admin_restaurant_orders', ['id' => $restaurantId]);
+            return $this->readyOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
     }
 
     /**
-     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}/ready", name="admin_restaurant_order_ready")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     * @Route("/admin/orders/{id}/cancel", name="admin_order_cancel")
      */
-    public function readyOrderAction($restaurantId, $orderId, Request $request)
+    public function cancelOrderAction($id, Request $request)
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $orderRepo = $this->getDoctrine()->getRepository(Order::class);
-
-        $restaurant = $restaurantRepo->find($restaurantId);
-        $order = $orderRepo->find($orderId);
-
-        $this->checkAccess($restaurant);
-
         if ($request->isMethod('POST')) {
-            $order->setStatus(Order::STATUS_READY);
-            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+            return $this->cancelOrder($id, 'admin_orders');
         }
-
-        return $this->redirectToRoute('admin_restaurant_orders', ['id' => $restaurantId]);
     }
 }
