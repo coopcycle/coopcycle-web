@@ -24,7 +24,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(iri="http://schema.org/Order",
  *   collectionOperations={
  *     "get"={"method"="GET"},
- *     "post"={"method"="POST"},
+ *     "post"={"method"="POST", "route_name"="order_create"},
  *     "my_orders"={"method"="GET", "route_name"="my_orders"}
  *   },
  *   itemOperations={

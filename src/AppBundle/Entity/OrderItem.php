@@ -62,13 +62,13 @@ class OrderItem
     /**
      * @var Order
      *
-     * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderedItem")
+     * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderedItem", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $order;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItemModifier", mappedBy="orderItem", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItemModifier", mappedBy="orderItem", cascade={"all", "persist"})
      * @Groups({"order"})
      */
     private $modifiers;

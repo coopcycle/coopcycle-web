@@ -35,7 +35,7 @@ class OrderItemModifier
     /**
      * @var OrderItem
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OrderItem", inversedBy="modifiers")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OrderItem", inversedBy="modifiers", cascade={"persist"})
      */
     private $orderItem;
 
