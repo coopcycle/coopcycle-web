@@ -26,22 +26,22 @@ class ProfileController extends Controller
      */
     public function editProfile(Request $request) {
 
-          $user = $this->getUser();
+        $user = $this->getUser();
 
-          $editForm = $this->createForm(UpdateProfileType::class, $user);
-          $editForm->handleRequest($request);
+        $editForm = $this->createForm(UpdateProfileType::class, $user);
+        $editForm->handleRequest($request);
 
-          if ($editForm->isSubmitted() && $editForm->isValid()) {
-              $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
-              $userManager->persist($user);
-              $userManager->flush();
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+            $userManager->persist($user);
+            $userManager->flush();
 
-              return $this->redirectToRoute('fos_user_profile_show');
-          }
+            return $this->redirectToRoute('fos_user_profile_show');
+        }
 
-          return array(
-              'form' => $editForm->createView()
-          );
+        return array(
+            'form' => $editForm->createView()
+        );
     }
 
     /**
@@ -258,6 +258,62 @@ class ProfileController extends Controller
      */
     public function restaurantOrdersAction($id)
     {
-        return $this->restaurantOrders($id);
+        return $this->restaurantOrders($id, [
+            'order_accept' => 'profile_order_accept',
+            'order_refuse' => 'profile_order_refuse',
+            'order_cancel' => 'profile_order_cancel',
+            'order_ready'  => 'profile_order_ready',
+        ]);
+    }
+
+    /**
+     * @Route("/profile/orders/{id}/accept", name="profile_order_accept")
+     * @Template
+     */
+    public function acceptOrderAction($id, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
+
+            return $this->acceptOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
+    }
+
+    /**
+     * @Route("/profile/orders/{id}/refuse", name="profile_order_refuse")
+     * @Template
+     */
+    public function refuseOrderAction($id, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
+
+            return $this->refuseOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
+    }
+
+    /**
+     * @Route("/profile/orders/{id}/ready", name="profile_order_ready")
+     * @Template
+     */
+    public function readyOrderAction($id, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
+
+            return $this->readyOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
+    }
+
+    /**
+     * @Route("/profile/orders/{id}/cancel", name="profile_order_cancel")
+     */
+    public function cancelOrderAction($id, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
+
+            return $this->cancelOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+        }
     }
 }
