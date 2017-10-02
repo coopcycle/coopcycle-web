@@ -78,7 +78,7 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  'AppBundle\Form\RestaurantType':
+  'AppBundle\Form\DeliveryServiceType':
     arguments: [ '@translator', '@delivery_service_factory' ]
     tags: [ form.type ]
 
@@ -101,11 +101,11 @@ services:
 
   delivery_service.default:
     class: AppBundle\Service\DeliveryService\Core
-    arguments: [ "@snc_redis.default", "%osrm_host%" ]
+    arguments: [ "@routing_service", "@snc_redis.default" ]
 
   delivery_service.applicolis:
     class: AppBundle\Service\DeliveryService\AppliColis
-    arguments: [ "@snc_redis.default", "%osrm_host%", "%applicolis_api_base_url%", "%applicolis_api_key%", "@logger" ]
+    arguments: [ "@routing_service", "@csa_guzzle.client.applicolis", "@logger" ]
 
   delivery_service_factory:
     class: AppBundle\Service\DeliveryService\Factory

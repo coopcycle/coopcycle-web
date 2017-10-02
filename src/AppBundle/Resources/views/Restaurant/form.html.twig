@@ -32,7 +32,10 @@
 
   <hr>
 
-  {{ form_row(form.deliveryService) }}
+  {{ form_row(form.deliveryService.type) }}
+  <div id="restaurant_deliveryService_options">
+  {{ form_rest(form.deliveryService) }}
+  </div>
 
   <hr>
 

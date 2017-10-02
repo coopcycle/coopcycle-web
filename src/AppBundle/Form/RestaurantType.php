@@ -2,6 +2,8 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\DeliveryService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -9,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,42 +19,19 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class RestaurantType extends AbstractType
 {
-    private $translator;
-    private $deliveryServiceFactory;
-
-    public function __construct(TranslatorInterface $translator, DeliveryServiceFactory $deliveryServiceFactory)
-    {
-        $this->translator = $translator;
-        $this->deliveryServiceFactory = $deliveryServiceFactory;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $deliveryServices = [
-            $this->translator->trans('Default') => null
-        ];
-        foreach ($this->deliveryServiceFactory->getServices() as $service) {
-            $key = $this->translator->trans('delivery_service.' . $service->getKey());
-            $deliveryServices[$key] = $service->getKey();
-        }
-
         $builder
             ->add('name', TextType::class)
             ->add('website', UrlType::class, ['required' => false])
             ->add('address', AddressType::class)
-            ->add('deliveryService', ChoiceType::class, [
-                'choices'  => $deliveryServices
-            ])
+            ->add('deliveryService', DeliveryServiceType::class, ['mapped' => false])
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'download_link' => false,
@@ -79,6 +59,28 @@ class RestaurantType extends AbstractType
                 'allow_delete' => true,
                 'prototype' => true,
             ]);
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+
+                $restaurant = $event->getForm()->getData();
+
+                $type = $event->getForm()->get('deliveryService')->get('type')->getData();
+
+                if ($type === 'applicolis') {
+                    $token = $event->getForm()->get('deliveryService')->get('token')->getData();
+                    $deliveryService = $restaurant->getDeliveryService();
+
+                    if (null === $deliveryService) {
+                        $deliveryService = new DeliveryService\AppliColis();
+                        $restaurant->setDeliveryService($deliveryService);
+                    }
+
+                    $deliveryService->setToken($token);
+                }
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)

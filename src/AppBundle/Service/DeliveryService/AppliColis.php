@@ -3,37 +3,35 @@
 namespace AppBundle\Service\DeliveryService;
 
 use AppBundle\Entity\Order;
+use AppBundle\Service\RoutingInterface;
 use Predis\Client as Redis;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
+use Psr\Log\LoggerInterface;
 
 class AppliColis extends Base
 {
-    private $apiBaseUrl;
-    private $apiKey;
     private $client;
     private $logger;
 
-    public function __construct(Redis $redis, $osrmHost, $apiBaseUrl, $apiKey, $logger)
+    public function __construct(RoutingInterface $routing, Client $client, LoggerInterface $logger)
     {
-        parent::__construct($redis, $osrmHost);
+        parent::__construct($routing);
 
-        $this->apiBaseUrl = $apiBaseUrl;
-        $this->apiKey = $apiKey;
-
-        $this->client = new Client([
-            'base_uri' => $apiBaseUrl,
-            'timeout'  => 10.0,
-        ]);
-
+        $this->client = $client;
         $this->logger = $logger;
     }
 
     public function getKey()
     {
         return 'applicolis';
+    }
+
+    private function getApiToken(Order $order)
+    {
+        return $order->getRestaurant()->getDeliveryService()->getToken();
     }
 
     public function create(Order $order)
@@ -71,7 +69,7 @@ class AppliColis extends Base
            $r = $this->client->request('POST', '/external-api/course', [
                 'json' => $json,
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Authorization' => 'Bearer ' . $this->getApiToken($order),
                     'Content-Type' => 'application/json'
                 ]
             ]);

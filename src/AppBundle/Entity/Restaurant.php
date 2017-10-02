@@ -97,12 +97,13 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The delivery service of the restaurant.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\OneToOne(targetEntity="DeliveryService", cascade={"persist"})
+     * @ORM\JoinColumn(name="delivery_service_id", referencedColumnName="id")
      */
     private $deliveryService;
 
     /**
-     * @var string The website of the restaurant.
+     * @var string The Stripe params of the restaurant.
      *
      * @ORM\ManyToOne(targetEntity="StripeParams")
      */
