@@ -9,13 +9,34 @@
 
 {% block content %}
 
-<h1>
-  {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}
-  {% if restaurant.id is not empty %}
-  <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-sm btn-primary pull-right">{% trans %}Edit menu{% endtrans %}</a>
-  {% endif %}
-</h1>
-<hr>
+<nav class="navbar">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}
+      </span>
+    </div>
+    <div class="collapse navbar-collapse" id="restaurant-navbar">
+      <div class="nav navbar-nav navbar-right">
+        {% if restaurant.id is not empty %}
+        <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-cutlery"></i>  {% trans %}Edit menu{% endtrans %}
+        </a>
+        <a href="{{ path(orders_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
 
 {{ form_start(form) }}
 
@@ -32,6 +53,7 @@
 
   <hr>
 
+  <h4>{% trans %}Delivery service{% endtrans %}</h4>
   {{ form_row(form.deliveryService.type) }}
   <div id="restaurant_deliveryService_options">
   {{ form_rest(form.deliveryService) }}
