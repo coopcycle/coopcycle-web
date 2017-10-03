@@ -23,11 +23,11 @@ class OrderRepository extends EntityRepository
         $qb = $this->createQueryBuilder('o');
         $qb
             ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
-            ->add('where', $qb->expr()->in('o.status', [
+            ->andWhere('o.restaurant = :restaurant')
+            ->andWhere($qb->expr()->in('o.status', [
                 Order::STATUS_WAITING,
                 Order::STATUS_ACCEPTED
             ]))
-            ->add('where', 'o.restaurant = :restaurant')
             ->setParameter('restaurant', $restaurant)
             ->orderBy('d.date', 'ASC')
             ;
