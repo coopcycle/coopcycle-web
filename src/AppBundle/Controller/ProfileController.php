@@ -206,6 +206,7 @@ class ProfileController extends Controller
             'success' => 'profile_restaurants',
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
+            'orders' => 'profile_restaurant_orders',
         ]);
     }
 
@@ -219,6 +220,7 @@ class ProfileController extends Controller
             'success' => 'profile_restaurants',
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
+            'orders' => 'profile_restaurant_orders',
         ]);
     }
 

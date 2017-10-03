@@ -63,6 +63,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $layout,
             'menu_route' => $routes['menu'],
+            'orders_route' => $routes['orders'],
             'restaurants_route' => $routes['restaurants'],
             'google_api_key' => $this->getParameter('google_api_key'),
         ];

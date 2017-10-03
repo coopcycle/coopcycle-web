@@ -29,8 +29,6 @@ class AdminController extends Controller
     use AdminTrait;
     use RestaurantTrait;
 
-
-
     /**
      * @Route("/admin", name="admin_index")
      * @Template("@App/Admin/dashboard.html.twig")
@@ -171,6 +169,7 @@ class AdminController extends Controller
             'success' => 'admin_restaurants',
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
+            'orders' => 'admin_restaurant_orders',
         ]);
     }
 
@@ -184,6 +183,7 @@ class AdminController extends Controller
             'success' => 'admin_restaurants',
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
+            'orders' => 'admin_restaurant_orders',
         ]);
     }
 
