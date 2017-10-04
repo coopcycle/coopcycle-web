@@ -6,13 +6,14 @@ use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\TimeRange;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
+const NUMBER_OF_AVAILABLE_DAYS = 2;
 
 /**
  * A restaurant.
@@ -245,6 +246,12 @@ class Restaurant extends FoodEstablishment
         return false;
     }
 
+    /**
+     * Get the next date the restaurant will be opened at.
+     *
+     * @param \DateTime|null $now
+     * @return mixed
+     */
     public function getNextOpeningDate(\DateTime $now = null)
     {
         if (!$now) {
@@ -252,6 +259,7 @@ class Restaurant extends FoodEstablishment
         }
 
         $dates = [];
+
         foreach ($this->openingHours as $openingHour) {
             $timeRange = new TimeRange($openingHour);
             $dates[] = $timeRange->getNextOpeningDate($now);
@@ -260,6 +268,48 @@ class Restaurant extends FoodEstablishment
         sort($dates);
 
         return array_shift($dates);
+    }
+
+    /**
+     * Return potential ordering times for a restaurant.
+     *
+     * We allow ordering at J+1.
+     *
+     * @param \DateTime|null $now
+     * @return array
+     */
+    public function getAvailabilities(\DateTime $now = null) {
+
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $date = clone $this->getNextOpeningDate($now);
+
+        $availabilities = [$date->format(\DateTime::ATOM)];
+
+        $currentDay = $date->format('Ymd');
+        $dayCount = 1;
+
+        while ($dayCount <= NUMBER_OF_AVAILABLE_DAYS) {
+
+            $date->modify('+30 minutes');
+
+            $nextOpenedDate = clone $this->getNextOpeningDate($date);
+
+            $day = $nextOpenedDate->format('Ymd');
+
+            if ($day !== $currentDay) {
+                $currentDay = $day;
+                $dayCount++;
+            }
+            else {
+                $date = $nextOpenedDate;
+                $availabilities[] = $date->format(\DateTime::ATOM);
+            }
+        }
+
+        return $availabilities;
     }
 
     public function setServesCuisine($servesCuisine)

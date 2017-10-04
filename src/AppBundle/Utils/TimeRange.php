@@ -125,6 +125,7 @@ class TimeRange
             $date->modify('+15 minutes');
         }
 
+
         return $date;
     }
 }
