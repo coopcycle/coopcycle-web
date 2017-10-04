@@ -20,22 +20,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
 
-        $date = clone $object->getNextOpeningDate();
-        $availabilities = [];
-        $days = [];
-
-        $date->modify('+30 minutes');
-        while (count($days) < 3) {
-            $availabilities[] = $date->format(\DateTime::ATOM);
-            $date->modify('+30 minutes');
-
-            $day = $date->format('Ymd');
-            if (!in_array($day, $days)) {
-                $days[] = $day;
-            }
-        }
-
-        $data['availabilities'] = $availabilities;
+        $data['availabilities'] = $object->getAvailabilities();
 
         return $data;
     }

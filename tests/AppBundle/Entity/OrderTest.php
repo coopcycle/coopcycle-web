@@ -2,11 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
-use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Menu\MenuItem;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\CartItem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
