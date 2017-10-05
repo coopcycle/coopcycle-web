@@ -265,6 +265,8 @@ class ProfileController extends Controller
             'order_refuse' => 'profile_order_refuse',
             'order_cancel' => 'profile_order_cancel',
             'order_ready'  => 'profile_order_ready',
+            'restaurants'  => 'profile_restaurants',
+            'restaurant'   => 'profile_restaurant_edit',
         ]);
     }
 

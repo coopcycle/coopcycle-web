@@ -30,8 +30,8 @@ trait AdminTrait
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
             'orders' => $orders,
             'orders_json' => '[' . implode(',', $ordersJson) . ']',
-            'restaurants_route' => 'admin_restaurants',
-            'restaurant_route' => 'admin_restaurant',
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
             'routes' => $routes
         ];
     }

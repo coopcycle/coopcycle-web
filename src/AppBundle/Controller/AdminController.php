@@ -293,6 +293,8 @@ class AdminController extends Controller
             'order_refuse' => 'admin_order_refuse',
             'order_cancel' => 'admin_order_cancel',
             'order_ready'  => 'admin_order_ready',
+            'restaurants'  => 'admin_restaurants',
+            'restaurant'   => 'admin_restaurant',
         ]);
     }
 
