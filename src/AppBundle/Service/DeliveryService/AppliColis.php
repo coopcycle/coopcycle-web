@@ -78,12 +78,13 @@ class AppliColis extends Base
 
             $this->logger->info('Received response from AppliColis : ' . (string) $body);
 
+            $data = json_decode((string) $body, true);
+            $delivery->setData($data);
+
         } catch (ClientException $e) {
             $this->logger->error(Psr7\str($e->getResponse()));
         } catch (ServerException $e) {
             $this->logger->error(Psr7\str($e->getResponse()));
         }
-
-        // TODO Store delivery info in database
     }
 }
