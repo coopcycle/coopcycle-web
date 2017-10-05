@@ -109,6 +109,11 @@ class Delivery extends Intangible
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $data = [];
+
     public function __construct(Order $order = null)
     {
         $this->status = self::STATUS_WAITING;
@@ -250,6 +255,18 @@ class Delivery extends Intangible
     public function getEvents()
     {
         return $this->events;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
+
+        return $this;
     }
 
     /**
