@@ -261,12 +261,13 @@ class ProfileController extends Controller
     public function restaurantOrdersAction($id)
     {
         return $this->restaurantOrders($id, [
-            'order_accept' => 'profile_order_accept',
-            'order_refuse' => 'profile_order_refuse',
-            'order_cancel' => 'profile_order_cancel',
-            'order_ready'  => 'profile_order_ready',
-            'restaurants'  => 'profile_restaurants',
-            'restaurant'   => 'profile_restaurant_edit',
+            'order_accept'  => 'profile_order_accept',
+            'order_refuse'  => 'profile_order_refuse',
+            'order_cancel'  => 'profile_order_cancel',
+            'order_ready'   => 'profile_order_ready',
+            'order_details' => 'profile_order',
+            'restaurants'   => 'profile_restaurants',
+            'restaurant'    => 'profile_restaurant_edit',
         ]);
     }
 

@@ -289,12 +289,13 @@ class AdminController extends Controller
     public function restaurantOrdersAction($id)
     {
         return $this->restaurantOrders($id, [
-            'order_accept' => 'admin_order_accept',
-            'order_refuse' => 'admin_order_refuse',
-            'order_cancel' => 'admin_order_cancel',
-            'order_ready'  => 'admin_order_ready',
-            'restaurants'  => 'admin_restaurants',
-            'restaurant'   => 'admin_restaurant',
+            'order_accept'  => 'admin_order_accept',
+            'order_refuse'  => 'admin_order_refuse',
+            'order_cancel'  => 'admin_order_cancel',
+            'order_ready'   => 'admin_order_ready',
+            'order_details' => 'admin_order',
+            'restaurants'   => 'admin_restaurants',
+            'restaurant'    => 'admin_restaurant',
         ]);
     }
 
