@@ -110,7 +110,7 @@ window.AppData = window.AppData || {};
 window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
   removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
-  items: {{ cart.items|json_encode()|raw }},
+  items: {{ cart.normalizedItems|json_encode()|raw }},
   date: "{{ cart.date|date('Y-m-d H:i:s') }}",
   validateCartURL: "{{ path('order') }}"
 }
