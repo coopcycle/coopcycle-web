@@ -18,7 +18,7 @@ class OrderRepository extends EntityRepository
         return [$hours, $minutes];
     }
 
-    public function getWaitingOrdersForRestaurant(Restaurant $restaurant)
+    public function getWaitingOrdersForRestaurant(Restaurant $restaurant, \DateTime $date = null)
     {
         $qb = $this->createQueryBuilder('o');
         $qb
@@ -30,6 +30,29 @@ class OrderRepository extends EntityRepository
             ]))
             ->setParameter('restaurant', $restaurant)
             ->orderBy('d.date', 'ASC')
+            ;
+
+        if ($date) {
+            $qb
+                ->andWhere('DATE(d.date) = :date')
+                ->setParameter('date', $date->format('Y-m-d'));
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getHistoryOrdersForRestaurant(Restaurant $restaurant)
+    {
+        $qb = $this->createQueryBuilder('o');
+        $qb
+            // ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
+            ->andWhere('o.restaurant = :restaurant')
+            ->andWhere($qb->expr()->notIn('o.status', [
+                Order::STATUS_WAITING,
+                Order::STATUS_ACCEPTED
+            ]))
+            ->setParameter('restaurant', $restaurant)
+            ->orderBy('o.updatedAt', 'DESC')
             ;
 
         return $qb->getQuery()->getResult();

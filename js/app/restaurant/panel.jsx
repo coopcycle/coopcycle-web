@@ -25,6 +25,6 @@ setTimeout(function() {
 
 orderList = render(
   <OrderList
-    orders={ window.__orders } />,
+    orders={ window.__orders } i18n={ window.__i18n } />,
   document.getElementById('order-list')
 );

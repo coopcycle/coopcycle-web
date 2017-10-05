@@ -286,7 +286,7 @@ class AdminController extends Controller
      * @Route("/admin/restaurants/{id}/orders", name="admin_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id)
+    public function restaurantOrdersAction($id, Request $request)
     {
         return $this->restaurantOrders($id, [
             'order_accept'  => 'admin_order_accept',
@@ -296,7 +296,7 @@ class AdminController extends Controller
             'order_details' => 'admin_order',
             'restaurants'   => 'admin_restaurants',
             'restaurant'    => 'admin_restaurant',
-        ]);
+        ], $request->query->get('tab', 'today'));
     }
 
     /**

@@ -21,6 +21,12 @@ class OrderList extends React.Component
 
     let { orders } = this.state
 
+    if (orders.length === 0) {
+      return (
+        <div className="alert alert-warning">{ this.props.i18n['No orders yet'] }</div>
+      )
+    }
+
     orders.sort((a, b) => {
       const dateA = moment(a.delivery.date);
       const dateB = moment(b.delivery.date);

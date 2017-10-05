@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait AdminTrait
 {
-    protected function restaurantOrders($id, array $routes = [])
+    protected function restaurantOrders($id, array $routes = [], $tab = null)
     {
         $restaurantRepo = $this->getDoctrine()->getRepository(Restaurant::class);
         $orderRepo = $this->getDoctrine()->getRepository(Order::class);
@@ -18,7 +18,14 @@ trait AdminTrait
         $restaurant = $restaurantRepo->find($id);
 
         $this->checkAccess($restaurant);
-        $orders = $orderRepo->getWaitingOrdersForRestaurant($restaurant);
+
+        $date = null;
+        if ($tab && in_array($tab, ['today', 'tomorrow'])) {
+            $date = new \DateTime($tab);
+        }
+
+        $orders = $orderRepo->getWaitingOrdersForRestaurant($restaurant, $date);
+        $history = $orderRepo->getHistoryOrdersForRestaurant($restaurant);
 
         $ordersJson = [];
         foreach ($orders as $order) {
@@ -29,10 +36,12 @@ trait AdminTrait
             'restaurant' => $restaurant,
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
             'orders' => $orders,
+            'history' => $history,
             'orders_json' => '[' . implode(',', $ordersJson) . ']',
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
-            'routes' => $routes
+            'routes' => $routes,
+            'tab' => $tab
         ];
     }
 

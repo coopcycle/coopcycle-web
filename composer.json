@@ -53,7 +53,8 @@
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^2.0",
         "myclabs/php-enum": "^1.5",
-        "willdurand/geocoder": "3.*"
+        "willdurand/geocoder": "3.*",
+        "beberlei/DoctrineExtensions": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
