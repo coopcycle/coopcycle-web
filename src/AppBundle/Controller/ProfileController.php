@@ -258,7 +258,7 @@ class ProfileController extends Controller
      * @Route("/profile/restaurants/{id}/orders", name="profile_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id)
+    public function restaurantOrdersAction($id, Request $request)
     {
         return $this->restaurantOrders($id, [
             'order_accept'  => 'profile_order_accept',
@@ -268,7 +268,7 @@ class ProfileController extends Controller
             'order_details' => 'profile_order',
             'restaurants'   => 'profile_restaurants',
             'restaurant'    => 'profile_restaurant_edit',
-        ]);
+        ], $request->query->get('tab', 'today'));
     }
 
     /**

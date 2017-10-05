@@ -8,14 +8,43 @@
 
 {% block content %}
 
+{% set current_route = app.request.attributes.get('_route') %}
+{% set current_route_params = app.request.attributes.get('_route_params') %}
+
 <div class="row">
   <div class="col-md-6">
-    <div class="well well-sm"><strong>{% trans %}Today{% endtrans %}</strong></div>
+    <div class="well well-sm"><strong>{% trans %}Waiting{% endtrans %}</strong></div>
+    <ul class="nav nav-justified nav-pills">
+      <li role="presentation" {% if tab == 'today' %}class="active"{% endif %}>
+        <a href="{{ path(current_route, current_route_params|merge({tab: 'today'})) }}">
+          {% trans %}Today{% endtrans %}
+        </a>
+      </li>
+      <li role="presentation" {% if tab == 'tomorrow' %}class="active"{% endif %}>
+        <a href="{{ path(current_route, current_route_params|merge({tab: 'tomorrow'})) }}">
+        {% trans %}Tomorrow{% endtrans %}
+        </a>
+      </li>
+    </ul>
+    <hr>
     <div id="order-list"></div>
   </div>
   <div class="col-md-6">
-    <div class="well well-sm"><strong>{% trans %}Tomorrow{% endtrans %}</strong></div>
-    <div class="alert alert-warning">{% trans %}You don't have any orders yet{% endtrans %}</div>
+    <div class="well well-sm"><strong>{% trans %}History{% endtrans %}</strong></div>
+    <table class="table table-condensed">
+      <tbody>
+      {% for order in history %}
+      <tr>
+        <td width="10%">
+          <a href="{{ path(routes.order_details, { id: order.id }) }}">#{{ order.id }}</a>
+        </td>
+        <td>{% include "AppBundle:Order:label.html.twig" %}</td>
+        <td>{{ order.createdAt|ago }}</td>
+        <td class="text-right">{{ order.total }}€</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -42,6 +71,9 @@ window.__routes = {
   'order_ready':   "{{ path(routes.order_ready,   { id: '__ORDER_ID__' }) }}",
   'order_details': "{{ path(routes.order_details, { id: '__ORDER_ID__' }) }}",
 };
+window.__i18n = {
+  "No orders yet": "{% trans %}No orders yet{% endtrans %}"
+}
 </script>
 <script src="{{ asset('js/restaurant-panel.js') }}"></script>
 {% endblock %}
