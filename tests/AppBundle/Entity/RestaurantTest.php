@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Entity;
 
-
 use AppBundle\Entity\Restaurant;
 use PHPUnit\Framework\TestCase;
 
@@ -12,9 +11,7 @@ class RestaurantTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
-
-        $format = 'Y-m-d H:i:s';
-        $date = \DateTime::createFromFormat($format, '2017-10-04 17:30:00');
+        $date = new \DateTime('2017-10-04T17:30:00+02:00');
 
         $availabilities = $restaurant->getAvailabilities($date);
 
