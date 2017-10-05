@@ -74,7 +74,7 @@ class OrderListItem extends React.Component
     return (
       <div className={ classNames.join(' ') }>
         <div className="panel-heading">
-          <h3 className="panel-title">Commande #{ id } </h3>
+          <h3 className="panel-title"><a href={ this.resolveRoute('order_details') }>Commande #{ id }</a></h3>
         </div>
         <div className="panel-body">
           <p className="text-right"><OrderLabel order={ order } /></p>

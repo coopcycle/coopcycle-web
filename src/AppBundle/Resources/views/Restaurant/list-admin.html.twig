@@ -17,17 +17,6 @@
               {% trans %}Manage{% endtrans %}   <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-              <li>
-                <a href="{{ path(restaurant_edit_route, { id: restaurant.id }) }}">
-                  {% trans %}Edit restaurant{% endtrans %}
-                </a>
-              </li>
-              <li>
-                <a href="{{ path(restaurant_menu_route, { id: restaurant.id }) }}">
-                  {% trans %}Edit menu{% endtrans %}
-                </a>
-              </li>
-              <li role="separator" class="divider"></li>
               {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
               <li>
                 <a href="{{ path(restaurant_orders_route, { id: restaurant.id }) }}">
@@ -35,13 +24,22 @@
                 </a>
               </li>
               {% endif %}
-              {#
               <li>
-                <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">{% trans %}View{% endtrans %}</a>
+                <a href="{{ path(restaurant_menu_route, { id: restaurant.id }) }}">
+                  {% trans %}Menu{% endtrans %}
+                </a>
               </li>
-              #}
+              <li>
+                <a href="{{ path(restaurant_edit_route, { id: restaurant.id }) }}">
+                  {% trans %}Settings{% endtrans %}
+                </a>
+              </li>
             </ul>
           </div>
+        </td>
+        <td class="text-right">
+          <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
         </td>
       </tr>
     {% endfor %}

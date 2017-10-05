@@ -36,10 +36,11 @@ window.__restaurant = {{ restaurant_json|raw }};
 window.__restaurant = {{ restaurant_json|raw }};
 window.__orders = {{ orders_json|raw }};
 window.__routes = {
-  'order_accept': "{{ path(routes.order_accept, { id: '__ORDER_ID__' }) }}",
-  'order_refuse': "{{ path(routes.order_refuse, { id: '__ORDER_ID__' }) }}",
-  'order_cancel': "{{ path(routes.order_cancel, { id: '__ORDER_ID__' }) }}",
-  'order_ready':  "{{ path(routes.order_ready,  { id: '__ORDER_ID__' }) }}"
+  'order_accept':  "{{ path(routes.order_accept,  { id: '__ORDER_ID__' }) }}",
+  'order_refuse':  "{{ path(routes.order_refuse,  { id: '__ORDER_ID__' }) }}",
+  'order_cancel':  "{{ path(routes.order_cancel,  { id: '__ORDER_ID__' }) }}",
+  'order_ready':   "{{ path(routes.order_ready,   { id: '__ORDER_ID__' }) }}",
+  'order_details': "{{ path(routes.order_details, { id: '__ORDER_ID__' }) }}",
 };
 </script>
 <script src="{{ asset('js/restaurant-panel.js') }}"></script>
