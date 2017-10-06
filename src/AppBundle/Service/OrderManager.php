@@ -27,7 +27,7 @@ class OrderManager
 
     public function pay(Order $order, $stripeToken)
     {
-        $this->payment->createCharge($order, $stripeToken);
+        $this->payment->authorize($order, $stripeToken);
 
         $order->setStatus(Order::STATUS_WAITING);
 
@@ -41,6 +41,8 @@ class OrderManager
         if ($order->getStatus() !== Order::STATUS_WAITING) {
             throw new \Exception(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
         }
+
+        $this->payment->capture($order);
 
         $order->setStatus(Order::STATUS_ACCEPTED);
 

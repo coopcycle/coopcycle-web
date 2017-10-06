@@ -118,6 +118,13 @@ class Order
      */
     private $updatedAt;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $charge;
+
     public function __construct()
     {
         $this->status = self::STATUS_CREATED;
@@ -338,6 +345,18 @@ class Order
     {
         $this->delivery = $delivery;
         $delivery->setOrder($this);
+
+        return $this;
+    }
+
+    public function getCharge()
+    {
+        return $this->charge;
+    }
+
+    public function setCharge($charge)
+    {
+        $this->charge = $charge;
 
         return $this;
     }
