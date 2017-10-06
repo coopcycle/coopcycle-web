@@ -119,7 +119,7 @@ class OrderController extends Controller
         }
 
         $order = $this->createOrderFromRequest($request);
-        $paymentService = $this->get('payment_service');
+        $orderManager = $this->get('order.manager');
 
         $deliveryAddress = $request->getSession()->get('deliveryAddress');
         $deliveryAddress = $this->getDoctrine()
@@ -128,12 +128,15 @@ class OrderController extends Controller
         $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
-            $this->getDoctrine()->getManagerForClass('AppBundle:Order')->persist($order);
-            $this->getDoctrine()->getManagerForClass('AppBundle:Order')->flush();
+
+            $this->getDoctrine()->getManagerForClass(Order::class)->persist($order);
+            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
 
             try {
-                $token = $request->request->get('stripeToken');
-                $paymentService->createCharge($order, $token);
+
+                $orderManager->pay($order, $request->request->get('stripeToken'));
+                $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+
             } catch (\Exception $e) {
                 return [
                     'error' => $e->getMessage(),
@@ -142,14 +145,6 @@ class OrderController extends Controller
                     'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
                 ];
             }
-
-            $order->setStatus(Order::STATUS_WAITING);
-
-            $this->getDoctrine()
-                ->getManagerForClass('AppBundle:Order')->flush();
-
-            $this->get('event_dispatcher')
-                ->dispatch('order.payment_success', new GenericEvent($order));
 
             $request->getSession()->remove('cart');
             $request->getSession()->remove('deliveryAddress');

@@ -45,7 +45,6 @@ class OrderRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
-            // ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
             ->andWhere('o.restaurant = :restaurant')
             ->andWhere($qb->expr()->notIn('o.status', [
                 Order::STATUS_WAITING,

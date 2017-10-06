@@ -5,7 +5,6 @@ namespace AppBundle\Action\Order;
 use AppBundle\Action\ActionTrait;
 use AppBundle\Entity\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -50,18 +49,9 @@ class Pay
         }
 
         try {
-            $this->paymentService->createCharge($order, $data['stripeToken']);
+            $this->orderManager->pay($order, $data['stripeToken']);
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Could not create charge', $e);
-        }
-
-        $order->setStatus(Order::STATUS_WAITING);
-
-        try {
-            $event = new GenericEvent($order);
-            $this->eventDispatcher->dispatch('order.payment_success', $event);
-        } catch (\Exception $e) {
-            throw new BadRequestHttpException('Could not dispatch payment success event', $e);
         }
 
         return $order;

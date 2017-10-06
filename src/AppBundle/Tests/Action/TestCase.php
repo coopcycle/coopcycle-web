@@ -4,6 +4,9 @@ namespace AppBundle\Tests\Action;
 
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
+use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Service\DeliveryServiceInterface;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
@@ -32,6 +35,9 @@ class TestCase extends BaseTestCase
         $this->eventDispatcher = $this->prophesize(EventDispatcher::class);
         $paymentService = $this->prophesize(PaymentService::class);
         $routing = $this->prophesize(RoutingInterface::class);
+        $deliveryService = $this->prophesize(DeliveryServiceInterface::class);
+
+        $deliveryServiceFactory = new DeliveryServiceFactory([], $deliveryService->reveal());
 
         $this->user = new Entity\ApiUser();
 
@@ -40,10 +46,17 @@ class TestCase extends BaseTestCase
 
         $tokenStorage->getToken()->willReturn($token->reveal());
 
+        $orderManager = new OrderManager(
+            $paymentService->reveal(),
+            $deliveryServiceFactory,
+            $this->redisProphecy->reveal(),
+            $serializer->reveal()
+        );
+
         $this->action = new $this->actionClass(
             $tokenStorage->reveal(), $this->redisProphecy->reveal(),
-            $deliveryRepository->reveal(), $serializer->reveal(), $doctrine->reveal(),
-            $this->eventDispatcher->reveal(), $paymentService->reveal(), $routing->reveal());
+            $deliveryRepository->reveal(), $doctrine->reveal(),
+            $orderManager, $routing->reveal());
     }
 
     protected static function setEntityId($entity, $value)

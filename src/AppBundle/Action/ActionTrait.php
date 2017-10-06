@@ -4,11 +4,9 @@ namespace AppBundle\Action;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Predis\Client as Redis;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Serializer\SerializerInterface;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Service\PaymentService;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 
@@ -17,23 +15,19 @@ trait ActionTrait
     protected $tokenStorage;
     protected $redis;
     protected $deliveryRepository;
-    protected $serializer;
     protected $doctrine;
-    protected $eventDispatcher;
-    protected $paymentService;
+    protected $orderManager;
     protected $routing;
 
     public function __construct(TokenStorageInterface $tokenStorage, Redis $redis,
-        DeliveryRepository $deliveryRepository, SerializerInterface $serializer, DoctrineRegistry $doctrine,
-        EventDispatcher $eventDispatcher, PaymentService $paymentService, RoutingInterface $routing)
+        DeliveryRepository $deliveryRepository, DoctrineRegistry $doctrine,
+        OrderManager $orderManager, RoutingInterface $routing)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
         $this->deliveryRepository = $deliveryRepository;
-        $this->serializer = $serializer;
         $this->doctrine = $doctrine;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->paymentService = $paymentService;
+        $this->orderManager = $orderManager;
         $this->routing = $routing;
     }
 
