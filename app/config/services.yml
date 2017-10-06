@@ -25,17 +25,15 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
-  my.order_listener:
-    class: AppBundle\EventListener\OrderListener
-    arguments: [ "@delivery_service_factory", "@snc_redis.default", "@serializer" ]
-    tags:
-      - { name: "kernel.event_listener", event: "order.payment_success", method: "onPaymentSuccess" }
-
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
     arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default", "@serializer" ]
     tags:
       - { name: doctrine.orm.entity_listener }
+
+  order.manager:
+    class: AppBundle\Service\OrderManager
+    arguments: [ "@payment_service", "@delivery_service_factory", "@snc_redis.default", "@serializer" ]
 
   delivery.entity_listener:
     class: AppBundle\Entity\Listener\DeliveryListener

@@ -32,12 +32,11 @@ class Accept
 
         $order = $data;
 
-        // Order MUST have status = WAITING
-        if ($order->getStatus() !== Order::STATUS_WAITING) {
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
+        try {
+            $this->orderManager->accept($order);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e);
         }
-
-        $order->setStatus(Order::STATUS_ACCEPTED);
 
         return $order;
     }

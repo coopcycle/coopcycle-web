@@ -48,10 +48,9 @@ trait AdminTrait
     protected function acceptOrder($id, $route, array $params = [])
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
         $this->checkAccess($order->getRestaurant());
 
-        $order->setStatus(Order::STATUS_ACCEPTED);
+        $this->get('order.manager')->accept($order);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
 
         return $this->redirectToRoute($route, $params);

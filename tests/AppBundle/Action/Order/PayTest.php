@@ -80,7 +80,10 @@ class PayTest extends TestCase
     {
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
+        $restaurant = new Entity\Restaurant();
+
         $order = new Entity\Order();
+        $order->setRestaurant($restaurant);
         $order->setCustomer($this->user);
         $order->setStatus(Entity\Order::STATUS_CREATED);
 
@@ -94,9 +97,5 @@ class PayTest extends TestCase
 
         $this->assertSame($order, $response);
         $this->assertEquals(Entity\Order::STATUS_WAITING, $order->getStatus());
-
-        $this->eventDispatcher
-            ->dispatch('order.payment_success', new GenericEvent($order))
-            ->shouldHaveBeenCalled();
     }
 }
