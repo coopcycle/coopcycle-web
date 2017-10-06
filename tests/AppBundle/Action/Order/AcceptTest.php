@@ -19,7 +19,10 @@ class AcceptTest extends TestCase
 
     public function testOnlyRestaurantsCanAcceptOrders()
     {
+        $restaurant = new Entity\Restaurant();
+
         $order = new Entity\Order();
+        $order->setRestaurant($restaurant);
         $order->setStatus(Entity\Order::STATUS_WAITING);
 
         foreach (['ROLE_USER', 'ROLE_COURIER'] as $role) {
@@ -36,7 +39,10 @@ class AcceptTest extends TestCase
     {
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
+        $restaurant = new Entity\Restaurant();
+
         $order = new Entity\Order();
+        $order->setRestaurant($restaurant);
 
         $statusList = [
             Entity\Order::STATUS_CREATED,
