@@ -17,35 +17,40 @@ class PaymentService
         $this->logger = $logger;
     }
 
-    public function createCharge(Order $order, $stripeToken)
+    private function getTransferGroup(Order $order)
     {
-        $this->logger->info('Stripe token: ' . $stripeToken);
+        return sprintf('order#%d', $order->getId());
+    }
 
-        try {
-            $transferGroup = "Order#".$order->getId();
+    public function authorize(Order $order, $stripeToken)
+    {
+        $this->logger->info('Authorizing payment for order #' . $order->getId());
 
-            $charge = Stripe\Charge::create(array(
-                "amount" => $order->getTotal() * 100, // Amount in cents
-                "currency" => "eur",
-                "source" => $stripeToken,
-                "description" => "Order #".$order->getId(),
-                "transfer_group" => $transferGroup,
-            ));
+        // @link https://stripe.com/docs/charges#auth-and-capture
+        $charge = Stripe\Charge::create(array(
+            'amount' => $order->getTotal() * 100, // Amount in cents
+            'currency' => 'eur',
+            'source' => $stripeToken,
+            'description' => 'Order #'.$order->getId(),
+            'transfer_group' => $this->getTransferGroup($order),
+            // To authorize a payment without capturing it,
+            // make a charge request that also includes the capture parameter with a value of false.
+            // This instructs Stripe to only authorize the amount on the customer’s card.
+            'capture' => false,
+        ));
 
-            // Create a Transfer to a connected account (later)
-            $stripeParams = $order->getRestaurant()->getStripeParams();
+        $order->setCharge($charge->id);
+    }
 
-            // FIXME This should be mandatory
-            if ($stripeParams && $stripeParams->getUserId()) {
-                $transfer = \Stripe\Transfer::create(array(
-                  "amount" => (($order->getTotal() * 100) * 0.75),
-                  "currency" => "eur",
-                  "destination" => $stripeParams->getUserId(),
-                  "transfer_group" => $transferGroup,
-                ));
-            }
-        } catch (Stripe\Error\Card $e) {
-            throw new \Exception($e);
-        }
+    public function capture(Order $order)
+    {
+        $this->logger->info('Capturing payment for order #' . $order->getId());
+
+        // TODO Check if $order->getCharge() is NULL
+
+        $charge = Stripe\Charge::retrieve($order->getCharge());
+        $charge->capture();
+
+        // TODO Create a Transfer
     }
 }
