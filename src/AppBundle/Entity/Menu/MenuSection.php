@@ -84,6 +84,14 @@ class MenuSection
         return $this->items;
     }
 
+    /**
+     * @param mixed $items
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+    }
+
     public function addItem(MenuItem $item)
     {
         $item->setSection($this);

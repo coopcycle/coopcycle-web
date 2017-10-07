@@ -79,14 +79,35 @@ trait RestaurantTrait
         return $form;
     }
 
+    private function removeSoftDeletedItems(Menu\MenuSection $section)
+    {
+        $em = $this->getDoctrine()->getManagerForClass(Menu\MenuItem::class);
+
+        // Disable SoftDeleteable behavior to retrieve all items
+        $em->getFilters()->disable('soft_deleteable');
+
+        // FIXME
+        // MenuSection::getItems does not return soft deleted items
+        $items = $this->getDoctrine()
+            ->getRepository(Menu\MenuItem::class)
+            ->findBy(['section' => $section]);
+
+        foreach ($items as $item) {
+            $section->getItems()->removeElement($item);
+            $item->setSection(null);
+        }
+
+        $em->getFilters()->enable('soft_deleteable');
+    }
+
     protected function editMenuAction($id, Request $request, $layout, array $routes)
     {
-        $em = $this->getDoctrine()->getManagerForClass('AppBundle:Restaurant');
+        $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
         $addMenuSection = $request->attributes->get('_add_menu_section', false);
         $sectionAdded = null;
 
         $restaurant = $this->getDoctrine()
-            ->getRepository('AppBundle:Restaurant')->find($id);
+            ->getRepository(Restaurant::class)->find($id);
 
         $this->checkAccess($restaurant);
 
@@ -120,41 +141,49 @@ trait RestaurantTrait
 
                 $form = $this->createMenuForm($menu, $sectionAdded);
             } else {
-                foreach ($originalSections as $originalSection) {
-
-                    // Remove deleted sections
-                    // Remove mapping between section & items
-                    if (false === $menu->getSections()->contains($originalSection)) {
-                        foreach ($originalSection->getItems() as $item) {
-                            // Don't remove the item to keep association with OrderItem
-                            $originalSection->getItems()->removeElement($item);
-                            $item->setSection(null);
-                        }
-
-                        $originalSection->setMenu(null);
-                        $em->remove($originalSection);
-                    } else {
-
-                        // Remove mapping between section & deleted item
-                        foreach ($menu->getSections() as $updatedSection) {
-                            if ($updatedSection === $originalSection) {
-                                foreach ($originalItems[$originalSection] as $originalItem) {
-                                    // var_dump('- ITEM : '. $originalItem->getId());
-                                    if (false === $updatedSection->getItems()->contains($originalItem)) {
-                                        $originalSection->getItems()->removeElement($originalItem);
-                                        $originalItem->setSection(null);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
 
                 // Make sure sections & items are mapped
                 foreach ($menu->getSections() as $section) {
                     foreach ($section->getItems() as $item) {
                         if (null === $item->getSection()) {
                             $item->setSection($section);
+                        }
+                    }
+                }
+
+                foreach ($originalSections as $originalSection) {
+
+                    // Remove deleted sections
+                    // Remove mapping between section & items
+                    if (false === $menu->getSections()->contains($originalSection)) {
+
+                        // First, soft delete items
+                        foreach ($originalSection->getItems() as $item) {
+                            // Don't remove the item to keep association with OrderItem
+                            $originalSection->getItems()->removeElement($item);
+                            $item->setSection(null);
+                            $em->remove($item);
+                        }
+
+                        // Then, remove association for soft deleted items
+                        $this->removeSoftDeletedItems($originalSection);
+
+                        $originalSection->setMenu(null);
+                        $em->remove($originalSection);
+
+                    } else {
+
+                        // Remove mapping between section & deleted item
+                        foreach ($menu->getSections() as $updatedSection) {
+                            if ($updatedSection === $originalSection) {
+                                foreach ($originalItems[$originalSection] as $originalItem) {
+                                    if (false === $updatedSection->getItems()->contains($originalItem)) {
+                                        $originalSection->getItems()->removeElement($originalItem);
+                                        $originalItem->setSection(null);
+                                        $em->remove($originalItem);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

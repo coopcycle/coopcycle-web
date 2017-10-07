@@ -84,6 +84,10 @@ doctrine:
                 ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
+        filters:
+            soft_deleteable:
+                class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+                enabled: true
 
 # Swiftmailer Configuration
 swiftmailer:

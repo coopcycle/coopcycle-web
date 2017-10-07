@@ -32,9 +32,9 @@
           {# form.vars may be null when used for prototype #}
           {{ form.vars.data ? form.vars.data.name : '' }}
           {{ form.vars.data ? '(' ~ form.vars.data.items|length ~ ')' : '' }}
+          <button type="button" class="btn btn-danger btn-xs pull-right"
+            data-toggle="remove-menu-section" data-target="#{{ form.vars.id }}">{% trans from 'messages' %}Delete{% endtrans %}</button>
         </a>
-        <button type="button" class="btn btn-danger btn-xs pull-right"
-          data-toggle="remove-menu-section" data-target="#{{ form.vars.id }}">{% trans from 'messages' %}Delete{% endtrans %}</button>
         <button class="btn btn-xs btn-success pull-right"
           style="margin-right: 15px;"
           data-toggle="add-menu-item" data-target="#{{ form.items.vars.id }}"><i class="fa fa-plus"></i> {% trans from 'messages' %}Add a new item{% endtrans %}</button>
@@ -73,6 +73,11 @@
       </div>
       <div class="col-sm-1">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1"><span aria-hidden="true">&times;</span></button>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-8">
+        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox' }}) }}
       </div>
     </div>
     <div class="form-group show-description">
