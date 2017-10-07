@@ -2,18 +2,20 @@
 
 namespace AppBundle\Entity\Menu;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\MenuItem as BaseMenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="menu_item")
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  * @ApiResource(
  *  shortName="MenuItem",
  *  iri="http://schema.org/MenuItem",
@@ -25,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MenuItem extends BaseMenuItem
 {
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuSection", inversedBy="items")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuSection", inversedBy="items", cascade={"all"})
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $section;
@@ -37,6 +39,17 @@ class MenuItem extends BaseMenuItem
      * @Groups({"restaurant"})
      */
     protected $modifiers;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
+    /**
+     * @Groups({"restaurant"})
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private $isAvailable = false;
 
     public function __construct()
     {
@@ -53,6 +66,32 @@ class MenuItem extends BaseMenuItem
         $this->section = $section;
 
         return $this;
+    }
+
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsAvailable()
+    {
+        return $this->isAvailable;
+    }
+
+    /**
+     * @param mixed $isUnavailable
+     */
+    public function setIsAvailable($isUnavailable)
+    {
+        $this->isAvailable = $isUnavailable;
     }
 
     /**
