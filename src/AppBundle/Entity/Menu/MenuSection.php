@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Menu;
 
 use AppBundle\Entity\Base\CreativeWork;
 use AppBundle\Entity\Menu;
-use AppBundle\Entity\MenuItem;
+use AppBundle\Entity\Base\MenuItem;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;

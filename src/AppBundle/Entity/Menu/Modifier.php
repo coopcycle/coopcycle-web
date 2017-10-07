@@ -3,7 +3,7 @@
 
 namespace AppBundle\Entity\Menu;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\MenuItem as BaseMenuItem;
+use AppBundle\Entity\Base\MenuItem as BaseMenuItem;
 use Doctrine\ORM\Mapping as ORM;
 
 
