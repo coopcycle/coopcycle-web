@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\MenuSection;
-use AppBundle\Entity\MenuItem;
 use AppBundle\Form\MenuType\MenuSectionType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

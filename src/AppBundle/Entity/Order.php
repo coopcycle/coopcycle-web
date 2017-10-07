@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity;
 
-
 use AppBundle\Entity\Menu\Modifier;
+use AppBundle\Entity\Base\MenuItem;
 use AppBundle\Utils\CartItem;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;

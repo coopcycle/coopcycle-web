@@ -7,7 +7,7 @@ AppBundle\Entity\ApiUser:
     addresses:
       groups: ['user']
 
-AppBundle\Entity\MenuItem:
+AppBundle\Entity\Base\MenuItem:
   attributes:
     offers:
       groups: ['restaurant']
