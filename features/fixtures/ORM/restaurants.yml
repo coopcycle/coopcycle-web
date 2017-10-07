@@ -6,14 +6,6 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
 
-AppBundle\Entity\MenuSection:
-  menu_section_appetizers:
-    name: Appetizers
-  menu_section_dishes:
-    name: Dishes
-  menu_section_desserts:
-    name: Desserts
-
 AppBundle\Entity\Menu\MenuItem:
   menu_item_{1..9}:
     name: <name()>
@@ -21,16 +13,16 @@ AppBundle\Entity\Menu\MenuItem:
 
 AppBundle\Entity\Menu\MenuSection:
   menu_section_1:
-    menuSection: "@menu_section_appetizers"
+    name: "Appetizers"
     items: [ "@menu_item_1", "@menu_item_2" ]
   menu_section_2:
-    menuSection: "@menu_section_dishes"
+    name: "Dishes"
     items: [ "@menu_item_3", "@menu_item_4" ]
   menu_section_3:
-    menuSection: "@menu_section_appetizers"
+    name: "Appetizers"
     items: [ "@menu_item_5", "@menu_item_6" ]
   menu_section_4:
-    menuSection: "@menu_section_dishes"
+    name: "Dishes"
     items: [ "@menu_item_7", "@menu_item_8" ]
 
 AppBundle\Entity\Menu:
