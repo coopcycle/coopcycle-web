@@ -24,9 +24,9 @@
 </div>
 
 {{ form_start(form) }}
-  <div id="add-section-wrapper">
   {{ form_row(form.addSection) }}
-  </div>
+  {{ form_row(form.suggestions) }}
+  <hr>
   {{ form_row(form.sections, { attr: {
     class: 'panel-group',
     role: 'tablist'
@@ -132,6 +132,11 @@ $(function() {
     });
   });
 
+  $('#menu_suggestions a').on('click', function(e) {
+    e.preventDefault();
+    $('#menu_addSection').val($(this).text());
+  });
+
   $(document).on('show.bs.collapse', '[role="tabpanel"] .list-group-item .collapse', function () {
     $(this).closest('.list-group-item').find('.show-description').remove();
   });
@@ -157,16 +162,14 @@ $(function() {
       $('#menu_sections').replaceWith(
         $(html).find('#menu_sections')
       );
-      $('#add-section-wrapper').replaceWith(
-        $(html).find('#add-section-wrapper')
-      );
       autoDismissMessages();
 
       var sectionAdded = $('#menu_sections').data('section-added');
       if (sectionAdded) {
-        var $el = $('[data-menu-section-id="' + sectionAdded + '"]');
+        var $el = $('[data-section-id="' + sectionAdded + '"]');
         addForm($('#' + $el.attr('id') + '_items'));
-        $('#menu_sections').removeAttr('data-section-added')
+        $('#menu_sections').removeAttr('data-section-added');
+        $('#menu_addSection').val('');
       }
     })
     .catch(function(e) {

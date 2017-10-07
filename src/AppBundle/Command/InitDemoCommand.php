@@ -18,7 +18,6 @@ class InitDemoCommand extends ContainerAwareCommand
     private $doctrine;
     private $faker;
     private $fixturesLoader;
-    private $menuSections = [];
     private $client;
     private $redis;
 
@@ -110,19 +109,18 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->userManipulator->addRole($username, 'ROLE_COURIER');
     }
 
-    private function createMenuSection($name)
+    private function createMenuCategory($name)
     {
-        $menuSection = new Entity\MenuSection();
-        $menuSection->setName($name);
+        $category = new Entity\Menu\MenuCategory();
+        $category->setName($name);
 
-        $this->doctrine->getManagerForClass(Entity\MenuSection::class)->persist($menuSection);
+        $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->persist($category);
 
-        return $menuSection;
+        return $category;
     }
 
     private function createMenu()
     {
-        $this->fixturesLoader->setReferences($this->menuSections);
         $objects = $this->fixturesLoader->load(__DIR__ . '/Resources/menu.yml');
 
         return $objects['menu'];
@@ -142,11 +140,10 @@ class InitDemoCommand extends ContainerAwareCommand
 
     private function createRestaurants(OutputInterface $output)
     {
-        $this->menuSections = [
-            'menu_section_appetizers' => $this->createMenuSection('Entrées'),
-            'menu_section_dishes' => $this->createMenuSection('Plats'),
-            'menu_section_desserts' => $this->createMenuSection('Desserts'),
-        ];
+        foreach (['Entrées', 'Plats', 'Desserts'] as $name) {
+            $this->createMenuCategory($name);
+        }
+        $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->flush();
 
         for ($i = 0; $i < 100; $i++) {
             $restaurant = $this->createRestaurant($this->faker->randomAddress);
