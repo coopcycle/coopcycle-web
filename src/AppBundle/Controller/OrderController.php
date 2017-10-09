@@ -158,4 +158,48 @@ class OrderController extends Controller
             'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
         );
     }
+
+    /**
+     * @Route("/public/{uuid}", name="order_public")
+     * @Template("@App/Order/public.html.twig")
+     * @param Request $request
+     *
+     */
+    public function orderPublic($uuid, Request $request) {
+
+        $orders = $this->getDoctrine()
+            ->getRepository(Order::class)->findBy(['uuid' => $uuid]);
+
+        if (count($orders) !== 1) {
+            return $this->redirectToRoute('redirect_to_locale');
+        }
+        else {
+            $order = array_pop($orders);
+        }
+
+        $orderEvents = [];
+        foreach ($order->getEvents() as $event) {
+            $orderEvents[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
+
+        $deliveryEvents = [];
+        foreach ($order->getDelivery()->getEvents() as $event) {
+            $deliveryEvents[] = [
+                'eventName' => $event->getEventName(),
+                'timestamp' => $event->getCreatedAt()->getTimestamp()
+            ];
+        }
+
+        return array(
+            'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
+            'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
+            'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
+            'layout' => 'AppBundle::base.html.twig'
+        );
+
+    }
 }
