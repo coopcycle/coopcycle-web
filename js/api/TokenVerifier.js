@@ -29,11 +29,11 @@ TokenVerifier.prototype.verify = function (info, cb) {
         .then(function(user) {
 
           if (!user) {
-            console.log('User does not exist')
+            console.log('User does not exist');
             return cb(false, 401, 'Access denied');
           }
           if (!_.contains(user.roles, 'ROLE_COURIER')) {
-            console.log('User has not enough access rights')
+            console.log('User has not enough access rights');
             return cb(false, 401, 'Access denied');
           }
 
@@ -69,6 +69,6 @@ TokenVerifier.prototype.verify = function (info, cb) {
         });
     }
   });
-}
+};
 
 module.exports = TokenVerifier;

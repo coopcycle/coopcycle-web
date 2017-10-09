@@ -9,8 +9,8 @@ const routes = window.__routes;
 class OrderListItem extends React.Component
 {
   resolveRoute(route) {
-    const order = this.props.order
-    const id = order['@id'].replace('/api/orders/', '')
+    const order = this.props.order;
+    const id = order['@id'].replace('/api/orders/', '');
 
     return routes[route].replace('__ORDER_ID__', id)
   }
@@ -60,12 +60,12 @@ class OrderListItem extends React.Component
   render() {
 
     const order = this.props.order;
-    const id = order['@id'].replace('/api/orders/', '')
+    const id = order['@id'].replace('/api/orders/', '');
 
     let classNames = [
       'panel',
       'panel-default'
-    ]
+    ];
 
     if (order.status === 'ACCEPTED') {
       classNames.push('panel-success')

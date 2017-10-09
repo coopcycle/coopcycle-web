@@ -63,4 +63,4 @@ window.initMap = function() {
   } else {
     setTimeout(function() { addressInput.focus() }, 750);
   }
-}
+};

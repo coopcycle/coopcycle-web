@@ -19,7 +19,7 @@ class OrderList extends React.Component
   }
   render() {
 
-    let { orders } = this.state
+    let { orders } = this.state;
 
     if (orders.length === 0) {
       return (

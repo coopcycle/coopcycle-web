@@ -11,7 +11,7 @@ var options = {
       }
     }]
   }
-}
+};
 
 var datasetOptions = {
   fill: false,
@@ -28,7 +28,7 @@ var datasetOptions = {
   pointHitRadius: 10,
   pointHoverBorderColor: "rgba(220,220,220,1)",
   spanGaps: false,
-}
+};
 
 var pickupData = _.extend({
   label: "Pickup time (minutes)",

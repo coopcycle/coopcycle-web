@@ -59,11 +59,11 @@ map = MapHelper.init('map', center, zoom);
 var restaurant = {
   lat: delivery.originAddress.geo.latitude,
   lng: delivery.originAddress.geo.longitude,
-}
+};
 var deliveryAddress = {
   lat: delivery.deliveryAddress.geo.latitude,
   lng: delivery.deliveryAddress.geo.longitude,
-}
+};
 
 var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#fff');
 var deliveryAddressMarker = MapHelper.createMarker(deliveryAddress, 'user', 'marker', '#fff');

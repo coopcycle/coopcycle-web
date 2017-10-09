@@ -36,7 +36,7 @@ var redisPubSub = require('redis').createClient({
   url: config.snc_redis.clients.default.dsn
 });
 
-let restaurants = {}
+let restaurants = {};
 
 redisPubSub.on('message', function(channel, message) {
 
@@ -45,7 +45,7 @@ redisPubSub.on('message', function(channel, message) {
   const order = JSON.parse(message);
 
   const restaurantKey = 'restaurant:' + order.restaurant['@id'].replace('/api/restaurants/', '');
-  console.log('Emit to restaurant ' + restaurantKey)
+  console.log('Emit to restaurant ' + restaurantKey);
   if (restaurants[restaurantKey]) {
     restaurants[restaurantKey].socket.emit('order', order);
   } else {

@@ -4,7 +4,7 @@ const LABELS = {
   'WAITING': 'label-default',
   'DISPATCHING': 'label-info',
   'DELIVERING': 'label-success',
-}
+};
 
 class DeliveryListItem extends React.Component
 {

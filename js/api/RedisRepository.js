@@ -14,7 +14,7 @@ RedisRepository.prototype.load = function(key) {
       resolve(result ? JSON.parse(result) : null);
     });
   });
-}
+};
 
 RedisRepository.prototype.save = function(model) {
   var self = this;
@@ -38,6 +38,6 @@ RedisRepository.prototype.save = function(model) {
       resolve(model);
     })
   });
-}
+};
 
 module.exports = RedisRepository;

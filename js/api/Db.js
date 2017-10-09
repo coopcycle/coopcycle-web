@@ -6,7 +6,7 @@ var sequelizeOptions = {
   timestamps: false,
   underscored: true,
   freezeTableName: true,
-}
+};
 
 var positionGetter = function() {
   var geo = this.getDataValue('geo');
@@ -16,18 +16,18 @@ var positionGetter = function() {
       longitude: geo.coordinates[1],
     };
   }
-}
+};
 
 var rolesGetter = function() {
   var roles = this.getDataValue('roles');
   if (roles) {
     return unserialize(this.getDataValue('roles'));
   }
-}
+};
 
 module.exports = function(sequelize) {
 
-  var Db = {}
+  var Db = {};
 
   Db.User = sequelize.define('user', {
     username: Sequelize.STRING,

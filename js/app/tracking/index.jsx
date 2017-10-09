@@ -19,7 +19,7 @@ var LABELS = {
   'DELIVERING': 'label-success',
   'PICKED': 'label-info',
   'DELIVERED': 'label-success'
-}
+};
 
 var COLORS = {
   TURQUOISE: '#1ABC9C',
@@ -36,7 +36,7 @@ var COLORS = {
   PUMPKIN: '#D35400',
   ALIZARIN: '#E74C3C',
   POMEGRANATE: '#C0392B',
-}
+};
 
 var infoWindows = [];
 var center = {
@@ -169,7 +169,7 @@ function addDelivery(delivery) {
       var animate = function animate(time) {
         requestAnimationFrame(animate);
         TWEEN.update(time);
-      }
+      };
 
       requestAnimationFrame(animate);
     }

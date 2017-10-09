@@ -37,6 +37,6 @@ DeliveryRegistry.prototype.findById = function(id) {
     }
     resolve(cached);
   });
-}
+};
 
 module.exports = DeliveryRegistry;

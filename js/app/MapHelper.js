@@ -58,7 +58,7 @@ function getPolyline(origin, destination) {
   var params = {
     origin: [originLatLng.lat, originLatLng.lng].join(','),
     destination: [destinationLatLng.lat, destinationLatLng.lng].join(',')
-  }
+  };
 
   return fetch('/api/routing/route?origin=' + params.origin + '&destination=' + params.destination)
     .then((response) => {
@@ -75,4 +75,4 @@ module.exports = {
   fitToLayers: fitToLayers,
   decodePolyline: decodePolyline,
   getPolyline: getPolyline
-}
+};

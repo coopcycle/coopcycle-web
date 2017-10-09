@@ -37,13 +37,13 @@ export default class extends React.Component {
 
   onDateChange(date, dateString) {
 
-    const { value } = this.state
+    const { value } = this.state;
 
-    value.set('date', date.get('date'))
-    value.set('month', date.get('month'))
-    value.set('year', date.get('year'))
+    value.set('date', date.get('date'));
+    value.set('month', date.get('month'));
+    value.set('year', date.get('year'));
 
-    this.setState({ value })
+    this.setState({ value });
 
     this.props.onChange(value)
   }
@@ -52,10 +52,10 @@ export default class extends React.Component {
 
     const { value } = this.state;
 
-    value.set('minute', date.get('minute'))
-    value.set('second', date.get('second'))
+    value.set('minute', date.get('minute'));
+    value.set('second', date.get('second'));
 
-    this.setState({ value })
+    this.setState({ value });
 
     this.props.onChange(value)
   }
@@ -78,7 +78,7 @@ export default class extends React.Component {
 
     const formItemProps = this.props.error ? {
       validateStatus: "error",
-    } : {}
+    } : {};
 
     return (
       <div>

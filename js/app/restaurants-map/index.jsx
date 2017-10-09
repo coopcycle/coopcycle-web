@@ -23,7 +23,7 @@ var COLORS = {
   PUMPKIN: '#D35400',
   ALIZARIN: '#E74C3C',
   POMEGRANATE: '#C0392B',
-}
+};
 
 var infoWindows = [];
 var center = {
@@ -73,7 +73,7 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}
 
 const markers = window.__restaurants.map(restaurant => {
 
-  const pos = { lat: restaurant.address.geo.latitude, lng: restaurant.address.geo.longitude }
+  const pos = { lat: restaurant.address.geo.latitude, lng: restaurant.address.geo.longitude };
   var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))];
 
   const marker = createMarker(pos, 'cutlery', 'marker', randomColor);
@@ -92,7 +92,7 @@ const markers = window.__restaurants.map(restaurant => {
   marker.bindPopup(el[0]);
 
   return marker;
-})
+});
 
 const restaurantsLayer = L.layerGroup(markers);
 restaurantsLayer.addTo(map);
