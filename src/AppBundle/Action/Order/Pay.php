@@ -51,7 +51,7 @@ class Pay
         try {
             $this->orderManager->pay($order, $data['stripeToken']);
         } catch (\Exception $e) {
-            throw new BadRequestHttpException('Could not create charge', $e);
+            throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
         return $order;
