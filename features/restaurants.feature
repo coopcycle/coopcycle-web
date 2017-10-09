@@ -86,14 +86,12 @@ Feature: Manage restaurants
             "@id":"@string@.startsWith('/api/menu_sections')",
             "@type":"http://schema.org/MenuSection",
             "hasMenuItem":@array@,
-            "description":null,
             "name":@string@
           },
           {
             "@id":"@string@.startsWith('/api/menu_sections')",
             "@type":"http://schema.org/MenuSection",
             "hasMenuItem":@array@,
-            "description":null,
             "name":@string@
           }
         ],

@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Utils\Cart;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Menu;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Form\DeliveryType;
+use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -346,5 +348,44 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             return $this->cancelOrder($id, 'admin_orders');
         }
+    }
+
+    /**
+     * @Route("/admin/menu/categories", name="admin_menu_categories")
+     * @Template
+     */
+    public function menuCategoriesAction(Request $request)
+    {
+        $categories = $this->getDoctrine()
+            ->getRepository(Menu\MenuCategory::class)
+            ->findBy([], ['name' => 'ASC']);
+
+        return [
+            'categories' => $categories,
+        ];
+    }
+
+    /**
+     * @Route("/admin/menu/categories/new", name="admin_menu_category_new")
+     * @Template
+     */
+    public function newMenuCategoryAction(Request $request)
+    {
+        $category = new Menu\MenuCategory();
+
+        $form = $this->createForm(MenuCategoryType::class, $category);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $category = $form->getData();
+            $this->getDoctrine()->getManagerForClass(Menu\MenuCategory::class)->persist($category);
+            $this->getDoctrine()->getManagerForClass(Menu\MenuCategory::class)->flush();
+
+            return $this->redirectToRoute('admin_menu_categories');
+        }
+
+        return [
+            'form' => $form->createView(),
+        ];
     }
 }

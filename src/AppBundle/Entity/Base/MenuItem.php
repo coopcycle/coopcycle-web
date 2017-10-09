@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Base;
 
 use AppBundle\Entity\Base\Thing;
 use Doctrine\ORM\Mapping as ORM;
@@ -73,6 +73,4 @@ abstract class MenuItem extends Thing
     {
         return $this->price;
     }
-
-
 }

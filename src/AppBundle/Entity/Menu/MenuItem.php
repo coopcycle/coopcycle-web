@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Menu;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\MenuItem as BaseMenuItem;
+use AppBundle\Entity\Base\MenuItem as BaseMenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
