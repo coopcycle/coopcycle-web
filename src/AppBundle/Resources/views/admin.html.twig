@@ -22,6 +22,17 @@
           <li><a href="{{ path('admin_deliveries') }}"><i class="fa fa-bicycle"></i>  {% trans %}Deliveries{% endtrans %}</a></li>
           <li><a href="{{ path('admin_restaurants') }}"><i class="fa fa-cutlery"></i>  {% trans %}Restaurants{% endtrans %}</a></li>
           <li><a href="{{ path('admin_users') }}"><i class="fa fa-user"></i>  {% trans %}Users{% endtrans %}</a></li>
+          {% if is_granted('ROLE_ADMIN') %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-cog"></i>  {% trans %}Settings{% endtrans %} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-header">Menu</li>
+              <li><a href="{{ path('admin_menu_categories') }}">{% trans %}Categories{% endtrans %}</a></li>
+            </ul>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </div>
