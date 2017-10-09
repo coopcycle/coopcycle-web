@@ -36,7 +36,7 @@ function CourierPool(redis, redisPubSub) {
 
 CourierPool.prototype.add = function(courier) {
   this.pool.push(courier);
-}
+};
 
 CourierPool.prototype.remove = function(courier) {
 
@@ -59,7 +59,7 @@ CourierPool.prototype.remove = function(courier) {
       });
     });
   }
-}
+};
 
 CourierPool.prototype.removeAll = function() {
   console.log('Removing all couriers from Redis...');
@@ -70,20 +70,20 @@ CourierPool.prototype.removeAll = function() {
   if (keys.length > 0) {
     this.redis.zrem('couriers:geo', keys);
   }
-}
+};
 
 CourierPool.prototype.size = function(courier) {
   return _.size(this.pool);
-}
+};
 
 CourierPool.prototype.findById = function(id) {
   return _.find(this.pool, function(courier) {
     return parseInt(courier.id, 10) === parseInt(id, 10);
   });
-}
+};
 
 CourierPool.prototype.findByKey = function(key) {
   return this.findById(Utils.keyAsInt(key));
-}
+};
 
 module.exports = CourierPool;

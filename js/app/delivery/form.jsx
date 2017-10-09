@@ -27,7 +27,7 @@ function refreshRouting() {
   var params = {
     origin: [originMarker.getLatLng().lat, originMarker.getLatLng().lng].join(','),
     destination: [deliveryMarker.getLatLng().lat, deliveryMarker.getLatLng().lng].join(',')
-  }
+  };
 
   fetch('/api/routing/route?origin=' + params.origin + '&destination=' + params.destination)
     .then((response) => {
@@ -65,7 +65,7 @@ function autocompleteInput(prefix, type) {
     var position = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
-    }
+    };
 
     if (type === 'origin') {
       if (originMarker) {
@@ -123,7 +123,7 @@ window.initMap = function() {
     MapHelper.fitToLayers(map, _.filter([originMarker, deliveryMarker]));
   }
 
-}
+};
 
 function onDateTimeChange(date) {
   $('#delivery_date').val(date.format('YYYY-MM-DD HH:mm:00'))

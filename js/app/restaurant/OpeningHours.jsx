@@ -18,7 +18,7 @@ for (let i = 0; i <= 60; i++) {
 }
 
 moment.locale('en');
-const keys = _.map(moment.weekdaysShort(), (key) => key.substring(0, 2))
+const keys = _.map(moment.weekdaysShort(), (key) => key.substring(0, 2));
 
 moment.locale('fr');
 const weekdaysSorted = moment.weekdaysShort(true);
@@ -27,13 +27,13 @@ const weekdays = _.map(_.object(keys, moment.weekdaysShort()), (weekday, key) =>
     key: key,
     name: weekday
   }
-}).sort((a, b) => weekdaysSorted.indexOf(a.name) < weekdaysSorted.indexOf(b.name) ? -1 : 1)
+}).sort((a, b) => weekdaysSorted.indexOf(a.name) < weekdaysSorted.indexOf(b.name) ? -1 : 1);
 
 export default class extends React.Component {
 
   constructor(props) {
 
-    super(props)
+    super(props);
 
     const config = _.object(keys, weekdays);
 
@@ -51,14 +51,14 @@ export default class extends React.Component {
 
   parseOpeningHours(text) {
 
-    const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi)
+    const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi);
 
-    let days = []
+    let days = [];
     _.each(matches, (match) => {
-      const isRange = match.includes('-')
+      const isRange = match.includes('-');
       if (isRange) {
-        const [ start, end ] = match.split('-')
-        let append = false
+        const [ start, end ] = match.split('-');
+        let append = false;
         _.each(weekdays, (weekday) => {
           if (weekday.key === start) {
             append = true
@@ -73,12 +73,12 @@ export default class extends React.Component {
       } else {
         days.push(match)
       }
-    })
+    });
 
-    let start = ''
-    let end = ''
+    let start = '';
+    let end = '';
 
-    const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi)
+    const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi);
     if (hours.length === 1) {
       [ start, end ] = hours[0].split('-')
     }
@@ -123,7 +123,7 @@ export default class extends React.Component {
     const { rows } = this.state;
     const row = rows[key];
 
-    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey)
+    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey);
     row.weekdays[weekday].checked = e.target.checked;
 
     rows.splice(key, 1, row);
@@ -133,15 +133,15 @@ export default class extends React.Component {
   }
 
   isWeekdayChecked(row, weekdayKey) {
-    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey)
+    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey);
 
     return row.weekdays[weekday].checked
   }
 
   rowToString(row) {
-    let isPrevChecked = false
-    let ranges = []
-    let buffer = []
+    let isPrevChecked = false;
+    let ranges = [];
+    let buffer = [];
     _.each(row.weekdays, (weekday) => {
       if (weekday.checked) {
         if (buffer.length === 0) {
@@ -154,7 +154,7 @@ export default class extends React.Component {
         }
       }
       isPrevChecked = weekday.checked
-    })
+    });
 
     const days = _.map(ranges, (range) => {
       if (range.length > 1) {
@@ -162,9 +162,9 @@ export default class extends React.Component {
       } else {
         return range[0]
       }
-    }).join(',')
+    }).join(',');
 
-    const hours = [row.start, row.end].join('-')
+    const hours = [row.start, row.end].join('-');
 
     return days + ' ' + hours
   }
@@ -172,7 +172,7 @@ export default class extends React.Component {
   toString() {
     var lines = _.map(this.state.rows, (row) => {
       return this.rowToString(row)
-    })
+    });
 
     return lines
   }
@@ -183,8 +183,8 @@ export default class extends React.Component {
 
   renderRow(row, key) {
 
-    const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null
-    const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null
+    const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null;
+    const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null;
 
     return (
       <tr key={key}>
@@ -245,17 +245,17 @@ export default class extends React.Component {
 
   addRow(e) {
     e.preventDefault();
-    const rows = this.state.rows
-    rows.push(this.createRowData())
-    this.setState({ rows })
+    const rows = this.state.rows;
+    rows.push(this.createRowData());
+    this.setState({ rows });
     this.props.onRowAdd()
   }
 
   removeRow(key, e) {
-    e.preventDefault()
-    let rows = this.state.rows
-    rows.splice(key, 1)
-    this.setState({ rows })
+    e.preventDefault();
+    let rows = this.state.rows;
+    rows.splice(key, 1);
+    this.setState({ rows });
     this.props.onRowRemove(key)
   }
 

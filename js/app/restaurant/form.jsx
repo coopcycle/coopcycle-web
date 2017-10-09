@@ -7,7 +7,7 @@ import autocomplete from '../autocomplete.jsx'
 
 window.initMap = () => autocomplete('restaurant_address');
 
-var entriesCount = $('input[name^="restaurant[openingHours]"]').length
+var entriesCount = $('input[name^="restaurant[openingHours]"]').length;
 
 function onRowAdd() {
   // grab the prototype template
@@ -22,14 +22,14 @@ function onRowAdd() {
 }
 
 function onRowRemove(index) {
-  $('#restaurant_openingHours_' + index).remove()
+  $('#restaurant_openingHours_' + index).remove();
   $('#opening-hours-text > p').get(index).remove()
 }
 
-let defaultValue = []
+let defaultValue = [];
 $('input[name^="restaurant[openingHours]"]').each((index, el) => {
   defaultValue.push($(el).val())
-})
+});
 
 var $deliveryService = $('#restaurant_deliveryService_type');
 $deliveryService.change(function() {
@@ -54,15 +54,15 @@ $deliveryService.change(function() {
 });
 
 
-const openingHoursValue = $('#restaurant_openingHours').val()
+const openingHoursValue = $('#restaurant_openingHours').val();
 
 render(<OpeningHours
   value={defaultValue}
   onChange={(rows) => {
     $('#opening-hours-text').empty();
     _.each(rows, (value, key) => {
-      $('#restaurant_openingHours_' + key).val(value)
-      const $text = $('<p>').addClass('help-block').text(value)
+      $('#restaurant_openingHours_' + key).val(value);
+      const $text = $('<p>').addClass('help-block').text(value);
       $('#opening-hours-text').append($text)
     })
   }}

@@ -22,15 +22,15 @@ Courier.prototype.DELIVERING = Courier.DELIVERING = 'DELIVERING';
 
 Courier.prototype.connect = function(ws) {
   this.ws = ws;
-}
+};
 
 Courier.prototype.setState = function(state) {
   this.state = state;
-}
+};
 
 Courier.prototype.setDelivery = function(delivery) {
   this.delivery = delivery;
-}
+};
 
 Courier.prototype.declineDelivery = function(delivery) {
   if (this.delivery !== delivery) {
@@ -46,23 +46,23 @@ Courier.prototype.declineDelivery = function(delivery) {
       this.declinedDeliveries.push(delivery);
     });
   });
-}
+};
 
 Courier.prototype.hasDeclinedDelivery = function(delivery) {
   return _.contains(this.declinedDeliveries, delivery);
-}
+};
 
 Courier.prototype.isAvailable = function() {
   return this.state === Courier.AVAILABLE;
-}
+};
 
 Courier.prototype.save = function(cb) {
   return Courier.Repository.save(this);
-}
+};
 
 Courier.prototype.send = function(message) {
   this.ws.send(JSON.stringify(message));
-}
+};
 
 Courier.prototype.toJSON = function() {
   return {
@@ -72,7 +72,7 @@ Courier.prototype.toJSON = function() {
     delivery: this.delivery,
     declinedDeliveries: this.declinedDeliveries,
   }
-}
+};
 
 /** Static methods **/
 
@@ -112,11 +112,11 @@ Courier.nearestForDelivery = function(delivery, distance) {
       return resolve(Courier.Pool.findByKey(key));
     });
   });
-}
+};
 
 Courier.updateCoordinates = function(courier, coordinates) {
   if (courier.state === Courier.UNKNOWN) {
-    console.log('Position received!')
+    console.log('Position received!');
     courier.setState(Courier.AVAILABLE);
   }
   REDIS.geoadd('couriers:geo',
@@ -124,7 +124,7 @@ Courier.updateCoordinates = function(courier, coordinates) {
     coordinates.latitude,
     Utils.resolveKey('courier', courier.id)
   );
-}
+};
 
 var REDIS;
 
@@ -132,6 +132,6 @@ Courier.init = function(redis, redisPubSub) {
   Courier.Pool = new CourierPool(redis, redisPubSub);
   Courier.Repository = new RedisRepository(redis, 'courier');
   REDIS = redis;
-}
+};
 
 module.exports.Courier = Courier;

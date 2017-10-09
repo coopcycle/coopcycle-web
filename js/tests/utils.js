@@ -63,7 +63,7 @@ TestUtils.prototype.cleanDb = function() {
   var pgConfig = this.pgConfig;
   var redis = this.redis;
 
-  var pool = new pg.Pool(pgConfig)
+  var pool = new pg.Pool(pgConfig);
 
   return new Promise(function(resolve, reject) {
     pool.connect(function(err, client, done) {
@@ -138,7 +138,7 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
         });
       });
   });
-}
+};
 
 TestUtils.prototype.createRestaurant = function(name, coordinates) {
   var Restaurant = this.db.Restaurant;
@@ -158,7 +158,7 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
     })
 
   });
-}
+};
 
 TestUtils.prototype.createRandomOrder = function(username, restaurant) {
 

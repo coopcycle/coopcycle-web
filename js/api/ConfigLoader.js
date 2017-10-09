@@ -1,13 +1,13 @@
 var YAML = require('js-yaml');
 var fs = require('fs');
 var path = require('path');
-var merge = require('deepmerge')
-var _ = require('underscore')
+var merge = require('deepmerge');
+var _ = require('underscore');
 
 var ConfigLoader = function(filename) {
   this.filename = filename;
   this.dirname = path.dirname(filename);
-}
+};
 
 function loadAndMerge(filename, dirname, parent) {
 
@@ -72,6 +72,6 @@ ConfigLoader.prototype.load = function() {
   data.parameters = parameters;
 
   return data;
-}
+};
 
 module.exports = ConfigLoader;

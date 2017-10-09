@@ -19,7 +19,7 @@ Delivery.init = function(redis, sequelize, db) {
   Delivery.Registry = new DeliveryRegistry(sequelize, redis);
   Db = db;
   REDIS = redis;
-}
+};
 
 Delivery.load = function() {
   return new Promise(function(resolve, reject) {
@@ -101,6 +101,6 @@ Delivery.load = function() {
       });
     });
   });
-}
+};
 
 module.exports = Delivery;

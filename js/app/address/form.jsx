@@ -1,3 +1,3 @@
 import autocomplete from '../autocomplete.jsx'
 
-window.initMap = () => autocomplete('address')
+window.initMap = () => autocomplete('address');
