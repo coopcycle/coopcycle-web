@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
-use AppBundle\Entity\MenuSection;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\RestaurantType;
@@ -69,7 +68,7 @@ trait RestaurantTrait
         ];
     }
 
-    private function createMenuForm(Menu $menu, MenuSection $sectionAdded = null)
+    private function createMenuForm(Menu $menu, Menu\MenuSection $sectionAdded = null)
     {
         $form = $this->createForm(MenuType::class, $menu, [
             'section_added' => $sectionAdded,
@@ -107,7 +106,8 @@ trait RestaurantTrait
         $sectionAdded = null;
 
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
+            ->getRepository(Restaurant::class)
+            ->find($id);
 
         $this->checkAccess($restaurant);
 
@@ -136,10 +136,11 @@ trait RestaurantTrait
             $menu = $form->getData();
 
             if ($addMenuSection) {
-                $sectionAdded = $form->get('addSection')->getData();
+                $sectionAdded = new Menu\MenuSection();
+                $sectionAdded->setName($form->get('addSection')->getData());
+
                 $menu->addSection($sectionAdded);
 
-                $form = $this->createMenuForm($menu, $sectionAdded);
             } else {
 
                 // Make sure sections & items are mapped
@@ -198,7 +199,10 @@ trait RestaurantTrait
                 $this->get('translator')->trans('Your changes were saved.')
             );
 
-            if (!$addMenuSection) {
+            if ($addMenuSection) {
+                $em->refresh($menu);
+                $form = $this->createMenuForm($menu, $sectionAdded);
+            } else {
                 return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
             }
         }

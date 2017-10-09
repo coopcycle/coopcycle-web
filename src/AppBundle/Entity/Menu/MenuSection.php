@@ -4,16 +4,21 @@ namespace AppBundle\Entity\Menu;
 
 use AppBundle\Entity\Base\CreativeWork;
 use AppBundle\Entity\Menu;
-use AppBundle\Entity\MenuItem;
+use AppBundle\Entity\Base\MenuItem;
+use AppBundle\Entity\Model\Name\MethodsTrait as NameMethods;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * A sub-grouping of food or drink items in a menu. E.g. courses (such as 'Dinner', 'Breakfast', etc.),
+ * specific type of dishes (such as 'Meat', 'Vegan', 'Drinks', etc.), or some other classification made by the menu provider.
+ *
+ * @see http://schema.org/MenuSection Documentation on Schema.org
+ *
  * @ORM\Entity
  * @ORM\Table(name="menu_section")
  * @ApiResource(
@@ -39,18 +44,21 @@ class MenuSection
     private $id;
 
     /**
+     * @var string The name of the section
+     *
+     * @ORM\Column(nullable=true)
+     * @ApiProperty(iri="http://schema.org/name")
+     * @Groups({"restaurant"})
+     */
+    protected $name;
+
+    use NameMethods;
+
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu", inversedBy="sections")
      * @ORM\JoinColumn(name="menu_id", referencedColumnName="id")
      */
     private $menu;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\MenuSection")
-     * @ORM\JoinColumn(name="menu_section_id", referencedColumnName="id")
-     * @ApiProperty(iri="https://schema.org/MenuSection")
-     * @Groups({"restaurant"})
-     */
-    private $menuSection;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItem", mappedBy="section", cascade={"all"})
@@ -72,11 +80,6 @@ class MenuSection
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getName()
-    {
-        return isset($this->menuSection) ? $this->menuSection->getName() : null;
     }
 
     public function getItems()
@@ -106,18 +109,6 @@ class MenuSection
     public function setMenu(Menu $menu = null)
     {
         $this->menu = $menu;
-
-        return $this;
-    }
-
-    public function getMenuSection()
-    {
-        return $this->menuSection;
-    }
-
-    public function setMenuSection($menuSection)
-    {
-        $this->menuSection = $menuSection;
 
         return $this;
     }

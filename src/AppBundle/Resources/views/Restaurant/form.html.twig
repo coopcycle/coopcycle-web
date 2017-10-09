@@ -27,7 +27,7 @@
       <div class="nav navbar-nav navbar-right">
         {% if restaurant.id is not empty %}
         <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-cutlery"></i>  {% trans %}Edit menu{% endtrans %}
+          <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
         </a>
         <a href="{{ path(orders_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}

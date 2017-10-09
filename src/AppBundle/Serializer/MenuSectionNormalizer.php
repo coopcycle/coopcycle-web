@@ -23,10 +23,6 @@ class MenuSectionNormalizer implements NormalizerInterface, DenormalizerInterfac
         $data['hasMenuItem'] = $data['items'];
         unset($data['items']);
 
-        $data['name'] = $data['menuSection']['name'];
-        $data['description'] = $data['menuSection']['description'];
-        unset($data['menuSection']);
-
         return $data;
     }
 
