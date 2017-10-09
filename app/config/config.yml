@@ -62,6 +62,7 @@ doctrine:
             raster:
                 class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
                 commented: false
+            uuid:  Ramsey\Uuid\Doctrine\UuidType
         mapping_types:
             _text: string
 
