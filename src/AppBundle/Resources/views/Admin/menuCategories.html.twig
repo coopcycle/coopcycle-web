@@ -1,0 +1,23 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Menu{% endtrans %}</li>
+<li>{% trans %}Categories{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+<tbody>
+{% for category in categories %}
+<tr>
+  <td>#{{ category.id }}</td>
+  <td>{{ category.name }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<a href="{{ path('admin_menu_category_new') }}" class="btn btn-success">{% trans %}Add category{% endtrans %}</a>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
