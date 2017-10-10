@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Order;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -11,9 +12,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
 
-    public function __construct(ItemNormalizer $normalizer)
+    public function __construct(ItemNormalizer $normalizer, Router $router)
     {
         $this->normalizer = $normalizer;
+        $this->router = $router;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -21,6 +23,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $data =  $this->normalizer->normalize($object, $format, $context);
 
         $data['total'] = $object->getTotal();
+        $data['publicUrl'] = $this->router->generate('order_public', ['uuid' => $object->getUuid()], true);
 
         return $data;
     }
