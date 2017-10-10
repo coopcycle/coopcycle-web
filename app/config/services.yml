@@ -48,8 +48,7 @@ services:
 
   my.order_normalizer:
     class: AppBundle\Serializer\OrderNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
+    arguments: [ "@api_platform.jsonld.normalizer.item", "@router" ]
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   app.menu_normalizer:
