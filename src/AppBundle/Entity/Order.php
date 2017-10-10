@@ -379,17 +379,17 @@ class Order
     }
 
     /**
-     * @return stringt
+     * @return string
      */
-    public function getUuid(): stringt
+    public function getUuid(): string
     {
         return $this->uuid;
     }
 
     /**
-     * @param stringt $uuid
+     * @param string $uuid
      */
-    public function setUuid(stringt $uuid)
+    public function setUuid(string $uuid)
     {
         $this->uuid = $uuid;
     }
