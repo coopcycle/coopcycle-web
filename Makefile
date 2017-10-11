@@ -7,7 +7,7 @@ install:
 	@openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
 	@mkdir -p var/osrm
-	@wget https://s3.amazonaws.com/metro-extracts.mapzen.com/paris_france.osm.pbf -O var/osrm/data.osm.pbf
+	@wget https://s3.amazonaws.com/mapzen.odes/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf -O var/osrm/data.osm.pbf
 	@docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker-compose run osrm osrm-contract /data/data.osrm
 	@printf "\e[0;32mCreating database..\e[0m\n"
