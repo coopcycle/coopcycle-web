@@ -33,3 +33,6 @@ fos_user:
     registration:
         confirmation:
             enabled: true
+
+sentry:
+    dsn: '%sentry_dsn%'
