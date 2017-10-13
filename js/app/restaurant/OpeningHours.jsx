@@ -4,7 +4,6 @@ import _ from 'underscore'
 
 import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
-import Switch from 'antd/lib/switch'
 import LocaleProvider from 'antd/lib/locale-provider'
 import frBE from 'antd/lib/locale-provider/fr_BE'
 
@@ -235,8 +234,8 @@ export default class extends React.Component {
 
   createRowData() {
     return {
-      start: '',
-      end: '',
+      start: '00:00',
+      end: '23:59',
       weekdays: _.map(weekdays, (weekday) => {
         return _.extend({ checked: false }, weekday)
       })
