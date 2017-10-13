@@ -7,7 +7,7 @@
   {% if restaurants|length > 0 %}
     {% for restaurant in restaurants %}
       <tr>
-        <td><a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td><a href="{{ path(restaurant_edit_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
         <td>{{ restaurant.name }}</td>
         <td>{{ restaurant.address.streetAddress }}</td>
         <td>{{ restaurant.openingHours|join(' ') }}</td>
