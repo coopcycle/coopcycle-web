@@ -57,3 +57,5 @@ parameters:
     piwik_site_id: ~
 
     is_demo: false
+
+    sentry_dsn: "https://********@sentry.io/********"

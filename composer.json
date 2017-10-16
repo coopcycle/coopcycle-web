@@ -54,7 +54,8 @@
         "csa/guzzle-bundle": "^2.0",
         "myclabs/php-enum": "^1.5",
         "willdurand/geocoder": "3.*",
-        "beberlei/DoctrineExtensions": "^1.0"
+        "beberlei/DoctrineExtensions": "^1.0",
+        "sentry/sentry-symfony": "^0.8.6"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
