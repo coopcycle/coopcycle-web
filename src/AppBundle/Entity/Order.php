@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,6 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity(repositoryClass="AppBundle\Entity\OrderRepository")
  * @ORM\EntityListeners({"AppBundle\Entity\Listener\OrderListener"})
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="order_")
  * @ApiResource(iri="http://schema.org/Order",
  *   collectionOperations={
@@ -119,6 +121,13 @@ class Order
     private $updatedAt;
 
     /**
+     * @var stringt
+     *
+     * @ORM\Column("uuid")
+     */
+    private $uuid;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
@@ -130,6 +139,14 @@ class Order
         $this->status = self::STATUS_CREATED;
         $this->orderedItem = new ArrayCollection();
         $this->events = new ArrayCollection();
+    }
+
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist() {
+        $this->uuid = Uuid::uuid4()->toString();
     }
 
     /**
@@ -360,4 +377,21 @@ class Order
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string $uuid
+     */
+    public function setUuid(string $uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
 }

@@ -50,6 +50,7 @@ module.exports = function(sequelize) {
 
   Db.Order = sequelize.define('order', {
     status: Sequelize.STRING,
+    uuid: Sequelize.STRING,
     createdAt: {
       field: 'created_at',
       type: Sequelize.DATE

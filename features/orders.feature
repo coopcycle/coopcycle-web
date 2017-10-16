@@ -93,6 +93,7 @@ Feature: Orders
         "date":"@string@.startsWith('2017-09-02')"
       },
       "total":@number@,
+      "publicUrl":@string@,
       "status":"CREATED"
     }
     """

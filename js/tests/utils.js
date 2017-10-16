@@ -178,6 +178,7 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
           })
           .then(function(deliveryAddress) {
             Order.create({
+              uuid: 'some-random-string',
               createdAt: new Date(),
               updatedAt: new Date(),
             })
