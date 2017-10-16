@@ -1,0 +1,45 @@
+{% if layout is defined %}
+{% extends layout %}
+{% endif %}
+
+{% block body %}
+
+  <style>
+    .arrow-down {
+      font-size: 24px;
+    }
+  </style>
+
+  <div class="alert alert-info">
+    <ul class="list-unstyled">
+      <li class="text-center"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>   {{ order.restaurant.name }} {{ order.restaurant.address.streetAddress }}</li>
+      <li class="text-center"><span class="arrow-down">⇣</span></li>
+      <li class="text-center"><i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>   {{ order.delivery.deliveryAddress.streetAddress }}</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-2">
+      <div class="embed-responsive embed-responsive-4by3">
+        <div class="embed-responsive-item" id="map"></div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div id="order-events"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="/tracking/socket.io/socket.io.js"></script>
+  <script>
+    window.__order = {{ order_json|raw }};
+    window.__order_events = {{ order_events_json|raw }}
+      window.__delivery_events = {{ delivery_events_json|raw }}
+        window.__i18n = {
+          'History': "{{ 'History'|trans }}"
+        }
+  </script>
+  <script src="{{ asset('js/order-tracking.js') }}"></script>
+{% endblock %}
