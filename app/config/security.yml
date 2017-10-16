@@ -86,6 +86,7 @@ security:
         - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/deliveries, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
