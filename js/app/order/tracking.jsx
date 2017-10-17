@@ -89,9 +89,11 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
     }
   });
 
+let events = window.__order_events.concat(window.__delivery_events);
+
 orderEvents = render(
   <OrderEvents
     i18n={window.__i18n}
-    events={window.__delivery_events} />,
+    events={events} />,
   document.getElementById('order-events')
 );
