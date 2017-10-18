@@ -3,8 +3,8 @@
 namespace AppBundle\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Symfony\Component\HttpFoundation\Request;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use AppBundle\Entity\Restaurant;
 use Doctrine\ORM\QueryBuilder;
 
 use AppBundle\Entity\RestaurantRepository;
@@ -18,7 +18,7 @@ final class RestaurantFilter extends SearchFilter
             return;
         }
 
-        $properties = $this->extractProperties($request);
+        $properties = $this->extractProperties($request, Restaurant::class);
         $distance = isset($properties['distance']) ? $properties['distance'] : 3000;
 
         if (isset($properties['coordinate'])) {
