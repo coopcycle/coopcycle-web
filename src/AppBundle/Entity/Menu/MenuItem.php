@@ -49,7 +49,7 @@ class MenuItem extends BaseMenuItem
      * @Groups({"restaurant"})
      * @ORM\Column(type="boolean", options={"default": true})
      */
-    private $isAvailable = false;
+    private $isAvailable = true;
 
     public function __construct()
     {
