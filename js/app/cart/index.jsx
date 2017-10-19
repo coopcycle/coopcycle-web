@@ -57,12 +57,3 @@ if (cart) {
   });
 
 }
-
-function onDatePickerChange(e) {
-  cartComponent.onDateChange(dateToString());
-}
-
-$('#cart-date').on('change', onDatePickerChange);
-$('#cart-time').on('change', onDatePickerChange);
-
-cartComponent.onDateChange(dateToString());

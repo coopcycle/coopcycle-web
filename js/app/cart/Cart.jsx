@@ -36,8 +36,6 @@ class Cart extends React.Component
   onDateChange(dateString) {
     $.post(this.props.addToCartURL, {
       date: dateString
-    }).then((cart) => {
-      this.setState({items: cart.items});
     });
   }
   render() {
