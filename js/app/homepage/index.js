@@ -8,7 +8,6 @@ window.initMap = function() {
   var addressInput = document.getElementById('address-search');
   var geohashInput = document.querySelector('input[name="geohash"]');
   var submitButton = document.querySelector('button[type="submit"]');
-  // var address = document.getElementById('address');
 
   var options = {
     types: ['address'],
