@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
 import CartItem from './CartItem.jsx';
+import DatePicker from './DatePicker.jsx';
 
 class Cart extends React.Component
 {
@@ -77,6 +78,8 @@ class Cart extends React.Component
 
     return (
       <div className="cart">
+        <DatePicker availabilities={this.props.availabilities} setDeliveryDate={(date) => this.onDateChange(date)}/>
+        <hr />
         {cartContent}
         <strong>Total {sum} €</strong>
         <hr />

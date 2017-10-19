@@ -82,23 +82,6 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
-      <div class="row">
-        <div class="col-sm-6">
-          <select class="form-control" id="cart-date">
-            {% for label,date in dates %}
-              <option value="{{ date|date('Y-m-d') }}">{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-sm-6">
-          <select class="form-control" id="cart-time">
-            {% for time in times %}
-              <option {% if cart.date|date('H:i') == time %}selected="selected"{% endif %}>{{ time }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-      <hr>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{% trans %}Cart{% endtrans %}</h3>
@@ -116,6 +99,7 @@
 {% block scripts %}
 <script>
 window.AppData = window.AppData || {};
+window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
 window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
   removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",

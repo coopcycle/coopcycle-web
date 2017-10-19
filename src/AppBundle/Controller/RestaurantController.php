@@ -114,27 +114,11 @@ class RestaurantController extends Controller
             }
         }
 
-        $now = new \DateTime();
-        $nextOpeningDate = $restaurant->getNextOpeningDate();
-
-        if ($now->format('Y-m-d') === $nextOpeningDate->format('Y-m-d')) {
-            $dates[$translator->trans('Today')] = new \DateTime('today');
-        }
-        $dates[$translator->trans('Tomorrow')] = new \DateTime('tomorrow');
-        ;
-
-        $times = [];
-        $date = clone $nextOpeningDate;
-
-        while ($restaurant->isOpen($date)) {
-            $date->modify('+15 minutes');
-            $times[] = $date->format('H:i');
-        }
+        $availabilities = $restaurant->getAvailabilities();
 
         return array(
             'restaurant' => $restaurant,
-            'dates' => $dates,
-            'times' => $times,
+            'availabilities' => $availabilities,
             'cart' => $this->getCart($request, $restaurant),
         );
     }
