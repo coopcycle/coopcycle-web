@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import Cart from '../Cart.jsx';
+import Cart from './Cart.jsx';
 
 function dateToString() {
   return $('#cart-date').val() + ' ' + $('#cart-time').val() + ':00';
@@ -15,6 +15,7 @@ if (cart) {
 
   cartComponent = render(
     <Cart
+      availabilities={window.AppData.availabilities}
       items={window.AppData.Cart.items}
       date={date}
       addToCartURL={window.AppData.Cart.addToCartURL}
