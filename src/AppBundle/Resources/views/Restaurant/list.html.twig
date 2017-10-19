@@ -42,7 +42,7 @@
         <img src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
         <div class="caption">
           <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-          <small>{{ restaurant.address.streetAddress }}{{ restaurant.address.streetAddress }}{{ restaurant.address.streetAddress }}</small>
+          <small>{{ restaurant.address.streetAddress }}</small>
           <p>
             {% for cuisineName in cuisineNames %}
             <span class="label label-info">{{ cuisineName }}</span>
