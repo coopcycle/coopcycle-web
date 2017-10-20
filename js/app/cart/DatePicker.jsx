@@ -99,6 +99,7 @@ class DatePicker extends Component {
       moment(date).format('YYYY-MM-DD'))
     const dates = _.keys(days)
 
+
     return (
       <div className="row" >
         <div className="col-sm-6" >
@@ -108,7 +109,7 @@ class DatePicker extends Component {
             {
               dates.map(date => (
                 <option key={ date } value={ date } >
-                  { moment(date).format('dddd DD MMM') }
+                  { moment(date).calendar(null, { sameDay: '[Aujourd\'hui]',  nextDay: '[Demain]', sameElse: 'dddd DD MMM'}) }
                 </option>
               ))
             }
