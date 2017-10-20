@@ -61,7 +61,7 @@ class RestaurantController extends Controller
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
-        if ($request->query->has('geohash')) {
+        if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
             $geotools = new Geotools();
             $geohash = $request->query->get('geohash');
 
@@ -93,6 +93,7 @@ class RestaurantController extends Controller
 
         $count = count($matches);
         $pages = ceil($count / self::ITEMS_PER_PAGE);
+
 
         return array(
             'google_api_key' => $this->getParameter('google_api_key'),

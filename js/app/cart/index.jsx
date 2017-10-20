@@ -5,13 +5,18 @@ import Cart from './Cart.jsx';
 var cart = document.getElementById('cart');
 var cartComponent;
 
+// 1. User picked date on the restaurant list page
+// 2. User has opened a Cart before
+var date = localStorage.getItem('search__date') || window.AppData.Cart.date;
+
 if (cart) {
 
   cartComponent = render(
     <Cart
+      deliveryDate={date}
       availabilities={window.AppData.availabilities}
       items={window.AppData.Cart.items}
-      date={window.AppData.Cart.date}
+      date={date}
       addToCartURL={window.AppData.Cart.addToCartURL}
       removeFromCartURL={window.AppData.Cart.removeFromCartURL}
       validateCartURL={window.AppData.Cart.validateCartURL} />,
