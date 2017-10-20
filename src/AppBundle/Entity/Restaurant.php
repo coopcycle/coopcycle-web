@@ -13,7 +13,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-const NUMBER_OF_AVAILABLE_DAYS = 2;
 
 /**
  * A restaurant.
@@ -38,6 +37,12 @@ const NUMBER_OF_AVAILABLE_DAYS = 2;
  */
 class Restaurant extends FoodEstablishment
 {
+
+    /**
+     *  We allow ordering at J+1
+     */
+    const NUMBER_OF_AVAILABLE_DAYS = 2;
+
     /**
      * @var int
      *
@@ -291,9 +296,9 @@ class Restaurant extends FoodEstablishment
         $currentDay = $date->format('Ymd');
         $dayCount = 1;
 
-        while ($dayCount <= NUMBER_OF_AVAILABLE_DAYS) {
+        while ($dayCount <= self::NUMBER_OF_AVAILABLE_DAYS) {
 
-            $date->modify('+30 minutes');
+            $date->modify('+15 minutes');
 
             $nextOpenedDate = clone $this->getNextOpeningDate($date);
 

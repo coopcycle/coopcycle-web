@@ -53,6 +53,7 @@ class TimeRangeTest extends TestCase
         $timeRange = new TimeRange('Mo-Sa 11:45-14:45');
 
         $this->assertEquals(new \DateTime('2017-05-16 11:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 06:30')));
+        $this->assertEquals(new \DateTime('2017-05-16 14:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 14:45')));
         $this->assertEquals(new \DateTime('2017-05-17 11:45'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 15:30')));
         $this->assertEquals(new \DateTime('2017-05-16 12:30'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 12:30')));
 
