@@ -70,17 +70,32 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $count = $repository->countNearby($latitude, $longitude, 1500);
+//            $count = $repository->countNearby($latitude, $longitude, 1500);
 
             $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
         } else {
-            $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
+//            $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
             $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
         }
 
+        if ($request->query->has('datetime')) {
+            $date = new \DateTime($request->query->get('datetime'));
+        } else {
+            $date = new \DateTime();
+        }
+
+        $matches = array_filter(
+            $matches,
+            function ($item) use ($date) {
+                return $item->isOpen($date);
+            }
+        );
+
+        $count = count($matches);
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
         return array(
+            'searchDate' => $date->format(\DateTime::ATOM),
             'restaurants' => $matches,
             'page' => $page,
             'pages' => $pages,
