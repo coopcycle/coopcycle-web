@@ -6,6 +6,8 @@ import moment from 'moment';
 moment.locale('fr');
 
 let searchDate = moment(window.AppData.searchDate),
+    initialGeohash = window.AppData.geohash,
+    address = localStorage.getItem('search_address'),
     searchDateString = searchDate.format('YYYY-MM-DD HH:mm:ss');
 
 // generate dateTime ranges
@@ -29,6 +31,9 @@ while (current.isBefore(nextDay)) {
 let initialDateString = start.isAfter(searchDate) ? '' : searchDateString  ;
 
 
+$('#restaurant-search-form').find('input[name=geohash]').val(initialGeohash);
+$('#restaurant-search-form').find('input[name=datetime]').val(initialDateString);
+
 function onDatePickerChange (dateString) {
   if (dateString != initialDateString) {
     $('#restaurant-search-form').find('input[name=datetime]').val(dateString);
@@ -36,7 +41,18 @@ function onDatePickerChange (dateString) {
   }
 }
 
+function onPlaceChange (geohash) {
+  if (geohash != initialGeohash) {
+    $('#restaurant-search-form').find('input[name=geohash]').val(geohash);
+    $('#restaurant-search-form').submit();
+  }
+}
+
 render(<RestaurantListFilter
+          onPlaceChange={ onPlaceChange }
+          geohash={ initialGeohash }
+          address={ address }
+
           onDatePickerChange={(date) => onDatePickerChange(date)}
           initialDate={ initialDateString }
           availabilities={ availabilities }

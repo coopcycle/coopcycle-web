@@ -95,6 +95,7 @@ class RestaurantController extends Controller
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
         return array(
+            'google_api_key' => $this->getParameter('google_api_key'),
             'searchDate' => $date->format(\DateTime::ATOM),
             'restaurants' => $matches,
             'page' => $page,

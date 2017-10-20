@@ -3,11 +3,12 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form class="form-inline" method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
-        <input type="hidden" name="geohash" value={{ geohash }}>
-        <input type="hidden" name="datetime">
-      </form>
+    <div class="col-md-10 col-md-offset-2">
+        {# hidden form filled with javascript #}
+        <form class="form-inline" method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
+          <input type="hidden" name="geohash" value={{ geohash }}>
+          <input type="hidden" name="datetime">
+        </form>
         <div id="restaurant-list-filter">
         </div>
     </div>
@@ -71,7 +72,9 @@
   <script>
     window.AppData = window.AppData || {};
     window.AppData.searchDate = "{{ searchDate }}";
+    window.AppData.geohash = "{{ geohash }}";
   </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
   <script src="{{ asset('js/restaurant-list.js') }}"></script>
 {% endblock %}
 
