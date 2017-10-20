@@ -11,17 +11,17 @@
   <body>
     {% include "AppBundle::menu.html.twig" %}
     {% block banner %}
-    {% if is_demo %}
-    <section id="banner">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 text-center">
-            <small>{{ 'demo.disclaimer'|trans|raw }}</small>
+      {% if is_demo %}
+        <section id="banner">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12 text-center">
+                <small>{{ 'demo.disclaimer'|trans|raw }}</small>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-    {% endif %}
+        </section>
+      {% endif %}
     {% endblock %}
     {% block body %}{% endblock %}
     <footer>

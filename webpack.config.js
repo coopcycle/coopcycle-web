@@ -20,6 +20,7 @@ var webpackConfig = {
     'css/tracking': './assets/css/tracking.scss',
     'js/address-form': './js/app/address/form.jsx',
     'js/common': ['bootstrap'],
+    'js/restaurant-list': './js/app/restaurant-list/index.jsx',
     'js/cart': './js/app/cart/index.jsx',
     'js/delivery-form': './js/app/delivery/form.jsx',
     'js/homepage': './js/app/homepage/index.js',
