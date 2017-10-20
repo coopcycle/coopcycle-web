@@ -17,7 +17,7 @@ const autocompleteStyles = {
 }
 
 const autocompleteClasses = {
-  root: 'form-group',
+  root: 'form-group input-location',
   input: 'form-control',
 }
 
