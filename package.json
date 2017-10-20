@@ -39,6 +39,7 @@
     "pg": "^6.1.0",
     "pg-hstore": "^2.3.2",
     "promise": "^7.1.1",
+    "react-places-autocomplete": "^5.4.3",
     "redis": "^2.6.2",
     "sequelize": "^4.7.5",
     "socket.io": "^1.7.1",
