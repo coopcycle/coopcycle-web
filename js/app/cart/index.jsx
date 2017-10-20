@@ -2,22 +2,21 @@ import React from 'react';
 import {render} from 'react-dom';
 import Cart from './Cart.jsx';
 
-function dateToString() {
-  return $('#cart-date').val() + ' ' + $('#cart-time').val() + ':00';
-}
-
 var cart = document.getElementById('cart');
 var cartComponent;
 
-var date = window.AppData.Cart.date || dateToString();
+
+// 1. User picked date on the restaurant list page
+// 2. User has opened a Cart before
+var date = localStorage.getItem('search__date') ||  window.AppData.Cart.date;
 
 if (cart) {
 
   cartComponent = render(
     <Cart
+      deliveryDate={date}
       availabilities={window.AppData.availabilities}
       items={window.AppData.Cart.items}
-      date={date}
       addToCartURL={window.AppData.Cart.addToCartURL}
       removeFromCartURL={window.AppData.Cart.removeFromCartURL}
       validateCartURL={window.AppData.Cart.validateCartURL} />,
