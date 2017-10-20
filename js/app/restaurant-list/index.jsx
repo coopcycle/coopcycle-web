@@ -36,6 +36,7 @@ $('#restaurant-search-form').find('input[name=datetime]').val(initialDateString)
 
 function onDatePickerChange (dateString) {
   if (dateString != initialDateString) {
+    localStorage.setItem('search__date', dateString);
     $('#restaurant-search-form').find('input[name=datetime]').val(dateString);
     $('#restaurant-search-form').submit();
   }
