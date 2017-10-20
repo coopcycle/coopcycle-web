@@ -117,6 +117,10 @@ class TimeRange
 
         $date = clone $now;
 
+        // round to next minute
+        $s = 60;
+        $date->setTimestamp($s * ceil($date->getTimestamp() / $s));
+
         while (($date->format('i') % 15) !== 0) {
             $date->modify('+1 minute');
         }
@@ -124,7 +128,6 @@ class TimeRange
         while (!$this->isOpen($date)) {
             $date->modify('+15 minutes');
         }
-
 
         return $date;
     }
