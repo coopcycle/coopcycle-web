@@ -70,12 +70,17 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-//            $count = $repository->countNearby($latitude, $longitude, 1500);
+            // FIXME : can't use SQL because we want to filter by date as well :(
+            // $count = $repository->countNearby($latitude, $longitude, 1500);
+            // $matches = $repository->findNearby($latitude, $longitude, 1500, , self::ITEMS_PER_PAGE, $offset);
 
-            $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
+            $matches = $repository->findNearby($latitude, $longitude, 1500);
         } else {
-//            $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
-            $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
+
+            // FIXME : can't use SQL because we want to filter by date as well :(
+            // $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
+
+            $matches = $repository->findBy([], ['name' => 'ASC']);
         }
 
         if ($request->query->has('datetime')) {
@@ -92,6 +97,9 @@ class RestaurantController extends Controller
         );
 
         $count = count($matches);
+
+        $matches = array_slice($matches, $offset, self::ITEMS_PER_PAGE);
+
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
 
