@@ -28,6 +28,8 @@ class RestaurantListFilter extends React.Component {
     this.geohashLib = require('ngeohash');
     this.state = {
       nowOrLater: this.props.initialDate ? 'later' : 'now',
+      // used to store a valid address, so we use it to refill the form when losing focus
+      initialAddress: this.props.address,
       address: this.props.address,
       geohash: this.props.geohash
     }
@@ -44,6 +46,10 @@ class RestaurantListFilter extends React.Component {
     this.setState({address: value})
   }
 
+  onAddressBlur() {
+    this.setState({address: this.state.initialAddress})
+  }
+
   onAddressSelect (address, placeId) {
     /*
       Controller for address selection (i.e. click on address in the dropdown)
@@ -57,19 +63,19 @@ class RestaurantListFilter extends React.Component {
               lat = place.geometry.location.lat(),
               lng = place.geometry.location.lng(),
               geohash = this.geohashLib.encode(lat, lng, 11);
-          this.setState({ geohash, address});
+          this.setState({ geohash, address, initialAddress: address});
         }
       }
     );
   }
 
   shouldComponentUpdate (nextProps, nextState) {
+
     // handle the switch from 'later' to 'as soon as possible'
-    if (this.state.dateTimeValue !== nextState.nowOrLater && nextState.nowOrLater === 'now') {
+    if (this.state.nowOrLater !== nextState.nowOrLater && nextState.nowOrLater === 'now') {
       this.props.onDatePickerChange('');
     }
-    // handle geohash change
-    else if (this.state.geohash !== nextState.geohash) {
+    else if (this.state.geohash !== nextState.geohash) { // handle geohash change
       localStorage.setItem('search_address', nextState.address); // save address for display
       this.props.onPlaceChange(nextState.geohash);
     }
@@ -86,7 +92,8 @@ class RestaurantListFilter extends React.Component {
     // address picker
     const inputProps = {
       value: address,
-      onChange:(value) => { this.onAddressChange(value) },
+      onChange: (value) => { this.onAddressChange(value) },
+      onBlur: () => { this.onAddressBlur() },
       placeholder: 'Entrez votre adresse'
     }
 
