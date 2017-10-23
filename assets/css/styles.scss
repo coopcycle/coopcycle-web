@@ -12,6 +12,16 @@ footer {
     font-weight: 400;
 }
 
+.banner-title {
+    color: $white;
+    font-weight: 700;
+    margin-bottom: $bs-base-margin;
+}
+
+.banner-search {
+    margin-top: $bs-base-margin * 2;
+}
+
 #banner {
     padding: 10px 0;
     background-color: $orange;
