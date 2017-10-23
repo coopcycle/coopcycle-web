@@ -1,6 +1,4 @@
-{% if layout is defined %}
-  {% extends layout %}
-{% endif %}
+{% extends layout %}
 
 {% block breadcrumb %}
 <li><a href="{{ path(breadcrumb_path) }}">{% trans %}Orders{% endtrans %}</a></li>
