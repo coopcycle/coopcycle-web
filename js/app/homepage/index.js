@@ -1,65 +1,113 @@
-var geohash = require('ngeohash');
+import React from 'react';
+import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
+import { render } from 'react-dom';
 
-var geohashValue = localStorage.getItem('search_geohash');
-var addressValue = localStorage.getItem('search_address');
+const autocompleteOptions = {
+  types: ['address'],
+  componentRestrictions: {
+    country: "fr"
+  }
+}
 
-window.initMap = function() {
+const autocompleteStyles = {
+  autocompleteContainer: {
+    zIndex: 1
+  }
+}
 
-  var addressInput = document.getElementById('address-search');
-  var geohashInput = document.querySelector('input[name="geohash"]');
-  var submitButton = document.querySelector('button[type="submit"]');
+const autocompleteClasses = {
+  root: 'form-group input-location',
+  input: 'form-control',
+}
 
-  var options = {
-    types: ['address'],
-    componentRestrictions: {
-      country: "fr"
+
+class HomeSearch extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.geohashLib = require('ngeohash');
+    this.state = {
+      address: '',
+      initialAddress: '',
+      geohash: ''
     }
-  };
-  var autocomplete = new google.maps.places.Autocomplete(addressInput, options);
+  }
 
-  $('#address-search-form').on('submit', function(e) {
-    if (geohashInput.value === '') {
-      addressInput.focus();
-      return false;
+  shouldComponentUpdate (nextProps, nextState) {
+
+    if (this.state.geohash !== nextState.geohash) { // handle geohash change
+      this.props.onPlaceChange(nextState.geohash, nextState.address);
     }
-
-    localStorage.setItem('search_geohash', geohashValue);
-    localStorage.setItem('search_address', addressValue);
 
     return true;
-  });
-
-  autocomplete.addListener('place_changed', function() {
-
-    var place = autocomplete.getPlace();
-
-    if (!place.geometry) {
-      window.alert("Autocomplete's returned place contains no geometry");
-      return;
-    }
-
-    $(submitButton).removeClass('disabled');
-
-    var lat = place.geometry.location.lat();
-    var lng = place.geometry.location.lng();
-
-    geohashInput.value = geohashValue = geohash.encode(lat, lng, 11);
-
-    if (place.address_components) {
-      addressValue = [
-        (place.address_components[0] && place.address_components[0].short_name || ''),
-        (place.address_components[1] && place.address_components[1].short_name || ''),
-        (place.address_components[2] && place.address_components[2].short_name || '')
-      ].join(' ');
-    }
-
-  });
-
-  if (geohashValue && addressValue) {
-    geohashInput.value = geohashValue;
-    addressInput.value = addressValue;
-    $(submitButton).removeClass('disabled');
-  } else {
-    setTimeout(function() { addressInput.focus() }, 750);
   }
-};
+
+  onAddressChange (value) {
+    /*
+      Controller for the address input text field
+     */
+    this.setState({address: value})
+  }
+
+  onAddressBlur() {
+    this.setState({address: this.state.initialAddress})
+  }
+
+  onAddressSelect (address, placeId) {
+    /*
+      Controller for address selection (i.e. click on address in the dropdown)
+     */
+
+    geocodeByPlaceId(placeId).then(
+      (results) => {
+        // should always be the case, assert ?
+        if (results.length === 1) {
+          let place = results[0],
+            lat = place.geometry.location.lat(),
+            lng = place.geometry.location.lng(),
+            geohash = this.geohashLib.encode(lat, lng, 11);
+          this.setState({ geohash, address, initialAddress: address });
+        }
+      }
+    );
+  }
+
+  render () {
+    let { address } = this.state;
+
+    const inputProps = {
+      value: address,
+      onChange: (value) => { this.onAddressChange(value) },
+      onBlur: () => { this.onAddressBlur() },
+      placeholder: 'Entrez votre adresse'
+    }
+
+    const AutocompleteItem = ({ suggestion }) => (<div>hello world</div>)
+
+    return (
+      <PlacesAutocomplete
+        autocompleteItem={ AutocompleteItem }
+        classNames={ autocompleteClasses }
+        inputProps={ inputProps }
+        options={ autocompleteOptions }
+        styles={ autocompleteStyles }
+        onSelect={ (address, placeId) => { this.onAddressSelect(address, placeId) }}
+      />
+    )
+  }
+}
+
+function onPlaceChange (geohash, address) {
+    localStorage.setItem('search_geohash', geohash);
+    localStorage.setItem('search_address', address);
+    $('#address-search-form').find('input[name=geohash]').val(geohash);
+    $('#address-search-form').submit();
+}
+
+
+render(
+  <HomeSearch
+    onPlaceChange = { onPlaceChange }
+  />,
+  document.getElementById('address-search')
+);

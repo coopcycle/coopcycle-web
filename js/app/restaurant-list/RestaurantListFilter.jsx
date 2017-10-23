@@ -1,6 +1,6 @@
 import React from 'react';
 import DatePicker from "../cart/DatePicker.jsx";
-import PlacesAutocomplete, { geocodeByAddress, getLatLng, geocodeByPlaceId } from 'react-places-autocomplete';
+import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
 
 
 const autocompleteOptions = {
@@ -76,8 +76,7 @@ class RestaurantListFilter extends React.Component {
       this.props.onDatePickerChange('');
     }
     else if (this.state.geohash !== nextState.geohash) { // handle geohash change
-      localStorage.setItem('search_address', nextState.address); // save address for display
-      this.props.onPlaceChange(nextState.geohash);
+      this.props.onPlaceChange(nextState.geohash, nextState.address);
     }
 
     return true;

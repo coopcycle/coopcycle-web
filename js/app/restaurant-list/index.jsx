@@ -42,8 +42,10 @@ function onDatePickerChange (dateString) {
   }
 }
 
-function onPlaceChange (geohash) {
+function onPlaceChange (geohash, address) {
   if (geohash != initialGeohash) {
+    localStorage.setItem('search_geohash', geohash);
+    localStorage.setItem('search_address', address);
     $('#restaurant-search-form').find('input[name=geohash]').val(geohash);
     $('#restaurant-search-form').submit();
   }
