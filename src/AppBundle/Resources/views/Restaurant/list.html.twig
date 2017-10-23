@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col-md-10 col-md-offset-2">
+    <div class="col-md-11 col-md-offset-1 restaurant-list-filter">
         {# hidden form filled with javascript #}
         <form class="form-inline" method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
           <input type="hidden" name="geohash" value={{ geohash }}>
