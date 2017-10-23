@@ -2,14 +2,8 @@ import React from 'react';
 import {render} from 'react-dom';
 import Cart from './Cart.jsx';
 
-function dateToString() {
-  return $('#cart-date').val() + ' ' + $('#cart-time').val() + ':00';
-}
-
 var cart = document.getElementById('cart');
 var cartComponent;
-
-var date = window.AppData.Cart.date || dateToString();
 
 if (cart) {
 
@@ -17,7 +11,7 @@ if (cart) {
     <Cart
       availabilities={window.AppData.availabilities}
       items={window.AppData.Cart.items}
-      date={date}
+      date={window.AppData.Cart.date}
       addToCartURL={window.AppData.Cart.addToCartURL}
       removeFromCartURL={window.AppData.Cart.removeFromCartURL}
       validateCartURL={window.AppData.Cart.validateCartURL} />,

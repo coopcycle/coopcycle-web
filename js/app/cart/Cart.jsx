@@ -13,7 +13,6 @@ class Cart extends React.Component
     };
   }
   removeItem(item) {
-    console.log(item.props);
     let removeFromCartUrl = this.props.removeFromCartURL.replace('__ITEM_KEY__', item.props.itemKey);
     $.ajax({
       url: removeFromCartUrl,
@@ -76,7 +75,10 @@ class Cart extends React.Component
 
     return (
       <div className="cart">
-        <DatePicker availabilities={this.props.availabilities} setDeliveryDate={(date) => this.onDateChange(date)}/>
+        <DatePicker
+          availabilities={this.props.availabilities}
+          value={this.props.date}
+          onChange={(date) => this.onDateChange(date)} />
         <hr />
         {cartContent}
         <strong>Total {sum} €</strong>

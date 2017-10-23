@@ -104,7 +104,7 @@ window.AppData.Cart = {
   addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
   removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
   items: {{ cart.normalizedItems|json_encode()|raw }},
-  date: "{{ cart.date|date('Y-m-d H:i:s') }}",
+  date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
   validateCartURL: "{{ path('order') }}"
 }
 </script>

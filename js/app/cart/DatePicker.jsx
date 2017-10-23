@@ -6,10 +6,10 @@ moment.locale('fr')
 
 class DatePicker extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
-    const { availabilities } = this.props
+    const { availabilities, value } = this.props
 
     const days = _.groupBy(availabilities, date =>
       moment(date).format('YYYY-MM-DD'))
@@ -28,26 +28,26 @@ class DatePicker extends Component {
   // we can do the computation at WillMount and WillReceiveProps time
   // 2. we keep in the local
   // state of the component these computed date and time variables
-  handleSetDateAndTime ({ availabilities, deliveryDate }) {
+  handleSetDateAndTime({ availabilities, value }) {
     let date, time
-    if (!deliveryDate) {
+    if (!value) {
       const first = availabilities[0]
       const firstMoment = moment(first)
       date = firstMoment.format('YYYY-MM-DD')
       time = firstMoment.format('HH:mm')
     } else {
-      const deliveryDateMoment = moment(deliveryDate)
+      const deliveryDateMoment = moment(value)
       date = deliveryDateMoment.format('YYYY-MM-DD')
       time = deliveryDateMoment.format('HH:mm')
     }
     this.setState({ date, time })
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.handleSetDateAndTime(this.props)
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     // no need to compute if actually the component updates
     // for restaurant.availabilities changes
     if (nextProps.deliveryDate !== this.props.deliveryDate) {
@@ -61,16 +61,12 @@ class DatePicker extends Component {
   // 2. So once date and time are stored in the local state
   // we trigger the redux action setDeliveryDate, but we make sure
   // to call it once
-  handleSetDeliveryDate () {
+  handleSetDeliveryDate() {
     const { date, time } = this.state
-    this.props.setDeliveryDate(date + ' ' + time + ':00')
+    this.props.onChange(date + ' ' + time + ':00')
   }
 
-  componentDidMount () {
-    this.handleSetDeliveryDate()
-  }
-
-  componentDidUpdate (nextState) {
+  componentDidUpdate(nextState) {
     // only trigger the action once
     // when date and/or time have changed in the local state
     if (nextState.date !== this.state.date || nextState.time !== this.state.time) {
@@ -78,15 +74,14 @@ class DatePicker extends Component {
     }
   }
 
-  onChangeDate ({ target: { value }}, days) {
+  onChangeDate({ target: { value }}, days) {
     this.setState({
-      availableTimes: days[value].map(date =>
-        moment(date).format('HH:mm')),
+      availableTimes: days[value].map(date => moment(date).format('HH:mm')),
       date: value
     })
   }
 
-  onChangeTime ({ target: { value }}) {
+  onChangeTime({ target: { value }}) {
     this.setState({ time: value })
   }
 
@@ -95,8 +90,7 @@ class DatePicker extends Component {
     const { availabilities } = this.props
     const { availableTimes, date, time } = this.state
 
-    const days = _.groupBy(availabilities, date =>
-      moment(date).format('YYYY-MM-DD'))
+    const days = _.groupBy(availabilities, date => moment(date).format('YYYY-MM-DD'))
     const dates = _.keys(days)
 
     return (
