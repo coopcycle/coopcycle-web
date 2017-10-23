@@ -107,24 +107,27 @@ class RestaurantListFilter extends React.Component {
 
     return (
       <div className="row">
-          <div className="col-md-4">
-            <PlacesAutocomplete
-              classNames={ autocompleteClasses }
-              inputProps={ inputProps }
-              options={ autocompleteOptions }
-              styles={ autocompleteStyles }
-              onSelect={ (address, placeId) => { this.onAddressSelect(address, placeId) }}
-            />
-          </div>
-          <div className="col-md-3" >
-            <select value={ this.state.nowOrLater } className="form-control" onChange={ (evt) => this.onDateTimeChange(evt) }>
-              <option value="now">Le plus tôt possible</option>
-              <option value="later">Plus tard</option>
-            </select>
-          </div>
-          <div className="col-md-4" >
-            { selectElement }
-          </div>
+        <div className="col-md-4">
+          <PlacesAutocomplete
+            classNames={ autocompleteClasses }
+            inputProps={ inputProps }
+            options={ autocompleteOptions }
+            styles={ autocompleteStyles }
+            onSelect={ (address, placeId) => { this.onAddressSelect(address, placeId) }}
+          />
+        </div>
+        <div className="col-md-1">
+          <span className="input-height">Quand?</span>
+        </div>
+        <div className="col-md-3" >
+          <select id="basic-url" value={ this.state.nowOrLater } className="form-control" onChange={ (evt) => this.onDateTimeChange(evt) }>
+            <option value="now">Au plus tôt</option>
+            <option value="later">Plus tard</option>
+          </select>
+        </div>
+        <div className="col-md-4" >
+          { selectElement }
+        </div>
       </div>
     )
   }

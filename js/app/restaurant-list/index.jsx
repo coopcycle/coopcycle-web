@@ -1,7 +1,7 @@
 import React from 'react';
-import RestaurantListFilter from "./RestaurantListFilter.jsx";
 import { render } from 'react-dom';
 import moment from 'moment';
+import RestaurantListFilter from "./RestaurantListFilter.jsx";
 
 moment.locale('fr');
 
