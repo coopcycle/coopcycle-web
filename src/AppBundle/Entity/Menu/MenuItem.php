@@ -35,7 +35,7 @@ class MenuItem extends BaseMenuItem
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItemModifier",
      *                mappedBy="menuItem",
-     *                cascade={"persist"})
+     *                cascade={"all"})
      * @Groups({"restaurant"})
      */
     protected $modifiers;

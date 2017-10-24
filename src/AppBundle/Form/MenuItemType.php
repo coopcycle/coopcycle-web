@@ -3,8 +3,10 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Menu\MenuItem;
+use AppBundle\Form\MenuType\MenuItemModifierType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -19,8 +21,18 @@ class MenuItemType extends AbstractType
             ->add('name', TextType::class)
             ->add('description', TextareaType::class, ['required' => false])
             ->add('price', MoneyType::class)
-            ->add('isAvailable', CheckboxType::class, ['label' => 'Available product?', 'required' => false])
-        ;
+            ->add('isAvailable', CheckboxType::class, [
+                'label' => 'Available product?',
+                'required' => false
+            ])
+            ->add('modifiers', CollectionType::class, [
+                'entry_type' => MenuItemModifierType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'prototype' => true,
+                'label' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

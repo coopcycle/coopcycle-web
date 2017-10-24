@@ -82,7 +82,20 @@ Delivery service: Service de livraison
 Waiting: En attente
 No orders yet: Pas de commande pour le moment
 Appetizers, Dishes…: Entrées, Plats…
+Calculus strategy: Mode de calcul
+Add description: Ajouter une description
+Modify description: Modifier la description
+Extra groups: Groupes de suppléments
+Add an extra groups: Ajouter un groupe de suppléments
+Add an extra: Ajouter un supplément
+Extras: Suppléments
+The extra is free: Le supplément est gratuit
+The extra has a fixed price: Le supplément a un prix fixe
+Each extra has a custom price: Chaque supplément a un prix
 
+menu.modifier.STRATEGY_FREE: Gratuit
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément
 
 norestaurantfound: Pas de restaurant ouvert à cette heure!<br>Essayez avec une autre heure de livraison.
 
@@ -123,6 +136,6 @@ Continue to payment: Paiement
 You don't have any restaurants yet: Vous n'avez pas encore de restaurants
 Create restaurant: Créer un restaurant
 Upload an image: Uploader une image
-Default: Défaut 
+Default: Défaut
 Serves cuisine: Type de plats
 No order in progress: Pas de commande en cours

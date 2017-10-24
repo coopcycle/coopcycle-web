@@ -6,7 +6,7 @@ function collapseAll() {
   $('#menu_sections .panel-collapse').collapse('hide');
 }
 
-function addForm($container) {
+function addMenuItemForm($container) {
 
   var prototype = $container.data('prototype');
   var index = $container.children().length;
@@ -19,6 +19,67 @@ function addForm($container) {
   if (!$container.closest('.collapse').hasClass('in')) {
     collapseAll();
     $container.closest('.collapse').collapse('show');
+  }
+}
+
+function addMenuItemModifierForm($container) {
+
+  var prototype = $container.data('prototype');
+  var index = $container.children().length;
+
+  var form = prototype.replace(/__name__/g, index);
+  var $form = $(form);
+
+  $container.append($form);
+}
+
+function addMenuItemModifierGroupForm($container) {
+
+  var prototype = $container.data('prototype');
+  var index = $container.children().length;
+
+  var form = prototype.replace(/__name__/g, index);
+  var $form = $(form);
+
+  $container.append($form);
+}
+
+function renderCalculusStrategy($input) {
+
+  const $groupPrice = $input.closest('.form-group').find('.modifier-group-price');
+  const $groupPriceLabel = $input.closest('.form-group').find('.modifier-group-price-label');
+  const $modifiersPrice = $input.closest('.menu-item-modifiers').find('.modifier-price');
+
+  switch($input.val()) {
+    case 'FREE':
+      $groupPrice.closest('.input-group').addClass('hidden');
+      $groupPrice.val(0.00);
+      $modifiersPrice.closest('.input-group').addClass('hidden');
+
+      $groupPrice.prop('required', false);
+      $modifiersPrice.prop('required', false);
+
+      $groupPriceLabel.addClass('hidden');
+      break;
+    case 'ADD_MENUITEM_PRICE':
+      $groupPrice.closest('.input-group').addClass('hidden');
+      $groupPrice.val(0.00);
+      $modifiersPrice.closest('.input-group').removeClass('hidden');
+
+      $groupPrice.prop('required', false);
+      $modifiersPrice.prop('required', true);
+
+      $groupPriceLabel.addClass('hidden');
+      break;
+    case 'ADD_MODIFIER_PRICE':
+      $groupPrice.closest('.input-group').removeClass('hidden');
+      $modifiersPrice.closest('.input-group').addClass('hidden');
+
+      $groupPrice.prop('required', true);
+      $modifiersPrice.prop('required', false);
+
+      $groupPriceLabel.removeClass('hidden');
+      break;
   }
 }
 
@@ -46,16 +107,41 @@ $(function() {
 
   autoDismissMessages();
 
-  $(document).on('click', '.list-group-item .close', function(e) {
+  // Activate Bootstrap tooltips
+  $('[data-toggle="tooltip"]').tooltip();
+
+  // Show/hide inputs on page load
+  $form.find('.modifier-calculus-strategy').each((index, input) => renderCalculusStrategy($(input)));
+
+  $(document).on('click', '.close', function(e) {
     e.preventDefault();
-    $(e.target).closest('.list-group-item').remove();
+    var selector = $(e.target).closest('.close').data('target');
+    $(selector).remove();
   });
 
   $(document).on('click', '[data-toggle="add-menu-item"]', function(e) {
     e.preventDefault();
     var selector = $(e.target).data('target');
     var $target = $(selector);
-    addForm($target);
+    addMenuItemForm($target);
+  });
+
+  $(document).on('click', '[data-toggle="add-menu-item-modifier"]', function(e) {
+    e.preventDefault();
+    var $target = $(e.target).prev();
+    addMenuItemModifierForm($target);
+    var $input = $target.closest('.menu-item-modifiers').find('.modifier-calculus-strategy');
+    renderCalculusStrategy($input);
+  });
+
+  $(document).on('click', '[data-toggle="add-menu-item-modifier-group"]', function(e) {
+    e.preventDefault();
+    e.preventDefault();
+    var selector = $(e.target).data('target');
+    var $target = $(selector);
+    addMenuItemModifierGroupForm($target);
+    var $input = $target.find('select.modifier-calculus-strategy');
+    renderCalculusStrategy($input);
   });
 
   $(document).on('click', '[data-toggle="remove-menu-section"]', function(e) {
@@ -143,6 +229,10 @@ $(function() {
 
   })
 
+  $(document).on('change', 'select.modifier-calculus-strategy', function(e) {
+    renderCalculusStrategy($(this));
+  })
+
   $(document).on('click', '#add-menu-section', function(e) {
     e.preventDefault();
 
@@ -169,7 +259,7 @@ $(function() {
       var sectionAdded = $('#menu_sections').data('section-added');
       if (sectionAdded) {
         var $el = $('[data-section-id="' + sectionAdded + '"]');
-        addForm($('#' + $el.attr('id') + '_items'));
+        addMenuItemForm($('#' + $el.attr('id') + '_items'));
         $('#menu_sections').removeAttr('data-section-added');
         $('#menu_addSection').val('');
       }

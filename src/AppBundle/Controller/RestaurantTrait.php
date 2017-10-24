@@ -128,6 +128,11 @@ trait RestaurantTrait
             $originalItems[$section] = $items;
         }
 
+        $originalModifiers = new ArrayCollection();
+        foreach ($menu->getAllModifiers() as $modifier) {
+            $originalModifiers->add($modifier);
+        }
+
         $form = $this->createMenuForm($menu);
 
         $form->handleRequest($request);
@@ -143,11 +148,19 @@ trait RestaurantTrait
 
             } else {
 
-                // Make sure sections & items are mapped
+                // Make sure objects are mapped
                 foreach ($menu->getSections() as $section) {
                     foreach ($section->getItems() as $item) {
                         if (null === $item->getSection()) {
                             $item->setSection($section);
+                        }
+                        foreach ($item->getModifiers() as $modifier) {
+                            if (null === $modifier->getMenuItem()) {
+                                $modifier->setMenuItem($item);
+                            }
+                            foreach ($modifier->getModifierChoices() as $modifierChoice) {
+                                $modifierChoice->setMenuItemModifier($modifier);
+                            }
                         }
                     }
                 }
@@ -184,6 +197,19 @@ trait RestaurantTrait
                                         $em->remove($originalItem);
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+
+                foreach ($originalModifiers as $originalModifier) {
+                    if (false === $menu->getAllModifiers()->contains($originalModifier)) {
+                        // TODO Soft delete modifier items
+                        $originalModifier->setMenuItem(null);
+                    } else {
+                        foreach ($menu->getAllModifiers() as $updatedModifier) {
+                            if ($updatedModifier === $originalModifier) {
+                                // TODO Manage delete items
                             }
                         }
                     }
