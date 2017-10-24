@@ -22,6 +22,37 @@ footer {
     margin-top: $bs-base-margin * 2;
 }
 
+.location-result {
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.location-result--active {
+    background-color: $light-gray;
+}
+
+.location-result--active .location-result--preferred {
+    background-color: $main-blue;
+}
+
+.location-result--preferred {
+    background-color: $main-blue-light;
+}
+
+.location-result--preferred::after {
+    font-family: 'FontAwesome';
+    content: '\F006';
+    color: $main-blue;
+    position: absolute;
+    top: 8px;
+    right: 4px;
+
+    font-size: 18px;
+    text-align: center;
+    width: 30px;
+}
+
 #banner {
     padding: 10px 0;
     background-color: $orange;

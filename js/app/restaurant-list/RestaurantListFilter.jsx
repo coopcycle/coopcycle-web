@@ -43,7 +43,8 @@ class RestaurantListFilter extends React.Component {
     /*
       Controller for the address input text field
      */
-    this.setState({address: value})
+    this.setState({address: value});
+
   }
 
   onAddressBlur() {

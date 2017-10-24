@@ -41,6 +41,17 @@
 {% endblock %}
 
 {% block scripts %}
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.addresses = [];
+    {% for address in  addresses %}
+    window.AppData.addresses.push({
+      'city': "{{ address.addressLocality }}",
+      'postalCode': "{{ address.postalCode }}",
+      'streetAddress': "{{ address.streetAddress }}",
+    });
+    {% endfor %}
+  </script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
   <script src="{{ asset('js/homepage.js') }}"></script>
 {% endblock %}

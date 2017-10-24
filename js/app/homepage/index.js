@@ -1,5 +1,5 @@
 import React from 'react';
-import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
+import PlacesAutocomplete, { geocodeByPlaceId, geocodeByAddress } from 'react-places-autocomplete';
 import { render } from 'react-dom';
 
 const autocompleteOptions = {
@@ -12,12 +12,16 @@ const autocompleteOptions = {
 const autocompleteStyles = {
   autocompleteContainer: {
     zIndex: 1
+  },
+  autocompleteItem: {
+    padding: 0
   }
 }
 
 const autocompleteClasses = {
   root: 'form-group input-location',
   input: 'form-control',
+  autocompleteItemActive: 'location-result--active'
 }
 
 
@@ -31,6 +35,8 @@ class HomeSearch extends React.Component {
       initialAddress: '',
       geohash: ''
     }
+    this.insertPreferredResults = this.insertPreferredResults.bind(this);
+    this.onAddressSelect = this.onAddressSelect.bind(this);
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -40,6 +46,10 @@ class HomeSearch extends React.Component {
     }
 
     return true;
+  }
+
+  insertPreferredResults ({results}, callback) {
+    return callback(this.props.preferredResults.concat(results))
   }
 
   onAddressChange (value) {
@@ -58,7 +68,15 @@ class HomeSearch extends React.Component {
       Controller for address selection (i.e. click on address in the dropdown)
      */
 
-    geocodeByPlaceId(placeId).then(
+    let func
+    if (placeId) {
+      func = geocodeByPlaceId
+    }
+    else {
+      func = geocodeByAddress
+    }
+
+    func(placeId).then(
       (results) => {
         // should always be the case, assert ?
         if (results.length === 1) {
@@ -82,16 +100,29 @@ class HomeSearch extends React.Component {
       placeholder: 'Entrez votre adresse'
     }
 
-    const AutocompleteItem = ({ suggestion }) => (<div>hello world</div>)
+    const AutocompleteItem = (suggestion) => {
+      let classes = ["location-result"]
+
+      if (suggestion.preferred) {
+        classes.push('location-result--preferred');
+      }
+
+      return (
+        <div className={ classes.join(' ') }>
+          { suggestion.suggestion }
+        </div>)
+    }
 
     return (
       <PlacesAutocomplete
+        preferredResults={ preferredResults }
         autocompleteItem={ AutocompleteItem }
         classNames={ autocompleteClasses }
         inputProps={ inputProps }
         options={ autocompleteOptions }
         styles={ autocompleteStyles }
-        onSelect={ (address, placeId) => { this.onAddressSelect(address, placeId) }}
+        onSelect={ this.onAddressSelect }
+        onSearch={ this.insertPreferredResults }
       />
     )
   }
@@ -104,10 +135,13 @@ function onPlaceChange (geohash, address) {
     $('#address-search-form').submit();
 }
 
+let addresses = window.AppData.addresses,
+  preferredResults = addresses.map(function (item) { return { suggestion: item.streetAddress, preferred: true }});
 
 render(
   <HomeSearch
     onPlaceChange = { onPlaceChange }
+    preferredResults = { preferredResults }
   />,
   document.getElementById('address-search')
 );
