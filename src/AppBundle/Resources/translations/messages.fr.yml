@@ -103,12 +103,8 @@ delivery.status.PICKED: Récupérée
 delivery.status.DELIVERED: Livrée
 delivery.status.CANCELED: Annulée
 
-demo.disclaimer: >
-  📢 Bienvenue sur la démo du logiciel de plateforme <a href="https://coopcycle.org">CoopCycle</a>
-  <br>
-  🤖 Ce site est réinitialisé régulièrement. Nous utilisons des bots pour simuler de l'activité
-  <br>
-  ⚠️ Vous pouvez passer commande auprès de restaurants imaginaires et voir une simulation de livraison
+demo.disclaimer: 📢  Bienvenue sur la démo de la plateforme <a href="https://coopcycle.org">CoopCycle</a>
+demo.disclaimer.subtitle: Commandez, payez avec une carte de crédit de test et suivez nos bots-livreurs!
 
 search.help: >
   Cherchez dans les quartiers de Paris : %links%

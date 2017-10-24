@@ -15,12 +15,8 @@ delivery.status.DISPATCHED: Dispatched
 delivery.status.PICKED: Picked
 delivery.status.DELIVERED: Delivered
 
-demo.disclaimer: >
-  📢 Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform software
-  <br>
-  🤖 This website is reset on a regular basis. We use bots to simulate activity
-  <br>
-  ⚠️ You can order meals at imaginary restaurants and watch a simulation of delivery.
+demo.disclaimer: 📢  Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform.
+demo.disclaimer.subtitle: Follow the checkout process, pay with a test credit card & see bots deliver your meal !
 
 search.help: >
   Search restaurants in Paris area : %links%
