@@ -1,11 +1,5 @@
-/ansible/group_vars/*.yml
-!ansible/group_vars/all.yml
-/ansible/host_vars/*.yml
-!ansible/host_vars/default.yml
 /app/config/parameters.yml
 /build/
-/config/deploy/*
-!config/deploy/.gitkeep
 /phpunit.xml
 
 # Dev temp files
@@ -31,7 +25,6 @@
 /web/js/
 /web/manifest.json
 
-/.vagrant/
 /node_modules/
 .DS_Store
 
