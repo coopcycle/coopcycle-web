@@ -83,6 +83,9 @@ Waiting: En attente
 No orders yet: Pas de commande pour le moment
 Appetizers, Dishes…: Entrées, Plats…
 
+
+norestaurantfound: Pas de restaurant ouvert à cette heure!<br>Essayez avec une autre heure de livraison.
+
 delivery_service.applicolis: AppliColis
 
 order.payment.card_number.label: Numéro de carte

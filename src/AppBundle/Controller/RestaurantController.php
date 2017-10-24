@@ -104,6 +104,7 @@ class RestaurantController extends Controller
 
 
         return array(
+            'count' => $count,
             'google_api_key' => $this->getParameter('google_api_key'),
             'searchDate' => $date->format(\DateTime::ATOM),
             'restaurants' => $matches,

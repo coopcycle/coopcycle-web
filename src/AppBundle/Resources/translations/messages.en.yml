@@ -1,3 +1,5 @@
+norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
+
 order.payment.card_number.label: Card number
 order.payment.total: Pay %total% €
 order.payment.card_number.help: >
