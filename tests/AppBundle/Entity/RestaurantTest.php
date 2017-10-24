@@ -16,8 +16,6 @@ class RestaurantTest extends TestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
-            '2017-10-04T17:30:00+02:00',
-            '2017-10-04T17:45:00+02:00',
             '2017-10-04T18:00:00+02:00',
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
@@ -71,13 +69,12 @@ class RestaurantTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
+
         $date = new \DateTime('2017-10-04T17:30:26+02:00');
 
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
-            '2017-10-04T17:45:00+02:00',
-            '2017-10-04T18:00:00+02:00',
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',

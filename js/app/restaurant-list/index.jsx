@@ -14,7 +14,7 @@ let searchDate = moment(window.AppData.searchDate),
 let minutes = moment().minutes(),
     nextQuarter = (Math.trunc(minutes / 15) + 1) * 15,
     start = moment().startOf('hour').minutes(nextQuarter),
-    current = moment().startOf('hour').minutes(nextQuarter),
+    current = moment().add(1, 'hour').startOf('hour').minutes(nextQuarter),
     availabilities = [],
     nextDay = moment().add(1, 'day').endOf('day');
 

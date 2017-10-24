@@ -37,6 +37,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Restaurant extends FoodEstablishment
 {
+    /**
+     *  Delay for preparation + delivery (in minutes)
+     */
+    const PREPARATION_AND_DELIVERY_DELAY = 30;
 
     /**
      *  We allow ordering at J+1
@@ -276,7 +280,7 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * Return potential ordering times for a restaurant.
+     * Return potential delivery times for a restaurant.
      *
      * We allow ordering at J+1.
      *
@@ -288,6 +292,8 @@ class Restaurant extends FoodEstablishment
         if (!$now) {
             $now = new \DateTime();
         }
+
+        $now->modify('+'.self::PREPARATION_AND_DELIVERY_DELAY.' minutes');
 
         $date = clone $this->getNextOpeningDate($now);
 
