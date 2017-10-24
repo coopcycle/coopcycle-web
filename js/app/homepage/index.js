@@ -68,15 +68,15 @@ class HomeSearch extends React.Component {
       Controller for address selection (i.e. click on address in the dropdown)
      */
 
-    let func
+    let pr
     if (placeId) {
-      func = geocodeByPlaceId
+      pr = geocodeByPlaceId(placeId)
     }
     else {
-      func = geocodeByAddress
+      pr = geocodeByAddress(address)
     }
 
-    func(placeId).then(
+    pr.then(
       (results) => {
         // should always be the case, assert ?
         if (results.length === 1) {
