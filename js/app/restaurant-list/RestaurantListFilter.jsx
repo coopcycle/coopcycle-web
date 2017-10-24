@@ -99,10 +99,10 @@ class RestaurantListFilter extends React.Component {
 
     if (!wantsNow) {
       selectElement = <DatePicker
-                        setDeliveryDate={ this.props.onDatePickerChange }
-                        availabilities={ this.props.availabilities }
-                        deliveryDate={ this.props.initialDate }
-                      />
+        onChange={ this.props.onDatePickerChange }
+        availabilities={ this.props.availabilities }
+        value={ this.props.initialDate }
+      />
     }
 
     return (
