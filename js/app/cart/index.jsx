@@ -15,21 +15,15 @@ if (cart) {
 
   cartComponent = render(
     <Sticky enabled={true} top={ 30 }>
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          <h3 className="panel-title">{ window.__i18n['Cart'] }</h3>
-        </div>
-        <div className="panel-body">
-          <Cart
-            deliveryDate={date}
-            availabilities={window.AppData.availabilities}
-            items={window.AppData.Cart.items}
-            date={date}
-            addToCartURL={window.AppData.Cart.addToCartURL}
-            removeFromCartURL={window.AppData.Cart.removeFromCartURL}
-            validateCartURL={window.AppData.Cart.validateCartURL} />
-        </div>
-      </div>
+        <Cart
+          i18n={window.__i18n}
+          deliveryDate={date}
+          availabilities={window.AppData.availabilities}
+          items={window.AppData.Cart.items}
+          date={date}
+          addToCartURL={window.AppData.Cart.addToCartURL}
+          removeFromCartURL={window.AppData.Cart.removeFromCartURL}
+          validateCartURL={window.AppData.Cart.validateCartURL} />
     </Sticky>,
     cart);
 

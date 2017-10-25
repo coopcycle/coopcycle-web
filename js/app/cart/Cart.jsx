@@ -78,16 +78,23 @@ class Cart extends React.Component
     }
 
     return (
-      <div className="cart">
-        <DatePicker
-          availabilities={this.props.availabilities}
-          value={this.props.deliveryDate}
-          onChange={(date) => this.onDateChange(date)} />
-        <hr />
-        {cartContent}
-        <strong>Total {sum} €</strong>
-        <hr />
-        <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <h3 className="panel-title">{ this.props.i18n['Cart'] }</h3>
+        </div>
+        <div className="panel-body">
+          <div className="cart">
+            <DatePicker
+              availabilities={this.props.availabilities}
+              value={this.props.deliveryDate}
+              onChange={(date) => this.onDateChange(date)} />
+            <hr />
+            {cartContent}
+            <strong>Total {sum} €</strong>
+            <hr />
+            <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+          </div>
+        </div>
       </div>
     );
   }
