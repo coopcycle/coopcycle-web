@@ -354,6 +354,9 @@ class Order
         return $this->events;
     }
 
+    /**
+     * @return Delivery
+     */
     public function getDelivery()
     {
         return $this->delivery;

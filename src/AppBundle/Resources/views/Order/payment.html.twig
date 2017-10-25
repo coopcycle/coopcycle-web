@@ -3,16 +3,14 @@
 {% block body %}
 <div class="container">
 
-  <div class="page-header">
-    <h2>{% trans %}My order{% endtrans %}</h2>
-  </div>
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
-  <p>{% trans %}<strong>Delivery</strong>{% endtrans %} {{ order.delivery.deliveryAddress.streetAddress }}</p>
+
   {% if error is defined %}
   <div class="alert alert-danger">
     {{ error }}
   </div>
   {% endif %}
+
   <div class="row">
     <div class="col-md-6">
       <form id="payment-form" method="POST" class="form-horizontal">

@@ -2,24 +2,17 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\Cart;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
-use AppBundle\Entity\OrderItem;
-use AppBundle\Form\OrderType;
+use AppBundle\Form\AddressType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use League\Geotools\Geotools;
-use League\Geotools\Coordinate\Coordinate;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Stripe;
+
 
 /**
  * @Route("/order")
@@ -52,6 +45,7 @@ class OrderController extends Controller
         $delivery = new Delivery($order);
         $delivery->setDate($cart->getDate());
         $delivery->setOriginAddress($restaurant->getAddress());
+        $delivery->setDeliveryAddress($cart->getAddress());
 
         return $order;
     }
@@ -67,8 +61,9 @@ class OrderController extends Controller
         }
 
         $order = $this->createOrderFromRequest($request);
+        $deliveryAddress =  $order->getDelivery()->getDeliveryAddress();
 
-        $form = $this->createForm(OrderType::class, $order);
+        $form = $this->createForm(AddressType::class, $deliveryAddress);
 
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
             $deliveryAddress = $request->getSession()->get('deliveryAddress');
@@ -81,11 +76,9 @@ class OrderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $order = $form->getData();
-            $deliveryAddress = $form->get('deliveryAddress')->getData();
+            $deliveryAddress = $form->getData();
 
-            $createDeliveryAddress = $form->get('createDeliveryAddress')->getData();
-            if ($createDeliveryAddress) {
+            if (!is_null($deliveryAddress->getId())) {
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
 
@@ -100,6 +93,7 @@ class OrderController extends Controller
         }
 
         return array(
+            'order' => $order,
             'form' => $form->createView(),
             'google_api_key' => $this->getParameter('google_api_key'),
             'restaurant' => $order->getRestaurant(),

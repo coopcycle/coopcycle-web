@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -21,18 +22,26 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('streetAddress', TextType::class)
-            ->add('postalCode', TextType::class)
-            ->add('addressLocality', TextType::class, [
-                'label' => 'City'
-            ])
-            ->add('description', TextType::class, [
-                'required' => false,
-                'label' => 'Delivery instructions (optional)'
-            ])
             ->add('floor', TextType::class, [
                 'required' => false,
                 'label' => 'Floor (optional)'
+            ])
+            ->add('streetAddress', TextType::class, [
+                'label' => 'Street address',
+                'disabled' => true
+            ])
+            ->add('postalCode', TextType::class, [
+                'label' => 'Postal code',
+                'disabled' => true
+            ])
+            ->add('addressLocality', TextType::class, [
+                'label' => 'City',
+                'disabled' => true
+            ])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+                'label' => 'Delivery instructions (optional)',
+                'attr' => ['rows' => '3', 'placeholder' => 'Second door on the left..']
             ])
             ->add('latitude', HiddenType::class, [
                 'mapped' => false,

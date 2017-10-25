@@ -2,12 +2,32 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Restaurant;
 
 
 class Cart
 {
+    /**
+     *
+     * ID of the restaurant the cart is linked to
+     *
+     * @var int
+     */
     private $restaurantId;
+
+    /**
+     * Delivery address for the cart
+     *
+     * @var Address
+     */
+    private $address;
+
+    /**
+     * Delivery date for the cart
+     *
+     * @var string
+     */
     private $date;
 
     /**
@@ -20,6 +40,8 @@ class Cart
         if (null !== $restaurant) {
             $this->restaurantId = $restaurant->getId();
         }
+
+        $this->address = new Address();
     }
 
     public function isForRestaurant(Restaurant $restaurant)
@@ -85,6 +107,23 @@ class Cart
 
         return $this;
     }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     */
+    public function setAddress(Address $address)
+    {
+        $this->address = $address;
+    }
+    
 
     public function getNormalizedItems()
     {

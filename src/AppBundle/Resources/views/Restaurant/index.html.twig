@@ -90,19 +90,20 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-  window.AppData = window.AppData || {};
-  window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
-  window.AppData.Cart = {
-    addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
-    removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
-    items: {{ cart.normalizedItems|json_encode()|raw }},
-    date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
-    validateCartURL: "{{ path('order') }}"
-  }
-  window.__i18n = {
-    "Cart": "{% trans %}Cart{% endtrans %}"
-  }
-</script>
-<script src="{{ asset('js/cart.js') }}"></script>
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
+    window.AppData.Cart = {
+      addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
+      removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
+      items: {{ cart.normalizedItems|json_encode()|raw }},
+      date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
+      validateCartURL: "{{ path('order') }}"
+    }
+    window.__i18n = {
+      "Cart": "{% trans %}Cart{% endtrans %}"
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+  <script src="{{ asset('js/cart.js') }}"></script>
 {% endblock %}

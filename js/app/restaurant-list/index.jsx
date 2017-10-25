@@ -5,6 +5,11 @@ import RestaurantListFilter from "./RestaurantListFilter.jsx";
 
 moment.locale('fr');
 
+
+// suggested addresses for addresspicker
+let preferredAddresses = window.AppData.addresses,
+    preferredResults = preferredAddresses.map(function (item) { return { suggestion: item.streetAddress, preferred: true }});
+
 let searchDate = moment(window.AppData.searchDate),
     initialGeohash = window.AppData.geohash,
     address = localStorage.getItem('search_address'),
@@ -55,6 +60,7 @@ render(<RestaurantListFilter
           onPlaceChange={ onPlaceChange }
           geohash={ initialGeohash }
           address={ address }
+          preferredResults = { preferredResults }
 
           onDatePickerChange={(date) => onDatePickerChange(date)}
           initialDate={ initialDateString }

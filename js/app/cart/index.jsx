@@ -9,12 +9,16 @@ var cartComponent;
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
-var date = localStorage.getItem('search__date') || window.AppData.Cart.date;
+var date = localStorage.getItem('search__date') || window.AppData.Cart.date || '',
+    geohash = localStorage.getItem('search_geohash') || '',
+    streetAddress = localStorage.getItem('search_address') || '';
 
 if (cart) {
 
   cartComponent = render(
         <Cart
+          streetAddress={streetAddress}
+          geohash={geohash}
           i18n={window.__i18n}
           deliveryDate={date}
           availabilities={window.AppData.availabilities}

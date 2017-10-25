@@ -7,102 +7,22 @@
 {% block body %}
 <div class="container">
 
+  {% include 'AppBundle:Order:breadcrumb.html.twig' %}
+
   <div class="row">
-
-    <div class="col-xs-12">
-
-      <div class="page-header">
-        <h2>{% trans %}My order{% endtrans %}</h2>
-      </div>
-
-      {% if cart is defined %}
-
-      {% include 'AppBundle:Order:breadcrumb.html.twig' %}
-
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <i class="fa fa-clock-o fa-lg"></i>  <strong>{% trans %}Delivery{% endtrans %}</strong>
-          <span class="pull-right">{{ cart.date|date('Y-m-d H:i') }}</span>
+    <div class="col-xs-12 col-md-6">
+      {{ form_start(form) }}
+        <h1>{% trans %}cart.widget.title{% endtrans %}</h1>
+        {{ form_widget(form) }}
+        <div class="text-center">
+          <button class="btn btn-primary btn-lg" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
         </div>
-      </div>
-
-      <form method="post">
-
-        <div class="list-group">
-          {% for item in cart.normalizedItems %}
-          <a href="#" class="list-group-item">
-            {{ item.name }} x {{ item.quantity }}<span class="pull-right">{{ item.total }} €</span><br>
-            {%  if item.modifiersDescription %}{{ item.modifiersDescription }}{%  endif %}
-          </a>
-          {% endfor %}
-        </div>
-
-        <div>
-          <strong>Total : {{ cart.total }} €</strong>
-        </div>
-
-        <hr>
-
-        <h3>{% trans %}Choose a delivery address{% endtrans %}</h3>
-
-        {{ form_start(form) }}
-          {% if not has_delivery_address %}
-            <div class="hidden">
-              {{ form_widget(form.createDeliveryAddress) }}
-            </div>
-          {% else %}
-            {{ form_widget(form.createDeliveryAddress) }}
-          {% endif %}
-          <hr>
-          {{ form_widget(form.deliveryAddress) }}
-          <hr>
-          {{ form_widget(form.save, { attr: { class: 'btn-primary btn-block' } }) }}
-        {{ form_end(form) }}
-
-      </form>
-
-      {% else %}
-      <div class="alert alert-warning">
-      {% trans %}No order in progress{% endtrans %}.
-      </div>
-      {% endif %}
-
+      {{ form_end(form) }}
     </div>
-
   </div>
 </div>
-{% endblock %}
+{%  endblock %}
 
-{% block scripts %}
-{% if cart is defined %}
-<script type="text/javascript">
-(function() {
 
-  $('#order_deliveryAddress_streetAddress').on('input', function(e) {
-    $(this).closest('.form-group').removeClass('has-error');
-    $(this).closest('.form-group').find('.help-block').remove();
-  });
-
-  $('input[name="order[createDeliveryAddress]"]').on('change', function(e) {
-    var $form = $(this).closest('form');
-    var data = {};
-    data[$(this).attr('name')] = $(this).val();
-    $.ajax({
-      url : $form.attr('action'),
-      type: $form.attr('method'),
-      data : data,
-      success: function(html) {
-        var $content = $(html).find('#order_deliveryAddress');
-        $('#order_deliveryAddress').replaceWith($content);
-        initMap();
-      }
-    });
-  });
-
-})()
-</script>
-<script src="{{ asset('js/order-address.js') }}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
-  async defer></script>
-{% endif %}
+{% block script %}
 {% endblock %}
