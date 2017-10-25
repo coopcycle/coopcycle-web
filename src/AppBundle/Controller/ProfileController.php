@@ -211,7 +211,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/restaurants/{id}", name="profile_restaurant_edit")
+     * @Route("/profile/restaurants/{id}", name="profile_restaurant")
      * @Template("@App/Restaurant/form.html.twig")
      */
     public function restaurantEditAction($id, Request $request)
@@ -233,7 +233,24 @@ class ProfileController extends Controller
         return $this->editMenuAction($id, $request, 'AppBundle::profile.html.twig', [
             'success' => 'profile_restaurants',
             'restaurants' => 'profile_restaurants',
-            'restaurant' => 'profile_restaurant_edit',
+            'restaurant' => 'profile_restaurant',
+            'add_section' => 'profile_restaurant_menu_add_section'
+        ]);
+    }
+
+    /**
+     * @Route("/profile/restaurant/{id}/menu/add-section", name="profile_restaurant_menu_add_section")
+     * @Template("@App/Restaurant/form-menu.html.twig")
+     */
+    public function addMenuSectionAction($id, Request $request)
+    {
+        $request->attributes->set('_add_menu_section', true);
+
+        return $this->editMenuAction($id, $request, 'AppBundle::profile.html.twig', [
+            'success' => 'admin_restaurants',
+            'restaurants' => 'profile_restaurants',
+            'restaurant' => 'profile_restaurant',
+            'add_section' => 'profile_restaurant_menu_add_section'
         ]);
     }
 
@@ -267,7 +284,7 @@ class ProfileController extends Controller
             'order_ready'   => 'profile_order_ready',
             'order_details' => 'profile_order',
             'restaurants'   => 'profile_restaurants',
-            'restaurant'    => 'profile_restaurant_edit',
+            'restaurant'    => 'profile_restaurant',
         ], $request->query->get('tab', 'today'));
     }
 

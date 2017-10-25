@@ -71,23 +71,24 @@
 {% block _menu_sections_entry_items_entry_row %}
 {% spaceless %}
   {% set containerSelector = form.vars.id ~ '_container' %}
-  <div class="list-group-item">
+  <div class="list-group-item" id="{{ form.vars.id }}">
     <div class="form-group row">
-      <div class="col-sm-8">
+      <div class="col-sm-6">
         {{ form_label(form.name) }}
-        {{ form_widget(form.name, { attr: {class: 'input-sm' } }) }}
+        {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         {{ form_label(form.price) }}
         {{ form_widget(form.price, { attr: { class: 'input-sm text-right' } }) }}
       </div>
-      <div class="col-sm-1">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close" tabindex="-1"><span aria-hidden="true">&times;</span></button>
+      <div class="col-sm-3">
+        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox switch' }}) }}
       </div>
-    </div>
-    <div class="form-group row">
-      <div class="col-sm-8">
-        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox' }}) }}
+      <div class="col-sm-1">
+        <button type="button" class="close" aria-label="Close" tabindex="-1"
+          data-target="{{ '#' ~ form.vars.id }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
     </div>
     <div class="form-group show-description">
@@ -107,9 +108,84 @@
     <div class="form-group row collapse" id="{{ containerSelector }}">
       <div class="col-sm-8">
         {{ form_label(form.description) }}
-        {{ form_widget(form.description, { attr: {class: 'input-sm' } }) }}
+        {{ form_widget(form.description, { attr: { class: 'input-sm' } }) }}
       </div>
     </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <label class="control-label">{% trans %}Extra groups{% endtrans %}</label>
+      </div>
+      <div class="col-sm-6 text-right">
+        <button type="button" class="btn btn-xs btn-success"
+          data-toggle="add-menu-item-modifier-group" data-target="{{ '#' ~ form.modifiers.vars.id }}">
+          <i class="fa fa-plus"></i> {% trans %}Add an extra groups{% endtrans %}
+        </button>
+      </div>
+    </div>
+    {{ form_widget(form.modifiers) }}
   </div>
 {% endspaceless %}
+{% endblock %}
+
+{% block _menu_sections_entry_items_entry_modifiers_entry_row %}
+{% set tooltip %}
+  <strong>{% trans %}menu.modifier.STRATEGY_FREE{% endtrans %}</strong>
+  <br>
+  {% trans %}The extra is free{% endtrans %}
+  <br>
+  <strong>{% trans %}menu.modifier.STRATEGY_ADD_MODIFIER_PRICE{% endtrans %}</strong>
+  <br>
+  {% trans %}The extra has a fixed price{% endtrans %}
+  <br>
+  <strong>{% trans %}menu.modifier.STRATEGY_ADD_MENUITEM_PRICE{% endtrans %}</strong>
+  <br>
+  {% trans %}Each extra has a custom price{% endtrans %}
+{% endset %}
+<div id="{{ form.vars.id }}" class="menu-item-modifiers">
+  <div class="form-group row">
+    <div class="col-sm-6">
+      {{ form_label(form.name) }}
+      {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
+    </div>
+    <div class="col-sm-3">
+      {{ form_label(form.calculusStrategy) }}  <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ tooltip }}">
+        <i class="fa fa-info-circle"></i>
+      </a>
+      {{ form_widget(form.calculusStrategy, { attr: { class: 'modifier-calculus-strategy input-sm' } }) }}
+    </div>
+    <div class="col-sm-2">
+      {{ form_label(form.price, null, { label_attr: { class: 'modifier-group-price-label' } }) }}
+      {{ form_widget(form.price, { attr: { class: 'modifier-group-price input-sm' } }) }}
+    </div>
+    <div class="col-sm-1">
+      <button type="button" class="close" aria-label="Close" tabindex="-1"
+        data-target="{{ '#' ~ form.vars.id }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <h6 class="text-muted">{% trans %}Extras{% endtrans %} ({{ form.modifierChoices.vars.value|length }})</h6>
+  {{ form_widget(form.modifierChoices) }}
+  <button type="button" class="btn btn-xs btn-success" data-toggle="add-menu-item-modifier">
+    <i class="fa fa-plus"></i> {% trans %}Add an extra{% endtrans %}
+  </button>
+</div>
+{% endblock %}
+
+{% block _menu_sections_entry_items_entry_modifiers_entry_modifierChoices_entry_row %}
+<div class="form-group row" id="{{ form.vars.id }}">
+  <div class="col-sm-6">
+    {{ form_label(form.name, null, { label_attr: { class: 'sr-only' } }) }}
+    {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
+  </div>
+  <div class="col-sm-3">
+    {{ form_widget(form.price, { attr: { class: 'modifier-price input-sm' } }) }}
+  </div>
+  <div class="col-sm-3">
+    <button type="button" class="close" aria-label="Close" tabindex="-1"
+      data-target="{{ '#' ~ form.vars.id }}">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
 {% endblock %}

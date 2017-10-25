@@ -199,6 +199,7 @@ class AdminController extends Controller
             'success' => 'admin_restaurant_menu',
             'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
+            'add_section' => 'admin_restaurant_menu_add_section'
         ]);
     }
 
@@ -214,6 +215,7 @@ class AdminController extends Controller
             'success' => 'admin_restaurants',
             'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
+            'add_section' => 'admin_restaurant_menu_add_section'
         ]);
     }
 

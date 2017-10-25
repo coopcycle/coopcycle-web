@@ -79,6 +79,10 @@ services:
     arguments: [ '@translator', '@delivery_service_factory' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\MenuType\MenuItemModifierType':
+    arguments: [ '@translator' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:

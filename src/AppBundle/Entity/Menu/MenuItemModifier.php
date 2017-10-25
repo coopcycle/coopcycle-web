@@ -25,6 +25,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class MenuItemModifier extends Thing
 {
+    const STRATEGY_FREE = 'FREE';
+    const STRATEGY_ADD_MENUITEM_PRICE = 'ADD_MENUITEM_PRICE';
+    const STRATEGY_ADD_MODIFIER_PRICE = 'ADD_MODIFIER_PRICE';
+
     /**
      * @var int
      *
@@ -60,7 +64,7 @@ class MenuItemModifier extends Thing
     /**
      * The menu item this modifier belongs to
      *
-         * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", inversedBy="modifiers", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", inversedBy="modifiers", cascade={"persist"})
      */
     protected $menuItem;
 
@@ -114,13 +118,13 @@ class MenuItemModifier extends Thing
      */
     public function getModifierPrice($modifier)
     {
-        if ($this->getCalculusStrategy() === 'FREE') {
+        if ($this->getCalculusStrategy() === self::STRATEGY_FREE) {
             $price = (float)0;
         }
-        else if ($this->getCalculusStrategy() === 'ADD_MENUITEM_PRICE') {
+        else if ($this->getCalculusStrategy() === self::STRATEGY_ADD_MENUITEM_PRICE) {
             $price = $modifier->getPrice();
         }
-        else if ($this->getCalculusStrategy() === 'ADD_MODIFIER_PRICE') {
+        else if ($this->getCalculusStrategy() === self::STRATEGY_ADD_MODIFIER_PRICE) {
             $price = $this->getPrice();
         }
         else {

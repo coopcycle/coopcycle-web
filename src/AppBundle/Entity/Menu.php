@@ -90,4 +90,17 @@ class Menu extends CreativeWork
 
         return $items;
     }
+
+    public function getAllModifiers()
+    {
+        $modifiers = new ArrayCollection();
+
+        foreach ($this->getAllItems() as $item) {
+            foreach ($item->getModifiers() as $modifier) {
+                $modifiers->add($modifier);
+            }
+        }
+
+        return $modifiers;
+    }
 }
