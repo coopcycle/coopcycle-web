@@ -79,7 +79,7 @@ class Cart extends React.Component
     }
 
     return (
-      <Sticky>
+      <Sticky enabled={true} top={ 30 }>
         <div className="panel panel-default">
           <div className="panel-heading">
             <h3 className="panel-title">{ this.props.i18n['Cart'] }</h3>
