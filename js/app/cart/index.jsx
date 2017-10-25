@@ -1,7 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import Cart from './Cart.jsx';
-import Sticky from 'react-stickynode';
+
 
 var cart = document.getElementById('cart');
 var cartComponent;
@@ -14,7 +14,6 @@ var date = localStorage.getItem('search__date') || window.AppData.Cart.date;
 if (cart) {
 
   cartComponent = render(
-    <Sticky enabled={true} top={ 30 }>
         <Cart
           i18n={window.__i18n}
           deliveryDate={date}
@@ -23,8 +22,7 @@ if (cart) {
           date={date}
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
-          validateCartURL={window.AppData.Cart.validateCartURL} />
-    </Sticky>,
+          validateCartURL={window.AppData.Cart.validateCartURL} />,
     cart);
 
   $('.js-add-to-cart').on('click', function(e) {

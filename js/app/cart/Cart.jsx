@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'underscore';
 import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
+import Sticky from 'react-stickynode';
 
 class Cart extends React.Component
 {
@@ -78,24 +79,26 @@ class Cart extends React.Component
     }
 
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          <h3 className="panel-title">{ this.props.i18n['Cart'] }</h3>
-        </div>
-        <div className="panel-body">
-          <div className="cart">
-            <DatePicker
-              availabilities={this.props.availabilities}
-              value={this.props.deliveryDate}
-              onChange={(date) => this.onDateChange(date)} />
-            <hr />
-            {cartContent}
-            <strong>Total {sum} €</strong>
-            <hr />
-            <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+      <Sticky>
+        <div className="panel panel-default">
+          <div className="panel-heading">
+            <h3 className="panel-title">{ this.props.i18n['Cart'] }</h3>
+          </div>
+          <div className="panel-body">
+            <div className="cart">
+              <DatePicker
+                availabilities={this.props.availabilities}
+                value={this.props.deliveryDate}
+                onChange={(date) => this.onDateChange(date)} />
+              <hr />
+              {cartContent}
+              <strong>Total {sum} €</strong>
+              <hr />
+              <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+            </div>
           </div>
         </div>
-      </div>
+      </Sticky>
     );
   }
 }
