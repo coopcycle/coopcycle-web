@@ -83,6 +83,42 @@ function renderCalculusStrategy($input) {
   }
 }
 
+function renderSwitch($input) {
+
+  const $parent = $input.closest('div.checkbox').parent();
+
+  const $switch = $('<div>');
+  const $hidden = $('<input>')
+
+  $switch.addClass('switch');
+
+  $hidden
+    .attr('type', 'hidden')
+    .attr('name', $input.attr('name'))
+    .attr('value', $input.attr('value'));
+
+  $parent.append($switch);
+  $parent.append($hidden);
+
+  const checked = $input.is(':checked');
+
+  $input.closest('div.checkbox').remove();
+
+  render(
+    <Switch defaultChecked={ checked }
+      checkedChildren={ window.__i18n['Available'] } unCheckedChildren={ window.__i18n['Unavailable'] }
+      onChange={(checked) => {
+        if (checked) {
+          $parent.append($hidden);
+        } else {
+          $hidden.remove();
+        }
+      }} />,
+    $switch.get(0)
+  );
+
+}
+
 function enableForm($form, enable) {
   if (enable) {
     $('#menu_addSection').removeAttr('disabled');
@@ -113,6 +149,9 @@ $(function() {
   // Show/hide inputs on page load
   $form.find('.modifier-calculus-strategy').each((index, input) => renderCalculusStrategy($(input)));
 
+  // Render Switch on page load
+  $form.find('.switch').each((index, el) => renderSwitch($(el)));
+
   $(document).on('click', '.close', function(e) {
     e.preventDefault();
     var selector = $(e.target).closest('.close').data('target');
@@ -124,6 +163,7 @@ $(function() {
     var selector = $(e.target).data('target');
     var $target = $(selector);
     addMenuItemForm($target);
+    $target.find('.switch').each((index, el) => renderSwitch($(el)));
   });
 
   $(document).on('click', '[data-toggle="add-menu-item-modifier"]', function(e) {
@@ -187,47 +227,6 @@ $(function() {
   $(document).on('show.bs.collapse', '[role="tabpanel"] .list-group-item .collapse', function () {
     $(this).closest('.list-group-item').find('.show-description').remove();
   });
-
-  const regex = /^menu\[sections\]\[[0-9]+\]\[items\]\[[0-9]+\]\[isAvailable\]$/
-
-  $('#menu_sections > .panel .list-group-item input[type="checkbox"]').each((index, el) => {
-
-    if ($(el).attr('name').match(regex)) {
-
-      const $parent = $(el).closest('div.checkbox').parent();
-
-      const $switch = $('<div>');
-      const $hidden = $('<input>')
-
-      $switch.addClass('switch');
-
-      $hidden
-        .attr('type', 'hidden')
-        .attr('name', $(el).attr('name'))
-        .attr('value', $(el).attr('value'));
-
-      $parent.append($switch);
-      $parent.append($hidden);
-
-      const checked = $(el).is(':checked');
-
-      $(el).closest('div.checkbox').remove();
-
-      render(
-        <Switch defaultChecked={ checked }
-          checkedChildren={ window.__i18n['Available'] } unCheckedChildren={ window.__i18n['Unavailable'] }
-          onChange={(checked) => {
-            if (checked) {
-              $parent.append($hidden);
-            } else {
-              $hidden.remove();
-            }
-          }} />,
-        $switch.get(0)
-      );
-    }
-
-  })
 
   $(document).on('change', 'select.modifier-calculus-strategy', function(e) {
     renderCalculusStrategy($(this));
