@@ -42,7 +42,7 @@ window.__i18n = {
   "Available": "{% trans %}Available{% endtrans %}",
   "Unavailable": "{% trans %}Unavailable{% endtrans %}"
 }
-window.__addSectionURL = "{{ path('admin_restaurant_menu_add_section', { id: restaurant.id }) }}";
+window.__addSectionURL = "{{ path(add_section_route, { id: restaurant.id }) }}";
 </script>
 <script src="{{ asset('js/restaurant-menu.js') }}"></script>
 {% endblock %}

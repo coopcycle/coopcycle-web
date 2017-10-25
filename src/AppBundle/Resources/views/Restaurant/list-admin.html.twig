@@ -1,6 +1,6 @@
 {% set restaurant_orders_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant_orders' : 'profile_restaurant_orders' %}
 {% set restaurant_menu_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant_menu' : 'profile_restaurant_menu' %}
-{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant_edit' %}
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
 
 <table class="table">
   <tbody>

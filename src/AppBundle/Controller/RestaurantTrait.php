@@ -214,6 +214,7 @@ trait RestaurantTrait
             'section_added' => $sectionAdded,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
+            'add_section_route' => $routes['add_section'],
         ];
     }
 }
