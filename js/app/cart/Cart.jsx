@@ -9,9 +9,10 @@ class Cart extends React.Component
     super(props);
     this.state = {
       items: props.items,
-      date: props.date
+      date: props.deliveryDate
     };
   }
+
   removeItem(item) {
     let removeFromCartUrl = this.props.removeFromCartURL.replace('__ITEM_KEY__', item.props.itemKey);
     $.ajax({
@@ -21,6 +22,7 @@ class Cart extends React.Component
       this.setState({items: cart.items});
     });
   }
+
   addMenuItemById(id, modifiers) {
     $.post(this.props.addToCartURL, {
       selectedItemData: {
@@ -32,11 +34,13 @@ class Cart extends React.Component
       this.setState({items: cart.items});
     });
   }
+
   onDateChange(dateString) {
     $.post(this.props.addToCartURL, {
       date: dateString
     });
   }
+
   render() {
     var items = this.state.items.map((item, key) => {
       return (
@@ -77,7 +81,7 @@ class Cart extends React.Component
       <div className="cart">
         <DatePicker
           availabilities={this.props.availabilities}
-          value={this.props.date}
+          value={this.props.deliveryDate}
           onChange={(date) => this.onDateChange(date)} />
         <hr />
         {cartContent}

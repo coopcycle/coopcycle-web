@@ -1,8 +1,8 @@
 <nav aria-label="...">
   <ul class="pager">
     {% set prev_page = (page > 1) ? page - 1 : 1 %}
-    <li class="previous {% if page == 1 %}disabled{% endif %}"><a href="{{ path('restaurants', {'geohash': geohash, 'page': prev_page}) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+    <li class="previous" {% if page == 1 %}style="display: none;"{% endif %}><a href="{{ path('restaurants', {'geohash': geohash, 'page': prev_page, 'datetime': searchDate}) }}"><span aria-hidden="true">&larr;</span> {%  trans  %}Previous{% endtrans %}</a></li>
     {% set next_page = (page < pages) ? page + 1 : page %}
-    <li class="next {% if page == pages %}disabled{% endif %}"><a href="{{ path('restaurants', {'geohash': geohash, 'page': next_page}) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
+    <li class="next" {% if next_page == page %}style="display: none;"{% endif %}><a href="{{ path('restaurants', {'geohash': geohash, 'page': next_page, 'datetime': searchDate}) }}">{% trans %}Next{% endtrans %} <span aria-hidden="true">&rarr;</span></a></li>
   </ul>
 </nav>

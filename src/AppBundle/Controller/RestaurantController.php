@@ -61,7 +61,7 @@ class RestaurantController extends Controller
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
-        if ($request->query->has('geohash')) {
+        if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
             $geotools = new Geotools();
             $geohash = $request->query->get('geohash');
 
@@ -70,17 +70,43 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $count = $repository->countNearby($latitude, $longitude, 1500);
+            // FIXME : can't use SQL because we want to filter by date as well :(
+            // $count = $repository->countNearby($latitude, $longitude, 1500);
+            // $matches = $repository->findNearby($latitude, $longitude, 1500, , self::ITEMS_PER_PAGE, $offset);
 
-            $matches = $repository->findNearby($latitude, $longitude, 1500, self::ITEMS_PER_PAGE, $offset);
+            $matches = $repository->findNearby($latitude, $longitude, 1500);
         } else {
-            $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
-            $matches = $repository->findBy([], ['name' => 'ASC'], self::ITEMS_PER_PAGE);
+
+            // FIXME : can't use SQL because we want to filter by date as well :(
+            // $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
+
+            $matches = $repository->findBy([], ['name' => 'ASC']);
         }
+
+        if ($request->query->has('datetime')) {
+            $date = new \DateTime($request->query->get('datetime'));
+        } else {
+            $date = new \DateTime();
+        }
+
+        $matches = array_filter(
+            $matches,
+            function ($item) use ($date) {
+                return $item->isOpen($date);
+            }
+        );
+
+        $count = count($matches);
+
+        $matches = array_slice($matches, $offset, self::ITEMS_PER_PAGE);
 
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
+
         return array(
+            'count' => $count,
+            'google_api_key' => $this->getParameter('google_api_key'),
+            'searchDate' => $date->format(\DateTime::ATOM),
             'restaurants' => $matches,
             'page' => $page,
             'pages' => $pages,

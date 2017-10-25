@@ -3,56 +3,69 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
-    {% include "AppBundle:Restaurant:pagination.html.twig" %}
+    <div class="col-md-11 col-md-offset-1 restaurant-list-filter">
+        {# hidden form filled with javascript #}
+        <form class="form-inline" method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
+          <input type="hidden" name="geohash" value={{ geohash }}>
+          <input type="hidden" name="datetime">
+        </form>
+        <div id="restaurant-list-filter">
+        </div>
     </div>
   </div>
-  <div class="row">
-    {% for restaurant in restaurants %}
-    <div class="col-sm-6 col-md-4">
 
-      {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
+  {%  if count == 0 %}
+      <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+          {{ 'norestaurantfound'|trans|raw }}
+      </div>
+  {% else %}
+    <div class="row display-flex">
+      {% for restaurant in restaurants %}
+      <div class="col-sm-6 col-md-4 display-flex">
 
-      {% set cuisineNames = [] %}
-      {% for cuisine in restaurant.servesCuisine %}
-        {% set cuisineNames = cuisineNames|merge([cuisine.name]) %}
-      {% endfor %}
+        {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
 
-      {% if restaurant_image is empty %}
-
-        {% set cuisineImage = 'default' %}
-        {% set cuisineImages = [] %}
+        {% set cuisineNames = [] %}
         {% for cuisine in restaurant.servesCuisine %}
-          {% for image in images %}
-            {% if image == cuisine.name|slugify %}
-              {% set cuisineImages = cuisineImages|merge([image]) %}
-            {% endif %}
-          {% endfor %}
+          {% set cuisineNames = cuisineNames|merge([cuisine.name]) %}
         {% endfor %}
 
-        {% if cuisineImages|length > 0 %}
-          {% set cuisineImage = random(cuisineImages) %}
+        {% if restaurant_image is empty %}
+
+          {% set cuisineImage = 'default' %}
+          {% set cuisineImages = [] %}
+          {% for cuisine in restaurant.servesCuisine %}
+            {% for image in images %}
+              {% if image == cuisine.name|slugify %}
+                {% set cuisineImages = cuisineImages|merge([image]) %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+
+          {% if cuisineImages|length > 0 %}
+            {% set cuisineImage = random(cuisineImages) %}
+          {% endif %}
+
+          {% set restaurant_image = asset('img/cuisine/' ~ cuisineImage ~ '.jpg') %}
+
         {% endif %}
 
-        {% set restaurant_image = asset('img/cuisine/' ~ cuisineImage ~ '.jpg') %}
+        <a class="thumbnail restaurant-item" href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
+          <img src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+          <div class="caption">
+            <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
+            <small>{{ restaurant.address.streetAddress }}</small>
+            <p>
+              {% for cuisineName in cuisineNames %}
+              <span class="label label-info">{{ cuisineName }}</span>
+              {% endfor %}
+            </p>
+          </div>
+        </a>
 
-      {% endif %}
-
-      <a class="thumbnail restaurant-item" href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
-        <img src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
-        <div class="caption">
-          <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-          <small>{{ restaurant.address.streetAddress }}</small>
-          <p>
-            {% for cuisineName in cuisineNames %}
-            <span class="label label-info">{{ cuisineName }}</span>
-            {% endfor %}
-          </p>
-        </div>
-      </a>
-
-    </div>
-    {% endfor %}
+      </div>
+      {% endfor %}
+    {%  endif %}
   </div>
   <div class="row">
     <div class="col-xs-12">
@@ -61,3 +74,14 @@
   </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.searchDate = "{{ searchDate }}";
+    window.AppData.geohash = "{{ geohash }}";
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+  <script src="{{ asset('js/restaurant-list.js') }}"></script>
+{% endblock %}
+

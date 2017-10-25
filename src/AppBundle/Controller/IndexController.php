@@ -18,8 +18,18 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
+        $user = $this->getUser();
+
+        if ($user) {
+            $addresses = $user->getAddresses();
+        }
+        else {
+            $addresses = [];
+        }
+
         return array(
             'google_api_key' => $this->getParameter('google_api_key'),
+            'addresses' => $addresses
         );
     }
 }
