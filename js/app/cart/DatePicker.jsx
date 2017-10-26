@@ -13,8 +13,15 @@ class DatePicker extends Component {
 
     const days = _.groupBy(availabilities, date =>
       moment(date).format('YYYY-MM-DD'))
-    const availableTimes = days[Object.keys(days)[0]]
-      .map(date => moment(date).format('HH:mm'))
+
+    let availableTimes
+
+    if (value) {
+      let day = moment(value).format('YYYY-MM-DD')
+      availableTimes = days[day].map(date => moment(date).format('HH:mm'))
+    } else {
+      availableTimes = days[Object.keys(days)[0]].map(date => moment(date).format('HH:mm'))
+    }
 
     this.state = {
       availableTimes,
@@ -92,7 +99,6 @@ class DatePicker extends Component {
 
     const days = _.groupBy(availabilities, date => moment(date).format('YYYY-MM-DD'))
     const dates = _.keys(days)
-
 
     return (
       <div className="row" >
