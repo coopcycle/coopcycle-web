@@ -295,7 +295,13 @@ class Restaurant extends FoodEstablishment
 
         $now->modify('+'.self::PREPARATION_AND_DELIVERY_DELAY.' minutes');
 
-        $date = clone $this->getNextOpeningDate($now);
+        $nextOpeningDate = $this->getNextOpeningDate($now);
+
+        if (is_null($nextOpeningDate)) {
+            return [];
+        }
+
+        $date =  clone $nextOpeningDate;
 
         $availabilities = [$date->format(\DateTime::ATOM)];
 
@@ -306,7 +312,13 @@ class Restaurant extends FoodEstablishment
 
             $date->modify('+15 minutes');
 
-            $nextOpenedDate = clone $this->getNextOpeningDate($date);
+            $nextOpeningDate = $this->getNextOpeningDate($date);
+
+            if (is_null($nextOpeningDate)) {
+                return $availabilities;
+            }
+
+            $nextOpenedDate = clone $nextOpeningDate;
 
             $day = $nextOpenedDate->format('Ymd');
 

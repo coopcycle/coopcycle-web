@@ -124,6 +124,7 @@ class RestaurantController extends Controller
      */
     public function indexAction($id, $slug, Request $request)
     {
+
         $restaurant = $this->getDoctrine()
             ->getRepository('AppBundle:Restaurant')->find($id);
 
