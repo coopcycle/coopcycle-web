@@ -50,6 +50,7 @@ class Order
     const STATUS_REFUSED    = 'REFUSED';
     const STATUS_READY      = 'READY';
     const STATUS_CANCELED   = 'CANCELED';
+    const STATUS_PICKED     = 'PICKED';
 
     /**
      * @var int
