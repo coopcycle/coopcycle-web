@@ -119,4 +119,17 @@ class RestaurantTest extends TestCase
         ], $availabilities);
 
     }
+
+    public function testGetAvailabilitiesWithNoOpenings() {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours([]);
+
+
+        $date = new \DateTime('2017-10-04T17:30:26+02:00');
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertEquals([], $availabilities);
+
+    }
 }
