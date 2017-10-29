@@ -44,6 +44,7 @@ class AddressPicker extends React.Component {
     this.onAddressSelect = this.onAddressSelect.bind(this);
     this.onAddressChange = this.onAddressChange.bind(this);
     this.onAddressBlur = this.onAddressBlur.bind(this);
+    this.onAddressKeyUp = this.onAddressKeyUp.bind(this);
   }
 
   onAddressChange (value) {
@@ -55,6 +56,12 @@ class AddressPicker extends React.Component {
 
   onAddressBlur() {
     this.setState({address: this.state.initialAddress})
+  }
+
+  onAddressKeyUp(evt) {
+    if(evt.key == 'Enter'){
+      this.props.onPlaceChange(this.state.geohash, this.state.address);
+    }
   }
 
   onAddressSelect (address, placeId) {
@@ -109,6 +116,7 @@ class AddressPicker extends React.Component {
     inputProps.value = address
     inputProps.onChange = this.onAddressChange
     inputProps.onBlur = this.onBlur
+    inputProps.onKeyUp = this.onAddressKeyUp
     inputProps.placeholder = this.placeholder
 
     return (

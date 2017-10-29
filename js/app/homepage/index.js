@@ -11,11 +11,12 @@ function onPlaceChange (geohash, address) {
 
 let preferredAddresses = window.AppData.addresses,
     preferredResults = preferredAddresses.map(function (item) { return { suggestion: item.streetAddress, preferred: true }}),
-    address = localStorage.getItem('search_address');
+    address = localStorage.getItem('search_address') || '',
+    geohash = localStorage.getItem('search_geohash') || '';
 
 render(
   <AddressPicker
-    geohash = { '' }
+    geohash = { geohash }
     address = { address }
     onPlaceChange = { onPlaceChange }
     preferredResults = { preferredResults }
