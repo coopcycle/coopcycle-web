@@ -8,7 +8,7 @@ class GeoUtils
 {
     public static function asGeoCoordinates($pointAsText)
     {
-        preg_match('/POINT\(([0-9\.]+) ([0-9\.]+)\)/', $pointAsText, $matches);
+        preg_match('/POINT\([-]{0,1}([0-9\.]+) [-]{0,1}([0-9\.]+)\)/', $pointAsText, $matches);
 
         $latitude = $matches[1];
         $longitude = $matches[2];
