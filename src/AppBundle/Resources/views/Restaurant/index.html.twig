@@ -48,7 +48,7 @@
                     <p class="menu-item-description">{{ menuItem.description }}</p>
                   {%  endif %}
                 </span>
-                <span class="menu-item-price">{{ menuItem.price }} €</span>
+                <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
               </a >
               {%  if menuItem.modifiers.count > 0 %}
                 <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
