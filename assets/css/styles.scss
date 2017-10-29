@@ -139,11 +139,13 @@ footer {
 }
 
 .menu-item .menu-item-content {
+    font-weight: bold;
     width: 80%;
 }
 
 .menu-item .menu-item-description {
     display: block;
+    font-weight: normal;
 }
 
 .menu-item .menu-item-price {
