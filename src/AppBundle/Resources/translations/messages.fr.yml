@@ -11,7 +11,6 @@ Restaurant: Restaurant
 Enter your address: Entrez votre adresse
 Data imported from %link%: Données importées depuis %link%
 Search for restaurants: Rechercher des restaurants
-View on GitHub: Voir sur GitHub
 My account: Mon compte
 Username: Nom d'utilisateur
 Email: Email
@@ -33,6 +32,7 @@ Postal code: Code postal
 City: Ville
 Street address: Adresse
 Delivery instructions (optional): Instructions (digicode, entreprise, ..) - optionnel
+Second door on the left..: Dans la deuxième cour à gauche..
 Floor (optional): Étage - optionnel
 Please select an address in the dropdown: Veuillez sélectionner une adresse dans la liste déroulante
 Address not available: Adresse indisponible
@@ -121,6 +121,9 @@ delivery.status.CANCELED: Annulée
 
 demo.disclaimer: 📢  Bienvenue sur la démo de la plateforme <a href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: Commandez, payez avec une carte de crédit de test et suivez nos bots-livreurs!
+
+cart.widget.title: Vos détails de livraison
+cart.widget.button: Commander
 
 search.help: >
   Cherchez dans les quartiers de Paris : %links%

@@ -238,7 +238,6 @@ class AdminController extends Controller
      */
     public function newDeliveryAction(Request $request)
     {
-        $osrmHost = $this->getParameter('osrm_host');
 
         $delivery = new Delivery();
 

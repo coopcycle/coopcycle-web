@@ -29,9 +29,9 @@ class BaseAddress extends Place
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
-        return $this->description || '';
+        return $this->description;
     }
 
     /**
@@ -45,9 +45,9 @@ class BaseAddress extends Place
     /**
      * @return string
      */
-    public function getFloor(): string
+    public function getFloor()
     {
-        return $this->floor || '';
+        return $this->floor;
     }
 
     /**
