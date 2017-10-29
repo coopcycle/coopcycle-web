@@ -6,69 +6,18 @@
 {% endblock %}
 
 {% block content %}
-
-<style>
-.arrow-down {
-  font-size: 24px;
-}
-</style>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#order-nav" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">{% trans %}Order{% endtrans %} #{{ order.id }}</a>
-    </div>
-    <div class="collapse navbar-collapse" id="order-nav">
-      <ul class="nav navbar-nav">
-        <li><a href="#">{% include "AppBundle:Order:label.html.twig" %}</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        {#
-        <li>
-          <button type="button" class="btn btn-default navbar-btn btn-xs">Reorder</button>
-        </li>
-        #}
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="alert alert-info">
-  <ul class="list-unstyled">
-    <li class="text-center"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>   {{ order.restaurant.name }} {{ order.restaurant.address.streetAddress }}</li>
-    <li class="text-center"><span class="arrow-down">⇣</span></li>
-    <li class="text-center"><i class="fa fa-smile-o fa-lg" aria-hidden="true"></i>   {{ order.delivery.deliveryAddress.streetAddress }}</li>
-  </ul>
-</div>
-
-<div class="row">
-  <div class="col-md-8">
-    <div class="embed-responsive embed-responsive-4by3">
-      <div class="embed-responsive-item" id="map"></div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div id="order-events"></div>
-  </div>
-</div>
-
+  {% include "AppBundle:Order:orderFollow.html.twig" %}
 {% endblock %}
 
 {% block scripts %}
 <script src="/tracking/socket.io/socket.io.js"></script>
 <script>
-window.__order = {{ order_json|raw }};
-window.__order_events = {{ order_events_json|raw }}
-window.__delivery_events = {{ delivery_events_json|raw }}
-window.__i18n = {
-  'History': "{{ 'History'|trans }}"
-}
+  window.__order = {{ order_json|raw }};
+  window.__order_events = {{ order_events_json|raw }}
+  window.__delivery_events = {{ delivery_events_json|raw }}
+  window.__i18n = {
+    'History': "{{ 'History'|trans }}"
+  }
 </script>
 <script src="{{ asset('js/order-tracking.js') }}"></script>
 {% endblock %}
