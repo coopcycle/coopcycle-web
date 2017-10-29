@@ -24,7 +24,6 @@ var webpackConfig = {
     'js/cart': './js/app/cart/index.jsx',
     'js/delivery-form': './js/app/delivery/form.jsx',
     'js/homepage': './js/app/homepage/index.js',
-    'js/order-address': './js/app/order/address.jsx',
     'js/order-payment': './js/app/order/payment.js',
     'js/order-tracking': [ 'whatwg-fetch', './js/app/order/tracking.jsx' ],
     'js/profile-deliveries': './js/app/profile/deliveries.js',

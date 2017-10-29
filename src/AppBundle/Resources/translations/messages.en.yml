@@ -20,6 +20,9 @@ delivery.status.DELIVERED: Delivered
 demo.disclaimer: 📢  Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: Follow the checkout process, pay with a test credit card & see bots deliver your meal !
 
+cart.widget.title: Your delivery details
+cart.widget.button: Order
+
 search.help: >
   Search restaurants in Paris area : %links%
 
