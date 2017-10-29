@@ -278,7 +278,7 @@ class Delivery extends Intangible
         $order = $this->getOrder();
 
         // Validate distance
-        $maxDistance = $order->getRestaurant()->getMaxDistance();
+        $maxDistance = Restaurant::MAX_DISTANCE;
 
         $constraint = new Assert\LessThan(['value' => $maxDistance]);
         $context

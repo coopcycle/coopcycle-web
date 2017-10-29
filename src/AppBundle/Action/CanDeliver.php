@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Restaurant;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +35,7 @@ class CanDeliver
 
         $distance = $this->routing->getDistance($origin, $destination);
 
-        if ($distance > $restaurant->getMaxDistance()) {
+        if ($distance > Restaurant::MAX_DISTANCE) {
             return new JsonResponse('no', 400);
         }
 
