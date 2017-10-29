@@ -1,8 +1,8 @@
 <nav aria-label="...">
   <ul class="pager">
     {% set prev_page = (page > 1) ? page - 1 : 1 %}
-    <li class="previous {% if page == 1 %}disabled{% endif %}"><a href="{{ path('profile_orders', {'page': prev_page}) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
+    <li class="previous" {% if page == 1 %}style="display:none;"{% endif %}><a href="{{ path('profile_orders', {'page': prev_page}) }}"><span aria-hidden="true">&larr;</span> Précédent</a></li>
     {% set next_page = (page < pages) ? page + 1 : page %}
-    <li class="next {% if page == pages %}disabled{% endif %}"><a href="{{ path('profile_orders', {'page': next_page}) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
+    <li class="next" {% if page == pages %}style="display: none;"{% endif %}><a href="{{ path('profile_orders', {'page': next_page}) }}">Suivant <span aria-hidden="true">&rarr;</span></a></li>
   </ul>
 </nav>
