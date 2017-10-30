@@ -93,10 +93,6 @@ footer {
     padding: 60px 0;
 }
 
-#payment-form, .card {
-    margin: 40px 0;
-}
-
 .restaurant-list-filter {
     padding-top: $bs-base-margin / 2;
     margin-bottom: $bs-base-margin;
@@ -166,7 +162,7 @@ footer {
     background-color: $main-blue;
 }
 
-.order-delivery__map {
+.order-map {
     z-index:-1;
     position:absolute;
     width:100%;
@@ -175,11 +171,11 @@ footer {
     padding:0;
 }
 
-.order-delivery__wrapper {
+.order-map__wrapper {
     position: relative;
 }
 
-.order-delivery__column {
+.order-map__column {
     margin: 40px 20px 60px;
     background-color: $white;
     box-sizing: border-box;

@@ -9,11 +9,11 @@
 
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
-  <div class="order-delivery__wrapper">
-    <div id="map" class="order-delivery__map"></div>
+  <div class="order-map__wrapper">
+    <div id="map" class="order-map"></div>
     <div class="row">
       <div class="col-md-3">
-        <div class="order-delivery__column">
+        <div class="order-map__column">
           {% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
           {% if not restaurant_image is empty %}
             <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}">
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="col-xs-12 col-md-5 col-md-offset-4">
-        <div class="order-delivery__column">
+        <div class="order-map__column">
           {{ form_start(form) }}
             <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
             {{ form_row(form.floor) }}
@@ -52,16 +52,16 @@
 
 
 {% block scripts %}
-  <script>
+  <script type="text/javascript">
     window.AppData = window.AppData || {};
     window.AppData.restaurantCoordinates = {
-      'lat': parseFloat("{{ order.restaurant.address.geo.latitude }}"),
-      'lng': parseFloat("{{ order.restaurant.address.geo.longitude }}")
+      'lat': "{{ order.restaurant.address.geo.latitude }}",
+      'lng': "{{ order.restaurant.address.geo.longitude }}"
     };
     window.AppData.customerCoordinates = {
-      'lat': parseFloat("{{ deliveryAddress.geo.latitude }}"),
-      'lng': parseFloat("{{ deliveryAddress.geo.longitude }}")
+      'lat': "{{ deliveryAddress.geo.latitude }}",
+      'lng': "{{ deliveryAddress.geo.longitude }}"
     };
   </script>
-  <script src="{{ asset('js/order.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/order.js') }}"></script>
 {% endblock %}

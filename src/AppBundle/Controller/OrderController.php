@@ -70,7 +70,7 @@ class OrderController extends Controller
             $deliveryAddress = $this->getDoctrine()
                 ->getManagerForClass(Address::class)->merge($deliveryAddress);
 
-            $form->get('deliveryAddress')->setData($deliveryAddress);
+            $form->setData($deliveryAddress);
         }
 
         $form->handleRequest($request);
@@ -148,6 +148,7 @@ class OrderController extends Controller
 
         return array(
             'order' => $order,
+            'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
             'restaurant' => $order->getRestaurant(),
             'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
         );

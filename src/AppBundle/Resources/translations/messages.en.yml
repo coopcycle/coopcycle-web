@@ -1,5 +1,9 @@
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
+order.payment.title: Your payment informations
+order.payment.expiration.label: Expiration
+order.payment.month.label: Month
+order.payment.year.label: Year
 order.payment.card_number.label: Card number
 order.payment.total: Pay %total% €
 order.payment.card_number.help: >
