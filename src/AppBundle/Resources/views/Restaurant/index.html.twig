@@ -31,6 +31,9 @@
             {% if not menuItem.isAvailable %}
               <a  class="list-group-item menu-item menu-item--unavailable">
                 <span class="menu-item-content">{{ menuItem.name }}</span>
+                {% if menuItem.description is not null %}
+                  <p class="menu-item-description">{{ menuItem.description }}</p>
+                {%  endif %}
                 <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}Unavailable{% endtrans %}</button></span>
               </a>
             {% else %}
@@ -40,8 +43,12 @@
                     data-toggle="modal" data-target="#{{ menuItem.id }}-modifiersModal"
                 {%  endif %}
               >
-                <span class="menu-item-content">{{ menuItem.name }}</span>
-                <span class="menu-item-price">{{ menuItem.price }} €</span>
+                <span class="menu-item-content">{{ menuItem.name }}
+                  {% if menuItem.description is not null %}
+                    <p class="menu-item-description">{{ menuItem.description }}</p>
+                  {%  endif %}
+                </span>
+                <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
               </a >
               {%  if menuItem.modifiers.count > 0 %}
                 <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
