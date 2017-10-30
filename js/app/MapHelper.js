@@ -2,8 +2,8 @@ var L = require('leaflet');
 var Polyline = require('@mapbox/polyline');
 var BeautifyMarker = require('beautifymarker');
 
-function init(id, center, zoom) {
-  var map = L.map(id, { scrollWheelZoom: false }).setView([center.lat, center.lng], zoom);
+function init(id, center, zoom, zoomControl = true) {
+  var map = L.map(id, { scrollWheelZoom: false, zoomControl: zoomControl}).setView([center.lat, center.lng], zoom);
 
   L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -31,9 +31,9 @@ function createMarker(position, icon, iconShape, color) {
   return marker;
 }
 
-function fitToLayers(map, layers) {
+function fitToLayers(map, layers, pad = 0) {
   var group = new L.featureGroup(layers);
-  map.fitBounds(group.getBounds());
+  map.fitBounds(group.getBounds().pad(pad));
 }
 
 function decodePolyline(polyline) {

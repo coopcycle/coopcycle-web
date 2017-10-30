@@ -9,20 +9,59 @@
 
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
-  <div class="row">
-    <div class="col-xs-12 col-md-6">
-      {{ form_start(form) }}
-        <h1>{% trans %}cart.widget.title{% endtrans %}</h1>
-        {{ form_widget(form) }}
-        <div class="text-center">
-          <button class="btn btn-primary btn-lg" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
+  <div class="order-delivery__wrapper">
+    <div id="map" class="order-delivery__map"></div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="order-delivery__column">
+          {% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
+          {% if not restaurant_image is empty %}
+            <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}">
+          {% endif %}
+          {{ order.restaurant.name }}<br><br>
+          {{ order.restaurant.address.streetAddress }}<br>
+          {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}<br>
+          {{ order.restaurant.telephone }}
         </div>
-      {{ form_end(form) }}
+      </div>
+      <div class="col-xs-12 col-md-5 col-md-offset-4">
+        <div class="order-delivery__column">
+          {{ form_start(form) }}
+            <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
+            {{ form_row(form.floor) }}
+            {{ form_row(form.streetAddress) }}
+            <div class="row">
+              <div class="col-md-4">
+                {{ form_row(form.postalCode) }}
+              </div>
+              <div class="col-md-8">
+                {{ form_row(form.addressLocality) }}
+              </div>
+            </div>
+            {{ form_row(form.description) }}
+            <div class="text-center">
+              <button class="btn btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
+            </div>
+          {{ form_end(form) }}
+        </div>
+      </div>
     </div>
   </div>
 </div>
 {%  endblock %}
 
 
-{% block script %}
+{% block scripts %}
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.restaurantCoordinates = {
+      'lat': parseFloat("{{ order.restaurant.address.geo.latitude }}"),
+      'lng': parseFloat("{{ order.restaurant.address.geo.longitude }}")
+    };
+    window.AppData.customerCoordinates = {
+      'lat': parseFloat("{{ deliveryAddress.geo.latitude }}"),
+      'lng': parseFloat("{{ deliveryAddress.geo.longitude }}")
+    };
+  </script>
+  <script src="{{ asset('js/order.js') }}"></script>
 {% endblock %}
