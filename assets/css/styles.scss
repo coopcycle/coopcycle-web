@@ -165,6 +165,27 @@ footer {
 .modifier-item__selected {
     background-color: $main-blue;
 }
+
+.order-delivery__map {
+    z-index:-1;
+    position:absolute;
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+.order-delivery__wrapper {
+    position: relative;
+}
+
+.order-delivery__column {
+    margin: 40px 20px 60px;
+    background-color: $white;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
 .ant-calendar-picker {
     margin-right: 5px;
 }
