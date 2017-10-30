@@ -5,64 +5,91 @@
 
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
-  {% if error is defined %}
-  <div class="alert alert-danger">
-    {{ error }}
-  </div>
-  {% endif %}
-
-  <div class="row">
-    <div class="col-md-6">
-      <form id="payment-form" method="POST" class="form-horizontal">
-        <div class="alert alert-danger hidden"></div>
-        <div class="form-group">
-          <label for="number" class="col-sm-2 control-label">{% trans %}order.payment.card_number.label{% endtrans %}</label>
-          <div class="col-sm-10">
-            <input id="number" class="form-control" type="text" size="20" data-stripe="number" autocomplete="off">
-            <span class="help-block">
-              {% trans with { '%total%': order.total } %}order.payment.card_number.help{% endtrans %}
-            </span>
-          </div>
+  <div class="order-map__wrapper">
+    <div id="map" class="order-map"></div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="order-map__column">
+          {% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
+          {% if not restaurant_image is empty %}
+            <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}">
+          {% endif %}
+          {{ order.restaurant.name }}<br><br>
+          {{ order.restaurant.address.streetAddress }}<br>
+          {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}<br>
+          {{ order.restaurant.telephone }}
         </div>
-        <div class="form-group">
-          <label for="number" class="col-sm-2 control-label">{% trans %}Expiration (MM/YY){% endtrans %}</label>
-          <div class="col-sm-5">
-            <input id="exp_month" class="form-control" type="text" size="2" data-stripe="exp_month" autocomplete="off">
-          </div>
-          <div class="col-sm-5">
-            <input id="exp_year" class="form-control" type="text" size="2" data-stripe="exp_year" autocomplete="off">
-          </div>
+      </div>
+      <div class="col-xs-12 col-md-5 col-md-offset-4">
+        <div class="order-map__column">
+          {% if error is defined %}
+            <div class="alert alert-danger">
+              {{ error }}
+            </div>
+          {% endif %}
+          <form id="payment-form" method="POST">
+            <h4>{% trans %}order.payment.title{% endtrans %}</h4>
+            <div class="form-group">
+              <label for="number" class="control-label">{% trans %}order.payment.card_number.label{% endtrans %}</label>
+              <input id="number" class="form-control" type="text" size="20" data-stripe="number" autocomplete="off">
+              <span class="help-block">
+                <small>{% trans with { '%total%': order.total } %}order.payment.card_number.help{% endtrans %}</small>
+              </span>
+            </div>
+            <label for="number" class="control-label">{% trans %}order.payment.expiration.label{% endtrans %}</label>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="exp_month" class="control-label">{% trans %}order.payment.month.label{% endtrans %}</label>
+                  <input id="exp_month" class="form-control" type="text" size="2" data-stripe="exp_month" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="exp_year" class="control-label">{% trans %}order.payment.year.label{% endtrans %}</label>
+                  <input id="exp_year" class="form-control" type="text" size="2" data-stripe="exp_year" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="number" class="control-label">{% trans %}CVC{% endtrans %}</label>
+                  <input id="cvc" class="form-control" type="text" size="4" data-stripe="cvc" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">
+                {% trans with { '%total%': order.total } %}order.payment.total{% endtrans %}
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="form-group">
-          <label for="number" class="col-sm-2 control-label">{% trans %}CVC{% endtrans %}</label>
-          <div class="col-sm-10">
-            <input id="cvc" class="form-control" type="text" size="4" data-stripe="cvc" autocomplete="off">
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-block btn-lg btn-primary">
-              {% trans with { '%total%': order.total } %}order.payment.total{% endtrans %}
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="col-md-6">
-      <div class="card"></div>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{{ asset('js/order-payment.css') }}">
+  <link rel="stylesheet" href="{{ asset('js/order-payment.css') }}">
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-<script type="text/javascript">
-  Stripe.setPublishableKey('{{ stripe_publishable_key }}');
-</script>
-<script type="text/javascript" src="{{ asset('js/order-payment.js') }}"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script type="text/javascript">
+    Stripe.setPublishableKey('{{ stripe_publishable_key }}');
+    window.AppData = window.AppData || {};
+    window.AppData.restaurantCoordinates = {
+      'lat': "{{ order.restaurant.address.geo.latitude }}",
+      'lng': "{{ order.restaurant.address.geo.longitude }}"
+    };
+    window.AppData.customerCoordinates = {
+      'lat': "{{ deliveryAddress.geo.latitude }}",
+      'lng': "{{ deliveryAddress.geo.longitude }}"
+    };
+  </script>
+  <script type="text/javascript" src="{{ asset('js/order.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/order-payment.js') }}"></script>
 {% endblock %}

@@ -101,6 +101,10 @@ norestaurantfound: Pas de restaurant ouvert à cette heure!<br>Essayez avec une 
 
 delivery_service.applicolis: AppliColis
 
+order.payment.title: Vos informations de paiement
+order.payment.expiration.label: Expiration
+order.payment.month.label: Mois
+order.payment.year.label: Année
 order.payment.card_number.label: Numéro de carte
 order.payment.total: Payer %total% €
 order.payment.card_number.help: >
