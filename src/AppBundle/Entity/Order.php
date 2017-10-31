@@ -50,7 +50,6 @@ class Order
     const STATUS_REFUSED    = 'REFUSED';
     const STATUS_READY      = 'READY';
     const STATUS_CANCELED   = 'CANCELED';
-    const STATUS_PICKED     = 'PICKED';
 
     /**
      * @var int
@@ -297,29 +296,6 @@ class Order
         }
 
         return $total;
-    }
-
-    public function getDeliveryTime()
-    {
-        // if ($this->status === self::STATUS_DELIVERED) {
-
-        //     $criteria = Criteria::create()
-        //         ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_ACCEPTED));
-        //     $accepted = $this->events->matching($criteria)->first();
-
-        //     $criteria = Criteria::create()
-        //         ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DELIVERED));
-        //     $delivered = $this->events->matching($criteria)->first();
-
-        //     if ($accepted && $delivered) {
-        //         $diff = $delivered->getCreatedAt()->diff($accepted->getCreatedAt());
-
-        //         $hours = $diff->format('%h');
-        //         $minutes = $diff->format('%i');
-
-        //         return $hours > 0 ? "{$hours}h {$minutes}min" : "{$minutes}min";
-        //     }
-        // }
     }
 
     /**
