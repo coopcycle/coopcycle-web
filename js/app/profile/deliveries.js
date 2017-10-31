@@ -31,7 +31,7 @@ var datasetOptions = {
 };
 
 var pickupData = _.extend({
-  label: "Pickup time (minutes)",
+  label: window.AppData.__i18n['Pickup time (minutes)'],
   data: window.AppData.DeliveryTimes.data.pickup,
   backgroundColor: "rgba(41, 128, 185, 0.4)",
   borderColor: "rgba(41, 128, 185, 1)",
@@ -40,7 +40,7 @@ var pickupData = _.extend({
 }, datasetOptions);
 
 var deliveryData = _.extend({
-  label: "Delivery time (minutes)",
+  label: window.AppData.__i18n['Delivery time (minutes)'],
   data: window.AppData.DeliveryTimes.data.delivery,
   backgroundColor: "rgba(39, 174, 96, 0.4)",
   borderColor: "rgba(39, 174, 96, 1)",

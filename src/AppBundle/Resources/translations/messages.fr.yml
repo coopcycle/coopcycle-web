@@ -92,6 +92,11 @@ Extras: Suppléments
 The extra is free: Le supplément est gratuit
 The extra has a fixed price: Le supplément a un prix fixe
 Each extra has a custom price: Chaque supplément a un prix
+Status: État
+View order: Voir la commande
+Pickup time (minutes): Temps de récupération (en minutes)
+Delivery time (minutes): Temps de livraison (en minutes)
+Average delivery time: Temps moyen de livraison
 
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit

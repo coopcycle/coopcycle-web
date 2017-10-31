@@ -67,7 +67,7 @@
     <td><a href="{{ path('admin_restaurant', {'id': order.restaurant.id}) }}">{{ order.restaurant.name }}</a></td>
     <td>{{ order.total }} €</td>
     <td>{{ order.createdAt|ago }}</td>
-    <td>{{ order.deliveryTime }}</td>
+    <td>{{ order.delivery.actualDuration }}</td>
     <td>
     {% if order.delivery.status == 'WAITING' %}
     <form method="post" action="{{ path('admin_order_cancel', {'id': order.id}) }}">

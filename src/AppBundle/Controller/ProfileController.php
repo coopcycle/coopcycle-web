@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Delivery;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -165,19 +166,19 @@ class ProfileController extends Controller
      */
     public function courierDeliveriesAction(Request $request)
     {
-        $deliveryTimes = $this->getDoctrine()->getRepository('AppBundle:Order')
+        $deliveryTimes = $this->getDoctrine()->getRepository(Delivery::class)
             ->getDeliveryTimes($this->getUser());
 
-        $avgDeliveryTime = $this->getDoctrine()->getRepository('AppBundle:Order')
+        $avgDeliveryTime = $this->getDoctrine()->getRepository(Delivery::class)
             ->getAverageDeliveryTime($this->getUser());
 
-        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->findBy(
+        $deliveries = $this->getDoctrine()->getRepository(Delivery::class)->findBy(
             ['courier' => $this->getUser()],
-            ['createdAt' => 'DESC']
+            ['date' => 'DESC']
         );
 
         return [
-            'orders' => $orders,
+            'deliveries' => $deliveries,
             'avg_delivery_time' => $avgDeliveryTime,
             'delivery_times' => $deliveryTimes,
         ];
