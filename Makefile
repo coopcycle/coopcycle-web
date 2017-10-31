@@ -1,5 +1,3 @@
-
-
 install:
 	@printf "\e[0;32mGenerating RSA key to encrypt webtokens..\e[0m\n"
 	@mkdir -p var/jwt
@@ -17,3 +15,6 @@ install:
 	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose run php bin/demo
+
+phpunit:
+	@docker-compose run php vendor/bin/phpunit
