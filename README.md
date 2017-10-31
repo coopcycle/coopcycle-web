@@ -21,7 +21,7 @@ How to run a local instance
 
 * Install [Docker](https://www.docker.com/). On OSX/Windows we advise you to install the latest versions available, which don't rely on Virtualbox.
 
-* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`. 
+* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`.
 
 * Create a Stripe account and copy your tests credentials. You will be asked for them when running `make install`.
 
@@ -48,21 +48,24 @@ Testing
 
 * Create the test database
 
-With Docker
 ```
 docker-compose run php bin/console doctrine:schema:create --env=test
 ```
 
+* Launch the PHPUnit tests
+
+```
+make phpunit
+```
+
 * Launch the Behat tests
 
-With Docker
 ```
 docker-compose run php php vendor/bin/behat
 ```
 
 * Launch the Mocha tests
 
-With Docker
 ```
 docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 ```
