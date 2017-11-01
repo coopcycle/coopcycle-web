@@ -1,7 +1,5 @@
 // import { init, createMarker, fitToLayers, getPolyline } from '../MapHelper';
 var MapHelper = require('../MapHelper');
-console.log(window.AppData.restaurantCoordinates);
-console.log(window.AppData.customerCoordinates);
 
 let center = { lat: 48.857498,  lng: 2.335402 },
     zoom = window.mapZoom || 10,

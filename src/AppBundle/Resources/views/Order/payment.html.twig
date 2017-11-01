@@ -10,14 +10,7 @@
     <div class="row">
       <div class="col-md-3">
         <div class="order-map__column">
-          {% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
-          {% if not restaurant_image is empty %}
-            <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}">
-          {% endif %}
-          {{ order.restaurant.name }}<br><br>
-          {{ order.restaurant.address.streetAddress }}<br>
-          {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}<br>
-          {{ order.restaurant.telephone }}
+          {% include "AppBundle::_partials/Order/restaurantDetails.html.twig" %}
         </div>
       </div>
       <div class="col-xs-12 col-md-5 col-md-offset-4">
