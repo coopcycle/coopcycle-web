@@ -15,6 +15,7 @@ install:
 	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose run php bin/demo
+	@docker-compose run php bin/console doctrine:migrations:version --add --all
 
 phpunit:
 	@docker-compose run php vendor/bin/phpunit
@@ -27,3 +28,4 @@ migrations-diff:
 
 migrations-migrate:
 	@docker-compose run php bin/console doctrine:migrations:migrate
+
