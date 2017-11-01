@@ -20,6 +20,9 @@ install:
 phpunit:
 	@docker-compose run php vendor/bin/phpunit
 
+behat:
+	@docker-compose run php php vendor/bin/behat
+
 mocha:
 	@docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 
