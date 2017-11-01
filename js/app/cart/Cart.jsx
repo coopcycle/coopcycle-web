@@ -142,6 +142,10 @@ class Cart extends React.Component
       return memo + (item.total);
     }, 0).toFixed(2);
 
+    var itemCount = _.reduce(this.state.items, function(memo, item) {
+      return memo + (item.quantity);
+    }, 0);
+
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
     if (items.length === 0) {
       btnClasses.push('disabled');
@@ -156,7 +160,9 @@ class Cart extends React.Component
       <Sticky enabled={!isMobileCart} top={ 30 }>
         <div className={ panelClasses.join(' ') }>
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
-            <h3 className="panel-title">{ this.props.i18n[cartTitleKey] }</h3>
+              <span className="cart-heading--items">{ itemCount }</span>
+              <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
+              { this.props.i18n[cartTitleKey] }
           </div>
           <div className="panel-body">
             <div className="cart">
