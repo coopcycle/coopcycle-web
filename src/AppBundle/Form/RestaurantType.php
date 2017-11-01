@@ -79,6 +79,10 @@ class RestaurantType extends AbstractType
 
                     $deliveryService->setToken($token);
                 }
+
+                // Make sure there is no NULL value in the openingHours array
+                $openingHours = array_filter($restaurant->getOpeningHours());
+                $restaurant->setOpeningHours($openingHours);
             }
         );
     }
