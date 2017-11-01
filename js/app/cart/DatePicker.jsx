@@ -11,12 +11,11 @@ class DatePicker extends Component {
 
     const { availabilities, value } = this.props
 
-    const days = _.groupBy(availabilities, date =>
-      moment(date).format('YYYY-MM-DD'))
+    const days = _.groupBy(availabilities, date => moment(date).format('YYYY-MM-DD'))
 
     let availableTimes
 
-    if (value) {
+    if (value && moment(value).isAfter(moment(availabilities[0]))) {
       let day = moment(value).format('YYYY-MM-DD')
       availableTimes = days[day].map(date => moment(date).format('HH:mm'))
     } else {
