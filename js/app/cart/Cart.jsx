@@ -111,7 +111,7 @@ class Cart extends React.Component
     let { items, toggled } = this.state ,
         cartContent,
         { streetAddress, geohash, isMobileCart } = this.props,
-        cartTitleKey = isMobileCart ? 'Cart' : 'cart.widget.button'
+        cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
       items = this.state.items.map((item, key) => {
