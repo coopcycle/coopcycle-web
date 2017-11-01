@@ -44,7 +44,7 @@
     <script src="{{ asset('js/common.js') }}"></script>
     {% block scripts %}{% endblock %}
     {% if app.environment == "dev" %}
-    <script src="{{ asset('webpack-dev-server.js') }}"></script>
+      <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
     {{ piwik_code() }}
   </body>
