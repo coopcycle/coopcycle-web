@@ -3,9 +3,38 @@ body {
 }
 
 footer {
-    padding: 30px 0;
-    margin-top: 30px;
-    border-top: 1px solid $gray;
+  padding: 30px 0;
+  margin-top: 30px;
+  border-top: 1px solid $gray;
+
+  @media screen and (max-width: $screen-xs-min){
+    display: none;
+  }
+}
+
+.page-header {
+  margin: 0 0 10px;
+
+  @media screen and (max-width: $screen-xs-min){
+    padding-bottom: 0;
+    margin: 0 0 10px;
+
+    h1 {
+      margin: 0 0 10px;
+    }
+  }
+}
+
+.h2 {
+  @media screen and (max-width: $screen-xs-min) {
+    margin-bottom: 10px;
+  }
+}
+
+.restaurant-header {
+  h1 {
+    display: inline-block;
+  }
 }
 
 .label {
@@ -107,6 +136,7 @@ $cart-heading-height: 40px;
 }
 
 .cart-wrapper {
+  overflow: hidden;
 
     @media screen and (max-width: $screen-xs-min) {
         padding: 0;
