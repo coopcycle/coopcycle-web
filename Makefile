@@ -18,3 +18,12 @@ install:
 
 phpunit:
 	@docker-compose run php vendor/bin/phpunit
+
+mocha:
+	@docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
+
+migrations-diff:
+	@docker-compose run php bin/console doctrine:migrations:diff
+
+migrations-migrate:
+	@docker-compose run php bin/console doctrine:migrations:migrate
