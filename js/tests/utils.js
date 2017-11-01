@@ -149,12 +149,15 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
     Address.create({
       geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
     }).then(function(address) {
-      Restaurant.create({ name: name })
-        .then(function(restaurant) {
-          restaurant.setAddress(address).then(function() {
-            resolve(restaurant);
-          })
+      Restaurant.create({
+        name: name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }).then(function(restaurant) {
+        restaurant.setAddress(address).then(function() {
+          resolve(restaurant);
         })
+      })
     })
 
   });
