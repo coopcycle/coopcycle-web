@@ -34,7 +34,7 @@ class RestaurantType extends AbstractType
             ->add('deliveryService', DeliveryServiceType::class, ['mapped' => false])
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
-                'download_link' => false,
+                'download_uri' => false,
             ])
             // FoodEstablishment
             ->add('servesCuisine', CollectionType::class, array(

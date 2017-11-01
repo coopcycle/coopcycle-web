@@ -204,7 +204,7 @@ class ProfileController extends Controller
     public function newRestaurantAction(Request $request)
     {
         return $this->editRestaurantAction(null, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'profile_restaurants',
+            'success' => 'profile_restaurant',
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
             'orders' => 'profile_restaurant_orders',
@@ -218,7 +218,7 @@ class ProfileController extends Controller
     public function restaurantEditAction($id, Request $request)
     {
         return $this->editRestaurantAction($id, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'profile_restaurants',
+            'success' => 'profile_restaurant',
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
             'orders' => 'profile_restaurant_orders',

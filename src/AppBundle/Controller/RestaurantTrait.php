@@ -54,7 +54,12 @@ trait RestaurantTrait
 
             $em->flush();
 
-            return $this->redirectToRoute($routes['success']);
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('Your changes were saved.')
+            );
+
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
         return [

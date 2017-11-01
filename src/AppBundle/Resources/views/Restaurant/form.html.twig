@@ -38,6 +38,12 @@
   </div>
 </nav>
 
+{% for message in app.flashes('notice') %}
+  <div class="alert alert-success">
+    {{ message }}
+  </div>
+{% endfor %}
+
 {{ form_start(form) }}
 
   <div class="row">

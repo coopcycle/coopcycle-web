@@ -70,7 +70,15 @@ module.exports = function(sequelize) {
   }));
 
   Db.Restaurant = sequelize.define('restaurant', {
-    name: Sequelize.STRING
+    name: Sequelize.STRING,
+    createdAt: {
+      field: 'created_at',
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      field: 'updated_at',
+      type: Sequelize.DATE
+    },
   }, _.extend(sequelizeOptions, {
     tableName: 'restaurant'
   }));
