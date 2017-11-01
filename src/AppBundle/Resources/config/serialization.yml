@@ -1,11 +1,13 @@
 AppBundle\Entity\ApiUser:
   attributes:
     username:
-      groups: ['user']
+      groups: ['user', 'order']
     email:
       groups: ['user']
     addresses:
       groups: ['user']
+    telephone:
+      groups: ['order']
 
 AppBundle\Entity\Base\MenuItem:
   attributes:

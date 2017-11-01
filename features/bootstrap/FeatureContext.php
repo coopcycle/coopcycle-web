@@ -168,6 +168,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         }
     }
 
+    private function createUser($username, $email, $password, array $data = [])
+    {
+        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
+        $manager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $manipulator->create($username, $password, $email, true, false);
+
+        if (isset($data['telephone'])) {
+            $user->setTelephone($data['telephone']);
+            $manager->updateUser($user);
+        }
+    }
+
     /**
      * @Given the user is loaded:
      */
@@ -175,8 +188,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $data = $table->getRowsHash();
 
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->create($data['username'], $data['password'], $data['email'], true, false);
+        $this->createUser($data['username'], $data['email'], $data['password'], $data);
     }
 
     /**
@@ -186,8 +198,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $data = $table->getRowsHash();
 
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $manipulator->create($username, $data['password'], $data['email'], true, false);
+        $this->createUser($username, $data['email'], $data['password'], $data);
     }
 
     /**

@@ -4,8 +4,9 @@ Feature: Orders
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
-      | email    | bob@coopcycle.org |
-      | password | 123456            |
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | +33612345678      |
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
@@ -37,7 +38,12 @@ Feature: Orders
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":"@string@.startsWith('/api/api_users')",
+      "customer":{
+        "@id":"@string@.startsWith('/api/api_users')",
+        "@type":"ApiUser",
+        "username":"bob",
+        "telephone": "+33612345678"
+      },
       "createdAt": @string@,
       "restaurant":{
         "@id":"/api/restaurants/1",
@@ -157,9 +163,10 @@ Feature: Orders
       | geo           | 48.855799, 2.359207 |
     And the user "bob" has ordered at restaurant "Nodaiwa" for "2017-09-02 12:30:00"
     And the courier is loaded:
-      | email    | sarah@coopcycle.org |
-      | username | sarah               |
-      | password | 123456              |
+      | email     | sarah@coopcycle.org |
+      | username  | sarah               |
+      | password  | 123456              |
+      | telephone | +33612345678        |
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -195,7 +202,12 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":"@string@.startsWith('/api/api_users')",
+      "courier":{
+        "@id":"@string@.startsWith('/api/api_users')",
+        "@type":"ApiUser",
+        "telephone":"+33612345678",
+        "username":"sarah"
+      },
       "status":"DISPATCHED",
       "date":"@string@.startsWith('2017-09-02')"
     }
@@ -234,7 +246,12 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":"@string@.startsWith('/api/api_users')",
+      "courier":{
+        "@id":"@string@.startsWith('/api/api_users')",
+        "@type":"ApiUser",
+        "telephone":"+33612345678",
+        "username":"sarah"
+      },
       "status":"PICKED",
       "date":"@string@.startsWith('2017-09-02')"
     }
@@ -273,7 +290,12 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":"@string@.startsWith('/api/api_users')",
+      "courier":{
+        "@id":"@string@.startsWith('/api/api_users')",
+        "@type":"ApiUser",
+        "telephone":"+33612345678",
+        "username":"sarah"
+      },
       "status":"DELIVERED",
       "date":"@string@.startsWith('2017-09-02')"
     }
