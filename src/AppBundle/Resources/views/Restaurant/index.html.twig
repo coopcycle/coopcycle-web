@@ -88,12 +88,16 @@
 
     </div>
 
-    <div class="col-xs-12 col-sm-4">
+    <div class="col-xs-12 col-sm-4 cart-container">
         <div id="cart"></div>
+    </div>
+
+    <div class="visible-xs">
     </div>
 
   </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -108,7 +112,8 @@
       validateCartURL: "{{ path('order') }}"
     }
     window.__i18n = {
-      "Cart": "{% trans %}Cart{% endtrans %}"
+      "Cart": "{% trans %}Cart{% endtrans %}",
+      "cart.widget.button": "{% trans %}cart.widget.button{% endtrans %}"
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
