@@ -58,4 +58,6 @@ parameters:
 
     is_demo: false
 
-    sentry_dsn: "https://********@sentry.io/********"
+    sentry_dsn: "https://<public>:<secret>@sentry.io/********"
+
+    sentry_public_dsn: "https://<public>@sentry.io/********"

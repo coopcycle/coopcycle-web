@@ -41,6 +41,7 @@ twig:
         - 'VichUploaderBundle:Form:fields.html.twig'
     globals:
         is_demo: "%is_demo%"
+        sentry_public_dsn: "%sentry_public_dsn%"
 
 # Doctrine Configuration
 doctrine:

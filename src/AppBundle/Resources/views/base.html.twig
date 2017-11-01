@@ -41,6 +41,10 @@
         </ul>
       </div>
     </footer>
+    {% if app.environment == "prod" %}
+      <script src="https://cdn.ravenjs.com/3.19.1/raven.min.js" crossorigin="anonymous"></script>
+      Raven.config({{ sentry_public_dsn }}).install()
+    {% endif %}
     <script src="{{ asset('js/common.js') }}"></script>
     {% block scripts %}{% endblock %}
     {% if app.environment == "dev" %}
