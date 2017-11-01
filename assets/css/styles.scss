@@ -7,7 +7,7 @@ footer {
   margin-top: 30px;
   border-top: 1px solid $gray;
 
-  @media screen and (max-width: $screen-xs-min){
+  @media screen and (max-width: $screen-md-min){
     display: none;
   }
 }
@@ -15,7 +15,7 @@ footer {
 .page-header {
   margin: 0 0 10px;
 
-  @media screen and (max-width: $screen-xs-min){
+  @media screen and (max-width: $screen-md-min){
     padding-bottom: 0;
     margin: 0 0 10px;
 
@@ -26,7 +26,7 @@ footer {
 }
 
 .h2 {
-  @media screen and (max-width: $screen-xs-min) {
+  @media screen and (max-width: $screen-md-min) {
     margin-bottom: 10px;
   }
 }
@@ -118,29 +118,63 @@ footer {
     margin-left: 10px;
 }
 
-.cart-container {
-  @media screen and (max-width: $screen-xs-min) {
-    padding: 0;
-  }
-}
-
 $cart-heading-height: 40px;
 
 .cart-heading {
+    position: relative;
     height: $cart-heading-height;
 
-    @media screen and (max-width: $screen-xs-min) {
-        color: $white;
-        backcground-color: $main-blue-light;
+    @media screen and (max-width: $screen-md-min) {
+      height: $cart-heading-height;
+      text-align: center;
+      color: $white !important;
+      background-color: $main-blue-light !important;
     }
 }
 
-.cart-wrapper {
-  overflow: hidden;
+.cart-heading--items {
+  display: none;
 
-    @media screen and (max-width: $screen-xs-min) {
+  @media screen and (max-width: $screen-md-min) {
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 30px;
+    left: 30px;
+    background-color: $main-blue;
+  }
+}
+
+.cart-heading--total {
+  display: none;
+
+  @media screen and (max-width: $screen-md-min) {
+    display: block;
+    position: absolute;
+    right: 40px;
+    height: 20px;
+    width: 20px;
+    padding: 0 5px;
+    border-radius: 30px;
+    background-color: $main-blue;
+
+    .fa {
+      position: relative;
+      right: 2px;
+    }
+  }
+}
+
+.cart-wrapper {
+  overflow-y: scroll;
+  height: 100%;
+
+    @media screen and (max-width: $screen-md-min) {
         padding: 0;
         margin-bottom: 0;
+        cursor: pointer;
+
 
         position: fixed;
         bottom: 0;
@@ -148,12 +182,11 @@ $cart-heading-height: 40px;
         right: 0;
         transform: translateY(calc(100% - #{$cart-heading-height}));
         transition: transform 0.4s;
-        cursor: pointer;
     }
 }
 
 .cart-wrapper--show {
-    @media screen and (max-width: $screen-xs-min) {
+    @media screen and (max-width: $screen-md-min) {
         transform: translateY(0);
     }
 }
