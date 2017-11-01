@@ -3,9 +3,10 @@ import {render} from 'react-dom';
 import Cart from './Cart.jsx';
 
 
+let isXsDevice = $('.visible-xs').is(':visible')
+
 var cart = document.getElementById('cart');
 var cartComponent;
-
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
@@ -26,7 +27,9 @@ if (cart) {
           date={date}
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
-          validateCartURL={window.AppData.Cart.validateCartURL} />,
+          validateCartURL={window.AppData.Cart.validateCartURL}
+          isMobileCart={ isXsDevice }
+        />,
     cart);
 
   $('.js-add-to-cart').on('click', function(e) {

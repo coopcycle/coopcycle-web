@@ -13,16 +13,22 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, deliveryDate, streetAddress, addressId } = this.props;
+    let { items, deliveryDate, streetAddress, addressId, isMobileCart } = this.props;
 
     this.state = {
       items,
+      toggled: !isMobileCart,
       date: deliveryDate,
       address: {streetAddress, addressId: addressId}
     }
 
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
+    this.onHeaderClick = this.onHeaderClick.bind(this)
+  }
+
+  onHeaderClick () {
+    this.setState({'toggled': !this.state.toggled})
   }
 
   removeItem(item) {
@@ -102,9 +108,10 @@ class Cart extends React.Component
 
   render() {
 
-    let { items } = this.state ,
+    let { items, toggled } = this.state ,
         cartContent,
-        { streetAddress, geohash } = this.props;
+        { streetAddress, geohash, isMobileCart } = this.props,
+        cartTitleKey = isMobileCart ? 'Cart' : 'cart.widget.button'
 
     if (items.length > 0) {
       items = this.state.items.map((item, key) => {
@@ -140,11 +147,16 @@ class Cart extends React.Component
       btnClasses.push('disabled');
     }
 
+    var panelClasses = ['panel', 'panel-default', 'cart-wrapper'];
+    if (toggled) {
+      panelClasses.push('cart-wrapper--show');
+    }
+
     return (
-      <Sticky enabled={true} top={ 30 }>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title">{ this.props.i18n['Cart'] }</h3>
+      <Sticky enabled={!isMobileCart} top={ 30 }>
+        <div className={ panelClasses.join(' ') }>
+          <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
+            <h3 className="panel-title">{ this.props.i18n[cartTitleKey] }</h3>
           </div>
           <div className="panel-body">
             <div className="cart">
@@ -181,7 +193,9 @@ Cart.propTypes = {
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,
   validateCartURL: PropTypes.string.isRequired,
   removeFromCartURL: PropTypes.string.isRequired,
-  addToCartURL: PropTypes.string.isRequired
+  addToCartURL: PropTypes.string.isRequired,
+  isMobileCart: PropTypes.bool.isRequired
 }
+
 
 module.exports = Cart;
