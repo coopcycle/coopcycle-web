@@ -1,21 +1,3 @@
-var Card = require("card");
-
-var card = new Card({
-    form: 'form',
-    container: '.card',
-    formSelectors: {
-      numberInput: 'input#number',
-      expiryInput: 'input#exp_month, input#exp_year',
-      cvcInput: 'input#cvc',
-    },
-    placeholders: {
-      number: '•••• •••• •••• ••••',
-      name: 'Full Name',
-      expiry: '••/••',
-      cvc: '•••'
-    },
-});
-
 function stripeResponseHandler(status, response) {
   // Grab the form:
   var $form = $('#payment-form');
