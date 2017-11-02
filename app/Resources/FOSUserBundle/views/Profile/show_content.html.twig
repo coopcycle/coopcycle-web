@@ -3,14 +3,21 @@
 {% block fos_user_content %}
 <div class="container">
   <ol class="breadcrumb">
-    <li><a href="{{ path('fos_user_profile_show') }}">{% trans from 'messages' %}My account{% endtrans %}</a></li>
+    <li>
+      <a href="{{ path('fos_user_profile_show') }}">
+      {% trans from 'messages' %}My account{% endtrans %}
+      </a>
+    </li>
   </ol>
   <div class="row">
     <div class="col-md-3">
       {% include "AppBundle:Profile:nav.html.twig" %}
     </div>
     <div class="col-md-9">
-        {% include "AppBundle:Profile:profile.html.twig" %}
+      {% include "AppBundle:Profile:profile.html.twig" %}
+      <a class="btn btn-success" href="{{ path('profile_edit') }}">
+        {% trans from 'messages' %}Edit{%  endtrans %}
+      </a>
     </div>
   </div>
 </div>

@@ -134,6 +134,22 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/user/{username}", name="admin_user_details")
+     * @Template
+     */
+    public function userAction($username, Request $request)
+    {
+        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+
+        return [
+            'user' => $user,
+        ];
+    }
+
+    /**
      * @Route("/admin/restaurants", name="admin_restaurants")
      * @Template
      */
@@ -297,6 +313,7 @@ class AdminController extends Controller
             'order_cancel'  => 'admin_order_cancel',
             'order_ready'   => 'admin_order_ready',
             'order_details' => 'admin_order',
+            'user_details'  => 'user',
             'restaurants'   => 'admin_restaurants',
             'restaurant'    => 'admin_restaurant',
         ], $request->query->get('tab', 'today'));
@@ -389,4 +406,6 @@ class AdminController extends Controller
             'form' => $form->createView(),
         ];
     }
+
+
 }

@@ -70,6 +70,7 @@ window.__routes = {
   'order_cancel':  "{{ path(routes.order_cancel,  { id: '__ORDER_ID__' }) }}",
   'order_ready':   "{{ path(routes.order_ready,   { id: '__ORDER_ID__' }) }}",
   'order_details': "{{ path(routes.order_details, { id: '__ORDER_ID__' }) }}",
+  'user_details':  "{{ path(routes.user_details,  { username: '__USERNAME__' }) }}",
 };
 window.__i18n = {
   "No orders yet": "{% trans %}No orders yet{% endtrans %}"
