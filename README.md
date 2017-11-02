@@ -61,14 +61,24 @@ make phpunit
 * Launch the Behat tests
 
 ```
-docker-compose run php php vendor/bin/behat
+make behat
 ```
 
 * Launch the Mocha tests
 
 ```
-docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
+make mocha
 ```
+
+Running migrations
+-------
+
+When pulling change from the remote, the database models may have change. To take account for the changes, you will need to run a database migration.
+
+```
+make migrations-migrate
+```
+ 
 
 License
 -------
