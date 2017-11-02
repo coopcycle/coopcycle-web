@@ -19,8 +19,8 @@ const autocompleteStyles = {
 }
 
 const autocompleteClasses = {
-  root: 'form-group input-location',
-  input: 'form-control',
+  root: 'form-group input-location-wrapper',
+  input: 'form-control input-location',
   autocompleteItemActive: 'location-result--active'
 }
 
@@ -45,6 +45,11 @@ class AddressPicker extends React.Component {
     this.onAddressChange = this.onAddressChange.bind(this);
     this.onAddressBlur = this.onAddressBlur.bind(this);
     this.onAddressKeyUp = this.onAddressKeyUp.bind(this);
+    this.onClear = this.onClear.bind(this);
+  }
+
+  onClear () {
+    this.setState({address: ''});
   }
 
   onAddressChange (value) {
@@ -120,18 +125,21 @@ class AddressPicker extends React.Component {
     inputProps.placeholder = this.placeholder
 
     return (
-      <PlacesAutocomplete
-        preferredResults={ preferredResults }
-        autocompleteItem={ AutocompleteItem }
-        classNames={ autocompleteClasses }
-        inputProps={ inputProps }
-        options={ autocompleteOptions }
-        styles={ autocompleteStyles }
-        onSelect={ this.onAddressSelect }
-        onSearch={ this.insertPreferredResults }
-        // uncomment this if your debugging the style of the suggested addresses
-        // alwaysRenderSuggestion
-      />
+      <div className="autocomplete-wrapper">
+        <PlacesAutocomplete
+          preferredResults={ preferredResults }
+          autocompleteItem={ AutocompleteItem }
+          classNames={ autocompleteClasses }
+          inputProps={ inputProps }
+          options={ autocompleteOptions }
+          styles={ autocompleteStyles }
+          onSelect={ this.onAddressSelect }
+          onSearch={ this.insertPreferredResults }
+          // uncomment this if your debugging the style of the suggested addresses
+          // alwaysRenderSuggestion
+        />
+        <i className="fa fa-times-circle autocomplete-clear" onClick={ this.onClear }></i>
+      </div>
     )
   }
 }
