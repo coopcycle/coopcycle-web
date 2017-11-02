@@ -97,6 +97,7 @@ View order: Voir la commande
 Pickup time (minutes): Temps de récupération (en minutes)
 Delivery time (minutes): Temps de livraison (en minutes)
 Average delivery time: Temps moyen de livraison
+Roles: Rôles
 
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
@@ -133,6 +134,11 @@ demo.disclaimer.subtitle: Commandez, payez avec une carte de crédit de test et 
 
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
+
+roles.ROLE_ADMIN: 'Administrateur'
+roles.ROLE_COURIER: 'Coursier'
+roles.ROLE_RESTAURANT: 'Restaurant'
+roles.ROLE_USER: 'Utilisateur'
 
 search.help: >
   Cherchez dans les quartiers de Paris : %links%

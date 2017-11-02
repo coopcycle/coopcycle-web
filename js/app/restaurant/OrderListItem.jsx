@@ -8,25 +8,31 @@ const routes = window.__routes;
 
 class OrderListItem extends React.Component
 {
-  resolveRoute(route) {
+  resolveOrderRoute(route) {
     const order = this.props.order;
     const id = order['@id'].replace('/api/orders/', '');
 
     return routes[route].replace('__ORDER_ID__', id)
   }
 
+  resolveUserRoute(route) {
+    const customer = this.props.order.customer;
+
+    return routes[route].replace('__USERNAME__', customer.username)
+  }
+
   renderWaitingButtons() {
     return (
       <div className="row">
         <div className="col-sm-6">
-          <form method="post" action={ this.resolveRoute('order_refuse') }>
+          <form method="post" action={ this.resolveOrderRoute('order_refuse') }>
             <button type="submit" className="btn btn-block btn-sm btn-danger">
               <i className="fa fa-ban" aria-hidden="true"></i>  Refuser
             </button>
           </form>
         </div>
         <div className="col-sm-6">
-          <form method="post" action={ this.resolveRoute('order_accept') }>
+          <form method="post" action={ this.resolveOrderRoute('order_accept') }>
             <button type="submit" className="btn btn-block btn-sm btn-success">
               <i className="fa fa-check" aria-hidden="true"></i>  Accepter
             </button>
@@ -40,14 +46,14 @@ class OrderListItem extends React.Component
     return (
       <div className="row">
         <div className="col-sm-6">
-          <form method="post" action={ this.resolveRoute('order_cancel') }>
+          <form method="post" action={ this.resolveOrderRoute('order_cancel') }>
             <button type="submit" className="btn btn-block btn-sm btn-danger">
               <i className="fa fa-ban" aria-hidden="true"></i>  Annuler
             </button>
           </form>
         </div>
         <div className="col-sm-6">
-          <form method="post" action={ this.resolveRoute('order_ready') }>
+          <form method="post" action={ this.resolveOrderRoute('order_ready') }>
             <button type="submit" className="btn btn-block btn-sm btn-success">
               <i className="fa fa-check" aria-hidden="true"></i>  Prête !
             </button>
@@ -74,11 +80,18 @@ class OrderListItem extends React.Component
     return (
       <div className={ classNames.join(' ') }>
         <div className="panel-heading">
-          <h3 className="panel-title"><a href={ this.resolveRoute('order_details') }>Commande #{ id }</a></h3>
+          <h3 className="panel-title"><a href={ this.resolveOrderRoute('order_details') }>Commande #{ id }</a></h3>
         </div>
         <div className="panel-body">
           <p className="text-right"><OrderLabel order={ order } /></p>
-          <p className="text-right"><i className="fa fa-calendar" aria-hidden="true"></i> { moment(order.createdAt).fromNow() }</p>
+          <p className="text-right">
+            <a href={ this.resolveUserRoute('user_details') }>
+            { order.customer.username }  <i className="fa fa-user" aria-hidden="true"></i>
+            </a>
+          </p>
+          { order.customer.telephone &&
+          <p className="text-right">{ order.customer.telephone }  <i className="fa fa-phone" aria-hidden="true"></i></p> }
+          <p className="text-right">{ moment(order.createdAt).fromNow() }  <i className="fa fa-calendar" aria-hidden="true"></i></p>
 
           <table className="table table-condensed">
             <tbody>

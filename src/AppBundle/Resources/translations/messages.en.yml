@@ -27,6 +27,11 @@ demo.disclaimer.subtitle: Follow the checkout process, pay with a test credit ca
 cart.widget.title: Your delivery details
 cart.widget.button: Order
 
+roles.ROLE_ADMIN: 'Administrator'
+roles.ROLE_COURIER: 'Courier'
+roles.ROLE_RESTAURANT: 'Restaurant'
+roles.ROLE_USER: 'User'
+
 search.help: >
   Search restaurants in Paris area : %links%
 

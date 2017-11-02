@@ -284,6 +284,7 @@ class ProfileController extends Controller
             'order_cancel'  => 'profile_order_cancel',
             'order_ready'   => 'profile_order_ready',
             'order_details' => 'profile_order',
+            'user_details'  => 'user',
             'restaurants'   => 'profile_restaurants',
             'restaurant'    => 'profile_restaurant',
         ], $request->query->get('tab', 'today'));

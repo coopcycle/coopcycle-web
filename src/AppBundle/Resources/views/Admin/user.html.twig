@@ -1,0 +1,10 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_users') }}">{% trans %}Users{% endtrans %}</a></li>
+<li>{{ user.username }}</li>
+{% endblock %}
+
+{% block content %}
+  {% include "AppBundle:Profile:profile.html.twig" %}
+{% endblock %}
