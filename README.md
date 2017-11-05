@@ -25,9 +25,9 @@ How to run a local instance
 
 * Create a Stripe account and copy your tests credentials. You will be asked for them when running `make install`.
 
-* Run the install scripts - when asked for `app/config/parameters.yml` parameters please enter your Google (`google_api_key`) and Stripe test (`stripe_secret_key` and `stripe_publishable_key`) credentials, for others you can keep defaults.
+* Run in root the install scripts - when asked for `app/config/parameters.yml` parameters please enter your Google (`google_api_key`) and Stripe test (`stripe_secret_key` and `stripe_publishable_key`) credentials, for others you can keep defaults.
 ```sh
-make install
+sudo make install
 ```
 
 
