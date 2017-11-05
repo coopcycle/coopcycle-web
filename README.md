@@ -35,7 +35,7 @@ make install
 
 * Start the Docker containers
 ```
-docker-compose up
+sudo docker-compose up
 ```
 
 * Open the platform in your browser
