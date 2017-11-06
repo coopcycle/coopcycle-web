@@ -27,16 +27,13 @@ class AddressType extends AbstractType
                 'label' => 'Floor (optional)'
             ])
             ->add('streetAddress', TextType::class, [
-                'label' => 'Street address',
-                'disabled' => true
+                'label' => 'Street address'
             ])
             ->add('postalCode', TextType::class, [
-                'label' => 'Postal code',
-                'disabled' => true
+                'label' => 'Postal code'
             ])
             ->add('addressLocality', TextType::class, [
-                'label' => 'City',
-                'disabled' => true
+                'label' => 'City'
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,
@@ -90,6 +87,7 @@ class AddressType extends AbstractType
                 }
             }
         });
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

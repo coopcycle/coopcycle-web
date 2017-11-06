@@ -7,7 +7,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
-use AppBundle\Form\AddressType;
+use AppBundle\Form\DeliveryAddressType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -63,7 +63,7 @@ class OrderController extends Controller
         $order = $this->createOrderFromRequest($request);
         $deliveryAddress =  $order->getDelivery()->getDeliveryAddress();
 
-        $form = $this->createForm(AddressType::class, $deliveryAddress);
+        $form = $this->createForm(DeliveryAddressType::class, $deliveryAddress);
 
         if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
             $deliveryAddress = $request->getSession()->get('deliveryAddress');
