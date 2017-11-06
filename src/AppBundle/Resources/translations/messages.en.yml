@@ -7,7 +7,7 @@ order.payment.year.label: Year
 order.payment.card_number.label: Card number
 order.payment.total: Pay %total% €
 order.payment.card_number.help: >
-  Use one of the Stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card numbers</a> (ex: 4242424242424242).
+  A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
 
 order.status.CREATED: Created
 order.status.CANCELED: Canceled
