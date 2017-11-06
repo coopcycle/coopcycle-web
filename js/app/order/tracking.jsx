@@ -33,7 +33,7 @@ function startWebSocket() {
 
   socket.on('courier', function (data) {
     if (!courierMarker) {
-      courierMarker = MapHelper.createMarker(data.coords, 'bicycle', 'circle', '#fff');
+      courierMarker = MapHelper.createMarker(data.coords, 'bicycle', 'circle', '#337ab7');
       courierMarker.addTo(map);
 
       MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker, courierMarker]);
@@ -65,8 +65,8 @@ var deliveryAddress = {
   lng: delivery.deliveryAddress.geo.longitude,
 };
 
-var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#fff');
-var deliveryAddressMarker = MapHelper.createMarker(deliveryAddress, 'user', 'marker', '#fff');
+var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#337ab7');
+var deliveryAddressMarker = MapHelper.createMarker(deliveryAddress, 'user', 'marker', '#337ab7');
 
 MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
   .then((data) => {
@@ -77,7 +77,7 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
     MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker]);
 
     var polyline = new L.Polyline(data, {
-      color: '#fff',
+      color: '#337ab7',
       weight: 3,
       opacity: 0.8,
       smoothFactor: 1
