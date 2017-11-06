@@ -19,7 +19,13 @@ How to run a local instance
 
 ### Prerequisites
 
-* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install). On OSX/Windows we advise you to install the latest versions available, which don't rely on Virtualbox.
+* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install). 
+
+    - On OSX : use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
+    
+    - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
+    
+    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group). 
 
 * Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`.
 
