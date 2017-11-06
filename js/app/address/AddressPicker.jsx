@@ -138,7 +138,10 @@ class AddressPicker extends React.Component {
           // uncomment this if your debugging the style of the suggested addresses
           // alwaysRenderSuggestion
         />
-        <i className="fa fa-times-circle autocomplete-clear" onClick={ this.onClear }></i>
+        { address &&
+          !inputProps.disabled &&
+          <i className="fa fa-times-circle autocomplete-clear" onClick={this.onClear}></i>
+        }
       </div>
     )
   }
