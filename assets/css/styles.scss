@@ -282,6 +282,11 @@ $cart-heading-height: 40px;
     background-color: $white;
     box-sizing: border-box;
     padding: 20px;
+
+    @media screen and (max-width: $screen-md-min){
+      margin: 20px 10px 0;
+      padding: 10px;
+    }
 }
 
 .order-map__image {
