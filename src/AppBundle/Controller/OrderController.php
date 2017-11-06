@@ -121,6 +121,13 @@ class OrderController extends Controller
 
         $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
+        $templateData =  [
+            'order' => $order,
+            'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
+            'restaurant' => $order->getRestaurant(),
+            'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
+        ];
+
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
 
             $this->getDoctrine()->getManagerForClass(Order::class)->persist($order);
@@ -132,12 +139,9 @@ class OrderController extends Controller
                 $this->getDoctrine()->getManagerForClass(Order::class)->flush();
 
             } catch (\Exception $e) {
-                return [
-                    'error' => $e->getMessage(),
-                    'order' => $order,
-                    'restaurant' => $order->getRestaurant(),
-                    'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
-                ];
+                $templateData['error'] = $e->getMessage();
+
+                return $templateData;
             }
 
             $request->getSession()->remove('cart');
@@ -146,12 +150,7 @@ class OrderController extends Controller
             return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
         }
 
-        return array(
-            'order' => $order,
-            'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
-            'restaurant' => $order->getRestaurant(),
-            'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
-        );
+        return $templateData;
     }
 
     /**
