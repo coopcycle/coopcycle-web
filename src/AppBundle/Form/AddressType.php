@@ -28,15 +28,15 @@ class AddressType extends AbstractType
             ])
             ->add('streetAddress', TextType::class, [
                 'label' => 'Street address',
-                'disabled' => true
+                'required' => true
             ])
             ->add('postalCode', TextType::class, [
                 'label' => 'Postal code',
-                'disabled' => true
+                'required' => true
             ])
             ->add('addressLocality', TextType::class, [
                 'label' => 'City',
-                'disabled' => true
+                'required' => true
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,
