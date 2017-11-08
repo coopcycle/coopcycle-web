@@ -44,12 +44,20 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Order
 {
-    const STATUS_CREATED    = 'CREATED';
-    const STATUS_WAITING    = 'WAITING'; // FIXME Should be STATUS_PAID
-    const STATUS_ACCEPTED   = 'ACCEPTED';
-    const STATUS_REFUSED    = 'REFUSED';
-    const STATUS_READY      = 'READY';
-    const STATUS_CANCELED   = 'CANCELED';
+    // the order is created but not paid yet
+    const STATUS_CREATED            = 'CREATED';
+    // the payment for this order failed
+    const STATUS_PAYMENT_ERROR      = 'PAYMENT_ERROR';
+    // the order is paid, has to be accepted by the restaurant owner
+    const STATUS_WAITING            = 'WAITING'; // FIXME Should be STATUS_PAID
+    // the order is accepted by the restaurant owner, he needs to prepare it
+    const STATUS_ACCEPTED           = 'ACCEPTED';
+    // the order has been refused by the restaurant owner
+    const STATUS_REFUSED            = 'REFUSED';
+    // the order is ready to be picked up
+    const STATUS_READY              = 'READY';
+    // the order has been cancelled (by an admin)
+    const STATUS_CANCELED           = 'CANCELED';
 
     /**
      * @var int

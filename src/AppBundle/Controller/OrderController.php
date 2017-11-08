@@ -136,12 +136,13 @@ class OrderController extends Controller
             try {
 
                 $orderManager->pay($order, $request->request->get('stripeToken'));
-                $this->getDoctrine()->getManagerForClass(Order::class)->flush();
-
             } catch (\Exception $e) {
                 $templateData['error'] = $e->getMessage();
+                $order->setStatus(Order::STATUS_PAYMENT_ERROR);
 
                 return $templateData;
+            } finally {
+                $this->getDoctrine()->getManagerForClass(Order::class)->flush();
             }
 
             $request->getSession()->remove('cart');
