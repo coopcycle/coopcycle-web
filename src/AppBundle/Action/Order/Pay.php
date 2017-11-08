@@ -22,7 +22,7 @@ class Pay
      * )
      * @Method("PUT")
      */
-    public function __invoke($data, Request $request)
+    public function __invoke(Order $data, Request $request)
     {
         $user = $this->getUser();
 
@@ -51,6 +51,7 @@ class Pay
         try {
             $this->orderManager->pay($order, $data['stripeToken']);
         } catch (\Exception $e) {
+            $order->setStatus(Order::STATUS_PAYMENT_ERROR);
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
