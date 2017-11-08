@@ -122,6 +122,7 @@ order.status.ACCEPTED: Acceptée
 order.status.REFUSED: Refusée
 order.status.READY: Prête
 order.status.CANCELED: Annulée
+order.status.PAYMENT_ERROR: Erreur de payement
 
 delivery.status.WAITING: En attente
 delivery.status.DISPATCHED: Acceptée

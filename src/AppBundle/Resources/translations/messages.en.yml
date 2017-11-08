@@ -15,6 +15,7 @@ order.status.WAITING: Waiting
 order.status.ACCEPTED: Accepted
 order.status.PICKED: Picked
 order.status.DELIVERED: Delivered
+order.status.PAYMENT_ERROR: Payment Error
 
 delivery.status.WAITING: Waiting
 delivery.status.DISPATCHED: Dispatched
