@@ -35,11 +35,17 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class Delivery extends Intangible
 {
+    // default status when the delivery is created along the order
     const STATUS_WAITING    = 'WAITING';
+    // the delivery has been accepted by a courier
     const STATUS_DISPATCHED = 'DISPATCHED';
+    // the delivery has been picked by a courier
     const STATUS_PICKED     = 'PICKED';
+    // delivered successfully
     const STATUS_DELIVERED  = 'DELIVERED';
+    // the courier had an accident
     const STATUS_ACCIDENT   = 'ACCIDENT';
+    // delivery was canceled (by an admin)
     const STATUS_CANCELED   = 'CANCELED';
 
     /**

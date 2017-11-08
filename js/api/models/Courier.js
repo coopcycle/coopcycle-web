@@ -75,19 +75,28 @@ Courier.prototype.toJSON = function() {
 };
 
 /** Static methods **/
+/*
+  Find the closest available courier for a given delivery.
 
-Courier.nearestForDelivery = function(delivery, distance) {
+  @param Delivery delivery The handled delivery
+  @param int distance The radius from the customer position in which we are looking for a courier
+ */
+
+Courier.nearestForDelivery = function(delivery, distance = 3500) {
 
   var address = delivery.deliveryAddress;
 
   return new Promise(function(resolve, reject) {
 
+    // Returns all the couriers which are in distance from the delivery address
     REDIS.georadius('couriers:geo', address.position.longitude, address.position.latitude, distance, "m", 'WITHDIST', 'ASC', function(err, matches) {
       if (!matches) {
         return resolve(null);
       }
 
-      // Keep only available couriers
+      // Filter couriers :
+      //  - courier that are available
+      //  - courier that didn't already refuse the delivery
       var results = _.filter(matches, (match) => {
         var key = match[0];
         var courier = Courier.Pool.findByKey(key);
