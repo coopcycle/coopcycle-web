@@ -24,7 +24,7 @@
             <h4>{% trans %}order.payment.title{% endtrans %}</h4>
             <div class="form-group">
               <label for="number" class="control-label">{% trans %}order.payment.card_number.label{% endtrans %}</label>
-              <input id="number" class="form-control" type="text" size="20" data-stripe="number" autocomplete="off" placeholder="4242424242424242" {% if is_demo %}value="42424242424242"{%  endif  %}>
+              <input id="number" class="form-control" type="text" size="20" data-stripe="number" autocomplete="off" placeholder="4242424242424242" {% if is_demo %}value="4242424242424242"{%  endif  %}>
               <span class="help-block">
                 {% if is_demo %}<small>{% trans with { '%total%': order.total } %}order.payment.card_number.help{% endtrans %}</small>{%  endif  %}
               </span>
