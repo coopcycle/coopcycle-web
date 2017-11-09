@@ -47,7 +47,6 @@ function startWebSocket() {
   });
 
   socket.on('order_event', function (data) {
-    console.log(data);
     orderFollow.handleOrderEvent(data);
   });
 }
