@@ -10,21 +10,4 @@
   </div>
 </div>
 
-{% if is_granted('ROLE_COURIER') %}
-<div class="panel panel-default">
-  <div class="panel-heading"><i class="fa fa-bicycle"></i>  {% trans %}Courier{% endtrans %}</div>
-  <div class="list-group">
-    <a href="{{ path('profile_courier_deliveries') }}" class="list-group-item">{% trans %}My deliveries{% endtrans %}</a>
-  </div>
-</div>
-{% endif %}
 
-{% if is_granted('ROLE_RESTAURANT') %}
-<div class="panel panel-default">
-  <div class="panel-heading"><i class="fa fa-cutlery"></i>  {% trans %}Merchant{% endtrans %}</div>
-  <div class="list-group">
-    <a href="{{ path('profile_restaurants') }}" class="list-group-item">{% trans %}My restaurants{% endtrans %}</a>
-    <a href="{{ path('profile_payment') }}" class="list-group-item">{% trans %}Payment{% endtrans %}</a>
-  </div>
-</div>
-{% endif %}

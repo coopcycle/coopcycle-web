@@ -99,6 +99,9 @@ Delivery time (minutes): Temps de livraison (en minutes)
 Average delivery time: Temps moyen de livraison
 Roles: Rôles
 
+profile.addresses.breadcrumb: Addresses
+profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
+
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
 menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément

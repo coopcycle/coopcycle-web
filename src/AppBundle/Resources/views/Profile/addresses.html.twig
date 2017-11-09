@@ -1,17 +1,27 @@
 {% extends "AppBundle::profile.html.twig" %}
 
+{% block breadcrumb %}
+  <li>{% trans %}profile.addresses.breadcrumb{% endtrans %}</li>
+{% endblock %}
+
 {% block content %}
-<h2>{%  trans %}My addresses{%  endtrans %}</h2>
-<table class="table">
-  <tbody>
-  {% for address in addresses %}
-  <tr>
-    <td>{{ address.id }}</td>
-    <td>{{ address.streetAddress }}</td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
+<h2>{% trans %}My addresses{%  endtrans %}</h2>
+  {% if addresses is empty %}
+    <div class="alert alert-warning">
+      {%  trans %}profile.addresses.empty{%  endtrans %}
+    </div>
+  {% else %}
+    <table class="table">
+      <tbody>
+        {% for address in addresses %}
+        <tr>
+          <td>{{ address.id }}</td>
+          <td>{{ address.streetAddress }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {%  endif %}
 <a class="btn btn-success" href="{{ path('profile_address_new') }}">{% trans %}Add{%  endtrans %}</a>
 {% endblock %}
 
