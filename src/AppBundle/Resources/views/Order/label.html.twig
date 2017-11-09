@@ -4,8 +4,8 @@
   'WAITING': 'label-warning',
   'ACCEPTED': 'label-primary',
   'REFUSED': 'label-danger',
-  'READY': 'label-success',
-  'PAYMENT_ERROR': 'label-danger'
+  'PAYMENT_ERROR': 'label-danger',
+  'READY': 'label-success'
 } %}
 {% set trans_key = 'order.status.' ~ order.status %}
 <span class="label {{ status_label_class[order.status] }}">{{ trans_key|trans }}</span>
