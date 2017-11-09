@@ -55,8 +55,13 @@
               <li><a href="{{ path('profile_orders') }}">{% trans %}My orders{% endtrans %}</a></li>
               <li><a href="{{ path('profile_addresses') }}">{% trans %}My addresses{% endtrans %}</a></li>
               {% if is_granted('ROLE_RESTAURANT') %}
-              <li role="separator" class="divider"></li>
-              <li><a href="{{ path('profile_restaurants') }}">{% trans %}My restaurants{% endtrans %}</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="{{ path('profile_restaurants') }}">{% trans %}My restaurants{% endtrans %}</a></li>
+                <li><a href="{{ path('profile_payment') }}">{% trans %}Payment{% endtrans %}</a></li>
+              {% endif %}
+              {% if is_granted('ROLE_COURIER') %}
+                <li role="separator" class="divider"></li>
+                <li><a href="{{ path('profile_courier_deliveries') }}">{% trans %}My deliveries{% endtrans %}</a></li>
               {% endif %}
               <li role="separator" class="divider"></li>
               <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
