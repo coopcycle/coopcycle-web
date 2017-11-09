@@ -75,7 +75,10 @@ class OrderListener
      */
     public function postPersist(Order $order, LifecycleEventArgs $args)
     {
+        $deliveryId = $order->getDelivery() ? $order->getDelivery()->getId() : null;
+
         $this->redis->publish('order_events', json_encode([
+            'delivery' => $deliveryId,
             'order' => $order->getId(),
             'status' => $order->getStatus(),
             'timestamp' => (new \DateTime())->getTimestamp(),
@@ -93,7 +96,10 @@ class OrderListener
         $em->persist($orderEvent);
         $em->flush();
 
+        $deliveryId = $order->getDelivery() ? $order->getDelivery()->getId() : null;
+
         $this->redis->publish('order_events', json_encode([
+            'delivery' => $deliveryId,
             'order' => $order->getId(),
             'status' => $order->getStatus(),
             'timestamp' => (new \DateTime())->getTimestamp(),

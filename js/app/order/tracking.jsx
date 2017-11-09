@@ -48,6 +48,13 @@ function startWebSocket() {
       timestamp: data.timestamp
     });
   });
+
+  socket.on('order_event', function (data) {
+    orderEvents.add({
+      eventName: data.status,
+      timestamp: data.timestamp
+    });
+  });
 }
 
 // --------------------
