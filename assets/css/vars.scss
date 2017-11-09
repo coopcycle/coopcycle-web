@@ -10,7 +10,18 @@ $light-gray: #f5f5f5;
 $gray: #ddd;
 $white: #fff;
 
+$red: #ff0033;
+$dark: #06070f;
+$yellow: #eeb516;
+$blue: #ff0033;
+$green: #558900;
+
 // Bootstrap variable
 $bs-input-height: 34px;
 $bs-base-margin: 20px;
 $screen-md-min: 768px;
+
+// Length
+$base-margin: $bs-base-margin;
+$base-margin-s: $base-margin / 2;
+$base-margin-xs: $base-margin-s / 2;

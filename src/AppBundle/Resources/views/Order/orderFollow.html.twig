@@ -1,42 +1,15 @@
-<style>
-  .arrow-down {
-    font-size: 24px;
-  }
-</style>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#order-nav" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">{% trans %}Order{% endtrans %} #{{ order.id }}</a>
+<div class="order-map__wrapper">
+  <div id="map" class="order-map hidden-xs hidden-sm"></div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="order-map__column">
+        {% include "AppBundle::_partials/Order/restaurantDetails.html.twig" %}
+      </div>
     </div>
-    <div class="collapse navbar-collapse" id="order-nav">
-      <ul class="nav navbar-nav">
-        <li><a href="#">{% include "AppBundle:Order:label.html.twig" %}</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        {#
-        <li>
-          <button type="button" class="btn btn-default navbar-btn btn-xs">Reorder</button>
-        </li>
-        #}
-      </ul>
+    <div class="col-md-5 col-md-offset-3">
+      <div class="order-map__column">
+        <div id="order-events"></div>
+      </div>
     </div>
-  </div>
-</nav>
-
-<div class="row">
-  <div class="col-md-8">
-    <div class="embed-responsive embed-responsive-4by3">
-      <div class="embed-responsive-item" id="map"></div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div id="order-events"></div>
   </div>
 </div>

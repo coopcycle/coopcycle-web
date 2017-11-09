@@ -38,6 +38,7 @@ class OrderEvent
     public function __construct(Order $order, $eventName)
     {
         $this->order = $order;
+        $order->getEvents()->add($this);
         $this->eventName = $eventName;
     }
 

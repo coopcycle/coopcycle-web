@@ -43,6 +43,7 @@ class DeliveryEvent
     public function __construct(Delivery $delivery, $eventName, ApiUser $courier = null)
     {
         $this->delivery = $delivery;
+        $delivery->getEvents()->add($this);
         $this->eventName = $eventName;
         $this->courier = $courier;
     }

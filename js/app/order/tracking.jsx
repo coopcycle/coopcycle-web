@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import OrderEvents from './OrderEvents.jsx';
+import OrderFollow from './OrderFollow.jsx';
 
 var _ = require('underscore');
 var moment = require('moment');
@@ -8,7 +8,7 @@ var MapHelper = require('../MapHelper');
 
 var map;
 var courierMarker;
-var orderEvents;
+var orderFollow;
 
 var center = {
   lat: 48.857498,
@@ -43,17 +43,12 @@ function startWebSocket() {
   });
 
   socket.on('delivery_event', function (data) {
-    orderEvents.add({
-      eventName: data.status,
-      timestamp: data.timestamp
-    });
+    orderFollow.handleDeliveryEvent(data);
   });
 
   socket.on('order_event', function (data) {
-    orderEvents.add({
-      eventName: data.status,
-      timestamp: data.timestamp
-    });
+    console.log(data);
+    orderFollow.handleOrderEvent(data);
   });
 }
 
@@ -61,7 +56,7 @@ function startWebSocket() {
 // Initialize LeafletJS
 // --------------------
 
-map = MapHelper.init('map', center, zoom);
+map = MapHelper.init('map', center, zoom, false);
 
 var restaurant = {
   lat: delivery.originAddress.geo.latitude,
@@ -81,7 +76,7 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
     restaurantMarker.addTo(map);
     deliveryAddressMarker.addTo(map);
 
-    MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker]);
+    MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker], 1);
 
     var polyline = new L.Polyline(data, {
       color: '#337ab7',
@@ -96,11 +91,14 @@ MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
     }
   });
 
-let events = window.__order_events.concat(window.__delivery_events);
 
-orderEvents = render(
-  <OrderEvents
+console.log(window.__order_events);
+
+orderFollow = render(
+  <OrderFollow
     i18n={window.__i18n}
-    events={events} />,
+    orderEvents={window.__order_events}
+    deliveryEvents={window.__delivery_events}
+  />,
   document.getElementById('order-events')
 );
