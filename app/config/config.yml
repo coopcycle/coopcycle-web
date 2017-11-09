@@ -42,6 +42,7 @@ twig:
     globals:
         is_demo: "%is_demo%"
         sentry_public_dsn: "%sentry_public_dsn%"
+        country_iso: "%country_iso%"
 
 # Doctrine Configuration
 doctrine:
