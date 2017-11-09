@@ -49,12 +49,20 @@ var started = false;
 var deliveries = {};
 
 redisPubSub.subscribe('delivery_events');
+redisPubSub.subscribe('order_events');
+
 redisPubSub.on('message', function(channel, message) {
   if (channel === 'delivery_events') {
     var data = JSON.parse(message);
     var deliveryKey = 'delivery:' + data.delivery;
     if (deliveries[deliveryKey]) {
       deliveries[deliveryKey].socket.emit('delivery_event', data);
+    }
+  } else if (channel === 'order_events' && message.delivery) {
+    var data = JSON.parse(message);
+    var deliveryKey = 'delivery:' + data.delivery;
+    if (deliveries[deliveryKey]) {
+      deliveries[deliveryKey].socket.emit('order_event', data);
     }
   }
 });
