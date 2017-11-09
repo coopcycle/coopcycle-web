@@ -96,7 +96,7 @@ class ProfileController extends Controller
         $orderEvents = [];
         foreach ($order->getEvents() as $event) {
             $orderEvents[] = [
-                'eventName' => $event->getEventName(),
+                'status' => $event->getEventName(),
                 'timestamp' => $event->getCreatedAt()->getTimestamp()
             ];
         }
@@ -104,7 +104,7 @@ class ProfileController extends Controller
         $deliveryEvents = [];
         foreach ($order->getDelivery()->getEvents() as $event) {
             $deliveryEvents[] = [
-                'eventName' => $event->getEventName(),
+                'status' => $event->getEventName(),
                 'timestamp' => $event->getCreatedAt()->getTimestamp()
             ];
         }
