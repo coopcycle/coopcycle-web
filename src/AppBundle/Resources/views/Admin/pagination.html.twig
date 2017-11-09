@@ -9,7 +9,7 @@
       <a href="{{ path(route_name, {'p': prev_page}) }}"><span aria-hidden="true">&larr;</span> Précédent</a>
     </li>
     {% set next_page = (page < pages) ? page + 1 : page %}
-    <li class="next" {% if page == pages %}style="display: none;"{% endif %}>
+    <li class="next" {% if page == next_page %}style="display: none;"{% endif %}>
       <a href="{{ path(route_name, {'p': next_page}) }}">Suivant <span aria-hidden="true">&rarr;</span></a>
     </li>
   </ul>
