@@ -6,6 +6,7 @@ const map = {
   'WAITING': 'label-warning',
   'ACCEPTED': 'label-primary',
   'REFUSED': 'label-danger',
+  'PAYMENT_ERROR': 'label-danger',
   'READY': 'label-success'
 };
 
