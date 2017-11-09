@@ -2,6 +2,7 @@ norestaurantfound: No restaurant open at this time!<br>Try a different delivery 
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!
+profile.orders.empty: No order yet!
 
 order.payment.title: Your payment informations
 order.payment.expiration.label: Expiration

@@ -7,20 +7,26 @@
 {% block content %}
 <h2 class="page-header">{% trans %}My orders{% endtrans %}</h2>
 {% include "AppBundle:Profile:orders.pagination.html.twig" %}
-<table class="table">
-  <tbody>
-  {% for order in orders %}
-  <tr>
-    <td width="10%"><a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a></td>
-    <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
-    <td width="10%">{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
-    <td>{{ order.restaurant.name }}</td>
-    <td>{{ order.createdAt|ago }}</td>
-    <td><span class="pull-right">{{ order.total }} €</span></td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
+  {% if orders is empty %}
+    <div class="alert alert-warning">
+      {%  trans %}profile.orders.empty{%  endtrans %}
+    </div>
+  {% else %}
+    <table class="table">
+      {% for order in orders %}
+        <tbody>
+        <tr>
+          <td width="10%"><a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a></td>
+          <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
+          <td width="10%">{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
+          <td>{{ order.restaurant.name }}</td>
+          <td>{{ order.createdAt|ago }}</td>
+          <td><span class="pull-right">{{ order.total }} €</span></td>
+        </tr>
+        </tbody>
+      {% endfor %}
+    </table>
+  {% endif %}
 {% endblock %}
 
 {% block scripts %}
