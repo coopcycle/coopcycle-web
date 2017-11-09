@@ -101,6 +101,7 @@ Roles: Rôles
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
+profile.orders.empty: Pas de commande pour l'instant!
 
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
