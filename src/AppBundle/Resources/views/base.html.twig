@@ -47,6 +47,10 @@
         Raven.config("{{ sentry_public_dsn }}").install();
       </script>
     {% endif %}
+    <script>
+      window.AppData = window.AppData || {};
+      window.AppData.countryIso = "{{ country_iso }}";
+    </script>
     <script src="{{ asset('js/common.js') }}"></script>
     {% block scripts %}{% endblock %}
     {% if app.environment == "dev" %}

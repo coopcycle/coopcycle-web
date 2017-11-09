@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const autocompleteOptions = {
   types: ['address'],
   componentRestrictions: {
-    country: "fr"
+    country: window.AppData.countryIso || "fr"
   }
 }
 

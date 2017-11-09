@@ -2,6 +2,10 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
+
+    # indicates in which country the platform will be deployed
+    country_iso: fr
+
     database_driver:   pdo_pgsql
     database_host:     postgres
     database_port:     5432
@@ -59,5 +63,4 @@ parameters:
     is_demo: false
 
     sentry_dsn: "https://<public>:<secret>@sentry.io/********"
-
     sentry_public_dsn: "https://<public>@sentry.io/********"

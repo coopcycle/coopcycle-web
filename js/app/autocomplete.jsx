@@ -1,7 +1,7 @@
 const options = {
   types: ['address'],
   componentRestrictions: {
-    country: "fr"
+    country: window.AppData.countryIso || "fr"
   }
 };
 
