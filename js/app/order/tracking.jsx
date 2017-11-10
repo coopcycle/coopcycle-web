@@ -19,7 +19,7 @@ var zoom = window.mapZoom || 13;
 var hostname = window.location.hostname;
 var socket;
 
-const order = window.__order;
+const order = window.AppData.order;
 const delivery = order.delivery;
 
 moment.locale($('html').attr('lang'));
@@ -95,9 +95,9 @@ console.log(window.__order_events);
 
 orderFollow = render(
   <OrderFollow
-    i18n={window.__i18n}
-    orderEvents={window.__order_events}
-    deliveryEvents={window.__delivery_events}
+    order={window.AppData.order}
+    orderEvents={window.AppData.order_events}
+    deliveryEvents={window.AppData.delivery_events}
   />,
-  document.getElementById('order-events')
+  document.getElementById('order-follow')
 );

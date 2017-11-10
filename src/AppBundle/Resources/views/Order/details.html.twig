@@ -12,9 +12,10 @@
 {% block scripts %}
 <script src="/tracking/socket.io/socket.io.js"></script>
 <script>
-  window.__order = {{ order_json|raw }};
-  window.__order_events = {{ order_events_json|raw }}
-  window.__delivery_events = {{ delivery_events_json|raw }}
+  window.AppData = window.AppData || {};
+  window.AppData.order = {{ order_json|raw }};
+  window.AppData.order_events = {{ order_events_json|raw }}
+  window.AppData.delivery_events = {{ delivery_events_json|raw }}
 </script>
 <script src="{{ asset('js/order-tracking.js') }}"></script>
 {% endblock %}
