@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import Cart from './Cart.jsx';
+import moment from 'moment';
 
 
 let isXsDevice = $('.visible-xs').is(':visible')
@@ -10,7 +11,10 @@ var cartComponent;
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
-var date = localStorage.getItem('search__date') || window.AppData.Cart.date || '',
+var initialDate = localStorage.getItem('search__date') || window.AppData.Cart.date || '',
+    availabilities = window.AppData.availabilities,
+    // TODO : check with someone knowledgeable in React if it is the right place to do this
+    initialDate = moment(initialDate).isAfter(moment(availabilities[0])) ? initialDate : availabilities[0],
     geohash = localStorage.getItem('search_geohash') || '',
     streetAddress = localStorage.getItem('search_address') || '';
 
@@ -21,10 +25,9 @@ if (cart) {
           streetAddress={streetAddress}
           geohash={geohash}
           i18n={window.__i18n}
-          deliveryDate={date}
-          availabilities={window.AppData.availabilities}
+          deliveryDate={initialDate}
+          availabilities={availabilities}
           items={window.AppData.Cart.items}
-          date={date}
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
           validateCartURL={window.AppData.Cart.validateCartURL}

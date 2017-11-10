@@ -110,7 +110,7 @@ class Cart extends React.Component
 
     let { items, toggled } = this.state ,
         cartContent,
-        { streetAddress, geohash, isMobileCart } = this.props,
+        { streetAddress, geohash, isMobileCart, deliveryDate, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
@@ -175,14 +175,14 @@ class Cart extends React.Component
               />
               <hr />
               <DatePicker
-                availabilities={this.props.availabilities}
-                value={this.props.deliveryDate}
+                availabilities={availabilities}
+                value={deliveryDate}
                 onChange={this.onDateChange} />
               <hr />
               {cartContent}
               <strong>Total {sum} €</strong>
               <hr />
-              <a href={this.props.validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+              <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
             </div>
           </div>
         </div>
