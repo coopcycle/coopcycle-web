@@ -74,14 +74,14 @@ class RestaurantController extends Controller
             $geotools = new Geotools();
 
             // we need to compute the geohash, because of small differences between geodata from the back and from the front
-            $address = $user->getAddresses()->filter(
+            $address = $user->getAddresses()/*->filter(
                 function ($address) use ($addressData, $geotools) {
                     $addressCoordinate = new Coordinate([$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]);
                     $basketCoordinate = new Coordinate([$addressData['latitude'], $addressData['longitude']]);
                     return $geotools->geohash()->encode($addressCoordinate, 9)->getGeohash() ===
                         $geotools->geohash()->encode($basketCoordinate, 9)->getGeohash();
                 }
-            );
+            )*/;
 
             if ($address->count() > 0) {
                 $this->logger->debug('Existing address found for streetAddress '.$addressData['streetAddress']);
