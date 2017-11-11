@@ -230,7 +230,7 @@ function addCourier(key, position) {
     return delivery.courier === key;
   });
 
-  var color = delivery ? delivery.color : '#fff';
+  var color = delivery ? delivery.color : '#000';
 
   if (!marker) {
 
