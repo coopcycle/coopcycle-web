@@ -100,7 +100,8 @@ Feature: Orders
       },
       "total":@number@,
       "publicUrl":@string@,
-      "status":"CREATED"
+      "status":"CREATED",
+      "preparationDate":"@string@.startsWith('2017-09-02T11:45:00')"
     }
     """
 

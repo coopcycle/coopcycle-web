@@ -382,4 +382,12 @@ class Order
         $this->uuid = $uuid;
     }
 
+    public function getPreparationDate()
+    {
+        $preparationDate = clone $this->delivery->getDate();
+
+        $preparationDate->modify(sprintf('-%d minutes', Restaurant::PREPARATION_AND_DELIVERY_DELAY));
+
+        return $preparationDate;
+    }
 }
