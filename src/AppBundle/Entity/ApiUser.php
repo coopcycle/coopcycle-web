@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -32,19 +34,22 @@ class ApiUser extends BaseUser
     protected $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", nullable=true)
      * @ApiProperty(iri="https://schema.org/givenName")
     */
     protected $givenName;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", nullable=true)
      * @ApiProperty(iri="https://schema.org/familyName")
      */
     protected $familyName;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank()
+     * @ORM\Column(type="phone_number", nullable=true)
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;

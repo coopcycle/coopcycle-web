@@ -65,6 +65,7 @@ doctrine:
                 class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
                 commented: false
             uuid:  Ramsey\Uuid\Doctrine\UuidType
+            phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
         mapping_types:
             _text: string
 
@@ -180,9 +181,3 @@ csa_guzzle:
                 base_uri: "%applicolis_api_base_url%"
                 lazy: true
 
-api_platform:
-
-    # ...
-
-    eager_loading:
-        max_joins: 100
