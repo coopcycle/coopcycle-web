@@ -206,12 +206,25 @@ class AddressProvider extends BaseProvider
 
         $response = $this->client->request('GET', "/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$this->apiKey}");
 
-        $data = json_decode((string) $response->getBody(), true);
+        $raw_data = json_decode((string) $response->getBody(), true)['results'][0];
+        $data = $raw_data['address_components'];
+        $formatted_data = [];
 
-        $streetAddress = $data['results'][0]['formatted_address'];
+        foreach ($data as $val) {
+            $formatted_data[$val['types'][0]] = $val['long_name'];
+        }
+
+        if (array_key_exists('street_number', $formatted_data)) {
+            $streetAddress = $formatted_data['street_number'].' '.$formatted_data['route'];
+        } else if (array_key_exists('route', $formatted_data)) {
+            $streetAddress = $formatted_data['route'];
+        } else {
+            $streetAddress = $raw_data['formatted_address'];
+        }
 
         $address = new Address();
-
+        $address->setAddressLocality($formatted_data['locality']);
+        $address->setPostalCode($formatted_data['postal_code']);
         $address->setStreetAddress($streetAddress);
         $address->setGeo(new GeoCoordinates($latitude, $longitude));
 
