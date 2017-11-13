@@ -88,7 +88,6 @@ class OrderTest extends TestCase
     public function testDistanceValidation()
     {
         $restaurant = new Restaurant();
-        $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
 
         $delivery = new Delivery();
@@ -120,7 +119,6 @@ class OrderTest extends TestCase
     public function testDateValidation()
     {
         $restaurant = new Restaurant();
-        $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
 
         $delivery = new Delivery();

@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class RestaurantRepository extends EntityRepository
 {
-    private function createNearbyQueryBuilder($latitude, $longitude, $distance = 5000)
+    private function createNearbyQueryBuilder($latitude, $longitude, $distance = Restaurant::MAX_DISTANCE)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -17,7 +17,7 @@ class RestaurantRepository extends EntityRepository
         return $qb;
     }
 
-    public static function addNearbyQueryClause(QueryBuilder $qb, $latitude, $longitude, $distance = 5000)
+    public static function addNearbyQueryClause(QueryBuilder $qb, $latitude, $longitude, $distance = Restaurant::MAX_DISTANCE)
     {
         $qb->innerJoin($qb->getRootAlias() . '.address', 'a', Expr\Join::WITH);
 

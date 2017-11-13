@@ -47,6 +47,12 @@ class Restaurant extends FoodEstablishment
      */
     const NUMBER_OF_AVAILABLE_DAYS = 2;
 
+    /*
+     * We allow ordering at max 3000 m
+     */
+
+    const MAX_DISTANCE = 3000;
+
     /**
      * @var int
      *
@@ -129,7 +135,6 @@ class Restaurant extends FoodEstablishment
      */
     private $hasMenu;
 
-    private $maxDistance = 3000;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -409,15 +414,4 @@ class Restaurant extends FoodEstablishment
         $this->hasMenu = $menu;
     }
 
-    public function getMaxDistance()
-    {
-        return $this->maxDistance;
-    }
-
-    public function setMaxDistance($maxDistance)
-    {
-        $this->maxDistance = $maxDistance;
-
-        return $this;
-    }
 }
