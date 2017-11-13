@@ -16,6 +16,7 @@ services:
 
   app.form.registration:
     class: AppBundle\Form\RegistrationType
+    arguments: ['%country_iso%']
     tags:
       - { name: form.type, alias: app_user_registration }
 
