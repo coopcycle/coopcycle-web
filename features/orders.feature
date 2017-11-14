@@ -6,7 +6,7 @@ Feature: Orders
     And the user "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
-      | telephone | +33612345678      |
+      | telephone | 0033612345678      |
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
@@ -166,7 +166,7 @@ Feature: Orders
       | email     | sarah@coopcycle.org |
       | username  | sarah               |
       | password  | 123456              |
-      | telephone | +33612345678        |
+      | telephone | 0033612345678        |
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
