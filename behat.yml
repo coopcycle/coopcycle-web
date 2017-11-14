@@ -4,7 +4,7 @@ default:
   suites:
     default:
       contexts:
-        - FeatureContext: { doctrine: "@doctrine" }
+        - FeatureContext: { doctrine: "@doctrine", phoneNumberUtil: "@libphonenumber.phone_number_util" }
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext

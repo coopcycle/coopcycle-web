@@ -37,12 +37,18 @@ AppBundle\Entity\Menu:
 
 AppBundle\Entity\Address:
   address_1:
+    addressLocality: 'New-York'
+    postalCode: 991
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
   address_2:
+    addressLocality: 'New-York'
+    postalCode: 991
     streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     geo: "@geo_2"
   address_3:
+    addressLocality: 'New-York'
+    postalCode: 991
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
 

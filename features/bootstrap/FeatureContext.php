@@ -59,7 +59,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct(ManagerRegistry $doctrine, HttpCallResultPool $httpCallResultPool)
+    public function __construct(
+        ManagerRegistry $doctrine,
+        HttpCallResultPool $httpCallResultPool,
+        \libphonenumber\PhoneNumberUtil $phoneNumberUtil
+    )
     {
         $this->tokens = [];
         $this->doctrine = $doctrine;
@@ -67,6 +71,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->schemaTool = new SchemaTool($this->manager);
         $this->classes = $this->manager->getMetadataFactory()->getAllMetadata();
         $this->httpCallResultPool = $httpCallResultPool;
+        $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -176,7 +181,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $user = $manipulator->create($username, $password, $email, true, false);
 
         if (isset($data['telephone'])) {
-            $user->setTelephone($data['telephone']);
+            $phoneNumber = $this->phoneNumberUtil->parse($data['telephone'], 'FR');
+            $user->setTelephone($phoneNumber);
             $manager->updateUser($user);
         }
     }
@@ -250,6 +256,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         list($lat, $lng) = explode(',', $data['geo']);
 
         $address = new Address();
+        $address->setPostalCode(991);
+        $address->setAddressLocality('New-York');
         $address->setStreetAddress($data['streetAddress']);
         $address->setGeo(new GeoCoordinates(trim($lat), trim($lng)));
 
