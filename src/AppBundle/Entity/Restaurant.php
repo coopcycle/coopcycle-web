@@ -159,6 +159,14 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * Gets id.
      *
      * @return int

@@ -3,7 +3,16 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+
+
+class AddProductException extends \Exception {}
+
+class UnavailableProductException extends AddProductException {}
+
+class RestaurantMismatchException extends AddProductException {}
 
 
 class Cart
@@ -59,8 +68,20 @@ class Cart
         $this->items = array();
     }
 
-    public function addItem($menuItem, $quantity = 1, $modifierChoices = [])
+    public function addItem(MenuItem $menuItem, $quantity = 1, $modifierChoices = [])
     {
+        if (!$menuItem->getIsAvailable()) {
+            throw new UnavailableProductException(
+                sprintf('Product %s is not available', $menuItem->getId())
+            );
+        }
+
+        if (!$menuItem->getRestaurant()->getId() != $this->restaurantId) {
+            throw new RestaurantMismatchException(
+                sprintf('Product %s doesn\'t belong to restaurant %s', $menuItem->getId(), $this->restaurantId)
+            );
+        }
+
         $cartItem = new CartItem($menuItem, $quantity, $modifierChoices);
         $itemKey = $cartItem->getKey();
 

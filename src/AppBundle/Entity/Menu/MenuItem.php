@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\MenuItem as BaseMenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
+use AppBundle\Entity\Restaurant;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -56,6 +57,16 @@ class MenuItem extends BaseMenuItem
         $this->modifiers = new ArrayCollection();
     }
 
+    /**
+     * @return Restaurant
+     */
+    public function getRestaurant() {
+        return $this->section->getMenu()->getRestaurant();
+    }
+
+    /**
+     * @return MenuSection
+     */
     public function getSection()
     {
         return $this->section;

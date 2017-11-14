@@ -8,6 +8,8 @@ use AppBundle\Utils\Cart;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\GeoUtils;
+use AppBundle\Utils\RestaurantMismatchException;
+use AppBundle\Utils\UnavailableProductException;
 use Doctrine\Common\Collections\Criteria;
 use League\Geotools\Coordinate\Coordinate;
 use Psr\Log\LoggerInterface;
@@ -240,17 +242,18 @@ class RestaurantController extends Controller
         if ($request->request->has('selectedItemData')) {
 
             $item = $request->request->get('selectedItemData');
-
-            // TODO Check if product belongs to restaurant
             $repo = $this->getDoctrine()->getRepository(MenuItem::class);
-
             $menuItem = $repo->find($item['menuItemId']);
-
             $modifierChoices = isset($item['modifiers']) ? $item['modifiers'] : [];
-
             $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
 
-            $cart->addItem($menuItem, $quantity, $modifierChoices);
+            try {
+                $cart->addItem($menuItem, $quantity, $modifierChoices);
+            } catch (RestaurantMismatchException $e) {
+                return new JsonResponse(['error' => 'Unable to add item'], 400);
+            } catch (UnavailableProductException $e) {
+                return new JsonResponse(['error' => 'Unable to add item'], 400);
+            }
         }
 
         if ($request->request->has('date')) {
