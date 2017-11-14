@@ -19,7 +19,7 @@
             <ul class="dropdown-menu">
               {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
               <li>
-                <a href="{{ path(restaurant_orders_route, { id: restaurant.id }) }}">
+                <a href="{{ path(restaurant_orders_route, { restaurantId: restaurant.id }) }}">
                 {% trans %}Orders{% endtrans %}
                 </a>
               </li>

@@ -10,38 +10,42 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait AdminTrait
 {
-    protected function restaurantOrders($id, array $routes = [], $tab = null)
+    protected function restaurantDashboard($restaurantId, $orderId, Request $request, array $routes = [])
     {
-        $restaurantRepo = $this->getDoctrine()->getRepository(Restaurant::class);
-        $orderRepo = $this->getDoctrine()->getRepository(Order::class);
+        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $orderRepository      = $this->getDoctrine()->getRepository(Order::class);
 
-        $restaurant = $restaurantRepo->find($id);
+        $restaurant = $restaurantRepository->find($restaurantId);
 
         $this->checkAccess($restaurant);
 
-        $date = null;
-        if ($tab && in_array($tab, ['today', 'tomorrow'])) {
-            $date = new \DateTime($tab);
+        $date = new \DateTime('now');
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
         }
+        $date->modify('-1 day');
 
-        $orders = $orderRepo->getWaitingOrdersForRestaurant($restaurant, $date);
-        $history = $orderRepo->getHistoryOrdersForRestaurant($restaurant);
+        $orders = $orderRepository->getWaitingOrdersForRestaurant($restaurant, $date);
+        $ordersJson = array_map(function ($order) {
+            return $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]);
+        }, $orders);
 
-        $ordersJson = [];
-        foreach ($orders as $order) {
-            $ordersJson[] = $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]);
+        $order = null;
+        if ($orderId) {
+            $order = $orderRepository->find($orderId);
         }
 
         return [
             'restaurant' => $restaurant,
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
             'orders' => $orders,
-            'history' => $history,
-            'orders_json' => '[' . implode(',', $ordersJson) . ']',
+            'orders_json' => '[' . implode(',', $ordersJson) . ']', // FIXME This is ugly...
+            'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]),
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'routes' => $routes,
-            'tab' => $tab
+            'date' => $date,
         ];
     }
 
