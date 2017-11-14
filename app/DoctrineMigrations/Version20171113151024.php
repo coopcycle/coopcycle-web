@@ -20,6 +20,7 @@ class Version20171113151024 extends AbstractMigration
 
         $this->addSql('ALTER TABLE address ALTER address_locality SET NOT NULL');
         $this->addSql('ALTER TABLE address ALTER street_address SET NOT NULL');
+        $this->addSql('ALTER TABLE address ALTER postal_code SET NOT NULL');
     }
 
     /**
@@ -32,5 +33,6 @@ class Version20171113151024 extends AbstractMigration
 
         $this->addSql('ALTER TABLE address ALTER address_locality DROP NOT NULL');
         $this->addSql('ALTER TABLE address ALTER street_address DROP NOT NULL');
+        $this->addSql('ALTER TABLE address ALTER postal_code DROP NOT NULL');
     }
 }
