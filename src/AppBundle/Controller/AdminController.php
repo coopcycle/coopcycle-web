@@ -254,7 +254,6 @@ class AdminController extends Controller
      */
     public function newDeliveryAction(Request $request)
     {
-
         $delivery = new Delivery();
 
         $form = $this->createForm(DeliveryType::class, $delivery);
@@ -302,21 +301,43 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/restaurants/{id}/orders", name="admin_restaurant_orders")
+     * @Route("/admin/restaurants/{restaurantId}/orders", name="admin_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id, Request $request)
+    public function restaurantOrdersAction($restaurantId, Request $request)
     {
-        return $this->restaurantOrders($id, [
-            'order_accept'  => 'admin_order_accept',
-            'order_refuse'  => 'admin_order_refuse',
-            'order_cancel'  => 'admin_order_cancel',
-            'order_ready'   => 'admin_order_ready',
-            'order_details' => 'admin_order',
-            'user_details'  => 'user',
-            'restaurants'   => 'admin_restaurants',
-            'restaurant'    => 'admin_restaurant',
-        ], $request->query->get('tab', 'today'));
+        return $this->restaurantDashboard($restaurantId, null, $request, [
+            'order_accept'      => 'admin_order_accept',
+            'order_refuse'      => 'admin_order_refuse',
+            'order_cancel'      => 'admin_order_cancel',
+            'order_ready'       => 'admin_order_ready',
+            'order_details'     => 'admin_order',
+            'user_details'      => 'user',
+            'restaurant'        => 'admin_restaurant',
+            'restaurants'       => 'admin_restaurants',
+            'restaurant_order'  => 'admin_restaurant_order',
+            'restaurant_orders' => 'admin_restaurant_orders'
+        ]);
+    }
+
+    /**
+     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}", name="admin_restaurant_order")
+     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     */
+    public function restaurantOrderAction($restaurantId, $orderId, Request $request)
+    {
+        return $this->restaurantDashboard($restaurantId, $orderId, $request, [
+            'order_accept'      => 'admin_order_accept',
+            'order_refuse'      => 'admin_order_refuse',
+            'order_cancel'      => 'admin_order_cancel',
+            'order_ready'       => 'admin_order_ready',
+            'order_details'     => 'admin_order',
+            'user_details'      => 'user',
+            'restaurant'        => 'admin_restaurant',
+            'restaurants'       => 'admin_restaurants',
+            'restaurant_order'  => 'admin_restaurant_order',
+            'restaurant_orders' => 'admin_restaurant_orders'
+        ]);
     }
 
     /**
@@ -328,7 +349,10 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->acceptOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->acceptOrder($id, 'admin_restaurant_order', [
+                'restaurantId' => $order->getRestaurant()->getId(),
+                'orderId' => $order->getId(),
+            ]);
         }
     }
 
@@ -341,7 +365,10 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->refuseOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->refuseOrder($id, 'admin_restaurant_order', [
+                'restaurantId' => $order->getRestaurant()->getId(),
+                'orderId' => $order->getId(),
+            ]);
         }
     }
 
@@ -354,7 +381,10 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->readyOrder($id, 'admin_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->readyOrder($id, 'admin_restaurant_order', [
+                'restaurantId' => $order->getRestaurant()->getId(),
+                'orderId' => $order->getId(),
+            ]);
         }
     }
 

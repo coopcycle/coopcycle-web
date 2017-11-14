@@ -273,21 +273,43 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/restaurants/{id}/orders", name="profile_restaurant_orders")
+     * @Route("/profile/restaurants/{restaurantId}/orders", name="profile_restaurant_orders")
      * @Template("@App/Admin/Restaurant/orders.html.twig")
      */
-    public function restaurantOrdersAction($id, Request $request)
+    public function restaurantOrdersAction($restaurantId, Request $request)
     {
-        return $this->restaurantOrders($id, [
-            'order_accept'  => 'profile_order_accept',
-            'order_refuse'  => 'profile_order_refuse',
-            'order_cancel'  => 'profile_order_cancel',
-            'order_ready'   => 'profile_order_ready',
-            'order_details' => 'profile_order',
-            'user_details'  => 'user',
-            'restaurants'   => 'profile_restaurants',
-            'restaurant'    => 'profile_restaurant',
-        ], $request->query->get('tab', 'today'));
+        return $this->restaurantDashboard($restaurantId, null, $request, [
+            'order_accept'      => 'profile_order_accept',
+            'order_refuse'      => 'profile_order_refuse',
+            'order_cancel'      => 'profile_order_cancel',
+            'order_ready'       => 'profile_order_ready',
+            'order_details'     => 'profile_order',
+            'user_details'      => 'user',
+            'restaurant'        => 'profile_restaurant',
+            'restaurants'       => 'profile_restaurants',
+            'restaurant_order'  => 'profile_restaurant_order',
+            'restaurant_orders' => 'profile_restaurant_orders'
+        ]);
+    }
+
+     /**
+     * @Route("/profile/restaurants/{restaurantId}/orders/{orderId}", name="profile_restaurant_order")
+     * @Template("@App/Admin/Restaurant/orders.html.twig")
+     */
+    public function restaurantOrderAction($restaurantId, $orderId, Request $request)
+    {
+        return $this->restaurantDashboard($restaurantId, $orderId, $request, [
+            'order_accept'      => 'profile_order_accept',
+            'order_refuse'      => 'profile_order_refuse',
+            'order_cancel'      => 'profile_order_cancel',
+            'order_ready'       => 'profile_order_ready',
+            'order_details'     => 'profile_order',
+            'user_details'      => 'user',
+            'restaurant'        => 'profile_restaurant',
+            'restaurants'       => 'profile_restaurants',
+            'restaurant_order'  => 'profile_restaurant_order',
+            'restaurant_orders' => 'profile_restaurant_orders'
+        ]);
     }
 
     /**

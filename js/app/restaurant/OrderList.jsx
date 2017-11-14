@@ -1,25 +1,77 @@
 import React from 'react';
-import OrderListItem from './OrderListItem.jsx';
+import OrderLabel from '../order/Label.jsx';
 import _ from 'lodash';
 import moment from 'moment';
+import numeral  from 'numeral';
+import 'numeral/locales'
+
+const locale = $('html').attr('lang')
+numeral.locale(locale)
 
 class OrderList extends React.Component
 {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       orders: props.orders,
-    };
+      active: props.active
+    }
   }
-  addOrder(order) {
-    let { orders } = this.state;
-    orders.push(order);
 
-    this.setState({ orders });
+  setActive(order) {
+    this.setState({ active: order })
   }
+
+  addOrder(order) {
+
+    let { orders } = this.state
+    orders.push(order)
+
+    this.setState({ orders })
+  }
+
+  renderOrders(date, orders) {
+    return (
+      <div key={ date }>
+        <h4>{ _.startCase(moment(date).calendar().split(' ')[0]) }</h4>
+        { this.renderOrdersTable(orders) }
+      </div>
+    )
+  }
+
+  renderOrdersTable(orders) {
+    return (
+      <div>
+        <table className="table table-hover">
+          <tbody>
+          { _.map(orders, (order) => this.renderOrderRow(order)) }
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  renderOrderRow(order) {
+
+    let className = ''
+    if (this.state.active && this.state.active['@id'] === order['@id']) {
+      className = 'active'
+    }
+
+    return (
+      <tr key={ order['@id'] } onClick={ () => this.props.onOrderClick(order) } style={{ cursor: 'pointer' }} className={ className }>
+        <td>#{ order['@id'].replace('/api/orders/', '') }</td>
+        <td><OrderLabel order={ order } /></td>
+        <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.preparationDate).format('lll') }</td>
+        <td>{ numeral(order.total).format('$0,0.00') }</td>
+        <td className="text-right">{ order.customer.username }</td>
+      </tr>
+    )
+  }
+
   render() {
 
-    let { orders } = this.state;
+    const { orders } = this.state
 
     if (orders.length === 0) {
       return (
@@ -27,29 +79,26 @@ class OrderList extends React.Component
       )
     }
 
-    orders.sort((a, b) => {
-      const dateA = moment(a.delivery.date);
-      const dateB = moment(b.delivery.date);
-      if (dateA === dateB) {
-        return 0;
-      }
+    const preparationDate = order => moment(order.preparationDate).format('YYYY-MM-DD')
+    const ordersByDate = _.mapValues(_.groupBy(orders, preparationDate), orders => {
+      orders.sort((a, b) => {
+        const dateA = moment(a.preparationDate);
+        const dateB = moment(b.preparationDate);
+        if (dateA === dateB) {
+          return 0;
+        }
 
-      return dateA.isAfter(dateB) ? 1 : -1;
-    });
+        return dateA.isAfter(dateB) ? 1 : -1;
+      });
 
-    var items = _.map(orders, (order, key) => {
-      return (
-        <OrderListItem
-          key={key}
-          order={order} />
-      );
-    });
+      return orders
+    })
 
     return (
       <div>
-        {items}
+      { _.map(ordersByDate, (orders, date) => this.renderOrders(date, orders)) }
       </div>
-    );
+    )
   }
 }
 

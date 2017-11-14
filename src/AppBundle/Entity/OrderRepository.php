@@ -10,23 +10,23 @@ class OrderRepository extends EntityRepository
 {
     public function getWaitingOrdersForRestaurant(Restaurant $restaurant, \DateTime $date = null)
     {
+        if (null === $date) {
+            $date = new \DateTime('now');
+        }
+
         $qb = $this->createQueryBuilder('o');
         $qb
             ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
             ->andWhere('o.restaurant = :restaurant')
-            ->andWhere($qb->expr()->in('o.status', [
-                Order::STATUS_WAITING,
-                Order::STATUS_ACCEPTED
+            ->andWhere($qb->expr()->notIn('d.status', [
+                Delivery::STATUS_PICKED,
+                Delivery::STATUS_DELIVERED,
             ]))
+            ->andWhere('DATE(d.date) >= :date')
             ->setParameter('restaurant', $restaurant)
+            ->setParameter('date', $date)
             ->orderBy('d.date', 'ASC')
             ;
-
-        if ($date) {
-            $qb
-                ->andWhere('DATE(d.date) = :date')
-                ->setParameter('date', $date->format('Y-m-d'));
-        }
 
         return $qb->getQuery()->getResult();
     }

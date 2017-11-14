@@ -71,6 +71,7 @@ Use the map below to find restaurants: Utilisez la carte ci-dessous pour trouver
 Manage orders: Gérer les commandes
 Create a new restaurant: Créer un nouveau restaurant
 Cancel: Annuler
+Ready!: Prête !
 Created at: Créé le
 Duration: Durée
 Dashboard: Tableau de bord
@@ -98,6 +99,9 @@ Pickup time (minutes): Temps de récupération (en minutes)
 Delivery time (minutes): Temps de livraison (en minutes)
 Average delivery time: Temps moyen de livraison
 Roles: Rôles
+Click on an order to display details: Cliquez sur une commande pour l'afficher
+Dishes: Plats
+Previous orders: Commandes précédentes
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!

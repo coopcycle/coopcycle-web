@@ -11,41 +11,21 @@
 {% set current_route = app.request.attributes.get('_route') %}
 {% set current_route_params = app.request.attributes.get('_route_params') %}
 
-<div class="row">
-  <div class="col-md-6">
-    <div class="well well-sm"><strong>{% trans %}Waiting{% endtrans %}</strong></div>
-    <ul class="nav nav-justified nav-pills">
-      <li role="presentation" {% if tab == 'today' %}class="active"{% endif %}>
-        <a href="{{ path(current_route, current_route_params|merge({tab: 'today'})) }}">
-          {% trans %}Today{% endtrans %}
-        </a>
-      </li>
-      <li role="presentation" {% if tab == 'tomorrow' %}class="active"{% endif %}>
-        <a href="{{ path(current_route, current_route_params|merge({tab: 'tomorrow'})) }}">
-        {% trans %}Tomorrow{% endtrans %}
-        </a>
-      </li>
-    </ul>
+<div class="restaurant-dashboard">
+
+  <div class="restaurant-dashboard__list">
+    {% set route_params = {
+      restaurantId: restaurant.id,
+      orderId: order ? order.id : null,
+      date: date|date_modify('-1 day')|date('Y-m-d')
+    } %}
+    <a href="{{ path(routes.restaurant_orders, route_params) }}" class="btn btn-block btn-default">
+      {% trans %}Previous orders{% endtrans %}
+    </a>
     <hr>
     <div id="order-list"></div>
   </div>
-  <div class="col-md-6">
-    <div class="well well-sm"><strong>{% trans %}History{% endtrans %}</strong></div>
-    <table class="table table-condensed">
-      <tbody>
-      {% for order in history %}
-      <tr>
-        <td width="10%">
-          <a href="{{ path(routes.order_details, { id: order.id }) }}">#{{ order.id }}</a>
-        </td>
-        <td>{% include "AppBundle:Order:label.html.twig" %}</td>
-        <td>{{ order.createdAt|ago }}</td>
-        <td class="text-right">{{ order.total }}€</td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  <aside class="restaurant-dashboard__details"></aside>
 </div>
 
 {% endblock %}
@@ -64,16 +44,26 @@ window.__order_status_i18n = {
 window.__restaurant = {{ restaurant_json|raw }};
 window.__restaurant = {{ restaurant_json|raw }};
 window.__orders = {{ orders_json|raw }};
+window.__order = {{ order_json|raw }};
 window.__routes = {
-  'order_accept':  "{{ path(routes.order_accept,  { id: '__ORDER_ID__' }) }}",
-  'order_refuse':  "{{ path(routes.order_refuse,  { id: '__ORDER_ID__' }) }}",
-  'order_cancel':  "{{ path(routes.order_cancel,  { id: '__ORDER_ID__' }) }}",
-  'order_ready':   "{{ path(routes.order_ready,   { id: '__ORDER_ID__' }) }}",
-  'order_details': "{{ path(routes.order_details, { id: '__ORDER_ID__' }) }}",
-  'user_details':  "{{ path(routes.user_details,  { username: '__USERNAME__' }) }}",
+  'order_accept':      "{{ path(routes.order_accept,      { id: '__ORDER_ID__' }) }}",
+  'order_refuse':      "{{ path(routes.order_refuse,      { id: '__ORDER_ID__' }) }}",
+  'order_cancel':      "{{ path(routes.order_cancel,      { id: '__ORDER_ID__' }) }}",
+  'order_ready':       "{{ path(routes.order_ready,       { id: '__ORDER_ID__' }) }}",
+  'order_details':     "{{ path(routes.order_details,     { id: '__ORDER_ID__' }) }}",
+  'restaurant_order':  "{{ path(routes.restaurant_order,  { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'restaurant_orders': "{{ path(routes.restaurant_orders, { restaurantId: '__RESTAURANT_ID__' }) }}",
+  'user_details':      "{{ path(routes.user_details,      { username: '__USERNAME__' }) }}",
 };
 window.__i18n = {
-  "No orders yet": "{% trans %}No orders yet{% endtrans %}"
+  "No orders yet": "{% trans %}No orders yet{% endtrans %}",
+  "Click on an order to display details": "{% trans %}Click on an order to display details{% endtrans %}",
+  "Order": "{% trans %}Order{% endtrans %}",
+  "Dishes": "{% trans %}Dishes{% endtrans %}",
+  "Refuse": "{% trans %}Refuse{% endtrans %}",
+  "Accept": "{% trans %}Accept{% endtrans %}",
+  "Cancel": "{% trans %}Cancel{% endtrans %}",
+  "Ready!": "{% trans %}Ready!{% endtrans %}",
 }
 </script>
 <script src="{{ asset('js/restaurant-panel.js') }}"></script>

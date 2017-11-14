@@ -38,9 +38,19 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Restaurant extends FoodEstablishment
 {
     /**
+     *  Delay for preparation (in minutes)
+     */
+    const PREPARATION_DELAY = 30;
+
+    /**
+     *  Delay for delivery (in minutes)
+     */
+    const DELIVERY_DELAY = 15;
+
+    /**
      *  Delay for preparation + delivery (in minutes)
      */
-    const PREPARATION_AND_DELIVERY_DELAY = 30;
+    const PREPARATION_AND_DELIVERY_DELAY = self::PREPARATION_DELAY + self::DELIVERY_DELAY;
 
     /**
      *  We allow ordering at J+1
