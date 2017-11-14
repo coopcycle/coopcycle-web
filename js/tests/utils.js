@@ -127,6 +127,8 @@ TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, ge
     User.findOne({ where: { username: username } })
       .then((customer) => {
         Address.create({
+          postalCode: '991',
+          addressLocality: 'Paris big city of the dream',
           streetAddress: streetAddress,
           geo: { type: 'Point', coordinates: [ geo.lat, geo.lng ]}
         })
@@ -147,6 +149,9 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
   return new Promise(function (resolve, reject) {
 
     Address.create({
+      postalCode: '991',
+      streetAddress: 'testStreet',
+      addressLocality: 'Paris big city of the dream',
       geo: { type: 'Point', coordinates: [ coordinates.latitude, coordinates.longitude ] }
     }).then(function(address) {
       Restaurant.create({

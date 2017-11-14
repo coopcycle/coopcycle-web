@@ -94,6 +94,14 @@ module.exports = function(sequelize) {
 
   Db.Address = sequelize.define('address', {
     name: Sequelize.STRING,
+    addressLocality: {
+      field: 'address_locality',
+      type: Sequelize.STRING
+    },
+    postalCode: {
+      field: 'postal_code',
+      type: Sequelize.STRING
+    },
     streetAddress: {
       field: 'street_address',
       type: Sequelize.STRING
