@@ -29,7 +29,7 @@
         <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
         </a>
-        <a href="{{ path(orders_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+        <a href="{{ path(orders_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
         </a>
         {% endif %}
