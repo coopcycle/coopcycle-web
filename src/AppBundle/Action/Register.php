@@ -4,7 +4,9 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\Order;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Form\ApiRegistrationType;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use FOS\UserBundle\Doctrine\UserManager;
 use FOS\UserBundle\Util\UserManipulator;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -12,6 +14,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessRespon
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,11 +27,35 @@ class Register
     private $jwtManager;
     private $dispatcher;
 
-    public function __construct(UserManipulator $userManipulator, JWTManager $jwtManager, EventDispatcherInterface $dispatcher)
+    public function __construct(
+        UserManipulator $userManipulator,
+        UserManager $userManager,
+        JWTManager $jwtManager,
+        EventDispatcherInterface $dispatcher,
+        FormFactory $formFactory
+    )
     {
         $this->userManipulator = $userManipulator;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
+        $this->formFactory = $formFactory;
+        $this->userManager = $userManager;
+    }
+
+    public function getFormErrorsArray ($form) {
+        $errors = [];
+
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        foreach ($form->all() as $child ) {
+            if (!$child->isValid()) {
+                $errors[$child->getName()] = $this->getFormErrorsArray($child);
+            }
+        }
+
+        return $errors;
     }
 
     /**
@@ -43,10 +70,40 @@ class Register
         $email = $request->request->get('_email');
         $username = $request->request->get('_username');
         $password = $request->request->get('_password');
+        $telephone = $request->request->get('_telephone');
+        $givenName = $request->request->get('_givenName');
+        $familyName = $request->request->get('_familyName');
+
+        $data = [
+            'email' => $email,
+            'username' => $username,
+            'plainPassword' => [
+                'password' => $password,
+                'password_confirmation' => $password
+            ],
+            'givenName' => $givenName,
+            'familyName' => $familyName,
+            'telephone' => $telephone
+        ];
+
+        $user = new ApiUser();
+
+        $form = $this->formFactory->create(ApiRegistrationType::class, $user);
+        $form->submit($data);
+
+        if (!$form->isValid()) {
+            $errors = $this->getFormErrorsArray($form);
+            return new JsonResponse($errors, 400);
+        }
 
         try {
+            // TODO Customize FOSUserBundle manipulator to pass all fields at once
             $user = $this->userManipulator->create($username, $password, $email, true, false);
             $jwt = $this->jwtManager->create($user);
+            $user->setTelephone($form->get('telephone')->getData());
+            $user->setGivenName($form->get('givenName')->getData());
+            $user->setFamilyName($form->get('familyName')->getData());
+            $this->userManager->updateUser($user);
         } catch (\Exception $e) {
             // TODO Send JSON-LD response
             throw new BadRequestHttpException($e);

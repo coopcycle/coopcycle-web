@@ -7,7 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,6 +23,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "normalization_context"={ "groups"={"user"} }
  *   }
  * )
+ * @UniqueEntity("email")
+ * @UniqueEntity("username")
  */
 class ApiUser extends BaseUser
 {
@@ -32,6 +34,18 @@ class ApiUser extends BaseUser
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
+
+    /**
+     * @Assert\NotBlank()
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * @Assert\NotBlank()
+     * @var string
+     */
+    protected $email;
 
     /**
      * @Assert\NotBlank()

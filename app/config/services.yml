@@ -14,6 +14,12 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  app.form.api_registration:
+    class: AppBundle\Form\ApiRegistrationType
+    arguments: ['%country_iso%']
+    tags:
+      - { name: form.type, alias: app_user_api_registration }
+
   app.form.registration:
     class: AppBundle\Form\RegistrationType
     arguments: ['%country_iso%']
