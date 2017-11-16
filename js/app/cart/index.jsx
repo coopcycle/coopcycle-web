@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import {render} from 'react-dom';
 import Cart from './Cart.jsx';
 import moment from 'moment';
@@ -8,6 +8,10 @@ let isXsDevice = $('.visible-xs').is(':visible')
 
 var cart = document.getElementById('cart');
 var cartComponent;
+
+// Remove the classic top cart, to replace it by the react one
+document.querySelector('a.btn-default').remove();
+
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
