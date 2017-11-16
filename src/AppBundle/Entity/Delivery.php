@@ -11,7 +11,9 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Validator\Constraints as CustomAssert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -32,6 +34,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
+ *
+ * @CustomAssert\IsValidDeliveryDate(groups="order")
+ *
  */
 class Delivery extends Intangible
 {
@@ -325,4 +330,5 @@ class Delivery extends Intangible
                 ->addViolation();
         }
     }
+
 }

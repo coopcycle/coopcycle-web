@@ -58,7 +58,8 @@
         "sentry/sentry-symfony": "^0.8.6",
         "ramsey/uuid-doctrine": "^1.4",
         "ramsey/uuid": "^3.7",
-        "misd/phone-number-bundle": "^1.2"
+        "misd/phone-number-bundle": "^1.2",
+        "nesbot/carbon": "^1.22"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
