@@ -6,6 +6,8 @@ import Sticky from 'react-stickynode';
 import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
+import CartTop from "./CartTop.jsx"
+import CartPortal from "./CartPortal.jsx"
 import { geocodeByAddress } from 'react-places-autocomplete';
 
 class Cart extends React.Component
@@ -196,10 +198,15 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
+        <CartPortal>
+         <CartTop total={sum}/>
+        </CartPortal>
+
       </Sticky>
     );
   }
 }
+
 
 Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
