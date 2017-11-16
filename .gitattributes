@@ -1,0 +1,5 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Force the following filetypes to have unix eols, so Windows does not break them
+*.sh text eol=lf
