@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Validator\Constraints\IsValidDeliveryDate;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 
@@ -15,6 +16,12 @@ class UnavailableProductException extends AddProductException {}
 class RestaurantMismatchException extends AddProductException {}
 
 
+/**
+ * Class Cart
+ * @package AppBundle\Utils
+ *
+ * @IsValidDeliveryDate(groups="cart")
+ */
 class Cart
 {
     /**

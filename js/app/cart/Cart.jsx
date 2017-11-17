@@ -25,6 +25,7 @@ class Cart extends React.Component
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
+    this.handleAjaxErrors = this.handleAjaxErrors.bind(this)
   }
 
   onHeaderClick () {
@@ -50,7 +51,11 @@ class Cart extends React.Component
       date: this.state.date
     }).then((cart) => {
       this.setState({items: cart.items});
-    });
+    }).fail((e) => { this.handleAjaxErrors(e.responseText) })
+  }
+
+  handleAjaxErrors(responseText) {
+    console.log(JSON.parse(responseText))
   }
 
   onDateChange(dateString) {
@@ -59,8 +64,9 @@ class Cart extends React.Component
     // - if date passed with props, will send at first item added
     // - if date not set with props, will send at the re-render triggered by first item added
     $.post(this.props.addToCartURL, {
-      date: dateString
-    });
+      date: dateString,
+
+    }).fail((e) => { this.handleAjaxErrors(e.responseText) })
   }
 
   onAddressSelect(address) {
@@ -98,7 +104,7 @@ class Cart extends React.Component
         $.post(this.props.addToCartURL, {
           date: this.props.deliveryDate,
           address: address
-        });
+        }).fail((e) => { this.handleAjaxErrors(e.responseText) })
 
       } else {
         throw new Error('More than 1 place returned with value ' + this.props.address)
@@ -108,7 +114,7 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, toggled } = this.state ,
+    let { items, toggled, errors } = this.state ,
         cartContent,
         { streetAddress, geohash, isMobileCart, deliveryDate, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
@@ -158,6 +164,9 @@ class Cart extends React.Component
 
     return (
       <Sticky enabled={!isMobileCart} top={ 30 }>
+        <div classID="alert alert-danger">
+          { errors }
+        </div>
         <div className={ panelClasses.join(' ') }>
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
               <span className="cart-heading--items">{ itemCount }</span>
