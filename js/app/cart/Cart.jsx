@@ -50,23 +50,22 @@ class Cart extends React.Component
       },
       date: this.state.date
     }).then((cart) => {
-      this.setState({items: cart.items});
+      this.setState({items: cart.items, errors: null});
     }).fail((e) => { this.handleAjaxErrors(e.responseText) })
   }
 
   handleAjaxErrors(responseText) {
-    console.log(JSON.parse(responseText))
+    let responseJSON = JSON.parse(responseText)
+    this.setState({errors: responseJSON.error})
   }
 
   onDateChange(dateString) {
-    // TODO : clean this, it feels hacky
-    // the way it works for now :
-    // - if date passed with props, will send at first item added
-    // - if date not set with props, will send at the re-render triggered by first item added
     $.post(this.props.addToCartURL, {
       date: dateString,
-
-    }).fail((e) => { this.handleAjaxErrors(e.responseText) })
+    }).then(() => {
+      this.setState({date: dateString, errors: null})
+    })
+      .fail((e) => {this.handleAjaxErrors(e.responseText)})
   }
 
   onAddressSelect(address) {
@@ -77,7 +76,7 @@ class Cart extends React.Component
   componentDidMount() {
     // we can set the address on the cart here, because we are sure the distance is valid for the restaurant
     geocodeByAddress(this.props.streetAddress).then((results) => {
-      if ( results.length === 1) {
+      if (results.length === 1) {
 
         // format Google's places format to a clean dict
         let place = results[0],
@@ -114,9 +113,9 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, toggled, errors } = this.state ,
+    let { items, toggled, errors, date: deliveryDate } = this.state ,
         cartContent,
-        { streetAddress, geohash, isMobileCart, deliveryDate, availabilities, validateCartURL } = this.props,
+        { streetAddress, geohash, isMobileCart, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
@@ -164,9 +163,6 @@ class Cart extends React.Component
 
     return (
       <Sticky enabled={!isMobileCart} top={ 30 }>
-        <div classID="alert alert-danger">
-          { errors }
-        </div>
         <div className={ panelClasses.join(' ') }>
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
               <span className="cart-heading--items">{ itemCount }</span>
@@ -174,6 +170,11 @@ class Cart extends React.Component
               { this.props.i18n[cartTitleKey] }
           </div>
           <div className="panel-body">
+            { errors &&
+            <div className="alert alert-danger margin-top-s">
+              { errors }
+            </div>
+            }
             <div className="cart">
               <AddressPicker
                 inputProps={ {disabled: true} }

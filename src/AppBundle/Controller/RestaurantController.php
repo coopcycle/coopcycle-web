@@ -255,9 +255,9 @@ class RestaurantController extends Controller
             try {
                 $cart->addItem($menuItem, $quantity, $modifierChoices);
             } catch (RestaurantMismatchException $e) {
-                return new JsonResponse(['error' => 'Unable to add item'], 400);
+                return new JsonResponse(['error' => sprintf('Unable to add %s', $menuItem->getName())], 400);
             } catch (UnavailableProductException $e) {
-                return new JsonResponse(['error' => 'Unable to add item'], 400);
+                return new JsonResponse(['error' => sprintf('Item %s is unavailable', $menuItem->getName())], 400);
             }
         }
 
