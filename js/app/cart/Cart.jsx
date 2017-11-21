@@ -15,23 +15,36 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, deliveryDate, streetAddress, addressId, isMobileCart } = this.props;
+    let { items, deliveryDate, streetAddress, addressId, isMobileCart, sameTopCart } = this.props;
+
+    if (this.props.sameTopCart) {
+      this.removeSessionTopCart();
+    }
+
 
     this.state = {
       items,
+      sameTopCart: sameTopCart,
       toggled: !isMobileCart,
       date: deliveryDate,
       address: {streetAddress, addressId: addressId}
     }
 
+
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
     this.handleAjaxErrors = this.handleAjaxErrors.bind(this)
+    this.removeSessionTopCart = this.removeSessionTopCart.bind(this)
+
   }
 
   onHeaderClick () {
     this.setState({'toggled': !this.state.toggled})
+  }
+
+  setSameTopCartTrue () {
+    this.setState({'sameTopCart': true})
   }
 
   removeItem(item) {
@@ -111,6 +124,10 @@ class Cart extends React.Component
         throw new Error('More than 1 place returned with value ' + this.props.address)
       }
     }).catch((err) => { console.log(err) });
+  }
+
+  removeSessionTopCart() {
+    document.querySelector('a.btn-default').remove();
   }
 
   render() {
@@ -198,10 +215,7 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
-        <CartPortal>
-         <CartTop total={sum}/>
-        </CartPortal>
-
+        {this.state.sameTopCart ? (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>):(<div></div>)}
       </Sticky>
     );
   }
