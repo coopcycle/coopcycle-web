@@ -21,7 +21,6 @@ class Cart extends React.Component
       this.removeSessionTopCart();
     }
 
-
     this.state = {
       items,
       sameTopCart: sameTopCart,
@@ -29,7 +28,6 @@ class Cart extends React.Component
       date: deliveryDate,
       address: {streetAddress, addressId: addressId}
     }
-
 
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
