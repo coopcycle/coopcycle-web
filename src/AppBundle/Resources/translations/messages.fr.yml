@@ -138,8 +138,8 @@ delivery.status.PICKED: Récupérée
 delivery.status.DELIVERED: Livrée
 delivery.status.CANCELED: Annulée
 
-demo.disclaimer: 📢  Bienvenue sur la démo de la plateforme <a href="https://coopcycle.org">CoopCycle</a>
-demo.disclaimer.subtitle: Commandez, payez avec une carte de crédit de test et suivez nos bots-livreurs!
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
 
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
