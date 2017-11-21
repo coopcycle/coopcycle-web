@@ -144,6 +144,11 @@ demo.disclaimer.subtitle: Commandez, payez avec une carte de crédit de test et 
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
+cart.modal.title: Attention
+cart.modal.content: Il n'est malheureusement pas possible de placer une commande dans plusieurs restaurants en même temps. Etes vous sur de vouloir continuer avec ce restaurant ?
+cart.modal.confirm: Ajouter
+cart.modal.cancel: Retour
+
 roles.ROLE_ADMIN: 'Administrateur'
 roles.ROLE_COURIER: 'Coursier'
 roles.ROLE_RESTAURANT: 'Restaurant'
