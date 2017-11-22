@@ -18,7 +18,13 @@
   <tr>
     <td><a href="{{ path('admin_user_details', { username: user.username }) }}">#{{ user.id }}</a></td>
     <td>{{ user.username }}</td>
-    <td>{{ user.email }}</td>
+    <td>
+      {% if is_demo %}
+        ✴✴✴
+      {% else %}
+        {{ user.email }}
+      {% endif %}
+    </td>
     <td>{{ user.telephone }}</td>
     <td class="text-right">
       {% include "AppBundle::_partials/User/roles.html.twig" %}
