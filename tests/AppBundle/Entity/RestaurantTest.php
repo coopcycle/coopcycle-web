@@ -16,7 +16,6 @@ class RestaurantTest extends TestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
-            '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
             '2017-10-04T19:00:00+02:00',

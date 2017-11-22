@@ -18,6 +18,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Behatch\HttpCall\HttpCallResultPool;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Carbon\Carbon;
 
 /**
  * Defines application features from the specific context.
@@ -104,6 +105,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @AfterScenario
+     */
+    public function unSetCarbon()
+    {
+        Carbon::setTestNow();
+    }
+
+
+    /**
      * @Given the redis database is empty
      */
     public function theRedisDatabaseIsEmpty()
@@ -112,6 +122,14 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         foreach ($redis->keys('*') as $key) {
             $redis->del($key);
         }
+    }
+
+    /**
+     * @Given the current time is :datetime
+     */
+    public function currentTimeIs(string $datetime) {
+        $now = new Carbon($datetime);
+        Carbon::setTestNow($now);
     }
 
     /**

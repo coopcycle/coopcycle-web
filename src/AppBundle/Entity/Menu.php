@@ -42,6 +42,13 @@ class Menu extends CreativeWork
      */
     private $sections;
 
+    /**
+     * @var string The menu of the restaurant.
+     *
+     * @ORM\OneToOne(targetEntity="Restaurant", mappedBy="hasMenu", cascade={"all"})
+     */
+    private $restaurant;
+
     public function __construct()
     {
         $this->sections = new ArrayCollection();
@@ -103,4 +110,21 @@ class Menu extends CreativeWork
 
         return $modifiers;
     }
+
+    /**
+     * @return Restaurant
+     */
+    public function getRestaurant()
+    {
+        return $this->restaurant;
+    }
+
+    /**
+     * @param Restaurant $restaurant
+     */
+    public function setRestaurant(Restaurant $restaurant)
+    {
+        $this->restaurant = $restaurant;
+    }
+
 }
