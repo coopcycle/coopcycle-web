@@ -111,7 +111,10 @@ deliveryDispatcher.setHandler(function(delivery, next) {
           delivery: {
             id: delivery.id,
             originAddress: delivery.originAddress.position,
-            deliveryAddress: delivery.deliveryAddress.position
+            deliveryAddress: delivery.deliveryAddress.position,
+            order: {
+              id: delivery.order.id
+            },
           }
         });
         next();

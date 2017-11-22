@@ -13,7 +13,8 @@ DeliveryRegistry.prototype.findById = function(id) {
   const options = {
     include: [
       { model: Db.Address, as: 'originAddress' },
-      { model: Db.Address, as: 'deliveryAddress' }
+      { model: Db.Address, as: 'deliveryAddress' },
+      { model: Db.Order }
     ]
   };
   return new Promise(function(resolve, reject) {

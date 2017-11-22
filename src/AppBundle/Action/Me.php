@@ -57,13 +57,16 @@ class Me
             $data['delivery'] = [
                 'id' => $delivery->getId(),
                 'status' => $delivery->getStatus(),
-                'restaurant' => [
+                'originAddress' => [
                     'longitude' => $delivery->getOriginAddress()->getGeo()->getLongitude(),
                     'latitude' => $delivery->getOriginAddress()->getGeo()->getLatitude(),
                 ],
                 'deliveryAddress' => [
                     'longitude' => $delivery->getDeliveryAddress()->getGeo()->getLongitude(),
                     'latitude' => $delivery->getDeliveryAddress()->getGeo()->getLatitude(),
+                ],
+                'order' => [
+                    'id' => $delivery->getOrder()->getId(),
                 ],
             ];
         }
