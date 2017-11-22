@@ -11,8 +11,10 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * An order is a confirmation of a transaction (a receipt), which can contain multiple line items, each represented by an Offer that has been accepted by the customer.
@@ -389,5 +391,23 @@ class Order
         $preparationDate->modify(sprintf('-%d minutes', Restaurant::PREPARATION_AND_DELIVERY_DELAY));
 
         return $preparationDate;
+    }
+
+    /**
+     * Custom order validation.
+     * @Assert\Callback(groups={"order"})
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+
+        $minimumAmount = $this->getRestaurant()->getMinimumCartAmount();
+
+        // Validate minimum cart amount
+        $constraint = new Assert\GreaterThanOrEqual(['value' => $minimumAmount]);
+        $context
+            ->getValidator()
+            ->inContext($context)
+            ->atPath('total')
+            ->validate($this->getItemsTotal(), $constraint, [Constraint::DEFAULT_GROUP]);
     }
 }

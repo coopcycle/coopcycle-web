@@ -113,10 +113,10 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, toggled, errors, date: deliveryDate } = this.state ,
+    let { items, toggled, errors, date } = this.state ,
         cartContent,
         cartWarning,
-        { streetAddress, geohash, isMobileCart, deliveryDate, availabilities, validateCartURL, minimumCartAmount, flatDeliveryPrice } = this.props,
+        { streetAddress, geohash, isMobileCart, availabilities, validateCartURL, minimumCartAmount, flatDeliveryPrice } = this.props,
         minimumCartString = 'Le montant minimum est de ' + minimumCartAmount + '€',
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
@@ -191,7 +191,7 @@ class Cart extends React.Component
               <hr />
               <DatePicker
                 availabilities={availabilities}
-                value={deliveryDate}
+                value={date}
                 onChange={this.onDateChange} />
               <hr />
               {cartWarning}
