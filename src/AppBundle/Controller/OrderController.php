@@ -46,6 +46,7 @@ class OrderController extends Controller
         $delivery->setDate($cart->getDate());
         $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($cart->getAddress());
+        $delivery->setPrice($restaurant->getContract()->getFlatDeliveryPrice());
 
         return $order;
     }

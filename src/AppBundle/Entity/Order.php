@@ -301,11 +301,26 @@ class Order
     public function getTotal()
     {
         $total = 0;
+
+        if ($this->getDelivery()) {
+            $total = $this->getDelivery()->getPrice();
+        }
+
+        $total += $this->getItemsTotal();
+
+        return $total;
+    }
+
+    public function getItemsTotal()
+    {
+        $total = 0;
+
         foreach ($this->orderedItem as $orderedItem) {
             $total += $orderedItem->getPrice() * $orderedItem->getQuantity();
         }
 
         return $total;
+
     }
 
     /**
