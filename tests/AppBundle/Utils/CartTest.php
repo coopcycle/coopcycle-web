@@ -25,7 +25,7 @@ class CartTest extends BaseTest
 
     public function testTotal()
     {
-        $cart = new Cart();
+        $cart = new Cart($this->restaurant);
 
         $item1 = $this->createMenuItem('Item 1', 5);
         $item2 = $this->createMenuItem('Item 2', 10);

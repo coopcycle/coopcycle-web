@@ -83,7 +83,7 @@ class Cart
             );
         }
 
-        if ($menuItem->getRestaurant()->getId() != $this->restaurantId) {
+        if ($this->restaurantId && $menuItem->getRestaurant()->getId() != $this->restaurantId) {
             throw new RestaurantMismatchException(
                 sprintf('Product %s doesn\'t belong to restaurant %s', $menuItem->getId(), $this->restaurantId)
             );

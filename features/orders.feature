@@ -468,7 +468,7 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"delivery.date",
-          "message":"Delivery date 2017-09-02 12:30:00 is invalid."
+          "message":"Delivery date 2017-09-02 12:30:00 is invalid"
         }
       ]
     }
@@ -505,7 +505,6 @@ Feature: Orders
       }
       """
     Then the response status code should be 400
-    Then print last response
     And the response should be in JSON
     And the JSON should match:
     """
@@ -517,7 +516,7 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"delivery.date",
-          "message":"Delivery date 2017-09-02 12:30:00 is invalid."
+          "message":"Delivery date 2017-09-02 12:30:00 is invalid"
         }
       ]
     }
