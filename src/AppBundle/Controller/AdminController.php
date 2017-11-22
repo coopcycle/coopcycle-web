@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -188,7 +189,7 @@ class AdminController extends Controller
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
             'orders' => 'admin_restaurant_orders',
-        ]);
+        ], RestaurantAdminType::class);
     }
 
     /**
@@ -202,7 +203,7 @@ class AdminController extends Controller
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
             'orders' => 'admin_restaurant_orders',
-        ]);
+        ], RestaurantAdminType::class);
     }
 
     /**

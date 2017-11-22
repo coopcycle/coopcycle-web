@@ -115,7 +115,9 @@ class Cart extends React.Component
 
     let { items, toggled, errors, date: deliveryDate } = this.state ,
         cartContent,
-        { streetAddress, geohash, isMobileCart, availabilities, validateCartURL } = this.props,
+        cartWarning,
+        { streetAddress, geohash, isMobileCart, deliveryDate, availabilities, validateCartURL, minimumCartAmount, flatDeliveryPrice } = this.props,
+        minimumCartString = 'Le montant minimum est de ' + minimumCartAmount + '€',
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
@@ -131,34 +133,37 @@ class Cart extends React.Component
             quantity={item.quantity}
             modifiersDescription={item.modifiersDescription}
           />
-        );
-      });
+        )
+      })
 
       cartContent = (
         <div className="list-group">{items}</div>
-      );
-    } else {
-      cartContent = (
-        <div className="alert alert-warning">Votre panier est vide</div>
-      );
+      )
     }
 
-    var sum = _.reduce(this.state.items, function(memo, item) {
+    let itemsTotalPrice = _.reduce(this.state.items, function(memo, item) {
       return memo + (item.total);
-    }, 0).toFixed(2);
-
-    var itemCount = _.reduce(this.state.items, function(memo, item) {
+    }, 0),
+        itemCount = _.reduce(this.state.items, function(memo, item) {
       return memo + (item.quantity);
-    }, 0);
+    }, 0),
+        total = (itemsTotalPrice + flatDeliveryPrice).toFixed(2)
+
+    if (items.length === 0) {
+      cartWarning = ( <div className="alert alert-warning">Votre panier est vide</div> )
+    } else if (itemsTotalPrice < minimumCartAmount) {
+      cartWarning = ( <div className="alert alert-warning">{ minimumCartString }</div> )
+    }
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
-    if (items.length === 0) {
-      btnClasses.push('disabled');
+
+    if (items.length === 0 || itemsTotalPrice < minimumCartAmount) {
+      btnClasses.push('disabled')
     }
 
     var panelClasses = ['panel', 'panel-default', 'cart-wrapper'];
     if (toggled) {
-      panelClasses.push('cart-wrapper--show');
+      panelClasses.push('cart-wrapper--show')
     }
 
     return (
@@ -189,8 +194,11 @@ class Cart extends React.Component
                 value={deliveryDate}
                 onChange={this.onDateChange} />
               <hr />
+              {cartWarning}
               {cartContent}
-              <strong>Total {sum} €</strong>
+              <hr />
+              {items.length > 0 && (<span>Prix de la course {flatDeliveryPrice.toFixed(2)}€<br /></span>)}
+              <strong>Total {total} €</strong>
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
             </div>
@@ -205,6 +213,8 @@ Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
   streetAddress: PropTypes.string.isRequired,
   addressId: PropTypes.number,
+  minimumCartAmount: PropTypes.number.isRequired,
+  flatDeliveryPrice: PropTypes.number.isRequired,
   deliveryDate: PropTypes.string.isRequired,
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,
   validateCartURL: PropTypes.string.isRequired,
@@ -214,4 +224,4 @@ Cart.propTypes = {
 }
 
 
-module.exports = Cart;
+module.exports = Cart

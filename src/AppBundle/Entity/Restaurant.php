@@ -161,6 +161,12 @@ class Restaurant extends FoodEstablishment
      */
     private $updatedAt;
 
+    /**
+     * @var Contract
+     * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
+     */
+    private $contract;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -446,4 +452,34 @@ class Restaurant extends FoodEstablishment
 
         return $this;
     }
+
+    /**
+     * @return Contract
+     */
+    public function getContract()
+    {
+        return $this->contract;
+    }
+
+    /**
+     * @param Contract $contract
+     */
+    public function setContract(Contract $contract)
+    {
+        $this->contract = $contract;
+        $contract->setRestaurant($this);
+    }
+
+    public function getFlatDeliveryPrice() {
+        if ($this->contract) {
+            return $this->contract->getFlatDeliveryPrice();
+        }
+    }
+
+    public function getMinimumCartAmount() {
+        if ($this->contract) {
+            return $this->contract->getMinimumCartAmount();
+        }
+    }
+
 }

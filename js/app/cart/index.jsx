@@ -31,6 +31,8 @@ if (cart) {
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
           validateCartURL={window.AppData.Cart.validateCartURL}
+          minimumCartAmount={window.AppData.Cart.minimumCartAmount}
+          flatDeliveryPrice={window.AppData.Cart.flatDeliveryPrice}
           isMobileCart={ isXsDevice }
         />,
     cart);

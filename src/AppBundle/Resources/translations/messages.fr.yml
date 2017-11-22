@@ -70,6 +70,7 @@ Delete: Supprimer
 Use the map below to find restaurants: Utilisez la carte ci-dessous pour trouver des restaurants
 Manage orders: Gérer les commandes
 Create a new restaurant: Créer un nouveau restaurant
+Fixed delivery price: Prix fixe de la course
 Cancel: Annuler
 Ready!: Prête !
 Created at: Créé le
@@ -106,6 +107,12 @@ Previous orders: Commandes précédentes
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
 profile.orders.empty: Pas de commande pour l'instant!
+
+restaurant.contract.title: Contrat
+restaurant.contract.minimumCartAmount.label: Montant minimum du panier
+restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
+restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
+restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit

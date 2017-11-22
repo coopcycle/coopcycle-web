@@ -1,5 +1,11 @@
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
+restaurant.contract.title: Contract
+restaurant.contract.minimumCartAmount.label: Minimum cart amount
+restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
+restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
+restaurant.contract.noContract: No contract details. Please contact an administrator.
+
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!
 profile.orders.empty: No order yet!
