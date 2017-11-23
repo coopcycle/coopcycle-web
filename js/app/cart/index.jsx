@@ -9,7 +9,9 @@ let isXsDevice = $('.visible-xs').is(':visible')
 var cart = document.getElementById('cart');
 var cartComponent;
 
-var isSessionCartForCurrentRestaurant = window.AppData.restaurantId === window.AppData.sessionRestaurantId;
+var restaurantId = window.AppData.restaurantId
+var sessionRestaurantId = window.AppData.sessionRestaurantId
+var isSessionCartForCurrentRestaurant = restaurantId === sessionRestaurantId;
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
@@ -66,7 +68,7 @@ if (cart) {
     cart);
 
   $('.js-add-to-cart').on('click', function(e) {
-      if (!isSessionCartForCurrentRestaurant) {
+      if (!isSessionCartForCurrentRestaurant && sessionRestaurantId) {
         $('#cart-warning-modal').modal('show');
         $('#cart-warning-primary').on('click', function(ev) {
             // remove the session cart
