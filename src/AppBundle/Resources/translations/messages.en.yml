@@ -33,7 +33,7 @@ cart.widget.title: Your delivery details
 cart.widget.button: Order
 
 cart.modal.title: Warning
-cart.modal.content: Ordering in multiple restaurant at the same time is not possible. Are you sure you want to add this item in you cart ?
+cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?
 cart.modal.confirm: Add
 cart.modal.cancel: Cancel
 

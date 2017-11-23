@@ -145,7 +145,7 @@ cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
 cart.modal.title: Attention
-cart.modal.content: Il n'est malheureusement pas possible de placer une commande dans plusieurs restaurants en même temps. Etes vous sur de vouloir continuer avec ce restaurant ?
+cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Ajouter
 cart.modal.cancel: Retour
 

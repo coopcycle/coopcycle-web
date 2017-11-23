@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 class CartPortal extends React.Component {
   constructor(props) {
     super(props);
-    this.el = document.querySelector('[id="bs-example-navbar-collapse-1"]');
+    this.el = document.getElementById('cart-top');
 
   }
 

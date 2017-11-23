@@ -9,7 +9,7 @@ let isXsDevice = $('.visible-xs').is(':visible')
 var cart = document.getElementById('cart');
 var cartComponent;
 
-var sameTopCart = window.AppData.restaurantId === window.AppData.sessionRestaurantId;
+var isSessionCartForCurrentRestaurant = window.AppData.restaurantId === window.AppData.sessionRestaurantId;
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
@@ -61,18 +61,18 @@ if (cart) {
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
           validateCartURL={window.AppData.Cart.validateCartURL}
           isMobileCart={ isXsDevice }
-          sameTopCart={ sameTopCart }
+          isSessionCartForCurrentRestaurant={ isSessionCartForCurrentRestaurant }
         />,
     cart);
 
   $('.js-add-to-cart').on('click', function(e) {
-      if (!sameTopCart) {
+      if (!isSessionCartForCurrentRestaurant) {
         $('#cart-warning-modal').modal('show');
         $('#cart-warning-primary').on('click', function(ev) {
             // remove the session cart
-            cartComponent.removeSessionTopCart();
+            cartComponent.deleteTopCartElement();
             cartComponent.setSameTopCartTrue();
-            sameTopCart = true;
+            isSessionCartForCurrentRestaurant = true;
             $('#cart-warning-modal').modal('hide');
             addItemToBasket(e);});
       } else {
