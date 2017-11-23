@@ -212,7 +212,7 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
-        {this.state.isSessionCartForCurrentRestaurant && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}}
+        {this.state.isSessionCartForCurrentRestaurant && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}
       </Sticky>
     );
   }
