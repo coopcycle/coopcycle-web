@@ -15,15 +15,15 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, deliveryDate, streetAddress, addressId, isMobileCart, sameTopCart } = this.props;
+    let { items, deliveryDate, streetAddress, addressId, isMobileCart, isSessionCartForCurrentRestaurant } = this.props;
 
-    if (this.props.sameTopCart) {
+    if (this.props.isSessionCartForCurrentRestaurant) {
       this.deleteTopCartElement();
     }
 
     this.state = {
       items,
-      sameTopCart: sameTopCart,
+      isSessionCartForCurrentRestaurant: isSessionCartForCurrentRestaurant,
       toggled: !isMobileCart,
       date: deliveryDate,
       address: {streetAddress, addressId: addressId}
@@ -41,7 +41,7 @@ class Cart extends React.Component
   }
 
   setSameTopCartTrue () {
-    this.setState({'sameTopCart': true})
+    this.setState({'isSessionCartForCurrentRestaurant': true})
   }
 
   removeItem(item) {
@@ -212,7 +212,7 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
-        {this.state.sameTopCart && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}}
+        {this.state.isSessionCartForCurrentRestaurant && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}}
       </Sticky>
     );
   }
