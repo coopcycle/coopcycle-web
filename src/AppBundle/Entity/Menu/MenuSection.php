@@ -55,7 +55,7 @@ class MenuSection
     use NameMethods;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu", inversedBy="sections")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu", inversedBy="sections", cascade={"all"})
      * @ORM\JoinColumn(name="menu_id", referencedColumnName="id")
      */
     private $menu;

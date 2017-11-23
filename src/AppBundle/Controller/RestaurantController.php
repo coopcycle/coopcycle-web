@@ -8,6 +8,9 @@ use AppBundle\Utils\Cart;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\GeoUtils;
+use AppBundle\Utils\RestaurantMismatchException;
+use AppBundle\Utils\UnavailableProductException;
+use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\Criteria;
 use League\Geotools\Coordinate\Coordinate;
 use Psr\Log\LoggerInterface;
@@ -19,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use League\Geotools\Geotools;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validation;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -32,6 +36,9 @@ class RestaurantController extends Controller
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
     }
 
     private function getCart(Request $request, Restaurant $restaurant)
@@ -240,17 +247,18 @@ class RestaurantController extends Controller
         if ($request->request->has('selectedItemData')) {
 
             $item = $request->request->get('selectedItemData');
-
-            // TODO Check if product belongs to restaurant
             $repo = $this->getDoctrine()->getRepository(MenuItem::class);
-
             $menuItem = $repo->find($item['menuItemId']);
-
             $modifierChoices = isset($item['modifiers']) ? $item['modifiers'] : [];
-
             $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
 
-            $cart->addItem($menuItem, $quantity, $modifierChoices);
+            try {
+                $cart->addItem($menuItem, $quantity, $modifierChoices);
+            } catch (RestaurantMismatchException $e) {
+                return new JsonResponse(['error' => sprintf('Unable to add %s', $menuItem->getName())], 400);
+            } catch (UnavailableProductException $e) {
+                return new JsonResponse(['error' => sprintf('Item %s is unavailable', $menuItem->getName())], 400);
+            }
         }
 
         if ($request->request->has('date')) {
@@ -261,9 +269,14 @@ class RestaurantController extends Controller
             $this->setCartAddress($request, $cart);
         }
 
-        $this->saveCart($request, $cart);
+        $errors = $this->validator->validate($cart, null, ["cart"]);
 
-        return new JsonResponse($cart->toArray());
+        if (count($errors) > 0) {
+            return new JsonResponse(ValidationUtils::serializeValidationErrors($errors), 400);
+        } else {
+            $this->saveCart($request, $cart);
+            return new JsonResponse($cart->toArray());
+        }
     }
 
     /**

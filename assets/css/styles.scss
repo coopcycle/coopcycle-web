@@ -1,5 +1,5 @@
 body {
-    font-family: "Arvo", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 footer {
@@ -10,6 +10,14 @@ footer {
   @media screen and (max-width: $screen-md-min){
     display: none;
   }
+}
+
+.navbar-brand {
+  font-family: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", Helvetica, Arial, sans-serif;
 }
 
 .page-header {
@@ -222,7 +230,7 @@ $cart-heading-height: 40px;
     padding-right: 45px;
 }
 
-.menu-item:hover:after {
+.menu-item:after {
     font-family: 'Glyphicons Halflings';
     content: "\002b";
     color: #bdc3c7;

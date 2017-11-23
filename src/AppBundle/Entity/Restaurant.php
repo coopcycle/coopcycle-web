@@ -53,6 +53,14 @@ class Restaurant extends FoodEstablishment
     const PREPARATION_AND_DELIVERY_DELAY = self::PREPARATION_DELAY + self::DELIVERY_DELAY;
 
     /**
+     * We need to take into account the time the user will take to order
+     * Otherwise we may trip too often in the following scenario :
+     *  - customer starts to shop with the first available date
+     *  - cart becomes invalid/out-of-date in the checkout process
+     */
+    const ORDERING_DELAY = 10;
+
+    /**
      *  We allow ordering at J+1
      */
     const NUMBER_OF_AVAILABLE_DAYS = 2;
@@ -156,6 +164,14 @@ class Restaurant extends FoodEstablishment
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 
     /**
@@ -315,7 +331,7 @@ class Restaurant extends FoodEstablishment
             $now = new \DateTime();
         }
 
-        $now->modify('+'.self::PREPARATION_AND_DELIVERY_DELAY.' minutes');
+        $now->modify('+'.(self::ORDERING_DELAY + self::PREPARATION_AND_DELIVERY_DELAY).' minutes');
 
         $nextOpeningDate = $this->getNextOpeningDate($now);
 

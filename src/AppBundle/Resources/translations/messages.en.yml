@@ -26,8 +26,8 @@ delivery.status.DISPATCHED: Dispatched
 delivery.status.PICKED: Picked
 delivery.status.DELIVERED: Delivered
 
-demo.disclaimer: 📢  Welcome on the demo of the <a href="https://coopcycle.org">CoopCycle</a> platform.
-demo.disclaimer.subtitle: Follow the checkout process, pay with a test credit card & see bots deliver your meal !
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
 
 cart.widget.title: Your delivery details
 cart.widget.button: Order
