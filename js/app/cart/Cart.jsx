@@ -18,7 +18,7 @@ class Cart extends React.Component
     let { items, deliveryDate, streetAddress, addressId, isMobileCart, sameTopCart } = this.props;
 
     if (this.props.sameTopCart) {
-      this.removeSessionTopCart();
+      this.deleteTopCartElement();
     }
 
     this.state = {
@@ -32,7 +32,7 @@ class Cart extends React.Component
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
-    this.removeSessionTopCart = this.removeSessionTopCart.bind(this)
+    this.deleteTopCartElement = this.deleteTopCartElement.bind(this)
   }
 
   onHeaderClick () {
@@ -118,8 +118,8 @@ class Cart extends React.Component
     }).catch((err) => { console.log(err) });
   }
 
-  removeSessionTopCart() {
-    document.querySelector('a.btn-default').remove();
+  deleteTopCartElement() {
+    document.getElementById('top-cart').remove();
   }
 
   render() {
@@ -202,7 +202,7 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
-        {this.state.sameTopCart ? (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>):(<div></div>)}
+        {this.state.sameTopCart && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}}
       </Sticky>
     );
   }

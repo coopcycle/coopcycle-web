@@ -131,7 +131,8 @@
       removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
       items: {{ cart.normalizedItems|json_encode()|raw }},
       date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
-      validateCartURL: "{{ path('order') }}"
+      validateCartURL: "{{ path('order') }}",
+      restaurantURL: "{{ path('restaurant', {'id': restaurant.id})|raw }}"
     }
     window.AppData.restaurantId = {{restaurant.id}};
     window.AppData.sessionRestaurantId = {% if sessionCart is not empty %}{{sessionCart.restaurantId}}{% else %}null{% endif %};
