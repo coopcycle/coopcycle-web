@@ -101,7 +101,6 @@ class Cart extends React.Component
             }
 
         $.post(this.props.addToCartURL, {
-          date: this.props.deliveryDate,
           address: address
         }).fail((e) => { this.handleAjaxErrors(e.responseText) })
 
