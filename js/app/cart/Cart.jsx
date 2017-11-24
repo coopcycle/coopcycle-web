@@ -6,6 +6,8 @@ import Sticky from 'react-stickynode';
 import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
+import CartTop from "./CartTop.jsx"
+import CartPortal from "./CartPortal.jsx"
 import { geocodeByAddress } from 'react-places-autocomplete';
 
 class Cart extends React.Component
@@ -13,10 +15,15 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, deliveryDate, streetAddress, addressId, isMobileCart } = this.props;
+    let { items, deliveryDate, streetAddress, addressId, isMobileCart, isSessionCartForCurrentRestaurant } = this.props;
+
+    if (this.props.isSessionCartForCurrentRestaurant) {
+      this.deleteTopCartElement();
+    }
 
     this.state = {
       items,
+      isSessionCartForCurrentRestaurant: isSessionCartForCurrentRestaurant,
       toggled: !isMobileCart,
       date: deliveryDate,
       address: {streetAddress, addressId: addressId}
@@ -26,10 +33,15 @@ class Cart extends React.Component
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
     this.handleAjaxErrors = this.handleAjaxErrors.bind(this)
+    this.deleteTopCartElement = this.deleteTopCartElement.bind(this)
   }
 
   onHeaderClick () {
     this.setState({'toggled': !this.state.toggled})
+  }
+
+  setSameTopCartTrue () {
+    this.setState({'isSessionCartForCurrentRestaurant': true})
   }
 
   removeItem(item) {
@@ -108,6 +120,10 @@ class Cart extends React.Component
         throw new Error('More than 1 place returned with value ' + this.props.address)
       }
     }).catch((err) => { console.log(err) });
+  }
+
+  deleteTopCartElement() {
+    document.getElementById('top-cart').remove();
   }
 
   render() {
@@ -195,10 +211,12 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
+        {this.state.isSessionCartForCurrentRestaurant && (<CartPortal><CartTop total={sum} i18n={this.props.i18n}/></CartPortal>)}
       </Sticky>
     );
   }
 }
+
 
 Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),

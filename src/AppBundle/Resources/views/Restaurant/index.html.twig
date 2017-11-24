@@ -100,9 +100,29 @@
   </div>
 </div>
 
+<div id='cart-warning-modal' class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{'cart.modal.title'|trans}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{'cart.modal.content'|trans}}</p>
+      </div>
+      <div class="modal-footer">
+        <button id='cart-warning-default' type="button" class="btn btn-default" data-dismiss="modal">{{'cart.modal.cancel'|trans }}</button>
+        <button id='cart-warning-primary' type="button" class="btn btn-primary">{{ 'cart.modal.confirm'|trans}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+{% set sessionCart = app.session.get('cart') %}
   <script>
     window.AppData = window.AppData || {};
     window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
@@ -111,8 +131,11 @@
       removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
       items: {{ cart.normalizedItems|json_encode()|raw }},
       date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
-      validateCartURL: "{{ path('order') }}"
+      validateCartURL: "{{ path('order') }}",
+      restaurantURL: "{{ path('restaurant', {'id': restaurant.id})|raw }}"
     }
+    window.AppData.restaurantId = {{restaurant.id}};
+    window.AppData.sessionRestaurantId = {% if sessionCart is not empty %}{{sessionCart.restaurantId}}{% else %}null{% endif %};
     window.__i18n = {
       "Cart": "{% trans %}Cart{% endtrans %}",
       "cart.widget.button": "{% trans %}My order{% endtrans %}"

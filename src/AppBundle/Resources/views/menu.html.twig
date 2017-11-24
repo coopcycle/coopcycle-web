@@ -11,7 +11,7 @@
       <a class="navbar-brand" href="{{ path('homepage') }}">CoopCycle</a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <div class="collapse navbar-collapse" id="cart-top">
       <ul class="nav navbar-nav">
         <li>
           <a href="{{ path('restaurants') }}">{% trans %}Restaurants{% endtrans %}</a>
@@ -83,15 +83,17 @@
       {% set deliveryAddress = app.session.get('deliveryAddress') %}
 
       {% if deliveryAddress is empty and cart is not empty %}
-      <a href="{{ path('restaurant', {'id': cart.restaurantId}) }}" class="btn btn-default navbar-btn navbar-right">
-        {% trans %}Cart{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
-      </a>
+          <a id="top-cart" href="{{ path('restaurant', {'id': cart.restaurantId}) }}" class="btn btn-default navbar-btn navbar-right">
+            {% trans %}Cart{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
+          </a>
       {% endif %}
 
       {% if deliveryAddress is not empty %}
-      <a href="{{ path('order') }}" class="btn btn-default navbar-btn navbar-right">
-        {% trans %}Order{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
-      </a>
+        <span class="cart-top">
+        <a id="top-cart" href="{{ path('order') }}" class="btn btn-default navbar-btn navbar-right">
+          {% trans %}Order{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
+        </span>
+      </span>
       {% endif %}
     </div>
   </div>
