@@ -1,6 +1,5 @@
 var Promise = require('promise');
 var _ = require('underscore');
-var async = require('async');
 var RedisRepository = require('../RedisRepository');
 var CourierPool = require('./CourierPool');
 var Utils = require('../Utils');

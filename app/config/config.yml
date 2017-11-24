@@ -149,6 +149,8 @@ snc_redis:
             type: predis
             alias: default
             dsn: "%redis_dsn%"
+            options:
+                prefix: "%database_name%:"
 
 webfactory_piwik:
     site_id: "%piwik_site_id%"
