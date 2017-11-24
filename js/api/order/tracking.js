@@ -1,3 +1,5 @@
+var createRedisClient = require("../RedisClient");
+
 var app = require('http').createServer(handler);
 var url = require('url') ;
 var io = require('socket.io')(app, {path: '/order-tracking/socket.io'});
@@ -5,7 +7,6 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var Mustache = require('mustache');
-var Promise = require('promise');
 
 var ROOT_DIR = __dirname + '/../../..';
 
@@ -32,9 +33,12 @@ try {
 }
 
 var redis = require('redis').createClient({
+  prefix: config.snc_redis.clients.default.options.prefix,
   url: config.snc_redis.clients.default.dsn
 });
-var redisPubSub = require('redis').createClient({
+
+var redisPubSub = require('../RedisClient')({
+  prefix: config.snc_redis.clients.default.options.prefix,
   url: config.snc_redis.clients.default.dsn
 });
 
@@ -48,8 +52,8 @@ console.log('PORT = ' + process.env.PORT);
 var started = false;
 var deliveries = {};
 
-redisPubSub.subscribe('delivery_events');
-redisPubSub.subscribe('order_events');
+redisPubSub.prefixedSubscribe('delivery_events');
+redisPubSub.prefixedSubscribe('order_events');
 
 redisPubSub.on('message', function(channel, message) {
   let data = JSON.parse(message);

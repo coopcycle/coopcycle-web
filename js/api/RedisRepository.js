@@ -27,10 +27,6 @@ RedisRepository.prototype.save = function(model) {
     }
   });
 
-  // var key = Utils.resolveKey(self.prefix, model.id);
-  // key += ":hash";
-  // this.redis.hmset(key, keysValues);
-
   return new Promise(function(resolve, reject) {
     var key = Utils.resolveKey(self.prefix, model.id);
     self.redis.set(key, JSON.stringify(model.toJSON()), function(err) {

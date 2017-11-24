@@ -42,7 +42,7 @@
     "prop-types": "^15.6.0",
     "react-places-autocomplete": "git+https://git@github.com/Atala/react-places-autocomplete.git",
     "react-stickynode": "^1.4.0",
-    "redis": "^2.6.2",
+    "redis": "^2.8.0",
     "sequelize": "^4.7.5",
     "socket.io": "^1.7.1",
     "underscore": "^1.8.3",

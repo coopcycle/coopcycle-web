@@ -1,12 +1,7 @@
 var app = require('http').createServer(handler);
-var url = require('url') ;
 var io = require('socket.io')(app, {path: '/restaurant-panel/socket.io'});
-var fs = require('fs');
 var path = require('path');
-var url = require('url');
 var _ = require('underscore');
-var Mustache = require('mustache');
-var Promise = require('promise');
 
 var ROOT_DIR = __dirname + '/../../..';
 
@@ -32,7 +27,8 @@ try {
   throw e;
 }
 
-var redisPubSub = require('redis').createClient({
+var redisPubSub = require('../RedisClient')({
+  prefix: config.snc_redis.clients.default.options.prefix,
   url: config.snc_redis.clients.default.dsn
 });
 
@@ -69,8 +65,6 @@ function handler(req, res) {
   res.end('');
 }
 
-var started = false;
-
 io.on('connection', function (socket) {
 
   socket.on('restaurant', function (restaurant) {
@@ -81,15 +75,16 @@ io.on('connection', function (socket) {
     restaurants[key] = _.extend(restaurant, {
       socket: socket
     });
-    console.log('Clients connected: ' + _.size(restaurants));
 
+    console.log('Clients connected: ' + _.size(restaurants));
     console.log('Subscribe to restaurant #' + id + ' orders');
+
     const channel = 'restaurant:' + id + ':orders';
-    redisPubSub.subscribe(channel);
+    redisPubSub.prefixedSubscribe(channel);
 
     socket.on('close', function() {
       console.log('Restaurant #' + id + ' disconnected!');
-      redisPubSub.subscribe(channel);
+      redisPubSub.prefixedSubscribe(channel);
 
       delete restaurants[key];
       console.log('Clients connected: ' + _.size(restaurants));

@@ -5,9 +5,9 @@ function CourierPool(redis, redisPubSub) {
   this.pool = [];
   this.redis = redis;
 
-  redisPubSub.subscribe('couriers');
-  redisPubSub.subscribe('couriers:available');
-  redisPubSub.subscribe('deliveries:declined');
+  redisPubSub.prefixedSubscribe('couriers');
+  redisPubSub.prefixedSubscribe('couriers:available');
+  redisPubSub.prefixedSubscribe('deliveries:declined');
 
   var self = this;
   redisPubSub.on('message', function(channel, message) {

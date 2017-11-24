@@ -1,4 +1,3 @@
-var exec = require('child_process').exec;
 var serialize = require('locutus/php/var/serialize');
 var pg = require('pg');
 var fs = require('fs');
@@ -7,9 +6,6 @@ var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
 var _ = require('underscore');
-var path = require('path');
-
-var rootDir = fs.realpathSync(__dirname + '/../../');
 var pgCleaner = new DatabaseCleaner('postgresql', {
   postgresql: {
     skipTables: [],
@@ -30,6 +26,7 @@ function TestUtils(config) {
   };
 
   this.redis = require('redis').createClient({
+    prefix: config.snc_redis.clients.default.options.prefix,
     url: config.snc_redis.clients.default.dsn
   });
 

@@ -38,7 +38,7 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^2.4",
-        "snc/redis-bundle": "2.0.0",
+        "snc/redis-bundle": "^2.0.0",
         "knplabs/knp-time-bundle": "^1.7",
         "twig/extensions": "^1.4",
         "cocur/slugify": "^2.3",
