@@ -21,8 +21,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $data =  $this->normalizer->normalize($object, $format, $context);
 
         $data['availabilities'] = $object->getAvailabilities();
-        $data['minimumCartAmount'] = $object->getFlatDeliveryPrice();
-        $data['flatDeliveryPrice'] = $object->getMinimumCartAmount();
+        $data['minimumCartAmount'] = $object->getMinimumCartAmount();
+        $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
 
         return $data;
     }

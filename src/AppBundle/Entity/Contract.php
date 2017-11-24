@@ -25,7 +25,7 @@ class Contract
     /**
      *
      * @var Restaurant
-     * @ORM\OneToOne(targetEntity="Restaurant", inversedBy="Contract", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Restaurant", inversedBy="contract", cascade={"persist"})
      * @ORM\JoinColumn(name="restaurant_id", referencedColumnName="id")
      */
     private $restaurant;

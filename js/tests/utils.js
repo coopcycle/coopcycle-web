@@ -198,7 +198,8 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
               return Delivery.create({
                 date: new Date(),
                 distance: 1000,
-                duration: 600
+                duration: 600,
+                price: 3.5
               }).then(function(delivery) {
                 return restaurant.getAddress().then(function(restaurantAddress) {
                   return delivery.setOriginAddress(restaurantAddress);

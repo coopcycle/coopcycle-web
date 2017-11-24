@@ -68,3 +68,17 @@ AppBundle\Entity\Restaurant:
     address: "@address_3"
     hasMenu: "@menu_3"
     openingHours: ['Mo-Sa 11:30-14:30']
+
+AppBundle\Entity\Contract:
+  contract_1:
+    restaurant: "@restaurant_1"
+    minimumCartAmount: 15
+    flatDeliveryPrice: 3.5
+  contract_2:
+    restaurant: "@restaurant_2"
+    minimumCartAmount: 15
+    flatDeliveryPrice: 3.5
+  contract_3:
+    restaurant: "@restaurant_3"
+    minimumCartAmount: 15
+    flatDeliveryPrice: 3.5

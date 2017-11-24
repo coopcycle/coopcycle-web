@@ -50,7 +50,9 @@ Feature: Orders
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
-        "availabilities":@array@
+        "availabilities":@array@,
+        "minimumCartAmount":@integer@,
+        "flatDeliveryPrice":@double@
       },
       "orderedItem":[
         {
@@ -97,7 +99,8 @@ Feature: Orders
         },
         "status":"WAITING",
         "courier":null,
-        "date":"@string@.startsWith('2017-09-02')"
+        "date":"@string@.startsWith('2017-09-02')",
+        "price": @double@
       },
       "total":@number@,
       "publicUrl":@string@,
@@ -212,7 +215,8 @@ Feature: Orders
         "username":"sarah"
       },
       "status":"DISPATCHED",
-      "date":"@string@.startsWith('2017-09-02')"
+      "date":"@string@.startsWith('2017-09-02')",
+      "price": @double@
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -256,7 +260,8 @@ Feature: Orders
         "username":"sarah"
       },
       "status":"PICKED",
-      "date":"@string@.startsWith('2017-09-02')"
+      "date":"@string@.startsWith('2017-09-02')",
+      "price": @double@
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -300,7 +305,8 @@ Feature: Orders
         "username":"sarah"
       },
       "status":"DELIVERED",
-      "date":"@string@.startsWith('2017-09-02')"
+      "date":"@string@.startsWith('2017-09-02')",
+      "price": @double@
     }
     """
 

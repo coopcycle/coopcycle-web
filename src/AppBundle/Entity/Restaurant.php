@@ -140,7 +140,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The menu of the restaurant.
      *
-     * @ORM\OneToOne(targetEntity="Menu", cascade={"all"})
+     * @ORM\OneToOne(targetEntity="Menu", inversedBy="restaurant", cascade={"all"})
      * @ORM\JoinColumn(name="menu_id")
      * @ApiProperty(iri="https://schema.org/Menu")
      * @Groups({"restaurant"})

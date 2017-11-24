@@ -127,6 +127,7 @@ class Delivery extends Intangible
     private $data = [];
 
     /**
+     * @Groups({"order"})
      * @ORM\Column(type="float")
      */
     private $price;

@@ -26,6 +26,11 @@ class Create
      */
     public function __invoke(Order $data) {
 
+        // Set delivery price in backend
+        $delivery = $data->getDelivery();
+        $deliveryPrice = $data->getRestaurant()->getFlatDeliveryPrice();
+        $delivery->setPrice($deliveryPrice);
+
         // Order MUST have status = CREATED
         if ($data->getStatus() !== Order::STATUS_CREATED) {
             throw new BadRequestHttpException(sprintf('Order must be created with status #%s', Order::STATUS_CREATED));
