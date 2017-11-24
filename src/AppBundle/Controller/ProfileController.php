@@ -321,7 +321,7 @@ class ProfileController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->acceptOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->acceptOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
         }
     }
 
@@ -334,7 +334,7 @@ class ProfileController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->refuseOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->refuseOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
         }
     }
 
@@ -347,7 +347,7 @@ class ProfileController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->readyOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->readyOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
         }
     }
 
@@ -359,7 +359,7 @@ class ProfileController extends Controller
         if ($request->isMethod('POST')) {
             $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-            return $this->cancelOrder($id, 'profile_restaurant_orders', ['id' => $order->getRestaurant()->getId()]);
+            return $this->cancelOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
         }
     }
 }
