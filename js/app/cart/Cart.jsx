@@ -32,6 +32,7 @@ class Cart extends React.Component
     this.onDateChange = this.onDateChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
+    this.deleteTopCartElement = this.deleteTopCartElement.bind(this)
     this.handleAjaxErrors = this.handleAjaxErrors.bind(this)
     this.deleteTopCartElement = this.deleteTopCartElement.bind(this)
   }
