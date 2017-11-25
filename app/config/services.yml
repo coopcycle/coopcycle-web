@@ -26,6 +26,12 @@ services:
     tags:
       - { name: form.type, alias: app_user_registration }
 
+  app.form.update_profile:
+    class: AppBundle\Form\UpdateProfileType
+    arguments: ['%country_iso%']
+    tags:
+      - { name: form.type, alias: app_user_registration }
+
   my.registration_listener:
     class: AppBundle\EventListener\RegistrationListener
     arguments: ['@router']
