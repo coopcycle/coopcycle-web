@@ -103,6 +103,8 @@ Roles: Rôles
 Click on an order to display details: Cliquez sur une commande pour l'afficher
 Dishes: Plats
 Previous orders: Commandes précédentes
+User %username%: Utilisateur %username%
+Edit user: Modifier l'utilisateur
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!

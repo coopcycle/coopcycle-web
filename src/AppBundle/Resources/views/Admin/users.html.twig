@@ -12,6 +12,7 @@
   <th>{% trans %}Email{% endtrans  %}</th>
   <th>{% trans %}Telephone{% endtrans  %}</th>
   <th class="text-right">{% trans %}Roles{% endtrans  %}</th>
+  <th></th>
 </thead>
 <tbody>
 {% for user in users %}
@@ -28,6 +29,11 @@
     <td>{{ user.telephone }}</td>
     <td class="text-right">
       {% include "AppBundle::_partials/User/roles.html.twig" %}
+    </td>
+    <td class="text-right">
+      <a class="btn btn-xs btn-success" href="{{ path('admin_user_edit', { username: user.username }) }}">
+        <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
+      </a>
     </td>
   </tr>
 {% endfor %}

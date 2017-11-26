@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Utils\Cart;
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu;
@@ -13,6 +14,7 @@ use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Form\UpdateProfileType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -146,6 +148,34 @@ class AdminController extends Controller
         $user = $userManager->findUserByUsername($username);
 
         return [
+            'user' => $user,
+        ];
+    }
+
+    /**
+     * @Route("/admin/user/{username}/edit", name="admin_user_edit")
+     * @Template
+     */
+    public function userEditAction($username, Request $request)
+    {
+        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+
+        $editForm = $this->createForm(UpdateProfileType::class, $user);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+            $userManager->persist($user);
+            $userManager->flush();
+
+            return $this->redirectToRoute('admin_user_details', ['username' => $user->getUsername()]);
+        }
+
+        return [
+            'form' => $editForm->createView(),
             'user' => $user,
         ];
     }

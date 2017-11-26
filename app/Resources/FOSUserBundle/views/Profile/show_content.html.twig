@@ -9,13 +9,13 @@
       </a>
     </li>
   </ol>
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3 col-xs-12">
-      {% include "AppBundle:Profile:profile.html.twig" %}
-      <a class="btn btn-success" href="{{ path('profile_edit') }}">
-        {% trans from 'messages' %}Edit{%  endtrans %}
-      </a>
-    </div>
-  </div>
+  <h2 class="page-header">
+    {% trans %}My account{% endtrans %}
+    <a class="btn btn-success pull-right" href="{{ path('profile_edit') }}">
+      <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
+    </a>
+  </h2>
+  {% include "AppBundle:Profile:profile.html.twig" %}
+
 </div>
 {% endblock %}

@@ -1,14 +1,16 @@
-{% extends "AppBundle::profile.html.twig" %}
+{% extends "AppBundle::admin.html.twig" %}
 
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Edit{%  endtrans %}</li>
+<li><a href="{{ path('admin_users') }}">{% trans %}Users{% endtrans %}</a></li>
+<li><a href="{{ path('admin_user_details', { username: user.username }) }}">{{ user.username }}</a></li>
+<li>{% trans %}Edit{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
     <h2 class="page-header">
-      {% trans %}Edit profile{%  endtrans %}
+      {% trans %}Edit user{%  endtrans %}
     </h2>
     {{ form_start(form) }}
     {{ form_widget(form) }}
