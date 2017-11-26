@@ -87,11 +87,33 @@ class OrderTest extends TestCase
         $this->assertEquals(50, $order->getTotal());
     }
 
+    public function testTotalWithDelivery()
+    {
+        $order = new Order();
+
+        $pizza = new MenuItem();
+        $pizza
+            ->setName('Pizza')
+            ->setPrice(10);
+
+        $pizzaItem = new CartItem($pizza, 4);
+        $order->addCartItem($pizzaItem, $pizza);
+
+        $delivery = new Delivery($order);
+        $delivery->setPrice(10);
+
+        $this->assertEquals(50, $order->getTotal());
+    }
+
     public function testDistanceValidation()
     {
         $restaurant = new Restaurant();
         $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
+
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(0);
+        $restaurant->setContract($contract);
 
         $delivery = new Delivery();
 
@@ -126,6 +148,10 @@ class OrderTest extends TestCase
         $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
 
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(0);
+        $restaurant->setContract($contract);
+
         $delivery = new Delivery();
 
         $order = new Order();
@@ -149,5 +175,29 @@ class OrderTest extends TestCase
         Carbon::setTestNow(Carbon::create(2017, 9, 3, 12, 25));
         $errors = $this->validator->validate($order, null, ['order']);
         $this->assertContains('Delivery date 2017-09-03 12:30:00 is invalid', ValidationUtils::serializeValidationErrors($errors)['delivery.date']);
+    }
+
+    public function testMinimumAmountValidation() {
+        $order = new Order();
+
+        $pizza = new MenuItem();
+        $pizza
+            ->setName('Pizza')
+            ->setPrice(10);
+
+        $pizzaItem = new CartItem($pizza, 1);
+        $order->addCartItem($pizzaItem, $pizza);
+
+        $restaurant = new Restaurant();
+
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(20);
+        $restaurant->setContract($contract);
+
+        $order->setRestaurant($restaurant);
+
+        $errors = $this->validator->validate($order, null, ['order']);
+        $this->assertEquals(1, count($errors));
+
     }
 }

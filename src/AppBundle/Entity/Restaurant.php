@@ -140,7 +140,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The menu of the restaurant.
      *
-     * @ORM\OneToOne(targetEntity="Menu", cascade={"all"})
+     * @ORM\OneToOne(targetEntity="Menu", inversedBy="restaurant", cascade={"all"})
      * @ORM\JoinColumn(name="menu_id")
      * @ApiProperty(iri="https://schema.org/Menu")
      * @Groups({"restaurant"})
@@ -160,6 +160,12 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(type="datetime")
      */
     private $updatedAt;
+
+    /**
+     * @var Contract
+     * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
+     */
+    private $contract;
 
     public function __construct()
     {
@@ -446,4 +452,34 @@ class Restaurant extends FoodEstablishment
 
         return $this;
     }
+
+    /**
+     * @return Contract
+     */
+    public function getContract()
+    {
+        return $this->contract;
+    }
+
+    /**
+     * @param Contract $contract
+     */
+    public function setContract(Contract $contract)
+    {
+        $this->contract = $contract;
+        $contract->setRestaurant($this);
+    }
+
+    public function getFlatDeliveryPrice() {
+        if ($this->contract) {
+            return $this->contract->getFlatDeliveryPrice();
+        }
+    }
+
+    public function getMinimumCartAmount() {
+        if ($this->contract) {
+            return $this->contract->getMinimumCartAmount();
+        }
+    }
+
 }

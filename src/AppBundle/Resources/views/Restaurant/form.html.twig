@@ -91,7 +91,41 @@
   {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
   {% do form.address.setRendered %}
 
-  {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
+  <hr>
+
+  <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
+  {% if is_granted('ROLE_ADMIN') %}
+    <div class="row margin-bottom-md">
+      <div class="col-md-6">
+        {{ form_row(form.contract.minimumCartAmount) }}
+        {{ form_row(form.contract.flatDeliveryPrice) }}
+      </div>
+    </div>
+  {% else %}
+    <div class="row margin-bottom-md">
+      {%  if restaurant.contract %}
+        <div class="col-md-12">
+          <div class="alert alert-warning">
+            {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
+          </div>
+          <p>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}: {{ restaurant.contract.minimumCartAmount }}€</p>
+          <p>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}: {{ restaurant.contract.flatDeliveryPrice }}€</p>
+        </div>
+      {% else %}
+        <div class="col-md-12">
+          <div class="alert alert-danger">
+            {% trans %}restaurant.contract.noContract{% endtrans %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3 col-xs-12">
+      {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
+    </div>
+  </div>
 
 {{ form_end(form) }}
 

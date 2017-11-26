@@ -144,8 +144,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
 
         foreach ($table as $row) {
+            $contract = new \AppBundle\Entity\Contract();
+            $contract->setMinimumCartAmount(15);
+            $contract->setFlatDeliveryPrice(3.50);
             $restaurant = new Restaurant();
             $restaurant->setName($row['name']);
+            $restaurant->setContract($contract);
 
             if (isset($row['id']) && !empty($row['id'])) {
                 $property = new \ReflectionProperty(Restaurant::class, 'id');
@@ -316,6 +320,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $order->setStatus(Order::STATUS_WAITING);
 
         $delivery = new Delivery($order);
+        $delivery->setPrice(3.50);
         $delivery->setDate(new \DateTime($date));
         $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($user->getAddresses()->first());

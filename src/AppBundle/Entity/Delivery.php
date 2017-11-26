@@ -126,6 +126,12 @@ class Delivery extends Intangible
      */
     private $data = [];
 
+    /**
+     * @Groups({"order"})
+     * @ORM\Column(type="float")
+     */
+    private $price;
+
     public function __construct(Order $order = null)
     {
         $this->status = self::STATUS_WAITING;
@@ -279,6 +285,22 @@ class Delivery extends Intangible
         $this->data = $data;
 
         return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param float $price
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
     }
 
     public function getActualDuration()

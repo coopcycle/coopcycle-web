@@ -88,6 +88,7 @@ module.exports = function(sequelize) {
     duration: Sequelize.INTEGER,
     date: Sequelize.DATE,
     status: Sequelize.STRING,
+    price: Sequelize.FLOAT,
   }, _.extend(sequelizeOptions, {
     tableName: 'delivery',
   }));

@@ -46,7 +46,7 @@ class ApiRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-           'data_class' => ApiUser::class,
+            'data_class' => ApiUser::class,
             'csrf_protection' => false
         ]);
     }

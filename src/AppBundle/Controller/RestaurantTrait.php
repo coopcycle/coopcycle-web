@@ -27,7 +27,7 @@ trait RestaurantTrait
         throw new AccessDeniedHttpException();
     }
 
-    protected function editRestaurantAction($id, Request $request, $layout, array $routes)
+    protected function editRestaurantAction($id, Request $request, $layout, array $routes, $formClass = RestaurantType::class)
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
         $em = $this->getDoctrine()->getManagerForClass('AppBundle:Restaurant');
@@ -39,7 +39,7 @@ trait RestaurantTrait
             $this->checkAccess($restaurant);
         }
 
-        $form = $this->createForm(RestaurantType::class, $restaurant);
+        $form = $this->createForm($formClass, $restaurant);
         $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
         $form->handleRequest($request);

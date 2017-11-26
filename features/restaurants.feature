@@ -99,7 +99,9 @@ Feature: Manage restaurants
         "name":"Menu"
       },
       "openingHours":@array@,
-      "availabilities":@array@
+      "availabilities":@array@,
+      "minimumCartAmount":@integer@,
+      "flatDeliveryPrice":@double@
     }
     """
 
