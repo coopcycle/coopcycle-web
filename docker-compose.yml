@@ -79,6 +79,11 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/srv/coopcycle/web:ro'
 
+  smtp:
+    image: namshi/smtp
+    ports:
+      - 25:25
+
 volumes:
   node_modules:
   pg_data:
