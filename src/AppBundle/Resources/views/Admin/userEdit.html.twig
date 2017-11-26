@@ -1,6 +1,6 @@
 {% extends "AppBundle::admin.html.twig" %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form 'AppBundle:Form:user.html.twig' %}
 
 {% block breadcrumb %}
 <li><a href="{{ path('admin_users') }}">{% trans %}Users{% endtrans %}</a></li>
@@ -16,4 +16,35 @@
     {{ form_widget(form) }}
     <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
     {{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/restaurant-search.js') }}"></script>
+<script>
+
+var $restaurants = $('#update_profile_restaurants');
+
+var el = document.querySelector('#restaurant-search');
+
+var options = {
+  url: "{{ path('restaurants_search', { format: 'json'  }) }}",
+  placeholder: "{% trans %}Search restaurant…{% endtrans %}",
+  onRestaurantSelected: function(restaurant) {
+    var newRestaurant = $restaurants.attr('data-prototype');
+    newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+    newRestaurant = newRestaurant.replace(/__value__/g, restaurant.id);
+    newRestaurant = newRestaurant.replace(/__restaurant_name__/g, restaurant.name);
+    $restaurants.find('tbody').append($(newRestaurant));
+  }
+}
+
+new CoopCycle.RestaurantSearch(el, options);
+
+$(document).on('click', '.remove-restaurant', function(e) {
+  e.preventDefault();
+  $(this).closest('tr').remove();
+});
+
+</script>
+
 {% endblock %}

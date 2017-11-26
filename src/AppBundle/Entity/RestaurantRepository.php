@@ -67,4 +67,16 @@ class RestaurantRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function search($q)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        // TODO Use lowercase
+        $qb
+            ->where('r.name LIKE :q')
+            ->setParameter('q', '%' . $q . '%');
+
+        return $qb->getQuery()->getResult();
+    }
 }

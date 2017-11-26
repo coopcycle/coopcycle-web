@@ -19,9 +19,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use League\Geotools\Geotools;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -320,5 +320,28 @@ class RestaurantController extends Controller
         return [
             'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
         ];
+    }
+
+    /**
+     * @Route("/restaurants/search", name="restaurants_search")
+     * @Template()
+     */
+    public function searchAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+
+        $results = $repository->search($request->query->get('q'));
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+
+            $data = array_map(function (Restaurant $restaurant) {
+                return [
+                    'id' => $restaurant->getId(),
+                    'name' => $restaurant->getName(),
+                ];
+            }, $results);
+
+            return new JsonResponse($data);
+        }
     }
 }

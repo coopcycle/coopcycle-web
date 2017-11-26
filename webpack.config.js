@@ -31,6 +31,7 @@ var webpackConfig = {
     'js/restaurant-form': './js/app/restaurant/form.jsx',
     'js/restaurant-menu': './js/app/restaurant/menu.jsx',
     'js/restaurant-panel': './js/app/restaurant/panel.jsx',
+    'js/restaurant-search': './js/app/restaurant/search.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
     'js/tracking': './js/app/tracking/index.jsx',
   },

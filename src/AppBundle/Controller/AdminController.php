@@ -163,7 +163,9 @@ class AdminController extends Controller
 
         $user = $userManager->findUserByUsername($username);
 
-        $editForm = $this->createForm(UpdateProfileType::class, $user);
+        $editForm = $this->createForm(UpdateProfileType::class, $user, [
+            'with_restaurants' => true
+        ]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -467,6 +469,4 @@ class AdminController extends Controller
             'form' => $form->createView(),
         ];
     }
-
-
 }
