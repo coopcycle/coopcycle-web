@@ -143,6 +143,11 @@ class Delivery extends Intangible implements TaxableInterface
      */
     private $taxCategory;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $weight;
+
     public function __construct(Order $order = null)
     {
         $this->status = self::STATUS_WAITING;
@@ -339,6 +344,20 @@ class Delivery extends Intangible implements TaxableInterface
     public function setTaxCategory(TaxCategoryInterface $taxCategory)
     {
         $this->taxCategory = $taxCategory;
+
+        return $this;
+    }
+
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
     }
 
     public function getActualDuration()
