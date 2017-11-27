@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import 'whatwg-fetch';
 import OrderList from './OrderList.jsx'
 import OrderDetails from './OrderDetails.jsx'
 

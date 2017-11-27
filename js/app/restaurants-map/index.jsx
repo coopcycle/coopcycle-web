@@ -1,6 +1,5 @@
 import React from 'react';
 import {render} from 'react-dom';
-import 'whatwg-fetch';
 
 var _ = require('underscore');
 var TWEEN = require('@tweenjs/tween.js');
