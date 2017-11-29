@@ -2,6 +2,9 @@ var DeliveryRegistry = require('./DeliveryRegistry');
 var Promise = require('promise');
 var _ = require('underscore');
 
+var winston = require('winston');
+winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
+
 function Delivery() {
   this.state = Delivery.WAITING;
 }
@@ -42,6 +45,8 @@ Delivery.load = function() {
       ]
     }).then(function(orders) {
 
+      winston.info('Found ' + orders.length + ' orders to manage')
+
       const deliveries = _.map(orders, order => order.delivery);
 
       const waiting = _.filter(deliveries, function(delivery) {
@@ -51,7 +56,15 @@ Delivery.load = function() {
         return delivery.status === Delivery.DISPATCHED || delivery.status === Delivery.PICKED;
       });
 
-      REDIS.del(['deliveries:waiting', 'deliveries:dispatching', 'deliveries:delivering'], function(err) {
+      const keysToDel = [
+        'deliveries:waiting',
+        'deliveries:dispatching',
+        'deliveries:delivering',
+        'delivery_addresses:geo',
+        'restaurants:geo'
+      ];
+
+      REDIS.del(keysToDel, function(err) {
         if (err) throw err;
 
         var deliveryAddresses = [];
