@@ -15,6 +15,10 @@ module.exports =  function createRedisClient(options) {
     return this.subscribe(channel);
   };
 
+  redisClient.isChannel = function(prefixed, unprefixed) {
+    return prefixed === (options.prefix + unprefixed)
+  }
+
   return redisClient;
 };
 

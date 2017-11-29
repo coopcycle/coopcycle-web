@@ -58,12 +58,13 @@ redisPubSub.prefixedSubscribe('order_events');
 redisPubSub.on('message', function(channel, message) {
   let data = JSON.parse(message);
 
-  if (channel === 'delivery_events') {
+  if (redisPubSub.isChannel(channel, 'delivery_events')) {
     var deliveryKey = 'delivery:' + data.delivery;
     if (deliveries[deliveryKey]) {
       deliveries[deliveryKey].socket.emit('delivery_event', data);
     }
-  } else if (channel === 'order_events' && data.delivery) {
+  }
+  if (redisPubSub.isChannel(channel, 'order_events') && data.delivery) {
     var deliveryKey = 'delivery:' + data.delivery;
     if (deliveries[deliveryKey]) {
       deliveries[deliveryKey].socket.emit('order_event', data);
