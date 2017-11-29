@@ -60,6 +60,7 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
         $delivery->setDate(new \DateTime($deliveryDate));
         $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($user->getAddresses()->first());
+        $delivery->setPrice($restaurant->getContract()->getFlatDeliveryPrice());
 
         $stripeToken = Stripe\Token::create([
             'card' => [
