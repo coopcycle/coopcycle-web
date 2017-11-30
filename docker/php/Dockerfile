@@ -12,6 +12,22 @@ RUN set -xe \
         icu-dev \
         zlib-dev \
         postgresql-dev \
+    && apk add --no-cache \
+            xvfb \
+            ttf-freefont \
+            fontconfig \
+            dbus \
+    && apk add qt5-qtbase-dev \
+            wkhtmltopdf \
+            --no-cache \
+            --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+            --allow-untrusted \
+    && mv /usr/bin/wkhtmltopdf /usr/bin/wkhtmltopdf-origin \
+    && echo $'#!/usr/bin/env sh\n\
+Xvfb :0 -screen 0 1024x768x24 -ac +extension GLX +render -noreset & \n\
+DISPLAY=:0.0 wkhtmltopdf-origin $@ \n\
+killall Xvfb' > /usr/bin/wkhtmltopdf \
+    && chmod +x /usr/bin/wkhtmltopdf \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && docker-php-ext-configure pdo_pgsql --with-pgsql \
     && docker-php-ext-install \
@@ -48,10 +64,7 @@ WORKDIR /srv/coopcycle
 COPY composer.json ./
 COPY composer.lock ./
 
-RUN mkdir -p \
-        var/cache \
-        var/logs \
-        var/sessions \
+RUN mkdir -p var/cache var/logs var/sessions \
     && composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
     && composer clear-cache \
 # Permissions hack because setfacl does not work on Mac and Windows
