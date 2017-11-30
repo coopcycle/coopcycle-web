@@ -18,7 +18,7 @@
         "psr-4": { "Tests\\": "tests/" }
     },
     "require": {
-        "php": ">=7.0",
+        "php": "^7.1",
         "symfony/symfony": "3.3.*",
         "symfony/property-info": "3.3.*",
         "api-platform/core": "^2.0",
