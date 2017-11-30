@@ -38,6 +38,10 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  'AppBundle\EventListener\SyliusIdGeneratorSubscriber':
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
     arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default", "@serializer" ]

@@ -183,3 +183,5 @@ csa_guzzle:
                 base_uri: "%applicolis_api_base_url%"
                 lazy: true
 
+sylius_taxation:
+    driver: doctrine/orm
