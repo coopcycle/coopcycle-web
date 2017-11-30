@@ -1,0 +1,48 @@
+<table class="table">
+  <thead>
+    <th>#</th>
+    <th>{% trans %}Order{% endtrans %}</th>
+    <th>{% trans %}Delivery{% endtrans %}</th>
+    <th>{% trans %}Restaurant{% endtrans %}</th>
+    <th class="text-right">{% trans %}Total including tax{% endtrans %}</th>
+    <th class="text-right">{% trans %}Duration{% endtrans %}</th>
+    <th class="text-right">{% trans %}Created at{% endtrans %}</th>
+    {% if show_buttons and is_granted('ROLE_ADMIN') %}
+    <th></th>
+    {% endif %}
+  </thead>
+  <tbody>
+  {% for order in orders %}
+  <tr>
+    <td width="5%"><a href="{{ path('admin_order', { id: order.id }) }}">#{{ order.id }}</a></td>
+    <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
+    <td width="10%">{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
+    <td>
+      <a target="_blank" href="{{ path(restaurant_route, { id: order.restaurant.id }) }}">
+        {{ order.restaurant.name }}
+      </a>
+    </td>
+    <td class="text-right">
+      <a target="_blank" href="{{ path(pdf_route, { id: order.id }) }}">
+        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+      </a>   <span>{{ order.totalIncludingTax }} €</span>
+    </td>
+    <td class="text-right">{{ order.delivery.actualDuration }}</td>
+    <td class="text-right">{{ order.createdAt|ago }}</td>
+    {% if show_buttons and is_granted('ROLE_ADMIN') %}
+    <td>
+      {% if order.delivery.status == 'WAITING' %}
+      <form method="post" action="{{ path('admin_order_cancel', { id: order.id }) }}">
+        <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}Cancel{% endtrans %}</button>
+      </form>
+      {% else %}
+      <a class="btn btn-xs btn-danger pull-right disabled">
+        {% trans %}Cancel{% endtrans %}
+      </a>
+      {% endif %}
+    </td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

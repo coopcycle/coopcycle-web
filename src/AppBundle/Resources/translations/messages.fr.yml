@@ -116,6 +116,10 @@ Menu categories: Catégories du menu
 Website: Site web
 Legal name: Raison sociale
 Opening hours: Horaires d'ouverture
+Invoice: Facture
+Total excluding tax: Total HT
+Total tax: Total TVA
+Total including tax: Total TTC
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!

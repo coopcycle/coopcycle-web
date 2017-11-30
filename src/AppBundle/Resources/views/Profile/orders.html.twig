@@ -12,20 +12,7 @@
       {%  trans %}profile.orders.empty{%  endtrans %}
     </div>
   {% else %}
-    <table class="table">
-      <tbody>
-      {% for order in orders %}
-        <tr>
-          <td width="10%"><a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a></td>
-          <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
-          <td width="10%">{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
-          <td>{{ order.restaurant.name }}</td>
-          <td>{{ order.createdAt|ago }}</td>
-          <td><span class="pull-right">{{ order.total }} €</span></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    {% include "AppBundle::_partials/Order/list.html.twig" %}
   {% endif %}
 {% endblock %}
 
