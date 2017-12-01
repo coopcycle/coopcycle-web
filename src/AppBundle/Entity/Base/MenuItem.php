@@ -5,6 +5,8 @@ namespace AppBundle\Entity\Base;
 use AppBundle\Entity\Base\Thing;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
+use Sylius\Component\Taxation\Model\TaxableInterface;
 
 /**
  * A food or drink item listed in a menu or menu section.
@@ -13,7 +15,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *
  * @ORM\MappedSuperclass
  */
-abstract class MenuItem extends Thing
+abstract class MenuItem extends Thing implements TaxableInterface
 {
     /**
      * @var int
@@ -23,6 +25,12 @@ abstract class MenuItem extends Thing
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Sylius\Component\Taxation\Model\TaxCategoryInterface")
+     * @ORM\JoinColumn(name="tax_category_id", referencedColumnName="id", nullable=false)
+     */
+    private $taxCategory;
 
     /**
      * @var float The offer price of a product, or of a price component when attached to PriceSpecification and its subtypes.
@@ -38,7 +46,6 @@ abstract class MenuItem extends Thing
      * @ApiProperty(iri="https://schema.org/price")
      */
     protected $price;
-
 
     /**
      * Gets id.
@@ -72,5 +79,15 @@ abstract class MenuItem extends Thing
     public function getPrice()
     {
         return $this->price;
+    }
+
+    public function getTaxCategory(): ?TaxCategoryInterface
+    {
+        return $this->taxCategory;
+    }
+
+    public function setTaxCategory(TaxCategoryInterface $taxCategory)
+    {
+        $this->taxCategory = $taxCategory;
     }
 }
