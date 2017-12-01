@@ -73,22 +73,26 @@
   {% set containerSelector = form.vars.id ~ '_container' %}
   <div class="list-group-item" id="{{ form.vars.id }}">
     <div class="form-group row">
-      <div class="col-sm-6">
+      <div class="col-sm-3">
         {{ form_label(form.name) }}
         {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-3">
         {{ form_label(form.price) }}
         {{ form_widget(form.price, { attr: { class: 'input-sm text-right' } }) }}
       </div>
       <div class="col-sm-3">
-        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox switch' }}) }}
+        {{ form_label(form.taxCategory, 'VAT'|trans([], 'messages')) }}
+        {{ form_widget(form.taxCategory) }}
       </div>
-      <div class="col-sm-1">
-        <button type="button" class="close" aria-label="Close" tabindex="-1"
-          data-target="{{ '#' ~ form.vars.id }}">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div class="col-sm-3">
+        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox switch' }}) }}
+        <div class="pull-right">
+          <button type="button" class="close" aria-label="Close" tabindex="-1"
+            data-target="{{ '#' ~ form.vars.id }}">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
       </div>
     </div>
     <div class="form-group show-description">
@@ -160,7 +164,7 @@
     <div class="col-sm-1">
       <button type="button" class="close" aria-label="Close" tabindex="-1"
         data-target="{{ '#' ~ form.vars.id }}">
-        <span aria-hidden="true">&times;</span>
+        <i class="fa fa-trash"></i>
       </button>
     </div>
   </div>
@@ -184,7 +188,7 @@
   <div class="col-sm-3">
     <button type="button" class="close" aria-label="Close" tabindex="-1"
       data-target="{{ '#' ~ form.vars.id }}">
-      <span aria-hidden="true">&times;</span>
+      <i class="fa fa-trash"></i>
     </button>
   </div>
 </div>
