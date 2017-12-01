@@ -1,5 +1,10 @@
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
+restaurant.disabledWarning: |
+  This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
+restaurant.form.enabled.label: Activated restaurant?
+restaurant.form.enabled.tooltip: |
+  When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
 restaurant.contract.title: Contract
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Fixed delivery price

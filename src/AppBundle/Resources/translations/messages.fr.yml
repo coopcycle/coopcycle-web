@@ -109,11 +109,17 @@ Search restaurant…: Rechercher un restaurant…
 Add a restaurant: Ajouter un restaurant
 Restaurants managed by user: Restaurants gérés par l'utilisateur
 VAT: TVA
+Your changes were saved.: Vos changements ont été sauvegardés.
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
 profile.orders.empty: Pas de commande pour l'instant!
 
+restaurant.disabledWarning: |
+  Ce restaurant n'est pas activé et n'est donc pas visible des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l'activer dans l'admin</a>.
+restaurant.form.enabled.label: Restaurant activé?
+restaurant.form.enabled.tooltip: |
+  Un restaurant activé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
 restaurant.contract.title: Contrat
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course

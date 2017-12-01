@@ -52,6 +52,12 @@
     </div>
     <div class="col-sm-8">
       {{ form_row(form.name) }}
+      <div class="switch-wrapper margin-bottom-md">
+        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
+        <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
+          <i class="fa fa-info-circle"></i>
+        </a>
+      </div>
       {{ form_row(form.website) }}
       {{ form_row(form.telephone) }}
     </div>
@@ -134,33 +140,38 @@
 {% block scripts %}
 <script type="text/javascript">
 
-function addForm($container) {
-  var prototype = $container.data('prototype');
-  var index = $container
-    .find('select')
-    .filter(function() {
-      return this.name.match(/^restaurant\[servesCuisine\]/);
-    })
-    .length;
+  window.AppData = window.AppData || {};
+  window.AppData.__i18n = window.AppData.__i18n || {};
+  window.AppData.__i18n['Enabled'] = 'Enabled';
+  window.AppData.__i18n['Disabled'] = 'Disabled';
 
-  var form = prototype.replace(/__name__/g, index);
+  function addForm($container) {
+    var prototype = $container.data('prototype');
+    var index = $container
+      .find('select')
+      .filter(function() {
+        return this.name.match(/^restaurant\[servesCuisine\]/);
+      })
+      .length;
 
-  $container.append(form);
-}
+    var form = prototype.replace(/__name__/g, index);
 
-$(function() {
-  $(document).on('click', '[data-remove]', function(e) {
-    e.preventDefault();
-    $(e.target).closest('.form-group').remove();
+    $container.append(form);
+  }
+
+  $(function() {
+    $(document).on('click', '[data-remove]', function(e) {
+      e.preventDefault();
+      $(e.target).closest('.form-group').remove();
+    });
+
+    $('[data-toggle="add-cuisine"]').on('click', function(e) {
+      e.preventDefault();
+      var selector = $(e.target).data('target');
+      var $target = $(selector);
+      addForm($target);
+    });
   });
-
-  $('[data-toggle="add-cuisine"]').on('click', function(e) {
-    e.preventDefault();
-    var selector = $(e.target).data('target');
-    var $target = $(selector);
-    addForm($target);
-  });
-});
 </script>
 <script src="{{ asset('js/restaurant-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap" async defer></script>

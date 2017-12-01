@@ -96,6 +96,16 @@ class Restaurant extends FoodEstablishment
     protected $servesCuisine;
 
     /**
+     * @var boolean Is the restaurant enabled?
+     *
+     * A disable restaurant is not shown to visitors, either on search page or on its detail page.
+     *
+     * @ORM\Column(type="boolean", options={"default": false})
+     * @Groups({"restaurant"})
+     */
+    protected $enabled;
+
+    /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
      * @Assert\File(maxSize = "1024k")
      * @var File
@@ -212,6 +222,22 @@ class Restaurant extends FoodEstablishment
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
     }
 
     public function getWebsite()
