@@ -6,12 +6,15 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\TimeRange;
+use AppBundle\Utils\ValidationUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Validation;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -81,6 +84,7 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      * @Groups({"restaurant", "order"})
+     * @Assert\NotBlank(message="restaurant.name.notBlank", groups={"activable"})
      */
     protected $name;
 
@@ -103,7 +107,7 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(type="boolean", options={"default": false})
      * @Groups({"restaurant"})
      */
-    protected $enabled;
+    protected $enabled = false;
 
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
@@ -121,6 +125,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
      * @Groups({"restaurant"})
+     * @Assert\NotBlank(groups={"activable"})
      */
     private $address;
 
@@ -133,10 +138,20 @@ class Restaurant extends FoodEstablishment
     private $website;
 
     /**
+     * @var string The telephone number..
+     *
+     * @ORM\Column(nullable=true)
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank(message="restaurant.telephone.notBlank", groups={"activable"})
+     */
+    protected $telephone;
+
+    /**
      * @var string The delivery service of the restaurant.
      *
      * @ORM\OneToOne(targetEntity="DeliveryService", cascade={"persist"})
      * @ORM\JoinColumn(name="delivery_service_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="restaurant.deliveryService.notBlank", groups={"activable"})
      */
     private $deliveryService;
 
@@ -160,6 +175,20 @@ class Restaurant extends FoodEstablishment
     private $maxDistance = 3000;
 
     /**
+     * @var string The opening hours for a business. Opening hours can be specified as a weekly time range, starting with days, then times per day. Multiple days can be listed with commas ',' separating each day. Day or time ranges are specified using a hyphen '-'.
+     *             - Days are specified using the following two-letter combinations: `Mo`, `Tu`, `We`, `Th`, `Fr`, `Sa`, `Su`.
+     *             - Times are specified using 24:00 time. For example, 3pm is specified as `15:00`.
+     *             - Here is an example: `<time itemprop="openingHours" datetime="Tu,Th 16:00-20:00">Tuesdays and Thursdays 4-8pm</time>`.
+     *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     * @ApiProperty(iri="https://schema.org/openingHours")
+     * @Groups({"restaurant"})
+     * @Assert\NotBlank(message="restaurant.openingHours.notBlank", groups={"activable"})
+     */
+    protected $openingHours;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
@@ -174,6 +203,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Contract
      * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
+     * @Assert\NotBlank(message="restaurant.contract.notBlank", groups={"activable"})
      */
     private $contract;
 
@@ -506,6 +536,27 @@ class Restaurant extends FoodEstablishment
         if ($this->contract) {
             return $this->contract->getMinimumCartAmount();
         }
+    }
+
+    /**
+     * Custom restaurant validation.
+     * @Assert\Callback()
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+
+        $enabled = $this->isEnabled();
+
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $activationErrors = $validator->validate($this, null, ['activable']);
+        $activationErrors = ValidationUtils::serializeValidationErrors($activationErrors);
+
+        if ($enabled && count($activationErrors) > 0) {
+            $context->buildViolation('Unable to activate restaurant.')
+                ->atPath('enabled')
+                ->addViolation();
+        }
+
     }
 
 }

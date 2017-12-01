@@ -7,13 +7,16 @@ use AppBundle\Entity\Menu;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Validator\Validation;
 
 trait RestaurantTrait
 {
+
     protected function checkAccess(Restaurant $restaurant)
     {
         if ($this->getUser()->hasRole('ROLE_ADMIN')) {
@@ -44,6 +47,10 @@ trait RestaurantTrait
 
         $form->handleRequest($request);
 
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $activationErrors = $validator->validate($restaurant, null, ['activable']);
+        $activationErrors = ValidationUtils::serializeValidationErrors($activationErrors);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $restaurant = $form->getData();
 
@@ -64,6 +71,7 @@ trait RestaurantTrait
 
         return [
             'restaurant' => $restaurant,
+            'activationErrors' => $activationErrors,
             'form' => $form->createView(),
             'layout' => $layout,
             'menu_route' => $routes['menu'],

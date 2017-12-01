@@ -126,6 +126,13 @@ restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 
+restaurant.notActivable: "Vous ne pouvez pas encore activer ce restaurant :"
+restaurant.openingHours.notBlank: Sélectionnez au moins un créneau d'ouverture
+restaurant.deliveryService.notBlank: Sélectionnez un service de livraison
+restaurant.telephone.notBlank: Entrez votre numéro de téléphone
+restaurant.name.notBlank: Entrez le nom de votre restaurant
+restaurant.contract.notBlank: Entrez le contrat de livraison pour ce restaurant (nécessite d'être admin)
+
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
 menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément

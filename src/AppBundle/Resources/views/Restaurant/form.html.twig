@@ -44,6 +44,24 @@
   </div>
 {% endfor %}
 
+{% if activationErrors is not empty %}
+  <div class="row margin-bottom-md">
+    <div class="col-sm-6 col-md-offset-3">
+      <div class="alert alert-warning">
+        {% trans %}restaurant.notActivable{% endtrans %}
+        <ul class="restaurant-availability-errors">
+          {% for field, errors in activationErrors %}
+            <li class="margin-left-l">
+              {%  set error = errors[0] %}
+              {{ error | trans }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif  %}
+
 {{ form_start(form) }}
 
   <div class="row">
