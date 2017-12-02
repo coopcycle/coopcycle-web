@@ -13,12 +13,16 @@ class MenuItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function __construct(ItemNormalizer $normalizer)
     {
+        // There is a circular reference between TaxCategory & TaxRate
+        $normalizer->setIgnoredAttributes([
+            'taxCategory'
+        ]);
         $this->normalizer = $normalizer;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data =  $this->normalizer->normalize($object, $format, $context);
+        $data = $this->normalizer->normalize($object, $format, $context);
 
         if (!is_array($data)) {
             return $data;
