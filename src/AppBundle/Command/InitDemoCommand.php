@@ -128,7 +128,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $taxRate->setName('TVA 10%');
         $taxRate->setCode('tva_10');
         $taxRate->setCategory($taxCategory);
-        $taxRate->setAmount(10.00);
+        $taxRate->setAmount(0.10);
         $taxRate->setIncludedInPrice(true);
         $taxRate->setCalculator('default');
 

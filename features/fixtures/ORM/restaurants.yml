@@ -8,7 +8,7 @@ Sylius\Component\Taxation\Model\TaxRate:
     name: "TVA 10%"
     code: tva_10
     category: "@tva_conso_immediate"
-    amount: 10.00
+    amount: 0.10
     includedInPrice: true
     calculator: default
 
