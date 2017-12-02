@@ -2,7 +2,6 @@
 
 namespace AppBundle;
 
-
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use AppBundle\Entity\Menu\Modifier;
@@ -11,7 +10,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\DBAL\Logging\EchoSQLLogger;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 /**
  * Class BaseTest
@@ -37,7 +36,7 @@ abstract class BaseTest extends KernelTestCase
         self::bootKernel();
         $this->doctrine = static::$kernel->getContainer()->get('doctrine');
         $this->em = $this->doctrine->getManager();
-//        $this->em->getConnection()->getConfiguration()->setSQLLogger( new EchoSQLLogger());
+        // $this->em->getConnection()->getConfiguration()->setSQLLogger( new EchoSQLLogger());
     }
 
     protected function tearDown()
@@ -47,24 +46,26 @@ abstract class BaseTest extends KernelTestCase
         $purger->purge();
     }
 
-    public function createMenuItem($name, $price)
+    public function createMenuItem($name, $price, TaxCategoryInterface $taxCategory)
     {
         $item = new MenuItem();
         $item->setName($name);
         $item->setPrice($price);
+        $item->setTaxCategory($taxCategory);
 
-        $manager = $this->doctrine->getManagerForClass(MenuItem::class);
-        $manager->persist($item);
-        $manager->flush();
+        $menuItemManager = $this->doctrine->getManagerForClass(MenuItem::class);
+        $menuItemManager->persist($item);
+        $menuItemManager->flush();
 
         return $item;
     }
 
-    public function createModifier($name, $price)
+    public function createModifier($name, $price, TaxCategoryInterface $taxCategory)
     {
         $item = new Modifier();
         $item->setName($name);
         $item->setPrice($price);
+        $item->setTaxCategory($taxCategory);
 
         $manager = $this->doctrine->getManagerForClass(Modifier::class);
         $manager->persist($item);
@@ -89,6 +90,4 @@ abstract class BaseTest extends KernelTestCase
 
         return $modifier;
     }
-
-
 }

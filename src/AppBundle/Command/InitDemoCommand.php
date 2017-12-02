@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+
 class InitDemoCommand extends ContainerAwareCommand
 {
     private $userManipulator;
@@ -109,6 +110,34 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->userManipulator->addRole($username, 'ROLE_COURIER');
     }
 
+    private function createTaxCategory()
+    {
+        $taxCategoryFactory = $this->getContainer()->get('sylius.factory.tax_category');
+        $taxCategoryManager = $this->getContainer()->get('sylius.manager.tax_category');
+        $taxRateFactory = $this->getContainer()->get('sylius.factory.tax_rate');
+        $taxRateManager = $this->getContainer()->get('sylius.manager.tax_rate');
+
+        $taxCategory = $taxCategoryFactory->createNew();
+        $taxCategory->setName('TVA consommation immédiate');
+        $taxCategory->setCode('tva_conso_immediate');
+
+        $taxCategoryManager->persist($taxCategory);
+        $taxCategoryManager->flush();
+
+        $taxRate = $taxRateFactory->createNew();
+        $taxRate->setName('TVA 10%');
+        $taxRate->setCode('tva_10');
+        $taxRate->setCategory($taxCategory);
+        $taxRate->setAmount(10.00);
+        $taxRate->setIncludedInPrice(true);
+        $taxRate->setCalculator('default');
+
+        $taxRateManager->persist($taxRate);
+        $taxRateManager->flush();
+
+        return $taxCategory;
+    }
+
     private function createMenuCategory($name)
     {
         $category = new Entity\Menu\MenuCategory();
@@ -119,14 +148,26 @@ class InitDemoCommand extends ContainerAwareCommand
         return $category;
     }
 
-    private function createMenu()
+    private function createMenu(TaxCategoryInterface $taxCategory)
     {
         $objects = $this->fixturesLoader->load(__DIR__ . '/Resources/menu.yml');
 
-        return $objects['menu'];
+        $menu = $objects['menu'];
+
+        foreach ($menu->getAllItems() as $menuItem) {
+            $menuItem->setTaxCategory($taxCategory);
+        }
+
+        foreach ($menu->getAllModifiers() as $menuItemModifier) {
+            foreach ($menuItemModifier->getModifierChoices() as $modifier) {
+                $modifier->setTaxCategory($taxCategory);
+            }
+        }
+
+        return $menu;
     }
 
-    private function createRestaurant(Entity\Address $address)
+    private function createRestaurant(Entity\Address $address, TaxCategoryInterface $taxCategory)
     {
         $contract = new Entity\Contract();
         $contract->setMinimumCartAmount(15);
@@ -135,7 +176,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurant = new Entity\Restaurant();
 
         $restaurant->setAddress($address);
-        $restaurant->setMenu($this->createMenu());
+        $restaurant->setMenu($this->createMenu($taxCategory));
         $restaurant->setName($this->faker->restaurantName);
         $restaurant->addOpeningHour('Mo-Sa 10:00-19:00');
         $restaurant->setContract($contract);
@@ -150,8 +191,10 @@ class InitDemoCommand extends ContainerAwareCommand
         }
         $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->flush();
 
+        $taxCategory = $this->createTaxCategory();
+
         for ($i = 0; $i < 100; $i++) {
-            $restaurant = $this->createRestaurant($this->faker->randomAddress);
+            $restaurant = $this->createRestaurant($this->faker->randomAddress, $taxCategory);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
 

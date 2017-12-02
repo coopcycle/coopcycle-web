@@ -1,3 +1,17 @@
+Sylius\Component\Taxation\Model\TaxCategory:
+  tva_conso_immediate:
+    code: tva_conso_immediate
+    name: "TVA consommation immédiate"
+
+Sylius\Component\Taxation\Model\TaxRate:
+  tva_10:
+    name: "TVA 10%"
+    code: tva_10
+    category: "@tva_conso_immediate"
+    amount: 10.00
+    includedInPrice: true
+    calculator: default
+
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
     __construct: [ "48.864577", "2.333338" ]
@@ -10,6 +24,7 @@ AppBundle\Entity\Menu\MenuItem:
   menu_item_{1..9}:
     name: <name()>
     price: <numberBetween(5, 10)>.99
+    tax_category: "@tva_conso_immediate"
 
 AppBundle\Entity\Menu\MenuSection:
   menu_section_1:
