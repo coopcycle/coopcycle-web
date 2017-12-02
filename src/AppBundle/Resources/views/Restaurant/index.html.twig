@@ -1,7 +1,17 @@
 {% extends "AppBundle::base.html.twig" %}
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
+{% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
 
 {% block body %}
 <div class="container">
+
+  {%  if not restaurant.enabled %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3 alert alert-danger">
+        {{ "restaurant.disabledWarning" | trans({'%restaurantEditUrl%': restaurant_edit_url}) | raw }}
+      </div>
+    </div>
+  {%  endif %}
 
   <div class="page-header restaurant-header">
     <h1>{{ restaurant.name }}</h1>

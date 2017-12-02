@@ -3,10 +3,19 @@
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Utils\ValidationUtils;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Validation;
 
 class RestaurantTest extends TestCase
 {
+    private $validator;
+
+    public function setUp()
+    {
+        $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+    }
+
     public function testGetAvailabilities() {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
@@ -127,6 +136,28 @@ class RestaurantTest extends TestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([], $availabilities);
+
+    }
+
+    public function testValidationErrors() {
+        $restaurant = new Restaurant();
+
+        $errors = $this->validator->validate($restaurant, null, ['activable']);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+        $this->assertEquals($errors['name'][0], 'restaurant.name.notBlank');
+        $this->assertEquals($errors['telephone'][0], 'restaurant.telephone.notBlank');
+        $this->assertEquals($errors['openingHours'][0], 'restaurant.openingHours.notBlank');
+        $this->assertEquals($errors['deliveryService'][0], 'restaurant.deliveryService.notBlank');
+        $this->assertEquals($errors['contract'][0], 'restaurant.contract.notBlank');
+
+    }
+
+    public function testCannotEnableRestaurant() {
+        $restaurant = new Restaurant();
+        $restaurant->setEnabled(true);
+
+        $errors = $this->validator->validate($restaurant, null);
+        $this->assertEquals(ValidationUtils::serializeValidationErrors($errors)['enabled'][0], 'Unable to activate restaurant.');
 
     }
 }

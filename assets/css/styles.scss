@@ -430,6 +430,10 @@ $order-follow--number-width: 26px;
     margin-left: 10px;
 }
 
+.restaurant-availability-errors {
+  list-style: initial;
+}
+
 form[name="menu"] {
     #menu_sections .switch {
         padding-top: 26px;

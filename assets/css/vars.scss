@@ -22,6 +22,7 @@ $bs-base-margin: 20px;
 $screen-md-min: 768px;
 
 // Length
+$base-margin-l: $bs-base-margin * 2;
 $base-margin: $bs-base-margin;
 $base-margin-s: $base-margin / 2;
 $base-margin-xs: $base-margin-s / 2;

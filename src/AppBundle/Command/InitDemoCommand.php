@@ -175,6 +175,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $restaurant = new Entity\Restaurant();
 
+        $restaurant->setEnabled(true);
         $restaurant->setAddress($address);
         $restaurant->setMenu($this->createMenu($taxCategory));
         $restaurant->setName($this->faker->restaurantName);

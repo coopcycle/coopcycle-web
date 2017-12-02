@@ -153,7 +153,7 @@ class RestaurantController extends Controller
             // FIXME : can't use SQL because we want to filter by date as well :(
             // $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
 
-            $matches = $repository->findBy([], ['name' => 'ASC']);
+            $matches = $repository->findBy(['enabled' => true], ['name' => 'ASC']);
         }
 
         if ($request->query->has('datetime')) {
@@ -208,12 +208,19 @@ class RestaurantController extends Controller
     public function indexAction($id, $slug, Request $request)
     {
 
-        $restaurant = $this->getDoctrine()
-            ->getRepository('AppBundle:Restaurant')->find($id);
+        $user = $this->getUser();
 
-        $translator = $this->get('translator');
+        // Preview mode for admin + restaurant owner
+        if (isset($user) && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
+            $restaurant = $this->getDoctrine()
+                ->getRepository('AppBundle:Restaurant')->findOneBy(['id' => $id]);
+        } else {
+            $restaurant = $this->getDoctrine()
+                ->getRepository('AppBundle:Restaurant')->findOneBy(['id' => $id, 'enabled' => true]);
+        }
 
-        if (!$restaurant) {
+        if (!$restaurant ||
+            (isset($user) && !$restaurant->isEnabled() && $user->hasRole('ROLE_RESTAURANT') && !$user->ownsRestaurant($restaurant))) {
             throw new NotFoundHttpException();
         }
 
