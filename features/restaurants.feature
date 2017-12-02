@@ -42,6 +42,7 @@ Feature: Manage restaurants
           "@id":"/api/restaurants/2",
           "@type":"http://schema.org/Restaurant",
           "servesCuisine":@array@,
+          "enabled":true,
           "address":@...@,
           "name":"Café Barjot",
           "hasMenu":@...@
@@ -59,6 +60,7 @@ Feature: Manage restaurants
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1"
     Then the response status code should be 200
+    Then print last response
     And the response should be in JSON
     And the JSON should match:
     """
@@ -67,6 +69,7 @@ Feature: Manage restaurants
       "@id":"/api/restaurants/1",
       "@type":"http://schema.org/Restaurant",
       "servesCuisine":@array@,
+      "enabled":true,
       "name":"Nodaiwa",
       "address":{
         "@id":"@string@.startsWith('/api/addresses')",

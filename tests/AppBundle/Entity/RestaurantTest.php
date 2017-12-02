@@ -144,10 +144,10 @@ class RestaurantTest extends TestCase
 
         $errors = $this->validator->validate($restaurant, null, ['activable']);
         $errors = ValidationUtils::serializeValidationErrors($errors);
-        $this->assertEquals($errors['name'][0], 'restaurant.openingHours.notBlank');
-        $this->assertEquals($errors['telephone'][0], 'restaurant.deliveryService.notBlank');
-        $this->assertEquals($errors['openingHours'][0], 'restaurant.telephone.notBlank');
-        $this->assertEquals($errors['deliveryService'][0], 'restaurant.name.notBlank');
+        $this->assertEquals($errors['name'][0], 'restaurant.name.notBlank');
+        $this->assertEquals($errors['telephone'][0], 'restaurant.telephone.notBlank');
+        $this->assertEquals($errors['openingHours'][0], 'restaurant.openingHours.notBlank');
+        $this->assertEquals($errors['deliveryService'][0], 'restaurant.deliveryService.notBlank');
         $this->assertEquals($errors['contract'][0], 'restaurant.contract.notBlank');
 
     }
