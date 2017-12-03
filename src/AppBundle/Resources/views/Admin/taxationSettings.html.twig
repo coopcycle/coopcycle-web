@@ -1,0 +1,24 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Settings{% endtrans %}</li>
+<li>{% trans %}Taxation{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+<tbody>
+{% for taxCategory in taxCategories %}
+{% set taxRate = taxCategory.rates|first %}
+<tr>
+  <td>#{{ taxCategory.id }}</td>
+  <td>{{ taxCategory.name }}</td>
+  <td>{{ (taxRate.amount * 100)|number_format(2, '.', ',') }} %</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

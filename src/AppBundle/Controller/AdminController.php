@@ -469,4 +469,19 @@ class AdminController extends Controller
             'form' => $form->createView(),
         ];
     }
+
+    /**
+     * @Route("/admin/settings/taxation", name="admin_taxation_settings")
+     * @Template
+     */
+    public function taxationSettingsAction(Request $request)
+    {
+        $taxCategoryRepository = $this->get('sylius.repository.tax_category');
+
+        $taxCategories = $taxCategoryRepository->findAll();
+
+        return [
+            'taxCategories' => $taxCategories
+        ];
+    }
 }
