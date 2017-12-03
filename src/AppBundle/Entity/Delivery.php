@@ -2,16 +2,19 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\Intangible;
+use AppBundle\Entity\Model\TaxableTrait;
+use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
+use Sylius\Component\Taxation\Model\TaxableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
-use AppBundle\Validator\Constraints as CustomAssert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -38,8 +41,10 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * @CustomAssert\IsValidDeliveryDate(groups="order")
  *
  */
-class Delivery extends Intangible
+class Delivery extends Intangible implements TaxableInterface
 {
+    use TaxableTrait;
+
     // default status when the delivery is created along the order
     const STATUS_WAITING    = 'WAITING';
     // the delivery has been accepted by a courier
@@ -132,13 +137,19 @@ class Delivery extends Intangible
      */
     private $price;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Sylius\Component\Taxation\Model\TaxCategoryInterface")
+     * @ORM\JoinColumn(name="tax_category_id", referencedColumnName="id", nullable=false)
+     */
+    private $taxCategory;
+
     public function __construct(Order $order = null)
     {
         $this->status = self::STATUS_WAITING;
 
         if ($order) {
+            $this->setOrder($order);
             $order->setDelivery($this);
-            $this->order = $order;
         }
 
         $this->events = new ArrayCollection();
@@ -164,6 +175,13 @@ class Delivery extends Intangible
         $this->originAddress = $originAddress;
 
         return $this;
+    }
+
+    public function setOriginAddressFromOrder(Order $order)
+    {
+        if (null !== $order->getRestaurant()) {
+            $this->originAddress = $order->getRestaurant()->getAddress();
+        }
     }
 
     public function getDeliveryAddress()
@@ -197,6 +215,9 @@ class Delivery extends Intangible
 
     public function setOrder(Order $order)
     {
+        $this->setPriceFromOrder($order);
+        $this->setOriginAddressFromOrder($order);
+
         $this->order = $order;
 
         return $this;
@@ -301,6 +322,23 @@ class Delivery extends Intangible
     public function setPrice($price)
     {
         $this->price = $price;
+    }
+
+    public function setPriceFromOrder(Order $order)
+    {
+        if (null !== $order->getRestaurant()) {
+            $this->price = $order->getRestaurant()->getFlatDeliveryPrice();
+        }
+    }
+
+    public function getTaxCategory(): ?TaxCategoryInterface
+    {
+        return $this->taxCategory;
+    }
+
+    public function setTaxCategory(TaxCategoryInterface $taxCategory)
+    {
+        $this->taxCategory = $taxCategory;
     }
 
     public function getActualDuration()

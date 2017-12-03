@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Entity\Base\MenuItem;
+use AppBundle\Entity\Model\TaxableTrait;
 use AppBundle\Utils\CartItem;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -46,6 +47,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class Order
 {
+    use TaxableTrait;
+
     // the order is created but not paid yet
     const STATUS_CREATED            = 'CREATED';
     // the payment for this order failed
@@ -275,6 +278,11 @@ class Order
     {
         $this->restaurant = $restaurant;
 
+        if (null !== $this->delivery) {
+            $this->delivery->setPriceFromOrder($this);
+            $this->delivery->setOriginAddressFromOrder($this);
+        }
+
         return $this;
     }
 
@@ -320,7 +328,6 @@ class Order
         }
 
         return $total;
-
     }
 
     /**
@@ -365,8 +372,8 @@ class Order
 
     public function setDelivery(Delivery $delivery)
     {
-        $this->delivery = $delivery;
         $delivery->setOrder($this);
+        $this->delivery = $delivery;
 
         return $this;
     }

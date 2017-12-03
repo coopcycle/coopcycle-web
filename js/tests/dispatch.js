@@ -16,6 +16,7 @@ function init() {
 
     Promise.all([
       utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 }),
+      utils.createTaxCategory('Default', 'default'),
       utils.createUser('bill'),
       utils.createUser('sarah', ['ROLE_COURIER']),
       utils.createUser('bob', ['ROLE_COURIER']),

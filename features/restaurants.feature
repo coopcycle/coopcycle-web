@@ -60,7 +60,6 @@ Feature: Manage restaurants
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1"
     Then the response status code should be 200
-    Then print last response
     And the response should be in JSON
     And the JSON should match:
     """

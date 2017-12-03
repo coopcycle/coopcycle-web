@@ -13,8 +13,8 @@
     </div>
   {% else %}
     <table class="table">
+      <tbody>
       {% for order in orders %}
-        <tbody>
         <tr>
           <td width="10%"><a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a></td>
           <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
@@ -23,8 +23,8 @@
           <td>{{ order.createdAt|ago }}</td>
           <td><span class="pull-right">{{ order.total }} €</span></td>
         </tr>
-        </tbody>
       {% endfor %}
+      </tbody>
     </table>
   {% endif %}
 {% endblock %}

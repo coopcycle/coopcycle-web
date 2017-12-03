@@ -12,6 +12,9 @@ use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Predis\Client as Redis;
+use Sylius\Component\Taxation\Calculator\CalculatorInterface;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -36,6 +39,9 @@ class TestCase extends BaseTestCase
         $paymentService = $this->prophesize(PaymentService::class);
         $routing = $this->prophesize(RoutingInterface::class);
         $deliveryService = $this->prophesize(DeliveryServiceInterface::class);
+        $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
+        $calculator = $this->prophesize(CalculatorInterface::class);
+        $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
 
         $deliveryServiceFactory = new DeliveryServiceFactory([], $deliveryService->reveal());
 
@@ -50,7 +56,11 @@ class TestCase extends BaseTestCase
             $paymentService->reveal(),
             $deliveryServiceFactory,
             $this->redisProphecy->reveal(),
-            $serializer->reveal()
+            $serializer->reveal(),
+            $taxRateResolver->reveal(),
+            $calculator->reveal(),
+            $taxCategoryRepository->reveal(),
+            'foo'
         );
 
         $this->action = new $this->actionClass(

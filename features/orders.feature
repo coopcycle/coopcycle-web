@@ -100,9 +100,15 @@ Feature: Orders
         "status":"WAITING",
         "courier":null,
         "date":"@string@.startsWith('2017-09-02')",
-        "price": @double@
+        "price": @double@,
+        "totalExcludingTax":@double@,
+        "totalTax":@double@,
+        "totalIncludingTax":@double@
       },
       "total":@number@,
+      "totalExcludingTax":@double@,
+      "totalTax":@double@,
+      "totalIncludingTax":@double@,
       "publicUrl":@string@,
       "status":"CREATED",
       "preparationDate":"@string@.startsWith('2017-09-02T11:45:00')"
@@ -216,7 +222,10 @@ Feature: Orders
       },
       "status":"DISPATCHED",
       "date":"@string@.startsWith('2017-09-02')",
-      "price": @double@
+      "price": @double@,
+      "totalExcludingTax":@double@,
+      "totalTax":@double@,
+      "totalIncludingTax":@double@
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -261,7 +270,10 @@ Feature: Orders
       },
       "status":"PICKED",
       "date":"@string@.startsWith('2017-09-02')",
-      "price": @double@
+      "price": @double@,
+      "totalExcludingTax":@double@,
+      "totalTax":@double@,
+      "totalIncludingTax":@double@
     }
     """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -306,7 +318,10 @@ Feature: Orders
       },
       "status":"DELIVERED",
       "date":"@string@.startsWith('2017-09-02')",
-      "price": @double@
+      "price": @double@,
+      "totalExcludingTax":@double@,
+      "totalTax":@double@,
+      "totalIncludingTax":@double@
     }
     """
 

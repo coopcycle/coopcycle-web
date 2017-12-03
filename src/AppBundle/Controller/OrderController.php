@@ -13,7 +13,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 
-
 /**
  * @Route("/order")
  */
@@ -44,9 +43,7 @@ class OrderController extends Controller
 
         $delivery = new Delivery($order);
         $delivery->setDate($cart->getDate());
-        $delivery->setOriginAddress($restaurant->getAddress());
         $delivery->setDeliveryAddress($cart->getAddress());
-        $delivery->setPrice($restaurant->getContract()->getFlatDeliveryPrice());
 
         return $order;
     }
@@ -161,8 +158,8 @@ class OrderController extends Controller
      * @param Request $request
      *
      */
-    public function orderPublic($uuid, Request $request) {
-
+    public function orderPublic($uuid, Request $request)
+    {
         $orders = $this->getDoctrine()
             ->getRepository(Order::class)->findBy(['uuid' => $uuid]);
 
@@ -196,6 +193,5 @@ class OrderController extends Controller
             'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
             'layout' => 'AppBundle::base.html.twig'
         );
-
     }
 }
