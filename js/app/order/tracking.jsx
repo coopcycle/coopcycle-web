@@ -55,49 +55,51 @@ function startWebSocket() {
 // Initialize LeafletJS
 // --------------------
 
-map = MapHelper.init('map', center, zoom, false);
+if ($('#map').is(':visible')) {
 
-var restaurant = {
-  lat: delivery.originAddress.geo.latitude,
-  lng: delivery.originAddress.geo.longitude,
-};
-var deliveryAddress = {
-  lat: delivery.deliveryAddress.geo.latitude,
-  lng: delivery.deliveryAddress.geo.longitude,
-};
+  // Render React element first
+  orderFollow = render(
+    <OrderFollow
+      order={window.AppData.order}
+      orderEvents={window.AppData.order_events}
+      deliveryEvents={window.AppData.delivery_events}
+    />,
+    document.getElementById('order-follow')
+  );
 
-var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#337ab7');
-var deliveryAddressMarker = MapHelper.createMarker(deliveryAddress, 'user', 'marker', '#337ab7');
+  map = MapHelper.init('map', center, zoom, false);
 
-MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
-  .then((data) => {
+  var restaurant = {
+    lat: delivery.originAddress.geo.latitude,
+    lng: delivery.originAddress.geo.longitude,
+  };
+  var deliveryAddress = {
+    lat: delivery.deliveryAddress.geo.latitude,
+    lng: delivery.deliveryAddress.geo.longitude,
+  };
 
-    restaurantMarker.addTo(map);
-    deliveryAddressMarker.addTo(map);
+  var restaurantMarker = MapHelper.createMarker(restaurant, 'cutlery', 'marker', '#337ab7');
+  var deliveryAddressMarker = MapHelper.createMarker(deliveryAddress, 'user', 'marker', '#337ab7');
 
-    MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker], 1);
+  MapHelper.getPolyline(restaurantMarker, deliveryAddressMarker)
+    .then((data) => {
 
-    var polyline = new L.Polyline(data, {
-      color: '#337ab7',
-      weight: 3,
-      opacity: 0.8,
-      smoothFactor: 1
+      restaurantMarker.addTo(map);
+      deliveryAddressMarker.addTo(map);
+
+      var polyline = new L.Polyline(data, {
+        color: '#337ab7',
+        weight: 3,
+        opacity: 0.8,
+        smoothFactor: 1
+      });
+      map.addLayer(polyline);
+
+      MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker, polyline], 1);
+
+      if (delivery.status !== 'DELIVERED' && delivery.status !== 'CANCELED') {
+        startWebSocket();
+      }
     });
-    map.addLayer(polyline);
 
-    if (delivery.status !== 'DELIVERED' && delivery.status !== 'CANCELED') {
-      startWebSocket();
-    }
-  });
-
-
-console.log(window.__order_events);
-
-orderFollow = render(
-  <OrderFollow
-    order={window.AppData.order}
-    orderEvents={window.AppData.order_events}
-    deliveryEvents={window.AppData.delivery_events}
-  />,
-  document.getElementById('order-follow')
-);
+}
