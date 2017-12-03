@@ -10,74 +10,71 @@ var config = configLoader.load();
 
 var utils = new TestUtils(config);
 
-var redisVersionCheck = new Promise(function (resolve, reject) {
-  var checkRedis = function () {
-    if (utils.serverVersionAtLeast(utils.redis, [3, 2, 0])) {
-      resolve();
-    } else {
-      reject('Redis version nok');
-    }
-  };
-  if (!utils.redis.ready) {
-    utils.redis.on('ready', function () {
-      checkRedis();
-    });
-  } else {
-    checkRedis();
-  }
-  });
-
 function init() {
+
   return new Promise(function(resolve, reject) {
-    utils.waitServerUp('127.0.0.1', 8000)
-         .then(function () {
-            return utils.cleanDb();
-          })
-         .then(function() {
-            return Promise.all([
-                utils.createUser('bill'),
-                utils.createUser('sarah', ['ROLE_COURIER']),
-                utils.createUser('bob', ['ROLE_COURIER'])
-              ]);
-          })
-          .then(function() {
-            return utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
-              lat: 48.855799,
-              lng: 2.359207
-            });
-          })
-          .then(resolve)
-          .catch((e) => reject(e));
-  });
+
+    Promise.all([
+      utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 }),
+      utils.createUser('bill'),
+      utils.createUser('sarah', ['ROLE_COURIER']),
+      utils.createUser('bob', ['ROLE_COURIER']),
+    ])
+    .then(function(objects) {
+      utils.createDeliveryAddress('bill', '1, rue de Rivoli', {
+        lat: 48.855799,
+        lng: 2.359207
+      })
+      .then(function() {
+        resolve(objects)
+      })
+    })
+    .catch(function(e) {
+      reject(e)
+    })
+
+  })
+
 }
 
-describe('With one order waiting', function() {
+describe('Dispatch WebSocket', function() {
 
-  before(function() {
-
-    this.timeout(60000);
-
+  before('Waiting for server', function() {
+    this.timeout(30000)
     return new Promise(function (resolve, reject) {
-        redisVersionCheck
-          .then(function () {
-            return init();
-          })
-          .then(function() {
-            return utils.createRestaurant('Awesome Pizza', { latitude: 48.884550, longitude: 2.341358 });
-          })
-          .then(function(restaurant) {
-            return utils.createRandomOrder('bill', restaurant);
-          })
-          .then(resolve)
-          .catch(function(e) {
-              reject(e);
-          });
-    });
+      utils.waitServerUp('127.0.0.1', 8000)
+        .then(function() {
+          resolve()
+        })
+        .catch(function(e) {
+          reject()
+        })
+    })
+  })
+
+  let restaurant;
+
+  beforeEach('Cleaning db & initializing users', function() {
+    this.timeout(30000)
+    return new Promise(function (resolve, reject) {
+      utils.cleanDb().then(function() {
+        init().then(function(objects) {
+
+          const [ newRestaurant ] = objects
+
+          restaurant = newRestaurant
+
+          utils.createRandomOrder('bill', restaurant, 'default')
+            .then(resolve)
+            .catch(reject)
+        })
+      })
+    })
   });
 
-  it('order should be dispatched to courier', function() {
+  it('should dispatch order to courier on connection', function() {
 
-    this.timeout(30000);
+    this.timeout(30000)
 
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('sarah');
@@ -114,28 +111,9 @@ describe('With one order waiting', function() {
         reject(e.message);
       };
     });
-  });
-});
+  })
 
-describe('With several users connected', function() {
-
-  before(function() {
-
-    this.timeout(30000);
-
-    return new Promise(function (resolve, reject) {
-      redisVersionCheck
-        .then(function () {
-          return init();
-        })
-        .then(resolve)
-        .catch(function(e) {
-            reject(e);
-        });
-    });
-  });
-
-  it('new order should be dispatched to closest courier', function() {
+  it('should dispatch order to closest courier', function() {
 
     this.timeout(5000);
 
@@ -190,14 +168,9 @@ describe('With several users connected', function() {
         }
       };
 
-      utils.createRestaurant('Awesome Pizza', {
-        latitude: 48.884550, longitude: 2.341358
-      })
-      .then(function(restaurant) {
-        return utils.createRandomOrder('bill', restaurant);
-      });
+      return utils.createRandomOrder('bill', restaurant, 'default')
+    })
 
-    });
-  });
+  })
 
-});
+})

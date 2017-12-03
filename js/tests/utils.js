@@ -69,30 +69,29 @@ TestUtils.prototype.cleanDb = function() {
 
       var cleanRedis = new Promise(function(resolve, reject) {
         redisCleaner.clean(redis, function(err) {
-          if (err) reject(err);
-          resolve();
+          if (err) return reject(err);
+          return resolve();
         });
       });
 
       var cleanPg = new Promise(function(resolve, reject) {
         pgCleaner.clean(client, function(err) {
-          if (err) reject(err);
+          if (err) return reject(err);
           pool.end();
-          resolve();
+          return resolve();
         });
       });
 
-      Promise.all([ cleanPg, cleanRedis ])
-        .then(resolve)
-        .catch(function(err) {
-          reject(err);
-        });
+      return Promise.all([ cleanPg, cleanRedis ])
+        .then(() => resolve())
+        .catch(err => reject(err))
     });
   });
 };
 
 TestUtils.prototype.createUser = function(username, roles) {
-  var User = this.db.User;
+
+  const { User } = this.db
 
   var params = {
     'username': username,
@@ -102,17 +101,17 @@ TestUtils.prototype.createUser = function(username, roles) {
     'roles': serialize(roles),
     'password': '123456',
     'enabled': true
-  };
+  }
 
   return new Promise(function (resolve, reject) {
     User.create(params)
-        .then(function() {
-          resolve();
-        })
-        .catch(function(err) {
-          reject(err.errors);
-        });
-});
+      .then(function(user) {
+        resolve(user)
+      })
+      .catch(function(e) {
+        reject(err.errors)
+      })
+  })
 };
 
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
@@ -171,84 +170,72 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
   var Order = this.db.Order;
   var User = this.db.User;
   var Delivery = this.db.Delivery;
+
   var redis = this.redis;
 
   return new Promise(function (resolve, reject) {
 
-    User.findOne({ where: { username: username } })
-      .then(function(customer) {
-        customer.getAddresses()
-          .then(function(deliveryAddresses) {
-            return _.first(deliveryAddresses);
-          })
-          .then(function(deliveryAddress) {
-            Order.create({
-              uuid: 'some-random-string',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            })
-            .then(function(order) {
-              return order.setCustomer(customer);
-            })
-            .then(function(order) {
-              return order.setRestaurant(restaurant);
-            })
-            .then(function(order) {
+    Promise.all([
+      User.findOne({ where: { username: username } }),
+      restaurant.getAddress()
+    ]).then(objects => {
 
-              return Delivery.create({
-                date: new Date(),
-                distance: 1000,
-                duration: 600,
-                price: 3.5
-              }).then(function(delivery) {
-                return restaurant.getAddress().then(function(restaurantAddress) {
-                  return delivery.setOriginAddress(restaurantAddress);
-                });
-              }).then(function(delivery) {
-                return delivery.setDeliveryAddress(deliveryAddress);
-              }).then(function(delivery) {
+      const [customer, restaurantAddress] = objects
+
+      customer.getAddresses()
+        .then(deliveryAddresses => _.first(deliveryAddresses))
+        .then(function(deliveryAddress) {
+          Order.create({
+            uuid: 'some-random-string',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .then(function(order) {
+            return order.setCustomer(customer);
+          })
+          .then(function(order) {
+            return order.setRestaurant(restaurant);
+          })
+          .then(function(order) {
+
+            let delivery = Delivery.build({
+              date: new Date(),
+              distance: 1000,
+              duration: 600,
+              price: 3.5,
+            })
+            delivery.setOriginAddress(restaurantAddress, { save: false })
+            delivery.setDeliveryAddress(deliveryAddress, { save: false })
+
+            return delivery.save()
+              .then(function(delivery) {
                 return order.setDelivery(delivery).then(function() {
                   return [order, delivery];
                 });
-              });
-
-            })
-            .then(function(args) {
-              const [order, delivery] = args;
-              redis.lpush('deliveries:waiting', delivery.id, function(err) {
-                if (err) return reject(err);
-                resolve(order);
-              });
-            })
-            .catch(function(e) {
-              reject(e);
+              })
+              .catch(function(e) {
+                reject(e);
+              })
+          })
+          .then(function(args) {
+            const [order, delivery] = args;
+            redis.lpush('deliveries:waiting', delivery.id, function(err) {
+              if (err) return reject(err);
+              resolve(order);
             });
           })
           .catch(function(e) {
             reject(e);
           });
+        })
+        .catch(function(e) {
+          reject(e);
         });
+
+    })
+
   });
 
-};
-
-// Check Redis version on Travis, to skip tests using geo commands
-// Code borrowed from https://github.com/NodeRedis/node_redis
-TestUtils.prototype.serverVersionAtLeast = function (connection, desired_version) {
-
-  // Return true if the server version >= desired_version
-  var version = connection.server_info.versions;
-  for (var i = 0; i < 3; i++) {
-      if (version[i] > desired_version[i]) {
-          return true;
-      }
-      if (version[i] < desired_version[i]) {
-          if (this.skip) this.skip();
-          return false;
-      }
-  }
-
-  return true;
 };
 
 TestUtils.prototype.waitServerUp = function (host, port, timeout) {
@@ -262,20 +249,20 @@ TestUtils.prototype.waitServerUp = function (host, port, timeout) {
   var timeout = timeout || 50000,
       client;
 
-   function cleanUp() {
-       if (client) {
-           client.removeAllListeners('connect');
-           client.removeAllListeners('error');
-           client.end();
-           client.destroy();
-           client.unref();
-       }
-     }
+  function cleanUp() {
+    if (client) {
+      client.removeAllListeners('connect');
+      client.removeAllListeners('error');
+      client.end();
+      client.destroy();
+      client.unref();
+    }
+  }
 
   return new Promise(function (resolve, reject) {
 
     timeoutId = setTimeout(function () {
-     reject('Unable to connect to server');
+      reject('Unable to connect to server');
     }, timeout);
 
     function onConnectCb () {

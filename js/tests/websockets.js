@@ -1,6 +1,7 @@
 var assert = require('assert');
 var fs = require('fs');
 var WebSocket = require('ws');
+
 var ConfigLoader = require('../api/ConfigLoader');
 var TestUtils = require('./utils');
 
@@ -11,28 +12,41 @@ var utils = new TestUtils(config);
 
 var initUsers = function() {
   return new Promise(function(resolve, reject) {
-    utils.waitServerUp('127.0.0.1', 8000)
-         .then(function () {
-            return utils.cleanDb();
-          })
-         .then(function() {
-             return Promise.all([
-               utils.createUser('bill'),
-               utils.createUser('sarah', ['ROLE_COURIER'])
-             ]);
-         })
-         .then(resolve)
-         .catch(reject);
-     });
-};
+    Promise.all([
+      utils.createUser('bill'),
+      utils.createUser('sarah', ['ROLE_COURIER'])
+    ])
+    .then(function(users) {
+      resolve()
+    })
+    .catch(function(e) {
+      reject(e)
+    })
+  })
+}
 
 describe('Connect to WebSocket', function() {
 
-  before(function() {
-    this.timeout(10000);
+  before('Waiting for server', function() {
+    this.timeout(30000)
+    return new Promise(function (resolve, reject) {
+      utils.waitServerUp('127.0.0.1', 8000).then(function() {
+        resolve()
+      })
+    })
+  })
 
-    return initUsers();
-  });
+  beforeEach('Cleaning db & initializing users', function() {
+    this.timeout(30000)
+    return new Promise(function (resolve, reject) {
+      utils.cleanDb()
+        .then(function() {
+          initUsers().then(function() {
+            resolve()
+          })
+        })
+    })
+  })
 
   it('should return 401 Unauthorized without JWT', function() {
     return new Promise(function (resolve, reject) {
