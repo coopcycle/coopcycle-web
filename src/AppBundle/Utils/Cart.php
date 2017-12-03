@@ -7,7 +7,9 @@ use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Validator\Constraints\IsValidDeliveryDate;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
-
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class AddProductException extends \Exception {}
 
@@ -24,13 +26,14 @@ class RestaurantMismatchException extends AddProductException {}
  */
 class Cart
 {
+
     /**
      *
-     * ID of the restaurant the cart is linked to
+     * Restaurant the cart is linked to
      *
-     * @var int
+     * @var Restaurant
      */
-    private $restaurantId;
+    private $restaurant;
 
     /**
      * Delivery address for the cart
@@ -38,6 +41,13 @@ class Cart
      * @var Address
      */
     private $address;
+
+    /**
+     * Distance to deliver for the cart
+     *
+     * @var int
+     */
+    private $distance;
 
     /**
      * Delivery date for the cart
@@ -51,23 +61,30 @@ class Cart
      */
     private $items = array();
 
+    /**
+     * Cart constructor.
+     * @param Restaurant|null $restaurant
+     */
     public function __construct(Restaurant $restaurant = null)
     {
-        if (null !== $restaurant) {
-            $this->restaurantId = $restaurant->getId();
-        }
-
+        $this->restaurant = $restaurant;
         $this->address = new Address();
     }
 
     public function isForRestaurant(Restaurant $restaurant)
     {
-        return $this->restaurantId === $restaurant->getId();
+        return $this->getRestaurantId() === $restaurant->getId();
     }
 
     public function getRestaurantId()
     {
-        return $this->restaurantId;
+        if (!is_null($this->restaurant)) {
+            return $this->restaurant->getId();
+        }
+    }
+
+    public function getRestaurant() {
+        return $this->restaurant;
     }
 
     public function clear()
@@ -83,9 +100,9 @@ class Cart
             );
         }
 
-        if ($this->restaurantId && $menuItem->getRestaurant()->getId() != $this->restaurantId) {
+        if ($this->getRestaurantId() && $menuItem->getRestaurant()->getId() != $this->getRestaurantId()) {
             throw new RestaurantMismatchException(
-                sprintf('Product %s doesn\'t belong to restaurant %s', $menuItem->getId(), $this->restaurantId)
+                sprintf('Product %s doesn\'t belong to restaurant %s', $menuItem->getId(), $this->getRestaurantId())
             );
         }
 
@@ -137,6 +154,22 @@ class Cart
     }
 
     /**
+     * @return int
+     */
+    public function getDistance()
+    {
+        return $this->distance;
+    }
+
+    /**
+     * @param int $distance
+     */
+    public function setDistance(int $distance)
+    {
+        $this->distance = $distance;
+    }
+
+    /**
      * @return Address
      */
     public function getAddress(): Address
@@ -165,5 +198,24 @@ class Cart
             'date' => $this->date->format('Y-m-d H:i:s'),
             'items' => $this->getNormalizedItems(),
         );
+    }
+
+    /**
+     * Custom order validation.
+     * @Assert\Callback(groups={"cart"})
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        // Validate distance
+        if (!is_null($this->address->getGeo()) && !is_null($this->restaurant)) {
+            $maxDistance = $this->getRestaurant()->getMaxDistance();
+
+            $constraint = new Assert\LessThan(['value' => $maxDistance]);
+            $context
+                ->getValidator()
+                ->inContext($context)
+                ->atPath('distance')
+                ->validate($this->distance, $constraint, [Constraint::DEFAULT_GROUP]);
+        }
     }
 }
