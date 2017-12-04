@@ -25,7 +25,9 @@ How to run a local instance
     
     - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
     
-    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group). 
+    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
+    
+* Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync-stack start` instead of `docker-compose up`.  
 
 * Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`.
 

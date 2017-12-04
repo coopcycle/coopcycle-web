@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  webpack:
+    volumes:
+      - 'node_modules:/srv/coopcycle/node_modules'
+      - 'webpack-sync:/srv/coopcycle:nocopy'
+
+  php:
+    volumes:
+      - 'node_modules:/srv/coopcycle/node_modules'
+      - 'php-sync:/srv/coopcycle:nocopy'
+
+volumes:
+    php-sync:
+      external: true
+    webpack-sync:
+      external: true
