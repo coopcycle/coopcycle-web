@@ -22,6 +22,7 @@ var envMap = {
 };
 
 var ConfigLoader = require('../ConfigLoader');
+const Metrics = require('../Metrics')
 
 try {
 
@@ -36,6 +37,12 @@ try {
 } catch (e) {
   throw e;
 }
+
+const metrics = new Metrics({
+  namespace: config.parameters.database_name,
+  host: config.parameters.statsd_host,
+  port: config.parameters.statsd_port,
+})
 
 var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
 
@@ -146,6 +153,8 @@ wsServer.on('connection', function(ws) {
     courier.connect(ws);
     Courier.Pool.add(courier);
 
+    metrics.gauge('couriers.connected', Courier.Pool.size())
+
     console.log('Courier #' + courier.id + ' connected!');
 
     ws.on('message', function(messageText) {
@@ -167,6 +176,7 @@ wsServer.on('connection', function(ws) {
       console.log('Courier #' + courier.id + ' disconnected!');
       Courier.Pool.remove(courier);
       console.log('Number of couriers connected: ' + Courier.Pool.size());
+      metrics.gauge('couriers.connected', Courier.Pool.size())
     });
 });
 
