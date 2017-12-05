@@ -59,6 +59,18 @@ module.exports = function(sequelize) {
       field: 'updated_at',
       type: Sequelize.DATE
     },
+    totalExcludingTax: {
+      field: 'total_excluding_tax',
+      type: Sequelize.FLOAT
+    },
+    totalTax: {
+      field: 'total_tax',
+      type: Sequelize.FLOAT
+    },
+    totalIncludingTax: {
+      field: 'total_including_tax',
+      type: Sequelize.FLOAT
+    },
   }, _.extend(sequelizeOptions, {
     tableName: 'order_'
   }));
@@ -89,6 +101,18 @@ module.exports = function(sequelize) {
     date: Sequelize.DATE,
     status: Sequelize.STRING,
     price: Sequelize.FLOAT,
+    totalExcludingTax: {
+      field: 'total_excluding_tax',
+      type: Sequelize.FLOAT
+    },
+    totalTax: {
+      field: 'total_tax',
+      type: Sequelize.FLOAT
+    },
+    totalIncludingTax: {
+      field: 'total_including_tax',
+      type: Sequelize.FLOAT
+    },
   }, _.extend(sequelizeOptions, {
     tableName: 'delivery',
   }));
@@ -115,12 +139,28 @@ module.exports = function(sequelize) {
     },
   }));
 
+  Db.TaxCategory = sequelize.define('tax_category', {
+    name: Sequelize.STRING,
+    code: Sequelize.STRING,
+    createdAt: {
+      field: 'created_at',
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      field: 'updated_at',
+      type: Sequelize.DATE
+    },
+  }, _.extend(sequelizeOptions, {
+    tableName: 'sylius_tax_category'
+  }));
+
   Db.Restaurant.belongsTo(Db.Address);
 
   Db.Delivery.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
   Db.Delivery.belongsTo(Db.Order);
+  Db.Delivery.belongsTo(Db.TaxCategory, { as: 'taxCategory', foreignKey : 'tax_category_id' });
 
   Db.Order.belongsTo(Db.Restaurant);
   Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });

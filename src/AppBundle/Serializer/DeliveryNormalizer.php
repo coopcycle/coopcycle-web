@@ -3,28 +3,23 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Delivery;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
+class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
 
-    public function __construct(ItemNormalizer $normalizer, Router $router)
+    public function __construct(ItemNormalizer $normalizer)
     {
         $this->normalizer = $normalizer;
-        $this->router = $router;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
-
-        $data['total'] = $object->getTotal();
-        $data['publicUrl'] = $this->router->generate('order_public', ['uuid' => $object->getUuid()], true);
-        $data['preparationDate'] = $object->getPreparationDate()->format(\DateTime::ATOM);
 
         $data['totalExcludingTax'] = $object->getTotalExcludingTax();
         $data['totalTax'] = $object->getTotalTax();
@@ -35,7 +30,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Order;
+        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Delivery;
     }
 
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -45,6 +40,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof Order;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof Delivery;
     }
 }

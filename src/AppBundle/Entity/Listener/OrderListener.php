@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Listener;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderEvent;
 use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Service\OrderManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Predis\Client as Redis;
@@ -17,13 +18,15 @@ class OrderListener
     private $deliveryServiceFactory;
     private $redis;
     private $serializer;
+    private $orderManager;
 
-    public function __construct(TokenStorageInterface $tokenStorage, DeliveryServiceFactory $deliveryServiceFactory, Redis $redis, SerializerInterface $serializer)
+    public function __construct(TokenStorageInterface $tokenStorage, DeliveryServiceFactory $deliveryServiceFactory, Redis $redis, SerializerInterface $serializer, OrderManager $orderManager)
     {
         $this->tokenStorage = $tokenStorage;
         $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->redis = $redis;
         $this->serializer = $serializer;
+        $this->orderManager = $orderManager;
     }
 
     private function getDeliveryService(Order $order)
@@ -64,6 +67,9 @@ class OrderListener
         if (null === $delivery->getOriginAddress()) {
             $delivery->setOriginAddress($order->getRestaurant()->getAddress());
         }
+
+        // Apply taxes
+        $this->orderManager->applyTaxes($order);
 
         if (!$delivery->isCalculated()) {
             $this->getDeliveryService($order)->calculate($delivery);

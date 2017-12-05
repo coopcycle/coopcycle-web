@@ -18,11 +18,6 @@ class CartTest extends BaseTest
     {
         parent::setUp();
 
-        $taxCategoryFactory = static::$kernel->getContainer()->get('sylius.factory.tax_category');
-        $taxCategoryManager = static::$kernel->getContainer()->get('sylius.manager.tax_category');
-        $taxRateFactory = static::$kernel->getContainer()->get('sylius.factory.tax_rate');
-        $taxRateManager = static::$kernel->getContainer()->get('sylius.manager.tax_rate');
-
         $this->restaurant = new Restaurant();
         $this->restaurant->setId(1);
 
@@ -32,23 +27,7 @@ class CartTest extends BaseTest
         $this->menuSection = new MenuSection();
         $this->menuSection->setMenu($menu);
 
-        $this->taxCategory = $taxCategoryFactory->createNew();
-        $this->taxCategory->setName('Default');
-        $this->taxCategory->setCode('default');
-
-        $taxCategoryManager->persist($this->taxCategory);
-        $taxCategoryManager->flush();
-
-        $taxRate = $taxRateFactory->createNew();
-        $taxRate->setName('TVA 10%');
-        $taxRate->setCode('tva_10');
-        $taxRate->setCategory($this->taxCategory);
-        $taxRate->setAmount(10.00);
-        $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('default');
-
-        $taxRateManager->persist($taxRate);
-        $taxRateManager->flush();
+        $this->taxCategory = $this->createTaxCategory('Default', 'default', 'TVA 10%', 'tva_10', 10.00);
     }
 
     public function testTotal()

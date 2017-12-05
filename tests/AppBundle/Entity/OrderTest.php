@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\BaseTest;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Utils\CartItem;
 use AppBundle\Utils\ValidationUtils;
@@ -11,15 +13,18 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 
-class OrderTest extends TestCase
+class OrderTest extends BaseTest
 {
     private $validator;
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
+
         Carbon::setTestNow(Carbon::create(2017, 9, 2, 11, 0));
     }
 
@@ -89,7 +94,14 @@ class OrderTest extends TestCase
 
     public function testTotalWithDelivery()
     {
+        $contract = new Contract();
+        $contract->setFlatDeliveryPrice(10);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
         $order = new Order();
+        $order->setRestaurant($restaurant);
 
         $pizza = new MenuItem();
         $pizza
@@ -100,19 +112,19 @@ class OrderTest extends TestCase
         $order->addCartItem($pizzaItem, $pizza);
 
         $delivery = new Delivery($order);
-        $delivery->setPrice(10);
 
         $this->assertEquals(50, $order->getTotal());
     }
 
     public function testDistanceValidation()
     {
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(0);
+        $contract->setFlatDeliveryPrice(10);
+
         $restaurant = new Restaurant();
         $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
-
-        $contract = new Contract();
-        $contract->setMinimumCartAmount(0);
         $restaurant->setContract($contract);
 
         $delivery = new Delivery();
@@ -144,12 +156,13 @@ class OrderTest extends TestCase
 
     public function testDateValidation()
     {
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(0);
+        $contract->setFlatDeliveryPrice(10);
+
         $restaurant = new Restaurant();
         $restaurant->setMaxDistance(3000);
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
-
-        $contract = new Contract();
-        $contract->setMinimumCartAmount(0);
         $restaurant->setContract($contract);
 
         $delivery = new Delivery();
@@ -177,7 +190,8 @@ class OrderTest extends TestCase
         $this->assertContains('Delivery date 2017-09-03 12:30:00 is invalid', ValidationUtils::serializeValidationErrors($errors)['delivery.date']);
     }
 
-    public function testMinimumAmountValidation() {
+    public function testMinimumAmountValidation()
+    {
         $order = new Order();
 
         $pizza = new MenuItem();
@@ -198,6 +212,75 @@ class OrderTest extends TestCase
 
         $errors = $this->validator->validate($order, null, ['order']);
         $this->assertEquals(1, count($errors));
+    }
 
+    public function testEventListener()
+    {
+        $user = $this->createUser('test');
+        $this->authenticate($user);
+
+        $foodTaxCategory = $this->createTaxCategory('TVA Restauration', 'tva_restauration', 'TVA 10%', 'tva_10', 0.10, 'float');
+        $deliveryTaxCategory = $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20, 'float');
+
+        $restaurantAddress = new Address();
+        $restaurantAddress->setStreetAddress('XXX');
+        $restaurantAddress->setPostalCode('75000');
+        $restaurantAddress->setAddressLocality('Paris');
+
+        $restaurant = $this->createRestaurant($restaurantAddress, ['Mo-Su 11:30-14:30'],
+            $minimumCartAmount = 05.00, $flatDeliveryPrice = 03.5);
+
+        $delivery = new Delivery();
+        $delivery->setDate(new \DateTime('today 12:30:00'));
+        $delivery->setDuration(30);
+        $delivery->setDistance(1500);
+
+        $order = new Order();
+        $order->setDelivery($delivery);
+        $order->setRestaurant($restaurant);
+
+        $pizza = $this->createMenuItem('Pizza', 10.00, $foodTaxCategory);
+
+        $pizzaItem = new CartItem($pizza, 1);
+        $order->addCartItem($pizzaItem, $pizza);
+
+        $this->doctrine->getManagerForClass(Order::class)->persist($order);
+        $this->doctrine->getManagerForClass(Order::class)->flush();
+
+        $this->assertSame($user, $order->getCustomer());
+        $this->assertSame($restaurantAddress, $delivery->getOriginAddress());
+        $this->assertEquals($flatDeliveryPrice, $delivery->getPrice());
+        $this->assertEquals(10.00, $order->getTotalIncludingTax());
+        $this->assertEquals(03.50, $delivery->getTotalIncludingTax());
+    }
+
+    public function testSetRestaurantUpdatesDelivery()
+    {
+        $order = new Order();
+
+        $delivery = new Delivery();
+
+        $order->setDelivery($delivery);
+
+        $this->assertNull($delivery->getOriginAddress());
+        $this->assertNull($delivery->getPrice());
+
+        $restaurantAddress = new Address();
+        $restaurantAddress->setStreetAddress('XXX');
+        $restaurantAddress->setPostalCode('75000');
+        $restaurantAddress->setAddressLocality('Paris');
+
+        $contract = new Contract();
+        $contract->setMinimumCartAmount(20);
+        $contract->setFlatDeliveryPrice(3.50);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+        $restaurant->setAddress($restaurantAddress);
+
+        $order->setRestaurant($restaurant);
+
+        $this->assertSame($restaurantAddress, $delivery->getOriginAddress());
+        $this->assertEquals(3.50, $delivery->getPrice());
     }
 }

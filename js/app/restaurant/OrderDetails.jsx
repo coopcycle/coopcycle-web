@@ -86,7 +86,7 @@ class OrderList extends React.Component {
           { this.state.order.orderedItem.map((item, key) =>
             <tr key={ key }>
               <td>{ item.quantity } x { item.name }</td>
-              <td className="text-right">{ numeral(item.quantity * item.price).format('$0,0.00') }</td>
+              <td className="text-right">{ numeral(item.quantity * item.price).format('0,0.00 $') }</td>
             </tr>
           ) }
         </tbody>
@@ -99,8 +99,16 @@ class OrderList extends React.Component {
       <table className="table">
         <tbody>
           <tr>
-            <td><strong>Total</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.total).format('$0,0.00') }</strong></td>
+            <td><strong>Total HT</strong></td>
+            <td className="text-right"><strong>{ numeral(this.state.order.totalExcludingTax).format('0,0.00 $') }</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Total TVA</strong></td>
+            <td className="text-right"><strong>{ numeral(this.state.order.totalTax).format('0,0.00 $') }</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Total TTC</strong></td>
+            <td className="text-right"><strong>{ numeral(this.state.order.totalIncludingTax).format('0,0.00 $') }</strong></td>
           </tr>
         </tbody>
       </table>

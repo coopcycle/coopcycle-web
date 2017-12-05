@@ -31,4 +31,5 @@ migrations-diff:
 
 migrations-migrate:
 	@docker-compose run php bin/console doctrine:migrations:migrate
+	@docker-compose run php bin/console doctrine:migrations:migrate --env=test
 

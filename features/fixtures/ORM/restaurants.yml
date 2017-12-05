@@ -2,6 +2,9 @@ Sylius\Component\Taxation\Model\TaxCategory:
   tva_conso_immediate:
     code: tva_conso_immediate
     name: "TVA consommation immédiate"
+  tva_livraison:
+    code: tva_livraison
+    name: "TVA livraison"
 
 Sylius\Component\Taxation\Model\TaxRate:
   tva_10:
@@ -10,7 +13,14 @@ Sylius\Component\Taxation\Model\TaxRate:
     category: "@tva_conso_immediate"
     amount: 0.10
     includedInPrice: true
-    calculator: default
+    calculator: float
+  tva_20:
+    name: "TVA 20%"
+    code: tva_20
+    category: "@tva_livraison"
+    amount: 0.20
+    includedInPrice: true
+    calculator: float
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:

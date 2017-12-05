@@ -8,6 +8,13 @@ import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
 import { geocodeByAddress } from 'react-places-autocomplete';
 
+import numeral  from 'numeral';
+import 'numeral/locales'
+
+const locale = $('html').attr('lang')
+
+numeral.locale(locale)
+
 class Cart extends React.Component
 {
   constructor(props) {
@@ -147,7 +154,7 @@ class Cart extends React.Component
         itemCount = _.reduce(this.state.items, function(memo, item) {
       return memo + (item.quantity);
     }, 0),
-        total = (itemsTotalPrice + flatDeliveryPrice).toFixed(2)
+        total = (itemsTotalPrice + flatDeliveryPrice)
 
     if (items.length === 0) {
       cartWarning = ( <div className="alert alert-warning">Votre panier est vide</div> )
@@ -197,8 +204,15 @@ class Cart extends React.Component
               {cartWarning}
               {cartContent}
               <hr />
-              {items.length > 0 && (<span>Prix de la course {flatDeliveryPrice.toFixed(2)}€<br /></span>)}
-              <strong>Total {total} €</strong>
+              {items.length > 0 && (
+              <div>
+                <span>Prix de la course </span>
+                <strong className="pull-right">{ numeral(flatDeliveryPrice).format('0,0.00 $') }</strong>
+              </div> )}
+              <div>
+                <span>Total</span>
+                <strong className="pull-right">{ numeral(total).format('0,0.00 $') }</strong>
+              </div>
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
             </div>

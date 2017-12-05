@@ -43,6 +43,16 @@ class OrderList extends React.Component
     return (
       <div>
         <table className="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>État</th>
+              <th>Date de préparation</th>
+              <th className="text-right">Commande</th>
+              <th className="text-right">Livraison</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
           { _.map(orders, (order) => this.renderOrderRow(order)) }
           </tbody>
@@ -60,10 +70,11 @@ class OrderList extends React.Component
 
     return (
       <tr key={ order['@id'] } onClick={ () => this.props.onOrderClick(order) } style={{ cursor: 'pointer' }} className={ className }>
-        <td>#{ order['@id'].replace('/api/orders/', '') }</td>
+        <td>{ order['@id'].replace('/api/orders/', '') }</td>
         <td><OrderLabel order={ order } /></td>
         <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.preparationDate).format('lll') }</td>
-        <td>{ numeral(order.total).format('$0,0.00') }</td>
+        <td className="text-right">{ numeral(order.totalIncludingTax).format('0,0.00 $') }</td>
+        <td className="text-right">{ numeral(order.delivery.totalIncludingTax).format('0,0.00 $') }</td>
         <td className="text-right">{ order.customer.username }</td>
       </tr>
     )

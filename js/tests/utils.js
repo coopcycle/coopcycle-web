@@ -114,6 +114,36 @@ TestUtils.prototype.createUser = function(username, roles) {
   })
 };
 
+TestUtils.prototype.createTaxCategory = function(name, code) {
+
+  const { TaxCategory } = this.db
+
+  return new Promise(function (resolve, reject) {
+
+    TaxCategory
+      .findOne({ where: { code } })
+      .then(function(taxCategory) {
+
+        if (taxCategory !== null) {
+          return resolve(taxCategory)
+        }
+
+        return TaxCategory.create({
+          name,
+          code,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .then(function(taxCategory) {
+          resolve(taxCategory)
+        })
+        .catch(function(e) {
+          reject(e)
+        })
+      })
+  })
+};
+
 TestUtils.prototype.createDeliveryAddress = function(username, streetAddress, geo) {
 
   var Address = this.db.Address;
@@ -164,12 +194,13 @@ TestUtils.prototype.createRestaurant = function(name, coordinates) {
   });
 };
 
-TestUtils.prototype.createRandomOrder = function(username, restaurant) {
+TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCategoryCode) {
 
   var Restaurant = this.db.Restaurant;
   var Order = this.db.Order;
   var User = this.db.User;
   var Delivery = this.db.Delivery;
+  var TaxCategory = this.db.TaxCategory;
 
   var redis = this.redis;
 
@@ -177,10 +208,11 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
 
     Promise.all([
       User.findOne({ where: { username: username } }),
+      TaxCategory.findOne({ where: { code: taxCategoryCode } }),
       restaurant.getAddress()
     ]).then(objects => {
 
-      const [customer, restaurantAddress] = objects
+      const [customer, taxCategory, restaurantAddress] = objects
 
       customer.getAddresses()
         .then(deliveryAddresses => _.first(deliveryAddresses))
@@ -189,6 +221,9 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
             uuid: 'some-random-string',
             createdAt: new Date(),
             updatedAt: new Date(),
+            totalExcludingTax: 0.00,
+            totalTax: 0.00,
+            totalIncludingTax: 0.00
           })
           .then(function(order) {
             return order.setCustomer(customer);
@@ -203,7 +238,11 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant) {
               distance: 1000,
               duration: 600,
               price: 3.5,
+              totalExcludingTax: 0.00,
+              totalTax: 0.00,
+              totalIncludingTax: 0.00,
             })
+            delivery.setTaxCategory(taxCategory, { save: false })
             delivery.setOriginAddress(restaurantAddress, { save: false })
             delivery.setDeliveryAddress(deliveryAddress, { save: false })
 
