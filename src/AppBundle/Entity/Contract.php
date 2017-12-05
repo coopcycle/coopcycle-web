@@ -69,7 +69,7 @@ class Contract
     /**
      * @param float $minimumCartAmount
      */
-    public function setMinimumCartAmount(float $minimumCartAmount)
+    public function setMinimumCartAmount(float $minimumCartAmount = null)
     {
         $this->minimumCartAmount = $minimumCartAmount;
     }
@@ -85,7 +85,7 @@ class Contract
     /**
      * @param float $flatDeliveryPrice
      */
-    public function setFlatDeliveryPrice(float $flatDeliveryPrice)
+    public function setFlatDeliveryPrice(float $flatDeliveryPrice = null)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
     }
