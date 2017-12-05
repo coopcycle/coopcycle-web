@@ -43,13 +43,18 @@ class RestaurantController extends Controller
 
     private function getCart(Request $request, Restaurant $restaurant)
     {
-        if (!$cart = $request->getSession()->get('cart')) {
+        $cart = $request->getSession()->get('cart');
+
+        if (is_null($cart)) {
             $cart = new Cart($restaurant);
         }
 
         if (!$cart->isForRestaurant($restaurant)) {
             $cart = new Cart($restaurant);
         }
+
+        // we clone so if there is a validation error we don't mutate the original cart
+        $cart = clone $cart;
 
         return $cart;
     }
@@ -262,9 +267,9 @@ class RestaurantController extends Controller
             try {
                 $cart->addItem($menuItem, $quantity, $modifierChoices);
             } catch (RestaurantMismatchException $e) {
-                return new JsonResponse(['error' => sprintf('Unable to add %s', $menuItem->getName())], 400);
+                return new JsonResponse(['errors' => ['item' => sprintf('Unable to add %s', $menuItem->getName())]], 400);
             } catch (UnavailableProductException $e) {
-                return new JsonResponse(['error' => sprintf('Item %s is unavailable', $menuItem->getName())], 400);
+                return new JsonResponse(['errors' => ['item' => sprintf('Item %s is unavailable', $menuItem->getName())]], 400);
             }
         }
 
@@ -277,6 +282,8 @@ class RestaurantController extends Controller
         }
 
         $errors = $this->validator->validate($cart, null, ["cart"]);
+
+//        var_dump($request->request->has('address'));
 
         if (count($errors) > 0) {
             return new JsonResponse(ValidationUtils::serializeValidationErrors($errors), 400);
