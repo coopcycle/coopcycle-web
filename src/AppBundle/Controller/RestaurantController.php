@@ -289,8 +289,6 @@ class RestaurantController extends Controller
 
         $errors = $this->validator->validate($cart, null, ["cart"]);
 
-//        var_dump($request->request->has('address'));
-
         if (count($errors) > 0) {
             return new JsonResponse([ 'errors' => ValidationUtils::serializeValidationErrors($errors)], 400);
         } else {
