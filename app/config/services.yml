@@ -66,6 +66,15 @@ services:
       - "@sylius.tax_rate_resolver"
       - "@sylius.tax_calculator"
       - "@sylius.repository.tax_category"
+      - "@coopcycle.delivery.manager"
+
+  coopcycle.delivery.manager:
+    class: AppBundle\Service\DeliveryManager
+    arguments:
+      - "@coopcycle.repository.delivery.pricing_rule"
+      - "@sylius.tax_rate_resolver"
+      - "@sylius.tax_calculator"
+      - "@sylius.repository.tax_category"
       - 'tva_livraison' # TODO Load from settings
 
   delivery.entity_listener:
@@ -137,6 +146,12 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Delivery
+
+  coopcycle.repository.delivery.pricing_rule:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Delivery\PricingRule
 
   delivery_service.default:
     class: AppBundle\Service\DeliveryService\Core

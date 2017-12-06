@@ -5,6 +5,7 @@ namespace AppBundle\Tests\Action;
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
 use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryServiceInterface;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
@@ -42,6 +43,7 @@ class TestCase extends BaseTestCase
         $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
         $calculator = $this->prophesize(CalculatorInterface::class);
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
+        $deliveryManager = $this->prophesize(DeliveryManager::class);
 
         $deliveryServiceFactory = new DeliveryServiceFactory([], $deliveryService->reveal());
 
@@ -60,7 +62,7 @@ class TestCase extends BaseTestCase
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
-            'foo'
+            $deliveryManager->reveal()
         );
 
         $this->action = new $this->actionClass(
