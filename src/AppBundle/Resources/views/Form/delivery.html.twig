@@ -2,10 +2,12 @@
 
 {% block _delivery_originAddress_streetAddress_row %}
 {% spaceless %}
-  <div class="form-row {% if not form.vars.valid %}has-error{% endif %}">
-    <div class="input-group">
-      <div class="input-group-addon"><i class="fa fa-cube"></i></div>
-      {{ form_widget(form) }}
+  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
+    <div class="col-sm-10 col-md-offset-2">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-cube"></i></div>
+        {{ form_widget(form) }}
+      </div>
     </div>
     {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
   </div>
@@ -14,12 +16,14 @@
 
 {% block _delivery_deliveryAddress_streetAddress_row %}
 {% spaceless %}
-  <div class="form-row {% if not form.vars.valid %}has-error{% endif %}">
-    <div class="input-group">
-      <div class="input-group-addon"><i class="fa fa-flag"></i></div>
-      {{ form_widget(form) }}
+  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
+    <div class="col-sm-10 col-md-offset-2">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-flag"></i></div>
+        {{ form_widget(form) }}
+      </div>
+      {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
     </div>
-    {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
   </div>
 {% endspaceless %}
 {% endblock %}
@@ -39,14 +43,22 @@
 
 {% block _delivery_distance_row %}
 {% spaceless %}
-  <label class="control-label">{{ translation_domain is same as(false) ? 'Distance' : 'Distance'|trans({}, translation_domain) }}</label>
-  <p class="form-control-static"><span id="delivery_distance"></span></p>
+  <div class="form-group">
+    {{ form_label(form, 'Distance'|trans({}, 'messages')) }}
+    <div class="col-sm-10">
+      <p class="form-control-static"><span id="delivery_distance"></span></p>
+    </div>
+  </div>
 {% endspaceless %}
 {% endblock %}
 
 {% block _delivery_duration_row %}
 {% spaceless %}
-  <label class="control-label">{{ translation_domain is same as(false) ? 'Duration' : 'Duration'|trans({}, translation_domain) }}</label>
-  <p class="form-control-static"><span id="delivery_duration"></span></p>
+  <div class="form-group">
+    {{ form_label(form, 'Duration'|trans({}, 'messages')) }}
+    <div class="col-sm-10">
+      <p class="form-control-static"><span id="delivery_duration"></span></p>
+    </div>
+  </div>
 {% endspaceless %}
 {% endblock %}

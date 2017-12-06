@@ -3,44 +3,38 @@
 {% form_theme form 'AppBundle:Form:delivery.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Deliveries{% endtrans %}</li>
+<li><a href="{{ path('admin_deliveries') }}">{% trans %}Deliveries{% endtrans %}</a></li>
 <li>{% trans %}Create delivery{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 {{ form_start(form) }}
 
-  {{ form_row(form.originAddress) }}
-  {{ form_row(form.deliveryAddress) }}
+  <div class="row">
+    <div class="col-sm-7">
 
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="row">
-        <div class="col-sm-6">
-          {{ form_row(form.distance) }}
-        </div>
-        <div class="col-sm-6">
-          {{ form_row(form.duration) }}
-        </div>
-      </div>
+      {{ form_row(form.date) }}
+      {{ form_row(form.weight) }}
+
+      <div class="well well-sm"><label>{% trans %}Origin address{% endtrans %}</label></div>
+      {{ form_widget(form.originAddress) }}
+
+      <div class="well well-sm"><label>{% trans %}Delivery address{% endtrans %}</label></div>
+      {{ form_widget(form.deliveryAddress) }}
+
     </div>
-  </div>
-
-  {{ form_row(form.date) }}
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
-    </div>
-  </div>
-
-  <hr>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="embed-responsive embed-responsive-16by9">
+    <div class="col-sm-5">
+      <div class="embed-responsive embed-responsive-4by3">
         <div class="embed-responsive-item" id="map"></div>
       </div>
+      <hr>
+      <div class="form-horizontal">
+        {{ form_row(form.distance) }}
+        {{ form_row(form.duration) }}
+        {{ form_row(form.price) }}
+      </div>
+      <hr>
+      <button type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
     </div>
   </div>
 
@@ -48,6 +42,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+window.__deliveries_pricing_calculate_url = "{{ path('admin_deliveries_pricing_calculate') }}"
+</script>
 <script src="{{ asset('js/delivery-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
   async defer></script>

@@ -22,18 +22,18 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('floor', TextType::class, [
-                'required' => false,
-                'label' => 'Floor (optional)'
-            ])
             ->add('streetAddress', TextType::class, [
                 'label' => 'Street address'
+            ])
+            ->add('addressLocality', TextType::class, [
+                'label' => 'City'
             ])
             ->add('postalCode', TextType::class, [
                 'label' => 'Postal code'
             ])
-            ->add('addressLocality', TextType::class, [
-                'label' => 'City'
+            ->add('floor', TextType::class, [
+                'required' => false,
+                'label' => 'Floor (optional)'
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,

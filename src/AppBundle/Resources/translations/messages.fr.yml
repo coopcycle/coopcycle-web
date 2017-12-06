@@ -124,6 +124,9 @@ Pricing: Tarification
 Add rule: Ajouter une règle
 No pricing rule found: Pas de règle de tarification pour le moment
 Enter an expression: Entrez une expression
+Origin address: Adresse de départ
+Delivery address: Adresse de livraison
+Weight: Poids
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
