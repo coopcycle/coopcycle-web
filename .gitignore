@@ -34,3 +34,6 @@
 
 # PHPStorm stuff
 .idea
+
+# docker-sync stuff
+.docker-sync

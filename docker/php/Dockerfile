@@ -72,6 +72,6 @@ COPY docker/php/start.sh /usr/local/bin/docker-app-start
 RUN chmod +x /usr/local/bin/docker-app-start
 
 # Needed to fix permissions error
-USER 1000
+USER 100
 
 CMD ["docker-app-start"]
