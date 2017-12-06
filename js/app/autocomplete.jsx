@@ -5,9 +5,7 @@ const options = {
   }
 };
 
-let placeChangedListener;
-
-module.exports = (form) => {
+module.exports = (form, onPlaceChanged) => {
 
   if (!window.google) {
     return;
@@ -26,14 +24,15 @@ module.exports = (form) => {
     locality: form + '_addressLocality'
   };
 
-  if (placeChangedListener) {
-    google.maps.event.removeListener(placeChangedListener);
-  }
-
+  google.maps.event.clearListeners(addressInput, 'place_changed');
   const autocomplete = new google.maps.places.Autocomplete(addressInput, options);
 
-  placeChangedListener = autocomplete.addListener('place_changed', function() {
-    var place = autocomplete.getPlace();
+  autocomplete.addListener('place_changed', function() {
+    const place = autocomplete.getPlace();
+    if (!place.geometry) {
+      return;
+    }
+
     latitudeInput.value = place.geometry.location.lat();
     longitudeInput.value = place.geometry.location.lng();
     for (var i = 0; i < place.address_components.length; i++) {
@@ -42,6 +41,10 @@ module.exports = (form) => {
       if (inputMap[addressType]) {
         $('#' + inputMap[addressType]).val(value);
       }
+    }
+
+    if (typeof onPlaceChanged !== 'undefined' && typeof onPlaceChanged === 'function') {
+      onPlaceChanged(place);
     }
   });
 };
