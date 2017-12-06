@@ -11,7 +11,7 @@ use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class InitDemoCommand extends ContainerAwareCommand
 {
