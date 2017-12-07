@@ -110,7 +110,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->userManipulator->addRole($username, 'ROLE_COURIER');
     }
 
-    private function createTaxCategory()
+    private function createTaxCategory($taxCategoryName, $taxCategoryCode, $taxRateName, $taxRateCode, $taxRateAmount)
     {
         $taxCategoryFactory = $this->getContainer()->get('sylius.factory.tax_category');
         $taxCategoryManager = $this->getContainer()->get('sylius.manager.tax_category');
@@ -118,19 +118,19 @@ class InitDemoCommand extends ContainerAwareCommand
         $taxRateManager = $this->getContainer()->get('sylius.manager.tax_rate');
 
         $taxCategory = $taxCategoryFactory->createNew();
-        $taxCategory->setName('TVA consommation immédiate');
-        $taxCategory->setCode('tva_conso_immediate');
+        $taxCategory->setName($taxCategoryName);
+        $taxCategory->setCode($taxCategoryCode);
 
         $taxCategoryManager->persist($taxCategory);
         $taxCategoryManager->flush();
 
         $taxRate = $taxRateFactory->createNew();
-        $taxRate->setName('TVA 10%');
-        $taxRate->setCode('tva_10');
+        $taxRate->setName($taxRateName);
+        $taxRate->setCode($taxRateCode);
         $taxRate->setCategory($taxCategory);
-        $taxRate->setAmount(0.10);
+        $taxRate->setAmount($taxRateAmount);
         $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('default');
+        $taxRate->setCalculator('float');
 
         $taxRateManager->persist($taxRate);
         $taxRateManager->flush();
@@ -192,10 +192,14 @@ class InitDemoCommand extends ContainerAwareCommand
         }
         $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->flush();
 
-        $taxCategory = $this->createTaxCategory();
+        $foodTaxCategory =
+            $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate', 'TVA 10%', 'tva_10', 0.10);
+
+        $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee', 'TVA 5.5%', 'tva_5_5', 0.055);
+        $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20);
 
         for ($i = 0; $i < 100; $i++) {
-            $restaurant = $this->createRestaurant($this->faker->randomAddress, $taxCategory);
+            $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
 
