@@ -72,7 +72,7 @@ function renderSwitch($input) {
   $parent.prepend($hidden)
 
   const checked = $input.is(':checked'),
-        disabled = $('.restaurant-availability-errors').is(':visible')
+        disabled = !window.AppData.__isActivable
 
   $input.closest('div.checkbox').remove()
 

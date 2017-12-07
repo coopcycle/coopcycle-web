@@ -34,6 +34,7 @@ class RestaurantType extends AbstractType
                 'required' => false
             ])
             ->add('name', TextType::class)
+            ->add('legalName', TextType::class, ['required' => false])
             ->add('website', UrlType::class, ['required' => false])
             ->add('address', AddressType::class)
             ->add('deliveryService', DeliveryServiceType::class, ['mapped' => false])
@@ -41,20 +42,20 @@ class RestaurantType extends AbstractType
                 'required' => false,
                 'download_uri' => false,
             ])
-            // FoodEstablishment
-            ->add('servesCuisine', CollectionType::class, array(
-                'entry_type' => EntityType::class,
-                'entry_options' => array(
-                    'label' => 'Cuisine',
-                    'class' => 'AppBundle:Cuisine',
-                    'choice_label' => 'name',
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-                    },
-                ),
-                'allow_add' => true,
-                'allow_delete' => true,
-            ))
+            // // FoodEstablishment
+            // ->add('servesCuisine', CollectionType::class, array(
+            //     'entry_type' => EntityType::class,
+            //     'entry_options' => array(
+            //         'label' => 'Cuisine',
+            //         'class' => 'AppBundle:Cuisine',
+            //         'choice_label' => 'name',
+            //         'query_builder' => function (EntityRepository $er) {
+            //             return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
+            //         },
+            //     ),
+            //     'allow_add' => true,
+            //     'allow_delete' => true,
+            // ))
             // LocalBusiness
             ->add('telephone', TextType::class, ['required' => false])
             ->add('openingHours', CollectionType::class, [
@@ -65,13 +66,31 @@ class RestaurantType extends AbstractType
                 'prototype' => true,
             ]);
 
+        if (in_array('siret', $options['additional_properties'])) {
+            $builder->add('siret', TextType::class, [
+                'required' => false,
+                'mapped' => false,
+            ]);
+        }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+            $form = $event->getForm();
+            $restaurant = $event->getData();
+
+            if (in_array('siret', $options['additional_properties'])) {
+                $form->get('siret')->setData($restaurant->getAdditionalPropertyValue('siret'));
+            }
+        });
+
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
+            function (FormEvent $event) use ($options) {
 
                 $restaurant = $event->getForm()->getData();
 
                 $type = $event->getForm()->get('deliveryService')->get('type')->getData();
+
+                $deliveryService = new DeliveryService\Core();
 
                 if ($type === 'applicolis') {
                     $token = $event->getForm()->get('deliveryService')->get('token')->getData();
@@ -79,15 +98,21 @@ class RestaurantType extends AbstractType
 
                     if (null === $deliveryService) {
                         $deliveryService = new DeliveryService\AppliColis();
-                        $restaurant->setDeliveryService($deliveryService);
                     }
 
                     $deliveryService->setToken($token);
                 }
 
+                $restaurant->setDeliveryService($deliveryService);
+
                 // Make sure there is no NULL value in the openingHours array
                 $openingHours = array_filter($restaurant->getOpeningHours());
                 $restaurant->setOpeningHours($openingHours);
+
+                if (in_array('siret', $options['additional_properties'])) {
+                    $value = $event->getForm()->get('siret')->getData();
+                    $restaurant->setAdditionalProperty('siret', $value);
+                }
             }
         );
     }
@@ -96,6 +121,7 @@ class RestaurantType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Restaurant::class,
+            'additional_properties' => [],
         ));
     }
 }

@@ -1,0 +1,6 @@
+restaurant.openingHours.notBlank: Select at least one opened schedule
+restaurant.deliveryService.notBlank: Select a delivery service
+restaurant.telephone.notBlank: Enter your phone number
+restaurant.name.notBlank: Enter your restaurant's name
+restaurant.contract.notValid: Enter the delivery contract terms (require admin privileges)
+restaurant.notActivable: You can't enable this restaurant yet

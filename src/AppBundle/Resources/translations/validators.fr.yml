@@ -1,0 +1,6 @@
+restaurant.openingHours.notBlank: Sélectionnez au moins un créneau d'ouverture
+restaurant.deliveryService.notBlank: Sélectionnez un service de livraison
+restaurant.telephone.notBlank: Entrez votre numéro de téléphone
+restaurant.name.notBlank: Entrez le nom de votre restaurant
+restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être admin)
+restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
