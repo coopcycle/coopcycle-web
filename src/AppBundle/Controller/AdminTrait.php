@@ -6,6 +6,8 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait AdminTrait
@@ -99,5 +101,29 @@ trait AdminTrait
         $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
 
         return $this->redirectToRoute($route, $params);
+    }
+
+    protected function invoiceAsPdfAction(Order $order)
+    {
+        $html = $this->renderView('AppBundle:Order:invoice.html.twig', [
+            'order' => $order
+        ]);
+
+        return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    protected function checkOrderAccess(Order $order)
+    {
+        $isAdmin = $this->getUser()->hasRole('ROLE_ADMIN');
+        $ownsRestaurant = $this->getUser()->ownsRestaurant($order->getRestaurant());
+        $isCustomer = $this->getUser() === $order->getCustomer();
+
+        if ($isAdmin || $ownsRestaurant || $isCustomer) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException();
     }
 }

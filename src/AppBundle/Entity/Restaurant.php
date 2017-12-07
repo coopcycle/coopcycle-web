@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\TimeRange;
 use AppBundle\Utils\ValidationUtils;
+use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -37,6 +38,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
 
  * @Vich\Uploadable
+ * @CustomAssert\IsActivableRestaurant(groups="activable")
  */
 class Restaurant extends FoodEstablishment
 {
@@ -84,7 +86,6 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      * @Groups({"restaurant", "order"})
-     * @Assert\NotBlank(message="restaurant.name.notBlank", groups={"activable"})
      */
     protected $name;
 
@@ -125,7 +126,6 @@ class Restaurant extends FoodEstablishment
     /**
      * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
      * @Groups({"restaurant"})
-     * @Assert\NotBlank(groups={"activable"})
      */
     private $address;
 
@@ -138,11 +138,10 @@ class Restaurant extends FoodEstablishment
     private $website;
 
     /**
-     * @var string The telephone number..
+     * @var string The telephone number.
      *
      * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
-     * @Assert\NotBlank(message="restaurant.telephone.notBlank", groups={"activable"})
      */
     protected $telephone;
 
@@ -151,7 +150,6 @@ class Restaurant extends FoodEstablishment
      *
      * @ORM\OneToOne(targetEntity="DeliveryService", cascade={"persist"})
      * @ORM\JoinColumn(name="delivery_service_id", referencedColumnName="id")
-     * @Assert\NotBlank(message="restaurant.deliveryService.notBlank", groups={"activable"})
      */
     private $deliveryService;
 
@@ -184,7 +182,6 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(type="json_array", nullable=true)
      * @ApiProperty(iri="https://schema.org/openingHours")
      * @Groups({"restaurant"})
-     * @Assert\NotBlank(message="restaurant.openingHours.notBlank", groups={"activable"})
      */
     protected $openingHours;
 
@@ -203,7 +200,6 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Contract
      * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
-     * @Assert\NotBlank(message="restaurant.contract.notBlank", groups={"activable"})
      */
     private $contract;
 
@@ -537,26 +533,4 @@ class Restaurant extends FoodEstablishment
             return $this->contract->getMinimumCartAmount();
         }
     }
-
-    /**
-     * Custom restaurant validation.
-     * @Assert\Callback()
-     */
-    public function validate(ExecutionContextInterface $context, $payload)
-    {
-
-        $enabled = $this->isEnabled();
-
-        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-        $activationErrors = $validator->validate($this, null, ['activable']);
-        $activationErrors = ValidationUtils::serializeValidationErrors($activationErrors);
-
-        if ($enabled && count($activationErrors) > 0) {
-            $context->buildViolation('Unable to activate restaurant.')
-                ->atPath('enabled')
-                ->addViolation();
-        }
-
-    }
-
 }

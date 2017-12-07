@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% trans %}Invoice{% endtrans %}</title>
+  </head>
+  <body>
+
+    <table style="width: 100%;">
+      <tbody>
+        <tr>
+          <td><h1>{% trans %}Invoice{% endtrans %} #{{ order.id }}</h1></td>
+          <td style="text-align: right;">{{ order.createdAt|localizeddate('full', 'none') }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div>
+      <div style="margin-bottom: 30px; width: 50%; float: left;">
+        <table style="width: 100%;">
+          <tbody>
+            <tr>
+              <td><strong>{{ order.restaurant.name }}</strong></td>
+            </tr>
+            <tr>
+              <td>{{ order.restaurant.address.streetAddress }}</td>
+            </tr>
+            <tr>
+              <td>{{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-bottom: 30px; width: 50%; float: left; text-align: right;">
+        {% set fullName = order.customer.givenName ~ ' ' ~ order.customer.familyName %}
+        <table style="width: 100%;">
+          <tbody>
+            <tr>
+              <td><strong>{{ fullName|trim is not empty ? fullName : order.customer.username }}</strong></td>
+            </tr>
+            <tr>
+              <td>{{ order.delivery.deliveryAddress.streetAddress }}</td>
+            </tr>
+            <tr>
+              <td>{{ order.delivery.deliveryAddress.postalCode }} {{ order.delivery.deliveryAddress.addressLocality }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <h2>{% trans %}Order{% endtrans %}</h2>
+
+    <table style="width: 100%;">
+      <tbody>
+      {% for item in order.orderedItem %}
+        <tr>
+            <td>{{ item.name }} × {{ item.quantity }}</td>
+            <td style="text-align: right;">{{ item.price * item.quantity }} €</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table style="width: 100%;">
+      <tbody>
+        <tr>
+          <td><strong>{% trans %}Total excluding tax{% endtrans %}</strong></td>
+          <td style="text-align: right;">{{ order.totalExcludingTax }} €</td>
+        </tr>
+        <tr>
+          <td><strong>{% trans %}Total tax{% endtrans %}</strong></td>
+          <td style="text-align: right;">{{ order.totalTax }} €</td>
+        </tr>
+        <tr>
+          <td><strong>{% trans %}Total including tax{% endtrans %}</strong></td>
+          <td style="text-align: right;">{{ order.totalIncludingTax }} €</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>

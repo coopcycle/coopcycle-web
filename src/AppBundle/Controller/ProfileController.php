@@ -81,7 +81,24 @@ class ProfileController extends Controller
             'orders' => $orders,
             'page' => $page,
             'pages' => $pages,
+            'pdf_route' => 'profile_order_invoice',
+            'restaurant_route' => 'restaurant',
+            'show_buttons' => false,
         );
+    }
+
+    /**
+     * @Route("/profile/orders/{id}.pdf", name="profile_order_invoice", requirements={"id" = "\d+"})
+     */
+    public function orderInvoiceAction($id, Request $request)
+    {
+        $order = $this->getDoctrine()
+            ->getRepository(Order::class)
+            ->find($id);
+
+        $this->checkOrderAccess($order);
+
+        return $this->invoiceAsPdfAction($order);
     }
 
     /**

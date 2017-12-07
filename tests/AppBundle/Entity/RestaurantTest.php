@@ -142,22 +142,22 @@ class RestaurantTest extends TestCase
     public function testValidationErrors() {
         $restaurant = new Restaurant();
 
-        $errors = $this->validator->validate($restaurant, null, ['activable']);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
-        $this->assertEquals($errors['name'][0], 'restaurant.name.notBlank');
-        $this->assertEquals($errors['telephone'][0], 'restaurant.telephone.notBlank');
-        $this->assertEquals($errors['openingHours'][0], 'restaurant.openingHours.notBlank');
-        $this->assertEquals($errors['deliveryService'][0], 'restaurant.deliveryService.notBlank');
-        $this->assertEquals($errors['contract'][0], 'restaurant.contract.notBlank');
+        $violations = $this->validator->validate($restaurant, null, ['activable']);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
 
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayHasKey('telephone', $errors);
+        $this->assertArrayHasKey('openingHours', $errors);
+        $this->assertArrayHasKey('contract', $errors);
     }
 
     public function testCannotEnableRestaurant() {
         $restaurant = new Restaurant();
         $restaurant->setEnabled(true);
 
-        $errors = $this->validator->validate($restaurant, null);
-        $this->assertEquals(ValidationUtils::serializeValidationErrors($errors)['enabled'][0], 'Unable to activate restaurant.');
+        $violations = $this->validator->validate($restaurant, null, ['activable']);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
 
+        $this->assertArrayHasKey('enabled', $errors);
     }
 }

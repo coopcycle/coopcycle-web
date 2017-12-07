@@ -10,8 +10,10 @@ use AppBundle\Form\RestaurantType;
 use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 
 trait RestaurantTrait
@@ -30,6 +32,19 @@ trait RestaurantTrait
         throw new AccessDeniedHttpException();
     }
 
+    private function getAdditionnalProperties()
+    {
+        $countryCode = $this->getParameter('country_iso');
+        $additionalProperties = [];
+
+        switch ($countryCode) {
+            case 'fr':
+                return ['siret'];
+            default:
+                break;
+        }
+    }
+
     protected function editRestaurantAction($id, Request $request, $layout, array $routes, $formClass = RestaurantType::class)
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
@@ -42,31 +57,45 @@ trait RestaurantTrait
             $this->checkAccess($restaurant);
         }
 
-        $form = $this->createForm($formClass, $restaurant);
+        $form = $this->createForm($formClass, $restaurant, [
+            'additional_properties' => $this->getAdditionnalProperties(),
+            'validation_groups' => ['activable'],
+        ]);
         $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
+        $activationErrors = [];
+
         $form->handleRequest($request);
+        if ($form->isSubmitted()) {
 
-        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-        $activationErrors = $validator->validate($restaurant, null, ['activable']);
-        $activationErrors = ValidationUtils::serializeValidationErrors($activationErrors);
+            if ($form->isValid()) {
+                $restaurant = $form->getData();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $restaurant = $form->getData();
+                if ($id === null) {
+                    $em->persist($restaurant);
+                    $this->getUser()->addRestaurant($restaurant);
+                }
 
-            if ($id === null) {
-                $em->persist($restaurant);
-                $this->getUser()->addRestaurant($restaurant);
+                $em->flush();
+
+                $this->addFlash(
+                    'notice',
+                    $this->get('translator')->trans('Your changes were saved.')
+                );
+
+                return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+            } else {
+                $violations = new ConstraintViolationList();
+                foreach ($form->getErrors(true) as $error) {
+                    $violations->add($error->getCause());
+                }
+                $activationErrors = ValidationUtils::serializeValidationErrors($violations);
             }
 
-            $em->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('Your changes were saved.')
-            );
-
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+        } else {
+            $validator = $this->get('validator');
+            $violations = $validator->validate($restaurant, null, ['activable']);
+            $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
         return [

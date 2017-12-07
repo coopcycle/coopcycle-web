@@ -11,13 +11,6 @@ restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
 
-restaurant.notActivable: "You can't enable this restaurant yet :"
-restaurant.openingHours.notBlank: Select at least one opened schedule
-restaurant.deliveryService.notBlank: Select a delivery service
-restaurant.telephone.notBlank: Enter your phone number
-restaurant.name.notBlank: Enter your restaurant's name
-restaurant.contract.notBlank: Enter the delivery contract terms (require admin privileges)
-
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!
 profile.orders.empty: No order yet!
