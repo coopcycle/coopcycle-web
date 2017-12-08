@@ -149,7 +149,6 @@ describe('Dispatch WebSocket', function() {
 
       sarah.onmessage = function(e) {
         assert.equal('message', e.type);
-
         var data = JSON.parse(e.data);
         assert.equal('delivery', data.type);
 
@@ -160,7 +159,6 @@ describe('Dispatch WebSocket', function() {
 
       bob.onmessage = function(e) {
         assert.equal('message', e.type);
-
         var data = JSON.parse(e.data);
         if ('delivery' === data.type) {
           sarah.close();
