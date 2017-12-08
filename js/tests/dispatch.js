@@ -141,7 +141,7 @@ describe('Dispatch WebSocket', function() {
     return new Promise(function (resolve, reject) {
 
       var sarah = createWebSocket('sarah', { latitude: 48.883083, longitude: 2.344276 });
-      var bob = createWebSocket('bob', { latitude: 48.884053, longitude: 2.333172 });
+      var bob = createWebSocket('bob', { latitude: 48.86069, longitude: 2.35525 });
 
       sarah.onerror = bob.onerror = function(e) {
         reject(e.message);
@@ -162,7 +162,7 @@ describe('Dispatch WebSocket', function() {
         assert.equal('message', e.type);
 
         var data = JSON.parse(e.data);
-        if ('order' === data.type) {
+        if ('delivery' === data.type) {
           sarah.close();
           bob.close();
           reject('Farest courier should not receive order');
