@@ -16,7 +16,7 @@
   "dependencies": {
     "@mapbox/polyline": "^0.2.0",
     "@tweenjs/tween.js": "^16.3.5",
-    "antd": "^2.9.3",
+    "antd": "^3.0.0",
     "async": "^2.1.4",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
     "chart.js": "^2.4.0",
