@@ -48,7 +48,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
 
         $hasErrors = count($nameErrors) > 0 || count($telephoneErrors) > 0 || count($openingHoursErrors);
 
-        if ($object->isEnabled() && $hasErrors) {
+        if ($hasErrors) {
             $this->context->buildViolation($constraint->enabledMessage)
                 ->atPath('enabled')
                 ->addViolation();
