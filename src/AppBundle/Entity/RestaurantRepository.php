@@ -16,7 +16,7 @@ class RestaurantRepository extends EntityRepository
 
         self::addNearbyQueryClause($qb, $latitude, $longitude, $distance);
 
-        $qb->add('where', $qb->expr()->eq(
+        $qb->andWhere($qb->expr()->eq(
             'r.enabled',
             $qb->expr()->literal(true)
         ));
@@ -66,6 +66,7 @@ class RestaurantRepository extends EntityRepository
 
     public function findNearby($latitude, $longitude, $distance = 5000, $limit = 10, $offset = 0)
     {
+
         $qb = $this->createNearbyQueryBuilder($latitude, $longitude, $distance);
 
         $qb
