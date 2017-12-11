@@ -8,6 +8,8 @@ use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use AppBundle\Service\OrderManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Predis\Client as Redis;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -19,6 +21,7 @@ class OrderListener
     private $redis;
     private $serializer;
     private $orderManager;
+    private $eventDispatcher;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
@@ -30,8 +33,8 @@ class OrderListener
         $templating,
         \Swift_Mailer $swiftMailer,
         $transactionalEmailAddress,
-        $transactionalEmailName
-    )
+        $transactionalEmailName,
+        EventDispatcherInterface $eventDispatcher)
     {
         $this->tokenStorage = $tokenStorage;
         $this->deliveryServiceFactory = $deliveryServiceFactory;
@@ -43,6 +46,7 @@ class OrderListener
         $this->mailer = $swiftMailer;
         $this->transactionalEmailAddress = $transactionalEmailAddress;
         $this->transactionalEmailName = $transactionalEmailName;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     private function getDeliveryService(Order $order)
@@ -107,6 +111,8 @@ class OrderListener
         ]));
 
         $this->sendTransactionalEmails($order);
+
+        $this->eventDispatcher->dispatch('order.created');
     }
 
     /**

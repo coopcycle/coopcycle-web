@@ -62,7 +62,8 @@ class TestCase extends BaseTestCase
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
-            $deliveryManager->reveal()
+            $deliveryManager->reveal(),
+            $this->eventDispatcher->reveal()
         );
 
         $this->action = new $this->actionClass(
