@@ -12,9 +12,12 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
+use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\UpdateProfileType;
+use AppBundle\Service\DeliveryPricingManager;
+use AppBundle\Utils\PricingRuleSet;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -322,22 +325,9 @@ class AdminController extends Controller
             }
 
             if ($form->isValid()) {
-                $originLat = $form->get('originAddress')->get('latitude')->getData();
-                $originLng = $form->get('originAddress')->get('longitude')->getData();
 
-                $deliveryLat = $form->get('deliveryAddress')->get('latitude')->getData();
-                $deliveryLng = $form->get('deliveryAddress')->get('longitude')->getData();
-
-                $data = $this->container->get('routing_service')->getRawResponse(
-                    new GeoCoordinates($originLat, $originLng),
-                    new GeoCoordinates($deliveryLat, $deliveryLng)
-                );
-
-                $delivery->setDistance((int) $data['routes'][0]['distance']);
-                $delivery->setDuration((int) $data['routes'][0]['duration']);
-
-                $delivery->getOriginAddress()->setGeo(new GeoCoordinates($originLat, $originLng));
-                $delivery->getDeliveryAddress()->setGeo(new GeoCoordinates($deliveryLat, $deliveryLng));
+                $this->get('delivery_service.default')->calculate($delivery);
+                $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
 
                 $em->persist($delivery);
                 $em->flush();
@@ -502,5 +492,64 @@ class AdminController extends Controller
         return [
             'taxCategories' => $taxCategories
         ];
+    }
+
+    /**
+     * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
+     * @Template
+     */
+    public function deliveriesPricingAction(Request $request)
+    {
+        $rules = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRule::class)
+            ->findBy([], ['position' => 'ASC']);
+
+        $ruleSet = new PricingRuleSet($rules);
+
+        $originalRules = new ArrayCollection();
+        foreach ($ruleSet as $rule) {
+            $originalRules->add($rule);
+        }
+
+        $form = $this->createForm(PricingRuleSetType::class, $ruleSet);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
+
+            foreach ($originalRules as $originalRule) {
+                if (!$data->contains($originalRule)) {
+                    $em->remove($originalRule);
+                }
+            }
+
+            foreach ($data as $rule) {
+                $em->persist($rule);
+            }
+
+            $em->flush();
+
+            return $this->redirectToRoute('admin_deliveries_pricing');
+        }
+
+        return [
+            'form' => $form->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/admin/deliveries/pricing/calculate", name="admin_deliveries_pricing_calculate")
+     * @Template
+     */
+    public function deliveriesPricingCalculateAction(Request $request)
+    {
+        $deliveryManager = $this->get('coopcycle.delivery.manager');
+
+        $delivery = new Delivery();
+        $delivery->setDistance($request->query->get('distance'));
+
+        return new JsonResponse($deliveryManager->getPrice($delivery));
     }
 }

@@ -120,6 +120,13 @@ Invoice: Facture
 Total excluding tax: Total HT
 Total tax: Total TVA
 Total including tax: Total TTC
+Pricing: Tarification
+Add rule: Ajouter une règle
+No pricing rule found: Pas de règle de tarification pour le moment
+Enter an expression: Entrez une expression
+Origin address: Adresse de départ
+Delivery address: Adresse de livraison
+Weight: Poids
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -161,13 +168,30 @@ order.status.ACCEPTED: Acceptée
 order.status.REFUSED: Refusée
 order.status.READY: Prête
 order.status.CANCELED: Annulée
-order.status.PAYMENT_ERROR: Erreur de payement
+order.status.PAYMENT_ERROR: Erreur de paiement
 
 delivery.status.WAITING: En attente
 delivery.status.DISPATCHED: Acceptée
 delivery.status.PICKED: Récupérée
 delivery.status.DELIVERED: Livrée
 delivery.status.CANCELED: Annulée
+
+delivery.pricing_rules.help: >
+  Vous pouvez définir des règles pour la tarification des livraisons :
+  chaque règle permet de définir une « expression » et un prix associé.
+  <br>
+  Les règles sont parcourues dans l'ordre, et la première dont l'expression est évaluée comme vraie est appliquée.
+  <br>
+  Variables disponibles : <code>distance</code>, <code>weight</code>
+  <br>
+  <br>
+  <strong>Exemples :</strong>
+  <br>
+  <code>distance in 0..3000</code> : la distance est comprise entre 0 et 3000 mètres
+  <br>
+  <code>weight > 1000</code> : le poids est supérieur à 1000 grammes
+  <br><br>
+  <a target="_blank" href="http://symfony.com/doc/3.4/components/expression_language/syntax.html">Syntaxe des expressions</a>
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>

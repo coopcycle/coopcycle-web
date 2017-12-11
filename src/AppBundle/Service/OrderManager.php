@@ -21,12 +21,12 @@ class OrderManager
     private $taxRateResolver;
     private $calculator;
     private $taxCategoryRepository;
-    private $deliveryTaxCategoryCode;
+    private $deliveryManager;
 
     public function __construct(PaymentService $payment, DeliveryServiceFactory $deliveryServiceFactory,
         Redis $redis, SerializerInterface $serializer,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, $deliveryTaxCategoryCode)
+        TaxCategoryRepositoryInterface $taxCategoryRepository, DeliveryManager $deliveryManager)
     {
         $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->payment = $payment;
@@ -35,7 +35,7 @@ class OrderManager
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->deliveryTaxCategoryCode = $deliveryTaxCategoryCode;
+        $this->deliveryManager = $deliveryManager;
     }
 
     public function pay(Order $order, $stripeToken)
@@ -66,21 +66,6 @@ class OrderManager
 
     public function applyTaxes(Order $order)
     {
-        $deliveryTaxCategory = $this->taxCategoryRepository->findOneBy(['code' => $this->deliveryTaxCategoryCode]);
-
-        $delivery = $order->getDelivery();
-        $delivery->setTaxCategory($deliveryTaxCategory);
-
-        $deliveryTaxRate = $this->taxRateResolver->resolve($delivery);
-
-        $deliveryTotalIncludingTax = $delivery->getPrice();
-        $deliveryTotalTax = $this->calculator->calculate($deliveryTotalIncludingTax, $deliveryTaxRate);
-        $deliveryTotalExcludingTax = $deliveryTotalIncludingTax - $deliveryTotalTax;
-
-        $delivery->setTotalExcludingTax($deliveryTotalExcludingTax);
-        $delivery->setTotalTax($deliveryTotalTax);
-        $delivery->setTotalIncludingTax($deliveryTotalIncludingTax);
-
         $orderTotalTax = 0;
         $orderTotalIncludingTax = 0;
 
@@ -100,5 +85,8 @@ class OrderManager
         $order->setTotalExcludingTax($orderTotalIncludingTax - $orderTotalTax);
         $order->setTotalTax($orderTotalTax);
         $order->setTotalIncludingTax($orderTotalIncludingTax);
+
+        // Also apply taxes on delivery
+        $this->deliveryManager->applyTaxes($order->getDelivery());
     }
 }

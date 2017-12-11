@@ -3,8 +3,13 @@ import _ from 'underscore';
 import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
-
+import numeral  from 'numeral';
+import 'numeral/locales'
+import autocomplete from '../autocomplete.jsx'
 import DateTimePicker from './DateTimePicker.jsx';
+
+const locale = $('html').attr('lang')
+numeral.locale(locale)
 
 var center = {
   lat: 48.857498,
@@ -13,25 +18,24 @@ var center = {
 var zoom = window.mapZoom || 13;
 
 var map;
-var originMarker;
-var deliveryMarker;
 
-var autocompleteOptions = {
-  types: ['address'],
-  componentRestrictions: {
-    country: "fr"
-  }
-};
+let markers = {
+  origin: null,
+  delivery: null,
+}
 
 function refreshRouting() {
-  var params = {
-    origin: [originMarker.getLatLng().lat, originMarker.getLatLng().lng].join(','),
-    destination: [deliveryMarker.getLatLng().lat, deliveryMarker.getLatLng().lng].join(',')
+
+  const { origin, delivery } = markers
+
+  const params = {
+    origin: [ origin.getLatLng().lat, origin.getLatLng().lng ].join(','),
+    destination: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(',')
   };
 
-  fetch('/api/routing/route?origin=' + params.origin + '&destination=' + params.destination)
-    .then((response) => {
-      response.json().then((data) => {
+  fetch('/api/routing/route?' + $.param(params))
+    .then(response => {
+      response.json().then(data => {
 
         var duration = parseInt(data.routes[0].duration, 10);
         var distance = parseInt(data.routes[0].distance, 10);
@@ -42,88 +46,44 @@ function refreshRouting() {
         $('#delivery_distance').text(kms + ' Km');
         $('#delivery_duration').text(minutes + ' min');
 
+        $.getJSON(window.__deliveries_pricing_calculate_url, { distance })
+          .then(price => {
+            $('#delivery_price').val(numeral(price).format('0,0.00'))
+          })
+
         // return decodePolyline(data.routes[0].geometry);
       })
     });
 }
 
-function autocompleteInput(prefix, type) {
-  var input = document.getElementById(prefix + '_streetAddress');
-  var autocomplete = new google.maps.places.Autocomplete(input, autocompleteOptions);
-  autocomplete.addListener('place_changed', function() {
+function onPlaceChanged(place, markerKey, markerIcon, markerColor) {
 
-    var place = autocomplete.getPlace();
+  const position = {
+    lat: place.geometry.location.lat(),
+    lng: place.geometry.location.lng(),
+  }
 
-    if (!place.geometry) {
-      console.log("Autocomplete's returned place contains no geometry");
-      return;
-    }
+  if (markers[markerKey]) {
+    map.removeLayer(markers[markerKey])
+  }
+  markers[markerKey] = MapHelper.createMarker(position, markerIcon, 'marker', markerColor)
+  markers[markerKey].addTo(map)
 
-    $('#' + prefix + '_latitude').val(place.geometry.location.lat());
-    $('#' + prefix + '_longitude').val(place.geometry.location.lng());
+  const existingMarkers = _.filter(markers)
 
-    var position = {
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
-    };
+  if (existingMarkers.length === 2) {
+    refreshRouting()
+  }
 
-    if (type === 'origin') {
-      if (originMarker) {
-        map.removeLayer(originMarker);
-      }
-      originMarker = MapHelper.createMarker(position, 'cube', 'marker', '#E74C3C');
-      originMarker.addTo(map);
-    }
-
-    if (type === 'delivery') {
-      if (deliveryMarker) {
-        map.removeLayer(deliveryMarker);
-      }
-      deliveryMarker = MapHelper.createMarker(position, 'flag', 'marker', '#2ECC71');
-      deliveryMarker.addTo(map);
-    }
-
-    if (originMarker && deliveryMarker) {
-      refreshRouting();
-    }
-
-    var markers = _.filter([originMarker, deliveryMarker]);
-    if (markers.length > 0) {
-      MapHelper.fitToLayers(map, _.filter([originMarker, deliveryMarker]));
-    }
-
-  });
+  if (existingMarkers.length > 0) {
+    MapHelper.fitToLayers(map, existingMarkers)
+  }
 }
 
 window.initMap = function() {
-
-  autocompleteInput('delivery_originAddress', 'origin');
-  autocompleteInput('delivery_deliveryAddress', 'delivery');
-
-  const originLat = $('#delivery_originAddress_latitude').val();
-  const originLng = $('#delivery_originAddress_longitude').val();
-  if (originLat && originLng) {
-    originMarker = MapHelper.createMarker({ lat: originLat, lng: originLng }, 'cube', 'marker', '#E74C3C');
-    originMarker.addTo(map);
-  }
-
-  const deliveryLat = $('#delivery_deliveryAddress_latitude').val();
-  const deliveryLng = $('#delivery_deliveryAddress_longitude').val();
-  if (originLat && originLng) {
-    deliveryMarker = MapHelper.createMarker({ lat: deliveryLat, lng: deliveryLng }, 'flag', 'marker', '#2ECC71');
-    deliveryMarker.addTo(map);
-  }
-
-  if (originMarker && deliveryMarker) {
-    refreshRouting();
-  }
-
-  var markers = _.filter([originMarker, deliveryMarker]);
-  if (markers.length > 0) {
-    MapHelper.fitToLayers(map, _.filter([originMarker, deliveryMarker]));
-  }
-
-};
+  autocomplete('delivery_originAddress', place => onPlaceChanged(place, 'origin', 'cube', '#E74C3C'))
+  autocomplete('delivery_deliveryAddress', place => onPlaceChanged(place, 'delivery', 'flag', '#2ECC71'))
+}
 
 function onDateTimeChange(date) {
   $('#delivery_date').val(date.format('YYYY-MM-DD HH:mm:00'))

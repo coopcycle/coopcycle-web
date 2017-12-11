@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -18,12 +19,14 @@ class DeliveryType extends AbstractType
         $builder
             ->add('originAddress', AddressType::class)
             ->add('deliveryAddress', AddressType::class)
-            ->add('distance', NumberType::class, ['mapped' => false])
-            ->add('duration', NumberType::class, ['mapped' => false])
+            ->add('weight', NumberType::class, ['required' => false])
             ->add('date', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss'
-            ]);
+            ])
+            ->add('price', MoneyType::class)
+            ->add('distance', NumberType::class, ['mapped' => false])
+            ->add('duration', NumberType::class, ['mapped' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

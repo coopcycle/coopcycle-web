@@ -493,6 +493,34 @@ form[name="menu"] {
     }
 }
 
+.delivery-pricing-ruleset {
+  padding-left: 0;
+  &__rule {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    &__handle {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      padding-top: 22px;
+    }
+    &__expression {
+      flex: 8;
+      padding-right: 15px;
+    }
+    &__price {
+      flex: 4;
+    }
+    &__remove {
+      flex: 1;
+      text-align: right;
+      padding-top: 22px;
+      padding-right: 15px;
+    }
+  }
+}
+
 .react-autosuggest__suggestions-container--open {
   display: block;
   border: 1px solid #aaa;
@@ -513,4 +541,8 @@ form[name="menu"] {
 
 .react-autosuggest__suggestion--highlighted {
   background-color: #eee;
+}
+
+.text-monospace {
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
