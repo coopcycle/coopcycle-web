@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Switch } from 'antd';
+import Switch from 'antd/lib/switch';
 
 function collapseAll() {
   $('#menu_sections .panel-collapse').collapse('hide');

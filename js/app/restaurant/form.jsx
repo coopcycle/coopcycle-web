@@ -3,7 +3,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import _ from 'underscore'
 import autocomplete from '../autocomplete.jsx'
-import { Switch } from 'antd'
+import Switch from 'antd/lib/switch'
 
 window.initMap = () => autocomplete('restaurant_address')
 
