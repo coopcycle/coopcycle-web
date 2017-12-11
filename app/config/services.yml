@@ -223,3 +223,9 @@ services:
       tags:
         - { name: monolog.logger, channel: mailer }
         - { name: "swiftmailer.default.plugin" }
+
+  coopcycle.metrics_helper:
+    class: AppBundle\Utils\MetricsHelper
+    arguments:
+      - "%database_name%"
+      - "@m6_statsd"

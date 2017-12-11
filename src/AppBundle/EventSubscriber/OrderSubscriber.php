@@ -6,6 +6,10 @@ use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Entity\Order;
 use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Utils\MetricsHelper;
+use M6Web\Component\Statsd\Client as StatsdClient;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
@@ -18,13 +22,19 @@ final class OrderSubscriber implements EventSubscriberInterface
     private $tokenStorage;
     private $deliveryServiceFactory;
     private $validator;
+    private $metricsHelper;
+    private $logger;
 
     public function __construct(TokenStorageInterface $tokenStorage,
-        DeliveryServiceFactory $deliveryServiceFactory, ValidatorInterface $validator)
+        DeliveryServiceFactory $deliveryServiceFactory, ValidatorInterface $validator,
+        MetricsHelper $metricsHelper,
+        LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->validator = $validator;
+        $this->metricsHelper = $metricsHelper;
+        $this->logger = $logger;
     }
 
     public static function getSubscribedEvents()
@@ -34,6 +44,8 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['postValidate', EventPriorities::POST_VALIDATE],
             ],
+            'order.created' => 'onOrderCreated',
+            'order.accepted' => 'onOrderAccepted',
         ];
     }
 
@@ -105,5 +117,17 @@ final class OrderSubscriber implements EventSubscriberInterface
         if (count($errors) > 0) {
             throw new ValidationException($errors);
         }
+    }
+
+    public function onOrderCreated(Event $event)
+    {
+        $this->logger->info('Order created');
+        $this->metricsHelper->incrementOrdersWaiting();
+    }
+
+    public function onOrderAccepted(Event $event)
+    {
+        $this->logger->info('Order accepted');
+        $this->metricsHelper->decrementOrdersWaiting();
     }
 }
