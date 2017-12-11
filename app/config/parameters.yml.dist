@@ -66,3 +66,6 @@ parameters:
 
     sentry_dsn: "https://<public>:<secret>@sentry.io/********"
     sentry_public_dsn: "https://<public>@sentry.io/********"
+
+    statsd_host: "graphite"
+    statsd_port: "8125"
