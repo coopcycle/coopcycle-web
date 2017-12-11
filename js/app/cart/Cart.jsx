@@ -176,6 +176,8 @@ class Cart extends React.Component
       cartWarning = ( <div className="alert alert-warning">Veuillez sélectionner une adresse.</div> )
     }
 
+    errors = _.omit(errors, value => null === value)
+
     if (errors) {
       if (errors.distance) {
         cartWarning = ( <div className="alert alert-danger">Cette addresse est trop éloignée.</div> )
@@ -188,7 +190,7 @@ class Cart extends React.Component
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
 
-    if (items.length === 0 || itemsTotalPrice < minimumCartAmount || !address || errors) {
+    if (items.length === 0 || itemsTotalPrice < minimumCartAmount || !address || _.size(errors) > 0) {
       btnClasses.push('disabled')
     }
 
