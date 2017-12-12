@@ -39,10 +39,12 @@ trait RestaurantTrait
 
         switch ($countryCode) {
             case 'fr':
-                return ['siret'];
+                 array_push($additionalProperties, 'siret');
             default:
                 break;
         }
+
+        return $additionalProperties;
     }
 
     protected function editRestaurantAction($id, Request $request, $layout, array $routes, $formClass = RestaurantType::class)
