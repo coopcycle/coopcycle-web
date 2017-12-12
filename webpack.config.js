@@ -36,10 +36,12 @@ var webpackConfig = {
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
     'js/tracking': './js/app/tracking/index.jsx',
   },
+  devtool: 'source-map',
   output: {
     publicPath: "/",
     path: __dirname + '/web',
-    filename: jsFilename
+    filename: jsFilename,
+    sourceMapFilename: jsFilename + '.map'
   },
   resolve: {
     alias: {
