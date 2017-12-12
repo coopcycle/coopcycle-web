@@ -83,11 +83,11 @@ Courier.prototype.toJSON = function() {
 
 Courier.nearestForDelivery = function(delivery, distance = 3500) {
 
-  var address = delivery.deliveryAddress;
+  var address = delivery.originAddress;
 
   return new Promise(function(resolve, reject) {
 
-    // Returns all the couriers which are in distance from the delivery address
+    // Returns all the couriers which are in distance from the restaurant address
     REDIS.georadius('couriers:geo', address.position.longitude, address.position.latitude, distance, "m", 'WITHDIST', 'ASC', function(err, matches) {
       if (!matches) {
         return resolve(null);

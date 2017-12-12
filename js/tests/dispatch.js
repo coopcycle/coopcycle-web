@@ -65,10 +65,7 @@ describe('Dispatch WebSocket', function() {
 
           restaurant = newRestaurant
 
-          utils.createRandomOrder('bill', restaurant, 'default')
-            .then(resolve)
-            .catch(reject)
-        })
+        }).then(resolve).catch(reject)
       })
     })
   });
@@ -111,6 +108,7 @@ describe('Dispatch WebSocket', function() {
       ws.onerror = function(e) {
         reject(e.message);
       };
+    utils.createRandomOrder('bill', restaurant, 'default')
     });
   })
 
@@ -141,7 +139,7 @@ describe('Dispatch WebSocket', function() {
     return new Promise(function (resolve, reject) {
 
       var sarah = createWebSocket('sarah', { latitude: 48.883083, longitude: 2.344276 });
-      var bob = createWebSocket('bob', { latitude: 48.884053, longitude: 2.333172 });
+      var bob = createWebSocket('bob', { latitude: 48.86069, longitude: 2.35525 });
 
       sarah.onerror = bob.onerror = function(e) {
         reject(e.message);
@@ -159,14 +157,64 @@ describe('Dispatch WebSocket', function() {
       };
 
       bob.onmessage = function(e) {
+        sarah.close();
+        bob.close();
+        reject('Farest courier should not receive order');
+      };
+
+      return utils.createRandomOrder('bill', restaurant, 'default')
+    })
+
+  })
+
+  it('should dispatch order to closest courier (one is at the exact same place as the restaurant)', function() {
+
+    this.timeout(5000);
+
+    var createWebSocket = function(username, coordinates) {
+
+      var ws = new WebSocket('http://localhost:8000', {
+        headers: {
+          Authorization: 'Bearer ' + utils.createJWT(username)
+        }
+      });
+
+      ws.onopen = function() {
+        assert.equal(WebSocket.OPEN, ws.readyState);
+
+        ws.send(JSON.stringify({
+          type: "updateCoordinates",
+          coordinates: coordinates
+        }));
+      };
+
+      return ws;
+    };
+
+    return new Promise(function (resolve, reject) {
+
+      var sarah = createWebSocket('sarah', { latitude: 48.884550, longitude: 2.341358 });
+      var bob = createWebSocket('bob', { latitude: 48.86069, longitude: 2.35525 });
+
+      sarah.onerror = bob.onerror = function(e) {
+        reject(e.message);
+      };
+
+      sarah.onmessage = function(e) {
         assert.equal('message', e.type);
 
         var data = JSON.parse(e.data);
-        if ('order' === data.type) {
-          sarah.close();
-          bob.close();
-          reject('Farest courier should not receive order');
-        }
+        assert.equal('delivery', data.type);
+
+        sarah.close();
+        bob.close();
+        resolve();
+      };
+
+      bob.onmessage = function(e) {
+        sarah.close();
+        bob.close();
+        reject('Farest courier should not receive order');
       };
 
       return utils.createRandomOrder('bill', restaurant, 'default')
