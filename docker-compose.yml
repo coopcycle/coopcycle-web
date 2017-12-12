@@ -65,6 +65,7 @@ services:
     environment:
       SYMFONY_ENV: 'dev'
     volumes:
+      - 'php_cache:/srv/coopcycle/var/cache'
       - './:/srv/coopcycle:cached'
 
   nginx:
@@ -81,3 +82,4 @@ services:
 volumes:
   node_modules:
   pg_data:
+  php_cache:
