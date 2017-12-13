@@ -1,0 +1,15 @@
+{% block subject %}{% trans %}registration.email.subject{% endtrans %}{% endblock %}
+
+{% block body_html %}
+  {%  embed 'AppBundle::Emails/layout.html.twig'%}
+    {% block content %}
+      {{ 'registration.email.message'| trans({'%givenName%': user.givenName, '%confirmationUrl%': confirmationUrl}) | raw }}
+    {% endblock %}
+  {% endembed %}
+{%  endblock %}
+
+{% block body_text %}
+    {% block content %}
+      {{ 'registration.email.textMessage'| trans({'%givenName%': user.givenName, '%confirmationUrl%': confirmationUrl}) | raw }}
+    {% endblock %}
+{%  endblock %}

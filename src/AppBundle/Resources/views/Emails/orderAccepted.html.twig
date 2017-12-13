@@ -1,0 +1,5 @@
+{% extends 'AppBundle::Emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'order.acceptedMail.body' | trans({'%orderId%': orderId}) | raw }}
+{% endblock %}

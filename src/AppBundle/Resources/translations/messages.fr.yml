@@ -204,6 +204,38 @@ roles.ROLE_COURIER: 'Coursier'
 roles.ROLE_RESTAURANT: 'Restaurant'
 roles.ROLE_USER: 'Utilisateur'
 
+# mail
+registration.email.subject: |
+  Confirmation d'adresse
+registration.email.message: |
+  Bonjour %givenName%,<br><br>
+  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
+  Bienvenue!<br><br>
+  L'équipe CoopCycle
+registration.email.textMessage: |
+  Bonjour %givenName%,\n\n
+  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
+  Bienvenue!\n\n
+  L'équipe CoopCycle
+
+order.confirmationMail.subject: "Confirmation de votre commande #%orderId%"
+order.confirmationMail.quantity: "Quantité"
+order.confirmationMail.delivery: "Livraison"
+order.confirmationMail.body: "Votre commande #%orderId% est confirmée.<br><br>Le restaurateur doit maintenant l'accepter. Vous serez débité après qu'il ait accepté votre commande."
+order.confirmationMail.outro: "Merci pour votre commande,<br><br>L'équipe CoopCycle"
+
+order.cancellationMail.subject: "Votre commande #%orderId% a été annulée"
+order.cancellationMail.body: |
+  Le restaurateur n'est pas en mesure de préparer votre commande #%orderId%. Votre compte n'a pas été débité.<br><br>
+  Veuillez nous en excusez,<br><br>
+  L'équipe CoopCycle
+
+order.acceptedMail.subject: "Votre commande #%orderId% a été validée"
+order.acceptedMail.body: |
+  Le cuisinier a commencé à préparer votre commande #%orderId%.<br><br>
+  Un coursier arrive pour vous l'apporter!<br><br>
+  L'équipe CoopCycle
+
 search.help: >
   Cherchez dans les quartiers de Paris : %links%
 

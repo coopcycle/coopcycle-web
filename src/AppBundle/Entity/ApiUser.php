@@ -199,4 +199,8 @@ class ApiUser extends BaseUser
 
         return $this;
     }
+
+    public function getFullName() {
+        return join(' ', [$this->givenName, $this->familyName]);
+    }
 }

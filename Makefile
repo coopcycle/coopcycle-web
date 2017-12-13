@@ -33,3 +33,5 @@ migrations-migrate:
 	@docker-compose run php bin/console doctrine:migrations:migrate
 	@docker-compose run php bin/console doctrine:migrations:migrate --env=test
 
+email-preview:
+	@docker-compose run php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.htm
