@@ -44,10 +44,21 @@ services:
 
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
-    arguments: [ "@security.token_storage", "@delivery_service_factory", "@snc_redis.default", "@serializer", "@order.manager" ]
     # lazy = true is mandatory
     # https://symfony.com/doc/3.3/doctrine/event_listeners_subscribers.html#lazy-loading-for-event-listeners
     # https://github.com/doctrine/DoctrineBundle/issues/300
+    arguments:
+      - "@security.token_storage"
+      - "@delivery_service_factory"
+      - "@snc_redis.default"
+      - "@serializer"
+      - "@order.manager"
+      - "@translator"
+      - "@templating"
+      - "@mailer"
+      - "%transactional_address%"
+      - "%transactional_sender_name%"
+
     tags:
       - { name: doctrine.orm.entity_listener, lazy: true }
 
@@ -193,3 +204,21 @@ services:
     class: Twig_Extensions_Extension_Intl
     tags:
       - { name: twig.extension }
+
+  swiftmailer.transport.eventdispatcher.mailjet:
+    class: Swift_Events_SimpleEventDispatcher
+
+  swiftmailer.mailer.transport.mailjet:
+      class: AppBundle\Service\MailjetTransport
+      arguments:
+          - "@swiftmailer.transport.eventdispatcher.mailjet"
+          - "%mailjet.api_key%"
+          - "%mailjet.secret_key%"
+          - "@logger"
+
+  swiftmailer.logger:
+      class: AppBundle\Service\MailLoggerService
+      arguments: ["@logger"]
+      tags:
+        - { name: monolog.logger, channel: mailer }
+        - { name: "swiftmailer.default.plugin" }

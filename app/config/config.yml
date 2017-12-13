@@ -103,6 +103,10 @@ swiftmailer:
     encryption: "%mailer_encryption%"
     spool:     { type: memory }
 
+mailjet:
+    api_key:    "%mailjet.api_key%"
+    secret_key: "%mailjet.secret_key%"
+
 # Nelmio CORS
 nelmio_cors:
     defaults:
@@ -119,6 +123,8 @@ fos_user:
     db_driver: orm
     firewall_name: web
     user_class: AppBundle\Entity\ApiUser
+    service:
+        mailer: fos_user.mailer.twig_swift
     from_email:
         address:        "%transactional_address%"
         sender_name:    "%transactional_sender_name%"

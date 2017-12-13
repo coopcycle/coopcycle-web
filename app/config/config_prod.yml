@@ -26,6 +26,12 @@ monolog:
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
             max_files: 7
+        mailer:
+            level:    error
+            type:     rotating_file
+            path:     '%kernel.logs_dir%/mailer.%kernel.environment%.log'
+            max_files: 7
+            channels: [mailer]
         console:
             type:  console
 
@@ -36,3 +42,4 @@ fos_user:
 
 sentry:
     dsn: '%sentry_dsn%'
+

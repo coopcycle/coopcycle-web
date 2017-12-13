@@ -21,6 +21,8 @@ parameters:
     mailer_password:   ~
     mailer_port:       ~
     mailer_encryption: ~
+    mailjet.api_key: ""
+    mailjet.secret_key: ""
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
