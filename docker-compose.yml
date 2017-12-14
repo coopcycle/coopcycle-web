@@ -60,8 +60,10 @@ services:
       - postgres
       - redis
       - osrm
+      - graphite
     links:
       - osrm
+      - graphite
     environment:
       SYMFONY_ENV: 'dev'
     volumes:
@@ -83,6 +85,25 @@ services:
     image: namshi/smtp
     ports:
       - 25:25
+
+  graphite:
+    restart: always
+    image: graphiteapp/graphite-statsd:latest
+    ports:
+      - '7000:80'
+      - '2003-2004:2003-2004'
+      - '2023-2024:2023-2024'
+      - '8125:8125/udp'
+      - '8126:8126'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    depends_on:
+      - graphite
+    links:
+      - graphite
 
 volumes:
   node_modules:

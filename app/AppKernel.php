@@ -35,7 +35,8 @@ class AppKernel extends Kernel
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
-            new Mailjet\MailjetBundle\MailjetBundle()
+            new Mailjet\MailjetBundle\MailjetBundle(),
+            new M6Web\Bundle\StatsdBundle\M6WebStatsdBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

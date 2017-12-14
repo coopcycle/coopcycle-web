@@ -22,11 +22,13 @@ class OrderManager
     private $calculator;
     private $taxCategoryRepository;
     private $deliveryManager;
+    private $eventDispatcher;
 
     public function __construct(PaymentService $payment, DeliveryServiceFactory $deliveryServiceFactory,
         Redis $redis, SerializerInterface $serializer,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, DeliveryManager $deliveryManager)
+        TaxCategoryRepositoryInterface $taxCategoryRepository, DeliveryManager $deliveryManager,
+        EventDispatcherInterface $eventDispatcher)
     {
         $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->payment = $payment;
@@ -36,6 +38,7 @@ class OrderManager
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->deliveryManager = $deliveryManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function pay(Order $order, $stripeToken)
@@ -62,6 +65,8 @@ class OrderManager
         $this->deliveryServiceFactory
             ->createForRestaurant($order->getRestaurant())
             ->create($order);
+
+        $this->eventDispatcher->dispatch('order.accepted');
     }
 
     public function applyTaxes(Order $order)

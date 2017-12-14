@@ -58,7 +58,7 @@ services:
       - "@mailer"
       - "%transactional_address%"
       - "%transactional_sender_name%"
-
+      - "@event_dispatcher"
     tags:
       - { name: doctrine.orm.entity_listener, lazy: true }
 
@@ -78,6 +78,7 @@ services:
       - "@sylius.tax_calculator"
       - "@sylius.repository.tax_category"
       - "@coopcycle.delivery.manager"
+      - "@event_dispatcher"
 
   coopcycle.delivery.manager:
     class: AppBundle\Service\DeliveryManager
@@ -222,3 +223,9 @@ services:
       tags:
         - { name: monolog.logger, channel: mailer }
         - { name: "swiftmailer.default.plugin" }
+
+  coopcycle.metrics_helper:
+    class: AppBundle\Utils\MetricsHelper
+    arguments:
+      - "%database_name%"
+      - "@m6_statsd"

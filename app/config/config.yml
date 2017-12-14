@@ -201,3 +201,12 @@ knp_snappy:
         enabled:    true
         binary:     /usr/bin/wkhtmltoimage
         options:    []
+
+m6_statsd:
+    servers:
+        default:
+            address: 'udp://%statsd_host%'
+            port: "%statsd_port%"
+    clients:
+        default:
+            servers: ["default"]
