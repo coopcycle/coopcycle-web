@@ -36,6 +36,7 @@ delivery.status.WAITING: Waiting
 delivery.status.DISPATCHED: Dispatched
 delivery.status.PICKED: Picked
 delivery.status.DELIVERED: Delivered
+delivery.status.CANCELED: Canceled
 
 delivery.pricing_rules.help: >
   You can define rules for deliveries pricing:
