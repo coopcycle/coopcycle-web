@@ -19,7 +19,7 @@ trait AdminTrait
 
         $restaurant = $restaurantRepository->find($restaurantId);
 
-        $this->checkAccess($restaurant);
+        $this->accessControl($restaurant);
 
         $date = new \DateTime('now');
         if ($request->query->has('date')) {
@@ -54,7 +54,7 @@ trait AdminTrait
     protected function acceptOrder($id, $route, array $params = [])
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-        $this->checkAccess($order->getRestaurant());
+        $this->accessControl($order->getRestaurant());
 
         $this->get('order.manager')->accept($order);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
@@ -66,7 +66,7 @@ trait AdminTrait
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        $this->checkAccess($order->getRestaurant());
+        $this->accessControl($order->getRestaurant());
 
         $order->setStatus(Order::STATUS_REFUSED);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
@@ -78,7 +78,7 @@ trait AdminTrait
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        $this->checkAccess($order->getRestaurant());
+        $this->accessControl($order->getRestaurant());
 
         $order->setStatus(Order::STATUS_READY);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
@@ -90,7 +90,7 @@ trait AdminTrait
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
 
-        $this->checkAccess($order->getRestaurant());
+        $this->accessControl($order->getRestaurant());
 
         $order->setStatus(Order::STATUS_CANCELED);
         $order->getDelivery()->setStatus(Order::STATUS_CANCELED);
@@ -112,18 +112,5 @@ trait AdminTrait
         return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [
             'Content-Type' => 'application/pdf',
         ]);
-    }
-
-    protected function checkOrderAccess(Order $order)
-    {
-        $isAdmin = $this->getUser()->hasRole('ROLE_ADMIN');
-        $ownsRestaurant = $this->getUser()->ownsRestaurant($order->getRestaurant());
-        $isCustomer = $this->getUser() === $order->getCustomer();
-
-        if ($isAdmin || $ownsRestaurant || $isCustomer) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException();
     }
 }

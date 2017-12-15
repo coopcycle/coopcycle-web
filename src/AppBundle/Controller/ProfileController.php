@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends Controller
 {
+    use AccessControlTrait;
     use AdminTrait;
     use RestaurantTrait;
 
@@ -96,7 +98,7 @@ class ProfileController extends Controller
             ->getRepository(Order::class)
             ->find($id);
 
-        $this->checkOrderAccess($order);
+        $this->accessControl($order);
 
         return $this->invoiceAsPdfAction($order);
     }

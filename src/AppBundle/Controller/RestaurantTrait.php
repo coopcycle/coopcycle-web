@@ -18,20 +18,6 @@ use Symfony\Component\Validator\Validation;
 
 trait RestaurantTrait
 {
-
-    protected function checkAccess(Restaurant $restaurant)
-    {
-        if ($this->getUser()->hasRole('ROLE_ADMIN')) {
-            return;
-        }
-
-        if ($this->getUser()->ownsRestaurant($restaurant)) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException();
-    }
-
     private function getAdditionnalProperties()
     {
         $countryCode = $this->getParameter('country_iso');
@@ -39,7 +25,7 @@ trait RestaurantTrait
 
         switch ($countryCode) {
             case 'fr':
-                 array_push($additionalProperties, 'siret');
+                $additionalProperties[] = 'siret';
             default:
                 break;
         }
@@ -56,7 +42,7 @@ trait RestaurantTrait
             $restaurant = new Restaurant();
         } else {
             $restaurant = $repository->find($id);
-            $this->checkAccess($restaurant);
+            $this->accessControl($restaurant);
         }
 
         $form = $this->createForm($formClass, $restaurant, [

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\ApiUser;
@@ -36,6 +37,7 @@ class AdminController extends Controller
 {
     const ITEMS_PER_PAGE = 20;
 
+    use AccessControlTrait;
     use AdminTrait;
     use RestaurantTrait;
 
@@ -94,7 +96,7 @@ class AdminController extends Controller
             ->getRepository(Order::class)
             ->find($id);
 
-        $this->checkOrderAccess($order);
+        $this->accessControl($order);
 
         return $this->invoiceAsPdfAction($order);
     }
