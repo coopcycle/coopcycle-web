@@ -26,12 +26,15 @@
     <div class="collapse navbar-collapse" id="restaurant-navbar">
       <div class="nav navbar-nav navbar-right">
         {% if restaurant.id is not empty %}
-        <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
-        </a>
-        <a href="{{ path(orders_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
-        </a>
+          <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+            <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
+          </a>
+          <a href="{{ path(orders_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
+            <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
+          </a>
+          <a href="{{ path(planning_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+            <i class="fa fa-clock-o"></i>  {% trans %}Planning{% endtrans %}
+          </a>
         {% endif %}
       </div>
     </div>
@@ -109,8 +112,10 @@
   #}
 
   <h4>{% trans %}Opening hours{% endtrans %}</h4>
+  <p>
+    <i class="fa fa-info-circle"></i>&nbsp;{% trans %}restaurant.form.temporaryClosingRule{% endtrans %}&nbsp;:&nbsp;<a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
+  </p>
   {{ form_row(form.openingHours) }}
-
   <hr>
 
   {{ form_row(form.address.streetAddress) }}

@@ -5,11 +5,17 @@ restaurant.disabledWarning: |
 restaurant.form.enabled.label: Activated restaurant?
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
+restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link
+restaurant.form.accessPlanning: Access planning
 restaurant.contract.title: Contract
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+
+restaurant.closingForm.title: Add a temporary closure
+restaurant.closingForm.reason.label: Reason
+restaurant.closingForm.dates.label: Closing from/to
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!

@@ -1,6 +1,5 @@
 import React from 'react';
 import OrderLabel from '../order/Label.jsx';
-import _ from 'lodash';
 import moment from 'moment';
 import numeral  from 'numeral';
 import 'numeral/locales'

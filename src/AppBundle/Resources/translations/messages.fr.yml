@@ -144,13 +144,17 @@ restaurant.disabledWarning: |
 restaurant.form.enabled.label: Restaurant activé?
 restaurant.form.enabled.tooltip: |
   Un restaurant desactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
+restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
+restaurant.form.accessPlanning: Accéder au planning
 restaurant.contract.title: Contrat
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 
-# restaurant.notActivable: "Vous ne pouvez pas encore activer ce restaurant :"
+restaurant.closingForm.title: Ajouter une fermeture temporaire
+restaurant.closingForm.reason.label: Motif
+restaurant.closingForm.dates.label: Fermeture de/à
 
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit

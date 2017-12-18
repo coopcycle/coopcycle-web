@@ -8,6 +8,7 @@ use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\TimeRange;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -186,6 +187,11 @@ class Restaurant extends FoodEstablishment
     protected $openingHours;
 
     /**
+     * @ORM\OneToMany(targetEntity="ClosingRule", mappedBy="restaurant", cascade={"all"})
+     */
+    private $closingRules;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
@@ -203,9 +209,12 @@ class Restaurant extends FoodEstablishment
      */
     private $contract;
 
+
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
+        $this->closingRules = new ArrayCollection();
     }
 
     /**
@@ -333,6 +342,36 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
+     * @return mixed
+     */
+    public function getClosingRules()
+    {
+        return $this->closingRules;
+    }
+
+    /**
+     * @param mixed $closingRules
+     */
+    public function setClosingRules($closingRules)
+    {
+        $this->closingRules = $closingRules;
+    }
+
+    public function hasClosingRuleForNow(\DateTime $now = null) {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $criteria = Criteria::create()->where(Criteria::expr()->andX(
+                Criteria::expr()->lte("startDate", $now),
+                Criteria::expr()->gte("endDate", $now)
+            ));
+
+        return $this->closingRules->matching($criteria)->count() > 0;
+
+    }
+
+    /**
      * @return boolean
      */
     public function isOpen(\DateTime $now = null)
@@ -343,7 +382,7 @@ class Restaurant extends FoodEstablishment
 
         foreach ($this->openingHours as $openingHour) {
             $timeRange = new TimeRange($openingHour);
-            if ($timeRange->isOpen($now)) {
+            if ($timeRange->isOpen($now) && !$this->hasClosingRuleForNow($now)) {
                 return true;
             }
         }
@@ -367,7 +406,8 @@ class Restaurant extends FoodEstablishment
 
         foreach ($this->openingHours as $openingHour) {
             $timeRange = new TimeRange($openingHour);
-            $dates[] = $timeRange->getNextOpeningDate($now);
+            $nextOpeningCandidate = $timeRange->getNextOpeningDate($now);
+            $dates[] = $nextOpeningCandidate;
         }
 
         sort($dates);
@@ -424,7 +464,9 @@ class Restaurant extends FoodEstablishment
             }
             else {
                 $date = $nextOpenedDate;
-                $availabilities[] = $date->format(\DateTime::ATOM);
+                if (!$this->hasClosingRuleForNow($date)) {
+                    $availabilities[] = $date->format(\DateTime::ATOM);
+                }
             }
         }
 

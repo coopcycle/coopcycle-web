@@ -32,6 +32,7 @@ var webpackConfig = {
     'js/delivery-pricing-rules': './js/app/delivery/pricing-rules.jsx',
     'js/restaurant-form': './js/app/restaurant/form.jsx',
     'js/restaurant-menu': './js/app/restaurant/menu.jsx',
+    'js/restaurant-planning': './js/app/restaurant/planning.jsx',
     'js/restaurant-panel': './js/app/restaurant/panel.jsx',
     'js/restaurant-search': './js/app/restaurant/search.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',

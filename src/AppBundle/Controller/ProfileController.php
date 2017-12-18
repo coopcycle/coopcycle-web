@@ -230,6 +230,7 @@ class ProfileController extends Controller
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
             'orders' => 'profile_restaurant_orders',
+            'planning' => 'profile_restaurant_planning'
         ]);
     }
 
@@ -244,6 +245,20 @@ class ProfileController extends Controller
             'restaurants' => 'profile_restaurants',
             'menu' => 'profile_restaurant_menu',
             'orders' => 'profile_restaurant_orders',
+            'planning' => 'profile_restaurant_planning'
+        ]);
+    }
+
+    /**
+     * @Route("/profile/restaurants/{id}/planning", name="profile_restaurant_planning")
+     * @Template("@App/Restaurant/planning.html.twig")
+     */
+    public function restaurantPlanningAction($id, Request $request)
+    {
+        return $this->editPlanningAction($id, $request, 'AppBundle::profile.html.twig', [
+            'restaurants' => 'profile_restaurants',
+            'restaurant' => 'profile_restaurant',
+            'success' => 'profile_restaurant_planning'
         ]);
     }
 

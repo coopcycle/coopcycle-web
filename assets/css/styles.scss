@@ -430,8 +430,29 @@ $order-follow--number-width: 26px;
     margin-left: 10px;
 }
 
+// HACK : disable Antd input style so it fits with Bootstrap's design
+#closing-rules-range-picker .ant-calendar-picker-input.ant-input {
+    padding: 0;
+    width: 100%;
+    border: none;
+}
+
+// HACK : vertical-align submit button to bottom
+#closing_rule_submit {
+  margin-top: 25px;
+}
+
 .restaurant-availability-errors {
-  list-style: initial;
+    list-style: initial;
+}
+
+.calendar-close {
+  color: $white;
+  background-color: $light-red;
+  border-top: 1px solid $red;
+  border-bottom: 1px solid $red;
+  list-style: none;
+  padding: $base-margin-xs $base-margin-xs;
 }
 
 form[name="menu"] {
