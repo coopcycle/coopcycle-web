@@ -3,18 +3,24 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Order;
-use AppBundle\Entity\Address;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use AppBundle\Entity\Restaurant;
+use AppBundle\Service\RoutingInterface;
+use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CanDeliver
 {
-    use ActionTrait;
+    private $doctrine;
+    private $routing;
+
+    public function __construct(DoctrineRegistry $doctrine, RoutingInterface $routing)
+    {
+        $this->doctrine = $doctrine;
+        $this->routing = $routing;
+    }
 
     /**
      * @Route(
@@ -25,7 +31,7 @@ class CanDeliver
      */
     public function canDeliverAction($id, $latitude, $longitude, Request $request)
     {
-        $restaurant = $this->doctrine->getRepository('AppBundle:Restaurant')->find($id);
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
 
         // TODO Manage 404
 

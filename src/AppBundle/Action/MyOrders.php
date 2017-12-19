@@ -25,7 +25,7 @@ class MyOrders
     public function __invoke($data)
     {
         return $this->doctrine
-            ->getRepository('AppBundle:Order')
+            ->getRepository(Order::class)
             ->findBy(['customer' => $this->getUser()], ['createdAt' => 'DESC'], 30);
     }
 }

@@ -3,7 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\ApiUser;
+use AppBundle\Exception\InvalidStatusException;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -25,6 +28,23 @@ class DeliveryManager
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->taxCategoryCode = $taxCategoryCode;
+    }
+
+    public function dispatch(Delivery $delivery, ApiUser $user)
+    {
+        if (!$user->hasRole('ROLE_COURIER')) {
+            $message = sprintf('Delivery #%d cannot be dispatched to user %s', $delivery->getId(), $user->getUsername());
+            throw new AccessDeniedException($message);
+        }
+
+        // Delivery MUST have status = WAITING
+        if ($delivery->getStatus() !== Delivery::STATUS_WAITING) {
+            $message = sprintf('Delivery #%d cannot be accepted anymore', $delivery->getId());
+            throw new InvalidStatusException($message);
+        }
+
+        $delivery->setCourier($user);
+        $delivery->setStatus(Delivery::STATUS_DISPATCHED);
     }
 
     public function applyTaxes(Delivery $delivery)

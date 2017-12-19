@@ -9,8 +9,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryServiceInterface;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
-use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Predis\Client as Redis;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -33,12 +33,10 @@ class TestCase extends BaseTestCase
     {
         $tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $this->redisProphecy = $this->prophesize(Redis::class);
-        $deliveryRepository = $this->prophesize(Entity\DeliveryRepository::class);
         $serializer = $this->prophesize(SerializerInterface::class);
         $doctrine = $this->prophesize(DoctrineRegistry::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcher::class);
         $paymentService = $this->prophesize(PaymentService::class);
-        $routing = $this->prophesize(RoutingInterface::class);
         $deliveryService = $this->prophesize(DeliveryServiceInterface::class);
         $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
         $calculator = $this->prophesize(CalculatorInterface::class);
@@ -54,6 +52,14 @@ class TestCase extends BaseTestCase
 
         $tokenStorage->getToken()->willReturn($token->reveal());
 
+        $deliveryManager = new DeliveryManager(
+            $this->prophesize(EntityRepository::class)->reveal(),
+            $taxRateResolver->reveal(),
+            $calculator->reveal(),
+            $taxCategoryRepository->reveal(),
+            'tva_livraison'
+        );
+
         $orderManager = new OrderManager(
             $paymentService->reveal(),
             $deliveryServiceFactory,
@@ -62,14 +68,17 @@ class TestCase extends BaseTestCase
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
-            $deliveryManager->reveal(),
+            $deliveryManager,
             $this->eventDispatcher->reveal()
         );
 
         $this->action = new $this->actionClass(
-            $tokenStorage->reveal(), $this->redisProphecy->reveal(),
-            $deliveryRepository->reveal(), $doctrine->reveal(),
-            $orderManager, $routing->reveal());
+            $tokenStorage->reveal(),
+            $this->redisProphecy->reveal(),
+            $doctrine->reveal(),
+            $orderManager,
+            $deliveryManager
+        );
     }
 
     protected static function setEntityId($entity, $value)

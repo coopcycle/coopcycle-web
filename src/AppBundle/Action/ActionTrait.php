@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Predis\Client as Redis;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
@@ -14,21 +14,18 @@ trait ActionTrait
 {
     protected $tokenStorage;
     protected $redis;
-    protected $deliveryRepository;
     protected $doctrine;
     protected $orderManager;
-    protected $routing;
+    protected $deliveryManager;
 
     public function __construct(TokenStorageInterface $tokenStorage, Redis $redis,
-        DeliveryRepository $deliveryRepository, DoctrineRegistry $doctrine,
-        OrderManager $orderManager, RoutingInterface $routing)
+        DoctrineRegistry $doctrine, OrderManager $orderManager, DeliveryManager $deliveryManager)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
-        $this->deliveryRepository = $deliveryRepository;
         $this->doctrine = $doctrine;
         $this->orderManager = $orderManager;
-        $this->routing = $routing;
+        $this->deliveryManager = $deliveryManager;
     }
 
     protected function getUser()

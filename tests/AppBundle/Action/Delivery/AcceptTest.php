@@ -6,7 +6,7 @@ use AppBundle\Action\Delivery\Accept;
 use AppBundle\Entity;
 use AppBundle\Tests\Action\TestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AcceptTest extends TestCase
 {
@@ -24,7 +24,7 @@ class AcceptTest extends TestCase
         $delivery->setStatus(Entity\Delivery::STATUS_WAITING);
 
         foreach (['ROLE_USER', 'ROLE_RESTAURANT'] as $role) {
-            $this->assertRoleThrowsException([$delivery], $role, AccessDeniedHttpException::class);
+            $this->assertRoleThrowsException([$delivery], $role, AccessDeniedException::class);
         }
     }
 

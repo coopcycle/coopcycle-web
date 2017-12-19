@@ -3,6 +3,7 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Delivery;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,10 +41,12 @@ class Me
         $status = 'AVAILABLE';
 
         // Check if courier has accepted a delivery previously
-        $delivery = $this->deliveryRepository->findOneBy([
-            'courier' => $user,
-            'status' => ['DISPATCHED', 'PICKED'],
-        ]);
+        $delivery = $this->doctrine
+            ->getRepository(Delivery::class)
+            ->findOneBy([
+                'courier' => $user,
+                'status' => ['DISPATCHED', 'PICKED'],
+            ]);
 
         if (null !== $delivery) {
             $status = 'DELIVERING';
