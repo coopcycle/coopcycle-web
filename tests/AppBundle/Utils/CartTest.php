@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\BaseTest;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\MenuSection;
@@ -18,8 +19,13 @@ class CartTest extends BaseTest
     {
         parent::setUp();
 
+        $contract = new Contract();
+        $contract->setFlatDeliveryPrice(3.5);
+        $contract->setMinimumCartAmount(10);
+
         $this->restaurant = new Restaurant();
         $this->restaurant->setId(1);
+        $this->restaurant->setContract($contract);
 
         $menu = new Menu();
         $menu->setRestaurant($this->restaurant);
@@ -28,6 +34,13 @@ class CartTest extends BaseTest
         $this->menuSection->setMenu($menu);
 
         $this->taxCategory = $this->createTaxCategory('Default', 'default', 'TVA 10%', 'tva_10', 10.00);
+    }
+
+    public function testTotalWithNoItems()
+    {
+        $cart = new Cart($this->restaurant);
+
+        $this->assertEquals(0, $cart->getTotal());
     }
 
     public function testTotal()
@@ -44,18 +57,18 @@ class CartTest extends BaseTest
         $cart->addItem($item2);
         $cart->addItem($item2);
 
-        $this->assertEquals(25, $cart->getTotal());
+        $this->assertEquals(25 + 3.5, $cart->getTotal());
 
         $cartItem = new CartItem($item2, 0, []);
 
         $cart->removeItem($cartItem->getKeyHash());
 
-        $this->assertEquals(5, $cart->getTotal());
+        $this->assertEquals(5 + 3.5, $cart->getTotal());
     }
 
     public function testTotalWithFreeModifier()
     {
-        $cart = new Cart();
+        $cart = new Cart($this->restaurant);
 
         $item1 = $this->createMenuItem('Item 1', 5, $this->taxCategory);
         $id1 = $item1->getId();
@@ -73,12 +86,12 @@ class CartTest extends BaseTest
 
         $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
 
-        $this->assertEquals(5, $cart->getTotal());
+        $this->assertEquals(5 + 3.5, $cart->getTotal());
     }
 
     public function testTotalWithPayingModifier()
     {
-        $cart = new Cart();
+        $cart = new Cart($this->restaurant);
 
         $item1 = $this->createMenuItem('Item 1', 5, $this->taxCategory);
         $item1->setSection($this->menuSection);
@@ -90,12 +103,12 @@ class CartTest extends BaseTest
 
         $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
 
-        $this->assertEquals(15, $cart->getTotal());
+        $this->assertEquals(15 + 3.5, $cart->getTotal());
     }
 
     public function testTotalWithFlatModifierPrice()
     {
-        $cart = new Cart();
+        $cart = new Cart($this->restaurant);
 
         $item1 = $this->createMenuItem('Item 1', 5, $this->taxCategory);
         $item1->setSection($this->menuSection);
@@ -107,12 +120,12 @@ class CartTest extends BaseTest
 
         $cart->addItem($item1, 1, [$modifier->getId() => [$item2->getId()]]);
 
-        $this->assertEquals(10, $cart->getTotal());
+        $this->assertEquals(10 + 3.5, $cart->getTotal());
     }
 
     public function testCantAddUnavailable()
     {
-        $cart = new Cart();
+        $cart = new Cart($this->restaurant);
         $item1 = $this->createMenuItem('Item 1', 5, $this->taxCategory);
         $item1->setSection($this->menuSection);
 

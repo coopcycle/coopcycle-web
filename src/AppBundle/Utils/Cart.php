@@ -136,9 +136,15 @@ class Cart
 
     public function getTotal()
     {
-        return array_reduce($this->items, function ($carry, $item) {
+        if (count($this->items) === 0) {
+            return 0;
+        }
+
+        $itemsTotal = array_reduce($this->items, function ($carry, $item) {
             return $carry + $item->getTotal();
         }, 0);
+
+        return $itemsTotal + $this->restaurant->getFlatDeliveryPrice();
     }
 
     public function getDate()
@@ -184,7 +190,7 @@ class Cart
     {
         $this->address = $address;
     }
-    
+
 
     public function getNormalizedItems()
     {
