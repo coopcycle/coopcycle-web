@@ -127,6 +127,7 @@ Enter an expression: Entrez une expression
 Origin address: Adresse de départ
 Delivery address: Adresse de livraison
 Weight: Poids
+Show canceled orders: Afficher les commandes annulées
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!

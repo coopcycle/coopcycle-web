@@ -49,13 +49,41 @@ class OrderRepository extends EntityRepository
 
     public function countByStatus($status)
     {
+        $statusList = !is_array($status) ? [$status] : $status;
+
         $qb = $this->createQueryBuilder('o')
             ->select('COUNT(o)')
-            ->where('o.status = :status')
-            ->setParameter('status', $status)
+            ->where('o.status IN (:statusList)')
+            ->setParameter('statusList', $statusList)
             ;
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findByStatus($status, array $orderBy = null, $limit = null, $offset = null)
+    {
+        $statusList = !is_array($status) ? [$status] : $status;
+
+        $qb = $this->createQueryBuilder('o')
+            ->where('o.status IN (:statusList)')
+            ->setParameter('statusList', $statusList)
+            ;
+
+        if (null !== $orderBy) {
+            foreach ($orderBy as $sort => $order) {
+                $qb->orderBy('o.'.$sort, $order);
+            }
+        }
+
+        if (null !== $limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        if (null !== $offset) {
+            $qb->setFirstResult($offset);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findByRestaurants($restaurants)

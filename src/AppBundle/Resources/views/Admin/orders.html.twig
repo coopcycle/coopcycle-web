@@ -15,6 +15,7 @@
 
 {% block content %}
 
+{#
 {% set total = waiting_count + accepted_count + ready_count %}
 {% set waiting_percent = total > 0 ? ((waiting_count / total) * 100)|round : 0 %}
 {% set accepted_percent = total > 0 ? ((accepted_count / total) * 100)|round : 0 %}
@@ -45,10 +46,33 @@
 </div>
 
 <hr>
+#}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="{{ path('admin_orders') }}" class="form-inline" name="admin_orders_settings" method="get">
+      <input type="hidden" name="show_canceled" value="{{ show_canceled ? 'on' : 'off' }}">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="show_canceled" {% if show_canceled %}checked="checked"{% endif %}>  {% trans %}Show canceled orders{% endtrans %}
+        </label>
+      </div>
+    </form>
+  </div>
+</div>
 
 {% include "AppBundle:Admin:pagination.html.twig" %}
 {% include "AppBundle::_partials/Order/list.html.twig" %}
 {% endblock %}
 
 {% block scripts %}
+<script>
+var $settingsForm = $('form[name="admin_orders_settings"]')
+$('#show_canceled').on('change', function(e) {
+  $settingsForm
+    .find('[name="show_canceled"]')
+    .val($(this).is(':checked') ? 'on' : 'off')
+  $settingsForm.submit()
+})
+</script>
 {% endblock %}

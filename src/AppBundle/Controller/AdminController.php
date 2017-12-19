@@ -24,12 +24,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -52,39 +53,58 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/orders", name="admin_orders")
-     * @Template
      */
     public function ordersAction(Request $request)
     {
-        $orderRepository = $this->getDoctrine()->getRepository('AppBundle:Order');
+        $response = new Response();
+        $orderRepository = $this->getDoctrine()->getRepository(Order::class);
 
-        $countAll = $orderRepository->countAll();
+        $showCanceled = false;
+        if ($request->query->has('show_canceled')) {
+            $showCanceled = $request->query->getBoolean('show_canceled');
+            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
+        } elseif ($request->cookies->has('__show_canceled')) {
+            $showCanceled = $request->cookies->getBoolean('__show_canceled');
+        }
+
+        $statusList = [
+            Order::STATUS_WAITING,
+            Order::STATUS_ACCEPTED,
+            Order::STATUS_REFUSED,
+            Order::STATUS_READY,
+        ];
+        if ($showCanceled) {
+            $statusList[] = Order::STATUS_CANCELED;
+        }
+
+        $countAll = $orderRepository->countByStatus($statusList);
 
         $pages = ceil($countAll / self::ITEMS_PER_PAGE);
         $page = $request->query->get('p', 1);
 
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
-        $orders = $orderRepository->findBy([], [
+        $orders = $orderRepository->findByStatus($statusList, [
             'updatedAt' => 'DESC',
             'createdAt' => 'DESC'
         ], self::ITEMS_PER_PAGE, $offset);
 
-        $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
-        $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
-        $ready = $orderRepository->countByStatus(Order::STATUS_READY);
+        // $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
+        // $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
+        // $ready = $orderRepository->countByStatus(Order::STATUS_READY);
 
-        return array(
+        return $this->render('@App/Admin/orders.html.twig', [
             'page' => $page,
             'pages' => $pages,
             'orders' => $orders,
-            'waiting_count' => $waiting,
-            'accepted_count' => $accepted,
-            'ready_count' => $ready,
+            // 'waiting_count' => $waiting,
+            // 'accepted_count' => $accepted,
+            // 'ready_count' => $ready,
             'pdf_route' => 'admin_order_invoice',
             'restaurant_route' => 'admin_restaurant',
             'show_buttons' => true,
-        );
+            'show_canceled' => $showCanceled,
+        ], $response);
     }
 
     /**
