@@ -6,6 +6,7 @@ import Sticky from 'react-stickynode';
 import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
+import CartTop from "./CartTop.jsx"
 import { geocodeByAddress } from 'react-places-autocomplete';
 
 import numeral  from 'numeral';
@@ -36,24 +37,56 @@ class Cart extends React.Component
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
     this.handleAjaxErrors = this.handleAjaxErrors.bind(this)
+    this.computeCartTotal = this.computeCartTotal.bind(this)
   }
 
-  onHeaderClick () {
+  onHeaderClick() {
     this.setState({'toggled': !this.state.toggled})
   }
 
+  computeCartTotal() {
+
+    // Sum delivery price when there is at least one item
+    if (this.state.items.length === 0) {
+      return 0
+    }
+
+    const { flatDeliveryPrice } = this.props.restaurant
+
+    const itemsTotalPrice = _.reduce(this.state.items, function(memo, item) {
+      return memo + item.total;
+    }, 0)
+
+    return (itemsTotalPrice + flatDeliveryPrice).toFixed(2)
+  }
+
+  resolveAddToCartURL() {
+    const { addToCartURL, restaurant } = this.props
+
+    return addToCartURL.replace('__RESTAURANT_ID__', restaurant.id)
+  }
+
+  resolveRemoveFromCartURL(itemKey) {
+    const { removeFromCartURL, restaurant } = this.props
+
+    return removeFromCartURL
+      .replace('__RESTAURANT_ID__', restaurant.id)
+      .replace('__ITEM_KEY__', itemKey)
+  }
+
   removeItem(item) {
-    let removeFromCartUrl = this.props.removeFromCartURL.replace('__ITEM_KEY__', item.props.itemKey);
     $.ajax({
-      url: removeFromCartUrl,
+      url: this.resolveRemoveFromCartURL(item.props.itemKey),
       type: 'DELETE',
     }).then((cart) => {
       this.setState({items: cart.items});
+      let total = this.computeCartTotal();
+      this.props.onCartChange(total);
     });
   }
 
   addMenuItemById(id, modifiers) {
-    $.post(this.props.addToCartURL, {
+    $.post(this.resolveAddToCartURL(), {
       selectedItemData: {
         menuItemId: id,
         modifiers: modifiers
@@ -62,6 +95,8 @@ class Cart extends React.Component
     }).then((cart) => {
       let errors = {...this.state.errors, item: null}
       this.setState({items: cart.items, errors});
+      let total = this.computeCartTotal();
+      this.props.onCartChange(total);
     }).fail((e) => { this.handleAjaxErrors(e.responseJSON) })
   }
 
@@ -70,7 +105,7 @@ class Cart extends React.Component
   }
 
   onDateChange(dateString) {
-    $.post(this.props.addToCartURL, {
+    $.post(this.resolveAddToCartURL(), {
       date: dateString,
     }).then(() => {
       let errors = {...this.state.errors, date: null}
@@ -105,7 +140,7 @@ class Cart extends React.Component
           'streetAddress': addressDict.streetAddress || '',
         }
 
-        $.post(this.props.addToCartURL, {
+        $.post(this.resolveAddToCartURL(), {
           date: this.state.date, // do not remove this line (used to set `date` on `componentDidMount` event)
           address: address
         }).then(() => {
@@ -127,15 +162,17 @@ class Cart extends React.Component
   }
 
   componentDidMount() {
+    // FIXME this.props.geohash & this.props.streetAddress may be empty
     this.onAddressChange(this.props.geohash, this.props.streetAddress)
   }
 
   render() {
 
-    let { items, toggled, errors, date, geohash, address} = this.state ,
+    let { items, toggled, errors, date, geohash, address } = this.state,
         cartContent,
         cartWarning,
-        { isMobileCart, availabilities, validateCartURL, minimumCartAmount, flatDeliveryPrice } = this.props,
+        { isMobileCart, availabilities, validateCartURL } = this.props,
+        { minimumCartAmount, flatDeliveryPrice } = this.props.restaurant,
         minimumCartString = 'Le montant minimum est de ' + minimumCartAmount + '€',
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
@@ -243,17 +280,17 @@ class Cart extends React.Component
   }
 }
 
+
 Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
   streetAddress: PropTypes.string.isRequired,
-  minimumCartAmount: PropTypes.number.isRequired,
-  flatDeliveryPrice: PropTypes.number.isRequired,
   deliveryDate: PropTypes.string.isRequired,
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,
   validateCartURL: PropTypes.string.isRequired,
   removeFromCartURL: PropTypes.string.isRequired,
   addToCartURL: PropTypes.string.isRequired,
-  isMobileCart: PropTypes.bool.isRequired
+  isMobileCart: PropTypes.bool.isRequired,
+  restaurant: PropTypes.object.isRequired
 }
 
 

@@ -110,27 +110,38 @@
   </div>
 </div>
 
+<div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{ 'cart.modal.content'|trans }}</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cart-warning-default" type="button" class="btn btn-default" data-dismiss="modal">
+          {{ 'cart.modal.cancel'|trans }}
+        </button>
+        <button id="cart-warning-primary" type="button" class="btn btn-primary">{{ 'cart.modal.confirm'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    window.AppData = window.AppData || {};
-    window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
-    window.AppData.Cart = {
-      addToCartURL: "{{ path('restaurant_add_to_cart', {'id': restaurant.id})|raw }}",
-      removeFromCartURL: "{{ path('restaurant_remove_from_cart', {'id': restaurant.id, 'itemKey': '__ITEM_KEY__'})|raw }}",
-      items: {{ cart.normalizedItems|json_encode()|raw }},
-      date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
-      validateCartURL: "{{ path('order') }}",
-      restaurantURL: "{{ path('restaurant', {'id': restaurant.id})|raw }}",
-      minimumCartAmount: parseFloat("{{ restaurant.minimumCartAmount }}"),
-      flatDeliveryPrice: parseFloat("{{ restaurant.flatDeliveryPrice }}")
-    }
-    window.__i18n = {
-      "Cart": "{% trans %}Cart{% endtrans %}",
-      "cart.widget.button": "{% trans %}My order{% endtrans %}"
-    }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
-  <script src="{{ asset('js/cart.js') }}"></script>
+<script>
+window.AppData = window.AppData || {};
+window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
+window.AppData.Restaurant = {
+  id: {{ restaurant.id }},
+  minimumCartAmount: {{ restaurant.minimumCartAmount }},
+  flatDeliveryPrice: {{ restaurant.flatDeliveryPrice }}
+};
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
 {% endblock %}
+

@@ -79,20 +79,9 @@
         {% endif %}
       </ul>
 
-      {% set cart = app.session.get('cart') %}
-      {% set deliveryAddress = app.session.get('deliveryAddress') %}
+      <div id='cart-top'></div>
 
-      {% if deliveryAddress is empty and cart is not empty %}
-      <a href="{{ path('restaurant', {'id': cart.restaurant.id}) }}" class="btn btn-default navbar-btn navbar-right">
-        {% trans %}Cart{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
-      </a>
-      {% endif %}
-
-      {% if deliveryAddress is not empty %}
-      <a href="{{ path('order') }}" class="btn btn-default navbar-btn navbar-right">
-        {% trans %}Order{% endtrans %}  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  {{ cart.total }} €
-      </a>
-      {% endif %}
     </div>
   </div>
 </nav>
+

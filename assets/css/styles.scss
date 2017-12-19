@@ -546,3 +546,9 @@ form[name="menu"] {
 .text-monospace {
   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
+
+#cart-top {
+  a {
+    margin-right: 0;
+  }
+}

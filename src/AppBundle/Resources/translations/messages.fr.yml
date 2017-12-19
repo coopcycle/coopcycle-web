@@ -199,6 +199,11 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
+cart.modal.title: Attention
+cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
+cart.modal.confirm: Ajouter
+cart.modal.cancel: Retour
+
 roles.ROLE_ADMIN: 'Administrateur'
 roles.ROLE_COURIER: 'Coursier'
 roles.ROLE_RESTAURANT: 'Restaurant'

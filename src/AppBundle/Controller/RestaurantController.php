@@ -47,7 +47,7 @@ class RestaurantController extends Controller
     {
         $cart = $request->getSession()->get('cart');
 
-        if (is_null($cart)) {
+        if (null === $cart) {
             $cart = new Cart($restaurant);
         }
 
@@ -207,7 +207,7 @@ class RestaurantController extends Controller
 
     /**
      * @Route("/restaurant/{id}-{slug}", name="restaurant",
-     *   requirements={"id" = "\d+", "slug" = "([a-z0-9-]+)"},
+     *   requirements={"id" = "(\d+|__RESTAURANT_ID__)", "slug" = "([a-z0-9-]+)"},
      *   defaults={"slug" = ""}
      * )
      * @Template()
