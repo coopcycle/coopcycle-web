@@ -128,6 +128,12 @@ Origin address: Adresse de départ
 Delivery address: Adresse de livraison
 Weight: Poids
 Show canceled orders: Afficher les commandes annulées
+Validate: Valider
+Please choose a courier in the list below: Veuillez choisir un coursier dans la liste ci-dessous
+The delivery will appear in his planning: La livraison apparaîtra dans son planning
+This delivery will be considered as picked: Cette livraison sera considérée comme récupérée
+This delivery will be considered as delivered: Cette livraison sera considérée comme livrée
+This action cannot be undone: Cette action ne peut pas être annulée
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -172,10 +178,14 @@ order.status.CANCELED: Annulée
 order.status.PAYMENT_ERROR: Erreur de paiement
 
 delivery.status.WAITING: En attente
-delivery.status.DISPATCHED: Acceptée
+delivery.status.DISPATCHED: Assignée
 delivery.status.PICKED: Récupérée
 delivery.status.DELIVERED: Livrée
 delivery.status.CANCELED: Annulée
+
+delivery.status.DISPATCHED.verb: Assigner
+delivery.status.PICKED.verb: Récupérer
+delivery.status.DELIVERED.verb: Livrer
 
 delivery.pricing_rules.help: >
   Vous pouvez définir des règles pour la tarification des livraisons :

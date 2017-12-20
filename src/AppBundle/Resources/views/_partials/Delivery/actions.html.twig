@@ -1,0 +1,25 @@
+{% if is_granted('ROLE_ADMIN') and delivery.status == 'WAITING' %}
+  <button type="button" class="btn btn-xs btn-success"
+    data-toggle="modal"
+    data-target="#delivery-modal"
+    data-delivery="{{ delivery.id }}"
+    data-action="dispatch">
+    {% trans %}delivery.status.DISPATCHED.verb{% endtrans %}
+  </button>
+{% elseif is_granted('ROLE_COURIER') and delivery.status == 'DISPATCHED' %}
+  <button type="button" class="btn btn-xs btn-success"
+    data-toggle="modal"
+    data-target="#delivery-modal"
+    data-delivery="{{ delivery.id }}"
+    data-action="pick">
+    {% trans %}delivery.status.PICKED.verb{% endtrans %}
+  </button>
+{% elseif is_granted('ROLE_COURIER') and delivery.status == 'PICKED' %}
+  <button type="button" class="btn btn-xs btn-success"
+    data-toggle="modal"
+    data-target="#delivery-modal"
+    data-delivery="{{ delivery.id }}"
+    data-action="deliver">
+    {% trans %}delivery.status.DELIVERED.verb{% endtrans %}
+  </button>
+{% endif %}

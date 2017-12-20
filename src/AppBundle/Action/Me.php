@@ -56,6 +56,13 @@ class Me
             'status' => $status,
         ];
 
+        $order = null;
+        if (null !== $delivery->getOrder()) {
+            $order = [
+                'id' => $delivery->getOrder()->getId(),
+            ];
+        }
+
         if (null !== $delivery) {
             $data['delivery'] = [
                 'id' => $delivery->getId(),
@@ -68,9 +75,7 @@ class Me
                     'longitude' => $delivery->getDeliveryAddress()->getGeo()->getLongitude(),
                     'latitude' => $delivery->getDeliveryAddress()->getGeo()->getLatitude(),
                 ],
-                'order' => [
-                    'id' => $delivery->getOrder()->getId(),
-                ],
+                'order' => $order,
             ];
         }
 
