@@ -56,14 +56,15 @@ class Me
             'status' => $status,
         ];
 
-        $order = null;
-        if (null !== $delivery->getOrder()) {
-            $order = [
-                'id' => $delivery->getOrder()->getId(),
-            ];
-        }
-
         if (null !== $delivery) {
+
+            $order = null;
+            if (null !== $delivery->getOrder()) {
+                $order = [
+                    'id' => $delivery->getOrder()->getId(),
+                ];
+            }
+
             $data['delivery'] = [
                 'id' => $delivery->getId(),
                 'status' => $delivery->getStatus(),
