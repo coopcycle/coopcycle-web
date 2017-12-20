@@ -38,6 +38,10 @@ delivery.status.PICKED: Picked
 delivery.status.DELIVERED: Delivered
 delivery.status.CANCELED: Canceled
 
+delivery.status.DISPATCHED.verb: Dispatch
+delivery.status.PICKED.verb: Pick
+delivery.status.DELIVERED.verb: Deliver
+
 delivery.pricing_rules.help: >
   You can define rules for deliveries pricing:
   each rule defines an « expression » and an associated price.

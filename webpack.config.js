@@ -28,6 +28,7 @@ var webpackConfig = {
     'js/order-tracking': './js/app/order/tracking.jsx',
     'js/profile-deliveries': './js/app/profile/deliveries.js',
     'js/delivery-form': './js/app/delivery/form.jsx',
+    'js/delivery-list': './js/app/delivery/list.jsx',
     'js/delivery-pricing-rules': './js/app/delivery/pricing-rules.jsx',
     'js/restaurant-form': './js/app/restaurant/form.jsx',
     'js/restaurant-menu': './js/app/restaurant/menu.jsx',

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
+use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ProfileController extends Controller
 {
     use AccessControlTrait;
+    use DeliveryTrait;
     use AdminTrait;
     use RestaurantTrait;
 
@@ -198,6 +200,7 @@ class ProfileController extends Controller
 
         return [
             'deliveries' => $deliveries,
+            'routes' => $this->getDeliveryRoutes(),
             'avg_delivery_time' => $avgDeliveryTime,
             'delivery_times' => $deliveryTimes,
         ];
@@ -380,5 +383,14 @@ class ProfileController extends Controller
 
             return $this->cancelOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
         }
+    }
+
+    protected function getDeliveryRoutes()
+    {
+        return [
+            'list'    => 'profile_courier_deliveries',
+            'pick'    => 'profile_delivery_pick',
+            'deliver' => 'profile_delivery_deliver'
+        ];
     }
 }

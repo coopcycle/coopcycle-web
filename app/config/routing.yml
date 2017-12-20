@@ -22,6 +22,25 @@ web:
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
+admin_delivery_pick:
+    path:     /admin/deliveries/{id}/pick
+    defaults: { _controller: AppBundle:Admin:pickDelivery }
+    methods:  [ POST ]
+
+admin_delivery_deliver:
+    path:     /admin/deliveries/{id}/deliver
+    defaults: { _controller: AppBundle:Admin:deliverDelivery }
+    methods:  [ POST ]
+
+profile_delivery_pick:
+    path:     /profile/deliveries/{id}/pick
+    defaults: { _controller: AppBundle:Profile:pickDelivery }
+    methods:  [ POST ]
+
+profile_delivery_deliver:
+    path:     /profile/deliveries/{id}/deliver
+    defaults: { _controller: AppBundle:Profile:deliverDelivery }
+    methods:  [ POST ]
 
 redirect_to_locale:
     path: /

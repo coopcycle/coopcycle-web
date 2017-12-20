@@ -5,24 +5,23 @@
 {% endblock %}
 
 {% block content %}
-  <table class="table">
-  {% for delivery in deliveries %}
-    <tr>
-      <td>
-        {{ delivery.originAddress.streetAddress }}
-        <br>
-        {{ delivery.deliveryAddress.streetAddress }}
-      </td>
-      <td>{{ (delivery.distance / 1000)|round(2) }} Km</td>
-      <td><i class="fa fa-clock-o"></i> {{ (delivery.duration / 60)|round }} Min</td>
-      <td>{{ delivery.date|date('d/m H:i') }}</td>
-      <td class="text-right">
-        {% if delivery.order is not empty %}
-          <a href="{{ path('admin_order', { id: delivery.order.id }) }}">{% trans %}Order{% endtrans %}</a>
-        {% endif %}
-      </td>
-    </tr>
-  {% endfor %}
-  </table>
-  <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Add{% endtrans %}</a>
+  {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: true } %}
+  <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}Add{% endtrans %}
+  </a>
+  {% include "AppBundle::_partials/Delivery/modal.html.twig" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.AppData = window.AppData || {};
+window.AppData.Delivery = {
+  actions: {
+    dispatch: "{{ path(routes.dispatch, { id: '__DELIVERY_ID__' }) }}",
+    pick: "{{ path(routes.pick, { id: '__DELIVERY_ID__' }) }}",
+    deliver: "{{ path(routes.deliver, { id: '__DELIVERY_ID__' }) }}"
+  }
+}
+</script>
+<script src="{{ asset('js/delivery-list.js') }}"></script>
 {% endblock %}

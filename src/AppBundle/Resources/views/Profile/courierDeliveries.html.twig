@@ -9,29 +9,8 @@
 <hr>
 <canvas id="myChart" width="100" height="33"></canvas>
 <hr>
-
-<table class="table">
-  <thead>
-    <th>#</th>
-    <th>{% trans %}Status{% endtrans %}</th>
-    <th class="text-right">{% trans %}Duration{% endtrans %}</th>
-    <th></th>
-  </thead>
-  <tbody>
-  {% for delivery in deliveries %}
-  <tr>
-    <td>#{{ delivery.id }}</td>
-    <td>{% include "AppBundle:Delivery:label.html.twig" %}</td>
-    <td class="text-right">{{ delivery.actualDuration }}</td>
-    <td class="text-right">
-      <a href="{{ path('profile_order', {id: delivery.order.id}) }}">
-        {% trans %}View order{% endtrans %}
-      </a>
-    </td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
+{% include "AppBundle::_partials/Delivery/list.html.twig" %}
+{% include "AppBundle::_partials/Delivery/modal.html.twig" %}
 {% endblock %}
 
 {% block scripts %}
@@ -45,6 +24,7 @@
     {% set pickup_data = pickup_data|merge([item.pickup_time]) %}
     {% set delivery_data = delivery_data|merge([item.delivery_time]) %}
   {% endfor %}
+
   <script>
   window.AppData = window.AppData || {};
   window.AppData.__i18n = {
@@ -58,6 +38,13 @@
       delivery: {{ delivery_data|json_encode()|raw }}
     }
   }
+  window.AppData.Delivery = {
+    actions: {
+      pick: "{{ path(routes.pick, { id: '__DELIVERY_ID__' }) }}",
+      deliver: "{{ path(routes.deliver, { id: '__DELIVERY_ID__' }) }}"
+    }
+  }
   </script>
   <script src="{{ asset('js/profile-deliveries.js') }}"></script>
+  <script src="{{ asset('js/delivery-list.js') }}"></script>
 {% endblock %}

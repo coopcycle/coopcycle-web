@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
+use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\ApiUser;
@@ -20,6 +21,7 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Service\DeliveryPricingManager;
 use AppBundle\Utils\PricingRuleSet;
 use Doctrine\Common\Collections\ArrayCollection;
+use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -39,6 +41,7 @@ class AdminController extends Controller
     const ITEMS_PER_PAGE = 20;
 
     use AccessControlTrait;
+    use DeliveryTrait;
     use AdminTrait;
     use RestaurantTrait;
 
@@ -320,8 +323,21 @@ class AdminController extends Controller
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:Delivery');
 
+        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
+        $userManager = $this->get('fos_user.user_manager');
+
+        $couriers = array_filter($userManager->findUsers(), function (UserInterface $user) {
+            return $user->hasRole('ROLE_COURIER');
+        });
+
+        usort($couriers, function (UserInterface $a, UserInterface $b) {
+            return $a->getUsername() < $b->getUsername() ? -1 : 1;
+        });
+
         return [
+            'couriers' => $couriers,
             'deliveries' => $repository->findBy([], ['date' => 'DESC']),
+            'routes' => $this->getDeliveryRoutes(),
         ];
     }
 
@@ -460,6 +476,41 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             return $this->cancelOrder($id, 'admin_orders');
         }
+    }
+
+    /**
+     * @Route("/admin/deliveries/{id}/dispatch", methods={"POST"}, name="admin_delivery_dispatch")
+     */
+    public function dispatchDeliveryAction($id, Request $request)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery);
+
+        $userManager = $this->get('fos_user.user_manager');
+
+        $userId = $request->request->get('courier');
+        $courier = $userManager->findUserBy(['id' => $userId]);
+
+        $this->get('coopcycle.delivery.manager')->dispatch($delivery, $courier);
+
+        $this->getDoctrine()
+            ->getManagerForClass(Delivery::class)
+            ->flush();
+
+        return $this->redirectToRoute('admin_deliveries');
+    }
+
+    protected function getDeliveryRoutes()
+    {
+        return [
+            'list'     => 'admin_deliveries',
+            'dispatch' => 'admin_delivery_dispatch',
+            'pick'     => 'admin_delivery_pick',
+            'deliver'  => 'admin_delivery_deliver'
+        ];
     }
 
     /**
