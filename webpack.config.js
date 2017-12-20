@@ -35,6 +35,7 @@ var webpackConfig = {
     'js/restaurant-search': './js/app/restaurant/search.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
     'js/tracking': './js/app/tracking/index.jsx',
+    'js/zone-preview': './js/app/zone/preview.jsx',
   },
   devtool: 'source-map',
   output: {

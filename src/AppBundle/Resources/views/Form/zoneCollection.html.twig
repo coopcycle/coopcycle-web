@@ -1,0 +1,24 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _zone_collection_zones_widget %}
+{{ form_widget(form, { attr: { class: 'row' } }) }}
+{% endblock %}
+
+{% block _zone_collection_zones_entry_row %}
+  <div class="col-sm-6 col-md-4">
+    <div class="thumbnail">
+      {{ form_widget(form.feature) }}
+      <div class="embed-responsive embed-responsive-4by3">
+        <div class="embed-responsive-item" id="{{ form.feature.vars.id ? form.feature.vars.id : '' }}-map"></div>
+      </div>
+      <div class="caption">
+        {{ form_row(form.name) }}
+        <div class="checkbox">
+          <label>
+            <input id="{{ form.feature.vars.id ? form.feature.vars.id : '' }}-checkbox" type="checkbox" checked> Ajouter cette zone
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

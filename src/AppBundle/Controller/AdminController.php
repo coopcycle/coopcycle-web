@@ -11,12 +11,15 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Zone;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\UpdateProfileType;
+use AppBundle\Form\GeoJSONUploadType;
+use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
 use AppBundle\Utils\PricingRuleSet;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -573,5 +576,68 @@ class AdminController extends Controller
         $delivery->setDistance($request->query->get('distance'));
 
         return new JsonResponse($deliveryManager->getPrice($delivery));
+    }
+
+    /**
+     * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
+     * @Template
+     */
+    public function deleteZoneAction($id, Request $request)
+    {
+        $zone = $this->getDoctrine()->getRepository(Zone::class)->find($id);
+
+        $this->getDoctrine()->getManagerForClass(Zone::class)->remove($zone);
+        $this->getDoctrine()->getManagerForClass(Zone::class)->flush();
+
+        return $this->redirectToRoute('admin_zones');
+    }
+
+    /**
+     * @Route("/admin/zones", name="admin_zones")
+     * @Template
+     */
+    public function zonesAction(Request $request)
+    {
+        $zoneCollection = new \stdClass();
+        $zoneCollection->zones = [];
+
+        $geojson = new \stdClass();
+        $geojson->features = [];
+
+        $uploadForm = $this->createForm(GeoJSONUploadType::class, $geojson);
+        $zoneCollectionForm = $this->createForm(ZoneCollectionType::class, $zoneCollection);
+
+        $zoneCollectionForm->handleRequest($request);
+        if ($zoneCollectionForm->isSubmitted() && $zoneCollectionForm->isValid()) {
+
+            $zoneCollection = $zoneCollectionForm->getData();
+
+            foreach ($zoneCollection->zones as $zone) {
+                $this->getDoctrine()->getManagerForClass(Zone::class)->persist($zone);
+            }
+
+            $this->getDoctrine()->getManagerForClass(Zone::class)->flush();
+
+            return $this->redirectToRoute('admin_zones');
+        }
+
+        $uploadForm->handleRequest($request);
+        if ($uploadForm->isSubmitted() && $uploadForm->isValid()) {
+            $geojson = $uploadForm->getData();
+            foreach ($geojson->features as $feature) {
+                $zone = new Zone();
+                $zone->setGeoJSON($feature['geometry']);
+                $zoneCollection->zones[] = $zone;
+            }
+            $zoneCollectionForm->setData($zoneCollection);
+        }
+
+        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
+
+        return [
+            'zones' => $zones,
+            'upload_form' => $uploadForm->createView(),
+            'zone_collection_form' => $zoneCollectionForm->createView(),
+        ];
     }
 }

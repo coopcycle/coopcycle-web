@@ -64,6 +64,9 @@ doctrine:
             raster:
                 class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
                 commented: false
+            geojson:
+                class: 'AppBundle\Doctrine\DBAL\Types\GeoJSONType'
+                commented: false
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
         mapping_types:
@@ -86,6 +89,8 @@ doctrine:
                 ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin
                 ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
                 ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
+                ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
+                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
