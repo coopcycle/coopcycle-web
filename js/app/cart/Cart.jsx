@@ -177,7 +177,7 @@ class Cart extends React.Component
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
-      items = this.state.items.map((item, key) => {
+      let cartItemComponents = items.map((item, key) => {
         return (
           <CartItem
             cart={this}
@@ -193,19 +193,19 @@ class Cart extends React.Component
       })
 
       cartContent = (
-        <div className="list-group">{items}</div>
+        <div className="list-group">{cartItemComponents}</div>
       )
     } else {
       cartContent = ( <div className="alert alert-warning">Votre panier est vide</div> )
     }
 
-    let itemsTotalPrice = _.reduce(this.state.items, function(memo, item) {
+    let itemsTotalPrice = _.reduce(items, function(memo, item) {
       return memo + (item.total);
     }, 0),
-        itemCount = _.reduce(this.state.items, function(memo, item) {
+        itemCount = _.reduce(items, function(memo, item) {
       return memo + (item.quantity);
     }, 0),
-        total = (itemsTotalPrice + flatDeliveryPrice)
+        total = items.length > 0 ? ( itemsTotalPrice + flatDeliveryPrice ) : 0
 
     if (items.length > 0 && itemsTotalPrice < minimumCartAmount) {
       cartWarning = ( <div className="alert alert-warning">{ minimumCartString }</div> )
@@ -262,10 +262,14 @@ class Cart extends React.Component
               <hr />
               {cartContent}
               <hr />
-              <div>
-                <span>Prix de la course </span>
-                <strong className="pull-right">{ numeral(flatDeliveryPrice).format('0,0.00 $') }</strong>
-              </div>
+              {
+                items.length > 0 && (
+                  <div>
+                    <span>Prix de la course </span>
+                    <strong className="pull-right">{ numeral(flatDeliveryPrice).format('0,0.00 $') }</strong>
+                  </div>
+                )
+              }
               <div>
                 <span>Total</span>
                 <strong className="pull-right">{ numeral(total).format('0,0.00 $') }</strong>
