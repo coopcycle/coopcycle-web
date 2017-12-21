@@ -66,7 +66,7 @@ doctrine:
                 commented: false
             geojson:
                 class: 'AppBundle\Doctrine\DBAL\Types\GeoJSONType'
-                commented: false
+                commented: true
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
         mapping_types:

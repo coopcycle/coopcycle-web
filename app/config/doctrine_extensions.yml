@@ -47,7 +47,7 @@ services:
             - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
     postgis.event_subscriber:
-        class: Jsor\Doctrine\PostGIS\Event\DBALSchemaEventSubscriber
+        class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
