@@ -2,6 +2,7 @@ var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
 var Sequelize = require('sequelize');
+var moment = require('moment');
 
 var winston = require('winston');
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
@@ -166,8 +167,14 @@ wsServer.on('connection', function(ws) {
       var message = JSON.parse(messageText);
 
       if (message.type === 'updateCoordinates') {
+
         winston.debug('Courier ' + courier.id + ', state = ' + courier.state + ' updating position in Redis...');
         Courier.updateCoordinates(courier, message.coordinates);
+
+        redis.rpush('tracking:' + courier.username, JSON.stringify({
+          ...message.coordinates,
+          timestamp: moment().unix()
+        }))
       }
 
     });
