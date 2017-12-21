@@ -5,7 +5,7 @@
 {% block body %}
 <div class="container">
 
-  {%  if not restaurant.enabled %}
+  {% if not restaurant.enabled %}
     <div class="row">
       <div class="col-md-6 col-md-offset-3 alert alert-danger">
         {{ "restaurant.disabledWarning" | trans({'%restaurantEditUrl%': restaurant_edit_url}) | raw }}
@@ -13,23 +13,18 @@
     </div>
   {%  endif %}
 
+  {% if not restaurant.isOpen %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3 alert alert-warning">
+        {{ "restaurant.closedWarning" | raw }}
+      </div>
+    </div>
+  {%  endif %}
+
   <div class="page-header restaurant-header">
     <h1>{{ restaurant.name }}</h1>
-  </div>
-
-  <div class="row">
-      <div class="col-md-4">
-        {% for timeRange in restaurant.openingHours %}
-          {{ timeRange }}<br>
-        {% endfor %}
-      </div>
-      <div class="col-md-8">
-        {% if restaurant.isOpen %}
-          <span class="label label-success">{% trans %}Open{% endtrans %}</span>
-        {% else %}
-          <span class="label label-warning">{% trans %}Closed{% endtrans %}</span>
-        {%  endif %}
-      </div>
+    <div id="opening-hours">
+    </div>
   </div>
 
   <div class="row">
@@ -136,6 +131,7 @@
 <script>
 window.AppData = window.AppData || {};
 window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
+window.AppData.openingHours = {{ restaurant.openingHours|json_encode()|raw }};
 window.AppData.Restaurant = {
   id: {{ restaurant.id }},
   minimumCartAmount: {{ restaurant.minimumCartAmount }},
