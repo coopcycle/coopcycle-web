@@ -3,7 +3,9 @@ norestaurantfound: No restaurant open at this time!<br>Try a different delivery 
 restaurant.disabledWarning: |
   This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
 restaurant.closedWarning: |
-  This restaurant is actually closed. You can still order for later on though!
+  This restaurant is closed now. You can still order for later on though!
+restaurant.temporaryClosedWarning: |
+  This restaurant is exceptionally closed. You can still order for later on though!
 restaurant.form.enabled.label: Activated restaurant?
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.

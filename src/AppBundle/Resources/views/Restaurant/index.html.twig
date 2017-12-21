@@ -13,10 +13,16 @@
     </div>
   {%  endif %}
 
-  {% if not restaurant.isOpen %}
+  {% if restaurant.hasClosingRuleForNow %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3 alert alert-danger">
+        {% trans %}restaurant.temporaryClosedWarning{% endtrans %}
+      </div>
+    </div>
+  {% elseif not restaurant.isOpen %}
     <div class="row">
       <div class="col-md-6 col-md-offset-3 alert alert-warning">
-        {{ "restaurant.closedWarning" | raw }}
+        {% trans %}restaurant.closedWarning{% endtrans %}
       </div>
     </div>
   {%  endif %}
