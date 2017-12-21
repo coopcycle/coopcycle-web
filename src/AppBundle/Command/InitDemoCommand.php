@@ -171,7 +171,7 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $contract = new Entity\Contract();
         $contract->setMinimumCartAmount(15);
-        $contract->setFlatDeliveryPrice(7);
+        $contract->setFlatDeliveryPrice(3.5);
 
         $restaurant = new Entity\Restaurant();
 
