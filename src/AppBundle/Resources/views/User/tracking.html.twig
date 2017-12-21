@@ -1,0 +1,26 @@
+{% extends 'AppBundle::' ~ layout ~ '.html.twig' %}
+
+{% block breadcrumb %}
+{% if layout == 'admin' %}
+<li>{% trans %}Users{% endtrans %}</li>
+{% endif %}
+<li>{% trans %}My tracking{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item" id="positions-map"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.AppData = window.AppData || {}
+window.AppData.positions = {{ positions|json_encode()|raw }}
+</script>
+<script src="{{ asset('js/user-tracking.js') }}"></script>
+{% endblock %}

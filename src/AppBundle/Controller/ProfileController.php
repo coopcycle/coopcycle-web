@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
@@ -21,6 +22,7 @@ class ProfileController extends Controller
     use DeliveryTrait;
     use AdminTrait;
     use RestaurantTrait;
+    use UserTrait;
 
     /**
      * @Route("/profile/edit", name="profile_edit")
@@ -392,5 +394,14 @@ class ProfileController extends Controller
             'pick'    => 'profile_delivery_pick',
             'deliver' => 'profile_delivery_deliver'
         ];
+    }
+
+    /**
+     * @Route("/profile/tracking", name="profile_tracking")
+     * @Template("@App/User/tracking.html.twig")
+     */
+    public function trackingAction(Request $request)
+    {
+        return $this->userTracking($this->getUser());
     }
 }

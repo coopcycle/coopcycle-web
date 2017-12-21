@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Utils\Cart;
 use AppBundle\Entity\ApiUser;
@@ -47,6 +48,7 @@ class AdminController extends Controller
     use DeliveryTrait;
     use AdminTrait;
     use RestaurantTrait;
+    use UserTrait;
 
     /**
      * @Route("/admin", name="admin_index")
@@ -230,6 +232,18 @@ class AdminController extends Controller
             'form' => $editForm->createView(),
             'user' => $user,
         ];
+    }
+
+    /**
+     * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
+     * @Template("@App/User/tracking.html.twig")
+     */
+    public function userTrackingAction($username, Request $request)
+    {
+        $userManager = $this->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        return $this->userTracking($user, 'admin');
     }
 
     /**
