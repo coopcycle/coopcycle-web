@@ -1,21 +1,16 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
 {% block fos_user_content %}
-<div class="container">
-  <ol class="breadcrumb">
-    <li>
-      <a href="{{ path('fos_user_profile_show') }}">
-      {% trans from 'messages' %}My account{% endtrans %}
-      </a>
-    </li>
-  </ol>
+
   <h2 class="page-header">
-    {% trans %}My account{% endtrans %}
-    <a class="btn btn-success pull-right" href="{{ path('profile_edit') }}">
+    {% trans from 'messages' %}My account{% endtrans %}
+  </h2>
+
+  <div class="text-right">
+    <a class="btn btn-success" href="{{ path('profile_edit') }}">
       <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
     </a>
-  </h2>
+  </div>
   {% include "AppBundle:Profile:profile.html.twig" %}
 
-</div>
 {% endblock %}

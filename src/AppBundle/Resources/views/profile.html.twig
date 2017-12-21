@@ -5,6 +5,34 @@
 {% block body %}
 <div class="container">
 
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#profile-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a>
+      </div>
+      <div class="collapse navbar-collapse" id="profile-navbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ path('profile_orders') }}"><i class="fa fa-cube"></i>  {% trans %}My orders{% endtrans %}</a></li>
+          <li><a href="{{ path('profile_addresses') }}"><i class="fa fa-map-marker"></i>  {% trans %}My addresses{% endtrans %}</a></li>
+          {% if is_granted('ROLE_COURIER') %}
+          <li><a href="{{ path('profile_courier_deliveries') }}"><i class="fa fa-bicycle"></i>  {% trans %}My deliveries{% endtrans %}</a></li>
+          <li><a href="{{ path('profile_tracking') }}"><i class="fa fa-location-arrow"></i>  {% trans %}My tracking{% endtrans %}</a></li>
+          {% endif %}
+          {% if is_granted('ROLE_RESTAURANT') %}
+            <li><a href="{{ path('profile_restaurants') }}"><i class="fa fa-cutlery"></i>  {% trans %}My restaurants{% endtrans %}</a></li>
+            <li><a href="{{ path('profile_payment') }}"><i class="fa fa fa-credit-card"></i>  {% trans %}Payment{% endtrans %}</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <ol class="breadcrumb">
     <li><a href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a></li>
     {% block breadcrumb %}{% endblock %}

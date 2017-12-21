@@ -1,0 +1,9 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+  {% block fos_user_content %}
+  <div class="container">
+  {% include "@FOSUser/Resetting/reset_content.html.twig" %}
+  </div>
+  {% endblock fos_user_content %}
+{% endblock %}
