@@ -23,27 +23,30 @@
 <script>
 
 var $restaurants = $('#update_profile_restaurants');
-
 var el = document.querySelector('#restaurant-search');
 
-var options = {
-  url: "{{ path('restaurants_search', { format: 'json'  }) }}",
-  placeholder: "{% trans %}Search restaurant…{% endtrans %}",
-  onRestaurantSelected: function(restaurant) {
-    var newRestaurant = $restaurants.attr('data-prototype');
-    newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
-    newRestaurant = newRestaurant.replace(/__value__/g, restaurant.id);
-    newRestaurant = newRestaurant.replace(/__restaurant_name__/g, restaurant.name);
-    $restaurants.find('tbody').append($(newRestaurant));
+if ($restaurants.length === 1 && el) {
+
+  var options = {
+    url: "{{ path('restaurants_search', { format: 'json'  }) }}",
+    placeholder: "{% trans %}Search restaurant…{% endtrans %}",
+    onRestaurantSelected: function(restaurant) {
+      var newRestaurant = $restaurants.attr('data-prototype');
+      newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+      newRestaurant = newRestaurant.replace(/__value__/g, restaurant.id);
+      newRestaurant = newRestaurant.replace(/__restaurant_name__/g, restaurant.name);
+      $restaurants.find('tbody').append($(newRestaurant));
+    }
   }
+
+  new CoopCycle.RestaurantSearch(el, options);
+
+  $(document).on('click', '.remove-restaurant', function(e) {
+    e.preventDefault();
+    $(this).closest('tr').remove();
+  });
+
 }
-
-new CoopCycle.RestaurantSearch(el, options);
-
-$(document).on('click', '.remove-restaurant', function(e) {
-  e.preventDefault();
-  $(this).closest('tr').remove();
-});
 
 </script>
 
