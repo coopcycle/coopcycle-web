@@ -6,19 +6,15 @@ use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
-use AppBundle\Utils\Cart;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Order;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
-use AppBundle\Form\RestaurantType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\ZoneCollectionType;
@@ -34,11 +30,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
-use League\Geotools\Geotools;
-use League\Geotools\Coordinate\Coordinate;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 
 class AdminController extends Controller
 {
@@ -285,6 +277,7 @@ class AdminController extends Controller
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
             'orders' => 'admin_restaurant_orders',
+            'planning' => 'admin_restaurant_planning'
         ], RestaurantAdminType::class);
     }
 
@@ -299,7 +292,21 @@ class AdminController extends Controller
             'restaurants' => 'admin_restaurants',
             'menu' => 'admin_restaurant_menu',
             'orders' => 'admin_restaurant_orders',
+            'planning' => 'admin_restaurant_planning'
         ], RestaurantAdminType::class);
+    }
+
+    /**
+     * @Route("/admin/restaurants/{id}/planning", name="admin_restaurant_planning")
+     * @Template("@App/Restaurant/planning.html.twig")
+     */
+    public function restaurantPlanningAction($id, Request $request)
+    {
+        return $this->editPlanningAction($id, $request, 'AppBundle::profile.html.twig', [
+            'restaurants' => 'admin_restaurants',
+            'restaurant' => 'admin_restaurant',
+            'success' => 'admin_restaurant_planning'
+        ]);
     }
 
     /**

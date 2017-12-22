@@ -1,24 +1,45 @@
-import React from 'react';
-import {render} from 'react-dom';
-import Cart from './Cart.jsx';
+import React from 'react'
+import {render} from 'react-dom'
+import Cart from './Cart.jsx'
 import CartTop from './CartTop.jsx'
-import moment from 'moment';
+import moment from 'moment'
+import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
 
-let isXsDevice = $('.visible-xs').is(':visible')
 
-var topCart = document.getElementById('cart-top');
-var topCartComponent;
-
-var cart = document.getElementById('cart');
-var cartComponent;
-
-let restaurantChangeWarning = false
+let isXsDevice = $('.visible-xs').is(':visible'),
+    topCart = document.getElementById('cart-top'),
+    topCartComponent,
+    cart = document.getElementById('cart'),
+    openingHoursContainer = document.getElementById('opening-hours'),
+    cartComponent,
+    restaurantChangeWarning = false
 
 // It means we are on a restaurant page
 if (window.AppData.Restaurant && window.AppData.Cart.restaurant) {
   if (window.AppData.Restaurant.id !== window.AppData.Cart.restaurant.id) {
     restaurantChangeWarning = true
   }
+}
+
+class OpeningHoursDisplay extends React.Component {
+
+  render () {
+    return (
+      <ul>
+        {this.props.openingHours.map(function (item, index) {
+          return (<li key={index}>{openingHourIntervalToReadable(item)}</li>)
+         })
+        }
+      </ul>
+    )
+  }
+}
+
+if (openingHoursContainer) {
+  render(
+    <OpeningHoursDisplay openingHours={window.AppData.openingHours}/>,
+    openingHoursContainer
+  )
 }
 
 if (topCart) {

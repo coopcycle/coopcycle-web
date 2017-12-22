@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
+use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\RestaurantType;
@@ -93,6 +95,7 @@ trait RestaurantTrait
             'layout' => $layout,
             'menu_route' => $routes['menu'],
             'orders_route' => $routes['orders'],
+            'planning_route' => $routes['planning'],
             'restaurants_route' => $routes['restaurants'],
             'google_api_key' => $this->getParameter('google_api_key'),
         ];
@@ -271,6 +274,41 @@ trait RestaurantTrait
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'add_section_route' => $routes['add_section'],
+        ];
+    }
+
+    protected function editPlanningAction($id, $request, $layout, array $routes) {
+
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $form = $this->createForm(ClosingRuleType::class);
+        $form->add('submit', SubmitType::class, array('label' => 'Save'));
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $closingRule = $form->getData();
+            $closingRule->setRestaurant($restaurant);
+            $manager = $this->getDoctrine()->getManagerForClass(ClosingRule::class);
+            $manager->persist($closingRule);
+            $manager->flush();
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('Your changes were saved.')
+            );
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+        }
+
+        return [
+            'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
+            'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
+            'restaurant' => $restaurant,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'layout' => $layout,
+            'form' => $form->createView()
         ];
     }
 }

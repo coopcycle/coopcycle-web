@@ -2,14 +2,24 @@ norestaurantfound: No restaurant open at this time!<br>Try a different delivery 
 
 restaurant.disabledWarning: |
   This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
+restaurant.closedWarning: |
+  This restaurant is closed now. You can still order for later on though!
+restaurant.temporaryClosedWarning: |
+  This restaurant is exceptionally closed. You can still order for later on though!
 restaurant.form.enabled.label: Activated restaurant?
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
+restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link
+restaurant.form.accessPlanning: Access planning
 restaurant.contract.title: Contract
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+
+restaurant.closingForm.title: Add a temporary closure
+restaurant.closingForm.reason.label: Reason
+restaurant.closingForm.dates.label: Closing from/to
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!
