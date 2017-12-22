@@ -178,7 +178,6 @@ class ProfileController extends Controller
         }
 
         return array(
-            'google_api_key' => $this->getParameter('google_api_key'),
             'form' => $form->createView(),
         );
     }

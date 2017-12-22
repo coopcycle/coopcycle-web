@@ -93,7 +93,6 @@ class OrderController extends Controller
         return array(
             'order' => $order,
             'form' => $form->createView(),
-            'google_api_key' => $this->getParameter('google_api_key'),
             'restaurant' => $order->getRestaurant(),
             'deliveryAddress' => $deliveryAddress,
             'cart' => $this->getCart($request),

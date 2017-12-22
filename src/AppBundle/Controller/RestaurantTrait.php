@@ -97,7 +97,6 @@ trait RestaurantTrait
             'orders_route' => $routes['orders'],
             'planning_route' => $routes['planning'],
             'restaurants_route' => $routes['restaurants'],
-            'google_api_key' => $this->getParameter('google_api_key'),
         ];
     }
 

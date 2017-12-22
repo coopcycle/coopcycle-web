@@ -28,7 +28,6 @@ class IndexController extends Controller
         }
 
         return array(
-            'google_api_key' => $this->getParameter('google_api_key'),
             'addresses' => $addresses
         );
     }

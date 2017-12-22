@@ -399,7 +399,6 @@ class AdminController extends Controller
         }
 
         return [
-            'google_api_key' => $this->getParameter('google_api_key'),
             'form' => $form->createView(),
         ];
     }
