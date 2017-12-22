@@ -31,9 +31,7 @@ closingRules = _.map(closingRules, function (item) {
   }
 })
 
-console.log(moment.locales())
 moment.locale(locale)
-console.log('locale changed')
 
 if (locale === 'fr') {
   antdLocale = frFR

@@ -7,7 +7,7 @@ footer {
   margin-top: 30px;
   border-top: 1px solid $gray;
 
-  @media screen and (max-width: $screen-md-min){
+  @media screen and (max-width: $screen-md-min) {
     display: none;
   }
 }
@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
 .page-header {
   margin: 0 0 10px;
 
-  @media screen and (max-width: $screen-md-min){
+  @media screen and (max-width: $screen-md-min) {
     padding-bottom: 0;
     margin: 0 0 10px;
 
@@ -46,101 +46,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .label {
-    font-weight: 400;
+  font-weight: 400;
 }
 
 .banner-title {
-    color: $white;
-    font-weight: 700;
-    margin-bottom: $bs-base-margin;
+  color: $white;
+  font-weight: 700;
+  margin-bottom: $bs-base-margin;
 }
 
 .banner-search {
-    margin-top: $bs-base-margin * 2;
+  margin-top: $bs-base-margin * 2;
 }
 
 .location-result {
-    position: relative;
-    padding: 10px;
-    cursor: pointer;
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .location-result--active {
-    background-color: $light-gray;
+  background-color: $light-gray;
 }
 
 .location-result--active .location-result--preferred {
-    background-color: $main-blue;
+  background-color: $main-blue;
 }
 
 .location-result--preferred {
-    background-color: $main-blue-light;
+  background-color: $main-blue-light;
 }
 
 .location-result--preferred::after {
-    font-family: 'FontAwesome';
-    content: '\F006';
-    color: $main-blue;
-    position: absolute;
-    top: 8px;
-    right: 4px;
+  font-family: 'FontAwesome';
+  content: '\F006';
+  color: $main-blue;
+  position: absolute;
+  top: 8px;
+  right: 4px;
 
-    font-size: 18px;
-    text-align: center;
-    width: 30px;
+  font-size: 18px;
+  text-align: center;
+  width: 30px;
 }
 
 #banner {
-    padding: 10px 0;
-    background-color: $orange;
-    color: #fff;
-    margin-top: -20px;
-    margin-bottom: 20px;
-    a {
-        color: $light-orange;
-    }
+  padding: 10px 0;
+  background-color: $orange;
+  color: #fff;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  a {
+    color: $light-orange;
+  }
 }
 
 #search {
-    margin-top: -20px;
-    padding: 100px 0;
-    background-color: $main-blue-light;
-    background-image: url(../pattern.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
+  margin-top: -20px;
+  padding: 100px 0;
+  background-color: $main-blue-light;
+  background-image: url(../pattern.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 
 #map {
-    margin-bottom: -30px;
-    background-color: #111;
-    padding: 30px 0;
-    color: #ccc;
+  margin-bottom: -30px;
+  background-color: #111;
+  padding: 30px 0;
+  color: #ccc;
 }
 
 #search small {
-    color: #fff;
+  color: #fff;
 }
-
 
 // ------------------ Cart ------------------
 
 #cart .list-group-item .close {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 $cart-heading-height: 40px;
 
 .cart-heading {
-    position: relative;
-    height: $cart-heading-height;
+  position: relative;
+  height: $cart-heading-height;
 
-    @media screen and (max-width: $screen-md-min) {
-      height: $cart-heading-height;
-      text-align: center;
-      color: $white !important;
-      background-color: $main-blue-light !important;
-    }
+  @media screen and (max-width: $screen-md-min) {
+    height: $cart-heading-height;
+    text-align: center;
+    color: $white !important;
+    background-color: $main-blue-light !important;
+  }
 }
 
 .cart-heading--items {
@@ -181,143 +180,143 @@ $cart-heading-height: 40px;
   overflow-y: scroll;
   height: 100%;
 
-    @media screen and (max-width: $screen-md-min) {
-        padding: 0;
-        margin-bottom: 0;
-        cursor: pointer;
+  @media screen and (max-width: $screen-md-min) {
+    padding: 0;
+    margin-bottom: 0;
+    cursor: pointer;
 
-
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        transform: translateY(calc(100% - #{$cart-heading-height}));
-        transition: transform 0.4s;
-    }
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(calc(100% - #{$cart-heading-height}));
+    transition: transform 0.4s;
+  }
 }
 
 .cart-wrapper--show {
-    @media screen and (max-width: $screen-md-min) {
-        transform: translateY(0);
-    }
+  @media screen and (max-width: $screen-md-min) {
+    transform: translateY(0);
+  }
 }
 
 #map-wrapper {
-    padding: 60px 0;
+  padding: 60px 0;
 }
 
 .restaurant-list-filter {
-    padding-top: $bs-base-margin / 2;
-    margin-bottom: $bs-base-margin;
+  padding-top: $bs-base-margin / 2;
+  margin-bottom: $bs-base-margin;
 }
 
 .restaurant-item:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .restaurant-item:hover img {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .menu-item {
-    position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    padding-right: 45px;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-right: 45px;
 }
 
 .menu-item:after {
-    font-family: 'Glyphicons Halflings';
-    content: "\002b";
-    color: #bdc3c7;
-    position: absolute;
-    right: 15px;
+  font-family: 'Glyphicons Halflings';
+  content: "\002b";
+  color: #bdc3c7;
+  position: absolute;
+  right: 15px;
 }
 
 .menu-item--unavailable {
-    background-color: #f5f5f5;
-    cursor: default;
+  background-color: #f5f5f5;
+  cursor: default;
 }
 
 .menu-item--unavailable:after {
-    content: none;
+  content: none;
 }
 
 .menu-item .menu-item-content {
-    font-weight: bold;
-    width: 80%;
+  font-weight: bold;
+  width: 80%;
 }
 
 .menu-item .menu-item-description {
-    display: block;
-    font-weight: normal;
+  display: block;
+  font-weight: normal;
 }
 
 .menu-item .menu-item-price {
-    width: 20%;
-    text-align: right;
+  width: 20%;
+  text-align: right;
 }
 
 .modifier-item input[type="radio"] {
-    position: relative;
-    margin-left: 0;
+  position: relative;
+  margin-left: 0;
 }
 
 .modifier-item:hover {
-    background-color: $main-blue-light;
+  background-color: $main-blue-light;
 }
 
 .modifier-item__selected {
-    background-color: $main-blue;
+  background-color: $main-blue;
 }
 
 .order-map {
-    z-index:-1;
-    position:absolute;
-    width:100%;
-    height:100%;
-    margin:0;
-    padding:0;
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .order-map__wrapper {
-    position: relative;
+  position: relative;
 }
 
 .order-map__column {
-    margin: 40px 20px 60px;
-    background-color: $white;
-    box-sizing: border-box;
-    padding: 20px;
+  margin: 40px 20px 60px;
+  background-color: $white;
+  box-sizing: border-box;
+  padding: 20px;
 
-    @media screen and (max-width: $screen-md-min){
-      margin: 20px 10px 0;
-      padding: 10px;
-    }
+  @media screen and (max-width: $screen-md-min) {
+    margin: 20px 10px 0;
+    padding: 10px;
+  }
 }
 
 .order-map__image {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .ant-calendar-picker {
-    margin-right: 5px;
+  margin-right: 5px;
 }
+
 .ant-form-item {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 form[name="restaurant"] #restaurant_imageFile_file {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 // ------------------ Address Picker ------------------
@@ -337,26 +336,26 @@ form[name="restaurant"] #restaurant_imageFile_file {
 $input-location-icon-width: 30px;
 
 .input-location-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .input-location-wrapper::before {
-    font-family: 'FontAwesome';
-    content: '\F041';
-    color: white;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
+  font-family: 'FontAwesome';
+  content: '\F041';
+  color: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
 
-    font-size: 22px;
-    text-align: center;
-    width: 30px;
-    background-color: $main-blue;
+  font-size: 22px;
+  text-align: center;
+  width: 30px;
+  background-color: $main-blue;
 
-    // HACK: mimic the bootrstap input border-radius
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+  // HACK: mimic the bootrstap input border-radius
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
 }
 
 .input-location {
@@ -364,8 +363,8 @@ $input-location-icon-width: 30px;
 }
 
 .input-height {
-    line-height: $bs-input-height;
-    height: $bs-input-height;
+  line-height: $bs-input-height;
+  height: $bs-input-height;
 }
 
 // ------------------ Order Follow ------------------
@@ -408,33 +407,33 @@ $order-follow--number-width: 26px;
 // ------------------ Image uploader ------------------
 
 .image-uploader {
-    position: relative;
-    width: 230px;
-    height: 230px;
-    border: 1px dashed black;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
+  position: relative;
+  width: 230px;
+  height: 230px;
+  border: 1px dashed black;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 
 .image-uploader > label {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 #opening-hours .ant-time-picker + .ant-time-picker {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 // HACK : disable Antd input style so it fits with Bootstrap's design
 #closing-rules-range-picker .ant-calendar-picker-input.ant-input {
-    padding: 0;
-    width: 100%;
-    border: none;
+  padding: 0;
+  width: 100%;
+  border: none;
 }
 
 // HACK : vertical-align submit button to bottom
@@ -443,7 +442,7 @@ $order-follow--number-width: 26px;
 }
 
 .restaurant-availability-errors {
-    list-style: initial;
+  list-style: initial;
 }
 
 .calendar-close {
@@ -456,62 +455,62 @@ $order-follow--number-width: 26px;
 }
 
 form[name="menu"] {
-    #menu_sections .switch {
-        padding-top: 26px;
-    }
-    .menu-item-modifiers {
-        margin-top: 15px;
-    }
-    .tooltip-inner {
-        text-align: left;
-    }
+  #menu_sections .switch {
+    padding-top: 26px;
+  }
+  .menu-item-modifiers {
+    margin-top: 15px;
+  }
+  .tooltip-inner {
+    text-align: left;
+  }
 }
 
 .role-icons {
-    .fa {
-        margin-left: 5px;
-    }
+  .fa {
+    margin-left: 5px;
+  }
 }
 
 .restaurant-dashboard {
+  display: flex;
+  height: 500px;
+  &__list {
+    flex: 3;
+    padding-right: 15px;
+    overflow-y: scroll;
+    h4 {
+      margin-top: 0;
+    }
+  }
+  &__details {
     display: flex;
-    height: 500px;
-    &__list {
-        flex: 3;
-        padding-right: 15px;
-        overflow-y: scroll;
-        h4 {
-            margin-top: 0;
-        }
+    flex: 2;
+    padding-left: 15px;
+    &__container {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      &--empty {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+      & > h3 {
+        margin-top: 0;
+      }
     }
-    &__details {
-        display: flex;
-        flex: 2;
-        padding-left: 15px;
-        &__container {
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            &--empty {
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-            }
-            & > h3 {
-                margin-top: 0;
-            }
-        }
-        &__dishes {
-            max-height: 60%;
-            overflow-y: scroll;
-        }
-        &__buttons {
-            margin-top: auto;
-        }
+    &__dishes {
+      max-height: 60%;
+      overflow-y: scroll;
     }
+    &__buttons {
+      margin-top: auto;
+    }
+  }
 }
 
 .delivery-pricing-ruleset {

@@ -5,14 +5,12 @@ indent_style = space
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
+indent_size = 2
 
 [*.html.twig]
 indent_size = 2
 
 [*.php]
-indent_size = 4
-
-[*.scss]
 indent_size = 4
 
 [*.js]

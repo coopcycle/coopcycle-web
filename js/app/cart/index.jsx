@@ -21,8 +21,6 @@ if (window.AppData.Restaurant && window.AppData.Cart.restaurant) {
   }
 }
 
-console.log(openingHourIntervalToReadable(window.AppData.openingHours[0]))
-
 class OpeningHoursDisplay extends React.Component {
 
   render () {
