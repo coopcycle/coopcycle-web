@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Base;
 
+use AppBundle\Utils\TimeRange;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -98,6 +99,49 @@ abstract class LocalBusiness
     public function getOpeningHours()
     {
         return $this->openingHours;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOpen(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            if ($timeRange->isOpen($now)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the next date the LocalBusiness will be opened at.
+     *
+     * @param \DateTime|null $now
+     * @return mixed
+     */
+    public function getNextOpeningDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $dates = [];
+
+        foreach ($this->openingHours as $openingHour) {
+            $timeRange = new TimeRange($openingHour);
+            $dates[] = $timeRange->getNextOpeningDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
     }
 
     public function getTelephone()
