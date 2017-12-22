@@ -207,13 +207,40 @@ class AdminController extends Controller
 
         $user = $userManager->findUserByUsername($username);
 
+        // Roles that can be edited by admin
+        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT'];
+
+        $originalRoles = array_filter($user->getRoles(), function($role) use ($editableRoles) {
+            return in_array($role, $editableRoles);
+        });
+
         $editForm = $this->createForm(UpdateProfileType::class, $user, [
-            'with_restaurants' => true
+            'with_restaurants' => true,
+            'with_roles' => true,
+            'editable_roles' => $editableRoles
         ]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+
             $userManager = $this->getDoctrine()->getManagerForClass(ApiUser::class);
+
+            $user = $editForm->getData();
+
+            $roles = $editForm->get('roles')->getData();
+
+            $rolesToRemove = array_diff($originalRoles, $roles);
+
+            foreach ($rolesToRemove as $role) {
+                $user->removeRole($role);
+            }
+
+            foreach ($roles as $role) {
+                if (!$user->hasRole($role)) {
+                    $user->addRole($role);
+                }
+            }
+
             $userManager->persist($user);
             $userManager->flush();
 

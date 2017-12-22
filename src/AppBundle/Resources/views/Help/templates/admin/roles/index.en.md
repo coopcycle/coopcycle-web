@@ -10,6 +10,6 @@ Only the administrator can assign roles to users.
 | Rôle                            | User   | Courier   | Restaurant |
 | ------------------------------- |:------:|:---------:|:----------:|
 | Place an order                  | ✔      | ✔         | ✔          |
-| Acces to API                    |        | ✔         | ✔          |
+| Access to API                   |        | ✔         | ✔          |
 | Modify the status of an order   |        |           | ✔          |
 | Modify the status of a delivery |        | ✔         |            |

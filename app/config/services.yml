@@ -28,7 +28,7 @@ services:
 
   app.form.update_profile:
     class: AppBundle\Form\UpdateProfileType
-    arguments: ['%country_iso%']
+    arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
     tags:
       - { name: form.type, alias: app_user_registration }
 
