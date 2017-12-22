@@ -200,14 +200,10 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurant->setAddress($address);
         $restaurant->setMenu($this->createMenu($taxCategory));
         $restaurant->setName($this->faker->restaurantName);
-        $restaurant->addOpeningHour('Mo-Fr ' . implode(',', [
-             $this->createRandomTimeRange('09:30', '14:30'),
-             $this->createRandomTimeRange('19:30', '23:30')
-        ]));
-        $restaurant->addOpeningHour('Sa-Su ' . implode(',', [
-             $this->createRandomTimeRange('08:30', '15:30'),
-             $this->createRandomTimeRange('19:00', '01:30')
-        ]));
+        $restaurant->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));
+        $restaurant->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('19:30', '23:30'));
+        $restaurant->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('08:30', '15:30'));
+        $restaurant->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('19:00', '01:30'));
         $restaurant->setContract($contract);
 
         return $restaurant;
