@@ -572,3 +572,18 @@ form[name="menu"] {
     margin-right: 0;
   }
 }
+
+#help {
+  table {
+    width: 100%;
+    th[align="center"] {
+      text-align: center;
+    }
+    th[align="right"] {
+      text-align: right;
+    }
+    th, td {
+      padding: 5px 0;
+    }
+  }
+}

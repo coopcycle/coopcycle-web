@@ -37,6 +37,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new Mailjet\MailjetBundle\MailjetBundle(),
             new M6Web\Bundle\StatsdBundle\M6WebStatsdBundle(),
+            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
