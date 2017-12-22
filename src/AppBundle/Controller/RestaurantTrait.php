@@ -142,7 +142,7 @@ trait RestaurantTrait
             ->getRepository(Restaurant::class)
             ->find($id);
 
-        $this->checkAccess($restaurant);
+        $this->accessControl($restaurant);
 
         $menu = $restaurant->getMenu();
 
