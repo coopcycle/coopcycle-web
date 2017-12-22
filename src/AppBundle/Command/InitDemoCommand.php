@@ -167,6 +167,26 @@ class InitDemoCommand extends ContainerAwareCommand
         return $menu;
     }
 
+    private function createRandomTimeRange($min, $max)
+    {
+        [$closingHour, $closingMinute] = explode(':', $max);
+        [$openingHour, $openingMinute] = explode(':', $min);
+
+        $closing = new \DateTime();
+        $closing->setTime($closingHour, $closingMinute);
+
+        $opening = new \DateTime();
+        $opening->setTime($openingHour, $openingMinute);
+
+        $increment = mt_rand(0, 5) * 15;
+        $decrement = mt_rand(0, 5) * 15;
+
+        $opening->modify("+{$increment} minutes");
+        $closing->modify("-{$decrement} minutes");
+
+        return sprintf('%s-%s', $opening->format('H:i'), $closing->format('H:i'));
+    }
+
     private function createRestaurant(Entity\Address $address, TaxCategoryInterface $taxCategory)
     {
         $contract = new Entity\Contract();
@@ -180,7 +200,14 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurant->setAddress($address);
         $restaurant->setMenu($this->createMenu($taxCategory));
         $restaurant->setName($this->faker->restaurantName);
-        $restaurant->addOpeningHour('Mo-Sa 10:00-19:00');
+        $restaurant->addOpeningHour('Mo-Fr ' . implode(',', [
+             $this->createRandomTimeRange('09:30', '14:30'),
+             $this->createRandomTimeRange('19:30', '23:30')
+        ]));
+        $restaurant->addOpeningHour('Sa-Su ' . implode(',', [
+             $this->createRandomTimeRange('08:30', '15:30'),
+             $this->createRandomTimeRange('19:00', '01:30')
+        ]));
         $restaurant->setContract($contract);
 
         return $restaurant;
