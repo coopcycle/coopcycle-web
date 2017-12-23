@@ -102,6 +102,10 @@ var webpackConfig = {
       contentBase: __dirname + '/web',
       stats: 'minimal',
       compress: true,
+      watchOptions: {
+          ignored: /node_modules/,
+          poll: 1000
+      }
   }
 };
 
