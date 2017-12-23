@@ -30,7 +30,7 @@ orderList = render(
 
       const orderId = order['@id'].replace('/api/orders/', '')
 
-      const url = window.__routes['restaurant_order']
+      const url = window.__routes['dashboard_order']
         .replace('__RESTAURANT_ID__', restaurantId)
         .replace('__ORDER_ID__', orderId)
 
@@ -42,6 +42,7 @@ orderList = render(
 
 orderDetails = render(
   <OrderDetails
+    restaurant={ window.__restaurant }
     order={ window.__order }
     routes={ window.__routes }
     i18n={ window.__i18n }
@@ -49,7 +50,7 @@ orderDetails = render(
       orderList.setActive(null)
       orderDetails.setOrder(null)
 
-      const url = window.__routes['restaurant_orders']
+      const url = window.__routes['dashboard']
         .replace('__RESTAURANT_ID__', restaurantId)
 
       window.history.pushState({}, '', url)

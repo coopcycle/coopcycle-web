@@ -1,16 +1,15 @@
-{% set restaurant_orders_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant_orders' : 'profile_restaurant_orders' %}
-{% set restaurant_menu_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant_menu' : 'profile_restaurant_menu' %}
-{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
-
 <table class="table">
   <tbody>
   {% if restaurants|length > 0 %}
     {% for restaurant in restaurants %}
       <tr>
-        <td><a href="{{ path(restaurant_edit_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
         <td>{{ restaurant.name }}</td>
         <td>{{ restaurant.address.streetAddress }}</td>
-        <td>{{ restaurant.openingHours|join(' ') }}</td>
+        <td>
+          <div class="restaurant-opening-hours"
+            data-opening-hours="{{ restaurant.openingHours|json_encode() }}"></div>
+        </td>
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -19,18 +18,18 @@
             <ul class="dropdown-menu">
               {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
               <li>
-                <a href="{{ path(restaurant_orders_route, { restaurantId: restaurant.id }) }}">
+                <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
                 {% trans %}Orders{% endtrans %}
                 </a>
               </li>
               {% endif %}
               <li>
-                <a href="{{ path(restaurant_menu_route, { id: restaurant.id }) }}">
+                <a href="{{ path(menu_route, { id: restaurant.id }) }}">
                   {% trans %}Menu{% endtrans %}
                 </a>
               </li>
               <li>
-                <a href="{{ path(restaurant_edit_route, { id: restaurant.id }) }}">
+                <a href="{{ path(restaurant_route, { id: restaurant.id }) }}">
                   {% trans %}Settings{% endtrans %}
                 </a>
               </li>

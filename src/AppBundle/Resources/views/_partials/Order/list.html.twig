@@ -14,16 +14,22 @@
   <tbody>
   {% for order in orders %}
   <tr>
-    <td width="5%"><a href="{{ path('admin_order', { id: order.id }) }}">#{{ order.id }}</a></td>
+    <td width="5%">
+      {% if is_granted('ROLE_ADMIN') %}
+      <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: order.restaurant.id, orderId: order.id }) }}">#{{ order.id }}</a>
+      {% else %}
+      <a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a>
+      {% endif %}
+    </td>
     <td width="10%">{% include "AppBundle:Order:label.html.twig" %}</td>
     <td width="10%">{% include "AppBundle:Delivery:label.html.twig" with { delivery: order.delivery } %}</td>
     <td>
-      <a target="_blank" href="{{ path(restaurant_route, { id: order.restaurant.id }) }}">
+      <a href="{{ path(routes.restaurant, { id: order.restaurant.id }) }}">
         {{ order.restaurant.name }}
       </a>
     </td>
     <td class="text-right">
-      <a target="_blank" href="{{ path(pdf_route, { id: order.id }) }}">
+      <a target="_blank" href="{{ path(routes.order_invoice, { id: order.id }) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>   <span>{{ order.totalIncludingTax }} €</span>
     </td>
@@ -32,7 +38,7 @@
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <td>
       {% if order.delivery.status == 'WAITING' %}
-      <form method="post" action="{{ path('admin_order_cancel', { id: order.id }) }}">
+      <form method="post" action="{{ path('admin_orders_order_cancel', { id: order.id }) }}">
         <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}Cancel{% endtrans %}</button>
       </form>
       {% else %}

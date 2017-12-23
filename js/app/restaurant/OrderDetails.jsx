@@ -20,10 +20,16 @@ class OrderList extends React.Component {
   }
 
   resolveOrderRoute(route) {
-    const order = this.state.order;
-    const id = order['@id'].replace('/api/orders/', '');
 
-    return this.props.routes[route].replace('__ORDER_ID__', id)
+    const restaurant = this.props.restaurant;
+    const restaurantId = restaurant['@id'].replace('/api/restaurants/', '');
+
+    const order = this.state.order;
+    const orderId = order['@id'].replace('/api/orders/', '');
+
+    return this.props.routes[route]
+      .replace('__RESTAURANT_ID__', restaurantId)
+      .replace('__ORDER_ID__', orderId)
   }
 
   resolveUserRoute(route) {

@@ -11,7 +11,6 @@
 
 <nav class="navbar">
   <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
         <span class="sr-only">Toggle navigation</span>
@@ -29,7 +28,7 @@
           <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
             <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
           </a>
-          <a href="{{ path(orders_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
+          <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
             <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
           </a>
           <a href="{{ path(planning_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
@@ -111,9 +110,13 @@
   <hr>
   #}
 
+  {% if restaurant.id is not null %}
   <p>
-    <i class="fa fa-info-circle"></i>&nbsp;{% trans %}restaurant.form.temporaryClosingRule{% endtrans %}&nbsp;:&nbsp;<a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
+    <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
+    <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
   </p>
+  {% endif %}
+
   {{ form_row(form.openingHours) }}
   <div id="opening-hours"></div>
   <hr>
@@ -128,8 +131,11 @@
 
   <hr>
 
+  {% if form.contract is defined or restaurant.id is not null %}
   <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
-  {% if is_granted('ROLE_ADMIN') %}
+  {% endif %}
+
+  {% if form.contract is defined %}
     <div class="row margin-bottom-md">
       <div class="col-md-6">
         {{ form_row(form.contract.minimumCartAmount) }}
@@ -139,8 +145,9 @@
       </div>
     </div>
   {% else %}
+    {% if restaurant.id is not null %}
     <div class="row margin-bottom-md">
-      {% if form.contract.vars.valid %}
+      {% if restaurant.contract is not empty %}
         <div class="col-md-12">
           <div class="alert alert-warning">
             {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
@@ -156,11 +163,12 @@
         </div>
       {% endif %}
     </div>
+    {% endif %}
   {% endif %}
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
-      {{ form_widget(form.submit, { attr: { class: 'btn-block btn-primary' } }) }}
+      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
     </div>
   </div>
 

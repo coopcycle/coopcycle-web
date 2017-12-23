@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\OrderTrait;
+use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
@@ -20,7 +22,7 @@ class ProfileController extends Controller
 {
     use AccessControlTrait;
     use DeliveryTrait;
-    use AdminTrait;
+    use OrderTrait;
     use RestaurantTrait;
     use UserTrait;
 
@@ -51,14 +53,9 @@ class ProfileController extends Controller
         );
     }
 
-    /**
-     * @Route("/profile/orders", name="profile_orders")
-     * @Template()
-     */
-    public function ordersAction(Request $request)
+    protected function getOrderList(Request $request)
     {
-        $orderManager = $this->getDoctrine()->getManagerForClass('AppBundle:Order');
-        $orderRepository = $orderManager->getRepository('AppBundle:Order');
+        $orderRepository = $this->getDoctrine()->getRepository(Order::class);
 
         $page = $request->query->get('page', 1);
 
@@ -83,32 +80,10 @@ class ProfileController extends Controller
             $offset
         );
 
-        return array(
-            'orders' => $orders,
-            'page' => $page,
-            'pages' => $pages,
-            'pdf_route' => 'profile_order_invoice',
-            'restaurant_route' => 'restaurant',
-            'show_buttons' => false,
-        );
+        return [ $orders, $pages, $page ];
     }
 
     /**
-     * @Route("/profile/orders/{id}.pdf", name="profile_order_invoice", requirements={"id" = "\d+"})
-     */
-    public function orderInvoiceAction($id, Request $request)
-    {
-        $order = $this->getDoctrine()
-            ->getRepository(Order::class)
-            ->find($id);
-
-        $this->accessControl($order);
-
-        return $this->invoiceAsPdfAction($order);
-    }
-
-    /**
-     * @Route("/profile/orders/{id}", name="profile_order")
      * @Template("@App/Order/details.html.twig")
      */
     public function orderAction($id, Request $request)
@@ -207,90 +182,9 @@ class ProfileController extends Controller
         ];
     }
 
-    /**
-     * @Route("/profile/restaurants", name="profile_restaurants")
-     * @Template()
-     */
-    public function restaurantsAction(Request $request)
+    protected function getRestaurantList(Request $request)
     {
-        $restaurants = $this->getUser()->getRestaurants();
-
-        return [
-            'restaurants' => $restaurants,
-        ];
-    }
-
-    /**
-     * @Route("/profile/restaurants/new", name="profile_restaurant_new")
-     * @Template("@App/Restaurant/form.html.twig")
-     */
-    public function newRestaurantAction(Request $request)
-    {
-        return $this->editRestaurantAction(null, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'profile_restaurant',
-            'restaurants' => 'profile_restaurants',
-            'menu' => 'profile_restaurant_menu',
-            'orders' => 'profile_restaurant_orders',
-            'planning' => 'profile_restaurant_planning'
-        ]);
-    }
-
-    /**
-     * @Route("/profile/restaurants/{id}", name="profile_restaurant")
-     * @Template("@App/Restaurant/form.html.twig")
-     */
-    public function restaurantEditAction($id, Request $request)
-    {
-        return $this->editRestaurantAction($id, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'profile_restaurant',
-            'restaurants' => 'profile_restaurants',
-            'menu' => 'profile_restaurant_menu',
-            'orders' => 'profile_restaurant_orders',
-            'planning' => 'profile_restaurant_planning'
-        ]);
-    }
-
-    /**
-     * @Route("/profile/restaurants/{id}/planning", name="profile_restaurant_planning")
-     * @Template("@App/Restaurant/planning.html.twig")
-     */
-    public function restaurantPlanningAction($id, Request $request)
-    {
-        return $this->editPlanningAction($id, $request, 'AppBundle::profile.html.twig', [
-            'restaurants' => 'profile_restaurants',
-            'restaurant' => 'profile_restaurant',
-            'success' => 'profile_restaurant_planning'
-        ]);
-    }
-
-    /**
-     * @Route("/profile/restaurants/{id}/menu", name="profile_restaurant_menu")
-     * @Template("@App/Restaurant/form-menu.html.twig")
-     */
-    public function restaurantMenuAction($id, Request $request)
-    {
-        return $this->editMenuAction($id, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'profile_restaurants',
-            'restaurants' => 'profile_restaurants',
-            'restaurant' => 'profile_restaurant',
-            'add_section' => 'profile_restaurant_menu_add_section'
-        ]);
-    }
-
-    /**
-     * @Route("/profile/restaurant/{id}/menu/add-section", name="profile_restaurant_menu_add_section")
-     * @Template("@App/Restaurant/form-menu.html.twig")
-     */
-    public function addMenuSectionAction($id, Request $request)
-    {
-        $request->attributes->set('_add_menu_section', true);
-
-        return $this->editMenuAction($id, $request, 'AppBundle::profile.html.twig', [
-            'success' => 'admin_restaurants',
-            'restaurants' => 'profile_restaurants',
-            'restaurant' => 'profile_restaurant',
-            'add_section' => 'profile_restaurant_menu_add_section'
-        ]);
+        return [ $this->getUser()->getRestaurants(), 1, 1 ];
     }
 
     /**
@@ -308,97 +202,6 @@ class ProfileController extends Controller
             'stripe_authorize_url' => $stripeAuthorizeURL,
             'stripe_user_id' => $stripeParams ? $stripeParams->getUserId() : null
         ];
-    }
-
-    /**
-     * @Route("/profile/restaurants/{restaurantId}/orders", name="profile_restaurant_orders")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
-     */
-    public function restaurantOrdersAction($restaurantId, Request $request)
-    {
-        return $this->restaurantDashboard($restaurantId, null, $request, [
-            'order_accept'      => 'profile_order_accept',
-            'order_refuse'      => 'profile_order_refuse',
-            'order_cancel'      => 'profile_order_cancel',
-            'order_ready'       => 'profile_order_ready',
-            'order_details'     => 'profile_order',
-            'user_details'      => 'user',
-            'restaurant'        => 'profile_restaurant',
-            'restaurants'       => 'profile_restaurants',
-            'restaurant_order'  => 'profile_restaurant_order',
-            'restaurant_orders' => 'profile_restaurant_orders'
-        ]);
-    }
-
-     /**
-     * @Route("/profile/restaurants/{restaurantId}/orders/{orderId}", name="profile_restaurant_order")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
-     */
-    public function restaurantOrderAction($restaurantId, $orderId, Request $request)
-    {
-        return $this->restaurantDashboard($restaurantId, $orderId, $request, [
-            'order_accept'      => 'profile_order_accept',
-            'order_refuse'      => 'profile_order_refuse',
-            'order_cancel'      => 'profile_order_cancel',
-            'order_ready'       => 'profile_order_ready',
-            'order_details'     => 'profile_order',
-            'user_details'      => 'user',
-            'restaurant'        => 'profile_restaurant',
-            'restaurants'       => 'profile_restaurants',
-            'restaurant_order'  => 'profile_restaurant_order',
-            'restaurant_orders' => 'profile_restaurant_orders'
-        ]);
-    }
-
-    /**
-     * @Route("/profile/orders/{id}/accept", name="profile_order_accept")
-     * @Template
-     */
-    public function acceptOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->acceptOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
-        }
-    }
-
-    /**
-     * @Route("/profile/orders/{id}/refuse", name="profile_order_refuse")
-     * @Template
-     */
-    public function refuseOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->refuseOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
-        }
-    }
-
-    /**
-     * @Route("/profile/orders/{id}/ready", name="profile_order_ready")
-     * @Template
-     */
-    public function readyOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->readyOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
-        }
-    }
-
-    /**
-     * @Route("/profile/orders/{id}/cancel", name="profile_order_cancel")
-     */
-    public function cancelOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->cancelOrder($id, 'profile_restaurant_orders', ['restaurantId' => $order->getRestaurant()->getId()]);
-        }
     }
 
     protected function getDeliveryRoutes()

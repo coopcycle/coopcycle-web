@@ -19,7 +19,7 @@
       orderId: order ? order.id : null,
       date: date|date_modify('-1 day')|date('Y-m-d')
     } %}
-    <a href="{{ path(routes.restaurant_orders, route_params) }}" class="btn btn-block btn-default">
+    <a href="{{ path(routes.dashboard, route_params) }}" class="btn btn-block btn-default">
       {% trans %}Previous orders{% endtrans %}
     </a>
     <hr>
@@ -46,14 +46,13 @@ window.__restaurant = {{ restaurant_json|raw }};
 window.__orders = {{ orders_json|raw }};
 window.__order = {{ order_json|raw }};
 window.__routes = {
-  'order_accept':      "{{ path(routes.order_accept,      { id: '__ORDER_ID__' }) }}",
-  'order_refuse':      "{{ path(routes.order_refuse,      { id: '__ORDER_ID__' }) }}",
-  'order_cancel':      "{{ path(routes.order_cancel,      { id: '__ORDER_ID__' }) }}",
-  'order_ready':       "{{ path(routes.order_ready,       { id: '__ORDER_ID__' }) }}",
-  'order_details':     "{{ path(routes.order_details,     { id: '__ORDER_ID__' }) }}",
-  'restaurant_order':  "{{ path(routes.restaurant_order,  { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'restaurant_orders': "{{ path(routes.restaurant_orders, { restaurantId: '__RESTAURANT_ID__' }) }}",
-  'user_details':      "{{ path(routes.user_details,      { username: '__USERNAME__' }) }}",
+  'order_accept':    "{{ path(routes.order_accept,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'order_refuse':    "{{ path(routes.order_refuse,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'order_cancel':    "{{ path(routes.order_cancel,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'order_ready':     "{{ path(routes.order_ready,     { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'dashboard':       "{{ path(routes.dashboard,       { restaurantId: '__RESTAURANT_ID__' }) }}",
+  'dashboard_order': "{{ path(routes.dashboard_order, { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
+  'user_details':    "{{ path(routes.user_details,    { username: '__USERNAME__' }) }}",
 };
 window.__i18n = {
   "No orders yet": "{% trans %}No orders yet{% endtrans %}",

@@ -4,11 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\OrderTrait;
+use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu;
+use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\DeliveryType;
@@ -38,7 +41,7 @@ class AdminController extends Controller
 
     use AccessControlTrait;
     use DeliveryTrait;
-    use AdminTrait;
+    use OrderTrait;
     use RestaurantTrait;
     use UserTrait;
 
@@ -51,18 +54,13 @@ class AdminController extends Controller
         return array();
     }
 
-    /**
-     * @Route("/admin/orders", name="admin_orders")
-     */
-    public function ordersAction(Request $request)
+    protected function getOrderList(Request $request)
     {
-        $response = new Response();
         $orderRepository = $this->getDoctrine()->getRepository(Order::class);
 
         $showCanceled = false;
         if ($request->query->has('show_canceled')) {
             $showCanceled = $request->query->getBoolean('show_canceled');
-            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
         } elseif ($request->cookies->has('__show_canceled')) {
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
@@ -89,71 +87,7 @@ class AdminController extends Controller
             'createdAt' => 'DESC'
         ], self::ITEMS_PER_PAGE, $offset);
 
-        // $waiting = $orderRepository->countByStatus(Order::STATUS_WAITING);
-        // $accepted = $orderRepository->countByStatus(Order::STATUS_ACCEPTED);
-        // $ready = $orderRepository->countByStatus(Order::STATUS_READY);
-
-        return $this->render('@App/Admin/orders.html.twig', [
-            'page' => $page,
-            'pages' => $pages,
-            'orders' => $orders,
-            // 'waiting_count' => $waiting,
-            // 'accepted_count' => $accepted,
-            // 'ready_count' => $ready,
-            'pdf_route' => 'admin_order_invoice',
-            'restaurant_route' => 'admin_restaurant',
-            'show_buttons' => true,
-            'show_canceled' => $showCanceled,
-        ], $response);
-    }
-
-    /**
-     * @Route("/admin/orders/{id}.pdf", name="admin_order_invoice", requirements={"id" = "\d+"})
-     */
-    public function orderInvoiceAction($id, Request $request)
-    {
-        $order = $this->getDoctrine()
-            ->getRepository(Order::class)
-            ->find($id);
-
-        $this->accessControl($order);
-
-        return $this->invoiceAsPdfAction($order);
-    }
-
-    /**
-     * @Route("/admin/orders/{id}", name="admin_order")
-     * @Template("@App/Order/details.html.twig")
-     */
-    public function orderAction($id, Request $request)
-    {
-        $order = $this->getDoctrine()
-            ->getRepository('AppBundle:Order')->find($id);
-
-        $orderEvents = [];
-        foreach ($order->getEvents() as $event) {
-            $orderEvents[] = [
-                'status' => $event->getEventName(),
-                'timestamp' => $event->getCreatedAt()->getTimestamp()
-            ];
-        }
-
-        $deliveryEvents = [];
-        foreach ($order->getDelivery()->getEvents() as $event) {
-            $deliveryEvents[] = [
-                'status' => $event->getEventName(),
-                'timestamp' => $event->getCreatedAt()->getTimestamp()
-            ];
-        }
-
-        return array(
-            'order' => $order,
-            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
-            'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
-            'layout' => 'AppBundle::admin.html.twig',
-            'breadcrumb_path' => 'admin_orders'
-        );
+        return [ $orders, $pages, $page ];
     }
 
     /**
@@ -265,13 +199,9 @@ class AdminController extends Controller
         return $this->userTracking($user, 'admin');
     }
 
-    /**
-     * @Route("/admin/restaurants", name="admin_restaurants")
-     * @Template
-     */
-    public function restaurantsAction(Request $request)
+    protected function getRestaurantList(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
+        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
 
         $countAll = $repository
             ->createQueryBuilder('r')->select('COUNT(r)')
@@ -286,84 +216,7 @@ class AdminController extends Controller
             'id' => 'DESC',
         ], self::ITEMS_PER_PAGE, $offset);
 
-        return array(
-            'restaurants' => $restaurants,
-            'page' => $page,
-            'pages' => $pages,
-        );
-    }
-
-    /**
-     * @Route("/admin/restaurant/{id}", name="admin_restaurant")
-     * @Template("@App/Restaurant/form.html.twig")
-     */
-    public function restaurantAction($id, Request $request)
-    {
-        return $this->editRestaurantAction($id, $request, 'AppBundle::admin.html.twig', [
-            'success' => 'admin_restaurant',
-            'restaurants' => 'admin_restaurants',
-            'menu' => 'admin_restaurant_menu',
-            'orders' => 'admin_restaurant_orders',
-            'planning' => 'admin_restaurant_planning'
-        ], RestaurantAdminType::class);
-    }
-
-    /**
-     * @Route("/admin/restaurants/new", name="admin_restaurant_new")
-     * @Template("@App/Restaurant/form.html.twig")
-     */
-    public function newRestaurantAction(Request $request)
-    {
-        return $this->editRestaurantAction(null, $request, 'AppBundle::admin.html.twig', [
-            'success' => 'admin_restaurants',
-            'restaurants' => 'admin_restaurants',
-            'menu' => 'admin_restaurant_menu',
-            'orders' => 'admin_restaurant_orders',
-            'planning' => 'admin_restaurant_planning'
-        ], RestaurantAdminType::class);
-    }
-
-    /**
-     * @Route("/admin/restaurants/{id}/planning", name="admin_restaurant_planning")
-     * @Template("@App/Restaurant/planning.html.twig")
-     */
-    public function restaurantPlanningAction($id, Request $request)
-    {
-        return $this->editPlanningAction($id, $request, 'AppBundle::profile.html.twig', [
-            'restaurants' => 'admin_restaurants',
-            'restaurant' => 'admin_restaurant',
-            'success' => 'admin_restaurant_planning'
-        ]);
-    }
-
-    /**
-     * @Route("/admin/restaurant/{id}/menu", name="admin_restaurant_menu")
-     * @Template("@App/Restaurant/form-menu.html.twig")
-     */
-    public function restaurantMenuAction($id, Request $request)
-    {
-        return $this->editMenuAction($id, $request, 'AppBundle::admin.html.twig', [
-            'success' => 'admin_restaurant_menu',
-            'restaurants' => 'admin_restaurants',
-            'restaurant' => 'admin_restaurant',
-            'add_section' => 'admin_restaurant_menu_add_section'
-        ]);
-    }
-
-    /**
-     * @Route("/admin/restaurant/{id}/menu/add-section", name="admin_restaurant_menu_add_section")
-     * @Template("@App/Restaurant/form-menu.html.twig")
-     */
-    public function addMenuSectionAction($id, Request $request)
-    {
-        $request->attributes->set('_add_menu_section', true);
-
-        return $this->editMenuAction($id, $request, 'AppBundle::admin.html.twig', [
-            'success' => 'admin_restaurants',
-            'restaurants' => 'admin_restaurants',
-            'restaurant' => 'admin_restaurant',
-            'add_section' => 'admin_restaurant_menu_add_section'
-        ]);
+        return [ $restaurants, $pages, $page ];
     }
 
     /**
@@ -428,104 +281,6 @@ class AdminController extends Controller
         return [
             'form' => $form->createView(),
         ];
-    }
-
-    /**
-     * @Route("/admin/restaurants/{restaurantId}/orders", name="admin_restaurant_orders")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
-     */
-    public function restaurantOrdersAction($restaurantId, Request $request)
-    {
-        return $this->restaurantDashboard($restaurantId, null, $request, [
-            'order_accept'      => 'admin_order_accept',
-            'order_refuse'      => 'admin_order_refuse',
-            'order_cancel'      => 'admin_order_cancel',
-            'order_ready'       => 'admin_order_ready',
-            'order_details'     => 'admin_order',
-            'user_details'      => 'user',
-            'restaurant'        => 'admin_restaurant',
-            'restaurants'       => 'admin_restaurants',
-            'restaurant_order'  => 'admin_restaurant_order',
-            'restaurant_orders' => 'admin_restaurant_orders'
-        ]);
-    }
-
-    /**
-     * @Route("/admin/restaurants/{restaurantId}/orders/{orderId}", name="admin_restaurant_order")
-     * @Template("@App/Admin/Restaurant/orders.html.twig")
-     */
-    public function restaurantOrderAction($restaurantId, $orderId, Request $request)
-    {
-        return $this->restaurantDashboard($restaurantId, $orderId, $request, [
-            'order_accept'      => 'admin_order_accept',
-            'order_refuse'      => 'admin_order_refuse',
-            'order_cancel'      => 'admin_order_cancel',
-            'order_ready'       => 'admin_order_ready',
-            'order_details'     => 'admin_order',
-            'user_details'      => 'user',
-            'restaurant'        => 'admin_restaurant',
-            'restaurants'       => 'admin_restaurants',
-            'restaurant_order'  => 'admin_restaurant_order',
-            'restaurant_orders' => 'admin_restaurant_orders'
-        ]);
-    }
-
-    /**
-     * @Route("/admin/orders/{id}/accept", name="admin_order_accept")
-     * @Template
-     */
-    public function acceptOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->acceptOrder($id, 'admin_restaurant_order', [
-                'restaurantId' => $order->getRestaurant()->getId(),
-                'orderId' => $order->getId(),
-            ]);
-        }
-    }
-
-    /**
-     * @Route("/admin/orders/{id}/refuse", name="admin_order_refuse")
-     * @Template
-     */
-    public function refuseOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->refuseOrder($id, 'admin_restaurant_order', [
-                'restaurantId' => $order->getRestaurant()->getId(),
-                'orderId' => $order->getId(),
-            ]);
-        }
-    }
-
-    /**
-     * @Route("/admin/orders/{id}/ready", name="admin_order_ready")
-     * @Template
-     */
-    public function readyOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
-            return $this->readyOrder($id, 'admin_restaurant_order', [
-                'restaurantId' => $order->getRestaurant()->getId(),
-                'orderId' => $order->getId(),
-            ]);
-        }
-    }
-
-    /**
-     * @Route("/admin/orders/{id}/cancel", name="admin_order_cancel")
-     */
-    public function cancelOrderAction($id, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            return $this->cancelOrder($id, 'admin_orders');
-        }
     }
 
     /**

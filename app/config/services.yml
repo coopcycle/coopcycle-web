@@ -30,7 +30,13 @@ services:
     class: AppBundle\Form\UpdateProfileType
     arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
     tags:
-      - { name: form.type, alias: app_user_registration }
+      - { name: form.type, alias: app_update_profile }
+
+  app.form.restaurant:
+    class: AppBundle\Form\RestaurantType
+    arguments: [ '@security.token_storage' ]
+    tags:
+      - { name: form.type, alias: app_restaurant }
 
   my.registration_listener:
     class: AppBundle\EventListener\RegistrationListener

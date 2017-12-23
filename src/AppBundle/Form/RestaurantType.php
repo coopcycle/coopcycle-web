@@ -12,12 +12,27 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RestaurantType extends LocalBusinessType
 {
+    private $tokenStorage;
+
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
+
+        $isAdmin = false;
+        if ($token = $this->tokenStorage->getToken()) {
+            if ($user = $token->getUser()) {
+                $isAdmin = $user->hasRole('ROLE_ADMIN');
+            }
+        }
 
         $builder
             ->add('deliveryService', DeliveryServiceType::class, ['mapped' => false])
@@ -35,6 +50,10 @@ class RestaurantType extends LocalBusinessType
             //     'allow_delete' => true,
             // ))
             ;
+
+        if ($isAdmin) {
+            $builder->add('contract', ContractType::class);
+        }
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,

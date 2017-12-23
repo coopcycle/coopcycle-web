@@ -8,20 +8,25 @@
 <h2 class="page-header">{% trans %}My restaurants{% endtrans %}</h2>
 
 {% if restaurants|length > 0 %}
-  <table class="table">
-    <tbody>
-    {% for restaurant in restaurants %}
-    {% include "AppBundle:Restaurant:list-admin.html.twig" %}
-    {% endfor %}
-    </tbody>
-  </table>
+  {% include "AppBundle::_partials/Restaurant/list.html.twig" %}
 {% else %}
   <div class="alert alert-warning">{% trans %}You don't have any restaurants yet{% endtrans %}</div>
 {% endif %}
 
-<a href="{{ path('profile_restaurant_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}</a>
+<a href="{{ path('profile_restaurant_new') }}" class="btn btn-success">
+  <i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}
+</a>
 
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
+<script>
+document.querySelectorAll('.restaurant-opening-hours').forEach(function(el) {
+  new CoopCycle.OpeningHoursParser(el, {
+    openingHours: JSON.parse(el.getAttribute('data-opening-hours')),
+    locale: $('html').attr('lang')
+  })
+})
+</script>
 {% endblock %}

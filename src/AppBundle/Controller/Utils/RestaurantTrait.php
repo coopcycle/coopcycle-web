@@ -1,8 +1,9 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ClosingRule;
+use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
 use AppBundle\Form\ClosingRuleType;
@@ -13,6 +14,7 @@ use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -35,25 +37,34 @@ trait RestaurantTrait
         return $additionalProperties;
     }
 
-    protected function editRestaurantAction($id, Request $request, $layout, array $routes, $formClass = RestaurantType::class)
+    abstract protected function getRestaurantList(Request $request);
+
+    public function restaurantListAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Restaurant');
-        $em = $this->getDoctrine()->getManagerForClass('AppBundle:Restaurant');
+        $routes = $request->attributes->get('routes');
 
-        if (null === $id) {
-            $restaurant = new Restaurant();
-        } else {
-            $restaurant = $repository->find($id);
-            $this->accessControl($restaurant);
-        }
+        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
 
-        $form = $this->createForm($formClass, $restaurant, [
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurants' => $restaurants,
+            'pages' => $pages,
+            'page' => $page,
+            'dashboard_route' => $routes['dashboard'],
+            'menu_route' => $routes['menu'],
+            'restaurant_route' => $routes['restaurant'],
+        ]);
+    }
+
+    private function renderRestaurantForm(Restaurant $restaurant, Request $request)
+    {
+        $form = $this->createForm(RestaurantType::class, $restaurant, [
             'additional_properties' => $this->getAdditionnalProperties(),
             'validation_groups' => ['activable'],
         ]);
-        $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
         $activationErrors = [];
+        $routes = $request->attributes->get('routes');
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
@@ -61,12 +72,13 @@ trait RestaurantTrait
             if ($form->isValid()) {
                 $restaurant = $form->getData();
 
-                if ($id === null) {
-                    $em->persist($restaurant);
+                if ($restaurant->getId() === null) {
+                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);
+                    // FIXME Do this only when user is not admin ?
                     $this->getUser()->addRestaurant($restaurant);
                 }
 
-                $em->flush();
+                $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
                 $this->addFlash(
                     'notice',
@@ -88,16 +100,89 @@ trait RestaurantTrait
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
-        return [
+        return $this->render($request->attributes->get('template'), [
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'form' => $form->createView(),
-            'layout' => $layout,
+            'layout' => $request->attributes->get('layout'),
             'menu_route' => $routes['menu'],
-            'orders_route' => $routes['orders'],
+            'dashboard_route' => $routes['dashboard'],
             'planning_route' => $routes['planning'],
             'restaurants_route' => $routes['restaurants'],
-        ];
+        ]);
+    }
+
+    public function restaurantAction($id, Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+
+        $restaurant = $repository->find($id);
+
+        $this->accessControl($restaurant);
+
+        return $this->renderRestaurantForm($restaurant, $request);
+    }
+
+    public function newRestaurantAction(Request $request)
+    {
+        // TODO Check roles
+        $restaurant = new Restaurant();
+
+        return $this->renderRestaurantForm($restaurant, $request);
+    }
+
+    private function renderRestaurantDashboard(Request $request, Restaurant $restaurant, Order $order = null)
+    {
+        $this->accessControl($restaurant);
+
+        $date = new \DateTime('now');
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
+        }
+        $date->modify('-1 day');
+
+        $orders = $this->getDoctrine()->getRepository(Order::class)
+            ->getWaitingOrdersForRestaurant($restaurant, $date);
+        $ordersJson = array_map(function ($order) {
+            return $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]);
+        }, $orders);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
+            'orders' => $orders,
+            'orders_json' => '[' . implode(',', $ordersJson) . ']', // FIXME This is ugly...
+            'order' => $order,
+            'order_json' => $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]),
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'routes' => $routes,
+            'date' => $date,
+        ]);
+    }
+
+    public function restaurantDashboardAction($restaurantId, Request $request)
+    {
+        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $orderRepository      = $this->getDoctrine()->getRepository(Order::class);
+
+        $restaurant = $restaurantRepository->find($restaurantId);
+
+        return $this->renderRestaurantDashboard($request, $restaurant);
+    }
+
+    public function restaurantDashboardOrderAction($restaurantId, $orderId, Request $request)
+    {
+        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
+        $orderRepository      = $this->getDoctrine()->getRepository(Order::class);
+
+        $restaurant = $restaurantRepository->find($restaurantId);
+        $order = $orderRepository->find($orderId);
+
+        return $this->renderRestaurantDashboard($request, $restaurant, $order);
     }
 
     private function createMenuForm(Menu $menu, Menu\MenuSection $sectionAdded = null)
@@ -131,10 +216,12 @@ trait RestaurantTrait
         $em->getFilters()->enable('soft_deleteable');
     }
 
-    protected function editMenuAction($id, Request $request, $layout, array $routes)
+    public function restaurantMenuAction($id, Request $request)
     {
+        $routes = $request->attributes->get('routes');
+
         $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
-        $addMenuSection = $request->attributes->get('_add_menu_section', false);
+        $addMenuSection = $request->attributes->get('add_menu_section', false);
         $sectionAdded = null;
 
         $restaurant = $this->getDoctrine()
@@ -265,18 +352,18 @@ trait RestaurantTrait
             }
         }
 
-        return [
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-            'layout' => $layout,
             'section_added' => $sectionAdded,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'add_section_route' => $routes['add_section'],
-        ];
+        ]);
     }
 
-    protected function editPlanningAction($id, $request, $layout, array $routes) {
+    public function restaurantPlanningAction($id, Request $request) {
 
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -300,14 +387,16 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
-        return [
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
             'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
             'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
             'restaurant' => $restaurant,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
-            'layout' => $layout,
             'form' => $form->createView()
-        ];
+        ]);
     }
 }
