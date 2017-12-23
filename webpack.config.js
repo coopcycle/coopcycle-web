@@ -18,7 +18,6 @@ var webpackConfig = {
   entry: {
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
-    'js/address-form': './js/app/address/form.jsx',
     'js/common': ['whatwg-fetch', 'bootstrap'],
     'js/homepage': './js/app/homepage/index.js',
     'js/restaurant-list': './js/app/restaurant-list/index.jsx',
@@ -40,6 +39,7 @@ var webpackConfig = {
     'js/user-tracking': './js/app/user/tracking.jsx',
     'js/widgets/opening-hours-parser': './js/app/widgets/OpeningHoursParser.jsx',
     'js/widgets/opening-hours-input': './js/app/widgets/OpeningHoursInput.jsx',
+    'js/widgets/address-input': './js/app/widgets/AddressInput.jsx',
     'js/zone-preview': './js/app/zone/preview.jsx',
   },
   devtool: 'source-map',

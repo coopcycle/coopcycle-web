@@ -170,6 +170,7 @@
 
 {% block scripts %}
 <script src="{{ asset('js/widgets/opening-hours-input.js') }}"></script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script type="text/javascript">
 
   window.AppData = window.AppData || {};
@@ -181,6 +182,17 @@
   new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
     locale: $('html').attr('lang')
   })
+
+  function initMap() {
+    new CoopCycle.AddressInput(document.querySelector('#restaurant_address_streetAddress'), {
+      elements: {
+        latitude: document.querySelector('#restaurant_address_latitude'),
+        longitude: document.querySelector('#restaurant_address_longitude'),
+        postalCode: document.querySelector('#restaurant_address_postalCode'),
+        addressLocality: document.querySelector('#restaurant_address_addressLocality')
+      }
+    })
+  }
 
   function addForm($container) {
     var prototype = $container.data('prototype');

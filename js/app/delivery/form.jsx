@@ -5,7 +5,6 @@ import { render } from 'react-dom';
 import moment from 'moment';
 import numeral  from 'numeral';
 import 'numeral/locales'
-import autocomplete from '../autocomplete.jsx'
 import DateTimePicker from './DateTimePicker.jsx';
 
 const locale = $('html').attr('lang')
@@ -56,11 +55,11 @@ function refreshRouting() {
     });
 }
 
-function onPlaceChanged(place, markerKey, markerIcon, markerColor) {
+function onLocationChange(location, markerKey, markerIcon, markerColor) {
 
   const position = {
-    lat: place.geometry.location.lat(),
-    lng: place.geometry.location.lng(),
+    lat: location.latitude,
+    lng: location.longitude,
   }
 
   if (markers[markerKey]) {
@@ -81,8 +80,24 @@ function onPlaceChanged(place, markerKey, markerIcon, markerColor) {
 }
 
 window.initMap = function() {
-  autocomplete('delivery_originAddress', place => onPlaceChanged(place, 'origin', 'cube', '#E74C3C'))
-  autocomplete('delivery_deliveryAddress', place => onPlaceChanged(place, 'delivery', 'flag', '#2ECC71'))
+  new CoopCycle.AddressInput(document.querySelector('#delivery_originAddress_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#delivery_originAddress_latitude'),
+      longitude: document.querySelector('#delivery_originAddress_longitude'),
+      postalCode: document.querySelector('#delivery_originAddress_postalCode'),
+      addressLocality: document.querySelector('#delivery_originAddress_addressLocality')
+    },
+    onLocationChange: location => onLocationChange(location, 'origin', 'cube', '#E74C3C')
+  })
+  new CoopCycle.AddressInput(document.querySelector('#delivery_deliveryAddress_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#delivery_deliveryAddress_latitude'),
+      longitude: document.querySelector('#delivery_deliveryAddress_longitude'),
+      postalCode: document.querySelector('#delivery_deliveryAddress_postalCode'),
+      addressLocality: document.querySelector('#delivery_deliveryAddress_addressLocality')
+    },
+    onLocationChange: location => onLocationChange(location, 'delivery', 'flag', '#2ECC71')
+  })
 }
 
 function onDateTimeChange(date) {

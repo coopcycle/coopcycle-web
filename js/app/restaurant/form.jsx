@@ -1,12 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import _ from 'underscore'
-import autocomplete from '../autocomplete.jsx'
 import Switch from 'antd/lib/switch'
-
-const locale = $('html').attr('lang')
-
-window.initMap = () => autocomplete('restaurant_address')
 
 var $deliveryService = $('#restaurant_deliveryService_type')
 $deliveryService.change(function() {

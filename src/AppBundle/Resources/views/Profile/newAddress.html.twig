@@ -11,7 +11,19 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ asset('js/address-form.js') }}"></script>
+  <script src="{{ asset('js/widgets/address-input.js') }}"></script>
+  <script>
+  function initMap() {
+    new CoopCycle.AddressInput(document.querySelector('#address_streetAddress'), {
+      elements: {
+        latitude: document.querySelector('#address_latitude'),
+        longitude: document.querySelector('#address_longitude'),
+        postalCode: document.querySelector('#address_postalCode'),
+        addressLocality: document.querySelector('#address_addressLocality')
+      }
+    })
+  }
+  </script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}
