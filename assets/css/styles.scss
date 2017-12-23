@@ -310,7 +310,8 @@ $cart-heading-height: 40px;
   margin-bottom: 0;
 }
 
-form[name="restaurant"] #restaurant_imageFile_file {
+form[name="restaurant"] #restaurant_imageFile_file,
+form[name="store"] #store_imageFile_file {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;

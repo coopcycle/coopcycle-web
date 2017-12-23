@@ -34,7 +34,7 @@ abstract class LocalBusiness
      *
      * @ORM\Column(type="json_array", nullable=true)
      * @ApiProperty(iri="https://schema.org/openingHours")
-     * @Groups({"restaurant"})
+     * @Groups({"restaurant", "store"})
      */
     protected $openingHours;
 

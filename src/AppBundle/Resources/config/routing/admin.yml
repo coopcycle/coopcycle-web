@@ -173,3 +173,8 @@ admin_orders_order_cancel:
         _controller: AppBundle:Admin:cancelOrder
         redirect_route: admin_orders
     methods: [ POST ]
+
+admin_store:
+    path:     /admin/stores/{id}
+    defaults: { _controller: AppBundle:Admin:store }
+    methods:  [ GET, POST ]

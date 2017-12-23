@@ -68,12 +68,17 @@ class ApiUser extends BaseUser
      */
     protected $telephone;
 
-
     /**
      * @ORM\ManyToMany(targetEntity="Restaurant", cascade={"all"})
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
      */
     private $restaurants;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Store", cascade={"all"})
+     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
+     */
+    private $stores;
 
     /**
      * @ORM\ManyToMany(targetEntity="Address", cascade={"all"})
@@ -91,6 +96,7 @@ class ApiUser extends BaseUser
     {
         $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
+        $this->stores = new ArrayCollection();
         $this->stripeParams = new ArrayCollection();
 
         parent::__construct();
@@ -144,7 +150,6 @@ class ApiUser extends BaseUser
         $this->telephone = $telephone;
     }
 
-
     public function setRestaurants($restaurants)
     {
         $this->restaurants = $restaurants;
@@ -167,6 +172,30 @@ class ApiUser extends BaseUser
     public function getRestaurants()
     {
         return $this->restaurants;
+    }
+
+    public function setStores($stores)
+    {
+        $this->stores = $stores;
+
+        return $this;
+    }
+
+    public function addStore(Store $store)
+    {
+        $this->stores->add($store);
+
+        return $this;
+    }
+
+    public function ownsStore(Store $store)
+    {
+        return $this->stores->contains($store);
+    }
+
+    public function getStores()
+    {
+        return $this->stores;
     }
 
     public function addAddress(Address $addresses)

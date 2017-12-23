@@ -140,6 +140,9 @@ Home: Accueil
 Admin manual: Manuel administrateur
 Upload a GeoJSON file: Uploadez un fichier au format GeoJSON
 Send: Envoyer
+Stores: Magasins
+Create a new store: Créer un nouveau magasin
+There are no stores yet: Pas de magasin pour le moment
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!

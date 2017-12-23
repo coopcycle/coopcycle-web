@@ -1,0 +1,18 @@
+<table class="table">
+  <tbody>
+  {% if stores|length > 0 %}
+    {% for store in stores %}
+      <tr>
+        <td><a href="{{ path('admin_store', { id: store.id }) }}">#{{ store.id }}</a></td>
+        <td>{{ store.name }}</td>
+        <td>{{ store.address.streetAddress }}</td>
+        <td>{{ store.openingHours|join(' ') }}</td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info">
+    {% trans %}There are no stores yet{% endtrans %}
+    </div>
+  {% endif %}
+  </tbody>
+</table>

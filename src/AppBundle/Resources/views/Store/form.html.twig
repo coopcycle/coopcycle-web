@@ -1,0 +1,79 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'AppBundle:Form:store.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_stores') }}">{% trans %}Stores{% endtrans %}</a></li>
+<li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}Create a new store{% endtrans %}{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-4">
+      {{ form_row(form.imageFile) }}
+    </div>
+    <div class="col-sm-8">
+      {{ form_row(form.name) }}
+      <div class="hidden">
+        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
+        <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
+          <i class="fa fa-info-circle"></i>
+        </a>
+      </div>
+      {{ form_row(form.legalName) }}
+      {{ form_row(form.website) }}
+      {{ form_row(form.telephone) }}
+      {% if form.siret is defined %}
+        {{ form_row(form.siret) }}
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
+
+  {{ form_row(form.openingHours) }}
+
+  <hr>
+
+  {{ form_row(form.address.streetAddress) }}
+  {{ form_row(form.address.postalCode) }}
+  {{ form_row(form.address.addressLocality) }}
+  {{ form_widget(form.address.longitude) }}
+  {{ form_widget(form.address.latitude) }}
+  {% do form.address.setRendered %}
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3 col-xs-12">
+      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+    </div>
+  </div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets/opening-hours-input.js') }}"></script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
+<script>
+new CoopCycle.OpeningHoursInput(document.querySelector('#store_openingHours'), {
+  locale: $('html').attr('lang')
+})
+function initMap() {
+  new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#store_address_latitude'),
+      longitude: document.querySelector('#store_address_longitude'),
+      postalCode: document.querySelector('#store_address_postalCode'),
+      addressLocality: document.querySelector('#store_address_addressLocality')
+    }
+  })
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

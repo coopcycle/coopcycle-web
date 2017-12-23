@@ -182,6 +182,15 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
+        store_image:
+            uri_prefix: /images/stores
+            upload_destination: '%kernel.root_dir%/../web/images/stores'
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
 
 csa_guzzle:
     logger: true

@@ -1,0 +1,13 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Stores{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+{% include "AppBundle:Store:list.html.twig" %}
+<a href="{{ path('admin_store_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Create a new store{% endtrans %}</a>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

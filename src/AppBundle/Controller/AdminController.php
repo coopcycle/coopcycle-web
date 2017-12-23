@@ -4,8 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
+use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
@@ -13,11 +15,14 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
+use AppBundle\Form\RestaurantType;
+use AppBundle\Form\StoreType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\ZoneCollectionType;
@@ -42,7 +47,9 @@ class AdminController extends Controller
     use AccessControlTrait;
     use DeliveryTrait;
     use OrderTrait;
+    use LocalBusinessTrait;
     use RestaurantTrait;
+    use StoreTrait;
     use UserTrait;
 
     /**
@@ -491,6 +498,51 @@ class AdminController extends Controller
             'zones' => $zones,
             'upload_form' => $uploadForm->createView(),
             'zone_collection_form' => $zoneCollectionForm->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/admin/stores", name="admin_stores")
+     * @Template
+     */
+    public function storesAction(Request $request)
+    {
+        $stores = $this->getDoctrine()->getRepository(Store::class)->findAll();
+
+        return [
+            'stores' => $stores
+        ];
+    }
+
+    /**
+     * @Route("/admin/stores/new", name="admin_store_new")
+     * @Template("@App/Store/form.html.twig")
+     */
+    public function newStoreAction(Request $request)
+    {
+        $store = new Store();
+        $form = $this->createForm(StoreType::class, $store, [
+            'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $store = $form->getData();
+            $this->getDoctrine()->getManagerForClass(Store::class)->persist($store);
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('Your changes were saved.')
+            );
+
+            return $this->redirectToRoute('admin_stores');
+        }
+
+        return [
+            'store' => $store,
+            'form' => $form->createView(),
         ];
     }
 }

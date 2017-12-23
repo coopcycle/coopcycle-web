@@ -10,6 +10,7 @@ security:
         ROLE_CUSTOMER: ROLE_USER
         ROLE_COURIER: ROLE_CUSTOMER
         ROLE_RESTAURANT: ROLE_USER
+        ROLE_STORE: ROLE_USER
         ROLE_ADMIN: ROLE_COURIER
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
