@@ -134,15 +134,19 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
 <script>
 window.AppData = window.AppData || {};
 window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
-window.AppData.openingHours = {{ restaurant.openingHours|json_encode()|raw }};
 window.AppData.Restaurant = {
   id: {{ restaurant.id }},
   minimumCartAmount: {{ restaurant.minimumCartAmount }},
   flatDeliveryPrice: {{ restaurant.flatDeliveryPrice }}
 };
+
+new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
+  openingHours: {{ restaurant.openingHours|json_encode()|raw }}
+})
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
 {% endblock %}
