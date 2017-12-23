@@ -143,13 +143,14 @@ profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
 profile.orders.empty: Pas de commande pour l'instant!
 
+local_business.form.enabled.label: Activé
+
 restaurant.disabledWarning: |
   Ce restaurant n'est pas activé et n'est donc pas visible des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l'activer dans l'admin</a>.
 restaurant.closedWarning: |
   Ce restaurant est actuellement fermé. Vous pouvez commander pour plus tard!
 restaurant.temporaryClosedWarning: |
   Ce restaurant est exceptionnellement fermé. Vous pouvez commander pour plus tard!
-restaurant.form.enabled.label: Restaurant activé?
 restaurant.form.enabled.tooltip: |
   Un restaurant desactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
