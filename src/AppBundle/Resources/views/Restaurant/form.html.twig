@@ -111,7 +111,6 @@
   <hr>
   #}
 
-  <h4>{% trans %}Opening hours{% endtrans %}</h4>
   <p>
     <i class="fa fa-info-circle"></i>&nbsp;{% trans %}restaurant.form.temporaryClosingRule{% endtrans %}&nbsp;:&nbsp;<a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
   </p>
@@ -170,6 +169,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ asset('js/widgets/opening-hours-input.js') }}"></script>
 <script type="text/javascript">
 
   window.AppData = window.AppData || {};
@@ -177,6 +177,10 @@
   window.AppData.__i18n['Enabled'] = 'Enabled';
   window.AppData.__i18n['Disabled'] = 'Disabled';
   window.AppData.__isActivable = {% if 'enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys %}false{% else %}true{% endif %};
+
+  new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
+    locale: $('html').attr('lang')
+  })
 
   function addForm($container) {
     var prototype = $container.data('prototype');

@@ -6,7 +6,7 @@ import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
 import LocaleProvider from 'antd/lib/locale-provider'
 import frBE from 'antd/lib/locale-provider/fr_BE'
-import openingHourIntervalToReadable from './parseOpeningHours.jsx'
+import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
 import TimeRange from '../utils/TimeRange'
 
 const timeFormat = 'HH:mm';
@@ -34,6 +34,7 @@ export default class extends React.Component {
       rows = _.map(this.props.value, (value) => this.parseOpeningHours(value))
     }
     this.setState({ rows })
+    this.props.onLoad(this.rowsToString(rows))
   }
 
   parseOpeningHours(text) {
@@ -127,12 +128,14 @@ export default class extends React.Component {
     return days + ' ' + hours
   }
 
-  toString() {
-    var lines = _.map(this.state.rows, (row) => {
+  rowsToString(rows) {
+    return _.map(rows, (row) => {
       return this.rowToString(row)
-    });
+    })
+  }
 
-    return lines
+  toArray() {
+    return this.rowsToString(this.state.rows)
   }
 
   disabledMinutes(h) {
@@ -222,7 +225,7 @@ export default class extends React.Component {
   renderAsText() {
     return (
       <ul className="list-unstyled">
-        { this.toString().map((item, index) =>
+        { this.toArray().map((item, index) =>
           <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale) }</li>
         )}
       </ul>

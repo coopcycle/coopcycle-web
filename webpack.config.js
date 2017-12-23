@@ -39,6 +39,7 @@ var webpackConfig = {
     'js/tracking': './js/app/tracking/index.jsx',
     'js/user-tracking': './js/app/user/tracking.jsx',
     'js/widgets/opening-hours-parser': './js/app/widgets/OpeningHoursParser.jsx',
+    'js/widgets/opening-hours-input': './js/app/widgets/OpeningHoursInput.jsx',
     'js/zone-preview': './js/app/zone/preview.jsx',
   },
   devtool: 'source-map',

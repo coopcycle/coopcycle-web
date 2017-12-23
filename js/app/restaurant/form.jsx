@@ -1,4 +1,3 @@
-import OpeningHours from './OpeningHours.jsx'
 import React from 'react'
 import { render } from 'react-dom'
 import _ from 'underscore'
@@ -8,30 +7,6 @@ import Switch from 'antd/lib/switch'
 const locale = $('html').attr('lang')
 
 window.initMap = () => autocomplete('restaurant_address')
-
-var entriesCount = $('input[name^="restaurant[openingHours]"]').length
-
-function onRowAdd() {
-  // grab the prototype template
-  var newWidget = $('#restaurant_openingHours').attr('data-prototype')
-  // replace the "__name__" used in the id and name of the prototype
-  // with a number that's unique to your emails
-  // end name attribute looks like name="contact[emails][2]"
-  newWidget = newWidget.replace(/__name__/g, entriesCount);
-  entriesCount++;
-
-  $('#restaurant_openingHours').append(newWidget)
-}
-
-function onRowRemove(index) {
-  $('#restaurant_openingHours_' + index).remove()
-  $('#opening-hours-text > p').get(index).remove()
-}
-
-let defaultValue = [];
-$('input[name^="restaurant[openingHours]"]').each((index, el) => {
-  defaultValue.push($(el).val())
-});
 
 var $deliveryService = $('#restaurant_deliveryService_type')
 $deliveryService.change(function() {
@@ -97,25 +72,6 @@ function renderSwitch($input) {
 
 
 $(function() {
-  render(<OpeningHours
-      locale={locale}
-      value={defaultValue}
-      onChange={(rows) => {
-        $('#opening-hours-text').empty()
-        _.each(rows, (value, key) => {
-          $('#restaurant_openingHours_' + key).val(value)
-          const $text = $('<p>').addClass('help-block').text(value)
-          $('#opening-hours-text').append($text)
-        })
-      }}
-      onRowAdd={onRowAdd}
-      onRowRemove={onRowRemove} />,
-    document.getElementById('opening-hours')
-  );
-
-  let $form = $('form[name="restaurant"]');
-
   // Render Switch on page load
-  $form.find('.switch').each((index, el) => renderSwitch($(el)))
-
+  $('form[name="restaurant"]').find('.switch').each((index, el) => renderSwitch($(el)))
 })
