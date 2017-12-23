@@ -31,10 +31,5 @@
 
 {% block _restaurant_openingHours_row %}
   {{ form_widget(form) }}
-  <div id="opening-hours-text">
-  {% for row in form %}
-    <p class="help-block">{{ row.vars.value }}</p>
-  {% endfor %}
-  </div>
   <div id="opening-hours"></div>
 {% endblock %}

@@ -116,6 +116,7 @@
     <i class="fa fa-info-circle"></i>&nbsp;{% trans %}restaurant.form.temporaryClosingRule{% endtrans %}&nbsp;:&nbsp;<a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
   </p>
   {{ form_row(form.openingHours) }}
+  <div id="opening-hours"></div>
   <hr>
 
   {{ form_row(form.address.streetAddress) }}

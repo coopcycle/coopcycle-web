@@ -145,7 +145,8 @@ window.AppData.Restaurant = {
 };
 
 new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
-  openingHours: {{ restaurant.openingHours|json_encode()|raw }}
+  openingHours: {{ restaurant.openingHours|json_encode()|raw }},
+  locale: $('html').attr('lang')
 })
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>

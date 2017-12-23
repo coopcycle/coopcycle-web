@@ -1,51 +1,34 @@
 import moment from 'moment'
 import _ from 'lodash'
-
-const locale = $('html').attr('lang')
-
-moment.locale('en')
-
-let openingsWeekDays = moment.weekdaysMin()
-
-moment.locale(locale)
-
-let localeWeekDays = moment.weekdays()
-
-let minDaysToLocaleDays =  {}
-
-
-_.each(openingsWeekDays, function (item, index) {
-  minDaysToLocaleDays[item] = localeWeekDays[index]
-})
+import TimeRange from '../utils/TimeRange'
 
 /*
   Takes an opening interval as formatted in the DB and returns it as a human-readable string
  */
-function openingHourIntervalToReadable(openingHourInterval) {
+function openingHourIntervalToReadable(openingHourInterval, locale) {
 
-  let splitted = openingHourInterval.split(/[ |-]/),
-      startDay = splitted[0],
-      endDay = splitted[1],
-      startHour = splitted[2],
-      endHour = splitted[3],
+  const { days, start, end } = TimeRange.parse(openingHourInterval)
+
+  let startDay = _.first(days),
+      endDay = _.last(days),
       formattedHours,
       formattedDays
 
   if (locale === 'fr') {
-    formattedHours = ['de', startHour.replace(':', 'h'), 'à', endHour.replace(':', 'h')].join(' ')
+    formattedHours = ['de', start.replace(':', 'h'), 'à', end.replace(':', 'h')].join(' ')
 
     if (startDay === endDay) {
-      formattedDays = 'Ouvert le ' + minDaysToLocaleDays[startDay]
+      formattedDays = 'Ouvert le ' + TimeRange.weekday(startDay, locale)
     } else {
-      formattedDays = ['Ouvert du', minDaysToLocaleDays[startDay], 'au', minDaysToLocaleDays[endDay]].join(' ')
+      formattedDays = ['Ouvert du', TimeRange.weekday(startDay, locale), 'au', TimeRange.weekday(endDay, locale)].join(' ')
     }
   } else {
-    formattedHours = [startHour.replace(':', 'h'), 'to', endHour.replace(':', 'h')].join(' ')
+    formattedHours = [start.replace(':', 'h'), 'to', start.replace(':', 'h')].join(' ')
 
     if (startDay === endDay) {
-      formattedDays = 'Open on ' + minDaysToLocaleDays[startDay]
+      formattedDays = 'Open on ' + TimeRange.weekday(startDay, locale)
     } else {
-      formattedDays = ['Open from', minDaysToLocaleDays[startDay], 'to', minDaysToLocaleDays[endDay]].join(' ')
+      formattedDays = ['Open from', TimeRange.weekday(startDay, locale), 'to', TimeRange.weekday(endDay, locale)].join(' ')
     }
   }
 

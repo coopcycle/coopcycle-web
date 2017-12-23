@@ -5,6 +5,8 @@ import _ from 'underscore'
 import autocomplete from '../autocomplete.jsx'
 import Switch from 'antd/lib/switch'
 
+const locale = $('html').attr('lang')
+
 window.initMap = () => autocomplete('restaurant_address')
 
 var entriesCount = $('input[name^="restaurant[openingHours]"]').length
@@ -96,6 +98,7 @@ function renderSwitch($input) {
 
 $(function() {
   render(<OpeningHours
+      locale={locale}
       value={defaultValue}
       onChange={(rows) => {
         $('#opening-hours-text').empty()

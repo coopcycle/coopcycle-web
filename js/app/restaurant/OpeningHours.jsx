@@ -6,6 +6,8 @@ import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
 import LocaleProvider from 'antd/lib/locale-provider'
 import frBE from 'antd/lib/locale-provider/fr_BE'
+import openingHourIntervalToReadable from './parseOpeningHours.jsx'
+import TimeRange from '../utils/TimeRange'
 
 const timeFormat = 'HH:mm';
 
@@ -16,71 +18,28 @@ for (let i = 0; i <= 60; i++) {
   }
 }
 
-moment.locale('en');
-const keys = _.map(moment.weekdaysShort(), (key) => key.substring(0, 2));
-
-moment.locale('fr');
-const weekdaysSorted = moment.weekdaysShort(true);
-const weekdays = _.map(_.object(keys, moment.weekdaysShort()), (weekday, key) => {
-  return {
-    key: key,
-    name: weekday
-  }
-}).sort((a, b) => weekdaysSorted.indexOf(a.name) < weekdaysSorted.indexOf(b.name) ? -1 : 1);
-
 export default class extends React.Component {
 
   constructor(props) {
-
     super(props);
+    this.state = {
+      weekdays: TimeRange.weekdaysShort(props.locale),
+      rows: []
+    };
+  }
 
-    const config = _.object(keys, weekdays);
-
+  componentDidMount() {
     let rows = [ this.createRowData() ];
     if (this.props.value) {
       rows = _.map(this.props.value, (value) => this.parseOpeningHours(value))
     }
-
-    this.state = {
-      config: config,
-      weekdays: weekdays,
-      rows: rows
-    };
+    this.setState({ rows })
   }
 
   parseOpeningHours(text) {
 
-    const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi);
-
-    let days = [];
-    _.each(matches, (match) => {
-      const isRange = match.includes('-');
-      if (isRange) {
-        const [ start, end ] = match.split('-');
-        let append = false;
-        _.each(weekdays, (weekday) => {
-          if (weekday.key === start) {
-            append = true
-          }
-          if (append) {
-            days.push(weekday.key)
-          }
-          if (weekday.key === end) {
-            append = false
-          }
-        })
-      } else {
-        days.push(match)
-      }
-    });
-
-    let start = '';
-    let end = '';
-
-    const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi);
-    if (hours.length === 1) {
-      [ start, end ] = hours[0].split('-')
-    }
+    const { days, start, end } = TimeRange.parse(text)
+    const { weekdays } = this.state
 
     return {
       start: start,
@@ -182,6 +141,7 @@ export default class extends React.Component {
 
   renderRow(row, key) {
 
+    const { weekdays } = this.state
     const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null;
     const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null;
 
@@ -233,6 +193,7 @@ export default class extends React.Component {
   }
 
   createRowData() {
+    const { weekdays } = this.state
     return {
       start: '00:00',
       end: '23:59',
@@ -244,7 +205,7 @@ export default class extends React.Component {
 
   addRow(e) {
     e.preventDefault();
-    const rows = this.state.rows;
+    const { rows, weekdays } = this.state
     rows.push(this.createRowData());
     this.setState({ rows });
     this.props.onRowAdd()
@@ -258,10 +219,23 @@ export default class extends React.Component {
     this.props.onRowRemove(key)
   }
 
-  render() {
+  renderAsText() {
+    return (
+      <ul className="list-unstyled">
+        { this.toString().map((item, index) =>
+          <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale) }</li>
+        )}
+      </ul>
+    )
+  }
 
+  render() {
+    const { weekdays } = this.state
     return (
       <div>
+        <div>
+        { this.renderAsText() }
+        </div>
         <table className="table">
           <thead>
             <tr>
