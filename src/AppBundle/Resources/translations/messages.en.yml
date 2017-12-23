@@ -118,6 +118,15 @@ roles.ROLE_COURIER: 'Courier'
 roles.ROLE_RESTAURANT: 'Restaurant'
 roles.ROLE_USER: 'User'
 
+user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>
+
+roles.ROLE_ADMIN.help: |
+  Administrator : Full access to all features
+roles.ROLE_COURIER.help: |
+  Coursier : view waiting tasks, modify assigned tasks…
+roles.ROLE_RESTAURANT.help: |
+  Restaurant : manage assigned restaurants, manage orders…
+
 search.help: >
   Search restaurants in Paris area : %links%
 

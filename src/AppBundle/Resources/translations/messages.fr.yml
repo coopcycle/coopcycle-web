@@ -135,6 +135,9 @@ This delivery will be considered as picked: Cette livraison sera considérée co
 This delivery will be considered as delivered: Cette livraison sera considérée comme livrée
 This action cannot be undone: Cette action ne peut pas être annulée
 My tracking: Mes itinéraires
+Help: Aide
+Home: Accueil
+Admin manual: Manuel administrateur
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -224,10 +227,19 @@ cart.modal.content: Vous avez commencé votre commande dans un autre restaurant.
 cart.modal.confirm: Ajouter
 cart.modal.cancel: Retour
 
+user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En savoir plus</a>
+
 roles.ROLE_ADMIN: 'Administrateur'
 roles.ROLE_COURIER: 'Coursier'
 roles.ROLE_RESTAURANT: 'Restaurant'
 roles.ROLE_USER: 'Utilisateur'
+
+roles.ROLE_ADMIN.help: |
+  Administrateur : Accès total à toutes les fonctions
+roles.ROLE_COURIER.help: |
+  Coursier : visualiser les courses à faire, changer l'état des courses qui lui sont assignées…
+roles.ROLE_RESTAURANT.help: |
+  Restaurant : gérer les restaurants qui lui sont assignés, gérer les commandes…
 
 # mail
 registration.email.subject: |

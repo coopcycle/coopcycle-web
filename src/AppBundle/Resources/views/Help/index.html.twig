@@ -1,0 +1,33 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+
+<div class="container" id="help">
+
+  <div class="row">
+    <div class="col-md-3">
+      <p>
+        <a href="{{ path('help') }}" class="btn btn-block btn-default">
+          <i class="fa fa-home"></i> {% trans %}Home{% endtrans %}
+        </a>
+      </p>
+      <div class="panel panel-default">
+        <div class="panel-heading">{% trans %}Admin manual{% endtrans %}</div>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <a href="{{ path('help_admin_roles') }}">{% trans %}Roles{% endtrans %}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9">
+      {% set markdown_content %}
+        {% include "AppBundle:Help:" ~ template %}
+      {% endset %}
+      {{ markdown_content|raw|markdown }}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
