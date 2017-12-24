@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use League\Geotools\Coordinate\Coordinate;
+use League\Geotools\Polygon\Polygon;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -73,5 +75,22 @@ class Zone
         $this->polygon = json_encode($geoJSON);
 
         return $this;
+    }
+
+    public function containsAddress(Address $address)
+    {
+        $geojson = $this->getGeoJSON();
+
+        $coordinates = array_map(function ($coordinate) {
+            return [ $coordinate[1], $coordinate[0] ];
+        }, $geojson['coordinates'][0]);
+
+
+        $polygon = new Polygon($coordinates);
+        $polygon->setPrecision(5);
+
+        $coordinate = new Coordinate([ $address->getGeo()->getLatitude(), $address->getGeo()->getLongitude() ]);
+
+        return $polygon->pointInPolygon($coordinate);
     }
 }
