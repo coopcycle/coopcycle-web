@@ -9,6 +9,31 @@
 
 {% block content %}
 
+{% if store.id is not empty %}
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#store-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        {{ store.name }}
+      </span>
+    </div>
+    <div class="collapse navbar-collapse" id="store-navbar">
+      <div class="nav navbar-nav navbar-right">
+        <a href="{{ path('admin_store_delivery_new', { id: store.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-bicycle"></i>  {% trans %}Create new delivery{% endtrans %}
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
 {{ form_start(form) }}
 
   <div class="row">
@@ -31,6 +56,10 @@
       {% endif %}
     </div>
   </div>
+
+  <hr>
+
+  {{ form_row(form.pricingRuleSet) }}
 
   <hr>
 

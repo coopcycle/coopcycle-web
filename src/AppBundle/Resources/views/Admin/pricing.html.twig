@@ -14,7 +14,18 @@
         <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">#{{ ruleSet.id }}</a></td>
         <td>{{ ruleSet.name }}</td>
         <td class="text-right">
-          <a class="btn btn-xs btn-success" href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ 'Modify'| trans }}</a>
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
+                  {% trans %}Settings{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </div>
         </td>
       </tr>
     {% endfor %}

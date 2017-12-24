@@ -4,6 +4,7 @@ namespace AppBundle\Tests\Action;
 
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
+use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryServiceInterface;
@@ -41,7 +42,7 @@ class TestCase extends BaseTestCase
         $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
         $calculator = $this->prophesize(CalculatorInterface::class);
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
-        $deliveryManager = $this->prophesize(DeliveryManager::class);
+        $zoneExpressionLanguageProvider = $this->prophesize(ZoneExpressionLanguageProvider::class);
 
         $deliveryServiceFactory = new DeliveryServiceFactory([], $deliveryService->reveal());
 
@@ -57,7 +58,8 @@ class TestCase extends BaseTestCase
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
-            'tva_livraison'
+            'tva_livraison',
+            $zoneExpressionLanguageProvider->reveal()
         );
 
         $orderManager = new OrderManager(

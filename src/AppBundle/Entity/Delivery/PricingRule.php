@@ -103,13 +103,16 @@ class PricingRule
         return $this;
     }
 
-    public function matches(Delivery $delivery)
+    public function matches(Delivery $delivery, ExpressionLanguage $language = null)
     {
-        $language = new ExpressionLanguage();
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
 
         return $language->evaluate($this->getExpression(), [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
+            'deliveryAddress' => $delivery->getDeliveryAddress()
         ]);
     }
 }

@@ -1,4 +1,11 @@
 <table class="table">
+  <thead>
+    <th></th>
+    <th>{{ 'Name'|trans }}</th>
+    <th>{{ 'Address'|trans }}</th>
+    <th>{{ 'Pricing'|trans }}</th>
+    <th></th>
+  </thead>
   <tbody>
   {% if stores|length > 0 %}
     {% for store in stores %}
@@ -6,7 +13,27 @@
         <td><a href="{{ path('admin_store', { id: store.id }) }}">#{{ store.id }}</a></td>
         <td>{{ store.name }}</td>
         <td>{{ store.address.streetAddress }}</td>
+        <td>{{ store.pricingRuleSet is not null ? store.pricingRuleSet.name : '' }}</td>
         <td>{{ store.openingHours|join(' ') }}</td>
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{ path('admin_store', { id: store.id }) }}">
+                  {% trans %}Settings{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path('admin_store_delivery_new', { id: store.id }) }}">
+                  {% trans %}Create new delivery{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
       </tr>
     {% endfor %}
   {% else %}

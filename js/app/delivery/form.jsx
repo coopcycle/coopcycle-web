@@ -23,6 +23,35 @@ let markers = {
   delivery: null,
 }
 
+function calculatePrice(distance, delivery) {
+
+  $('#delivery_price').attr('disabled', true)
+
+  const deliveryParams = {
+    distance,
+    delivery_address: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(','),
+    pricing_rule_set: $('#delivery_pricingRuleSet').val()
+  }
+
+  $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
+    .then(price => {
+      $('#delivery_price').val(numeral(price).format('0,0.00'))
+      $('#delivery_price').attr('disabled', false)
+    })
+    .catch(e => {
+      $('#delivery_price').attr('disabled', false)
+    })
+}
+
+// Update price when pricing is changed
+if ($('#delivery_pricingRuleSet').is('select')) {
+  $('#delivery_pricingRuleSet').on('change', function(e) {
+    if (_.filter(markers).length === 2) {
+      refreshRouting()
+    }
+  })
+}
+
 function refreshRouting() {
 
   const { origin, delivery } = markers
@@ -45,10 +74,9 @@ function refreshRouting() {
         $('#delivery_distance').text(kms + ' Km');
         $('#delivery_duration').text(minutes + ' min');
 
-        $.getJSON(window.__deliveries_pricing_calculate_url, { distance })
-          .then(price => {
-            $('#delivery_price').val(numeral(price).format('0,0.00'))
-          })
+        if (window.AppData.DeliveryForm.calculatePriceURL) {
+          calculatePrice(distance, delivery)
+        }
 
         // return decodePolyline(data.routes[0].geometry);
       })
@@ -80,6 +108,21 @@ function onLocationChange(location, markerKey, markerIcon, markerColor) {
 }
 
 window.initMap = function() {
+
+  const originAddressLatitude = document.querySelector('#delivery_originAddress_latitude')
+  const originAddressLongitude = document.querySelector('#delivery_originAddress_longitude')
+
+  const hasOriginAddress = originAddressLatitude.value && originAddressLongitude.value
+
+  if (hasOriginAddress) {
+    onLocationChange({
+      latitude: originAddressLatitude.value,
+      longitude: originAddressLongitude.value
+    }, 'origin', 'cube', '#E74C3C')
+    $('#originAddressChecked').removeClass('hidden')
+    setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
+  }
+
   new CoopCycle.AddressInput(document.querySelector('#delivery_originAddress_streetAddress'), {
     elements: {
       latitude: document.querySelector('#delivery_originAddress_latitude'),
@@ -87,7 +130,15 @@ window.initMap = function() {
       postalCode: document.querySelector('#delivery_originAddress_postalCode'),
       addressLocality: document.querySelector('#delivery_originAddress_addressLocality')
     },
-    onLocationChange: location => onLocationChange(location, 'origin', 'cube', '#E74C3C')
+    onLocationChange: location => onLocationChange(location, 'origin', 'cube', '#E74C3C'),
+    onAddressChange: address => {
+      $('#originAddressTitleLabel').text(address.streetAddress)
+      $('#originAddressChecked').removeClass('hidden')
+      if (!hasOriginAddress) {
+        setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
+        setTimeout(() => $('#delivery_deliveryAddress_streetAddress').focus(), 500)
+      }
+    }
   })
   new CoopCycle.AddressInput(document.querySelector('#delivery_deliveryAddress_streetAddress'), {
     elements: {
@@ -96,7 +147,16 @@ window.initMap = function() {
       postalCode: document.querySelector('#delivery_deliveryAddress_postalCode'),
       addressLocality: document.querySelector('#delivery_deliveryAddress_addressLocality')
     },
-    onLocationChange: location => onLocationChange(location, 'delivery', 'flag', '#2ECC71')
+    onLocationChange: location => onLocationChange(location, 'delivery', 'flag', '#2ECC71'),
+    onAddressChange: address => {
+      $('#deliveryAddressTitleLabel').text(address.streetAddress)
+      $('#deliveryAddressChecked').removeClass('hidden')
+    },
+    onLoad: () => {
+      if (hasOriginAddress) {
+        setTimeout(() => $('#delivery_deliveryAddress_streetAddress').focus(), 500)
+      }
+    }
   })
 }
 

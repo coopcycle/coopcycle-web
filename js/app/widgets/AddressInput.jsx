@@ -27,6 +27,10 @@ window.CoopCycle.AddressInput = function(el, options) {
   google.maps.event.clearListeners(el, 'place_changed')
   const autocomplete = new google.maps.places.Autocomplete(el, mapsOptions)
 
+  if (options.hasOwnProperty('onLoad') && typeof options.onLoad === 'function') {
+      options.onLoad()
+    }
+
   autocomplete.addListener('place_changed', function() {
 
     const place = autocomplete.getPlace()
@@ -55,6 +59,10 @@ window.CoopCycle.AddressInput = function(el, options) {
       if (addressTypeToPropertyName.hasOwnProperty(addressType)) {
         propertyNames[addressTypeToPropertyName[addressType]] = place.address_components[i].long_name
       }
+    }
+
+    if (options.hasOwnProperty('onAddressChange') && typeof options.onAddressChange === 'function') {
+      options.onAddressChange({ streetAddress: el.value, ...propertyNames })
     }
 
     _.each(propertyNames, (value, name) => {

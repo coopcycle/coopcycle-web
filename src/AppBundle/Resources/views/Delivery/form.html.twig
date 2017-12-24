@@ -1,0 +1,106 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'AppBundle:Form:delivery.html.twig' %}
+
+{% block breadcrumb %}
+{% if store is not null %}
+<li><a href="{{ path('admin_stores') }}">{% trans %}Stores{% endtrans %}</a></li>
+<li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+{% else %}
+<li><a href="{{ path('admin_deliveries') }}">{% trans %}Deliveries{% endtrans %}</a></li>
+{% endif %}
+<li>{% trans %}Create delivery{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-6">
+
+      {{ form_row(form.date) }}
+      {{ form_row(form.weight) }}
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" href="#collapseOriginAddress" aria-expanded="true" aria-controls="collapseOriginAddress">
+              {% trans %}Origin address{% endtrans %} 
+              <strong id="originAddressTitleLabel">
+              {% if form.originAddress.vars.value %}
+              {{ form.originAddress.vars.value.streetAddress }}
+              {% endif %}
+              </strong>
+            </a>
+            <span class="pull-right hidden" id="originAddressChecked">
+              <i class="fa fa-check" aria-hidden="true" style="color: #27AE60"></i>
+            </span>
+          </h4>
+        </div>
+        <div id="collapseOriginAddress" class="panel-collapse collapse in" role="tabpanel">
+          <div class="panel-body">
+            {{ form_widget(form.originAddress) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" href="#collapseDeliveryAddress" aria-expanded="true" aria-controls="collapseDeliveryAddress">
+              {% trans %}Delivery address{% endtrans %} 
+              <strong id="deliveryAddressTitleLabel"></strong>
+            </a>
+            <span class="pull-right hidden" id="deliveryAddressChecked">
+              <i class="fa fa-check" aria-hidden="true" style="color: #27AE60"></i>
+            </span>
+          </h4>
+        </div>
+        <div id="collapseDeliveryAddress" class="panel-collapse collapse in" role="tabpanel">
+          <div class="panel-body">
+            {{ form_widget(form.deliveryAddress) }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-sm-6">
+      <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item" id="map"></div>
+      </div>
+      <hr>
+      <div class="form-horizontal">
+        {% if store is not null %}
+          <div class="alert alert-info">
+            {% set trans_params = {
+              '%name%': store.pricingRuleSet.name,
+              '%link%': path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id })
+            } %}
+            {% trans with trans_params %}form.delivery.pricing_rule_set.about{% endtrans %}
+          </div>
+        {% endif %}
+        {{ form_row(form.pricingRuleSet) }}
+        {{ form_row(form.distance) }}
+        {{ form_row(form.duration) }}
+        {{ form_row(form.price) }}
+      </div>
+      <hr>
+      <button type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
+    </div>
+  </div>
+
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.AppData = window.AppData || {}
+window.AppData.DeliveryForm = {
+  calculatePriceURL: "{{ path('admin_deliveries_calculate_price') }}"
+}
+</script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
+<script src="{{ asset('js/delivery-form.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places&callback=initMap"
+  async defer></script>
+{% endblock %}

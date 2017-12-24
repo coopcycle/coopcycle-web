@@ -144,6 +144,9 @@ Stores: Magasins
 Create a new store: Créer un nouveau magasin
 There are no stores yet: Pas de magasin pour le moment
 Rules: Règles
+Address: Adresse
+Create new delivery: Créer une livraison
+Create a new pricing: Créer une nouvelle tarification
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -213,6 +216,10 @@ cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
 form.geojson_upload.file: Fichier
+form.store_type.pricing_rule_set.label: Tarification
+form.delivery.pricing_rule_set.about: |
+  La tarification suivante sera appliquée : <a href="%link%" target="_blank">%name%</a>
+form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?

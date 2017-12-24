@@ -60,6 +60,10 @@ cart.widget.title: Your delivery details
 cart.widget.button: Order
 
 form.geojson_upload.file: File
+form.store_type.pricing_rule_set.label: Pricing
+form.delivery.pricing_rule_set.about: |
+  The following pricing will be applied: <a href="%link%" target="_blank">%name%</a>
+form.store_type.pricing_rule_set.placeholder: Choose a pricing
 
 # mail
 email.signature:
