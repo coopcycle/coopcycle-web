@@ -1,0 +1,27 @@
+help:
+    path: /{_locale}/help
+    defaults:
+        _controller: AppBundle:Help:index
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]
+
+help_admin_roles:
+    path: /{_locale}/help/admin/roles
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/roles/index
+        title: Roles
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]
+
+help_admin_pricing:
+    path: /{_locale}/help/admin/pricing
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/pricing/index
+        title: Pricing
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]

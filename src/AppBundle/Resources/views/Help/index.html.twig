@@ -14,9 +14,11 @@
       <div class="panel panel-default">
         <div class="panel-heading">{% trans %}Admin manual{% endtrans %}</div>
         <ul class="list-group">
+          {% for route_key,trans_key in menu %}
           <li class="list-group-item">
-            <a href="{{ path('help_admin_roles') }}">{% trans %}Roles{% endtrans %}</a>
+            <a href="{{ path(route_key) }}">{{ trans_key|trans }}</a>
           </li>
+          {% endfor %}
         </ul>
       </div>
     </div>

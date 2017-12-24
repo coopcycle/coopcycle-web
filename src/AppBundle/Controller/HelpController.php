@@ -8,9 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
- */
 class HelpController extends Controller
 {
     private function resolveTemplate($name, $locale)
@@ -18,25 +15,38 @@ class HelpController extends Controller
         return "templates/$name.{$locale}.md";
     }
 
+    private function getMenu()
+    {
+        $menu = [];
+        foreach ($this->get('router')->getRouteCollection()->all() as $name => $route) {
+            if (strpos($name, 'help_') === 0) {
+                $defaults = $route->getDefaults();
+                $menu[$name] = $defaults['title'];
+            }
+        }
+
+        return $menu;
+    }
+
     /**
-     * @Route("/help", name="help")
      * @Template()
      */
     public function indexAction(Request $request)
     {
         return [
+            'menu' => $this->getMenu(),
             'template' => $this->resolveTemplate('index', $request->getLocale())
         ];
     }
 
     /**
-     * @Route("/help/admin/roles", name="help_admin_roles")
      * @Template("@App/Help/index.html.twig")
      */
-    public function adminRolesAction(Request $request)
+    public function renderMarkdownAction(Request $request)
     {
         return [
-            'template' => $this->resolveTemplate('admin/roles/index', $request->getLocale())
+            'menu' => $this->getMenu(),
+            'template' => $this->resolveTemplate($request->attributes->get('template'), $request->getLocale())
         ];
     }
 }

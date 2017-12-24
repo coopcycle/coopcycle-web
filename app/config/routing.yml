@@ -374,6 +374,9 @@ profile_delivery_deliver:
     defaults: { _controller: AppBundle:Profile:deliverDelivery }
     methods:  [ POST ]
 
+coopcycle_help:
+    resource: '@AppBundle/Resources/config/routing/help.yml'
+
 redirect_to_locale:
     path: /
     defaults:
