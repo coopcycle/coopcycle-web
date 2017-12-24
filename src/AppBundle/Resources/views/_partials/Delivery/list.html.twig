@@ -38,8 +38,9 @@
       <td width="10%" class="text-right">{{ (delivery.distance / 1000)|round(2) }} Km</td>
       <td width="10%" class="text-right"><i class="fa fa-clock-o"></i> {{ (delivery.duration / 60)|round }} Min</td>
       <td class="text-right">
-        {% if delivery.order is not empty %}
-        <a href="{{ path('admin_order', { id: delivery.order.id }) }}" title="{% trans %}Order{% endtrans %}">
+        {% if is_granted('ROLE_ADMIN') and delivery.order is not empty %}
+        <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: delivery.order.restaurant.id, orderId: delivery.order.id }) }}"
+          title="{% trans %}Order{% endtrans %}">
           #{{ delivery.order.id }}
         </a>
         {% else %}
