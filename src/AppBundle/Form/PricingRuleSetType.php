@@ -2,8 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Utils\PricingRuleSet;
-use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +18,7 @@ class PricingRuleSetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('name', TextType::class)
             ->add('rules', CollectionType::class, array(
                 'entry_type' => PricingRuleType::class,
                 'allow_add' => true,

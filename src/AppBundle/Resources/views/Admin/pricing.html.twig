@@ -1,0 +1,34 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}Settings{% endtrans %}</li>
+<li>{% trans %}Pricing{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <tbody>
+  {% if ruleSets|length > 0 %}
+    {% for ruleSet in ruleSets %}
+      <tr>
+        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">#{{ ruleSet.id }}</a></td>
+        <td>{{ ruleSet.name }}</td>
+        <td class="text-right">
+          <a class="btn btn-xs btn-success" href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ 'Modify'| trans }}</a>
+        </td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info">
+    {% trans %}There are no stores yet{% endtrans %}
+    </div>
+  {% endif %}
+  </tbody>
+</table>
+<div class="text-right">
+  <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}">{{ 'Create a new pricing'| trans }}</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

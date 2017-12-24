@@ -49,4 +49,15 @@ class HelpController extends Controller
             'template' => $this->resolveTemplate($request->attributes->get('template'), $request->getLocale())
         ];
     }
+
+    /**
+     * @Route("/help/admin/pricing", name="help_admin_pricing")
+     * @Template("@App/Help/index.html.twig")
+     */
+    public function adminPricingAction(Request $request)
+    {
+        return [
+            'template' => $this->resolveTemplate('admin/pricing/index', $request->getLocale())
+        ];
+    }
 }

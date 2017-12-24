@@ -143,6 +143,7 @@ Send: Envoyer
 Stores: Magasins
 Create a new store: Créer un nouveau magasin
 There are no stores yet: Pas de magasin pour le moment
+Rules: Règles
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -204,23 +205,6 @@ delivery.status.CANCELED: Annulée
 delivery.status.DISPATCHED.verb: Assigner
 delivery.status.PICKED.verb: Récupérer
 delivery.status.DELIVERED.verb: Livrer
-
-delivery.pricing_rules.help: >
-  Vous pouvez définir des règles pour la tarification des livraisons :
-  chaque règle permet de définir une « expression » et un prix associé.
-  <br>
-  Les règles sont parcourues dans l'ordre, et la première dont l'expression est évaluée comme vraie est appliquée.
-  <br>
-  Variables disponibles : <code>distance</code>, <code>weight</code>
-  <br>
-  <br>
-  <strong>Exemples :</strong>
-  <br>
-  <code>distance in 0..3000</code> : la distance est comprise entre 0 et 3000 mètres
-  <br>
-  <code>weight > 1000</code> : le poids est supérieur à 1000 grammes
-  <br><br>
-  <a target="_blank" href="http://symfony.com/doc/3.4/components/expression_language/syntax.html">Syntaxe des expressions</a>
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
@@ -285,6 +269,7 @@ search.help: >
   Cherchez dans les quartiers de Paris : %links%
 
 zones.help: Consultez <a href="%link%">l'aide</a> sur les zones.
+delivery.pricing_rules.help: Consultez <a href="%link%">l'aide</a> sur la tarification.
 
 meta.title: Plateforme de livraison de repas open source. Seulement pour les sociétés coopératives.
 

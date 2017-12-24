@@ -381,18 +381,23 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
-     * @Template
+     * @Template("AppBundle:Admin:pricing.html.twig")
      */
-    public function deliveriesPricingAction(Request $request)
+    public function pricingRuleSetsAction(Request $request)
     {
-        $rules = $this->getDoctrine()
-            ->getRepository(Delivery\PricingRule::class)
-            ->findBy([], ['position' => 'ASC']);
+        $ruleSets = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->findAll();
 
-        $ruleSet = new PricingRuleSet($rules);
+        return [
+            'ruleSets' => $ruleSets
+        ];
+    }
 
+    private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
+    {
         $originalRules = new ArrayCollection();
-        foreach ($ruleSet as $rule) {
+        foreach ($ruleSet->getRules() as $rule) {
             $originalRules->add($rule);
         }
 
@@ -400,18 +405,22 @@ class AdminController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $ruleSet = $form->getData();
 
             $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
 
             foreach ($originalRules as $originalRule) {
-                if (!$data->contains($originalRule)) {
+                if (!$ruleSet->getRules()->contains($originalRule)) {
                     $em->remove($originalRule);
                 }
             }
 
-            foreach ($data as $rule) {
-                $em->persist($rule);
+            foreach ($ruleSet->getRules() as $rule) {
+                $rule->setRuleSet($ruleSet);
+            }
+
+            if (null === $ruleSet->getId()) {
+                $em->persist($ruleSet);
             }
 
             $em->flush();
@@ -422,6 +431,30 @@ class AdminController extends Controller
         return [
             'form' => $form->createView(),
         ];
+    }
+
+    /**
+     * @Route("/admin/deliveries/pricing/new", name="admin_deliveries_pricing_ruleset_new")
+     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     */
+    public function newPricingRuleSetAction(Request $request)
+    {
+        $ruleSet = new Delivery\PricingRuleSet();
+
+        return $this->renderPricingRuleSetForm($ruleSet, $request);
+    }
+
+    /**
+     * @Route("/admin/deliveries/pricing/{id}", name="admin_deliveries_pricing_ruleset")
+     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     */
+    public function pricingRuleSetAction($id, Request $request)
+    {
+        $ruleSet = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        return $this->renderPricingRuleSetForm($ruleSet, $request);
     }
 
     /**

@@ -2,19 +2,19 @@
 {% form_theme form 'AppBundle:Form:pricingRuleSet.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Deliveries{% endtrans %}</li>
-<li>{% trans %}Pricing{% endtrans %}</li>
+<li>{% trans %}Settings{% endtrans %}</li>
+<li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}Pricing{% endtrans %}</a></li>
 {% endblock %}
 
 {% block content %}
 
   <div class="alert alert-info">
-    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans %}delivery.pricing_rules.help{% endtrans %}
+    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_pricing') } %}delivery.pricing_rules.help{% endtrans %}
   </div>
 
-  <hr>
-
   {{ form_start(form) }}
+
+    {{ form_row(form.name) }}
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
       {% trans %}No pricing rule found{% endtrans %}
@@ -23,6 +23,8 @@
     {% if form.rules|length == 0 %}
       {% do form.rules.setRendered %}
     {% endif %}
+
+    {{ form_label(form.rules) }}
 
     <ul id="rule-set" class="delivery-pricing-ruleset"
       data-prototype="{{ form_widget(form.rules.vars.prototype)|e }}">

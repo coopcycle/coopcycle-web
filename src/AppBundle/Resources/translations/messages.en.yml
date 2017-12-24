@@ -53,23 +53,6 @@ delivery.status.DISPATCHED.verb: Dispatch
 delivery.status.PICKED.verb: Pick
 delivery.status.DELIVERED.verb: Deliver
 
-delivery.pricing_rules.help: >
-  You can define rules for deliveries pricing:
-  each rule defines an « expression » and an associated price.
-  <br>
-  The rules are traversed in order, and the first one whose expression is evaluated to true is applied.
-  <br>
-  Available variables: <code>distance</code>, <code>weight</code>
-  <br>
-  <br>
-  <strong>Examples:</strong>
-  <br>
-  <code>distance in 0..3000</code> : the distance is between 0 and 3000 meters
-  <br>
-  <code>weight > 1000</code> : the weight is greater than 1000 grams
-  <br><br>
-  <a target="_blank" href="http://symfony.com/doc/3.4/components/expression_language/syntax.html">Expression syntax</a>
-
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
 
@@ -134,6 +117,7 @@ search.help: >
   Search restaurants in Paris area : %links%
 
 zones.help: Read <a href="%link%">help</a> about zones.
+delivery.pricing_rules.help: Read <a href="%link%">help</a> about pricing.
 
 meta.title: Open-source foodtech. Only for worker-owned business.
 

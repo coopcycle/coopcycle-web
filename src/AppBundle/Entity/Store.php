@@ -116,6 +116,12 @@ class Store extends LocalBusiness
     private $updatedAt;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Delivery\PricingRuleSet", cascade={"persist"})
+     * @ORM\JoinColumn(name="pricing_rule_set_id", referencedColumnName="id")
+     */
+    private $pricingRuleSet;
+
+    /**
      * Gets id.
      *
      * @return int
@@ -239,6 +245,18 @@ class Store extends LocalBusiness
     public function setStripeParams(StripeParams $stripeParams)
     {
         $this->stripeParams = $stripeParams;
+
+        return $this;
+    }
+
+    public function getPricingRuleSet()
+    {
+        return $this->pricingRuleSet;
+    }
+
+    public function setPricingRuleSet($pricingRuleSet)
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
 
         return $this;
     }
