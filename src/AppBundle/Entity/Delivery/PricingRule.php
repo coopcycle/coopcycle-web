@@ -40,6 +40,12 @@ class PricingRule
     protected $position;
 
     /**
+     * @ORM\ManyToOne(targetEntity="PricingRuleSet", inversedBy="rules", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    protected $ruleSet;
+
+    /**
      * Gets id.
      *
      * @return int
@@ -81,6 +87,18 @@ class PricingRule
     public function setPosition($position)
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getRuleSet()
+    {
+        return $this->ruleSet;
+    }
+
+    public function setRuleSet(PricingRuleSet $ruleSet)
+    {
+        $this->ruleSet = $ruleSet;
 
         return $this;
     }
