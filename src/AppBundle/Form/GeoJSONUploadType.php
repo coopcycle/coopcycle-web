@@ -21,6 +21,7 @@ class GeoJSONUploadType extends AbstractType
             ->add('file', FormType\FileType::class, array(
                 'mapped' => false,
                 'required' => true,
+                'label' => 'form.geojson_upload.file'
             ));
 
         $builder->get('file')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {

@@ -25,3 +25,13 @@ help_admin_pricing:
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
+
+help_admin_zones:
+    path: /{_locale}/help/admin/zones
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/zones/index
+        title: Zones
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]

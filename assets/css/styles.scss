@@ -574,6 +574,11 @@ form[name="menu"] {
 }
 
 #help {
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
   table {
     width: 100%;
     th[align="center"] {

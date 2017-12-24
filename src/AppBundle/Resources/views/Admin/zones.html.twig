@@ -8,6 +8,10 @@
 
 {% block content %}
 
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_zones') } %}zones.help{% endtrans %}
+  </div>
+
   {% if upload_form.vars.submitted and upload_form.vars.valid %}
 
     {{ form_start(zone_collection_form) }}
@@ -51,7 +55,8 @@
       <div class="col-md-4 col-md-offset-8">
         {{ form_start(upload_form) }}
           {{ form_row(upload_form.file) }}
-          <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+          <span class="help-block">{% trans %}Upload a GeoJSON file{% endtrans %}</span>
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}Send{% endtrans %}</button>
         {{ form_end(upload_form) }}
       </div>
     </div>

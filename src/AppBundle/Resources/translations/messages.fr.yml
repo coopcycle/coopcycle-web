@@ -138,6 +138,8 @@ My tracking: Mes itinéraires
 Help: Aide
 Home: Accueil
 Admin manual: Manuel administrateur
+Upload a GeoJSON file: Uploadez un fichier au format GeoJSON
+Send: Envoyer
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -223,6 +225,8 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
+form.geojson_upload.file: Fichier
+
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Ajouter
@@ -276,6 +280,8 @@ order.acceptedMail.body: |
 
 search.help: >
   Cherchez dans les quartiers de Paris : %links%
+
+zones.help: Consultez <a href="%link%">l'aide</a> sur les zones.
 
 meta.title: Plateforme de livraison de repas open source. Seulement pour les sociétés coopératives.
 

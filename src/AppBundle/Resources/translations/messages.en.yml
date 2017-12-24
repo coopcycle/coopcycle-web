@@ -76,6 +76,8 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help
 cart.widget.title: Your delivery details
 cart.widget.button: Order
 
+form.geojson_upload.file: File
+
 # mail
 email.signature:
 registration.email.subject: |
@@ -130,6 +132,8 @@ roles.ROLE_RESTAURANT.help: |
 
 search.help: >
   Search restaurants in Paris area : %links%
+
+zones.help: Read <a href="%link%">help</a> about zones.
 
 meta.title: Open-source foodtech. Only for worker-owned business.
 
