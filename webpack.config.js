@@ -18,7 +18,7 @@ var webpackConfig = {
   entry: {
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
-    'js/common': ['whatwg-fetch', 'bootstrap'],
+    'js/common': ['es6-set', 'whatwg-fetch', 'bootstrap'],
     'js/homepage': './js/app/homepage/index.js',
     'js/restaurant-list': './js/app/restaurant-list/index.jsx',
     'js/cart': './js/app/cart/index.jsx',
