@@ -80,10 +80,20 @@ class Osrm extends Base
      */
     public function getRawResponse(GeoCoordinates $origin, GeoCoordinates $destination)
     {
-        $originCoords = implode(',', [$origin->getLongitude(), $origin->getLatitude()]);
-        $destinationCoords = implode(',', [$destination->getLongitude(), $destination->getLatitude()]);
+        return $this->getServiceResponse('route', [ $origin, $destination ], ['overview' => 'full']);
+    }
 
-        $response = $this->client->request('GET', "/route/v1/bicycle/{$originCoords};{$destinationCoords}?overview=full");
+    public function getServiceResponse($service, array $coordinates, array $options = [])
+    {
+        $coords = array_map(function($coordinate) {
+            return implode(',', [ $coordinate->getLongitude(), $coordinate->getLatitude() ]);
+        }, $coordinates);
+
+        $coordsAsString = implode(';', $coords);
+
+        $uri = "/{$service}/v1/bicycle/{$coordsAsString}?" . http_build_query($options);
+
+        $response = $this->client->request('GET', $uri);
 
         return json_decode($response->getBody(), true);
     }

@@ -62,31 +62,26 @@ function refreshRouting() {
 
   const { origin, delivery } = markers
 
-  const params = {
-    origin: [ origin.getLatLng().lat, origin.getLatLng().lng ].join(','),
-    destination: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(',')
-  };
+  MapHelper.route([
+    [ origin.getLatLng().lat, origin.getLatLng().lng ],
+    [ delivery.getLatLng().lat, delivery.getLatLng().lng ]
+  ]).then(route => {
 
-  fetch('/api/routing/route?' + $.param(params))
-    .then(response => {
-      response.json().then(data => {
+    var duration = parseInt(route.duration, 10);
+    var distance = parseInt(route.distance, 10);
 
-        var duration = parseInt(data.routes[0].duration, 10);
-        var distance = parseInt(data.routes[0].distance, 10);
+    var kms = (distance / 1000).toFixed(2);
+    var minutes = Math.ceil(duration / 60);
 
-        var kms = (distance / 1000).toFixed(2);
-        var minutes = Math.ceil(duration / 60);
+    $('#delivery_distance').text(kms + ' Km');
+    $('#delivery_duration').text(minutes + ' min');
 
-        $('#delivery_distance').text(kms + ' Km');
-        $('#delivery_duration').text(minutes + ' min');
+    if (window.AppData.DeliveryForm.calculatePriceURL) {
+      calculatePrice(distance, delivery)
+    }
 
-        if (window.AppData.DeliveryForm.calculatePriceURL) {
-          calculatePrice(distance, delivery)
-        }
-
-        // return decodePolyline(data.routes[0].geometry);
-      })
-    });
+    // return decodePolyline(data.routes[0].geometry);
+  })
 }
 
 function onLocationChange(location, markerKey, markerIcon, markerColor) {

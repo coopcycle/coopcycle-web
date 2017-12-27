@@ -57,21 +57,29 @@ function decodePolyline(polyline) {
   return polylineCoords;
 }
 
+function route(coordinates) {
+  const markersAsString = coordinates
+    .map(coordinate => coordinate[0] + ',' + coordinate[1])
+    .join(';')
+  return $.getJSON(window.AppData.MapHelper.routeURL.replace('__COORDINATES__', markersAsString))
+    .then(response => {
+      const { routes } = response
+      return routes[0]
+    })
+}
+
 function getPolyline(origin, destination) {
+
   var originLatLng = origin.getLatLng();
   var destinationLatLng = destination.getLatLng();
 
-  var params = {
-    origin: [originLatLng.lat, originLatLng.lng].join(','),
-    destination: [destinationLatLng.lat, destinationLatLng.lng].join(',')
-  };
+  var coordinates = [
+    [originLatLng.lat, originLatLng.lng],
+    [destinationLatLng.lat, destinationLatLng.lng]
+  ]
 
-  return fetch('/api/routing/route?origin=' + params.origin + '&destination=' + params.destination)
-    .then((response) => {
-      return response.json().then((data) => {
-        return decodePolyline(data.routes[0].geometry);
-      })
-    });
+  return route(coordinates)
+    .then(route => decodePolyline(route.geometry))
 }
 
 module.exports = {
@@ -80,5 +88,6 @@ module.exports = {
   createMarkerIcon: createMarkerIcon,
   fitToLayers: fitToLayers,
   decodePolyline: decodePolyline,
-  getPolyline: getPolyline
+  getPolyline: getPolyline,
+  route
 };

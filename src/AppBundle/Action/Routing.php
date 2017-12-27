@@ -27,24 +27,53 @@ class Routing
         $this->routing = $routing;
     }
 
+    private function decodeCoordinates($coordinates)
+    {
+        $coords = explode(';', $coordinates);
+
+        return array_map(function($coord) {
+            [ $latitude, $longitude ] = explode(',', $coord);
+            return new GeoCoordinates($latitude, $longitude);
+        }, $coords);
+    }
+
     /**
      * @Route(
-     *     path="/routing/route",
+     *     path="/routing/route/{coordinates}",
      *     name="routing_route"
      * )
      * @Method("GET")
      */
-    public function routeAction(Request $request): JsonResponse
+    public function routeAction($coordinates, Request $request): JsonResponse
     {
-        $origin = $request->query->get('origin');
-        $destination = $request->query->get('destination');
+        $data = $this->routing->getServiceResponse(
+            'route',
+            $this->decodeCoordinates($coordinates),
+            [
+                'steps' => 'true',
+                'overview' => 'full'
+            ]
+        );
 
-        list($originLat, $originLng) = explode(',', $origin);
-        list($destinationLat, $destinationLng) = explode(',', $destination);
+        return new JsonResponse($data);
+    }
 
-        $data = $this->routing->getRawResponse(
-            new GeoCoordinates($originLat, $originLng),
-            new GeoCoordinates($destinationLat, $destinationLng)
+    /**
+     * @Route(
+     *     path="/routing/trip/{coordinates}",
+     *     name="routing_trip"
+     * )
+     * @Method("GET")
+     */
+    public function tripAction($coordinates, Request $request): JsonResponse
+    {
+        $data = $this->routing->getServiceResponse(
+            'trip',
+            $this->decodeCoordinates($coordinates),
+            [
+                'steps' => 'true',
+                'overview' => 'full'
+            ]
         );
 
         return new JsonResponse($data);
