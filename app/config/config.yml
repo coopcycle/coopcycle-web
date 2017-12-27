@@ -71,6 +71,7 @@ doctrine:
                 commented: true
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
+            date_string: AppBundle\Doctrine\DBAL\Types\DateStringType
         mapping_types:
             _text: string
 
