@@ -61,6 +61,7 @@ class Delivery extends Intangible implements TaxableInterface
     /**
      * @var int
      *
+     * @Groups({"delivery"})
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -68,14 +69,14 @@ class Delivery extends Intangible implements TaxableInterface
     private $id;
 
     /**
-     * @Groups({"order"})
+     * @Groups({"place", "order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $originAddress;
 
     /**
-     * @Groups({"order"})
+     * @Groups({"place", "order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
@@ -96,13 +97,13 @@ class Delivery extends Intangible implements TaxableInterface
     /**
      * @var string
      *
-     * @Groups({"order"})
+     * @Groups({"delivery", "order"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $status;
 
     /**
-     * @Groups({"order"})
+     * @Groups({"delivery", "order"})
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank(groups={"order"})
      */

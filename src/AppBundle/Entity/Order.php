@@ -67,6 +67,7 @@ class Order
     /**
      * @var int
      *
+     * @Groups({"order"})
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")

@@ -38,6 +38,7 @@ Feature: Orders
     {
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
+      "id": @integer@,
       "@type":"http://schema.org/Order",
       "customer":{
         "@id":"@string@.startsWith('/api/api_users')",
@@ -188,11 +189,13 @@ Feature: Orders
       """
     Then the response status code should be 200
     And the response should be in JSON
+    And print last response
     And the JSON should match:
     """
     {
       "@context":"/api/contexts/Delivery",
       "@id":"@string@.startsWith('/api/deliveries')",
+      "id":@integer@,
       "@type":"http://schema.org/ParcelDelivery",
       "originAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -214,12 +217,7 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":{
-        "@id":"@string@.startsWith('/api/api_users')",
-        "@type":"ApiUser",
-        "telephone":"+33612345678",
-        "username":"sarah"
-      },
+      "courier":"sarah",
       "status":"DISPATCHED",
       "date":"@string@.startsWith('2017-09-02')",
       "price": @double@,
@@ -241,6 +239,7 @@ Feature: Orders
     {
       "@context":"/api/contexts/Delivery",
       "@id":"@string@.startsWith('/api/deliveries')",
+      "id":@integer@,
       "@type":"http://schema.org/ParcelDelivery",
       "originAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -262,12 +261,7 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":{
-        "@id":"@string@.startsWith('/api/api_users')",
-        "@type":"ApiUser",
-        "telephone":"+33612345678",
-        "username":"sarah"
-      },
+      "courier":"sarah",
       "status":"PICKED",
       "date":"@string@.startsWith('2017-09-02')",
       "price": @double@,
@@ -289,6 +283,7 @@ Feature: Orders
     {
       "@context":"/api/contexts/Delivery",
       "@id":"@string@.startsWith('/api/deliveries')",
+      "id":@integer@,
       "@type":"http://schema.org/ParcelDelivery",
       "originAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -310,12 +305,7 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null
       },
-      "courier":{
-        "@id":"@string@.startsWith('/api/api_users')",
-        "@type":"ApiUser",
-        "telephone":"+33612345678",
-        "username":"sarah"
-      },
+      "courier":"sarah",
       "status":"DELIVERED",
       "date":"@string@.startsWith('2017-09-02')",
       "price": @double@,
