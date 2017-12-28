@@ -36,8 +36,10 @@ function createMarker(position, icon, iconShape, color) {
 }
 
 function fitToLayers(map, layers, pad = 0) {
-  var group = new L.featureGroup(layers);
-  map.fitBounds(group.getBounds().pad(pad));
+  var group = new L.featureGroup(layers)
+  if (group.getLayers().length > 0) {
+    map.fitBounds(group.getBounds().pad(pad))
+  }
 }
 
 function decodePolyline(polyline) {
