@@ -38,6 +38,12 @@ services:
     tags:
       - { name: form.type, alias: app_restaurant }
 
+  app.form.store:
+    class: AppBundle\Form\StoreType
+    arguments: [ '@security.token_storage' ]
+    tags:
+      - { name: form.type, alias: app_store }
+
   coopcycle.repository.zone:
     class: AppBundle\Entity\OrderRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]

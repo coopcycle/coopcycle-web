@@ -56,15 +56,16 @@
       {% endif %}
     </div>
   </div>
-
   <hr>
+
+  {% if form.pricingRuleSet is defined %}
 
   {{ form_row(form.pricingRuleSet) }}
-
   <hr>
 
-  {{ form_row(form.openingHours) }}
+  {% endif %}
 
+  {{ form_row(form.openingHours) }}
   <hr>
 
   {{ form_row(form.address.streetAddress) }}
