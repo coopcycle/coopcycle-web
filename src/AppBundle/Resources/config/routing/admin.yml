@@ -8,6 +8,10 @@ admin_delivery_deliver:
     defaults: { _controller: AppBundle:Admin:deliverDelivery }
     methods:  [ POST ]
 
+admin_deliveries_calculate_price:
+    path:     /admin/deliveries/calculate-price
+    defaults: { _controller: AppBundle:Admin:calculateDeliveryPrice }
+
 admin_order_invoice:
     path:     /admin/orders/{id}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }
@@ -174,7 +178,35 @@ admin_orders_order_cancel:
         redirect_route: admin_orders
     methods: [ POST ]
 
+admin_stores:
+    path: /admin/stores
+    defaults:
+        _controller: AppBundle:Admin:storeList
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Admin:stores.html.twig
+        routes:
+            store: admin_store
+            store_delivery: admin_store_delivery
+    methods:  [ GET ]
+
 admin_store:
-    path:     /admin/stores/{id}
-    defaults: { _controller: AppBundle:Admin:store }
+    path: /admin/stores/{id}
+    defaults:
+        _controller: AppBundle:Admin:store
+        layout: AppBundle::admin.html.twig
+        routes:
+            stores: admin_stores
+            store_delivery: admin_store_delivery
+    methods:  [ GET, POST ]
+
+admin_store_delivery:
+    path: /admin/stores/{id}/deliveries/new
+    defaults:
+        _controller: AppBundle:Admin:newStoreDelivery
+        layout: AppBundle::admin.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            success: admin_deliveries
+            calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]

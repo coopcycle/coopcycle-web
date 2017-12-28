@@ -7,6 +7,7 @@ use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
+use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
@@ -26,6 +27,7 @@ class ProfileController extends Controller
     use LocalBusinessTrait;
     use OrderTrait;
     use RestaurantTrait;
+    use StoreTrait;
     use UserTrait;
 
     /**
@@ -187,6 +189,11 @@ class ProfileController extends Controller
     protected function getRestaurantList(Request $request)
     {
         return [ $this->getUser()->getRestaurants(), 1, 1 ];
+    }
+
+    protected function getStoreList(Request $request)
+    {
+        return [ $this->getUser()->getStores(), 1, 1 ];
     }
 
     /**

@@ -171,3 +171,40 @@ profile_delivery_deliver:
     path:     /profile/deliveries/{id}/deliver
     defaults: { _controller: AppBundle:Profile:deliverDelivery }
     methods:  [ POST ]
+
+profile_deliveries_calculate_price:
+    path: /profile/deliveries/calculate-price
+    defaults: { _controller: AppBundle:Profile:calculateDeliveryPrice }
+
+profile_stores:
+    path: /profile/stores
+    defaults:
+        _controller: AppBundle:Profile:storeList
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Profile:stores.html.twig
+        routes:
+            store: profile_store
+            store_delivery: profile_store_delivery
+    methods:  [ GET ]
+
+profile_store:
+    path: /profile/stores/{id}
+    defaults:
+        _controller: AppBundle:Profile:store
+        layout: AppBundle::profile.html.twig
+        routes:
+            stores: profile_stores
+            store_delivery: profile_store_delivery
+    methods:  [ GET, POST ]
+
+profile_store_delivery:
+    path: /profile/stores/{id}/deliveries/new
+    defaults:
+        _controller: AppBundle:Profile:newStoreDelivery
+        layout: AppBundle::profile.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            success: profile_stores
+            calculate_price: profile_deliveries_calculate_price
+    methods:  [ GET, POST ]

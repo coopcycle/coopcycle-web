@@ -20,7 +20,6 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Zone;
-use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
@@ -256,56 +255,6 @@ class AdminController extends Controller
         ];
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null)
-    {
-        if ($store) {
-            $delivery->setDate($store->getNextOpeningDate());
-        } else {
-            $date = new \DateTime('+1 day');
-            $date->setTime(12, 00);
-            $delivery->setDate($date);
-        }
-
-        $translator = $this->get('translator');
-
-        $form = $this->createForm(DeliveryType::class, $delivery, [
-            'free_pricing' => $store === null,
-            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null,
-            'vehicle_choices' => [
-                $translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
-                $translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-            ]
-        ]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
-            $delivery = $form->getData();
-
-            $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
-
-            if ($delivery->getDate() < new \DateTime()) {
-                $form->get('date')->addError(new FormError('The date is in the past'));
-            }
-
-            if ($form->isValid()) {
-
-                $this->get('delivery_service.default')->calculate($delivery);
-                $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
-
-                $em->persist($delivery);
-                $em->flush();
-
-                return $this->redirectToRoute('admin_deliveries');
-            }
-        }
-
-        return [
-            'store' => $store,
-            'form' => $form->createView(),
-        ];
-    }
-
     /**
      * @Route("/admin/deliveries/new", name="admin_deliveries_new")
      * @Template("AppBundle:Delivery:form.html.twig")
@@ -315,20 +264,6 @@ class AdminController extends Controller
         $delivery = new Delivery();
 
         return $this->renderDeliveryForm($delivery, $request);
-    }
-
-    /**
-     * @Route("/admin/stores/{id}/deliveries/new", name="admin_store_delivery_new")
-     * @Template("AppBundle:Delivery:form.html.twig")
-     */
-    public function newStoreDeliveryAction($id, Request $request)
-    {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
-
-        $delivery = new Delivery();
-        $delivery->setOriginAddress($store->getAddress());
-
-        return $this->renderDeliveryForm($delivery, $request, $store);
     }
 
     /**
@@ -499,40 +434,6 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/deliveries/calculate-price", name="admin_deliveries_calculate_price")
-     * @Template
-     */
-    public function calculateDeliveryPriceAction(Request $request)
-    {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
-
-        if (!$request->query->has('pricing_rule_set')) {
-            throw new BadRequestHttpException('No pricing provided');
-        }
-
-        if (empty($request->query->get('pricing_rule_set'))) {
-            throw new BadRequestHttpException('No pricing provided');
-        }
-
-        $delivery = new Delivery();
-        $delivery->setDistance($request->query->get('distance'));
-        $delivery->setVehicle($request->query->get('vehicle', null));
-
-        $deliveryAddressCoords = $request->query->get('delivery_address');
-        [ $latitude, $longitude ] = explode(',', $deliveryAddressCoords);
-
-        $pricingRuleSet = $this->getDoctrine()
-            ->getRepository(PricingRuleSet::class)->find($request->query->get('pricing_rule_set'));
-
-        $deliveryAddress = new Address();
-        $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
-
-        $delivery->setDeliveryAddress($deliveryAddress);
-
-        return new JsonResponse($deliveryManager->getPrice($delivery, $pricingRuleSet));
-    }
-
-    /**
      * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
      * @Template
      */
@@ -595,17 +496,11 @@ class AdminController extends Controller
         ];
     }
 
-    /**
-     * @Route("/admin/stores", name="admin_stores")
-     * @Template
-     */
-    public function storesAction(Request $request)
+    public function getStoreList(Request $request)
     {
         $stores = $this->getDoctrine()->getRepository(Store::class)->findAll();
 
-        return [
-            'stores' => $stores
-        ];
+        return [ $stores, 1, 1 ];
     }
 
     /**

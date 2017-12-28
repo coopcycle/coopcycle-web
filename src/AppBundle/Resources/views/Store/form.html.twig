@@ -1,9 +1,9 @@
-{% extends "AppBundle::admin.html.twig" %}
+{% extends layout %}
 
 {% form_theme form 'AppBundle:Form:store.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path('admin_stores') }}">{% trans %}Stores{% endtrans %}</a></li>
+<li><a href="{{ path(stores_route) }}">{% trans %}Stores{% endtrans %}</a></li>
 <li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}Create a new store{% endtrans %}{% endif %}</li>
 {% endblock %}
 
@@ -25,7 +25,7 @@
     </div>
     <div class="collapse navbar-collapse" id="store-navbar">
       <div class="nav navbar-nav navbar-right">
-        <a href="{{ path('admin_store_delivery_new', { id: store.id }) }}" class="btn btn-default navbar-btn">
+        <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-bicycle"></i>  {% trans %}Create new delivery{% endtrans %}
         </a>
       </div>
