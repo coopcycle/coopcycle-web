@@ -112,7 +112,8 @@ class PricingRule
         return $language->evaluate($this->getExpression(), [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
-            'deliveryAddress' => $delivery->getDeliveryAddress()
+            'deliveryAddress' => $delivery->getDeliveryAddress(),
+            'vehicle' => $delivery->getVehicle()
         ]);
     }
 }

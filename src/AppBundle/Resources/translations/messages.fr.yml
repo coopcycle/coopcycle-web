@@ -147,6 +147,7 @@ Rules: Règles
 Address: Adresse
 Create new delivery: Créer une livraison
 Create a new pricing: Créer une nouvelle tarification
+Vehicle: Véhicule
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -219,6 +220,9 @@ form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
 form.delivery.pricing_rule_set.about: |
   La tarification suivante sera appliquée : <a href="%link%" target="_blank">%name%</a>
+form.delivery.vehicle.placeholder: Choisissez un type de véhicule
+form.delivery.vehicle.VEHICLE_BIKE: Vélo
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
 
 cart.modal.title: Attention

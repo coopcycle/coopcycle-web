@@ -9,15 +9,17 @@ Les règles sont parcourues dans l'ordre, et la première dont l'expression est 
 
 ### Variables disponibles
 
-<code>distance</code> : La distance entre le point de retrait et le point de dépôt
+`deliveryAddress` : L'adresse de livraison
 
-<code>weight</code> : Le poids du colis transporté
+`distance` : La distance entre le point de retrait et le point de dépôt
 
-<code>deliveryAddress</code> : L'adresse de livraison
+`weight` : Le poids du colis transporté
+
+`vehicle` : Le type de véhicule (`bike` ou `cargo_bike`)
 
 ### Fonctions disponibles
 
-<code>in_zone(address, zoneName)</code> : Vérifie que la variable <code>address</code> est dans la zone avec le nom <code>zoneName</code>
+`in_zone(address, zoneName)` : Vérifie que la variable `address` est dans la zone avec le nom <code>zoneName</code>
 
 ### Exemples
 
@@ -36,5 +38,9 @@ La distance est comprise entre 0 et 3000 mètres et le poids est supérieur à 1
 L'adresse de livraison est dans la zone « paris_est »
 
 <code>in_zone(deliveryAddress, "paris_est")</code>
+
+Le véhicule utilisé est un vélo cargo
+
+<code>vehicle == "cargo_bike"</code>
 
 <a target="_blank" href="http://symfony.com/doc/3.4/components/expression_language/syntax.html">Syntaxe des expressions</a>

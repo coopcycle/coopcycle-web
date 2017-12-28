@@ -30,7 +30,8 @@ function calculatePrice(distance, delivery) {
   const deliveryParams = {
     distance,
     delivery_address: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(','),
-    pricing_rule_set: $('#delivery_pricingRuleSet').val()
+    pricing_rule_set: $('#delivery_pricingRuleSet').val(),
+    vehicle: $('#delivery_vehicle').val(),
   }
 
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
@@ -43,7 +44,7 @@ function calculatePrice(distance, delivery) {
     })
 }
 
-// Update price when pricing is changed
+// Update price when parameters have changed
 if ($('#delivery_pricingRuleSet').is('select')) {
   $('#delivery_pricingRuleSet').on('change', function(e) {
     if (_.filter(markers).length === 2) {
@@ -51,6 +52,11 @@ if ($('#delivery_pricingRuleSet').is('select')) {
     }
   })
 }
+$('#delivery_vehicle').on('change', function(e) {
+  if (_.filter(markers).length === 2) {
+    refreshRouting()
+  }
+})
 
 function refreshRouting() {
 

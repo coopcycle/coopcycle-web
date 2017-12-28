@@ -265,9 +265,15 @@ class AdminController extends Controller
             $delivery->setDate($date);
         }
 
+        $translator = $this->get('translator');
+
         $form = $this->createForm(DeliveryType::class, $delivery, [
             'free_pricing' => $store === null,
-            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null
+            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null,
+            'vehicle_choices' => [
+                $translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
+                $translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
+            ]
         ]);
 
         $form->handleRequest($request);
@@ -509,6 +515,7 @@ class AdminController extends Controller
 
         $delivery = new Delivery();
         $delivery->setDistance($request->query->get('distance'));
+        $delivery->setVehicle($request->query->get('vehicle', null));
 
         $deliveryAddressCoords = $request->query->get('delivery_address');
         [ $latitude, $longitude ] = explode(',', $deliveryAddressCoords);

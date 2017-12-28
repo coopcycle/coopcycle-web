@@ -58,6 +58,9 @@ class Delivery extends Intangible implements TaxableInterface
     // delivery was canceled (by an admin)
     const STATUS_CANCELED   = 'CANCELED';
 
+    const VEHICLE_BIKE = 'bike';
+    const VEHICLE_CARGO_BIKE = 'cargo_bike';
+
     /**
      * @var int
      *
@@ -148,6 +151,11 @@ class Delivery extends Intangible implements TaxableInterface
      * @ORM\Column(type="integer", nullable=true)
      */
     private $weight;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $vehicle;
 
     public function __construct(Order $order = null)
     {
@@ -409,6 +417,18 @@ class Delivery extends Intangible implements TaxableInterface
                 ->atPath('date')
                 ->addViolation();
         }
+    }
+
+    public function getVehicle()
+    {
+        return $this->vehicle;
+    }
+
+    public function setVehicle($vehicle)
+    {
+        $this->vehicle = $vehicle;
+
+        return $this;
     }
 
 }

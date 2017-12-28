@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -26,6 +27,7 @@ class DeliveryType extends AbstractType
             ->add('originAddress', AddressType::class)
             ->add('deliveryAddress', AddressType::class)
             ->add('weight', NumberType::class, ['required' => false])
+
             ->add('date', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss'
@@ -33,6 +35,14 @@ class DeliveryType extends AbstractType
             ->add('price', MoneyType::class)
             ->add('distance', NumberType::class, ['mapped' => false])
             ->add('duration', NumberType::class, ['mapped' => false]);
+
+        if (!empty($options['vehicle_choices'])) {
+            $builder->add('vehicle', ChoiceType::class, [
+                'required' => false,
+                'choices'  => $options['vehicle_choices'],
+                'placeholder' => 'form.delivery.vehicle.placeholder'
+            ]);
+        }
 
         if (true === $options['free_pricing']) {
             $builder
@@ -66,7 +76,8 @@ class DeliveryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
             'free_pricing' => true,
-            'pricing_rule_set' => null
+            'pricing_rule_set' => null,
+            'vehicle_choices' => []
         ));
     }
 }
