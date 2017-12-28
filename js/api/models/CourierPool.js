@@ -87,4 +87,8 @@ CourierPool.prototype.findByKey = function(key) {
   return this.findById(Utils.keyAsInt(key));
 };
 
+CourierPool.prototype.forEach = function(cb) {
+  this.pool.forEach(cb);
+};
+
 module.exports = CourierPool;

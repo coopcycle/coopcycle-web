@@ -57,6 +57,11 @@ var redisPubSub = require('../RedisClient')({
   url: config.snc_redis.clients.default.dsn
 });
 
+var pub = require('../RedisClient')({
+  prefix: config.snc_redis.clients.default.options.prefix,
+  url: config.snc_redis.clients.default.dsn
+});
+
 var sequelize = new Sequelize(
   config.doctrine.dbal.dbname,
   config.doctrine.dbal.user,
@@ -156,7 +161,8 @@ wsServer.on('connection', function(ws) {
 
     metrics.gauge('couriers.connected', Courier.Pool.size())
 
-    console.log('Courier #' + courier.id + ' connected!');
+    console.log('Courier ' + courier.username + ' connected!');
+    pub.prefixedPublish('online', courier.username)
 
     ws.on('message', function(messageText) {
 
@@ -168,12 +174,20 @@ wsServer.on('connection', function(ws) {
 
       if (message.type === 'updateCoordinates') {
 
-        winston.debug('Courier ' + courier.id + ', state = ' + courier.state + ' updating position in Redis...');
+        // winston.debug('Courier ' + courier.username + ', state = ' + courier.state + ' updating position in Redis...');
         Courier.updateCoordinates(courier, message.coordinates);
 
         redis.rpush('tracking:' + courier.username, JSON.stringify({
           ...message.coordinates,
           timestamp: moment().unix()
+        }))
+
+        const { username } = courier
+        const { latitude, longitude } = message.coordinates
+
+        pub.prefixedPublish('tracking', JSON.stringify({
+          user: username,
+          coords: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
         }))
       }
 
@@ -184,6 +198,7 @@ wsServer.on('connection', function(ws) {
       Courier.Pool.remove(courier);
       console.log('Number of couriers connected: ' + Courier.Pool.size());
       metrics.gauge('couriers.connected', Courier.Pool.size())
+      pub.prefixedPublish('offline', courier.username)
     });
 });
 
@@ -194,5 +209,9 @@ process.on('SIGINT', function () {
   console.log('---------------------');
   isClosing = true;
   deliveryDispatcher.stop();
+
+  Courier.Pool.forEach(function(courier) {
+    pub.prefixedPublish('offline', courier.username)
+  })
   Courier.Pool.removeAll();
 });

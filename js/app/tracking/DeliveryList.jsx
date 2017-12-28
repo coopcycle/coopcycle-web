@@ -1,33 +1,45 @@
 import React from 'react';
 import DeliveryListItem from './DeliveryListItem.jsx';
-import _ from 'underscore';
+import _ from 'underscore'
+import moment from 'moment'
 
 class OrderList extends React.Component
 {
   constructor(props) {
     super(props);
     this.state = {
-      items: {},
+      items: props.deliveries || [],
       active: null
     };
   }
-  setItem(key, order) {
-    let items = this.state.items;
+  addItem(delivery) {
+    let { items } = this.state
+    items = items.slice()
+    items.push(delivery)
 
-    if (items[key]) {
-      items[key].state = order.state;
-    } else {
-      items[key] = order;
-    }
-
-    this.setState({items});
+    this.setState({ items })
   }
-  removeItem(key) {
-    let items = this.state.items;
-    if (items[key]) {
-      delete items[key];
-      this.setState({items});
-    }
+  removeItemById(id) {
+    let { items } = this.state
+    items = items.slice()
+    items = _.filter(items, item => item.id !== id)
+    this.setState({ items })
+  }
+  updateStatusById(id, status) {
+    let { items } = this.state
+    items = items.slice()
+    items = items.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          status,
+        }
+      }
+
+      return item
+    })
+
+    this.setState({ items })
   }
   onItemClick(order) {
     this.setState({active: order.key});
@@ -38,26 +50,30 @@ class OrderList extends React.Component
     this.props.onReset();
   }
   render() {
-    var items = _.map(this.state.items, (item, key) => {
+
+    let { items } = this.state
+
+    items.sort((a, b) => moment(a.date).isBefore(moment(b.date)) ? -1 : 1)
+
+    items = _.map(items, (item, key) => {
       return (
         <DeliveryListItem
           key={key}
-          id={key}
-          color={item.color}
-          state={item.state}
-          delivery={item}
-          active={this.state.active === key}
-          onClick={this.onItemClick.bind(this, item)}
-          onClose={this.onItemClose.bind(this)}
-          onMouseEnter={this.props.onItemMouseEnter.bind(this)}
-          onMouseLeave={this.props.onItemMouseLeave.bind(this)} />
+          color={ '#fff' }
+          status={ item.status }
+          id={ item.id }
+          courier={ item.courier }
+          date={ item.date }
+          originAddress={ item.originAddress }
+          deliveryAddress={ item.deliveryAddress }
+          onClick={this.onItemClick.bind(this, item)} />
       );
     });
 
     return (
-      <ul className="list-unstyled">
-        {items}
-      </ul>
+      <div className="list-group">
+        { items }
+      </div>
     );
   }
 }

@@ -42,24 +42,17 @@ html, body {
   -ms-flex: 2.5;
   flex: 2.5;
   overflow: auto;
-  background-color: #333;
 }
-#order-list {
-  padding: 10px;
+#menu-heading {
+  padding: 20px 15px;
+  color: #fff;
+  background-color: #34495E;
+  h4 {
+    margin: 0;
+  }
 }
-#order-list ul li {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 2px solid;
-  cursor: pointer;
-}
-#order-list ul li h5 {
-  margin-top: 0;
-}
-#order-list ul li:hover,
-#order-list ul li:active,
-#order-list ul li.active {
-  background-color: #222;
+.list-group {
+  margin-bottom: 0;
 }
 .close {
   text-shadow: none;

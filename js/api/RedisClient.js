@@ -1,23 +1,19 @@
 var redis = require('redis');
 
+const withPrefix = (prefix, channel) => prefix + channel
 
 /*
  * We need this because the prefix is not applied to the `subscribe` command
  * See : https://github.com/NodeRedis/node_redis/issues/1286
  */
 
-module.exports =  function createRedisClient(options) {
+module.exports = function createRedisClient(options) {
 
-  redisClient = redis.createClient(options);
+  const redisClient = redis.createClient(options)
 
-  redisClient.prefixedSubscribe = function (channel) {
-    channel = options.prefix + channel;
-    return this.subscribe(channel);
-  };
-
-  redisClient.isChannel = function(prefixed, unprefixed) {
-    return prefixed === (options.prefix + unprefixed)
-  }
+  redisClient.prefixedSubscribe = (channel) => redisClient.subscribe(withPrefix(options.prefix, channel))
+  redisClient.prefixedPublish = (channel, message) => redisClient.publish(withPrefix(options.prefix, channel), message)
+  redisClient.isChannel = (prefixed, unprefixed) => prefixed === (options.prefix + unprefixed)
 
   return redisClient;
 };

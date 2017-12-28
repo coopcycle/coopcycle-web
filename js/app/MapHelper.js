@@ -28,7 +28,7 @@ function createMarkerIcon(icon, iconShape, color) {
 }
 
 function createMarker(position, icon, iconShape, color) {
-  var marker = L.marker([position.lat, position.lng], {
+  var marker = L.marker(position, {
     icon: createMarkerIcon(icon, iconShape, color)
   });
 
