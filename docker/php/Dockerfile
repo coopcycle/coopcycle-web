@@ -34,6 +34,7 @@ killall Xvfb' > /usr/bin/wkhtmltopdf \
         intl \
         pdo_pgsql \
         zip \
+        bcmath \
     && pecl install \
         apcu-${APCU_VERSION} \
     && docker-php-ext-enable --ini-name 20-apcu.ini apcu \

@@ -4,31 +4,39 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
+use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
+use AppBundle\Form\RestaurantType;
+use AppBundle\Form\StoreType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
-use AppBundle\Utils\PricingRuleSet;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +50,9 @@ class AdminController extends Controller
     use AccessControlTrait;
     use DeliveryTrait;
     use OrderTrait;
+    use LocalBusinessTrait;
     use RestaurantTrait;
+    use StoreTrait;
     use UserTrait;
 
     /**
@@ -245,15 +255,20 @@ class AdminController extends Controller
         ];
     }
 
-    /**
-     * @Route("/admin/deliveries/new", name="admin_deliveries_new")
-     * @Template()
-     */
-    public function newDeliveryAction(Request $request)
+    private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null)
     {
-        $delivery = new Delivery();
+        if ($store) {
+            $delivery->setDate($store->getNextOpeningDate());
+        } else {
+            $date = new \DateTime('+1 day');
+            $date->setTime(12, 00);
+            $delivery->setDate($date);
+        }
 
-        $form = $this->createForm(DeliveryType::class, $delivery);
+        $form = $this->createForm(DeliveryType::class, $delivery, [
+            'free_pricing' => $store === null,
+            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null
+        ]);
 
         $form->handleRequest($request);
 
@@ -279,8 +294,34 @@ class AdminController extends Controller
         }
 
         return [
+            'store' => $store,
             'form' => $form->createView(),
         ];
+    }
+
+    /**
+     * @Route("/admin/deliveries/new", name="admin_deliveries_new")
+     * @Template("AppBundle:Delivery:form.html.twig")
+     */
+    public function newDeliveryAction(Request $request)
+    {
+        $delivery = new Delivery();
+
+        return $this->renderDeliveryForm($delivery, $request);
+    }
+
+    /**
+     * @Route("/admin/stores/{id}/deliveries/new", name="admin_store_delivery_new")
+     * @Template("AppBundle:Delivery:form.html.twig")
+     */
+    public function newStoreDeliveryAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+
+        $delivery = new Delivery();
+        $delivery->setOriginAddress($store->getAddress());
+
+        return $this->renderDeliveryForm($delivery, $request, $store);
     }
 
     /**
@@ -374,18 +415,23 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
-     * @Template
+     * @Template("AppBundle:Admin:pricing.html.twig")
      */
-    public function deliveriesPricingAction(Request $request)
+    public function pricingRuleSetsAction(Request $request)
     {
-        $rules = $this->getDoctrine()
-            ->getRepository(Delivery\PricingRule::class)
-            ->findBy([], ['position' => 'ASC']);
+        $ruleSets = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->findAll();
 
-        $ruleSet = new PricingRuleSet($rules);
+        return [
+            'ruleSets' => $ruleSets
+        ];
+    }
 
+    private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
+    {
         $originalRules = new ArrayCollection();
-        foreach ($ruleSet as $rule) {
+        foreach ($ruleSet->getRules() as $rule) {
             $originalRules->add($rule);
         }
 
@@ -393,18 +439,22 @@ class AdminController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $ruleSet = $form->getData();
 
             $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
 
             foreach ($originalRules as $originalRule) {
-                if (!$data->contains($originalRule)) {
+                if (!$ruleSet->getRules()->contains($originalRule)) {
                     $em->remove($originalRule);
                 }
             }
 
-            foreach ($data as $rule) {
-                $em->persist($rule);
+            foreach ($ruleSet->getRules() as $rule) {
+                $rule->setRuleSet($ruleSet);
+            }
+
+            if (null === $ruleSet->getId()) {
+                $em->persist($ruleSet);
             }
 
             $em->flush();
@@ -418,17 +468,60 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/deliveries/pricing/calculate", name="admin_deliveries_pricing_calculate")
+     * @Route("/admin/deliveries/pricing/new", name="admin_deliveries_pricing_ruleset_new")
+     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     */
+    public function newPricingRuleSetAction(Request $request)
+    {
+        $ruleSet = new Delivery\PricingRuleSet();
+
+        return $this->renderPricingRuleSetForm($ruleSet, $request);
+    }
+
+    /**
+     * @Route("/admin/deliveries/pricing/{id}", name="admin_deliveries_pricing_ruleset")
+     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     */
+    public function pricingRuleSetAction($id, Request $request)
+    {
+        $ruleSet = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        return $this->renderPricingRuleSetForm($ruleSet, $request);
+    }
+
+    /**
+     * @Route("/admin/deliveries/calculate-price", name="admin_deliveries_calculate_price")
      * @Template
      */
-    public function deliveriesPricingCalculateAction(Request $request)
+    public function calculateDeliveryPriceAction(Request $request)
     {
         $deliveryManager = $this->get('coopcycle.delivery.manager');
+
+        if (!$request->query->has('pricing_rule_set')) {
+            throw new BadRequestHttpException('No pricing provided');
+        }
+
+        if (empty($request->query->get('pricing_rule_set'))) {
+            throw new BadRequestHttpException('No pricing provided');
+        }
 
         $delivery = new Delivery();
         $delivery->setDistance($request->query->get('distance'));
 
-        return new JsonResponse($deliveryManager->getPrice($delivery));
+        $deliveryAddressCoords = $request->query->get('delivery_address');
+        [ $latitude, $longitude ] = explode(',', $deliveryAddressCoords);
+
+        $pricingRuleSet = $this->getDoctrine()
+            ->getRepository(PricingRuleSet::class)->find($request->query->get('pricing_rule_set'));
+
+        $deliveryAddress = new Address();
+        $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
+
+        $delivery->setDeliveryAddress($deliveryAddress);
+
+        return new JsonResponse($deliveryManager->getPrice($delivery, $pricingRuleSet));
     }
 
     /**
@@ -492,5 +585,29 @@ class AdminController extends Controller
             'upload_form' => $uploadForm->createView(),
             'zone_collection_form' => $zoneCollectionForm->createView(),
         ];
+    }
+
+    /**
+     * @Route("/admin/stores", name="admin_stores")
+     * @Template
+     */
+    public function storesAction(Request $request)
+    {
+        $stores = $this->getDoctrine()->getRepository(Store::class)->findAll();
+
+        return [
+            'stores' => $stores
+        ];
+    }
+
+    /**
+     * @Route("/admin/stores/new", name="admin_store_new")
+     * @Template("@App/Store/form.html.twig")
+     */
+    public function newStoreAction(Request $request)
+    {
+        $store = new Store();
+
+        return $this->renderStoreForm($store, $request);
     }
 }

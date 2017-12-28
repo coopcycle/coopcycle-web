@@ -3,9 +3,12 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Exception\InvalidStatusException;
+use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
@@ -18,16 +21,18 @@ class DeliveryManager
     private $calculator;
     private $taxCategoryRepository;
     private $taxCategoryCode;
+    private $zoneExpressionLanguageProvider;
 
     public function __construct(EntityRepository $pricingRuleRepository,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode)
+        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ZoneExpressionLanguageProvider $zoneExpressionLanguageProvider)
     {
         $this->pricingRuleRepository = $pricingRuleRepository;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->taxCategoryCode = $taxCategoryCode;
+        $this->zoneExpressionLanguageProvider = $zoneExpressionLanguageProvider;
     }
 
     public function dispatch(Delivery $delivery, ApiUser $user)
@@ -64,12 +69,13 @@ class DeliveryManager
         $delivery->setTotalIncludingTax($totalIncludingTax);
     }
 
-    public function getPrice(Delivery $delivery)
+    public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
-        $rules = $this->pricingRuleRepository->findBy([], ['position' => 'ASC']);
+        $language = new ExpressionLanguage();
+        $language->registerProvider($this->zoneExpressionLanguageProvider);
 
-        foreach ($rules as $rule) {
-            if ($rule->matches($delivery)) {
+        foreach ($ruleSet->getRules() as $rule) {
+            if ($rule->matches($delivery, $language)) {
                 return $rule->getPrice();
             }
         }

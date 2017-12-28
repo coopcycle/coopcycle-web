@@ -22,21 +22,6 @@ use Symfony\Component\Validator\Validation;
 
 trait RestaurantTrait
 {
-    private function getAdditionnalProperties()
-    {
-        $countryCode = $this->getParameter('country_iso');
-        $additionalProperties = [];
-
-        switch ($countryCode) {
-            case 'fr':
-                $additionalProperties[] = 'siret';
-            default:
-                break;
-        }
-
-        return $additionalProperties;
-    }
-
     abstract protected function getRestaurantList(Request $request);
 
     public function restaurantListAction(Request $request)
@@ -59,7 +44,7 @@ trait RestaurantTrait
     private function renderRestaurantForm(Restaurant $restaurant, Request $request)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
-            'additional_properties' => $this->getAdditionnalProperties(),
+            'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
             'validation_groups' => ['activable'],
         ]);
 

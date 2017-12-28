@@ -38,6 +38,16 @@ services:
     tags:
       - { name: form.type, alias: app_restaurant }
 
+  coopcycle.repository.zone:
+    class: AppBundle\Entity\OrderRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Zone
+
+  coopcycle.expression_language.zone.provider:
+    class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
+    arguments: [ '@coopcycle.repository.zone' ]
+
   my.registration_listener:
     class: AppBundle\EventListener\RegistrationListener
     arguments: ['@router']
@@ -94,6 +104,7 @@ services:
       - "@sylius.tax_calculator"
       - "@sylius.repository.tax_category"
       - 'tva_livraison' # TODO Load from settings
+      - "@coopcycle.expression_language.zone.provider"
 
   delivery.entity_listener:
     class: AppBundle\Entity\Listener\DeliveryListener

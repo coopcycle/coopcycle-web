@@ -40,6 +40,12 @@ class PricingRule
     protected $position;
 
     /**
+     * @ORM\ManyToOne(targetEntity="PricingRuleSet", inversedBy="rules", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    protected $ruleSet;
+
+    /**
      * Gets id.
      *
      * @return int
@@ -85,13 +91,28 @@ class PricingRule
         return $this;
     }
 
-    public function matches(Delivery $delivery)
+    public function getRuleSet()
     {
-        $language = new ExpressionLanguage();
+        return $this->ruleSet;
+    }
+
+    public function setRuleSet(PricingRuleSet $ruleSet)
+    {
+        $this->ruleSet = $ruleSet;
+
+        return $this;
+    }
+
+    public function matches(Delivery $delivery, ExpressionLanguage $language = null)
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
 
         return $language->evaluate($this->getExpression(), [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
+            'deliveryAddress' => $delivery->getDeliveryAddress()
         ]);
     }
 }
