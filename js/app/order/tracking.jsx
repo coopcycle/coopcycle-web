@@ -25,29 +25,32 @@ const delivery = order.delivery;
 moment.locale($('html').attr('lang'));
 
 function startWebSocket() {
-  socket = io('//' + hostname, {path: '/order-tracking/socket.io'});
+  socket = io('//' + hostname, { path: '/tracking/socket.io' })
 
-  socket.on('connect', function() {
-    socket.emit('delivery', delivery);
-  });
-
-  socket.on('courier', function (data) {
-    if (!courierMarker) {
-      courierMarker = MapHelper.createMarker(data.coords, 'bicycle', 'circle', '#337ab7');
-      courierMarker.addTo(map);
-
-      MapHelper.fitToLayers(map, [restaurantMarker, deliveryAddressMarker, courierMarker]);
-    } else {
-      courierMarker.setLatLng([data.coords.lat, data.coords.lng]).update();
+  socket.on('tracking', event => {
+    if (delivery.courier == event.user) {
+      if (!courierMarker) {
+        courierMarker = MapHelper.createMarker(event.coords, 'bicycle', 'circle', '#337ab7')
+        courierMarker.addTo(map)
+        MapHelper.fitToLayers(map, [ restaurantMarker, deliveryAddressMarker, courierMarker ])
+      } else {
+        courierMarker
+          .setLatLng(event.coords)
+          .update()
+      }
     }
   });
 
-  socket.on('delivery_event', function (data) {
-    orderFollow.handleDeliveryEvent(data);
+  socket.on('delivery_events', event => {
+    if (event.delivery === delivery.id) {
+      orderFollow.handleDeliveryEvent(event)
+    }
   });
 
-  socket.on('order_event', function (data) {
-    orderFollow.handleOrderEvent(data);
+  socket.on('order_events', event => {
+    if (event.order === order.id) {
+      orderFollow.handleOrderEvent(event)
+    }
   });
 }
 

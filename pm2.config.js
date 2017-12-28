@@ -46,11 +46,6 @@ var apps = [{
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
   port: config.parameters['app.tracking_port'] || 8001
 }, {
-  name: "coopcycle-order-tracking-" + appName,
-  script: "./js/api/order/tracking.js",
-  watch: ["./js/api/order/tracking.js"],
-  port: config.parameters['app.order_tracking_port'] || 8002
-}, {
   name: "coopcycle-restaurant-panel-" + appName,
   script: "./js/api/restaurant/panel.js",
   watch: ["./js/api/restaurant/panel.js"],
