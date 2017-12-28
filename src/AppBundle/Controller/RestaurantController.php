@@ -337,27 +337,4 @@ class RestaurantController extends Controller
             'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
         ];
     }
-
-    /**
-     * @Route("/restaurants/search", name="restaurants_search")
-     * @Template()
-     */
-    public function searchAction(Request $request)
-    {
-        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
-
-        $results = $repository->search($request->query->get('q'));
-
-        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-
-            $data = array_map(function (Restaurant $restaurant) {
-                return [
-                    'id' => $restaurant->getId(),
-                    'name' => $restaurant->getName(),
-                ];
-            }, $results);
-
-            return new JsonResponse($data);
-        }
-    }
 }

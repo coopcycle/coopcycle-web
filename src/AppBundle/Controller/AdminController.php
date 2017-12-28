@@ -152,7 +152,7 @@ class AdminController extends Controller
         $user = $userManager->findUserByUsername($username);
 
         // Roles that can be edited by admin
-        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT'];
+        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
 
         $originalRoles = array_filter($user->getRoles(), function($role) use ($editableRoles) {
             return in_array($role, $editableRoles);
@@ -160,6 +160,7 @@ class AdminController extends Controller
 
         $editForm = $this->createForm(UpdateProfileType::class, $user, [
             'with_restaurants' => true,
+            'with_stores' => true,
             'with_roles' => true,
             'editable_roles' => $editableRoles
         ]);
@@ -616,5 +617,56 @@ class AdminController extends Controller
         $store = new Store();
 
         return $this->renderStoreForm($store, $request);
+    }
+
+    /**
+     * @Route("/admin/restaurants/search", name="admin_restaurants_search")
+     * @Template()
+     */
+    public function searchRestaurantsAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Restaurant::class);
+
+        $results = $repository->search($request->query->get('q'));
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+
+            $data = array_map(function (Restaurant $restaurant) {
+                return [
+                    'id' => $restaurant->getId(),
+                    'name' => $restaurant->getName(),
+                ];
+            }, $results);
+
+            return new JsonResponse($data);
+        }
+    }
+
+    /**
+     * @Route("/admin/stores/search", name="admin_stores_search")
+     * @Template()
+     */
+    public function searchStoresAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Store::class);
+
+        $qb = $repository->createQueryBuilder('s');
+        $qb
+            ->where('LOWER(s.name) LIKE :q')
+            ->setParameter('q', '%' . strtolower($request->query->get('q')) . '%');
+
+        $results = $qb->getQuery()->getResult();
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+
+            $data = array_map(function (Store $store) {
+                return [
+                    'id' => $store->getId(),
+                    'name' => $store->getName(),
+                ];
+            }, $results);
+
+            return new JsonResponse($data);
+        }
     }
 }

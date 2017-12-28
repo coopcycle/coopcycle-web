@@ -82,10 +82,9 @@ class RestaurantRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('r');
 
-        // TODO Use lowercase
         $qb
-            ->where('r.name LIKE :q')
-            ->setParameter('q', '%' . $q . '%');
+            ->where('LOWER(r.name) LIKE :q')
+            ->setParameter('q', '%' . strtolower($q) . '%');
 
         return $qb->getQuery()->getResult();
     }

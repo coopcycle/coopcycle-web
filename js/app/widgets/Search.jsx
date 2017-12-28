@@ -1,15 +1,17 @@
+console.log('ok')
+
 import React from 'react'
 import { render } from 'react-dom'
-import Autocomplete from './Autocomplete.jsx'
+import Autocomplete from '../components/Autocomplete.jsx'
 
 window.CoopCycle = window.CoopCycle || {}
 
-window.CoopCycle.RestaurantSearch = function(el, options) {
+window.CoopCycle.Search = function(el, options) {
   render(
     <Autocomplete
       baseURL={ options.url }
       placeholder={ options.placeholder }
-      onRestaurantSelected={ options.onRestaurantSelected } />,
+      onSuggestionSelected={ options.onSuggestionSelected } />,
     el
   )
 }

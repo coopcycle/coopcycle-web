@@ -73,12 +73,24 @@ class UpdateProfileType extends AbstractType
                 }
 
                 if ($user->hasRole('ROLE_RESTAURANT') && $options['with_restaurants']) {
-                    $restaurants = $user->getRestaurants();
                     $event->getForm()->add('restaurants', CollectionType::class, array(
                         'entry_type' => EntityType::class,
                         'entry_options' => array(
                             'label' => 'Restaurants',
                             'class' => 'AppBundle:Restaurant',
+                            'choice_label' => 'name',
+                        ),
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                    ));
+                }
+
+                if ($user->hasRole('ROLE_STORE') && $options['with_stores']) {
+                    $event->getForm()->add('stores', CollectionType::class, array(
+                        'entry_type' => EntityType::class,
+                        'entry_options' => array(
+                            'label' => 'Stores',
+                            'class' => 'AppBundle:Store',
                             'choice_label' => 'name',
                         ),
                         'allow_add' => true,
@@ -94,6 +106,7 @@ class UpdateProfileType extends AbstractType
         $resolver->setDefaults(array(
            'data_class' => ApiUser::class,
            'with_restaurants' => false,
+           'with_stores' => false,
            'with_roles' => false,
            'editable_roles' => []
         ));

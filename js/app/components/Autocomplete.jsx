@@ -39,7 +39,7 @@ export default class extends Component {
   };
 
   onSuggestionSelected(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
-    this.props.onRestaurantSelected(suggestion);
+    this.props.onSuggestionSelected(suggestion);
     this.setState({
       value: '',
       suggestions: []
