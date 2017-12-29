@@ -19,6 +19,8 @@ use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Schedule;
+use AppBundle\Entity\ScheduleItem;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
@@ -38,7 +40,8 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Routing\RequestContext;
+use ApiPlatform\Core\Serializer\SerializerContextBuilder;
 
 class AdminController extends Controller
 {
@@ -95,6 +98,144 @@ class AdminController extends Controller
         ], self::ITEMS_PER_PAGE, $offset);
 
         return [ $orders, $pages, $page ];
+    }
+
+    private function getSchedule(\DateTime $date)
+    {
+        $qb = $this->getDoctrine()
+            ->getRepository(Schedule::class)
+            ->createQueryBuilder('s');
+        $qb
+            ->where('DATE(s.date) = :date')
+            ->setParameter('date', $date->format('Y-m-d'));
+
+
+        $schedule = $qb->getQuery()->getOneOrNullResult();
+
+        if (!$schedule) {
+            $schedule = new Schedule();
+            $schedule->setDate($date);
+            $this->getDoctrine()->getManagerForClass(Schedule::class)->persist($schedule);
+            $this->getDoctrine()->getManagerForClass(Schedule::class)->flush();
+        }
+
+        return $schedule;
+    }
+
+    /**
+     * @Route("/admin/dashboard/fullscreen", name="admin_dashboard_fullscreen")
+     * @Template
+     */
+    public function dashboardFullscreenAction(Request $request)
+    {
+        $date = new \DateTime();
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
+        }
+
+        if ($this->container->has('profiler')) {
+            $this->container->get('profiler')->disable();
+        }
+
+        $deliveries = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->createQueryBuilder('d')
+            ->andWhere('DATE(d.date) = :date')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+
+        $deliveries = array_map(function (Delivery $delivery) {
+            return $this->get('api_platform.serializer')->normalize($delivery, 'jsonld', [
+                'resource_class' => Delivery::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['delivery', 'place']
+            ]);
+        }, $deliveries);
+
+        $schedule = $this->getSchedule($date);
+
+        $schedules = [];
+        foreach ($schedule->getItems() as $scheduleItem) {
+            $username = $scheduleItem->getCourier()->getUsername();
+            $schedules[$username][] =
+                $this->get('api_platform.serializer')->normalize($scheduleItem, 'jsonld', [
+                    'resource_class' => ScheduleItem::class,
+                    'operation_type' => 'item',
+                    'item_operation_name' => 'get',
+                    'groups' => ['schedule_item']
+                ]);
+        }
+
+        $userManager = $this->get('fos_user.user_manager');
+
+        $couriers = array_filter($userManager->findUsers(), function (UserInterface $user) {
+            return $user->hasRole('ROLE_COURIER');
+        });
+
+        usort($couriers, function (UserInterface $a, UserInterface $b) {
+            return $a->getUsername() < $b->getUsername() ? -1 : 1;
+        });
+
+        $users = [];
+        foreach (array_keys($schedules) as $username) {
+            $users[] = $userManager->findUserByUsername($username);
+        }
+
+        return array(
+            'date' => $date,
+            'users_json' => $this->get('serializer')->serialize($users, 'json'),
+            'couriers' => $couriers,
+            'deliveries' => $deliveries,
+            'planning' => $schedules,
+        );
+    }
+
+    /**
+     * @Route("/admin/schedules/{date}/{username}", name="admin_schedule_update",
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"}
+     * )
+     */
+    public function updateScheduleAction($date, $username, Request $request)
+    {
+        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+
+        $schedule = $this->getSchedule(new \DateTime($date));
+
+        $data = json_decode($request->getContent(), true);
+
+        foreach ($schedule->getItems() as $item) {
+            $this->getDoctrine()
+                ->getManagerForClass(ScheduleItem::class)
+                ->remove($item);
+        }
+
+        $this->getDoctrine()
+            ->getManagerForClass(ScheduleItem::class)
+            ->flush();
+
+        foreach ($data as $item) {
+
+            $address = $this->getResourceFromIri($item['address']);
+            $delivery = $this->getResourceFromIri($item['delivery']);
+
+            $scheduleItem = new ScheduleItem();
+            $scheduleItem->setDate(new \DateTime($date));
+            $scheduleItem->setCourier($user);
+            $scheduleItem->setDelivery($delivery);
+            $scheduleItem->setAddress($address);
+            $scheduleItem->setPosition($item['position']);
+
+            $schedule->addItem($scheduleItem);
+
+        }
+
+        $this->getDoctrine()
+            ->getManagerForClass(Schedule::class)
+            ->flush();
+
+        return new JsonResponse([]);
     }
 
     /**
@@ -553,5 +694,50 @@ class AdminController extends Controller
 
             return new JsonResponse($data);
         }
+    }
+
+    private function getResourceFromIri($iri)
+    {
+        $baseContext = $this->get('router')->getContext();
+
+        $request = Request::create($iri);
+        $context = (new RequestContext())->fromRequest($request);
+        $context->setMethod('GET');
+        $context->setPathInfo($iri);
+        $context->setScheme($baseContext->getScheme());
+
+        try {
+            $this->get('router')->setContext($context);
+            $parameters = $this->get('router')->match($request->getPathInfo());
+
+            // return $this->get('api_platform.item_data_provider')
+            //     ->getItem($parameters['_api_resource_class'], $parameters['id']);
+
+            return $this->getDoctrine()
+                ->getRepository($parameters['_api_resource_class'])
+                ->find($parameters['id']);
+
+        } catch (\Exception $e) {
+
+        } finally {
+            $this->get('router')->setContext($baseContext);
+        }
+    }
+
+    /**
+     * @Route("/admin/dashboard/users/{username}", name="admin_dashboard_user")
+     */
+    public function dashboardUserAction($username, Request $request)
+    {
+        $userManager = $this->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $user = $this->get('api_platform.serializer')->normalize($user, 'jsonld', [
+            'resource_class' => ApiUser::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+        ]);
+
+        return new JsonResponse($user);
     }
 }

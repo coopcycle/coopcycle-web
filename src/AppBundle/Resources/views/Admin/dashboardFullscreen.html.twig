@@ -1,0 +1,73 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block banner %}{% endblock %}
+{% block menu %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <div class="dashboard__map">
+      <div id="map"></div>
+    </div>
+    <aside class="dashboard__aside">
+      <section class="dashboard__aside__top">
+      </section>
+      <section class="dashboard__aside__bottom">
+      </section>
+    </aside>
+</div>
+<div class="modal fade" id="user-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{% trans %}Add a user to the planning{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="form-horizontal">
+          <div class="form-group" data-action="dispatch">
+            <label for="courier" class="col-sm-2 control-label">
+              {% trans %}Courier{% endtrans %}
+              </label>
+            <div class="col-sm-10">
+              <select name="courier" class="form-control">
+                <option></option>
+                {% for courier in couriers %}
+                  <option value="{{ courier.username }}">
+                    {{ courier.username }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}Add{% endtrans %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/tracking/socket.io/socket.io.js"></script>
+<script>
+window.AppData = window.AppData || {}
+window.AppData.Dashboard = {
+  i18n: {
+    'Waiting': "{{ date|localizeddate('medium', 'none') }}",
+    'Dispatched': 'Assignées'
+  },
+  routingRouteURL: "{{ path('routing_route', { coordinates: '__COORDINATES__' }) }}",
+  routingTripURL: "{{ path('routing_trip', { coordinates: '__COORDINATES__' }) }}",
+  planningURL: "{{ path('admin_schedule_update', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
+  userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
+  users: {{ users_json|raw }},
+  deliveries: {{ deliveries|json_encode()|raw }},
+  planning: {{ planning|json_encode()|raw }}
+}
+</script>
+<script src="{{ asset('js/dashboard.js') }}"></script>
+{% endblock %}
