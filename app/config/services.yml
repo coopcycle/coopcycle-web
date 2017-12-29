@@ -112,6 +112,12 @@ services:
       - 'tva_livraison' # TODO Load from settings
       - "@coopcycle.expression_language.zone.provider"
 
+  coopcycle.cart_provider:
+    class: AppBundle\Service\CartProviderService
+    arguments:
+      - "@doctrine"
+      - "@request_stack"
+
   delivery.entity_listener:
     class: AppBundle\Entity\Listener\DeliveryListener
     arguments: [ "@snc_redis.default", "@serializer" ]

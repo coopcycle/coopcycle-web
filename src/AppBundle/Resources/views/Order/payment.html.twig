@@ -21,6 +21,7 @@
             </div>
           {% endif %}
           <form id="payment-form" method="POST">
+            <div class="alert alert-danger hidden" id="stripe-error"></div>
             <h4>{% trans %}order.payment.title{% endtrans %}</h4>
             <div class="form-group">
               <label for="number" class="control-label">{% trans %}order.payment.card_number.label{% endtrans %}</label>

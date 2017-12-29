@@ -2,10 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Cart\CartItem;
 use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Entity\Base\MenuItem;
 use AppBundle\Entity\Model\TaxableTrait;
-use AppBundle\Utils\CartItem;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;

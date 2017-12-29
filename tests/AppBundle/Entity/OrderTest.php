@@ -3,14 +3,12 @@
 namespace AppBundle\Entity;
 
 use AppBundle\BaseTest;
-use AppBundle\Entity\Address;
+use AppBundle\Entity\Cart\Cart;
+use AppBundle\Entity\Cart\CartItem;
 use AppBundle\Entity\Menu\MenuItem;
-use AppBundle\Utils\CartItem;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\DeliveryDateInFuture;
 use Carbon\Carbon;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 
 class OrderTest extends BaseTest
@@ -37,6 +35,7 @@ class OrderTest extends BaseTest
     public function testAddCartItem()
     {
         $order = new Order();
+        $cart = new Cart();
 
         $pizza = new MenuItem();
         $pizza
@@ -48,10 +47,10 @@ class OrderTest extends BaseTest
             ->setName('Salad')
             ->setPrice(5);
 
-        $pizzaItem = new CartItem($pizza, 4);
+        $pizzaItem = new CartItem($cart, $pizza, 4);
         $order->addCartItem($pizzaItem, $pizza);
 
-        $saladItem = new CartItem($salad, 2);
+        $saladItem = new CartItem($cart, $salad, 2);
         $order->addCartItem($saladItem, $salad);
 
         $this->assertCount(2, $order->getOrderedItem());
@@ -72,6 +71,7 @@ class OrderTest extends BaseTest
     public function testTotal()
     {
         $order = new Order();
+        $cart = new Cart();
 
         $pizza = new MenuItem();
         $pizza
@@ -83,10 +83,10 @@ class OrderTest extends BaseTest
             ->setName('Salad')
             ->setPrice(5);
 
-        $pizzaItem = new CartItem($pizza, 4);
+        $pizzaItem = new CartItem($cart, $pizza, 4);
         $order->addCartItem($pizzaItem, $pizza);
 
-        $saladItem = new CartItem($salad, 2);
+        $saladItem = new CartItem($cart, $salad, 2);
         $order->addCartItem($saladItem, $salad);
 
         $this->assertEquals(50, $order->getTotal());
@@ -103,12 +103,14 @@ class OrderTest extends BaseTest
         $order = new Order();
         $order->setRestaurant($restaurant);
 
+        $cart = new Cart();
+
         $pizza = new MenuItem();
         $pizza
             ->setName('Pizza')
             ->setPrice(10);
 
-        $pizzaItem = new CartItem($pizza, 4);
+        $pizzaItem = new CartItem($cart, $pizza, 4);
         $order->addCartItem($pizzaItem, $pizza);
 
         $delivery = new Delivery($order);
@@ -193,13 +195,14 @@ class OrderTest extends BaseTest
     public function testMinimumAmountValidation()
     {
         $order = new Order();
+        $cart = new Cart();
 
         $pizza = new MenuItem();
         $pizza
             ->setName('Pizza')
             ->setPrice(10);
 
-        $pizzaItem = new CartItem($pizza, 1);
+        $pizzaItem = new CartItem($cart, $pizza, 1);
         $order->addCartItem($pizzaItem, $pizza);
 
         $restaurant = new Restaurant();
@@ -241,7 +244,8 @@ class OrderTest extends BaseTest
 
         $pizza = $this->createMenuItem('Pizza', 10.00, $foodTaxCategory);
 
-        $pizzaItem = new CartItem($pizza, 1);
+        $cart = new Cart();
+        $pizzaItem = new CartItem($cart, $pizza, 1);
         $order->addCartItem($pizzaItem, $pizza);
 
         $this->doctrine->getManagerForClass(Order::class)->persist($order);

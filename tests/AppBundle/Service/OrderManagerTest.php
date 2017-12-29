@@ -3,11 +3,12 @@
 namespace AppBundle\Utils;
 
 use AppBundle\BaseTest;
+use AppBundle\Entity\Cart\Cart;
+use AppBundle\Entity\Cart\CartItem;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Utils\CartItem;
 
 class OrderManagerTest extends BaseTest
 {
@@ -52,8 +53,10 @@ class OrderManagerTest extends BaseTest
         $order->setRestaurant($restaurant);
         $order->setDelivery($delivery);
 
-        $order->addCartItem(new CartItem($item1, 1), $item1);
-        $order->addCartItem(new CartItem($item2, 1), $item2);
+        $cart = new Cart();
+
+        $order->addCartItem(new CartItem($cart, $item1, 1), $item1);
+        $order->addCartItem(new CartItem($cart, $item2, 1), $item2);
 
         $this->orderManager->applyTaxes($order);
 

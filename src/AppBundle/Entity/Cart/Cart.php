@@ -1,12 +1,14 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace AppBundle\Entity\Cart;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Validator\Constraints\IsValidDeliveryDate;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -23,15 +25,27 @@ class RestaurantMismatchException extends AddProductException {}
  * @package AppBundle\Utils
  *
  * @IsValidDeliveryDate(groups="cart")
+ *
+ * @ORM\Entity
  */
 class Cart
 {
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    protected $id;
 
     /**
      *
      * Restaurant the cart is linked to
      *
      * @var Restaurant
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Restaurant", cascade={"all"})
+     *
      */
     private $restaurant;
 
@@ -39,6 +53,9 @@ class Cart
      * Delivery address for the cart
      *
      * @var Address
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Address", cascade={"all"})
+     *
      */
     private $address;
 
@@ -46,6 +63,8 @@ class Cart
      * Distance to deliver for the cart
      *
      * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $distance;
 
@@ -53,13 +72,17 @@ class Cart
      * Delivery date for the cart
      *
      * @var string
+     *
+     * @ORM\Column(type="datetime")
      */
     private $date;
 
     /**
      * @var CartItem[]
+     *
+     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade={"all"})
      */
-    private $items = array();
+    private $items;
 
     /**
      * Cart constructor.
@@ -68,7 +91,23 @@ class Cart
     public function __construct(Restaurant $restaurant = null)
     {
         $this->restaurant = $restaurant;
-        $this->address = new Address();
+        $this->items = new ArrayCollection();
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 
     public function isForRestaurant(Restaurant $restaurant)
@@ -87,11 +126,6 @@ class Cart
         return $this->restaurant;
     }
 
-    public function clear()
-    {
-        $this->items = array();
-    }
-
     public function addItem(MenuItem $menuItem, $quantity = 1, $modifierChoices = [])
     {
         if (!$menuItem->getIsAvailable()) {
@@ -106,14 +140,17 @@ class Cart
             );
         }
 
-        $cartItem = new CartItem($menuItem, $quantity, $modifierChoices);
+        $cartItem = new CartItem($this, $menuItem, $quantity, $modifierChoices);
         $itemKey = $cartItem->getKey();
 
-        if (array_key_exists($itemKey, $this->items)) {
-            $this->items[$itemKey]->update($quantity);
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('key', $itemKey));
+        $item = $this->items->matching($criteria)->first();
+
+        if ($item) {
+            $item->update($quantity);
         }
         else {
-            $this->items[$itemKey] = $cartItem;
+            $this->items->add($cartItem);
         }
 
         return $this->items;
@@ -122,8 +159,11 @@ class Cart
 
     public function removeItem($itemKey)
     {
-        if (array_key_exists($itemKey, $this->items)) {
-            unset($this->items[$itemKey]);
+        $criteria = Criteria::create()->where(Criteria::expr()->eq('key', $itemKey));
+        $item = $this->items->matching($criteria)->first();
+
+        if (!is_null($item)) {
+            $this->items->removeElement($item);
         }
 
         return $this->items;
@@ -140,9 +180,11 @@ class Cart
             return 0;
         }
 
-        $itemsTotal = array_reduce($this->items, function ($carry, $item) {
-            return $carry + $item->getTotal();
-        }, 0);
+        $itemsTotal = 0;
+
+        foreach ($this->items as $item) {
+            $itemsTotal += $item->getTotal();
+        }
 
         return $itemsTotal + $this->restaurant->getFlatDeliveryPrice();
     }
@@ -178,7 +220,7 @@ class Cart
     /**
      * @return Address
      */
-    public function getAddress(): Address
+    public function getAddress()
     {
         return $this->address;
     }
@@ -194,8 +236,13 @@ class Cart
 
     public function getNormalizedItems()
     {
-        // Make sure this is a zero-indexed array, for proper JSON serialization
-        return array_values(array_map(function ($el) { return $el->toArray(); }, $this->items));
+        $serialized = [];
+
+        foreach ($this->items as $item) {
+            array_push($serialized, $item->toArray());
+        }
+
+        return $serialized;
     }
 
     public function toArray()
@@ -213,7 +260,7 @@ class Cart
     public function validate(ExecutionContextInterface $context, $payload)
     {
         // Validate distance
-        if (!is_null($this->address->getGeo()) && !is_null($this->restaurant)) {
+        if (!is_null($this->address) && !is_null($this->address->getGeo()) && !is_null($this->restaurant)) {
             $maxDistance = $this->getRestaurant()->getMaxDistance();
 
             $constraint = new Assert\LessThan(['value' => $maxDistance]);

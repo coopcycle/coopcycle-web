@@ -3,6 +3,10 @@
 namespace AppBundle\Utils;
 
 use AppBundle\BaseTest;
+use AppBundle\Entity\Cart\Cart;
+use AppBundle\Entity\Cart\CartItem;
+use AppBundle\Entity\Cart\RestaurantMismatchException;
+use AppBundle\Entity\Cart\UnavailableProductException;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Menu\MenuItem;
@@ -59,7 +63,7 @@ class CartTest extends BaseTest
 
         $this->assertEquals(25 + 3.5, $cart->getTotal());
 
-        $cartItem = new CartItem($item2, 0, []);
+        $cartItem = new CartItem($cart, $item2, 0, []);
 
         $cart->removeItem($cartItem->getKeyHash());
 

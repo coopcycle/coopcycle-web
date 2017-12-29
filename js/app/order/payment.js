@@ -5,7 +5,7 @@ function stripeResponseHandler(status, response) {
   if (response.error) { // Problem!
 
     // Show the errors on the form:
-    $form.find('.alert')
+    $form.find('#stripe-error')
       .text(response.error.message)
       .removeClass('hidden');
 
