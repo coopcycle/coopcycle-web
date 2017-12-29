@@ -255,10 +255,6 @@ class AdminController extends Controller
         ];
     }
 
-    /**
-     * @Route("/admin/deliveries/new", name="admin_deliveries_new")
-     * @Template("AppBundle:Delivery:form.html.twig")
-     */
     public function newDeliveryAction(Request $request)
     {
         $delivery = new Delivery();
