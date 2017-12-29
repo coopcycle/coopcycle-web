@@ -201,6 +201,16 @@ admin_stores:
             store_delivery: admin_store_delivery
     methods:  [ GET ]
 
+admin_store_new:
+    path: /admin/stores/new
+    defaults:
+        _controller: AppBundle:Admin:newStore
+        layout: AppBundle::admin.html.twig
+        routes:
+            stores: admin_stores
+            store_delivery: admin_store_delivery
+    methods:  [ GET, POST ]
+
 admin_store:
     path: /admin/stores/{id}
     defaults:

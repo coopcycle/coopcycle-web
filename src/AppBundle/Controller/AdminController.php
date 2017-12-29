@@ -499,10 +499,6 @@ class AdminController extends Controller
         return [ $stores, 1, 1 ];
     }
 
-    /**
-     * @Route("/admin/stores/new", name="admin_store_new")
-     * @Template("@App/Store/form.html.twig")
-     */
     public function newStoreAction(Request $request)
     {
         $store = new Store();
