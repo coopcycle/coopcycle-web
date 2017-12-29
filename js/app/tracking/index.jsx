@@ -207,7 +207,7 @@ setTimeout(function() {
     if (event.status === 'WAITING') {
       deliveryList.addItem(event.delivery, event.status)
       const { originAddress, deliveryAddress } = event.delivery
-      const layerGroup = createLayerGroup(delivery,
+      const layerGroup = createLayerGroup(event.delivery,
         [ originAddress.geo.latitude, originAddress.geo.longitude ],
         [ deliveryAddress.geo.latitude, deliveryAddress.geo.longitude ]
       )
