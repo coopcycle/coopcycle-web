@@ -64,6 +64,8 @@ preload()
         // This will block until there is a delivery in the queue
         let delivery = yield nextDelivery()
 
+        pub.prefixedPublish('autoscheduler:begin_delivery', JSON.stringify(delivery))
+
         // If the delivery has been delayed, skip
         // if (delay.has(delivery.id) && delay.get(delivery.id) > 0) {
         //   winston.debug(`Skipping delivery #${delivery.id}...`)
@@ -113,6 +115,8 @@ preload()
           }
 
         }
+
+        pub.prefixedPublish('autoscheduler:end_delivery', JSON.stringify(delivery))
 
         yield new Promise(resolve => setTimeout(resolve, 1000))
 

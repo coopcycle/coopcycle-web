@@ -60,6 +60,8 @@ io.on('connection', function (socket) {
     sub.prefixedSubscribe('tracking')
     sub.prefixedSubscribe('delivery_events')
     sub.prefixedSubscribe('order_events')
+    sub.prefixedSubscribe('autoscheduler:begin_delivery')
+    sub.prefixedSubscribe('autoscheduler:end_delivery')
 
     sub.on('subscribe', (channel, count) => {
       if (count == 5) {
@@ -78,6 +80,12 @@ io.on('connection', function (socket) {
           }
           if (sub.isChannel(channel, 'order_events')) {
             io.sockets.emit('order_events', JSON.parse(message))
+          }
+          if (sub.isChannel(channel, 'autoscheduler:begin_delivery')) {
+            io.sockets.emit('autoscheduler:begin_delivery', JSON.parse(message))
+          }
+          if (sub.isChannel(channel, 'autoscheduler:end_delivery')) {
+            io.sockets.emit('autoscheduler:end_delivery', JSON.parse(message))
           }
         })
       }

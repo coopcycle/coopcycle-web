@@ -29,7 +29,7 @@ const couriersLayer = new L.LayerGroup()
 
 function hideOthers(delivery) {
   layersByDelivery.forEach((layers, key) => {
-    if (key !== delivery['@id']) {
+    if (key !== delivery.id) {
       map.removeLayer(layers)
     } else {
       if (!map.hasLayer(layers)) {
@@ -48,25 +48,12 @@ function fitMap() {
   MapHelper.fitToLayers(map, layers)
 }
 
-function createLayerGroup(delivery) {
+function createLayerGroup(delivery, pickupCoords, dropoffCoords, color) {
 
   const { originAddress, deliveryAddress } = delivery
 
-  if (!layersByDelivery.has(delivery['@id'])) {
-    layersByDelivery.set(delivery['@id'], new L.LayerGroup([]))
-  }
-
-  const layerGroup = layersByDelivery.get(delivery['@id'])
-
-  const pickup = MapHelper.createMarker([
-    originAddress.geo.latitude,
-    originAddress.geo.longitude
-  ], 'arrow-up', 'circle', '#3498DB')
-
-  const dropoff = MapHelper.createMarker([
-    deliveryAddress.geo.latitude,
-    deliveryAddress.geo.longitude
-  ], 'arrow-down', 'circle', '#2ECC71')
+  const pickup = MapHelper.createMarker(pickupCoords, 'arrow-up', 'marker', color || '#3498DB')
+  const dropoff = MapHelper.createMarker(dropoffCoords, 'arrow-down', 'marker', color || '#2ECC71')
 
   pickup.bindPopup(`<div class="text-center">${originAddress.streetAddress}</div>`, {
     offset: [3, 70]
@@ -75,6 +62,8 @@ function createLayerGroup(delivery) {
     offset: [3, 70]
   })
 
+  const layerGroup = new L.LayerGroup([])
+
   layerGroup.addLayer(pickup)
   layerGroup.addLayer(dropoff)
 
@@ -82,7 +71,15 @@ function createLayerGroup(delivery) {
 }
 
 window.AppData.Tracking.deliveries
-  .forEach(delivery => createLayerGroup(delivery).addTo(map))
+  .forEach(delivery => {
+    const { originAddress, deliveryAddress } = delivery
+    const layerGroup = createLayerGroup(delivery,
+      [ originAddress.geo.latitude, originAddress.geo.longitude ],
+      [ deliveryAddress.geo.latitude, deliveryAddress.geo.longitude ]
+    )
+    layersByDelivery.set(delivery.id, layerGroup)
+    layerGroup.eachLayer(layer => layer.addTo(map))
+  })
 couriersLayer.addTo(map)
 fitMap()
 
@@ -98,7 +95,7 @@ deliveryList = render(
       var originParam = [ originAddress.geo.latitude, originAddress.geo.longitude ].join(',');
       var destinationParam = [ deliveryAddress.geo.latitude, deliveryAddress.geo.longitude ].join(',')
 
-      const layerGroup = layersByDelivery.get(delivery['@id'])
+      const layerGroup = layersByDelivery.get(delivery.id)
 
       if (layerGroup.getLayers().length < 3) {
         const [ marker1, marker2 ] = layerGroup.getLayers()
@@ -158,6 +155,47 @@ setTimeout(function() {
     counter.decrement()
   })
 
+  socket.on('autoscheduler:begin_delivery', delivery => {
+
+    const { originAddress, deliveryAddress } = delivery
+
+    if (!layersByDelivery.has(delivery.id)) {
+      return
+    }
+
+    const layerGroup = layersByDelivery.get(delivery.id)
+    const newLayerGroup = createLayerGroup(delivery,
+      [ originAddress.position.latitude, originAddress.position.longitude ],
+      [ deliveryAddress.position.latitude, deliveryAddress.position.longitude ],
+      '#E74C3C'
+    )
+    setTimeout(() => {
+      map.removeLayer(layerGroup)
+      newLayerGroup.eachLayer(layer => layer.addTo(map))
+      layersByDelivery.set(delivery.id, newLayerGroup)
+    }, 150)
+  })
+
+  socket.on('autoscheduler:end_delivery', delivery => {
+
+    const { originAddress, deliveryAddress } = delivery
+
+    if (!layersByDelivery.has(delivery.id)) {
+      return
+    }
+
+    const layerGroup = layersByDelivery.get(delivery.id)
+    const newLayerGroup = createLayerGroup(delivery,
+      [ originAddress.position.latitude, originAddress.position.longitude ],
+      [ deliveryAddress.position.latitude, deliveryAddress.position.longitude ]
+    )
+    setTimeout(() => {
+      map.removeLayer(layerGroup)
+      newLayerGroup.eachLayer(layer => layer.addTo(map))
+      layersByDelivery.set(delivery.id, newLayerGroup)
+    }, 500)
+  })
+
   socket.on('delivery_events', event => {
     console.log('New delivery event', event)
     if (event.status === 'CANCELED' || event.status === 'DELIVERED') {
@@ -168,7 +206,13 @@ setTimeout(function() {
     }
     if (event.status === 'WAITING') {
       deliveryList.addItem(event.delivery, event.status)
-      createLayerGroup(event.delivery).addTo(map)
+      const { originAddress, deliveryAddress } = event.delivery
+      const layerGroup = createLayerGroup(delivery,
+        [ originAddress.geo.latitude, originAddress.geo.longitude ],
+        [ deliveryAddress.geo.latitude, deliveryAddress.geo.longitude ]
+      )
+      layersByDelivery.set(delivery.id, layerGroup)
+      layerGroup.eachLayer(layer => layer.addTo(map))
       fitMap()
     }
   })
