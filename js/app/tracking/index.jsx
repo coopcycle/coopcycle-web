@@ -14,12 +14,7 @@ var deliveries = [];
 var couriers = [];
 var deliveryList;
 
-var center = {
-  lat: 48.857498,
-  lng: 2.335402
-};
-var zoom = window.mapZoom || 13;
-var map = MapHelper.init('map', center, zoom)
+var map = MapHelper.init('map')
 
 const hostname = window.location.hostname
 

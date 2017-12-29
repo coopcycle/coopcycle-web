@@ -1,9 +1,7 @@
 var MapHelper = require('../MapHelper');
 
 if ($('#map').is(':visible')) {
-  let center = { lat: 48.857498,  lng: 2.335402 },
-    zoom = window.mapZoom || 10,
-    map = MapHelper.init('map', center, zoom, false),
+  let map = MapHelper.init('map', null, 10, false),
     restaurantMarker = MapHelper.createMarker(window.AppData.restaurantCoordinates, 'cutlery', 'marker', '#337ab7'),
     customerMarker = MapHelper.createMarker(window.AppData.customerCoordinates, 'user', 'marker', '#337ab7');
 

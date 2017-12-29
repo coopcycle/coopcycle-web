@@ -11,13 +11,7 @@ import _ from 'lodash';
 import L from 'leaflet'
 import moment from 'moment'
 
-var center = {
-  lat: 48.857498,
-  lng: 2.335402
-};
-var zoom = window.mapZoom || 13;
-
-const map = MapHelper.init('map', center, zoom)
+const map = MapHelper.init('map')
 
 const proxy = new MapProxy(map, {
   users: window.AppData.Dashboard.users,

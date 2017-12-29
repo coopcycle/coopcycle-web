@@ -2,11 +2,19 @@ var L = require('leaflet');
 var Polyline = require('@mapbox/polyline');
 var BeautifyMarker = require('beautifymarker');
 
-function init(id, center, zoom, zoomControl = true) {
-  var map = L.map(id, { scrollWheelZoom: false, zoomControl: zoomControl})
+function init(id, center, zoom = 13, zoomControl = true) {
+
+  if (!center && window.AppData && window.AppData.MapHelper && window.AppData.MapHelper.center) {
+    let [ latitude, longitude ] = window.AppData.MapHelper.center.split(',')
+    if (latitude && longitude) {
+      center = [ parseFloat(latitude), parseFloat(longitude) ]
+    }
+  }
+
+  var map = L.map(id, { scrollWheelZoom: false, zoomControl })
 
   if (center && zoom) {
-    map.setView([center.lat, center.lng], zoom)
+    map.setView(center, zoom)
   }
 
   L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {

@@ -10,12 +10,6 @@ import DateTimePicker from './DateTimePicker.jsx';
 const locale = $('html').attr('lang')
 numeral.locale(locale)
 
-var center = {
-  lat: 48.857498,
-  lng: 2.335402
-};
-var zoom = window.mapZoom || 13;
-
 var map;
 
 let markers = {
@@ -165,7 +159,7 @@ function onDateTimeChange(date) {
   $('#delivery_date').val(date.format('YYYY-MM-DD HH:mm:00'))
 }
 
-map = MapHelper.init('map', center, zoom);
+map = MapHelper.init('map');
 
 const date = $('#delivery_date').val();
 const error = $('#datetimepicker').data('has-error');

@@ -10,12 +10,6 @@ var map;
 var courierMarker;
 var orderFollow;
 
-var center = {
-  lat: 48.857498,
-  lng: 2.335402
-};
-var zoom = window.mapZoom || 13;
-
 var hostname = window.location.hostname;
 var socket;
 
@@ -70,7 +64,7 @@ if ($('#map').is(':visible')) {
     document.getElementById('order-follow')
   );
 
-  map = MapHelper.init('map', center, zoom, false);
+  map = MapHelper.init('map');
 
   var restaurant = {
     lat: delivery.originAddress.geo.latitude,
