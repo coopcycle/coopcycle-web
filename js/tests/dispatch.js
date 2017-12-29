@@ -70,154 +70,156 @@ describe('Dispatch WebSocket', function() {
     })
   });
 
+  function createWebSocket(username) {
+
+    var ws = new WebSocket('http://localhost:8000', {
+      headers: {
+        Authorization: 'Bearer ' + utils.createJWT(username)
+      }
+    });
+
+    ws.on('open', function() {
+      assert.equal(WebSocket.OPEN, ws.readyState);
+    });
+
+    return ws;
+  };
+
+  function send(ws, data, timeout) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(() => {
+
+        ws.send(JSON.stringify(data), e => {
+          if (e) {
+            console.error('WebSocket error', e)
+          }
+          resolve()
+        })
+      }, timeout)
+    })
+  }
+
   it('should dispatch order to courier on connection', function() {
 
-    this.timeout(30000)
+    this.timeout(10000)
 
     return new Promise(function (resolve, reject) {
-      var token = utils.createJWT('sarah');
 
-      var ws = new WebSocket('http://localhost:8000', {
-        headers: {
-          Authorization: 'Bearer ' + token
-        }
-      });
+      var sarah = createWebSocket('sarah');
 
-      ws.onopen = function() {
+      sarah.on('message', function(message) {
 
-        assert.equal(WebSocket.OPEN, ws.readyState);
-
-        var msg = JSON.stringify({
-          type: "updateCoordinates",
-          coordinates: { latitude: 48.883083, longitude: 2.344276 }
-        });
-        ws.send(msg);
-      };
-
-      ws.onmessage = function(e) {
-
-        assert.equal('message', e.type);
-
-        var data = JSON.parse(e.data);
+        var data = JSON.parse(message);
         assert.equal('delivery', data.type);
 
-        ws.close();
+        sarah.close();
         resolve();
-      };
+      });
 
-      ws.onerror = function(e) {
+      sarah.on('error', function(e) {
         reject(e.message);
-      };
-    utils.createRandomOrder('bill', restaurant, 'default')
+      });
+
+      utils.createRandomOrder('bill', restaurant, 'default')
+        .then(() => {
+          send(sarah, {
+            type: "updateCoordinates",
+            coordinates: { latitude: 48.883083, longitude: 2.344276 }
+          }, 2000)
+        })
+
     });
   })
 
   it('should dispatch order to closest courier', function() {
 
-    this.timeout(5000);
-
-    var createWebSocket = function(username, coordinates) {
-
-      var ws = new WebSocket('http://localhost:8000', {
-        headers: {
-          Authorization: 'Bearer ' + utils.createJWT(username)
-        }
-      });
-
-      ws.onopen = function() {
-        assert.equal(WebSocket.OPEN, ws.readyState);
-
-        ws.send(JSON.stringify({
-          type: "updateCoordinates",
-          coordinates: coordinates
-        }));
-      };
-
-      return ws;
-    };
+    this.timeout(10000);
 
     return new Promise(function (resolve, reject) {
 
-      var sarah = createWebSocket('sarah', { latitude: 48.883083, longitude: 2.344276 });
-      var bob = createWebSocket('bob', { latitude: 48.86069, longitude: 2.35525 });
+      var sarah = createWebSocket('sarah');
+      var bob = createWebSocket('bob');
 
       sarah.onerror = bob.onerror = function(e) {
         reject(e.message);
       };
 
-      sarah.onmessage = function(e) {
-        assert.equal('message', e.type);
+      sarah.on('message', function(message) {
 
-        var data = JSON.parse(e.data);
+        var data = JSON.parse(message);
         assert.equal('delivery', data.type);
 
         sarah.close();
         bob.close();
         resolve();
-      };
+      });
 
-      bob.onmessage = function(e) {
+      bob.on('message', function(message) {
         sarah.close();
         bob.close();
         reject('Farest courier should not receive order');
-      };
+      });
 
-      return utils.createRandomOrder('bill', restaurant, 'default')
+      const messages = [
+        send(sarah, {
+          type: "updateCoordinates",
+          coordinates: { latitude: 48.883083, longitude: 2.344276 }
+        }, 2000),
+        send(bob, {
+          type: "updateCoordinates",
+          coordinates: { latitude: 48.86069, longitude: 2.35525 }
+        }, 2000)
+      ]
+
+      Promise.all(messages)
+        .then(() => utils.createRandomOrder('bill', restaurant, 'default'))
+
     })
 
   })
 
   it('should dispatch order to closest courier (one is at the exact same place as the restaurant)', function() {
 
-    this.timeout(5000);
-
-    var createWebSocket = function(username, coordinates) {
-
-      var ws = new WebSocket('http://localhost:8000', {
-        headers: {
-          Authorization: 'Bearer ' + utils.createJWT(username)
-        }
-      });
-
-      ws.onopen = function() {
-        assert.equal(WebSocket.OPEN, ws.readyState);
-
-        ws.send(JSON.stringify({
-          type: "updateCoordinates",
-          coordinates: coordinates
-        }));
-      };
-
-      return ws;
-    };
+    this.timeout(10000);
 
     return new Promise(function (resolve, reject) {
 
-      var sarah = createWebSocket('sarah', { latitude: 48.884550, longitude: 2.341358 });
-      var bob = createWebSocket('bob', { latitude: 48.86069, longitude: 2.35525 });
+      var sarah = createWebSocket('sarah');
+      var bob = createWebSocket('bob');
 
       sarah.onerror = bob.onerror = function(e) {
         reject(e.message);
       };
 
-      sarah.onmessage = function(e) {
-        assert.equal('message', e.type);
+      sarah.on('message', function(message) {
 
-        var data = JSON.parse(e.data);
+        var data = JSON.parse(message);
         assert.equal('delivery', data.type);
 
         sarah.close();
         bob.close();
         resolve();
-      };
+      });
 
-      bob.onmessage = function(e) {
+      bob.on('message', function(e) {
         sarah.close();
         bob.close();
         reject('Farest courier should not receive order');
-      };
+      });
 
-      return utils.createRandomOrder('bill', restaurant, 'default')
+      const messages = [
+        send(sarah, {
+          type: "updateCoordinates",
+          coordinates: { latitude: 48.884550, longitude: 2.341358 }
+        }, 2000),
+        send(bob, {
+          type: "updateCoordinates",
+          coordinates: { latitude: 48.86069, longitude: 2.35525 }
+        }, 2000)
+      ]
+
+      Promise.all(messages)
+        .then(() => utils.createRandomOrder('bill', restaurant, 'default'))
     })
 
   })
