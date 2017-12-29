@@ -1,8 +1,12 @@
 var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
-var Sequelize = require('sequelize');
-var moment = require('moment');
+var co = require('co')
+var _ = require('lodash')
+
+const Courier = require('../models/Courier')
+const CourierPool = require('../models/CourierPool')
+const DeliveryRegistry = require('../models/DeliveryRegistry')
 
 var winston = require('winston');
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
@@ -16,62 +20,111 @@ console.log('---------------------');
 console.log('NODE_ENV = ' + process.env.NODE_ENV);
 console.log('PORT = ' + process.env.PORT);
 
-var envMap = {
-  production: 'prod',
-  development: 'dev',
-  test: 'test'
-};
+const {
+  metrics,
+  redis,
+  pub,
+  sub,
+  sequelize
+} = require('./config')(ROOT_DIR)
 
-var ConfigLoader = require('../ConfigLoader');
-const Metrics = require('../Metrics')
+const db = require('../Db')(sequelize);
+const couriers = new CourierPool(redis)
+const deliveries = new DeliveryRegistry(sequelize, redis)
 
-try {
+const {
+  addToDispatching,
+  addToWaiting,
+  findNearest,
+  nextDelivery,
+  onConnect,
+  onUpdateCoordinates,
+  preload,
+  removeFromDispatching,
+  removeFromWaiting,
+  subscribe,
+} = require('./api')(db, redis, pub, metrics, couriers, deliveries, winston)
 
-  var configFile = 'config.yml';
-  if (envMap[process.env.NODE_ENV]) {
-    configFile = 'config_' + envMap[process.env.NODE_ENV] + '.yml';
-  }
+preload()
+  .then(() => {
 
-  var configLoader = new ConfigLoader(ROOT_DIR + '/app/config/' + configFile);
-  var config = configLoader.load();
+    winston.info('Subscribing to Redis channels...');
+    subscribe(sub)
 
-} catch (e) {
-  throw e;
-}
+    let delay = new Map()
 
-const metrics = new Metrics({
-  namespace: config.parameters.database_name,
-  host: config.parameters.statsd_host,
-  port: config.parameters.statsd_port,
-})
+    co(function* () {
 
-var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
+      winston.info('Starting loop...')
 
-var redis = require('redis').createClient({
-  prefix: config.snc_redis.clients.default.options.prefix,
-  url: config.snc_redis.clients.default.dsn
-});
+      const distances = [500, 1000, 2000, 2500, 3000, 3500, 4000, 4500]
 
-var redisPubSub = require('../RedisClient')({
-  prefix: config.snc_redis.clients.default.options.prefix,
-  url: config.snc_redis.clients.default.dsn
-});
+      while (true) {
 
-var pub = require('../RedisClient')({
-  prefix: config.snc_redis.clients.default.options.prefix,
-  url: config.snc_redis.clients.default.dsn
-});
+        // This will block until there is a delivery in the queue
+        let delivery = yield nextDelivery()
 
-var sequelize = new Sequelize(
-  config.doctrine.dbal.dbname,
-  config.doctrine.dbal.user,
-  config.doctrine.dbal.password,
-  {
-    host: config.doctrine.dbal.host,
-    dialect: 'postgres',
-    logging: false,
-  }
-);
+        // If the delivery has been delayed, skip
+        // if (delay.has(delivery.id) && delay.get(delivery.id) > 0) {
+        //   winston.debug(`Skipping delivery #${delivery.id}...`)
+        //   delay.set(delivery.id, delay.get(delivery.id) - 1)
+        //   yield new Promise(resolve => setTimeout(resolve, 1000))
+        //   continue
+        // }
+
+        // Try distances in ascending order
+        for (let i = 0; i < distances.length; i++) {
+
+          let distance = distances[i]
+          let courier = yield findNearest(delivery, distance)
+
+          if (courier) {
+
+            winston.debug(`Dispatching delivery #${delivery.id} to ${courier.username}`)
+
+            courier.setDelivery(delivery.id)
+            courier.setState(Courier.DISPATCHING)
+
+            yield removeFromWaiting(delivery.id)
+            yield addToDispatching(delivery.id)
+
+            winston.info(`Sending WebSocket message to ${courier.username}`)
+
+            courier.send({
+              type: 'delivery',
+              delivery: {
+                id: delivery.id,
+                originAddress: delivery.originAddress.position,
+                deliveryAddress: delivery.deliveryAddress.position,
+                order: {
+                  id: delivery.order.id
+                },
+              }
+            })
+
+            // Break the loop to avoid checking other distances
+            break;
+
+          } else {
+            if (distance === 4500) {
+              winston.debug(`Max distance reached!`)
+              delay.set(delivery.id, 10)
+            }
+          }
+
+        }
+
+        yield new Promise(resolve => setTimeout(resolve, 1000))
+
+      }
+
+    }).then(function (value) {
+      console.log(value);
+    }, function (err) {
+      console.error(err.stack);
+    });
+
+  })
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
@@ -79,71 +132,11 @@ var server = http.createServer(function(request, response) {
 });
 server.listen(process.env.PORT || 8000, function() {});
 
-var Db = require('../Db')(sequelize);
-
-var Courier = require('../models/Courier').Courier;
-Courier.init(redis, redisPubSub);
-
-var Delivery = require('../models/Delivery');
-Delivery.init(redis, sequelize, Db);
-
-var DeliveryDispatcher = require('../models/DeliveryDispatcher');
-var deliveryDispatcher = new DeliveryDispatcher(redis, Delivery.Registry);
-
+var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem');
 var TokenVerifier = require('../TokenVerifier');
-var tokenVerifier = new TokenVerifier(cert, Db);
+var tokenVerifier = new TokenVerifier(cert, db);
 
-/* Delivery dispatch loop */
-
-deliveryDispatcher.setHandler(function(delivery, next) {
-
-  // winston.info('Trying to dispatch delivery #' + delivery.id);
-
-  Courier.nearestForDelivery(delivery, 3500).then(function(courier) {
-
-    if (!courier) {
-      // winston.debug('No couriers nearby');
-      return next();
-    }
-
-    console.log('Dispatching delivery #' + delivery.id + ' to courier #' + courier.id);
-
-    // There is a courier available
-    // Change state to "DISPATCHING" and wait for feedback
-    courier.setDelivery(delivery.id);
-    courier.setState(Courier.DISPATCHING);
-
-    // Remove delivery from the waiting list
-    redis.lrem('deliveries:waiting', 0, delivery.id, function(err) {
-      if (err) throw err;
-      redis.lpush('deliveries:dispatching', delivery.id, function(err) {
-        if (err) throw err;
-        // TODO record dispatch event ?
-        courier.send({
-          type: 'delivery',
-          delivery: {
-            id: delivery.id,
-            originAddress: delivery.originAddress.position,
-            deliveryAddress: delivery.deliveryAddress.position,
-            order: {
-              id: delivery.order.id
-            },
-          }
-        });
-        next();
-      });
-    });
-  });
-});
-
-// Load deliveries in Redis
-Delivery.load().then(function() {
-  console.log('Everything is loaded, starting dispatch loop...');
-  deliveryDispatcher.start();
-});
-
-// create the server
-wsServer = new WebSocketServer({
+var wsServer = new WebSocketServer({
     server: server,
     verifyClient: function (info, cb) {
       tokenVerifier.verify(info, cb);
@@ -155,63 +148,71 @@ var isClosing = false;
 // WebSocket server
 wsServer.on('connection', function(ws) {
 
-    var courier = ws.upgradeReq.courier;
-    courier.connect(ws);
-    Courier.Pool.add(courier);
+    const { user } = ws.upgradeReq;
 
-    metrics.gauge('couriers.connected', Courier.Pool.size())
+    let state = Courier.UNKNOWN;
 
-    console.log('Courier ' + courier.username + ' connected!');
-    pub.prefixedPublish('online', courier.username)
+    db.Delivery.findOne({
+      where: {
+        status: {$in: ['DISPATCHED', 'PICKED']},
+        courier_id: user.id
+      }
+    }).then(function(delivery) {
 
-    ws.on('message', function(messageText) {
-
-      if (isClosing) {
-        return;
+      if (delivery) {
+        state = Courier.DELIVERING;
+        winston.debug('Courier #' + user.username + ' was delivering #' + delivery.id);
+      } else {
+        winston.debug('Courier #' + user.username + ' was not delivering anything');
       }
 
-      var message = JSON.parse(messageText);
+      winston.info('Courier #' + user.username + ', setting state = ' + state);
 
-      if (message.type === 'updateCoordinates') {
+      const data = user.toJSON()
+      const courier = new Courier({ ...data, state })
 
-        // winston.debug('Courier ' + courier.username + ', state = ' + courier.state + ' updating position in Redis...');
-        Courier.updateCoordinates(courier, message.coordinates);
+      onConnect(courier, ws)
 
-        redis.rpush('tracking:' + courier.username, JSON.stringify({
-          ...message.coordinates,
-          timestamp: moment().unix()
-        }))
+      ws.on('message', function(messageText) {
 
-        const { username } = courier
-        const { latitude, longitude } = message.coordinates
+        if (isClosing) {
+          return
+        }
 
-        pub.prefixedPublish('tracking', JSON.stringify({
-          user: username,
-          coords: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
-        }))
-      }
+        var message = JSON.parse(messageText)
+        if (message.type === 'updateCoordinates') {
+          onUpdateCoordinates(courier, message.coordinates)
+        }
 
-    });
+      })
 
-    ws.on('close', function() {
-      console.log('Courier #' + courier.id + ' disconnected!');
-      Courier.Pool.remove(courier);
-      console.log('Number of couriers connected: ' + Courier.Pool.size());
-      metrics.gauge('couriers.connected', Courier.Pool.size())
-      pub.prefixedPublish('offline', courier.username)
-    });
-});
+      ws.on('close', function() {
+
+        couriers.remove(courier);
+
+        winston.info('Courier #' + courier.username + ' disconnected!');
+        winston.debug('Number of couriers connected: ' + couriers.size());
+
+        metrics.gauge('couriers.connected', couriers.size())
+        pub.prefixedPublish('offline', courier.username)
+
+      })
+
+    })
+
+})
 
 // Handle restarts
 process.on('SIGINT', function () {
+
   console.log('---------------------');
   console.log('- STOPPING DISPATCH -');
   console.log('---------------------');
-  isClosing = true;
-  deliveryDispatcher.stop();
 
-  Courier.Pool.forEach(function(courier) {
+  isClosing = true;
+
+  couriers.forEach(function(courier) {
     pub.prefixedPublish('offline', courier.username)
   })
-  Courier.Pool.removeAll();
+  couriers.removeAll();
 });

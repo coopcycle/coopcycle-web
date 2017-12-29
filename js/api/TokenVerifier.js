@@ -38,35 +38,9 @@ TokenVerifier.prototype.verify = function (info, cb) {
           }
 
           info.req.user = user;
+          cb(true);
 
-          var state = Courier.UNKNOWN;
-
-          // Check courier status
-          self.db.Delivery.findOne({
-            where: {
-              status: {$in: ['DISPATCHED', 'PICKED']},
-              courier_id: user.id
-            }
-          }).then(function(delivery) {
-
-            if (delivery) {
-              state = Courier.DELIVERING;
-              console.log('Courier #' + user.id + ' was delivering #' + delivery.id);
-            } else {
-              console.log('Courier #' + user.id + ' was not delivering anything');
-            }
-
-            console.log('Courier #' + user.id + ', setting state = ' + state);
-
-            var courier = new Courier(_.extend(user.toJSON(), {
-              state: state
-            }));
-
-            info.req.courier = courier;
-            cb(true);
-
-          });
-        });
+        })
     }
   });
 };

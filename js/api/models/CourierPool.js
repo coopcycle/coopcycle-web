@@ -1,38 +1,9 @@
 var _ = require('underscore');
 var Utils = require('../Utils');
 
-function CourierPool(redis, redisPubSub) {
+function CourierPool(redis) {
   this.pool = [];
   this.redis = redis;
-
-  redisPubSub.prefixedSubscribe('couriers');
-  redisPubSub.prefixedSubscribe('couriers:available');
-  redisPubSub.prefixedSubscribe('deliveries:declined');
-
-  var self = this;
-  redisPubSub.on('message', function(channel, message) {
-
-    if (redisPubSub.isChannel(channel, 'couriers')) {
-      console.log('Courier #' + message + ' has accepted delivery');
-      var courier = self.findById(message);
-      if (courier) {
-        courier.setState('DELIVERING');
-      }
-    }
-    if (redisPubSub.isChannel(channel, 'couriers:available')) {
-      console.log('Courier #' + message + ' is available again');
-      var courier = self.findById(message);
-      if (courier) {
-        courier.setState('AVAILABLE');
-      }
-    }
-    if (redisPubSub.isChannel(channel, 'deliveries:declined')) {
-      var data = JSON.parse(message);
-      console.log('Courier #' + data.courier + ' has declined delivery #' + data.delivery);
-      var courier = self.findById(data.courier);
-      courier.declineDelivery(data.delivery);
-    }
-  });
 }
 
 CourierPool.prototype.add = function(courier) {
