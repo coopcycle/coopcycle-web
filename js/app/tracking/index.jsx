@@ -211,7 +211,7 @@ setTimeout(function() {
         [ originAddress.geo.latitude, originAddress.geo.longitude ],
         [ deliveryAddress.geo.latitude, deliveryAddress.geo.longitude ]
       )
-      layersByDelivery.set(delivery.id, layerGroup)
+      layersByDelivery.set(event.delivery.id, layerGroup)
       layerGroup.eachLayer(layer => layer.addTo(map))
       fitMap()
     }
