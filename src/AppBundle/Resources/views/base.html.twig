@@ -59,7 +59,7 @@
     </script>
 
     <script src="{{ asset('js/common.js') }}"></script>
-    {% set cart = app.session.get('cart') %}
+    {% set cart = cart_provider.getCart() %}
     <script>
       window.AppData.Cart = {
         {% if cart is not empty %}

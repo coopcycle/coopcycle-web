@@ -4,15 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Cart\RestaurantMismatchException;
+use AppBundle\Entity\Cart\UnavailableProductException;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Utils\Cart;
+use AppBundle\Entity\Cart\Cart;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Utils\GeoUtils;
-use AppBundle\Utils\RestaurantMismatchException;
-use AppBundle\Utils\UnavailableProductException;
 use AppBundle\Utils\ValidationUtils;
-use Doctrine\Common\Collections\Criteria;
 use League\Geotools\Coordinate\Coordinate;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -45,76 +43,43 @@ class RestaurantController extends Controller
 
     private function getCart(Request $request, Restaurant $restaurant)
     {
-        $cart = $request->getSession()->get('cart');
 
-        if (null === $cart) {
+        $cartId = $request->getSession()->get('cartId');
+
+        if (null === $cartId) {
             $cart = new Cart($restaurant);
+        } else {
+            $cartRepo = $this->getDoctrine()->getRepository(Cart::class);
+            $cart = $cartRepo->find($cartId);
         }
 
         if (!$cart->isForRestaurant($restaurant)) {
             $cart = new Cart($restaurant);
         }
 
-        // we clone so if there is a validation error we don't mutate the original cart
-        $cart = clone $cart;
-
         return $cart;
     }
 
     private function saveCart(Request $request, Cart $cart)
     {
-        $request->getSession()->set('cart', $cart);
+        $cartManager = $this->getDoctrine()->getManagerForClass(Cart::class);
+        $cartManager->persist($cart);
+        $cartManager->flush();
+        $cartId = $cart->getId();
+        $request->getSession()->set('cartId', $cartId);
     }
 
     private function setCartAddress(Request $request, Cart $cart) {
-        // check if the user has already the address registered
-        $user = $this->getUser();
+
         $addressData = $request->request->get('address');
 
-        if ($user) {
-
-            // TODO : this doesn't work, maybe a bug in doctrine-postgis
-            // TODO: investigate it
-//            $criteria = Criteria::create()->where(
-//                Criteria::expr()->eq(
-//                    "geo",
-//                    GeoUtils::asPoint(new GeoCoordinates($addressData['latitude'], $addressData['longitude']))
-//                )
-//            );
-//
-//            $address = $user->getAddresses()->matching($criteria);
-            // the field `geo` on address is not hydrated correctly and is set to the DB value as string, instead of POINT(xxx,yyy)
-
-            $geotools = new Geotools();
-
-            // we need to compute the geohash, because of small differences between geodata from the back and from the front
-            $address = $user->getAddresses()->filter(
-                function ($address) use ($addressData, $geotools) {
-                    $addressCoordinate = new Coordinate([$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]);
-                    $basketCoordinate = new Coordinate([$addressData['latitude'], $addressData['longitude']]);
-                    return $geotools->geohash()->encode($addressCoordinate, 9)->getGeohash() ===
-                        $geotools->geohash()->encode($basketCoordinate, 9)->getGeohash();
-                }
-            );
-
-            if ($address->count() > 0) {
-                $this->logger->debug('Existing address found for streetAddress '.$addressData['streetAddress']);
-                $cart->setAddress($address->first());
-
-                return $cart;
-            }
-        }
-
-        $this->logger->debug('New address for user');
-
-        $address = new Address();
+        $address = $cart->getAddress() ? $cart->getAddress() : new Address();
         $address->setAddressLocality($addressData['addressLocality']);
         $address->setAddressCountry($addressData['addressCountry']);
         $address->setAddressRegion($addressData['addressRegion']);
         $address->setPostalCode($addressData['postalCode']);
         $address->setStreetAddress($addressData['streetAddress']);
         $address->setGeo(new GeoCoordinates($addressData['latitude'], $addressData['longitude']));
-
         $cart->setAddress($address);
         return $address;
     }

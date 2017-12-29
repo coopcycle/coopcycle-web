@@ -2,15 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\Cart;
-use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\StripeParams;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 class StripeController extends Controller
 {

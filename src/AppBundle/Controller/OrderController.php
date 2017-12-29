@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Cart\Cart;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Form\DeliveryAddressType;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -20,7 +22,12 @@ class OrderController extends Controller
 {
     private function getCart(Request $request)
     {
-        return $request->getSession()->get('cart');
+        $cartId = $request->getSession()->get('cartId');
+        if (!is_null($cartId)) {
+            $cartRepo = $this->getDoctrine()->getRepository(Cart::class);
+
+            return $cartRepo->find($cartId);
+        }
     }
 
     private function createOrderFromRequest(Request $request)
@@ -76,7 +83,16 @@ class OrderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $deliveryAddress = $form->getData();
 
-            if (!is_null($deliveryAddress->getId())) {
+            $user = $this->getUser();
+
+            $hasAlreadySaved = $user->getAddresses()->filter(
+                    function ($address) use ($deliveryAddress) {
+                        return $deliveryAddress->getGeo()->getLatitude() === $address->getGeo()->getLatitude() &&
+                            $deliveryAddress->getGeo()->getLongitude() === $address->getGeo()->getLongitude();
+                    }
+                )->count() > 0;
+
+            if (!$hasAlreadySaved) {
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
                 $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
 
@@ -142,7 +158,7 @@ class OrderController extends Controller
                 $this->getDoctrine()->getManagerForClass(Order::class)->flush();
             }
 
-            $request->getSession()->remove('cart');
+            $request->getSession()->remove('cartId');
             $request->getSession()->remove('deliveryAddress');
 
             return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
