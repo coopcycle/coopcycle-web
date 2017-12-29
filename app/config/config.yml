@@ -43,7 +43,6 @@ twig:
         is_demo: "%is_demo%"
         sentry_public_dsn: "%sentry_public_dsn%"
         country_iso: "%country_iso%"
-        google_api_key: "%google_api_key%"
         cart_provider: '@coopcycle.cart_provider'
 
 # Doctrine Configuration

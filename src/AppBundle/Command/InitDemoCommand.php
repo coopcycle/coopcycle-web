@@ -51,7 +51,7 @@ class InitDemoCommand extends ContainerAwareCommand
             'timeout'  => 2.0,
         ]);
 
-        $apiKey = $this->getContainer()->getParameter('google_api_key');
+        $apiKey = $this->getContainer()->get('craue_config')->get('google_api_key');
         $addressProvider = new AddressProvider($this->faker, $client, $apiKey);
 
         $this->faker->addProvider($restaurantProvider);

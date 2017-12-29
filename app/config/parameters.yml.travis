@@ -17,7 +17,6 @@ parameters:
     jwt_public_key_path: '%kernel.root_dir%/../var/jwt/public.pem'
     jwt_key_pass_phrase: coursiers
     jwt_token_ttl: 86400
-    google_api_key: YOUR_API_KEY
     stripe_secret_key: YOUR_STRIPE_SECRET_KEY
     stripe_publishable_key: YOUR_STRIPE_PUBLISHABLE_KEY
     stripe_connect_client_id: YOUR_STRIPE_CONNECT_CLIENT_ID

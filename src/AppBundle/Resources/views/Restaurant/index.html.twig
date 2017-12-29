@@ -150,6 +150,6 @@ new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   locale: $('html').attr('lang')
 })
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places"></script>
 {% endblock %}
 
