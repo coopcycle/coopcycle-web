@@ -1,0 +1,22 @@
+{{ form_start(form, {'attr': {'class': 'craue_config_settings_modify'}}) }}
+  {{ form_errors(form) }}
+
+  {% for section in sections | craue_sortSections %}
+    {% if section is not empty %}
+      <fieldset>
+        <legend>{{ section | trans({}, 'CraueConfigBundle') }}</legend>
+    {% endif %}
+
+    {% for setting in form.settings if setting.vars.value.section == section %}
+      {{ form_row(setting.value) }}
+    {% endfor %}
+
+    {% if section is not empty %}
+      </fieldset>
+    {% endif %}
+  {% endfor %}
+
+  {{ form_rest(form) }}
+
+  <button type="submit" class="btn btn-block btn-primary">{{ 'modify_settings' | trans({}, 'CraueConfigBundle') }}</button>
+{{ form_end(form) }}

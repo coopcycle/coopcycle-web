@@ -232,3 +232,8 @@ admin_store_delivery:
             success: admin_deliveries
             calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+craue_config_settings_modify:
+    path: /admin/settings/modify
+    defaults:
+        _controller: CraueConfigBundle:Settings:modify

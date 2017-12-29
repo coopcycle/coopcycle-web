@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c8c6a37c00773d4e387ecfe8d0009165",
-    "content-hash": "fbb8498bccc56674e4f080028fdbf69f",
+    "hash": "fcacbe6ef0b8fd9bc94c90a3d5af2507",
+    "content-hash": "4232c7ef07b54335f6f58843552ea4a0",
     "packages": [
         {
             "name": "api-platform/core",
@@ -346,6 +346,67 @@
                 "tls"
             ],
             "time": "2017-11-29 09:37:33"
+        },
+        {
+            "name": "craue/config-bundle",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/craue/CraueConfigBundle.git",
+                "reference": "8848641ddc3661066b8f0f14c78fa9d0d39f42ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/craue/CraueConfigBundle/zipball/8848641ddc3661066b8f0f14c78fa9d0d39f42ef",
+                "reference": "8848641ddc3661066b8f0f14c78fa9d0d39f42ef",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/doctrine-bundle": "~1.3",
+                "php": "^5.3.9|~7.0",
+                "symfony/framework-bundle": "~2.7|~3.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-cache-bundle": "~1.3",
+                "doctrine/orm": "^2.3.1",
+                "phpunit/phpunit": "^4.8.35|~5.7|~6.0",
+                "symfony/assetic-bundle": "^2.8.1",
+                "symfony/phpunit-bridge": "~3.2",
+                "symfony/symfony": "~2.7|~3.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Craue\\ConfigBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Raue",
+                    "email": "christian.raue@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/craue/CraueConfigBundle/contributors"
+                }
+            ],
+            "description": "Database-stored settings made available via a service for your Symfony project.",
+            "homepage": "https://github.com/craue/CraueConfigBundle",
+            "keywords": [
+                "Symfony2",
+                "config",
+                "symfony3"
+            ],
+            "time": "2017-05-11 07:06:20"
         },
         {
             "name": "csa/guzzle-bundle",

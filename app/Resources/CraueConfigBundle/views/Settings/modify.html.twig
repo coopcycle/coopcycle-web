@@ -1,0 +1,12 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% trans_default_domain 'CraueConfigBundle' %}
+
+{% block content %}
+  <div class="container">
+  {% block craue_config_content %}
+    {% include '@CraueConfig/Settings/modify_content.html.twig' %}
+  {% endblock %}
+  </div>
+{% endblock %}
