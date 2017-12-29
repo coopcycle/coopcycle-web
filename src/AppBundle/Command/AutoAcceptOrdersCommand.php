@@ -12,6 +12,7 @@ class AutoAcceptOrdersCommand extends ContainerAwareCommand
     private $doctrine;
     private $orderRepository;
     private $orderManager;
+    private $logger;
 
     protected function configure()
     {
@@ -25,6 +26,7 @@ class AutoAcceptOrdersCommand extends ContainerAwareCommand
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->orderRepository = $this->doctrine->getRepository(Order::class);
         $this->orderManager = $this->getContainer()->get('order.manager');
+        $this->logger = $this->getContainer()->get('logger');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -37,8 +39,13 @@ class AutoAcceptOrdersCommand extends ContainerAwareCommand
 
         foreach ($orders as $order) {
             $output->writeln(sprintf('Accepting order #%d', $order->getId()));
-            $this->orderManager->accept($order);
-            $this->doctrine->getManagerForClass(Order::class)->flush();
+            try {
+                $this->orderManager->accept($order);
+                $this->doctrine->getManagerForClass(Order::class)->flush();
+            } catch (\Exception $e) {
+                $output->writeln(sprintf('Could not accept order #%d', $order->getId()));
+                $this->logger->error($e->getMessage());
+            }
         }
     }
 }
