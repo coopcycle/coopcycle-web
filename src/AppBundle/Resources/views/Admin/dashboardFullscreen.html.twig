@@ -60,6 +60,8 @@ window.AppData.Dashboard = {
     'Waiting': "{{ date|localizeddate('medium', 'none') }}",
     'Dispatched': 'Assignées'
   },
+  date: "{{ date|date('Y-m-d') }}",
+  dashboardURL: "{{ path('admin_dashboard_fullscreen', { date: '__DATE__' }) }}",
   routingRouteURL: "{{ path('routing_route', { coordinates: '__COORDINATES__' }) }}",
   routingTripURL: "{{ path('routing_trip', { coordinates: '__COORDINATES__' }) }}",
   planningURL: "{{ path('admin_schedule_update', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",

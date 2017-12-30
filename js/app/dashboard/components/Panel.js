@@ -6,15 +6,7 @@ export default class extends React.Component {
   render() {
     return (
       <div className="dashboard__panel">
-        <h4>
-          <span>{ this.props.title }</span>
-          { this.props.button && (
-            <a href="#" className="pull-right" onClick={ e => {
-              e.preventDefault();
-              this.props.onClickButton()
-            }}><i className="fa fa-plus"></i></a>
-          )}
-        </h4>
+        { this.props.heading() }
         <div className="dashboard__panel__scroll">
           { this.props.children }
         </div>

@@ -91,6 +91,16 @@ html, body {
       -webkit-flex: 2;
       -ms-flex: 2;
       flex: 2;
+      .dashboard__panel {
+        h4 > a {
+          color: #fff;
+          &:hover, &:active {
+            color: darken(#fff, 15%);
+            text-decoration: none;
+          }
+        }
+
+      }
       .panel {
         margin-bottom: 0;
         .dropzone {

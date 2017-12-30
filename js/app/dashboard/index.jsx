@@ -1,5 +1,8 @@
 import React from 'react'
 import { render, findDOMNode } from 'react-dom'
+import { DatePicker, LocaleProvider } from 'antd'
+import fr_FR from 'antd/lib/locale-provider/fr_FR'
+import en_GB from 'antd/lib/locale-provider/en_GB'
 import MapHelper from '../MapHelper'
 import Panel from './components/Panel'
 import DeliveryList from './components/DeliveryList'
@@ -10,6 +13,9 @@ import dragula from 'dragula';
 import _ from 'lodash';
 import L from 'leaflet'
 import moment from 'moment'
+
+const locale = $('html').attr('lang');
+const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 const map = MapHelper.init('map')
 
@@ -79,9 +85,21 @@ var drake = dragula({
 
 const unscheduled = _.filter(window.AppData.Dashboard.deliveries, delivery => !isPlanned(delivery))
 
-render(<Panel
-  title={ window.AppData.Dashboard.i18n['Waiting'] }
-  button={ false }>
+render(<Panel heading={() => (
+    <h4>
+      <LocaleProvider locale={antdLocale}>
+        <DatePicker
+          format={ 'll' }
+          defaultValue={ moment(window.AppData.Dashboard.date) }
+          onChange={(date, dateString) => {
+            if (date) {
+              const dashboardURL = window.AppData.Dashboard.dashboardURL.replace('__DATE__', date.format('YYYY-MM-DD'))
+              window.location.replace(dashboardURL)
+            }
+          }} />
+      </LocaleProvider>
+    </h4>
+  )}>
     <DeliveryList
       ref={ el => waitingList = el }
       deliveries={ unscheduled }
@@ -103,12 +121,17 @@ $('#user-modal button[type="submit"]').on('click', (e) => {
     })
 })
 
-render(<Panel
-  title={ window.AppData.Dashboard.i18n['Dispatched'] }
-  button={ true }
-  onClickButton={ () => {
-    $('#user-modal').modal('show')
-  }}>
+render(<Panel heading={() => (
+    <h4>
+      <span>{ window.AppData.Dashboard.i18n['Dispatched'] }</span>
+      <a href="#" className="pull-right" onClick={ e => {
+        e.preventDefault();
+        $('#user-modal').modal('show')
+      }}>
+        <i className="fa fa-plus"></i> <i className="fa fa-user"></i>
+      </a>
+    </h4>
+  )}>
     <UserPanelList
       ref={ el => planningList = el }
       users={ window.AppData.Dashboard.users }
