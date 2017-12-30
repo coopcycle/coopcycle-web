@@ -38,6 +38,7 @@ class Schedule
      * @var MenuItem
      *
      * @ORM\OneToMany(targetEntity="ScheduleItem", mappedBy="schedule", cascade={"persist"})
+     * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"schedule", "schedule_item"})
      */
     private $items;

@@ -4,6 +4,10 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Schedule;
+use AppBundle\Entity\ScheduleItem;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,16 +19,39 @@ class Me
     use ActionTrait;
 
     /**
-     * @Route(path="/me", name="me",
-     *  defaults={
-     *   "_api_resource_class"=ApiUser::class,
-     *   "_api_collection_operation_name"="me",
-     * })
+     * @Route(
+     *   name="my_schedule",
+     *   path="/me/schedule/{date}",
+     *   defaults={
+     *     "_api_resource_class"=ScheduleItem::class,
+     *     "_api_collection_operation_name"="my_schedule"
+     *   }
+     * )
      * @Method("GET")
      */
-    public function meAction()
+    public function scheduleAction($date)
     {
-        return $this->getUser();
+        $date = new \DateTime($date);
+
+        $qb = $this->doctrine
+            ->getRepository(Schedule::class)
+            ->createQueryBuilder('s');
+        $qb
+            ->where('DATE(s.date) = :date')
+            ->setParameter('date', $date->format('Y-m-d'));
+
+        $schedule = $qb->getQuery()->getOneOrNullResult();
+
+        if (!$schedule) {
+            return [];
+        }
+
+        $userCriteria = Criteria::create()
+            ->where(Criteria::expr()->eq('courier', $this->getUser()))
+            ->orderBy(['position' => 'ASC']);
+        $items = $schedule->getItems()->matching($userCriteria);
+
+        return $items;
     }
 
     /**
@@ -81,5 +108,18 @@ class Me
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * @Route(path="/me", name="me",
+     *  defaults={
+     *   "_api_resource_class"=ApiUser::class,
+     *   "_api_collection_operation_name"="me",
+     * })
+     * @Method("GET")
+     */
+    public function meAction()
+    {
+        return $this->getUser();
     }
 }

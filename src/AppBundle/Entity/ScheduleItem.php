@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,13 +14,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(shortName="ScheduleItem", attributes={
- *     "denormalization_context"={"groups"={"schedule_item"}},
- *     "normalization_context"={"groups"={"schedule", "schedule_item", "delivery"}}
+ *   "denormalization_context"={"groups"={"schedule_item"}},
+ *   "normalization_context"={"groups"={"schedule", "schedule_item", "delivery", "place"}}
  * }, collectionOperations={
- *     "get"={"method"="get"}
+ *   "get"={"method"="get"},
+ *   "my_schedule" = {
+ *     "route_name" = "my_schedule",
+ *     "swagger_context" = {
+ *       "parameters" = {{
+ *         "name" = "date",
+ *         "in" = "path",
+ *         "required" = "true",
+ *         "type" = "string"
+ *       }}
+ *     }
+ *   }
  * }, itemOperations={
- *     "get"={"method"="get"}
- *   })
+ *   "get"={"method"="get"},
+ *   "schedule_item_done"={"route_name"="api_schedule_items_put_done"}
+ * })
  * @ORM\Entity
  * @ORM\Table(name="schedule_item", uniqueConstraints={
  *   @ORM\UniqueConstraint(name="schedule_item_unique",columns={"schedule_date", "courier_id", "delivery_id", "address_id"})
@@ -27,6 +40,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ScheduleItem
 {
+    const STATUS_TODO = 'TODO';
+    const STATUS_DONE = 'DONE';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -69,6 +85,24 @@ class ScheduleItem
      * @Groups({"schedule_item"})
      */
     private $position;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"schedule_item"})
+     */
+    private $status = self::STATUS_TODO;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     public function getId()
     {
@@ -143,6 +177,18 @@ class ScheduleItem
     public function setSchedule($schedule)
     {
         $this->schedule = $schedule;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }
