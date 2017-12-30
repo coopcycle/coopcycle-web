@@ -123,10 +123,9 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/dashboard/fullscreen", name="admin_dashboard_fullscreen")
-     * @Template
+     * @Route("/admin/dashboard/iframe", name="admin_dashboard_iframe")
      */
-    public function dashboardFullscreenAction(Request $request)
+    public function dashboardIframeAction(Request $request)
     {
         $date = new \DateTime();
         if ($request->query->has('date')) {
@@ -183,13 +182,43 @@ class AdminController extends Controller
             $users[] = $userManager->findUserByUsername($username);
         }
 
-        return array(
+        $isIframe = $request->attributes->getBoolean('iframe', true);
+        $nav = false;
+
+        $routeParams = [ 'date' => '__DATE__' ];
+        if (!$isIframe) {
+            $nav = true;
+            $routeParams['fullscreen'] = 'on';
+        }
+
+        return $this->render('@App/Admin/dashboardIframe.html.twig', [
+            'nav' => $nav,
             'date' => $date,
+            'refresh_route' => $request->attributes->get('refresh_route', 'admin_dashboard_iframe'),
+            'refresh_route_params' => $routeParams,
             'users_json' => $this->get('serializer')->serialize($users, 'json'),
             'couriers' => $couriers,
             'deliveries' => $deliveries,
             'planning' => $schedules,
-        );
+        ]);
+    }
+
+    /**
+     * @Route("/admin/dashboard", name="admin_dashboard")
+     */
+    public function dashboardAction(Request $request)
+    {
+        $fullscreen = $request->query->getBoolean('fullscreen');
+
+        if ($fullscreen) {
+
+            $request->attributes->set('refresh_route', 'admin_dashboard');
+            $request->attributes->set('iframe', false);
+
+            return $this->dashboardIframeAction($request);
+        }
+
+        return $this->render('@App/Admin/dashboard.html.twig');
     }
 
     /**
@@ -236,15 +265,6 @@ class AdminController extends Controller
             ->flush();
 
         return new JsonResponse([]);
-    }
-
-    /**
-     * @Route("/admin/dashboard", name="admin_dashboard")
-     * @Template
-     */
-    public function dashboardAction(Request $request)
-    {
-        return array();
     }
 
     /**

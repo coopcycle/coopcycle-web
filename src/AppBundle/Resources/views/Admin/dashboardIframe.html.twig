@@ -1,7 +1,11 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% block banner %}{% endblock %}
-{% block menu %}{% endblock %}
+{% block menu %}
+  {% if nav %}
+  {% include "AppBundle:Admin:nav.html.twig" with { nav_class: 'navbar--dashboard' } %}
+  {% endif %}
+{% endblock %}
 {% block footer %}{% endblock %}
 
 {% block body %}
@@ -61,7 +65,7 @@ window.AppData.Dashboard = {
     'Dispatched': 'Assignées'
   },
   date: "{{ date|date('Y-m-d') }}",
-  dashboardURL: "{{ path('admin_dashboard_fullscreen', { date: '__DATE__' }) }}",
+  dashboardURL: "{{ path(refresh_route, refresh_route_params)|raw }}",
   routingRouteURL: "{{ path('routing_route', { coordinates: '__COORDINATES__' }) }}",
   routingTripURL: "{{ path('routing_trip', { coordinates: '__COORDINATES__' }) }}",
   planningURL: "{{ path('admin_schedule_update', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
