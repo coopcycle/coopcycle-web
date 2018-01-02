@@ -18,9 +18,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-window.AppData = window.AppData || {}
-window.AppData.positions = {{ positions|json_encode()|raw }}
-</script>
-<script src="{{ asset('js/user-tracking.js') }}"></script>
+  <script>
+  window.AppData = window.AppData || {}
+  window.AppData.positions = {{ positions|json_encode()|raw }}
+  </script>
+  <script src="{{ asset('js/common.js') }}"></script>
+  <script src="{{ asset('js/user-tracking.js') }}"></script>
 {% endblock %}
