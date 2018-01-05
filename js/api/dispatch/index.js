@@ -109,7 +109,6 @@ preload()
 
           } else {
             if (distance === 4500) {
-              winston.debug(`Max distance reached!`)
               delay.set(delivery.id, 10)
             }
           }
