@@ -109,6 +109,7 @@ cart.modal.cancel: Cancel
 roles.ROLE_ADMIN: 'Administrator'
 roles.ROLE_COURIER: 'Courier'
 roles.ROLE_RESTAURANT: 'Restaurant'
+roles.ROLE_STORE: 'Store'
 roles.ROLE_USER: 'User'
 
 user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>

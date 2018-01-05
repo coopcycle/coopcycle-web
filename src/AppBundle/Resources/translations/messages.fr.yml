@@ -237,6 +237,7 @@ user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%li
 roles.ROLE_ADMIN: 'Administrateur'
 roles.ROLE_COURIER: 'Coursier'
 roles.ROLE_RESTAURANT: 'Restaurant'
+roles.ROLE_STORE: 'Magasin'
 roles.ROLE_USER: 'Utilisateur'
 
 roles.ROLE_ADMIN.help: |
