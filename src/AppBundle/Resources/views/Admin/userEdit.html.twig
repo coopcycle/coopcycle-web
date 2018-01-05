@@ -12,6 +12,11 @@
     <h2 class="page-header">
       {% trans %}Edit user{%  endtrans %}
     </h2>
+    {% for message in app.flashes('notice') %}
+      <div class="alert alert-success">
+        {{ message }}
+      </div>
+    {% endfor %}
     {{ form_start(form) }}
     {{ form_widget(form) }}
     <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>

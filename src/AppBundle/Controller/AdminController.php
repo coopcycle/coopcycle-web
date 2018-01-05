@@ -347,7 +347,12 @@ class AdminController extends Controller
             $userManager->persist($user);
             $userManager->flush();
 
-            return $this->redirectToRoute('admin_user_details', ['username' => $user->getUsername()]);
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('Your changes were saved.')
+            );
+
+            return $this->redirectToRoute('admin_user_edit', ['username' => $user->getUsername()]);
         }
 
         return [
