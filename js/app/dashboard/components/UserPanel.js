@@ -21,7 +21,8 @@ export default class extends React.Component {
       duration: 0,
       distance: 0,
       markersOrder: props.markersOrder || [],
-      loading: false
+      loading: false,
+      collapsed: true,
     }
   }
 
@@ -31,9 +32,26 @@ export default class extends React.Component {
 
     const { user } = this.props
     $('#collapse-' + user.username).on('shown.bs.collapse', () => {
-      this.props.onShow()
+
+      const { deliveries, markersOrder } = this.state
+
+      this.setState({ collapsed: false })
+
+      if (deliveries.length > 0) {
+        this.refresh(deliveries, markersOrder).then((state) => {
+          if (state.route) {
+            this.props.map.refreshRoute(user.username, state.route)
+          }
+          this.setState(state)
+          this.props.onShow()
+        })
+      } else {
+        this.props.onShow()
+      }
+
     })
     $('#collapse-' + user.username).on('hidden.bs.collapse', () => {
+      this.setState({ collapsed: true })
       this.props.onHide()
     })
 
@@ -180,17 +198,18 @@ export default class extends React.Component {
   render() {
 
     const { user, map } = this.props
-    const { deliveries, markersOrder, duration, distance, loading } = this.state
+    const { deliveries, markersOrder, duration, distance, loading, collapsed } = this.state
     const markers = this.asMarkers(deliveries, markersOrder)
 
     return (
       <div className="panel panel-default" style={{ opacity: loading ? 0.7 : 1 }}>
         <div className="panel-heading">
           <h3 className="panel-title">
+            <i className="fa fa-user"></i> 
             <a role="button" data-toggle="collapse" data-parent="#accordion" href={ '#collapse-' + user.username } aria-expanded="true"
-              aria-controls="collapseOne">
-              <i className="fa fa-user"></i>  { user.username }
-            </a>
+              aria-controls="collapseOne">{ user.username }</a> 
+            { collapsed && ( <i className="fa fa-caret-down"></i> ) }
+            { !collapsed && ( <i className="fa fa-caret-up"></i> ) }
             { loading && (
               <span className="pull-right"><i className="fa fa-spinner"></i></span>
             )}
@@ -218,8 +237,9 @@ export default class extends React.Component {
                 ]
                 return (
                   <div key={ key } className={ classNames.join(' ') } data-delivery={ marker.delivery['@id'] } data-address-type={ marker.type }>
+                    <span>#{ marker.delivery.id }</span> 
+                    <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (marker.type === 'pickup' ? 'arrow-up' : 'arrow-down') }></i>  
                     <a>
-                      <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (marker.type === 'pickup' ? 'arrow-up' : 'arrow-down') }></i>  
                       <span>{ marker.address.streetAddress }</span>
                       { marker.type === 'dropoff' && (
                         <span>
@@ -228,7 +248,7 @@ export default class extends React.Component {
                         </span>
                       ) }
                     </a>
-                    <a href="#" className="pull-right address-remove" onClick={(e) => {
+                    <a href="#" className="address-remove" onClick={(e) => {
                       e.preventDefault()
                       this.remove(marker.delivery)
                     }}><i className="fa fa-times"></i></a>

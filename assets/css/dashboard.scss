@@ -136,12 +136,18 @@ html, body {
         }
         .address-list {
           .list-group-item {
+            position: relative;
+            padding-right: 30px;
             a {
               color: #fff;
             }
             .address-remove {
               font-size: 16px;
               line-height: 16px;
+              position: absolute;
+              right: 15px;
+              top: 50%;
+              transform: translateY(-50%);
             }
             color: #fff;
             &--pickup {
@@ -149,9 +155,6 @@ html, body {
             }
             &--dropoff {
               background-color: lighten(#2ECC71, 15%);
-              .address-remove {
-                margin-top: -8px;
-              }
             }
             &--pickup:hover {
               cursor: pointer;
