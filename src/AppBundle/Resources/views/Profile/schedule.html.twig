@@ -1,0 +1,64 @@
+{% extends "AppBundle::profile.html.twig" %}
+
+{% block breadcrumb %}
+  <li>{% trans %}Schedule{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <th></th>
+    <th></th>
+    <th>{% trans %}Delivery{% endtrans %}</th>
+    <th>{% trans %}Address{% endtrans %}</th>
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+  {% for item in items %}
+    <tr {% if item == next_item %}class="active"{% endif %}>
+      <td width="2%">
+        {% if item.done %}
+        <i class="fa fa-calendar-check-o" style="color: #27AE60;"></i>
+        {% else %}
+        <i class="fa fa-calendar-o"></i>
+        {% endif %}
+      </td>
+      <td>
+        {% if item.isPickup %}
+        <button class="btn btn-xs btn-default">
+          <i class="fa fa-arrow-up"></i> {% trans %}schedule.item.adress.pickup{% endtrans %}
+        {% else %}
+        <button class="btn btn-xs btn-default">
+          <i class="fa fa-arrow-down"></i> {% trans %}schedule.item.adress.dropoff{% endtrans %}
+        {% endif %}
+        </button>
+      </td>
+      <td>#{{ item.delivery.id }}</td>
+      <td>{{ item.address.streetAddress }}</td>
+      <td>
+        {% if item.isDropoff %}
+          {{ item.delivery.date|localizeddate('short', 'short') }}
+        {% endif %}
+      </td>
+      <td class="text-right">
+        {% if item == next_item %}
+        <form method="post" action="{{ path('profile_schedule_item_done', { id: item.id }) }}">
+          <button type="submit" class="btn btn-xs btn-success">
+            <i class="fa fa-check"></i> Fait
+          </button>
+        </form>
+        {% else %}
+          {% if item.done %}
+            {{ item.updatedAt|localizeddate('short', 'short') }}
+          {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

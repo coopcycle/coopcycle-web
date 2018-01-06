@@ -192,4 +192,31 @@ class ScheduleItem
 
         return $this;
     }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function isDone()
+    {
+        return $this->status === self::STATUS_DONE;
+    }
+
+    public function isPickup()
+    {
+        return $this->address === $this->delivery->getOriginAddress();
+    }
+
+    public function isDropoff()
+    {
+        return $this->address === $this->delivery->getDeliveryAddress();
+    }
 }

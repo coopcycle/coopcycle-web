@@ -13,8 +13,11 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Schedule;
+use AppBundle\Entity\ScheduleItem;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -229,5 +232,63 @@ class ProfileController extends Controller
     public function trackingAction(Request $request)
     {
         return $this->userTracking($this->getUser());
+    }
+
+    /**
+     * @Route("/profile/schedule", name="profile_schedule")
+     * @Template
+     */
+    public function scheduleAction(Request $request)
+    {
+        $date = new \DateTime();
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
+        }
+
+        $qb = $this->getDoctrine()
+            ->getRepository(Schedule::class)
+            ->createQueryBuilder('s');
+        $qb
+            ->where('DATE(s.date) = :date')
+            ->setParameter('date', $date->format('Y-m-d'));
+
+        $schedule = $qb->getQuery()->getOneOrNullResult();
+
+        $userCriteria = Criteria::create()
+            ->where(Criteria::expr()->eq('courier', $this->getUser()))
+            ->orderBy(['position' => 'ASC']);
+        $items = $schedule->getItems()->matching($userCriteria);
+
+        $nextItem = null;
+        foreach ($items as $item) {
+            if (!$item->isDone()) {
+                $nextItem = $item;
+                break;
+            }
+        }
+
+        return [
+            'date' => $date,
+            'items' => $items,
+            'next_item' => $nextItem
+        ];
+    }
+
+    /**
+     * @Route("/profile/schedule-item/{id}/done", methods={"POST"}, name="profile_schedule_item_done")
+     */
+    public function markScheduleItemAsDoneAction($id, Request $request)
+    {
+        $scheduleItem = $this->getDoctrine()
+            ->getRepository(ScheduleItem::class)->find($id);
+
+        // TODO Access control
+
+        $scheduleItem->setStatus(ScheduleItem::STATUS_DONE);
+
+        $this->getDoctrine()
+            ->getManagerForClass(ScheduleItem::class)->flush();
+
+        return $this->redirectToRoute('profile_schedule');
     }
 }
