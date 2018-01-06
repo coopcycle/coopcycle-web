@@ -86,11 +86,8 @@
         restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}",
         validateCartURL: "{{ path('order') }}"
       };
-      window.AppData.MapHelper = {
-        routeURL: "{{ path('routing_route', { coordinates: '__COORDINATES__' }) }}",
-        center: "{{ craue_setting('maps.center') }}"
-      };
     </script>
+    {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% block scripts %}{% endblock %}
     <script src="{{ asset('js/cart.js') }}"></script>
     {% if app.environment == "dev" %}

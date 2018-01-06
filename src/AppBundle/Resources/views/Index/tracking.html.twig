@@ -46,6 +46,7 @@
       }
     </script>
     <script src="{{ asset('js/common.js') }}"></script>
+    {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
