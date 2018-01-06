@@ -23,7 +23,12 @@ class AddressType extends AbstractType
     {
         $builder
             ->add('streetAddress', TextType::class, [
-                'label' => 'Street address'
+                'label' => 'Street address',
+                'attr' => [
+                    // autocomplete="off" doesn't work in Chrome
+                    // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
+                    'autocomplete' => 'false'
+                ]
             ])
             ->add('addressLocality', TextType::class, [
                 'label' => 'City'
