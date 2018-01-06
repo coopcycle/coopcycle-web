@@ -14,12 +14,14 @@ let preferredAddresses = window.AppData.addresses,
     address = localStorage.getItem('search_address') || '',
     geohash = localStorage.getItem('search_geohash') || '';
 
-render(
-  <AddressPicker
-    geohash = { geohash }
-    address = { address }
-    onPlaceChange = { onPlaceChange }
-    preferredResults = { preferredResults }
-  />,
-  document.getElementById('address-search')
-);
+window.initMap = () => {
+  render(
+    <AddressPicker
+      geohash = { geohash }
+      address = { address }
+      onPlaceChange = { onPlaceChange }
+      preferredResults = { preferredResults }
+    />,
+    document.getElementById('address-search')
+  );
+}
