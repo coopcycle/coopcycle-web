@@ -5,16 +5,16 @@
 {% endblock %}
 
 {% block content %}
-  <nav class="text-center">
-    {{ knp_pagination_render(deliveries) }}
-  </nav>
+  <p class="text-right">
+    <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success">
+      <i class="fa fa-plus"></i> {% trans %}Create new delivery{% endtrans %}
+    </a>
+  </p>
   {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: true } %}
   <nav class="text-center">
     {{ knp_pagination_render(deliveries) }}
   </nav>
-  <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}Create new delivery{% endtrans %}
-  </a>
+
   {% include "AppBundle::_partials/Delivery/modal.html.twig" %}
 {% endblock %}
 
