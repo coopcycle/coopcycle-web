@@ -226,3 +226,7 @@ m6_statsd:
     clients:
         default:
             servers: ["default"]
+
+knp_paginator:
+    template:
+        pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig'

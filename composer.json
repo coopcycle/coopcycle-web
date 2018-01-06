@@ -65,7 +65,8 @@
         "mailjet/mailjet-bundle": "^1.0",
         "m6web/statsd-bundle": "^2.15.0",
         "knplabs/knp-markdown-bundle": "^1.6",
-        "craue/config-bundle": "~2.0"
+        "craue/config-bundle": "~2.0",
+        "knplabs/knp-paginator-bundle": "^2.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

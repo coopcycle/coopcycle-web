@@ -399,7 +399,7 @@ class AdminController extends Controller
      */
     public function deliveriesAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Delivery');
+        $repository = $this->getDoctrine()->getRepository(Delivery::class);
 
         // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
         $userManager = $this->get('fos_user.user_manager');
@@ -412,9 +412,15 @@ class AdminController extends Controller
             return $a->getUsername() < $b->getUsername() ? -1 : 1;
         });
 
+        $deliveries = $this->get('knp_paginator')->paginate(
+            $repository->createQueryBuilder('d')->orderBy('d.date', 'DESC'),
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
         return [
             'couriers' => $couriers,
-            'deliveries' => $repository->findBy([], ['date' => 'DESC']),
+            'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
         ];
     }
