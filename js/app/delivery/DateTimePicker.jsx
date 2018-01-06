@@ -52,8 +52,9 @@ export default class extends React.Component {
 
     const { value } = this.state;
 
+    value.set('hour', date.get('hour'));
     value.set('minute', date.get('minute'));
-    value.set('second', date.get('second'));
+    value.set('second', 0);
 
     this.setState({ value });
 
@@ -64,10 +65,6 @@ export default class extends React.Component {
     if (date) {
       return date.isBefore(today);
     }
-  }
-
-  disabledHours() {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 22, 23];
   }
 
   disabledMinutes(h) {
@@ -94,7 +91,6 @@ export default class extends React.Component {
           </LocaleProvider>
           <LocaleProvider locale={frBE}>
             <TimePicker
-              disabledHours={this.disabledHours}
               disabledMinutes={this.disabledMinutes}
               onChange={this.onTimeChange.bind(this)}
               defaultValue={this.props.defaultValue}

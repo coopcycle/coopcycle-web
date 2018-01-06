@@ -26,8 +26,10 @@ trait DeliveryTrait
         if ($store) {
             $delivery->setDate($store->getNextOpeningDate());
         } else {
-            $date = new \DateTime('+1 day');
-            $date->setTime(12, 00);
+            $date = new \DateTime('+1 hour');
+            while (($date->format('i') % 15) !== 0) {
+                $date->modify('+1 minute');
+            }
             $delivery->setDate($date);
         }
 
