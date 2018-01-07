@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker;
 use GuzzleHttp\Client;
 use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
@@ -21,6 +22,7 @@ class InitDemoCommand extends ContainerAwareCommand
     private $fixturesLoader;
     private $client;
     private $redis;
+    private $ormPurger;
 
     private static $users = [
         'admin' => [
@@ -60,10 +62,18 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->faker->addProvider($addressProvider);
 
         $this->redis = $this->getContainer()->get('snc_redis.default');
+
+        $this->ormPurger = new ORMPurger($this->getContainer()->get('doctrine')->getManager(), [
+            'craue_config_setting',
+            'migration_versions',
+        ]);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('Purging database...');
+        $this->ormPurger->purge();
+
         $output->writeln('Creating super users...');
         foreach (self::$users as $username => $params) {
             $this->createUser($username, $params);
