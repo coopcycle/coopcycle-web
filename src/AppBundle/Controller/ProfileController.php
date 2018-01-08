@@ -252,18 +252,21 @@ class ProfileController extends Controller
             ->where('DATE(s.date) = :date')
             ->setParameter('date', $date->format('Y-m-d'));
 
-        $schedule = $qb->getQuery()->getOneOrNullResult();
-
-        $userCriteria = Criteria::create()
-            ->where(Criteria::expr()->eq('courier', $this->getUser()))
-            ->orderBy(['position' => 'ASC']);
-        $items = $schedule->getItems()->matching($userCriteria);
-
+        $items = [];
         $nextItem = null;
-        foreach ($items as $item) {
-            if (!$item->isDone()) {
-                $nextItem = $item;
-                break;
+
+        if ($schedule = $qb->getQuery()->getOneOrNullResult()) {
+            $userCriteria = Criteria::create()
+                ->where(Criteria::expr()->eq('courier', $this->getUser()))
+                ->orderBy(['position' => 'ASC']);
+            $items = $schedule->getItems()->matching($userCriteria);
+
+
+            foreach ($items as $item) {
+                if (!$item->isDone()) {
+                    $nextItem = $item;
+                    break;
+                }
             }
         }
 
