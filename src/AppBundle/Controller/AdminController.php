@@ -109,7 +109,6 @@ class AdminController extends Controller
             ->where('DATE(s.date) = :date')
             ->setParameter('date', $date->format('Y-m-d'));
 
-
         $schedule = $qb->getQuery()->getOneOrNullResult();
 
         if (!$schedule) {
@@ -235,9 +234,11 @@ class AdminController extends Controller
         $data = json_decode($request->getContent(), true);
 
         foreach ($schedule->getItems() as $item) {
-            $this->getDoctrine()
-                ->getManagerForClass(ScheduleItem::class)
-                ->remove($item);
+            if ($item->getCourier() === $user) {
+                $this->getDoctrine()
+                    ->getManagerForClass(ScheduleItem::class)
+                    ->remove($item);
+            }
         }
 
         $this->getDoctrine()
