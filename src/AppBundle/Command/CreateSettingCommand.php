@@ -12,6 +12,7 @@ Class CreateSettingCommand extends ContainerAwareCommand
 {
     private $entityName;
     private $entityManager;
+    private $craueConfig;
 
     protected function configure()
     {
@@ -42,6 +43,7 @@ Class CreateSettingCommand extends ContainerAwareCommand
     {
         $this->entityName = $this->getContainer()->getParameter('craue_config.entity_name');
         $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass($this->entityName);
+        $this->craueConfig = $this->getContainer()->get('craue_config');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
@@ -64,6 +66,12 @@ Class CreateSettingCommand extends ContainerAwareCommand
         $section = $input->getOption('section');
         $name = $input->getOption('name');
         $value = $input->getOption('value');
+
+        try {
+            $value = $this->craueConfig->get($name);
+            $output->writeln(sprintf('<comment>Setting %s already exists</comment>', $name));
+            return;
+        } catch (\RuntimeException $e) {}
 
         $className = $this->entityName;
 
