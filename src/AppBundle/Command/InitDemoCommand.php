@@ -12,6 +12,7 @@ use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class InitDemoCommand extends ContainerAwareCommand
@@ -23,6 +24,7 @@ class InitDemoCommand extends ContainerAwareCommand
     private $client;
     private $redis;
     private $ormPurger;
+    private $craueConfig;
 
     private static $users = [
         'admin' => [
@@ -48,20 +50,12 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $restaurantProvider = new RestaurantProvider($this->faker);
 
-        $client = new Client([
-            'base_uri' => 'https://maps.googleapis.com',
-            'timeout'  => 2.0,
-        ]);
-
-        $apiKey = $this->getContainer()->get('craue_config')->get('google_api_key');
-        $addressProvider = new AddressProvider($this->faker, $client, $apiKey);
-
         $this->faker->addProvider($restaurantProvider);
         $this->fixturesLoader->addProvider($restaurantProvider);
 
-        $this->faker->addProvider($addressProvider);
-
         $this->redis = $this->getContainer()->get('snc_redis.default');
+
+        $this->craueConfig = $this->getContainer()->get('craue_config');
 
         $this->ormPurger = new ORMPurger($this->getContainer()->get('doctrine')->getManager(), [
             'craue_config_setting',
@@ -73,6 +67,9 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $output->writeln('Purging database...');
         $this->ormPurger->purge();
+
+        $output->writeln('Verifying database config...');
+        $this->handleCraueConfig($input, $output);
 
         $output->writeln('Creating super users...');
         foreach (self::$users as $username => $params) {
@@ -100,6 +97,57 @@ class InitDemoCommand extends ContainerAwareCommand
         foreach ($keys as $key) {
             $this->redis->del($key);
         }
+    }
+
+    private function createCraueConfigSetting($name, $value, $section = 'general')
+    {
+        $className = $this->getContainer()->getParameter('craue_config.entity_name');
+
+        $setting = new $className();
+
+        $setting->setName($name);
+        $setting->setValue($value);
+        $setting->setSection($section);
+
+        return $setting;
+    }
+
+    private function handleCraueConfig(InputInterface $input, OutputInterface $output)
+    {
+        $className = $this->getContainer()->getParameter('craue_config.entity_name');
+        $em = $this->doctrine->getManagerForClass($className);
+
+        try {
+            $this->craueConfig->get('maps.center');
+        } catch (\RuntimeException $e) {
+            $mapsCenter = $this->createCraueConfigSetting('maps.center', '48.857498,2.335402');
+            $em->persist($mapsCenter);
+        }
+
+        try {
+            $this->craueConfig->get('google_api_key');
+        } catch (\RuntimeException $e) {
+            $question = new Question('Please enter a Google API key');
+            $apiKey = $this->getHelper('question')->ask($input, $output, $question);
+            if (!$apiKey) {
+                throw new \Exception('No Google API key provided');
+            }
+
+            $googleApiKey = $this->createCraueConfigSetting('google_api_key', $apiKey);
+            $em->persist($googleApiKey);
+        }
+
+        $em->flush();
+
+        $client = new Client([
+            'base_uri' => 'https://maps.googleapis.com',
+            'timeout'  => 2.0,
+        ]);
+
+        $apiKey = $this->craueConfig->get('google_api_key');
+        $addressProvider = new AddressProvider($this->faker, $client, $apiKey);
+
+        $this->faker->addProvider($addressProvider);
     }
 
     private function createUser($username, array $params = [])
