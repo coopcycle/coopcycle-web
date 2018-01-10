@@ -120,6 +120,7 @@ trait DeliveryTrait
         $delivery = new Delivery();
         $delivery->setDistance($request->query->get('distance'));
         $delivery->setVehicle($request->query->get('vehicle', null));
+        $delivery->setWeight($request->query->get('weight', null));
 
         $deliveryAddressCoords = $request->query->get('delivery_address');
         [ $latitude, $longitude ] = explode(',', $deliveryAddressCoords);

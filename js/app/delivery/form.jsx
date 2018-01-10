@@ -26,10 +26,17 @@ function calculatePrice(distance, delivery) {
     delivery_address: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(','),
     pricing_rule_set: $('#delivery_pricingRuleSet').val(),
     vehicle: $('#delivery_vehicle').val(),
+    weight: $('#delivery_weight').val()
   }
 
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
     .then(price => {
+      console.log(price)
+      $('#no-price-warning').hide()
+      // we couldn't calculate the price
+      if (isNaN(price)) {
+        $('#no-price-warning').show()
+      }
       $('#delivery_price').val(numeral(price).format('0,0.00'))
       $('#delivery_price').attr('disabled', false)
     })

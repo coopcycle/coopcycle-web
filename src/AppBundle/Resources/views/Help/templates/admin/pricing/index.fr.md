@@ -1,7 +1,7 @@
 Tarification
 ------------
 
-Vous pouvez définir des règles pour la tarification des livraisons.
+Chaque magasin a une tarification associée, qui permet de calculer le prix de la course. Vous pouvez définir des règles pour la tarification des livraisons. 
 
 Chaque règle permet de définir une « expression » et un prix associé.
 
@@ -13,7 +13,7 @@ Les règles sont parcourues dans l'ordre, et la première dont l'expression est 
 
 `distance` : La distance entre le point de retrait et le point de dépôt
 
-`weight` : Le poids du colis transporté
+`weight` : Le poids du colis transporté en grammes
 
 `vehicle` : Le type de véhicule (`bike` ou `cargo_bike`)
 

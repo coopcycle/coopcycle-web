@@ -1,6 +1,7 @@
 Pricing
 -------
 
+Each store is associated to a pricing, which enables the platform to calcuclate the delivery price.
 You can define rules for deliveries pricing:
 each rule defines an « expression » and an associated price.
 

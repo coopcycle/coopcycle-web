@@ -17,7 +17,7 @@
     {{ form_row(form.name) }}
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
-      {% trans %}No pricing rule found{% endtrans %}
+      {% trans %}No pricing rule found. Pricing rules define how the delivery cost is calculated.{% endtrans %}
     </div>
 
     {% if form.rules|length == 0 %}
