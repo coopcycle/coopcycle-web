@@ -68,6 +68,9 @@ form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
 form.store_type.pricing_rule_set.placeholder: Choose a pricing
 form.delivery.vehicle.placeholder: Choose a vehicle type
 
+form.appearance.navbarBackgroundColor.label: Navbar background color
+form.appearance.jumbotronBackgroundImage.label: Homepage background image
+
 # mail
 email.signature:
 registration.email.subject: |

@@ -1,0 +1,13 @@
+/* Custom styles */
+
+{% if settings.navbarBackgroundColor is defined %}
+#topnav {
+  background-color: {{ settings.navbarBackgroundColor|raw }};
+}
+{% endif %}
+
+{% if settings.jumbotronBackgroundImage is defined %}
+#search {
+  background-image: url({{ asset('images/custom/' ~ settings.jumbotronBackgroundImage) }});
+}
+{% endif %}

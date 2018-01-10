@@ -62,7 +62,7 @@
           </li>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
-          <li class="active">
+          <li>
             <a href="{{ path('admin_index') }}">{% trans %}<i class="fa fa-lock"></i>{% endtrans %}</a>
           </li>
         {% endif %}

@@ -233,6 +233,9 @@ form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
 
+form.appearance.navbarBackgroundColor.label: Couleur de la barre de navigation
+form.appearance.jumbotronBackgroundImage.label: Image de fond de la page d'accueil
+
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Ajouter

@@ -258,3 +258,11 @@ services:
     arguments:
       - "%database_name%"
       - "@m6_statsd"
+
+  coopcycle.settings:
+    class: AppBundle\Service\Settings
+    arguments:
+      - "@craue_config"
+      - "@doctrine.orm.default_entity_manager"
+      - "%craue_config.entity_name%"
+      - { appearance.navbarBackgroundColor: '#fff' }
