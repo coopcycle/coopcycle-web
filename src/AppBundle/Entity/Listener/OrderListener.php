@@ -138,7 +138,11 @@ class OrderListener
         $this->sendTransactionalEmails($order);
     }
 
-    protected function sendTransactionalEmails(Order $order) {
+    protected function sendTransactionalEmails(Order $order)
+    {
+        if (preg_match('/@demo.coopcycle.org$/', $order->getCustomer()->getEmail())) {
+            return;
+        }
 
         // order placed
         if ($order->getStatus() === Order::STATUS_WAITING) {
