@@ -533,8 +533,16 @@ class AdminController extends Controller
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
     {
         $originalRules = new ArrayCollection();
+
         foreach ($ruleSet->getRules() as $rule) {
             $originalRules->add($rule);
+        }
+
+        $zoneRepo = $this->getDoctrine()->getRepository(Zone::class);
+        $zones = $zoneRepo->findAll();
+        $zoneNames = [];
+        foreach ($zones as $zone) {
+            array_push($zoneNames, $zone->getName());
         }
 
         $form = $this->createForm(PricingRuleSetType::class, $ruleSet);
@@ -566,6 +574,7 @@ class AdminController extends Controller
 
         return [
             'form' => $form->createView(),
+            'zoneNames' => json_encode($zoneNames)
         ];
     }
 

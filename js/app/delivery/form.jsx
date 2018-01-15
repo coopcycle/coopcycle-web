@@ -31,7 +31,6 @@ function calculatePrice(distance, delivery) {
 
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
     .then(price => {
-      console.log(price)
       $('#no-price-warning').hide()
       // we couldn't calculate the price
       if (isNaN(price)) {
