@@ -49,7 +49,10 @@ class PaymentService
         // TODO Check if $order->getCharge() is NULL
 
         $charge = Stripe\Charge::retrieve($order->getCharge());
-        $charge->capture();
+
+        if (!$charge->captured) {
+            $charge->capture();
+        }
 
         // TODO Create a Transfer
     }
