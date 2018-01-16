@@ -15,7 +15,7 @@ let preferredAddresses = window.AppData.addresses,
     geohash = localStorage.getItem('search_geohash') || '';
 
 window.initMap = () => {
-  render(
+  var addressPickerElement = render(
     <AddressPicker
       geohash = { geohash }
       address = { address }
@@ -24,4 +24,11 @@ window.initMap = () => {
     />,
     document.getElementById('address-search')
   );
+
+  $(document).keypress(function(event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13') {
+      addressPickerElement.onAddressKeyUp(event);
+    }
+  });
 }
