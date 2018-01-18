@@ -11,6 +11,12 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
+
+    public function __construct($router)
+    {
+        $this->router = $router;
+    }
+
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
     {
         $token = $event->getAuthenticationToken();
@@ -20,6 +26,13 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-        return new RedirectResponse($request->headers->get('referer'));
+
+        if ($token->getUser()->hasRole('ROLE_ADMIN')) {
+            return new RedirectResponse($this->router->generate('admin_index'));
+        }
+        else {
+            return new RedirectResponse($request->headers->get('referer'));
+        }
     }
 }
+

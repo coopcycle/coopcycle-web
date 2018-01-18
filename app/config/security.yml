@@ -78,6 +78,7 @@ security:
             pattern:            ^/
             form_login:
                 provider:       fos_userbundle
+                success_handler: coopcycle.web_success_handler
             logout: true
             anonymous: ~
 
