@@ -285,7 +285,7 @@ class InitDemoCommand extends ContainerAwareCommand
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
 
-            $username = "resto-{$restaurant->getId()}";
+            $username = "resto-{$i}";
             $user = $this->createUser($username, [
                 'password' => $username,
                 'roles' => ['ROLE_RESTAURANT']
