@@ -60,26 +60,25 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --optimize-autoloader --classmap-authoritative \
     && composer clear-cache
 
+ENV COMPOSER_ALLOW_SUPERUSER 0
+
 WORKDIR /srv/coopcycle
 
 COPY composer.json ./
 COPY composer.lock ./
 
-RUN mkdir -p var/cache var/logs var/sessions \
-    && composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
-    && composer clear-cache \
+RUN mkdir -p var/cache var/logs var/sessions vendor \
 # Permissions hack because setfacl does not work on Mac and Windows
     && chown -R www-data var/cache \
     && chown -R www-data var/logs \
     && chown -R www-data var/sessions \
-    && chmod -R +w var/cache
+    && chmod -R +w var/cache \
+    && chown -R www-data vendor
 
 COPY app app/
 COPY bin bin/
 COPY src src/
 COPY web web/
-
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
 
 COPY docker/php/start.sh /usr/local/bin/docker-app-start
 
@@ -87,5 +86,9 @@ RUN chmod +x /usr/local/bin/docker-app-start
 
 # Needed to fix permissions error
 USER 82
+
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
+RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
+    && composer clear-cache
 
 CMD ["docker-app-start"]
