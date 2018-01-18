@@ -8,11 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
 
-    public function __construct($router)
+    public function __construct(UrlGeneratorInterface $router)
     {
         $this->router = $router;
     }
@@ -30,6 +31,16 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         if ($token->getUser()->hasRole('ROLE_ADMIN')) {
             return new RedirectResponse($this->router->generate('admin_index'));
         }
+
+        if ($token->getUser()->hasRole('ROLE_RESTAURANT')) {
+            return new RedirectResponse($this->router->generate('referer'));
+        }
+
+        if ($token->getUser()->hasRole('ROLE_COURIER')) {
+            return new RedirectResponse($this->router->generate('profile_schedule'));
+        }
+
+
         else {
             return new RedirectResponse($request->headers->get('referer'));
         }
