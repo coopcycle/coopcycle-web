@@ -1,18 +1,12 @@
 Pricing
 -------
 
-Each store is associated to a pricing, which enables the platform to calcuclate the delivery price.
-You can define rules for deliveries pricing:
-each rule defines an « expression » and an associated price.
+You can create pricings from the admin dashboard : `Settings` > `Pricing` . Afterwards, each `Store` will be associated to a `Pricing` in order to calculate the prices of the delivery created for this store.
 
-The rules are traversed in order, and the first one whose expression is evaluated to true is applied.
+Each `Pricing` is composed of several `Rules`. A `Rule` is a set of conditions and a price. When creating a delivery, the rules are traversed in order, and the first one whose expression match the delivery is applied.
 
-Available variables: <code>distance</code>, <code>weight</code>
-
-<strong>Examples:</strong>
-
-<code>distance in 0..3000</code> : the distance is between 0 and 3000 meters
-
-<code>weight > 1000</code> : the weight is greater than 1000 grams
-
-<a target="_blank" href="http://symfony.com/doc/3.4/components/expression_language/syntax.html">Expression syntax</a>
+Supported criterion for rules :
+ - Length of delivery (in m)
+ - Weight to deliver (in g)
+ - Type of vehicle (`bike` or `cargo bike`)
+ - Zone of delivery address 
