@@ -9,7 +9,8 @@ services:
 
   php:
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
+      - 'php_session:/srv/coopcycle/var/sessions'
+      - 'php_vendor:/srv/coopcycle/vendor'
       - 'php-sync:/srv/coopcycle:nocopy'
 
 volumes:
@@ -17,3 +18,5 @@ volumes:
       external: true
     webpack-sync:
       external: true
+    php_vendor:
+    php_session:

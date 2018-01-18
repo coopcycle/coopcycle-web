@@ -27,7 +27,7 @@ How to run a local instance
     
     - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
     
-* Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync-stack start` instead of `docker-compose up`.  
+* Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync start` to start sync in the background, then ` docker-compose -f docker-compose.yml -f docker-compose-dev.yml up`.  
 
 * Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`.
 
