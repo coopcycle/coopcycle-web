@@ -33,7 +33,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         }
 
         if ($token->getUser()->hasRole('ROLE_RESTAURANT')) {
-            return new RedirectResponse($this->router->generate('referer'));
+            return new RedirectResponse($this->router->generate('profile_orders'));
         }
 
         if ($token->getUser()->hasRole('ROLE_COURIER')) {
