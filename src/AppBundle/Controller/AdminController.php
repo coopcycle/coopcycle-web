@@ -11,10 +11,7 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
@@ -25,8 +22,6 @@ use AppBundle\Entity\Zone;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
-use AppBundle\Form\RestaurantType;
-use AppBundle\Form\StoreType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\ZoneCollectionType;
@@ -36,12 +31,10 @@ use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RequestContext;
-use ApiPlatform\Core\Serializer\SerializerContextBuilder;
+
 
 class AdminController extends Controller
 {
@@ -540,8 +533,16 @@ class AdminController extends Controller
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
     {
         $originalRules = new ArrayCollection();
+
         foreach ($ruleSet->getRules() as $rule) {
             $originalRules->add($rule);
+        }
+
+        $zoneRepo = $this->getDoctrine()->getRepository(Zone::class);
+        $zones = $zoneRepo->findAll();
+        $zoneNames = [];
+        foreach ($zones as $zone) {
+            array_push($zoneNames, $zone->getName());
         }
 
         $form = $this->createForm(PricingRuleSetType::class, $ruleSet);
@@ -573,6 +574,7 @@ class AdminController extends Controller
 
         return [
             'form' => $form->createView(),
+            'zoneNames' => json_encode($zoneNames)
         ];
     }
 

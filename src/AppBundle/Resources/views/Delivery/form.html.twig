@@ -79,7 +79,9 @@
             } %}
             {% trans with trans_params %}form.delivery.pricing_rule_set.about{% endtrans %}
           </div>
+          <div id="no-price-warning" class="alert alert-warning" style="display:none;">{% trans %}deliveryForm.noPriceFromPricingWarning{% endtrans %}</div>
         {% endif %}
+        <div id="no-price-warning" class="alert alert-warning" style="display:none;">{% trans %}deliveryForm.noPriceWarning{% endtrans %}</div>
         {{ form_row(form.pricingRuleSet) }}
         {{ form_row(form.distance) }}
         {{ form_row(form.duration) }}

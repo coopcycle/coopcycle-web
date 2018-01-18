@@ -26,7 +26,7 @@ class DeliveryType extends AbstractType
         $builder
             ->add('originAddress', AddressType::class)
             ->add('deliveryAddress', AddressType::class)
-            ->add('weight', NumberType::class, ['required' => false])
+            ->add('weight', NumberType::class, ['required' => false, 'label' => 'Weight (g)'])
 
             ->add('date', DateType::class, [
                 'widget' => 'single_text',

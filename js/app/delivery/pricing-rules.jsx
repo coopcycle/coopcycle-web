@@ -1,7 +1,13 @@
 import { Sortable } from '@shopify/draggable'
 
-const ruleSet = $('#rule-set')
-const warning = $('form[name="pricing_rule_set"] .alert-warning')
+const ruleSet = $('#rule-set'),
+      warning = $('form[name="pricing_rule_set"] .alert-warning'),
+      sortable = new Sortable(
+                      document.querySelector('.delivery-pricing-ruleset'),
+                      { draggable: '.delivery-pricing-ruleset__rule', handle:'.delivery-pricing-ruleset__rule__handle',
+                      })
+
+sortable.on('mirror:destroy', () => onListChange())
 
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {
@@ -18,10 +24,18 @@ const onListChange = () => {
 $('#add-pricing-rule').on('click', function(e) {
   e.preventDefault();
 
-  var newRule = ruleSet.attr('data-prototype')
+  let newRule = ruleSet.attr('data-prototype')
   newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
 
-  var newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule)
+  let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
+      $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
+      $input = $ruleExpression.find('input')
+
+  function onExpressionChange(newExpression) {
+    $input.val(newExpression)
+  }
+
+  window.CoopCycle.RulePicker(newLi.find('.rule-expression-container')[0], {onExpressionChange: onExpressionChange, zones: window.AppData.zones})
   newLi.appendTo(ruleSet)
 
   onListChange()
@@ -34,9 +48,10 @@ $(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(
   onListChange()
 })
 
-const sortable = new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
-  draggable: '.delivery-pricing-ruleset__rule',
-  handle:    '.delivery-pricing-ruleset__rule__handle',
+$('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
+  let $input = $(item).find('input')
+  function onExpressionChange(newExpression) {
+    $input.val(newExpression)
+  }
+  window.CoopCycle.RulePicker($(item).find('.rule-expression-container')[0], {'expression': $input.val(), onExpressionChange: onExpressionChange, zones: window.AppData.zones})
 })
-
-sortable.on('mirror:destroy', () => onListChange())

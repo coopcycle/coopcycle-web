@@ -121,12 +121,12 @@ Total excluding tax: Total HT
 Total tax: Total TVA
 Total including tax: Total TTC
 Pricing: Tarification
-Add rule: Ajouter une règle
-No pricing rule found: Pas de règle de tarification pour le moment
+Add rule: Ajouter un tarif
+No pricing rule found. Pricing rules define how the delivery cost is calculated. : Veuillez ajouter au moins une règle de tarification. Les règles définissent comment le prix de la course est calculé.
 Enter an expression: Entrez une expression
 Origin address: Adresse de départ
 Delivery address: Adresse de livraison
-Weight: Poids
+Weight (g): Poids (g)
 Show canceled orders: Afficher les commandes annulées
 Validate: Valider
 Please choose a courier in the list below: Veuillez choisir un coursier dans la liste ci-dessous
@@ -142,8 +142,8 @@ Upload a GeoJSON file: Uploadez un fichier au format GeoJSON
 Send: Envoyer
 Stores: Magasins
 Create a new store: Créer un nouveau magasin
-There are no stores yet: Pas de magasin pour le moment
-There are no pricings yet: Pas de tarification pour le moment
+There are no stores yet.: Pas de magasin pour le moment.
+There are no pricings yet: Pas de tarification pour le moment.
 Rules: Règles
 Address: Adresse
 Create new delivery: Créer une livraison
@@ -163,6 +163,10 @@ profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
 profile.orders.empty: Pas de commande pour l'instant!
 
 local_business.form.enabled.label: Activé
+
+deliveryForm.noPriceWarning: Le prix de la course n'a pas pu être calculé. Veuillez l'entrer manuellement.
+deliveryForm.noPriceFromPricingWarning: Le prix de la course n'a pas pu être calculé à partir de la tarification. Veuillez l'entrer manuellement ou éditer la tarification.
+
 
 restaurant.disabledWarning: |
   Ce restaurant n'est pas activé et n'est donc pas visible des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l'activer dans l'admin</a>.
@@ -291,8 +295,8 @@ order.acceptedMail.body: |
 search.help: >
   Cherchez dans les quartiers de Paris : %links%
 
-zones.help: Consultez <a href="%link%">l'aide</a> sur les zones.
-delivery.pricing_rules.help: Consultez <a href="%link%">l'aide</a> sur la tarification.
+zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
+delivery.pricing_rules.help: <a href="%link%">Consulter l'aide sur la tarification.</a>
 
 meta.title: Plateforme de livraison de repas open source. Seulement pour les sociétés coopératives.
 

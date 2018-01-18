@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,18 +24,21 @@ class PricingRule
     protected $id;
 
     /**
+     * @Groups({"original_rules"})
      * @ORM\Column(type="string")
      * @Assert\Type(type="string")
      */
     protected $expression;
 
     /**
+     * @Groups({"original_rules"})
      * @ORM\Column(type="float")
      * @Assert\Type(type="float")
      */
     protected $price;
 
     /**
+     * @Groups({"original_rules"})
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $position;

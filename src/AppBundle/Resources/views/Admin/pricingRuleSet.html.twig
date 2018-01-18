@@ -17,7 +17,7 @@
     {{ form_row(form.name) }}
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
-      {% trans %}No pricing rule found{% endtrans %}
+      {% trans %}No pricing rule found. Pricing rules define how the delivery cost is calculated.{% endtrans %}
     </div>
 
     {% if form.rules|length == 0 %}
@@ -26,14 +26,17 @@
 
     {{ form_label(form.rules) }}
 
-    <ul id="rule-set" class="delivery-pricing-ruleset"
-      data-prototype="{{ form_widget(form.rules.vars.prototype)|e }}">
-      {% for rule in form.rules %}
-      <li class="delivery-pricing-ruleset__rule">
-        {{ form_errors(rule) }}
-        {{ form_widget(rule) }}
-      </li>
-      {% endfor %}
+    <ul
+        id="rule-set"
+        class="delivery-pricing-ruleset"
+        data-prototype="{{ form_widget(form.rules.vars.prototype)|e }}"
+    >
+        {% for rule in form.rules %}
+          <li class="delivery-pricing-ruleset__rule">
+            {{ form_errors(rule) }}
+            {{ form_widget(rule) }}
+          </li>
+        {% endfor %}
     </ul>
 
     <div class="form-group text-right">
@@ -51,5 +54,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/delivery-pricing-rules.js') }}"></script>
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.zones = {{ zoneNames|raw }};
+  </script>
+  <script src="{{ asset('js/widgets/rule-picker.js') }}"></script>
+  <script src="{{ asset('js/delivery-pricing-rules.js') }}"></script>
 {% endblock %}

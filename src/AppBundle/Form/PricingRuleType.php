@@ -15,7 +15,7 @@ class PricingRuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('expression', TextType::class)
+            ->add('expression', HiddenType::class)
             ->add('price', MoneyType::class)
             ->add('position', HiddenType::class, [
                 'required' => false

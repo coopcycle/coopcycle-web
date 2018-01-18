@@ -2,6 +2,9 @@ norestaurantfound: No restaurant open at this time!<br>Try a different delivery 
 
 local_business.form.enabled.label: Enabled
 
+deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
+deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
+
 restaurant.disabledWarning: |
   This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
 restaurant.closedWarning: |
@@ -124,8 +127,8 @@ roles.ROLE_RESTAURANT.help: |
 search.help: >
   Search restaurants in Paris area : %links%
 
-zones.help: Read <a href="%link%">help</a> about zones.
-delivery.pricing_rules.help: Read <a href="%link%">help</a> about pricing.
+zones.help: <a href="%link%">Get help about zones.</a>
+delivery.pricing_rules.help: <a href="%link%">Get help about pricing.</a>
 
 meta.title: Open-source foodtech. Only for worker-owned business.
 
