@@ -134,5 +134,5 @@ meta.title: Open-source foodtech. Only for worker-owned business.
 
 delivery_service.applicolis: AppliColis
 
-schedule.item.adress.pickup: Pickup
-schedule.item.adress.dropoff: Dropoff
+task.type.PICKUP: Pickup
+task.type.DROPOFF: Dropoff

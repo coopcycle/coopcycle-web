@@ -154,8 +154,8 @@ Add a user to the planning: Ajouter un utilisateur au planning
 Stores managed by user: Magasins gérés par l'utilisateur
 Add a store: Ajouter un magasin
 Search store…: Rechercher un magasin…
-My schedule: Mon planning
-Schedule: Planning
+My tasks: Mes tâches
+Tasks: Tâches
 No tasks scheduled: Aucune tâche programmée
 
 profile.addresses.breadcrumb: Addresses
@@ -314,5 +314,5 @@ Default: Défaut
 Serves cuisine: Type de plats
 No order in progress: Pas de commande en cours
 
-schedule.item.adress.pickup: Retrait
-schedule.item.adress.dropoff: Dépôt
+task.type.PICKUP: Retrait
+task.type.DROPOFF: Dépôt

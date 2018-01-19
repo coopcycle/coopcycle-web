@@ -13,11 +13,12 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Schedule;
-use AppBundle\Entity\ScheduleItem;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskAssignment;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Query\Expr;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -235,63 +236,59 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/schedule", name="profile_schedule")
+     * @Route("/profile/tasks", name="profile_tasks")
      * @Template
      */
-    public function scheduleAction(Request $request)
+    public function tasksAction(Request $request)
     {
         $date = new \DateTime();
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
         }
 
-        $qb = $this->getDoctrine()
-            ->getRepository(Schedule::class)
-            ->createQueryBuilder('s');
-        $qb
-            ->where('DATE(s.date) = :date')
-            ->setParameter('date', $date->format('Y-m-d'));
+        $tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t')
+            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
+            ->andWhere('DATE(t.doneBefore) = :date')
+            ->andWhere('ta.courier = :courier')
+            ->orderBy('ta.position', 'ASC')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('courier', $this->getUser())
+            ->getQuery()
+            ->getResult();
 
-        $items = [];
-        $nextItem = null;
+        $nextTask = null;
 
-        if ($schedule = $qb->getQuery()->getOneOrNullResult()) {
-            $userCriteria = Criteria::create()
-                ->where(Criteria::expr()->eq('courier', $this->getUser()))
-                ->orderBy(['position' => 'ASC']);
-            $items = $schedule->getItems()->matching($userCriteria);
-
-
-            foreach ($items as $item) {
-                if (!$item->isDone()) {
-                    $nextItem = $item;
-                    break;
-                }
+        foreach ($tasks as $task) {
+            if (!($task->getStatus() === Task::STATUS_DONE)) {
+                $nextTask = $task;
+                break;
             }
         }
 
         return [
             'date' => $date,
-            'items' => $items,
-            'next_item' => $nextItem
+            'tasks' => $tasks,
+            'next_task' => $nextTask
         ];
     }
 
     /**
-     * @Route("/profile/schedule-item/{id}/done", methods={"POST"}, name="profile_schedule_item_done")
+     * @Route("/profile/tasks/{id}/done", methods={"POST"}, name="profile_task_done")
      */
-    public function markScheduleItemAsDoneAction($id, Request $request)
+    public function markTaskDoneAction($id, Request $request)
     {
-        $scheduleItem = $this->getDoctrine()
-            ->getRepository(ScheduleItem::class)->find($id);
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)->find($id);
 
         // TODO Access control
 
-        $scheduleItem->setStatus(ScheduleItem::STATUS_DONE);
+        $task->setStatus(Task::STATUS_DONE);
 
         $this->getDoctrine()
-            ->getManagerForClass(ScheduleItem::class)->flush();
+            ->getManagerForClass(Task::class)->flush();
 
-        return $this->redirectToRoute('profile_schedule');
+        return $this->redirectToRoute('profile_tasks');
     }
 }

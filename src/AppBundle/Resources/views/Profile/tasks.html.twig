@@ -1,7 +1,7 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block breadcrumb %}
-  <li>{% trans %}Schedule{% endtrans %}</li>
+  <li>{% trans %}Tasks{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
 
 <hr>
 
-{% if items|length == 0 %}
+{% if tasks|length == 0 %}
 
   <div class="alert alert-warning">
     {% trans %}No tasks scheduled{% endtrans %}
@@ -31,42 +31,39 @@
       <th></th>
     </thead>
     <tbody>
-    {% for item in items %}
-      <tr {% if item == next_item %}class="active"{% endif %}>
+    {% for task in tasks %}
+      <tr {% if task == next_task %}class="active"{% endif %}>
         <td width="2%">
-          {% if item.done %}
+          {% if task.status == 'DONE' %}
           <i class="fa fa-calendar-check-o" style="color: #27AE60;"></i>
           {% else %}
           <i class="fa fa-calendar-o"></i>
           {% endif %}
         </td>
         <td>
-          {% if item.isPickup %}
           <button class="btn btn-xs btn-default">
-            <i class="fa fa-arrow-up"></i> {% trans %}schedule.item.adress.pickup{% endtrans %}
-          {% else %}
-          <button class="btn btn-xs btn-default">
-            <i class="fa fa-arrow-down"></i> {% trans %}schedule.item.adress.dropoff{% endtrans %}
-          {% endif %}
+            {% if task.type == 'PICKUP' %}
+            <i class="fa fa-arrow-up"></i>
+            {% else %}
+            <i class="fa fa-arrow-down"></i>
+            {% endif %} {{ ('task.type.' ~ task.type) | trans }}
           </button>
         </td>
-        <td>#{{ item.delivery.id }}</td>
-        <td>{{ item.address.streetAddress }}</td>
+        <td>#{{ task.delivery.id }}</td>
+        <td>{{ task.address.streetAddress }}</td>
         <td>
-          {% if item.isDropoff %}
-            {{ item.delivery.date|localizeddate('short', 'short') }}
-          {% endif %}
+          {{ task.doneAfter|localizeddate('none', 'short') }} - {{ task.doneBefore|localizeddate('none', 'short') }}
         </td>
         <td class="text-right">
-          {% if item == next_item %}
-          <form method="post" action="{{ path('profile_schedule_item_done', { id: item.id }) }}">
+          {% if task == next_task %}
+          <form method="post" action="{{ path('profile_task_done', { id: task.id }) }}">
             <button type="submit" class="btn btn-xs btn-success">
               <i class="fa fa-check"></i> Fait
             </button>
           </form>
           {% else %}
-            {% if item.done %}
-              {{ item.updatedAt|localizeddate('short', 'short') }}
+            {% if task.status == 'DONE' %}
+              {{ task.updatedAt|localizeddate('short', 'short') }}
             {% endif %}
           {% endif %}
         </td>
@@ -82,11 +79,11 @@
 {% block scripts %}
   <script src="{{ asset('js/widgets/date-picker.js') }}"></script>
   <script>
-    var scheduleURL = "{{ path('profile_schedule', { date: '__DATE__' }) }}";
+    var tasksURL = "{{ path('profile_tasks', { date: '__DATE__' }) }}";
     new CoopCycle.DatePicker(document.querySelector('#datepicker'), {
       defaultValue: "{{ date|date('Y-m-d') }}",
       onChange: function(date, dateString) {
-        window.location.replace(scheduleURL.replace('__DATE__', date.format('YYYY-MM-DD')))
+        window.location.replace(tasksURL.replace('__DATE__', date.format('YYYY-MM-DD')))
       }
     });
   </script>

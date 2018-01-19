@@ -22,7 +22,7 @@
           <li><a href="{{ path('profile_addresses') }}"><i class="fa fa-map-marker"></i>  {% trans %}My addresses{% endtrans %}</a></li>
           {% if is_granted('ROLE_COURIER') %}
           <li><a href="{{ path('profile_courier_deliveries') }}"><i class="fa fa-bicycle"></i>  {% trans %}My deliveries{% endtrans %}</a></li>
-          <li><a href="{{ path('profile_schedule') }}"><i class="fa fa-calendar-check-o"></i>  {% trans %}My schedule{% endtrans %}</a></li>
+          <li><a href="{{ path('profile_tasks') }}"><i class="fa fa-calendar-check-o"></i>  {% trans %}My tasks{% endtrans %}</a></li>
           <li><a href="{{ path('profile_tracking') }}"><i class="fa fa-location-arrow"></i>  {% trans %}My tracking{% endtrans %}</a></li>
           {% endif %}
           {% if is_granted('ROLE_STORE') %}
