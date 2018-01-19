@@ -29,21 +29,19 @@
     {% endblock %}
     {% block body %}{% endblock %}
     {% block footer %}
-    <footer>
-      <div class="container text-center">
-        <ul class="list-inline">
-          <li>
-            <a href="mailto:contact@coopcycle.org">
-              {% trans %}Contact us{% endtrans %}
-            </a>
-          </li>
-          <li>
-            <a href="{{ path('help') }}">
-              {% trans %}Help{% endtrans %}
-            </a>
-          </li>
-        </ul>
-      </div>
+    <footer class="footer text-center">
+      <ul class="list-inline">
+        <li>
+          <a class="footer-link" href="mailto:contact@coopcycle.org">
+            {% trans %}Contact us{% endtrans %}
+          </a>
+        </li>
+        <li>
+          <a class="footer-link" href="{{ path('help') }}">
+            {% trans %}Help{% endtrans %}
+          </a>
+        </li>
+      </ul>
     </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
@@ -89,7 +87,7 @@
     </script>
     {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% block scripts %}{% endblock %}
-    <script src="{{ asset('js/cart.js') }}"></script>
+      <script src="{{ asset('js/cart.js') }}"></script>
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
