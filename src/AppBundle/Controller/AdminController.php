@@ -16,8 +16,9 @@ use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Schedule;
-use AppBundle\Entity\ScheduleItem;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskAssignment;
+use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
@@ -93,27 +94,6 @@ class AdminController extends Controller
         return [ $orders, $pages, $page ];
     }
 
-    private function getSchedule(\DateTime $date)
-    {
-        $qb = $this->getDoctrine()
-            ->getRepository(Schedule::class)
-            ->createQueryBuilder('s');
-        $qb
-            ->where('DATE(s.date) = :date')
-            ->setParameter('date', $date->format('Y-m-d'));
-
-        $schedule = $qb->getQuery()->getOneOrNullResult();
-
-        if (!$schedule) {
-            $schedule = new Schedule();
-            $schedule->setDate($date);
-            $this->getDoctrine()->getManagerForClass(Schedule::class)->persist($schedule);
-            $this->getDoctrine()->getManagerForClass(Schedule::class)->flush();
-        }
-
-        return $schedule;
-    }
-
     /**
      * @Route("/admin/dashboard/iframe", name="admin_dashboard_iframe")
      */
@@ -128,35 +108,38 @@ class AdminController extends Controller
             $this->container->get('profiler')->disable();
         }
 
-        $deliveries = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->createQueryBuilder('d')
-            ->andWhere('DATE(d.date) = :date')
+        $tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t')
+            ->andWhere('DATE(t.doneBefore) = :date')
             ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()
             ->getResult();
 
-        $deliveries = array_map(function (Delivery $delivery) {
-            return $this->get('api_platform.serializer')->normalize($delivery, 'jsonld', [
-                'resource_class' => Delivery::class,
+        $tasks = array_map(function (Task $task) {
+            return $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
+                'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['delivery', 'place']
+                'groups' => ['task', 'delivery', 'place']
             ]);
-        }, $deliveries);
+        }, $tasks);
 
-        $schedule = $this->getSchedule($date);
+        $taskLists = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->createQueryBuilder('tl')
+            ->andWhere('DATE(tl.date) = :date')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
 
-        $schedules = [];
-        foreach ($schedule->getItems() as $scheduleItem) {
-            $username = $scheduleItem->getCourier()->getUsername();
-            $schedules[$username][] =
-                $this->get('api_platform.serializer')->normalize($scheduleItem, 'jsonld', [
-                    'resource_class' => ScheduleItem::class,
-                    'operation_type' => 'item',
-                    'item_operation_name' => 'get',
-                    'groups' => ['schedule_item']
-                ]);
+        $taskListsNormalized = [];
+        foreach ($taskLists as $taskList) {
+            $taskListsNormalized[$taskList->getCourier()->getUsername()] = [
+                'duration' => $taskList->getDuration(),
+                'distance' => $taskList->getDistance(),
+                'polyline' => $taskList->getPolyline(),
+            ];
         }
 
         $userManager = $this->get('fos_user.user_manager');
@@ -168,11 +151,6 @@ class AdminController extends Controller
         usort($couriers, function (UserInterface $a, UserInterface $b) {
             return $a->getUsername() < $b->getUsername() ? -1 : 1;
         });
-
-        $users = [];
-        foreach (array_keys($schedules) as $username) {
-            $users[] = $userManager->findUserByUsername($username);
-        }
 
         $isIframe = $request->attributes->getBoolean('iframe', true);
         $nav = false;
@@ -188,10 +166,9 @@ class AdminController extends Controller
             'date' => $date,
             'refresh_route' => $request->attributes->get('refresh_route', 'admin_dashboard_iframe'),
             'refresh_route_params' => $routeParams,
-            'users_json' => $this->get('serializer')->serialize($users, 'json'),
             'couriers' => $couriers,
-            'deliveries' => $deliveries,
-            'planning' => $schedules,
+            'tasks' => $tasks,
+            'task_lists' => $taskListsNormalized,
         ]);
     }
 
@@ -214,51 +191,100 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/schedules/{date}/{username}", name="admin_schedule_update",
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"}
-     * )
+     * @Route("/admin/tasks/{date}/{username}/assign", name="admin_tasks_assign",
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function updateScheduleAction($date, $username, Request $request)
+    public function assignTasksAction($date, $username, Request $request)
     {
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+        $routing = $this->get('routing_service');
 
-        $schedule = $this->getSchedule(new \DateTime($date));
+        $date = new \DateTime($date);
 
-        $data = json_decode($request->getContent(), true);
+        $tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t')
+            ->andWhere('DATE(t.doneBefore) = :date')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
 
-        foreach ($schedule->getItems() as $item) {
-            if ($item->getCourier() === $user) {
+        foreach ($tasks as $task) {
+            if ($task->isAssignedTo($user)) {
+
                 $this->getDoctrine()
-                    ->getManagerForClass(ScheduleItem::class)
-                    ->remove($item);
+                    ->getManagerForClass(TaskAssignment::class)
+                    ->remove($task->getAssignment());
+
+                $task->unassign();
             }
         }
 
         $this->getDoctrine()
-            ->getManagerForClass(ScheduleItem::class)
+            ->getManagerForClass(Task::class)
             ->flush();
 
+        $data = json_decode($request->getContent(), true);
+
+        $assignedTasks = [];
         foreach ($data as $item) {
+            $task = $this->getResourceFromIri($item['task']);
+            $task->assignTo($user, $item['position']);
+            $assignedTasks[] = $task;
+        }
 
-            $address = $this->getResourceFromIri($item['address']);
-            $delivery = $this->getResourceFromIri($item['delivery']);
+        $this->getDoctrine()
+            ->getManagerForClass(Task::class)
+            ->flush();
 
-            $scheduleItem = new ScheduleItem();
-            $scheduleItem->setDate(new \DateTime($date));
-            $scheduleItem->setCourier($user);
-            $scheduleItem->setDelivery($delivery);
-            $scheduleItem->setAddress($address);
-            $scheduleItem->setPosition($item['position']);
+        // Update TaskList
 
-            $schedule->addItem($scheduleItem);
+        $taskList = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->find(['date' => $date->format('Y-m-d'), 'courier' => $user]);
+
+        if (null === $taskList) {
+            $taskList = new TaskList();
+            $taskList->setDate($date);
+            $taskList->setCourier($user);
+
+            $this->getDoctrine()
+                ->getManagerForClass(TaskList::class)
+                ->persist($taskList);
+        }
+
+        if (count($assignedTasks) === 0) {
+
+            $taskList->setDistance(0);
+            $taskList->setDuration(0);
+            $taskList->setPolyline('');
+
+        } else {
+
+            $coordinates = array_map(function (Task $task) {
+                return $task->getAddress()->getGeo();
+            }, $assignedTasks);
+
+            $data = $routing->getServiceResponse('route', $coordinates, [
+                'steps' => 'true',
+                'overview' => 'full'
+            ]);
+
+            $taskList->setDistance($data['routes'][0]['distance']);
+            $taskList->setDuration($data['routes'][0]['duration']);
+            $taskList->setPolyline($data['routes'][0]['geometry']);
 
         }
 
         $this->getDoctrine()
-            ->getManagerForClass(Schedule::class)
+            ->getManagerForClass(TaskList::class)
             ->flush();
 
-        return new JsonResponse([]);
+        return new JsonResponse([
+            'distance' => $taskList->getDistance(),
+            'duration' => $taskList->getDuration(),
+            'polyline' => $taskList->getPolyline(),
+        ]);
     }
 
     /**

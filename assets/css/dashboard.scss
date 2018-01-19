@@ -57,8 +57,6 @@ html, body {
     }
   }
 
-
-
   &__map {
     -webkit-box-flex: 7.5;
     -webkit-flex: 7.5;
@@ -66,13 +64,12 @@ html, body {
     flex: 7.5;
   }
 
-   &__aside {
+  &__aside {
     -webkit-box-flex: 2.5;
     -webkit-flex: 2.5;
     -ms-flex: 2.5;
     flex: 2.5;
 
-    // background-color: #333;
     flex-direction: column;
     font-size: 11px;
 
@@ -134,42 +131,42 @@ html, body {
             border-width: 0;
           }
         }
-        .address-list {
-          .list-group-item {
-            position: relative;
-            padding-right: 30px;
-            a {
-              color: #fff;
-            }
-            .address-remove {
-              font-size: 16px;
-              line-height: 16px;
-              position: absolute;
-              right: 15px;
-              top: 50%;
-              transform: translateY(-50%);
-            }
-            color: #fff;
-            &--pickup {
-              background-color: lighten(#3498DB, 15%);
-            }
-            &--dropoff {
-              background-color: lighten(#2ECC71, 15%);
-            }
-            &--pickup:hover {
-              cursor: pointer;
-              background-color: lighten(#3498DB, 5%);
-            }
-            &--dropoff:hover {
-              cursor: pointer;
-              background-color: lighten(#2ECC71, 5%);
-            }
-          }
-        }
       }
     }
-   }
+  }
 
+}
+
+.list-group-item {
+  font-size: 11px;
+  position: relative;
+  padding-right: 30px;
+  a {
+    color: #fff;
+  }
+  .task-remove {
+    font-size: 16px;
+    line-height: 16px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  color: #fff;
+  &--pickup {
+    background-color: lighten(#3498DB, 15%);
+  }
+  &--dropoff {
+    background-color: lighten(#2ECC71, 15%);
+  }
+  &--pickup:hover {
+    cursor: pointer;
+    background-color: lighten(#3498DB, 5%);
+  }
+  &--dropoff:hover {
+    cursor: pointer;
+    background-color: lighten(#2ECC71, 5%);
+  }
 }
 
 .gu-mirror {

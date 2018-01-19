@@ -5,7 +5,7 @@ import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 import MapHelper from '../MapHelper'
 import Panel from './components/Panel'
-import DeliveryList from './components/DeliveryList'
+import TaskList from './components/TaskList'
 import UserPanel from './components/UserPanel'
 import UserPanelList from './components/UserPanelList'
 import MapProxy from './components/MapProxy'
@@ -19,44 +19,40 @@ const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 const map = MapHelper.init('map')
 
-const proxy = new MapProxy(map, {
-  users: window.AppData.Dashboard.users,
-  routingRouteURL: window.AppData.Dashboard.routingRouteURL
-})
+const proxy = new MapProxy(map)
 
-console.log(window.AppData.Dashboard.deliveries)
-console.log(window.AppData.Dashboard.planning)
+const unassignedTasks = _.filter(window.AppData.Dashboard.tasks, task => !task.isAssigned)
+const assignedTasks = _.filter(window.AppData.Dashboard.tasks, task => task.isAssigned)
 
-function isPlanned(delivery) {
-  let deliveries = []
-  _.each(window.AppData.Dashboard.planning, (items, username) => {
-    _.each(items, item => {
-      deliveries.push(item.delivery)
-    })
-  })
-  const item = _.find(deliveries, iri => delivery['@id'] === iri)
+_.each(window.AppData.Dashboard.tasks, task => proxy.addTask(task))
+_.each(window.AppData.Dashboard.taskLists, (taskList, username) => proxy.addTaskList(username, taskList))
 
-  return !!item
-}
-
-let elementRef
+let lastDraggedElement
 let waitingComponent
-let waitingList
-let planningList
+let unassignedTaskList
+let userPanelList
 
 const userComponentMap = new Map()
 
 var drake = dragula({
   copy: true,
-  copySortSource: true,
+  copySortSource: false,
   revertOnSpill: true,
-  accepts: (el, target, source, sibling) => target !== source,
+  accepts: (el, target, source, sibling) => target !== source
 })
 .on('cloned', function (clone, original) {
-  elementRef = original
-  $(original).addClass('disabled')
+  lastDraggedElement = original
+  if ($(original).hasClass('list-group-item')) {
+    $(original).addClass('disabled')
+  } else {
+    $(original).find('.list-group-item').addClass('disabled')
+  }
 }).on('dragend', function (el) {
-  $(elementRef).removeClass('disabled')
+  if ($(lastDraggedElement).hasClass('list-group-item')) {
+    $(original).removeClass('disabled')
+  } else {
+    $(lastDraggedElement).find('.list-group-item').removeClass('disabled')
+  }
 }).on('over', function (el, container, source) {
   if (userComponentMap.has(container)) {
     $(container).addClass('dropzone--over');
@@ -69,21 +65,32 @@ var drake = dragula({
 
   const component = userComponentMap.get(target)
 
-  const delivery = _.find(window.AppData.Dashboard.deliveries,
-    delivery => delivery['@id'] === element.getAttribute('data-delivery-id'))
+  let tasks = []
+  if ($(element).data('task-group') === true) {
+    tasks = $(element)
+      .children()
+      .map((index, el) => $(el).data('task-id'))
+      .map((index, taskID) => _.find(window.AppData.Dashboard.tasks, task => task['@id'] === taskID))
+      .toArray()
+  } else {
+    // TODO Manage single task
+  }
 
-  $(target).addClass('dropzone--loading')
+  component.add(tasks)
+  unassignedTaskList.remove(tasks)
 
-  component.add(delivery).then(() => {
-    $(target).removeClass('dropzone--loading')
-    element.remove()
-    waitingList.remove(delivery)
-    elementRef.remove()
-  })
+  $(target).removeClass('dropzone--loading')
+  element.remove()
+  lastDraggedElement.remove()
 
 });
 
-const unscheduled = _.filter(window.AppData.Dashboard.deliveries, delivery => !isPlanned(delivery))
+$('#user-modal button[type="submit"]').on('click', (e) => {
+  e.preventDefault()
+  const username = $('#user-modal [name="courier"]').val()
+  userPanelList.add(username)
+  $('#user-modal').modal('hide')
+})
 
 render(<Panel heading={() => (
     <h4>
@@ -100,26 +107,13 @@ render(<Panel heading={() => (
       </LocaleProvider>
     </h4>
   )}>
-    <DeliveryList
-      ref={ el => waitingList = el }
-      deliveries={ unscheduled }
-      onLoad={el => {
-        drake.containers.push(el)
-      }} />
+    <TaskList
+      ref={ el => unassignedTaskList = el }
+      tasks={ unassignedTasks }
+      onLoad={ el => drake.containers.push(el) } />
   </Panel>,
   document.querySelector('.dashboard .dashboard__aside__top')
 )
-
-$('#user-modal button[type="submit"]').on('click', (e) => {
-  e.preventDefault()
-  const username = $('#user-modal [name="courier"]').val()
-  $.getJSON(window.AppData.Dashboard.userURL.replace('__USERNAME__', username))
-    .then(user => {
-      planningList.add(user)
-      proxy.addUser(user)
-      $('#user-modal').modal('hide')
-    })
-})
 
 render(<Panel heading={() => (
     <h4>
@@ -133,15 +127,31 @@ render(<Panel heading={() => (
     </h4>
   )}>
     <UserPanelList
-      ref={ el => planningList = el }
-      users={ window.AppData.Dashboard.users }
-      planning={ window.AppData.Dashboard.planning }
-      deliveries={ window.AppData.Dashboard.deliveries }
+      ref={ el => userPanelList = el }
+      tasks={ assignedTasks }
+      taskLists={ window.AppData.Dashboard.taskLists }
       map={ proxy }
-      onRemove={delivery => waitingList.add(delivery)}
+      onRemove={task => unassignedTaskList.add(task)}
       onLoad={(component, element) => {
         drake.containers.push(element)
         userComponentMap.set(element, component)
+      }}
+      onTaskListChange={(username, taskList) => {
+        proxy.addTaskList(username, taskList)
+      }}
+      save={(username, tasks) => {
+        const data = tasks.map((task, index) => {
+          return {
+            task: task['@id'],
+            position: index
+          }
+        })
+        return $.ajax({
+          url: window.AppData.Dashboard.assignTaskURL.replace('__USERNAME__', username),
+          type: 'POST',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+        })
       }} />
   </Panel>,
   document.querySelector('.dashboard .dashboard__aside__bottom')

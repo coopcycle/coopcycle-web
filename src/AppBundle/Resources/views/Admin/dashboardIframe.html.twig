@@ -66,13 +66,10 @@ window.AppData.Dashboard = {
   },
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path(refresh_route, refresh_route_params)|raw }}",
-  routingRouteURL: "{{ path('routing_route', { coordinates: '__COORDINATES__' }) }}",
-  routingTripURL: "{{ path('routing_trip', { coordinates: '__COORDINATES__' }) }}",
-  planningURL: "{{ path('admin_schedule_update', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
+  assignTaskURL: "{{ path('admin_tasks_assign', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
   userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
-  users: {{ users_json|raw }},
-  deliveries: {{ deliveries|json_encode()|raw }},
-  planning: {{ planning|json_encode()|raw }}
+  tasks: {{ tasks|json_encode()|raw }},
+  taskLists: {{ task_lists|json_encode()|raw }}
 }
 </script>
 <script src="{{ asset('js/dashboard.js') }}"></script>

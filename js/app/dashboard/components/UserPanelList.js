@@ -10,68 +10,70 @@ export default class extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      users: props.users || []
+      users: props.users || [],
+      tasks: props.tasks || [],
+      uncollapsed: null
     }
   }
 
-  add(user) {
+  add(username) {
     let { users } = this.state
-    users = users.slice()
-    users.push(user)
-    this.setState({ users })
+    const newUsers = users.slice()
+    newUsers.push(username)
+    this.setState({ users: newUsers, uncollapsed: username })
+  }
+
+  componentDidMount() {
+    // Hide other collapsibles when a collapsible is going to be shown
+    $('#accordion').on('show.bs.collapse', '.collapse', () => {
+      $('#accordion').find('.collapse.in').collapse('hide')
+    });
   }
 
   render() {
 
-    const { deliveries, map, planning } = this.props
+    const { map, taskLists } = this.props
+    const { tasks, users } = this.state
+    let { uncollapsed } = this.state
+
+    const tasksByUser = _.groupBy(tasks, task => task.assignedTo)
+
+    users.forEach(username => {
+      if (!tasksByUser.hasOwnProperty(username)) {
+        tasksByUser[username] = []
+      }
+    })
+
+    if (!uncollapsed) {
+      uncollapsed = _.first(_.keys(tasksByUser))
+    }
 
     return (
       <div id="accordion">
-      { this.state.users.map(user => {
+      { _.map(tasksByUser, (tasks, username) => {
 
-        let userDeliveries = []
-        let markersOrder = []
-        if (planning.hasOwnProperty(user.username)) {
-
-          const userPlanning = planning[user.username]
-          const keys = _.keys(_.groupBy(userPlanning, item => item.delivery))
-
-          userDeliveries = _.map(keys, key => _.find(deliveries, delivery => delivery['@id'] === key))
-          markersOrder = userPlanning.map(item => {
-            const isPickup = _.find(userDeliveries, delivery => delivery.originAddress['@id'] === item.address)
-            return item.delivery + (isPickup ? '#pickup' : '#dropoff')
-          })
+        let distance = 0
+        let duration = 0
+        if (taskLists.hasOwnProperty(username)) {
+          distance = taskLists[username].distance
+          duration = taskLists[username].duration
         }
 
         return (
           <UserPanel
-            key={ user.username }
-            user={ user }
-            deliveries={ userDeliveries }
-            markersOrder={ markersOrder }
+            key={ username }
+            username={ username }
+            tasks={ tasks }
+            distance={ distance }
+            duration={ duration }
             map={ map }
-            onShow={() => {
-              map.showLayers(user.username)
-              map.zoom(user.username)
-            }}
-            onHide={ () => map.hideLayers(user.username) }
-            onRemove={ delivery => this.props.onRemove(delivery) }
+            collapsed={ uncollapsed !== username }
+            onShow={() => {}}
+            onHide={() => {}}
             onLoad={ (component, element) => this.props.onLoad(component, element.querySelector('.panel .list-group')) }
-            save={markers => {
-              const data = markers.map((marker, index) => {
-                return {
-                  delivery: marker.delivery['@id'],
-                  address: marker.address['@id'],
-                  position: index
-                }
-              })
-              return $.ajax({
-                url: window.AppData.Dashboard.planningURL.replace('__USERNAME__', user.username),
-                type: 'POST',
-                data: JSON.stringify(data),
-                contentType: 'application/json',
-              })
-            }} />
+            onTaskListChange={ this.props.onTaskListChange }
+            onRemove={ this.props.onRemove }
+            save={ this.props.save } />
           )
       })}
       </div>
