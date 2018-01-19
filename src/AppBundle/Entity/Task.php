@@ -1,0 +1,213 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+/**
+ * @ORM\Entity
+ * @ApiResource(
+ *   attributes={
+ *     "denormalization_context"={"groups"={"task"}},
+ *     "normalization_context"={"groups"={"task", "delivery", "place"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={"method"="GET"}
+ *   },
+ *   itemOperations={
+ *     "get"={"method"="GET"}
+ *   }
+ * )
+ */
+class Task
+{
+    const TYPE_DROPOFF = 'DROPOFF';
+    const TYPE_PICKUP = 'PICKUP';
+
+    const STATUS_TODO = 'TODO';
+    const STATUS_DONE = 'DONE';
+
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"task"})
+     */
+    private $type = self::TYPE_DROPOFF;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"task"})
+     */
+    private $status = self::STATUS_TODO;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Delivery")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"task"})
+     */
+    private $delivery;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Address")
+     * @Groups({"task"})
+     */
+    private $address;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"task"})
+     */
+    private $doneAfter;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"task"})
+     */
+    private $doneBefore;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"task"})
+     */
+    private $comments;
+
+    /**
+     * @ORM\OneToOne(targetEntity="TaskAssignment", mappedBy="task", cascade={"all"})
+     */
+    private $assignment;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Groups({"task"})
+     */
+    private $createdAt;
+
+    /**
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @Groups({"task"})
+     */
+    private $updatedAt;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getDelivery()
+    {
+        return $this->delivery;
+    }
+
+    public function setDelivery($delivery)
+    {
+        $this->delivery = $delivery;
+
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getDoneAfter()
+    {
+        return $this->doneAfter;
+    }
+
+    public function setDoneAfter($doneAfter)
+    {
+        $this->doneAfter = $doneAfter;
+
+        return $this;
+    }
+
+    public function getDoneBefore()
+    {
+        return $this->doneBefore;
+    }
+
+    public function setDoneBefore($doneBefore)
+    {
+        $this->doneBefore = $doneBefore;
+
+        return $this;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    public function getAssignment()
+    {
+        return $this->assignment;
+    }
+
+    public function isAssigned()
+    {
+        return null !== $this->assignment;
+    }
+
+    public function isAssignedTo(ApiUser $courier)
+    {
+        return $this->isAssigned() && $this->assignment->getCourier() === $courier;
+    }
+
+    public function assignTo(ApiUser $courier, $position)
+    {
+        $assignment = new TaskAssignment();
+        $assignment->setTask($this);
+        $assignment->setCourier($courier);
+        $assignment->setPosition($position);
+
+        $this->assignment = $assignment;
+    }
+
+    public function unassign()
+    {
+        $this->assignment = null;
+    }
+}
