@@ -4,11 +4,11 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Schedule;
-use AppBundle\Entity\ScheduleItem;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskAssignment;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Expr;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,38 +20,32 @@ class Me
 
     /**
      * @Route(
-     *   name="my_schedule",
-     *   path="/me/schedule/{date}",
+     *   name="my_tasks",
+     *   path="/me/tasks/{date}",
      *   defaults={
-     *     "_api_resource_class"=ScheduleItem::class,
-     *     "_api_collection_operation_name"="my_schedule"
+     *     "_api_resource_class"=Task::class,
+     *     "_api_collection_operation_name"="my_tasks"
      *   }
      * )
      * @Method("GET")
      */
-    public function scheduleAction($date)
+    public function tasksAction($date)
     {
         $date = new \DateTime($date);
 
-        $qb = $this->doctrine
-            ->getRepository(Schedule::class)
-            ->createQueryBuilder('s');
-        $qb
-            ->where('DATE(s.date) = :date')
-            ->setParameter('date', $date->format('Y-m-d'));
+        $tasks = $this->doctrine
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t')
+            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
+            ->andWhere('DATE(t.doneBefore) = :date')
+            ->andWhere('ta.courier = :courier')
+            ->orderBy('ta.position', 'ASC')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('courier', $this->getUser())
+            ->getQuery()
+            ->getResult();
 
-        $schedule = $qb->getQuery()->getOneOrNullResult();
-
-        if (!$schedule) {
-            return [];
-        }
-
-        $userCriteria = Criteria::create()
-            ->where(Criteria::expr()->eq('courier', $this->getUser()))
-            ->orderBy(['position' => 'ASC']);
-        $items = $schedule->getItems()->matching($userCriteria);
-
-        return $items;
+        return $tasks;
     }
 
     /**

@@ -55,8 +55,8 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
-        api_schedule_items:
-            pattern:   ^/api/schedule_items
+        api_tasks:
+            pattern:   ^/api/tasks
             stateless: true
             guard:
                 authenticators:
@@ -95,7 +95,7 @@ security:
         - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/deliveries, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/schedule_items, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/tasks, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }

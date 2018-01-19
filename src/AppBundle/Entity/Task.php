@@ -15,10 +15,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "normalization_context"={"groups"={"task", "delivery", "place"}}
  *   },
  *   collectionOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "my_tasks" = {
+ *       "route_name" = "my_tasks",
+ *       "swagger_context" = {
+ *         "parameters" = {{
+ *           "name" = "date",
+ *           "in" = "path",
+ *           "required" = "true",
+ *           "type" = "string"
+ *         }}
+ *       }
+ *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "task_done"={"route_name"="api_task_done"}
  *   }
  * )
  */
