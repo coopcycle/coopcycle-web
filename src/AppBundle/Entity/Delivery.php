@@ -431,4 +431,32 @@ class Delivery extends Intangible implements TaxableInterface
         return $this;
     }
 
+    public static function createTasks(Delivery $delivery)
+    {
+        $dropoffDoneBefore = clone $delivery->getDate();
+
+        $dropoffDoneAfter = clone $delivery->getDate();
+        $dropoffDoneAfter->modify('-15 minutes');
+
+        $dropoffTask = new Task();
+        $dropoffTask->setDelivery($delivery);
+        $dropoffTask->setType(Task::TYPE_DROPOFF);
+        $dropoffTask->setAddress($delivery->getDeliveryAddress());
+        $dropoffTask->setDoneAfter($dropoffDoneAfter);
+        $dropoffTask->setDoneBefore($dropoffDoneBefore);
+
+        $pickupDoneAfter = clone $delivery->getDate();
+        $pickupDoneAfter->modify(sprintf('-%d minutes', Restaurant::DELIVERY_DELAY));
+        $pickupDoneBefore = clone $pickupDoneAfter;
+        $pickupDoneBefore->modify('+15 minutes');
+
+        $pickupTask = new Task();
+        $pickupTask->setDelivery($delivery);
+        $pickupTask->setType(Task::TYPE_PICKUP);
+        $pickupTask->setAddress($delivery->getOriginAddress());
+        $pickupTask->setDoneAfter($pickupDoneAfter);
+        $pickupTask->setDoneBefore($pickupDoneBefore);
+
+        return [ $pickupTask, $dropoffTask ];
+    }
 }

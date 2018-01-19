@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\DeliveryEvent;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Predis\Client as Redis;
@@ -26,8 +27,13 @@ class DeliveryListener
     {
         $em = $args->getEntityManager();
 
+        foreach (Delivery::createTasks($delivery) as $task) {
+            $em->persist($task);
+        }
+
         $deliveryEvent = new DeliveryEvent($delivery, $delivery->getStatus(), $delivery->getCourier());
         $em->persist($deliveryEvent);
+
         $em->flush();
 
         $this->redis->publish('delivery_events', json_encode([
