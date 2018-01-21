@@ -37,7 +37,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         }
 
         if ($token->getUser()->hasRole('ROLE_COURIER')) {
-            return new RedirectResponse($this->router->generate('profile_schedule'));
+            return new RedirectResponse($this->router->generate('profile_tasks'));
         }
 
 
