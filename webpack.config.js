@@ -27,7 +27,6 @@ var webpackConfig = {
     'js/order': './js/app/order/index.jsx',
     'js/order-payment': './js/app/order/payment.js',
     'js/order-tracking': './js/app/order/tracking.jsx',
-    'js/profile-deliveries': './js/app/profile/deliveries.js',
     'js/delivery-form': './js/app/delivery/form.jsx',
     'js/delivery-list': './js/app/delivery/list.jsx',
     'js/delivery-pricing-rules': './js/app/delivery/pricing-rules.jsx',

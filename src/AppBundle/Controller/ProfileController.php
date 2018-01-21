@@ -165,31 +165,6 @@ class ProfileController extends Controller
         );
     }
 
-    /**
-     * @Route("/profile/deliveries", name="profile_courier_deliveries")
-     * @Template()
-     */
-    public function courierDeliveriesAction(Request $request)
-    {
-        $deliveryTimes = $this->getDoctrine()->getRepository(Delivery::class)
-            ->getDeliveryTimes($this->getUser());
-
-        $avgDeliveryTime = $this->getDoctrine()->getRepository(Delivery::class)
-            ->getAverageDeliveryTime($this->getUser());
-
-        $deliveries = $this->getDoctrine()->getRepository(Delivery::class)->findBy(
-            ['courier' => $this->getUser()],
-            ['date' => 'DESC']
-        );
-
-        return [
-            'deliveries' => $deliveries,
-            'routes' => $this->getDeliveryRoutes(),
-            'avg_delivery_time' => $avgDeliveryTime,
-            'delivery_times' => $deliveryTimes,
-        ];
-    }
-
     protected function getRestaurantList(Request $request)
     {
         return [ $this->getUser()->getRestaurants(), 1, 1 ];

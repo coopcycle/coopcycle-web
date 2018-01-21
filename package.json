@@ -19,7 +19,6 @@
     "@tweenjs/tween.js": "^16.3.5",
     "antd": "^3.0.3",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
-    "chart.js": "^2.7.1",
     "co": "^4.6.0",
     "coopcycle-js": "git+https://git@github.com/coopcycle/coopcycle-js.git",
     "deepmerge": "^1.5.2",
