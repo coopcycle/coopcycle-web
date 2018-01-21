@@ -1,0 +1,54 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block content %}
+
+<ul class="nav nav-pills">
+  {% for week in weeks %}
+  <li {% if week.start == date %}class="active"{% endif %}>
+    <a href="{{ path('admin_schedules', {
+      year: week.start|date('Y'),
+      month: week.start|date('m'),
+      date: week.start|date('Y-m-d')
+    }) }}">{{ week.start|localizeddate('short', 'none') }}</a>
+  </li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<div id="calendar"></div>
+
+<div id="event-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ asset('css/schedule.css') }}">
+{% endblock %}
+
+{% block scripts %}
+  <script>
+  window.AppData = window.AppData || {}
+  window.AppData.Schedules = {
+    currentDate: "{{ date|date('c') }}"
+  }
+  </script>
+  <script src="{{ asset('js/schedule.js') }}"></script>
+{% endblock %}

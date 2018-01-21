@@ -16,6 +16,7 @@ else {
 
 var webpackConfig = {
   entry: {
+    'css/schedule': './assets/css/schedule.scss',
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
     'js/common': ['es6-set', 'whatwg-fetch', 'bootstrap'],
@@ -35,6 +36,7 @@ var webpackConfig = {
     'js/restaurant-planning': './js/app/restaurant/planning.jsx',
     'js/restaurant-panel': './js/app/restaurant/panel.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
+    'js/schedule': './js/app/schedule/index.js',
     'js/tracking': './js/app/tracking/index.jsx',
     'js/user-tracking': './js/app/user/tracking.jsx',
     'js/widgets/rule-picker': './js/app/widgets/RulePicker.js',
@@ -91,6 +93,7 @@ var webpackConfig = {
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery",
+        moment: "moment",
       }),
       new CopyWebpackPlugin([
         { from: 'node_modules/coopcycle-js/build/coopcycle.js', to: 'js/coopcycle.js' }

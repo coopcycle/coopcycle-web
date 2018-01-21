@@ -800,4 +800,74 @@ class AdminController extends Controller
 
         return new JsonResponse($user);
     }
+
+    private function getWeeks(\DateTime $date)
+    {
+        $month = $date->format('m');
+
+        $mondays = [];
+        while ($date->format('m') == $month) {
+            if ($date->format('N') == 1) {
+                $mondays[] = clone $date;
+            }
+            $date->modify('+1 day');
+        }
+
+        $weeks = [];
+        foreach ($mondays as $monday) {
+
+            $end = clone $monday;
+            $end->modify('+7 days');
+
+            $weeks[] = [
+                'start' => $monday,
+                'end' => $end,
+            ];
+        }
+
+        return $weeks;
+    }
+
+    /**
+     * @Route("/admin/schedules/{year}-{month}", name="admin_schedules",
+     *   requirements={"year" = "[0-9]{4}", "month" = "[0-9]{2}"}
+     * )
+     * @Template()
+     */
+    public function schedulesAction($year, $month, Request $request)
+    {
+        $monthSchedule = new \DateTime();
+        $monthSchedule->setDate($year, $month, 1);
+
+        $weeks = $this->getWeeks($monthSchedule);
+
+        $date = $weeks[0]['start'];
+        if ($request->query->has('date')) {
+            foreach ($weeks as $week) {
+                if ($week['start']->format('Y-m-d') === $request->query->get('date')) {
+                    $date = $week['start'];
+                    break;
+                }
+            }
+        }
+
+        return [
+            'weeks' => $weeks,
+            'date' => $date,
+        ];
+    }
+
+    /**
+     * @Route("/admin/schedules", name="admin_schedules_no_date")
+     * @Template()
+     */
+    public function schedulesNoDateAction(Request $request)
+    {
+        $date = new \DateTime();
+
+        return $this->redirectToRoute('admin_schedules', [
+            'year' => $date->format('Y'),
+            'month' => $date->format('m'),
+        ]);
+    }
 }
