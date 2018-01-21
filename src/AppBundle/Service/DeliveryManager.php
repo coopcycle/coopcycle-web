@@ -42,6 +42,11 @@ class DeliveryManager
             throw new AccessDeniedException($message);
         }
 
+        // Delivery is already dispatch to the same user
+        if ($delivery->getStatus() === Delivery::STATUS_DISPATCHED && $delivery->getCourier() === $user) {
+            return;
+        }
+
         // Delivery MUST have status = WAITING
         if ($delivery->getStatus() !== Delivery::STATUS_WAITING) {
             $message = sprintf('Delivery #%d cannot be accepted anymore', $delivery->getId());
