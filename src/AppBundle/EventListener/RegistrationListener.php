@@ -41,6 +41,9 @@ class RegistrationListener implements EventSubscriberInterface
             case 'COURIER':
                 $roles = ['ROLE_COURIER'];
                 break;
+            case 'STORE':
+                $roles = ['ROLE_STORE'];
+                break;
             case 'RESTAURANT':
                 $roles = ['ROLE_RESTAURANT'];
                 break;

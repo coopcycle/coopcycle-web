@@ -34,6 +34,7 @@ class RegistrationType extends AbstractType
                     'Customer' => 'CUSTOMER',
                     'Courier' => 'COURIER',
                     'Restaurant' => 'RESTAURANT',
+                    'Store' => 'STORE',
                 ]
             ]);
     }
