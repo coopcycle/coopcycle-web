@@ -27,7 +27,6 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-
         if ($token->getUser()->hasRole('ROLE_ADMIN')) {
             return new RedirectResponse($this->router->generate('admin_index'));
         }
@@ -40,10 +39,11 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
             return new RedirectResponse($this->router->generate('profile_tasks'));
         }
 
-
-        else {
-            return new RedirectResponse($request->headers->get('referer'));
+        if ($token->getUser()->hasRole('ROLE_STORE')) {
+            return new RedirectResponse($this->router->generate('profile_stores'));
         }
+
+        return new RedirectResponse($request->headers->get('referer'));
     }
 }
 
