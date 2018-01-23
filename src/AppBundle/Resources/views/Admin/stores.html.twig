@@ -5,9 +5,18 @@
 {% endblock %}
 
 {% block content %}
-{% include "AppBundle:Store:list.html.twig" %}
-<a href="{{ path('admin_store_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Create a new store{% endtrans %}</a>
+  {% include "AppBundle:Store:list.html.twig" %}
+  <a href="{{ path('admin_store_new') }}" class="btn btn-success"><i class="fa fa-plus"></i> {% trans %}Create a new store{% endtrans %}</a>
 {% endblock %}
 
 {% block scripts %}
+  <script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
+  <script>
+    document.querySelectorAll('.store-opening-hours').forEach(function(el) {
+      new CoopCycle.OpeningHoursParser(el, {
+        openingHours: JSON.parse(el.getAttribute('data-opening-hours')),
+        locale: $('html').attr('lang')
+      })
+    })
+  </script>
 {% endblock %}
