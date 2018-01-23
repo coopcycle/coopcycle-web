@@ -14,7 +14,7 @@
         <td>{{ store.name }}</td>
         <td>{{ store.address.streetAddress }}</td>
         <td>{{ store.pricingRuleSet is not null ? store.pricingRuleSet.name : '' }}</td>
-        <td>{{ store.openingHours|join(' ') }}</td>
+        <td class="store-opening-hours" data-opening-hours="{{ store.openingHours|json_encode() }}"></td>
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
