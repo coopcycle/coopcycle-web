@@ -35,7 +35,7 @@ class HelpController extends Controller
     {
         return [
             'menu' => $this->getMenu(),
-            'template' => $this->resolveTemplate('index', $request->getLocale())
+            'template' => $this->resolveTemplate('index', $request->getLocale()),
         ];
     }
 
@@ -47,17 +47,6 @@ class HelpController extends Controller
         return [
             'menu' => $this->getMenu(),
             'template' => $this->resolveTemplate($request->attributes->get('template'), $request->getLocale())
-        ];
-    }
-
-    /**
-     * @Route("/help/admin/pricing", name="help_admin_pricing")
-     * @Template("@App/Help/index.html.twig")
-     */
-    public function adminPricingAction(Request $request)
-    {
-        return [
-            'template' => $this->resolveTemplate('admin/pricing/index', $request->getLocale())
         ];
     }
 }

@@ -1,6 +1,6 @@
 Help
 ----
 
-Welcome on our help page.
+Welcome on our help page !
 
-Here you will find documentation on how to use the platform.
+You will find here documentation on how to use the CoopCycle platform.

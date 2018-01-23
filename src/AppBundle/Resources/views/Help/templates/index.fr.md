@@ -1,6 +1,6 @@
 Aide
 ----
 
-Bienvenue sur notre page d'aide.
+Bienvenue sur notre page d'aide !
 
-Vous trouverez ici de la documentation sur l'utilisation de plateforme.
+Vous trouverez ici la documentation sur l'utilisation de la plateforme CoopCycle.

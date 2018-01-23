@@ -14,13 +14,13 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
-<script>
-document.querySelectorAll('.restaurant-opening-hours').forEach(function(el) {
-  new CoopCycle.OpeningHoursParser(el, {
-    openingHours: JSON.parse(el.getAttribute('data-opening-hours')),
-    locale: $('html').attr('lang')
+  <script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
+  <script>
+  document.querySelectorAll('.restaurant-opening-hours').forEach(function(el) {
+    new CoopCycle.OpeningHoursParser(el, {
+      openingHours: JSON.parse(el.getAttribute('data-opening-hours')),
+      locale: $('html').attr('lang')
+    })
   })
-})
-</script>
+  </script>
 {% endblock %}

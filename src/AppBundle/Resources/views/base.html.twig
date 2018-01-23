@@ -29,20 +29,20 @@
     {% endblock %}
     {% block body %}{% endblock %}
     {% block footer %}
-    <footer class="footer text-center">
-      <ul class="list-inline">
-        <li>
-          <a class="footer-link" href="mailto:contact@coopcycle.org">
-            {% trans %}Contact us{% endtrans %}
-          </a>
-        </li>
-        <li>
-          <a class="footer-link" href="{{ path('help') }}">
-            {% trans %}Help{% endtrans %}
-          </a>
-        </li>
-      </ul>
-    </footer>
+      <footer class="footer text-center">
+        <ul class="list-inline">
+          <li>
+            <a class="footer-link" href="mailto:contact@coopcycle.org">
+              {% trans %}Contact us{% endtrans %}
+            </a>
+          </li>
+          <li>
+            <a class="footer-link" href="{{ path('help') }}">
+              {% trans %}Help{% endtrans %}
+            </a>
+          </li>
+        </ul>
+      </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
       <script src="https://cdn.ravenjs.com/3.19.1/raven.min.js" crossorigin="anonymous"></script>

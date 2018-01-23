@@ -12,6 +12,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.main-container {
+  min-height: 400px;
+}
+
 
 .footer {
   width: 100%;
@@ -56,6 +60,30 @@ h1, h2, h3, h4, h5, h6 {
 .restaurant-header {
   h1 {
     display: inline-block;
+  }
+}
+
+.store-opening-hours {
+  width: 35%;
+}
+
+// ------------------ Help ------------------
+
+.help-nav__item {
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  .list-group-item {
+    font-size: 14px;
+    color: $main-blue;
+
+    &:hover {
+      color: white;
+      background-color: $main-blue-light;
+      text-decoration: none;
+    }
   }
 }
 
