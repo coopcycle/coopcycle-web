@@ -8,6 +8,8 @@ class RestaurantProvider extends BaseProvider
 {
     /* Formats */
 
+    protected static $storeFormat = '{{storeActivity}} {{storeAdjective}}';
+
     protected static $restaurantFormats = array(
         '{{restaurantPrefix}} {{restaurantAdjective}} {{restaurantSuffix}}',
         '{{restaurantPrefix}} {{restaurantSuffix}}',
@@ -25,6 +27,35 @@ class RestaurantProvider extends BaseProvider
     protected static $dessertFormats = array(
         '{{dessertMainIngredient}} {{dessertAdditionalIngredient}}',
     );
+
+    /* Stores */
+
+    protected static $storeAdjectives = array(
+        'express',
+        'prompto',
+        'à domicile',
+        'rapide',
+    );
+
+    protected static $storeActivities = array(
+        'couture',
+        'pressing',
+        'fleurs',
+        'colis',
+        'fruits & légumes',
+        'photos',
+        'lunettes'
+    );
+
+    public function storeAdjective()
+    {
+        return static::randomElement(static::$storeAdjectives);
+    }
+
+    public function storeActivity()
+    {
+        return static::randomElement(static::$storeActivities);
+    }
 
     /* Restaurants */
 
@@ -143,6 +174,11 @@ class RestaurantProvider extends BaseProvider
     );
 
     /* API */
+
+    public function storeName()
+    {
+        return ucfirst($this->generator->parse(static::$storeFormat));
+    }
 
     public function restaurantName()
     {

@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker;
 use GuzzleHttp\Client;
@@ -91,6 +92,9 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $output->writeln('Creating restaurants...');
         $this->createRestaurants($output);
+
+        $output->writeln('Creating stores...');
+        $this->createStores();
 
         $output->writeln('Removing data from Redis...');
         $keys = $this->redis->keys('*');
@@ -245,6 +249,54 @@ class InitDemoCommand extends ContainerAwareCommand
         return sprintf('%s-%s', $opening->format('H:i'), $closing->format('H:i'));
     }
 
+    private function createPricingRuleSet(Entity\Store $store)
+    {
+        $pricingRuleSet = new Entity\Delivery\PricingRuleSet();
+        $pricingRuleSet->setName('Tarification de '.$store->getName());
+
+        $distances = [];
+        $prices = [];
+
+        for ($i = 1; $i <= 6; $i++) {
+            array_push($distances, random_int(1, 20) * 1000);
+        }
+
+        for ($i = 1; $i <= 5; $i++) {
+            array_push($prices, random_int(5, 20));
+        }
+
+        sort($distances);
+        sort($prices);
+
+        foreach ($prices as $k => $price) {
+            $pricingRule = new Entity\Delivery\PricingRule();
+            $pricingRule->setPosition($k);
+            $pricingRule->setExpression('distance in '.(string)$distances[$k].'..'.(string)$distances[$k+1]);
+            $pricingRule->setPrice($price);
+            $pricingRule->setRuleSet($pricingRuleSet);
+            $pricingRuleSet->getRules()->add($pricingRule);
+        };
+
+
+        return $pricingRuleSet;
+    }
+
+    private function createStore(Entity\Address $address)
+    {
+        $shop = new Entity\Store();
+
+        $shop->setEnabled(true);
+        $shop->setTelephone('+33623456789');
+        $shop->setAddress($address);
+        $shop->setName($this->faker->storeName);
+        $shop->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));
+        $shop->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('19:30', '23:30'));
+        $shop->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('08:30', '15:30'));
+        $shop->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('19:00', '01:30'));
+
+        return $shop;
+    }
+
     private function createRestaurant(Entity\Address $address, TaxCategoryInterface $taxCategory)
     {
         $contract = new Entity\Contract();
@@ -294,5 +346,26 @@ class InitDemoCommand extends ContainerAwareCommand
         }
 
         $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
+    }
+
+    private function createStores()
+    {
+
+        for ($i = 0; $i < 100; $i++) {
+            $store = $this->createStore($this->faker->randomAddress);
+            $pricingRuleSet = $this->createPricingRuleSet($store);
+            $store->setPricingRuleSet($pricingRuleSet);
+            $this->doctrine->getManagerForClass(Entity\Store::class)->persist($store);
+            $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
+
+            $username = "store-{$i}";
+            $user = $this->createUser($username, [
+                'password' => $username,
+                'roles' => ['ROLE_STORE']
+            ]);
+            $user->addStore($store);
+        }
+
+        $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
     }
 }
