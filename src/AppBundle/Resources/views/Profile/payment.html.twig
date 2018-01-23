@@ -1,9 +1,5 @@
 {% extends "AppBundle::profile.html.twig" %}
 
-{% block breadcrumb %}
-<li>{% trans %}Payment{% endtrans %}</li>
-{% endblock %}
-
 {% block content %}
   <h2 class="page-header">{% trans %}Payment{% endtrans %}</h2>
   {% if stripe_user_id is not empty %}
