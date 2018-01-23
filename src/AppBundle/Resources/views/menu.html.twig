@@ -45,7 +45,21 @@
               {{ app.user.username }} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="{{ path('fos_user_profile_show') }}">{% trans %}My account{% endtrans %}</a></li>
+              <li>
+                {# NB: ROLE_ADMIN is also ROLE_COURIER (couriers are admins ;)) #}
+                {% if is_granted('ROLE_COURIER') %}
+                  {% set mainAccountPath = 'profile_courier_deliveries' %}
+                {% elseif is_granted('ROLE_STORE') %}
+                  {% set mainAccountPath = 'profile_stores' %}
+                {% elseif is_granted('ROLE_RESTAURANT') %}
+                  {% set mainAccountPath = 'profile_restaurants' %}
+                {% else %}
+                  {% set mainAccountPath = 'fos_user_profile_show' %}
+                {% endif %}
+                <a href="{{ path(mainAccountPath) }}">
+                  {% trans %}My account{% endtrans %}
+                </a>
+              </li>
               <li role="separator" class="divider"></li>
               <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
             </ul>
@@ -56,9 +70,9 @@
           </li>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
-          <li class="active">
-            <a href="{{ path('admin_index') }}">{% trans %}<i class="fa fa-lock"></i>{% endtrans %}</a>
-          </li>
+          <a class="btn btn-primary navbar-btn" href="{{ path('admin_index') }}">
+            {% trans %}Admin dashboard{% endtrans %}
+          </a>
         {% endif %}
       </ul>
 
