@@ -32,7 +32,7 @@
     </thead>
     <tbody>
     {% for task in tasks %}
-      <tr {% if task == next_task %}class="active"{% endif %}>
+      <tr>
         <td width="2%">
           {% if task.status == 'DONE' %}
           <i class="fa fa-calendar-check-o" style="color: #27AE60;"></i>
@@ -55,16 +55,14 @@
           {{ task.doneAfter|localizeddate('none', 'short') }} - {{ task.doneBefore|localizeddate('none', 'short') }}
         </td>
         <td class="text-right">
-          {% if task == next_task %}
-          <form method="post" action="{{ path('profile_task_done', { id: task.id }) }}">
-            <button type="submit" class="btn btn-xs btn-success">
-              <i class="fa fa-check"></i> Fait
-            </button>
-          </form>
-          {% else %}
-            {% if task.status == 'DONE' %}
-              {{ task.updatedAt|localizeddate('short', 'short') }}
-            {% endif %}
+          {% if task.status == 'TODO' %}
+            <form method="post" action="{{ path('profile_task_done', { id: task.id }) }}">
+              <button type="submit" class="btn btn-xs btn-success">
+                <i class="fa fa-check"></i> Fait
+              </button>
+            </form>
+          {% elseif task.status == 'DONE' %}
+            {{ task.updatedAt|localizeddate('short', 'short') }}
           {% endif %}
         </td>
       </tr>

@@ -233,19 +233,9 @@ class ProfileController extends Controller
             ->getQuery()
             ->getResult();
 
-        $nextTask = null;
-
-        foreach ($tasks as $task) {
-            if (!($task->getStatus() === Task::STATUS_DONE)) {
-                $nextTask = $task;
-                break;
-            }
-        }
-
         return [
             'date' => $date,
             'tasks' => $tasks,
-            'next_task' => $nextTask
         ];
     }
 
