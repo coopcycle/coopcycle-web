@@ -268,3 +268,7 @@ services:
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@router']
+
+  coopcycle.task_manager:
+    class: AppBundle\Service\TaskManager
+    arguments: ["@doctrine", "@event_dispatcher"]
