@@ -210,16 +210,18 @@ class Task
 
     public function assignTo(ApiUser $courier, $position)
     {
-        $assignment = new TaskAssignment();
-        $assignment->setTask($this);
-        $assignment->setCourier($courier);
-        $assignment->setPosition($position);
+        if (null === $this->assignment) {
+            $this->assignment = new TaskAssignment();
+            $this->assignment->setTask($this);
+        }
 
-        $this->assignment = $assignment;
+        $this->assignment->setCourier($courier);
+        $this->assignment->setPosition($position);
     }
 
     public function unassign()
     {
+        $this->assignment->setTask(null);
         $this->assignment = null;
     }
 }
