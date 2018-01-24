@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\TaskRepository")
  * @ApiResource(
  *   attributes={
  *     "denormalization_context"={"groups"={"task"}},

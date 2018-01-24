@@ -196,45 +196,44 @@ class AdminController extends Controller
      */
     public function assignTasksAction($date, $username, Request $request)
     {
+        $taskManager = $this->get('coopcycle.task_manager');
+        $taskRepository = $this->getDoctrine()->getRepository(Task::class);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
         $routing = $this->get('routing_service');
 
         $date = new \DateTime($date);
 
-        $tasks = $this->getDoctrine()
-            ->getRepository(Task::class)
-            ->createQueryBuilder('t')
-            ->andWhere('DATE(t.doneBefore) = :date')
-            ->setParameter('date', $date->format('Y-m-d'))
-            ->getQuery()
-            ->getResult();
+        // Tasks are sent as JSON payload
+        $data = json_decode($request->getContent(), true);
 
-        foreach ($tasks as $task) {
-            if ($task->isAssignedTo($user)) {
+        $assignedTasks = new \SplObjectStorage();
+        foreach ($taskRepository->findByUserAndDate($user, $date) as $task) {
+            $assignedTasks[$task] = $task->getAssignment()->getPosition();
+        }
 
-                $this->getDoctrine()
-                    ->getManagerForClass(TaskAssignment::class)
-                    ->remove($task->getAssignment());
+        $tasksToAssign = new \SplObjectStorage();
+        foreach ($data as $item) {
+            $task = $this->getResourceFromIri($item['task']);
+            $tasksToAssign[$task] = $item['position'];
+        }
 
-                $task->unassign();
+        $tasksToUnassign = [];
+        foreach ($assignedTasks as $task) {
+            if (!$tasksToAssign->contains($task)) {
+                $tasksToUnassign[] = $task;
             }
         }
 
-        $this->getDoctrine()
-            ->getManagerForClass(Task::class)
-            ->flush();
+        foreach ($tasksToUnassign as $task) {
+            $taskManager->unassign($task);
+        }
 
-        $data = json_decode($request->getContent(), true);
-
-        $assignedTasks = [];
-        foreach ($data as $item) {
-            $task = $this->getResourceFromIri($item['task']);
-            $task->assignTo($user, $item['position']);
-            $assignedTasks[] = $task;
+        foreach ($tasksToAssign as $position => $task) {
+            $taskManager->assign($task, $user, $position);
         }
 
         $this->getDoctrine()
-            ->getManagerForClass(Task::class)
+            ->getManagerForClass(TaskAssignment::class)
             ->flush();
 
         // Update TaskList
@@ -253,7 +252,7 @@ class AdminController extends Controller
                 ->persist($taskList);
         }
 
-        if (count($assignedTasks) === 0) {
+        if (count($tasksToAssign) === 0) {
 
             $taskList->setDistance(0);
             $taskList->setDuration(0);
@@ -261,9 +260,10 @@ class AdminController extends Controller
 
         } else {
 
-            $coordinates = array_map(function (Task $task) {
-                return $task->getAddress()->getGeo();
-            }, $assignedTasks);
+            $coordinates = [];
+            foreach ($tasksToAssign as $task) {
+                $coordinates[] = $task->getAddress()->getGeo();
+            }
 
             $data = $routing->getServiceResponse('route', $coordinates, [
                 'steps' => 'true',

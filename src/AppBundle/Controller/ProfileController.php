@@ -254,15 +254,18 @@ class ProfileController extends Controller
      */
     public function markTaskDoneAction($id, Request $request)
     {
+        $taskManager = $this->get('coopcycle.task_manager');
+
         $task = $this->getDoctrine()
             ->getRepository(Task::class)->find($id);
 
         // TODO Access control
 
-        $task->setStatus(Task::STATUS_DONE);
+        $taskManager->markAsDone($task);
 
         $this->getDoctrine()
-            ->getManagerForClass(Task::class)->flush();
+            ->getManagerForClass(Task::class)
+            ->flush();
 
         return $this->redirectToRoute('profile_tasks');
     }

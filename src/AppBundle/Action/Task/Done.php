@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use AppBundle\Action\ActionTrait;
+use AppBundle\Service\TaskManager;
 use AppBundle\Entity\Task;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -10,7 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class Done
 {
-    use ActionTrait;
+    protected $taskManager;
+
+    public function __construct(TaskManager $taskManager)
+    {
+        $this->taskManager = $taskManager;
+    }
 
     /**
      * @Route(
@@ -33,7 +38,7 @@ class Done
             throw new AccessDeniedHttpException(sprintf('User %s cannot update task', $user->getUsername()));
         }
 
-        $task->setStatus(Task::STATUS_DONE);
+        $this->taskManager->markAsDone($task);
 
         return $task;
     }
