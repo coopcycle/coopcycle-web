@@ -55,6 +55,10 @@
 </div>
 {% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
 {% block scripts %}
 <script src="/tracking/socket.io/socket.io.js"></script>
 <script>

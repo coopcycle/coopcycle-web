@@ -16,6 +16,7 @@ else {
 
 var webpackConfig = {
   entry: {
+    'css/dashboard': './assets/css/dashboard.scss',
     'css/styles': './assets/css/main.scss',
     'css/tracking': './assets/css/tracking.scss',
     'js/common': ['es6-set', 'whatwg-fetch', 'bootstrap'],
