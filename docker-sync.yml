@@ -6,13 +6,14 @@ syncs:
   #IMPORTANT: ensure this name is unique and does not match your other application container name
   php-sync:
     src: './'
+    sync_strategy: 'native_osx'
     sync_userid: '82'
-    sync_excludes: ['.idea/', '.git/', 'node_modules/']
-    sync_excludes_type: 'Name'
-    watch_excludes: ['.*/.git', '.*/node_modules', '.*/idea', '.gitignore']
+    sync_excludes: ['.idea/', '.git/', 'node_modules/', 'vendor/', 'var/cache/']
+    sync_excludes_type: 'Path'
+    watch_excludes: ['.*/.git', '.*/node_modules', '.*/idea', '.gitignore', '.*/vendor', '.*/var/cache']
   webpack-sync:
     src: './'
-    sync_userid: '82'
-    sync_excludes: ['.idea/', '.git/', 'node_modules/']
-    sync_excludes_type: 'Name'
-    watch_excludes: ['.*/.git', '.*/node_modules', '.*/idea', '.gitignore']
+    sync_userid: '33'
+    sync_excludes: ['.idea/', '.git/', 'node_modules/', 'vendor/', 'var/cache/']
+    sync_excludes_type: 'Path'
+    watch_excludes: ['.*/.git', '.*/node_modules', '.*/idea', '.gitignore', '.*/vendor', '.*/var/cache']
