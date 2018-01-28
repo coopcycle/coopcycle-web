@@ -25,6 +25,7 @@ use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
+use AppBundle\Form\TaskUploadType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,10 +33,12 @@ use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
-
 
 class AdminController extends Controller
 {
@@ -108,6 +111,41 @@ class AdminController extends Controller
             $this->container->get('profiler')->disable();
         }
 
+        $taskImport = new \stdClass();
+        $taskImport->tasks = [];
+
+        $taskUploadForm = $this->createForm(TaskUploadType::class, $taskImport, [
+            'date' => $date
+        ]);
+
+        $taskUploadForm->handleRequest($request);
+        if ($taskUploadForm->isSubmitted()) {
+            if ($taskUploadForm->isValid()) {
+
+                $taskImport = $taskUploadForm->getData();
+
+                foreach ($taskImport->tasks as $task) {
+                    $this->getDoctrine()
+                        ->getManagerForClass(Task::class)
+                        ->persist($task);
+                }
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Task::class)
+                    ->flush();
+
+                $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
+                $isIframe = $request->attributes->getBoolean('iframe', true);
+
+                $routeParams = [ 'date' => $date->format('Y-m-d') ];
+                if (!$isIframe) {
+                    $routeParams['fullscreen'] = 'on';
+                }
+
+                return $this->redirectToRoute($routeName, $routeParams);
+            }
+        }
+
         $tasks = $this->getDoctrine()
             ->getRepository(Task::class)
             ->createQueryBuilder('t')
@@ -169,6 +207,7 @@ class AdminController extends Controller
             'couriers' => $couriers,
             'tasks' => $tasks,
             'task_lists' => $taskListsNormalized,
+            'task_upload_form' => $taskUploadForm->createView(),
         ]);
     }
 

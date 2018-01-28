@@ -157,6 +157,7 @@ Search store…: Rechercher un magasin…
 My tasks: Mes tâches
 Tasks: Tâches
 No tasks scheduled: Aucune tâche programmée
+Tasks will be created for %date%: Les tâches seront créées pour le %date%
 
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
@@ -237,6 +238,7 @@ form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
+form.task_upload.file: Fichier
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?

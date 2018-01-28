@@ -69,7 +69,7 @@ class Task
     private $delivery;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Address")
+     * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @Groups({"task"})
      */
     private $address;

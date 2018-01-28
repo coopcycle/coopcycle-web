@@ -177,6 +177,10 @@ services:
     arguments: [ '@translator' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\TaskUploadType':
+    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:

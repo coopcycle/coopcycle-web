@@ -204,6 +204,10 @@ csa_guzzle:
             config:
                 base_uri: "%applicolis_api_base_url%"
                 lazy: true
+        google_maps:
+            config:
+                base_uri: "https://maps.googleapis.com"
+                lazy: true
 
 sylius_taxation:
     driver: doctrine/orm
