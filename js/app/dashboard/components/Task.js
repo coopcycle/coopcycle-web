@@ -19,7 +19,10 @@ export default class extends React.Component {
         <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (task.type === 'PICKUP' ? 'arrow-up' : 'arrow-down') }></i>  
         <a><span>{ task.address.streetAddress }</span></a>
         <br />
-        <span>#{ task.delivery.id }</span> <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
+        { task.delivery && (
+          <span>#{ task.delivery.id }</span>
+        )}
+        <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
         { this.props.assigned &&
           <a href="#" className="task-remove" onClick={(e) => {
             e.preventDefault()

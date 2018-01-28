@@ -34,11 +34,13 @@ final class TaskSubscriber implements EventSubscriberInterface
         $task = $event->getTask();
         $user = $event->getUser();
 
-        $this->deliveryManager->dispatch($task->getDelivery(), $user);
+        if (null !== $task->getDelivery()) {
+            $this->deliveryManager->dispatch($task->getDelivery(), $user);
 
-        $this->doctrine
-            ->getManagerForClass(Delivery::class)
-            ->flush();
+            $this->doctrine
+                ->getManagerForClass(Delivery::class)
+                ->flush();
+        }
     }
 
     public function onTaskDone(TaskDoneEvent $event)

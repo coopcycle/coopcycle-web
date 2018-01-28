@@ -38,7 +38,9 @@ class TaskManager
 
         $task->unassign();
 
-        $task->getDelivery()->setStatus(Delivery::STATUS_WAITING);
+        if (null !== $task->getDelivery()) {
+            $task->getDelivery()->setStatus(Delivery::STATUS_WAITING);
+        }
     }
 
     public function markAsDone(Task $task)

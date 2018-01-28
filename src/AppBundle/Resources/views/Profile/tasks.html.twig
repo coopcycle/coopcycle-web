@@ -49,7 +49,7 @@
             {% endif %} {{ ('task.type.' ~ task.type) | trans }}
           </button>
         </td>
-        <td>#{{ task.delivery.id }}</td>
+        <td>{% if task.delivery is not empty %}#{{ task.delivery.id }}{% endif %}</td>
         <td>{{ task.address.streetAddress }}</td>
         <td>
           {{ task.doneAfter|localizeddate('none', 'short') }} - {{ task.doneBefore|localizeddate('none', 'short') }}

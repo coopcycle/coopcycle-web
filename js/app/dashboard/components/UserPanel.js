@@ -106,7 +106,7 @@ export default class extends React.Component {
     // Check if we need to remove another linked task
     let tasksToRemove = []
     if (taskToRemove.delivery) {
-      tasksToRemove = _.filter(tasks, task => task.delivery['@id'] === taskToRemove.delivery['@id'])
+      tasksToRemove = _.filter(tasks, task => task.delivery !== null && task.delivery['@id'] === taskToRemove.delivery['@id'])
     } else {
       tasksToRemove = [ taskToRemove ]
     }

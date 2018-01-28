@@ -40,16 +40,21 @@ export default class extends React.Component {
 
     const { tasks } = this.state
 
-    // TODO
-    // Right now, there are only groups
-    // In the future task.delivery might be NULL
-    const taskGroups = _.groupBy(tasks, task => task.delivery['@id'])
+    const standaloneTasks = _.filter(tasks, task => task.delivery === null)
+    const groupedTasks = _.filter(tasks, task => task.delivery !== null)
+
+    const taskGroups = _.groupBy(groupedTasks, task => task.delivery['@id'])
 
     return (
       <div className="list-group task-list">
         { _.map(taskGroups, (tasks, key) => {
           return (
             <TaskGroup key={ key } tasks={ tasks } />
+          )
+        })}
+        { _.map(standaloneTasks, (task, key) => {
+          return (
+            <Task key={ key } task={ task } />
           )
         })}
       </div>

@@ -49,7 +49,7 @@ var drake = dragula({
   }
 }).on('dragend', function (el) {
   if ($(lastDraggedElement).hasClass('list-group-item')) {
-    $(original).removeClass('disabled')
+    $(lastDraggedElement).removeClass('disabled')
   } else {
     $(lastDraggedElement).find('.list-group-item').removeClass('disabled')
   }
@@ -73,7 +73,8 @@ var drake = dragula({
       .map((index, taskID) => _.find(window.AppData.Dashboard.tasks, task => task['@id'] === taskID))
       .toArray()
   } else {
-    // TODO Manage single task
+    const task = _.find(window.AppData.Dashboard.tasks, task => task['@id'] === $(element).data('task-id'))
+    tasks.push(task)
   }
 
   component.add(tasks)
