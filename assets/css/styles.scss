@@ -362,6 +362,19 @@ form[name="store"] #store_imageFile_file {
   z-index: -1;
 }
 
+// ------------------ Autosuggest ------------------
+
+.react-autosuggest__container {
+  position: relative;
+}
+
+.react-autosuggest__suggestions-container {
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: 2000!important;
+}
+
 // ------------------ Address Picker ------------------
 
 .autocomplete-wrapper {

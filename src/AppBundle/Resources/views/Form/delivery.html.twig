@@ -64,3 +64,17 @@
   </div>
 {% endspaceless %}
 {% endblock %}
+
+{% block _delivery_store_row %}
+  {% spaceless %}
+    <div class="form-group">
+      {{ form_label(form, 'Store'|trans({}, 'messages')) }}
+      <div class="col-sm-10">
+        <div id="store-search">
+        </div>
+        <i class="fa fa-times-circle autocomplete-clear"></i>
+        {{ block('hidden_widget') }}
+      </div>
+    </div>
+  {% endspaceless %}
+{% endblock %}

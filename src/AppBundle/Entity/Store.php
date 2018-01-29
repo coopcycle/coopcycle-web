@@ -205,6 +205,9 @@ class Store extends LocalBusiness
         return $this->imageName;
     }
 
+    /**
+     * @return Address
+     */
     public function getAddress()
     {
         return $this->address;

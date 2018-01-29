@@ -18,6 +18,42 @@ let markers = {
 }
 
 
+var storeSearch = document.querySelector('#store-search'), originAddressComponent;
+
+if (storeSearch) {
+
+  var options = {
+    url: window.AppData.adminStoreSearchUrl,
+    placeholder: "",
+    onSuggestionSelected: function(store) {
+      $('.react-autosuggest__container input').val(store.name)
+      $('#delivery_store').val(store.id)
+      $('#delivery_pricingRuleSet').val(store.pricingRuleSetId)
+      document.querySelector('#delivery_originAddress_streetAddress').value = store.address.streetAddress
+      document.querySelector('#delivery_originAddress_latitude').value = store.address.latitude
+      document.querySelector('#delivery_originAddress_longitude').value = store.address.longitude
+      document.querySelector('#delivery_originAddress_postalCode').value = store.address.postalCode
+      document.querySelector('#delivery_originAddress_addressLocality').value = store.address.addressLocality
+
+      // refresh the map on the right
+      onLocationChange({
+        latitude: store.address.latitude,
+        longitude: store.address.longitude
+      }, 'origin', 'cube', '#E74C3C')
+      $('#originAddressChecked').removeClass('hidden')
+      setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
+    }
+  }
+
+  new CoopCycle.Search(storeSearch, options);
+
+  $(document).on('click', '.remove-store', function(e) {
+    e.preventDefault();
+    $(this).closest('tr').remove();
+  });
+}
+
+
 // for non-admin disable submit until the price has been calculated
 if (!window.AppData.isAdmin) {
   $('#delivery-submit').attr('disabled', true)
@@ -155,6 +191,7 @@ window.initMap = function() {
       }
     }
   })
+
   new CoopCycle.AddressInput(document.querySelector('#delivery_deliveryAddress_streetAddress'), {
     elements: {
       latitude: document.querySelector('#delivery_deliveryAddress_latitude'),

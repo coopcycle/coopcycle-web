@@ -1,14 +1,15 @@
 <table class="table">
   <thead>
     <th>#</th>
-    <th>État</th>
-    <th>Date</th>
-    <th>Départ / Arrivée</th>
+    <th>{% trans %}Status{% endtrans %}</th>
+    <th>{% trans %}Date{% endtrans %}</th>
+    <th>{% trans %}From / To{% endtrans %}</th>
     {% if show_courier is defined and show_courier %}
-    <th>Coursier</th>
+      <th>{% trans %}Courier{% endtrans %}</th>
     {% endif %}
-    <th colspan="2" class="text-right">Estimations</th>
-    <th class="text-right">Commande</th>
+    <th>{% trans %}Distance{% endtrans %}</th>
+    <th>{% trans %}Duration{% endtrans %}</th>
+    <th>{% trans %}Order{% endtrans %}</th>
     <th></th>
   </thead>
   <tbody>
@@ -28,16 +29,16 @@
       <td width="10%">
         {% if delivery.courier is not empty %}
         <a href="{{ path('admin_user_details', { username: delivery.courier.username }) }}" title="{{ delivery.courier.username }}">
-          <i class="fa fa-user"></i> {{ delivery.courier.username }}
+          {{ delivery.courier.username }}
         </a>
         {% else %}
         <i class="fa fa-ban"></i>
         {% endif %}
       </td>
       {% endif %}
-      <td width="10%" class="text-right">{{ (delivery.distance / 1000)|round(2) }} Km</td>
-      <td width="10%" class="text-right"><i class="fa fa-clock-o"></i> {{ (delivery.duration / 60)|round }} Min</td>
-      <td class="text-right">
+      <td width="10%">{{ (delivery.distance / 1000)|round(2) }} Km</td>
+      <td width="10%">{{ (delivery.duration / 60)|round }} Min</td>
+      <td>
         {% if is_granted('ROLE_ADMIN') and delivery.order is not empty %}
         <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: delivery.order.restaurant.id, orderId: delivery.order.id }) }}"
           title="{% trans %}Order{% endtrans %}">

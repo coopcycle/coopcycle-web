@@ -51,6 +51,14 @@ class DeliveryType extends AbstractType
             ]);
         }
 
+        if ($options['with_stores']) {
+            $builder->add('store', EntityType::class, array(
+                'class' => Store::class,
+                'choice_label' => 'name',
+                'required' => false
+            ));
+        }
+
         $isAdmin = false;
         if ($token = $this->tokenStorage->getToken()) {
             if ($user = $token->getUser()) {
@@ -103,7 +111,8 @@ class DeliveryType extends AbstractType
             'data_class' => Delivery::class,
             'free_pricing' => true,
             'pricing_rule_set' => null,
-            'vehicle_choices' => []
+            'vehicle_choices' => [],
+            'with_stores' => false
         ));
     }
 }
