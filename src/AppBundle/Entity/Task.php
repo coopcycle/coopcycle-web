@@ -10,6 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\TaskRepository")
+ * @ORM\EntityListeners({"AppBundle\Entity\Listener\TaskListener"})
  * @ApiResource(
  *   attributes={
  *     "denormalization_context"={"groups"={"task"}},
