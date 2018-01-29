@@ -3,7 +3,9 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\TaskEvent;
 use AppBundle\Event\TaskAssignEvent;
+use AppBundle\Event\TaskCreateEvent;
 use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
@@ -25,7 +27,8 @@ final class TaskSubscriber implements EventSubscriberInterface
     {
         return [
             TaskAssignEvent::NAME => 'onTaskAssign',
-            TaskDoneEvent::NAME => 'onTaskDone',
+            TaskCreateEvent::NAME => 'onTaskCreate',
+            TaskDoneEvent::NAME   => 'onTaskDone',
         ];
     }
 
@@ -33,6 +36,16 @@ final class TaskSubscriber implements EventSubscriberInterface
     {
         $task = $event->getTask();
         $user = $event->getUser();
+
+        $taskEvent = new TaskEvent($task, 'ASSIGN');
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->persist($taskEvent);
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->flush();
 
         if (null !== $task->getDelivery()) {
             $this->deliveryManager->dispatch($task->getDelivery(), $user);
@@ -43,8 +56,33 @@ final class TaskSubscriber implements EventSubscriberInterface
         }
     }
 
+    public function onTaskCreate(TaskCreateEvent $event)
+    {
+        $task = $event->getTask();
+
+        $taskEvent = new TaskEvent($task, 'CREATE');
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->persist($taskEvent);
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->flush();
+    }
+
     public function onTaskDone(TaskDoneEvent $event)
     {
         $task = $event->getTask();
+
+        $taskEvent = new TaskEvent($task, 'DONE');
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->persist($taskEvent);
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->flush();
     }
 }
