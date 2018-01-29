@@ -46,6 +46,7 @@ class Task
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Groups({"task"})
      */
     private $id;
 
