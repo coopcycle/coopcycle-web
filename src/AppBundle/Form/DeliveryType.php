@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Store;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,6 +44,8 @@ class DeliveryType extends AbstractType
                 'placeholder' => 'form.delivery.vehicle.placeholder'
             ]);
         }
+
+
 
         if (true === $options['free_pricing']) {
             $builder

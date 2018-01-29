@@ -98,6 +98,12 @@ class Delivery extends Intangible implements TaxableInterface
     private $courier;
 
     /**
+     * @Groups({"order"})
+     * @ORM\ManyToOne(targetEntity="Store", inversedBy="deliveries")
+     */
+    private $store;
+
+    /**
      * @var string
      *
      * @Groups({"delivery", "order"})
@@ -429,6 +435,22 @@ class Delivery extends Intangible implements TaxableInterface
         $this->vehicle = $vehicle;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
+     * @param mixed $store
+     */
+    public function setStore($store)
+    {
+        $this->store = $store;
     }
 
     public static function createTasks(Delivery $delivery)

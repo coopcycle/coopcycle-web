@@ -11,7 +11,6 @@ use AppBundle\Form\DeliveryType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait DeliveryTrait
@@ -61,6 +60,10 @@ trait DeliveryTrait
 
                 $this->get('delivery_service.default')->calculate($delivery);
                 $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
+
+                if ($store) {
+                    $delivery->setStore($store);
+                }
 
                 $em->persist($delivery);
                 $em->flush();

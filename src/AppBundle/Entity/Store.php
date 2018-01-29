@@ -121,6 +121,16 @@ class Store extends LocalBusiness
      */
     private $pricingRuleSet;
 
+    /*
+     * @ORM\ManyToOne(targetEntity="Delivery", mappedBy="store")
+     */
+    private $deliveries;
+
+
+    public function __construct() {
+        $this->deliveries = new ArrayCollection();
+    }
+
     /**
      * Gets id.
      *
