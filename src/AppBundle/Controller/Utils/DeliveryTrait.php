@@ -49,6 +49,7 @@ trait DeliveryTrait
 
         if ($form->isSubmitted()) {
             $delivery = $form->getData();
+            $user = $this->getUser();
 
             $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
 
@@ -56,14 +57,23 @@ trait DeliveryTrait
                 $form->get('date')->addError(new FormError('The date is in the past'));
             }
 
+            if (!$store && !$user->hasRole('ROLE_ADMIN')) {
+                $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
+            }
+
             if ($form->isValid()) {
+
+                if ($store) {
+                    if (!$user->hasRole('ROLE_ADMIN')) {
+                        $deliveryManager = $this->get('coopcycle.delivery.manager');
+                        $price = $deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+                        $delivery->setPrice($price);
+                    }
+                    $delivery->setStore($store);
+                }
 
                 $this->get('delivery_service.default')->calculate($delivery);
                 $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
-
-                if ($store) {
-                    $delivery->setStore($store);
-                }
 
                 $em->persist($delivery);
                 $em->flush();

@@ -46,7 +46,8 @@
   <div class="form-group">
     {{ form_label(form, 'Distance'|trans({}, 'messages')) }}
     <div class="col-sm-10">
-      <p class="form-control-static"><span id="delivery_distance"></span></p>
+      <p class="form-control-static"><span id="delivery_distance--display"></span></p>
+      {{ block('hidden_widget') }}
     </div>
   </div>
 {% endspaceless %}
@@ -57,7 +58,8 @@
   <div class="form-group">
     {{ form_label(form, 'Duration'|trans({}, 'messages')) }}
     <div class="col-sm-10">
-      <p class="form-control-static"><span id="delivery_duration"></span></p>
+      <p class="form-control-static"><span id="delivery_duration--display"></span></p>
+      {{ block('hidden_widget') }}
     </div>
   </div>
 {% endspaceless %}

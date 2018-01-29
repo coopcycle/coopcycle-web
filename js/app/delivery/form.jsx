@@ -17,6 +17,12 @@ let markers = {
   delivery: null,
 }
 
+
+// for non-admin disable submit until the price has been calculated
+if (!window.AppData.isAdmin) {
+  $('#delivery-submit').attr('disabled', true)
+}
+
 function calculatePrice(distance, delivery) {
 
   $('#delivery_price').attr('disabled', true)
@@ -36,8 +42,14 @@ function calculatePrice(distance, delivery) {
       if (isNaN(price)) {
         $('#no-price-warning').show()
       }
-      $('#delivery_price').val(numeral(price).format('0,0.00'))
-      $('#delivery_price').attr('disabled', false)
+      else {
+        $('#delivery-submit').attr('disabled', false)
+        $('#delivery_price').val(numeral(price).format('0,0.00'))
+      }
+
+      if (window.AppData.isAdmin) {
+        $('#delivery_price').attr('disabled', false)
+      }
     })
     .catch(e => {
       $('#delivery_price').attr('disabled', false)
@@ -73,8 +85,10 @@ function refreshRouting() {
     var kms = (distance / 1000).toFixed(2);
     var minutes = Math.ceil(duration / 60);
 
-    $('#delivery_distance').text(kms + ' Km');
-    $('#delivery_duration').text(minutes + ' min');
+    $('#delivery_distance--display').text(kms + ' Km');
+    $('#delivery_distance').val(distance);
+    $('#delivery_duration--display').text(minutes + ' min');
+    $('#delivery_duration').val(duration);
 
     if (window.AppData.DeliveryForm.calculatePriceURL) {
       calculatePrice(distance, delivery)
@@ -170,4 +184,10 @@ map = MapHelper.init('map');
 const date = $('#delivery_date').val();
 const error = $('#datetimepicker').data('has-error');
 
-render(<DateTimePicker error={error} onChange={onDateTimeChange} defaultValue={date ? moment(date) : moment() } />, document.getElementById('datetimepicker'));
+render(
+  <DateTimePicker
+    error={error}
+    onChange={onDateTimeChange}
+    defaultValue={date ? moment(date) : moment() } />,
+  document.getElementById('datetimepicker')
+);

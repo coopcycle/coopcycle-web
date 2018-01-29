@@ -88,7 +88,7 @@
         {{ form_row(form.price) }}
       </div>
       <hr>
-      <button type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
     </div>
   </div>
 
@@ -99,7 +99,8 @@
 <script>
 window.AppData = window.AppData || {}
 window.AppData.DeliveryForm = {
-  calculatePriceURL: "{{ path(calculate_price_route) }}"
+  calculatePriceURL: "{{ path(calculate_price_route) }}",
+  isAdmin: {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %}
 }
 </script>
 <script src="{{ asset('js/widgets/address-input.js') }}"></script>
