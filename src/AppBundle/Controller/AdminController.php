@@ -291,7 +291,7 @@ class AdminController extends Controller
                 ->persist($taskList);
         }
 
-        if (count($tasksToAssign) === 0) {
+        if (count($tasksToAssign) <= 1) {
 
             $taskList->setDistance(0);
             $taskList->setDuration(0);
