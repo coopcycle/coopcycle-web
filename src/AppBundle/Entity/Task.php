@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -99,6 +100,12 @@ class Task
     private $assignment;
 
     /**
+     * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task")
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     */
+    private $events;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      * @Groups({"task"})
@@ -111,6 +118,11 @@ class Task
      * @Groups({"task"})
      */
     private $updatedAt;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -197,6 +209,11 @@ class Task
     public function getAssignment()
     {
         return $this->assignment;
+    }
+
+    public function getEvents()
+    {
+        return $this->events;
     }
 
     public function isAssigned()
