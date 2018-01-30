@@ -12,12 +12,12 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskAssignment;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends Controller
 {
+    const ITEMS_PER_PAGE = 20;
+
     use AccessControlTrait;
     use DeliveryTrait;
     use LocalBusinessTrait;

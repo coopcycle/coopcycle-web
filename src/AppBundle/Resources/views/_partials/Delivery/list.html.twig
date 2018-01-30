@@ -9,7 +9,10 @@
     {% endif %}
     <th>{% trans %}Distance{% endtrans %}</th>
     <th>{% trans %}Duration{% endtrans %}</th>
-    <th>{% trans %}Order{% endtrans %}</th>
+    {% if show_order is defined and show_order %}
+      <th>{% trans %}Order{% endtrans %}</th>
+    {% endif %}
+    <th>{% trans %}Price{% endtrans %}</th>
     <th></th>
   </thead>
   <tbody>
@@ -38,15 +41,20 @@
       {% endif %}
       <td width="10%">{{ (delivery.distance / 1000)|round(2) }} Km</td>
       <td width="10%">{{ (delivery.duration / 60)|round }} Min</td>
+      {% if show_order is defined and show_order %}
+        <td>
+          {% if is_granted('ROLE_ADMIN') and delivery.order is not empty %}
+          <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: delivery.order.restaurant.id, orderId: delivery.order.id }) }}"
+            title="{% trans %}Order{% endtrans %}">
+            #{{ delivery.order.id }}
+          </a>
+          {% else %}
+          <i class="fa fa-ban"></i>
+          {% endif %}
+        </td>
+      {% endif %}
       <td>
-        {% if is_granted('ROLE_ADMIN') and delivery.order is not empty %}
-        <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: delivery.order.restaurant.id, orderId: delivery.order.id }) }}"
-          title="{% trans %}Order{% endtrans %}">
-          #{{ delivery.order.id }}
-        </a>
-        {% else %}
-        <i class="fa fa-ban"></i>
-        {% endif %}
+        {{ delivery.price }} &euro;
       </td>
       <td class="text-right">
         {% include "AppBundle::_partials/Delivery/actions.html.twig" %}

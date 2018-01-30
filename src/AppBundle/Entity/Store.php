@@ -121,8 +121,8 @@ class Store extends LocalBusiness
      */
     private $pricingRuleSet;
 
-    /*
-     * @ORM\ManyToOne(targetEntity="Delivery", mappedBy="store")
+    /**
+     * @ORM\OneToMany(targetEntity="Delivery", mappedBy="store")
      */
     private $deliveries;
 
@@ -273,4 +273,21 @@ class Store extends LocalBusiness
 
         return $this;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDeliveries()
+    {
+        return $this->deliveries;
+    }
+
+    /**
+     * @param ArrayCollection $deliveries
+     */
+    public function setDeliveries(ArrayCollection $deliveries)
+    {
+        $this->deliveries = $deliveries;
+    }
+
 }
