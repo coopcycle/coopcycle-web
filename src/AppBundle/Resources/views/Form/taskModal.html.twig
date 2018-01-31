@@ -1,0 +1,20 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _task_address_widget %}
+{% spaceless %}
+  <div id="{{ form.vars.id }}">
+    {{ form_row(form.streetAddress) }}
+    <a class="help-block" role="button" data-toggle="collapse" href="#task_address_options">
+      <i class="fa fa-plus"></i> {% trans from 'messages' %}More options{% endtrans %}
+    </a>
+  </div>
+  <div class="collapse" id="task_address_options">
+    {{ form_row(form.postalCode) }}
+    {{ form_row(form.addressLocality) }}
+    {{ form_row(form.floor) }}
+    {{ form_row(form.description) }}
+  </div>
+  {{ form_widget(form.latitude) }}
+  {{ form_widget(form.longitude) }}
+{% endspaceless %}
+{% endblock %}

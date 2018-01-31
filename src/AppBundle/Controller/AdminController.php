@@ -26,6 +26,7 @@ use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Form\TaskType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -102,7 +103,9 @@ class AdminController extends Controller
      */
     public function dashboardIframeAction(Request $request)
     {
-        $date = new \DateTime();
+        $now = new \DateTime();
+
+        $date = clone $now;
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
         }
@@ -117,6 +120,22 @@ class AdminController extends Controller
         $taskUploadForm = $this->createForm(TaskUploadType::class, $taskImport, [
             'date' => $date
         ]);
+
+        $task = new Task();
+
+        $doneAfter = clone $date;
+        $doneBefore = clone $date;
+
+        $doneAfter->setTime($now->format('H'), $now->format('i'));
+        $doneBefore->setTime($now->format('H'), $now->format('i'));
+
+        $doneAfter->modify('+1 hour');
+        $doneBefore->modify('+1 hour 30 minutes');
+
+        $task->setDoneAfter($doneAfter);
+        $task->setDoneBefore($doneBefore);
+
+        $newTaskForm = $this->createForm(TaskType::class, $task);
 
         $taskUploadForm->handleRequest($request);
         if ($taskUploadForm->isSubmitted()) {
@@ -144,6 +163,30 @@ class AdminController extends Controller
 
                 return $this->redirectToRoute($routeName, $routeParams);
             }
+        }
+
+        $newTaskForm->handleRequest($request);
+        if ($newTaskForm->isSubmitted() && $newTaskForm->isValid()) {
+
+            $task = $newTaskForm->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(Task::class)
+                ->persist($task);
+
+            $this->getDoctrine()
+                ->getManagerForClass(Task::class)
+                ->flush();
+
+            $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
+            $isIframe = $request->attributes->getBoolean('iframe', true);
+
+            $routeParams = [ 'date' => $date->format('Y-m-d') ];
+            if (!$isIframe) {
+                $routeParams['fullscreen'] = 'on';
+            }
+
+            return $this->redirectToRoute($routeName, $routeParams);
         }
 
         $tasks = $this->getDoctrine()
@@ -208,6 +251,7 @@ class AdminController extends Controller
             'tasks' => $tasks,
             'task_lists' => $taskListsNormalized,
             'task_upload_form' => $taskUploadForm->createView(),
+            'new_task_form' => $newTaskForm->createView(),
         ]);
     }
 

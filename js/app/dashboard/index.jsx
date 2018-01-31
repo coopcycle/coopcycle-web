@@ -95,17 +95,13 @@ $('#user-modal button[type="submit"]').on('click', (e) => {
 
 render(<Panel heading={() => (
     <h4>
-      <LocaleProvider locale={antdLocale}>
-        <DatePicker
-          format={ 'll' }
-          defaultValue={ moment(window.AppData.Dashboard.date) }
-          onChange={(date, dateString) => {
-            if (date) {
-              const dashboardURL = window.AppData.Dashboard.dashboardURL.replace('__DATE__', date.format('YYYY-MM-DD'))
-              window.location.replace(dashboardURL)
-            }
-          }} />
-      </LocaleProvider>
+      <span>{ window.AppData.Dashboard.i18n['Unassigned'] }</span>
+      <a href="#" className="pull-right" onClick={ e => {
+        e.preventDefault();
+        $('#task-modal').modal('show')
+      }}>
+        <i className="fa fa-plus"></i>
+      </a>
     </h4>
   )}>
     <TaskList
@@ -118,7 +114,7 @@ render(<Panel heading={() => (
 
 render(<Panel heading={() => (
     <h4>
-      <span>{ window.AppData.Dashboard.i18n['Dispatched'] }</span>
+      <span>{ window.AppData.Dashboard.i18n['Assigned'] }</span>
       <a href="#" className="pull-right" onClick={ e => {
         e.preventDefault();
         $('#user-modal').modal('show')
@@ -157,6 +153,55 @@ render(<Panel heading={() => (
   </Panel>,
   document.querySelector('.dashboard .dashboard__aside__bottom')
 )
+
+render(
+  <LocaleProvider locale={antdLocale}>
+    <DatePicker
+      format={ 'll' }
+      defaultValue={ moment(window.AppData.Dashboard.date) }
+      onChange={(date, dateString) => {
+        if (date) {
+          const dashboardURL = window.AppData.Dashboard.dashboardURL.replace('__DATE__', date.format('YYYY-MM-DD'))
+          window.location.replace(dashboardURL)
+        }
+      }} />
+  </LocaleProvider>,
+  document.querySelector('#date-picker')
+)
+
+render(
+  <LocaleProvider locale={antdLocale}>
+    <DatePicker.RangePicker
+      style={{ width: '100%' }}
+      showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
+      format="YYYY-MM-DD HH:mm"
+      defaultValue={[ moment($('#task_doneAfter').val()), moment($('#task_doneBefore').val()) ]}
+      onChange={(value, dateString) => {
+        const [ doneAfter, doneBefore ] = dateString
+        $('#task_doneAfter').val(doneAfter)
+        $('#task_doneBefore').val(doneBefore)
+      }} />
+  </LocaleProvider>,
+  document.querySelector('#task_timewindow_rangepicker')
+)
+
+const $doneAfterHidden = $('<input>')
+  .attr('type', 'hidden')
+  .attr('name', $('#task_doneAfter').attr('name'))
+  .attr('id', 'task_doneAfter')
+  .val($('#task_doneAfter').val())
+
+const $doneBeforeHidden = $('<input>')
+  .attr('type', 'hidden')
+  .attr('name', $('#task_doneBefore').attr('name'))
+  .attr('id', 'task_doneBefore')
+  .val($('#task_doneBefore').val())
+
+$doneAfterHidden.appendTo($('#task_timewindow'))
+$doneBeforeHidden.appendTo($('#task_timewindow'))
+
+$('#task_doneAfter').closest('.form-group').remove()
+$('#task_doneBefore').closest('.form-group').remove()
 
 const hostname = window.location.hostname
 const couriersMap = new Map()

@@ -1,6 +1,7 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% form_theme task_upload_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme new_task_form 'AppBundle:Form:taskModal.html.twig' %}
 
 {% block banner %}{% endblock %}
 {% block menu %}
@@ -18,7 +19,8 @@
         <nav class="navbar navbar-default">
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav">
+              <div id="date-picker" class="navbar-text"></div>
+              <ul class="nav navbar-nav navbar-right">
                 <li>
                   <a href="#" data-toggle="modal" data-target="#upload-modal">
                     <i class="fa fa-upload" aria-hidden="true"></i> Upload
@@ -112,6 +114,35 @@
   </div>
 </div>
 
+<div class="modal fade" id="task-modal" tabindex="-1" role="dialog" aria-labelledby="task-modal-label">
+  <div class="modal-dialog" role="document">
+    {{ form_start(new_task_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="task-modal-label">{% trans %}Create task{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_row(new_task_form.type) }}
+        {{ form_widget(new_task_form.address) }}
+        <div id="task_timewindow">
+          <label class="control-label">{% trans %}Time window{% endtrans %}</label>
+          <div class="form-group">
+            <div id="task_timewindow_rangepicker"></div>
+          </div>
+          {{ form_row(new_task_form.doneAfter) }}
+          {{ form_row(new_task_form.doneBefore) }}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
+      </div>
+    {{ form_end(new_task_form) }}
+  </div>
+</div>
+
 
 {% endblock %}
 
@@ -121,12 +152,14 @@
 
 {% block scripts %}
 <script src="/tracking/socket.io/socket.io.js"></script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script>
 window.AppData = window.AppData || {}
 window.AppData.Dashboard = {
   i18n: {
     'Waiting': "{{ date|localizeddate('medium', 'none') }}",
-    'Dispatched': 'Assignées'
+    'Unassigned': 'En attente',
+    'Assigned': 'Assignées'
   },
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path(refresh_route, refresh_route_params)|raw }}",
@@ -143,4 +176,18 @@ $('#task-upload-form-errors').popover({
   container: 'body'
 })
 </script>
+<script>
+function initMap() {
+  new CoopCycle.AddressInput(document.querySelector('#task_address_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#task_address_latitude'),
+      longitude: document.querySelector('#task_address_longitude'),
+      postalCode: document.querySelector('#task_address_postalCode'),
+      addressLocality: document.querySelector('#task_address_addressLocality')
+    }
+  })
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"
+  async defer></script>
 {% endblock %}
