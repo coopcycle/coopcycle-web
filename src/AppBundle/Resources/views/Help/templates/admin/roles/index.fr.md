@@ -1,8 +1,6 @@
 Rôles utilisateur
 -----------------
 
-Each user of the platform can have one or more role. Each role give access to a restricted set of actions.
-
 Chaque utilisateur peut avoir un ou plusieurs rôles. Chaque rôle donne accès à des fonctionalités de la plateforme.
 
 À la création de compte, vous pouvez choisir entre les rôles `Client`, `Restaurateur`, `Livreur` ou `Magasin`. Par la suite seul un utilisateur `Admin` pourra éditer vos rôles. 
