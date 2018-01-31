@@ -48,7 +48,7 @@
               <li>
                 {# NB: ROLE_ADMIN is also ROLE_COURIER (couriers are admins ;)) #}
                 {% if is_granted('ROLE_COURIER') %}
-                  {% set mainAccountPath = 'profile_courier_deliveries' %}
+                  {% set mainAccountPath = 'profile_tasks' %}
                 {% elseif is_granted('ROLE_STORE') %}
                   {% set mainAccountPath = 'profile_stores' %}
                 {% elseif is_granted('ROLE_RESTAURANT') %}
