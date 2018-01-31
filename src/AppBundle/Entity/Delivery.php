@@ -98,7 +98,6 @@ class Delivery extends Intangible implements TaxableInterface
     private $courier;
 
     /**
-     * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="Store", inversedBy="deliveries")
      */
     private $store;
