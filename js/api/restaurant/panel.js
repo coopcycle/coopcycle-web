@@ -56,7 +56,6 @@ console.log('-----------------------------');
 
 console.log('NODE_ENV = ' + process.env.NODE_ENV);
 console.log('PORT = ' + process.env.PORT);
-console.log('ASSETS URL = ' + process.env.ASSETS_BASE_URL);
 
 app.listen(process.env.PORT || 8003);
 

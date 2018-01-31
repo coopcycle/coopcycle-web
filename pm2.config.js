@@ -50,6 +50,11 @@ var apps = [{
   script: "./js/api/restaurant/panel.js",
   watch: ["./js/api/restaurant/panel.js"],
   port: config.parameters['app.restaurant_panel_port'] || 8003
+}, {
+  name: "coopcycle-dispatch-v2-" + appName,
+  script: "./js/api/dispatch-v2/index.js",
+  watch: ["./js/api/dispatch-v2/index.js"],
+  port: config.parameters['app.dispatch_v2_port'] || 8004
 }];
 
 apps = _.map(apps, function(app) {
@@ -68,17 +73,14 @@ apps = _.map(apps, function(app) {
     env: {
       NODE_ENV: "development",
       PORT: app.port,
-      ASSETS_BASE_URL: config.framework.assets.base_urls ? config.framework.assets.base_urls['0'] : ''
     },
     env_production : {
       NODE_ENV: "production",
       PORT: app.port,
-      ASSETS_BASE_URL: ''
     },
     env_test : {
       NODE_ENV: "test",
       PORT: app.port,
-      ASSETS_BASE_URL: config.framework.assets.base_urls ? config.framework.assets.base_urls['0'] : ''
     }
   });
 });
