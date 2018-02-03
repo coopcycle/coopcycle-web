@@ -19,7 +19,9 @@
     <div class="col-sm-6">
 
       {{ form_row(form.date) }}
+      {% if form.store is defined %}
       {{ form_row(form.store) }}
+      {% endif %}
       {{ form_row(form.weight) }}
       {{ form_row(form.vehicle) }}
 
