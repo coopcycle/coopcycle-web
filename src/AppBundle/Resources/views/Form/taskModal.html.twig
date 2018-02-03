@@ -4,11 +4,11 @@
 {% spaceless %}
   <div id="{{ form.vars.id }}">
     {{ form_row(form.streetAddress) }}
-    <a class="help-block" role="button" data-toggle="collapse" href="#task_address_options">
+    <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_options">
       <i class="fa fa-plus"></i> {% trans from 'messages' %}More options{% endtrans %}
     </a>
   </div>
-  <div class="collapse" id="task_address_options">
+  <div class="collapse" id="{{ form.vars.id }}_options">
     {{ form_row(form.postalCode) }}
     {{ form_row(form.addressLocality) }}
     {{ form_row(form.floor) }}
@@ -17,4 +17,8 @@
   {{ form_widget(form.latitude) }}
   {{ form_widget(form.longitude) }}
 {% endspaceless %}
+{% endblock %}
+
+{% block _task_edit_address_widget %}
+{{ block('_task_address_widget') }}
 {% endblock %}

@@ -1,3 +1,4 @@
+import EventEmitter from 'events'
 import React from 'react'
 import { render, findDOMNode } from 'react-dom'
 import { DatePicker, LocaleProvider } from 'antd'
@@ -9,6 +10,7 @@ import TaskList from './components/TaskList'
 import UserPanel from './components/UserPanel'
 import UserPanelList from './components/UserPanelList'
 import MapProxy from './components/MapProxy'
+import TaskRangePicker from './widgets/TaskRangePicker'
 import dragula from 'dragula';
 import _ from 'lodash';
 import L from 'leaflet'
@@ -18,6 +20,7 @@ const locale = $('html').attr('lang');
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 const map = MapHelper.init('map')
+const eventEmitter = new EventEmitter()
 
 const proxy = new MapProxy(map)
 
@@ -106,6 +109,7 @@ render(<Panel heading={() => (
   )}>
     <TaskList
       ref={ el => unassignedTaskList = el }
+      eventEmitter={ eventEmitter }
       tasks={ unassignedTasks }
       onLoad={ el => drake.containers.push(el) } />
   </Panel>,
@@ -128,6 +132,7 @@ render(<Panel heading={() => (
       tasks={ assignedTasks }
       taskLists={ window.AppData.Dashboard.taskLists }
       map={ proxy }
+      eventEmitter={ eventEmitter }
       onRemove={task => unassignedTaskList.add(task)}
       onLoad={(component, element) => {
         drake.containers.push(element)
@@ -169,39 +174,10 @@ render(
   document.querySelector('#date-picker')
 )
 
-render(
-  <LocaleProvider locale={antdLocale}>
-    <DatePicker.RangePicker
-      style={{ width: '100%' }}
-      showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
-      format="YYYY-MM-DD HH:mm"
-      defaultValue={[ moment($('#task_doneAfter').val()), moment($('#task_doneBefore').val()) ]}
-      onChange={(value, dateString) => {
-        const [ doneAfter, doneBefore ] = dateString
-        $('#task_doneAfter').val(doneAfter)
-        $('#task_doneBefore').val(doneBefore)
-      }} />
-  </LocaleProvider>,
-  document.querySelector('#task_timewindow_rangepicker')
-)
-
-const $doneAfterHidden = $('<input>')
-  .attr('type', 'hidden')
-  .attr('name', $('#task_doneAfter').attr('name'))
-  .attr('id', 'task_doneAfter')
-  .val($('#task_doneAfter').val())
-
-const $doneBeforeHidden = $('<input>')
-  .attr('type', 'hidden')
-  .attr('name', $('#task_doneBefore').attr('name'))
-  .attr('id', 'task_doneBefore')
-  .val($('#task_doneBefore').val())
-
-$doneAfterHidden.appendTo($('#task_timewindow'))
-$doneBeforeHidden.appendTo($('#task_timewindow'))
-
-$('#task_doneAfter').closest('.form-group').remove()
-$('#task_doneBefore').closest('.form-group').remove()
+new TaskRangePicker(document.querySelector('#task_rangepicker'), [
+  document.querySelector('#task_doneAfter'),
+  document.querySelector('#task_doneBefore')
+])
 
 const hostname = window.location.hostname
 const couriersMap = new Map()
@@ -240,3 +216,6 @@ const socket = io('//' + hostname, { path: '/tracking/socket.io' })
     const marker = couriersMap.get(username)
     marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#CCC'))
   })
+
+  socket.on('task:done', task => eventEmitter.emit('task:done', task))
+  socket.on('task:failed', task => eventEmitter.emit('task:failed', task))

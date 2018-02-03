@@ -883,4 +883,21 @@ class AdminController extends Controller
 
         return new JsonResponse($user);
     }
+
+    /**
+     * @Route("/admin/dashboard/tasks/{id}/modal-content", name="admin_dashboard_task_modal_content")
+     * @Template()
+     */
+    public function dashboardTaskModalContentAction($id, Request $request)
+    {
+        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+
+        $taskForm = $this->get('form.factory')->createNamed('task_edit', TaskType::class, $task, [
+            'can_edit_type' => false
+        ]);
+
+        return [
+            'task_form' => $taskForm->createView(),
+        ];
+    }
 }

@@ -49,12 +49,12 @@ export default class extends React.Component {
       <div className="list-group task-list">
         { _.map(taskGroups, (tasks, key) => {
           return (
-            <TaskGroup key={ key } tasks={ tasks } />
+            <TaskGroup key={ key } eventEmitter={ this.props.eventEmitter } tasks={ tasks } />
           )
         })}
         { _.map(standaloneTasks, (task, key) => {
           return (
-            <Task key={ key } task={ task } />
+            <Task key={ key } eventEmitter={ this.props.eventEmitter } task={ task } />
           )
         })}
       </div>

@@ -126,10 +126,10 @@
       <div class="modal-body">
         {{ form_row(new_task_form.type) }}
         {{ form_widget(new_task_form.address) }}
-        <div id="task_timewindow">
+        <div>
           <label class="control-label">{% trans %}Time window{% endtrans %}</label>
           <div class="form-group">
-            <div id="task_timewindow_rangepicker"></div>
+            <div id="task_rangepicker"></div>
           </div>
           {{ form_row(new_task_form.doneAfter) }}
           {{ form_row(new_task_form.doneBefore) }}
@@ -143,6 +143,7 @@
   </div>
 </div>
 
+<div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 
 {% endblock %}
 
@@ -164,6 +165,7 @@ window.AppData.Dashboard = {
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path(refresh_route, refresh_route_params)|raw }}",
   assignTaskURL: "{{ path('admin_tasks_assign', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
+  taskModalURL: "{{ path('admin_dashboard_task_modal_content', { id: '__TASK_ID__' }) }}",
   userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }}

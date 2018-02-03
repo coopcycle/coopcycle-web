@@ -168,6 +168,7 @@ export default class extends React.Component {
             { tasks.map(task => (
               <Task
                 key={ task['@id'] }
+                eventEmitter={ this.props.eventEmitter }
                 task={ task }
                 assigned={ true }
                 onRemove={ task => this.remove(task) } />

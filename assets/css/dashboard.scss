@@ -161,10 +161,12 @@ html, body {
   font-size: 11px;
   position: relative;
   padding-right: 30px;
+  cursor: pointer;
+  color: #fff;
   a {
     color: #fff;
   }
-  .task-remove {
+  .task-icon-right {
     font-size: 16px;
     line-height: 16px;
     position: absolute;
@@ -172,20 +174,26 @@ html, body {
     top: 50%;
     transform: translateY(-50%);
   }
-  color: #fff;
   &--pickup {
     background-color: lighten(#3498DB, 15%);
+  }
+  &--pickup:hover {
+    background-color: lighten(#3498DB, 5%);
   }
   &--dropoff {
     background-color: lighten(#2ECC71, 15%);
   }
-  &--pickup:hover {
-    cursor: pointer;
-    background-color: lighten(#3498DB, 5%);
-  }
   &--dropoff:hover {
-    cursor: pointer;
     background-color: lighten(#2ECC71, 5%);
+  }
+  &--done {
+    opacity: 0.6;
+  }
+  &--failed {
+    background-color: lighten(#E74C3C, 15%);
+  }
+  &--failed:hover {
+    background-color: lighten(#E74C3C, 5%);
   }
 }
 

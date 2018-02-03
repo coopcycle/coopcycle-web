@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
-var _ = require('underscore');
+var _ = require('lodash');
 var http = require('http');
 
 var ROOT_DIR = __dirname + '/../../..';
@@ -49,44 +49,37 @@ const io = require('socket.io')(app, { path: '/tracking/socket.io' });
 
 let subscribed = false;
 
+const channels = {
+  'online': false,
+  'offline': false,
+  'tracking': true,
+  'delivery_events': true,
+  'order_events': true,
+  'autoscheduler:begin_delivery': true,
+  'autoscheduler:end_delivery': true,
+  'task:done': true,
+  'task:failed': true,
+}
+
 io.on('connection', function (socket) {
 
   if (!subscribed) {
 
     console.log('A client is connected, subscribing...');
 
-    sub.prefixedSubscribe('online')
-    sub.prefixedSubscribe('offline')
-    sub.prefixedSubscribe('tracking')
-    sub.prefixedSubscribe('delivery_events')
-    sub.prefixedSubscribe('order_events')
-    sub.prefixedSubscribe('autoscheduler:begin_delivery')
-    sub.prefixedSubscribe('autoscheduler:end_delivery')
+    _.each(channels, (toJSON, channel) => sub.prefixedSubscribe(channel))
 
     sub.on('subscribe', (channel, count) => {
-      if (count == 5) {
-        sub.on('message', function(channel, message) {
-          if (sub.isChannel(channel, 'online')) {
-            io.sockets.emit('online', message)
-          }
-          if (sub.isChannel(channel, 'offline')) {
-            io.sockets.emit('offline', message)
-          }
-          if (sub.isChannel(channel, 'tracking')) {
-            io.sockets.emit('tracking', JSON.parse(message))
-          }
-          if (sub.isChannel(channel, 'delivery_events')) {
-            io.sockets.emit('delivery_events', JSON.parse(message))
-          }
-          if (sub.isChannel(channel, 'order_events')) {
-            io.sockets.emit('order_events', JSON.parse(message))
-          }
-          if (sub.isChannel(channel, 'autoscheduler:begin_delivery')) {
-            io.sockets.emit('autoscheduler:begin_delivery', JSON.parse(message))
-          }
-          if (sub.isChannel(channel, 'autoscheduler:end_delivery')) {
-            io.sockets.emit('autoscheduler:end_delivery', JSON.parse(message))
-          }
+      if (count == _.size(channels)) {
+
+        console.log('All channels subscribed, start forwarding messages')
+
+        sub.on('message', function(channelWithPrefix, message) {
+          _.each(channels, (toJSON, channel) => {
+            if (sub.isChannel(channelWithPrefix, channel)) {
+              io.sockets.emit(channel, toJSON ? JSON.parse(message) : message)
+            }
+          })
         })
       }
     })

@@ -1,0 +1,28 @@
+{% form_theme task_form 'AppBundle:Form:taskModal.html.twig' %}
+
+<div class="modal-dialog" role="document">
+  {{ form_start(task_form, { attr: { class: 'modal-content' } }) }}
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title" id="task-modal-label">{% trans %}Edit task{% endtrans %}</h4>
+    </div>
+    <div class="modal-body">
+      {{ form_row(task_form.type) }}
+      {{ form_widget(task_form.address) }}
+      <div>
+        <label class="control-label">{% trans %}Time window{% endtrans %}</label>
+        <div class="form-group">
+          <div id="{{ task_form.vars.id }}_rangepicker"></div>
+        </div>
+        {{ form_row(task_form.doneAfter) }}
+        {{ form_row(task_form.doneBefore) }}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+      <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
+    </div>
+  {{ form_end(task_form) }}
+</div>

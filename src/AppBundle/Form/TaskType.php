@@ -26,7 +26,8 @@ class TaskType extends LocalBusinessType
                     'Pickup' => Task::TYPE_PICKUP,
                 ],
                 'expanded' => true,
-                'multiple' => false
+                'multiple' => false,
+                'disabled' => !$options['can_edit_type']
             ])
             ->add('address', AddressType::class)
             ->add('doneAfter', DateType::class, [
@@ -44,6 +45,7 @@ class TaskType extends LocalBusinessType
     {
         $resolver->setDefaults(array(
             'data_class' => Task::class,
+            'can_edit_type' => true
         ));
     }
 }

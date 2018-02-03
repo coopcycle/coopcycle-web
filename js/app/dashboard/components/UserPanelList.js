@@ -62,6 +62,7 @@ export default class extends React.Component {
         return (
           <UserPanel
             key={ username }
+            eventEmitter={ this.props.eventEmitter }
             username={ username }
             tasks={ tasks }
             distance={ distance }

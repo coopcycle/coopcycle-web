@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskAssignment;
 use AppBundle\Event\TaskDoneEvent;
+use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskAssignEvent;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
@@ -48,5 +49,12 @@ class TaskManager
         $task->setStatus(Task::STATUS_DONE);
 
         $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task));
+    }
+
+    public function markAsFailed(Task $task, $reason = null)
+    {
+        $task->setStatus(Task::STATUS_FAILED);
+
+        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $reason));
     }
 }
