@@ -9,7 +9,8 @@ window.CoopCycle.Search = function(el, options) {
     <Autocomplete
       baseURL={ options.url }
       placeholder={ options.placeholder }
-      onSuggestionSelected={ options.onSuggestionSelected } />,
+      onSuggestionSelected={ options.onSuggestionSelected }
+      clearOnSelect={ options.clearOnSelect || false } />,
     el
   )
 }

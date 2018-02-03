@@ -53,10 +53,15 @@ export default class extends Component {
   };
 
   onSuggestionSelected(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
-    this.props.onSuggestionSelected(suggestion);
-    this.setState({
+    const { clearOnSelect } = this.props
+    let newState = {
       suggestions: []
-    });
+    }
+    if (clearOnSelect) {
+      newState.value = ''
+    }
+    this.props.onSuggestionSelected(suggestion);
+    this.setState(newState);
   }
 
   onSuggestionsClearRequested() {
