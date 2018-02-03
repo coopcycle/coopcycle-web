@@ -17,7 +17,6 @@ let markers = {
   delivery: null,
 }
 
-
 var storeSearch = document.querySelector('#store-search'), originAddressComponent;
 
 if (storeSearch) {
@@ -25,8 +24,8 @@ if (storeSearch) {
   var options = {
     url: window.AppData.adminStoreSearchUrl,
     placeholder: "",
+    clearOnSelect: true,
     onSuggestionSelected: function(store) {
-      $('.react-autosuggest__container input').val(store.name)
       $('#delivery_store').val(store.id)
       $('#delivery_pricingRuleSet').val(store.pricingRuleSetId)
       document.querySelector('#delivery_originAddress_streetAddress').value = store.address.streetAddress
@@ -34,6 +33,9 @@ if (storeSearch) {
       document.querySelector('#delivery_originAddress_longitude').value = store.address.longitude
       document.querySelector('#delivery_originAddress_postalCode').value = store.address.postalCode
       document.querySelector('#delivery_originAddress_addressLocality').value = store.address.addressLocality
+
+      $('#selected-store-name').text(store.name)
+      $('#selected-store').removeClass('hidden')
 
       // refresh the map on the right
       onLocationChange({
@@ -47,10 +49,13 @@ if (storeSearch) {
 
   new CoopCycle.Search(storeSearch, options);
 
-  $(document).on('click', '.remove-store', function(e) {
-    e.preventDefault();
-    $(this).closest('tr').remove();
-  });
+  $('#selected-store .alert .close').on('click', function (e) {
+    e.preventDefault()
+    $('#delivery_store').val('')
+    $('#delivery_pricingRuleSet').val('')
+    $('#selected-store').addClass('hidden')
+  })
+
 }
 
 
@@ -61,8 +66,6 @@ if (!window.AppData.isAdmin) {
 
 function calculatePrice(distance, delivery) {
 
-  $('#delivery_price').attr('disabled', true)
-
   const deliveryParams = {
     distance,
     delivery_address: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(','),
@@ -71,20 +74,24 @@ function calculatePrice(distance, delivery) {
     weight: $('#delivery_weight').val()
   }
 
+  $('#no-price-warning').hide()
+  $('#delivery_price').attr('disabled', true)
+  $('#delivery-submit').attr('disabled', true)
+
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
     .then(price => {
-      $('#no-price-warning').hide()
+
+      $('#delivery-submit').attr('disabled', false)
+      $('#delivery_price').attr('disabled', false)
+
       // we couldn't calculate the price
       if (isNaN(price)) {
         $('#no-price-warning').show()
+        $('#delivery_price').val('')
+        $('#delivery_price').focus()
       }
       else {
-        $('#delivery-submit').attr('disabled', false)
         $('#delivery_price').val(numeral(price).format('0,0.00'))
-      }
-
-      if (window.AppData.isAdmin) {
-        $('#delivery_price').attr('disabled', false)
       }
     })
     .catch(e => {

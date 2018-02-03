@@ -70,10 +70,16 @@
     <div class="form-group">
       {{ form_label(form, 'Store'|trans({}, 'messages')) }}
       <div class="col-sm-10">
-        <div id="store-search">
-        </div>
-        <i class="fa fa-times-circle autocomplete-clear"></i>
+        <div id="store-search"></div>
         {{ block('hidden_widget') }}
+      </div>
+    </div>
+    <div id="selected-store" class="form-group hidden">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="alert alert-info alert-dismissible nomargin" role="alert">
+          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <span id="selected-store-name"></span>
+        </div>
       </div>
     </div>
   {% endspaceless %}
