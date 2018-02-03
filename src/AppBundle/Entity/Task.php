@@ -32,7 +32,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
- *     "task_done"={"route_name"="api_task_done"}
+ *     "task_done"={"route_name"="api_task_done"},
+ *     "task_failed"={"route_name"="api_task_failed"}
  *   }
  * )
  */
@@ -42,6 +43,7 @@ class Task
     const TYPE_PICKUP = 'PICKUP';
 
     const STATUS_TODO = 'TODO';
+    const STATUS_FAILED = 'FAILED';
     const STATUS_DONE = 'DONE';
 
     /**
