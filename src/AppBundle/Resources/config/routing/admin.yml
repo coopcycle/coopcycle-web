@@ -241,6 +241,9 @@ admin_store_deliveries:
     defaults:
         _controller: AppBundle:Admin:storeDeliveries
         layout: AppBundle::admin.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
     methods:  [ GET ]
 
 craue_config_settings_modify:

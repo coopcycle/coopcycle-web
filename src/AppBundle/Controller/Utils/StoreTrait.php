@@ -46,7 +46,10 @@ trait StoreTrait
 
         return $this->render('AppBundle:Store:storeDeliveries.html.twig', [
             'layout' => $request->attributes->get('layout'),
-            'deliveries' => $deliveries
+            'deliveries' => $deliveries,
+            'store' => $store,
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
         ]);
     }
 

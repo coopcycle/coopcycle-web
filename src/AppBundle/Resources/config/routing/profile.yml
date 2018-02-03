@@ -204,6 +204,9 @@ profile_store_deliveries:
     defaults:
         _controller: AppBundle:Profile:storeDeliveries
         layout: AppBundle::profile.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
     methods:  [ GET ]
 
 profile_store_delivery:

@@ -1,4 +1,10 @@
-{% extends "AppBundle::profile.html.twig" %}
+{% extends layout %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}Stores{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>{% trans %}Past deliveries{% endtrans %}</li>
+{% endblock %}
 
 {% block content %}
   {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: false, show_price: true, show_order: false } %}
