@@ -1,5 +1,7 @@
 import React from 'react'
+import { render } from 'react-dom'
 import TaskIcon from './TaskIcon'
+import TaskTimeline from './TaskTimeline'
 import TaskRangePicker from '../widgets/TaskRangePicker'
 import moment from 'moment'
 
@@ -67,10 +69,16 @@ export default class extends React.Component {
 
     $('#task-edit-modal')
       .load(taskModalURL.replace('__TASK_ID__', task.id), () => {
+
         new TaskRangePicker(document.querySelector('#task_edit_rangepicker'), [
           document.querySelector('#task_edit_doneAfter'),
           document.querySelector('#task_edit_doneBefore')
         ])
+
+        render(
+          <TaskTimeline task={ task } />
+        , document.querySelector('#task_edit_history'))
+
         $('#task-edit-modal').modal({ show: true })
       })
   }

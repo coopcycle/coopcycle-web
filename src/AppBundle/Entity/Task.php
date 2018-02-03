@@ -105,6 +105,7 @@ class Task
     /**
      * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task")
      * @ORM\OrderBy({"createdAt" = "ASC"})
+     * @Groups({"task"})
      */
     private $events;
 

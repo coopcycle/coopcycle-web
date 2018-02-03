@@ -19,6 +19,14 @@
         {{ form_row(task_form.doneAfter) }}
         {{ form_row(task_form.doneBefore) }}
       </div>
+      <p>
+        <a class="help-block" role="button" data-toggle="collapse" href="#{{ task_form.vars.id }}_history">
+          <i class="fa fa-plus"></i> {% trans from 'messages' %}Show history{% endtrans %}
+        </a>
+      </p>
+      <div class="collapse" id="{{ task_form.vars.id }}_history">
+        History
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
