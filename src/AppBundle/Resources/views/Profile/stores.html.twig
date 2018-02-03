@@ -1,11 +1,7 @@
 {% extends "AppBundle::profile.html.twig" %}
 
-{% block breadcrumb %}
-  <li>{% trans %}Stores{% endtrans %}</li>
-{% endblock %}
-
 {% block content %}
-{% include "AppBundle:Store:list.html.twig" %}
+  {% include "AppBundle:Store:list.html.twig" %}
 {% endblock %}
 
 {% block scripts %}

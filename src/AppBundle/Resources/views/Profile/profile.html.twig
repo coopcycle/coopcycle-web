@@ -2,4 +2,4 @@
 <p><strong>{% trans %}Email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
 <p><strong>{% trans %}Family name{%  endtrans %}</strong>: {{ user.familyName }}</p>
 <p><strong>{% trans %}Given name{%  endtrans %}</strong>: {{ user.givenName }}</p>
-<p><strong>{% trans %}Telephone{%  endtrans %}</strong>: {{ user.telephone }}</p>
+<p><strong>{% trans %}Telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>

@@ -1,3 +1,9 @@
+adminDashboard.tooltip.orders: Manage restaurants orders
+adminDashboard.tooltip.deliveries: Manage deliveries
+adminDashboard.tooltip.stores: Manage stores
+adminDashboard.tooltip.restaurants: Manage restaurants
+adminDashboard.tooltip.users: Manage user accounts
+
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
 local_business.form.enabled.label: Enabled
@@ -121,9 +127,11 @@ user.edit.roles.help: Configure the permissions of this user <a href="%link%">Le
 roles.ROLE_ADMIN.help: |
   Administrator : Full access to all features
 roles.ROLE_COURIER.help: |
-  Coursier : view waiting tasks, modify assigned tasks…
+  Courier : view waiting tasks, modify assigned tasks…
 roles.ROLE_RESTAURANT.help: |
-  Restaurant : manage assigned restaurants, manage orders…
+  Restaurant owner: manage assigned restaurants, manage orders…
+roles.ROLE_STORE.help: |
+  Store owner: manage assigned stores, manage deliveries…
 
 search.help: >
   Search restaurants in Paris area : %links%
@@ -131,7 +139,7 @@ search.help: >
 zones.help: <a href="%link%">Get help about zones.</a>
 delivery.pricing_rules.help: <a href="%link%">Get help about pricing.</a>
 
-meta.title: Open-source foodtech. Only for worker-owned business.
+meta.title: Delivery platform for worker-owned business.
 
 delivery_service.applicolis: AppliColis
 

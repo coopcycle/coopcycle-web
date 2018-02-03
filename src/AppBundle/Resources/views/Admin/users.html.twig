@@ -26,7 +26,7 @@
         {{ user.email }}
       {% endif %}
     </td>
-    <td>{{ user.telephone }}</td>
+    <td>{% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</td>
     <td class="text-right">
       {% include "AppBundle::_partials/User/roles.html.twig" %}
     </td>

@@ -35,3 +35,23 @@ help_admin_zones:
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
+
+help_admin_stores:
+    path: /{_locale}/help/admin/stores
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/stores/index
+        title: Stores
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]
+
+help_admin_smartphone_apps:
+    path: /{_locale}/help/admin/apps
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/SmartphoneApps/index
+        title: Smartphone Applications
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]

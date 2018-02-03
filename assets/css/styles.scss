@@ -2,10 +2,32 @@ body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
-footer {
-  padding: 30px 0;
-  margin-top: 30px;
-  border-top: 1px solid $gray;
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+.h2 {
+  @media screen and (max-width: $screen-md-min) {
+    margin-bottom: 10px;
+  }
+}
+
+.main-container {
+  min-height: 400px;
+}
+
+
+.footer {
+  width: 100%;
+  padding: $base-margin 0;
+  margin-top: $base-margin-l;
+  border-top: 1px solid $dark;
+  background-color: $main-blue;
+
+  a.footer-link {
+    color: $white;
+    margin: 0 $base-margin-s;
+  }
 
   @media screen and (max-width: $screen-md-min) {
     display: none;
@@ -13,10 +35,6 @@ footer {
 }
 
 .navbar-brand {
-  font-family: "Raleway", Helvetica, Arial, sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
 }
 
@@ -33,15 +51,39 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.h2 {
-  @media screen and (max-width: $screen-md-min) {
-    margin-bottom: 10px;
-  }
+// ------------------ Admin ------------------
+
+.admin-navbar__help {
+  border-left: 1px solid grey;
 }
 
 .restaurant-header {
   h1 {
     display: inline-block;
+  }
+}
+
+.store-opening-hours {
+  width: 35%;
+}
+
+// ------------------ Help ------------------
+
+.help-nav__item {
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  .list-group-item {
+    font-size: 14px;
+    color: $main-blue;
+
+    &:hover {
+      color: white;
+      background-color: $main-blue-light;
+      text-decoration: none;
+    }
   }
 }
 

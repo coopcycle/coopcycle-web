@@ -1,9 +1,5 @@
 {% extends "AppBundle::profile.html.twig" %}
 
-{% block breadcrumb %}
-  <li>{% trans %}Orders{% endtrans %}</li>
-{% endblock %}
-
 {% block content %}
 <h2 class="page-header">{% trans %}My orders{% endtrans %}</h2>
 {% include "AppBundle:Profile:orders.pagination.html.twig" %}

@@ -1,5 +1,3 @@
-console.log('ok')
-
 import React from 'react'
 import { render } from 'react-dom'
 import Autocomplete from '../components/Autocomplete.jsx'

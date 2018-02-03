@@ -29,22 +29,20 @@
     {% endblock %}
     {% block body %}{% endblock %}
     {% block footer %}
-    <footer>
-      <div class="container text-center">
+      <footer class="footer text-center">
         <ul class="list-inline">
           <li>
-            <a href="mailto:contact@coopcycle.org">
+            <a class="footer-link" href="mailto:contact@coopcycle.org">
               {% trans %}Contact us{% endtrans %}
             </a>
           </li>
           <li>
-            <a href="{{ path('help') }}">
+            <a class="footer-link" href="{{ path('help') }}">
               {% trans %}Help{% endtrans %}
             </a>
           </li>
         </ul>
-      </div>
-    </footer>
+      </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
       <script src="https://cdn.ravenjs.com/3.19.1/raven.min.js" crossorigin="anonymous"></script>
@@ -89,7 +87,7 @@
     </script>
     {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% block scripts %}{% endblock %}
-    <script src="{{ asset('js/cart.js') }}"></script>
+      <script src="{{ asset('js/cart.js') }}"></script>
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
