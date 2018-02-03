@@ -185,6 +185,7 @@ profile_stores:
         routes:
             store: profile_store
             store_delivery: profile_store_delivery
+            store_deliveries: profile_store_deliveries
     methods:  [ GET ]
 
 profile_store:
@@ -195,7 +196,15 @@ profile_store:
         routes:
             stores: profile_stores
             store_delivery: profile_store_delivery
+            store_deliveries: profile_store_deliveries
     methods:  [ GET, POST ]
+
+profile_store_deliveries:
+    path: /profile/stores/{id}/deliveries
+    defaults:
+        _controller: AppBundle:Profile:storeDeliveries
+        layout: AppBundle::profile.html.twig
+    methods:  [ GET ]
 
 profile_store_delivery:
     path: /profile/stores/{id}/deliveries/new

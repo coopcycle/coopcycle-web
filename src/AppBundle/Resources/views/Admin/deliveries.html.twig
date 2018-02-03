@@ -10,7 +10,7 @@
       <i class="fa fa-plus"></i> {% trans %}Create new delivery{% endtrans %}
     </a>
   </p>
-  {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: true } %}
+  {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: true, show_order: true } %}
   <nav class="text-center">
     {{ knp_pagination_render(deliveries) }}
   </nav>

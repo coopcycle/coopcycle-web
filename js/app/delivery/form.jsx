@@ -17,9 +17,54 @@ let markers = {
   delivery: null,
 }
 
-function calculatePrice(distance, delivery) {
+var storeSearch = document.querySelector('#store-search'), originAddressComponent;
 
-  $('#delivery_price').attr('disabled', true)
+if (storeSearch) {
+
+  var options = {
+    url: window.AppData.adminStoreSearchUrl,
+    placeholder: "",
+    clearOnSelect: true,
+    onSuggestionSelected: function(store) {
+      $('#delivery_store').val(store.id)
+      $('#delivery_pricingRuleSet').val(store.pricingRuleSetId)
+      document.querySelector('#delivery_originAddress_streetAddress').value = store.address.streetAddress
+      document.querySelector('#delivery_originAddress_latitude').value = store.address.latitude
+      document.querySelector('#delivery_originAddress_longitude').value = store.address.longitude
+      document.querySelector('#delivery_originAddress_postalCode').value = store.address.postalCode
+      document.querySelector('#delivery_originAddress_addressLocality').value = store.address.addressLocality
+
+      $('#selected-store-name').text(store.name)
+      $('#selected-store').removeClass('hidden')
+
+      // refresh the map on the right
+      onLocationChange({
+        latitude: store.address.latitude,
+        longitude: store.address.longitude
+      }, 'origin', 'cube', '#E74C3C')
+      $('#originAddressChecked').removeClass('hidden')
+      setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
+    }
+  }
+
+  new CoopCycle.Search(storeSearch, options);
+
+  $('#selected-store .alert .close').on('click', function (e) {
+    e.preventDefault()
+    $('#delivery_store').val('')
+    $('#delivery_pricingRuleSet').val('')
+    $('#selected-store').addClass('hidden')
+  })
+
+}
+
+
+// for non-admin disable submit until the price has been calculated
+if (!window.AppData.isAdmin) {
+  $('#delivery-submit').attr('disabled', true)
+}
+
+function calculatePrice(distance, delivery) {
 
   const deliveryParams = {
     distance,
@@ -29,15 +74,25 @@ function calculatePrice(distance, delivery) {
     weight: $('#delivery_weight').val()
   }
 
+  $('#no-price-warning').hide()
+  $('#delivery_price').attr('disabled', true)
+  $('#delivery-submit').attr('disabled', true)
+
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
     .then(price => {
-      $('#no-price-warning').hide()
+
+      $('#delivery-submit').attr('disabled', false)
+      $('#delivery_price').attr('disabled', false)
+
       // we couldn't calculate the price
       if (isNaN(price)) {
         $('#no-price-warning').show()
+        $('#delivery_price').val('')
+        $('#delivery_price').focus()
       }
-      $('#delivery_price').val(numeral(price).format('0,0.00'))
-      $('#delivery_price').attr('disabled', false)
+      else {
+        $('#delivery_price').val(numeral(price).format('0,0.00'))
+      }
     })
     .catch(e => {
       $('#delivery_price').attr('disabled', false)
@@ -73,8 +128,10 @@ function refreshRouting() {
     var kms = (distance / 1000).toFixed(2);
     var minutes = Math.ceil(duration / 60);
 
-    $('#delivery_distance').text(kms + ' Km');
-    $('#delivery_duration').text(minutes + ' min');
+    $('#delivery_distance--display').text(kms + ' Km');
+    $('#delivery_distance').val(distance);
+    $('#delivery_duration--display').text(minutes + ' min');
+    $('#delivery_duration').val(duration);
 
     if (window.AppData.DeliveryForm.calculatePriceURL) {
       calculatePrice(distance, delivery)
@@ -141,6 +198,7 @@ window.initMap = function() {
       }
     }
   })
+
   new CoopCycle.AddressInput(document.querySelector('#delivery_deliveryAddress_streetAddress'), {
     elements: {
       latitude: document.querySelector('#delivery_deliveryAddress_latitude'),
@@ -170,4 +228,10 @@ map = MapHelper.init('map');
 const date = $('#delivery_date').val();
 const error = $('#datetimepicker').data('has-error');
 
-render(<DateTimePicker error={error} onChange={onDateTimeChange} defaultValue={date ? moment(date) : moment() } />, document.getElementById('datetimepicker'));
+render(
+  <DateTimePicker
+    error={error}
+    onChange={onDateTimeChange}
+    defaultValue={date ? moment(date) : moment() } />,
+  document.getElementById('datetimepicker')
+);

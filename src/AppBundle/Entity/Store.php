@@ -122,6 +122,16 @@ class Store extends LocalBusiness
     private $pricingRuleSet;
 
     /**
+     * @ORM\OneToMany(targetEntity="Delivery", mappedBy="store")
+     */
+    private $deliveries;
+
+
+    public function __construct() {
+        $this->deliveries = new ArrayCollection();
+    }
+
+    /**
      * Gets id.
      *
      * @return int
@@ -195,6 +205,9 @@ class Store extends LocalBusiness
         return $this->imageName;
     }
 
+    /**
+     * @return Address
+     */
     public function getAddress()
     {
         return $this->address;
@@ -260,4 +273,21 @@ class Store extends LocalBusiness
 
         return $this;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDeliveries()
+    {
+        return $this->deliveries;
+    }
+
+    /**
+     * @param ArrayCollection $deliveries
+     */
+    public function setDeliveries(ArrayCollection $deliveries)
+    {
+        $this->deliveries = $deliveries;
+    }
+
 }

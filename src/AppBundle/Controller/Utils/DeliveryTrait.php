@@ -11,7 +11,6 @@ use AppBundle\Form\DeliveryType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait DeliveryTrait
@@ -21,7 +20,7 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null)
+    private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null, array $options = [])
     {
         if ($store) {
             $delivery->setDate($store->getNextOpeningDate());
@@ -35,14 +34,17 @@ trait DeliveryTrait
 
         $translator = $this->get('translator');
 
-        $form = $this->createForm(DeliveryType::class, $delivery, [
+        $options = array_merge([
             'free_pricing' => $store === null,
             'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null,
             'vehicle_choices' => [
                 $translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
                 $translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-            ]
-        ]);
+            ]],
+            $options
+        );
+
+        $form = $this->createForm(DeliveryType::class, $delivery, $options);
 
         $routes = $request->attributes->get('routes');
 
@@ -50,6 +52,7 @@ trait DeliveryTrait
 
         if ($form->isSubmitted()) {
             $delivery = $form->getData();
+            $user = $this->getUser();
 
             $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
 
@@ -57,7 +60,22 @@ trait DeliveryTrait
                 $form->get('date')->addError(new FormError('The date is in the past'));
             }
 
+            if (!$store && !$user->hasRole('ROLE_ADMIN')) {
+                $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
+            }
+
             if ($form->isValid()) {
+
+                if ($store) {
+
+                    // if the user is not admin, he cannot override the set pricing
+                    if (!$user->hasRole('ROLE_ADMIN')) {
+                        $deliveryManager = $this->get('coopcycle.delivery.manager');
+                        $price = $deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+                        $delivery->setPrice($price);
+                    }
+                    $delivery->setStore($store);
+                }
 
                 $this->get('delivery_service.default')->calculate($delivery);
                 $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);

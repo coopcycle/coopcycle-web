@@ -25,6 +25,28 @@ trait StoreTrait
             'page' => $page,
             'store_route' => $routes['store'],
             'store_delivery_route' => $routes['store_delivery'],
+            'store_deliveries_route' => $routes['store_deliveries'],
+        ]);
+    }
+
+    public function storeDeliveriesAction($id, Request $request) {
+
+        $routes = $request->attributes->get('routes');
+
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)->find($id);
+
+        $deliveries = $store->getDeliveries();
+
+        $deliveries = $this->get('knp_paginator')->paginate(
+            $deliveries,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
+        return $this->render('AppBundle:Store:storeDeliveries.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'deliveries' => $deliveries
         ]);
     }
 
@@ -57,6 +79,7 @@ trait StoreTrait
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_delivery_route' => $routes['store_delivery'],
+            'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
 

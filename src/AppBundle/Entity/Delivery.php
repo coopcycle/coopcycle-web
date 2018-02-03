@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -96,6 +96,11 @@ class Delivery extends Intangible implements TaxableInterface
      * @ORM\ManyToOne(targetEntity="ApiUser")
      */
     private $courier;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Store", inversedBy="deliveries")
+     */
+    private $store;
 
     /**
      * @var string
@@ -429,6 +434,22 @@ class Delivery extends Intangible implements TaxableInterface
         $this->vehicle = $vehicle;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
+     * @param mixed $store
+     */
+    public function setStore($store)
+    {
+        $this->store = $store;
     }
 
     public static function createTasks(Delivery $delivery)

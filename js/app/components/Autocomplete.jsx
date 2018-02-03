@@ -1,13 +1,27 @@
 import React, { Component } from 'react'
 import Autosuggest from 'react-autosuggest';
 
-const getSuggestionValue = suggestion => suggestion.name;
+// ------------------ Autosuggest ------------------
 
-const renderSuggestion = suggestion => (
-  <span>
-    {suggestion.name}
-  </span>
-);
+
+const getSuggestionValue = suggestion => suggestion.name,
+      renderSuggestion = suggestion => (<span>{suggestion.name}</span>),
+      theme = {
+        container:                'react-autosuggest__container',
+        containerOpen:            'react-autosuggest__container--open',
+        input:                    'react-autosuggest__input',
+        inputOpen:                'react-autosuggest__input--open',
+        inputFocused:             'react-autosuggest__input--focused',
+        suggestionsContainer:     'react-autosuggest__suggestions-container',
+        suggestionsContainerOpen: 'react-autosuggest__suggestions-container--open',
+        suggestionsList:          'react-autosuggest__suggestions-list',
+        suggestion:               'react-autosuggest__suggestion',
+        suggestionFirst:          'react-autosuggest__suggestion--first',
+        suggestionHighlighted:    'react-autosuggest__suggestion--highlighted',
+        sectionContainer:         'react-autosuggest__section-container',
+        sectionContainerFirst:    'react-autosuggest__section-container--first',
+        sectionTitle:             'react-autosuggest__section-title'
+      }
 
 export default class extends Component {
 
@@ -39,11 +53,15 @@ export default class extends Component {
   };
 
   onSuggestionSelected(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
-    this.props.onSuggestionSelected(suggestion);
-    this.setState({
-      value: '',
+    const { clearOnSelect } = this.props
+    let newState = {
       suggestions: []
-    });
+    }
+    if (clearOnSelect) {
+      newState.value = ''
+    }
+    this.props.onSuggestionSelected(suggestion);
+    this.setState(newState);
   }
 
   onSuggestionsClearRequested() {
@@ -64,6 +82,7 @@ export default class extends Component {
 
     return (
       <Autosuggest
+        theme={theme}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}

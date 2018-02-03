@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Store;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,12 +16,18 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Delivery;
 
 class DeliveryType extends AbstractType
 {
+    public function __construct(TokenStorage $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -33,8 +40,8 @@ class DeliveryType extends AbstractType
                 'format' => 'yyyy-MM-dd HH:mm:ss'
             ])
             ->add('price', MoneyType::class)
-            ->add('distance', NumberType::class, ['mapped' => false])
-            ->add('duration', NumberType::class, ['mapped' => false]);
+            ->add('distance', NumberType::class)
+            ->add('duration', NumberType::class);
 
         if (!empty($options['vehicle_choices'])) {
             $builder->add('vehicle', ChoiceType::class, [
@@ -43,6 +50,33 @@ class DeliveryType extends AbstractType
                 'placeholder' => 'form.delivery.vehicle.placeholder'
             ]);
         }
+
+        if ($options['with_stores']) {
+            $builder->add('store', EntityType::class, array(
+                'class' => Store::class,
+                'choice_label' => 'name',
+                'required' => false
+            ));
+        }
+
+        $isAdmin = false;
+        if ($token = $this->tokenStorage->getToken()) {
+            if ($user = $token->getUser()) {
+                $isAdmin = $user->hasRole('ROLE_ADMIN');
+            }
+        }
+
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) use ($options, $isAdmin) {
+                if(!$isAdmin) {
+                    $priceFieldConfig = $event->getForm()->get('price')->getConfig();
+                    $options = $priceFieldConfig->getOptions();
+                    $options['attr'] = ['disabled' => true];
+                    $event->getForm()->add('price', MoneyType::class, $options);
+                }
+            }
+        );
 
         if (true === $options['free_pricing']) {
             $builder
@@ -77,7 +111,8 @@ class DeliveryType extends AbstractType
             'data_class' => Delivery::class,
             'free_pricing' => true,
             'pricing_rule_set' => null,
-            'vehicle_choices' => []
+            'vehicle_choices' => [],
+            'with_stores' => false
         ));
     }
 }

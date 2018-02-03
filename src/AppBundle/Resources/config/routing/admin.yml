@@ -199,6 +199,7 @@ admin_stores:
         routes:
             store: admin_store
             store_delivery: admin_store_delivery
+            store_deliveries: admin_store_deliveries
     methods:  [ GET ]
 
 admin_store_new:
@@ -209,6 +210,7 @@ admin_store_new:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
+            store_deliveries: admin_store_deliveries
     methods:  [ GET, POST ]
 
 admin_store:
@@ -219,6 +221,7 @@ admin_store:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
+            store_deliveries: admin_store_deliveries
     methods:  [ GET, POST ]
 
 admin_store_delivery:
@@ -232,6 +235,13 @@ admin_store_delivery:
             success: admin_deliveries
             calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+admin_store_deliveries:
+    path: /admin/stores/{id}/deliveries
+    defaults:
+        _controller: AppBundle:Admin:storeDeliveries
+        layout: AppBundle::admin.html.twig
+    methods:  [ GET ]
 
 craue_config_settings_modify:
     path: /admin/settings/modify

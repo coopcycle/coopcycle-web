@@ -32,6 +32,12 @@ services:
     tags:
       - { name: form.type, alias: app_update_profile }
 
+  app.form.delivery:
+    class: AppBundle\Form\DeliveryType
+    arguments: [ '@security.token_storage' ]
+    tags:
+      - { name: form.type, alias: app_delivery }
+
   app.form.restaurant:
     class: AppBundle\Form\RestaurantType
     arguments: [ '@security.token_storage' ]

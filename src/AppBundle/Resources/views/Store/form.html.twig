@@ -25,6 +25,9 @@
     </div>
     <div class="collapse navbar-collapse" id="store-navbar">
       <div class="nav navbar-nav navbar-right">
+        <a href="{{ path(store_deliveries_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-bicycle"></i>  {% trans %}Past deliveries{% endtrans %}
+        </a>
         <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-bicycle"></i>  {% trans %}Create new delivery{% endtrans %}
         </a>

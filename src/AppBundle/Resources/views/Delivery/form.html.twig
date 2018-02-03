@@ -19,6 +19,9 @@
     <div class="col-sm-6">
 
       {{ form_row(form.date) }}
+      {% if form.store is defined %}
+      {{ form_row(form.store) }}
+      {% endif %}
       {{ form_row(form.weight) }}
       {{ form_row(form.vehicle) }}
 
@@ -88,7 +91,7 @@
         {{ form_row(form.price) }}
       </div>
       <hr>
-      <button type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
     </div>
   </div>
 
@@ -97,11 +100,17 @@
 
 {% block scripts %}
 <script>
-window.AppData = window.AppData || {}
-window.AppData.DeliveryForm = {
-  calculatePriceURL: "{{ path(calculate_price_route) }}"
-}
+  let isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};
+  window.AppData = window.AppData || {};
+  window.AppData.isAdmin = isAdmin
+  window.AppData.DeliveryForm = {
+    calculatePriceURL: "{{ path(calculate_price_route) }}"
+  };
+  if (isAdmin) {
+    window.AppData.adminStoreSearchUrl = "{{ path('admin_stores_search', { format: 'json'  }) }}";
+  }
 </script>
+<script src="{{ asset('js/widgets/search.js') }}"></script>
 <script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script src="{{ asset('js/delivery-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"

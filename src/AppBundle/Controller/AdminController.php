@@ -34,9 +34,6 @@ use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
@@ -532,7 +529,7 @@ class AdminController extends Controller
     {
         $delivery = new Delivery();
 
-        return $this->renderDeliveryForm($delivery, $request);
+        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
     }
 
     /**
@@ -832,6 +829,15 @@ class AdminController extends Controller
                 return [
                     'id' => $store->getId(),
                     'name' => $store->getName(),
+                    'pricingRuleSetId' => $store->getPricingRuleSet() ? $store->getPricingRuleSet()->getId() : null,
+                    'address' => [
+                        'addressLocality' => $store->getAddress()->getAddressLocality(),
+                        'addressCountry' => $store->getAddress()->getAddressCountry(),
+                        'streetAddress' => $store->getAddress()->getStreetAddress(),
+                        'postalCode' => $store->getAddress()->getPostalCode(),
+                        'latitude' => $store->getAddress()->getGeo()->getLatitude(),
+                        'longitude' => $store->getAddress()->getGeo()->getLongitude()
+                    ]
                 ];
             }, $results);
 
