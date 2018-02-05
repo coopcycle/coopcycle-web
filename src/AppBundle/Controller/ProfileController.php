@@ -261,4 +261,13 @@ class ProfileController extends Controller
 
         return $this->redirectToRoute('profile_tasks');
     }
+
+    public function editDeliveryAction($id, Request $request)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
+    }
 }

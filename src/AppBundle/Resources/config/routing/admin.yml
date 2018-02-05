@@ -24,6 +24,18 @@ admin_deliveries_calculate_price:
     path:     /admin/deliveries/calculate-price
     defaults: { _controller: AppBundle:Admin:calculateDeliveryPrice }
 
+admin_delivery:
+  path: /admin/deliveries/{id}
+  defaults:
+      _controller: AppBundle:Admin:editDelivery
+      layout: AppBundle::admin.html.twig
+      routes:
+          stores: admin_stores
+          store: admin_store
+          success: admin_deliveries
+          calculate_price: admin_deliveries_calculate_price
+  methods:  [ GET, POST ]
+
 admin_order_invoice:
     path:     /admin/orders/{id}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }

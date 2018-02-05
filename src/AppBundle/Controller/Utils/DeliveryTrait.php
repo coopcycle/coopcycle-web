@@ -22,27 +22,31 @@ trait DeliveryTrait
 
     private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null, array $options = [])
     {
-        if ($store) {
-            $delivery->setDate($store->getNextOpeningDate());
-        } else {
-            $date = new \DateTime('+1 hour');
-            while (($date->format('i') % 15) !== 0) {
-                $date->modify('+1 minute');
-            }
-            $delivery->setDate($date);
-        }
-
+        $isNew = $delivery->getId() === null;
         $translator = $this->get('translator');
 
-        $options = array_merge([
+        if ($isNew) {
+            if ($store) {
+                $delivery->setDate($store->getNextOpeningDate());
+            } else {
+                $date = new \DateTime('+1 hour');
+                while (($date->format('i') % 15) !== 0) {
+                    $date->modify('+1 minute');
+                }
+                $delivery->setDate($date);
+            }
+        }
+
+        $defaultOptions = [
             'free_pricing' => $store === null,
             'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null,
             'vehicle_choices' => [
                 $translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
                 $translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-            ]],
-            $options
-        );
+            ]
+        ];
+
+        $options = array_merge($defaultOptions, $options);
 
         $form = $this->createForm(DeliveryType::class, $delivery, $options);
 
@@ -56,7 +60,7 @@ trait DeliveryTrait
 
             $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
 
-            if ($delivery->getDate() < new \DateTime()) {
+            if ($isNew && $delivery->getDate() < new \DateTime()) {
                 $form->get('date')->addError(new FormError('The date is in the past'));
             }
 
@@ -80,7 +84,10 @@ trait DeliveryTrait
                 $this->get('delivery_service.default')->calculate($delivery);
                 $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
 
-                $em->persist($delivery);
+                if ($isNew) {
+                    $em->persist($delivery);
+                }
+
                 $em->flush();
 
                 return $this->redirectToRoute($routes['success']);
@@ -90,6 +97,7 @@ trait DeliveryTrait
         return $this->render("AppBundle:Delivery:form.html.twig", [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
+            'delivery' => $delivery,
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

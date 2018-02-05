@@ -18,7 +18,11 @@
   <tbody>
   {% for delivery in deliveries %}
     <tr>
-      <td width="5%">#{{ delivery.id }}</td>
+      <td width="5%">
+        <a href="{{ path(delivery_route, { id: delivery.id }) }}">
+          #{{ delivery.id }}
+        </a>
+      </td>
       <td width="5%">{% include "AppBundle:Delivery:label.html.twig" %}</td>
       <td width="15%">
       {{ delivery.date|localizeddate('short', 'short') }}
@@ -30,7 +34,7 @@
       </td>
       {% if show_courier is defined and show_courier %}
       <td width="10%">
-        {% if delivery.courier is not empty %}
+        {% if is_granted('ROLE_ADMIN') and delivery.courier is not empty %}
         <a href="{{ path('admin_user_details', { username: delivery.courier.username }) }}" title="{{ delivery.courier.username }}">
           {{ delivery.courier.username }}
         </a>

@@ -50,6 +50,7 @@ trait StoreTrait
             'store' => $store,
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'delivery_route' => $routes['delivery']
         ]);
     }
 

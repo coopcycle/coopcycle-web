@@ -532,6 +532,15 @@ class AdminController extends Controller
         return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
     }
 
+    public function editDeliveryAction($id, Request $request)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
+    }
+
     /**
      * @Route("/admin/deliveries/{id}/dispatch", methods={"POST"}, name="admin_delivery_dispatch")
      */

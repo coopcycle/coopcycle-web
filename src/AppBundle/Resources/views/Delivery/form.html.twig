@@ -9,7 +9,11 @@
 {% else %}
 <li><a href="{{ path('admin_deliveries') }}">{% trans %}Deliveries{% endtrans %}</a></li>
 {% endif %}
+{% if delivery.id is not null %}
+<li>#{{ delivery.id }}</li>
+{% else %}
 <li>{% trans %}Create delivery{% endtrans %}</li>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -53,7 +57,11 @@
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" href="#collapseDeliveryAddress" aria-expanded="true" aria-controls="collapseDeliveryAddress">
               {% trans %}Delivery address{% endtrans %} 
-              <strong id="deliveryAddressTitleLabel"></strong>
+              <strong id="deliveryAddressTitleLabel">
+              {% if form.deliveryAddress.vars.value %}
+              {{ form.deliveryAddress.vars.value.streetAddress }}
+              {% endif %}
+              </strong>
             </a>
             <span class="pull-right hidden" id="deliveryAddressChecked">
               <i class="fa fa-check" aria-hidden="true" style="color: #27AE60"></i>
