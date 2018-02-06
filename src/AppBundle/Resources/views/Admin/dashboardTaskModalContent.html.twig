@@ -29,8 +29,11 @@
       </div>
     </div>
     <div class="modal-footer">
+      {% if form.delete is defined %}
+      {{ form_widget(form.delete, { attr: { class: 'btn btn-danger pull-left' } }) }}
+      {% endif %}
       <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
-      <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
+      {{ form_widget(form.save, { attr: { class: 'btn btn-primary' } }) }}
     </div>
   {{ form_end(form) }}
 </div>

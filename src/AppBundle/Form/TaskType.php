@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -37,12 +38,22 @@ class TaskType extends LocalBusinessType
             ->add('doneBefore', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm'
-            ])
-            ;
+            ]);
 
-        if ($options['action']) {
-            $builder->setAction($options['action']);
-        }
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $task = $event->getData();
+
+            // We are editing an existing task
+            if (null !== $task->getId()) {
+                if (!$task->isAssigned()) {
+                    $form->add('delete', SubmitType::class);
+                }
+                $form->add('save', SubmitType::class);
+            }
+
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -50,7 +61,6 @@ class TaskType extends LocalBusinessType
         $resolver->setDefaults(array(
             'data_class' => Task::class,
             'can_edit_type' => true,
-            'action' => null
         ));
     }
 }

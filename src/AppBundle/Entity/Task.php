@@ -103,7 +103,7 @@ class Task
     private $assignment;
 
     /**
-     * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task")
+     * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task", cascade={"all"})
      * @ORM\OrderBy({"createdAt" = "ASC"})
      * @Groups({"task"})
      */

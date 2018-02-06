@@ -903,12 +903,20 @@ class AdminController extends Controller
             ->getRepository(Task::class)
             ->find($id);
 
-        $taskForm = $this->createTaskEditForm($task);
+        $form = $this->createTaskEditForm($task);
 
-        $taskForm->handleRequest($request);
-        if ($taskForm->isSubmitted() && $taskForm->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            $task = $taskForm->getData();
+            $task = $form->getData();
+
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+                if (!$task->isAssigned()) {
+                    $this->getDoctrine()
+                        ->getManagerForClass(Task::class)
+                        ->remove($task);
+                }
+            }
 
             $this->getDoctrine()
                 ->getManagerForClass(Task::class)
@@ -936,10 +944,10 @@ class AdminController extends Controller
             ->getRepository(Task::class)
             ->find($id);
 
-        $taskForm = $this->createTaskEditForm($task);
+        $form = $this->createTaskEditForm($task);
 
         return [
-            'form' => $taskForm->createView(),
+            'form' => $form->createView(),
         ];
     }
 }
