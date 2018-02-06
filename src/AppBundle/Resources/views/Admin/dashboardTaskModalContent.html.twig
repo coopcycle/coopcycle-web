@@ -1,7 +1,7 @@
-{% form_theme task_form 'AppBundle:Form:taskModal.html.twig' %}
+{% form_theme form 'AppBundle:Form:taskModal.html.twig' %}
 
 <div class="modal-dialog" role="document">
-  {{ form_start(task_form, { attr: { class: 'modal-content' } }) }}
+  {{ form_start(form, { action: path('admin_dashboard_task', { id: form.vars.data.id }), attr: { class: 'modal-content' } }) }}
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -9,22 +9,22 @@
       <h4 class="modal-title" id="task-modal-label">{% trans %}Edit task{% endtrans %}</h4>
     </div>
     <div class="modal-body">
-      {{ form_row(task_form.type) }}
-      {{ form_widget(task_form.address) }}
+      {{ form_row(form.type) }}
+      {{ form_widget(form.address) }}
       <div>
         <label class="control-label">{% trans %}Time window{% endtrans %}</label>
         <div class="form-group">
-          <div id="{{ task_form.vars.id }}_rangepicker"></div>
+          <div id="{{ form.vars.id }}_rangepicker"></div>
         </div>
-        {{ form_row(task_form.doneAfter) }}
-        {{ form_row(task_form.doneBefore) }}
+        {{ form_row(form.doneAfter) }}
+        {{ form_row(form.doneBefore) }}
       </div>
       <p>
-        <a class="help-block" role="button" data-toggle="collapse" href="#{{ task_form.vars.id }}_history">
+        <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_history">
           <i class="fa fa-plus"></i> {% trans from 'messages' %}Show history{% endtrans %}
         </a>
       </p>
-      <div class="collapse" id="{{ task_form.vars.id }}_history">
+      <div class="collapse" id="{{ form.vars.id }}_history">
         History
       </div>
     </div>
@@ -32,5 +32,5 @@
       <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
       <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
     </div>
-  {{ form_end(task_form) }}
+  {{ form_end(form) }}
 </div>

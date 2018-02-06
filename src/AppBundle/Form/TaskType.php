@@ -39,13 +39,18 @@ class TaskType extends LocalBusinessType
                 'format' => 'yyyy-MM-dd HH:mm'
             ])
             ;
+
+        if ($options['action']) {
+            $builder->setAction($options['action']);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => Task::class,
-            'can_edit_type' => true
+            'can_edit_type' => true,
+            'action' => null
         ));
     }
 }

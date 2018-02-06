@@ -8,6 +8,7 @@ use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
+use AppBundle\Controller\Utils\TaskTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
@@ -48,6 +49,7 @@ class AdminController extends Controller
     use LocalBusinessTrait;
     use RestaurantTrait;
     use StoreTrait;
+    use TaskTrait;
     use UserTrait;
 
     /**
@@ -118,19 +120,7 @@ class AdminController extends Controller
             'date' => $date
         ]);
 
-        $task = new Task();
-
-        $doneAfter = clone $date;
-        $doneBefore = clone $date;
-
-        $doneAfter->setTime($now->format('H'), $now->format('i'));
-        $doneBefore->setTime($now->format('H'), $now->format('i'));
-
-        $doneAfter->modify('+1 hour');
-        $doneBefore->modify('+1 hour 30 minutes');
-
-        $task->setDoneAfter($doneAfter);
-        $task->setDoneBefore($doneBefore);
+        $task = $this->createDefaultTask($date);
 
         $newTaskForm = $this->createForm(TaskType::class, $task);
 
@@ -900,19 +890,56 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/dashboard/tasks/{id}", methods={"POST"}, name="admin_dashboard_task")
+     */
+    public function dashboardTask($id, Request $request)
+    {
+        $date = new \DateTime();
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
+        }
+
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->find($id);
+
+        $taskForm = $this->createTaskEditForm($task);
+
+        $taskForm->handleRequest($request);
+        if ($taskForm->isSubmitted() && $taskForm->isValid()) {
+
+            $task = $taskForm->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(Task::class)
+                ->flush();
+
+            $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
+            $isIframe = $request->attributes->getBoolean('iframe', true);
+
+            $routeParams = [ 'date' => $date->format('Y-m-d') ];
+            if (!$isIframe) {
+                $routeParams['fullscreen'] = 'on';
+            }
+
+            return $this->redirectToRoute($routeName, $routeParams);
+        }
+    }
+
+    /**
      * @Route("/admin/dashboard/tasks/{id}/modal-content", name="admin_dashboard_task_modal_content")
      * @Template()
      */
     public function dashboardTaskModalContentAction($id, Request $request)
     {
-        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->find($id);
 
-        $taskForm = $this->get('form.factory')->createNamed('task_edit', TaskType::class, $task, [
-            'can_edit_type' => false
-        ]);
+        $taskForm = $this->createTaskEditForm($task);
 
         return [
-            'task_form' => $taskForm->createView(),
+            'form' => $taskForm->createView(),
         ];
     }
 }
