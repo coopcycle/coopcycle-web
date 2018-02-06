@@ -75,6 +75,15 @@ export default class extends React.Component {
           document.querySelector('#task_edit_doneBefore')
         ])
 
+        new CoopCycle.AddressInput(document.querySelector('#task_edit_address_streetAddress'), {
+          elements: {
+            latitude: document.querySelector('#task_edit_address_latitude'),
+            longitude: document.querySelector('#task_edit_address_longitude'),
+            postalCode: document.querySelector('#task_edit_address_postalCode'),
+            addressLocality: document.querySelector('#task_edit_address_addressLocality')
+          }
+        })
+
         render(
           <TaskTimeline task={ task } />
         , document.querySelector('#task_edit_history'))
