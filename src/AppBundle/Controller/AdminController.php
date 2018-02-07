@@ -97,17 +97,29 @@ class AdminController extends Controller
         return [ $orders, $pages, $page ];
     }
 
+    private function redirectToDashboard(Request $request)
+    {
+        $nav = $request->query->getBoolean('nav', true);
+
+        $params = [
+            'date' => $request->get('date'),
+        ];
+
+        if (!$nav) {
+            $params['nav'] = 'off';
+        }
+
+        return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
+    }
+
     /**
-     * @Route("/admin/dashboard/iframe", name="admin_dashboard_iframe")
+     * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__"})
      */
-    public function dashboardIframeAction(Request $request)
+    public function dashboardFullscreenAction($date, Request $request)
     {
         $now = new \DateTime();
-
-        $date = clone $now;
-        if ($request->query->has('date')) {
-            $date = new \DateTime($request->query->get('date'));
-        }
+        $date = new \DateTime($date);
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -140,15 +152,7 @@ class AdminController extends Controller
                     ->getManagerForClass(Task::class)
                     ->flush();
 
-                $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
-                $isIframe = $request->attributes->getBoolean('iframe', true);
-
-                $routeParams = [ 'date' => $date->format('Y-m-d') ];
-                if (!$isIframe) {
-                    $routeParams['fullscreen'] = 'on';
-                }
-
-                return $this->redirectToRoute($routeName, $routeParams);
+                return $this->redirectToDashboard($request);
             }
         }
 
@@ -165,15 +169,7 @@ class AdminController extends Controller
                 ->getManagerForClass(Task::class)
                 ->flush();
 
-            $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
-            $isIframe = $request->attributes->getBoolean('iframe', true);
-
-            $routeParams = [ 'date' => $date->format('Y-m-d') ];
-            if (!$isIframe) {
-                $routeParams['fullscreen'] = 'on';
-            }
-
-            return $this->redirectToRoute($routeName, $routeParams);
+            return $this->redirectToDashboard($request);
         }
 
         $tasks = $this->getDoctrine()
@@ -220,20 +216,9 @@ class AdminController extends Controller
             return $a->getUsername() < $b->getUsername() ? -1 : 1;
         });
 
-        $isIframe = $request->attributes->getBoolean('iframe', true);
-        $nav = false;
-
-        $routeParams = [ 'date' => '__DATE__' ];
-        if (!$isIframe) {
-            $nav = true;
-            $routeParams['fullscreen'] = 'on';
-        }
-
         return $this->render('@App/Admin/dashboardIframe.html.twig', [
-            'nav' => $nav,
+            'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
-            'refresh_route' => $request->attributes->get('refresh_route', 'admin_dashboard_iframe'),
-            'refresh_route_params' => $routeParams,
             'couriers' => $couriers,
             'tasks' => $tasks,
             'task_lists' => $taskListsNormalized,
@@ -247,17 +232,7 @@ class AdminController extends Controller
      */
     public function dashboardAction(Request $request)
     {
-        $fullscreen = $request->query->getBoolean('fullscreen');
-
-        if ($fullscreen) {
-
-            $request->attributes->set('refresh_route', 'admin_dashboard');
-            $request->attributes->set('iframe', false);
-
-            return $this->dashboardIframeAction($request);
-        }
-
-        return $this->render('@App/Admin/dashboard.html.twig');
+        return $this->render('@App/Admin/dashboard.html.twig', ['date' => new \DateTime()]);
     }
 
     /**
@@ -894,11 +869,6 @@ class AdminController extends Controller
      */
     public function dashboardTask($id, Request $request)
     {
-        $date = new \DateTime();
-        if ($request->query->has('date')) {
-            $date = new \DateTime($request->query->get('date'));
-        }
-
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
             ->find($id);
@@ -922,15 +892,7 @@ class AdminController extends Controller
                 ->getManagerForClass(Task::class)
                 ->flush();
 
-            $routeName = $request->attributes->get('refresh_route', 'admin_dashboard_iframe');
-            $isIframe = $request->attributes->getBoolean('iframe', true);
-
-            $routeParams = [ 'date' => $date->format('Y-m-d') ];
-            if (!$isIframe) {
-                $routeParams['fullscreen'] = 'on';
-            }
-
-            return $this->redirectToRoute($routeName, $routeParams);
+            return $this->redirect($request->headers->get('referer'));
         }
     }
 

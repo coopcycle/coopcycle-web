@@ -155,6 +155,12 @@
 <script src="/tracking/socket.io/socket.io.js"></script>
 <script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script>
+
+{% set dashboard_route_params = { date: '__DATE__' } %}
+{% if not nav %}
+  {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
+{% endif %}
+
 window.AppData = window.AppData || {}
 window.AppData.Dashboard = {
   i18n: {
@@ -163,7 +169,7 @@ window.AppData.Dashboard = {
     'Assigned': 'Assignées'
   },
   date: "{{ date|date('Y-m-d') }}",
-  dashboardURL: "{{ path(refresh_route, refresh_route_params)|raw }}",
+  dashboardURL: "{{ path('admin_dashboard_fullscreen', dashboard_route_params)|raw }}",
   assignTaskURL: "{{ path('admin_tasks_assign', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
   taskModalURL: "{{ path('admin_dashboard_task_modal_content', { id: '__TASK_ID__' }) }}",
   userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
