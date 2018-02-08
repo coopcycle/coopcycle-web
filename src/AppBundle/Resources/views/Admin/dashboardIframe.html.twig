@@ -22,8 +22,13 @@
               <div id="date-picker" class="navbar-text"></div>
               <ul class="nav navbar-nav navbar-right">
                 <li>
+                  <a href="#" data-toggle="modal" data-target="#export-modal">
+                    <i class="fa fa-download" aria-hidden="true"></i> {% trans %}Export{% endtrans %}
+                  </a>
+                </li>
+                <li>
                   <a href="#" data-toggle="modal" data-target="#upload-modal">
-                    <i class="fa fa-upload" aria-hidden="true"></i> Upload
+                    <i class="fa fa-upload" aria-hidden="true"></i> {% trans %}Import{% endtrans %}
                   </a>
                 </li>
                 {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
@@ -96,11 +101,11 @@
     {{ form_start(task_upload_form, { attr: { class: 'modal-content' } }) }}
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="upload-modal-label">{% trans %}Upload tasks via CSV{% endtrans %}</h4>
+        <h4 class="modal-title" id="upload-modal-label">{% trans %}Import tasks{% endtrans %}</h4>
       </div>
       <div class="modal-body">
         <div class="alert alert-info">
-          {% trans with { '%date%': date|localizeddate('medium', 'none') } %}Tasks will be created for %date%{% endtrans %}
+          {% trans with { '%date%': date|localizeddate('medium', 'none') } %}Tasks matching %date% will be imported{% endtrans %}
         </div>
         <div class="form-horizontal">
           {{ form_row(task_upload_form.file) }}
@@ -108,7 +113,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
-        <button type="submit" class="btn btn-primary">{% trans %}Upload{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}Import{% endtrans %}</button>
       </div>
     {{ form_end(task_upload_form) }}
   </div>
@@ -140,6 +145,26 @@
         <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
       </div>
     {{ form_end(new_task_form) }}
+  </div>
+</div>
+
+<div class="modal fade" id="export-modal" tabindex="-1" role="dialog" aria-labelledby="export-modal-label">
+  <div class="modal-dialog" role="document">
+    {{ form_start(task_export_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="export-modal-label">{% trans %}Export tasks{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          {% trans with { '%date%': date|localizeddate('medium', 'none') } %}Tasks matching %date% will be exported{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-primary">{% trans %}Export{% endtrans %}</button>
+      </div>
+    {{ form_end(task_export_form) }}
   </div>
 </div>
 

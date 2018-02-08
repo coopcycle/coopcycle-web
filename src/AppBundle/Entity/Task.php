@@ -246,4 +246,24 @@ class Task
         $this->assignment->setTask(null);
         $this->assignment = null;
     }
+
+    public function hasEvent($name)
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getFirstEvent($name)
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getName() === $name) {
+                return $event;
+            }
+        }
+    }
 }

@@ -1,0 +1,54 @@
+<?php
+
+namespace AppBundle\Form;
+
+use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskRepository;
+use League\Csv\Writer as CsvWriter;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\Extension\Core\Type as FormType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class TaskExportType extends AbstractType
+{
+    private $taskRepository;
+
+    public function __construct(TaskRepository $taskRepository)
+    {
+        $this->taskRepository = $taskRepository;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+
+            $taskExport = $event->getForm()->getData();
+
+            $assignedTasks = $this->taskRepository->findAssigned($taskExport->date);
+
+            $csv = CsvWriter::createFromString('');
+            $csv->insertOne(['#', 'type', 'address.streetAddress', 'status', 'event.DONE.notes']);
+
+            $records = [];
+            foreach ($assignedTasks as $task) {
+                $records[] = [
+                    $task->getId(),
+                    $task->getType(),
+                    $task->getAddress()->getStreetAddress(),
+                    $task->getStatus(),
+                    $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : ''
+                ];
+            }
+            $csv->insertAll($records);
+
+            $taskExport->csv = $csv->getContent();
+
+            $event->getForm()->setData($taskExport);
+        });
+    }
+}

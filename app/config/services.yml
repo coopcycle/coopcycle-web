@@ -193,6 +193,10 @@ services:
     arguments: [ '@craue_config', '@csa_guzzle.client.google_maps' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\TaskExportType':
+    arguments: [ '@coopcycle.repository.task' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
@@ -215,6 +219,12 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Delivery\PricingRule
+
+  coopcycle.repository.task:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Task
 
   delivery_service.default:
     class: AppBundle\Service\DeliveryService\Core

@@ -20,4 +20,15 @@ class TaskRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAssigned(\DateTime $date)
+    {
+        return $this->createQueryBuilder('t')
+            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
+            ->andWhere('DATE(t.doneBefore) = :date')
+            ->orderBy('ta.position', 'ASC')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
 }
