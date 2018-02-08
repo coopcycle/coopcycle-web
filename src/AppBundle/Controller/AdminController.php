@@ -58,7 +58,7 @@ class AdminController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return array();
+        return $this->dashboardAction($request);
     }
 
     protected function getOrderList(Request $request)
