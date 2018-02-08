@@ -28,7 +28,7 @@ html, body {
   padding: 0;
   margin: 0;
 
-  &__map, &__aside {
+  &__map, &__aside, &__map-container {
     display: -webkit-box;
     display: -ms-flexbox;
     display: -webkit-flex;
@@ -38,6 +38,12 @@ html, body {
   &__map {
     padding-bottom: 50px;
     position: relative;
+  }
+  &__map-container {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
   }
   &__toolbar-container {
     position: absolute;
@@ -93,6 +99,8 @@ html, body {
     font-size: 11px;
 
     .dashboard__panel {
+      min-height: 200px;
+
       h4 > a {
         color: #fff;
         &:hover, &:active {
@@ -102,59 +110,37 @@ html, body {
       }
     }
 
-    &__top, &__bottom {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: -webkit-flex;
-      display: flex;
-    }
-    &__top {
-      overflow: auto;
-      flex-direction: column;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      -ms-flex: 1;
-      flex: 1;
-    }
-    &__bottom {
-      -webkit-box-flex: 2;
-      -webkit-flex: 2;
-      -ms-flex: 2;
-      flex: 2;
+    .dropzone {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      background-color: lighten(#F39C12, 30%);
+      border: 3px dashed #F1C40F;
 
-      .panel {
-        margin-bottom: 0;
-        .dropzone {
-          box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          -webkit-box-sizing: border-box;
-          background-color: lighten(#F39C12, 30%);
-          border: 3px dashed #F1C40F;
-          &--over {
-            background-color: lighten(#F39C12, 30%);
-            border: 3px dashed #E74C3C;
-            .dropzone-item {
-              display: none;
-            }
-          }
-          &--loading {
-            background-color: lighten(#F39C12, 30%);
-            border: 3px dashed #E74C3C;
-            .dropzone-item {
-              display: none;
-            }
-          }
-          .list-group-item {
-            background-color: transparent;
-          }
-          .dropzone-item {
-            border-width: 0;
-          }
+      &--over {
+        background-color: lighten(#F39C12, 30%);
+        border: 3px dashed #E74C3C;
+
+        .dropzone-item {
+          display: none;
         }
+
+      }
+      &--loading {
+        background-color: lighten(#F39C12, 30%);
+        border: 3px dashed #E74C3C;
+        .dropzone-item {
+          display: none;
+        }
+      }
+      .list-group-item {
+        background-color: transparent;
+      }
+      .dropzone-item {
+        border-width: 0;
       }
     }
   }
-
 }
 
 .list-group-item {
@@ -230,6 +216,7 @@ html, body {
   flex: 1;
   margin-bottom: 0;
   padding: 0;
+  z-index: 0;
 }
 
 #date-picker {

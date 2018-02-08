@@ -12,9 +12,9 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
-<div class="dashboard {% if nav %}dashboard--with-nav{% endif %}">
+<div class="dashboard {% if nav %}dashboard--with-nav{% endif %}" id="dashboard">
     <div class="dashboard__map">
-      <div id="map"></div>
+      <div class="dashboard__map-container"></div>
       <div class="dashboard__toolbar-container">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
@@ -60,40 +60,6 @@
       <section class="dashboard__aside__bottom">
       </section>
     </aside>
-</div>
-
-<div class="modal fade" id="user-modal" tabindex="-1" role="dialog" aria-labelledby="user-modal-label">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="user-modal-label">{% trans %}Add a user to the planning{% endtrans %}</h4>
-      </div>
-      <div class="modal-body">
-        <form method="post" class="form-horizontal">
-          <div class="form-group" data-action="dispatch">
-            <label for="courier" class="col-sm-2 control-label">
-              {% trans %}Courier{% endtrans %}
-              </label>
-            <div class="col-sm-10">
-              <select name="courier" class="form-control">
-                <option></option>
-                {% for courier in couriers %}
-                  <option value="{{ courier.username }}">
-                    {{ courier.username }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
-        <button type="submit" class="btn btn-primary">{% trans %}Add{% endtrans %}</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="upload-modal-label">
@@ -190,8 +156,12 @@ window.AppData = window.AppData || {}
 window.AppData.Dashboard = {
   i18n: {
     'Waiting': "{{ date|localizeddate('medium', 'none') }}",
-    'Unassigned': 'En attente',
-    'Assigned': 'Assignées'
+    'Unassigned': "{% trans %}dashboard.unassigned{% endtrans %}",
+    'Assigned': "{% trans %}dashboard.assigned{% endtrans %}",
+    'Add a user to the planning': "{% trans %}Add a user to the planning{% endtrans %}",
+    'Courier': "{% trans %}Courier{% endtrans %}",
+    'Add': "{% trans %}Add{% endtrans %}",
+    'Cancel': "{% trans %}Cancel{% endtrans %}"
   },
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path('admin_dashboard_fullscreen', dashboard_route_params)|raw }}",
@@ -199,7 +169,8 @@ window.AppData.Dashboard = {
   taskModalURL: "{{ path('admin_dashboard_task_modal_content', { id: '__TASK_ID__' }) }}",
   userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
   tasks: {{ tasks|json_encode()|raw }},
-  taskLists: {{ task_lists|json_encode()|raw }}
+  taskLists: {{ task_lists|json_encode()|raw }},
+  couriersList: {{ couriers|json_encode()|raw }}
 }
 </script>
 <script src="{{ asset('js/dashboard.js') }}"></script>

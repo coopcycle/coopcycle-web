@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import TaskIcon from './TaskIcon'
 import TaskTimeline from './TaskTimeline'
 import TaskRangePicker from '../widgets/TaskRangePicker'
 import moment from 'moment'
@@ -9,32 +8,11 @@ moment.locale($('html').attr('lang'))
 
 const taskModalURL = window.AppData.Dashboard.taskModalURL
 
-export default class extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      task: props.task
-    }
-  }
-
-  componentDidMount() {
-    this.props.eventEmitter.on('task:done', (task) => {
-      if (task['@id'] === this.state.task['@id']) {
-        this.setState({ task })
-      }
-    })
-    this.props.eventEmitter.on('task:failed', (task) => {
-      if (task['@id'] === this.state.task['@id']) {
-        this.setState({ task })
-      }
-    })
-  }
+class Task extends React.Component {
 
   renderIconRight() {
 
-    const { assigned } = this.props
-    const { task } = this.state
+    const { assigned, task } = this.props
 
     if (assigned) {
       if (task.status === 'TODO') {
@@ -65,7 +43,7 @@ export default class extends React.Component {
   showTaskModal(e) {
     e.preventDefault()
 
-    const { task } = this.state
+    const { task } = this.props
 
     $('#task-edit-modal')
       .load(taskModalURL.replace('__TASK_ID__', task.id), () => {
@@ -85,8 +63,8 @@ export default class extends React.Component {
         })
 
         render(
-          <TaskTimeline task={ task } />
-        , document.querySelector('#task_edit_history'))
+          <TaskTimeline task={ task } />,
+          document.querySelector('#task_edit_history'))
 
         $('#task-edit-modal').modal({ show: true })
       })
@@ -94,7 +72,7 @@ export default class extends React.Component {
 
   render() {
 
-    const { task } = this.state
+    const { task } = this.props
 
     const classNames = [
       'list-group-item',
@@ -117,3 +95,5 @@ export default class extends React.Component {
 
   }
 }
+
+export default Task

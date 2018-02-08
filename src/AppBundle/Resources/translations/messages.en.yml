@@ -4,6 +4,9 @@ adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
 
+dashboard.unassigned: Unassigned
+dashboard.assigned: Assigned
+
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
 local_business.form.enabled.label: Enabled

@@ -121,7 +121,7 @@ class AdminController extends Controller
      */
     public function dashboardFullscreenAction($date, Request $request)
     {
-        $now = new \DateTime();
+
         $date = new \DateTime($date);
 
         if ($this->container->has('profiler')) {
@@ -230,15 +230,15 @@ class AdminController extends Controller
             ];
         }
 
-        $userManager = $this->get('fos_user.user_manager');
-
-        $couriers = array_filter($userManager->findUsers(), function (UserInterface $user) {
-            return $user->hasRole('ROLE_COURIER');
-        });
-
-        usort($couriers, function (UserInterface $a, UserInterface $b) {
-            return $a->getUsername() < $b->getUsername() ? -1 : 1;
-        });
+        $couriers = $this->getDoctrine()
+            ->getRepository(ApiUser::class)
+            ->createQueryBuilder('u')
+            ->select("u.username")
+            ->where('u.roles LIKE :roles')
+            ->orderBy('u.username', 'ASC')
+            ->setParameter('roles', '%ROLE_COURIER%')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('@App/Admin/dashboardIframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
@@ -350,10 +350,20 @@ class AdminController extends Controller
             ->getManagerForClass(TaskList::class)
             ->flush();
 
+        $tasks = array_map(function (Task $task) {
+            return $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
+                'resource_class' => Task::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task', 'delivery', 'place']
+            ]);
+        }, iterator_to_array($tasksToAssign));
+
         return new JsonResponse([
             'distance' => $taskList->getDistance(),
             'duration' => $taskList->getDuration(),
             'polyline' => $taskList->getPolyline(),
+            'tasks' => $tasks
         ]);
     }
 
