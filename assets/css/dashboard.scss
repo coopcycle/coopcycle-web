@@ -181,6 +181,9 @@ html, body {
     background-color: lighten(#3498DB, 5%);
   }
   &--dropoff {
+    cursor: grab;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
     background-color: lighten(#2ECC71, 15%);
   }
   &--dropoff:hover {
