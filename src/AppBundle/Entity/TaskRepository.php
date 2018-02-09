@@ -12,7 +12,7 @@ class TaskRepository extends EntityRepository
     {
         return $this->createQueryBuilder('t')
             ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
-            ->andWhere('DATE(t.doneBefore) = :date')
+            ->andWhere('DATE(t.doneAfter) = :date')
             ->andWhere('ta.courier = :courier')
             ->orderBy('ta.position', 'ASC')
             ->setParameter('date', $date->format('Y-m-d'))
@@ -25,7 +25,7 @@ class TaskRepository extends EntityRepository
     {
         return $this->createQueryBuilder('t')
             ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
-            ->andWhere('DATE(t.doneBefore) = :date')
+            ->andWhere('DATE(t.doneAfter) = :date')
             ->orderBy('ta.position', 'ASC')
             ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()

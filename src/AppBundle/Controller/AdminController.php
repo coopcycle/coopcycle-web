@@ -199,7 +199,7 @@ class AdminController extends Controller
         $tasks = $this->getDoctrine()
             ->getRepository(Task::class)
             ->createQueryBuilder('t')
-            ->andWhere('DATE(t.doneBefore) = :date')
+            ->andWhere('DATE(t.doneAfter) = :date')
             ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()
             ->getResult();

@@ -35,15 +35,7 @@ class Me
 
         $tasks = $this->doctrine
             ->getRepository(Task::class)
-            ->createQueryBuilder('t')
-            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
-            ->andWhere('DATE(t.doneBefore) = :date')
-            ->andWhere('ta.courier = :courier')
-            ->orderBy('ta.position', 'ASC')
-            ->setParameter('date', $date->format('Y-m-d'))
-            ->setParameter('courier', $this->getUser())
-            ->getQuery()
-            ->getResult();
+            ->findByUserAndDate($this->getUser(), $date);
 
         return $tasks;
     }
