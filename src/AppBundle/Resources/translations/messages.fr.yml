@@ -170,6 +170,7 @@ Import: Importer
 Export: Exporter
 Import tasks: Importer des tâches
 Export tasks: Exporter des tâches
+Edit task %id%: Modifier la tâche %id%
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses

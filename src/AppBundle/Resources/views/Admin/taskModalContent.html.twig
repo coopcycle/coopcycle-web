@@ -1,12 +1,14 @@
 {% form_theme form 'AppBundle:Form:taskModal.html.twig' %}
 
+{% set task = form.vars.data %}
+
 <div class="modal-dialog" role="document">
-  {{ form_start(form, { action: path('admin_dashboard_task', { id: form.vars.data.id }), attr: { class: 'modal-content' } }) }}
+  {{ form_start(form, { action: path('admin_task', { id: task.id }), attr: { class: 'modal-content' } }) }}
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
-      <h4 class="modal-title" id="task-modal-label">{% trans %}Edit task{% endtrans %}</h4>
+      <h4 class="modal-title" id="task-modal-label">{% trans with { '%id%': ('#' ~ task.id) } %}Edit task %id%{% endtrans %}</h4>
     </div>
     <div class="modal-body">
       {{ form_row(form.type) }}
@@ -25,7 +27,19 @@
         </a>
       </p>
       <div class="collapse" id="{{ form.vars.id }}_history">
-        History
+        <ul class="list-unstyled" data-render="timeline">
+          {% for event in task.events %}
+            <li data-event="{{ event.name }}">
+              <time datetime="{{ event.createdAt|date('c') }}">{{ event.createdAt|localizeddate('short', 'short') }}</time> 
+              <span>{{ event.name }}</span> 
+              {% if event.notes is not empty %}
+              <pre>
+                {{ event.notes }}
+              </pre>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
     <div class="modal-footer">
@@ -37,3 +51,7 @@
     </div>
   {{ form_end(form) }}
 </div>
+
+<script>
+new CoopCycle.TaskModal('task_edit');
+</script

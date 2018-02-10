@@ -166,7 +166,7 @@ window.AppData.Dashboard = {
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path('admin_dashboard_fullscreen', dashboard_route_params)|raw }}",
   assignTaskURL: "{{ path('admin_tasks_assign', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
-  taskModalURL: "{{ path('admin_dashboard_task_modal_content', { id: '__TASK_ID__' }) }}",
+  taskModalURL: "{{ path('admin_task_modal_content', { id: '__TASK_ID__' }) }}",
   userURL: "{{ path('admin_dashboard_user', { username: '__USERNAME__' }) }}",
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
@@ -192,6 +192,8 @@ function initMap() {
   })
 }
 </script>
+<script src="{{ asset('js/widgets/timeline.js') }}"></script>
+<script src="{{ asset('js/task-modal.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

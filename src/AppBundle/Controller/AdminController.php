@@ -900,9 +900,9 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/dashboard/tasks/{id}", methods={"POST"}, name="admin_dashboard_task")
+     * @Route("/admin/tasks/{id}", methods={"POST"}, name="admin_task")
      */
-    public function dashboardTask($id, Request $request)
+    public function taskAction($id, Request $request)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -932,10 +932,10 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/dashboard/tasks/{id}/modal-content", name="admin_dashboard_task_modal_content")
+     * @Route("/admin/tasks/{id}/modal-content", name="admin_task_modal_content")
      * @Template()
      */
-    public function dashboardTaskModalContentAction($id, Request $request)
+    public function taskModalContentAction($id, Request $request)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
