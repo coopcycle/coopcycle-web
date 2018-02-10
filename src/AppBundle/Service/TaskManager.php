@@ -24,28 +24,81 @@ class TaskManager
         $this->dispatcher = $dispatcher;
     }
 
-    public function assign(Task $task, UserInterface $user, $position)
+    /**
+     * Assigns a task to a user.
+     * If $position is omitted, $task will be assigned at the end.
+     * If $task is linked to other tasks, they will be assigned to the same user.
+     *
+     * @param Task          $task
+     * @param UserInterface $user
+     * @param int           $position
+     */
+    public function assign(Task $task, UserInterface $user, $position = null)
     {
-        $isAssignedToSameUser = $task->isAssigned() && $task->isAssignedTo($user);
+        $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
 
-        $task->assignTo($user, $position);
+        if (null === $position) {
+            $tasks = $taskRepository->findByUserAndDate($user, $task->getDoneBefore());
+            if (count($tasks) === 0) {
+                $position = 0;
+            } else {
+                $positions = array_map(function (Task $task) {
+                    return $task->getAssignment()->getPosition();
+                }, $tasks);
+                $position = max($positions) + 1;
+            }
+        }
 
-        if (!$isAssignedToSameUser) {
-            $this->dispatcher->dispatch(TaskAssignEvent::NAME, new TaskAssignEvent($task, $user));
+        $linked = $taskRepository->findLinked($task);
+        $tasks = array_merge([$task], $linked);
+
+        usort($tasks, function (Task $a, Task $b) {
+            if ($a->hasPrevious() && $a->getPrevious() === $b) {
+                return 1;
+            }
+            if ($b->hasPrevious() && $b->getPrevious() === $a) {
+                return -1;
+            }
+            return 0;
+        });
+
+        foreach ($tasks as $taskToAssign) {
+            $taskToAssign->assignTo($user, $position++);
+
+            $isAssignedToSameUser = $taskToAssign->isAssigned() && $taskToAssign->isAssignedTo($user);
+            if (!$isAssignedToSameUser) {
+                $this->dispatcher->dispatch(TaskAssignEvent::NAME, new TaskAssignEvent($taskToAssign, $user));
+            }
         }
     }
 
     public function unassign(Task $task)
     {
-        $this->doctrine
-            ->getManagerForClass(TaskAssignment::class)
-            ->remove($task->getAssignment());
+        $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
 
-        $task->unassign();
+        $linked = $taskRepository->findLinked($task);
+        $tasks = array_merge([$task], $linked);
 
-        if (null !== $task->getDelivery()) {
-            $task->getDelivery()->setStatus(Delivery::STATUS_WAITING);
+        foreach ($tasks as $taskToUnassign) {
+
+            // FIXME
+            // Until the dashboard manages linked tasks properly,
+            // TaskManager::unassign may be called twice
+            if ($taskToUnassign->isAssigned()) {
+                $this->doctrine
+                    ->getManagerForClass(TaskAssignment::class)
+                    ->remove($taskToUnassign->getAssignment());
+
+                $taskToUnassign->unassign();
+
+                if (null !== $taskToUnassign->getDelivery()) {
+                    $taskToUnassign->getDelivery()->setStatus(Delivery::STATUS_WAITING);
+                }
+            }
+
         }
+
+        // TODO Reorder assigned tasks
     }
 
     public function markAsDone(Task $task)

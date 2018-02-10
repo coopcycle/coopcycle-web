@@ -31,4 +31,22 @@ class TaskRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findLinked(Task $task)
+    {
+        $linked = [];
+
+        if ($task->hasPrevious()) {
+            // TODO Recursion
+            $linked[] = $task->getPrevious();
+        } else {
+            $linked = $this->createQueryBuilder('t')
+                ->andWhere('t.previous = :task')
+                ->setParameter('task', $task)
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $linked;
+    }
 }
