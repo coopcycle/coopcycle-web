@@ -162,16 +162,6 @@ profile_restaurant_planning:
             restaurant: profile_restaurant
     methods: [ GET, POST ]
 
-profile_delivery_pick:
-    path:     /profile/deliveries/{id}/pick
-    defaults: { _controller: AppBundle:Profile:pickDelivery }
-    methods:  [ POST ]
-
-profile_delivery_deliver:
-    path:     /profile/deliveries/{id}/deliver
-    defaults: { _controller: AppBundle:Profile:deliverDelivery }
-    methods:  [ POST ]
-
 profile_deliveries_calculate_price:
     path: /profile/deliveries/calculate-price
     defaults: { _controller: AppBundle:Profile:calculateDeliveryPrice }

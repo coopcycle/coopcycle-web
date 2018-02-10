@@ -10,24 +10,74 @@
       <i class="fa fa-plus"></i> {% trans %}Create new delivery{% endtrans %}
     </a>
   </p>
-  {% include "AppBundle::_partials/Delivery/list.html.twig" with { show_courier: true, show_order: true, delivery_route: 'admin_delivery' } %}
+  <table class="table">
+    <thead>
+      <th></th>
+      <th>#</th>
+      <th>{% trans %}Type{% endtrans %}</th>
+      <th>{% trans %}Due date{% endtrans %}</th>
+      <th>{% trans %}Courier{% endtrans %}</th>
+      <th>{% trans %}Address{% endtrans %}</th>
+      <th>{% trans %}Delivery{% endtrans %}</th>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+      <tr {% if task.done %}class="active"{% endif %}>
+        <td width="1%">
+          {% include "AppBundle::_partials/Task/statusIcon.html.twig" %}
+        </td>
+        <td width="5%">
+          <a href="#" data-task="{{ task.id }}">
+            #{{ task.id }}
+          </a>
+        </td>
+        <td width="5%">
+          {% include "AppBundle::_partials/Task/typeLabel.html.twig" %}
+        </td>
+        <td width="15%">
+          <i class="fa fa-clock-o"></i> {{ task.doneBefore|localizeddate('short', 'short') }}
+        </td>
+        <td>
+        {% if task.assigned %}
+          <a href="{{ path('admin_user_details', { username: task.assignment.courier.username }) }}" title="{{ task.assignment.courier.username }}">
+            <i class="fa fa-user"></i> {{ task.assignment.courier.username }}
+          </a>
+        {% endif %}
+        </td>
+        <td>
+          {{ task.address.streetAddress }}
+        </td>
+        <td width="5%" class="text-right">
+          {% if task.delivery is not null %}
+          <a href="{{ path(routes.view, { id: task.delivery.id }) }}"
+            title="{% trans with { '%id%': task.delivery.id } %}Delivery #%id%{% endtrans %}">
+            <i class="fa fa-exchange"></i>
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
   <nav class="text-center">
-    {{ knp_pagination_render(deliveries) }}
+    {{ knp_pagination_render(tasks) }}
   </nav>
 
-  {% include "AppBundle::_partials/Delivery/modal.html.twig" %}
+  <div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
 window.AppData = window.AppData || {};
 window.AppData.Delivery = {
-  actions: {
-    dispatch: "{{ path(routes.dispatch, { id: '__DELIVERY_ID__' }) }}",
-    pick: "{{ path(routes.pick, { id: '__DELIVERY_ID__' }) }}",
-    deliver: "{{ path(routes.deliver, { id: '__DELIVERY_ID__' }) }}"
-  }
-}
+  taskModalURL: "{{ path('admin_task_modal_content', { id: '__TASK_ID__' }) }}"
+};
 </script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
+<script src="{{ asset('js/widgets/timeline.js') }}"></script>
+<script src="{{ asset('js/task-modal.js') }}"></script>
 <script src="{{ asset('js/delivery-list.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places"
+  async defer></script>
 {% endblock %}

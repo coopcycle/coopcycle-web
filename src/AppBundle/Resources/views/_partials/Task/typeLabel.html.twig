@@ -1,0 +1,7 @@
+<button class="btn btn-xs btn-default">
+  {% if task.type == 'PICKUP' %}
+  <i class="fa fa-cube"></i>
+  {% else %}
+  <i class="fa fa-arrow-down"></i>
+  {% endif %} {{ ('task.type.' ~ task.type) | trans }}
+</button>

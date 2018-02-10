@@ -1,13 +1,3 @@
-admin_delivery_pick:
-    path:     /admin/deliveries/{id}/pick
-    defaults: { _controller: AppBundle:Admin:pickDelivery }
-    methods:  [ POST ]
-
-admin_delivery_deliver:
-    path:     /admin/deliveries/{id}/deliver
-    defaults: { _controller: AppBundle:Admin:deliverDelivery }
-    methods:  [ POST ]
-
 admin_deliveries_new:
   path: /admin/deliveries/new
   defaults:
