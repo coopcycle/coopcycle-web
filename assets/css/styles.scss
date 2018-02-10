@@ -654,3 +654,9 @@ form[name="menu"] {
     }
   }
 }
+
+// Make sure Google Place Autocomplete is always on top
+// Fix for Bootstrap's modal
+div.pac-container {
+   z-index: 1050 !important;
+}
