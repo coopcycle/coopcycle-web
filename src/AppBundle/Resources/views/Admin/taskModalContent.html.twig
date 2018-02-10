@@ -21,6 +21,7 @@
         {{ form_row(form.doneAfter) }}
         {{ form_row(form.doneBefore) }}
       </div>
+      {{ form_row(form.assign) }}
       <p>
         <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_history">
           <i class="fa fa-plus"></i> {% trans from 'messages' %}Show history{% endtrans %}

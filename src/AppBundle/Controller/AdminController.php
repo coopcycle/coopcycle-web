@@ -904,6 +904,8 @@ class AdminController extends Controller
      */
     public function taskAction($id, Request $request)
     {
+        $taskManager = $this->get('coopcycle.task_manager');
+
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
             ->find($id);
@@ -914,6 +916,18 @@ class AdminController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $task = $form->getData();
+
+            $user = $form->get('assign')->getData();
+
+            if (null === $user) {
+                if ($task->isAssigned()) {
+                    $taskManager->unassign($task);
+                }
+            } else {
+                if (!$task->isAssigned() || !$task->isAssignedTo($user)) {
+                    $taskManager->assign($task, $user);
+                }
+            }
 
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
                 if (!$task->isAssigned()) {
