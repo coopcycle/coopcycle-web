@@ -109,10 +109,30 @@ TestUtils.prototype.createUser = function(username, roles) {
         resolve(user)
       })
       .catch(function(e) {
-        reject(err.errors)
+        reject(e.errors)
       })
   })
-};
+}
+
+TestUtils.prototype.createSetting = function(name, value) {
+
+  const { CraueSettings } = this.db
+
+  return new Promise(function (resolve, reject) {
+
+    CraueSettings.create({
+        name,
+        value,
+        section: 'general'
+      })
+        .then(function(setting) {
+          resolve(setting)
+        })
+        .catch(function(e) {
+          reject(e.errors)
+        })
+    })
+}
 
 TestUtils.prototype.createTaxCategory = function(name, code) {
 
@@ -138,7 +158,7 @@ TestUtils.prototype.createTaxCategory = function(name, code) {
           resolve(taxCategory)
         })
         .catch(function(e) {
-          reject(e)
+          reject(e.errors)
         })
       })
   })

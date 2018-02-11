@@ -63,12 +63,12 @@ preload()
       while (true) {
 
         let shouldDispatchSetting = yield db.CraueSettings.findOne({ where: {'name': 'enable_automatic_dispatch'}}),
-            shouldDispatch =  shouldDispatchSetting.value === 'true'
+            shouldDispatch =  shouldDispatchSetting ? shouldDispatchSetting.value === 'true' : false
 
         if (!shouldDispatch) {
-          let automaticDispatchWait = 180;
+          let automaticDispatchWait = process.env.NODE_ENV === 'test' ? 10 : 180*1000;
           winston.info('Automatic dispatch is disabled, stop and check in ' + automaticDispatchWait + ' seconds');
-          yield new Promise(resolve => setTimeout(resolve, automaticDispatchWait*1000))
+          yield new Promise(resolve => setTimeout(resolve, automaticDispatchWait))
           continue
         }
 
