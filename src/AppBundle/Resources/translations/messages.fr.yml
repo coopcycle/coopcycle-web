@@ -172,6 +172,8 @@ Import tasks: Importer des tâches
 Export tasks: Exporter des tâches
 Edit task %id%: Modifier la tâche %id%
 Due date: Échéance
+Complete: Terminer
+Complete task %id%: Terminer la tâche %id%
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
@@ -262,6 +264,9 @@ form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
 form.task_upload.file: Fichier
+
+form.task_complete.done.label: Terminer
+form.task_complete.fail.label: Signaler un problème
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?

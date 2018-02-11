@@ -18,6 +18,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskAssignment;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
+use AppBundle\Form\TaskCompleteType;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
@@ -233,27 +234,6 @@ class ProfileController extends Controller
         ];
     }
 
-    /**
-     * @Route("/profile/tasks/{id}/done", methods={"POST"}, name="profile_task_done")
-     */
-    public function markTaskDoneAction($id, Request $request)
-    {
-        $taskManager = $this->get('coopcycle.task_manager');
-
-        $task = $this->getDoctrine()
-            ->getRepository(Task::class)->find($id);
-
-        // TODO Access control
-
-        $taskManager->markAsDone($task);
-
-        $this->getDoctrine()
-            ->getManagerForClass(Task::class)
-            ->flush();
-
-        return $this->redirectToRoute('profile_tasks');
-    }
-
     public function editDeliveryAction($id, Request $request)
     {
         $delivery = $this->getDoctrine()
@@ -261,5 +241,42 @@ class ProfileController extends Controller
             ->find($id);
 
         return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
+    }
+
+    /**
+     * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
+     * @Template()
+     */
+    public function completeTaskAction($id, Request $request)
+    {
+        $taskManager = $this->get('coopcycle.task_manager');
+
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->find($id);
+
+        $form = $this->createForm(TaskCompleteType::class, $task);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $task = $form->getData();
+            $notes = $form->get('notes')->getData();
+
+            if ($form->getClickedButton()) {
+                if ('done' === $form->getClickedButton()->getName()) {
+                    $taskManager->markAsDone($task);
+                }
+                if ('fail' === $form->getClickedButton()->getName()) {
+                    $taskManager->markAsFailed($task, $notes);
+                }
+            }
+
+            return $this->redirectToRoute('profile_tasks', ['date' => $task->getDoneBefore()->format('Y-m-d')]);
+        }
+
+        return [
+            'form' => $form->createView(),
+        ];
     }
 }
