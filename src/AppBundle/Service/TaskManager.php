@@ -26,9 +26,13 @@ class TaskManager
 
     public function assign(Task $task, UserInterface $user, $position)
     {
+        $isAssignedToSameUser = $task->isAssigned() && $task->isAssignedTo($user);
+
         $task->assignTo($user, $position);
 
-        $this->dispatcher->dispatch(TaskAssignEvent::NAME, new TaskAssignEvent($task, $user));
+        if (!$isAssignedToSameUser) {
+            $this->dispatcher->dispatch(TaskAssignEvent::NAME, new TaskAssignEvent($task, $user));
+        }
     }
 
     public function unassign(Task $task)

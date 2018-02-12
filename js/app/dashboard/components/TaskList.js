@@ -3,61 +3,59 @@ import { findDOMNode } from 'react-dom'
 import _ from 'lodash'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
+import { connect } from 'react-redux'
 
-export default class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      tasks: props.tasks || [],
-    }
-  }
+
+class TaskList extends React.Component {
+
   componentDidMount() {
-    this.props.onLoad(findDOMNode(this))
+    this.props.onLoad(findDOMNode(document.getElementById('task-list')))
   }
-  add(task) {
-    let { tasks } = this.state
-    tasks = tasks.slice()
-    tasks.push(task)
-    this.setState({ tasks })
-  }
-  remove(task) {
-    const { tasks } = this.state
 
-    let tasksToRemove = []
-    if (Array.isArray(task)) {
-      task.forEach(task => tasksToRemove.push(task))
-    } else {
-      tasksToRemove = [ task ]
-    }
-
-    const newTasks = tasks.slice()
-
-    _.remove(newTasks, task => _.find(tasksToRemove, taskToRemove => task['@id'] === taskToRemove['@id']))
-
-    this.setState({ tasks: newTasks })
-  }
   render() {
 
-    const { tasks } = this.state
-
-    const standaloneTasks = _.filter(tasks, task => task.delivery === null)
-    const groupedTasks = _.filter(tasks, task => task.delivery !== null)
-
-    const taskGroups = _.groupBy(groupedTasks, task => task.delivery['@id'])
+    const { unassignedTasks } = this.props,
+          standaloneTasks = _.filter(unassignedTasks, task => task.delivery === null),
+          groupedTasks = _.filter(unassignedTasks, task => task.delivery !== null),
+          taskGroups = _.groupBy(groupedTasks, task => task.delivery['@id'])
 
     return (
-      <div className="list-group task-list">
-        { _.map(taskGroups, (tasks, key) => {
-          return (
-            <TaskGroup key={ key } eventEmitter={ this.props.eventEmitter } tasks={ tasks } />
-          )
-        })}
-        { _.map(standaloneTasks, (task, key) => {
-          return (
-            <Task key={ key } eventEmitter={ this.props.eventEmitter } task={ task } />
-          )
-        })}
+      <div className="dashboard__panel">
+        <h4>
+          <span>{ window.AppData.Dashboard.i18n['Unassigned'] }</span>
+          <a href="#" className="pull-right" onClick={ e => {
+            e.preventDefault();
+            $('#task-modal').modal('show')
+          }}>
+            <i className="fa fa-plus"></i>
+          </a>
+        </h4>
+        <div className="dashboard__panel__scroll">
+          <div className="list-group" id="task-list">
+            { _.map(taskGroups, (tasks, key) => {
+              return (
+                <TaskGroup key={ key } tasks={ tasks } />
+              )
+            })}
+            { _.map(standaloneTasks, (task, key) => {
+              return (
+                <Task
+                  key={ key }
+                  task={ task }
+                />
+              )
+            })}
+          </div>
+        </div>
       </div>
     )
   }
 }
+
+function mapStateToProps (state) {
+  return {
+    unassignedTasks: state.unassignedTasks
+  }
+}
+
+export default connect(mapStateToProps)(TaskList)

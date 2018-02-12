@@ -183,6 +183,9 @@ profile.orders.empty: Pas de commande pour l'instant!
 
 local_business.form.enabled.label: Activé
 
+dashboard.unassigned: En attente
+dashboard.assigned: Assignées
+
 deliveryForm.noPriceWarning: Le prix de la course n'a pas pu être calculé. Veuillez l'entrer manuellement.
 deliveryForm.noPriceFromPricingWarning: Le prix de la course n'a pas pu être calculé à partir de la tarification. Veuillez l'entrer manuellement ou éditer la tarification.
 
