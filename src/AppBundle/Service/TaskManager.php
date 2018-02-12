@@ -8,6 +8,7 @@ use AppBundle\Entity\TaskAssignment;
 use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskAssignEvent;
+use AppBundle\Event\TaskUnassignEvent;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -91,9 +92,7 @@ class TaskManager
 
                 $taskToUnassign->unassign();
 
-                if (null !== $taskToUnassign->getDelivery()) {
-                    $taskToUnassign->getDelivery()->setStatus(Delivery::STATUS_WAITING);
-                }
+                $this->dispatcher->dispatch(TaskUnassignEvent::NAME, new TaskUnassignEvent($taskToUnassign));
             }
 
         }

@@ -7,8 +7,9 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Event\TaskAssignEvent;
 use AppBundle\Event\TaskCreateEvent;
-use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskDoneEvent;
+use AppBundle\Event\TaskFailedEvent;
+use AppBundle\Event\TaskUnassignEvent;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use Predis\Client as Redis;
@@ -34,11 +35,25 @@ final class TaskSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            TaskAssignEvent::NAME => 'onTaskAssign',
-            TaskCreateEvent::NAME => 'onTaskCreate',
-            TaskFailedEvent::NAME => 'onTaskFailed',
-            TaskDoneEvent::NAME   => 'onTaskDone',
+            TaskAssignEvent::NAME   => 'onTaskAssign',
+            TaskCreateEvent::NAME   => 'onTaskCreate',
+            TaskFailedEvent::NAME   => 'onTaskFailed',
+            TaskDoneEvent::NAME     => 'onTaskDone',
+            TaskUnassignEvent::NAME => 'onTaskUnassign',
         ];
+    }
+
+    private function addEvent(Task $task, $name, $notes = null)
+    {
+        $event = new TaskEvent($task, $name, $notes);
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->persist($event);
+
+        $this->doctrine
+            ->getManagerForClass(TaskEvent::class)
+            ->flush();
     }
 
     public function onTaskAssign(TaskAssignEvent $event)
@@ -46,18 +61,26 @@ final class TaskSubscriber implements EventSubscriberInterface
         $task = $event->getTask();
         $user = $event->getUser();
 
-        $taskEvent = new TaskEvent($task, 'ASSIGN');
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->persist($taskEvent);
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->flush();
+        $this->addEvent($task, 'ASSIGN');
 
         if (null !== $task->getDelivery()) {
             $this->deliveryManager->dispatch($task->getDelivery(), $user);
+
+            $this->doctrine
+                ->getManagerForClass(Delivery::class)
+                ->flush();
+        }
+    }
+
+    public function onTaskUnassign(TaskUnassignEvent $event)
+    {
+        $task = $event->getTask();
+
+        $this->addEvent($task, 'UNASSIGN');
+
+        if (null !== $task->getDelivery()) {
+            $task->getDelivery()->setCourier(null);
+            $task->getDelivery()->setStatus(Delivery::STATUS_WAITING);
 
             $this->doctrine
                 ->getManagerForClass(Delivery::class)
@@ -69,30 +92,26 @@ final class TaskSubscriber implements EventSubscriberInterface
     {
         $task = $event->getTask();
 
-        $taskEvent = new TaskEvent($task, 'CREATE');
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->persist($taskEvent);
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->flush();
+        $this->addEvent($task, 'CREATE');
     }
 
     public function onTaskDone(TaskDoneEvent $event)
     {
         $task = $event->getTask();
 
-        $taskEvent = new TaskEvent($task, 'DONE');
+        $this->addEvent($task, 'DONE');
 
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->persist($taskEvent);
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->flush();
+        if (null !== $task->getDelivery()) {
+            if ($task->isPickup()) {
+                $task->getDelivery()->setStatus(Delivery::STATUS_PICKED);
+            }
+            if ($task->isDropoff()) {
+                $task->getDelivery()->setStatus(Delivery::STATUS_DELIVERED);
+            }
+            $this->doctrine
+                ->getManagerForClass(Delivery::class)
+                ->flush();
+        }
 
         $data = $this->serializer->normalize($task, 'jsonld', [
             'resource_class' => Task::class,
@@ -108,15 +127,7 @@ final class TaskSubscriber implements EventSubscriberInterface
     {
         $task = $event->getTask();
 
-        $taskEvent = new TaskEvent($task, 'FAILED', $event->getReason());
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->persist($taskEvent);
-
-        $this->doctrine
-            ->getManagerForClass(TaskEvent::class)
-            ->flush();
+        $this->addEvent($task, 'FAILED', $event->getReason());
 
         $data = $this->serializer->normalize($task, 'jsonld', [
             'resource_class' => Task::class,

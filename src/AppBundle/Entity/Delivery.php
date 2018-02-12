@@ -290,7 +290,7 @@ class Delivery extends Intangible implements TaxableInterface
      *
      * @return $this
      */
-    public function setCourier(ApiUser $courier)
+    public function setCourier(ApiUser $courier = null)
     {
         $this->courier = $courier;
 

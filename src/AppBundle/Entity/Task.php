@@ -163,6 +163,16 @@ class Task
         return $this;
     }
 
+    public function isPickup()
+    {
+        return $this->type === self::TYPE_PICKUP;
+    }
+
+    public function isDropoff()
+    {
+        return $this->type === self::TYPE_DROPOFF;
+    }
+
     public function getStatus()
     {
         return $this->status;
