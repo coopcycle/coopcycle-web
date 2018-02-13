@@ -28,9 +28,13 @@ const drake = dragula({
     $(inDraggingUnassignedTask).find('.list-group-item').removeClass('disabled')
   }
 }).on('over', function (el, container, source) {
-  $(container).addClass('dropzone--over');
+  if ($(container).hasClass('dropzone')) {
+    $(container).addClass('dropzone--over')
+  }
 }).on('out', function (el, container, source) {
-  $(container).removeClass('dropzone--over');
+  if ($(container).hasClass('dropzone')) {
+    $(container).removeClass('dropzone--over')
+  }
 })
 
 /**
