@@ -61,12 +61,9 @@ class Task extends React.Component {
 
     return (
       <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] }>
-        <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (task.type === 'PICKUP' ? 'arrow-up' : 'arrow-down') }></i>  
+        <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>  
         <a onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
         <br />
-        { task.delivery && (
-          <span>#{ task.delivery.id }</span> 
-        )}
         <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
         { this.renderIconRight() }
       </div>

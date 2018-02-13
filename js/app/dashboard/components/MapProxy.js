@@ -19,7 +19,7 @@ export default class MapProxy {
 
   addTask(task) {
     const color  = task.type === 'PICKUP' ? '#337ab7' : '#27AE60'
-    const icon   = task.type === 'PICKUP' ? 'arrow-up' : 'arrow-down'
+    const icon   = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
