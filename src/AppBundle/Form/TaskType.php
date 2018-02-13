@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -38,7 +39,20 @@ class TaskType extends LocalBusinessType
             ->add('doneBefore', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm'
-            ]);
+            ])
+            ->add('assign', EntityType::class, array(
+                'mapped' => false,
+                'label' => 'Courier',
+                'required' => false,
+                'class' => ApiUser::class,
+                'query_builder' => function (EntityRepository $entityRepository) {
+                    return $entityRepository->createQueryBuilder('u')
+                        ->where('u.roles LIKE :roles')
+                        ->setParameter('roles', '%ROLE_COURIER%')
+                        ->orderBy('u.username', 'ASC');
+                },
+                'choice_label' => 'username',
+            ));
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -53,6 +67,9 @@ class TaskType extends LocalBusinessType
                 $form->add('save', SubmitType::class);
             }
 
+            if ($task->isAssigned()) {
+                $form->get('assign')->setData($task->getAssignment()->getCourier());
+            }
         });
     }
 

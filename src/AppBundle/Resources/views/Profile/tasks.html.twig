@@ -22,50 +22,39 @@
     <thead>
       <th></th>
       <th></th>
-      <th>{% trans %}Delivery{% endtrans %}</th>
-      <th>{% trans %}Address{% endtrans %}</th>
       <th></th>
+      <th>{% trans %}Due date{% endtrans %}</th>
+      <th>{% trans %}Address{% endtrans %}</th>
       <th></th>
     </thead>
     <tbody>
     {% for task in tasks %}
       <tr>
         <td width="2%">
-          {% if task.status == 'DONE' %}
-          <i class="fa fa-calendar-check-o" style="color: #27AE60;"></i>
-          {% else %}
-          <i class="fa fa-calendar-o"></i>
-          {% endif %}
+          {% include "AppBundle::_partials/Task/statusIcon.html.twig" %}
         </td>
-        <td>
-          <button class="btn btn-xs btn-default">
-            {% if task.type == 'PICKUP' %}
-            <i class="fa fa-arrow-up"></i>
-            {% else %}
-            <i class="fa fa-arrow-down"></i>
-            {% endif %} {{ ('task.type.' ~ task.type) | trans }}
-          </button>
+        <td width="2%">
+          #{{ task.id }}
         </td>
-        <td>{% if task.delivery is not empty %}#{{ task.delivery.id }}{% endif %}</td>
-        <td>{{ task.address.streetAddress }}</td>
-        <td>
+        <td width="5%">
+          {% include "AppBundle::_partials/Task/typeLabel.html.twig" %}
+        </td>
+        <td width="15%">
+          <i class="fa fa-clock-o"></i> 
           {{ task.doneAfter|localizeddate('none', 'short') }} - {{ task.doneBefore|localizeddate('none', 'short') }}
         </td>
+        <td>{{ task.address.streetAddress }}</td>
         <td class="text-right">
-          {% if task.status == 'TODO' %}
-            <form method="post" action="{{ path('profile_task_done', { id: task.id }) }}">
-              <button type="submit" class="btn btn-xs btn-success">
-                <i class="fa fa-check"></i> Fait
-              </button>
-            </form>
-          {% elseif task.status == 'DONE' %}
-            {{ task.updatedAt|localizeddate('short', 'short') }}
-          {% endif %}
+          <button type="button" class="btn btn-xs btn-primary {% if task.done %}disabled{% endif %}" data-task="{{ task.id }}">
+            <i class="fa fa-check"></i> {% trans %}Complete{% endtrans %}
+          </button>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+
+  <div class="modal fade" id="task-complete-modal" tabindex="-1" role="dialog" aria-labelledby="task-complete-modal-label"></div>
 
 {% endif %}
 
@@ -74,12 +63,26 @@
 {% block scripts %}
   <script src="{{ asset('js/widgets/date-picker.js') }}"></script>
   <script>
+
     var tasksURL = "{{ path('profile_tasks', { date: '__DATE__' }) }}";
+    var completeModalURL = "{{ path('profile_task_complete', { id: '__TASK_ID__' }) }}";
+
     new CoopCycle.DatePicker(document.querySelector('#datepicker'), {
       defaultValue: "{{ date|date('Y-m-d') }}",
       onChange: function(date, dateString) {
         window.location.replace(tasksURL.replace('__DATE__', date.format('YYYY-MM-DD')))
       }
     });
+
+    $('[data-task]').on('click', function(e) {
+      e.preventDefault();
+      if ($(e.currentTarget).hasClass('disabled')) {
+        return;
+      }
+      const taskID = $(e.currentTarget).data('task');
+      $('#task-complete-modal')
+        .load(completeModalURL.replace('__TASK_ID__', taskID), () => $('#task-complete-modal').modal({ show: true }));
+    });
+
   </script>
 {% endblock %}

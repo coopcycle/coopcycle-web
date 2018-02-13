@@ -105,32 +105,6 @@ trait DeliveryTrait
         ]);
     }
 
-    public function pickDeliveryAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()->getRepository(Delivery::class)->find($id);
-        $this->accessControl($delivery);
-
-        $delivery->setStatus(Delivery::STATUS_PICKED);
-        $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-        $routes = $this->getDeliveryRoutes();
-
-        return $this->redirectToRoute($routes['list']);
-    }
-
-    public function deliverDeliveryAction($id, Delivery $delivery)
-    {
-        $delivery = $this->getDoctrine()->getRepository(Delivery::class)->find($id);
-        $this->accessControl($delivery);
-
-        $delivery->setStatus(Delivery::STATUS_DELIVERED);
-        $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-        $routes = $this->getDeliveryRoutes();
-
-        return $this->redirectToRoute($routes['list']);
-    }
-
     public function calculateDeliveryPriceAction(Request $request)
     {
         $deliveryManager = $this->get('coopcycle.delivery.manager');

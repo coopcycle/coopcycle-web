@@ -1,0 +1,25 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block submit_widget %}
+  {% set type = type|default('submit') %}
+
+  {% if label is empty %}
+    {% if label_format is not empty %}
+      {% set label = label_format|replace({
+          '%name%': name,
+          '%id%': id,
+      }) %}
+    {% else %}
+        {% set label = name|humanize %}
+    {% endif %}
+  {% endif %}
+  <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+    {% if form.vars.name == 'fail' %}
+      <i class="fa fa-exclamation-triangle"></i>
+    {% endif %}
+    {% if form.vars.name == 'done' %}
+      <i class="fa fa-check"></i>
+    {% endif %}
+    {{ label|trans({}, translation_domain) }}
+  </button>
+{% endblock submit_widget %}

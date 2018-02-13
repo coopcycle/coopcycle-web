@@ -123,6 +123,12 @@ class Task
      */
     private $updatedAt;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Task")
+     * @ORM\JoinColumn(name="previous_task_id", referencedColumnName="id", nullable=true)
+     */
+    private $previous;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -157,6 +163,16 @@ class Task
         return $this;
     }
 
+    public function isPickup()
+    {
+        return $this->type === self::TYPE_PICKUP;
+    }
+
+    public function isDropoff()
+    {
+        return $this->type === self::TYPE_DROPOFF;
+    }
+
     public function getStatus()
     {
         return $this->status;
@@ -167,6 +183,16 @@ class Task
         $this->status = $status;
 
         return $this;
+    }
+
+    public function isDone()
+    {
+        return $this->status === self::STATUS_DONE;
+    }
+
+    public function isFailed()
+    {
+        return $this->status === self::STATUS_FAILED;
     }
 
     public function getAddress()
@@ -218,6 +244,23 @@ class Task
     public function getEvents()
     {
         return $this->events;
+    }
+
+    public function getPrevious()
+    {
+        return $this->previous;
+    }
+
+    public function setPrevious(Task $previous)
+    {
+        $this->previous = $previous;
+
+        return $this;
+    }
+
+    public function hasPrevious()
+    {
+        return $this->previous !== null;
     }
 
     public function isAssigned()

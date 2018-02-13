@@ -81,6 +81,9 @@ form.store_type.pricing_rule_set.placeholder: Choose a pricing
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.task_upload.file: File
 
+form.task_complete.done.label: Complete
+form.task_complete.fail.label: Report problem
+
 # mail
 email.signature:
 registration.email.subject: |

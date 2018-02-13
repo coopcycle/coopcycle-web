@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import TaskTimeline from './TaskTimeline'
-import TaskRangePicker from '../widgets/TaskRangePicker'
+import TaskRangePicker from '../../widgets/TaskRangePicker'
 import moment from 'moment'
 
 moment.locale($('html').attr('lang'))
@@ -46,28 +46,7 @@ class Task extends React.Component {
     const { task } = this.props
 
     $('#task-edit-modal')
-      .load(taskModalURL.replace('__TASK_ID__', task.id), () => {
-
-        new TaskRangePicker(document.querySelector('#task_edit_rangepicker'), [
-          document.querySelector('#task_edit_doneAfter'),
-          document.querySelector('#task_edit_doneBefore')
-        ])
-
-        new CoopCycle.AddressInput(document.querySelector('#task_edit_address_streetAddress'), {
-          elements: {
-            latitude: document.querySelector('#task_edit_address_latitude'),
-            longitude: document.querySelector('#task_edit_address_longitude'),
-            postalCode: document.querySelector('#task_edit_address_postalCode'),
-            addressLocality: document.querySelector('#task_edit_address_addressLocality')
-          }
-        })
-
-        render(
-          <TaskTimeline task={ task } />,
-          document.querySelector('#task_edit_history'))
-
-        $('#task-edit-modal').modal({ show: true })
-      })
+      .load(taskModalURL.replace('__TASK_ID__', task.id), () => $('#task-edit-modal').modal({ show: true }))
   }
 
   render() {
@@ -86,7 +65,7 @@ class Task extends React.Component {
         <a onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
         <br />
         { task.delivery && (
-          <span>#{ task.delivery.id }</span>
+          <span>#{ task.delivery.id }</span> 
         )}
         <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
         { this.renderIconRight() }
