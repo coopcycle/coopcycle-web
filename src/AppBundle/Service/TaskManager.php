@@ -2,14 +2,12 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskAssignment;
 use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskAssignEvent;
 use AppBundle\Event\TaskUnassignEvent;
-use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -97,13 +95,17 @@ class TaskManager
             // Until the dashboard manages linked tasks properly,
             // TaskManager::unassign may be called twice
             if ($taskToUnassign->isAssigned()) {
+                $freedUser = clone $taskToUnassign->getAssignment()->getCourier();
+
                 $this->doctrine
                     ->getManagerForClass(TaskAssignment::class)
                     ->remove($taskToUnassign->getAssignment());
 
                 $taskToUnassign->unassign();
 
-                $this->dispatcher->dispatch(TaskUnassignEvent::NAME, new TaskUnassignEvent($taskToUnassign));
+                $this->dispatcher->dispatch(
+                    TaskUnassignEvent::NAME,
+                    new TaskUnassignEvent($taskToUnassign, $freedUser));
             }
 
         }
@@ -115,13 +117,13 @@ class TaskManager
     {
         $task->setStatus(Task::STATUS_DONE);
 
-        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task));
+        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignment()->getUser(), $task->get));
     }
 
     public function markAsFailed(Task $task, $reason = null)
     {
         $task->setStatus(Task::STATUS_FAILED);
 
-        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $reason));
+        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignment()->getUser(), $reason));
     }
 }

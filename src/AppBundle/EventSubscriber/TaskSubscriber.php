@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskEvent;
@@ -12,8 +13,8 @@ use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskUnassignEvent;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use FOS\UserBundle\Model\UserInterface;
 use Predis\Client as Redis;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -56,6 +57,25 @@ final class TaskSubscriber implements EventSubscriberInterface
             ->flush();
     }
 
+    private function publishTaskEventToRedis(Task $task, UserInterface $user, $channelName) {
+        $serializedUser = $this->serializer->normalize($user, 'jsonld', [
+            'resource_class' => ApiUser::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get'
+        ]);
+
+        $serializedTask = $this->serializer->normalize($task, 'jsonld', [
+            'resource_class' => Task::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['task', 'delivery', 'place']
+        ]);
+
+        $this->redis->publish(
+            $channelName,
+            json_encode(['task' => $serializedTask, 'user' => $serializedUser]));
+    }
+
     public function onTaskAssign(TaskAssignEvent $event)
     {
         $task = $event->getTask();
@@ -70,11 +90,14 @@ final class TaskSubscriber implements EventSubscriberInterface
                 ->getManagerForClass(Delivery::class)
                 ->flush();
         }
+
+        $this->publishTaskEventToRedis($task, $user, 'task:assign');
     }
 
     public function onTaskUnassign(TaskUnassignEvent $event)
     {
         $task = $event->getTask();
+        $user = $event->getUser();
 
         $this->addEvent($task, 'UNASSIGN');
 
@@ -86,6 +109,8 @@ final class TaskSubscriber implements EventSubscriberInterface
                 ->getManagerForClass(Delivery::class)
                 ->flush();
         }
+
+        $this->publishTaskEventToRedis($task, $user, 'task:unassign');
     }
 
     public function onTaskCreate(TaskCreateEvent $event)
@@ -98,6 +123,7 @@ final class TaskSubscriber implements EventSubscriberInterface
     public function onTaskDone(TaskDoneEvent $event)
     {
         $task = $event->getTask();
+        $user = $event->getUser();
 
         $this->addEvent($task, 'DONE');
 
@@ -113,29 +139,17 @@ final class TaskSubscriber implements EventSubscriberInterface
                 ->flush();
         }
 
-        $data = $this->serializer->normalize($task, 'jsonld', [
-            'resource_class' => Task::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['task', 'delivery', 'place']
-        ]);
-
-        $this->redis->publish('task:done', json_encode($data));
+        $this->publishTaskEventToRedis($task, $user, 'task:done');
     }
 
     public function onTaskFailed(TaskFailedEvent $event)
     {
         $task = $event->getTask();
+        $user = $event->getUser();
 
         $this->addEvent($task, 'FAILED', $event->getReason());
 
-        $data = $this->serializer->normalize($task, 'jsonld', [
-            'resource_class' => Task::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['task', 'delivery', 'place']
-        ]);
 
-        $this->redis->publish('task:failed', json_encode($data));
+        $this->publishTaskEventToRedis($task, $user, 'task:failed');
     }
 }

@@ -70,8 +70,8 @@ function configureOnDrop(allTasks, assignTasks) {
 class DashboardApp extends React.Component {
 
   componentDidMount() {
-    this.props.socket.on('task:done', task => this.props.updateTask(task))
-    this.props.socket.on('task:failed', task => this.props.updateTask(task))
+    this.props.socket.on('task:done', data => this.props.updateTask(data.task))
+    this.props.socket.on('task:failed', data => this.props.updateTask(data.task))
     configureOnDrop(this.props.allTasks, this.props.assignTasks)
   }
 

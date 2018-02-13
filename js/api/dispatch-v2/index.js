@@ -1,7 +1,6 @@
 var WebSocketServer = require('ws').Server
 var http = require('http')
 var fs = require('fs')
-var co = require('co')
 var _ = require('lodash')
 
 var winston = require('winston')
@@ -17,8 +16,6 @@ console.log('NODE_ENV = ' + process.env.NODE_ENV)
 console.log('PORT = ' + process.env.PORT)
 
 const {
-  metrics,
-  redis,
   pub,
   sub,
   sequelize
@@ -43,7 +40,32 @@ var wsServer = new WebSocketServer({
     },
 })
 
-let isClosing = false
+let isClosing = false,
+    couriersList = {}
+
+const channels = [
+  'task:unassign',
+  'task:assign',
+  'task:done',
+  'task:failed'
+]
+
+_.each(channels, (channel) => { sub.prefixedSubscribe(channel) })
+
+sub.on('subscribe', (channel, count) => {
+  if (count === channels.length) {
+    sub.on('message', function(channelWithPrefix, message) {
+      const parsedMessage = JSON.parse(message),
+            username = parsedMessage.user.username
+      _.each(channels, (channel) => {
+        if (sub.isChannel(channelWithPrefix, channel) && couriersList[username]) {
+          winston.debug(`Sending message ${message} to ${username}`)
+          couriersList[username].send(message)
+        }
+      })
+    })
+  }
+})
 
 // WebSocket server
 wsServer.on('connection', function(ws) {
@@ -51,6 +73,9 @@ wsServer.on('connection', function(ws) {
     const { user } = ws.upgradeReq
 
     console.log(`User ${user.username} connected`)
+
+    couriersList[user.username] = ws
+
     pub.prefixedPublish('online', user.username)
 
     ws.on('message', function(messageText) {
@@ -79,6 +104,7 @@ wsServer.on('connection', function(ws) {
     ws.on('close', function() {
       console.log(`User ${user.username} disconnected`)
       pub.prefixedPublish('offline', user.username)
+      delete couriersList[user.username]
     })
 
 })

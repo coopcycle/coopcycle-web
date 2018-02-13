@@ -2,7 +2,6 @@ var WebSocketServer = require('ws').Server;
 var http = require('http');
 var fs = require('fs');
 var co = require('co')
-var _ = require('lodash')
 
 const Courier = require('../models/Courier')
 const CourierPool = require('../models/CourierPool')

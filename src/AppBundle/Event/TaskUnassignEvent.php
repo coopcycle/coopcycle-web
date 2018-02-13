@@ -12,13 +12,21 @@ class TaskUnassignEvent extends Event
 
     protected $task;
 
-    public function __construct(Task $task)
+    protected $user;
+
+    public function __construct(Task $task, UserInterface $user)
     {
         $this->task = $task;
+        $this->user = $user;
     }
 
     public function getTask()
     {
         return $this->task;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 }
