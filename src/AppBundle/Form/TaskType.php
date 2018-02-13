@@ -40,31 +40,38 @@ class TaskType extends LocalBusinessType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm'
             ])
-            ->add('assign', EntityType::class, array(
-                'mapped' => false,
-                'label' => 'Courier',
-                'required' => false,
-                'class' => ApiUser::class,
-                'query_builder' => function (EntityRepository $entityRepository) {
-                    return $entityRepository->createQueryBuilder('u')
-                        ->where('u.roles LIKE :roles')
-                        ->setParameter('roles', '%ROLE_COURIER%')
-                        ->orderBy('u.username', 'ASC');
-                },
-                'choice_label' => 'username',
-            ));
+
+            ->add('save', SubmitType::class);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
             $task = $event->getData();
 
+            $isNewTask = $task->getId() === null;
+
             // We are editing an existing task
-            if (null !== $task->getId()) {
+            if (!$isNewTask) {
+
+                // Only non-assigned tasks can be deleted
                 if (!$task->isAssigned()) {
                     $form->add('delete', SubmitType::class);
                 }
-                $form->add('save', SubmitType::class);
+
+                // Only existing tasks can be assigned
+                $form->add('assign', EntityType::class, array(
+                    'mapped' => false,
+                    'label' => 'Courier',
+                    'required' => false,
+                    'class' => ApiUser::class,
+                    'query_builder' => function (EntityRepository $entityRepository) {
+                        return $entityRepository->createQueryBuilder('u')
+                            ->where('u.roles LIKE :roles')
+                            ->setParameter('roles', '%ROLE_COURIER%')
+                            ->orderBy('u.username', 'ASC');
+                    },
+                    'choice_label' => 'username',
+                ));
             }
 
             if ($task->isAssigned()) {

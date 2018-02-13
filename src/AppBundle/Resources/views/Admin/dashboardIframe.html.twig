@@ -1,7 +1,6 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% form_theme task_upload_form 'bootstrap_3_horizontal_layout.html.twig' %}
-{% form_theme new_task_form 'AppBundle:Form:taskModal.html.twig' %}
 
 {% block banner %}{% endblock %}
 {% block menu %}
@@ -85,35 +84,6 @@
   </div>
 </div>
 
-<div class="modal fade" id="task-modal" tabindex="-1" role="dialog" aria-labelledby="task-modal-label">
-  <div class="modal-dialog" role="document">
-    {{ form_start(new_task_form, { attr: { class: 'modal-content' } }) }}
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="task-modal-label">{% trans %}Create task{% endtrans %}</h4>
-      </div>
-      <div class="modal-body">
-        {{ form_row(new_task_form.type) }}
-        {{ form_widget(new_task_form.address) }}
-        <div>
-          <label class="control-label">{% trans %}Time window{% endtrans %}</label>
-          <div class="form-group">
-            <div id="task_rangepicker"></div>
-          </div>
-          {{ form_row(new_task_form.doneAfter) }}
-          {{ form_row(new_task_form.doneBefore) }}
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
-        <button type="submit" class="btn btn-primary">{% trans %}Validate{% endtrans %}</button>
-      </div>
-    {{ form_end(new_task_form) }}
-  </div>
-</div>
-
 <div class="modal fade" id="export-modal" tabindex="-1" role="dialog" aria-labelledby="export-modal-label">
   <div class="modal-dialog" role="document">
     {{ form_start(task_export_form, { attr: { class: 'modal-content' } }) }}
@@ -134,6 +104,9 @@
   </div>
 </div>
 
+<div class="modal fade" id="task-modal" tabindex="-1" role="dialog">
+  {% include "AppBundle::_partials/Task/form.html.twig" with { form: new_task_form } %}
+</div>
 <div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 
 {% endblock %}
