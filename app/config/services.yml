@@ -167,6 +167,7 @@ services:
     class: AppBundle\Serializer\TaskNormalizer
     arguments:
       - "@api_platform.jsonld.normalizer.item"
+      - "@api_platform.iri_converter"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   app.menu_section:
