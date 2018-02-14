@@ -117,13 +117,13 @@ class TaskManager
     {
         $task->setStatus(Task::STATUS_DONE);
 
-        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignment()->getUser(), $task->get));
+        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignment()->getCourier(), $task->get));
     }
 
     public function markAsFailed(Task $task, $reason = null)
     {
         $task->setStatus(Task::STATUS_FAILED);
 
-        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignment()->getUser(), $reason));
+        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignment()->getCourier(), $reason));
     }
 }
