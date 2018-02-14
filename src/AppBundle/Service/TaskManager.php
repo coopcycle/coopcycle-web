@@ -74,10 +74,11 @@ class TaskManager
         }
 
         foreach ($tasksWithPosition as $taskToAssign) {
+
+            $wasAssignedToSameUser = $taskToAssign->isAssignedTo($user);
             $taskToAssign->assignTo($user, $tasksWithPosition[$taskToAssign]);
 
-            $isAssignedToSameUser = $taskToAssign->isAssigned() && $taskToAssign->isAssignedTo($user);
-            if (!$isAssignedToSameUser) {
+            if (!$wasAssignedToSameUser) {
                 $this->dispatcher->dispatch(TaskAssignEvent::NAME, new TaskAssignEvent($taskToAssign, $user));
             }
         }
