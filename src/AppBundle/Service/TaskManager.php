@@ -36,9 +36,12 @@ class TaskManager
      */
     public function assign(Task $task, UserInterface $user, $position = null)
     {
-        $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
+        $tasksWithPosition = new \SplObjectStorage();
 
         if (null === $position) {
+
+            $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
+
             $tasks = $taskRepository->findByUserAndDate($user, $task->getDoneBefore());
             if (count($tasks) === 0) {
                 $position = 0;
@@ -48,23 +51,30 @@ class TaskManager
                 }, $tasks);
                 $position = max($positions) + 1;
             }
+
+            $linked = $taskRepository->findLinked($task);
+            $tasks = array_merge([$task], $linked);
+
+            usort($tasks, function (Task $a, Task $b) {
+                if ($a->hasPrevious() && $a->getPrevious() === $b) {
+                    return 1;
+                }
+                if ($b->hasPrevious() && $b->getPrevious() === $a) {
+                    return -1;
+                }
+                return 0;
+            });
+
+            foreach ($tasks as $taskToAssign) {
+                $tasksWithPosition[$taskToAssign] = $position++;
+            }
+
+        } else {
+            $tasksWithPosition[$task] = $position;
         }
 
-        $linked = $taskRepository->findLinked($task);
-        $tasks = array_merge([$task], $linked);
-
-        usort($tasks, function (Task $a, Task $b) {
-            if ($a->hasPrevious() && $a->getPrevious() === $b) {
-                return 1;
-            }
-            if ($b->hasPrevious() && $b->getPrevious() === $a) {
-                return -1;
-            }
-            return 0;
-        });
-
-        foreach ($tasks as $taskToAssign) {
-            $taskToAssign->assignTo($user, $position++);
+        foreach ($tasksWithPosition as $taskToAssign) {
+            $taskToAssign->assignTo($user, $tasksWithPosition[$taskToAssign]);
 
             $isAssignedToSameUser = $taskToAssign->isAssigned() && $taskToAssign->isAssignedTo($user);
             if (!$isAssignedToSameUser) {

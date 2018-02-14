@@ -298,8 +298,8 @@ class AdminController extends Controller
             $taskManager->unassign($task);
         }
 
-        foreach ($tasksToAssign as $position => $task) {
-            $taskManager->assign($task, $user, $position);
+        foreach ($tasksToAssign as $task) {
+            $taskManager->assign($task, $user, $tasksToAssign[$task]);
         }
 
         $this->getDoctrine()
