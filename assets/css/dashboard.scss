@@ -153,19 +153,11 @@ html, body {
 .list-group-item {
   font-size: 11px;
   position: relative;
-  padding-right: 30px;
+  padding-right: 60px;
   cursor: pointer;
   color: #fff;
   a {
     color: #fff;
-  }
-  .task-icon-right {
-    font-size: 16px;
-    line-height: 16px;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
   }
   &--pickup {
     background-color: lighten(#3498DB, 15%);
@@ -174,9 +166,9 @@ html, body {
     background-color: lighten(#3498DB, 5%);
   }
   &--dropoff {
-    cursor: grab;
     cursor: -webkit-grab;
     cursor: -moz-grab;
+    cursor: grab;
     background-color: lighten(#2ECC71, 15%);
   }
   &--dropoff:hover {
@@ -190,6 +182,28 @@ html, body {
   }
   &--failed:hover {
     background-color: lighten(#E74C3C, 5%);
+  }
+}
+
+.task__streetAddress {
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task__icon {
+  font-size: 16px;
+  line-height: 16px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  &--right {
+    right: 15px;
+  }
+  &--left {
+    right: 40px;
   }
 }
 

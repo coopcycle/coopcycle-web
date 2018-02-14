@@ -17,7 +17,7 @@ class Task extends React.Component {
     if (assigned) {
       if (task.status === 'TODO') {
         return (
-          <a href="#" className="task-icon-right" onClick={(e) => {
+          <a href="#" className="task__icon task__icon--right" onClick={(e) => {
             e.preventDefault()
             this.props.onRemove(task)
           }}><i className="fa fa-times"></i></a>
@@ -25,18 +25,31 @@ class Task extends React.Component {
       }
       if (task.status === 'DONE') {
         return (
-          <span className="task-icon-right">
+          <span className="task__icon task__icon--right">
             <i className="fa fa-check"></i>
           </span>
         )
       }
       if (task.status === 'FAILED') {
         return (
-          <span className="task-icon-right">
+          <span className="task__icon task__icon--right">
             <i className="fa fa-warning"></i>
           </span>
         )
       }
+    }
+  }
+
+  renderIconLeft() {
+
+    const { assigned, task } = this.props
+    const classNames = ['task__icon']
+    classNames.push(assigned ? 'task__icon--left' : 'task__icon--right')
+
+    if (task.hasOwnProperty('group')) {
+      return (
+        <span className={ classNames.join(' ') }><i className="fa fa-exchange"></i></span>
+      )
     }
   }
 
@@ -62,9 +75,10 @@ class Task extends React.Component {
     return (
       <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] }>
         <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>  
-        <a onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
+        <a className="task__streetAddress" onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
         <br />
         <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
+        { this.renderIconLeft() }
         { this.renderIconRight() }
       </div>
     )
