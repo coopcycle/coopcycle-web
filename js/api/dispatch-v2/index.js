@@ -52,6 +52,7 @@ const channels = [
 
 _.each(channels, (channel) => { sub.prefixedSubscribe(channel) })
 
+
 sub.on('subscribe', (channel, count) => {
   if (count === channels.length) {
     sub.on('message', function(channelWithPrefix, message) {
@@ -60,7 +61,8 @@ sub.on('subscribe', (channel, count) => {
       _.each(channels, (channel) => {
         if (sub.isChannel(channelWithPrefix, channel) && couriersList[username]) {
           winston.debug(`Sending message ${message} to ${username}`)
-          couriersList[username].send(message)
+          parsedMessage.type = channel
+          couriersList[username].send(JSON.stringify(parsedMessage))
         }
       })
     })
