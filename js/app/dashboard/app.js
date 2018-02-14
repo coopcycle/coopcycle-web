@@ -77,7 +77,7 @@ class DashboardApp extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className="dashboard__aside-container">
         <TaskList
           onLoad={ el => drake.containers.push(el) } />
         <UserPanelList

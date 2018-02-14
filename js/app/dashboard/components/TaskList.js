@@ -31,7 +31,7 @@ class TaskList extends React.Component {
           </a>
         </h4>
         <div className="dashboard__panel__scroll">
-          <div className="list-group" id="task-list">
+          <div className="list-group nomargin" id="task-list">
             { _.map(taskGroups, (tasks, key) => {
               return (
                 <TaskGroup key={ key } tasks={ tasks } />
