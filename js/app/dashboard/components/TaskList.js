@@ -15,9 +15,9 @@ class TaskList extends React.Component {
   render() {
 
     const { unassignedTasks } = this.props,
-          standaloneTasks = _.filter(unassignedTasks, task => task.delivery === null),
-          groupedTasks = _.filter(unassignedTasks, task => task.delivery !== null),
-          taskGroups = _.groupBy(groupedTasks, task => task.delivery['@id'])
+          standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group')),
+          groupedTasks = _.filter(unassignedTasks, task => task.hasOwnProperty('group')),
+          taskGroups = _.groupBy(groupedTasks, task => task.group)
 
     return (
       <div className="dashboard__panel">

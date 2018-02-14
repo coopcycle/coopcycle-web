@@ -73,8 +73,8 @@ class UserPanel extends React.Component {
 
     // Check if we need to remove another linked task
     let tasksToRemove = []
-    if (taskToRemove.delivery) {
-      tasksToRemove = _.filter(this.props.tasks, task => task.delivery !== null && task.delivery['@id'] === taskToRemove.delivery['@id'])
+    if (taskToRemove.hasOwnProperty('group')) {
+      tasksToRemove = _.filter(this.props.tasks, task => task.hasOwnProperty('group') && task.group === taskToRemove.group)
     } else {
       tasksToRemove = [ taskToRemove ]
     }

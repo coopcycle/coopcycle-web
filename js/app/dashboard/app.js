@@ -40,7 +40,7 @@ const drake = dragula({
 /**
  * Code to handle drag and drop from unassigned tasks to assigned
  */
-function configureOnDrop(assignTasks) {
+function configureOnDrop(allTasks, assignTasks) {
 
   drake
     .on('drop', function(element, target, source) {
@@ -52,10 +52,10 @@ function configureOnDrop(assignTasks) {
         tasks = $(element)
           .children()
           .map((index, el) => $(el).data('task-id'))
-          .map((index, taskID) => _.find(window.AppData.Dashboard.tasks, task => task['@id'] === taskID))
+          .map((index, taskID) => _.find(allTasks, task => task['@id'] === taskID))
           .toArray()
       } else {
-        const task = _.find(window.AppData.Dashboard.tasks, task => task['@id'] === $(element).data('task-id'))
+        const task = _.find(allTasks, task => task['@id'] === $(element).data('task-id'))
         tasks.push(task)
       }
 
@@ -72,7 +72,7 @@ class DashboardApp extends React.Component {
   componentDidMount() {
     this.props.socket.on('task:done', task => this.props.updateTask(task))
     this.props.socket.on('task:failed', task => this.props.updateTask(task))
-    configureOnDrop(this.props.assignTasks)
+    configureOnDrop(this.props.allTasks, this.props.assignTasks)
   }
 
   render () {
@@ -89,7 +89,9 @@ class DashboardApp extends React.Component {
 }
 
 function mapStateToProps (state) {
-  return {}
+  return {
+    allTasks: state.allTasks
+  }
 }
 
 function mapDispatchToProps (dispatch) {

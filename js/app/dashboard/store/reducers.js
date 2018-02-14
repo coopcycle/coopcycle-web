@@ -1,9 +1,24 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash'
 
+function addGroupProperty(tasks) {
+  let tasksById = _.keyBy(tasks, task => task['@id'])
+
+  const tasksWithPrevious = _.filter(tasks, task => task.previous !== null)
+  _.each(tasksWithPrevious, task => {
+    const previousTask = tasksById[task.previous]
+    const taskGroup    = [ previousTask, task ]
+    const groupKey     = _.join(_.map(taskGroup, task => task.id), ':')
+
+    tasksById[task.previous] = Object.assign(tasksById[task.previous], { group: groupKey })
+    tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { group: groupKey })
+  })
+
+  return _.map(tasksById, task => task)
+}
 
 // initial data pumped from the template
-const tasksInitial = window.AppData.Dashboard.tasks,
+const tasksInitial = addGroupProperty(window.AppData.Dashboard.tasks),
       unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned),
       assignedTasksList = _.filter(tasksInitial, task => task.isAssigned),
       assignedTasksByUserInitial = _.groupBy(assignedTasksList, task => task.assignedTo)
@@ -65,7 +80,7 @@ const assignedTasksByUser = (state = assignedTasksByUserInitial, action) => {
       newState[action.username].polyline = ''
       break
     case 'SAVE_USER_TASKS_SUCCESS':
-      newState[action.username] = action.tasks
+      newState[action.username] = addGroupProperty(action.tasks)
       newState[action.username].duration = action.duration
       newState[action.username].distance = action.distance
       newState[action.username].polyline = action.polyline
@@ -112,6 +127,10 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
   return newState
 }
 
+const allTasks = (state = tasksInitial, action) => {
+  return state
+}
+
 const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
     case 'OPEN_ADD_USER':
@@ -138,6 +157,7 @@ const userPanelLoading = (state = false, action) => {
 
 
 export default combineReducers({
+  allTasks,
   assignedTasksByUser,
   unassignedTasks,
   userPanelLoading,
