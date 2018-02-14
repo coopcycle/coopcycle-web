@@ -13,7 +13,7 @@ class LeafletMap extends Component {
     this.proxy = new MapProxy(this.map)
 
     this.props.tasks.forEach(task => this.proxy.addTask(task))
-    _.forEach(this.props.taskLists, (taskList, username) => this.proxy.addTaskList(username, taskList))
+    _.forEach(this.props.polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
 
     const couriersMap = new Map()
     const couriersLayer = new L.LayerGroup()
@@ -55,8 +55,16 @@ class LeafletMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { tasks } = this.props
-    _.forEach(this.props.taskLists, (taskList, username) => this.proxy.addTaskList(username, taskList))
+    const { polylineEnabled, polylines } = this.props
+
+    _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
+    _.forEach(polylineEnabled, (enabled, username) => {
+      if (enabled) {
+        this.proxy.showPolyline(username, polylines[username])
+      } else {
+        this.proxy.hidePolyline(username)
+      }
+    })
   }
 
   render() {
@@ -68,21 +76,20 @@ class LeafletMap extends Component {
 
 function mapStateToProps(state, ownProps) {
 
-  const { assignedTasksByUser, unassignedTasks } = state
+  const { assignedTasksByUser, unassignedTasks, polylineEnabled } = state
 
   const tasks = unassignedTasks.slice()
   _.forEach(assignedTasksByUser, (userTasks, username) => userTasks.forEach(task => tasks.push(task)))
 
-  let taskLists = {}
+  let polylines = {}
   _.forEach(assignedTasksByUser, (userTasks, username) => {
-    taskLists[username] = {
-      polyline: userTasks.polyline
-    }
+    polylines[username] = userTasks.polyline
   })
 
   return {
     tasks,
-    taskLists
+    polylines,
+    polylineEnabled
   }
 }
 

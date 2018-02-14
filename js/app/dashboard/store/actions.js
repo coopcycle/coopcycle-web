@@ -59,6 +59,10 @@ function saveUserTasksRequest (username, tasks) {
     }
 }
 
+function togglePolyline(username) {
+  return { type: 'TOGGLE_POLYLINE', username }
+}
+
 export {
   updateTask,
   addUsernameToList,
@@ -67,5 +71,6 @@ export {
   assignTasks,
   removeTasks,
   openAddUserModal,
-  closeAddUserModal
+  closeAddUserModal,
+  togglePolyline
 }

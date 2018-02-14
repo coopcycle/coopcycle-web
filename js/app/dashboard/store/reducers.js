@@ -37,6 +37,11 @@ _.each(_.keys(assignedTasksByUserInitial),
         }
       })
 
+let polylineEnabledByUser = {}
+_.each(_.keys(assignedTasksByUserInitial), username => {
+  polylineEnabledByUser[username] = false
+})
+
 /*
   Store for all assigned tasks
 */
@@ -155,11 +160,24 @@ const userPanelLoading = (state = false, action) => {
   }
 }
 
+const polylineEnabled = (state = polylineEnabledByUser, action) => {
+  switch (action.type) {
+    case 'TOGGLE_POLYLINE':
+      let newState = { ...state }
+      const { username } = action
+      newState[username] = !state[username]
+
+      return newState
+    default:
+      return state
+  }
+}
 
 export default combineReducers({
   allTasks,
   assignedTasksByUser,
   unassignedTasks,
   userPanelLoading,
-  addModalIsOpen
+  addModalIsOpen,
+  polylineEnabled
 })

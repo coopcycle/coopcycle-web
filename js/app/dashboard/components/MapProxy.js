@@ -14,7 +14,7 @@ export default class MapProxy {
 
   constructor(map) {
     this.map = map
-    this.layers = new Map()
+    this.polylineLayerGroups = new Map()
   }
 
   addTask(task) {
@@ -40,23 +40,30 @@ export default class MapProxy {
     marker.addTo(this.map)
   }
 
-  addTaskList(username, taskList) {
+  getPolylineLayerGroup(username) {
+    let layerGroup = this.polylineLayerGroups.get(username)
 
-    let layers = this.layers.get(username)
-
-    if (!layers) {
-      layers = {
-        polyline: L.layerGroup(),
-        tasks: L.layerGroup(),
-      }
-      this.layers.set(username, layers)
-
-      layers.polyline.addTo(this.map)
+    if (!layerGroup) {
+      layerGroup = L.layerGroup()
+      this.polylineLayerGroups.set(username, layerGroup)
     }
 
-    const polyline = L.polyline(MapHelper.decodePolyline(taskList.polyline), polylineOptions)
-    layers.polyline.clearLayers()
-    layers.polyline.addLayer(polyline)
+    return layerGroup
+  }
 
+  setPolyline(username, polyline) {
+    const layer = L.polyline(MapHelper.decodePolyline(polyline), polylineOptions)
+    const layerGroup = this.getPolylineLayerGroup(username)
+
+    layerGroup.clearLayers()
+    layerGroup.addLayer(layer)
+  }
+
+  showPolyline(username) {
+    this.getPolylineLayerGroup(username).addTo(this.map)
+  }
+
+  hidePolyline(username) {
+    this.getPolylineLayerGroup(username).removeFrom(this.map)
   }
 }

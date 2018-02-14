@@ -5,7 +5,7 @@ import moment from 'moment'
 import dragula from 'react-dragula'
 import _ from 'lodash'
 import Task from './Task'
-import { removeTasks, saveUserTasksRequest } from '../store/actions'
+import { removeTasks, saveUserTasksRequest, togglePolyline } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -126,7 +126,7 @@ class UserPanel extends React.Component {
 
   render() {
 
-    const { duration, distance, username, tasks } = this.props
+    const { duration, distance, username, tasks, polylineEnabled } = this.props
     const { collapsed } = this.state
 
     tasks.sort((a, b) => {
@@ -140,6 +140,11 @@ class UserPanel extends React.Component {
 
     const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
+    const polylineClassNames = ['pull-right', 'taskList__summary-polyline']
+    if (polylineEnabled) {
+      polylineClassNames.push('taskList__summary-polyline--enabled')
+    }
+
     return (
       <div className="panel panel-default nomargin">
         <div className="panel-heading">
@@ -152,10 +157,13 @@ class UserPanel extends React.Component {
         </div>
         <div id={ 'collapse-' + username } className="panel-collapse collapse" role="tabpanel">
           { tasks.length > 0 && (
-            <div className="panel-body">
+            <div className="panel-body taskList__summary">
               <strong>Durée</strong>  <span>{ durationFormatted }</span>
               <br />
               <strong>Distance</strong>  <span>{ distanceFormatted }</span>
+              <a role="button" className={ polylineClassNames.join(' ') } onClick={ e => this.props.togglePolyline(username) }>
+                <i className="fa fa-map fa-2x"></i>
+              </a>
             </div>
           )}
           <div className="list-group dropzone" data-username={ username }>
@@ -181,6 +189,7 @@ class UserPanel extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
+    polylineEnabled: state.polylineEnabled[ownProps.username],
     tasks: state.assignedTasksByUser[ownProps.username],
     distance: state.assignedTasksByUser[ownProps.username].distance,
     duration: state.assignedTasksByUser[ownProps.username].duration,
@@ -191,6 +200,7 @@ function mapDispatchToProps(dispatch) {
   return {
     removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
     saveUserTasksRequest: (username, tasks) => { dispatch(saveUserTasksRequest(username, tasks)) },
+    togglePolyline: username => { dispatch(togglePolyline(username)) }
   }
 }
 
