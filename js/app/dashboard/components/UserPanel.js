@@ -38,7 +38,49 @@ class UserPanel extends React.Component {
     // handler to change the task order within a courier tasklist
     const container = findDOMNode(this).querySelector('.courier-task-list')
     dragula([container], {
+      // You can set accepts to a method with the following signature: (el, target, source, sibling).
+      // It'll be called to make sure that an element el, that came from container source,
+      // can be dropped on container target before a sibling element.
+      // The sibling can be null, which would mean that the element would be placed as the last element in the container.
+      accepts: (el, target, source, sibling) => {
 
+        if (el === sibling) {
+          return true
+        }
+
+        const { tasks } = this.props
+
+        const draggedTask = _.find(tasks, task => task['@id'] === el.getAttribute('data-task-id'))
+
+        if (!draggedTask.hasOwnProperty('group')) {
+          return true
+        }
+
+        const taskOrder = _.map(tasks, task => task['@id'])
+
+        let siblingTaskIndex
+        if (sibling === null) {
+          siblingTaskIndex = tasks.length - 1
+        } else {
+          const siblingTask = _.find(tasks, task => task['@id'] === sibling.getAttribute('data-task-id'))
+          siblingTaskIndex  = taskOrder.indexOf(siblingTask['@id'])
+        }
+
+        if (draggedTask.previous) {
+          const previousTaskIndex = taskOrder.indexOf(draggedTask.previous)
+          if (siblingTaskIndex <= previousTaskIndex) {
+            return false
+          }
+        } else {
+          const nextTask = _.find(tasks, task => task.previous === draggedTask['@id'])
+          const nextTaskIndex = taskOrder.indexOf(nextTask['@id'])
+          if (siblingTaskIndex >= nextTaskIndex) {
+            return false
+          }
+        }
+
+        return true
+      }
     }).on('drop', (element, target, source) => {
 
       const { tasks } = this.props
