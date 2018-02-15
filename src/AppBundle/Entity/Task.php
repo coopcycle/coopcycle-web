@@ -231,6 +231,18 @@ class Task
         return $this;
     }
 
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+
+        return $this;
+    }
+
     public function getUpdatedAt()
     {
         return $this->updatedAt;

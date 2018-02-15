@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -40,7 +41,10 @@ class TaskType extends LocalBusinessType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm'
             ])
-
+            ->add('comments', TextareaType::class, [
+                'required' => false,
+                'attr' => ['rows' => '2', 'placeholder' => 'Specify any useful details to complete task']
+            ])
             ->add('save', SubmitType::class);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
