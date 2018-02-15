@@ -55,3 +55,24 @@ help_admin_smartphone_apps:
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
+
+help_admin_tasks:
+    path: /{_locale}/help/admin/tasks
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/tasks/index
+        title: Tasks
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]
+
+help_admin_tasks_import:
+    path: /{_locale}/help/admin/tasks/import
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/tasks/import
+        title: Import tasks
+        nav: false
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]

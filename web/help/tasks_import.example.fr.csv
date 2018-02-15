@@ -1,0 +1,6 @@
+type,address,after,before,comments
+pickup,"1, rue de Rivoli Paris",15/02/2018 12:00,15/02/2018 14:00,Téléphoner au client
+dropoff,"54, rue du Faubourg Saint Denis Paris",2018-02-15 09:00,2018-02-15 10:00,
+dropoff,"23, rue du Faubourd du Temple Paris",09:00,12:00,
+pickup,"59, rue du Faubourg Saint Denis Paris",8h,10h,
+dropoff,"67, boulevard du Temple Paris",15/02 09:00,15/02 12:00,

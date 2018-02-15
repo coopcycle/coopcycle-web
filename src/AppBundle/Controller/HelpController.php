@@ -21,7 +21,11 @@ class HelpController extends Controller
         foreach ($this->get('router')->getRouteCollection()->all() as $name => $route) {
             if (strpos($name, 'help_') === 0) {
                 $defaults = $route->getDefaults();
-                $menu[$name] = $defaults['title'];
+
+                $nav = isset($defaults['nav']) ? $defaults['nav'] : true;
+                if ($nav) {
+                    $menu[$name] = $defaults['title'];
+                }
             }
         }
 
