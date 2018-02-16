@@ -15,6 +15,10 @@ export default class MapProxy {
   constructor(map) {
     this.map = map
     this.polylineLayerGroups = new Map()
+
+    this.courierMarkers = new Map()
+    this.courierLayerGroup = new L.LayerGroup()
+    this.courierLayerGroup.addTo(this.map)
   }
 
   addTask(task) {
@@ -65,5 +69,38 @@ export default class MapProxy {
 
   hidePolyline(username) {
     this.getPolylineLayerGroup(username).removeFrom(this.map)
+  }
+
+  setOnline(username) {
+    console.log(`User ${username} is online`)
+    if (!this.courierMarkers.has(username)) {
+      return
+    }
+    const marker = this.courierMarkers.get(username)
+    marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#000'))
+  }
+
+  setOffline(username) {
+    console.log(`User ${username} is offline`)
+    if (!this.courierMarkers.has(username)) {
+      return
+    }
+    const marker = this.courierMarkers.get(username)
+    marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#CCC'))
+  }
+
+  setGeolocation(username, position) {
+    let marker = this.courierMarkers.get(username)
+    if (!marker) {
+      marker = MapHelper.createMarker(position, 'bicycle', 'circle', '#000')
+      const popupContent = `<div class="text-center">${username}</div>`
+      marker.bindPopup(popupContent, {
+        offset: [3, 70]
+      })
+      this.courierLayerGroup.addLayer(marker)
+      this.courierMarkers.set(username, marker)
+    } else {
+      marker.setLatLng(position).update()
+    }
   }
 }

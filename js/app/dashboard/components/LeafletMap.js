@@ -12,46 +12,18 @@ class LeafletMap extends Component {
     this.map = MapHelper.init('map')
     this.proxy = new MapProxy(this.map)
 
-    this.props.tasks.forEach(task => this.proxy.addTask(task))
+    _.forEach(this.props.tasks, task => this.proxy.addTask(task))
     _.forEach(this.props.polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
-
-    const couriersMap = new Map()
-    const couriersLayer = new L.LayerGroup()
-
-    couriersLayer.addTo(this.map)
 
     const { socket } = this.props
 
     socket.on('tracking', data => {
-      let marker
-      if (!couriersMap.has(data.user)) {
-        marker = MapHelper.createMarker(data.coords, 'bicycle', 'circle', '#000')
-        const popupContent = `<div class="text-center">${data.user}</div>`
-        marker.bindPopup(popupContent, {
-          offset: [3, 70]
-        })
-        couriersLayer.addLayer(marker)
-        couriersMap.set(data.user, marker)
-      } else {
-        marker = couriersMap.get(data.user)
-        marker.setLatLng(data.coords).update()
-        marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#000'))
-      }
+      const { user, coords } = data
+      this.proxy.setGeolocation(user, coords)
+      this.proxy.setOnline(user)
     })
-
-    socket.on('online', username => {
-      console.log(`User ${username} is connected`)
-    })
-
-    socket.on('offline', username => {
-      if (!couriersMap.has(username)) {
-        console.error(`User ${username} not found`)
-        return
-      }
-      const marker = couriersMap.get(username)
-      marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#CCC'))
-    })
-
+    socket.on('online', username => this.proxy.setOnline(username))
+    socket.on('offline', username => this.proxy.setOffline(username))
   }
 
   componentDidUpdate(prevProps, prevState) {
