@@ -38,7 +38,7 @@ class TaskManager
 
         if (null === $position) {
 
-            $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
+            $taskRepository = $this->doctrine->getRepository(Task::class);
 
             $tasks = $taskRepository->findByUserAndDate($user, $task->getDoneBefore());
             if (count($tasks) === 0) {
@@ -84,7 +84,7 @@ class TaskManager
 
     public function unassign(Task $task)
     {
-        $taskRepository = $tasks = $this->doctrine->getRepository(Task::class);
+        $taskRepository = $this->doctrine->getRepository(Task::class);
 
         $linked = $taskRepository->findLinked($task);
         $tasks = array_merge([$task], $linked);
@@ -111,6 +111,24 @@ class TaskManager
         }
 
         // TODO Reorder assigned tasks
+    }
+
+    public function remove(Task $task)
+    {
+        if ($task->isAssigned()) {
+            throw new \Exception(sprintf('Task #%d is assigned to %s. Only unassigned tasks can be removed.',
+                $task->getId(), $task->getAssignedCourier->getUsername()));
+        }
+
+        $taskRepository = $this->doctrine->getRepository(Task::class);
+        $entityManager = $this->doctrine->getManagerForClass(Task::class);
+
+        $nextTasks = $taskRepository->findBy(['previous' => $task]);
+        foreach ($nextTasks as $nextTask) {
+            $nextTask->setPrevious(null);
+        }
+
+        $entityManager->remove($task);
     }
 
     public function markAsDone(Task $task)

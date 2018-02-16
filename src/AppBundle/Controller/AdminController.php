@@ -931,10 +931,10 @@ class AdminController extends Controller
             }
 
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
-                if (!$task->isAssigned()) {
-                    $this->getDoctrine()
-                        ->getManagerForClass(Task::class)
-                        ->remove($task);
+                try {
+                    $taskManager->remove($task);
+                } catch (\Exception $e) {
+                    // TODO Find a way to reopen modal with error
                 }
             }
 

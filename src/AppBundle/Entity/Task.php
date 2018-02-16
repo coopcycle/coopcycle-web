@@ -263,7 +263,7 @@ class Task
         return $this->previous;
     }
 
-    public function setPrevious(Task $previous)
+    public function setPrevious(Task $previous = null)
     {
         $this->previous = $previous;
 
@@ -283,6 +283,13 @@ class Task
     public function isAssignedTo(ApiUser $courier)
     {
         return $this->isAssigned() && $this->assignment->getCourier() === $courier;
+    }
+
+    public function getAssignedCourier()
+    {
+        if ($this->isAssigned()) {
+            return $this->assignment->getCourier();
+        }
     }
 
     public function assignTo(ApiUser $courier, $position)
