@@ -357,7 +357,10 @@ class AdminController extends Controller
                 'item_operation_name' => 'get',
                 'groups' => ['task', 'delivery', 'place']
             ]);
-        }, iterator_to_array($tasksToAssign));
+        }, iterator_to_array($tasksToAssign, false));
+
+        // Publish a Redis event in task:changed channel
+        $this->publishTasksChangedEvent($tasks, $user);
 
         return new JsonResponse([
             'distance' => $taskList->getDistance(),
@@ -365,6 +368,20 @@ class AdminController extends Controller
             'polyline' => $taskList->getPolyline(),
             'tasks' => $tasks
         ]);
+    }
+
+    private function publishTasksChangedEvent(array $normalizedTasks, UserInterface $user)
+    {
+        $normalizedUser = $this->get('serializer')->normalize($user, 'jsonld', [
+            'resource_class' => ApiUser::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get'
+        ]);
+
+        $this->get('snc_redis.default')->publish('tasks:changed', json_encode([
+            'tasks' => $normalizedTasks,
+            'user' => $normalizedUser
+        ]));
     }
 
     /**
