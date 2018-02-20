@@ -10,17 +10,22 @@ const taskModalURL = window.AppData.Dashboard.taskModalURL
 
 class Task extends React.Component {
 
-  renderIconRight() {
+  renderStatusIcon() {
 
     const { assigned, task } = this.props
 
     if (assigned) {
       if (task.status === 'TODO') {
         return (
-          <a href="#" className="task__icon task__icon--right" onClick={(e) => {
-            e.preventDefault()
-            this.props.onRemove(task)
-          }}><i className="fa fa-times"></i></a>
+          <a
+            href="#"
+            className="task__icon task__icon--right"
+            onClick={(e) => {
+              e.preventDefault()
+              this.props.onRemove(task)
+            }}
+            data-toggle="tooltip" data-placement="right" title="Désassigner"
+          ><i className="fa fa-times"></i></a>
         )
       }
       if (task.status === 'DONE') {
@@ -40,7 +45,7 @@ class Task extends React.Component {
     }
   }
 
-  renderIconLeft() {
+  renderLinkedIcon() {
 
     const { assigned, task } = this.props
     const classNames = ['task__icon']
@@ -70,16 +75,25 @@ class Task extends React.Component {
       'list-group-item',
       'list-group-item--' + task.type.toLowerCase(),
       'list-group-item--' + task.status.toLowerCase(),
+      'task'
     ]
 
     return (
       <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] }>
-        <i style={{ fontSize: '14px' }} className={ 'fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>  
-        <a className="task__streetAddress" onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
-        <br />
-        <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
-        { this.renderIconLeft() }
-        { this.renderIconRight() }
+        <div>
+          <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+          <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>
+        </div>
+        <div>
+          <a onClick={ this.showTaskModal.bind(this) }><span>{ task.address.name || task.address.streetAddress }</span></a>
+        </div>
+        <div>
+          <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
+        </div>
+        <div>
+          { this.renderLinkedIcon() }
+        </div>
+        {this.renderStatusIcon()}
       </div>
     )
 

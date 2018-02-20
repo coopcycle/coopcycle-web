@@ -148,7 +148,7 @@ html, body {
 }
 
 .list-group-item {
-  font-size: 11px;
+  font-size: 12px;
   position: relative;
   padding-right: 60px;
   cursor: pointer;
@@ -182,13 +182,6 @@ html, body {
   }
 }
 
-.task__streetAddress {
-  display: inline-block;
-  width: 75%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .task__icon {
   font-size: 16px;
@@ -196,11 +189,17 @@ html, body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+
   &--right {
     right: 15px;
   }
   &--left {
     right: 40px;
+  }
+  &--type {
+    position: static;
+    padding-right: 5px;
+    transform: none;
   }
 }
 
