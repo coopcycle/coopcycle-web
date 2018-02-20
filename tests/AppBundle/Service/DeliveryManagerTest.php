@@ -27,6 +27,7 @@ class DeliveryManagerTest extends BaseTest
         $this->calculator = static::$kernel->getContainer()->get('sylius.tax_calculator');
         $this->taxCategoryRepository = static::$kernel->getContainer()->get('sylius.repository.tax_category');
         $this->zoneExpressionLanguageProvider = static::$kernel->getContainer()->get('coopcycle.expression_language.zone.provider');
+        $this->routing = static::$kernel->getContainer()->get('routing_service');
     }
 
     public function testGetPrice()
@@ -58,7 +59,8 @@ class DeliveryManagerTest extends BaseTest
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->zoneExpressionLanguageProvider
+            $this->zoneExpressionLanguageProvider,
+            $this->routing
         );
 
         $delivery = new Delivery();
@@ -79,7 +81,8 @@ class DeliveryManagerTest extends BaseTest
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->zoneExpressionLanguageProvider
+            $this->zoneExpressionLanguageProvider,
+            $this->routing
         );
 
         // 3.5 - (3.5 / (1 + 0.20)) = 0.58

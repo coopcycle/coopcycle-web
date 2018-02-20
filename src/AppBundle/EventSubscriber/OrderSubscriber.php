@@ -2,12 +2,14 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Event\OrderAcceptEvent;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Entity\Order;
-use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Utils\MetricsHelper;
 use M6Web\Component\Statsd\Client as StatsdClient;
+use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,20 +22,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class OrderSubscriber implements EventSubscriberInterface
 {
     private $tokenStorage;
-    private $deliveryServiceFactory;
+    private $deliveryManager;
     private $validator;
     private $metricsHelper;
+    private $redis;
     private $logger;
 
     public function __construct(TokenStorageInterface $tokenStorage,
-        DeliveryServiceFactory $deliveryServiceFactory, ValidatorInterface $validator,
-        MetricsHelper $metricsHelper,
+        DeliveryManager $deliveryManager, ValidatorInterface $validator,
+        MetricsHelper $metricsHelper, Redis $redis,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->deliveryServiceFactory = $deliveryServiceFactory;
+        $this->deliveryManager = $deliveryManager;
         $this->validator = $validator;
         $this->metricsHelper = $metricsHelper;
+        $this->redis = $redis;
         $this->logger = $logger;
     }
 
@@ -45,7 +49,7 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['postValidate', EventPriorities::POST_VALIDATE],
             ],
             'order.created' => 'onOrderCreated',
-            'order.accepted' => 'onOrderAccepted',
+            OrderAcceptEvent::NAME => 'onOrderAccepted',
         ];
     }
 
@@ -61,11 +65,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         return $user;
-    }
-
-    private function getDeliveryService(Order $order)
-    {
-        return $this->deliveryServiceFactory->createForRestaurant($order->getRestaurant());
     }
 
     public function preValidate(GetResponseForControllerResultEvent $event)
@@ -98,7 +97,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         if (!$delivery->isCalculated()) {
-            $this->getDeliveryService($order)->calculate($delivery);
+            $this->deliveryManager->calculate($delivery);
         }
 
         $event->setControllerResult($order);
@@ -125,9 +124,40 @@ final class OrderSubscriber implements EventSubscriberInterface
         $this->metricsHelper->incrementOrdersWaiting();
     }
 
-    public function onOrderAccepted(Event $event)
+    public function onOrderAccepted(OrderAcceptEvent $event)
     {
         $this->logger->info('Order accepted');
+
+        $order = $event->getOrder();
+
+        $originAddress = $order->getDelivery()->getOriginAddress();
+        $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
+
+        $this->redis->geoadd(
+            'deliveries:geo',
+            $originAddress->getGeo()->getLongitude(),
+            $originAddress->getGeo()->getLatitude(),
+            'delivery:'.$order->getDelivery()->getId()
+        );
+
+        $this->redis->geoadd(
+            'restaurants:geo',
+            $originAddress->getGeo()->getLongitude(),
+            $originAddress->getGeo()->getLatitude(),
+            'delivery:'.$order->getDelivery()->getId()
+        );
+        $this->redis->geoadd(
+            'delivery_addresses:geo',
+            $deliveryAddress->getGeo()->getLongitude(),
+            $deliveryAddress->getGeo()->getLatitude(),
+            'delivery:'.$order->getDelivery()->getId()
+        );
+
+        $this->redis->lpush(
+            'deliveries:waiting',
+            $order->getDelivery()->getId()
+        );
+
         $this->metricsHelper->decrementOrdersWaiting();
     }
 }

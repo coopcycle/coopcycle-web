@@ -77,10 +77,10 @@ services:
     # https://github.com/doctrine/DoctrineBundle/issues/300
     arguments:
       - "@security.token_storage"
-      - "@delivery_service_factory"
       - "@snc_redis.default"
       - "@serializer"
       - "@order.manager"
+      - "@coopcycle.delivery.manager"
       - "@translator"
       - "@templating"
       - "@mailer"
@@ -99,7 +99,6 @@ services:
     class: AppBundle\Service\OrderManager
     arguments:
       - "@payment_service"
-      - "@delivery_service_factory"
       - "@snc_redis.default"
       - "@serializer"
       - "@sylius.tax_rate_resolver"
@@ -117,6 +116,7 @@ services:
       - "@sylius.repository.tax_category"
       - 'tva_livraison' # TODO Load from settings
       - "@coopcycle.expression_language.zone.provider"
+      - "@routing_service"
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
@@ -182,10 +182,6 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  'AppBundle\Form\DeliveryServiceType':
-    arguments: [ '@translator', '@delivery_service_factory' ]
-    tags: [ form.type ]
-
   'AppBundle\Form\MenuType\MenuItemModifierType':
     arguments: [ '@translator' ]
     tags: [ form.type ]
@@ -226,20 +222,6 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Task
-
-  delivery_service.default:
-    class: AppBundle\Service\DeliveryService\Core
-    arguments: [ "@routing_service", "@snc_redis.default" ]
-
-  delivery_service.applicolis:
-    class: AppBundle\Service\DeliveryService\AppliColis
-    arguments: [ "@routing_service", "@csa_guzzle.client.applicolis", "@logger" ]
-
-  delivery_service_factory:
-    class: AppBundle\Service\DeliveryService\Factory
-    arguments:
-      - [ "@delivery_service.applicolis" ]
-      - "@delivery_service.default"
 
   routing_service:
     class: AppBundle\Service\Routing\Osrm

@@ -5,11 +5,10 @@ namespace AppBundle\Tests\Action;
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
-use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
 use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\DeliveryServiceInterface;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
+use AppBundle\Service\RoutingInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
@@ -38,13 +37,11 @@ class TestCase extends BaseTestCase
         $doctrine = $this->prophesize(DoctrineRegistry::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcher::class);
         $paymentService = $this->prophesize(PaymentService::class);
-        $deliveryService = $this->prophesize(DeliveryServiceInterface::class);
         $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
         $calculator = $this->prophesize(CalculatorInterface::class);
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
         $zoneExpressionLanguageProvider = $this->prophesize(ZoneExpressionLanguageProvider::class);
-
-        $deliveryServiceFactory = new DeliveryServiceFactory([], $deliveryService->reveal());
+        $routing = $this->prophesize(RoutingInterface::class);
 
         $this->user = new Entity\ApiUser();
 
@@ -59,12 +56,12 @@ class TestCase extends BaseTestCase
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
             'tva_livraison',
-            $zoneExpressionLanguageProvider->reveal()
+            $zoneExpressionLanguageProvider->reveal(),
+            $routing->reveal()
         );
 
         $orderManager = new OrderManager(
             $paymentService->reveal(),
-            $deliveryServiceFactory,
             $this->redisProphecy->reveal(),
             $serializer->reveal(),
             $taxRateResolver->reveal(),

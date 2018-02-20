@@ -70,19 +70,19 @@ trait DeliveryTrait
 
             if ($form->isValid()) {
 
-                if ($store) {
+                $deliveryManager = $this->get('coopcycle.delivery.manager');
 
+                if ($store) {
                     // if the user is not admin, he cannot override the set pricing
                     if (!$user->hasRole('ROLE_ADMIN')) {
-                        $deliveryManager = $this->get('coopcycle.delivery.manager');
                         $price = $deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
                         $delivery->setPrice($price);
                     }
                     $delivery->setStore($store);
                 }
 
-                $this->get('delivery_service.default')->calculate($delivery);
-                $this->get('coopcycle.delivery.manager')->applyTaxes($delivery);
+                $deliveryManager->calculate($delivery);
+                $deliveryManager->applyTaxes($delivery);
 
                 if ($isNew) {
                     $em->persist($delivery);

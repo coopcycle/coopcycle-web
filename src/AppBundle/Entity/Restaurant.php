@@ -147,14 +147,6 @@ class Restaurant extends FoodEstablishment
     protected $telephone;
 
     /**
-     * @var string The delivery service of the restaurant.
-     *
-     * @ORM\OneToOne(targetEntity="DeliveryService", cascade={"persist"})
-     * @ORM\JoinColumn(name="delivery_service_id", referencedColumnName="id")
-     */
-    private $deliveryService;
-
-    /**
      * @var string The Stripe params of the restaurant.
      *
      * @ORM\ManyToOne(targetEntity="StripeParams")
@@ -196,8 +188,6 @@ class Restaurant extends FoodEstablishment
      * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
      */
     private $contract;
-
-
 
     public function __construct()
     {
@@ -444,18 +434,6 @@ class Restaurant extends FoodEstablishment
     public function setStripeParams(StripeParams $stripeParams)
     {
         $this->stripeParams = $stripeParams;
-
-        return $this;
-    }
-
-    public function getDeliveryService()
-    {
-        return $this->deliveryService;
-    }
-
-    public function setDeliveryService($deliveryService)
-    {
-        $this->deliveryService = $deliveryService;
 
         return $this;
     }

@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderEvent;
-use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Predis\Client as Redis;
@@ -17,7 +17,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 class OrderListener
 {
     private $tokenStorage;
-    private $deliveryServiceFactory;
     private $redis;
     private $serializer;
     private $orderManager;
@@ -25,10 +24,10 @@ class OrderListener
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        DeliveryServiceFactory $deliveryServiceFactory,
         Redis $redis,
         SerializerInterface $serializer,
         OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
         TranslatorInterface $translator,
         $templating,
         \Swift_Mailer $swiftMailer,
@@ -37,21 +36,16 @@ class OrderListener
         EventDispatcherInterface $eventDispatcher)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->redis = $redis;
         $this->serializer = $serializer;
         $this->orderManager = $orderManager;
+        $this->deliveryManager = $deliveryManager;
         $this->translator = $translator;
         $this->templating = $templating;
         $this->mailer = $swiftMailer;
         $this->transactionalEmailAddress = $transactionalEmailAddress;
         $this->transactionalEmailName = $transactionalEmailName;
         $this->eventDispatcher = $eventDispatcher;
-    }
-
-    private function getDeliveryService(Order $order)
-    {
-        return $this->deliveryServiceFactory->createForRestaurant($order->getRestaurant());
     }
 
     private function getUser()
@@ -92,7 +86,7 @@ class OrderListener
         $this->orderManager->applyTaxes($order);
 
         if (!$delivery->isCalculated()) {
-            $this->getDeliveryService($order)->calculate($delivery);
+            $this->deliveryManager->calculate($delivery);
         }
     }
 

@@ -3,7 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Order;
-use AppBundle\Service\DeliveryService\Factory as DeliveryServiceFactory;
+use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Service\PaymentService;
 use Predis\Client as Redis;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -14,7 +14,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderManager
 {
-    private $deliveryServiceFactory;
     private $payment;
     private $redis;
     private $serializer;
@@ -24,13 +23,12 @@ class OrderManager
     private $deliveryManager;
     private $eventDispatcher;
 
-    public function __construct(PaymentService $payment, DeliveryServiceFactory $deliveryServiceFactory,
+    public function __construct(PaymentService $payment,
         Redis $redis, SerializerInterface $serializer,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
         TaxCategoryRepositoryInterface $taxCategoryRepository, DeliveryManager $deliveryManager,
         EventDispatcherInterface $eventDispatcher)
     {
-        $this->deliveryServiceFactory = $deliveryServiceFactory;
         $this->payment = $payment;
         $this->redis = $redis;
         $this->serializer = $serializer;
@@ -62,11 +60,7 @@ class OrderManager
 
         $order->setStatus(Order::STATUS_ACCEPTED);
 
-        $this->deliveryServiceFactory
-            ->createForRestaurant($order->getRestaurant())
-            ->create($order);
-
-        $this->eventDispatcher->dispatch('order.accepted');
+        $this->eventDispatcher->dispatch(OrderAcceptEvent::NAME, new OrderAcceptEvent($order));
     }
 
     public function applyTaxes(Order $order)
