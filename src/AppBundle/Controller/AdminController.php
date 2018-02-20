@@ -18,6 +18,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\TaskAssignment;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Zone;
@@ -151,7 +152,16 @@ class AdminController extends Controller
 
                 $taskImport = $taskUploadForm->getData();
 
+                $taskGroup = new TaskGroup();
+                $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
+
+                $this->getDoctrine()
+                    ->getManagerForClass(TaskGroup::class)
+                    ->persist($taskGroup);
+
                 foreach ($taskImport->tasks as $task) {
+                    $task->setGroup($taskGroup);
+
                     $this->getDoctrine()
                         ->getManagerForClass(Task::class)
                         ->persist($task);
