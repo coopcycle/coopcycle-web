@@ -1,42 +1,89 @@
 import React from 'react'
-import { findDOMNode } from 'react-dom'
 import _ from 'lodash'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import { connect } from 'react-redux'
-
+import { setTaskListGroupMode } from '../store/actions'
 
 class TaskList extends React.Component {
 
   componentDidMount() {
-    this.props.onLoad(findDOMNode(document.getElementById('task-list')))
+
+    const $groupModeBtn = $('#task-list-group-mode')
+
+    $(document).on('click', '#task-list-group-mode--group', () => {
+      this.props.setTaskListGroupMode('GROUP_MODE_FOLDERS')
+      $groupModeBtn.popover('hide')
+    })
+
+    $(document).on('click', '#task-list-group-mode--none', () => {
+      this.props.setTaskListGroupMode('GROUP_MODE_NONE')
+      $groupModeBtn.popover('hide')
+    })
+
+    $groupModeBtn.popover({
+      container: 'body',
+      html: true,
+      placement: 'left',
+      content: document.querySelector('#task-list-group-mode-template').textContent
+    })
+  }
+
+  renderGroup(group, tasks) {
+    return (
+      <TaskGroup key={ group.id } group={ group } tasks={ tasks } />
+    )
   }
 
   render() {
 
-    const { unassignedTasks } = this.props,
-          standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group')),
-          groupedTasks = _.filter(unassignedTasks, task => task.hasOwnProperty('group')),
-          taskGroups = _.groupBy(groupedTasks, task => task.group)
+    const { unassignedTasks, taskListGroupMode } = this.props
+
+    const groupsMap = new Map()
+    const groups = []
+    let standaloneTasks = []
+
+    if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
+
+      const tasksWithGroup = _.filter(unassignedTasks, task => task.hasOwnProperty('group') && task.group)
+
+      _.forEach(tasksWithGroup, task => {
+        const keys = Array.from(groupsMap.keys())
+        const group = _.find(keys, group => group.id === task.group.id)
+        if (!group) {
+          groupsMap.set(task.group, [ task ])
+        } else {
+          groupsMap.get(group).push(task)
+        }
+      })
+      groupsMap.forEach((tasks, group) => {
+        groups.push(this.renderGroup(group, tasks))
+      })
+
+      standaloneTasks = _.filter(unassignedTasks, task => !task.hasOwnProperty('group') || !task.group)
+
+    } else {
+      standaloneTasks = unassignedTasks
+    }
 
     return (
       <div className="dashboard__panel">
         <h4>
           <span>{ window.AppData.Dashboard.i18n['Unassigned'] }</span>
-          <a href="#" className="pull-right" onClick={ e => {
-            e.preventDefault();
-            $('#task-modal').modal('show')
-          }}>
-            <i className="fa fa-plus"></i>
-          </a>
+          <span className="pull-right">
+            <a href="#" id="task-list-group-mode" title={ window.AppData.Dashboard.i18n['Display'] }>
+              <i className="fa fa-list"></i>
+            </a>   <a href="#" onClick={ e => {
+              e.preventDefault();
+              $('#task-modal').modal('show')
+            }}>
+              <i className="fa fa-plus"></i>
+            </a>
+          </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <div className="list-group nomargin" id="task-list">
-            { _.map(taskGroups, (tasks, key) => {
-              return (
-                <TaskGroup key={ key } tasks={ tasks } />
-              )
-            })}
+          <div className="list-group nomargin">
+            { groups }
             { _.map(standaloneTasks, (task, key) => {
               return (
                 <Task
@@ -54,8 +101,15 @@ class TaskList extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    unassignedTasks: state.unassignedTasks
+    unassignedTasks: state.unassignedTasks,
+    taskListGroupMode: state.taskListGroupMode
   }
 }
 
-export default connect(mapStateToProps)(TaskList)
+function mapDispatchToProps(dispatch) {
+  return {
+    setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList)

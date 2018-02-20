@@ -1,24 +1,24 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash'
 
-function addGroupProperty(tasks) {
+function addLinkProperty(tasks) {
   let tasksById = _.keyBy(tasks, task => task['@id'])
 
   const tasksWithPrevious = _.filter(tasks, task => task.previous !== null)
   _.each(tasksWithPrevious, task => {
     const previousTask = tasksById[task.previous]
-    const taskGroup    = [ previousTask, task ]
-    const groupKey     = _.join(_.map(taskGroup, task => task.id), ':')
+    const taskArray    = [ previousTask, task ]
+    const linkKey      = _.join(_.map(taskArray, task => task.id), ':')
 
-    tasksById[task.previous] = Object.assign(tasksById[task.previous], { group: groupKey })
-    tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { group: groupKey })
+    tasksById[task.previous] = Object.assign(tasksById[task.previous], { link: linkKey })
+    tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { link: linkKey })
   })
 
   return _.map(tasksById, task => task)
 }
 
 // initial data pumped from the template
-const tasksInitial = addGroupProperty(window.AppData.Dashboard.tasks),
+const tasksInitial = addLinkProperty(window.AppData.Dashboard.tasks),
       unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned),
       assignedTasksList = _.filter(tasksInitial, task => task.isAssigned),
       assignedTasksByUserInitial = _.groupBy(assignedTasksList, task => task.assignedTo)
@@ -85,7 +85,7 @@ const assignedTasksByUser = (state = assignedTasksByUserInitial, action) => {
       newState[action.username].polyline = ''
       break
     case 'SAVE_USER_TASKS_SUCCESS':
-      newState[action.username] = addGroupProperty(action.tasks)
+      newState[action.username] = addLinkProperty(action.tasks)
       newState[action.username].duration = action.duration
       newState[action.username].distance = action.distance
       newState[action.username].polyline = action.polyline
@@ -173,11 +173,21 @@ const polylineEnabled = (state = polylineEnabledByUser, action) => {
   }
 }
 
+const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
+  switch (action.type) {
+    case 'SET_TASK_LIST_GROUP_MODE':
+      return action.mode
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   allTasks,
   assignedTasksByUser,
   unassignedTasks,
   userPanelLoading,
   addModalIsOpen,
-  polylineEnabled
+  polylineEnabled,
+  taskListGroupMode,
 })

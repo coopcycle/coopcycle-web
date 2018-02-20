@@ -52,7 +52,7 @@ class UserPanel extends React.Component {
 
         const draggedTask = _.find(tasks, task => task['@id'] === el.getAttribute('data-task-id'))
 
-        if (!draggedTask.hasOwnProperty('group')) {
+        if (!draggedTask.hasOwnProperty('link')) {
           return true
         }
 
@@ -115,8 +115,8 @@ class UserPanel extends React.Component {
 
     // Check if we need to remove another linked task
     let tasksToRemove = []
-    if (taskToRemove.hasOwnProperty('group')) {
-      tasksToRemove = _.filter(this.props.tasks, task => task.hasOwnProperty('group') && task.group === taskToRemove.group)
+    if (taskToRemove.hasOwnProperty('link')) {
+      tasksToRemove = _.filter(this.props.tasks, task => task.hasOwnProperty('link') && task.link === taskToRemove.link)
     } else {
       tasksToRemove = [ taskToRemove ]
     }

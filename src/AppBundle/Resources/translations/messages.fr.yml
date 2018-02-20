@@ -179,6 +179,9 @@ Specify any useful details to complete task: Précisez tout détail utile pour e
 Import errors: Erreurs d'importation
 Could not geocode address %address%: Impossible de géocoder l'adresse %address%
 You must provide an "address" column: Vous devez spécifier une colonne "address"
+Display: Affichage
+Display by groups: Afficher par groupes
+Display all: Afficher tout
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses

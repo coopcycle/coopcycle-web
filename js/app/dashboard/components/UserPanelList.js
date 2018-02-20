@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { addUsernameToList, closeAddUserModal, openAddUserModal, removeTasks, saveUserTasksRequest, assignTasks } from '../store/actions'
+import { addUsernameToList, closeAddUserModal, openAddUserModal } from '../store/actions'
 import UserPanel from './UserPanel'
 
 
@@ -134,9 +134,6 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
-    removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
-    saveUserTasksRequest: (username, tasks) => { dispatch(saveUserTasksRequest(username, tasks)) },
     addUsername: (username) => { dispatch(addUsernameToList(username)) },
     openAddUserModal: () => { dispatch(openAddUserModal()) },
     closeAddUserModal: () => { dispatch(closeAddUserModal()) }

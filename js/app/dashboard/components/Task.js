@@ -51,7 +51,7 @@ class Task extends React.Component {
     const classNames = ['task__icon']
     classNames.push(assigned ? 'task__icon--left' : 'task__icon--right')
 
-    if (task.hasOwnProperty('group')) {
+    if (task.hasOwnProperty('link')) {
       return (
         <span className={ classNames.join(' ') }><i className="fa fa-exchange"></i></span>
       )
@@ -75,11 +75,16 @@ class Task extends React.Component {
       'list-group-item',
       'list-group-item--' + task.type.toLowerCase(),
       'list-group-item--' + task.status.toLowerCase(),
-      'task'
+      'task__draggable'
     ]
 
+    let taskAttributes = {}
+    if (task.hasOwnProperty('link')) {
+      taskAttributes = Object.assign(taskAttributes, { 'data-link': task.link })
+    }
+
     return (
-      <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] }>
+      <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes }>
         <div>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
           <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>
