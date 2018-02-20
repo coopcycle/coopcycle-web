@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Task\Group as TaskGroup;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -128,6 +129,12 @@ class Task
      * @ORM\JoinColumn(name="previous_task_id", referencedColumnName="id", nullable=true)
      */
     private $previous;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Task\Group", cascade={"all"})
+     * @ORM\JoinColumn(name="group_id", referencedColumnName="id", nullable=true)
+     */
+    private $group;
 
     public function __construct()
     {
@@ -327,5 +334,17 @@ class Task
                 return $event;
             }
         }
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    public function setGroup(TaskGroup $group = null)
+    {
+        $this->group = $group;
+
+        return $this;
     }
 }
