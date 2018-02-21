@@ -2,27 +2,13 @@
 
 namespace AppBundle\Action\Task;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Service\TaskManager;
 use AppBundle\Entity\Task;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class Done
+class Done extends Base
 {
-    protected $tokenStorage;
-    protected $taskManager;
-
-    use TokenStorageTrait;
-
-    public function __construct(TokenStorageInterface $tokenStorage, TaskManager $taskManager)
-    {
-        $this->tokenStorage = $tokenStorage;
-        $this->taskManager = $taskManager;
-    }
-
     /**
      * @Route(
      *   name="api_task_done",
@@ -34,15 +20,12 @@ class Done
      * )
      * @Method("PUT")
      */
-    public function __invoke($data)
+    public function __invoke(Task $data, Request $request)
     {
         $task = $data;
 
-        if (!$task->isAssignedTo($this->getUser())) {
-            throw new AccessDeniedHttpException(sprintf('User %s cannot update task', $user->getUsername()));
-        }
-
-        $this->taskManager->markAsDone($task);
+        $this->accessControl($task);
+        $this->taskManager->markAsDone($task, $this->getNotes($request));
 
         return $task;
     }

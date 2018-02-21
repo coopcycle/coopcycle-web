@@ -12,13 +12,13 @@ class TaskFailedEvent extends Event
 
     protected $task;
     protected $user;
-    protected $reason;
+    protected $notes;
 
-    public function __construct(Task $task, UserInterface $user, $reason = null)
+    public function __construct(Task $task, UserInterface $user, $notes = null)
     {
         $this->task = $task;
         $this->user = $user;
-        $this->reason = $reason;
+        $this->notes = $notes;
     }
 
     public function getTask()
@@ -26,9 +26,9 @@ class TaskFailedEvent extends Event
         return $this->task;
     }
 
-    public function getReason()
+    public function getNotes()
     {
-        return $this->reason;
+        return $this->notes;
     }
 
     public function getUser()

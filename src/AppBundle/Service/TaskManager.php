@@ -131,17 +131,17 @@ class TaskManager
         $entityManager->remove($task);
     }
 
-    public function markAsDone(Task $task)
+    public function markAsDone(Task $task, $notes = null)
     {
         $task->setStatus(Task::STATUS_DONE);
 
-        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignment()->getCourier()));
+        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignment()->getCourier(), $notes));
     }
 
-    public function markAsFailed(Task $task, $reason = null)
+    public function markAsFailed(Task $task, $notes = null)
     {
         $task->setStatus(Task::STATUS_FAILED);
 
-        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignment()->getCourier(), $reason));
+        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignment()->getCourier(), $notes));
     }
 }

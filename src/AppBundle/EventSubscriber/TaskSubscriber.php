@@ -125,7 +125,7 @@ final class TaskSubscriber implements EventSubscriberInterface
         $task = $event->getTask();
         $user = $event->getUser();
 
-        $this->addEvent($task, 'DONE');
+        $this->addEvent($task, 'DONE', $event->getNotes());
 
         if (null !== $task->getDelivery()) {
             if ($task->isPickup()) {
@@ -147,8 +147,7 @@ final class TaskSubscriber implements EventSubscriberInterface
         $task = $event->getTask();
         $user = $event->getUser();
 
-        $this->addEvent($task, 'FAILED', $event->getReason());
-
+        $this->addEvent($task, 'FAILED', $event->getNotes());
 
         $this->publishTaskEventToRedis($task, $user, 'task:failed');
     }
