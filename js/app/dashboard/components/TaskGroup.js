@@ -3,18 +3,29 @@ import Task from './Task'
 
 export default class extends React.Component {
   render() {
-    const { tasks } = this.props
+    const { group, tasks } = this.props
     return (
-      <div className="task-group" data-task-group="true">
-        { tasks.map(task => {
-          return (
-            <Task
-              key={ task['@id'] }
-              task={ task }
-              assigned={ false }
-            />
-          )
-        })}
+      <div className="panel panel-default nomargin task__draggable">
+        <div className="panel-heading" role="tab">
+          <h4 className="panel-title">
+            <a role="button" data-toggle="collapse" href={ `#task-group-panel-${group.id}` }>
+              <i className="fa fa-folder"></i> { group.name } <span className="badge">{ tasks.length }</span>
+            </a>
+          </h4>
+        </div>
+        <div id={ `task-group-panel-${group.id}` } className="panel-collapse collapse" role="tabpanel">
+          <ul className="list-group">
+            { tasks.map(task => {
+              return (
+                <Task
+                  key={ task['@id'] }
+                  task={ task }
+                  assigned={ false }
+                />
+              )
+            })}
+          </ul>
+        </div>
       </div>
     )
   }

@@ -104,6 +104,13 @@
 </div>
 <div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 
+<script id="task-list-group-mode-template" type="text/template">
+  <ul class="list-unstyled nomargin">
+    <li><a href="#" id="task-list-group-mode--group">{% trans %}Display by groups{% endtrans %}</a></li>
+    <li><a href="#" id="task-list-group-mode--none">{% trans %}Display all{% endtrans %}</a></li>
+  </ul>
+</script>
+
 {% endblock %}
 
 {% block styles %}
@@ -129,7 +136,8 @@ window.AppData.Dashboard = {
     'Add a user to the planning': "{% trans %}Add a user to the planning{% endtrans %}",
     'Courier': "{% trans %}Courier{% endtrans %}",
     'Add': "{% trans %}Add{% endtrans %}",
-    'Cancel': "{% trans %}Cancel{% endtrans %}"
+    'Cancel': "{% trans %}Cancel{% endtrans %}",
+    'Display': "{% trans %}Display{% endtrans %}"
   },
   date: "{{ date|date('Y-m-d') }}",
   dashboardURL: "{{ path('admin_dashboard_fullscreen', dashboard_route_params)|raw }}",

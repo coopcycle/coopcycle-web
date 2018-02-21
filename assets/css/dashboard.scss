@@ -64,13 +64,20 @@ html, body {
     flex: 1;
     -webkit-flex-direction: column;
     flex-direction: column;
-    > h3, > h4 {
+    > h4 {
       padding: 15px;
       margin: 0;
       background-color: #95A5A6;
       color: #fff;
+      a {
+        color: #fff;
+        &:hover, &:active {
+          color: darken(#fff, 15%);
+          text-decoration: none;
+        }
+      }
     }
-    .dashboard__panel__scroll {
+    &__scroll {
       overflow: auto;
     }
   }
@@ -107,16 +114,6 @@ html, body {
       flex: 1;
       -webkit-flex-direction: column;
       flex-direction: column;
-    }
-
-    .dashboard__panel {
-      h4 > a {
-        color: #fff;
-        &:hover, &:active {
-          color: darken(#fff, 15%);
-          text-decoration: none;
-        }
-      }
     }
 
     .dropzone {
@@ -158,6 +155,10 @@ html, body {
   padding-right: 60px;
   cursor: pointer;
   color: #fff;
+  border-radius: 0;
+  &:last-child {
+    border-radius: 0;
+  }
   a {
     color: #fff;
   }
@@ -187,7 +188,6 @@ html, body {
   }
 }
 
-
 .task__icon {
   font-size: 16px;
   line-height: 16px;
@@ -205,6 +205,12 @@ html, body {
     position: static;
     padding-right: 5px;
     transform: none;
+  }
+}
+
+.task__draggable {
+  &--dragging {
+    opacity: 0.4;
   }
 }
 

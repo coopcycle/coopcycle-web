@@ -63,6 +63,10 @@ function togglePolyline(username) {
   return { type: 'TOGGLE_POLYLINE', username }
 }
 
+function setTaskListGroupMode(mode) {
+  return { type: 'SET_TASK_LIST_GROUP_MODE', mode }
+}
+
 export {
   updateTask,
   addUsernameToList,
@@ -72,5 +76,6 @@ export {
   removeTasks,
   openAddUserModal,
   closeAddUserModal,
-  togglePolyline
+  togglePolyline,
+  setTaskListGroupMode,
 }
