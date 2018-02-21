@@ -84,7 +84,12 @@ html, body {
 
   &__aside {
 
-    width: 275px;
+    -webkit-box-flex: 2.5;
+    -webkit-flex: 2.5;
+    -ms-flex: 2.5;
+    flex: 2.5;
+
+    min-width: 275px;
 
     -webkit-flex-direction: column;
     flex-direction: column;
