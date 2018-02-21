@@ -7,11 +7,15 @@ function addLinkProperty(tasks) {
   const tasksWithPrevious = _.filter(tasks, task => task.previous !== null)
   _.each(tasksWithPrevious, task => {
     const previousTask = tasksById[task.previous]
-    const taskArray    = [ previousTask, task ]
-    const linkKey      = _.join(_.map(taskArray, task => task.id), ':')
 
-    tasksById[task.previous] = Object.assign(tasksById[task.previous], { link: linkKey })
-    tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { link: linkKey })
+    // previous task may be undefined (example case: two different days)
+    if (previousTask) {
+      const taskArray    = [ previousTask, task ],
+        linkKey      = _.join(_.map(taskArray, task => task.id), ':')
+
+      tasksById[task.previous] = Object.assign(tasksById[task.previous], { link: linkKey })
+      tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { link: linkKey })
+    }
   })
 
   return _.map(tasksById, task => task)
