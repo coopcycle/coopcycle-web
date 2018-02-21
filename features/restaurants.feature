@@ -1,5 +1,6 @@
 Feature: Manage restaurants
 
+  @debug
   Scenario: Retrieve the restaurants list
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
@@ -17,7 +18,7 @@ Feature: Manage restaurants
       "hydra:totalItems":3,
       "hydra:search":{
         "@type":"hydra:IriTemplate",
-        "hydra:template":"/api/restaurants{?}",
+        "hydra:template":"/api/restaurants{?coordinate,distance}",
         "hydra:variableRepresentation":"BasicRepresentation",
         "hydra:mapping":@array@
       }

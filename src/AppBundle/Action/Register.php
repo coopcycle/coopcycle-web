@@ -6,7 +6,7 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Form\ApiRegistrationType;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use FOS\UserBundle\Doctrine\UserManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -29,7 +29,7 @@ class Register
 
     public function __construct(
         UserManipulator $userManipulator,
-        UserManager $userManager,
+        UserManagerInterface $userManager,
         JWTManager $jwtManager,
         EventDispatcherInterface $dispatcher,
         FormFactory $formFactory

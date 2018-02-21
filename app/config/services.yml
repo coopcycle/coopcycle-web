@@ -57,6 +57,7 @@ services:
       - AppBundle\Entity\Zone
 
   coopcycle.expression_language.zone.provider:
+    public: true
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
     arguments: [ '@coopcycle.repository.zone' ]
 
@@ -96,6 +97,7 @@ services:
       - { name: sylius.tax_calculator, calculator: float, label: "Float" }
 
   order.manager:
+    public: true
     class: AppBundle\Service\OrderManager
     arguments:
       - "@payment_service"
@@ -224,6 +226,7 @@ services:
       - AppBundle\Entity\Task
 
   routing_service:
+    public: true
     class: AppBundle\Service\Routing\Osrm
     arguments:
       - '@csa_guzzle.client.osrm'
@@ -234,11 +237,9 @@ services:
       - "%stripe_secret_key%"
       - "@logger"
 
-  restaurant.search_filter:
-    parent: "api_platform.doctrine.orm.search_filter"
-    class: 'AppBundle\Filter\RestaurantFilter'
-    arguments: [ { distance: "exact", coordinate: "exact" } ]
-    tags:  [ { name: 'api_platform.filter', id: 'restaurant.search' } ]
+  'AppBundle\Filter\RestaurantFilter':
+    arguments: [ '@doctrine', '@request_stack', '@logger', { distance: "exact", coordinate: "exact" } ]
+    tags: [ 'api_platform.filter' ]
 
   twig.extension.text:
     class: Twig_Extensions_Extension_Text

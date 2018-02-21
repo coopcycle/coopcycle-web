@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\FoodEstablishment;
+use AppBundle\Filter\RestaurantFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
@@ -26,7 +27,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\RestaurantRepository")
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
- *     "filters"={"restaurant.search"},
+ *     "filters"={RestaurantFilter::class},
  *     "denormalization_context"={"groups"={"order_denormalize"}},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   },

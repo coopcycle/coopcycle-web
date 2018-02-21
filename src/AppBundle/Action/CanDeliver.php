@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;

@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 
 trait ActionTrait
 {
