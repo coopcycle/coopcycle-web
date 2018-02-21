@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     "ready"={"route_name"="order_ready"}
  *   },
  *   attributes={
- *     "denormalization_context"={"groups"={"order"}},
+ *     "denormalization_context"={"groups"={"order", "order_denormalize"}},
  *     "normalization_context"={"groups"={"order", "place"}}
  *   }
  * )

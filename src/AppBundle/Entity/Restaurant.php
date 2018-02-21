@@ -27,6 +27,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
  *     "filters"={"restaurant.search"},
+ *     "denormalization_context"={"groups"={"order_denormalize"}},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   },
  *   collectionOperations={
@@ -191,6 +192,7 @@ class Restaurant extends FoodEstablishment
 
     /**
      * @var Contract
+     * @Groups({"order_denormalize"})
      * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
      */
     private $contract;
