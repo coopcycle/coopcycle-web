@@ -21,6 +21,7 @@ class TaskEvent
 
     /**
      * @ORM\ManyToOne(targetEntity="Task", inversedBy="events")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $task;
 
