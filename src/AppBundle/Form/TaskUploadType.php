@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Task;
 use Craue\ConfigBundle\Util\Config;
 use GuzzleHttp\Client;
+use League\Csv\Exception as CsvReaderException;
 use League\Csv\Reader as CsvReader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -154,31 +155,39 @@ class TaskUploadType extends AbstractType
                 return;
             }
 
-            foreach ($csv as $record) {
+            try {
 
-                [ $doneAfter, $doneBefore ] = $this->parseTimeWindow($record, $options['date']);
+                foreach ($csv as $record) {
 
-                try {
-                    $address = $this->geocodeAddress($record['address']);
-                } catch (\Exception $e) {
-                    $event->getForm()->addError(new FormError($e->getMessage()));
-                    return;
+                    [ $doneAfter, $doneBefore ] = $this->parseTimeWindow($record, $options['date']);
+
+                    try {
+                        $address = $this->geocodeAddress($record['address']);
+                    } catch (\Exception $e) {
+                        $event->getForm()->addError(new FormError($e->getMessage()));
+                        return;
+                    }
+
+                    $task = new Task();
+                    $task->setAddress($address);
+                    $task->setDoneAfter($doneAfter);
+                    $task->setDoneBefore($doneBefore);
+
+                    if (isset($record['type'])) {
+                        $this->applyType($task, $record['type']);
+                    }
+
+                    if (isset($record['comments']) && !empty($record['comments'])) {
+                        $task->setComments($record['comments']);
+                    }
+
+                    $tasks[] = $task;
                 }
 
-                $task = new Task();
-                $task->setAddress($address);
-                $task->setDoneAfter($doneAfter);
-                $task->setDoneBefore($doneBefore);
-
-                if (isset($record['type'])) {
-                    $this->applyType($task, $record['type']);
-                }
-
-                if (isset($record['comments']) && !empty($record['comments'])) {
-                    $task->setComments($record['comments']);
-                }
-
-                $tasks[] = $task;
+            } catch (CsvReaderException $e) {
+                $message = $this->translator->trans('The CSV file is not valid');
+                $event->getForm()->addError(new FormError($message));
+                return;
             }
 
             $taskImport = $event->getForm()->getParent()->getData();

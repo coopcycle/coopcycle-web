@@ -182,6 +182,7 @@ You must provide an "address" column: Vous devez spécifier une colonne "address
 Display: Affichage
 Display by groups: Afficher par groupes
 Display all: Afficher tout
+The CSV file is not valid: Le ficher CSV n'est pas valide
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
