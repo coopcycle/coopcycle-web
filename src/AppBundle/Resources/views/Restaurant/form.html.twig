@@ -90,14 +90,6 @@
 
   <hr>
 
-  <h4>{% trans %}Delivery service{% endtrans %}</h4>
-  {{ form_row(form.deliveryService.type) }}
-  <div id="restaurant_deliveryService_options">
-  {{ form_rest(form.deliveryService) }}
-  </div>
-
-  <hr>
-
   {#
   <div id="cuisines" data-prototype="{{ form_widget(form.servesCuisine.vars.prototype)|e('html_attr') }}">
     {{ form_label(form.servesCuisine) }}
