@@ -32,7 +32,16 @@ class TaskExportType extends AbstractType
             $assignedTasks = $this->taskRepository->findAssigned($taskExport->date);
 
             $csv = CsvWriter::createFromString('');
-            $csv->insertOne(['#', 'type', 'address.streetAddress', 'address.latlng', 'status', 'event.DONE.notes']);
+            $csv->insertOne([
+                '#',
+                'type',
+                'address.streetAddress',
+                'address.latlng',
+                'status',
+                'comments',
+                'event.DONE.notes',
+                'event.FAILED.notes'
+            ]);
 
             $records = [];
             foreach ($assignedTasks as $task) {
@@ -44,7 +53,9 @@ class TaskExportType extends AbstractType
                     $address->getStreetAddress(),
                     implode(',', [$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]),
                     $task->getStatus(),
-                    $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : ''
+                    $task->getComments(),
+                    $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : '',
+                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getNotes() : ''
                 ];
             }
             $csv->insertAll($records);
