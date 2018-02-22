@@ -33,10 +33,11 @@ install:
   - npm install -g pm2
   # Install OSRM
   - mkdir -p var/osrm
-  - wget https://s3.amazonaws.com/mapzen.odes/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf -P var/osrm
-  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-extract -p /opt/bicycle.lua /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf
-  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:v5.5.4 osrm-contract /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osrm
-  - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:v5.5.4 osrm-routed /data/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osrm
+  - wget https://coopcycle.org/osm/paris-france.osm.pbf -P var/osrm
+  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-extract -p /opt/bicycle.lua /data/paris-france.osm.pbf
+  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-partition /data/paris-france.osrm
+  - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-customize /data/paris-france.osrm
+  - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:latest osrm-routed --algorithm mld /data/paris-france.osrm
 
 before_script:
   - phpenv config-rm xdebug.ini

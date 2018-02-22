@@ -1,5 +1,5 @@
 #!/bin/sh
 
 if [ -f "/data/$OSRM_FILENAME" ]; then
-    osrm-routed /data/$OSRM_FILENAME
+    osrm-routed --algorithm mld /data/$OSRM_FILENAME
 fi

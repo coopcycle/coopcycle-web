@@ -4,10 +4,7 @@ install:
 	@openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096;
 	@openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	@mkdir -p var/osrm
-	@wget https://s3.amazonaws.com/mapzen.odes/ex_i653FMk2VwCUGetCYpH2hR4hpNLKV.osm.pbf -O var/osrm/data.osm.pbf
-	@docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
-	@docker-compose run osrm osrm-contract /data/data.osrm
+	$(MAKE) osrm
 	@printf "\e[0;32mCreating database..\e[0m\n"
 	@docker-compose run php composer install --prefer-dist --no-progress --no-suggest
 	@docker-compose run php bin/console doctrine:database:create --if-not-exists --env=dev
@@ -17,6 +14,13 @@ install:
 	@docker-compose run php bin/console doctrine:schema:create --env=dev
 	@docker-compose run php bin/demo --env=dev
 	@docker-compose run php bin/console doctrine:migrations:version --add --all
+
+osrm:
+	@mkdir -p var/osrm
+	@wget https://coopcycle.org/osm/paris-france.osm.pbf -O var/osrm/data.osm.pbf
+	@docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+	@docker-compose run osrm osrm-partition /data/data.osrm
+	@docker-compose run osrm osrm-customize /data/data.osrm
 
 phpunit:
 	@docker-compose run php vendor/bin/phpunit
