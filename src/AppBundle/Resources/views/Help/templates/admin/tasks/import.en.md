@@ -16,7 +16,7 @@ You can download an [example file](/help/tasks_import.example.fr.csv).
 ---
 
 
-| `type`    | `address_name`      | `address`                             | `after`            | `before`           | `comments`           |
+| `type`    | `address.name`      | `address`                             | `after`            | `before`           | `comments`           |
 | --------- | ------------------- | ------------------------------------- | ------------------ | ------------------ | -------------------- |
 | `pickup`  | `Mairie du 2e`      | `1, rue de Rivoli Paris`              | `15/02/2018 12:00` | `15/02/2018 14:00` | `Call customer`      |
 | `dropoff` | `Bijouterie`        | `54, rue de la Paix Paris`            | `2018-02-15 09:00` | `2018-02-15 10:00` |                      |

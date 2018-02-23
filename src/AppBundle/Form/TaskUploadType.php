@@ -168,8 +168,8 @@ class TaskUploadType extends AbstractType
                         return;
                     }
 
-                    if (isset($record['address_name']) && !empty($record['address_name'])) {
-                        $address->setName($record['address_name']);
+                    if (isset($record['address.name']) && !empty($record['address.name'])) {
+                        $address->setName($record['address.name']);
                     }
 
                     $task = new Task();
