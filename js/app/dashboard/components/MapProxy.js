@@ -27,11 +27,14 @@ export default class MapProxy {
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
-    const doneAfter = moment(task.doneAfter).format('LT')
-    const doneBefore = moment(task.doneBefore).format('LT')
+    const doneAfter = moment(task.doneAfter).format('LT'),
+      doneBefore = moment(task.doneBefore).format('LT'),
+      taskId = /([\d]+)/.exec(task['@id'])[0]
 
     const popupContent = `
-      <strong>${task.address.streetAddress}</strong>
+      <span>Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }</span>
+      <br>
+      <span>${task.address.streetAddress}</span>
       <br>
       <span>${doneAfter} - ${doneBefore}</span>
     `

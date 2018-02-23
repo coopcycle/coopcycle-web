@@ -35,6 +35,7 @@ class TaskExportType extends AbstractType
             $csv->insertOne([
                 '#',
                 'type',
+                'address.name',
                 'address.streetAddress',
                 'address.latlng',
                 'status',
@@ -50,6 +51,7 @@ class TaskExportType extends AbstractType
                 $records[] = [
                     $task->getId(),
                     $task->getType(),
+                    $address->getName(),
                     $address->getStreetAddress(),
                     implode(',', [$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]),
                     $task->getStatus(),
