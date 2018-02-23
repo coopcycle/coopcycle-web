@@ -51,12 +51,12 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
-    # gedmo.listener.sluggable:
-    #     class: Gedmo\Sluggable\SluggableListener
-    #     tags:
-    #         - { name: doctrine.event_subscriber, connection: default }
-    #     calls:
-    #         - [ setAnnotationReader, [ "@annotation_reader" ] ]
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
     gedmo.listener.sortable:
         class: Gedmo\Sortable\SortableListener
