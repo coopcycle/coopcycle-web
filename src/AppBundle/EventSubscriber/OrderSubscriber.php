@@ -3,10 +3,13 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Event\OrderAcceptEvent;
+use AppBundle\Event\OrderCancelEvent;
+use AppBundle\Event\OrderCreateEvent;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Entity\Order;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\NotificationManager;
 use AppBundle\Utils\MetricsHelper;
 use M6Web\Component\Statsd\Client as StatsdClient;
 use Predis\Client as Redis;
@@ -23,18 +26,21 @@ final class OrderSubscriber implements EventSubscriberInterface
 {
     private $tokenStorage;
     private $deliveryManager;
+    private $notificationManager;
     private $validator;
     private $metricsHelper;
     private $redis;
     private $logger;
 
     public function __construct(TokenStorageInterface $tokenStorage,
-        DeliveryManager $deliveryManager, ValidatorInterface $validator,
+        DeliveryManager $deliveryManager, NotificationManager $notificationManager,
+        ValidatorInterface $validator,
         MetricsHelper $metricsHelper, Redis $redis,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->deliveryManager = $deliveryManager;
+        $this->notificationManager = $notificationManager;
         $this->validator = $validator;
         $this->metricsHelper = $metricsHelper;
         $this->redis = $redis;
@@ -48,8 +54,9 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['postValidate', EventPriorities::POST_VALIDATE],
             ],
-            'order.created' => 'onOrderCreated',
+            OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
+            OrderCancelEvent::NAME => 'onOrderCanceled',
         ];
     }
 
@@ -120,15 +127,22 @@ final class OrderSubscriber implements EventSubscriberInterface
 
     public function onOrderCreated(Event $event)
     {
-        $this->logger->info('Order created');
+        $order = $event->getOrder();
+
+        $this->logger->info(sprintf('Order #%d created', $order->getId()));
+
+        $this->notificationManager->notifyOrderCreated($order);
         $this->metricsHelper->incrementOrdersWaiting();
     }
 
     public function onOrderAccepted(OrderAcceptEvent $event)
     {
-        $this->logger->info('Order accepted');
-
         $order = $event->getOrder();
+
+        $this->logger->info(sprintf('Order #%d accepted', $order->getId()));
+
+        $this->notificationManager->notifyOrderAccepted($order);
+        $this->metricsHelper->decrementOrdersWaiting();
 
         $originAddress = $order->getDelivery()->getOriginAddress();
         $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
@@ -157,7 +171,17 @@ final class OrderSubscriber implements EventSubscriberInterface
             'deliveries:waiting',
             $order->getDelivery()->getId()
         );
+    }
 
+    public function onOrderCanceled(Event $event)
+    {
+        $order = $event->getOrder();
+
+        $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
+
+        $this->notificationManager->notifyOrderCanceled($order);
         $this->metricsHelper->decrementOrdersWaiting();
+
+        $this->redis->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
     }
 }

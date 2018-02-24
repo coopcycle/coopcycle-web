@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Order;
-use AppBundle\Entity\Delivery;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,16 +104,10 @@ trait OrderTrait
     private function cancelOrderById($id)
     {
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
-
         $this->accessControl($order->getRestaurant());
 
-        $order->setStatus(Order::STATUS_CANCELED);
-        $order->getDelivery()->setStatus(Order::STATUS_CANCELED);
-
+        $this->get('order.manager')->cancel($order);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
-        $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-        $this->get('snc_redis.default')->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
     }
 
     public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request)

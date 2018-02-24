@@ -82,11 +82,6 @@ services:
       - "@serializer"
       - "@order.manager"
       - "@coopcycle.delivery.manager"
-      - "@translator"
-      - "@templating"
-      - "@mailer"
-      - "%transactional_address%"
-      - "%transactional_sender_name%"
       - "@event_dispatcher"
     tags:
       - { name: doctrine.orm.entity_listener, lazy: true }
@@ -282,3 +277,11 @@ services:
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
     arguments: ["@doctrine", "@event_dispatcher"]
+
+  coopcycle.notification_manager:
+    class: AppBundle\Service\NotificationManager
+    arguments:
+      - "@mailer"
+      - "@templating"
+      - "@translator"
+      - { transactional_address: "%transactional_address%", transactional_sender_name: "%transactional_sender_name%" }

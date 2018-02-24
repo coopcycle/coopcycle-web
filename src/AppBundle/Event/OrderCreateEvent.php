@@ -5,9 +5,9 @@ namespace AppBundle\Event;
 use AppBundle\Entity\Order;
 use Symfony\Component\EventDispatcher\Event;
 
-class OrderAcceptEvent extends Event
+class OrderCreateEvent extends Event
 {
-    const NAME = 'order.accept';
+    const NAME = 'order.create';
 
     protected $order;
 

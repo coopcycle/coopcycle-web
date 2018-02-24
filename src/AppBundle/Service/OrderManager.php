@@ -2,8 +2,10 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Event\OrderAcceptEvent;
+use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Service\PaymentService;
 use Predis\Client as Redis;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -61,6 +63,14 @@ class OrderManager
         $order->setStatus(Order::STATUS_ACCEPTED);
 
         $this->eventDispatcher->dispatch(OrderAcceptEvent::NAME, new OrderAcceptEvent($order));
+    }
+
+    public function cancel(Order $order)
+    {
+        $order->setStatus(Order::STATUS_CANCELED);
+        $order->getDelivery()->setStatus(Delivery::STATUS_CANCELED);
+
+        $this->eventDispatcher->dispatch(OrderCancelEvent::NAME, new OrderCancelEvent($order));
     }
 
     public function applyTaxes(Order $order)
