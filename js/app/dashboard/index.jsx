@@ -4,7 +4,6 @@ import { Provider } from 'react-redux'
 import { DatePicker, LocaleProvider } from 'antd'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
-import TaskRangePicker from '../widgets/TaskRangePicker'
 import moment from 'moment'
 import store from './store/store'
 import DashboardApp from './app'
@@ -43,8 +42,3 @@ render(
   </LocaleProvider>,
   document.querySelector('#date-picker')
 )
-
-new TaskRangePicker(document.querySelector('#task_rangepicker'), [
-  document.querySelector('#task_doneAfter'),
-  document.querySelector('#task_doneBefore')
-])

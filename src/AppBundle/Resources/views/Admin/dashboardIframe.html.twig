@@ -119,7 +119,6 @@
 
 {% block scripts %}
 <script src="/tracking/socket.io/socket.io.js"></script>
-<script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script>
 
 {% set dashboard_route_params = { date: '__DATE__' } %}
@@ -158,16 +157,10 @@ $('#task-upload-form-errors').popover({
 </script>
 <script>
 function initMap() {
-  new CoopCycle.AddressInput(document.querySelector('#task_address_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#task_address_latitude'),
-      longitude: document.querySelector('#task_address_longitude'),
-      postalCode: document.querySelector('#task_address_postalCode'),
-      addressLocality: document.querySelector('#task_address_addressLocality')
-    }
-  })
+  new CoopCycle.TaskModal("{{ new_task_form.vars.name }}");
 }
 </script>
+<script src="{{ asset('js/widgets/address-input.js') }}"></script>
 <script src="{{ asset('js/widgets/timeline.js') }}"></script>
 <script src="{{ asset('js/task-modal.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"

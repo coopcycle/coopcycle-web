@@ -1,7 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
 import TaskTimeline from './TaskTimeline'
-import TaskRangePicker from '../../widgets/TaskRangePicker'
 import moment from 'moment'
 
 moment.locale($('html').attr('lang'))

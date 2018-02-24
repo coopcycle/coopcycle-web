@@ -18,6 +18,8 @@ window.CoopCycle.TaskModal = (formName) => {
   ])
 
   const timelineEl = document.querySelector(`form[name="${formName}"] ul[data-render="timeline"]`)
-  new CoopCycle.Timeline(timelineEl)
+  if (timelineEl) {
+    new CoopCycle.Timeline(timelineEl)
+  }
 
 }
