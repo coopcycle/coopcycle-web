@@ -208,6 +208,10 @@ services:
     arguments: [ '@coopcycle.settings_manager' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\TaskType':
+    arguments: [ '@coopcycle.tag_manager' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:

@@ -22,3 +22,25 @@
 {% block _task_edit_address_widget %}
 {{ block('_task_address_widget') }}
 {% endblock %}
+
+{% block _task_tagsAsString_label %}
+<div>
+{{ form_label(form) }}
+<span class="pull-right">
+  <a class="task-tags-selector" href="#" title="Select tags"><i class="fa fa-cog"></i></a>
+</span>
+</div>
+{% endblock %}
+
+{% block _task_edit_tagsAsString_label %}
+{{ block('_task_tagsAsString_label') }}
+{% endblock %}
+
+{% block _task_tagsAsString_widget %}
+<div class="task-tag-list"></div>
+{{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _task_edit_tagsAsString_widget %}
+{{ block('_task_tagsAsString_widget') }}
+{% endblock %}
