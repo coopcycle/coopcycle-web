@@ -19,6 +19,6 @@ class OrderAcceptEvent extends Event
 
     public function getOrder()
     {
-        return $this->task;
+        return $this->order;
     }
 }
