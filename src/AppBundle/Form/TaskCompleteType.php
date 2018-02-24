@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TaskCompleteType extends LocalBusinessType
+class TaskCompleteType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
