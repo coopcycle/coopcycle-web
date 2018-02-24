@@ -18,7 +18,6 @@ var webpackConfig = {
   entry: {
     'css/dashboard': './assets/css/dashboard.scss',
     'css/styles': './assets/css/main.scss',
-    'css/tracking': './assets/css/tracking.scss',
     'js/common': ['es6-set', 'whatwg-fetch', 'bootstrap'],
     'js/dashboard': './js/app/dashboard/index.jsx',
     'js/homepage': './js/app/homepage/index.js',
@@ -36,7 +35,6 @@ var webpackConfig = {
     'js/restaurant-panel': './js/app/restaurant/panel.jsx',
     'js/restaurants-map': './js/app/restaurants-map/index.jsx',
     'js/task-modal': './js/app/task/modal.js',
-    'js/tracking': './js/app/tracking/index.jsx',
     'js/user-tracking': './js/app/user/tracking.jsx',
     'js/widgets/rule-picker': './js/app/widgets/RulePicker.js',
     'js/widgets/date-picker': './js/app/widgets/DatePicker.js',
