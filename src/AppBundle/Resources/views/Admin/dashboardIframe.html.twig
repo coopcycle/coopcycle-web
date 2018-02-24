@@ -132,6 +132,14 @@
   </ul>
 </script>
 
+<script id="task-tag-list-popover-template" type="text/template">
+<div class="popover" role="tooltip">
+  <div class="arrow"></div>
+  <h3 class="popover-title hidden"></h3>
+  <div class="popover-content nopadding"></div>
+</div>
+</script>
+
 {% endblock %}
 
 {% block styles %}
@@ -182,7 +190,7 @@ $('#task-group-modal').on('show.bs.modal', function (event) {
 </script>
 <script>
 function initMap() {
-  new CoopCycle.TaskModal("{{ new_task_form.vars.name }}");
+  new CoopCycle.TaskModal("{{ new_task_form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
 }
 </script>
 <script src="{{ asset('js/widgets/address-input.js') }}"></script>

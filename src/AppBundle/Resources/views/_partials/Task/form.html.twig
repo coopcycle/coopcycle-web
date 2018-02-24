@@ -85,6 +85,6 @@
 
 {% if init_javascript|default(false) %}
 <script>
-new CoopCycle.TaskModal("{{ form.vars.name }}");
+new CoopCycle.TaskModal("{{ form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
 </script>
 {% endif %}
