@@ -247,3 +247,17 @@ admin_store_deliveries:
             stores: admin_stores
             store: admin_store
     methods:  [ GET ]
+
+admin_tag_new:
+    path: /admin/settings/tags/new
+    defaults:
+        _controller: AppBundle:Tag:newTag
+        template: AppBundle:Admin:tag.html.twig
+        redirect_route: admin_tags
+
+admin_tag:
+    path: /admin/settings/tags/{slug}
+    defaults:
+        _controller: AppBundle:Tag:tag
+        template: AppBundle:Admin:tag.html.twig
+        redirect_route: admin_tags

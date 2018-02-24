@@ -45,6 +45,7 @@
     "promise": "^7.1.1",
     "prop-types": "^15.6.0",
     "react-autosuggest": "^9.3.2",
+    "react-color": "^2.13.8",
     "react-dragula": "^1.1.17",
     "react-places-autocomplete": "git+https://git@github.com/Atala/react-places-autocomplete.git",
     "react-stickynode": "^1.4.0",

@@ -17,6 +17,7 @@ use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\TaskList;
@@ -631,6 +632,33 @@ class AdminController extends Controller
         return [
             'taxCategories' => $taxCategories
         ];
+    }
+
+    /**
+     * @Route("/admin/settings/tags", name="admin_tags")
+     */
+    public function tagsAction(Request $request)
+    {
+        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
+
+        if ($request->query->has('format')) {
+            if ('json' === $request->query->get('format')) {
+                $data = array_map(function (Tag $tag) {
+                    return [
+                        'id' => $tag->getId(),
+                        'name' => $tag->getName(),
+                        'slug' => $tag->getSlug(),
+                        'color' => $tag->getColor(),
+                    ];
+                }, $tags);
+
+                return new JsonResponse($data);
+            }
+        }
+
+        return $this->render('@App/Admin/tags.html.twig', [
+            'tags' => $tags
+        ]);
     }
 
     /**
