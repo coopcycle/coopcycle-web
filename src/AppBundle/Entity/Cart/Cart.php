@@ -164,6 +164,7 @@ class Cart
 
         if (!is_null($item)) {
             $this->items->removeElement($item);
+            $item->setCart(null);
         }
 
         return $this->items;

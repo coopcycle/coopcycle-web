@@ -230,4 +230,11 @@ class CartItem
         $this->unitPrice = $unitPrice;
     }
 
+    public function setCart(Cart $cart = null)
+    {
+        $this->cart = $cart;
+
+        return $this;
+    }
+
 }
