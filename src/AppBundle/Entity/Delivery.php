@@ -136,11 +136,6 @@ class Delivery extends Intangible implements TaxableInterface
     private $events;
 
     /**
-     * @ORM\Column(type="json_array", nullable=true)
-     */
-    private $data = [];
-
-    /**
      * @Groups({"order"})
      * @ORM\Column(type="float")
      */
@@ -313,18 +308,6 @@ class Delivery extends Intangible implements TaxableInterface
     public function getEvents()
     {
         return $this->events;
-    }
-
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
     }
 
     /**

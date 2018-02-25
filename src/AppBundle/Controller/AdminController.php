@@ -568,36 +568,10 @@ class AdminController extends Controller
         return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
     }
 
-    /**
-     * @Route("/admin/deliveries/{id}/dispatch", methods={"POST"}, name="admin_delivery_dispatch")
-     */
-    public function dispatchDeliveryAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        $this->accessControl($delivery);
-
-        $userManager = $this->get('fos_user.user_manager');
-
-        $userId = $request->request->get('courier');
-        $courier = $userManager->findUserBy(['id' => $userId]);
-
-        $this->get('coopcycle.delivery.manager')->dispatch($delivery, $courier);
-
-        $this->getDoctrine()
-            ->getManagerForClass(Delivery::class)
-            ->flush();
-
-        return $this->redirectToRoute('admin_deliveries');
-    }
-
     protected function getDeliveryRoutes()
     {
         return [
             'list'     => 'admin_deliveries',
-            'dispatch' => 'admin_delivery_dispatch',
             'pick'     => 'admin_delivery_pick',
             'deliver'  => 'admin_delivery_deliver',
             'view'     => 'admin_delivery'
