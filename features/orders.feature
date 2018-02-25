@@ -167,6 +167,7 @@ Feature: Orders
 
   Scenario: Courier can accept, pick & deliver order
     Given the database is empty
+    And the current time is "2017-09-02 11:30:00"
     And the redis database is empty
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
@@ -430,8 +431,8 @@ Feature: Orders
       "hydra:description":@string@,
       "violations":[
         {
-          "propertyPath":"delivery.distance",
-          "message":"This value should be less than 3000."
+          "propertyPath":"delivery.deliveryAddress",
+          "message":@string@
         }
       ]
     }
@@ -479,7 +480,7 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"delivery.date",
-          "message":"Delivery date 2017-09-02 12:30:00 is invalid"
+          "message":@string@
         }
       ]
     }
@@ -527,7 +528,7 @@ Feature: Orders
       "violations":[
         {
           "propertyPath":"delivery.date",
-          "message":"Delivery date 2017-09-02 12:30:00 is invalid"
+          "message":@string@
         }
       ]
     }

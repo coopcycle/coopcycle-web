@@ -5,7 +5,6 @@ namespace AppBundle\Entity\Listener;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\OrderEvent;
 use AppBundle\Event\OrderCreateEvent;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Predis\Client as Redis;
@@ -19,7 +18,6 @@ class OrderListener
     private $redis;
     private $serializer;
     private $orderManager;
-    private $deliveryManager;
     private $eventDispatcher;
 
     public function __construct(
@@ -27,14 +25,12 @@ class OrderListener
         Redis $redis,
         SerializerInterface $serializer,
         OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
         EventDispatcherInterface $eventDispatcher)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
         $this->serializer = $serializer;
         $this->orderManager = $orderManager;
-        $this->deliveryManager = $deliveryManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -72,12 +68,18 @@ class OrderListener
             $delivery->setOriginAddress($order->getRestaurant()->getAddress());
         }
 
+        // HACK: set manually order_item_id on order_item_modifier
+        // hopefully this get fixed : https://github.com/api-platform/api-platform/issues/430
+        $em = $args->getEntityManager();
+        foreach ($order->getOrderedItem() as $item) {
+            foreach ($item->getModifiers() as $modifier) {
+                $modifier->setOrderItem($item);
+                $em->persist($modifier);
+            }
+        }
+
         // Apply taxes
         $this->orderManager->applyTaxes($order);
-
-        if (!$delivery->isCalculated()) {
-            $this->deliveryManager->calculate($delivery);
-        }
     }
 
     /**

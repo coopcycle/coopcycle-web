@@ -7,3 +7,9 @@ restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
 address.tooFar: Cette addresse est trop éloignée
 
 cart.date.tooSoon: Cette date est trop proche
+
+order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%
+
+delivery.date.restaurantClosed: Le restaurant est fermé à %date%
+delivery.date.hasPassed: La date %date% est dépassée
+delivery.date.tooSoon: La date %date% est trop proche

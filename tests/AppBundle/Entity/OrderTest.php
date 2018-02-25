@@ -9,7 +9,6 @@ use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\DeliveryDateInFuture;
 use Carbon\Carbon;
-use Symfony\Component\Validator\Validation;
 
 class OrderTest extends BaseTest
 {
@@ -19,9 +18,7 @@ class OrderTest extends BaseTest
     {
         parent::setUp();
 
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
+        $this->validator = static::$kernel->getContainer()->get('validator');
 
         Carbon::setTestNow(Carbon::create(2017, 9, 2, 11, 0));
     }
@@ -136,24 +133,16 @@ class OrderTest extends BaseTest
         $order->setRestaurant($restaurant);
 
         $delivery->setDate(new \DateTime('2017-09-02 12:30:00'));
+        $delivery->setDuration(15 * 60);
 
-        // With "Default" group,
-        // delivery.distance & delivery.duration are optional
-        $errors = $this->validator->validate($order);
-        $this->assertEquals(0, count($errors));
+        $delivery->setDistance(4500);
+        $violations = $this->validator->validate($order);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
+        $this->assertArrayHasKey('delivery.deliveryAddress', $errors);
 
-        // With "Order" group,
-        // delivery.distance & delivery.duration are mandatory
-        $errors = $this->validator->validate($order, null, ['order']);
-
-        $this->assertEquals(ValidationUtils::serializeValidationErrors($errors)['delivery.distance'][0], 'This value should not be blank.');
-
-        // Order is valid
-        $delivery->setDuration(30);
         $delivery->setDistance(1500);
-
-        $errors = $this->validator->validate($order, null, ['order']);
-        $this->assertEquals(0, count($errors));
+        $violations = $this->validator->validate($order);
+        $this->assertEquals(0, count($violations));
     }
 
     public function testDateValidation()
@@ -173,23 +162,39 @@ class OrderTest extends BaseTest
         $order->setDelivery($delivery);
         $order->setRestaurant($restaurant);
 
-        $delivery->setDuration(30);
+        // It takes 15 minutes to deliver
+        $delivery->setDuration(15 * 60);
         $delivery->setDistance(1500);
 
+        Carbon::setTestNow(Carbon::create(2017, 9, 2, 11, 30));
+
         // Restaurant is open
-        $delivery->setDate(new \DateTime('2017-09-02 12:30:00'));
-        $errors = $this->validator->validate($order, null, ['order']);
-        $this->assertEquals(0, count($errors));
+        $delivery->setDate(new \DateTime('2017-09-02 12:40:00'));
+
+        $violations = $this->validator->validate($order);
+        $this->assertEquals(0, count($violations));
 
         // Restaurant is closed
-        $delivery->setDate(new \DateTime('2017-09-03 12:30:00'));
-        $errors = $this->validator->validate($order, null, ['order']);
-        $this->assertEquals('Restaurant is closed at 2017-09-03 12:30:00', ValidationUtils::serializeValidationErrors($errors)['delivery.date'][0]);
+        $delivery->setDate(new \DateTime('2017-09-03 12:40:00'));
+
+        $violations = $this->validator->validate($order);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
+        $this->assertArrayHasKey('delivery.date', $errors);
 
         // Delivery is too soon
-        Carbon::setTestNow(Carbon::create(2017, 9, 3, 12, 25));
-        $errors = $this->validator->validate($order, null, ['order']);
-        $this->assertContains('Delivery date 2017-09-03 12:30:00 is invalid', ValidationUtils::serializeValidationErrors($errors)['delivery.date']);
+        $delivery->setDate(new \DateTime('2017-09-02 11:20:00'));
+
+        $violations = $this->validator->validate($order);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
+        $this->assertArrayHasKey('delivery.date', $errors);
+
+        // Date has passed
+        Carbon::setTestNow(Carbon::create(2017, 9, 2, 12, 30));
+        $delivery->setDate(new \DateTime('2017-09-02 12:40:00'));
+
+        $violations = $this->validator->validate($order);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
+        $this->assertArrayHasKey('delivery.date', $errors);
     }
 
     public function testMinimumAmountValidation()
@@ -213,8 +218,9 @@ class OrderTest extends BaseTest
 
         $order->setRestaurant($restaurant);
 
-        $errors = $this->validator->validate($order, null, ['order']);
-        $this->assertEquals(1, count($errors));
+        $violations = $this->validator->validate($order);
+        $errors = ValidationUtils::serializeValidationErrors($violations);
+        $this->assertArrayHasKey('totalIncludingTax', $errors);
     }
 
     public function testSetRestaurantUpdatesDelivery()

@@ -81,7 +81,6 @@ services:
       - "@snc_redis.default"
       - "@serializer"
       - "@order.manager"
-      - "@coopcycle.delivery.manager"
       - "@event_dispatcher"
     tags:
       - { name: doctrine.orm.entity_listener, lazy: true }
@@ -113,7 +112,6 @@ services:
       - "@sylius.repository.tax_category"
       - 'tva_livraison' # TODO Load from settings
       - "@coopcycle.expression_language.zone.provider"
-      - "@routing_service"
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
@@ -287,6 +285,11 @@ services:
       - { transactional_address: "%transactional_address%", transactional_sender_name: "%transactional_sender_name%" }
 
   'AppBundle\Validator\Constraints\CartValidator':
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }
+
+  'AppBundle\Validator\Constraints\DeliveryValidator':
     arguments: [ '@routing_service' ]
     tags:
       - { name: validator.constraint_validator }

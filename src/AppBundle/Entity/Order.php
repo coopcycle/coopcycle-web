@@ -6,6 +6,7 @@ use AppBundle\Entity\Cart\CartItem;
 use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Entity\Base\MenuItem;
 use AppBundle\Entity\Model\TaxableTrait;
+use AppBundle\Validator\Constraints\Order as AssertOrder;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -29,7 +30,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ApiResource(iri="http://schema.org/Order",
  *   collectionOperations={
  *     "get"={"method"="GET"},
- *     "post"={"method"="POST", "route_name"="order_create"},
+ *     "post"={"method"="POST"},
  *     "my_orders"={"method"="GET", "route_name"="my_orders"}
  *   },
  *   itemOperations={
@@ -40,10 +41,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     "ready"={"route_name"="order_ready"}
  *   },
  *   attributes={
- *     "denormalization_context"={"groups"={"order", "order_denormalize"}},
+ *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"order", "place"}}
  *   }
  * )
+ * @AssertOrder
  */
 class Order
 {
@@ -79,14 +81,16 @@ class Order
      *
      * @Groups({"order"})
      * @ORM\ManyToOne(targetEntity="ApiUser")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $customer;
 
     /**
      * @var Restaurant
      *
-     * @Groups({"order", "place"})
+     * @Groups({"order_create", "order", "place"})
      * @ORM\ManyToOne(targetEntity="Restaurant")
+     * @ORM\JoinColumn(nullable=false)
      * @ApiProperty(iri="https://schema.org/restaurant")
      */
     private $restaurant;
@@ -94,7 +98,7 @@ class Order
     /**
      * @var OrderItem The item ordered.
      *
-     * @Groups({"order"})
+     * @Groups({"order_create", "order"})
      * @ORM\OneToMany(targetEntity="OrderItem", mappedBy="order", cascade={"all"})
      */
     private $orderedItem;
@@ -116,7 +120,7 @@ class Order
     /**
      * @Assert\NotNull
      * @Assert\Valid
-     * @Groups({"order"})
+     * @Groups({"order_create", "order"})
      * @ORM\OneToOne(targetEntity="Delivery", mappedBy="order", cascade={"all"})
      */
     private $delivery;
@@ -426,6 +430,9 @@ class Order
         $this->uuid = $uuid;
     }
 
+    /**
+     * @deprecated
+     */
     public function getPreparationDate()
     {
         $preparationDate = clone $this->delivery->getDate();
@@ -436,20 +443,11 @@ class Order
     }
 
     /**
-     * Custom order validation.
-     * @Assert\Callback(groups={"order"})
+     * Returns the time it takes to prepare the order, in seconds.
+     * @return int
      */
-    public function validate(ExecutionContextInterface $context, $payload)
+    public function getDuration()
     {
-
-        $minimumAmount = $this->getRestaurant()->getMinimumCartAmount();
-
-        // Validate minimum cart amount
-        $constraint = new Assert\GreaterThanOrEqual(['value' => $minimumAmount]);
-        $context
-            ->getValidator()
-            ->inContext($context)
-            ->atPath('total')
-            ->validate($this->getItemsTotal(), $constraint, [Constraint::DEFAULT_GROUP]);
+        return Restaurant::PREPARATION_DELAY * 60;
     }
 }

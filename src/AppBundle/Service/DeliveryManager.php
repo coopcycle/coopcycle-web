@@ -22,12 +22,10 @@ class DeliveryManager
     private $taxCategoryRepository;
     private $taxCategoryCode;
     private $zoneExpressionLanguageProvider;
-    private $routing;
 
     public function __construct(EntityRepository $pricingRuleRepository,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ZoneExpressionLanguageProvider $zoneExpressionLanguageProvider,
-        RoutingInterface $routing)
+        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ZoneExpressionLanguageProvider $zoneExpressionLanguageProvider)
     {
         $this->pricingRuleRepository = $pricingRuleRepository;
         $this->taxRateResolver = $taxRateResolver;
@@ -35,7 +33,6 @@ class DeliveryManager
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->taxCategoryCode = $taxCategoryCode;
         $this->zoneExpressionLanguageProvider = $zoneExpressionLanguageProvider;
-        $this->routing = $routing;
     }
 
     public function dispatch(Delivery $delivery, ApiUser $user)
@@ -87,19 +84,5 @@ class DeliveryManager
                 return $rule->getPrice();
             }
         }
-    }
-
-    public function calculate(Delivery $delivery)
-    {
-        $data = $this->routing->getRawResponse(
-            $delivery->getOriginAddress()->getGeo(),
-            $delivery->getDeliveryAddress()->getGeo()
-        );
-
-        $distance = $data['routes'][0]['distance'];
-        $duration = $data['routes'][0]['duration'];
-
-        $delivery->setDistance((int) $distance);
-        $delivery->setDuration((int) $duration);
     }
 }

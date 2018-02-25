@@ -7,17 +7,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\TaxableTrait;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
-use AppBundle\Validator\Constraints as CustomAssert;
+use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -34,13 +30,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     "deliver"={"route_name"="delivery_deliver"}
  *   },
  *   attributes={
- *     "denormalization_context"={"groups"={"delivery"}},
+ *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
- *
- * @CustomAssert\IsValidDeliveryDate(groups="order")
- *
+ * @AssertDelivery
  */
 class Delivery extends TaskCollection implements TaxableInterface, TaskCollectionInterface
 {
@@ -76,7 +70,7 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     private $originAddress;
 
     /**
-     * @Groups({"place", "order"})
+     * @Groups({"order_create", "place", "order"})
      * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
@@ -108,9 +102,8 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     private $status;
 
     /**
-     * @Groups({"delivery", "order"})
+     * @Groups({"order_create", "delivery", "order"})
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(groups={"order"})
      */
     private $date;
 
@@ -340,33 +333,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
 
                 return $hours > 0 ? "{$hours}h {$minutes}min" : "{$minutes}min";
             }
-        }
-    }
-
-    /**
-     * Custom order validation.
-     * @Assert\Callback(groups={"order"})
-     */
-    public function validate(ExecutionContextInterface $context, $payload)
-    {
-        $order = $this->getOrder();
-
-        // Validate distance
-        $maxDistance = $order->getRestaurant()->getMaxDistance();
-
-        $constraint = new Assert\LessThan(['value' => $maxDistance]);
-        $context
-            ->getValidator()
-            ->inContext($context)
-            ->atPath('distance')
-            ->validate($this->distance, $constraint, [Constraint::DEFAULT_GROUP]);
-
-        // Validate opening hours
-        if (!$order->getRestaurant()->isOpen($this->getDate())) {
-             $context
-                ->buildViolation(sprintf('Restaurant is closed at %s', $this->getDate()->format('Y-m-d H:i:s')))
-                ->atPath('date')
-                ->addViolation();
         }
     }
 

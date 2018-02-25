@@ -60,10 +60,6 @@ trait DeliveryTrait
 
             $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
 
-            if ($isNew && $delivery->getDate() < new \DateTime()) {
-                $form->get('date')->addError(new FormError('The date is in the past'));
-            }
-
             if (!$store && !$user->hasRole('ROLE_ADMIN')) {
                 $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
             }
@@ -81,7 +77,6 @@ trait DeliveryTrait
                     $delivery->setStore($store);
                 }
 
-                $deliveryManager->calculate($delivery);
                 $deliveryManager->applyTaxes($delivery);
 
                 if ($isNew) {

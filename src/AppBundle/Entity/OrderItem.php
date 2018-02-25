@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\EntityListeners({"AppBundle\Entity\Listener\OrderItemListener"})
  * @ApiResource(iri="http://schema.org/OrderItem",
  *   attributes={
- *     "denormalization_context"={"groups"={"order", "order_item"}},
+ *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"order"}}
  *   }
  * )
@@ -46,7 +46,7 @@ class OrderItem
      * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/MenuItem")
-     * @Groups({"order"})
+     * @Groups({"order_create", "order"})
      */
     private $menuItem;
 
@@ -55,7 +55,7 @@ class OrderItem
      *
      * @Assert\NotBlank()
      * @ORM\Column(type="integer")
-     * @Groups({"order"})
+     * @Groups({"order_create", "order"})
      */
     private $quantity;
 

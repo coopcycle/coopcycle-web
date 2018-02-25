@@ -8,10 +8,8 @@ use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
 use AppBundle\Event\TaskCollectionChangeEvent;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NotificationManager;
 use AppBundle\Utils\MetricsHelper;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use M6Web\Component\Statsd\Client as StatsdClient;
 use Predis\Client as Redis;
@@ -22,28 +20,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
     private $tokenStorage;
-    private $deliveryManager;
     private $notificationManager;
-    private $validator;
     private $metricsHelper;
     private $redis;
     private $logger;
 
     public function __construct(TokenStorageInterface $tokenStorage,
-        DeliveryManager $deliveryManager, NotificationManager $notificationManager,
-        ValidatorInterface $validator,
+        NotificationManager $notificationManager,
         MetricsHelper $metricsHelper, Redis $redis,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->deliveryManager = $deliveryManager;
         $this->notificationManager = $notificationManager;
-        $this->validator = $validator;
         $this->metricsHelper = $metricsHelper;
         $this->redis = $redis;
         $this->logger = $logger;
@@ -54,7 +46,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
-                ['postValidate', EventPriorities::POST_VALIDATE],
             ],
             OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
@@ -106,26 +97,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             $delivery->setOriginAddress($order->getRestaurant()->getAddress());
         }
 
-        if (!$delivery->isCalculated()) {
-            $this->deliveryManager->calculate($delivery);
-        }
-
         $event->setControllerResult($order);
-    }
-
-    public function postValidate(GetResponseForControllerResultEvent $event)
-    {
-        $order = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
-
-        if (!$order instanceof Order || Request::METHOD_POST !== $method) {
-            return;
-        }
-
-        $errors = $this->validator->validate($order, null, ['order']);
-        if (count($errors) > 0) {
-            throw new ValidationException($errors);
-        }
     }
 
     public function onOrderCreated(Event $event)
