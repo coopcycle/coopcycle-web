@@ -37,7 +37,7 @@ migrations-diff:
 
 migrations-migrate:
 	@docker-compose run php bin/console doctrine:migrations:migrate
-	$docker-compose run php bin/console doctrine:schema:update --env=test --force --no-interaction
+	@docker-compose run php bin/console doctrine:schema:update --env=test --force --no-interaction
 
 email-preview:
 	@docker-compose run php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.htm
