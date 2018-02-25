@@ -201,6 +201,7 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCatego
   var User = this.db.User;
   var Delivery = this.db.Delivery;
   var TaxCategory = this.db.TaxCategory;
+  var TaskCollection = this.db.TaskCollection;
 
   var redis = this.redis;
 
@@ -217,54 +218,51 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCatego
       customer.getAddresses()
         .then(deliveryAddresses => _.first(deliveryAddresses))
         .then(function(deliveryAddress) {
-          Order.create({
+
+          let order = Order.build({
             uuid: 'some-random-string',
             createdAt: new Date(),
             updatedAt: new Date(),
+            readyAt: new Date(),
             totalExcludingTax: 0.00,
             totalTax: 0.00,
             totalIncludingTax: 0.00
-          })
-          .then(function(order) {
-            return order.setCustomer(customer);
-          })
-          .then(function(order) {
-            return order.setRestaurant(restaurant);
-          })
-          .then(function(order) {
+          });
+          order.setCustomer(customer, { save: false });
+          order.setRestaurant(restaurant, { save: false });
 
-            let delivery = Delivery.build({
-              date: new Date(),
-              distance: 1000,
-              duration: 600,
-              price: 3.5,
-              totalExcludingTax: 0.00,
-              totalTax: 0.00,
-              totalIncludingTax: 0.00,
+          return order.save().then(function(order) {
+            return TaskCollection.create({
+              type: 'delivery'
             })
-            delivery.setTaxCategory(taxCategory, { save: false })
-            delivery.setOriginAddress(restaurantAddress, { save: false })
-            delivery.setDeliveryAddress(deliveryAddress, { save: false })
+            .then(function(taskCollection) {
+              let delivery = Delivery.build({
+                id: taskCollection.id,
+                date: new Date(),
+                distance: 1000,
+                duration: 600,
+                price: 3.5,
+                totalExcludingTax: 0.00,
+                totalTax: 0.00,
+                totalIncludingTax: 0.00,
+              })
+              delivery.setTaxCategory(taxCategory, { save: false });
+              delivery.setOriginAddress(restaurantAddress, { save: false });
+              delivery.setDeliveryAddress(deliveryAddress, { save: false });
+              delivery.setOrder(order, { save: false });
 
-            return delivery.save()
-              .then(function(delivery) {
-                return order.setDelivery(delivery).then(function() {
-                  return [order, delivery];
-                });
-              })
-              .catch(function(e) {
-                reject(e);
-              })
+              return delivery.save();
+            })
+            .then(function(delivery) {
+              return { order, delivery };
+            })
           })
-          .then(function(args) {
-            const [order, delivery] = args;
-            redis.lpush('deliveries:waiting', delivery.id, function(err) {
-              if (err) return reject(err);
-              resolve(order);
-            });
-          })
-          .catch(function(e) {
-            reject(e);
+        })
+        .then(function(args) {
+          const { order, delivery } = args;
+          redis.lpush('deliveries:waiting', delivery.id, function(err) {
+            if (err) return reject(err);
+            resolve(order);
           });
         })
         .catch(function(e) {

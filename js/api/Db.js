@@ -59,6 +59,10 @@ module.exports = function(sequelize) {
       field: 'updated_at',
       type: Sequelize.DATE
     },
+    readyAt: {
+      field: 'ready_at',
+      type: Sequelize.DATE
+    },
     totalExcludingTax: {
       field: 'total_excluding_tax',
       type: Sequelize.FLOAT
@@ -152,6 +156,12 @@ module.exports = function(sequelize) {
     },
   }, _.extend(sequelizeOptions, {
     tableName: 'sylius_tax_category'
+  }));
+
+  Db.TaskCollection = sequelize.define('task_collection', {
+    type: Sequelize.STRING,
+  }, _.extend(sequelizeOptions, {
+    tableName: 'task_collection'
   }));
 
   Db.Restaurant.belongsTo(Db.Address);

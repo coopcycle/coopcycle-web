@@ -47,6 +47,7 @@ Feature: Orders
         "telephone": "+33612345678"
       },
       "createdAt": @string@,
+      "readyAt": "@string@.startsWith('2017-09-02T12:18')",
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",

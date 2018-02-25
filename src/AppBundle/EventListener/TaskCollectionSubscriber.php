@@ -4,6 +4,7 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Event\TaskCollectionChangeEvent;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
@@ -46,6 +47,8 @@ class TaskCollectionSubscriber implements EventSubscriber
 
             $entity->setDistance((int) $data['routes'][0]['distance']);
             $entity->setDuration((int) $data['routes'][0]['duration']);
+
+            $this->dispatcher->dispatch(TaskCollectionChangeEvent::NAME, new TaskCollectionChangeEvent($entity));
         }
     }
 }

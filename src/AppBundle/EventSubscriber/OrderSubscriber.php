@@ -2,15 +2,17 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Order;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use ApiPlatform\Core\EventListener\EventPriorities;
-use AppBundle\Entity\Order;
+use AppBundle\Event\TaskCollectionChangeEvent;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NotificationManager;
 use AppBundle\Utils\MetricsHelper;
+use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Core\EventListener\EventPriorities;
 use M6Web\Component\Statsd\Client as StatsdClient;
 use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
@@ -57,6 +59,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
             OrderCancelEvent::NAME => 'onOrderCanceled',
+            TaskCollectionChangeEvent::NAME => 'onTaskCollectionChanged',
         ];
     }
 
@@ -183,5 +186,25 @@ final class OrderSubscriber implements EventSubscriberInterface
         $this->metricsHelper->decrementOrdersWaiting();
 
         $this->redis->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
+    }
+
+    public function onTaskCollectionChanged(TaskCollectionChangeEvent $event)
+    {
+        $taskCollection = $event->getTaskCollection();
+
+        if ($taskCollection instanceof Delivery) {
+
+            $delivery = $taskCollection;
+            $order = $delivery->getOrder();
+
+            if (null !== $order && null === $order->getReadyAt()) {
+
+                // Given the time it takes to deliver,
+                // calculate when the order should be ready
+                $readyAt = clone $delivery->getDate();
+                $readyAt->modify(sprintf('-%d seconds', $delivery->getDuration()));
+                $order->setReadyAt($readyAt);
+            }
+        }
     }
 }

@@ -122,6 +122,13 @@ class Order
     private $delivery;
 
     /**
+     * The time the order should be ready.
+     * @ORM\Column(type="datetime")
+     * @Groups({"order"})
+     */
+    private $readyAt;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @Groups({"order"})
      * @ORM\Column(type="datetime")
@@ -295,6 +302,18 @@ class Order
     public function getRestaurant()
     {
         return $this->restaurant;
+    }
+
+    public function getReadyAt()
+    {
+        return $this->readyAt;
+    }
+
+    public function setReadyAt($readyAt)
+    {
+        $this->readyAt = $readyAt;
+
+        return $this;
     }
 
     public function getCreatedAt()
