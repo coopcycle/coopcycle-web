@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\TaskEvent;
 use PHPUnit\Framework\TestCase;
 
 
@@ -67,5 +68,25 @@ class TaskTest extends TestCase
         $this->task->assignTo($this->courier, 1);
         $this->task->unassign();
         $this->assertNull($this->task->getAssignment());
+    }
+
+    public function testHasEvent()
+    {
+        $event = new TaskEvent($this->task, "PICKUP");
+        $this->task->getEvents()->add($event);
+        $this->assertTrue($this->task->hasEvent("PICKUP"));
+        $this->assertFalse($this->task->hasEvent("DROPOFF"));
+    }
+
+    public function testGetFirstEvent()
+    {
+        $first_event = new TaskEvent($this->task, "PICKUP");
+        $this->task->getEvents()->add($first_event);
+        $second_event = new TaskEvent($this->task, "DELIVERY");
+        $this->task->getEvents()->add($second_event);
+        $third_event = new TaskEvent($this->task, "PICKUP");
+        $this->task->getEvents()->add($first_event);
+        $this->assertSame($this->task->getFirstEvent("PICKUP"),
+                           $first_event);
     }
 }
