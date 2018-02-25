@@ -216,10 +216,14 @@ class Cart extends React.Component
     errors = _.omit(errors, value => null === value)
 
     if (errors) {
-      if (errors.distance) {
-        cartWarning = ( <div className="alert alert-danger">Cette addresse est trop éloignée.</div> )
+      if (errors.address) {
+        cartWarning = errors.address.map((message, key) => (
+          <div key={ key } className="alert alert-danger">{ message }</div>
+        ))
       } else if (errors.date) {
-        cartWarning = ( <div className="alert alert-danger">Cette date de livraison est indisponible.</div> )
+        cartWarning = errors.date.map((message, key) => (
+          <div key={ key } className="alert alert-danger">{ message }</div>
+        ))
       } else if (errors.item) {
         cartWarning = ( <div className="alert alert-danger">{errors.item}</div> )
       }

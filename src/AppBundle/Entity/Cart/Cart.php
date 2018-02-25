@@ -5,13 +5,10 @@ namespace AppBundle\Entity\Cart;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Validator\Constraints\IsValidDeliveryDate;
+use AppBundle\Validator\Constraints\Cart as AssertCart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class AddProductException extends \Exception {}
 
@@ -24,9 +21,8 @@ class RestaurantMismatchException extends AddProductException {}
  * Class Cart
  * @package AppBundle\Utils
  *
- * @IsValidDeliveryDate(groups="cart")
- *
  * @ORM\Entity
+ * @AssertCart
  */
 class Cart
 {
@@ -58,15 +54,6 @@ class Cart
      *
      */
     private $address;
-
-    /**
-     * Distance to deliver for the cart
-     *
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $distance;
 
     /**
      * Delivery date for the cart
@@ -203,22 +190,6 @@ class Cart
     }
 
     /**
-     * @return int
-     */
-    public function getDistance()
-    {
-        return $this->distance;
-    }
-
-    /**
-     * @param int $distance
-     */
-    public function setDistance(int $distance)
-    {
-        $this->distance = $distance;
-    }
-
-    /**
      * @return Address
      */
     public function getAddress()
@@ -252,24 +223,5 @@ class Cart
             'date' => $this->date->format('Y-m-d H:i:s'),
             'items' => $this->getNormalizedItems(),
         );
-    }
-
-    /**
-     * Custom order validation.
-     * @Assert\Callback(groups={"cart"})
-     */
-    public function validate(ExecutionContextInterface $context, $payload)
-    {
-        // Validate distance
-        if (!is_null($this->address) && !is_null($this->address->getGeo()) && !is_null($this->restaurant)) {
-            $maxDistance = $this->getRestaurant()->getMaxDistance();
-
-            $constraint = new Assert\LessThan(['value' => $maxDistance]);
-            $context
-                ->getValidator()
-                ->inContext($context)
-                ->atPath('distance')
-                ->validate($this->distance, $constraint, [Constraint::DEFAULT_GROUP]);
-        }
     }
 }

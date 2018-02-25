@@ -285,3 +285,8 @@ services:
       - "@templating"
       - "@translator"
       - { transactional_address: "%transactional_address%", transactional_sender_name: "%transactional_sender_name%" }
+
+  'AppBundle\Validator\Constraints\CartValidator':
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }

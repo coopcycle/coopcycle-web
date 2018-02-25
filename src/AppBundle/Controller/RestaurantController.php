@@ -6,13 +6,11 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Cart\RestaurantMismatchException;
 use AppBundle\Entity\Cart\UnavailableProductException;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Entity\Cart\Cart;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
 use League\Geotools\Coordinate\Coordinate;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -21,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use League\Geotools\Geotools;
-use Symfony\Component\Validator\Validation;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -29,17 +26,6 @@ use Symfony\Component\Validator\Validation;
 class RestaurantController extends Controller
 {
     const ITEMS_PER_PAGE = 15;
-
-    protected $logger;
-
-    public function __construct(LoggerInterface $logger, RoutingInterface $routing)
-    {
-        $this->logger = $logger;
-        $this->routing = $routing;
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-    }
 
     private function getCart(Request $request, Restaurant $restaurant)
     {
@@ -244,13 +230,9 @@ class RestaurantController extends Controller
 
         if ($request->request->has('address')) {
             $this->setCartAddress($request, $cart);
-            $origin = $cart->getRestaurant()->getAddress()->getGeo();
-            $destination = $cart->getAddress()->getGeo();
-            $distance = $this->routing->getDistance($origin, $destination);
-            $cart->setDistance($distance);
         }
 
-        $errors = $this->validator->validate($cart, null, ["cart"]);
+        $errors = $this->get('validator')->validate($cart);
 
         if (count($errors) > 0) {
             return new JsonResponse([ 'errors' => ValidationUtils::serializeValidationErrors($errors)], 400);
