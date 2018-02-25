@@ -217,47 +217,6 @@ class OrderTest extends BaseTest
         $this->assertEquals(1, count($errors));
     }
 
-    public function testEventListener()
-    {
-        $user = $this->createUser('test');
-        $this->authenticate($user);
-
-        $foodTaxCategory = $this->createTaxCategory('TVA Restauration', 'tva_restauration', 'TVA 10%', 'tva_10', 0.10, 'float');
-        $deliveryTaxCategory = $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20, 'float');
-
-        $restaurantAddress = new Address();
-        $restaurantAddress->setStreetAddress('XXX');
-        $restaurantAddress->setPostalCode('75000');
-        $restaurantAddress->setAddressLocality('Paris');
-
-        $restaurant = $this->createRestaurant($restaurantAddress, ['Mo-Su 11:30-14:30'],
-            $minimumCartAmount = 05.00, $flatDeliveryPrice = 03.5);
-
-        $delivery = new Delivery();
-        $delivery->setDate(new \DateTime('today 12:30:00'));
-        $delivery->setDuration(30);
-        $delivery->setDistance(1500);
-
-        $order = new Order();
-        $order->setDelivery($delivery);
-        $order->setRestaurant($restaurant);
-
-        $pizza = $this->createMenuItem('Pizza', 10.00, $foodTaxCategory);
-
-        $cart = new Cart();
-        $pizzaItem = new CartItem($cart, $pizza, 1);
-        $order->addCartItem($pizzaItem, $pizza);
-
-        $this->doctrine->getManagerForClass(Order::class)->persist($order);
-        $this->doctrine->getManagerForClass(Order::class)->flush();
-
-        $this->assertSame($user, $order->getCustomer());
-        $this->assertSame($restaurantAddress, $delivery->getOriginAddress());
-        $this->assertEquals($flatDeliveryPrice, $delivery->getPrice());
-        $this->assertEquals(10.00, $order->getTotalIncludingTax());
-        $this->assertEquals(03.50, $delivery->getTotalIncludingTax());
-    }
-
     public function testSetRestaurantUpdatesDelivery()
     {
         $order = new Order();

@@ -4,8 +4,9 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\Base\Intangible;
 use AppBundle\Entity\Model\TaxableTrait;
+use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -41,8 +42,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @CustomAssert\IsValidDeliveryDate(groups="order")
  *
  */
-class Delivery extends Intangible implements TaxableInterface
+class Delivery extends TaskCollection implements TaxableInterface, TaskCollectionInterface
 {
+    use TaskCollectionTrait;
     use TaxableTrait;
 
     // default status when the delivery is created along the order
@@ -62,14 +64,9 @@ class Delivery extends Intangible implements TaxableInterface
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 
     /**
-     * @var int
-     *
      * @Groups({"delivery"})
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @Groups({"place", "order"})
@@ -118,18 +115,6 @@ class Delivery extends Intangible implements TaxableInterface
     private $date;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"order"})
-     */
-    private $distance;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"order"})
-     */
-    private $duration;
-
-    /**
      * @ORM\OneToMany(targetEntity="DeliveryEvent", mappedBy="delivery")
      * @ORM\OrderBy({"createdAt" = "ASC"})
      */
@@ -159,6 +144,8 @@ class Delivery extends Intangible implements TaxableInterface
 
     public function __construct(Order $order = null)
     {
+        parent::__construct();
+
         $this->status = self::STATUS_WAITING;
 
         if ($order) {
@@ -233,30 +220,6 @@ class Delivery extends Intangible implements TaxableInterface
         $this->setOriginAddressFromOrder($order);
 
         $this->order = $order;
-
-        return $this;
-    }
-
-    public function getDistance()
-    {
-        return $this->distance;
-    }
-
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-
-        return $this;
-    }
-
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    public function setDuration($duration)
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -443,7 +406,6 @@ class Delivery extends Intangible implements TaxableInterface
         $dropoffDoneAfter->modify('-15 minutes');
 
         $dropoffTask = new Task();
-        $dropoffTask->setDelivery($delivery);
         $dropoffTask->setType(Task::TYPE_DROPOFF);
         $dropoffTask->setAddress($delivery->getDeliveryAddress());
         $dropoffTask->setDoneAfter($dropoffDoneAfter);
@@ -456,7 +418,6 @@ class Delivery extends Intangible implements TaxableInterface
         $pickupDoneAfter->modify('-15 minutes');
 
         $pickupTask = new Task();
-        $pickupTask->setDelivery($delivery);
         $pickupTask->setType(Task::TYPE_PICKUP);
         $pickupTask->setAddress($delivery->getOriginAddress());
         $pickupTask->setDoneAfter($pickupDoneAfter);
