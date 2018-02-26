@@ -7,6 +7,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="task_collection_item", uniqueConstraints={
+ *   @ORM\UniqueConstraint(name="task_collection_item_unique", columns={"parent_id", "task_id"})}
+ * )
  */
 class TaskCollectionItem
 {
@@ -25,7 +28,7 @@ class TaskCollectionItem
     private $parent;
 
     /**
-     * @ORM\OneToOne(targetEntity="Task", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Task", cascade={"persist"})
      * @ORM\JoinColumn(name="task_id", referencedColumnName="id")
      */
     private $task;
@@ -36,12 +39,17 @@ class TaskCollectionItem
      */
     private $position;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getParent()
     {
         return $this->parent;
     }
 
-    public function setParent($parent)
+    public function setParent(TaskCollection $parent = null)
     {
         $this->parent = $parent;
 

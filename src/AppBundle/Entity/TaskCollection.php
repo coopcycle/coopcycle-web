@@ -9,7 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"delivery" = "AppBundle\Entity\Delivery"})
+ * @ORM\DiscriminatorMap({
+ *   "delivery"  = "AppBundle\Entity\Delivery",
+ *   "task_list" = "AppBundle\Entity\TaskList"
+ * })
  */
 abstract class TaskCollection
 {
@@ -21,7 +24,7 @@ abstract class TaskCollection
     protected $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="TaskCollectionItem", mappedBy="parent", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="TaskCollectionItem", mappedBy="parent", orphanRemoval=true, cascade={"all"})
      */
     protected $items;
 
@@ -30,16 +33,38 @@ abstract class TaskCollection
         $this->items = new ArrayCollection();
     }
 
-    public function addTask(Task $task)
+    public function addTask(Task $task, $position = null)
     {
-        $item = new TaskCollectionItem();
-        $item->setTask($task);
-        $item->setParent($this);
-        $item->setPosition(-1);
+        $item = null;
+        foreach ($this->items as $i) {
+            if ($i->getTask() === $task) {
+                $item = $i;
+                break;
+            }
+        }
 
-        $this->items->add($item);
+        if ($item === null) {
+            $item = new TaskCollectionItem();
+            $item->setTask($task);
+            $item->setParent($this);
+
+            $this->items->add($item);
+        }
+
+        $item->setPosition($position !== null ? $position : -1);
 
         return $this;
+    }
+
+    public function removeTask(Task $task)
+    {
+        foreach ($this->items as $item) {
+            if ($item->getTask() === $task) {
+                $this->items->removeElement($item);
+                $item->setParent(null);
+                break;
+            }
+        }
     }
 
     public function getTasks()

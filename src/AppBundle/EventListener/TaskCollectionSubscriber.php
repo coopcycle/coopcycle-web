@@ -4,29 +4,56 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\TaskCollection;
+use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Event\TaskCollectionChangeEvent;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TaskCollectionSubscriber implements EventSubscriber
 {
     private $dispatcher;
     private $routing;
+    private $logger;
 
-    public function __construct(EventDispatcherInterface $dispatcher, RoutingInterface $routing)
+    public function __construct(EventDispatcherInterface $dispatcher, RoutingInterface $routing, LoggerInterface $logger)
     {
         $this->dispatcher = $dispatcher;
         $this->routing = $routing;
+        $this->logger = $logger;
     }
 
     public function getSubscribedEvents()
     {
         return array(
             Events::prePersist,
+            Events::onFlush
         );
+    }
+
+    private function calculate(TaskCollectionInterface $taskCollection)
+    {
+        $coordinates = [];
+        foreach ($taskCollection->getTasks() as $task) {
+            $coordinates[] = $task->getAddress()->getGeo();
+        }
+
+        if (count($coordinates) <= 1) {
+            $taskCollection->setDistance(0);
+            $taskCollection->setDuration(0);
+        } else {
+            $data = $this->routing->getServiceResponse('route', $coordinates, [
+                'steps' => 'true',
+                'overview' => 'full'
+            ]);
+            $taskCollection->setDistance((int) $data['routes'][0]['distance']);
+            $taskCollection->setDuration((int) $data['routes'][0]['duration']);
+        }
     }
 
     public function prePersist(LifecycleEventArgs $args)
@@ -34,21 +61,50 @@ class TaskCollectionSubscriber implements EventSubscriber
         $entity = $args->getObject();
 
         if ($entity instanceof TaskCollectionInterface) {
+            $this->calculate($entity);
+            $this->dispatcher->dispatch(TaskCollectionChangeEvent::NAME, new TaskCollectionChangeEvent($entity));
+        }
+    }
 
-            $coordinates = [];
-            foreach ($entity->getTasks() as $task) {
-                $coordinates[] = $task->getAddress()->getGeo();
+    /**
+     * Performs TaskCollection calculations when items have been modified.
+     */
+    public function onFlush(OnFlushEventArgs $args)
+    {
+        $em = $args->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        $entities = array_merge(
+            $uow->getScheduledEntityInsertions(),
+            $uow->getScheduledEntityUpdates(),
+            $uow->getScheduledEntityDeletions()
+        );
+
+        $taskCollectionItems = array_filter($entities, function ($entity) {
+            return $entity instanceof TaskCollectionItem;
+        });
+
+        $taskCollections = [];
+        foreach ($taskCollectionItems as $taskCollectionItem) {
+
+            $taskCollection = $taskCollectionItem->getParent();
+
+            // When a TaskCollectionItem has been removed, its parent is NULL.
+            if (!$taskCollection) {
+                $entityChangeSet = $uow->getEntityChangeSet($taskCollectionItem);
+                [ $oldValue, $newValue ] = $entityChangeSet['parent'];
+                $taskCollection = $oldValue;
             }
 
-            $data = $this->routing->getServiceResponse('route', $coordinates, [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]);
+            if (false === array_search($taskCollection, $taskCollections)) {
+                $taskCollections[] = $taskCollection;
+            }
+        }
 
-            $entity->setDistance((int) $data['routes'][0]['distance']);
-            $entity->setDuration((int) $data['routes'][0]['duration']);
-
-            $this->dispatcher->dispatch(TaskCollectionChangeEvent::NAME, new TaskCollectionChangeEvent($entity));
+        foreach ($taskCollections as $taskCollection) {
+            $this->logger->debug('TaskCollection was modified, recalculating…');
+            $this->calculate($taskCollection);
+            $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskCollection::class), $taskCollection);
         }
     }
 }

@@ -322,7 +322,6 @@ class AdminController extends Controller
         $taskManager = $this->get('coopcycle.task_manager');
         $taskRepository = $this->getDoctrine()->getRepository(Task::class);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
-        $routing = $this->get('routing_service');
 
         $date = new \DateTime($date);
 
@@ -363,7 +362,7 @@ class AdminController extends Controller
 
         $taskList = $this->getDoctrine()
             ->getRepository(TaskList::class)
-            ->find(['date' => $date->format('Y-m-d'), 'courier' => $user]);
+            ->findOneBy(['date' => $date, 'courier' => $user]);
 
         if (null === $taskList) {
             $taskList = new TaskList();
@@ -375,28 +374,11 @@ class AdminController extends Controller
                 ->persist($taskList);
         }
 
-        if (count($tasksToAssign) <= 1) {
-
-            $taskList->setDistance(0);
-            $taskList->setDuration(0);
-            $taskList->setPolyline('');
-
-        } else {
-
-            $coordinates = [];
-            foreach ($tasksToAssign as $task) {
-                $coordinates[] = $task->getAddress()->getGeo();
-            }
-
-            $data = $routing->getServiceResponse('route', $coordinates, [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]);
-
-            $taskList->setDistance($data['routes'][0]['distance']);
-            $taskList->setDuration($data['routes'][0]['duration']);
-            $taskList->setPolyline($data['routes'][0]['geometry']);
-
+        foreach ($tasksToUnassign as $task) {
+            $taskList->removeTask($task);
+        }
+        foreach ($tasksToAssign as $task) {
+            $taskList->addTask($task, $tasksToAssign[$task]);
         }
 
         $this->getDoctrine()

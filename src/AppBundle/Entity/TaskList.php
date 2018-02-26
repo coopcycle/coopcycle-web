@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -9,31 +11,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="task_list", uniqueConstraints={
+ *   @ORM\UniqueConstraint(name="task_list_unique", columns={"date", "courier_id"})}
+ * )
  */
-class TaskList
+class TaskList extends TaskCollection implements TaskCollectionInterface
 {
+    use TaskCollectionTrait;
+
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column(type="date_string")
+     * @ORM\Column(type="date")
      */
     private $date;
 
     /**
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="ApiUser")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $courier;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $duration;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $distance;
 
     /**
      * @ORM\Column(type="text")
@@ -54,6 +49,11 @@ class TaskList
      */
     private $updatedAt;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getDate()
     {
         return $this->date;
@@ -61,7 +61,7 @@ class TaskList
 
     public function setDate(\DateTime $date)
     {
-        $this->date = $date->format('Y-m-d');
+        $this->date = $date;
 
         return $this;
     }
@@ -74,30 +74,6 @@ class TaskList
     public function setCourier($courier)
     {
         $this->courier = $courier;
-
-        return $this;
-    }
-
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    public function setDuration($duration)
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getDistance()
-    {
-        return $this->distance;
-    }
-
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
 
         return $this;
     }
