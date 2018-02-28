@@ -131,7 +131,7 @@ class Task
     private $previous;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Task\Group", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Task\Group", cascade={"persist"})
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id", nullable=true)
      */
     private $group;
