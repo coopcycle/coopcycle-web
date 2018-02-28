@@ -25,8 +25,8 @@ class TaskType extends AbstractType
         $builder
             ->add('type', ChoiceType::class, [
                 'choices' => [
-                    'Dropoff' => Task::TYPE_DROPOFF,
                     'Pickup' => Task::TYPE_PICKUP,
+                    'Dropoff' => Task::TYPE_DROPOFF,
                 ],
                 'expanded' => true,
                 'multiple' => false,
