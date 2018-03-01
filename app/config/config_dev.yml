@@ -40,6 +40,13 @@ monolog:
         #    type:   chromephp
         #    level:  info
 
+services:
+    apns_php.push:
+        class: \ApnsPHP_Push
+        arguments:
+            - 1
+            - "%apns_certificate_file%"
+
 # Uncomment to send emails in dev
 #fos_user:
 #   registration:

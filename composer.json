@@ -71,7 +71,8 @@
         "sylius/order-bundle": "^1.1",
         "sylius/payment": "^1.1",
         "laravolt/avatar": "^2.0",
-        "sylius/product-bundle": "^1.1"
+        "sylius/product-bundle": "^1.1",
+        "duccio/apns-php": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

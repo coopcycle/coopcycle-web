@@ -56,3 +56,7 @@ parameters:
 
     statsd_host: "graphite"
     statsd_port: "8125"
+
+    fcm_server_api_key: ""
+    apns_certificate_file: ""
+    apns_certificate_pass_phrase: ""

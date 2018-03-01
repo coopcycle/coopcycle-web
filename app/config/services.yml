@@ -403,6 +403,14 @@ services:
       - "@serializer"
       - "@translator"
 
+  coopcycle.remote_push_notification_manager:
+    class: AppBundle\Service\RemotePushNotificationManager
+    arguments:
+      - "@csa_guzzle.client.fcm"
+      - "@apns_php.push"
+      - "%apns_certificate_pass_phrase%"
+      - "%fcm_server_api_key%"
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:
