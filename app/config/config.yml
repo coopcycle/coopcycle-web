@@ -107,6 +107,10 @@ doctrine:
                 class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
                 enabled: true
 
+api_platform:
+    mapping:
+        paths: ['%kernel.project_dir%/src/AppBundle/Api/Dto']
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
