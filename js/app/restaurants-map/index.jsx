@@ -82,8 +82,10 @@ const markers = window.__restaurants.map(restaurant => {
   return marker;
 });
 
-const restaurantsLayer = L.layerGroup(markers);
-restaurantsLayer.addTo(map);
+if (markers.length > 0) {
+  const restaurantsLayer = L.layerGroup(markers);
+  restaurantsLayer.addTo(map);
 
-const group = new L.featureGroup(markers);
-map.fitBounds(group.getBounds());
+  const group = new L.featureGroup(markers);
+  map.fitBounds(group.getBounds());
+}
