@@ -81,10 +81,8 @@
     <script src="{{ asset('js/common.js') }}"></script>
     <script>
     window.__restaurants = {{ restaurants|raw }};
-    // window.__i18n = {
-    //   'History': "{{ 'History'|trans }}"
-    // }
     </script>
+    {% include "AppBundle::_partials/mapHelper.html.twig" %}
     <script src="{{ asset('js/restaurants-map.js') }}"></script>
     {% if app.environment == "dev" %}
     <script src="{{ asset('webpack-dev-server.js') }}"></script>
