@@ -1,6 +1,5 @@
 Feature: Manage restaurants
 
-  @debug
   Scenario: Retrieve the restaurants list
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
