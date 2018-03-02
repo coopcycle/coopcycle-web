@@ -23,7 +23,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         unset($data['items']);
 
-        $data['totalExcludingTax'] = (string) $object->getTotalExcludingTax();
+        $data['totalExcludingTax'] = $object->getTotalExcludingTax();
         $data['totalTax'] = $object->getTotalTax();
         $data['totalIncludingTax'] = $object->getTotalIncludingTax();
         $data['courier'] = $object->getCourier() !== null ? $object->getCourier()->getUsername() : null;
