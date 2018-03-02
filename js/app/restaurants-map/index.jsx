@@ -1,5 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
+import MapHelper from '../MapHelper'
 
 var _ = require('underscore');
 var TWEEN = require('@tweenjs/tween.js');
@@ -47,13 +48,6 @@ function createMarker(position, icon, iconShape, color) {
     icon: createMarkerIcon(icon, iconShape, color)
   });
 
-  // if (infoWindow) {
-  //   marker.addListener('click', function() {
-  //     closeAllInfoWindows();
-  //     infoWindow.open(map, marker);
-  //   });
-  // }
-
   return marker;
 }
 
@@ -63,12 +57,7 @@ function closeAllInfoWindows() {
   });
 }
 
-const map = L.map('map', { scrollWheelZoom: false }).setView([center.lat, center.lng], zoom);
-
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>'
-}).addTo(map);
+const map = MapHelper.init('map')
 
 const markers = window.__restaurants.map(restaurant => {
 
