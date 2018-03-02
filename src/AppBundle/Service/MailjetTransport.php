@@ -64,7 +64,7 @@ class MailjetTransport extends \Mailjet\MailjetSwiftMailer\SwiftMailer\MailjetTr
             $resultStatus = \Swift_Events_SendEvent::RESULT_FAILED;
         }
 
-        $this->logger->info(var_dump($this->resultApi->getBody()));
+        $this->logger->info($this->resultApi->getBody());
 
         // Send SwiftMailer Event
         if ($event) {
