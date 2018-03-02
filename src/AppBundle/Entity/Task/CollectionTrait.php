@@ -3,16 +3,19 @@
 namespace AppBundle\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CollectionTrait
 {
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"task_collection"})
      */
     protected $distance;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"task_collection"})
      */
     protected $duration;
 

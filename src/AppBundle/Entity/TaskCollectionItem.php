@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -30,12 +31,14 @@ class TaskCollectionItem
     /**
      * @ORM\ManyToOne(targetEntity="Task", cascade={"persist"})
      * @ORM\JoinColumn(name="task_id", referencedColumnName="id")
+     * @Groups({"task_collection"})
      */
     private $task;
 
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="position", type="integer")
+     * @Groups({"task_collection"})
      */
     private $position;
 

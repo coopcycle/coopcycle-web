@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -25,12 +26,21 @@ abstract class TaskCollection
 
     /**
      * @ORM\OneToMany(targetEntity="TaskCollectionItem", mappedBy="parent", orphanRemoval=true, cascade={"all"})
+     * @Groups({"task_collection", "task"})
      */
     protected $items;
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
+    }
+
+    /**
+     * Mandatory for serialization to work.
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     public function addTask(Task $task, $position = null)
