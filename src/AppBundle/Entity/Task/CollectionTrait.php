@@ -19,6 +19,12 @@ trait CollectionTrait
      */
     protected $duration;
 
+    /**
+     * @ORM\Column(type="text")
+     * @Groups({"task_collection"})
+     */
+    protected $polyline = '';
+
     public function getDistance()
     {
         return $this->distance;
@@ -39,6 +45,18 @@ trait CollectionTrait
     public function setDuration($duration)
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getPolyline()
+    {
+        return $this->polyline;
+    }
+
+    public function setPolyline($polyline)
+    {
+        $this->polyline = $polyline;
 
         return $this;
     }

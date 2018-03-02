@@ -40,11 +40,6 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     private $courier;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $polyline = '';
-
-    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      * @Groups({"task_collection"})
@@ -83,18 +78,6 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     public function setCourier($courier)
     {
         $this->courier = $courier;
-
-        return $this;
-    }
-
-    public function getPolyline()
-    {
-        return $this->polyline;
-    }
-
-    public function setPolyline($polyline)
-    {
-        $this->polyline = $polyline;
 
         return $this;
     }

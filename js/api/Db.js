@@ -105,6 +105,7 @@ module.exports = function(sequelize) {
     date: Sequelize.DATE,
     status: Sequelize.STRING,
     price: Sequelize.FLOAT,
+    polyline: Sequelize.STRING,
     totalExcludingTax: {
       field: 'total_excluding_tax',
       type: Sequelize.FLOAT

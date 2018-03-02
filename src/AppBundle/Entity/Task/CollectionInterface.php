@@ -10,5 +10,7 @@ interface CollectionInterface
 
     public function getDuration();
 
+    public function getPolyline();
+
     public function getTasks();
 }

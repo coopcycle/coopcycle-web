@@ -46,6 +46,7 @@ class TaskCollectionSubscriber implements EventSubscriber
         if (count($coordinates) <= 1) {
             $taskCollection->setDistance(0);
             $taskCollection->setDuration(0);
+            $taskCollection->setPolyline('');
         } else {
             $data = $this->routing->getServiceResponse('route', $coordinates, [
                 'steps' => 'true',
@@ -53,6 +54,7 @@ class TaskCollectionSubscriber implements EventSubscriber
             ]);
             $taskCollection->setDistance((int) $data['routes'][0]['distance']);
             $taskCollection->setDuration((int) $data['routes'][0]['duration']);
+            $taskCollection->setPolyline($data['routes'][0]['geometry']);
         }
     }
 
