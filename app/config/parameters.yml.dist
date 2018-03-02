@@ -5,6 +5,7 @@ parameters:
 
     # indicates in which country the platform will be deployed
     country_iso: fr
+    coopcycle.locale: fr
 
     database_driver:   pdo_pgsql
     database_host:     postgres
