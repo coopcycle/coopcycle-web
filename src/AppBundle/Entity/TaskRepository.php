@@ -8,15 +8,21 @@ use Doctrine\ORM\Query\Expr;
 
 class TaskRepository extends EntityRepository
 {
-    public function findByUserAndDate(UserInterface $user, \DateTime $date)
+    public function findByDate(\DateTime $date)
     {
         return $this->createQueryBuilder('t')
-            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
-            ->andWhere('DATE(t.doneAfter) = :date')
-            ->andWhere('ta.courier = :courier')
-            ->orderBy('ta.position', 'ASC')
+            ->andWhere('DATE(t.doneBefore) = :date')
             ->setParameter('date', $date->format('Y-m-d'))
-            ->setParameter('courier', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUnassigned(\DateTime $date)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.assignedTo IS NULL')
+            ->andWhere('DATE(t.doneBefore) = :date')
+            ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()
             ->getResult();
     }
@@ -24,9 +30,8 @@ class TaskRepository extends EntityRepository
     public function findAssigned(\DateTime $date)
     {
         return $this->createQueryBuilder('t')
-            ->join(TaskAssignment::class, 'ta', Expr\Join::WITH, 't.id = ta.task')
-            ->andWhere('DATE(t.doneAfter) = :date')
-            ->orderBy('ta.position', 'ASC')
+            ->andWhere('t.assignedTo IS NOT NULL')
+            ->andWhere('DATE(t.doneBefore) = :date')
             ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()
             ->getResult();

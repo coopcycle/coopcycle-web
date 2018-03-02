@@ -165,6 +165,12 @@ services:
       - "@api_platform.iri_converter"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  coopcycle.api.normalizer.task_list:
+    class: AppBundle\Serializer\TaskListNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   app.menu_section:
     class: AppBundle\Serializer\MenuSectionNormalizer
     arguments:

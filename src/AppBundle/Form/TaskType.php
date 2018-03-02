@@ -79,7 +79,7 @@ class TaskType extends AbstractType
             }
 
             if ($task->isAssigned()) {
-                $form->get('assign')->setData($task->getAssignment()->getCourier());
+                $form->get('assign')->setData($task->getAssignedCourier());
             }
         });
     }

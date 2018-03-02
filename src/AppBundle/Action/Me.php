@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskAssignment;
+use AppBundle\Entity\TaskList;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr;
@@ -33,9 +33,17 @@ class Me
     {
         $date = new \DateTime($date);
 
-        $tasks = $this->doctrine
-            ->getRepository(Task::class)
-            ->findByUserAndDate($this->getUser(), $date);
+        $taskList = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->findOneBy([
+                'courier' => $this->getUser(),
+                'date' => $date
+            ]);
+
+        $tasks = [];
+        if ($taskList) {
+            $tasks = $taskList->getTasks();
+        }
 
         return $tasks;
     }

@@ -15,7 +15,7 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskAssignment;
+use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
@@ -224,9 +224,17 @@ class ProfileController extends Controller
             $date = new \DateTime($request->query->get('date'));
         }
 
-        $tasks = $this->getDoctrine()
-            ->getRepository(Task::class)
-            ->findByUserAndDate($this->getUser(), $date);
+        $taskList = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->findOneBy([
+                'courier' => $this->getUser(),
+                'date' => $date
+            ]);
+
+        $tasks = [];
+        if ($taskList) {
+            $tasks = $taskList->getTasks();
+        }
 
         return [
             'date' => $date,

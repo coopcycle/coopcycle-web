@@ -25,10 +25,8 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data['isAssigned'] = $object->isAssigned();
         $data['assignedTo'] = null;
-        $data['position'] = 0;
         if ($object->isAssigned()) {
-            $data['assignedTo'] = $object->getAssignment()->getCourier()->getUsername();
-            $data['position'] = $object->getAssignment()->getPosition();
+            $data['assignedTo'] = $object->getAssignedCourier()->getUsername();
         }
 
         $data['previous'] = null;

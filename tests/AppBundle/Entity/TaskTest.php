@@ -36,38 +36,19 @@ class TaskTest extends TestCase
         $this->assertTrue($this->task->hasPrevious());
     }
 
-    public function testIsAssigned()
+    public function testAssignTo()
     {
-        $this->assertFalse($this->task->isAssigned());
-        $this->task->assignTo($this->courier, 1);
+        $this->task->assignTo($this->courier);
         $this->assertTrue($this->task->isAssigned());
-    }
-
-    public function testIsAssignedTo()
-    {
-        $this->task->assignTo($this->courier, 1);
         $this->assertTrue($this->task->isAssignedTo($this->courier));
-    }
-
-    public function testGetAssignedCourier()
-    {
-        $this->task->assignTo($this->courier, 1);
-        $this->assertEquals($this->task->getAssignedCourier(),
-                            $this->courier);
-    }
-
-    public function testAssignedTo()
-    {
-        $this->task->assignTo($this->courier, 1);
-        $this->assertEquals($this->task->getAssignment()->getCourier(), $this->courier);
-        $this->assertEquals($this->task->getAssignment()->getPosition(), 1);
+        $this->assertEquals($this->task->getAssignedCourier(), $this->courier);
     }
 
     public function testUnassign()
     {
-        $this->task->assignTo($this->courier, 1);
+        $this->task->assignTo($this->courier);
         $this->task->unassign();
-        $this->assertNull($this->task->getAssignment());
+        $this->assertNull($this->task->getAssignedCourier());
     }
 
     public function testHasEvent()

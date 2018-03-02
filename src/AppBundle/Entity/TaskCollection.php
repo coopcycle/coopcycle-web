@@ -83,4 +83,15 @@ abstract class TaskCollection
             return $item->getTask();
         });
     }
+
+    public function containsTask(Task $task)
+    {
+        foreach ($this->getTasks() as $t) {
+            if ($task === $t) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

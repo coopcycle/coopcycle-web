@@ -14,6 +14,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="task_list", uniqueConstraints={
  *   @ORM\UniqueConstraint(name="task_list_unique", columns={"date", "courier_id"})}
  * )
+ * @ApiResource(
+ *   collectionOperations={},
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *   },
+ *   attributes={
+ *     "normalization_context"={"groups"={"task_collection", "task"}}
+ *   }
+ * )
  */
 class TaskList extends TaskCollection implements TaskCollectionInterface
 {
@@ -33,19 +42,19 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     /**
      * @ORM\Column(type="text")
      */
-    private $polyline;
+    private $polyline = '';
 
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @Groups({"task"})
+     * @Groups({"task_collection"})
      */
     private $createdAt;
 
     /**
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
-     * @Groups({"task"})
+     * @Groups({"task_collection"})
      */
     private $updatedAt;
 
@@ -88,5 +97,35 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
         $this->polyline = $polyline;
 
         return $this;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * When a Task is added, it is assigned.
+     */
+    public function addTask(Task $task, $position = null)
+    {
+        $task->assignTo($this->getCourier());
+
+        return parent::addTask($task, $position);
+    }
+
+    /**
+     * When a Task is removed, it is unassigned.
+     */
+    public function removeTask(Task $task)
+    {
+        $task->unassign();
+
+        return parent::removeTask($task);
     }
 }
