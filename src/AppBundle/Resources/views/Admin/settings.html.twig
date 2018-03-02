@@ -1,0 +1,18 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'AppBundle:Form:settings.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}Configuration{% endtrans %}</li>
+<li>{% trans %}Settings{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">{{ 'Save'|trans }}</button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

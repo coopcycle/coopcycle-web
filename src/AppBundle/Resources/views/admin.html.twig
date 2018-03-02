@@ -5,6 +5,14 @@
 {% block body %}
 <div class="container">
 
+  {% if not settings_manager.fullyConfigured %}
+  <div class="alert alert-danger">
+  {% trans with { '%settings_url%': path('admin_settings') } %}
+  admin.settings.missing_mandatory_settings
+  {% endtrans %}
+  </div>
+  {% endif %}
+
   {% include "AppBundle:Admin:nav.html.twig" %}
 
   <ol class="breadcrumb">

@@ -1,0 +1,21 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _settings_stripe_publishable_key_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.stripe_publishable_key.help{% endtrans %}</span>
+{% endblock %}
+
+{% block _settings_stripe_secret_key_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.stripe_secret_key.help{% endtrans %}</span>
+{% endblock %}
+
+{% block _settings_google_api_key_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.google_api_key.help{% endtrans %}</span>
+{% endblock %}
+
+{% block _settings_latlng_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.latlng.help{% endtrans %}</span>
+{% endblock %}

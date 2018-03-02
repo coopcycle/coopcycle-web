@@ -122,9 +122,9 @@ class InitDemoCommand extends ContainerAwareCommand
         $em = $this->doctrine->getManagerForClass($className);
 
         try {
-            $this->craueConfig->get('maps.center');
+            $this->craueConfig->get('latlng');
         } catch (\RuntimeException $e) {
-            $mapsCenter = $this->createCraueConfigSetting('maps.center', '48.857498,2.335402');
+            $mapsCenter = $this->createCraueConfigSetting('latlng', '48.857498,2.335402');
             $em->persist($mapsCenter);
         }
 

@@ -27,6 +27,7 @@ use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
+use AppBundle\Form\SettingsType;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
@@ -1000,6 +1001,35 @@ class AdminController extends Controller
             ->find($id);
 
         $form = $this->createTaskEditForm($task);
+
+        return [
+            'form' => $form->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/admin/settings", name="admin_settings")
+     * @Template()
+     */
+    public function settingsAction(Request $request)
+    {
+        $settingsManager = $this->get('coopcycle.settings_manager');
+
+        $form = $this->createForm(SettingsType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+
+            foreach ($data as $name => $value) {
+                $settingsManager->set($name, $value);
+            }
+
+            $settingsManager->flush();
+
+            return $this->redirectToRoute('admin_settings');
+        }
 
         return [
             'form' => $form->createView(),

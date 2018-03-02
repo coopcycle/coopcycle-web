@@ -35,8 +35,6 @@ parameters:
     jwt_key_pass_phrase:  'coursiers'                                # ssh key pass phrase
     jwt_token_ttl:        86400
 
-    stripe_secret_key: YOUR_STRIPE_SECRET_KEY
-    stripe_publishable_key: YOUR_STRIPE_PUBLISHABLE_KEY
     stripe_connect_client_id: YOUR_STRIPE_CONNECT_CLIENT_ID
 
     transactional_address: transactional@coopcycle.dev

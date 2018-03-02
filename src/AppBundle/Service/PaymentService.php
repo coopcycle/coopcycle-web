@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Order;
+use AppBundle\Service\SettingsManager;
 use Stripe;
 use Psr\Log\LoggerInterface;
 
@@ -10,9 +11,13 @@ class PaymentService
 {
     private $logger;
 
-    public function __construct($apiKey, LoggerInterface $logger)
+    public function __construct(SettingsManager $settingsManager, LoggerInterface $logger)
     {
-        Stripe\Stripe::setApiKey($apiKey);
+        $apiKey = $settingsManager->get('stripe_secret_key');
+
+        if ($apiKey) {
+            Stripe\Stripe::setApiKey($apiKey);
+        }
 
         $this->logger = $logger;
     }

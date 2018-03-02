@@ -278,6 +278,19 @@ form.task_upload.file: Fichier
 form.task_complete.done.label: Terminer
 form.task_complete.fail.label: Signaler un problème
 
+form.settings.stripe_publishable_key.label: Clé publique Stripe
+form.settings.stripe_publishable_key.help: |
+  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé publique</a>
+form.settings.stripe_secret_key.label: Clé secrète Stripe
+form.settings.stripe_secret_key.help: |
+  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé secrète</a>
+form.settings.google_api_key.label: Clé d'API Google
+form.settings.google_api_key.help: |
+  Créez un compte Google pour récupérer votre <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé d'API</a>
+form.settings.latlng.label: Coordonnées géographiques
+form.settings.latlng.help: |
+  Spécifiez la latitude et la longitude par défaut. Vous pouvez l'obtenir sur <a href="https://www.latlong.net/">latlong.net</a>
+
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Ajouter
@@ -356,3 +369,7 @@ No order in progress: Pas de commande en cours
 
 task.type.PICKUP: Retrait
 task.type.DROPOFF: Dépôt
+
+admin.settings.missing_mandatory_settings: |
+  Des paramètres obligatoires sont manquants.
+  Allez à la <a href="%settings_url%">page des paramètres</a> pour les configurer.

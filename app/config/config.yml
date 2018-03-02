@@ -44,6 +44,7 @@ twig:
         sentry_public_dsn: "%sentry_public_dsn%"
         country_iso: "%country_iso%"
         cart_provider: '@coopcycle.cart_provider'
+        settings_manager: "@coopcycle.settings_manager"
 
 # Doctrine Configuration
 doctrine:

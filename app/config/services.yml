@@ -189,6 +189,10 @@ services:
     arguments: [ '@coopcycle.repository.task' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\SettingsType':
+    arguments: [ '@coopcycle.settings_manager' ]
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
@@ -227,7 +231,7 @@ services:
   payment_service:
     class: AppBundle\Service\PaymentService
     arguments:
-      - "%stripe_secret_key%"
+      - "@coopcycle.settings_manager"
       - "@logger"
 
   'AppBundle\Filter\RestaurantFilter':
@@ -275,6 +279,10 @@ services:
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
     arguments: ["@doctrine", "@event_dispatcher"]
+
+  coopcycle.settings_manager:
+    class: AppBundle\Service\SettingsManager
+    arguments: ["@craue_config", "%craue_config.entity_name%", "@doctrine", "@logger"]
 
   coopcycle.notification_manager:
     class: AppBundle\Service\NotificationManager

@@ -69,7 +69,7 @@
 {% block scripts %}
   <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
   <script type="text/javascript">
-    Stripe.setPublishableKey('{{ stripe_publishable_key }}');
+    Stripe.setPublishableKey("{{ craue_setting('stripe_publishable_key') }}");
     window.AppData = window.AppData || {};
     window.AppData.restaurantCoordinates = {
       'lat': "{{ order.restaurant.address.geo.latitude }}",

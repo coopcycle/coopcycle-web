@@ -26,19 +26,18 @@
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.users{%  endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_users') }}"><i class="fa fa-user"></i>&nbsp;{% trans %}Users{% endtrans %}</a>
         </li>
-        {% if is_granted('ROLE_ADMIN') %}
         <li class="dropdown">
           <a class="admin-navbar__link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-cog"></i>  {% trans %}Settings{% endtrans %} <span class="caret"></span>
+            <i class="fa fa-cog"></i>  {% trans %}Configuration{% endtrans %} <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
+            <li><a href="{{ path('admin_settings') }}">{% trans %}Settings{% endtrans %}</a></li>
             <li><a href="{{ path('admin_menu_categories') }}">{% trans %}Menu categories{% endtrans %}</a></li>
             <li><a href="{{ path('admin_taxation_settings') }}">{% trans %}Taxation{% endtrans %}</a></li>
             <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}Pricing{% endtrans %}</a></li>
             <li><a href="{{ path('admin_zones') }}">{% trans %}Zones{% endtrans %}</a></li>
           </ul>
         </li>
-        {% endif %}
         <li class="admin-navbar__help">
           <a class="admin-navbar__link" href="{{ path('help') }}"><i class="fa fa-question"></i>&nbsp;{% trans %}Help{% endtrans %}</a>
         </li>

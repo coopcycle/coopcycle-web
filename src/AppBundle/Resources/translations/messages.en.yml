@@ -84,6 +84,19 @@ form.task_upload.file: File
 form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 
+form.settings.stripe_publishable_key.label: Stripe publishable key
+form.settings.stripe_publishable_key.help: |
+  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
+form.settings.stripe_secret_key.label: Stripe secret key
+form.settings.stripe_secret_key.help: |
+  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
+form.settings.google_api_key.label: Clé d'API Google
+form.settings.google_api_key.help: |
+  Create a Google account to obtain your <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API key</a>
+form.settings.latlng.label: Geographical coordinates
+form.settings.latlng.help: |
+  Specify the default latitude and longitude. You can get it on <a href="https://www.latlong.net/">latlong.net</a>
+
 # mail
 email.signature:
 registration.email.subject: |
@@ -151,3 +164,7 @@ delivery_service.applicolis: AppliColis
 
 task.type.PICKUP: Pickup
 task.type.DROPOFF: Dropoff
+
+admin.settings.missing_mandatory_settings: |
+  Mandatory settings are missing.
+  Go to <a href="%settings_url%">settings page</a> to configure them.

@@ -125,6 +125,8 @@ class OrderController extends Controller
             return $this->redirectToRoute('order');
         }
 
+        $settingsManager = $this->get('coopcycle.settings_manager');
+
         $order = $this->createOrderFromRequest($request);
         $orderManager = $this->get('order.manager');
 
@@ -138,7 +140,7 @@ class OrderController extends Controller
             'order' => $order,
             'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
             'restaurant' => $order->getRestaurant(),
-            'stripe_publishable_key' => $this->getParameter('stripe_publishable_key')
+            'stripe_publishable_key' => $settingsManager->get('stripe_publishable_key')
         ];
 
         if ($request->isMethod('POST') && $request->request->has('stripeToken')) {

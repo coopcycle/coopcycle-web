@@ -247,8 +247,3 @@ admin_store_deliveries:
             stores: admin_stores
             store: admin_store
     methods:  [ GET ]
-
-craue_config_settings_modify:
-    path: /admin/settings/modify
-    defaults:
-        _controller: CraueConfigBundle:Settings:modify
