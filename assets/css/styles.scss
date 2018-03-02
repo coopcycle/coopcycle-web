@@ -1,5 +1,18 @@
-body {
+html, body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  min-height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.content {
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -20,8 +33,6 @@ h1, h2, h3, h4, h5, h6 {
 .footer {
   width: 100%;
   padding: $base-margin 0;
-  margin-top: $base-margin-l;
-  border-top: 1px solid $dark;
   background-color: $main-blue;
 
   a.footer-link {
