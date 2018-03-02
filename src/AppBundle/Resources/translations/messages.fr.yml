@@ -181,6 +181,7 @@ Display: Affichage
 Display by groups: Afficher par groupes
 Display all: Afficher tout
 The CSV file is not valid: Le ficher CSV n'est pas valide
+There are no restaurants yet.: Pas de restaurant pour le moment.
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses

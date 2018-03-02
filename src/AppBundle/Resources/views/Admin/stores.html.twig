@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block content %}
-  <a href="{{ path('admin_store_new') }}" class="btn btn-success pull-right margin-bottom-md"><i class="fa fa-plus"></i> {% trans %}Create a new store{% endtrans %}</a>
+  <div class="text-right margin-bottom-md">
+    <a href="{{ path('admin_store_new') }}" class="btn btn-success">
+      <i class="fa fa-plus"></i> {% trans %}Create a new store{% endtrans %}
+    </a>
+  </div>
   {% include "AppBundle:Store:list.html.twig" %}
 {% endblock %}
 

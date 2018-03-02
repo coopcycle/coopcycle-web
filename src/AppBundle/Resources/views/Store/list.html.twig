@@ -1,13 +1,13 @@
-<table class="table">
-  <thead>
-    <th></th>
-    <th>{{ 'Name'|trans }}</th>
-    <th>{{ 'Address'|trans }}</th>
-    <th>{{ 'Pricing'|trans }}</th>
-    <th></th>
-  </thead>
-  <tbody>
-  {% if stores|length > 0 %}
+{% if stores|length > 0 %}
+  <table class="table">
+    <thead>
+      <th></th>
+      <th>{{ 'Name'|trans }}</th>
+      <th>{{ 'Address'|trans }}</th>
+      <th>{{ 'Pricing'|trans }}</th>
+      <th></th>
+    </thead>
+    <tbody>
     {% for store in stores %}
       <tr>
         <td><a href="{{ path(store_route, { id: store.id }) }}">#{{ store.id }}</a></td>
@@ -36,10 +36,10 @@
         </td>
       </tr>
     {% endfor %}
-  {% else %}
-    <div class="alert alert-info">
-    {% trans %}There are no stores yet{% endtrans %}
-    </div>
-  {% endif %}
-  </tbody>
-</table>
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}There are no stores yet{% endtrans %}
+  </div>
+{% endif %}

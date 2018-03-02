@@ -5,12 +5,16 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="text-right margin-bottom-md">
+  <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}
+  </a>
+</div>
 {% include "AppBundle:Admin:pagination.html.twig" %}
 {% include "AppBundle::_partials/Restaurant/list.html.twig" %}
 {% include "AppBundle:Admin:pagination.html.twig" %}
-<a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
-  <i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}
-</a>
+
 {% endblock %}
 
 {% block scripts %}

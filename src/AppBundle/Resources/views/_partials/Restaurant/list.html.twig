@@ -1,6 +1,6 @@
-<table class="table">
-  <tbody>
-  {% if restaurants|length > 0 %}
+{% if restaurants|length > 0 %}
+  <table class="table">
+    <tbody>
     {% for restaurant in restaurants %}
       <tr>
         <td><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
@@ -42,11 +42,11 @@
         </td>
       </tr>
     {% endfor %}
-  {% else %}
-    <div class="alert alert-info">
-    {% trans %}There are no restaurants yet.{% endtrans %}
-    <a href="{{ path('admin_restaurant_new') }}">{% trans %}Create a new restaurant{% endtrans %}</a>
-    </div>
-  {% endif %}
-  </tbody>
-</table>
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}There are no restaurants yet.{% endtrans %}
+  <a href="{{ path('admin_restaurant_new') }}">{% trans %}Create a new restaurant{% endtrans %}</a>
+  </div>
+{% endif %}
