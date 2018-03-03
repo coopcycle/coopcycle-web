@@ -2,4 +2,5 @@
 
 cd /srv/coopcycle
 npm install
-node_modules/.bin/webpack-dev-server --watch-poll --host 0.0.0.0 --content-base=web/
+
+node_modules/.bin/encore dev-server --watch-poll --host 0.0.0.0 --content-base=web/ --disable-host-check

@@ -9,7 +9,7 @@ framework:
     session:
         save_path:   "/tmp"
     assets:
-        base_urls: [ "%webpack.dev_server.base_url%" ]
+        base_urls: [ "http://localhost:8080" ]
 
 web_profiler:
     toolbar: true

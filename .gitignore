@@ -24,6 +24,8 @@
 !web/images/.gitkeep
 /web/js/
 /web/manifest.json
+/web/manifest.js
+/web/manifest.*.js
 
 /node_modules/
 .DS_Store
