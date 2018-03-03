@@ -4,7 +4,9 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Task;
+use AppBundle\Service\TagManager;
 use Craue\ConfigBundle\Util\Config;
 use GuzzleHttp\Client;
 use League\Csv\Exception as CsvReaderException;
@@ -23,16 +25,18 @@ class TaskUploadType extends AbstractType
     private $config;
     private $client;
     private $translator;
+    private $tagManager;
 
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
-    public function __construct(Config $config, Client $client, TranslatorInterface $translator)
+    public function __construct(Config $config, Client $client, TranslatorInterface $translator, TagManager $tagManager)
     {
         $this->config = $config;
         $this->client = $client;
         $this->translator = $translator;
+        $this->tagManager = $tagManager;
     }
 
     private function validateHeader(array $header)
@@ -68,6 +72,17 @@ class TaskUploadType extends AbstractType
 
         if ($type === Task::TYPE_DROPOFF) {
             $task->setType(Task::TYPE_DROPOFF);
+        }
+    }
+
+    private function applyTags(TaggableInterface $task, $tagsAsString)
+    {
+        $tagsAsString = trim($tagsAsString);
+
+        if (!empty($tagsAsString)) {
+            $slugs = explode(' ', $tagsAsString);
+            $tags = $this->tagManager->fromSlugs($slugs);
+            $task->setTags($tags);
         }
     }
 
@@ -179,6 +194,10 @@ class TaskUploadType extends AbstractType
 
                     if (isset($record['type'])) {
                         $this->applyType($task, $record['type']);
+                    }
+
+                    if (isset($record['tags'])) {
+                        $this->applyTags($task, $record['tags']);
                     }
 
                     if (isset($record['comments']) && !empty($record['comments'])) {

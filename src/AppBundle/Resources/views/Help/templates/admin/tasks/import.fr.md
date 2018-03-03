@@ -16,8 +16,8 @@ Vous pouvez télécharger un [fichier d'exemple](/help/tasks_import.example.fr.c
 ---
 
 
-| `type`    | `address.name`      | `address`                             | `after`            | `before`           | `comments`           |
-| --------- | ------------------- | ------------------------------------- | ------------------ | ------------------ | -------------------- |
-| `pickup`  | `Mairie du 2e`      | `1, rue de Rivoli Paris`              | `15/02/2018 12:00` | `15/02/2018 14:00` | `Appeller le client` |
-| `dropoff` | `Bijouterie`        | `54, rue de la Paix Paris`            | `2018-02-15 09:00` | `2018-02-15 10:00` |                      |
-| `dropoff` | `Magasin de fleurs` | `23, rue du Faubourg du Temple Paris` | `09:00`            | `12:00`            |                      |
+| `type`    | `address.name`      | `address`                             | `after`            | `before`           | `comments`           | `tags`      |
+| --------- | ------------------- | ------------------------------------- | ------------------ | ------------------ | -------------------- | ----------- |
+| `pickup`  | `Mairie du 2e`      | `1, rue de Rivoli Paris`              | `15/02/2018 12:00` | `15/02/2018 14:00` | `Appeller le client` |             |
+| `dropoff` | `Bijouterie`        | `54, rue de la Paix Paris`            | `2018-02-15 09:00` | `2018-02-15 10:00` |                      | `important` |
+| `dropoff` | `Magasin de fleurs` | `23, rue du Faubourg du Temple Paris` | `09:00`            | `12:00`            |                      |             |
