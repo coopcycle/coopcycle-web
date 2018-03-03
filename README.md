@@ -19,21 +19,16 @@ How to run a local instance
 
 ### Prerequisites
 
-* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install). 
+* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
 
     - On OSX : use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
-    
+
     - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
-    
+
     - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
-    
-* Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync start` to start sync in the background, then ` docker-compose -f docker-compose.yml -f docker-compose-dev.yml up`.
 
-* Get [a Google Map API Key](https://developers.google.com/maps/documentation/javascript/get-api-key#key) and copy it. You will be asked for it when running `make install`.
+* Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync start` to start sync in the background, then `docker-compose -f docker-compose.yml -f docker-compose-dev.yml up`.
 
-* [Create a Stripe account](https://dashboard.stripe.com/register) and copy your tests credentials. You will be asked for them when running `make install`.
-
-* Run the install scripts - when asked for `app/config/parameters.yml` parameters please enter your Google (`google_api_key`) and Stripe test (`stripe_secret_key` and `stripe_publishable_key`) credentials, for others you can keep defaults.
 ```sh
 make install
 ```
@@ -81,12 +76,12 @@ make mocha
 Running migrations
 -------
 
-When pulling change from the remote, the database models may have change. To take account for the changes, you will need to run a database migration.
+When pulling change from the remote, the database models may have changed. To apply the changes, you will need to run a database migration.
 
 ```
 make migrations-migrate
 ```
- 
+
 
 License
 -------
