@@ -29,7 +29,7 @@
         <ul class="nav navbar-nav navbar-right">
 
           {% if is_granted('ROLE_COURIER') %}
-            <li><a href="{{ path('profile_tracking') }}"><i class="fa fa-location-arrow"></i>  {% trans %}profile.myTracking{% endtrans %}</a></li>
+            <li><a href="{{ path('profile_tracking', { date: 'now'|date('Y-m-d') }) }}"><i class="fa fa-location-arrow"></i>  {% trans %}profile.myTracking{% endtrans %}</a></li>
           {% endif %}
 
           {% if is_granted('ROLE_STORE') and is_granted('ROLE_COURIER') %}

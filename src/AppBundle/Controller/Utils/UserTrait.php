@@ -9,14 +9,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait UserTrait
 {
-    protected function userTracking(UserInterface $user, $layout = 'profile')
+    protected function userTracking(UserInterface $user, \DateTime $date, $layout = 'profile')
     {
-        $positions = $this->getDoctrine()->getRepository(TrackingPosition::class)->findBy([
-            'courier' => $user,
-        ], ['date' => 'ASC']);
+        $qb = $this->getDoctrine()
+            ->getRepository(TrackingPosition::class)->createQueryBuilder('tp');
+        $qb
+            ->andWhere('tp.courier = :user')
+            ->andWhere('DATE(tp.date) >= :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date)
+            ->orderBy('tp.date', 'ASC');
+
+        $positions = $qb->getQuery()->getResult();
 
         return [
             'layout' => $layout,
+            'date' => $date,
             'positions' => $positions,
         ];
     }

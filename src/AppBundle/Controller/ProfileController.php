@@ -205,12 +205,14 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/tracking", name="profile_tracking")
+     * @Route("/profile/tracking/{date}", name="profile_tracking")
      * @Template("@App/User/tracking.html.twig")
      */
-    public function trackingAction(Request $request)
+    public function trackingAction($date, Request $request)
     {
-        return $this->userTracking($this->getUser());
+        $date = new \DateTime($date);
+
+        return $this->userTracking($this->getUser(), $date);
     }
 
     /**
