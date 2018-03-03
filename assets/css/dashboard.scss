@@ -15,13 +15,7 @@ html, body {
 
 .dashboard {
 
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-
-  -webkit-flex: 1;
-  -ms-flex: 1;
   flex: 1;
 
   width: 100%;
@@ -31,9 +25,6 @@ html, body {
   margin: 0;
 
   &__map, &__aside, &__map-container {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
     display: flex;
   }
 
@@ -42,9 +33,6 @@ html, body {
     position: relative;
   }
   &__map-container {
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    -ms-flex: 1;
     flex: 1;
   }
   &__toolbar-container {
@@ -58,15 +46,8 @@ html, body {
   }
 
   &__panel {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
     display: flex;
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    -ms-flex: 1;
     flex: 1;
-    -webkit-flex-direction: column;
     flex-direction: column;
     > h4 {
       padding: 15px;
@@ -87,43 +68,25 @@ html, body {
   }
 
   &__map {
-    -webkit-box-flex: 7.5;
-    -webkit-flex: 7.5;
-    -ms-flex: 7.5;
     flex: 7.5;
   }
 
   &__aside {
 
-    -webkit-box-flex: 2.5;
-    -webkit-flex: 2.5;
-    -ms-flex: 2.5;
     flex: 2.5;
-
-    min-width: 275px;
-
-    -webkit-flex-direction: column;
     flex-direction: column;
 
+    min-width: 275px;
     font-size: 11px;
 
     &-container {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: -webkit-flex;
       display: flex;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      -ms-flex: 1;
       flex: 1;
-      -webkit-flex-direction: column;
       flex-direction: column;
     }
 
     .dropzone {
       box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
       background-color: lighten(#F39C12, 30%);
       border: 3px dashed #F1C40F;
 
@@ -173,8 +136,6 @@ html, body {
     background-color: lighten(#3498DB, 5%);
   }
   &--dropoff {
-    cursor: -webkit-grab;
-    cursor: -moz-grab;
     cursor: grab;
     background-color: lighten(#2ECC71, 15%);
   }
@@ -264,9 +225,6 @@ html, body {
 }
 
 #map {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  -ms-flex: 1;
   flex: 1;
   margin-bottom: 0;
   padding: 0;
