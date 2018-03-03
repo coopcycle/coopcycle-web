@@ -11,6 +11,10 @@ export default class extends React.Component {
             <a role="button" data-toggle="collapse" href={ `#task-group-panel-${group.id}` }>
               <i className="fa fa-folder"></i> { group.name } <span className="badge">{ tasks.length }</span>
             </a>
+            <a role="button" href="#" className="pull-right"
+              data-toggle="modal" data-target="#task-group-modal" data-group={ group.id }>
+              <i className="fa fa-trash"></i>
+            </a>
           </h4>
         </div>
         <div id={ `task-group-panel-${group.id}` } className="panel-collapse collapse" role="tabpanel">

@@ -99,6 +99,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="task-group-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    {{ form_start(task_group_form, { attr: { class: 'modal-content' } }) }}
+      {{ form_widget(task_group_form.id) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans %}Delete task group{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          {% trans %}You are going to delete a task group. This will delete all the tasks from the group.{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+        {{ form_widget(task_group_form.delete, { attr: { class: 'btn btn-danger' } }) }}
+      </div>
+    {{ form_end(task_group_form) }}
+  </div>
+</div>
+
 <div class="modal fade" id="task-modal" tabindex="-1" role="dialog">
   {% include "AppBundle::_partials/Task/form.html.twig" with { form: new_task_form } %}
 </div>
@@ -153,6 +174,10 @@ window.AppData.Dashboard = {
 $('#task-upload-form-errors').popover({
   html: true,
   container: 'body'
+})
+$('#task-group-modal').on('show.bs.modal', function (event) {
+  var $btn = $(event.relatedTarget);
+  $('#task_group_id').val($btn.data('group'));
 })
 </script>
 <script>

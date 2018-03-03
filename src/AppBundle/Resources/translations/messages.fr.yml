@@ -182,6 +182,8 @@ Display by groups: Afficher par groupes
 Display all: Afficher tout
 The CSV file is not valid: Le ficher CSV n'est pas valide
 There are no restaurants yet.: Pas de restaurant pour le moment.
+Delete task group: Supprimer un groupe de tâches
+You are going to delete a task group. This will delete all the tasks from the group.: Vous êtes sur le point de supprimer un groupe de tâches. Cela supprimera toutes les tâches du groupe.
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses

@@ -28,6 +28,7 @@ use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\TaskExportType;
+use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Form\TaskType;
 use AppBundle\Form\ZoneCollectionType;
@@ -146,6 +147,8 @@ class AdminController extends Controller
 
         $taskExportForm = $this->createForm(TaskExportType::class, $taskExport);
 
+        $taskGroupForm = $this->createForm(TaskGroupType::class);
+
         $taskUploadForm->handleRequest($request);
         if ($taskUploadForm->isSubmitted()) {
             if ($taskUploadForm->isValid()) {
@@ -206,6 +209,44 @@ class AdminController extends Controller
             return $response;
         }
 
+        $taskGroupForm->handleRequest($request);
+        if ($taskGroupForm->isSubmitted() && $taskGroupForm->isValid()) {
+
+            if ($taskGroupForm->getClickedButton() && 'delete' === $taskGroupForm->getClickedButton()->getName()) {
+
+                $taskGroup = $this->getDoctrine()
+                    ->getRepository(TaskGroup::class)
+                    ->find($taskGroupForm->get('id')->getData());
+
+                $tasks = $this->getDoctrine()
+                    ->getRepository(Task::class)
+                    ->findByGroup($taskGroup);
+
+                $deleteGroup = true;
+                foreach ($tasks as $task) {
+                    if (!$task->isAssigned()) {
+                        $this->getDoctrine()
+                            ->getManagerForClass(Task::class)
+                            ->remove($task);
+                    } else {
+                        $deleteGroup = false;
+                    }
+                }
+
+                if ($deleteGroup) {
+                    $this->getDoctrine()
+                        ->getManagerForClass(TaskGroup::class)
+                        ->remove($taskGroup);
+                }
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Task::class)
+                    ->flush();
+            }
+
+            return $this->redirectToDashboard($request);
+        }
+
         $tasks = $this->getDoctrine()
             ->getRepository(Task::class)
             ->createQueryBuilder('t')
@@ -259,6 +300,7 @@ class AdminController extends Controller
             'task_upload_form' => $taskUploadForm->createView(),
             'task_export_form' => $taskExportForm->createView(),
             'new_task_form' => $newTaskForm->createView(),
+            'task_group_form' => $taskGroupForm->createView(),
         ]);
     }
 
