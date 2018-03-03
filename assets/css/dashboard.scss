@@ -9,6 +9,10 @@ html, body {
   margin-bottom: 0;
 }
 
+.content {
+  height: calc(100% - 50px);
+}
+
 .dashboard {
 
   display: -webkit-box;
