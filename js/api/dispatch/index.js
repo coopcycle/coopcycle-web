@@ -18,7 +18,8 @@ console.log('PORT = ' + process.env.PORT)
 const {
   pub,
   sub,
-  sequelize
+  sequelize,
+  redis
 } = require('./config')(ROOT_DIR)
 
 const db = require('../Db')(sequelize)
@@ -96,10 +97,18 @@ wsServer.on('connection', function(ws) {
 
         const { username } = user
         const { latitude, longitude } = data
+
         pub.prefixedPublish('tracking', JSON.stringify({
           user: username,
           coords: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
         }))
+
+        redis.rpush(`tracking:${username}`, JSON.stringify({
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          timestamp: moment().unix()
+        }))
+
       }
 
     })
