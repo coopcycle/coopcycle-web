@@ -29,6 +29,9 @@ How to run a local instance
 
 * Docker Sync : Sync between host source files and container can be painfully slow on OSX or Windows. We advise you to install [docker-sync](http://docker-sync.io/) to speed up things. The command to start the platform on localhost would then be `docker-sync start` to start sync in the background, then `docker-compose -f docker-compose.yml -f docker-compose-dev.yml up`.
 
+
+* Run the install scripts.
+
 ```sh
 make install
 ```
