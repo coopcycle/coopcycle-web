@@ -44,6 +44,7 @@ const {
   subscribe,
 } = require('./api')(db, redis, pub, metrics, couriers, deliveries, winston)
 
+
 preload()
   .then(() => {
 
@@ -59,6 +60,16 @@ preload()
       const distances = [500, 1000, 2000, 2500, 3000, 3500, 4000, 4500]
 
       while (true) {
+
+        let shouldDispatchSetting = yield db.CraueSettings.findOne({ where: {'name': 'enable_automatic_dispatch'}}),
+            shouldDispatch =  shouldDispatchSetting ? shouldDispatchSetting.value === 'true' : false
+
+        if (!shouldDispatch) {
+          let automaticDispatchWait = process.env.NODE_ENV === 'test' ? 10 : 180*1000;
+          winston.info('Automatic dispatch is disabled, stop and check in ' + automaticDispatchWait + ' seconds');
+          yield new Promise(resolve => setTimeout(resolve, automaticDispatchWait))
+          continue
+        }
 
         // This will block until there is a delivery in the queue
         let delivery = yield nextDelivery()

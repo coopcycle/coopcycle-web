@@ -99,6 +99,16 @@ module.exports = function(sequelize) {
     tableName: 'restaurant'
   }));
 
+  Db.CraueSettings = sequelize.define('craue_config_setting', {
+    name: Sequelize.STRING,
+    value: Sequelize.STRING,
+    section: Sequelize.STRING
+  }, _.extend(sequelizeOptions, {
+    tableName: 'craue_config_setting'
+  }));
+
+  Db.CraueSettings.removeAttribute("id"); // no primary key on this model
+
   Db.Delivery = sequelize.define('delivery', {
     distance: Sequelize.INTEGER,
     duration: Sequelize.INTEGER,
