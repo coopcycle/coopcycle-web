@@ -51,8 +51,6 @@ parameters:
     app.restaurant_panel_port: "8003"
     app.dispatch_v2_port: "8004"
 
-    applicolis_api_base_url: ~
-
     piwik_site_id: ~
 
     is_demo: false

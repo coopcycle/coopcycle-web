@@ -203,10 +203,6 @@ csa_guzzle:
             config:
                 base_uri: "http://%osrm_host%"
                 lazy: true
-        applicolis:
-            config:
-                base_uri: "%applicolis_api_base_url%"
-                lazy: true
         google_maps:
             config:
                 base_uri: "https://maps.googleapis.com"
