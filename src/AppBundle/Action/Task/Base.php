@@ -34,6 +34,11 @@ abstract class Base
         if (isset($data['notes'])) {
             return $data['notes'];
         }
+
+        // FIXME Remove when the app is ok
+        if (isset($data['reason'])) {
+            return $data['reason'];
+        }
     }
 
     protected function accessControl(Task $task)
