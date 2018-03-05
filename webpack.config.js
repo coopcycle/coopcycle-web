@@ -43,6 +43,10 @@ Encore
     resolveUrlLoader: false
   })
 
+  .configureFilenames({
+    images: 'img/build/[name].[hash:8].[ext]'
+  })
+
   .enableReactPreset()
   .autoProvidejQuery()
   .enableSourceMaps(true)

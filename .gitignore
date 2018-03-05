@@ -22,6 +22,7 @@
 /web/fonts/
 /web/images/*
 !web/images/.gitkeep
+/web/img/build/
 /web/js/
 /web/manifest.json
 /web/manifest.js
