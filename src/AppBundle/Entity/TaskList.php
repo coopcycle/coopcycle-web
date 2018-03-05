@@ -10,6 +10,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * A TaskList represents the daily planning for a courier.
+ * It is a concrete implementation of a TaskCollection.
+ *
  * @ORM\Entity
  * @ORM\Table(name="task_list", uniqueConstraints={
  *   @ORM\UniqueConstraint(name="task_list_unique", columns={"date", "courier_id"})}

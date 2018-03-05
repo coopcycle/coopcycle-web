@@ -7,6 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * A TaskCollection is the database representation of a Task\CollectionInterface.
+ * It uses Doctrine's Inheritance Mapping to implement a OneToMany relationship with TaskCollectionItem.
+ * There are two concrete implementations of TaskCollection: Delivery & TaskList.
+ *
+ * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html
+ *
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string")

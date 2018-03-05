@@ -7,6 +7,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * A TaskCollectionItem is a task belonging to a TaskCollection.
+ *
  * @ORM\Entity
  * @ORM\Table(name="task_collection_item", uniqueConstraints={
  *   @ORM\UniqueConstraint(name="task_collection_item_unique", columns={"parent_id", "task_id"})}
