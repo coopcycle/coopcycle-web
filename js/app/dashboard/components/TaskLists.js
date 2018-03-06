@@ -4,10 +4,9 @@ import { findDOMNode } from 'react-dom'
 import Modal from 'react-modal'
 import _ from 'lodash'
 import { addUsernameToList, closeAddUserModal, openAddUserModal } from '../store/actions'
-import UserPanel from './UserPanel'
+import TaskList from './TaskList'
 
-
-class UserPanelList extends React.Component {
+class TaskLists extends React.Component {
 
   constructor(props) {
     super(props)
@@ -109,7 +108,7 @@ class UserPanelList extends React.Component {
           {
             _.map(assignedTasksByUser, (tasks, username) => {
               return (
-                <UserPanel
+                <TaskList
                   key={ username }
                   username={ username }
                   collapsed={ uncollapsed !== username }
@@ -140,4 +139,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserPanelList)
+export default connect(mapStateToProps, mapDispatchToProps)(TaskLists)

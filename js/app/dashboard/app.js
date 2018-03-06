@@ -3,8 +3,8 @@ import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import dragula from 'dragula'
 import { assignTasks, updateTask } from './store/actions'
-import TaskList from './components/TaskList'
-import UserPanelList from './components/UserPanelList'
+import UnassignedTasks from './components/UnassignedTasks'
+import TaskLists from './components/TaskLists'
 import _ from 'lodash'
 
 const drake = dragula({
@@ -89,8 +89,8 @@ class DashboardApp extends React.Component {
   render () {
     return (
       <div className="dashboard__aside-container">
-        <TaskList ref="unassignedTasks" />
-        <UserPanelList
+        <UnassignedTasks ref="unassignedTasks" />
+        <TaskLists
           couriersList={ window.AppData.Dashboard.couriersList }
           onLoad={ el => drake.containers.push(el) } />
       </div>
