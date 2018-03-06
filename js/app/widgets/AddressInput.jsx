@@ -12,8 +12,7 @@ const addressTypeToPropertyName = {
   locality: 'addressLocality'
 }
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.AddressInput = function(el, options) {
+export default (el, options) => {
 
   options = options || {
     elements: {}

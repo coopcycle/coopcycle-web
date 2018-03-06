@@ -2,9 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import Autocomplete from '../components/Autocomplete.jsx'
 
-window.CoopCycle = window.CoopCycle || {}
-
-window.CoopCycle.Search = function(el, options) {
+export default (el, options) => {
   render(
     <Autocomplete
       baseURL={ options.url }

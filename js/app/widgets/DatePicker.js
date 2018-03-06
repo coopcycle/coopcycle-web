@@ -8,8 +8,7 @@ import moment from 'moment'
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.DatePicker = function(el, options) {
+export default (el, options) => {
 
   options = options || {
     defaultValue: moment(),

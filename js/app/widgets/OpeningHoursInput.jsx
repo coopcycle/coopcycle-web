@@ -3,9 +3,7 @@ import { render } from 'react-dom'
 import OpeningHours from '../components/OpeningHours.jsx'
 import _ from 'underscore'
 
-window.CoopCycle = window.CoopCycle || {}
-
-window.CoopCycle.OpeningHoursInput = function(el, options) {
+export default (el, options) => {
 
   options = options || {}
 

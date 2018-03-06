@@ -3,9 +3,7 @@ import { render } from 'react-dom'
 import { Timeline } from 'antd'
 import moment from 'moment'
 
-window.CoopCycle = window.CoopCycle || {}
-
-window.CoopCycle.Timeline = function(ul, options) {
+export default (ul, options) => {
 
   const items = [].slice.call(ul.querySelectorAll('li'))
 
@@ -50,4 +48,3 @@ window.CoopCycle.Timeline = function(ul, options) {
     el
   )
 }
-

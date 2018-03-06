@@ -2,8 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import RulePicker from '../components/RulePicker.jsx'
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.RulePicker = function(el, options) {
+export default (el, options) => {
 
   let defaults = {
     zones: ['Test zone', 'Test2'],

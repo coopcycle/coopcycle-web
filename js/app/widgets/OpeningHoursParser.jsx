@@ -14,7 +14,6 @@ class OpeningHoursDisplay extends React.Component {
   }
 }
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.OpeningHoursParser = function(el, options) {
+export default (el, options) => {
   render(<OpeningHoursDisplay openingHours={ options.openingHours } locale={ options.locale } />, el)
 }

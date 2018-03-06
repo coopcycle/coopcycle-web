@@ -135,7 +135,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/widgets/opening-hours-parser.js') }}"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
 <script>
 window.AppData = window.AppData || {};
 window.AppData.availabilities = {{ availabilities|json_encode()|raw }};

@@ -187,8 +187,7 @@ function initMap() {
   new CoopCycle.TaskModal("{{ new_task_form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
 }
 </script>
-<script src="{{ asset('js/widgets/address-input.js') }}"></script>
-<script src="{{ asset('js/widgets/timeline.js') }}"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
 <script src="{{ asset('js/task-modal.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
