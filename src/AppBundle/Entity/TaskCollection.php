@@ -88,7 +88,7 @@ abstract class TaskCollection
     {
         return $this->items->map(function (TaskCollectionItem $item) {
             return $item->getTask();
-        });
+        })->toArray();
     }
 
     public function containsTask(Task $task)
