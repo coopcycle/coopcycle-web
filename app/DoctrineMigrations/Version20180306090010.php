@@ -22,9 +22,9 @@ class Version20180306090010 extends AbstractMigration
         $stmt->execute();
         $lastTaskListId = $stmt->fetchColumn();
 
-        $this->addSql('ALTER SEQUENCE task_collection_id_seq RESTART WITH :id', [
-            'id' => (max($lastDeliveryId, $lastTaskListId) + 1)
-        ]);
+        $taskCollectionId = (max($lastDeliveryId, $lastTaskListId) + 1);
+
+        $this->addSql("ALTER SEQUENCE task_collection_id_seq RESTART WITH {$taskCollectionId}");
     }
 
     public function down(Schema $schema)
