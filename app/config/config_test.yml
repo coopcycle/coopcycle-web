@@ -25,6 +25,8 @@ snc_redis:
             type: predis
             alias: default
             dsn: redis://%redis_host%:6379/1
+            options:
+                prefix: "%database_name%_test:"
 
 m6_statsd:
     servers: {}
