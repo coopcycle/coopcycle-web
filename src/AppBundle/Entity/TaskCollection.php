@@ -32,6 +32,7 @@ abstract class TaskCollection
 
     /**
      * @ORM\OneToMany(targetEntity="TaskCollectionItem", mappedBy="parent", orphanRemoval=true, cascade={"all"})
+     * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"task_collection", "task"})
      */
     protected $items;
