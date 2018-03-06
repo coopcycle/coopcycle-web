@@ -5,7 +5,7 @@ import moment from 'moment'
 import dragula from 'react-dragula'
 import _ from 'lodash'
 import Task from './Task'
-import { removeTasks, saveUserTasksRequest, togglePolyline } from '../store/actions'
+import { removeTasks, modifyTaskList, togglePolyline } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -19,7 +19,7 @@ class TaskList extends React.Component {
   }
 
   componentDidMount() {
-    this.props.onLoad(findDOMNode(this))
+    this.props.taskListDidMount(this)
 
     const { username, collapsed } = this.props
 
@@ -96,7 +96,7 @@ class TaskList extends React.Component {
         return keyA > keyB ? 1 : -1
       })
 
-      this.props.saveUserTasksRequest(this.props.username, newTasks)
+      this.props.modifyTaskList(this.props.username, newTasks)
 
     })
 
@@ -107,7 +107,7 @@ class TaskList extends React.Component {
 
     // use a comparator to avoid infinite loop when refreshing tasks with data from server (because of task event additions)
     if (prevProps.tasks.length !== this.props.tasks.length || !_.isEqualWith(prevProps.tasks, this.props.tasks, taskComparator)) {
-      this.props.saveUserTasksRequest(this.props.username, this.props.tasks)
+      this.props.modifyTaskList(this.props.username, this.props.tasks)
     }
   }
 
@@ -190,16 +190,16 @@ class TaskList extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
-    tasks: state.assignedTasksByUser[ownProps.username],
-    distance: state.assignedTasksByUser[ownProps.username].distance,
-    duration: state.assignedTasksByUser[ownProps.username].duration,
+    tasks: ownProps.items,
+    distance: ownProps.distance,
+    duration: ownProps.duration,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
-    saveUserTasksRequest: (username, tasks) => { dispatch(saveUserTasksRequest(username, tasks)) },
+    modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
     togglePolyline: username => { dispatch(togglePolyline(username)) }
   }
 }

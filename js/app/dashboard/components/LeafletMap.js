@@ -48,14 +48,14 @@ class LeafletMap extends Component {
 
 function mapStateToProps(state, ownProps) {
 
-  const { assignedTasksByUser, unassignedTasks, polylineEnabled } = state
+  const { taskLists, unassignedTasks, polylineEnabled } = state
 
-  const tasks = unassignedTasks.slice()
-  _.forEach(assignedTasksByUser, (userTasks, username) => userTasks.forEach(task => tasks.push(task)))
+  const tasks = unassignedTasks.slice(0)
+  _.forEach(taskLists, taskList => taskList.items.forEach(task => tasks.push(task)))
 
   let polylines = {}
-  _.forEach(assignedTasksByUser, (userTasks, username) => {
-    polylines[username] = userTasks.polyline
+  _.forEach(taskLists, taskList => {
+    polylines[taskList.username] = taskList.polyline
   })
 
   return {

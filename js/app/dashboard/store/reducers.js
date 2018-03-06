@@ -21,119 +21,122 @@ function addLinkProperty(tasks) {
   return _.map(tasksById, task => task)
 }
 
+const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
+
 // initial data pumped from the template
 const tasksInitial = addLinkProperty(window.AppData.Dashboard.tasks),
-      unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned),
-      assignedTasksList = _.filter(tasksInitial, task => task.isAssigned),
-      assignedTasksByUserInitial = _.groupBy(assignedTasksList, task => task.assignedTo)
-
-_.each(_.keys(assignedTasksByUserInitial),
-      (username) => {
-        if (window.AppData.Dashboard.taskLists.hasOwnProperty(username)) {
-          const { distance, duration, polyline } = window.AppData.Dashboard.taskLists[username]
-          assignedTasksByUserInitial[username].duration = duration
-          assignedTasksByUserInitial[username].distance = distance
-          assignedTasksByUserInitial[username].polyline = polyline
-        } else {
-          assignedTasksByUserInitial[username].duration = 0
-          assignedTasksByUserInitial[username].distance = 0
-          assignedTasksByUserInitial[username].polyline = ''
-        }
-      })
+      taskListsInitial = window.AppData.Dashboard.taskLists.map(taskList =>
+        Object.assign(taskList, { items: addLinkProperty(taskList.items) })
+      ),
+      unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
 
 let polylineEnabledByUser = {}
-_.each(_.keys(assignedTasksByUserInitial), username => {
-  polylineEnabledByUser[username] = false
+_.forEach(taskLists, taskList => {
+  polylineEnabledByUser[taskList.username] = false
 })
 
-/*
-  Store for all assigned tasks
-*/
-const assignedTasksByUser = (state = assignedTasksByUserInitial, action) => {
+const taskLists = (state = taskListsInitial, action) => {
 
-  let  userTasks = state[action.username],
-    newState = { ...state },
-    newUserTasks,
-    taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
+  let newTaskLists = state.slice(0)
+  let taskListIndex
+  let taskList
+  let taskListItems
 
-  switch(action.type) {
+  switch (action.type) {
+
     case 'ASSIGN_TASKS':
-      newUserTasks = userTasks.slice()
-      // backend need to have the `position` attribute correctly set - append new tasks
-      let position = newUserTasks[newUserTasks.length - 1] ? newUserTasks[newUserTasks.length - 1].position : -1
-      _.each(action.tasks, (task) => {
-        position++
-        task.position = position
-      })
 
-      newState[action.username] = Array.prototype.concat(newUserTasks, action.tasks)
-      newState[action.username].duration = 0
-      newState[action.username].distance = 0
-      newState[action.username].polyline = ''
-      break
+      taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
+      taskList = newTaskLists[taskListIndex]
+
+      newTaskLists.splice(taskListIndex, 1,
+        Object.assign({}, taskList, { items: taskList.items.concat(action.tasks) }))
+
+      return newTaskLists
+
     case 'REMOVE_TASKS':
-      newUserTasks  = _.differenceWith(
-        userTasks,
-        _.intersectionWith(userTasks, action.tasks, taskComparator),
+
+      taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
+      taskList = newTaskLists[taskListIndex]
+
+      taskListItems = _.differenceWith(
+        taskList.items,
+        _.intersectionWith(taskList.items, action.tasks, taskComparator),
         taskComparator
       )
-      newState[action.username] = newUserTasks
-      newState[action.username].duration = 0
-      newState[action.username].distance = 0
-      newState[action.username].polyline = ''
-      break
-    case 'ADD_USERNAME':
-      newState[action.username] = []
-      newState[action.username].duration = 0
-      newState[action.username].distance = 0
-      newState[action.username].polyline = ''
-      break
-    case 'SAVE_USER_TASKS_SUCCESS':
-      newState[action.username] = addLinkProperty(action.tasks)
-      newState[action.username].duration = action.duration
-      newState[action.username].distance = action.distance
-      newState[action.username].polyline = action.polyline
-      break
+      newTaskLists.splice(taskListIndex, 1,
+        Object.assign({}, taskList, { items: taskListItems }))
+
+      return newTaskLists
+
+    case 'MODIFY_TASK_LIST_REQUEST_SUCCESS':
+
+      taskListIndex = _.findIndex(newTaskLists, taskList => taskList['@id'] === action.taskList['@id'])
+
+      newTaskLists.splice(taskListIndex, 1,
+        Object.assign({}, action.taskList, { items: addLinkProperty(action.taskList.items) }))
+
+      return newTaskLists
+
+    case 'ADD_TASK_LIST_REQUEST_SUCCESS':
+
+      newTaskLists.push(action.taskList)
+
+      return newTaskLists
+
     case 'UPDATE_TASK':
       if (action.task.assignedTo) {
-        userTasks = state[action.task.assignedTo]
-        let index =  _.findIndex(userTasks, (task) => action.task['@id'] === task['@id'])
-        userTasks.splice(index, 1, action.task)
-        newState[action.task.assignedTo] =  userTasks
+
+        taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
+        taskList = newTaskLists[taskListIndex]
+
+        const taskIndex = _.findIndex(taskList.items, task => action.task['@id'] === task['@id'])
+
+        taskListItems = taskList.items.slice(0)
+        taskListItems.splice(taskIndex, 1, action.task)
+
+        newTaskLists.splice(taskListIndex, 1,
+          Object.assign({}, taskList, { items: taskListItems }))
+
+        return newTaskLists
       }
       break
   }
 
-  return newState
+  return state
 }
 
 /*
   Store for all unassigned tasks
  */
 const unassignedTasks = (state = unassignedTasksInitial, action) => {
-  let newState = state.slice(),
-    taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
+  let newState
 
-  switch(action.type) {
+  switch (action.type) {
+
     case 'ASSIGN_TASKS':
-      newState  = _.differenceWith(
+      newState = state.slice(0)
+      newState = _.differenceWith(
         newState,
         _.intersectionWith(newState, action.tasks, taskComparator),
         taskComparator
-        )
-      break
+      )
+      return newState
+
     case 'REMOVE_TASKS':
-      newState = Array.prototype.concat(newState, action.tasks)
-      break
+      return Array.prototype.concat(state, action.tasks)
+
     case 'UPDATE_TASK':
       if (!action.task.assignedTo) {
-        let index =  _.findIndex(newState, (task) => action.task['@id'] === task['@id'])
+        newState = state.slice(0)
+        let index = _.findIndex(newState, (task) => action.task['@id'] === task['@id'])
         newState.splice(index, 1, action.task)
+
+        return newState
       }
-      break
   }
 
-  return newState
+  return state
 }
 
 const allTasks = (state = tasksInitial, action) => {
@@ -151,11 +154,13 @@ const addModalIsOpen = (state = false, action) => {
   }
 }
 
-const userPanelLoading = (state = false, action) => {
+const taskListsLoading = (state = false, action) => {
   switch(action.type) {
-    case 'SAVE_USER_TASKS':
+    case 'ADD_TASK_LIST_REQUEST':
+    case 'MODIFY_TASK_LIST_REQUEST':
       return true
-    case 'SAVE_USER_TASKS_SUCCESS':
+    case 'ADD_TASK_LIST_REQUEST_SUCCESS':
+    case 'MODIFY_TASK_LIST_REQUEST_SUCCESS':
       return false
     case 'SAVE_USER_TASKS_ERROR':
       throw(new Error('Unhnadled error case for save'))
@@ -188,9 +193,9 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
 
 export default combineReducers({
   allTasks,
-  assignedTasksByUser,
   unassignedTasks,
-  userPanelLoading,
+  taskLists,
+  taskListsLoading,
   addModalIsOpen,
   polylineEnabled,
   taskListGroupMode,

@@ -1,9 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { findDOMNode } from 'react-dom'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { addUsernameToList, closeAddUserModal, openAddUserModal } from '../store/actions'
+import { addTaskList, closeAddUserModal, openAddUserModal } from '../store/actions'
 import TaskList from './TaskList'
 
 class TaskLists extends React.Component {
@@ -11,7 +10,6 @@ class TaskLists extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      tasks: props.tasks || [],
       uncollapsed: null,
       selectedCourier: ''
     }
@@ -28,7 +26,7 @@ class TaskLists extends React.Component {
   }
 
   addUser() {
-    this.props.addUsername(this.state.selectedCourier)
+    this.props.addTaskList(this.state.selectedCourier)
     this.props.closeAddUserModal()
   }
 
@@ -38,18 +36,18 @@ class TaskLists extends React.Component {
 
   render() {
 
-    let { addModalIsOpen, assignedTasksByUser, userPanelLoading } = this.props
+    let { addModalIsOpen, taskLists, taskListsLoading } = this.props
     let { uncollapsed, selectedCourier } = this.state
 
-    if (!uncollapsed) {
-      uncollapsed = _.first(_.keys(assignedTasksByUser))
+    if (!uncollapsed && taskLists.length > 0) {
+      uncollapsed = _.first(taskLists).username
     }
 
     return (
       <div className="dashboard__panel">
         <h4>
           <span>{ window.AppData.Dashboard.i18n['Assigned'] }</span>
-          { userPanelLoading ?
+          { taskListsLoading ?
             (<span className="pull-right"><i className="fa fa-spinner"></i></span>) :
             (<a className="pull-right" onClick={this.props.openAddUserModal}>
               <i className="fa fa-plus"></i> <i className="fa fa-user"></i>
@@ -103,16 +101,20 @@ class TaskLists extends React.Component {
             <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{window.AppData.Dashboard.i18n['Add']}</button>
           </div>
         </Modal>
-        <div className="dashboard__panel__scroll" style={{ opacity: userPanelLoading ? 0.7 : 1, pointerEvents: userPanelLoading ? 'none' : 'initial' }}>
+        <div className="dashboard__panel__scroll" style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
           <div id="accordion">
           {
-            _.map(assignedTasksByUser, (tasks, username) => {
+            _.map(taskLists, taskList => {
               return (
                 <TaskList
-                  key={ username }
-                  username={ username }
-                  collapsed={ uncollapsed !== username }
-                  onLoad={ (element) => this.props.onLoad(element.querySelector('.panel .list-group')) } />
+                  key={ taskList['@id'] }
+                  ref={ taskList['@id'] }
+                  username={ taskList.username }
+                  distance={ taskList.distance }
+                  duration={ taskList.duration }
+                  items={ taskList.items }
+                  collapsed={ uncollapsed !== taskList.username }
+                  taskListDidMount={ this.props.taskListDidMount } />
               )
             })
           }
@@ -126,17 +128,17 @@ class TaskLists extends React.Component {
 function mapStateToProps (state) {
   return {
     addModalIsOpen: state.addModalIsOpen,
-    assignedTasksByUser: state.assignedTasksByUser,
-    userPanelLoading: state.userPanelLoading
+    taskLists: state.taskLists,
+    taskListsLoading: state.taskListsLoading
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    addUsername: (username) => { dispatch(addUsernameToList(username)) },
+    addTaskList: (date, username) => dispatch(addTaskList(date, username)),
     openAddUserModal: () => { dispatch(openAddUserModal()) },
     closeAddUserModal: () => { dispatch(closeAddUserModal()) }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskLists)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(TaskLists)

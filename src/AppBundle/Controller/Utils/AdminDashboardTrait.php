@@ -263,18 +263,8 @@ trait AdminDashboardTrait
         ]);
     }
 
-    /**
-     * @Route("/admin/tasks/{date}/{username}/assign", name="admin_tasks_assign",
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
-    public function assignTasksAction($date, $username, Request $request)
+    protected function getTaskList(\DateTime $date, UserInterface $user)
     {
-        $taskManager = $this->get('coopcycle.task_manager');
-        $taskRepository = $this->getDoctrine()->getRepository(Task::class);
-        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
-
-        $date = new \DateTime($date);
-
         $taskList = $this->getDoctrine()
             ->getRepository(TaskList::class)
             ->findOneBy(['date' => $date, 'courier' => $user]);
@@ -283,7 +273,24 @@ trait AdminDashboardTrait
             $taskList = new TaskList();
             $taskList->setDate($date);
             $taskList->setCourier($user);
+        }
 
+        return $taskList;
+    }
+
+    /**
+     * @Route("/admin/tasks/{date}/{username}", name="admin_task_list_modify",
+     *   methods={"PUT"},
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
+     */
+    public function modifyTaskListAction($date, $username, Request $request)
+    {
+        $date = new \DateTime($date);
+        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+
+        $taskList = $this->getTaskList($date, $user);
+
+        if (null === $taskList->getId()) {
             $this->getDoctrine()
                 ->getManagerForClass(TaskList::class)
                 ->persist($taskList);
@@ -321,23 +328,47 @@ trait AdminDashboardTrait
             ->getManagerForClass(TaskList::class)
             ->flush();
 
-        $tasks = array_map(function (Task $task) {
-            return $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
-                'resource_class' => Task::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['task', 'delivery', 'place']
-            ]);
-        }, iterator_to_array($tasksToAssign, false));
-
         // Publish a Redis event in task:changed channel
-        $this->publishTasksChangedEvent($tasks, $user);
+        $this->publishTasksChangedEvent($taskList->getTasks(), $user);
 
-        return new JsonResponse([
-            'distance' => $taskList->getDistance(),
-            'duration' => $taskList->getDuration(),
-            'polyline' => $taskList->getPolyline(),
-            'tasks' => $tasks
+        $taskListNormalized = $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+            'resource_class' => TaskList::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['task_collection', 'task', 'delivery', 'place']
         ]);
+
+        return new JsonResponse($taskListNormalized);
+    }
+
+    /**
+     * @Route("/admin/task-lists/{date}/{username}", name="admin_task_list_create",
+     *   methods={"POST"},
+     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
+     */
+    public function createTaskListAction($date, $username, Request $request)
+    {
+        $date = new \DateTime($date);
+        $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
+
+        $taskList = $this->getTaskList($date, $user);
+
+        if (null === $taskList->getId()) {
+            $this->getDoctrine()
+                ->getManagerForClass(TaskList::class)
+                ->persist($taskList);
+            $this->getDoctrine()
+                ->getManagerForClass(TaskList::class)
+                ->flush();
+        }
+
+        $taskListNormalized = $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+            'resource_class' => TaskList::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['task_collection', 'task']
+        ]);
+
+        return new JsonResponse($taskListNormalized);
     }
 }

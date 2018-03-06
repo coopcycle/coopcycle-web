@@ -92,7 +92,10 @@ class DashboardApp extends React.Component {
         <UnassignedTasks ref="unassignedTasks" />
         <TaskLists
           couriersList={ window.AppData.Dashboard.couriersList }
-          onLoad={ el => drake.containers.push(el) } />
+          ref="taskLists"
+          taskListDidMount={ taskListComponent =>
+            drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
+          } />
       </div>
     )
   }
