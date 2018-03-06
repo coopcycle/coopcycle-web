@@ -36,9 +36,29 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data['group'] = null;
         if (null !== $object->getGroup()) {
+
+            $groupTags = [];
+            foreach ($object->getGroup()->getTags() as $tag) {
+                $groupTags[] = [
+                    'name' => $tag->getName(),
+                    'slug' => $tag->getSlug(),
+                    'color' => $tag->getColor(),
+                ];
+            }
+
             $data['group'] = [
                 'id' => $object->getGroup()->getId(),
                 'name' => $object->getGroup()->getName(),
+                'tags' => $groupTags
+            ];
+        }
+
+        $data['tags'] = [];
+        foreach ($object->getTags() as $tag) {
+            $data['tags'][] = [
+                'name' => $tag->getName(),
+                'slug' => $tag->getSlug(),
+                'color' => $tag->getColor(),
             ];
         }
 

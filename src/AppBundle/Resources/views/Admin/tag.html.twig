@@ -1,0 +1,27 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}Settings{% endtrans %}</li>
+<li><a href="{{ path('admin_tags') }}">{% trans %}Tags{% endtrans %}</a></li>
+<li>{{ tag.name }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+    </div>
+  </div>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets/color-picker.js') }}"></script>
+<script>
+new CoopCycle.ColorPicker(document.querySelector('#tag_color'))
+</script>
+{% endblock %}

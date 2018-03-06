@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,8 +40,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   }
  * )
  */
-class Task
+class Task implements TaggableInterface
 {
+    use TaggableTrait;
+
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
 

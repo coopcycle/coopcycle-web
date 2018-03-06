@@ -5,6 +5,36 @@ import moment from 'moment'
 
 moment.locale($('html').attr('lang'))
 
+const DEFAULT_PICKUP_COLOR = '#337ab7'
+const DEFAULT_DROPOFF_COLOR = '#27AE60'
+
+const tagsColor = tags => {
+  const tag = _.first(tags)
+
+  return tag.color
+}
+
+const taskColor = task => {
+
+  if (task.group && task.group.tags.length > 0) {
+    return tagsColor(task.group.tags)
+  }
+
+  if (task.tags.length > 0) {
+    const tag = _.first(task.tags)
+    return tag.color
+  }
+
+  switch (task.type) {
+    case 'PICKUP':
+      return DEFAULT_PICKUP_COLOR
+    case 'DROPOFF':
+      return DEFAULT_DROPOFF_COLOR
+    default:
+      return '#DEDEDE'
+  }
+}
+
 const polylineOptions = {
   color: '#3498DB',
   opacity: 0.7
@@ -22,7 +52,7 @@ export default class MapProxy {
   }
 
   addTask(task) {
-    const color  = task.type === 'PICKUP' ? '#337ab7' : '#27AE60'
+    const color  = taskColor(task)
     const icon   = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const marker = MapHelper.createMarker(coords, icon, 'marker', color)

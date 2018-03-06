@@ -29,6 +29,7 @@ Encore
   .addEntry('js/restaurants-map', './js/app/restaurants-map/index.jsx')
   .addEntry('js/task-modal', './js/app/task/modal.js')
   .addEntry('js/user-tracking', './js/app/user/tracking.jsx')
+  .addEntry('js/widgets/color-picker', './js/app/widgets/ColorPicker.js')
   .addEntry('js/widgets/rule-picker', './js/app/widgets/RulePicker.js')
   .addEntry('js/widgets/date-picker', './js/app/widgets/DatePicker.js')
   .addEntry('js/widgets/opening-hours-parser', './js/app/widgets/OpeningHoursParser.jsx')

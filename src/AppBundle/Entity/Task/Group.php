@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Task;
 
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -9,8 +11,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="task_group")
  */
-class Group
+class Group implements TaggableInterface
 {
+    use TaggableTrait;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id

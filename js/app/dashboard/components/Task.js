@@ -57,6 +57,18 @@ class Task extends React.Component {
     }
   }
 
+  renderTags() {
+    const { task } = this.props
+
+    return (
+      <span className="task__tags">
+      { task.tags.map(tag => (
+        <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
+      )) }
+      </span>
+    )
+  }
+
   showTaskModal(e) {
     e.preventDefault()
 
@@ -86,10 +98,13 @@ class Task extends React.Component {
       <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes }>
         <div>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}
+          <a onClick={ this.showTaskModal.bind(this) }>
+            <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}
+          </a>
+          { this.renderTags() }
         </div>
         <div>
-          <a onClick={ this.showTaskModal.bind(this) }><span>{ task.address.streetAddress }</span></a>
+          <span>{ task.address.name || task.address.streetAddress }</span>
         </div>
         <div>
           <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>

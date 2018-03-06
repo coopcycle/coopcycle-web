@@ -71,6 +71,15 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
+  'AppBundle\EventListener\TaggableSubscriber':
+    arguments: [ '@coopcycle.tag_manager' ]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
+  coopcycle.tag_manager:
+    class: AppBundle\Service\TagManager
+    arguments: [ '@doctrine' ]
+
   order.entity_listener:
     class: AppBundle\Entity\Listener\OrderListener
     # lazy = true is mandatory
@@ -188,7 +197,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\TaskUploadType':
-    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator' ]
+    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager' ]
     tags: [ form.type ]
 
   'AppBundle\Form\TaskExportType':
@@ -197,6 +206,10 @@ services:
 
   'AppBundle\Form\SettingsType':
     arguments: [ '@coopcycle.settings_manager' ]
+    tags: [ form.type ]
+
+  'AppBundle\Form\TaskType':
+    arguments: [ '@coopcycle.tag_manager' ]
     tags: [ form.type ]
 
   my.jwt_listener:
