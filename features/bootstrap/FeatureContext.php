@@ -6,6 +6,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -413,5 +414,28 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
 
         $this->doctrine->getManagerForClass(Delivery::class)->flush();
+    }
+
+    /**
+     * @Given the tasks with comments matching :comments are assigned to :username
+     */
+    public function theTaskWithCommentsMatchingAreAssignedTo($comments, $username)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+        $qb = $this->doctrine
+            ->getRepository(Task::class)
+            ->createQueryBuilder('t')
+            ->where('t.comments LIKE :comments')
+            ->setParameter('comments', "%{$comments}%");
+
+        $tasks = $qb->getQuery()->getResult();
+
+        foreach ($tasks as $task) {
+            $task->assignTo($user);
+        }
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 }
