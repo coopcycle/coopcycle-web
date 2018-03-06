@@ -2,8 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { SketchPicker } from 'react-color';
 
-window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.ColorPicker = function(el, options) {
+export default (el, options) => {
 
   options = options || {}
 
