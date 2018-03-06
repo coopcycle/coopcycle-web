@@ -241,6 +241,7 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCatego
                 date: new Date(),
                 distance: 1000,
                 duration: 600,
+                polyline: '',
                 price: 3.5,
                 totalExcludingTax: 0.00,
                 totalTax: 0.00,

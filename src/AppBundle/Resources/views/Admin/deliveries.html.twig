@@ -39,8 +39,8 @@
         </td>
         <td>
         {% if task.assigned %}
-          <a href="{{ path('admin_user_details', { username: task.assignment.courier.username }) }}" title="{{ task.assignment.courier.username }}">
-            <i class="fa fa-user"></i> {{ task.assignment.courier.username }}
+          <a href="{{ path('admin_user_details', { username: task.assignedCourier.username }) }}" title="{{ task.assignedCourier.username }}">
+            <i class="fa fa-user"></i> {{ task.assignedCourier.username }}
           </a>
         {% endif %}
         </td>

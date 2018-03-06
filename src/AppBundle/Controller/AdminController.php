@@ -19,7 +19,6 @@ use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
-use AppBundle\Entity\TaskAssignment;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\MenuCategoryType;
@@ -124,7 +123,6 @@ class AdminController extends Controller
      */
     public function dashboardFullscreenAction($date, Request $request)
     {
-
         $date = new \DateTime($date);
 
         if ($this->container->has('profiler')) {
@@ -248,39 +246,31 @@ class AdminController extends Controller
             return $this->redirectToDashboard($request);
         }
 
-        $tasks = $this->getDoctrine()
+        $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
-            ->createQueryBuilder('t')
-            ->andWhere('DATE(t.doneAfter) = :date')
-            ->setParameter('date', $date->format('Y-m-d'))
-            ->getQuery()
-            ->getResult();
+            ->findByDate($date);
 
-        $tasks = array_map(function (Task $task) {
+        $taskLists = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->findByDate($date);
+
+        $allTasksNormalized = array_map(function (Task $task) {
             return $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
                 'groups' => ['task', 'delivery', 'place']
             ]);
-        }, $tasks);
+        }, $allTasks);
 
-        $taskLists = $this->getDoctrine()
-            ->getRepository(TaskList::class)
-            ->createQueryBuilder('tl')
-            ->andWhere('DATE(tl.date) = :date')
-            ->setParameter('date', $date->format('Y-m-d'))
-            ->getQuery()
-            ->getResult();
-
-        $taskListsNormalized = [];
-        foreach ($taskLists as $taskList) {
-            $taskListsNormalized[$taskList->getCourier()->getUsername()] = [
-                'duration' => $taskList->getDuration(),
-                'distance' => $taskList->getDistance(),
-                'polyline' => $taskList->getPolyline(),
-            ];
-        }
+        $taskListsNormalized = array_map(function (TaskList $taskList) {
+            return $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+                'resource_class' => TaskList::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task_collection', 'task', 'delivery', 'place']
+            ]);
+        }, $taskLists);
 
         $couriers = $this->getDoctrine()
             ->getRepository(ApiUser::class)
@@ -296,7 +286,7 @@ class AdminController extends Controller
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
-            'tasks' => $tasks,
+            'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_upload_form' => $taskUploadForm->createView(),
             'task_export_form' => $taskExportForm->createView(),
@@ -322,16 +312,29 @@ class AdminController extends Controller
         $taskManager = $this->get('coopcycle.task_manager');
         $taskRepository = $this->getDoctrine()->getRepository(Task::class);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
-        $routing = $this->get('routing_service');
 
         $date = new \DateTime($date);
+
+        $taskList = $this->getDoctrine()
+            ->getRepository(TaskList::class)
+            ->findOneBy(['date' => $date, 'courier' => $user]);
+
+        if (null === $taskList) {
+            $taskList = new TaskList();
+            $taskList->setDate($date);
+            $taskList->setCourier($user);
+
+            $this->getDoctrine()
+                ->getManagerForClass(TaskList::class)
+                ->persist($taskList);
+        }
 
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);
 
         $assignedTasks = new \SplObjectStorage();
-        foreach ($taskRepository->findByUserAndDate($user, $date) as $task) {
-            $assignedTasks[$task] = $task->getAssignment()->getPosition();
+        foreach ($taskList->getItems() as $taskListItem) {
+            $assignedTasks[$taskListItem->getTask()] = $taskListItem->getPosition();
         }
 
         $tasksToAssign = new \SplObjectStorage();
@@ -348,55 +351,10 @@ class AdminController extends Controller
         }
 
         foreach ($tasksToUnassign as $task) {
-            $taskManager->unassign($task);
+            $taskList->removeTask($task);
         }
-
         foreach ($tasksToAssign as $task) {
-            $taskManager->assign($task, $user, $tasksToAssign[$task]);
-        }
-
-        $this->getDoctrine()
-            ->getManagerForClass(TaskAssignment::class)
-            ->flush();
-
-        // Update TaskList
-
-        $taskList = $this->getDoctrine()
-            ->getRepository(TaskList::class)
-            ->find(['date' => $date->format('Y-m-d'), 'courier' => $user]);
-
-        if (null === $taskList) {
-            $taskList = new TaskList();
-            $taskList->setDate($date);
-            $taskList->setCourier($user);
-
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->persist($taskList);
-        }
-
-        if (count($tasksToAssign) <= 1) {
-
-            $taskList->setDistance(0);
-            $taskList->setDuration(0);
-            $taskList->setPolyline('');
-
-        } else {
-
-            $coordinates = [];
-            foreach ($tasksToAssign as $task) {
-                $coordinates[] = $task->getAddress()->getGeo();
-            }
-
-            $data = $routing->getServiceResponse('route', $coordinates, [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]);
-
-            $taskList->setDistance($data['routes'][0]['distance']);
-            $taskList->setDuration($data['routes'][0]['duration']);
-            $taskList->setPolyline($data['routes'][0]['geometry']);
-
+            $taskList->addTask($task, $tasksToAssign[$task]);
         }
 
         $this->getDoctrine()
@@ -965,13 +923,9 @@ class AdminController extends Controller
             $user = $form->get('assign')->getData();
 
             if (null === $user) {
-                if ($task->isAssigned()) {
-                    $taskManager->unassign($task);
-                }
+                $task->unassign();
             } else {
-                if (!$task->isAssigned() || !$task->isAssignedTo($user)) {
-                    $taskManager->assign($task, $user);
-                }
+                $task->assignTo($user);
             }
 
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {

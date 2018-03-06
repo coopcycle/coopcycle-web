@@ -2,57 +2,64 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * A TaskList represents the daily planning for a courier.
+ * It is a concrete implementation of a TaskCollection.
+ *
  * @ORM\Entity
+ * @ORM\Table(name="task_list", uniqueConstraints={
+ *   @ORM\UniqueConstraint(name="task_list_unique", columns={"date", "courier_id"})}
+ * )
+ * @ApiResource(
+ *   collectionOperations={},
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *   },
+ *   attributes={
+ *     "normalization_context"={"groups"={"task_collection", "task"}}
+ *   }
+ * )
  */
-class TaskList
+class TaskList extends TaskCollection implements TaskCollectionInterface
 {
+    use TaskCollectionTrait;
+
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column(type="date_string")
+     * @ORM\Column(type="date")
      */
     private $date;
 
     /**
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="ApiUser")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $courier;
 
     /**
-     * @ORM\Column(type="float")
-     */
-    private $duration;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $distance;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $polyline;
-
-    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @Groups({"task"})
+     * @Groups({"task_collection"})
      */
     private $createdAt;
 
     /**
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
-     * @Groups({"task"})
+     * @Groups({"task_collection"})
      */
     private $updatedAt;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function getDate()
     {
@@ -61,7 +68,7 @@ class TaskList
 
     public function setDate(\DateTime $date)
     {
-        $this->date = $date->format('Y-m-d');
+        $this->date = $date;
 
         return $this;
     }
@@ -78,39 +85,33 @@ class TaskList
         return $this;
     }
 
-    public function getDuration()
+    public function getCreatedAt()
     {
-        return $this->duration;
+        return $this->createdAt;
     }
 
-    public function setDuration($duration)
+    public function getUpdatedAt()
     {
-        $this->duration = $duration;
-
-        return $this;
+        return $this->updatedAt;
     }
 
-    public function getDistance()
+    /**
+     * When a Task is added, it is assigned.
+     */
+    public function addTask(Task $task, $position = null)
     {
-        return $this->distance;
+        $task->assignTo($this->getCourier());
+
+        return parent::addTask($task, $position);
     }
 
-    public function setDistance($distance)
+    /**
+     * When a Task is removed, it is unassigned.
+     */
+    public function removeTask(Task $task)
     {
-        $this->distance = $distance;
+        $task->unassign();
 
-        return $this;
-    }
-
-    public function getPolyline()
-    {
-        return $this->polyline;
-    }
-
-    public function setPolyline($polyline)
-    {
-        $this->polyline = $polyline;
-
-        return $this;
+        return parent::removeTask($task);
     }
 }

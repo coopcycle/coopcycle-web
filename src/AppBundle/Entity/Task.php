@@ -70,7 +70,6 @@ class Task
     /**
      * @ORM\ManyToOne(targetEntity="Delivery")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups({"task"})
      */
     private $delivery;
 
@@ -97,11 +96,6 @@ class Task
      * @Groups({"task"})
      */
     private $comments;
-
-    /**
-     * @ORM\OneToOne(targetEntity="TaskAssignment", mappedBy="task", cascade={"all"})
-     */
-    private $assignment;
 
     /**
      * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task", cascade={"all"})
@@ -135,6 +129,13 @@ class Task
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id", nullable=true)
      */
     private $group;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ApiUser")
+     * @ORM\JoinColumn(name="assigned_to", referencedColumnName="id", nullable=true)
+     * @Groups({"task"})
+     */
+    private $assignedTo;
 
     public function __construct()
     {
@@ -255,11 +256,6 @@ class Task
         return $this->updatedAt;
     }
 
-    public function getAssignment()
-    {
-        return $this->assignment;
-    }
-
     public function getEvents()
     {
         return $this->events;
@@ -284,36 +280,27 @@ class Task
 
     public function isAssigned()
     {
-        return null !== $this->assignment;
+        return null !== $this->assignedTo;
     }
 
     public function isAssignedTo(ApiUser $courier)
     {
-        return $this->isAssigned() && $this->assignment->getCourier() === $courier;
+        return $this->isAssigned() && $this->assignedTo === $courier;
     }
 
     public function getAssignedCourier()
     {
-        if ($this->isAssigned()) {
-            return $this->assignment->getCourier();
-        }
+        return $this->assignedTo;
     }
 
-    public function assignTo(ApiUser $courier, $position)
+    public function assignTo(ApiUser $courier)
     {
-        if (null === $this->assignment) {
-            $this->assignment = new TaskAssignment();
-            $this->assignment->setTask($this);
-        }
-
-        $this->assignment->setCourier($courier);
-        $this->assignment->setPosition($position);
+        $this->assignedTo = $courier;
     }
 
     public function unassign()
     {
-        $this->assignment->setTask(null);
-        $this->assignment = null;
+        $this->assignedTo = null;
     }
 
     public function hasEvent($name)
