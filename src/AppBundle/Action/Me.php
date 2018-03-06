@@ -33,7 +33,7 @@ class Me
     {
         $date = new \DateTime($date);
 
-        $taskList = $this->getDoctrine()
+        $taskList = $this->doctrine
             ->getRepository(TaskList::class)
             ->findOneBy([
                 'courier' => $this->getUser(),
