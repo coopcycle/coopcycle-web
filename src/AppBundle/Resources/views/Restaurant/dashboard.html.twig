@@ -1,9 +1,9 @@
 {% extends is_granted('ROLE_ADMIN') ? "AppBundle::admin.html.twig" : "AppBundle::profile.html.twig" %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
+<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
 <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
-<li>{% trans %}Orders{% endtrans %}</li>
+<li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
@@ -20,7 +20,7 @@
       date: date|date_modify('-1 day')|date('Y-m-d')
     } %}
     <a href="{{ path(routes.dashboard, route_params) }}" class="btn btn-block btn-default">
-      {% trans %}Previous orders{% endtrans %}
+      {% trans %}adminDashboard.orders.previousOrders{% endtrans %}
     </a>
     <hr>
     <div id="order-list"></div>
@@ -55,14 +55,14 @@ window.__routes = {
   'user_details':    "{{ path(routes.user_details,    { username: '__USERNAME__' }) }}",
 };
 window.__i18n = {
-  "No orders yet": "{% trans %}No orders yet{% endtrans %}",
-  "Click on an order to display details": "{% trans %}Click on an order to display details{% endtrans %}",
-  "Order": "{% trans %}Order{% endtrans %}",
-  "Dishes": "{% trans %}Dishes{% endtrans %}",
-  "Refuse": "{% trans %}Refuse{% endtrans %}",
-  "Accept": "{% trans %}Accept{% endtrans %}",
-  "Cancel": "{% trans %}Cancel{% endtrans %}",
-  "Ready!": "{% trans %}Ready!{% endtrans %}",
+  "No orders yet": "{% trans %}adminDashboard.orders.noOrders{% endtrans %}",
+  "Click on an order to display details": "{% trans %}adminDashboard.orders.clickForDetails{% endtrans %}",
+  "Order": "{% trans %}adminDashboard.orders.order{% endtrans %}",
+  "Dishes": "{% trans %}adminDashboard.orders.dishes{% endtrans %}",
+  "Refuse": "{% trans %}adminDashboard.orders.refuse{% endtrans %}",
+  "Accept": "{% trans %}adminDashboard.orders.accept{% endtrans %}",
+  "Cancel": "{% trans %}adminDashboard.orders.cancel{% endtrans %}",
+  "Ready!": "{% trans %}adminDashboard.orders.ready{% endtrans %}",
 }
 </script>
 <script src="{{ asset('js/restaurant-panel.js') }}"></script>

@@ -1,7 +1,7 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Orders{% endtrans %}</li>
+<li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
 {% endblock %}
 
 {% set status_label_class = {
@@ -54,7 +54,7 @@
       <input type="hidden" name="show_canceled" value="{{ show_canceled ? 'on' : 'off' }}">
       <div class="checkbox">
         <label>
-          <input type="checkbox" id="show_canceled" {% if show_canceled %}checked="checked"{% endif %}>  {% trans %}Show canceled orders{% endtrans %}
+          <input type="checkbox" id="show_canceled" {% if show_canceled %}checked="checked"{% endif %}>  {% trans %}adminDashboard.orders.showCanceled{% endtrans %}
         </label>
       </div>
     </form>

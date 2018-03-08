@@ -35,12 +35,12 @@
         <ul class="list-inline">
           <li>
             <a class="footer-link" href="mailto:contact@coopcycle.org">
-              {% trans %}Contact us{% endtrans %}
+              {% trans %}base.footer.contactUs{% endtrans %}
             </a>
           </li>
           <li>
             <a class="footer-link" href="{{ path('help') }}">
-              {% trans %}Help{% endtrans %}
+              {% trans %}base.footer.help{% endtrans %}
             </a>
           </li>
         </ul>
@@ -56,8 +56,8 @@
       window.AppData = window.AppData || {};
       window.AppData.countryIso = "{{ country_iso }}";
       window.__i18n = {
-        "Cart": "{% trans %}Cart{% endtrans %}",
-        "cart.widget.button": "{% trans %}My order{% endtrans %}"
+        "Cart": "{% trans %}cart.title{% endtrans %}",
+        "cart.widget.button": "{% trans %}cart.widget.button{% endtrans %}"
       }
     </script>
 

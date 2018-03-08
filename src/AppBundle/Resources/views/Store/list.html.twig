@@ -18,17 +18,17 @@
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+              {% trans %}stores.manage{% endtrans %}   <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
               <li>
                 <a href="{{ path(store_route, { id: store.id }) }}">
-                  {% trans %}Settings{% endtrans %}
+                  {% trans %}stores.settings{% endtrans %}
                 </a>
               </li>
               <li>
                 <a href="{{ path(store_delivery_route, { id: store.id }) }}">
-                  {% trans %}Create new delivery{% endtrans %}
+                  {% trans %}stores.createNewDelivery{% endtrans %}
                 </a>
               </li>
             </ul>
@@ -40,6 +40,6 @@
   </table>
 {% else %}
   <div class="alert alert-info">
-  {% trans %}There are no stores yet{% endtrans %}
+  {% trans %}stores.list.noStores{% endtrans %}
   </div>
 {% endif %}

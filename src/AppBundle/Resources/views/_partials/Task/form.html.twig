@@ -14,7 +14,7 @@
 
 {% set modal_title %}
   {% if is_new_task %}
-    {% trans %}Create task{% endtrans %}
+    {% trans %}task.form.create{% endtrans %}
   {% else %}
     {% trans with { '%id%': ('#' ~ task.id) } %}Edit task %id%{% endtrans %}
   {% endif %}
@@ -34,7 +34,7 @@
       {{ form_widget(form.address) }}
 
       <div>
-        <label class="control-label">{% trans %}Time window{% endtrans %}</label>
+        <label class="control-label">{% trans %}task.form.timeWindow{% endtrans %}</label>
         <div class="form-group">
           <div id="{{ form.vars.id }}_rangepicker"></div>
         </div>
@@ -52,7 +52,7 @@
       {% if not is_new_task %}
       <p>
         <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_history">
-          <i class="fa fa-plus"></i> {% trans from 'messages' %}Show history{% endtrans %}
+          <i class="fa fa-plus"></i> {% trans from 'messages' %}task.form.showHistory{% endtrans %}
         </a>
       </p>
       <div class="collapse" id="{{ form.vars.id }}_history">
@@ -77,7 +77,7 @@
       {% if form.delete is defined %}
       {{ form_widget(form.delete, { attr: { class: 'btn btn-danger pull-left' } }) }}
       {% endif %}
-      <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}task.form.cancel{% endtrans %}</button>
       {{ form_widget(form.save, { attr: { class: 'btn btn-primary' } }) }}
     </div>
   {{ form_end(form) }}

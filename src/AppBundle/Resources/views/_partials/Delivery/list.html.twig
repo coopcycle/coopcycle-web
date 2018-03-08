@@ -1,18 +1,18 @@
 <table class="table">
   <thead>
     <th>#</th>
-    <th>{% trans %}Status{% endtrans %}</th>
-    <th>{% trans %}Date{% endtrans %}</th>
-    <th>{% trans %}From / To{% endtrans %}</th>
+    <th>{% trans %}delivery.list.status{% endtrans %}</th>
+    <th>{% trans %}delivery.list.date{% endtrans %}</th>
+    <th>{% trans %}delivery.list.fromTo{% endtrans %}</th>
     {% if show_courier is defined and show_courier %}
-      <th>{% trans %}Courier{% endtrans %}</th>
+      <th>{% trans %}delivery.list.courier{% endtrans %}</th>
     {% endif %}
-    <th>{% trans %}Distance{% endtrans %}</th>
-    <th>{% trans %}Duration{% endtrans %}</th>
+    <th>{% trans %}delivery.list.distance{% endtrans %}</th>
+    <th>{% trans %}delivery.list.duration{% endtrans %}</th>
     {% if show_order is defined and show_order %}
-      <th>{% trans %}Order{% endtrans %}</th>
+      <th>{% trans %}delivery.list.order{% endtrans %}</th>
     {% endif %}
-    <th>{% trans %}Price{% endtrans %}</th>
+    <th>{% trans %}delivery.list.price{% endtrans %}</th>
     <th></th>
   </thead>
   <tbody>
@@ -49,7 +49,7 @@
         <td>
           {% if is_granted('ROLE_ADMIN') and delivery.order is not empty %}
           <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: delivery.order.restaurant.id, orderId: delivery.order.id }) }}"
-            title="{% trans %}Order{% endtrans %}">
+            title="{% trans %}delivery.list.order{% endtrans %}">
             #{{ delivery.order.id }}
           </a>
           {% else %}

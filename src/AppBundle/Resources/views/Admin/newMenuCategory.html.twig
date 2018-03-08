@@ -2,16 +2,16 @@
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Menu{% endtrans %}</li>
-<li>{% trans %}Categories{% endtrans %}</li>
-<li>{% trans %}Add{% endtrans %}</li>
+<li>{% trans %}adminDashboard.menuCategories.menu{% endtrans %}</li>
+<li>{% trans %}adminDashboard.menuCategories.categories{% endtrans %}</li>
+<li>{% trans %}adminDashboard.menuCategories.addCategory{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 {{ form_start(form) }}
   {{ form_row(form.name) }}
   {{ form_row(form.description) }}
-  <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+  <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.menuCategories.save{% endtrans %}</button>
 {{ form_end(form) }}
 {% endblock %}
 

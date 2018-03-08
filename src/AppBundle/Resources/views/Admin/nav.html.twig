@@ -7,40 +7,40 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ path('admin_dashboard') }}">{% trans %}Admin dashboard{% endtrans %}</a>
+      <a class="navbar-brand" href="{{ path('admin_dashboard') }}">{% trans %}adminDashboard.title{% endtrans %}</a>
     </div>
     <div class="collapse navbar-collapse" id="admin-navbar">
       <ul class="nav navbar-nav navbar-right">
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.orders{%  endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_orders') }}"><i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('admin_orders') }}"><i class="fa fa-cube"></i>  {% trans %}adminDashboard.orders.title{% endtrans %}</a>
         </li>
         <li  data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.deliveries{%  endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_deliveries') }}"><i class="fa fa-bicycle"></i>&nbsp;{% trans %}Deliveries{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('admin_deliveries') }}"><i class="fa fa-bicycle"></i>&nbsp;{% trans %}adminDashboard.deliveries.title{% endtrans %}</a>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{%  endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_stores') }}"><i class="fa fa-shopping-cart"></i>&nbsp;{% trans %}Stores{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('admin_stores') }}"><i class="fa fa-shopping-cart"></i>&nbsp;{% trans %}adminDashboard.stores.title{% endtrans %}</a>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{%  endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}"><i class="fa fa-cutlery"></i>&nbsp;{% trans %}Restaurants{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}"><i class="fa fa-cutlery"></i>&nbsp;{% trans %}adminDashboard.restaurants.title{% endtrans %}</a>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.users{%  endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_users') }}"><i class="fa fa-user"></i>&nbsp;{% trans %}Users{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('admin_users') }}"><i class="fa fa-user"></i>&nbsp;{% trans %}adminDashboard.users.title{% endtrans %}</a>
         </li>
         <li class="dropdown">
           <a class="admin-navbar__link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-cog"></i>  {% trans %}Configuration{% endtrans %} <span class="caret"></span>
+            <i class="fa fa-cog"></i>  {% trans %}adminDashboard.configuration{% endtrans %} <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="{{ path('admin_settings') }}">{% trans %}Settings{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_menu_categories') }}">{% trans %}Menu categories{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}Pricing{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_tags') }}">{% trans %}Tags{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_taxation_settings') }}">{% trans %}Taxation{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_zones') }}">{% trans %}Zones{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_settings') }}">{% trans %}adminDashboard.settings.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_menu_categories') }}">{% trans %}adminDashboard.menuCategories.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_tags') }}">{% trans %}adminDashboard.tags.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_taxation_settings') }}">{% trans %}adminDashboard.taxation.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_zones') }}">{% trans %}adminDashboard.zones.title{% endtrans %}</a></li>
           </ul>
         </li>
         <li class="admin-navbar__help">
-          <a class="admin-navbar__link" href="{{ path('help') }}"><i class="fa fa-question"></i>&nbsp;{% trans %}Help{% endtrans %}</a>
+          <a class="admin-navbar__link" href="{{ path('help') }}"><i class="fa fa-question"></i>&nbsp;{% trans %}help.title{% endtrans %}</a>
         </li>
       </ul>
     </div>

@@ -1,9 +1,9 @@
 {% extends layout %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(stores_route) }}">{% trans %}Stores{% endtrans %}</a></li>
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-<li>{% trans %}Past deliveries{% endtrans %}</li>
+<li>{% trans %}delivery.pastDeliveries{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}

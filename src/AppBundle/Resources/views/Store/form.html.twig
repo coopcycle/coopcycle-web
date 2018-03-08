@@ -3,8 +3,8 @@
 {% form_theme form 'AppBundle:Form:store.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(stores_route) }}">{% trans %}Stores{% endtrans %}</a></li>
-<li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}Create a new store{% endtrans %}{% endif %}</li>
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li>{% if store.id is not empty %}{{ store.name }}{% else %}{% trans %}adminDashboard.stores.createNew{% endtrans %}{% endif %}</li>
 {% endblock %}
 
 {% block content %}
@@ -26,10 +26,10 @@
     <div class="collapse navbar-collapse" id="store-navbar">
       <div class="nav navbar-nav navbar-right">
         <a href="{{ path(store_deliveries_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-bicycle"></i>  {% trans %}Past deliveries{% endtrans %}
+          <i class="fa fa-bicycle"></i>  {% trans %}delivery.pastDeliveries{% endtrans %}
         </a>
         <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-bicycle"></i>  {% trans %}Create new delivery{% endtrans %}
+          <i class="fa fa-bicycle"></i>  {% trans %}delivery.createNew{% endtrans %}
         </a>
       </div>
     </div>
@@ -82,7 +82,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
-      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+      <button type="submit" class="btn btn-block btn-primary">{% trans %}stores.form.save{% endtrans %}</button>
     </div>
   </div>
 

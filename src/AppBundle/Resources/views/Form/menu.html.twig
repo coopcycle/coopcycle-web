@@ -7,7 +7,7 @@
   </div>
   <div class="col-sm-3">
     <button type="button" class="btn btn-success pull-right" id="add-menu-section">
-      {% trans from 'messages' %}Add section{% endtrans %}
+      {% trans from 'messages' %}restaurant.menu.form.addSection{% endtrans %}
     </button>
   </div>
 </div>
@@ -43,11 +43,11 @@
           {{ form.vars.data ? form.vars.data.name : '' }}
           {{ form.vars.data ? '(' ~ form.vars.data.items|length ~ ')' : '' }}
           <button type="button" class="btn btn-danger btn-xs pull-right"
-            data-toggle="remove-menu-section" data-target="#{{ form.vars.id }}">{% trans from 'messages' %}Delete{% endtrans %}</button>
+            data-toggle="remove-menu-section" data-target="#{{ form.vars.id }}">{% trans from 'messages' %}restaurant.menu.form.delete{% endtrans %}</button>
         </a>
         <button class="btn btn-xs btn-success pull-right"
           style="margin-right: 15px;"
-          data-toggle="add-menu-item" data-target="#{{ form.items.vars.id }}"><i class="fa fa-plus"></i> {% trans from 'messages' %}Add a new item{% endtrans %}</button>
+          data-toggle="add-menu-item" data-target="#{{ form.items.vars.id }}"><i class="fa fa-plus"></i> {% trans from 'messages' %}restaurant.menu.form.addItem{% endtrans %}</button>
       </h4>
     </div>
 
@@ -102,9 +102,9 @@
           aria-expanded="false" aria-controls="{{ containerSelector }}">
           {# form.vars may be null when used for prototype #}
           {% if form.vars.value and form.vars.value.description %}
-            <i class="fa fa-pencil"></i>  <small>{% trans %}Modify description{% endtrans %}</small>
+            <i class="fa fa-pencil"></i>  <small>{% trans %}restaurant.menu.form.modifyDescription{% endtrans %}</small>
           {% else %}
-            <i class="fa fa-plus"></i>  <small>{% trans %}Add description{% endtrans %}</small>
+            <i class="fa fa-plus"></i>  <small>{% trans %}restaurant.menu.form.addDescription{% endtrans %}</small>
           {% endif %}
         </a>
       </div>
@@ -117,12 +117,12 @@
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <label class="control-label">{% trans %}Extra groups{% endtrans %}</label>
+        <label class="control-label">{% trans %}restaurant.menu.form.extraGroups{% endtrans %}</label>
       </div>
       <div class="col-sm-6 text-right">
         <button type="button" class="btn btn-xs btn-success"
           data-toggle="add-menu-item-modifier-group" data-target="{{ '#' ~ form.modifiers.vars.id }}">
-          <i class="fa fa-plus"></i> {% trans %}Add an extra groups{% endtrans %}
+          <i class="fa fa-plus"></i> {% trans %}restaurant.menu.form.addExtraGroup{% endtrans %}
         </button>
       </div>
     </div>
@@ -135,15 +135,15 @@
 {% set tooltip %}
   <strong>{% trans %}menu.modifier.STRATEGY_FREE{% endtrans %}</strong>
   <br>
-  {% trans %}The extra is free{% endtrans %}
+  {% trans %}menu.modifier.STRATEGY_FREE.description{% endtrans %}
   <br>
   <strong>{% trans %}menu.modifier.STRATEGY_ADD_MODIFIER_PRICE{% endtrans %}</strong>
   <br>
-  {% trans %}The extra has a fixed price{% endtrans %}
+  {% trans %}menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description{% endtrans %}
   <br>
   <strong>{% trans %}menu.modifier.STRATEGY_ADD_MENUITEM_PRICE{% endtrans %}</strong>
   <br>
-  {% trans %}Each extra has a custom price{% endtrans %}
+  {% trans %}menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description{% endtrans %}
 {% endset %}
 <div id="{{ form.vars.id }}" class="menu-item-modifiers">
   <div class="form-group row">
@@ -168,10 +168,10 @@
       </button>
     </div>
   </div>
-  <h6 class="text-muted">{% trans %}Extras{% endtrans %} ({{ form.modifierChoices.vars.value|length }})</h6>
+  <h6 class="text-muted">{% trans %}restaurant.menu.form.extras{% endtrans %} ({{ form.modifierChoices.vars.value|length }})</h6>
   {{ form_widget(form.modifierChoices) }}
   <button type="button" class="btn btn-xs btn-success" data-toggle="add-menu-item-modifier">
-    <i class="fa fa-plus"></i> {% trans %}Add an extra{% endtrans %}
+    <i class="fa fa-plus"></i> {% trans %}restaurant.menu.form.addExtra{% endtrans %}
   </button>
 </div>
 {% endblock %}

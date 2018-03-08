@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>{% trans %}Invoice{% endtrans %}</title>
+    <title>{% trans %}adminDashboard.orders.invoice.title{% endtrans %}</title>
   </head>
   <body>
 
     <table style="width: 100%;">
       <tbody>
         <tr>
-          <td><h1>{% trans %}Invoice{% endtrans %} #{{ order.id }}</h1></td>
+          <td><h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.id }}</h1></td>
           <td style="text-align: right;">{{ order.createdAt|localizeddate('full', 'none') }}</td>
         </tr>
       </tbody>
@@ -51,7 +51,7 @@
 
     <div style="clear: both;"></div>
 
-    <h2>{% trans %}Order{% endtrans %}</h2>
+    <h2>{% trans %}adminDashboard.orders.order{% endtrans %}</h2>
 
     <table style="width: 100%;">
       <tbody>
@@ -69,15 +69,15 @@
     <table style="width: 100%;">
       <tbody>
         <tr>
-          <td><strong>{% trans %}Total excluding tax{% endtrans %}</strong></td>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.totalExcludingTax{% endtrans %}</strong></td>
           <td style="text-align: right;">{{ order.totalExcludingTax }} €</td>
         </tr>
         <tr>
-          <td><strong>{% trans %}Total tax{% endtrans %}</strong></td>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.totalTax{% endtrans %}</strong></td>
           <td style="text-align: right;">{{ order.totalTax }} €</td>
         </tr>
         <tr>
-          <td><strong>{% trans %}Total including tax{% endtrans %}</strong></td>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.totalIncludingTax{% endtrans %}</strong></td>
           <td style="text-align: right;">{{ order.totalIncludingTax }} €</td>
         </tr>
       </tbody>

@@ -3,7 +3,7 @@
 {% form_theme form 'AppBundle:Form:menu.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
+<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
 <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
 <li>Menu</li>
 {% endblock %}
@@ -39,8 +39,8 @@
 {% block scripts %}
 <script type="text/javascript">
 window.__i18n = {
-  "Available": "{% trans %}Available{% endtrans %}",
-  "Unavailable": "{% trans %}Unavailable{% endtrans %}"
+  "Available": "{% trans %}restaurant.available{% endtrans %}",
+  "Unavailable": "{% trans %}restaurant.unavailable{% endtrans %}"
 }
 window.__addSectionURL = "{{ path(add_section_route, { id: restaurant.id }) }}";
 </script>

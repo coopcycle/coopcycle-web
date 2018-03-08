@@ -4,10 +4,10 @@
 
 {% block content %}
     <h2 class="page-header">
-      {% trans %}Edit profile{%  endtrans %}
+      {% trans %}profile.editProfile{%  endtrans %}
     </h2>
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+    <button type="submit" class="btn btn-block btn-primary">{% trans %}profile.edit.save{% endtrans %}</button>
     {{ form_end(form) }}
 {% endblock %}

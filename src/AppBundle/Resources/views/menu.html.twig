@@ -15,7 +15,8 @@
       {% set default_locale = 'en' %}
       {% set locales = {
         'en': 'English',
-        'fr': 'Français'
+        'fr': 'Français',
+        'es': 'Español'
       } %}
       {% set current_locale = default_locale %}
       {% if locales[app.request.locale] is defined %}
@@ -57,7 +58,7 @@
                   {% set mainAccountPath = 'fos_user_profile_show' %}
                 {% endif %}
                 <a href="{{ path(mainAccountPath) }}">
-                  {% trans %}My account{% endtrans %}
+                  {% trans %}navbar.myAccount{% endtrans %}
                 </a>
               </li>
               <li role="separator" class="divider"></li>
@@ -66,12 +67,12 @@
           </li>
         {% else %}
           <li>
-            <a href="{{ path('fos_user_security_login') }}">Connexion</a>
+            <a href="{{ path('fos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
           </li>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
           <a class="btn btn-primary navbar-btn" href="{{ path('admin_index') }}">
-            {% trans %}Admin dashboard{% endtrans %}
+            {% trans %}adminDashboard.title{% endtrans %}
           </a>
         {% endif %}
       </ul>
@@ -81,4 +82,3 @@
     </div>
   </div>
 </nav>
-

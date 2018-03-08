@@ -1,12 +1,12 @@
 <table class="table">
   <thead>
     <th>#</th>
-    <th>{% trans %}Order{% endtrans %}</th>
-    <th>{% trans %}Delivery{% endtrans %}</th>
-    <th>{% trans %}Restaurant{% endtrans %}</th>
-    <th class="text-right">{% trans %}Total including tax{% endtrans %}</th>
-    <th class="text-right">{% trans %}Duration{% endtrans %}</th>
-    <th class="text-right">{% trans %}Created at{% endtrans %}</th>
+    <th>{% trans %}order.list.order{% endtrans %}</th>
+    <th>{% trans %}order.list.delivery{% endtrans %}</th>
+    <th>{% trans %}order.list.restaurant{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.list.totalIncludingTax{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.list.duration{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.list.createdAt{% endtrans %}</th>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <th></th>
     {% endif %}
@@ -39,11 +39,11 @@
     <td>
       {% if order.delivery.status == 'WAITING' or order.delivery.status == 'DISPATCHED'  %}
       <form method="post" action="{{ path('admin_orders_order_cancel', { id: order.id }) }}">
-        <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}Cancel{% endtrans %}</button>
+        <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}order.list.cancel{% endtrans %}</button>
       </form>
       {% else %}
       <a class="btn btn-xs btn-danger pull-right disabled">
-        {% trans %}Cancel{% endtrans %}
+        {% trans %}order.list.cancel{% endtrans %}
       </a>
       {% endif %}
     </td>

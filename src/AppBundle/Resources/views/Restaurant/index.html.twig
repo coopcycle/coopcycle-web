@@ -48,7 +48,7 @@
                 {% if menuItem.description is not null %}
                   <p class="menu-item-description">{{ menuItem.description }}</p>
                 {%  endif %}
-                <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}Unavailable{% endtrans %}</button></span>
+                <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
               </a>
             {% else %}
               <a  class="list-group-item menu-item {% if menuItem.modifiers.count == 0 %}js-add-to-cart{% endif %}"
@@ -152,4 +152,3 @@ new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places"></script>
 {% endblock %}
-

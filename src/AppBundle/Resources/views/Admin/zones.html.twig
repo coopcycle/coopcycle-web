@@ -3,7 +3,7 @@
 {% form_theme zone_collection_form 'AppBundle:Form:zoneCollection.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Zones{% endtrans %}</li>
+<li>{% trans %}adminDashboard.zones.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
@@ -19,10 +19,10 @@
       <hr>
       <div class="row">
         <div class="col-md-6">
-          <a href="{{ path('admin_zones') }}" class="btn btn-block btn-default">{% trans %}Cancel{% endtrans %}</a>
+          <a href="{{ path('admin_zones') }}" class="btn btn-block btn-default">{% trans %}adminDashboard.zones.cancel{% endtrans %}</a>
         </div>
         <div class="col-md-6">
-          <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.save{% endtrans %}</button>
         </div>
       </div>
     {{ form_end(zone_collection_form) }}
@@ -41,7 +41,7 @@
             <p>
               <form method="post" action="{{ path('admin_zone_delete', { id: zone.id }) }}">
                 <button type="submit" class="btn btn-sm btn-danger">
-                  <i class="fa fa-trash"></i> {% trans %}Delete{% endtrans %}
+                  <i class="fa fa-trash"></i> {% trans %}adminDashboard.zones.delete{% endtrans %}
                 </button>
               </form>
             </p>
@@ -55,8 +55,8 @@
       <div class="col-md-4 col-md-offset-8">
         {{ form_start(upload_form) }}
           {{ form_row(upload_form.file) }}
-          <span class="help-block">{% trans %}Upload a GeoJSON file{% endtrans %}</span>
-          <button type="submit" class="btn btn-block btn-primary">{% trans %}Send{% endtrans %}</button>
+          <span class="help-block">{% trans %}adminDashboard.zones.uploadGeoJSON{% endtrans %}</span>
+          <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.send{% endtrans %}</button>
         {{ form_end(upload_form) }}
       </div>
     </div>

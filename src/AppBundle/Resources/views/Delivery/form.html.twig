@@ -4,15 +4,15 @@
 
 {% block breadcrumb %}
 {% if store is not null %}
-<li><a href="{{ path(stores_route) }}">{% trans %}Stores{% endtrans %}</a></li>
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
 {% else %}
-<li><a href="{{ path('admin_deliveries') }}">{% trans %}Deliveries{% endtrans %}</a></li>
+<li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
 {% endif %}
 {% if delivery.id is not null %}
 <li>#{{ delivery.id }}</li>
 {% else %}
-<li>{% trans %}Create delivery{% endtrans %}</li>
+<li>{% trans %}adminDashboard.deliveries.createNew{% endtrans %}</li>
 {% endif %}
 {% endblock %}
 
@@ -33,7 +33,7 @@
         <div class="panel-heading" role="tab">
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" href="#collapseOriginAddress" aria-expanded="true" aria-controls="collapseOriginAddress">
-              {% trans %}Origin address{% endtrans %} 
+              {% trans %}adminDashboard.deliveries.originAddress{% endtrans %} 
               <strong id="originAddressTitleLabel">
               {% if form.originAddress.vars.value %}
               {{ form.originAddress.vars.value.streetAddress }}
@@ -56,7 +56,7 @@
         <div class="panel-heading" role="tab">
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" href="#collapseDeliveryAddress" aria-expanded="true" aria-controls="collapseDeliveryAddress">
-              {% trans %}Delivery address{% endtrans %} 
+              {% trans %}adminDashboard.deliveries.deliveryAddress{% endtrans %} 
               <strong id="deliveryAddressTitleLabel">
               {% if form.deliveryAddress.vars.value %}
               {{ form.deliveryAddress.vars.value.streetAddress }}
@@ -99,7 +99,7 @@
         {{ form_row(form.price) }}
       </div>
       <hr>
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}Save{% endtrans %}</button>
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}adminDashboard.deliveries.save{% endtrans %}</button>
     </div>
   </div>
 
