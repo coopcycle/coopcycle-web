@@ -310,7 +310,7 @@ form.settings.stripe_publishable_key.help: |
 form.settings.stripe_secret_key.label: Stripe secret key
 form.settings.stripe_secret_key.help: |
   Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
-form.settings.google_api_key.label: Clé d'API Google
+form.settings.google_api_key.label: Google API key
 form.settings.google_api_key.help: |
   Create a Google account to obtain your <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API key</a>
 form.settings.latlng.label: Geographical coordinates
