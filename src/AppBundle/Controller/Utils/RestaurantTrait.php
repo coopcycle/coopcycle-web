@@ -359,6 +359,8 @@ trait RestaurantTrait
 
         $form->handleRequest($request);
 
+        $routes = $request->attributes->get('routes');
+
         if ($form->isSubmitted() && $form->isValid()) {
             $closingRule = $form->getData();
             $closingRule->setRestaurant($restaurant);
@@ -372,8 +374,6 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
-        $routes = $request->attributes->get('routes');
-
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
             'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
@@ -381,6 +381,7 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
+            'routes' => $routes,
             'form' => $form->createView()
         ]);
     }
