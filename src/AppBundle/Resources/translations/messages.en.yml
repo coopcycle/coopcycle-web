@@ -277,7 +277,7 @@ order.acceptedMail.body: |
 
 task.form.create: Create task
 task.form.timeWindow: Time window
-task.form.cancel: task.form.timeWindow
+task.form.cancel: Cancel
 task.form.showHistory: Show history
 task.form.modal.moreOptions: More options
 form.task_upload.file: File
