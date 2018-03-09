@@ -224,7 +224,7 @@ class Task implements TaggableInterface
         return $this->doneAfter;
     }
 
-    public function setDoneAfter(\DateTime $doneAfter)
+    public function setDoneAfter(\DateTime $doneAfter = null)
     {
         $this->doneAfter = $doneAfter;
 

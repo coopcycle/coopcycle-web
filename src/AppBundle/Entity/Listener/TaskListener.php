@@ -24,6 +24,15 @@ class TaskListener
         $this->logger = $logger;
     }
 
+    public function prePersist(Task $task, LifecycleEventArgs $args)
+    {
+        if (null === $task->getDoneAfter()) {
+            $doneAfter = clone $task->getDoneBefore();
+            $doneAfter->modify('-15 minutes');
+            $task->setDoneAfter($doneAfter);
+        }
+    }
+
     public function postPersist(Task $task, LifecycleEventArgs $args)
     {
         $this->dispatcher->dispatch(TaskCreateEvent::NAME, new TaskCreateEvent($task));

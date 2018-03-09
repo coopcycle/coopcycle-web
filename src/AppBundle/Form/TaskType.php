@@ -44,11 +44,12 @@ class TaskType extends AbstractType
             ->add('address', AddressType::class)
             ->add('doneAfter', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm'
+                'format' => 'yyyy-MM-dd HH:mm:ss',
+                'required' => false
             ])
             ->add('doneBefore', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm'
+                'format' => 'yyyy-MM-dd HH:mm:ss'
             ])
             ->add('comments', TextareaType::class, [
                 'required' => false,
@@ -61,15 +62,13 @@ class TaskType extends AbstractType
             ])
             ->add('save', SubmitType::class);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
             $task = $event->getData();
 
-            $isNewTask = $task->getId() === null;
-
             // We are editing an existing task
-            if (!$isNewTask) {
+            if ($task && null !== $task->getId()) {
 
                 // Only non-assigned tasks can be deleted
                 if (!$task->isAssigned()) {
@@ -96,11 +95,12 @@ class TaskType extends AbstractType
                 }, iterator_to_array($task->getTags()));
 
                 $form->get('tagsAsString')->setData(implode(' ', $tags));
+
+                if ($task->isAssigned()) {
+                    $form->get('assign')->setData($task->getAssignedCourier());
+                }
             }
 
-            if ($task->isAssigned()) {
-                $form->get('assign')->setData($task->getAssignedCourier());
-            }
         });
 
         $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
