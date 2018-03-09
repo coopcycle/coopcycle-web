@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -22,12 +23,13 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('streetAddress', TextType::class, [
+            ->add('streetAddress', SearchType::class, [
                 'label' => 'Street address',
                 'attr' => [
                     // autocomplete="off" doesn't work in Chrome
                     // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
-                    'autocomplete' => 'false'
+                    // https://bugs.chromium.org/p/chromium/issues/detail?id=468153#c164
+                    'autocomplete' => uniqid()
                 ]
             ])
             ->add('addressLocality', TextType::class, [
