@@ -278,6 +278,22 @@ form.delivery.vehicle.VEHICLE_BIKE: Bike
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
 form.store_type.pricing_rule_set.placeholder: Choose a pricing
 form.delivery.vehicle.placeholder: Choose a vehicle type
+form.delivery.pickup.label: Pickup
+form.delivery.dropoff.label: Dropoff
+form.delivery.weight.label: Weight (g)
+form.delivery.vehicle.label: Vehicle
+form.delivery.pickup.doneBefore.label: Pickup time
+form.delivery.dropoff.doneBefore.label: Dropoff time
+form.delivery.distance.label: Distance
+form.delivery.duration.label: Duration
+form.delivery.store.label: Magasin
+form.delivery.store.placeholder: Search a store…
+
+form.address.addressLocality.label: City
+form.address.postalCode.label: Postal code
+form.address.floor.label: Floor
+form.address.description.label: Instructions
+form.address.description.placeholder: 2nd door on the left…
 
 
 form.settings.stripe_publishable_key.label: Stripe publishable key

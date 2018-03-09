@@ -1,68 +1,105 @@
 {% extends 'bootstrap_3_horizontal_layout.html.twig' %}
 
-{% block _delivery_originAddress_streetAddress_row %}
-{% spaceless %}
-  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
-    <div class="col-sm-10 col-md-offset-2">
-      <div class="input-group">
-        <div class="input-group-addon"><i class="fa fa-cube"></i></div>
-        {{ form_widget(form) }}
-      </div>
-    </div>
-    {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+{% block task_row %}
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab">
+    <h4 class="panel-title">
+      <a role="button" data-toggle="collapse" href="#{{ form.vars.id ~ '_collapse' }}"
+        aria-expanded="true" aria-controls="{{ form.vars.id ~ '_collapse' }}">
+        {{ label|trans }}
+        <strong id="{{ form.vars.id ~ '_panel_title' }}">
+        {% if form.address.vars.value %}
+        {{ form.address.vars.value.streetAddress }}
+        {% endif %}
+        </strong>
+      </a>
+      <span class="pull-right hidden" id="{{ form.vars.id ~ '_checked' }}">
+        <i class="fa fa-check" aria-hidden="true" style="color: #27AE60"></i>
+      </span>
+    </h4>
   </div>
-{% endspaceless %}
-{% endblock %}
-
-{% block _delivery_deliveryAddress_streetAddress_row %}
-{% spaceless %}
-  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
-    <div class="col-sm-10 col-md-offset-2">
-      <div class="input-group">
-        <div class="input-group-addon"><i class="fa fa-flag"></i></div>
-        {{ form_widget(form) }}
-      </div>
-      {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+  <div id="{{ form.vars.id ~ '_collapse' }}" class="panel-collapse collapse in" role="tabpanel">
+    <div class="panel-body">
+      {{ form_widget(form) }}
     </div>
   </div>
-{% endspaceless %}
+</div>
 {% endblock %}
 
-{% block _delivery_date_row %}
-{% spaceless %}
+{% block task_widget %}
+
+  {{ form_row(form.address.streetAddress, { label: false }) }}
+  {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+
+  {{ form_row(form.address.description) }}
+
+  {{ form_row(form.address.postalCode) }}
+  {{ form_row(form.address.addressLocality) }}
+
+  {{ form_widget(form.address.latitude) }}
+  {{ form_widget(form.address.longitude) }}
+  {{ form_widget(form.type) }}
+
+{% endblock %}
+
+{% block task_address_streetAddress_row %}
+<div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
+  <div class="col-sm-10 col-md-offset-2">
+    <div class="input-group">
+      <div class="input-group-addon"><i class="fa fa-{{ icon }}"></i></div>
+      {{ form_widget(form) }}
+    </div>
+  </div>
+  {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
+</div>
+{% endblock %}
+
+{# Pickup #}
+
+{% block _delivery_pickup_row %}
+  {{ block('task_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_widget %}
+  {{ block('task_widget') }}
+{% endblock %}
+
+{% block _delivery_pickup_type_widget %}
   {{ block('hidden_widget') }}
-  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
-    {{ form_label(form) }}
-    <div class="col-sm-10">
-      <div id="datetimepicker" {% if not form.vars.valid %}data-has-error="true"{% endif %}></div>
-      {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
-    </div>
-  </div>
-{% endspaceless %}
 {% endblock %}
 
-{% block _delivery_distance_row %}
-{% spaceless %}
-  <div class="form-group">
-    {{ form_label(form, 'Distance'|trans({}, 'messages')) }}
-    <div class="col-sm-10">
-      <p class="form-control-static"><span id="delivery_distance--display"></span></p>
-      {{ block('hidden_widget') }}
-    </div>
-  </div>
-{% endspaceless %}
+{% block _delivery_pickup_address_streetAddress_row %}
+  {% set icon = 'cube' %}
+  {{ block('task_address_streetAddress_row') }}
 {% endblock %}
 
-{% block _delivery_duration_row %}
-{% spaceless %}
-  <div class="form-group">
-    {{ form_label(form, 'Duration'|trans({}, 'messages')) }}
-    <div class="col-sm-10">
-      <p class="form-control-static"><span id="delivery_duration--display"></span></p>
-      {{ block('hidden_widget') }}
-    </div>
-  </div>
-{% endspaceless %}
+{% block _delivery_pickup_doneBefore_widget %}
+  {{ block('hidden_widget') }}
+  <div id="{{ form.vars.id ~ '_widget' }}"></div>
+{% endblock %}
+
+{# Dropoff #}
+
+{% block _delivery_dropoff_row %}
+  {{ block('task_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_widget %}
+  {{ block('task_widget') }}
+{% endblock %}
+
+{% block _delivery_dropoff_type_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_dropoff_address_streetAddress_row %}
+  {% set icon = 'flag' %}
+  {{ block('task_address_streetAddress_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_doneBefore_widget %}
+  {{ block('hidden_widget') }}
+  <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {% endblock %}
 
 {% block _delivery_store_row %}

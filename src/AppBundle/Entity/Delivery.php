@@ -411,4 +411,27 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
 
         return [ $pickupTask, $dropoffTask ];
     }
+
+    public static function create()
+    {
+        $pickupDoneBefore = new \DateTime();
+        $pickupDoneBefore->modify('+1 day');
+
+        $dropoffDoneBefore = clone $pickupDoneBefore;
+        $dropoffDoneBefore->modify('+1 hour');
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setDoneBefore($pickupDoneBefore);
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->setDoneBefore($dropoffDoneBefore);
+
+        $delivery = new self();
+        $delivery->addTask($pickup);
+        $delivery->addTask($dropoff);
+
+        return $delivery;
+    }
 }

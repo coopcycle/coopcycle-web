@@ -33,19 +33,19 @@ class AddressType extends AbstractType
                 ]
             ])
             ->add('addressLocality', TextType::class, [
-                'label' => 'City'
+                'label' => 'form.address.addressLocality.label'
             ])
             ->add('postalCode', TextType::class, [
-                'label' => 'Postal code'
+                'label' => 'form.address.postalCode.label'
             ])
             ->add('floor', TextType::class, [
                 'required' => false,
-                'label' => 'Floor (optional)'
+                'label' => 'form.address.floor.label'
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,
-                'label' => 'Delivery instructions (optional)',
-                'attr' => ['rows' => '3', 'placeholder' => 'Second door on the left..']
+                'label' => 'form.address.description.label',
+                'attr' => ['rows' => '3', 'placeholder' => 'form.address.description.placeholder']
             ])
             ->add('latitude', HiddenType::class, [
                 'mapped' => false,

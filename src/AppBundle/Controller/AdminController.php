@@ -257,7 +257,7 @@ class AdminController extends Controller
 
     public function newDeliveryAction(Request $request)
     {
-        $delivery = new Delivery();
+        $delivery = Delivery::create();
 
         return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
     }

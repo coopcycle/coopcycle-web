@@ -280,6 +280,22 @@ form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
+form.delivery.pickup.label: Retrait
+form.delivery.dropoff.label: Dépôt
+form.delivery.weight.label: Poids (en grammes)
+form.delivery.vehicle.label: Type de véhicule
+form.delivery.pickup.doneBefore.label: Heure de retrait
+form.delivery.dropoff.doneBefore.label: Heure de dépôt
+form.delivery.distance.label: Distance
+form.delivery.duration.label: Durée
+form.delivery.store.label: Magasin
+form.delivery.store.placeholder: Rechercher un magasin…
+
+form.address.addressLocality.label: Ville
+form.address.postalCode.label: Code postal
+form.address.floor.label: Étage
+form.address.description.label: Instructions
+form.address.description.placeholder: 2ème porte à gauche…
 
 
 form.settings.stripe_publishable_key.label: Clé publique Stripe

@@ -1,11 +1,10 @@
-var MapHelper = require('../MapHelper');
+import MapHelper from '../MapHelper';
 import _ from 'underscore';
 import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
 import numeral  from 'numeral';
 import 'numeral/locales'
-import DateTimePicker from './DateTimePicker.jsx';
 
 const locale = $('html').attr('lang')
 numeral.locale(locale)
@@ -13,8 +12,8 @@ numeral.locale(locale)
 var map;
 
 let markers = {
-  origin: null,
-  delivery: null,
+  pickup: null,
+  dropoff: null,
 }
 
 const storeSearch = document.querySelector('#store-search')
@@ -23,26 +22,26 @@ if (storeSearch) {
 
   var options = {
     url: window.AppData.adminStoreSearchUrl,
-    placeholder: "",
+    placeholder: document.querySelector('#delivery_store').getAttribute('placeholder'),
     clearOnSelect: true,
     onSuggestionSelected: function(store) {
 
       $('#delivery_store').val(store.id)
       $('#delivery_pricingRuleSet').val(store.pricingRuleSetId)
 
-      document.querySelector('#delivery_originAddress_streetAddress').value = store.address.streetAddress
-      document.querySelector('#delivery_originAddress_latitude').value = store.address.latitude
-      document.querySelector('#delivery_originAddress_longitude').value = store.address.longitude
-      document.querySelector('#delivery_originAddress_postalCode').value = store.address.postalCode
-      document.querySelector('#delivery_originAddress_addressLocality').value = store.address.addressLocality
+      document.querySelector('#delivery_pickup_address_streetAddress').value = store.address.streetAddress
+      document.querySelector('#delivery_pickup_address_latitude').value = store.address.latitude
+      document.querySelector('#delivery_pickup_address_longitude').value = store.address.longitude
+      document.querySelector('#delivery_pickup_address_postalCode').value = store.address.postalCode
+      document.querySelector('#delivery_pickup_address_addressLocality').value = store.address.addressLocality
 
       $('#selected-store-name').text(store.name)
       $('#selected-store').removeClass('hidden')
 
       // refresh the map on the right
-      onLocationChange(store.address, 'origin')
-      markAddressChecked('origin')
-      setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
+      onLocationChange(store.address, 'pickup')
+      markAddressChecked('pickup')
+      setTimeout(() => $('#delivery_pickup_collapse').collapse('hide'), 500)
     }
   }
 
@@ -67,11 +66,11 @@ function enableForm() {
   $('#delivery-submit').attr('disabled', false)
 }
 
-function calculatePrice(distance, delivery) {
+function calculatePrice(distance, dropoff) {
 
   const deliveryParams = {
     distance,
-    delivery_address: [ delivery.getLatLng().lat, delivery.getLatLng().lng ].join(','),
+    delivery_address: [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ].join(','),
     pricing_rule_set: $('#delivery_pricingRuleSet').val(),
     vehicle: $('#delivery_vehicle').val(),
     weight: $('#delivery_weight').val()
@@ -103,11 +102,11 @@ function refreshRouting() {
   // We need to have 2 markers
   if (_.filter(markers).length < 2) return
 
-  const { origin, delivery } = markers
+  const { pickup, dropoff } = markers
 
   MapHelper.route([
-    [ origin.getLatLng().lat, origin.getLatLng().lng ],
-    [ delivery.getLatLng().lat, delivery.getLatLng().lng ]
+    [ pickup.getLatLng().lat, pickup.getLatLng().lng ],
+    [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ]
   ]).then(route => {
 
     var duration = parseInt(route.duration, 10);
@@ -116,13 +115,11 @@ function refreshRouting() {
     var kms = (distance / 1000).toFixed(2);
     var minutes = Math.ceil(duration / 60);
 
-    $('#delivery_distance--display').text(kms + ' Km');
-    $('#delivery_distance').val(distance);
-    $('#delivery_duration--display').text(minutes + ' min');
-    $('#delivery_duration').val(duration);
+    $('#delivery_distance').text(kms + ' Km');
+    $('#delivery_duration').text(minutes + ' min');
 
     if (window.AppData.DeliveryForm.calculatePriceURL) {
-      calculatePrice(distance, delivery)
+      calculatePrice(distance, dropoff)
     }
 
     // return decodePolyline(data.routes[0].geometry);
@@ -130,13 +127,13 @@ function refreshRouting() {
 }
 
 const markerIcons = {
-  origin:   { icon: 'cube', color: '#E74C3C' },
-  delivery: { icon: 'flag', color: '#2ECC71' }
+  pickup:  { icon: 'cube', color: '#E74C3C' },
+  dropoff: { icon: 'flag', color: '#2ECC71' }
 }
 
 const addressTypeSelector = {
-  origin:   { checkmark: '#originAddressChecked' },
-  delivery: { checkmark: '#deliveryAddressChecked' }
+  pickup:  { checkmark: '#delivery_pickup_checked' },
+  dropoff: { checkmark: '#delivery_dropoff_checked' }
 }
 
 function createMarker(location, addressType) {
@@ -165,79 +162,86 @@ function onLocationChange(location, addressType, markerIcon, markerColor) {
 
 window.initMap = function() {
 
-  const originAddressLatitude  = document.querySelector('#delivery_originAddress_latitude')
-  const originAddressLongitude = document.querySelector('#delivery_originAddress_longitude')
+  const originAddressLatitude  = document.querySelector('#delivery_pickup_address_latitude')
+  const originAddressLongitude = document.querySelector('#delivery_pickup_address_longitude')
 
-  const deliveryAddressLatitude  = document.querySelector('#delivery_deliveryAddress_latitude')
-  const deliveryAddressLongitude = document.querySelector('#delivery_deliveryAddress_longitude')
+  const deliveryAddressLatitude  = document.querySelector('#delivery_dropoff_address_latitude')
+  const deliveryAddressLongitude = document.querySelector('#delivery_dropoff_address_longitude')
 
   const hasOriginAddress = originAddressLatitude.value && originAddressLongitude.value
   const hasDeliveryAddress = deliveryAddressLongitude.value && deliveryAddressLatitude.value
 
   if (hasOriginAddress) {
-    markAddressChecked('origin')
+    markAddressChecked('pickup')
     createMarker({
       latitude: originAddressLatitude.value,
       longitude: originAddressLongitude.value
-    }, 'origin')
-    $('#collapseOriginAddress').collapse('hide')
+    }, 'pickup')
+    $('#delivery_pickup_collapse').collapse('hide')
   }
 
   if (hasDeliveryAddress) {
-    markAddressChecked('delivery')
+    markAddressChecked('dropoff')
     createMarker({
       latitude: deliveryAddressLatitude.value,
       longitude: deliveryAddressLongitude.value
-    }, 'delivery')
-    $('#collapseDeliveryAddress').collapse('hide')
+    }, 'dropoff')
+    $('#delivery_dropoff_collapse').collapse('hide')
   }
 
-  new CoopCycle.AddressInput(document.querySelector('#delivery_originAddress_streetAddress'), {
+  new CoopCycle.AddressInput(document.querySelector('#delivery_pickup_address_streetAddress'), {
     elements: {
-      latitude: document.querySelector('#delivery_originAddress_latitude'),
-      longitude: document.querySelector('#delivery_originAddress_longitude'),
-      postalCode: document.querySelector('#delivery_originAddress_postalCode'),
-      addressLocality: document.querySelector('#delivery_originAddress_addressLocality')
+      latitude: document.querySelector('#delivery_pickup_address_latitude'),
+      longitude: document.querySelector('#delivery_pickup_address_longitude'),
+      postalCode: document.querySelector('#delivery_pickup_address_postalCode'),
+      addressLocality: document.querySelector('#delivery_pickup_address_addressLocality')
     },
-    onLocationChange: location => onLocationChange(location, 'origin'),
+    onLocationChange: location => onLocationChange(location, 'pickup'),
     onAddressChange: address => {
-      $('#originAddressTitleLabel').text(address.streetAddress)
-      markAddressChecked('origin')
+      $('#delivery_pickup_panel_title').text(address.streetAddress)
+      markAddressChecked('pickup')
       if (!hasOriginAddress) {
-        setTimeout(() => $('#collapseOriginAddress').collapse('hide'), 500)
-        setTimeout(() => $('#delivery_deliveryAddress_streetAddress').focus(), 500)
+        setTimeout(() => $('#delivery_pickup_collapse').collapse('hide'), 500)
+        setTimeout(() => $('#delivery_pickup_address_streetAddress').focus(), 500)
       }
     }
   })
 
-  new CoopCycle.AddressInput(document.querySelector('#delivery_deliveryAddress_streetAddress'), {
+  new CoopCycle.DateTimePicker(document.querySelector('#delivery_pickup_doneBefore_widget'), {
+    defaultValue: document.querySelector('#delivery_pickup_doneBefore').value,
+    onChange: function(date, dateString) {
+      document.querySelector('#delivery_pickup_doneBefore').value = date.format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+
+  new CoopCycle.AddressInput(document.querySelector('#delivery_dropoff_address_streetAddress'), {
     elements: {
-      latitude: document.querySelector('#delivery_deliveryAddress_latitude'),
-      longitude: document.querySelector('#delivery_deliveryAddress_longitude'),
-      postalCode: document.querySelector('#delivery_deliveryAddress_postalCode'),
-      addressLocality: document.querySelector('#delivery_deliveryAddress_addressLocality')
+      latitude: document.querySelector('#delivery_dropoff_address_latitude'),
+      longitude: document.querySelector('#delivery_dropoff_address_longitude'),
+      postalCode: document.querySelector('#delivery_dropoff_address_postalCode'),
+      addressLocality: document.querySelector('#delivery_dropoff_address_addressLocality')
     },
-    onLocationChange: location => onLocationChange(location, 'delivery'),
+    onLocationChange: location => onLocationChange(location, 'dropoff'),
     onAddressChange: address => {
-      $('#deliveryAddressTitleLabel').text(address.streetAddress)
-      markAddressChecked('delivery')
+      $('#delivery_dropoff_panel_title').text(address.streetAddress)
+      markAddressChecked('dropoff')
     },
     onLoad: () => {
       if (hasOriginAddress) {
-        setTimeout(() => $('#delivery_deliveryAddress_streetAddress').focus(), 500)
+        setTimeout(() => $('#delivery_dropoff_address_streetAddress').focus(), 500)
       }
+    }
+  })
+
+  new CoopCycle.DateTimePicker(document.querySelector('#delivery_dropoff_doneBefore_widget'), {
+    defaultValue: document.querySelector('#delivery_dropoff_doneBefore').value,
+    onChange: function(date, dateString) {
+      document.querySelector('#delivery_dropoff_doneBefore').value = date.format('YYYY-MM-DD HH:mm:ss')
     }
   })
 }
 
-function onDateTimeChange(date) {
-  $('#delivery_date').val(date.format('YYYY-MM-DD HH:mm:00'))
-}
-
 map = MapHelper.init('map');
-
-const date = $('#delivery_date').val();
-const error = $('#datetimepicker').data('has-error');
 
 // For non-admin disable submit until the price has been calculated
 if (!window.AppData.isAdmin) {
@@ -249,11 +253,3 @@ if ($('#delivery_pricingRuleSet').is('select')) {
   $('#delivery_pricingRuleSet').on('change', e => refreshRouting())
 }
 $('#delivery_vehicle').on('change', e => refreshRouting())
-
-render(
-  <DateTimePicker
-    error={error}
-    onChange={onDateTimeChange}
-    defaultValue={date ? moment(date) : moment() } />,
-  document.getElementById('datetimepicker')
-);

@@ -20,6 +20,25 @@ class DeliveryListener
         $this->normalizer = $normalizer;
     }
 
+    public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
+    {
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        // Make sure legacy "originAddress" & "deliveryAddress" are set
+        if (null === $delivery->getOriginAddress() && null !== $pickup) {
+            $delivery->setOriginAddress($pickup->getAddress());
+        }
+        if (null === $delivery->getDeliveryAddress() && null !== $dropoff) {
+            $delivery->setDeliveryAddress($dropoff->getAddress());
+        }
+
+        // Make sure tasks are linked
+        if (null !== $pickup && null !== $dropoff && !$pickup->hasPrevious()) {
+            $dropoff->setPrevious($pickup);
+        }
+    }
+
     /**
      * @param LifecycleEventArgs $args
      */

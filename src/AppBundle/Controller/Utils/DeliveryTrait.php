@@ -23,7 +23,6 @@ trait DeliveryTrait
     private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null, array $options = [])
     {
         $isNew = $delivery->getId() === null;
-        $translator = $this->get('translator');
 
         if ($isNew) {
             if ($store) {
@@ -39,11 +38,7 @@ trait DeliveryTrait
 
         $defaultOptions = [
             'free_pricing' => $store === null,
-            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null,
-            'vehicle_choices' => [
-                $translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
-                $translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-            ]
+            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null
         ];
 
         $options = array_merge($defaultOptions, $options);
@@ -55,10 +50,11 @@ trait DeliveryTrait
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+
             $delivery = $form->getData();
             $user = $this->getUser();
 
-            $em = $this->getDoctrine()->getManagerForClass('AppBundle:Delivery');
+            $em = $this->getDoctrine()->getManagerForClass(Delivery::class);
 
             if (!$store && !$user->hasRole('ROLE_ADMIN')) {
                 $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
