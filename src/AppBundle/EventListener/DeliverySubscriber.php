@@ -21,9 +21,17 @@ class DeliverySubscriber implements EventSubscriber
         $entity = $args->getObject();
 
         if ($entity instanceof Delivery) {
-            foreach (Delivery::createTasks($entity) as $task) {
+
+            $tasks = $entity->getTasks();
+            if (count($tasks) === 0) {
+                $tasks = Delivery::createTasks($entity);
+                foreach ($tasks as $task) {
+                    $entity->addTask($task);
+                }
+            }
+
+            foreach ($tasks as $task) {
                 $task->setDelivery($entity);
-                $entity->addTask($task);
             }
         }
     }
