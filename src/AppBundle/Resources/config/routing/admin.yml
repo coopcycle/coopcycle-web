@@ -119,6 +119,7 @@ admin_restaurant_planning:
         routes:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
+            success: admin_restaurant_planning
     methods: [ GET, POST ]
 
 admin_restaurant_dashboard:
