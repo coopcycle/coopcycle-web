@@ -133,7 +133,7 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private $vehicle;
+    private $vehicle = self::VEHICLE_BIKE;
 
     public function __construct(Order $order = null)
     {
@@ -362,6 +362,24 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     public function setStore($store)
     {
         $this->store = $store;
+    }
+
+    public function getPickup()
+    {
+        foreach ($this->getTasks() as $task) {
+            if ($task->getType() === Task::TYPE_PICKUP) {
+                return $task;
+            }
+        }
+    }
+
+    public function getDropoff()
+    {
+        foreach ($this->getTasks() as $task) {
+            if ($task->getType() === Task::TYPE_DROPOFF) {
+                return $task;
+            }
+        }
     }
 
     public static function createTasks(Delivery $delivery)
