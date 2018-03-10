@@ -2,14 +2,13 @@
 {% form_theme form 'AppBundle:Form:pricingRuleSet.html.twig' %}
 
 {% block breadcrumb %}
-<li>{% trans %}Settings{% endtrans %}</li>
-<li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}Pricing{% endtrans %}</a></li>
+<li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
 {% endblock %}
 
 {% block content %}
 
   <div class="alert alert-info">
-    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_pricing') } %}delivery.pricing_rules.help{% endtrans %}
+    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_pricing') } %}adminDashboard.pricing.help{% endtrans %}
   </div>
 
   {{ form_start(form) }}
@@ -17,7 +16,7 @@
     {{ form_row(form.name) }}
 
     <div class="alert alert-warning {% if form.rules|length > 0 %}hidden{% endif %}">
-      {% trans %}No pricing rule found. Pricing rules define how the delivery cost is calculated.{% endtrans %}
+      {% trans %}adminDashboard.pricing.noRuleFound{% endtrans %}
     </div>
 
     {% if form.rules|length == 0 %}
@@ -41,12 +40,12 @@
 
     <div class="form-group text-right">
       <button type="button" id="add-pricing-rule" class="btn btn-success">
-        <i class="fa fa-plus"></i> {% trans %}Add rule{% endtrans %}
+        <i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.addRule{% endtrans %}
       </button>
     </div>
 
     <button type="submit" class="btn btn-block btn-primary">
-      {% trans %}Save{% endtrans %}
+      {% trans %}adminDashboard.pricing.save{% endtrans %}
     </button>
 
   {{ form_end(form) }}

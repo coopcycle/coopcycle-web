@@ -18,7 +18,7 @@
     <div class="image-uploader"
       {% if image_uri is defined and image_uri %}style="background-image: url({{ image_uri }})"{% endif %}>
       <label for="{{ form.file.vars.id }}" class="btn btn-danger">
-        <i class="fa fa-upload"></i> {% trans %}Upload an image{% endtrans %}
+        <i class="fa fa-upload"></i> {% trans %}restaurant.form.uploadImage{% endtrans %}
       </label>
       {{ form_widget(form.file) }}
     </div>

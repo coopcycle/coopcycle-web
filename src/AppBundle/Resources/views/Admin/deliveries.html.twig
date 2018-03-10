@@ -1,24 +1,24 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Deliveries{% endtrans %}</li>
+<li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
   <p class="text-right">
     <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success">
-      <i class="fa fa-plus"></i> {% trans %}Create new delivery{% endtrans %}
+      <i class="fa fa-plus"></i> {% trans %}adminDashboard.deliveries.createNew{% endtrans %}
     </a>
   </p>
   <table class="table">
     <thead>
       <th></th>
       <th>#</th>
-      <th>{% trans %}Type{% endtrans %}</th>
-      <th>{% trans %}Due date{% endtrans %}</th>
-      <th>{% trans %}Courier{% endtrans %}</th>
-      <th>{% trans %}Address{% endtrans %}</th>
-      <th>{% trans %}Delivery{% endtrans %}</th>
+      <th>{% trans %}adminDashboard.deliveries.type{% endtrans %}</th>
+      <th>{% trans %}adminDashboard.deliveries.dueDate{% endtrans %}</th>
+      <th>{% trans %}adminDashboard.deliveries.courier{% endtrans %}</th>
+      <th>{% trans %}adminDashboard.deliveries.address{% endtrans %}</th>
+      <th>{% trans %}adminDashboard.deliveries.delivery{% endtrans %}</th>
     </thead>
     <tbody>
     {% for task in tasks %}

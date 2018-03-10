@@ -1,16 +1,16 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block content %}
-<h2 class="page-header">{% trans %}My restaurants{% endtrans %}</h2>
+<h2 class="page-header">{% trans %}profile.myRestaurants{% endtrans %}</h2>
 
 {% if restaurants|length > 0 %}
   {% include "AppBundle::_partials/Restaurant/list.html.twig" %}
 {% else %}
-  <div class="alert alert-warning">{% trans %}You don't have any restaurants yet{% endtrans %}</div>
+  <div class="alert alert-warning">{% trans %}profile.myRestaurants.noRestaurants{% endtrans %}</div>
 {% endif %}
 
 <a href="{{ path('profile_restaurant_new') }}" class="btn btn-success">
-  <i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}
+  <i class="fa fa-plus"></i> {% trans %}profile.myRestaurants.createNew{% endtrans %}
 </a>
 
 {% endblock %}

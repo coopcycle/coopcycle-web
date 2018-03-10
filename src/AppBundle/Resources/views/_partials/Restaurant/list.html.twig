@@ -13,24 +13,24 @@
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+              {% trans %}restaurant.list.manage{% endtrans %}   <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
               {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
               <li>
                 <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
-                {% trans %}Orders{% endtrans %}
+                {% trans %}restaurant.list.orders{% endtrans %}
                 </a>
               </li>
               {% endif %}
               <li>
                 <a href="{{ path(menu_route, { id: restaurant.id }) }}">
-                  {% trans %}Menu{% endtrans %}
+                  {% trans %}restaurant.list.menu{% endtrans %}
                 </a>
               </li>
               <li>
                 <a href="{{ path(restaurant_route, { id: restaurant.id }) }}">
-                  {% trans %}Settings{% endtrans %}
+                  {% trans %}restaurant.list.settings{% endtrans %}
                 </a>
               </li>
             </ul>
@@ -46,7 +46,7 @@
   </table>
 {% else %}
   <div class="alert alert-info">
-  {% trans %}There are no restaurants yet.{% endtrans %}
-  <a href="{{ path('admin_restaurant_new') }}">{% trans %}Create a new restaurant{% endtrans %}</a>
+  {% trans %}restaurant.list.norestaurant{% endtrans %}
+  <a href="{{ path('admin_restaurant_new') }}">{% trans %}restaurant.list.createNewRestaurant{% endtrans %}</a>
   </div>
 {% endif %}

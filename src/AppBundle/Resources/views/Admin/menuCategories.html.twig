@@ -1,8 +1,8 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Menu{% endtrans %}</li>
-<li>{% trans %}Categories{% endtrans %}</li>
+<li>{% trans %}adminDashboard.menuCategories.menu{% endtrans %}</li>
+<li>{% trans %}adminDashboard.menuCategories.categories{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
 {% endfor %}
 </tbody>
 </table>
-<a href="{{ path('admin_menu_category_new') }}" class="btn btn-success">{% trans %}Add category{% endtrans %}</a>
+<a href="{{ path('admin_menu_category_new') }}" class="btn btn-success">{% trans %}adminDashboard.menuCategories.addCategory{% endtrans %}</a>
 {% endblock %}
 
 {% block scripts %}

@@ -3,10 +3,10 @@
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block content %}
-  <h2 class="page-header">{% trans %}New address{%  endtrans %}</h2>
+  <h2 class="page-header">{% trans %}profile.addresses.newAddress{%  endtrans %}</h2>
   {{ form_start(form) }}
   {{ form_widget(form) }}
-  <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+  <button type="submit" class="btn btn-block btn-primary">{% trans %}profile.addresses.save{% endtrans %}</button>
   {{ form_end(form) }}
 {% endblock %}
 

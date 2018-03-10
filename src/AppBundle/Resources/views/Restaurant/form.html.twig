@@ -3,8 +3,8 @@
 {% form_theme form 'AppBundle:Form:restaurant.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(restaurants_route) }}">{% trans %}Restaurants{% endtrans %}</a></li>
-<li>{% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}</li>
+<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+<li>{% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}restaurant.form.createRestaurant{% endtrans %}{% endif %}</li>
 {% endblock %}
 
 {% block content %}
@@ -19,20 +19,20 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}Create restaurant{% endtrans %}{% endif %}
+        {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}restaurant.form.createRestaurant{% endtrans %}{% endif %}
       </span>
     </div>
     <div class="collapse navbar-collapse" id="restaurant-navbar">
       <div class="nav navbar-nav navbar-right">
         {% if restaurant.id is not empty %}
           <a href="{{ path(menu_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-            <i class="fa fa-cutlery"></i>  {% trans %}Menu{% endtrans %}
+            <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.menu{% endtrans %}
           </a>
           <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
-            <i class="fa fa-cube"></i>  {% trans %}Orders{% endtrans %}
+            <i class="fa fa-cube"></i>  {% trans %}restaurant.list.orders{% endtrans %}
           </a>
           <a href="{{ path(planning_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
-            <i class="fa fa-clock-o"></i>  {% trans %}Planning{% endtrans %}
+            <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.planning{% endtrans %}
           </a>
         {% endif %}
       </div>
@@ -160,7 +160,7 @@
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
-      <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+      <button type="submit" class="btn btn-block btn-primary">{% trans %}restaurant.form.save{% endtrans %}</button>
     </div>
   </div>
 

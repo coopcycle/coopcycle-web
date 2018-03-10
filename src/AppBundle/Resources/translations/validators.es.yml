@@ -1,0 +1,15 @@
+restaurant.openingHours.notBlank: Introduce al menos un horario de apertura
+restaurant.telephone.notBlank: Introduce un número de teléfono
+restaurant.name.notBlank: Introduce el nombre del restaurante
+restaurant.contract.notValid: Introduce los términos de contrato (requiere privilegios de administrador)
+restaurant.notActivable: Aún no puedes activar éste restaurante
+
+address.tooFar: Esta dirección está muy lejos
+
+cart.date.tooSoon: Ésta fecha es demasiado pronto
+
+order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%
+
+delivery.date.restaurantClosed: Restaurante cerrado el %date%
+delivery.date.hasPassed: La fecha %date% ya ha pasado
+delivery.date.tooSoon: La fecha %date% es demasiado pronto

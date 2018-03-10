@@ -1,14 +1,14 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Restaurants{% endtrans %}</li>
+<li>{% trans %}adminDashboard.restaurants.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 
 <div class="text-right margin-bottom-md">
   <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}Create a new restaurant{% endtrans %}
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.restaurants.createNew{% endtrans %}
   </a>
 </div>
 {% include "AppBundle:Admin:pagination.html.twig" %}

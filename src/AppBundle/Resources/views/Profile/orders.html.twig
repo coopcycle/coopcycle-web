@@ -1,7 +1,7 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block content %}
-<h2 class="page-header">{% trans %}My orders{% endtrans %}</h2>
+<h2 class="page-header">{% trans %}profile.myOrders{% endtrans %}</h2>
 {% include "AppBundle:Profile:orders.pagination.html.twig" %}
   {% if orders is empty %}
     <div class="alert alert-warning">

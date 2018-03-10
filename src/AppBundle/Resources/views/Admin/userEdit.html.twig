@@ -3,14 +3,14 @@
 {% form_theme form 'AppBundle:Form:user.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path('admin_users') }}">{% trans %}Users{% endtrans %}</a></li>
+<li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
 <li><a href="{{ path('admin_user_details', { username: user.username }) }}">{{ user.username }}</a></li>
-<li>{% trans %}Edit{% endtrans %}</li>
+<li>{% trans %}adminDashboard.users.edit{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
     <h2 class="page-header">
-      {% trans %}Edit user{%  endtrans %}
+      {% trans %}adminDashboard.users.editUser{%  endtrans %}
     </h2>
     {% for message in app.flashes('notice') %}
       <div class="alert alert-success">
@@ -19,7 +19,7 @@
     {% endfor %}
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button type="submit" class="btn btn-block btn-primary">{% trans %}Save{% endtrans %}</button>
+    <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.users.save{% endtrans %}</button>
     {{ form_end(form) }}
 {% endblock %}
 
@@ -37,7 +37,7 @@
 
     var options = {
       url: "{{ path('admin_restaurants_search', { format: 'json'  }) }}",
-      placeholder: "{% trans %}Search restaurant…{% endtrans %}",
+      placeholder: "{% trans %}adminDashboard.users.searchRestaurant{% endtrans %}",
       onSuggestionSelected: function(restaurant) {
         var newRestaurant = $restaurants.attr('data-prototype');
         newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
@@ -60,7 +60,7 @@
 
     var options = {
       url: "{{ path('admin_stores_search', { format: 'json'  }) }}",
-      placeholder: "{% trans %}Search store…{% endtrans %}",
+      placeholder: "{% trans %}adminDashboard.users.searchStore{% endtrans %}",
       onSuggestionSelected: function(store) {
         var newStore = $stores.attr('data-prototype');
         newStore = newStore.replace(/__name__/g, $stores.find('tbody > tr').length);

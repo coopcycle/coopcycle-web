@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="text-right">
-  <label class="control-label" style="margin-right: 15px;">{% trans %}Date{% endtrans %}</label>
+  <label class="control-label" style="margin-right: 15px;">{% trans %}profile.task.date{% endtrans %}</label>
   <span id="datepicker"></span>
 </div>
 
@@ -13,7 +13,7 @@
 {% if tasks|length == 0 %}
 
   <div class="alert alert-warning">
-    {% trans %}No tasks scheduled{% endtrans %}
+    {% trans %}profile.task.noTasks{% endtrans %}
   </div>
 
 {% else %}
@@ -23,8 +23,8 @@
       <th></th>
       <th></th>
       <th></th>
-      <th>{% trans %}Due date{% endtrans %}</th>
-      <th>{% trans %}Address{% endtrans %}</th>
+      <th>{% trans %}profile.task.dueDate{% endtrans %}</th>
+      <th>{% trans %}profile.task.address{% endtrans %}</th>
       <th></th>
     </thead>
     <tbody>
@@ -46,7 +46,7 @@
         <td>{{ task.address.streetAddress }}</td>
         <td class="text-right">
           <button type="button" class="btn btn-xs btn-primary {% if task.done %}disabled{% endif %}" data-task="{{ task.id }}">
-            <i class="fa fa-check"></i> {% trans %}Complete{% endtrans %}
+            <i class="fa fa-check"></i> {% trans %}profile.task.complete{% endtrans %}
           </button>
         </td>
       </tr>

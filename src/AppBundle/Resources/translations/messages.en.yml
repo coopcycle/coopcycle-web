@@ -1,59 +1,113 @@
+navbar.login: Login
+navbar.myAccount: My Account
+
+base.footer.contactUs: Contact us
+base.footer.help: Help
+
+adminDashboard.title: Admin dashboard
+adminDashboard.configuration: Configuration
+
 adminDashboard.tooltip.orders: Manage restaurants orders
 adminDashboard.tooltip.deliveries: Manage deliveries
 adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
 
-dashboard.unassigned: Unassigned
-dashboard.assigned: Assigned
+adminDashboard.dashboard.title: Dashboard
+adminDashboard.dashboard.import: Import
+adminDashboard.dashboard.export: Export
+adminDashboard.dashboard.importErrors: Import errors
+adminDashboard.dashboard.importTasks: Import tasks
+adminDashboard.dashboard.exportTasks: Export tasks
+adminDashboard.dashboard.cancel: Cancel
+adminDashboard.dashboard.deleteTaskGroup: Delete task group
+adminDashboard.dashboard.display: Display
+adminDashboard.dashboard.displayByGroups: Display by groups
+adminDashboard.dashboard.displayAll: Display all
+adminDashboard.dashboard.add: Add
+adminDashboard.dashboard.addUserToPlanning: Add a user to the planning
+adminDashboard.dashboard.courier: Courier
 
-norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
+adminDashboard.deliveries.title: Deliveries
+adminDashboard.deliveries.createNew: Create new delivery
+adminDashboard.deliveries.type: Type
+adminDashboard.deliveries.dueDate: Due date
+adminDashboard.deliveries.courier: Courier
+adminDashboard.deliveries.address: Address
+adminDashboard.deliveries.delivery: Delivery
 
-local_business.form.enabled.label: Enabled
+adminDashboard.menuCategories.title: Menu categories
+adminDashboard.menuCategories.menu: Menu
+adminDashboard.menuCategories.categories: Categories
+adminDashboard.menuCategories.addCategory: Add category
+adminDashboard.menuCategories.save: Save
 
-deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
-deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
+adminDashboard.stores.title: Stores
+adminDashboard.stores.createNew: Create a new store
+adminDashboard.stores.form.uploadImage: Upload an image
 
-restaurant.disabledWarning: |
-  This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
-restaurant.closedWarning: |
-  This restaurant is closed now. You can still order for later on though!
-restaurant.temporaryClosedWarning: |
-  This restaurant is exceptionally closed. You can still order for later on though!
-restaurant.form.enabled.tooltip: |
-  When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
-restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link
-restaurant.form.accessPlanning: Access planning
-restaurant.contract.title: Contract
-restaurant.contract.minimumCartAmount.label: Minimum cart amount
-restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
-restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
-restaurant.contract.noContract: No contract details. Please contact an administrator.
+adminDashboard.deliveries.title: Deliveries
+adminDashboard.deliveries.createNew: Create delivery
+adminDashboard.deliveries.originAddress: Origin address
+adminDashboard.deliveries.deliveryAddress: Delivery address
+adminDashboard.deliveries.save: Save
 
-restaurant.closingForm.title: Add a temporary closure
-restaurant.closingForm.reason.label: Reason
-restaurant.closingForm.dates.label: Closing from/to
+adminDashboard.orders.title: Orders
+adminDashboard.orders.order: Order
+adminDashboard.orders.dishes: Dishes
+adminDashboard.orders.refuse: Refuse
+adminDashboard.orders.accept: Accept
+adminDashboard.orders.cancel: Cancel
+adminDashboard.orders.ready: Ready!
+adminDashboard.orders.previousOrders: Previous orders
+adminDashboard.orders.showCanceled: Show canceled orders
+adminDashboard.orders.noOrders: No orders yet
+adminDashboard.orders.clickForDetails: Click on an order to display details
+adminDashboard.orders.invoice.title: Invoice
+adminDashboard.orders.invoice.totalExcludingTax: Total excluding tax
+adminDashboard.orders.invoice.totalTax: Total tax
+adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 
-profile.addresses.breadcrumb: Adresses
-profile.addresses.empty: No address saved yet!
-profile.orders.empty: No order yet!
+adminDashboard.restaurants.title: Restaurants
+adminDashboard.restaurants.createNew: Create a new restaurant
 
-order.payment.title: Your payment informations
-order.payment.expiration.label: Expiration
-order.payment.month.label: Month
-order.payment.year.label: Year
-order.payment.card_number.label: Card number
-order.payment.total: Pay %total% €
-order.payment.card_number.help: >
-  A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
+adminDashboard.users.title: Users
+adminDashboard.users.edit: Edit
+adminDashboard.users.save: Save
+adminDashboard.users.searchRestaurant: Search restaurant…
+adminDashboard.users.searchStore: Search store…
+adminDashboard.users.roles: Roles
+adminDashboard.users.editUser: Edit user
+adminDashboard.users.edit.addStore: Add a store
+adminDashboard.users.edit.addRestaurant: Add a restaurant
 
-order.status.CREATED: Created
-order.status.CANCELED: Canceled
-order.status.WAITING: Waiting
-order.status.ACCEPTED: Accepted
-order.status.PICKED: Picked
-order.status.DELIVERED: Delivered
-order.status.PAYMENT_ERROR: Payment Error
+adminDashboard.settings.title: Settings
+
+adminDashboard.pricing.title: Pricing
+adminDashboard.pricing.manage: Manage
+adminDashboard.pricing.settings: Settings
+adminDashboard.pricing.noPricings: There are no pricings yet
+adminDashboard.pricing.createNew: Create a new pricing
+adminDashboard.pricing.help: <a href="%link%">Get help about pricing.</a>
+adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how the delivery cost is calculated.
+adminDashboard.pricing.addRule: Add rule
+adminDashboard.pricing.save: Save
+
+adminDashboard.tags.title: Tags
+adminDashboard.tags.save: Save
+adminDashboard.tags.createNew: Create new tag
+adminDashboard.tags.name: Name
+adminDashboard.tags.color: Color
+
+adminDashboard.taxation.title: Taxation
+
+adminDashboard.zones.title: Zones
+adminDashboard.zones.cancel: Cancel
+adminDashboard.zones.save: Save
+adminDashboard.zones.delete: Delete
+adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
+adminDashboard.zones.send: Send
+
 
 delivery.status.WAITING: Waiting
 delivery.status.DISPATCHED: Dispatched
@@ -65,52 +119,140 @@ delivery.status.DISPATCHED.verb: Dispatch
 delivery.status.PICKED.verb: Pick
 delivery.status.DELIVERED.verb: Deliver
 
-demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
-demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
+deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
+deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
 
-cart.widget.title: Your delivery details
-cart.widget.button: Order
+delivery.list.status: Status
+delivery.list.date: Date
+delivery.list.fromTo: From / To
+delivery.list.courier: Courier
+delivery.list.distance: Distance
+delivery.list.duration: Duration
+delivery.list.order: Order
+delivery.list.price: Price
 
-form.geojson_upload.file: File
-form.store_type.pricing_rule_set.label: Pricing
-form.delivery.pricing_rule_set.about: |
-  The following pricing will be applied: <a href="%link%" target="_blank">%name%</a>
-form.delivery.vehicle.VEHICLE_BIKE: Bike
-form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
-form.store_type.pricing_rule_set.placeholder: Choose a pricing
-form.delivery.vehicle.placeholder: Choose a vehicle type
-form.task_upload.file: File
+delivery.pastDeliveries: Past deliveries
+delivery.createNew: Create new delivery
 
-form.task_complete.done.label: Complete
-form.task_complete.fail.label: Report problem
+help.title: Help
+help.home: Home
 
-form.settings.stripe_publishable_key.label: Stripe publishable key
-form.settings.stripe_publishable_key.help: |
-  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
-form.settings.stripe_secret_key.label: Stripe secret key
-form.settings.stripe_secret_key.help: |
-  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
-form.settings.google_api_key.label: Clé d'API Google
-form.settings.google_api_key.help: |
-  Create a Google account to obtain your <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API key</a>
-form.settings.latlng.label: Geographical coordinates
-form.settings.latlng.help: |
-  Specify the default latitude and longitude. You can get it on <a href="https://www.latlong.net/">latlong.net</a>
+dashboard.unassigned: Unassigned
+dashboard.assigned: Assigned
 
-# mail
-email.signature:
-registration.email.subject: |
-  Email confirmation
-registration.email.message: |
-  Hi %givenName%,<br><br>
-  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
-  Welcome!<br><br>
-  The CoopCycle team
-registration.email.textMessage: |
-  Hi %givenName%,\n\n
-  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
-  Welcome!\n\n
-  The CoopCycle team
+norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
+
+local_business.form.enabled.label: Enabled
+
+
+restaurant.available: Available
+restaurant.unavailable: Unavailable
+restaurant.disabledWarning: |
+  This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
+restaurant.closedWarning: |
+  This restaurant is closed now. You can still order for later on though!
+restaurant.temporaryClosedWarning: |
+  This restaurant is exceptionally closed. You can still order for later on though!
+restaurant.form.enabled.tooltip: |
+  When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
+restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link
+restaurant.form.accessPlanning: Access planning
+restaurant.form.createRestaurant: Create restaurant
+restaurant.form.save: Save
+restaurant.contract.title: Contract
+restaurant.contract.minimumCartAmount.label: Minimum cart amount
+restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
+restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
+restaurant.contract.noContract: No contract details. Please contact an administrator.
+
+restaurant.closingForm.title: Add a temporary closure
+restaurant.closingForm.reason.label: Reason
+restaurant.closingForm.dates.label: Closing from/to
+
+restaurant.list.manage: Manage
+restaurant.list.orders: Orders
+restaurant.list.menu: Menu
+restaurant.list.planning: Planning
+restaurant.list.settings: Settings
+restaurant.list.norestaurant: There are no restaurants yet.
+restaurant.list.createNewRestaurant: Create a new restaurant
+
+restaurant.form.uploadImage: Upload an image
+
+restaurant.menu.form.addSection: Add section
+restaurant.menu.form.delete: Delete
+restaurant.menu.form.addDescription: Add description
+restaurant.menu.form.modifyDescription: Modify description
+restaurant.menu.form.extras: Extras
+restaurant.menu.form.addExtra: Add an extra
+restaurant.menu.form.extraGroups: Extra groups
+restaurant.menu.form.addExtraGroup: Add an extra groups
+restaurant.menu.form.addItem: Add a new item
+menu.modifier.STRATEGY_FREE: Free extra
+menu.modifier.STRATEGY_FREE.description: The extra is free
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Fixed price for all
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: All extras have a fixed price
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Fixed price for each
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Each extra has a custom price
+
+profile.addresses.breadcrumb: Adresses
+profile.addresses.empty: No address saved yet!
+profile.orders.empty: No order yet!
+profile.myDeliveries: My deliveries
+profile.myStores: My stores
+profile.myRestaurants: My restaurants
+profile.myRestaurants.noRestaurants: You don't have any restaurants yet
+profile.myRestaurants.createNew: Create a new restaurant
+profile.myAccount: My account
+profile.myTracking: My tracking
+profile.myOrders: My orders
+profile.myAddresses: My addresses
+profile.myPersonalInfo: My personal information
+profile.payment: Payment
+profile.task.cancel: Cancel
+profile.task.noTasks: No tasks scheduled
+profile.task.dueDate: Due date
+profile.task.address: Address
+profile.task.complete: Complete
+profile.task.date: Date
+profile.edit.save: Save
+profile.addresses.newAddress: New address
+profile.addresses.save: Save
+profile.addresses.add: Add
+profile.editProfile: Edit profile
+profile.payment.title: Payment
+profile.payment.stripeConnected: Your Stripe account is connected
+profile.username: Username
+profile.email: Email
+profile.telephone: Telephone
+profile.familyName: Family name
+profile.givenName: Given name
+
+order.payment.title: Your payment informations
+order.payment.expiration.label: Expiration
+order.payment.month.label: Month
+order.payment.year.label: Year
+order.payment.card_number.label: Card number
+order.payment.total: Pay %total% €
+order.payment.card_number.help: >
+  A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
+order.payment.cvc: CVC
+
+order.status.CREATED: Created
+order.status.CANCELED: Canceled
+order.status.WAITING: Waiting
+order.status.ACCEPTED: Accepted
+order.status.PICKED: Picked
+order.status.DELIVERED: Delivered
+order.status.PAYMENT_ERROR: Payment Error
+
+order.list.order: Order
+order.list.delivery: Delivery
+order.list.restaurant: Restaurant
+order.list.totalIncludingTax: Total including Tax
+order.list.duration: Duration
+order.list.createdAt: Created at
+order.list.cancel: Cancel
 
 order.confirmationMail.subject: "Order #%orderId% confirmed"
 order.confirmationMail.quantity: "Quantity"
@@ -130,6 +272,70 @@ order.acceptedMail.body: |
   A courier is coming to bring it to you!<br><br>
   The CoopCycle team
 
+
+
+
+task.form.create: Create task
+task.form.timeWindow: Time window
+task.form.cancel: Cancel
+task.form.showHistory: Show history
+task.form.modal.moreOptions: More options
+form.task_upload.file: File
+form.task_complete.done.label: Complete
+form.task_complete.fail.label: Report problem
+task.type.PICKUP: Pickup
+task.type.DROPOFF: Dropoff
+
+
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
+
+cart.title: Cart
+cart.widget.title: Your delivery details
+cart.widget.button: My order
+
+form.geojson_upload.file: File
+form.store_type.pricing_rule_set.label: Pricing
+form.delivery.pricing_rule_set.about: |
+  The following pricing will be applied: <a href="%link%" target="_blank">%name%</a>
+form.delivery.vehicle.VEHICLE_BIKE: Bike
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
+form.store_type.pricing_rule_set.placeholder: Choose a pricing
+form.delivery.vehicle.placeholder: Choose a vehicle type
+
+
+form.settings.stripe_publishable_key.label: Stripe publishable key
+form.settings.stripe_publishable_key.help: |
+  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
+form.settings.stripe_secret_key.label: Stripe secret key
+form.settings.stripe_secret_key.help: |
+  Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
+form.settings.google_api_key.label: Google API key
+form.settings.google_api_key.help: |
+  Create a Google account to obtain your <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API key</a>
+form.settings.latlng.label: Geographical coordinates
+form.settings.latlng.help: |
+  Specify the default latitude and longitude. You can get it on <a href="https://www.latlong.net/">latlong.net</a>
+
+
+
+# mail
+email.signature:
+registration.email.subject: |
+  Email confirmation
+registration.email.message: |
+  Hi %givenName%,<br><br>
+  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
+  Welcome!<br><br>
+  The CoopCycle team
+registration.email.textMessage: |
+  Hi %givenName%,\n\n
+  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
+  Welcome!\n\n
+  The CoopCycle team
+
+
+
 cart.modal.title: Warning
 cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?
 cart.modal.confirm: Add
@@ -142,6 +348,8 @@ roles.ROLE_STORE: 'Store'
 roles.ROLE_USER: 'User'
 
 user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>
+user.profile.familyName: Family name
+user.profile.givenName: Given name
 
 roles.ROLE_ADMIN.help: |
   Administrator : Full access to all features
@@ -155,16 +363,24 @@ roles.ROLE_STORE.help: |
 search.help: >
   Search restaurants in Paris area : %links%
 
+stores.form.save: Save
+stores.manage: Manage
+stores.settings: Settings
+stores.createNewDelivery: Create new delivery
+stores.list.noStores: There are no stores yet
+
 zones.help: <a href="%link%">Get help about zones.</a>
-delivery.pricing_rules.help: <a href="%link%">Get help about pricing.</a>
 
 meta.title: Delivery platform for worker-owned business.
 
 delivery_service.applicolis: AppliColis
 
-task.type.PICKUP: Pickup
-task.type.DROPOFF: Dropoff
-
 admin.settings.missing_mandatory_settings: |
   Mandatory settings are missing.
   Go to <a href="%settings_url%">settings page</a> to configure them.
+
+index.map.tip: Use the map below to find restaurants
+index.banner: Delicious meals delivered at your place
+
+pagination.previous: Previous
+pagination.next: Next

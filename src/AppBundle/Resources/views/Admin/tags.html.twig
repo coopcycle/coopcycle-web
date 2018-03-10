@@ -1,21 +1,20 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Settings{% endtrans %}</li>
-<li>{% trans %}Tags{% endtrans %}</li>
+<li>{% trans %}adminDashboard.tags.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 <p class="text-right">
   <a href="{{ path('admin_tag_new') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}Create new tag{% endtrans %}
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.tags.createNew{% endtrans %}
   </a>
 </p>
 <table class="table">
 <thead>
   <th>#</th>
-  <th>{% trans %}Name{% endtrans %}</th>
-  <th>{% trans %}Color{% endtrans %}</th>
+  <th>{% trans %}adminDashboard.tags.name{% endtrans %}</th>
+  <th>{% trans %}adminDashboard.tags.color{% endtrans %}</th>
 </thead>
 <tbody>
 {% for tag in tags %}

@@ -1,17 +1,17 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Users{% endtrans %}</li>
+<li>{% trans %}adminDashboard.users.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 <table class="table">
 <thead>
   <th>#</th>
-  <th>{% trans %}Username{% endtrans  %}</th>
-  <th>{% trans %}Email{% endtrans  %}</th>
-  <th>{% trans %}Telephone{% endtrans  %}</th>
-  <th class="text-right">{% trans %}Roles{% endtrans  %}</th>
+  <th>{% trans %}profile.username{% endtrans  %}</th>
+  <th>{% trans %}profile.email{% endtrans  %}</th>
+  <th>{% trans %}profile.telephone{% endtrans  %}</th>
+  <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
   <th></th>
 </thead>
 <tbody>

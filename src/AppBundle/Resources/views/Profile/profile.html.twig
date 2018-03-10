@@ -1,5 +1,5 @@
-<p><strong>{% trans %}Username{%  endtrans %}</strong>: {{ user.username }}</p>
-<p><strong>{% trans %}Email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
-<p><strong>{% trans %}Family name{%  endtrans %}</strong>: {{ user.familyName }}</p>
-<p><strong>{% trans %}Given name{%  endtrans %}</strong>: {{ user.givenName }}</p>
-<p><strong>{% trans %}Telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>
+<p><strong>{% trans %}profile.username{%  endtrans %}</strong>: {{ user.username }}</p>
+<p><strong>{% trans %}profile.email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
+<p><strong>{% trans %}profile.familyName{%  endtrans %}</strong>: {{ user.familyName }}</p>
+<p><strong>{% trans %}profile.givenName{%  endtrans %}</strong>: {{ user.givenName }}</p>
+<p><strong>{% trans %}profile.telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>

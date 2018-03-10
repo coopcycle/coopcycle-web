@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<h2 class="page-header">{% trans %}My addresses{%  endtrans %}</h2>
+<h2 class="page-header">{% trans %}profile.myAddresses{%  endtrans %}</h2>
   {% if addresses is empty %}
     <div class="alert alert-warning">
       {%  trans %}profile.addresses.empty{%  endtrans %}
@@ -19,7 +19,7 @@
       </tbody>
     </table>
   {%  endif %}
-<a class="btn btn-success" href="{{ path('profile_address_new') }}">{% trans %}Add{%  endtrans %}</a>
+<a class="btn btn-success" href="{{ path('profile_address_new') }}">{% trans %}profile.addresses.add{%  endtrans %}</a>
 {% endblock %}
 
 {% block scripts %}

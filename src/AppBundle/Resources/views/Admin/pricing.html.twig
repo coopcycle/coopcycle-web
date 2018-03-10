@@ -1,8 +1,7 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}Settings{% endtrans %}</li>
-<li>{% trans %}Pricing{% endtrans %}</li>
+<li>{% trans %}adminDashboard.pricing.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
@@ -16,12 +15,12 @@
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans %}Manage{% endtrans %}   <span class="caret"></span>
+              {% trans %}adminDashboard.pricing.manage{% endtrans %}   <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
               <li>
                 <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
-                  {% trans %}Settings{% endtrans %}
+                  {% trans %}adminDashboard.pricing.settings{% endtrans %}
                 </a>
               </li>
             </ul>
@@ -31,13 +30,13 @@
     {% endfor %}
   {% else %}
     <div class="alert alert-info">
-    {% trans %}There are no pricings yet{% endtrans %}
+    {% trans %}adminDashboard.pricing.noPricings{% endtrans %}
     </div>
   {% endif %}
   </tbody>
 </table>
 <div class="text-right">
-  <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {{ 'Create a new pricing'| trans }}</a>
+  <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
 </div>
 {% endblock %}
 
