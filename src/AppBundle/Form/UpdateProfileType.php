@@ -38,7 +38,7 @@ class UpdateProfileType extends AbstractType
                 ->add('telephone', PhoneNumberType::class,
                     array('label' => 'Telephone',
                           'format' => PhoneNumberFormat::NATIONAL,
-                          'default_region' => $this->countryIso));
+                          'default_region' => strtoupper($this->countryIso)));
 
 
         $isAdmin = false;

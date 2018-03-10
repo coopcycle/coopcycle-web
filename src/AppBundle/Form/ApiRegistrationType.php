@@ -38,7 +38,7 @@ class ApiRegistrationType extends AbstractType
                 ->add('familyName', TextType::class)
                 ->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
-                    'default_region' => $this->countryIso
+                    'default_region' => strtoupper($this->countryIso)
                 ]);
 
     }
