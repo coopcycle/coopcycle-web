@@ -35,6 +35,9 @@ adminDashboard.deliveries.dueDate: Fecha de entrega
 adminDashboard.deliveries.courier: Mensajero
 adminDashboard.deliveries.address: Dirección
 adminDashboard.deliveries.delivery: Entrega
+adminDashboard.deliveries.originAddress: Dirección de origen
+adminDashboard.deliveries.deliveryAddress: Dirección de entrega
+adminDashboard.deliveries.save: Guardar
 
 adminDashboard.menuCategories.title: Categorías de la carta
 adminDashboard.menuCategories.menu: Carta
@@ -45,12 +48,6 @@ adminDashboard.menuCategories.save: Guardar
 adminDashboard.stores.title: Tiendas
 adminDashboard.stores.createNew: Crear tienda
 adminDashboard.stores.form.uploadImage: Subir una imagen
-
-adminDashboard.deliveries.title: Entregas
-adminDashboard.deliveries.createNew: Crear entrega
-adminDashboard.deliveries.originAddress: Dirección de origen
-adminDashboard.deliveries.deliveryAddress: Dirección de entrega
-adminDashboard.deliveries.save: Guardar
 
 adminDashboard.orders.title: Pedidos
 adminDashboard.orders.order: Pedido
@@ -321,7 +318,6 @@ form.settings.latlng.help: |
 
 
 # mail
-email.signature:
 registration.email.subject: |
   Confirma tu correo electrónico
 registration.email.message: |
@@ -370,8 +366,6 @@ stores.list.noStores: Aún no existe ninguna tienda
 zones.help: <a href="%link%">Ayuda sobre las zonas.</a>
 
 meta.title: Plataforma de logística para cooperativas.
-
-delivery_service.applicolis: AppliColis
 
 admin.settings.missing_mandatory_settings: |
   Algunos ajustes obligatorios no han sido configurados.

@@ -35,6 +35,9 @@ adminDashboard.deliveries.dueDate: Due date
 adminDashboard.deliveries.courier: Courier
 adminDashboard.deliveries.address: Address
 adminDashboard.deliveries.delivery: Delivery
+adminDashboard.deliveries.originAddress: Origin address
+adminDashboard.deliveries.deliveryAddress: Delivery address
+adminDashboard.deliveries.save: Save
 
 adminDashboard.menuCategories.title: Menu categories
 adminDashboard.menuCategories.menu: Menu
@@ -45,12 +48,6 @@ adminDashboard.menuCategories.save: Save
 adminDashboard.stores.title: Stores
 adminDashboard.stores.createNew: Create a new store
 adminDashboard.stores.form.uploadImage: Upload an image
-
-adminDashboard.deliveries.title: Deliveries
-adminDashboard.deliveries.createNew: Create delivery
-adminDashboard.deliveries.originAddress: Origin address
-adminDashboard.deliveries.deliveryAddress: Delivery address
-adminDashboard.deliveries.save: Save
 
 adminDashboard.orders.title: Orders
 adminDashboard.orders.order: Order
@@ -320,7 +317,6 @@ form.settings.latlng.help: |
 
 
 # mail
-email.signature:
 registration.email.subject: |
   Email confirmation
 registration.email.message: |
@@ -360,9 +356,6 @@ roles.ROLE_RESTAURANT.help: |
 roles.ROLE_STORE.help: |
   Store owner: manage assigned stores, manage deliveries…
 
-search.help: >
-  Search restaurants in Paris area : %links%
-
 stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
@@ -372,8 +365,6 @@ stores.list.noStores: There are no stores yet
 zones.help: <a href="%link%">Get help about zones.</a>
 
 meta.title: Delivery platform for worker-owned business.
-
-delivery_service.applicolis: AppliColis
 
 admin.settings.missing_mandatory_settings: |
   Mandatory settings are missing.
