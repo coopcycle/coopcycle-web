@@ -1,0 +1,30 @@
+registration.email.subject: |
+  Email confirmation
+registration.email.message: |
+  Hi %givenName%,<br><br>
+  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
+  Welcome!<br><br>
+  The CoopCycle team
+registration.email.textMessage: |
+  Hi %givenName%,\n\n
+  To confirm your email, please click the following link: <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
+  Welcome!\n\n
+  The CoopCycle team
+
+order.confirmationMail.subject: "Order #%orderId% confirmed"
+order.confirmationMail.quantity: "Quantity"
+order.confirmationMail.delivery: "Delivery"
+order.confirmationMail.body: "Your order #%orderId% is confirmed.<br><br>The restaurant owner should now accept it. Your account will be debit when he accepts."
+order.confirmationMail.outro: "Thanks for your order,<br><br>The CoopCycle team"
+
+order.cancellationMail.subject: "Your order #%orderId% has been cancelled"
+order.cancellationMail.body: |
+  The restaurant owner can't prepared your order #%orderId%. Your account have not been debited.<br><br>
+  Please excuse us,<br><br>
+  The CoopCycle team
+
+order.acceptedMail.subject: "Your order #%orderId% has been accepted"
+order.acceptedMail.body: |
+  The cook started to prepare your order #%orderId%.<br><br>
+  A courier is coming to bring it to you!<br><br>
+  The CoopCycle team

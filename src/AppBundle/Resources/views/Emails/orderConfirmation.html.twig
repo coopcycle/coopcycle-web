@@ -1,14 +1,14 @@
 {% extends 'AppBundle::Emails/layout.html.twig' %}
 
 {% block content %}
-  {{  'order.confirmationMail.body' | trans({'%orderId%': orderId}) | raw }}
+  {{  'order.confirmationMail.body' | trans({'%orderId%': orderId}, 'emails') | raw }}
   <br><br>
   <table border="0" cellpadding="0" cellspacing="0" style="width:600px; margin: 20px auto; line-height: 30px;">
     <thead style="background-color: #ebebeb; font-size: 14px; font-weight: 200;">
       <tr>
         <th style="text-align: left; padding-left: 20px; width: 40px;">#</th>
         <th style="text-align: left; padding-left: 20px;">Item</th>
-        <th style="width: 120px; text-align: left; padding-left: 20px;">{% trans %}order.confirmationMail.quantity{% endtrans %}</th>
+        <th style="width: 120px; text-align: left; padding-left: 20px;">{% trans from 'emails' %}order.confirmationMail.quantity{% endtrans %}</th>
         <th style="width: 100px; text-align: right; padding-right: 20px;">Total</th>
       </tr>
     </thead>
@@ -26,7 +26,7 @@
         <td style="text-align: right; padding-right: 20px;">{{ order.totalTax|number_format(2, ',', ',') }}&nbsp;€</td>
       </tr>
       <tr style="background-color:#ebebeb;">
-        <td colspan="3" style="padding-left: 20px;">{% trans %}order.confirmationMail.delivery{% endtrans %}</td>
+        <td colspan="3" style="padding-left: 20px;">{% trans from 'emails' %}order.confirmationMail.delivery{% endtrans %}</td>
         <td style="text-align: right; padding-right: 20px; ">{{ order.delivery.price|number_format(2, ',', ',') }}&nbsp;€</td>
       </tr>
       <tr style="font-weight: 600; background-color: #BFBFBF;">
@@ -36,5 +36,5 @@
     </tbody>
   </table>
   <br><br>
-  {% trans %}order.confirmationMail.outro{%  endtrans %}
+  {% trans from 'emails' %}order.confirmationMail.outro{% endtrans %}
 {% endblock %}

@@ -35,7 +35,7 @@ class NotificationManager
             'orderId' => $order->getId()
         ]);
 
-        $email = new \Swift_Message($this->translator->trans('order.confirmationMail.subject', ['%orderId%' => $order->getId()]));
+        $email = new \Swift_Message($this->translator->trans('order.confirmationMail.subject', ['%orderId%' => $order->getId()], 'emails'));
         $email->setFrom([$emailAddress => $emailName]);
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');
@@ -57,7 +57,7 @@ class NotificationManager
             'orderId' => $order->getId()
         ]);
 
-        $email = new \Swift_Message($this->translator->trans('order.acceptedMail.subject', ['%orderId%' => $order->getId()]));
+        $email = new \Swift_Message($this->translator->trans('order.acceptedMail.subject', ['%orderId%' => $order->getId()], 'emails'));
         $email->setFrom([$emailAddress => $emailName]);
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');
@@ -79,7 +79,7 @@ class NotificationManager
             'orderId' => $order->getId()
         ]);
 
-        $email = new \Swift_Message($this->translator->trans('order.cancellationMail.subject', ['%orderId%' => $order->getId()]));
+        $email = new \Swift_Message($this->translator->trans('order.cancellationMail.subject', ['%orderId%' => $order->getId()], 'emails'));
         $email->setFrom([$emailAddress => $emailName]);
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');

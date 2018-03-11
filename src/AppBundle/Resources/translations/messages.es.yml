@@ -252,27 +252,6 @@ order.list.duration: Duración
 order.list.createdAt: Creado
 order.list.cancel: Cancelar
 
-order.confirmationMail.subject: "Pedido #%orderId% confirmado"
-order.confirmationMail.quantity: "Cantidad"
-order.confirmationMail.delivery: "Entrega"
-order.confirmationMail.body: "Tu pedido #%orderId% ha sido confirmado.<br><br>El restaurante aún tiene que aceptarlo. No cargaremos el precio del pedido a tu tarjeta hasta que lo haga."
-order.confirmationMail.outro: "Gracias por tu pedido,<br><br>La pájara"
-
-order.cancellationMail.subject: "Tu pedido #%orderId% ha sido cancelado"
-order.cancellationMail.body: |
-  El restaurante no puede preparar tu pedido #%orderId%. No hemos hecho ningún cargo a tu cuenta.<br><br>
-  Perdón por las molestias,<br><br>
-  La pájara
-
-order.acceptedMail.subject: "Tu pedido #%orderId% ha sido aceptado"
-order.acceptedMail.body: |
-  El cocinero ha empezado a preparar el pedido #%orderId%.<br><br>
-  Un mensajero se pondrá de camino en cuanto esté listo!<br><br>
-  La pájara
-
-
-
-
 task.form.create: Crear tarea
 task.form.timeWindow: Periodo
 task.form.cancel: Cancelar
@@ -314,24 +293,6 @@ form.settings.google_api_key.help: |
 form.settings.latlng.label: Coordinadas geográficas
 form.settings.latlng.help: |
   Especifica la latitud y longitud por defecto del mapa. Puedes obtenerla en <a href="https://www.latlong.net/">latlong.net</a>
-
-
-
-# mail
-registration.email.subject: |
-  Confirma tu correo electrónico
-registration.email.message: |
-  Hola %givenName%,<br><br>
-  sigue el siguiente enlace para confirmar tu correo electrónico: <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
-  ¡Bienvenido!<br><br>
-  La pájara
-registration.email.textMessage: |
-  Hola %givenName%,\n\n
-  sigue el siguiente enlace para confirmar tu correo electrónico: <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
-  ¡Bienvenido!\n\n
-  La pájara
-
-
 
 cart.modal.title: Atención
 cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres iniciar un pedido nuevo en éste restaurante?
