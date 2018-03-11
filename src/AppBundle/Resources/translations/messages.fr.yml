@@ -1,191 +1,11 @@
-Previous: Précédent
-Next: Suivant
-Delicious meals delivered at your place: De bons plats livrés à domicile
-Given name: Prénom
-Family name: Nom de famille
-Telephone: Numéro de téléphone
-Account type: Type de compte
-Customer: Client
-Courier: Coursier
-Restaurant: Restaurant
-Store: Magasin
-Enter your address: Entrez votre adresse
-Data imported from %link%: Données importées depuis %link%
-Search for restaurants: Rechercher des restaurants
-My personal informations: Mes informations personnelles
-My account: Mon compte
-Username: Nom d'utilisateur
-Email: Email
-My order: Ma commande
-My orders: Mes commandes
-My addresses: Mes adresses
-New Address: Nouvelle adresse
-Edit profile: Modifier le profil
-Unavailable: Indisponible
-Available: Disponible
-Available product?: Produit disponible?
-Add: Ajouter
-Save: Enregistrer
-Cart: Panier
-Order: Commande
-Orders: Commandes
-Additional information: Informations supplémentaires
-Postal code: Code postal
-City: Ville
-Street address: Adresse
-Delivery instructions (optional): Instructions (digicode, entreprise, ..) - optionnel
-Second door on the left..: Dans la deuxième cour à gauche..
-Floor (optional): Étage - optionnel
-Please select an address in the dropdown: Veuillez sélectionner une adresse dans la liste déroulante
-Address not available: Adresse indisponible
-Not registered yet?: Pas encore enregistré ?
-Create your account: Créez votre compte.
-History: Historique
-My deliveries: Mes livraisons
-Choose a delivery address: Choisissez une adresse de livraison
-Existing address: Adresse existante
-New address: Nouvelle adresse
-Delivery: Livraison
-Payment: Paiement
-Restaurants: Restaurants
-My restaurants: Mes restaurants
-Add a product: Ajouter un produit
-Settings: Paramètres
-Menu: Menu
-Name: Nom
-Price: Prix
-Category: Catégorie
-Save: Sauvegarder
-Forgot password?: Mot de passe oublié ?
-Deliveries: Livraisons
-Users: Utilisateurs
-Today: Aujourd'hui
-Tomorrow: Demain
-Edit: Modifier
-View: Voir
-User: Utilisateur
-Merchant: Commerçant
-Add section: Ajouter une section
-Add a new item: Nouvel élément
-Delete: Supprimer
-Use the map below to find restaurants: Utilisez la carte ci-dessous pour trouver des restaurants
-Manage orders: Gérer les commandes
-Create a new restaurant: Créer un nouveau restaurant
-Fixed delivery price: Prix fixe de la course
-Cancel: Annuler
-Ready!: Prête !
-Created at: Créé le
-Duration: Durée
-Admin dashboard: Panel d'administration
-From / To: De / À
-Manage: Gérer
-Refuse: Refuser
-Accept: Accepter
-Waiting: En attente
-No orders yet: Pas de commande pour le moment
-Appetizers, Dishes…: Entrées, Plats…
-Calculus strategy: Mode de calcul
-Add description: Ajouter une description
-Modify description: Modifier la description
-Extra groups: Groupes de suppléments
-Add an extra groups: Ajouter un groupe de suppléments
-Add an extra: Ajouter un supplément
-Extras: Suppléments
-The extra is free: Le supplément est gratuit
-The extra has a fixed price: Le supplément a un prix fixe
-Each extra has a custom price: Chaque supplément a un prix
-Status: État
-View order: Voir la commande
-Pickup time (minutes): Temps de récupération (en minutes)
-Delivery time (minutes): Temps de livraison (en minutes)
-Average delivery time: Temps moyen de livraison
-Roles: Rôles
-Click on an order to display details: Cliquez sur une commande pour l'afficher
-Dishes: Plats
-Previous orders: Commandes précédentes
-User %username%: Utilisateur %username%
-Edit user: Modifier l'utilisateur
-Search restaurant…: Rechercher un restaurant…
-Add a restaurant: Ajouter un restaurant
-Restaurants managed by user: Restaurants gérés par l'utilisateur
-VAT: TVA
-Your changes were saved.: Vos changements ont été sauvegardés.
-Taxation: Taxes
-Categories: Catégories
-Menu categories: Catégories du menu
-Website: Site web
-Legal name: Raison sociale
-Opening hours: Horaires d'ouverture
-Invoice: Facture
-Total excluding tax: Total HT
-Total tax: Total TVA
-Total including tax: Total TTC
-Pricing: Tarification
-Add rule: Ajouter un tarif
-No pricing rule found. Pricing rules define how the delivery cost is calculated. : Veuillez ajouter au moins une règle de tarification. Les règles définissent comment le prix de la course est calculé.
-Enter an expression: Entrez une expression
-Origin address: Adresse de départ
-Delivery address: Adresse de livraison
-Weight (g): Poids (g)
-Show canceled orders: Afficher les commandes annulées
-Validate: Valider
-Please choose a courier in the list below: Veuillez choisir un coursier dans la liste ci-dessous
-The delivery will appear in his planning: La livraison apparaîtra dans son planning
-This delivery will be considered as picked: Cette livraison sera considérée comme récupérée
-This delivery will be considered as delivered: Cette livraison sera considérée comme livrée
-This action cannot be undone: Cette action ne peut pas être annulée
-My tracking: Mes itinéraires
-Help: Aide
-Home: Accueil
-Upload a GeoJSON file: Uploadez un fichier au format GeoJSON
-Send: Envoyer
-Stores: Magasins
-Create a new store: Créer un nouveau magasin
-There are no stores yet.: Pas de magasin pour le moment.
-There are no pricings yet: Pas de tarification pour le moment.
-Rules: Règles
-Address: Adresse
-Create new delivery: Créer une livraison
-Create a new pricing: Créer une nouvelle tarification
-Vehicle: Véhicule
-My stores: Mes magasins
-Add a user to the planning: Ajouter un utilisateur au planning
-Stores managed by user: Magasins gérés par l'utilisateur
-Add a store: Ajouter un magasin
-Search store…: Rechercher un magasin…
-My tasks: Mes tâches
-Tasks: Tâches
-No tasks scheduled: Aucune tâche programmée
-Tasks matching %date% will be imported: Les tâches du %date% seront importées
-Tasks matching %date% will be exported: Les tâches du %date% seront exportées
-Create task: Créer une tâche
-More options: Plus d'options
-Time window: Créneau horaire
-Show history: Voir l'historique
-Smartphone Applications: Applications smartphone
-Past deliveries: Dernières livraisons
-Import: Importer
-Export: Exporter
-Import tasks: Importer des tâches
-Export tasks: Exporter des tâches
-Edit task %id%: Modifier la tâche %id%
-Due date: Échéance
-Complete: Terminer
-Complete task %id%: Terminer la tâche %id%
-Comments: Commentaires
-Specify any useful details to complete task: Précisez tout détail utile pour effectuer la tâche
-Import errors: Erreurs d'importation
-Could not geocode address %address%: Impossible de géocoder l'adresse %address%
-You must provide an "address" column: Vous devez spécifier une colonne "address"
-Display: Affichage
-Display by groups: Afficher par groupes
-Display all: Afficher tout
-The CSV file is not valid: Le ficher CSV n'est pas valide
-There are no restaurants yet.: Pas de restaurant pour le moment.
-Delete task group: Supprimer un groupe de tâches
-You are going to delete a task group. This will delete all the tasks from the group.: Vous êtes sur le point de supprimer un groupe de tâches. Cela supprimera toutes les tâches du groupe.
-Color: Couleur
-Create new tag: Créer un nouveau tag
+navbar.login: Connexion
+navbar.myAccount: Mon compte
+
+base.footer.contactUs: Nous contacter
+base.footer.help: Aide
+
+adminDashboard.title: Panel d'administration
+adminDashboard.configuration: Configuration
 
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
@@ -193,63 +13,98 @@ adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
 
-profile.addresses.breadcrumb: Addresses
-profile.addresses.empty: Pas d'adresse sauvegardée pour le moment!
-profile.orders.empty: Pas de commande pour l'instant!
+adminDashboard.dashboard.title: Tableau de bord
+adminDashboard.dashboard.import: Importer
+adminDashboard.dashboard.export: Exporter
+adminDashboard.dashboard.importErrors: Erreurs d'importation
+adminDashboard.dashboard.importTasks: Importer des tâches
+adminDashboard.dashboard.exportTasks: Exporter des tâches
+adminDashboard.dashboard.cancel: Annuler
+adminDashboard.dashboard.deleteTaskGroup: Supprimer un groupe de tâches
+adminDashboard.dashboard.display: Affichage
+adminDashboard.dashboard.displayByGroups: Afficher par groupe
+adminDashboard.dashboard.displayAll: Afficher tout
+adminDashboard.dashboard.add: Ajouter
+adminDashboard.dashboard.addUserToPlanning: Ajouter un utilisateur au planning
+adminDashboard.dashboard.courier: Coursier
 
-local_business.form.enabled.label: Activé
+adminDashboard.deliveries.title: Livraisons
+adminDashboard.deliveries.createNew: Créer une livraison
+adminDashboard.deliveries.type: Type
+adminDashboard.deliveries.dueDate: Échéance
+adminDashboard.deliveries.courier: Coursier
+adminDashboard.deliveries.address: Adresse
+adminDashboard.deliveries.delivery: Livraison
+adminDashboard.deliveries.originAddress: Adresse de départ
+adminDashboard.deliveries.deliveryAddress: Adresse de livraison
+adminDashboard.deliveries.save: Enregister
 
-dashboard.unassigned: En attente
-dashboard.assigned: Assignées
+adminDashboard.menuCategories.title: Catégories du menu
+adminDashboard.menuCategories.menu: Menu
+adminDashboard.menuCategories.categories: Catégories
+adminDashboard.menuCategories.addCategory: Ajouter une catégorie
+adminDashboard.menuCategories.save: Enregister
 
-deliveryForm.noPriceWarning: Le prix de la course n'a pas pu être calculé. Veuillez l'entrer manuellement.
-deliveryForm.noPriceFromPricingWarning: Le prix de la course n'a pas pu être calculé à partir de la tarification. Veuillez l'entrer manuellement ou éditer la tarification.
+adminDashboard.stores.title: Magasins
+adminDashboard.stores.createNew: Créer un magasin
+adminDashboard.stores.form.uploadImage: Uploader une image
 
+adminDashboard.orders.title: Commandes
+adminDashboard.orders.order: Commande
+adminDashboard.orders.dishes: Plats
+adminDashboard.orders.refuse: Refuser
+adminDashboard.orders.accept: Accepter
+adminDashboard.orders.cancel: Annuler
+adminDashboard.orders.ready: Prêt !
+adminDashboard.orders.previousOrders: Commandes précédentes
+adminDashboard.orders.showCanceled: Afficher les commandes annulées
+adminDashboard.orders.noOrders: Pas de commande pour l'instant
+adminDashboard.orders.clickForDetails: Cliquez sur une commande pour l'afficher
+adminDashboard.orders.invoice.title: Facture
+adminDashboard.orders.invoice.totalExcludingTax: Total HT
+adminDashboard.orders.invoice.totalTax: Total TVA
+adminDashboard.orders.invoice.totalIncludingTax: Total TTC
 
-restaurant.disabledWarning: |
-  Ce restaurant n'est pas activé et n'est donc pas visible des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l'activer dans l'admin</a>.
-restaurant.closedWarning: |
-  Ce restaurant est actuellement fermé. Vous pouvez commander pour plus tard!
-restaurant.temporaryClosedWarning: |
-  Ce restaurant est exceptionnellement fermé. Vous pouvez commander pour plus tard!
-restaurant.form.enabled.tooltip: |
-  Un restaurant desactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
-restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
-restaurant.form.accessPlanning: Accéder au planning
-restaurant.contract.title: Contrat
-restaurant.contract.minimumCartAmount.label: Montant minimum du panier
-restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
-restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
-restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
+adminDashboard.restaurants.title: Restaurants
+adminDashboard.restaurants.createNew: Créer un restaurant
 
-restaurant.closingForm.title: Ajouter une fermeture temporaire
-restaurant.closingForm.reason.label: Motif
-restaurant.closingForm.dates.label: Fermeture de/à
+adminDashboard.users.title: Utilisateurs
+adminDashboard.users.edit: Modifier
+adminDashboard.users.save: Enregister
+adminDashboard.users.searchRestaurant: Rechercher un restaurant…
+adminDashboard.users.searchStore: Rechercher un magasin…
+adminDashboard.users.roles: Rôles
+adminDashboard.users.editUser: Modier l'utilisateur
+adminDashboard.users.edit.addStore: Ajouter un magasin
+adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 
-menu.modifier.STRATEGY_FREE: Gratuit
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément
+adminDashboard.settings.title: Paramètres
 
-norestaurantfound: Pas de restaurant ouvert à cette heure!<br>Essayez avec une autre heure de livraison.
+adminDashboard.pricing.title: Tarification
+adminDashboard.pricing.manage: Gérer
+adminDashboard.pricing.settings: Paramètres
+adminDashboard.pricing.noPricings: Pas de tarification pour le moment
+adminDashboard.pricing.createNew: Créer une tarification
+adminDashboard.pricing.help: <a href="%link%">Consulter l'aide sur la tarification.</a>
+adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tarification. Les règles définissent comment le prix de la course est calculé.
+adminDashboard.pricing.addRule: Ajouter une règle
+adminDashboard.pricing.save: Enregister
 
-delivery_service.applicolis: AppliColis
+adminDashboard.tags.title: Tags
+adminDashboard.tags.save: Enregister
+adminDashboard.tags.createNew: Créer un tag
+adminDashboard.tags.name: Nom
+adminDashboard.tags.color: Couleur
 
-order.payment.title: Vos informations de paiement
-order.payment.expiration.label: Expiration
-order.payment.month.label: Mois
-order.payment.year.label: Année
-order.payment.card_number.label: Numéro de carte
-order.payment.total: Payer %total% €
-order.payment.card_number.help: >
-  Un <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte ne sera débité.
+adminDashboard.taxation.title: Taxes
 
-order.status.WAITING: En attente
-order.status.CREATED: Créée
-order.status.ACCEPTED: Acceptée
-order.status.REFUSED: Refusée
-order.status.READY: Prête
-order.status.CANCELED: Annulée
-order.status.PAYMENT_ERROR: Erreur de paiement
+adminDashboard.zones.title: Zones
+adminDashboard.zones.cancel: Annuler
+adminDashboard.zones.save: Enregister
+adminDashboard.zones.delete: Supprimer
+adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
+adminDashboard.zones.send: Envoyer
+
 
 delivery.status.WAITING: En attente
 delivery.status.DISPATCHED: Assignée
@@ -261,73 +116,140 @@ delivery.status.DISPATCHED.verb: Assigner
 delivery.status.PICKED.verb: Récupérer
 delivery.status.DELIVERED.verb: Livrer
 
-demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
-demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
+deliveryForm.noPriceWarning: Le prix de la course n'a pas pu être calculé. Veuillez l'entrer manuellement.
+deliveryForm.noPriceFromPricingWarning: Le prix de la course n'a pas pu être calculé à partir de la tarification. Veuillez l'entrer manuellement ou éditer la tarification.
 
-cart.widget.title: Vos détails de livraison
-cart.widget.button: Commander
+delivery.list.status: Statut
+delivery.list.date: Date
+delivery.list.fromTo: De / À
+delivery.list.courier: Coursier
+delivery.list.distance: Distance
+delivery.list.duration: Durée
+delivery.list.order: Commande
+delivery.list.price: Prix
 
-form.geojson_upload.file: Fichier
-form.store_type.pricing_rule_set.label: Tarification
-form.delivery.pricing_rule_set.about: |
-  La tarification suivante sera appliquée : <a href="%link%" target="_blank">%name%</a>
-form.delivery.vehicle.placeholder: Choisissez un type de véhicule
-form.delivery.vehicle.VEHICLE_BIKE: Vélo
-form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
-form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
-form.task_upload.file: Fichier
+delivery.pastDeliveries: Dernières livraisons
+delivery.createNew: Créer une livraison
 
-form.task_complete.done.label: Terminer
-form.task_complete.fail.label: Signaler un problème
+help.title: Aide
+help.home: Accueil
 
-form.settings.stripe_publishable_key.label: Clé publique Stripe
-form.settings.stripe_publishable_key.help: |
-  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé publique</a>
-form.settings.stripe_secret_key.label: Clé secrète Stripe
-form.settings.stripe_secret_key.help: |
-  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé secrète</a>
-form.settings.google_api_key.label: Clé d'API Google
-form.settings.google_api_key.help: |
-  Créez un compte Google pour récupérer votre <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé d'API</a>
-form.settings.latlng.label: Coordonnées géographiques
-form.settings.latlng.help: |
-  Spécifiez la latitude et la longitude par défaut. Vous pouvez l'obtenir sur <a href="https://www.latlong.net/">latlong.net</a>
+dashboard.unassigned: En attente
+dashboard.assigned: Assignées
 
-cart.modal.title: Attention
-cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
-cart.modal.confirm: Ajouter
-cart.modal.cancel: Retour
+norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre heure de livraison.
 
-user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En savoir plus</a>
+local_business.form.enabled.label: Activé
 
-roles.ROLE_ADMIN: 'Administrateur'
-roles.ROLE_COURIER: 'Coursier'
-roles.ROLE_RESTAURANT: 'Restaurant'
-roles.ROLE_STORE: 'Magasin'
-roles.ROLE_USER: 'Utilisateur'
 
-roles.ROLE_ADMIN.help: |
-  Administrateur : Accès total à toutes les fonctions
-roles.ROLE_COURIER.help: |
-  Coursier : visualiser les courses à faire, changer l'état des courses qui lui sont assignées…
-roles.ROLE_RESTAURANT.help: |
-  Restaurant : gérer les restaurants qui lui sont assignés, gérer les commandes…
-roles.ROLE_STORE.help: |
-  Magasin : gérer les magasins qui lui sont assignés, créer des courses…
+restaurant.available: Disponible
+restaurant.unavailable: Indisponible
+restaurant.disabledWarning: |
+  Ce restaurant n'est pas activé et n'est donc pas visible des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l'activer dans l'admin</a>.
+restaurant.closedWarning: |
+  Ce restaurant est actuellement fermé. Vous pouvez commander pour plus tard!
+restaurant.temporaryClosedWarning: |
+  Ce restaurant est exceptionnellement fermé. Vous pouvez commander pour plus tard!
+restaurant.form.enabled.tooltip: |
+  Un restaurant desactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
+restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
+restaurant.form.accessPlanning: Accéder au planning
+restaurant.form.createRestaurant: Créer un restaurant
+restaurant.form.save: Enregister
+restaurant.contract.title: Contrat
+restaurant.contract.minimumCartAmount.label: Montant minimum du panier
+restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
+restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
+restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 
-# mail
-registration.email.subject: |
-  Confirmation d'adresse
-registration.email.message: |
-  Bonjour %givenName%,<br><br>
-  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
-  Bienvenue!<br><br>
-  L'équipe CoopCycle
-registration.email.textMessage: |
-  Bonjour %givenName%,\n\n
-  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
-  Bienvenue!\n\n
-  L'équipe CoopCycle
+restaurant.closingForm.title: Ajouter une fermeture temporaire
+restaurant.closingForm.reason.label: Motif
+restaurant.closingForm.dates.label: Fermeture de/à
+
+restaurant.list.manage: Gérer
+restaurant.list.orders: Commandes
+restaurant.list.menu: Menu
+restaurant.list.planning: Planning
+restaurant.list.settings: Paramètres
+restaurant.list.norestaurant: Pas de restaurant pour le moment
+restaurant.list.createNewRestaurant: Créer un restaurant
+
+restaurant.form.uploadImage: Uploader une image
+
+restaurant.menu.form.addSection: Ajouter une section
+restaurant.menu.form.delete: Supprimer
+restaurant.menu.form.addDescription: Ajouter une description
+restaurant.menu.form.modifyDescription: Modifier la description
+restaurant.menu.form.extras: Suppléments
+restaurant.menu.form.addExtra: Ajouter un supplément
+restaurant.menu.form.extraGroups: Groupes de suppléments
+restaurant.menu.form.addExtraGroup: Ajouter un groupe de supplément
+restaurant.menu.form.addItem: Nouvel élément
+menu.modifier.STRATEGY_FREE: Gratuit
+menu.modifier.STRATEGY_FREE.description: Le supplément est gratuit
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: Tous les suppléments ont un prix fixe
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Chaque supplément a un prix différent
+
+profile.addresses.breadcrumb: Adresses
+profile.addresses.empty: Pas d'adresse sauvegardée pour le moment !
+profile.orders.empty: Pas de commande pour le moment !
+profile.myDeliveries: Mes livraisons
+profile.myStores: Mes magasins
+profile.myRestaurants: Mes restaurants
+profile.myRestaurants.noRestaurants: Vous n'avez pas encore de restaurants
+profile.myRestaurants.createNew: Créer un restaurant
+profile.myAccount: Mon compte
+profile.myTracking: Mes itinéraires
+profile.myOrders: Mes commandes
+profile.myAddresses: Mes adresses
+profile.myPersonalInfo: Mes données personnelles
+profile.payment: Paiement
+profile.task.cancel: Annuler
+profile.task.noTasks: Aucune tâche programmée
+profile.task.dueDate: Échéance
+profile.task.address: Adresse
+profile.task.complete: Terminer
+profile.task.date: Date
+profile.edit.save: Enregister
+profile.addresses.newAddress: Nouvelle adresse
+profile.addresses.save: Enregister
+profile.addresses.add: Ajouter
+profile.editProfile: Modifier le profil
+profile.payment.title: Paiement
+profile.payment.stripeConnected: Votre compte Stripe est connecté
+profile.username: Nom d'utilisateur
+profile.email: Email
+profile.telephone: Numéro de téléphone
+profile.familyName: Nom
+profile.givenName: Prénom
+
+order.payment.title: Vos informations de paiement
+order.payment.expiration.label: Expiration
+order.payment.month.label: Mois
+order.payment.year.label: Année
+order.payment.card_number.label: Numéro de carte
+order.payment.total: Payer %total% €
+order.payment.card_number.help: >
+  Un <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte ne sera débité.
+order.payment.cvc: CVC
+
+order.status.CREATED: Créée
+order.status.CANCELED: Annulée
+order.status.WAITING: En attente
+order.status.ACCEPTED: Acceptée
+order.status.PICKED: Récupéree
+order.status.DELIVERED: Livrée
+order.status.PAYMENT_ERROR: Erreur de paiement
+
+order.list.order: Commande
+order.list.delivery: Livraison
+order.list.restaurant: Restaurant
+order.list.totalIncludingTax: Total TTC
+order.list.duration: Durée
+order.list.createdAt: Créée le
+order.list.cancel: Annuler
 
 order.confirmationMail.subject: "Confirmation de votre commande #%orderId%"
 order.confirmationMail.quantity: "Quantité"
@@ -347,31 +269,111 @@ order.acceptedMail.body: |
   Un coursier arrive pour vous l'apporter!<br><br>
   L'équipe CoopCycle
 
-search.help: >
-  Cherchez dans les quartiers de Paris : %links%
 
-zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
-delivery.pricing_rules.help: <a href="%link%">Consulter l'aide sur la tarification.</a>
 
-meta.title: Plateforme de livraison pour les sociétés coopératives.
 
-About: À propos
-Open: Ouvert
-Closed: Fermé
-Contact us: Contactez nous
-Terms of service: Conditions d'utilisation
-Continue to payment: Paiement
-You don't have any restaurants yet: Vous n'avez pas encore de restaurants
-Create restaurant: Créer un restaurant
-Create delivery: Créer une livraison
-Upload an image: Uploader une image
-Default: Défaut
-Serves cuisine: Type de plats
-No order in progress: Pas de commande en cours
-
+task.form.create: Créer une tâche
+task.form.timeWindow: Créneau horaire
+task.form.cancel: Annuler
+task.form.showHistory: Voir l'historique
+task.form.modal.moreOptions: Plus d'options
+form.task_upload.file: Fichier
+form.task_complete.done.label: Terminer
+form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
 task.type.DROPOFF: Dépôt
+
+
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
+
+cart.title: Panier
+cart.widget.title: Vos détails de livraison
+cart.widget.button: Commander
+
+
+
+form.geojson_upload.file: Fichier
+form.store_type.pricing_rule_set.label: Tarification
+form.delivery.pricing_rule_set.about: |
+  La tarification suivante sera appliquée : <a href="%link%" target="_blank">%name%</a>
+form.delivery.vehicle.VEHICLE_BIKE: Vélo
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
+form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
+form.delivery.vehicle.placeholder: Choisissez un type de véhicule
+
+
+form.settings.stripe_publishable_key.label: Clé publique Stripe
+form.settings.stripe_publishable_key.help: |
+  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé publique</a>
+form.settings.stripe_secret_key.label: Clé secrète Stripe
+form.settings.stripe_secret_key.help: |
+  Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé secrète</a>
+form.settings.google_api_key.label: Clé d'API Google
+form.settings.google_api_key.help: |
+  Créez un compte Google pour récupérer votre <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé d'API</a>
+form.settings.latlng.label: Coordonnées géographiques
+form.settings.latlng.help: |
+  Spécifiez la latitude et la longitude par défaut. Vous pouvez l'obtenir sur <a href="https://www.latlong.net/">latlong.net</a>
+
+
+
+# mail
+registration.email.subject: |
+  Confirmation d'adresse
+registration.email.message: |
+  Bonjour %givenName%,<br><br>
+  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.<br><br>
+  Bienvenue!<br><br>
+  L'équipe CoopCycle
+registration.email.textMessage: |
+  Bonjour %givenName%,\n\n
+  Pour confirmer votre email, veuillez cliquer sur le lien suivant <a href="%confirmationUrl%">%confirmationUrl%</a>.\n\n
+  Bienvenue!\n\n
+  L'équipe CoopCycle
+
+
+
+cart.modal.title: Attention
+cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
+cart.modal.confirm: Ajouter
+cart.modal.cancel: Retour
+
+roles.ROLE_ADMIN: Administrateur
+roles.ROLE_COURIER: Coursier
+roles.ROLE_RESTAURANT: Restaurant
+roles.ROLE_STORE: Magasin
+roles.ROLE_USER: Utilisateur
+
+user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En savoir plus</a>
+user.profile.familyName: Nom
+user.profile.givenName: Prénom
+
+roles.ROLE_ADMIN.help: |
+  Administrateur : Accès total à toutes les fonctions
+roles.ROLE_COURIER.help: |
+  Coursier : visualiser les courses à faire, changer l'état des courses qui lui sont assignées…
+roles.ROLE_RESTAURANT.help: |
+  Restaurant : gérer les restaurants qui lui sont assignés, gérer les commandes…
+roles.ROLE_STORE.help: |
+  Magasin : gérer les magasins qui lui sont assignés, créer des courses…
+
+stores.form.save: Enregister
+stores.manage: Gérer
+stores.settings: Paramètres
+stores.createNewDelivery: Créer une livraison
+stores.list.noStores: Pas de magasin pour le moment
+
+zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
+
+meta.title: Plateforme de livraison pour les sociétés coopératives.
 
 admin.settings.missing_mandatory_settings: |
   Des paramètres obligatoires sont manquants.
   Allez à la <a href="%settings_url%">page des paramètres</a> pour les configurer.
+
+index.map.tip: Utilisez la carte ci-dessous pour trouver des restaurants
+index.banner: De bons plats livrés à domicile
+
+pagination.previous: Précédent
+pagination.next: Suivante
