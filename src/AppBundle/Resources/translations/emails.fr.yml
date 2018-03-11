@@ -28,3 +28,24 @@ order.acceptedMail.body: |
   Le cuisinier a commencé à préparer votre commande #%orderId%.<br><br>
   Un coursier arrive pour vous l'apporter!<br><br>
   L'équipe CoopCycle
+
+delivery.to_be_confirmed.subject: Commande enregistrée !
+delivery.to_be_confirmed.body: |
+  Bonjour, <br><br>
+  Nous avons bien enregistré votre demande.
+  <br>
+  <br>
+  Nous vérifions dans les plus brefs délais votre commande, et nous vous recontactons lorsque celle-ci est confirmée.
+delivery.to_be_confirmed.outro: Merci pour votre confiance
+
+delivery.confirmed.subject: Votre livraison est confirmée !
+delivery.confirmed.body: |
+  Bonjour,
+  <br>
+  Votre livraison est confirmée.
+  <br>
+  <br>
+  Si vous souhaitez payer votre commande par carte bancaire, <a href="%stripe_payment_url%">cliquez ici</a>.
+delivery.confirmed.outro: Merci pour votre confiance
+
+

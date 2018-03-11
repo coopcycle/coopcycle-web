@@ -1,0 +1,75 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block banner %}{% endblock %}
+{% block menu %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block styles %}
+<style>
+  .StripeElement {
+    background-color: white;
+    height: 40px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div style="padding: 20px;">
+
+  <h3>{{ 'embed.payment.heading'|trans({ '%uuid%': stripe_payment.uuid }) }}</h3>
+
+  {{ form_start(form) }}
+
+    {{ form_widget(form.stripeToken) }}
+
+    <div class="form-group">
+      <label class="control-label" for="card-element">
+        {% trans %}order.payment.title{% endtrans %}
+      </label>
+      <div id="card-element">
+        <!-- a Stripe Element will be inserted here. -->
+      </div>
+      <!-- Used to display form errors -->
+      <div id="card-errors" role="alert"></div>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-lg btn-primary">
+      {% trans with { '%total%': stripe_payment.totalIncludingTax } %}order.payment.total{% endtrans %}
+    </button>
+
+  {{ form_end(form) }}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script type="text/javascript">
+  new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+    publishableKey: "{{ craue_setting('stripe_publishable_key') }}",
+    tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  })
+</script>
+{% endblock %}

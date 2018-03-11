@@ -1,0 +1,77 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% form_theme form with ['AppBundle:Form:delivery.html.twig', 'AppBundle:Form:deliveryEmbed.html.twig'] %}
+
+{% block banner %}{% endblock %}
+{% block menu %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+
+<div style="padding: 20px;">
+
+  {% include "@App/Embed/Delivery/breadcrumb.html.twig" %}
+
+  {{ form_start(form, { action: path('embed_delivery_summary'), attr: {  autocomplete: 'off' } }) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.pickup) }}
+    {{ form_row(form.dropoff) }}
+
+    {{ form_row(form.vehicle) }}
+
+    <h3>Contact</h3>
+
+    {{ form_row(form.email) }}
+    {{ form_row(form.telephone) }}
+
+    {{ form_widget(form._token) }}
+
+    <hr>
+
+    <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
+
+  {{ form_end(form, { render_rest: false }) }}
+
+  {% include "@App/Embed/Delivery/footer.html.twig" %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function initMap() {
+
+  var tasks = {
+    pickup: {
+      doneBefore: "{{ form.pickup.doneBefore.vars.value|date('Y-m-d H:i:s') }}",
+    },
+    dropoff: {
+      doneBefore: "{{ form.dropoff.doneBefore.vars.value|date('Y-m-d H:i:s') }}"
+    }
+  }
+
+  $.each(tasks, function(type, data) {
+    new CoopCycle.DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
+      defaultValue: data.doneBefore,
+      onChange: function(date, dateString) {
+        document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+      }
+    });
+    new CoopCycle.AddressInput(document.querySelector(`#delivery_${type}_address_streetAddress`), {
+      elements: {
+        latitude: document.querySelector(`#delivery_${type}_address_latitude`),
+        longitude: document.querySelector(`#delivery_${type}_address_longitude `),
+        postalCode: document.querySelector(`#delivery_${type}_address_postalCode`),
+        addressLocality: document.querySelector(`#delivery_${type}_address_addressLocality`)
+      }
+    });
+  })
+
+}
+</script>
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"
+  async defer></script>
+{% endblock %}

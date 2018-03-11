@@ -17,23 +17,37 @@
 {% endblock %}
 
 {% block content %}
+
+{% set delivery = form.vars.value %}
+
 {{ form_start(form) }}
 
+  {% if delivery.status == 'TO_BE_CONFIRMED' %}
+  <div class="alert alert-warning">
+    <i class="fa fa-exclamation-triangle"></i> {{ 'form.delivery.to_be_confirmed.alert'|trans }}
+    <span class="pull-right">
+    {% if form.confirm is defined %}
+    {{ form_widget(form.confirm, { attr: { class: 'btn btn-xs btn-success' } }) }}
+    {% endif %}
+    </span>
+  </div>
+  {% endif %}
+
   <div class="row">
-    <div class="col-sm-7">
+    <div class="col-sm-6">
+
+      {{ form_row(form.vehicle) }}
+      {{ form_row(form.weight) }}
 
       {% if form.store is defined %}
       {{ form_row(form.store) }}
       {% endif %}
 
-      {{ form_row(form.weight) }}
-      {{ form_row(form.vehicle) }}
-
       {{ form_row(form.pickup) }}
       {{ form_row(form.dropoff) }}
 
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-6">
       <div class="embed-responsive embed-responsive-16by9">
         <div class="embed-responsive-item" id="map"></div>
       </div>
@@ -83,7 +97,10 @@
 
       </div>
       <hr>
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">{% trans %}adminDashboard.deliveries.save{% endtrans %}</button>
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
+        {% trans %}adminDashboard.deliveries.save{% endtrans %}
+      </button>
+
     </div>
   </div>
 

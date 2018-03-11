@@ -38,6 +38,7 @@ adminDashboard.deliveries.delivery: Livraison
 adminDashboard.deliveries.originAddress: Adresse de départ
 adminDashboard.deliveries.deliveryAddress: Adresse de livraison
 adminDashboard.deliveries.save: Enregister
+admin.deliveries.to_be_confirmed.alert: Vous avez des livraisons à confirmer. Cliquez sur l'icône « Livraison » dans la colonne de droite.
 
 adminDashboard.menuCategories.title: Catégories du menu
 adminDashboard.menuCategories.menu: Menu
@@ -290,6 +291,8 @@ form.delivery.distance.label: Distance
 form.delivery.duration.label: Durée
 form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Rechercher un magasin…
+form.delivery.confirm.label: Confirmer
+form.delivery.to_be_confirmed.alert: Vous devez confirmer la livraison
 
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
@@ -354,3 +357,38 @@ index.banner: De bons plats livrés à domicile
 
 pagination.previous: Précédent
 pagination.next: Suivante
+
+basics.save: Enregister
+basics.next: Suivant
+basics.continue: Continuer
+basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
+
+adminDashboard.embed.title: Intégration
+
+embed.delivery.title: Formulaire de création de livraison
+embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle tarifaire à appliquer
+embed.delivery.iframe_code: Utilisez le code HTML ci-dessous pour intégrer le formulaire sur votre site
+
+embed.breadcrumb.start: Informations
+embed.breadcrumb.summary: Résumé
+embed.breadcrumb.confirm: Confirmation
+
+embed.payment.heading: Payer ma commande
+
+embed.delivery.summary: |
+  Merci !
+  <br>
+  Vous avez commandé une course qui vous sera déposée le <strong>%dropoff_date%</strong> à l'adresse suivante :
+  <br>
+  <strong>%dropoff_address%</strong>
+  <br>
+  <br>
+  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>
+  <br>
+  Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>
+
+embed.delivery.confirm_message: |
+  Nous avons bien enregistré votre demande.
+  <br>
+  Nous allons vous envoyer un email d'ici quelques minutes.
+

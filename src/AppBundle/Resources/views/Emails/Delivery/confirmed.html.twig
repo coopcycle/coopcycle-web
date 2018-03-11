@@ -1,0 +1,10 @@
+{% extends '@App/Emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'delivery.confirmed.body' | trans({
+    '%stripe_payment_url%': url('embed_payment', { uuid: stripe_payment.uuid }),
+  }, 'emails') | raw }}
+  <br>
+  <br>
+  {% trans from 'emails' %}delivery.confirmed.outro{% endtrans %}
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block task_embed_row %}
+
+  {{ form_label(form) }}
+
+  {{ form_row(form.address.streetAddress, { label: false }) }}
+  {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+
+  {{ form_row(form.address.description) }}
+
+  {{ form_widget(form.type) }}
+  {{ form_widget(form.address.latitude) }}
+  {{ form_widget(form.address.longitude) }}
+  {{ form_widget(form.address.postalCode) }}
+  {{ form_widget(form.address.addressLocality) }}
+
+{% endblock %}
+
+{% block _delivery_vehicle_widget %}
+<div class="alert alert-info">
+  Nous livrons en vélo cargo les objets de plus de 50x40x20 (cm) ou dont le poids excède 6kg
+</div>
+{{ block('vehicle_widget') }}
+{% endblock %}
+
+{# Pickup #}
+
+{% block _delivery_pickup_row %}
+  {{ block('task_embed_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_address_streetAddress_row %}
+  {{ block('form_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{% block _delivery_pickup_address_postalCode_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_pickup_address_addressLocality_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{# Dropoff #}
+
+{% block _delivery_dropoff_row %}
+  {{ block('task_embed_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_address_streetAddress_row %}
+  {{ block('form_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{% block _delivery_dropoff_address_postalCode_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_dropoff_address_addressLocality_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}

@@ -14,6 +14,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
@@ -21,6 +22,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
+use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
@@ -238,6 +240,16 @@ class AdminController extends Controller
             return $user->hasRole('ROLE_COURIER');
         });
 
+        $qb =  $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->createQueryBuilder('d');
+
+        $qb->select($qb->expr()->count('d'))
+           ->where('d.status = ?1')
+           ->setParameter(1, Delivery::STATUS_TO_BE_CONFIRMED);
+
+        $toBeConfirmedCount = $qb->getQuery()->getSingleScalarResult();
+
         usort($couriers, function (UserInterface $a, UserInterface $b) {
             return $a->getUsername() < $b->getUsername() ? -1 : 1;
         });
@@ -252,6 +264,7 @@ class AdminController extends Controller
             'couriers' => $couriers,
             'tasks' => $tasks,
             'routes' => $this->getDeliveryRoutes(),
+            'to_be_confirmed_warning' => $toBeConfirmedCount > 0
         ];
     }
 
@@ -671,6 +684,63 @@ class AdminController extends Controller
 
         return [
             'form' => $form->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/admin/embed", name="admin_embed")
+     * @Template()
+     */
+    public function embedAction(Request $request)
+    {
+        $pricingRuleSet = null;
+        try {
+            $pricingRuleSetId = $this->get('craue_config')->get('embed.delivery.pricingRuleSet');
+            if ($pricingRuleSetId) {
+                $pricingRuleSet = $this->getDoctrine()
+                    ->getRepository(PricingRuleSet::class)
+                    ->find($pricingRuleSetId);
+            }
+        } catch (\RuntimeException $e) {}
+
+        $embedSettingsForm = $this->createForm(EmbedSettingsType::class);
+        $embedSettingsForm->get('pricingRuleSet')->setData($pricingRuleSet);
+
+        $embedSettingsForm->handleRequest($request);
+        if ($embedSettingsForm->isSubmitted() && $embedSettingsForm->isValid()) {
+
+            $pricingRuleSet = $embedSettingsForm->get('pricingRuleSet')->getData();
+
+            $configEntityClass = $this->getParameter('craue_config.entity_name');
+
+            $setting = $this->getDoctrine()
+                ->getRepository($configEntityClass)
+                ->findOneBy([
+                    'section' => 'embed',
+                    'name' => 'embed.delivery.pricingRuleSet'
+                ]);
+
+            if (!$setting) {
+                $setting = new $configEntityClass();
+                $setting->setSection('embed');
+                $setting->setName('embed.delivery.pricingRuleSet');
+
+                $this->getDoctrine()
+                    ->getManagerForClass($configEntityClass)
+                    ->persist($setting);
+            }
+
+            $setting->setValue($pricingRuleSet ? $pricingRuleSet->getId() : null);
+
+            $this->getDoctrine()
+                ->getManagerForClass($configEntityClass)->flush();
+
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return [
+            'pricing_rule_set' => $pricingRuleSet,
+            'embed_settings_form' => $embedSettingsForm->createView(),
         ];
     }
 }

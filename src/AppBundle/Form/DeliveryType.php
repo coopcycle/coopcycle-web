@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -131,14 +132,25 @@ class DeliveryType extends AbstractType
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) use ($options, $isAdmin) {
+
+                $form = $event->getForm();
+                $delivery = $form->getData();
+
                 if (!$isAdmin) {
                     $priceFieldConfig = $event->getForm()->get('price')->getConfig();
                     $options = $priceFieldConfig->getOptions();
                     $options['attr'] = ['disabled' => true];
                     $event->getForm()->add('price', MoneyType::class, $options);
                 }
+
                 if (false === $options['free_pricing'] && null !== $options['pricing_rule_set']) {
                     $event->getForm()->get('pricingRuleSet')->setData($options['pricing_rule_set']->getId());
+                }
+
+                if ($delivery->getStatus() === Delivery::STATUS_TO_BE_CONFIRMED) {
+                    $form->add('confirm', SubmitType::class, [
+                        'label' => 'form.delivery.confirm.label'
+                    ]);
                 }
             }
         );

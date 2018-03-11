@@ -60,6 +60,15 @@ trait DeliveryTrait
                 $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
             }
 
+            if ($form->getClickedButton()) {
+                if ('confirm' === $form->getClickedButton()->getName()) {
+                    $delivery->setStatus(Delivery::STATUS_CONFIRMED);
+                    $em->flush();
+
+                    return $this->redirectToRoute($routes['success']);
+                }
+            }
+
             if ($form->isValid()) {
 
                 $deliveryManager = $this->get('coopcycle.delivery.manager');
