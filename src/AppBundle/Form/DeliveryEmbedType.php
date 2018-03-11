@@ -11,14 +11,14 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DeliveryEmbedType extends DeliveryType
 {
-    public function __construct(TokenStorage $tokenStorage, TranslatorInterface $translator, $countryCode)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator, $countryCode)
     {
-        parent::__construct($tokenStorage, $translator);
+        parent::__construct($authorizationChecker, $translator);
 
         $this->countryCode = $countryCode;
     }

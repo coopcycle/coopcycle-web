@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
@@ -27,12 +27,12 @@ use Symfony\Component\Validator\Constraints;
 
 class DeliveryType extends AbstractType
 {
-    private $tokenStorage;
+    private $authorizationChecker;
     private $translator;
 
-    public function __construct(TokenStorage $tokenStorage, TranslatorInterface $translator)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, TranslatorInterface $translator)
     {
-        $this->tokenStorage = $tokenStorage;
+        $this->authorizationChecker = $authorizationChecker;
         $this->translator = $translator;
     }
 
@@ -43,12 +43,7 @@ class DeliveryType extends AbstractType
             $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
         ];
 
-        $isAdmin = false;
-        if ($token = $this->tokenStorage->getToken()) {
-            if ($user = $token->getUser()) {
-                $isAdmin = $user->hasRole('ROLE_ADMIN');
-            }
-        }
+        $isAdmin = $this->authorizationChecker->isGranted('ROLE_ADMIN');
 
         $builder
             ->add('weight', NumberType::class, [
@@ -138,9 +133,9 @@ class DeliveryType extends AbstractType
 
                 if (!$isAdmin) {
                     $priceFieldConfig = $event->getForm()->get('price')->getConfig();
-                    $options = $priceFieldConfig->getOptions();
-                    $options['attr'] = ['disabled' => true];
-                    $event->getForm()->add('price', MoneyType::class, $options);
+                    $priceFieldOptions = $priceFieldConfig->getOptions();
+                    $priceFieldOptions['attr'] = ['disabled' => true];
+                    $event->getForm()->add('price', MoneyType::class, $priceFieldOptions);
                 }
 
                 if (false === $options['free_pricing'] && null !== $options['pricing_rule_set']) {
