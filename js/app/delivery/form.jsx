@@ -177,7 +177,6 @@ window.initMap = function() {
       latitude: originAddressLatitude.value,
       longitude: originAddressLongitude.value
     }, 'pickup')
-    $('#delivery_pickup_collapse').collapse('hide')
   }
 
   if (hasDeliveryAddress) {
@@ -186,7 +185,6 @@ window.initMap = function() {
       latitude: deliveryAddressLatitude.value,
       longitude: deliveryAddressLongitude.value
     }, 'dropoff')
-    $('#delivery_dropoff_collapse').collapse('hide')
   }
 
   new CoopCycle.AddressInput(document.querySelector('#delivery_pickup_address_streetAddress'), {
@@ -225,11 +223,6 @@ window.initMap = function() {
     onAddressChange: address => {
       $('#delivery_dropoff_panel_title').text(address.streetAddress)
       markAddressChecked('dropoff')
-    },
-    onLoad: () => {
-      if (hasOriginAddress) {
-        setTimeout(() => $('#delivery_dropoff_address_streetAddress').focus(), 500)
-      }
     }
   })
 
