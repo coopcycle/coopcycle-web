@@ -39,6 +39,7 @@
   {{ form_widget(form.address.latitude) }}
   {{ form_widget(form.address.longitude) }}
   {{ form_widget(form.type) }}
+  {{ form_widget(form.doneAfter) }}
 
 {% endblock %}
 
@@ -52,6 +53,26 @@
   </div>
   {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
 </div>
+{% endblock %}
+
+{% block vehicle_widget %}
+<div>
+  <div class="btn-group btn-group--vehicle" data-toggle="buttons">
+  {% for child in form %}
+    {% set value = child.vars.value %}
+    {% set checked = child.vars.checked %}
+    {% set label = child.vars.label %}
+    <label class="btn btn-default {% if checked %}active{% endif %}">
+      <div class="bike-icon bike-icon--{{ value }}"></div>
+      <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} /> {{ label }}
+    </label>
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block _delivery_vehicle_widget %}
+  {{ block('vehicle_widget') }}
 {% endblock %}
 
 {# Pickup #}
@@ -71,6 +92,10 @@
 {% block _delivery_pickup_address_streetAddress_row %}
   {% set icon = 'cube' %}
   {{ block('task_address_streetAddress_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_doneAfter_widget %}
+  {{ block('hidden_widget') }}
 {% endblock %}
 
 {% block _delivery_pickup_doneBefore_widget %}
@@ -95,6 +120,10 @@
 {% block _delivery_dropoff_address_streetAddress_row %}
   {% set icon = 'flag' %}
   {{ block('task_address_streetAddress_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_doneAfter_widget %}
+  {{ block('hidden_widget') }}
 {% endblock %}
 
 {% block _delivery_dropoff_doneBefore_widget %}

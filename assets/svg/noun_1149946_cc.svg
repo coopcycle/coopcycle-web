@@ -1,0 +1,26 @@
+<svg
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" xml:space="preserve" viewBox="0 0 133.33333 133.33333" x="0px" y="0px">
+  <g transform="matrix(1.3333333,0,0,-1.3333333,0,133.33333)">
+    <g transform="matrix(0.41250001,0,0,-0.41250001,670.12071,221.91966)">
+      <g transform="matrix(1.8181818,0,0,1.8181818,4576.8428,-1295.0889)">
+        <g transform="translate(-642.05097,-0.24515095)">
+          <path d="m -2702.3384,954.58586 c -5.9177,0 -32.2158,0 -39.517,0 l 11.5843,-24.21772" style="" fill="none" stroke="#000000" stroke-width="3.15776682" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1"/>
+          <path d="m -2708.1094,920.71313 c 6.0529,0.0932 5.8578,2.33964 5.9474,8.81257 l 0.018,25.06016 h 11.595 m 28.8764,0 13.2731,-10e-6 v -17.54824 h -53.7626" style="" fill="none" stroke="#000000" stroke-width="3.15776682" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1"/>
+          <path d="m -2729.7853,930.61105 9.0666,23.97481" style="" fill="none" stroke="#000000" stroke-width="3.1575501" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1"/>
+          <ellipse ry="14.374805" rx="14.308007" cy="954.26251" cx="-2741.3738" style="" fill="none" stroke="#000000" stroke-width="3.15597868" stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1"/>
+          <path d="m -2732.3499,927.76243 c -2.1274,0.72357 -2.7488,0.23882 -3.4362,-0.2245 -0.6874,-0.46331 -0.7311,-2.08845 -0.1215,-2.79341 1.172,-1.35515 13.2621,-0.0629 13.9671,0.12145 0.705,0.18434 0.559,0.47386 0.3644,0.85017 -0.1947,0.37632 -7.2486,0.29202 -8.3012,1.41529 0.3087,0.83158 2.3551,5.79992 2.3551,5.79992 l -2.4986,0.40774 c -0.7682,-2.16479 -1.7951,-4.05149 -2.3291,-5.57666 z" style="" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="0.48565" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1"/>
+          <circle r="10.238582" cy="958.39874" cx="-2676.3511" style="" fill="none" stroke="#000000" stroke-width="3.32753921" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1"/>
+          <circle style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.25039029;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" cx="-2676.3538" cy="958.59662" r="1.5124999"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <text x="0" y="148.33333" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by eric poscher</text>
+  <text x="0" y="153.33333" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
+</svg>

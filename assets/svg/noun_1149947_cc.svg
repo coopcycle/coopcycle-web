@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:svg="http://www.w3.org/2000/svg" viewBox="0 0 133.33333 133.33333" xml:space="preserve" version="1.1" x="0px" y="0px">
+    <g transform="matrix(1.3333333,0,0,-1.3333333,0,133.33333)">
+        <g transform="matrix(0.41250001,0,0,-0.41250001,670.12071,221.91966)">
+            <path d="m -1462.8816,388.64287 5.25,17.375 24.6251,0.25" style="" fill="none" stroke="#000000" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+            <path d="m -1467.5305,395.26787 6.3989,0.1251" style="" fill="none" stroke="#000000" stroke-width="4.70031595" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+            <path style="" d="m -1465.1554,405.01787 5.3989,0.12491" fill="none" stroke="#000000" stroke-width="4.70031595" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+            <g transform="translate(1308.1771,0.18454608)">
+                <ellipse ry="26.136011" rx="26.014559" cy="439.37756" cx="-2764" style="" fill="none" stroke="#000000" stroke-width="5.73814297" stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1" />
+                <ellipse ry="26.136011" rx="26.014559" cy="439.62753" cx="-2859" style="" fill="none" stroke="#000000" stroke-width="5.73814297" stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1" />
+                <path style="" d="m -2763.4576,439.83335 c 0,0 -15.7339,-51.299 -17.25,-56.25001 -1.5161,-4.951 -2.818,-6.125 -12.943,-6" fill="none" stroke="#000000" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+                <path style="" d="m -2816.2076,442.33334 -20.25,-47.99999 58.0732,0.43607 1.4268,5.56392 -38.75,42.25 -43.75,-2.74999 22.75,-45.24999" fill="none" stroke="#000000" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+                <path style="" d="m -2840.9325,388.92513 c -3.8679,1.31558 -4.9977,0.43422 -6.2476,-0.40817 -1.2499,-0.8424 -1.3293,-3.7972 -0.2208,-5.07894 2.1309,-2.46391 24.1127,-0.11433 25.3946,0.22082 1.2818,0.33515 1.0163,0.86156 0.6625,1.54576 -0.3539,0.68421 -13.1792,0.53096 -15.093,2.57326 0.5612,1.51196 4.282,10.54531 4.282,10.54531 l -4.543,0.74134 c -1.3967,-3.93597 -3.2637,-7.36635 -4.2347,-10.13938 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="0.88299996" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" />
+            </g>
+        </g>
+    </g>
+    <text x="0" y="148.33333" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by eric poscher</text>
+    <text x="0" y="153.33333" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
+</svg>
