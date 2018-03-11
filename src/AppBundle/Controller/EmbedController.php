@@ -280,7 +280,7 @@ class EmbedController extends Controller
             $stripeToken = $form->get('stripeToken')->getData();
 
             $charge = Stripe\Charge::create([
-              'amount' => $delivery->getTotalIncludingTax() * 100,
+              'amount' => $stripePayment->getTotalIncludingTax() * 100,
               'currency' => 'eur',
               'description' => $chargeDescription,
               'metadata' => $chargeMetadata,
