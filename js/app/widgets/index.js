@@ -1,6 +1,8 @@
 import AddressInput from './AddressInput'
 import ColorPicker from './ColorPicker'
 import DatePicker from './DatePicker'
+import DateTimePicker from './DateTimePicker'
+import DeliveryMap from './DeliveryMap'
 import OpeningHoursInput from './OpeningHoursInput'
 import OpeningHoursParser from './OpeningHoursParser'
 import RulePicker from './RulePicker'
@@ -12,6 +14,8 @@ window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.AddressInput = AddressInput
 window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.DatePicker = DatePicker
+window.CoopCycle.DateTimePicker = DateTimePicker
+window.CoopCycle.DeliveryMap = DeliveryMap
 window.CoopCycle.OpeningHoursInput = OpeningHoursInput
 window.CoopCycle.OpeningHoursParser = OpeningHoursParser
 window.CoopCycle.RulePicker = RulePicker
