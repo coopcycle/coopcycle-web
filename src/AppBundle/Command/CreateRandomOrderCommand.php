@@ -38,7 +38,6 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
         $this->restaurantRepository = $this->doctrine->getRepository(Restaurant::class);
         $this->orderRepository = $this->doctrine->getRepository(Order::class);
         $this->userManager = $this->getContainer()->get('fos_user.user_manager');
-        $this->stripe = Stripe\Stripe::setApiKey($this->getContainer()->getParameter('stripe_secret_key'));
         $this->orderManager = $this->getContainer()->get('order.manager');
     }
 
