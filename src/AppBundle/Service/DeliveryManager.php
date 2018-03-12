@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -19,18 +18,18 @@ class DeliveryManager
     private $calculator;
     private $taxCategoryRepository;
     private $taxCategoryCode;
-    private $zoneExpressionLanguageProvider;
+    private $expressionLanguage;
 
     public function __construct(EntityRepository $pricingRuleRepository,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ZoneExpressionLanguageProvider $zoneExpressionLanguageProvider)
+        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ExpressionLanguage $expressionLanguage)
     {
         $this->pricingRuleRepository = $pricingRuleRepository;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->taxCategoryCode = $taxCategoryCode;
-        $this->zoneExpressionLanguageProvider = $zoneExpressionLanguageProvider;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     public function applyTaxes(Delivery $delivery)
@@ -52,12 +51,9 @@ class DeliveryManager
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
-        $language = new ExpressionLanguage();
-        $language->registerProvider($this->zoneExpressionLanguageProvider);
-
         foreach ($ruleSet->getRules() as $rule) {
-            if ($rule->matches($delivery, $language)) {
-                return $rule->getPrice();
+            if ($rule->matches($delivery, $this->expressionLanguage)) {
+                return $rule->evaluatePrice($delivery, $this->expressionLanguage);
             }
         }
     }

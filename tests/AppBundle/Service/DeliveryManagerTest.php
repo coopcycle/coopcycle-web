@@ -6,7 +6,6 @@ use AppBundle\BaseTest;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
@@ -17,7 +16,7 @@ class DeliveryManagerTest extends BaseTest
     private $taxRateResolver;
     private $calculator;
     private $taxCategoryRepository;
-    private $zoneExpressionLanguageProvider;
+    private $expressionLanguage;
 
     public function setUp()
     {
@@ -26,8 +25,7 @@ class DeliveryManagerTest extends BaseTest
         $this->taxRateResolver = static::$kernel->getContainer()->get('sylius.tax_rate_resolver');
         $this->calculator = static::$kernel->getContainer()->get('sylius.tax_calculator');
         $this->taxCategoryRepository = static::$kernel->getContainer()->get('sylius.repository.tax_category');
-        $this->zoneExpressionLanguageProvider = static::$kernel->getContainer()->get('coopcycle.expression_language.zone.provider');
-        $this->routing = static::$kernel->getContainer()->get('routing_service');
+        $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
     }
 
     public function testGetPrice()
@@ -59,8 +57,7 @@ class DeliveryManagerTest extends BaseTest
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->zoneExpressionLanguageProvider,
-            $this->routing
+            $this->expressionLanguage
         );
 
         $delivery = new Delivery();
@@ -81,8 +78,7 @@ class DeliveryManagerTest extends BaseTest
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->zoneExpressionLanguageProvider,
-            $this->routing
+            $this->expressionLanguage
         );
 
         // 3.5 - (3.5 / (1 + 0.20)) = 0.58

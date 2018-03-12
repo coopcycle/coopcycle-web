@@ -45,15 +45,22 @@ services:
       - { name: form.type, alias: app_store }
 
   coopcycle.repository.zone:
-    class: AppBundle\Entity\OrderRepository
+    class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Zone
 
   coopcycle.expression_language.zone.provider:
-    public: true
+    public: false
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
     arguments: [ '@coopcycle.repository.zone' ]
+
+  coopcycle.expression_language:
+    public: true
+    class: AppBundle\ExpressionLanguage\ExpressionLanguage
+    arguments:
+      - null
+      - [ "@coopcycle.expression_language.zone.provider" ]
 
   my.registration_listener:
     class: AppBundle\EventListener\RegistrationListener
@@ -114,7 +121,7 @@ services:
       - "@sylius.tax_calculator"
       - "@sylius.repository.tax_category"
       - 'tva_livraison' # TODO Load from settings
-      - "@coopcycle.expression_language.zone.provider"
+      - "@coopcycle.expression_language"
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService

@@ -25,15 +25,15 @@ class PricingRule
 
     /**
      * @Groups({"original_rules"})
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Assert\Type(type="string")
      */
     protected $expression;
 
     /**
      * @Groups({"original_rules"})
-     * @ORM\Column(type="float")
-     * @Assert\Type(type="float")
+     * @ORM\Column(type="text")
+     * @Assert\Type(type="string")
      */
     protected $price;
 
@@ -105,6 +105,20 @@ class PricingRule
         $this->ruleSet = $ruleSet;
 
         return $this;
+    }
+
+    public function evaluatePrice(Delivery $delivery, ExpressionLanguage $language = null)
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        return $language->evaluate($this->getPrice(), [
+            'distance' => $delivery->getDistance(),
+            'weight' => $delivery->getWeight(),
+            'deliveryAddress' => $delivery->getDeliveryAddress(),
+            'vehicle' => $delivery->getVehicle()
+        ]);
     }
 
     public function matches(Delivery $delivery, ExpressionLanguage $language = null)

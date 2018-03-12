@@ -52,4 +52,17 @@ class PricingRuleTest extends TestCase
 
         $this->assertFalse($rule->matches($delivery));
     }
+
+    public function testEvaluatePrice()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance in 500..3000');
+        $rule->setPrice('15 + ((distance / 1000) * 3)');
+
+        $delivery = new Delivery();
+        $delivery->setDistance(2500);
+
+        // 15€ + 3€ per km = 15 + 2,5 * 3
+        $this->assertEquals(22.5, $rule->evaluatePrice($delivery));
+    }
 }

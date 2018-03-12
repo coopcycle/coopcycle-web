@@ -4,7 +4,6 @@ namespace AppBundle\Tests\Action;
 
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
-use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
@@ -17,6 +16,7 @@ use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -40,7 +40,7 @@ class TestCase extends BaseTestCase
         $taxRateResolver = $this->prophesize(TaxRateResolverInterface::class);
         $calculator = $this->prophesize(CalculatorInterface::class);
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
-        $zoneExpressionLanguageProvider = $this->prophesize(ZoneExpressionLanguageProvider::class);
+        $expressionLanguage = $this->prophesize(ExpressionLanguage::class);
         $routing = $this->prophesize(RoutingInterface::class);
 
         $this->user = new Entity\ApiUser();
@@ -56,7 +56,7 @@ class TestCase extends BaseTestCase
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
             'tva_livraison',
-            $zoneExpressionLanguageProvider->reveal(),
+            $expressionLanguage->reveal(),
             $routing->reveal()
         );
 
