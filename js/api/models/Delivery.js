@@ -1,5 +1,4 @@
 var Promise = require('promise');
-var _ = require('underscore');
 
 var winston = require('winston');
 winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';

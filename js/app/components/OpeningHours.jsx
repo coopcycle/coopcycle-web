@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import _ from 'underscore'
+import _ from 'lodash'
 
 import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'

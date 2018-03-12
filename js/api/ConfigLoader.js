@@ -2,7 +2,7 @@ var YAML = require('js-yaml');
 var fs = require('fs');
 var path = require('path');
 var merge = require('deepmerge');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var ConfigLoader = function(filename) {
   this.filename = filename;
@@ -37,7 +37,7 @@ function loadAndMerge(filename, dirname, parent) {
 
 function replaceParameters(data, parameters) {
 
-  return _.mapObject(data, function(value, key) {
+  return _.mapValues(data, function(value, key) {
     if (typeof value === 'string') {
       if (-1 !== value.indexOf('%')) {
         _.each(parameters, function(paramValue, paramKey) {

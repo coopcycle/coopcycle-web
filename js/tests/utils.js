@@ -5,7 +5,7 @@ var net = require('net');
 var DatabaseCleaner = require('database-cleaner');
 var jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
-var _ = require('underscore');
+var _ = require('lodash');
 var pgCleaner = new DatabaseCleaner('postgresql', {
   postgresql: {
     skipTables: [],

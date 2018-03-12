@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from 'react-dom';
 import OrderFollow from './OrderFollow.jsx';
 
-var _ = require('underscore');
 var moment = require('moment');
 var MapHelper = require('../MapHelper');
 

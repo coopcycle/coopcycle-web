@@ -1,6 +1,6 @@
 import MapHelper from '../MapHelper'
 import L from 'leaflet'
-import _ from 'underscore'
+import _ from 'lodash'
 
 if ($('form[name="zone_collection"]').length === 1) {
   $('#zone_collection_zones').find('input[type="hidden"]')

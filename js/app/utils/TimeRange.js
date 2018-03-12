@@ -1,5 +1,5 @@
 import moment from 'moment'
-import _ from 'underscore'
+import _ from 'lodash'
 
 export default class TimeRange {
 
@@ -21,7 +21,7 @@ export default class TimeRange {
   }
 
   static weekdays(locale) {
-    const map = _.object(
+    const map = _.zipObject(
       moment.localeData('en').weekdaysMin(),
       moment.localeData(locale).weekdays()
     )
@@ -41,7 +41,7 @@ export default class TimeRange {
   }
 
   static weekdaysShort(locale) {
-    const map =  _.object(
+    const map =  _.zipObject(
       moment.localeData('en').weekdaysMin(),
       moment.localeData(locale).weekdaysShort()
     )

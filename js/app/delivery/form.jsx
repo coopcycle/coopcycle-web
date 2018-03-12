@@ -1,5 +1,5 @@
 import MapHelper from '../MapHelper';
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';

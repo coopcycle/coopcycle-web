@@ -1,6 +1,6 @@
 var Courier = require('./models/Courier').Courier;
 var jwt = require('jsonwebtoken');
-var _ = require('underscore');
+var _ = require('lodash');
 
 function TokenVerifier(cert, db) {
   this.cert = cert;
@@ -32,7 +32,7 @@ TokenVerifier.prototype.verify = function (info, cb) {
             console.log('User does not exist');
             return cb(false, 401, 'Access denied');
           }
-          if (!_.contains(user.roles, 'ROLE_COURIER')) {
+          if (!_.includes(user.roles, 'ROLE_COURIER')) {
             console.log('User has not enough access rights');
             return cb(false, 401, 'Access denied');
           }

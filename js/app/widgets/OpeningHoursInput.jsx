@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import OpeningHours from '../components/OpeningHours.jsx'
-import _ from 'underscore'
+import _ from 'lodash'
 
 export default (el, options) => {
 

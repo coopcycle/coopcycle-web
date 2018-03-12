@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import MapHelper from '../MapHelper'
 
-var _ = require('underscore');
+var _ = require('lodash');
 var TWEEN = require('@tweenjs/tween.js');
 var L = require('leaflet-providers');
 var Polyline = require('@mapbox/polyline');

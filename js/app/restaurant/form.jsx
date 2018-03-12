@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import _ from 'underscore'
 import Switch from 'antd/lib/switch'
 
 var $deliveryService = $('#restaurant_deliveryService_type')

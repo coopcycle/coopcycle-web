@@ -1,5 +1,5 @@
 var Sequelize = require('sequelize');
-var _ = require('underscore');
+var _ = require('lodash');
 var unserialize = require('locutus/php/var/unserialize');
 
 var sequelizeOptions = {

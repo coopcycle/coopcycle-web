@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 function Courier(data) {
   this.state = data.state || Courier.UNKNOWN;
@@ -32,7 +32,7 @@ Courier.prototype.declineDelivery = function(delivery) {
 };
 
 Courier.prototype.hasDeclinedDelivery = function(delivery) {
-  return _.contains(this.declinedDeliveries, delivery);
+  return _.includes(this.declinedDeliveries, delivery);
 };
 
 Courier.prototype.isAvailable = function() {
