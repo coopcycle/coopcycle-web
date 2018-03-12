@@ -40,6 +40,7 @@ Feature: Manage restaurants
       "hydra:member":[
         {
           "@id":"/api/restaurants/2",
+          "id": 2,
           "@type":"http://schema.org/Restaurant",
           "servesCuisine":@array@,
           "enabled":true,
@@ -66,6 +67,7 @@ Feature: Manage restaurants
     {
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants/1",
+      "id":1,
       "@type":"http://schema.org/Restaurant",
       "servesCuisine":@array@,
       "enabled":true,

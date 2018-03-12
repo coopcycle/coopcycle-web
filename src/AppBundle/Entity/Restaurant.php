@@ -78,6 +78,7 @@ class Restaurant extends FoodEstablishment
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Groups({"restaurant"})
      */
     private $id;
 

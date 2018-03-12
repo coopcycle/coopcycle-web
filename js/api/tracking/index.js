@@ -48,15 +48,46 @@ const io = require('socket.io')(app, { path: '/tracking/socket.io' });
 let subscribed = false;
 
 const channels = {
-  'online': false,
-  'offline': false,
-  'tracking': true,
-  'delivery_events': true,
-  'order_events': true,
-  'autoscheduler:begin_delivery': true,
-  'autoscheduler:end_delivery': true,
-  'task:done': true,
-  'task:failed': true,
+  'online': {
+    toJSON: false,
+    psubscribe: false
+  },
+  'offline': {
+    toJSON: false,
+    psubscribe: false
+  },
+  'tracking': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'delivery_events': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'order_events': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'autoscheduler:begin_delivery': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'autoscheduler:end_delivery': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'task:done': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'task:failed': {
+    toJSON: true,
+    psubscribe: false
+  },
+  'restaurant:*:orders': {
+    toJSON: true,
+    psubscribe: true
+  },
 }
 
 io.on('connection', function (socket) {
@@ -65,20 +96,43 @@ io.on('connection', function (socket) {
 
     console.log('A client is connected, subscribing...');
 
-    _.each(channels, (toJSON, channel) => sub.prefixedSubscribe(channel))
-
     sub.on('subscribe', (channel, count) => {
-      if (count == _.size(channels)) {
+      console.log(`Subscribed to ${channel}`)
+    })
 
-        console.log('All channels subscribed, start forwarding messages')
+    sub.on('psubscribe', (channel, count) => {
+      console.log(`Subscribed to ${channel}`)
+    })
 
-        sub.on('message', function(channelWithPrefix, message) {
-          _.each(channels, (toJSON, channel) => {
-            if (sub.isChannel(channelWithPrefix, channel)) {
-              io.sockets.emit(channel, toJSON ? JSON.parse(message) : message)
-            }
-          })
-        })
+    sub.on('message', function(channelWithPrefix, message) {
+
+      console.log(`Received message on channel ${channelWithPrefix}`)
+
+      const channel = sub.unprefixedChannel(channelWithPrefix)
+      const { toJSON } = channels[channel]
+
+      io.sockets.emit(channel, toJSON ? JSON.parse(message) : message)
+
+    })
+
+    sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
+
+      console.log(`Received pmessage on channel ${channelWithPrefix}`)
+
+      const channel = sub.unprefixedChannel(channelWithPrefix)
+      const pattern = sub.unprefixedChannel(patternWithPrefix)
+      const { toJSON } = channels[pattern]
+
+      io.sockets.emit(channel, toJSON ? JSON.parse(message) : message)
+
+    })
+
+    _.each(channels, (options, channel) => {
+      const { psubscribe } = options
+      if (psubscribe) {
+        sub.prefixedPSubscribe(channel)
+      } else {
+        sub.prefixedSubscribe(channel)
       }
     })
 

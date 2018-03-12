@@ -13,7 +13,9 @@ module.exports = function createRedisClient(options) {
 
   redisClient.prefixedSubscribe = (channel) => redisClient.subscribe(withPrefix(options.prefix, channel))
   redisClient.prefixedPublish = (channel, message) => redisClient.publish(withPrefix(options.prefix, channel), message)
+  redisClient.prefixedPSubscribe = (channel) => redisClient.psubscribe(withPrefix(options.prefix, channel))
   redisClient.isChannel = (prefixed, unprefixed) => prefixed === (options.prefix + unprefixed)
+  redisClient.unprefixedChannel = (channel) => channel.replace(new RegExp(`^${options.prefix}`, 'gi'), '')
 
   return redisClient;
 };

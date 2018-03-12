@@ -5,17 +5,14 @@ import OrderDetails from './OrderDetails.jsx'
 
 const hostname = window.location.hostname;
 const restaurant = window.__restaurant;
-const restaurantId = restaurant['@id'].replace('/api/restaurants/', '')
 
 let orderList;
 let orderDetails;
 
 setTimeout(function() {
 
-  var socket = io('//' + hostname, {path: '/restaurant-panel/socket.io'});
-
-  socket.on('connect', () => socket.emit('restaurant', restaurant));
-  socket.on('order', data => orderList.addOrder(data));
+  var socket = io('//' + hostname, { path: '/tracking/socket.io' });
+  socket.on(`restaurant:${restaurant.id}:orders`, order => orderList.addOrder(order))
 
 }, 1000);
 
@@ -31,7 +28,7 @@ orderList = render(
       const orderId = order['@id'].replace('/api/orders/', '')
 
       const url = window.__routes['dashboard_order']
-        .replace('__RESTAURANT_ID__', restaurantId)
+        .replace('__RESTAURANT_ID__', restaurant.id)
         .replace('__ORDER_ID__', orderId)
 
       window.history.pushState({}, '', url)
@@ -51,7 +48,7 @@ orderDetails = render(
       orderDetails.setOrder(null)
 
       const url = window.__routes['dashboard']
-        .replace('__RESTAURANT_ID__', restaurantId)
+        .replace('__RESTAURANT_ID__', restaurant.id)
 
       window.history.pushState({}, '', url)
 
