@@ -18,8 +18,11 @@ class PricingRuleSetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, [
+                'label' => 'form.pricing_rule_set.name.label'
+            ])
             ->add('rules', CollectionType::class, array(
+                'label' => 'form.pricing_rule_set.rules.label',
                 'entry_type' => PricingRuleType::class,
                 'allow_add' => true,
                 'allow_delete' => true,

@@ -89,7 +89,6 @@ adminDashboard.pricing.createNew: Créer une tarification
 adminDashboard.pricing.help: <a href="%link%">Consulter l'aide sur la tarification.</a>
 adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tarification. Les règles définissent comment le prix de la course est calculé.
 adminDashboard.pricing.addRule: Ajouter une règle
-adminDashboard.pricing.save: Enregister
 
 adminDashboard.tags.title: Tags
 adminDashboard.tags.save: Enregister
@@ -300,6 +299,10 @@ form.address.floor.label: Étage
 form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
 
+form.pricing_rule_set.name.label: Nom
+form.pricing_rule_set.rules.label: Règles
+form.pricing_rule.price.label: Prix
+form.pricing_rule.price.help: Prix fixe ou expression
 
 form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe

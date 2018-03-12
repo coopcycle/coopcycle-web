@@ -7,7 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PricingRuleType extends AbstractType
@@ -16,7 +15,9 @@ class PricingRuleType extends AbstractType
     {
         $builder
             ->add('expression', HiddenType::class)
-            ->add('price', MoneyType::class)
+            ->add('price', TextType::class, [
+                'label' => 'form.pricing_rule.price.label'
+            ])
             ->add('position', HiddenType::class, [
                 'required' => false
             ]);

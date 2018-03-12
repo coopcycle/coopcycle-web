@@ -155,7 +155,7 @@ class RulePickerLine extends React.Component {
       // zone
       case 'in_zone':
         return (
-          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control">
+          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
               { this.props.rulePicker.props.zones.map((item, index) => {
                   return (<option value={item} key={index}>{item}</option>)
                 }
@@ -165,7 +165,7 @@ class RulePickerLine extends React.Component {
       // vehicle
       case '==':
         return (
-          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control">
+          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
             <option value="bike">Vélo</option>
             <option value="cargo_bike">Vélo Cargo</option>
           </select>
@@ -175,20 +175,20 @@ class RulePickerLine extends React.Component {
         return (
           <div className="row">
             <div className="col-md-6">
-              <input className="form-control" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>
+              <input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>
             </div>
             <div className="col-md-6">
-              <input className="form-control" value={this.state.boundValues[1]} onChange={this.handleSecondBoundChange} type="number"></input>
+              <input className="form-control input-sm" value={this.state.boundValues[1]} onChange={this.handleSecondBoundChange} type="number"></input>
             </div>
           </div>
         )
       case '>':
         return (
-          (<input className="form-control" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
+          (<input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
         )
       case '<':
         return (
-          (<input className="form-control" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
+          (<input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
         )
     }
   }
@@ -198,7 +198,7 @@ class RulePickerLine extends React.Component {
     return (
       <div className="row">
         <div className="col-md-3 form-group">
-          <select value={this.state.typeValue} onChange={this.onTypeSelect} className="form-control">
+          <select value={this.state.typeValue} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
             <option value="distance">Distance (m)</option>
             <option value="weight">Poids (g)</option>
@@ -209,7 +209,7 @@ class RulePickerLine extends React.Component {
         <div className="col-md-3">
           {
             this.state.typeValue && (
-              <select value={this.state.operatorValue} onChange={this.onOperatorSelect} className="form-control">
+              <select value={this.state.operatorValue} onChange={this.onOperatorSelect} className="form-control input-sm">
                 <option value="">-</option>
                 { typeToOperators[this.state.typeValue].map(function(operator, index) {
                     return (<option key={index} value={operator}>{operator}</option>)

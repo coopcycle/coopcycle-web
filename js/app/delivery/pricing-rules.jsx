@@ -1,13 +1,15 @@
-import { Sortable } from '@shopify/draggable'
+import dragula from 'dragula'
 
 const ruleSet = $('#rule-set'),
-      warning = $('form[name="pricing_rule_set"] .alert-warning'),
-      sortable = new Sortable(
-                      document.querySelector('.delivery-pricing-ruleset'),
-                      { draggable: '.delivery-pricing-ruleset__rule', handle:'.delivery-pricing-ruleset__rule__handle',
-                      })
+      warning = $('form[name="pricing_rule_set"] .alert-warning')
 
-sortable.on('mirror:destroy', () => onListChange())
+const drake = dragula([document.querySelector('.delivery-pricing-ruleset')], {
+  moves: (el, container, handle) => {
+    return handle.classList.contains('delivery-pricing-ruleset__rule__handle')
+      || handle.parentNode.classList.contains('delivery-pricing-ruleset__rule__handle')
+  }
+})
+.on('dragend', () => onListChange())
 
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {

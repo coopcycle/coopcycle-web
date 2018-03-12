@@ -44,8 +44,10 @@ class RulePicker extends React.Component {
       <div className="rule-picker">
         { this.state.lines.map((line, index) => <RulePickerLine key={index} index={index} rulePicker={this} line={line} />) }
         <div className="row">
-          <div className="col-md-4 col-md-offset-8">
-            <button className="btn btn-primary" onClick={this.addLine}>Ajouter une règle</button>
+          <div className="col-xs-12 text-right">
+            <button className="btn btn-xs btn-primary" onClick={this.addLine}>
+              <i className="fa fa-plus"></i> Ajouter une condition
+            </button>
           </div>
         </div>
       </div>

@@ -11,10 +11,16 @@
     {{ form_widget(form.expression, { attr: { placeholder: 'Enter an expression'|trans([], 'messages'), class: 'text-monospace' } }) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__price">
-    {{ form_label(form.price) }}
-    {{ form_widget(form.price) }}
+    {{ form_row(form.price) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__remove">
     <a href="#"><i class="fa fa-trash"></i></a>
   </div>
+{% endblock %}
+
+{% block _pricing_rule_set_rules_entry_price_widget %}
+  {{ block('form_widget') }}
+  {% if form.vars.valid %}
+  <span class="help-block"><i class="fa fa-info-circle"></i> {{ 'form.pricing_rule.price.help'|trans }}</span>
+  {% endif %}
 {% endblock %}

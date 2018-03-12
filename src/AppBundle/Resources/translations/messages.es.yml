@@ -88,7 +88,6 @@ adminDashboard.pricing.createNew: Crear nueva tarifa
 adminDashboard.pricing.help: <a href="%link%">Ayuda sobre tarificación.</a>
 adminDashboard.pricing.noRuleFound: No se encuentra ninguna regla de tarificación. Éstas definen como se calcula el coste de la entrega.
 adminDashboard.pricing.addRule: Añadir regla
-adminDashboard.pricing.save: Guardar
 
 adminDashboard.tags.title: Etiquetas
 adminDashboard.tags.save: Guardar
@@ -296,6 +295,11 @@ form.address.floor.label: Piso
 form.address.description.label: Instrucciones
 form.address.description.placeholder: 2da puerta a la izquierda…
 
+form.pricing_rule_set.name.label: Nombre
+form.pricing_rule_set.rules.label: Reglas
+form.pricing_rule.price.label: Precio
+form.pricing_rule.price.help: Precio fijo o expresión
+
 form.settings.brand_name.label: Marca de fábrica
 form.settings.stripe_publishable_key.label: Clave pública de stripe
 form.settings.stripe_publishable_key.help: |
@@ -353,3 +357,5 @@ index.banner: Platos deliciosos del restaurante a tu casa
 
 pagination.previous: Anterior
 pagination.next: Siguiente
+
+basics.save: Guardar

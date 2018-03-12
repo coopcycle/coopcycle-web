@@ -88,7 +88,6 @@ adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.help: <a href="%link%">Get help about pricing.</a>
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how the delivery cost is calculated.
 adminDashboard.pricing.addRule: Add rule
-adminDashboard.pricing.save: Save
 
 adminDashboard.tags.title: Tags
 adminDashboard.tags.save: Save
@@ -295,6 +294,11 @@ form.address.floor.label: Floor
 form.address.description.label: Instructions
 form.address.description.placeholder: 2nd door on the left…
 
+form.pricing_rule_set.name.label: Name
+form.pricing_rule_set.rules.label: Rules
+form.pricing_rule.price.label: Price
+form.pricing_rule.price.help: Fixed price or expression
+
 form.settings.brand_name.label: Brand name
 form.settings.stripe_publishable_key.label: Stripe publishable key
 form.settings.stripe_publishable_key.help: |
@@ -353,4 +357,5 @@ index.banner: Delicious meals delivered at your place
 pagination.previous: Previous
 pagination.next: Next
 
+basics.save: Save
 basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
