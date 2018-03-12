@@ -4,10 +4,11 @@ Feature: Orders
     Given the database is empty
     And the current time is "2017-09-02 11:00:00"
     And the fixtures file "restaurants.yml" is loaded
+    And the setting "brand_name" has value "CoopCycle"
     And the user "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
-      | telephone | 0033612345678      |
+      | telephone | 0033612345678     |
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |

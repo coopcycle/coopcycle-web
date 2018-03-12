@@ -438,4 +438,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
     }
+
+    /**
+     * @Given the setting :name has value :value
+     */
+    public function theSettingHasValue($name, $value)
+    {
+        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
+
+        $settingsManager->set($name, $value);
+        $settingsManager->flush();
+    }
 }

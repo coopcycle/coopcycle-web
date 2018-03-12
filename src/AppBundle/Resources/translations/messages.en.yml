@@ -352,3 +352,5 @@ index.banner: Delicious meals delivered at your place
 
 pagination.previous: Previous
 pagination.next: Next
+
+basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
