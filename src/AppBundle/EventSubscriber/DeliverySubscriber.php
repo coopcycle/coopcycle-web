@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryEvent;
 use AppBundle\Entity\StripePayment;
@@ -56,7 +57,18 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $this->logger->info(sprintf('Delivery #%d created', $delivery->getId()));
 
-        // TODO Notify administrators
+        if ($delivery->getStatus() === Delivery::STATUS_TO_BE_CONFIRMED) {
+            $administrators = $this->doctrine
+                ->getRepository(ApiUser::class)
+                ->createQueryBuilder('u')
+                ->where('u.roles LIKE :roles')
+                ->setParameter('roles', '%ROLE_ADMIN%')
+                ->getQuery()
+                ->getResult();
+            foreach ($administrators as $administrator) {
+                $this->notificationManager->notifyDeliveryHasToBeConfirmed($delivery, $administrator->getEmail());
+            }
+        }
 
         $this->persistEvent($delivery, 'CREATE');
     }

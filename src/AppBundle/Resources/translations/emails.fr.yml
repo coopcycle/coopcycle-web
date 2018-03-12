@@ -48,4 +48,11 @@ delivery.confirmed.body: |
   Si vous souhaitez payer votre commande par carte bancaire, <a href="%stripe_payment_url%">cliquez ici</a>.
 delivery.confirmed.outro: Merci pour votre confiance
 
-
+delivery.has_to_be_confirmed.subject: Nouvelle livraison à confirmer
+delivery.has_to_be_confirmed.body: |
+  Bonjour,
+  <br>
+  Une nouvelle livraison a été commandée.
+  <br>
+  <br>
+  Pour vérifier les détails, et confirmer la livraison, <a href="%delivery_url%">cliquez ici</a>.

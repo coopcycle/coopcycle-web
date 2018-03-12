@@ -1,0 +1,7 @@
+{% extends '@App/Emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'delivery.has_to_be_confirmed.body' | trans({
+    '%delivery_url%': url('admin_delivery', { id: delivery.id }),
+  }, 'emails') | raw }}
+{% endblock %}
