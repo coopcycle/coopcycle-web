@@ -1,17 +1,13 @@
 <?php
 
-
 namespace AppBundle\Command;
-
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
-class PreviewEmailLayout extends ContainerAwareCommand
+class EmailPreviewCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this
@@ -25,7 +21,7 @@ class PreviewEmailLayout extends ContainerAwareCommand
         $html = $container->get('templating')
                           ->render(
                               'AppBundle::Emails/layout.html.twig',
-                              ['raw_content' => 'The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.<br><br>']);
+                              ['raw_content' => 'The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.']);
         echo $html;
     }
 
