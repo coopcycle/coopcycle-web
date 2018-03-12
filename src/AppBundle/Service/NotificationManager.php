@@ -13,14 +13,24 @@ class NotificationManager
     private $mailer;
     private $templating;
     private $translator;
-    private $options;
+    private $settingsManager;
+    private $transactionalAddress;
 
-    public function __construct(\Swift_Mailer $mailer, TwigEngine $templating, TranslatorInterface $translator, array $options)
+    public function __construct(\Swift_Mailer $mailer, TwigEngine $templating,
+        TranslatorInterface $translator, SettingsManager $settingsManager, $transactionalAddress)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->translator = $translator;
-        $this->options = $options;
+        $this->settingsManager = $settingsManager;
+        $this->transactionalAddress = $transactionalAddress;
+    }
+
+    private function getFrom()
+    {
+        return [
+            $this->transactionalAddress => $this->settingsManager->get('brand_name')
+        ];
     }
 
     public function notifyOrderCreated(Order $order)
@@ -29,16 +39,13 @@ class NotificationManager
             return;
         }
 
-        $emailAddress = $this->options['transactional_address'];
-        $emailName = $this->options['transactional_sender_name'];
-
         $emailBody = $this->templating->render('AppBundle::Emails/orderConfirmation.html.twig', [
             'order' => $order,
             'orderId' => $order->getId()
         ]);
 
         $email = new \Swift_Message($this->translator->trans('order.confirmationMail.subject', ['%orderId%' => $order->getId()], 'emails'));
-        $email->setFrom([$emailAddress => $emailName]);
+        $email->setFrom($this->getFrom());
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');
 
@@ -51,16 +58,13 @@ class NotificationManager
             return;
         }
 
-        $emailAddress = $this->options['transactional_address'];
-        $emailName = $this->options['transactional_sender_name'];
-
         $emailBody = $this->templating->render('AppBundle::Emails/orderAccepted.html.twig', [
             'order' => $order,
             'orderId' => $order->getId()
         ]);
 
         $email = new \Swift_Message($this->translator->trans('order.acceptedMail.subject', ['%orderId%' => $order->getId()], 'emails'));
-        $email->setFrom([$emailAddress => $emailName]);
+        $email->setFrom($this->getFrom());
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');
 
@@ -73,16 +77,13 @@ class NotificationManager
             return;
         }
 
-        $emailAddress = $this->options['transactional_address'];
-        $emailName = $this->options['transactional_sender_name'];
-
         $emailBody = $this->templating->render('AppBundle::Emails/orderCancelled.html.twig', [
             'order' => $order,
             'orderId' => $order->getId()
         ]);
 
         $email = new \Swift_Message($this->translator->trans('order.cancellationMail.subject', ['%orderId%' => $order->getId()], 'emails'));
-        $email->setFrom([$emailAddress => $emailName]);
+        $email->setFrom($this->getFrom());
         $email->setTo([$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]);
         $email->setBody($emailBody, 'text/html');
 
@@ -91,11 +92,8 @@ class NotificationManager
 
     public function notifyDeliveryToBeConfirmed(Delivery $delivery, $to)
     {
-        $emailAddress = $this->options['transactional_address'];
-        $emailName = $this->options['transactional_sender_name'];
-
         $email = new \Swift_Message($this->translator->trans('delivery.to_be_confirmed.subject', [], 'emails'));
-        $email->setFrom([$emailAddress => $emailName]);
+        $email->setFrom($this->getFrom());
         $email->setTo($to);
         $email->setBody($this->templating->render('@App/Emails/Delivery/toBeConfirmed.html.twig', [
             'delivery' => $delivery,
@@ -106,11 +104,8 @@ class NotificationManager
 
     public function notifyDeliveryConfirmed(Delivery $delivery, StripePayment $stripePayment)
     {
-        $emailAddress = $this->options['transactional_address'];
-        $emailName = $this->options['transactional_sender_name'];
-
         $email = new \Swift_Message($this->translator->trans('delivery.confirmed.subject', [], 'emails'));
-        $email->setFrom([$emailAddress => $emailName]);
+        $email->setFrom($this->getFrom());
         $email->setTo($stripePayment->getUser()->getEmail());
         $email->setBody($this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
             'delivery' => $delivery,

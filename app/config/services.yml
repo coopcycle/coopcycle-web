@@ -319,7 +319,8 @@ services:
       - "@mailer"
       - "@templating"
       - "@translator"
-      - { transactional_address: "%transactional_address%", transactional_sender_name: "%transactional_sender_name%" }
+      - "@coopcycle.settings_manager"
+      - "%transactional_address%"
 
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
