@@ -167,7 +167,6 @@ module.exports = function(sequelize) {
 
   Db.Restaurant.belongsTo(Db.Address);
 
-  Db.Delivery.belongsTo(Db.User, {as: 'courier', foreignKey : 'courier_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'originAddress', foreignKey : 'origin_address_id' });
   Db.Delivery.belongsTo(Db.Address, { as: 'deliveryAddress', foreignKey : 'delivery_address_id' });
   Db.Delivery.belongsTo(Db.Order);

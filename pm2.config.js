@@ -50,11 +50,6 @@ var apps = [{
   script: "./js/api/restaurant/panel.js",
   watch: ["./js/api/restaurant/panel.js"],
   port: config.parameters['app.restaurant_panel_port'] || 8003
-}, {
-  name: "coopcycle-dispatch-v2-" + appName,
-  script: "./js/api/dispatch-v2/index.js",
-  watch: ["./js/api/dispatch-v2/index.js"],
-  port: config.parameters['app.dispatch_v2_port'] || 8004
 }];
 
 apps = _.map(apps, function(app) {
