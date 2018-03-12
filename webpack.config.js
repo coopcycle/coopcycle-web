@@ -43,7 +43,6 @@ Encore
 
   .enableReactPreset()
   .autoProvidejQuery()
-  .enableSourceMaps(true)
 
   .enableVersioning(Encore.isProduction())
 
