@@ -23,11 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={},
  *   itemOperations={
- *     "get"={"method"="GET"},
- *     "accept"={"route_name"="delivery_accept"},
- *     "decline"={"route_name"="delivery_decline"},
- *     "pick"={"route_name"="delivery_pick"},
- *     "deliver"={"route_name"="delivery_deliver"}
+ *     "get"={"method"="GET"}
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -87,12 +83,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
      * @ORM\JoinColumn(name="order_id", referencedColumnName="id")
      */
     private $order;
-
-    /**
-     * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="ApiUser")
-     */
-    private $courier;
 
     /**
      * @ORM\ManyToOne(targetEntity="Store", inversedBy="deliveries")
@@ -223,11 +213,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         return $this;
     }
 
-    public function isCalculated()
-    {
-        return null !== $this->duration && null !== $this->distance;
-    }
-
     public function getStatus()
     {
         return $this->status;
@@ -238,30 +223,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         $this->status = $status;
 
         return $this;
-    }
-
-    /**
-     * Sets courier.
-     *
-     * @param ApiUser $courier
-     *
-     * @return $this
-     */
-    public function setCourier(ApiUser $courier = null)
-    {
-        $this->courier = $courier;
-
-        return $this;
-    }
-
-    /**
-     * Gets courier.
-     *
-     * @return ApiUser
-     */
-    public function getCourier()
-    {
-        return $this->courier;
     }
 
     /**

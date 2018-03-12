@@ -11,7 +11,6 @@ use AppBundle\Event\TaskCreateEvent;
 use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskUnassignEvent;
-use AppBundle\Service\DeliveryManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use FOS\UserBundle\Model\UserInterface;
 use Predis\Client as Redis;
@@ -21,14 +20,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 final class TaskSubscriber implements EventSubscriberInterface
 {
     private $doctrine;
-    private $deliveryManager;
     private $redis;
     private $serializer;
 
-    public function __construct(DoctrineRegistry $doctrine, DeliveryManager $deliveryManager, Redis $redis, SerializerInterface $serializer)
+    public function __construct(DoctrineRegistry $doctrine, Redis $redis, SerializerInterface $serializer)
     {
         $this->doctrine = $doctrine;
-        $this->deliveryManager = $deliveryManager;
         $this->redis = $redis;
         $this->serializer = $serializer;
     }
@@ -82,15 +79,6 @@ final class TaskSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
 
         $this->addEvent($task, 'ASSIGN');
-
-        if (null !== $task->getDelivery()) {
-            $this->deliveryManager->dispatch($task->getDelivery(), $user);
-
-            $this->doctrine
-                ->getManagerForClass(Delivery::class)
-                ->flush();
-        }
-
         $this->publishTaskEventToRedis($task, $user, 'task:assign');
     }
 
@@ -100,16 +88,6 @@ final class TaskSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
 
         $this->addEvent($task, 'UNASSIGN');
-
-        if (null !== $task->getDelivery()) {
-            $task->getDelivery()->setCourier(null);
-            $task->getDelivery()->setStatus(Delivery::STATUS_WAITING);
-
-            $this->doctrine
-                ->getManagerForClass(Delivery::class)
-                ->flush();
-        }
-
         $this->publishTaskEventToRedis($task, $user, 'task:unassign');
     }
 
