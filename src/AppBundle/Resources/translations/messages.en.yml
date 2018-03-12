@@ -295,7 +295,7 @@ form.address.floor.label: Floor
 form.address.description.label: Instructions
 form.address.description.placeholder: 2nd door on the left…
 
-
+form.settings.brand_name.label: Brand name
 form.settings.stripe_publishable_key.label: Stripe publishable key
 form.settings.stripe_publishable_key.help: |
   Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>

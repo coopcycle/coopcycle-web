@@ -14,6 +14,7 @@ class SettingsManager
     private $logger;
 
     private $settings = [
+        'brand_name',
         'stripe_publishable_key',
         'stripe_secret_key',
         'google_api_key',

@@ -301,6 +301,7 @@ form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
 
 
+form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe
 form.settings.stripe_publishable_key.help: |
   Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé publique</a>
