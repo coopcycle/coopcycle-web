@@ -3,10 +3,8 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -29,8 +27,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class TaskList extends TaskCollection implements TaskCollectionInterface
 {
-    use TaskCollectionTrait;
-
     /**
      * @ORM\Column(type="date")
      */
@@ -41,25 +37,6 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
      * @ORM\JoinColumn(nullable=false)
      */
     private $courier;
-
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     * @Groups({"task_collection"})
-     */
-    private $createdAt;
-
-    /**
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     * @Groups({"task_collection"})
-     */
-    private $updatedAt;
-
-    public function getId()
-    {
-        return $this->id;
-    }
 
     public function getDate()
     {
@@ -83,16 +60,6 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
         $this->courier = $courier;
 
         return $this;
-    }
-
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
     }
 
     /**

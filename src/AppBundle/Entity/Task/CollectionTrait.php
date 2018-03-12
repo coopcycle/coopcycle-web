@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CollectionTrait
@@ -24,6 +25,20 @@ trait CollectionTrait
      * @Groups({"task_collection"})
      */
     protected $polyline = '';
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Groups({"task_collection"})
+     */
+    private $createdAt;
+
+    /**
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @Groups({"task_collection"})
+     */
+    private $updatedAt;
 
     public function getDistance()
     {
@@ -59,5 +74,15 @@ trait CollectionTrait
         $this->polyline = $polyline;
 
         return $this;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 }

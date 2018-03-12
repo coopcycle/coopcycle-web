@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -23,6 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 abstract class TaskCollection
 {
+    use TaskCollectionTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -40,6 +43,11 @@ abstract class TaskCollection
     public function __construct()
     {
         $this->items = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

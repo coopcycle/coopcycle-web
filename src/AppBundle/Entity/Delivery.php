@@ -6,7 +6,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\TaxableTrait;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -34,7 +33,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Delivery extends TaskCollection implements TaxableInterface, TaskCollectionInterface
 {
-    use TaskCollectionTrait;
     use TaxableTrait;
 
     // default status when the delivery is created along the order
@@ -143,16 +141,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         }
 
         $this->events = new ArrayCollection();
-    }
-
-    /**
-     * Gets id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     public function getOriginAddress()
