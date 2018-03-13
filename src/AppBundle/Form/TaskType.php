@@ -76,7 +76,7 @@ class TaskType extends AbstractType
                 }
 
                 // Only existing tasks can be assigned
-                $form->add('assign', EntityType::class, array(
+                $assignOptions = array(
                     'mapped' => false,
                     'label' => 'Courier',
                     'required' => false,
@@ -88,7 +88,13 @@ class TaskType extends AbstractType
                             ->orderBy('u.username', 'ASC');
                     },
                     'choice_label' => 'username',
-                ));
+                );
+
+                if ($task->isAssigned()) {
+                    $assignOptions['data'] = $task->getAssignedCourier();
+                }
+
+                $form->add('assign', EntityType::class, $assignOptions);
 
                 $tags = array_map(function ($tag) {
                     return $tag->getSlug();
