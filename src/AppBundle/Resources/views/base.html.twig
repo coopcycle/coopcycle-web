@@ -47,7 +47,7 @@
       </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
-      <script src="https://cdn.ravenjs.com/3.19.1/raven.min.js" crossorigin="anonymous"></script>
+      <script src="https://cdn.ravenjs.com/3.23.1/raven.min.js" crossorigin="anonymous"></script>
       <script>
         Raven.config("{{ sentry_public_dsn }}").install();
       </script>
