@@ -329,7 +329,14 @@ trait AdminDashboardTrait
             ->flush();
 
         // Publish a Redis event in task:changed channel
-        $this->publishTasksChangedEvent($taskList->getTasks(), $user);
+        $tasksNormalized = $this->get('api_platform.serializer')->normalize($taskList->getTasks(), 'jsonld', [
+            'resource_class' => Task::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['task', 'delivery', 'place']
+        ]);
+
+        $this->publishTasksChangedEvent($tasksNormalized, $user);
 
         $taskListNormalized = $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
             'resource_class' => TaskList::class,
