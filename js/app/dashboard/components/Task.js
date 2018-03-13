@@ -98,10 +98,12 @@ class Task extends React.Component {
       <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes }>
         <div>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          <a onClick={ this.showTaskModal.bind(this) }>
-            <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}
-          </a>
+          <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}
           { this.renderTags() }
+          &nbsp;&nbsp;
+          <a onClick={ this.showTaskModal.bind(this) }>
+            <i className="fa fa-pencil"></i>
+          </a>
         </div>
         <div>
           <span>{ task.address.name || task.address.streetAddress }</span>
