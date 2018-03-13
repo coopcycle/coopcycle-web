@@ -96,17 +96,23 @@ class TaskType extends AbstractType
 
                 $form->add('assign', EntityType::class, $assignOptions);
 
-                $tags = array_map(function ($tag) {
-                    return $tag->getSlug();
-                }, iterator_to_array($task->getTags()));
-
-                $form->get('tagsAsString')->setData(implode(' ', $tags));
-
                 if ($task->isAssigned()) {
                     $form->get('assign')->setData($task->getAssignedCourier());
                 }
             }
 
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $task = $event->getData();
+
+            $tags = array_map(function ($tag) {
+                return $tag->getSlug();
+            }, iterator_to_array($task->getTags()));
+
+            $form->get('tagsAsString')->setData(implode(' ', $tags));
         });
 
         $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
