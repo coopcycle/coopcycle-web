@@ -1,0 +1,51 @@
+AppBundle\Entity\DeliveryEvent:
+    type: entity
+    table: delivery_event
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        eventName:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: event_name
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        delivery:
+            targetEntity: AppBundle\Entity\Delivery
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: events
+            joinColumns:
+                delivery_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        courier:
+            targetEntity: AppBundle\Entity\ApiUser
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                courier_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

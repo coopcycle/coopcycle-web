@@ -1,0 +1,53 @@
+AppBundle\Entity\OrderItemModifier:
+    type: entity
+    table: order_item_modifier
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        description:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    manyToOne:
+        orderItem:
+            targetEntity: AppBundle\Entity\OrderItem
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: modifiers
+            joinColumns:
+                order_item_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        modifier:
+            targetEntity: AppBundle\Entity\Menu\MenuItemModifier
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                modifier_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

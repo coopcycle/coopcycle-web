@@ -1,0 +1,5 @@
+AppBundle\Entity\Base\CreativeWork:
+    type: mappedSuperclass
+    table: creative_work
+    id: {  }
+    lifecycleCallbacks: {  }

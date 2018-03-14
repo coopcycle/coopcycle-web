@@ -1,0 +1,107 @@
+AppBundle\Entity\ApiUser:
+    type: entity
+    table: api_user
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        givenName:
+            type: string
+            nullable: true
+            column: given_name
+        familyName:
+            type: string
+            nullable: true
+            column: family_name
+        telephone:
+            type: phone_number
+            nullable: true
+    manyToMany:
+        restaurants:
+            targetEntity: AppBundle\Entity\Restaurant
+            cascade:
+                - all
+            fetch: LAZY
+            joinTable:
+                name: api_user_restaurant
+                inverseJoinColumns:
+                    -
+                        name: restaurant_id
+                        unique: false
+                        nullable: true
+                        onDelete: null
+                        columnDefinition: null
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: api_user_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+            orderBy: null
+        stores:
+            targetEntity: AppBundle\Entity\Store
+            cascade:
+                - all
+            fetch: LAZY
+            joinTable:
+                name: api_user_store
+                inverseJoinColumns:
+                    -
+                        name: store_id
+                        unique: false
+                        nullable: true
+                        onDelete: null
+                        columnDefinition: null
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: api_user_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+            orderBy: null
+        addresses:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - all
+            fetch: LAZY
+            joinTable:
+                name: api_user_address
+                inverseJoinColumns:
+                    -
+                        name: address_id
+                        unique: false
+                        nullable: true
+                        onDelete: null
+                        columnDefinition: null
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: api_user_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+            orderBy: null
+        stripeParams:
+            targetEntity: AppBundle\Entity\StripeParams
+            cascade:
+                - all
+            fetch: LAZY
+            joinTable:
+                name: api_user_stripe_params
+                joinColumns:
+                    -
+                        name: api_user_id
+                        unique: true
+                        nullable: true
+                        onDelete: null
+                        columnDefinition: null
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: stripe_params_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+            orderBy: null
+    lifecycleCallbacks: {  }

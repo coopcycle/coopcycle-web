@@ -1,0 +1,40 @@
+AppBundle\Entity\Zone:
+    type: entity
+    table: zone
+    indexes:
+        idx_polygon:
+            columns:
+                - polygon
+            flags:
+                - spatial
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        polygon:
+            type: geojson
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            options:
+                geometry_type: POLYGON
+                srid: 4326
+            requireSQLConversion: true
+    lifecycleCallbacks: {  }

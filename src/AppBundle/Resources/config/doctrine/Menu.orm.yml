@@ -1,0 +1,50 @@
+AppBundle\Entity\Menu:
+    type: entity
+    table: menu
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        description:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    oneToMany:
+        sections:
+            targetEntity: AppBundle\Entity\Menu\MenuSection
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: menu
+            inversedBy: null
+            orphanRemoval: false
+            orderBy: null
+    oneToOne:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: hasMenu
+            inversedBy: null
+            joinColumns: {  }
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

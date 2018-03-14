@@ -1,0 +1,5 @@
+AppBundle\Entity\Base\Intangible:
+    type: mappedSuperclass
+    table: intangible
+    id: {  }
+    lifecycleCallbacks: {  }

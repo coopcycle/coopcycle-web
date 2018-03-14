@@ -1,0 +1,51 @@
+AppBundle\Entity\TrackingPosition:
+    type: entity
+    table: tracking_position
+    indexes:
+        idx_tracking_position_coordinates:
+            columns:
+                - coordinates
+            flags:
+                - spatial
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        coordinates:
+            type: geography
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            options:
+                geometry_type: GEOMETRY
+                srid: 4326
+            requireSQLConversion: true
+        date:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+    manyToOne:
+        courier:
+            targetEntity: AppBundle\Entity\ApiUser
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                courier_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

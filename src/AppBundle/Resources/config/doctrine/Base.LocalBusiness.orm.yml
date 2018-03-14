@@ -1,0 +1,5 @@
+AppBundle\Entity\Base\LocalBusiness:
+    type: mappedSuperclass
+    table: local_business
+    id: {  }
+    lifecycleCallbacks: {  }

@@ -1,0 +1,5 @@
+AppBundle\Entity\Base\FoodEstablishment:
+    type: mappedSuperclass
+    table: food_establishment
+    id: {  }
+    lifecycleCallbacks: {  }

@@ -1,0 +1,70 @@
+AppBundle\Entity\TaskCollection:
+    type: entity
+    table: task_collection
+    inheritanceType: JOINED
+    discriminatorColumn:
+        name: type
+        type: string
+        length: 255
+        columnDefinition: null
+        fieldName: type
+    discriminatorMap:
+        delivery: AppBundle\Entity\Delivery
+        task_list: AppBundle\Entity\TaskList
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        distance:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        duration:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        polyline:
+            type: text
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: create
+    oneToMany:
+        items:
+            targetEntity: AppBundle\Entity\TaskCollectionItem
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: parent
+            inversedBy: null
+            orphanRemoval: true
+            orderBy:
+                position: ASC
+    lifecycleCallbacks: {  }

@@ -1,0 +1,67 @@
+AppBundle\Entity\Menu\MenuItemModifier:
+    type: entity
+    table: menu_item_modifier
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        calculusStrategy:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: calculus_strategy
+        price:
+            type: float
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        description:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    manyToOne:
+        menuItem:
+            targetEntity: AppBundle\Entity\Menu\MenuItem
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: modifiers
+            joinColumns:
+                menu_item_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    oneToMany:
+        modifierChoices:
+            targetEntity: AppBundle\Entity\Menu\Modifier
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: menuItemModifier
+            inversedBy: null
+            orphanRemoval: false
+            orderBy: null
+    lifecycleCallbacks: {  }

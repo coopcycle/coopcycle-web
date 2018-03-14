@@ -1,0 +1,76 @@
+AppBundle\Entity\Cart\CartItem:
+    type: entity
+    table: cart_item
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        modifiersDescription:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: modifiers_description
+        quantity:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        modifierChoices:
+            type: array
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: modifier_choices
+        key:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        unitPrice:
+            type: float
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: unit_price
+    manyToOne:
+        menuItem:
+            targetEntity: AppBundle\Entity\Menu\MenuItem
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                menu_item_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        cart:
+            targetEntity: AppBundle\Entity\Cart\Cart
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: items
+            joinColumns:
+                cart_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

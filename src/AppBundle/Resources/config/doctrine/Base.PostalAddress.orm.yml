@@ -1,0 +1,13 @@
+AppBundle\Entity\Base\PostalAddress:
+    type: mappedSuperclass
+    table: postal_address
+    id: {  }
+    fields:
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    lifecycleCallbacks: {  }

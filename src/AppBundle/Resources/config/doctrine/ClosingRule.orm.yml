@@ -1,0 +1,50 @@
+AppBundle\Entity\ClosingRule:
+    type: entity
+    table: closing_rule
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        startDate:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: start_date
+        endDate:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: end_date
+        reason:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    manyToOne:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: closingRules
+            joinColumns:
+                restaurant_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

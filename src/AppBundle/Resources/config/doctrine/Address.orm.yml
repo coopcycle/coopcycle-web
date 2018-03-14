@@ -1,0 +1,58 @@
+AppBundle\Entity\Address:
+    type: entity
+    table: address
+    indexes:
+        idx_address_geo:
+            columns:
+                - geo
+            flags:
+                - spatial
+    options:
+        spatial_indexes:
+            - idx_address_geo
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        description:
+            type: string
+            nullable: true
+        floor:
+            type: string
+            nullable: true
+        geo:
+            type: geography
+            nullable: true
+            options:
+                geometry_type: GEOMETRY
+                srid: 4326
+            requireSQLConversion: true
+        addressCountry:
+            type: string
+            nullable: true
+            column: address_country
+        addressLocality:
+            type: string
+            column: address_locality
+        addressRegion:
+            type: string
+            nullable: true
+            column: address_region
+        postalCode:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: postal_code
+        postOfficeBoxNumber:
+            type: string
+            nullable: true
+            column: post_office_box_number
+        streetAddress:
+            type: string
+            column: street_address

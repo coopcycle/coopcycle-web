@@ -1,0 +1,39 @@
+AppBundle\Entity\Menu\Modifier:
+    type: entity
+    table: modifier
+    id: {  }
+    fields:
+        price:
+            type: float
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        description:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+    manyToOne:
+        menuItemModifier:
+            targetEntity: AppBundle\Entity\Menu\MenuItemModifier
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: modifierChoices
+            joinColumns:
+                menu_item_modifier_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

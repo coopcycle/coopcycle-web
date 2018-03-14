@@ -1,0 +1,178 @@
+AppBundle\Entity\Restaurant:
+    type: entity
+    table: restaurant
+    repositoryClass: AppBundle\Entity\RestaurantRepository
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        enabled:
+            type: boolean
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            options:
+                default: false
+        imageName:
+            type: string
+            scale: 0
+            length: 255
+            unique: false
+            nullable: true
+            precision: 0
+            column: image_name
+        website:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        telephone:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: update
+        legalName:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+            column: legal_name
+        openingHours:
+            type: json_array
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+            column: opening_hours
+        vatID:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+            column: vat_id
+        additionalProperties:
+            type: json_array
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+            column: additional_properties
+    manyToMany:
+        servesCuisine:
+            targetEntity: AppBundle\Entity\Cuisine
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinTable:
+                name: restaurant_cuisine
+                schema: null
+                inverseJoinColumns:
+                    -
+                        name: cuisine_id
+                        unique: false
+                        nullable: true
+                        onDelete: null
+                        columnDefinition: null
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+            orderBy:
+                name: ASC
+    oneToOne:
+        address:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                address_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        hasMenu:
+            targetEntity: AppBundle\Entity\Menu
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: restaurant
+            joinColumns:
+                menu_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        contract:
+            targetEntity: AppBundle\Entity\Contract
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: restaurant
+            inversedBy: null
+            joinColumns: {  }
+            orphanRemoval: false
+    manyToOne:
+        stripeParams:
+            targetEntity: AppBundle\Entity\StripeParams
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                stripe_params_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    oneToMany:
+        closingRules:
+            targetEntity: AppBundle\Entity\ClosingRule
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: restaurant
+            inversedBy: null
+            orphanRemoval: false
+            orderBy: null
+    lifecycleCallbacks: {  }

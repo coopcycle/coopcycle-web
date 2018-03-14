@@ -1,0 +1,30 @@
+AppBundle\Entity\TaskEvent:
+    type: entity
+    table: task_event
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        notes:
+            type: text
+            nullable: true
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        task:
+            targetEntity: AppBundle\Entity\Task
+            fetch: LAZY
+            inversedBy: events
+            joinColumns:
+                task_id:
+                    referencedColumnName: id
+                    nullable: false

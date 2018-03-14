@@ -1,0 +1,141 @@
+AppBundle\Entity\Task:
+    type: entity
+    table: task
+    repositoryClass: AppBundle\Entity\TaskRepository
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        type:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        status:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+        doneAfter:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: done_after
+        doneBefore:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: done_before
+        comments:
+            type: text
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        delivery:
+            targetEntity: AppBundle\Entity\Delivery
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                delivery_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        address:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                address_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        group:
+            targetEntity: AppBundle\Entity\Task\Group
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                group_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+        assignedTo:
+            targetEntity: AppBundle\Entity\ApiUser
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                assigned_to:
+                    referencedColumnName: id
+            orphanRemoval: false
+    oneToMany:
+        events:
+            targetEntity: AppBundle\Entity\TaskEvent
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: task
+            inversedBy: null
+            orphanRemoval: false
+            orderBy:
+                createdAt: ASC
+    oneToOne:
+        previous:
+            targetEntity: AppBundle\Entity\Task
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                previous_task_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
+    entityListeners:
+        AppBundle\Entity\Listener\TaskListener:
+            prePersist:
+                - prePersist
+            postPersist:
+                - postPersist
+            preUpdate:
+                - preUpdate
+            postUpdate:
+                - postUpdate
