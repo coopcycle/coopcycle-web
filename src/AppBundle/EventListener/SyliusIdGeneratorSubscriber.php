@@ -24,6 +24,11 @@ class SyliusIdGeneratorSubscriber implements EventSubscriber
         $metadata = $args->getClassMetadata();
 
         $classes = [
+            'Sylius\Component\Order\Model\Adjustment',
+            'Sylius\Component\Order\Model\Order',
+            'Sylius\Component\Order\Model\OrderItem',
+            'Sylius\Component\Order\Model\OrderItemUnit',
+            'Sylius\Component\Order\Model\OrderSequence',
             'Sylius\Component\Taxation\Model\TaxCategory',
             'Sylius\Component\Taxation\Model\TaxRate',
         ];
