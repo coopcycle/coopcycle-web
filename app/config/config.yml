@@ -45,6 +45,8 @@ twig:
         country_iso: "%country_iso%"
         cart_provider: '@coopcycle.cart_provider'
         settings_manager: "@coopcycle.settings_manager"
+        piwik_site_id: "%piwik_site_id%"
+        piwik_disabled: "%kernel.debug%"
 
 # Doctrine Configuration
 doctrine:
@@ -167,12 +169,6 @@ snc_redis:
                 prefix: "%database_name%:"
                 # https://github.com/nrk/predis/issues/33
                 read_write_timeout: 0
-
-webfactory_piwik:
-    site_id: "%piwik_site_id%"
-    disabled: "%kernel.debug%"
-    piwik_host: piwik.coopcycle.org
-    tracker_path: "/piwik.js"
 
 vich_uploader:
     db_driver: orm

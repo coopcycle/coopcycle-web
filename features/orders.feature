@@ -61,8 +61,8 @@ Feature: Orders
         {
           "@id":"@string@.startsWith('/api/order_items')",
           "@type":"http://schema.org/OrderItem",
-          "menuItem":"/api/menu_items/1",
-          "quantity":1,
+          "menuItem":"@string@.startsWith('/api/menu_items')",
+          "quantity":@integer@,
           "name":@string@,
           "price":@number@,
           "modifiers": @array@
@@ -70,8 +70,8 @@ Feature: Orders
         {
           "@id":"@string@.startsWith('/api/order_items')",
           "@type":"http://schema.org/OrderItem",
-          "menuItem":"/api/menu_items/2",
-          "quantity":2,
+          "menuItem":"@string@.startsWith('/api/menu_items')",
+          "quantity":@integer@,
           "name":@string@,
           "price":@number@,
           "modifiers": @array@

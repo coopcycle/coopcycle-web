@@ -94,6 +94,6 @@
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
-    {{ piwik_code() }}
+    {% include "AppBundle::_partials/piwik.html.twig" %}
   </body>
 </html>
