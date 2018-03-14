@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a20d552abcb1a5132c4270bab85146b2",
+    "content-hash": "8f1eb87f49e0d72d7f4e52f5bcc1ebff",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5709,6 +5709,229 @@
                 "mailer"
             ],
             "time": "2018-01-23T07:37:21+00:00"
+        },
+        {
+            "name": "sylius/money-bundle",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
+                "reference": "3304c8f9017e06068dfc33a2b255dc35642501e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusMoneyBundle/zipball/3304c8f9017e06068dfc33a2b255dc35642501e9",
+                "reference": "3304c8f9017e06068dfc33a2b255dc35642501e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "sylius/resource-bundle": "^1.0",
+                "symfony/framework-bundle": "^3.4",
+                "symfony/intl": "^3.4",
+                "symfony/templating": "^3.4",
+                "webmozart/assert": "^1.0"
+            },
+            "conflict": {
+                "twig/twig": "^1.0"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.5",
+                "incenteev/composer-parameter-handler": "~2.0",
+                "phpspec/phpspec": "^4.0",
+                "phpunit/phpunit": "^5.6",
+                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+                "sylius/currency-bundle": "^1.0",
+                "symfony/browser-kit": "^3.4",
+                "symfony/dependency-injection": "^3.4",
+                "symfony/form": "^3.4",
+                "twig/twig": "^2.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                },
+                "incenteev-parameters": {
+                    "file": "test/app/config/parameters.yml"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Bundle\\MoneyBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Currencies and money formatting engine bundle for Symfony2.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "cash",
+                "currencies",
+                "currency",
+                "money"
+            ],
+            "time": "2018-02-08T16:38:47+00:00"
+        },
+        {
+            "name": "sylius/order",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Order.git",
+                "reference": "7964e7bc6ca04d6b629cb2f222249d7a64010b46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Order/zipball/7964e7bc6ca04d6b629cb2f222249d7a64010b46",
+                "reference": "7964e7bc6ca04d6b629cb2f222249d7a64010b46",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "sylius/resource": "^1.0",
+                "webmozart/assert": "^1.1",
+                "zendframework/zend-stdlib": "^3.1"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Order\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Orders management library for PHP.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "ecommerce",
+                "order",
+                "sales",
+                "shop",
+                "webshop"
+            ],
+            "time": "2018-02-08T16:38:47+00:00"
+        },
+        {
+            "name": "sylius/order-bundle",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusOrderBundle.git",
+                "reference": "26afbbadabc2b413c92a88408ba4751ff384c558"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/26afbbadabc2b413c92a88408ba4751ff384c558",
+                "reference": "26afbbadabc2b413c92a88408ba4751ff384c558",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "stof/doctrine-extensions-bundle": "^1.2",
+                "sylius/money-bundle": "^1.0",
+                "sylius/order": "^1.0",
+                "sylius/resource-bundle": "^1.0",
+                "symfony/framework-bundle": "^3.4",
+                "symfony/templating": "^3.4"
+            },
+            "conflict": {
+                "twig/twig": "^1.0"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.5",
+                "incenteev/composer-parameter-handler": "~2.0",
+                "phpspec/phpspec": "^4.0",
+                "phpunit/phpunit": "^5.6",
+                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+                "symfony/browser-kit": "^3.4",
+                "symfony/dependency-injection": "^3.4",
+                "symfony/form": "^3.4",
+                "symfony/validator": "^3.4"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                },
+                "incenteev-parameters": {
+                    "file": "test/app/config/parameters.yml"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Bundle\\OrderBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Sales order management for Symfony2 applications.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "ecommerce",
+                "order",
+                "orders",
+                "sales",
+                "shop",
+                "sylius"
+            ],
+            "time": "2018-02-08T16:38:47+00:00"
         },
         {
             "name": "sylius/registry",

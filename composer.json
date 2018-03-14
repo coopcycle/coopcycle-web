@@ -59,7 +59,7 @@
         "ramsey/uuid": "^3.7",
         "misd/phone-number-bundle": "^1.2",
         "nesbot/carbon": "^1.22",
-        "sylius/taxation-bundle": "^1.0.4",
+        "sylius/taxation-bundle": "^1.1",
         "knplabs/knp-snappy-bundle": "^1.5",
         "mailjet/mailjet-bundle": "^1.0",
         "m6web/statsd-bundle": "^2.15.0",
@@ -67,7 +67,8 @@
         "craue/config-bundle": "~2.0",
         "knplabs/knp-paginator-bundle": "^2.7",
         "league/csv": "^9.1",
-        "twig/twig": "^2.0"
+        "twig/twig": "^2.0",
+        "sylius/order-bundle": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
