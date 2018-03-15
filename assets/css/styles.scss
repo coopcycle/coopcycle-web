@@ -23,6 +23,11 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 400px;
 }
 
+.container--full-height {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .footer {
   width: 100%;
@@ -149,7 +154,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-#search {
+.homepage-search {
   margin-top: -20px;
   padding: 100px 0;
   background-color: $main-blue-light;
@@ -159,8 +164,8 @@ h1, h2, h3, h4, h5, h6 {
   background-position: center center;
 }
 
-#map {
-  margin-bottom: -30px;
+.homepage-map {
+  margin-bottom: -40px;
   background-color: #111;
   padding: 30px 0;
   color: #ccc;
@@ -317,17 +322,21 @@ $cart-heading-height: 40px;
   background-color: $main-blue;
 }
 
+
+
+.order-map__wrapper {
+  height: 100%;
+  position: relative;
+}
+
 .order-map {
+  flex: 1;
   z-index: -1;
   position: absolute;
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.order-map__wrapper {
-  position: relative;
+  top: 0;
+  left: 0;
 }
 
 .order-map__column {

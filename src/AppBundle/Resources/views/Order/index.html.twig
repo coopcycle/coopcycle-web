@@ -5,12 +5,11 @@
 {% endif %}
 
 {% block body %}
-<div class="container">
+<div class="container container--full-height">
 
   {% include 'AppBundle:Order:breadcrumb.html.twig' %}
 
   <div class="order-map__wrapper">
-    <div id="map" class="order-map hidden-xs hidden-sm"></div>
     <div class="row">
       <div class="col-md-3">
         <div class="order-map__column">
@@ -39,6 +38,7 @@
         </div>
       </div>
     </div>
+    <div id="map" class="order-map hidden-xs hidden-sm"></div>
   </div>
 </div>
 {%  endblock %}

@@ -17,7 +17,6 @@ Encore
   .addEntry('js/restaurant-list', './js/app/restaurant-list/index.jsx')
   .addEntry('js/cart', './js/app/cart/index.jsx')
   .addEntry('js/order', './js/app/order/index.jsx')
-  .addEntry('js/order-payment', './js/app/order/payment.js')
   .addEntry('js/order-tracking', './js/app/order/tracking.jsx')
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
   .addEntry('js/delivery-list', './js/app/delivery/list.jsx')

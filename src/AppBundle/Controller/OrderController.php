@@ -9,6 +9,7 @@ use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
 use AppBundle\Form\DeliveryAddressType;
+use AppBundle\Form\StripePaymentType;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -125,8 +126,6 @@ class OrderController extends Controller
             return $this->redirectToRoute('order');
         }
 
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
         $order = $this->createOrderFromRequest($request);
         $orderManager = $this->get('order.manager');
 
@@ -136,21 +135,25 @@ class OrderController extends Controller
 
         $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
+        $form = $this->createForm(StripePaymentType::class);
+
         $templateData =  [
             'order' => $order,
             'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
             'restaurant' => $order->getRestaurant(),
-            'stripe_publishable_key' => $settingsManager->get('stripe_publishable_key')
+            'form' => $form->createView(),
         ];
 
-        if ($request->isMethod('POST') && $request->request->has('stripeToken')) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $stripeToken = $form->get('stripeToken')->getData();
 
             $this->getDoctrine()->getManagerForClass(Order::class)->persist($order);
             $this->getDoctrine()->getManagerForClass(Order::class)->flush();
 
             try {
-
-                $orderManager->pay($order, $request->request->get('stripeToken'));
+                $orderManager->pay($order, $stripeToken);
             } catch (\Exception $e) {
                 $templateData['error'] = $e->getMessage();
                 $order->setStatus(Order::STATUS_PAYMENT_ERROR);
