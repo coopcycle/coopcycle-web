@@ -16,6 +16,7 @@ class TaskListTest extends TaskCollectionTest
         $this->taskCollection->setCourier($user);
     }
 
+
     public function testAddRemoveTaskChangesAssignedUser()
     {
         $user = new ApiUser();

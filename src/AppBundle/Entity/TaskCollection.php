@@ -58,25 +58,65 @@ abstract class TaskCollection
         return $this->items;
     }
 
-    public function addTask(Task $task, $position = null)
-    {
-        $item = null;
-        foreach ($this->items as $i) {
-            if ($i->getTask() === $task) {
-                $item = $i;
-                break;
-            }
+    public function getMaxPosition() {
+        $maxPosition = -1;
+        foreach ($this->getItems() as $i) {
+            $maxPosition = $i->getPosition() > $maxPosition ? $i->getPosition() : $maxPosition;
         }
 
-        if ($item === null) {
+        return $maxPosition;
+    }
+
+    public function addTask(Task $task, $position = null)
+    {
+        // create the collection item if necessary
+        $item = null;
+        $created = false;
+        $items = $this->items;
+
+        $item = $items->filter(function ($item) use ($task) {
+            return $item->getTask() === $task;
+        })->first();
+
+        if (!$item) {
             $item = new TaskCollectionItem();
             $item->setTask($task);
             $item->setParent($this);
-
             $this->items->add($item);
+            $created = true;
         }
 
-        $item->setPosition($position !== null ? $position : -1);
+        // 2 cases
+        // case 1 : insertion - increment the position of the items after position
+        // case 2 : move
+        if ($created) {
+            $position = is_null($position) ? $this->getMaxPosition() + 1 : $position;
+            foreach ($items as $i) {
+                if ($i->getPosition() >= $position && $item !== $i) {
+                    $i->setPosition($i->getPosition() + 1);
+                }
+            }
+        } else if (!$created) {
+            $position = is_null($position) ? $this->getMaxPosition() : $position;
+            // moving up : decrement positions between the old one (inf) and the new one (sup)
+            if ($item->getPosition() > $position) {
+                foreach ($items as $i) {
+                    if ($i->getPosition() <= $position && $i->getPosition() >= $item->getPosition() && $item !== $i) {
+                        $i->setPosition($i->getPosition() - 1);
+                    }
+                }
+            }
+            // moving down : increment the position between the old one (sup) and the new one (inf)
+            else if ($item->getPosition() < $position) {
+                foreach ($items as $i) {
+                    if ($i->getPosition() >= $position && $i->getPosition() <= $item->getPosition() && $item !== $i) {
+                        $i->setPosition($i->getPosition() - 1);
+                    }
+                }
+            }
+        }
+
+        $item->setPosition($position);
 
         return $this;
     }
@@ -108,5 +148,50 @@ abstract class TaskCollection
         }
 
         return false;
+    }
+
+    public function setTasks(array $tasks)
+    {
+        if (count(array_filter(array_keys($tasks), 'is_string')) > 0) {
+            throw new \InvalidArgumentException('$tasks must be an array indexed by integers');
+        }
+
+        $newTasks = new \SplObjectStorage();
+        foreach ($tasks as $position => $task) {
+            $newTasks[$task] = $position;
+        }
+
+        $currentTasks = new \SplObjectStorage();
+        foreach ($this->getItems() as $item) {
+            $currentTasks[$item->getTask()] = $item->getPosition();
+        }
+
+        $tasksToRemove = [];
+        foreach ($currentTasks as $task) {
+            if (!$newTasks->contains($task)) {
+                $tasksToRemove[] = $task;
+            }
+        }
+
+        foreach ($newTasks as $task) {
+            $this->addTask($task, $newTasks[$task]);
+        }
+
+        foreach ($tasksToRemove as $task) {
+            $this->removeTask($task);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Find item at position or return null
+     */
+    public function findAt($position) {
+        foreach ($this->getItems() as $item) {
+            if ($item->getPosition() === $position) {
+                return $item;
+            }
+        }
     }
 }
