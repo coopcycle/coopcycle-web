@@ -2,10 +2,8 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Entity\Order;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Form\ApiRegistrationType;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
@@ -14,9 +12,8 @@ use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessRespon
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -32,7 +29,7 @@ class Register
         UserManagerInterface $userManager,
         JWTManager $jwtManager,
         EventDispatcherInterface $dispatcher,
-        FormFactory $formFactory
+        FormFactoryInterface $formFactory
     )
     {
         $this->userManipulator = $userManipulator;
