@@ -1,0 +1,100 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+<li><a href="{{ path('admin_delivery', { id: delivery.id }) }}">#{{ delivery.id }}</a></li>
+<li>Commande</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+
+    {% if order.state == 'cart' %}
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i> Lorsque vous aurez confirmé la livraison, le client sera notifié par email.
+    </div>
+    {% endif %}
+
+    <h3>Informations</h3>
+
+    <table class="table">
+      <tbody>
+        <tr>
+          <th><i class="fa fa-user"></i> Utilisateur</th>
+          <td class="text-right">
+            <a href="{{ path('admin_user_details', { username: order_user.username }) }}">
+              {{ order_user.username }}
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <th><i class="fa fa-envelope"></i> Email</th>
+          <td class="text-right">
+            {{ order_user.email }}
+          </td>
+        </tr>
+
+        <tr>
+          <th><i class="fa fa-phone"></i> Numéro de téléphone</th>
+          <td class="text-right">
+            {{ order_user.telephone|phone_number_format('NATIONAL') }}
+          </td>
+        </tr>
+        <tr>
+          <th><i class="fa fa-cube"></i> Retrait</th>
+          <td class="text-right">
+            {{ delivery.pickup.address.streetAddress }}
+          </td>
+        </tr>
+        <tr>
+          <th><i class="fa fa-flag"></i> Dépôt</th>
+          <td class="text-right">
+            {{ delivery.dropoff.address.streetAddress }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Résumé</h3>
+
+    <table class="table">
+      <tbody>
+        <tr>
+          <th>Total HT</th>
+          <td class="text-right">
+            {{ delivery.totalExcludingTax }}€
+          </td>
+        </tr>
+        <tr>
+          <th>Total TVA</th>
+          <td class="text-right">
+            {{ delivery.totalTax }}€
+          </td>
+        </tr>
+        <tr>
+          <th>Total TTC</th>
+          <td class="text-right">
+            {{ delivery.totalIncludingTax }}€
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="text-right">
+    {{ form_start(form) }}
+      {% if form.confirm is defined %}
+        {{ form_widget(form.confirm, { attr: { class: 'btn btn-success' } }) }}
+      {% endif %}
+    {{ form_end(form) }}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

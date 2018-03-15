@@ -2,17 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryOrder;
+use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
-use AppBundle\Form\StripePaymentType;
-use Doctrine\Common\Util\ClassUtils;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Stripe;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -153,6 +154,23 @@ class EmbedController extends Controller
         ]);
     }
 
+    private function createOrder(Delivery $delivery)
+    {
+        $orderFactory = $this->container->get('sylius.factory.order');
+        $orderItemFactory = $this->container->get('sylius.factory.order_item');
+
+        $order = $orderFactory->createNew();
+        $orderItem = $orderItemFactory->createNew();
+
+        $orderItem->setUnitPrice($delivery->getTotalIncludingTax() * 100);
+
+        $order->addItem($orderItem);
+        $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
+        $this->container->get('sylius.order_processing.order_processor')->process($order);
+
+        return $order;
+    }
+
     /**
      * @Route("/embed/delivery/process", name="embed_delivery_process")
      * @Template
@@ -177,14 +195,14 @@ class EmbedController extends Controller
 
             $delivery = $form->getData();
             $email = $form->get('email')->getData();
+            $telephone = $form->get('telephone')->getData();
 
             $this->applyDistanceDuration($form);
             $this->applyTaxes($delivery, $pricingRuleSet);
 
-            $delivery->setStatus(Delivery::STATUS_TO_BE_CONFIRMED);
-
             $userManipulator = $this->get('fos_user.util.user_manipulator');
             $userManager = $this->get('fos_user.user_manager');
+            $phoneNumberUtil = $this->get('libphonenumber.phone_number_util');
 
             $user = $userManager->findUserByEmail($email);
             if (!$user) {
@@ -196,18 +214,47 @@ class EmbedController extends Controller
                 $user = $userManipulator->create($username, $password, $email, true, false);
             }
 
+            if (null === $user->getTelephone() || !$user->getTelephone()->equals($telephone)) {
+                $user->setTelephone($telephone);
+                $userManager->updateUser($user);
+            }
+
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
-            // Create a StripePayment & store it in database
-            $stripePayment = StripePayment::create($user, $delivery);
+            $order = $this->createOrder($delivery);
 
+            $orderRepository = $this->container->get('sylius.repository.order');
+            $orderRepository->add($order);
+
+            $deliveryOrder = new DeliveryOrder($order, $user);
+            $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);
+
+            $stripePayment = StripePayment::create($order);
+
+            $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->persist($deliveryOrder);
+            $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->persist($deliveryOrderItem);
             $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
+
+            $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->flush();
+            $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->flush();
             $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
 
-            // Send confirmation email
-            $email = $form->get('email')->getData();
-            $notificationManager->notifyDeliveryToBeConfirmed($delivery, $email);
+            $administrators = $this->getDoctrine()
+                ->getRepository(ApiUser::class)
+                ->createQueryBuilder('u')
+                ->where('u.roles LIKE :roles')
+                ->setParameter('roles', '%ROLE_ADMIN%')
+                ->getQuery()
+                ->getResult();
+
+            // Send email to customer
+            $notificationManager->notifyDeliveryToBeConfirmed($delivery, $user->getEmail());
+
+            // Send email to administrators
+            foreach ($administrators as $administrator) {
+                $notificationManager->notifyDeliveryHasToBeConfirmed($delivery, $administrator->getEmail());
+            }
 
             $this->addFlash(
                 'notice',
@@ -232,73 +279,8 @@ class EmbedController extends Controller
             ->getRepository(Delivery::class)
             ->find($id);
 
-        $stripePayment = $this->getDoctrine()->getRepository(StripePayment::class)
-            ->findOneBy([
-                'resourceClass' => ClassUtils::getClass($delivery),
-                'resourceId' => $delivery->getId(),
-            ]);
-
         return $this->render('@App/Embed/Delivery/delivery.html.twig', [
             'delivery' => $delivery,
-            'stripe_payment' => $stripePayment,
-        ]);
-    }
-
-    /**
-     * @Route("/embed/payment/{uuid}", name="embed_payment")
-     * @Template
-     */
-    public function paymentAction($uuid, Request $request)
-    {
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
-        Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
-
-        $stripePayment = $this->getDoctrine()->getRepository(StripePayment::class)
-            ->findOneByUuid($uuid);
-
-        $resource = $this->getDoctrine()
-            ->getRepository($stripePayment->getResourceClass())
-            ->find($stripePayment->getResourceId());
-
-        $chargeDescription = '';
-        $chargeMetadata = [];
-        if ($resource instanceof Delivery) {
-            $chargeDescription = sprintf('Delivery #%d', $resource->getId());
-            $chargeMetadata = [
-                'delivery_id' => $resource->getId(),
-            ];
-        } else {
-            throw new NotFoundHttpException(sprintf('No template for resource of class %s', $stripePayment->getResourceClass()));
-        }
-
-        $form = $this->createForm(StripePaymentType::class, $stripePayment);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $stripeToken = $form->get('stripeToken')->getData();
-
-            $charge = Stripe\Charge::create([
-              'amount' => $stripePayment->getTotalIncludingTax() * 100,
-              'currency' => 'eur',
-              'description' => $chargeDescription,
-              'metadata' => $chargeMetadata,
-              'source' => $stripeToken,
-            ]);
-
-            $stripePayment->setCharge($charge->id);
-            $stripePayment->setStatus(StripePayment::STATUS_CAPTURED);
-
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
-
-            return $this->redirectToRoute('embed_payment', ['uuid' => $uuid]);
-        }
-
-        return $this->render('@App/Embed/StripePayment/form.html.twig', [
-            'resource' => $resource,
-            'stripe_payment' => $stripePayment,
-            'form' => $form->createView(),
         ]);
     }
 }

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-  {% if to_be_confirmed_warning %}
+  {% if to_be_confirmed|length > 0 %}
     <div class="alert alert-warning">
       <i class="fa fa-exclamation-triangle"></i> {{ 'admin.deliveries.to_be_confirmed.alert'|trans }}
     </div>
@@ -31,7 +31,7 @@
     {% for task in tasks %}
 
       {% set row_classes = [] %}
-      {% if task.delivery is not null and task.delivery.status == 'TO_BE_CONFIRMED' %}
+      {% if task.delivery in to_be_confirmed %}
         {% set row_classes = row_classes|merge(['warning']) %}
       {% endif %}
 

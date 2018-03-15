@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
     - { resource: doctrine_extensions.yml }
+    - { resource: state_machine.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -206,6 +207,12 @@ csa_guzzle:
 
 sylius_taxation:
     driver: doctrine/orm
+
+sylius_order:
+    resources:
+        order:
+            classes:
+                repository: AppBundle\Entity\Delivery\OrderRepository
 
 knp_snappy:
     pdf:

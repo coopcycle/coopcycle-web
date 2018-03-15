@@ -5,6 +5,8 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryOrder;
+use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Store;
 use AppBundle\Form\DeliveryType;
@@ -20,9 +22,22 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
+    private function getDeliveryOrder(Delivery $delivery)
+    {
+        $deliveryOrderItem = $this->getDoctrine()
+                ->getRepository(DeliveryOrderItem::class)
+                ->findOneByDelivery($delivery);
+
+        if ($deliveryOrderItem) {
+            return $deliveryOrderItem->getOrderItem()->getOrder();
+        }
+    }
+
     private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null, array $options = [])
     {
         $isNew = $delivery->getId() === null;
+        $routes = $request->attributes->get('routes');
+        $deliveryOrder = null;
 
         if ($isNew) {
             if ($store) {
@@ -34,21 +49,21 @@ trait DeliveryTrait
                 }
                 $delivery->setDate($date);
             }
+        } else {
+            if ($this->getUser()->hasRole('ROLE_ADMIN')) {
+                $deliveryOrder = $this->getDeliveryOrder($delivery);
+            }
         }
 
         $defaultOptions = [
             'free_pricing' => $store === null,
             'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null
         ];
-
         $options = array_merge($defaultOptions, $options);
 
         $form = $this->createForm(DeliveryType::class, $delivery, $options);
 
-        $routes = $request->attributes->get('routes');
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted()) {
 
             $delivery = $form->getData();
@@ -58,15 +73,6 @@ trait DeliveryTrait
 
             if (!$store && !$user->hasRole('ROLE_ADMIN')) {
                 $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
-            }
-
-            if ($form->getClickedButton()) {
-                if ('confirm' === $form->getClickedButton()->getName()) {
-                    $delivery->setStatus(Delivery::STATUS_CONFIRMED);
-                    $em->flush();
-
-                    return $this->redirectToRoute($routes['success']);
-                }
             }
 
             if ($form->isValid()) {
@@ -102,6 +108,7 @@ trait DeliveryTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'calculate_price_route' => $routes['calculate_price'],
+            'delivery_order' => $deliveryOrder
         ]);
     }
 

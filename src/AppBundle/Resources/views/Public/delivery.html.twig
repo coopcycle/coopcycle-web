@@ -1,0 +1,128 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block menu %}
+<nav id="topnav" class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ path('homepage') }}">
+        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+      </a>
+      <a class="navbar-brand" href="{{ path('homepage') }}">{{ craue_setting('brand_name') }}</a>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-6">
+      <section>
+        <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+      </section>
+    </div>
+    <div class="col-md-6">
+
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><h4 class="nomargin">Résumé</h4></div>
+        <div class="panel-body">
+          <p><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+          <p class="nomargin">
+            <a href="{{ path('public_invoice', { number: order.number }) }}">
+              <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger la facture
+            </a>
+          </p>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Total HT</th>
+              <td class="text-right">
+                {{ delivery.totalExcludingTax }}€
+              </td>
+            </tr>
+            <tr>
+              <th>Total TVA</th>
+              <td class="text-right">
+                {{ delivery.totalTax }}€
+              </td>
+            </tr>
+            <tr>
+              <th>Total TTC</th>
+              <td class="text-right">
+                {{ delivery.totalIncludingTax }}€
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {% if stripe_payment.state == 'completed' %}
+        <div class="alert alert-success">
+          <i class="fa fa-check"></i> Paiement effectué le {{ stripe_payment.updatedAt|localizeddate('medium', 'short') }}
+        </div>
+      {% endif %}
+
+      {% if stripe_payment.state == 'new' %}
+
+        {{ form_start(form) }}
+
+          {{ form_widget(form.stripeToken) }}
+
+          <div class="alert alert-info">
+            Utilisez le formulaire ci-dessous pour payer votre commande par carte bancaire
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="card-element">
+              {% trans %}order.payment.title{% endtrans %}
+            </label>
+            <div id="card-element">
+              <!-- a Stripe Element will be inserted here. -->
+            </div>
+            <!-- Used to display form errors -->
+            <div id="card-errors" role="alert"></div>
+          </div>
+
+          <button type="submit" class="btn btn-block btn-lg btn-primary">
+            {% trans with { '%total%': (stripe_payment.amount / 100) } %}order.payment.total{% endtrans %}
+          </button>
+
+        {{ form_end(form) }}
+
+      {% endif %}
+
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}
+
+{% block footer %}
+<div style="padding: 20px 0;">
+  <div class="container">
+    <div class="text-center">
+      <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+new CoopCycle.DeliveryMap('map', {
+  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ],
+  polyline: "{{ delivery.polyline|e('js') }}"
+})
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+  publishableKey: "{{ craue_setting('stripe_publishable_key') }}",
+  tokenElement: document.querySelector('#stripe_payment_stripeToken')
+})
+</script>
+{% endblock %}

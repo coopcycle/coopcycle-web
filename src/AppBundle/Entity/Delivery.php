@@ -48,12 +48,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     // delivery was canceled (by an admin)
     const STATUS_CANCELED   = 'CANCELED';
 
-    // Needs to be confirmed by an administrator
-    const STATUS_TO_BE_CONFIRMED = 'TO_BE_CONFIRMED';
-
-    // Has been confirmed by an administrator
-    const STATUS_CONFIRMED = 'CONFIRMED';
-
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 

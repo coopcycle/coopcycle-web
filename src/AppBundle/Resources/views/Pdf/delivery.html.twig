@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% trans %}adminDashboard.orders.invoice.title{% endtrans %}</title>
+    <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    .wrapper {
+      min-height: 100%;
+      margin-bottom: -80px;
+    }
+    .footer {
+      height: 50px;
+      text-align: center;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <table style="width: 100%;">
+        <tbody>
+          <tr>
+            <td><h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.number }}</h1></td>
+            <td style="text-align: right;">{{ order.createdAt|localizeddate('full', 'none') }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        <div style="margin-bottom: 30px; width: 50%; float: left;">
+        </div>
+        <div style="margin-bottom: 30px; width: 50%; float: left; text-align: right;">
+          {% set fullName = customer.givenName ~ ' ' ~ customer.familyName %}
+          <table style="width: 100%;">
+            <tbody>
+              <tr>
+                <td><strong>{{ fullName|trim is not empty ? fullName : order.customer.username }}</strong></td>
+              </tr>
+              <tr>
+                <td>{{ delivery.pickup.address.streetAddress }}</td>
+              </tr>
+              <tr>
+                <td>{{ delivery.pickup.address.postalCode }} {{ delivery.pickup.address.addressLocality }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="clear: both;"></div>
+
+      <h2>{% trans %}adminDashboard.orders.order{% endtrans %}</h2>
+
+      <table style="width: 100%;">
+        <tbody>
+          <tr>
+            <td>Livraison {{ (delivery.distance / 1000)|round(2) }} Km × 1</td>
+            <td style="text-align: right;">{{ delivery.totalIncludingTax }} €</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr>
+
+      <table style="width: 100%;">
+        <tbody>
+          <tr>
+            <td><strong>{% trans %}adminDashboard.orders.invoice.totalExcludingTax{% endtrans %}</strong></td>
+            <td style="text-align: right;">{{ delivery.totalExcludingTax }} €</td>
+          </tr>
+          <tr>
+            <td><strong>{% trans %}adminDashboard.orders.invoice.totalTax{% endtrans %}</strong></td>
+            <td style="text-align: right;">{{ delivery.totalTax }} €</td>
+          </tr>
+          <tr>
+            <td><strong>{% trans %}adminDashboard.orders.invoice.totalIncludingTax{% endtrans %}</strong></td>
+            <td style="text-align: right;">{{ delivery.totalIncludingTax }} €</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {# <div class="push"></div> #}
+
+    </div>
+
+    <div class="footer">
+      <p>Footer</p>
+    </div>
+
+  </body>
+</html>

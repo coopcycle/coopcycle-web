@@ -5,10 +5,10 @@ namespace AppBundle\Tests\Action;
 use AppBundle\Action\Order\Accept;
 use AppBundle\Entity;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\NotificationManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
-use AppBundle\Service\RoutingInterface;
-use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Predis\Client as Redis;
@@ -41,7 +41,7 @@ class TestCase extends BaseTestCase
         $calculator = $this->prophesize(CalculatorInterface::class);
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
         $expressionLanguage = $this->prophesize(ExpressionLanguage::class);
-        $routing = $this->prophesize(RoutingInterface::class);
+        $notificationManager = $this->prophesize(NotificationManager::class);
 
         $this->user = new Entity\ApiUser();
 
@@ -51,13 +51,13 @@ class TestCase extends BaseTestCase
         $tokenStorage->getToken()->willReturn($token->reveal());
 
         $deliveryManager = new DeliveryManager(
-            $this->prophesize(EntityRepository::class)->reveal(),
+            $doctrine->reveal(),
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
             'tva_livraison',
             $expressionLanguage->reveal(),
-            $routing->reveal()
+            $notificationManager->reveal()
         );
 
         $orderManager = new OrderManager(

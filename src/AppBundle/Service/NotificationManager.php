@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
 use Symfony\Bridge\Twig\TwigEngine;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class NotificationManager
@@ -114,14 +115,13 @@ class NotificationManager
         $this->mailer->send($email);
     }
 
-    public function notifyDeliveryConfirmed(Delivery $delivery, StripePayment $stripePayment)
+    public function notifyDeliveryConfirmed(OrderInterface $order, $to)
     {
         $email = new \Swift_Message($this->translator->trans('delivery.confirmed.subject', [], 'emails'));
         $email->setFrom($this->getFrom());
-        $email->setTo($stripePayment->getUser()->getEmail());
+        $email->setTo($to);
         $email->setBody($this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
-            'delivery' => $delivery,
-            'stripe_payment' => $stripePayment
+            'order' => $order,
         ]), 'text/html');
 
         $this->mailer->send($email);

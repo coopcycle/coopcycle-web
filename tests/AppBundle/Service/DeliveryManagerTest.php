@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\NotificationManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Prophecy\Argument;
@@ -17,6 +18,7 @@ class DeliveryManagerTest extends BaseTest
     private $calculator;
     private $taxCategoryRepository;
     private $expressionLanguage;
+    private $notificationManager;
 
     public function setUp()
     {
@@ -26,12 +28,11 @@ class DeliveryManagerTest extends BaseTest
         $this->calculator = static::$kernel->getContainer()->get('sylius.tax_calculator');
         $this->taxCategoryRepository = static::$kernel->getContainer()->get('sylius.repository.tax_category');
         $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
+        $this->notificationManager = $this->prophesize(NotificationManager::class);
     }
 
     public function testGetPrice()
     {
-        $pricingRuleRepository = $this->prophesize(EntityRepository::class);
-
         $rule1 = new PricingRule();
         $rule1->setExpression('distance in 0..3000');
         $rule1->setPrice(5.99);
@@ -52,12 +53,13 @@ class DeliveryManagerTest extends BaseTest
         ]));
 
         $deliveryManager = new DeliveryManager(
-            $pricingRuleRepository->reveal(),
+            $this->doctrine,
             $this->taxRateResolver,
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->expressionLanguage
+            $this->expressionLanguage,
+            $this->notificationManager->reveal()
         );
 
         $delivery = new Delivery();
@@ -70,15 +72,14 @@ class DeliveryManagerTest extends BaseTest
     {
         $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20, 'float');
 
-        $pricingRuleRepository = $this->prophesize(EntityRepository::class);
-
         $deliveryManager = new DeliveryManager(
-            $pricingRuleRepository->reveal(),
+            $this->doctrine,
             $this->taxRateResolver,
             $this->calculator,
             $this->taxCategoryRepository,
             'tva_livraison',
-            $this->expressionLanguage
+            $this->expressionLanguage,
+            $this->notificationManager->reveal()
         );
 
         // 3.5 - (3.5 / (1 + 0.20)) = 0.58
