@@ -68,7 +68,8 @@
         "knplabs/knp-paginator-bundle": "^2.7",
         "league/csv": "^9.1",
         "twig/twig": "^2.0",
-        "sylius/order-bundle": "^1.1"
+        "sylius/order-bundle": "^1.1",
+        "sylius/payment": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

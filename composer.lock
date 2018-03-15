@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f1eb87f49e0d72d7f4e52f5bcc1ebff",
+    "content-hash": "1a3d8923f3626164b8da25edd3c22e9a",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5930,6 +5930,68 @@
                 "sales",
                 "shop",
                 "sylius"
+            ],
+            "time": "2018-02-08T16:38:47+00:00"
+        },
+        {
+            "name": "sylius/payment",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Payment.git",
+                "reference": "74043762ecc6ec8b3314ce82efe0a4048dfca2ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Payment/zipball/74043762ecc6ec8b3314ce82efe0a4048dfca2ca",
+                "reference": "74043762ecc6ec8b3314ce82efe0a4048dfca2ca",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "sylius/registry": "^1.0",
+                "sylius/resource": "^1.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Payment\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Flexible payments system for PHP e-commerce applications.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "ecommerce",
+                "payment",
+                "payments",
+                "shop",
+                "webshop"
             ],
             "time": "2018-02-08T16:38:47+00:00"
         },
