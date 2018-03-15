@@ -218,9 +218,21 @@ class RestaurantController extends Controller
             try {
                 $cart->addItem($menuItem, $quantity, $modifierChoices);
             } catch (RestaurantMismatchException $e) {
-                return new JsonResponse(['errors' => ['item' => sprintf('Unable to add %s', $menuItem->getName())]], 400);
+                return new JsonResponse([
+                    'errors' => [
+                        'item' => [
+                            sprintf('Unable to add %s', $menuItem->getName())
+                        ]
+                    ]
+                ], 400);
             } catch (UnavailableProductException $e) {
-                return new JsonResponse(['errors' => ['item' => sprintf('Item %s is unavailable', $menuItem->getName())]], 400);
+                return new JsonResponse([
+                    'errors' => [
+                        'item' => [
+                            sprintf('Item %s is unavailable', $menuItem->getName())
+                        ]
+                    ]
+                ], 400);
             }
         }
 
@@ -234,12 +246,12 @@ class RestaurantController extends Controller
 
         $errors = $this->get('validator')->validate($cart);
 
-        if (count($errors) > 0) {
-            return new JsonResponse([ 'errors' => ValidationUtils::serializeValidationErrors($errors)], 400);
-        } else {
-            $this->saveCart($request, $cart);
-            return new JsonResponse($cart->toArray());
-        }
+        $this->saveCart($request, $cart);
+
+        return new JsonResponse([
+            'cart' => $cart->toArray(),
+            'errors' => ValidationUtils::serializeValidationErrors($errors)
+        ], count($errors) > 0 ? 400 : 200);
     }
 
     /**
@@ -253,9 +265,14 @@ class RestaurantController extends Controller
         $cart = $this->getCart($request, $restaurant);
 
         $cart->removeItem($itemKey);
+
+        $errors = $this->get('validator')->validate($cart);
         $this->saveCart($request, $cart);
 
-        return new JsonResponse($cart->toArray());
+        return new JsonResponse([
+            'cart' => $cart->toArray(),
+            'errors' => ValidationUtils::serializeValidationErrors($errors)
+        ], count($errors) > 0 ? 400 : 200);
     }
 
     /**

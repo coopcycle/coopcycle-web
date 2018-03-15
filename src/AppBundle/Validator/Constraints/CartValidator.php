@@ -44,5 +44,14 @@ class CartValidator extends ConstraintValidator
                 ->atPath('address')
                 ->addViolation();
         }
+
+        $minimumCartAmount = $object->getRestaurant()->getMinimumCartAmount();
+        $violations = $validator->validate($object->getTotal(), new Assert\GreaterThanOrEqual(['value' => $minimumCartAmount]));
+        if (count($violations) > 0) {
+            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
+                ->setParameter('%minimum_amount%', $minimumCartAmount)
+                ->atPath('total')
+                ->addViolation();
+        }
     }
 }
