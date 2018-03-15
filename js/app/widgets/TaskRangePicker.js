@@ -41,7 +41,7 @@ export default class TaskRangePicker {
         <DatePicker.RangePicker
           style={{ width: '100%' }}
           showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
-          format="YYYY-MM-DD HH:mm"
+          format="YYYY-MM-DD HH:mm:ss"
           defaultValue={[ moment(afterValue), moment(beforeValue) ]}
           onChange={(value, dateString) => {
             const [ doneAfter, doneBefore ] = dateString
