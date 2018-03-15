@@ -11,3 +11,7 @@ proxy_buffers 8 32k;
 proxy_buffer_size 64k;
 
 proxy_set_header X-Forwarded-Proto $scheme;
+
+# Set a high read timeout to avoid disconnections
+# http://nginx.org/en/docs/http/websocket.html
+proxy_read_timeout 1d;
