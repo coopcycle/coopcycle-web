@@ -17,7 +17,6 @@ class Filters extends Component {
   }
 
 
-
   render() {
 
     const { showFinishedTasks, selectedTags, allTags, debug_state } = this.props
@@ -47,6 +46,7 @@ class Filters extends Component {
       </ul>
     </li>
   )
+
   }
 }
 
@@ -65,5 +65,6 @@ function mapDispatchToProps (dispatch) {
     setSelectedTagList: tagName => {  dispatch(setSelectedTagList(tagName)) },
     }
   }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filters)

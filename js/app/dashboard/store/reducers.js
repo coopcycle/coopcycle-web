@@ -263,6 +263,7 @@ const tasksFilters = (state = {showFinishedTasks: true}, action) => {
   }
 }
 
+
 const allTags = (state = tagsInitial, action) => {
   return state
 }
@@ -291,6 +292,7 @@ const tagsFilters = (state = {selectedTags:  tagsInitial}, action ) => {
   }
 }
 
+
 export default combineReducers({
   allTasks,
   allTags,
@@ -302,4 +304,5 @@ export default combineReducers({
   taskListGroupMode,
   tasksFilters,
   tagsFilters,
+  tasksFilters
 })
