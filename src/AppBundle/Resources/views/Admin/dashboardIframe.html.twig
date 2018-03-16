@@ -17,11 +17,15 @@
         <nav class="navbar navbar-default">
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              {# Date Picker #}
-              <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayBefore|date('Y-m-d') }) }}"><i class="fa fa-caret-left"></i></a>
-              <div class="dashboard__date-picker" id="date-picker"></div>
-              <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayAfter|date('Y-m-d') }) }}"><i class="fa fa-caret-right"></i></a>
-              <ul class="nav navbar-nav navbar-right">
+              <ul class="nav navbar-nav" id="dashboard-controls">
+                {# Date Picker #}
+                <li>
+                  <div class="dashboard__date"}>
+                    <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayBefore|date('Y-m-d') }) }}"><i class="fa fa-caret-left"></i></a>
+                    <div class="dashboard__date-picker" id="date-picker"></div>
+                    <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayAfter|date('Y-m-d') }) }}"><i class="fa fa-caret-right"></i></a>
+                  </div>
+                </li>
                 <li>
                   <a href="#" data-toggle="modal" data-target="#export-modal">
                     <i class="fa fa-download" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.export{% endtrans %}
@@ -49,6 +53,7 @@
                     </a>
                   </li>
                 {% endif %}
+                {# Filters #}
               </ul>
             </div>
           </div>

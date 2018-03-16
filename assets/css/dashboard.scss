@@ -73,6 +73,11 @@ html, body {
     flex: 7.5;
   }
 
+  &__date {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
   &__date-picker {
     margin: 9px 0;
     display: inline-block;
@@ -93,6 +98,11 @@ html, body {
     position: relative;
     top: 2px;
     padding: 0 4px;
+  }
+
+  &__filters__icon {
+    position: relative;
+    right: 8px;
   }
 
   &__aside {

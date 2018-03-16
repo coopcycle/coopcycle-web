@@ -45,7 +45,7 @@
 
           {% if is_granted('ROLE_COURIER') or is_granted('ROLE_RESTAURANT') or is_granted('ROLE_STORE') %}
             <li class="dropdown">
-              <a class="admin-navbar__link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-user"></i>  {% trans %}profile.myAccount{% endtrans %} <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">

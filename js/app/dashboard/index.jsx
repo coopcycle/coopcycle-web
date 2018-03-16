@@ -8,6 +8,7 @@ import moment from 'moment'
 import store from './store/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
+import Filters from './components/Filters'
 
 const locale = $('html').attr('lang'),
       antdLocale = locale === 'fr' ? fr_FR : en_GB,
@@ -27,6 +28,17 @@ render(
   </Provider>,
   document.querySelector('.dashboard__aside')
 )
+
+let li = document.createElement('li');
+
+render(
+  <Provider store={store}>
+    <Filters />
+  </Provider>,
+  li,
+  function () {
+    document.querySelector('#dashboard-controls').appendChild(findDOMNode(this))
+})
 
 render(
   <LocaleProvider locale={antdLocale}>

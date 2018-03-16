@@ -57,35 +57,49 @@ export default class MapProxy {
     this.map = map
     this.polylineLayerGroups = new Map()
 
+    this.taskMarkers = new Map()
+
     this.courierMarkers = new Map()
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
   }
 
   addTask(task) {
-    const color  = taskColor(task)
-    const icon   = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
-    const coords = [task.address.geo.latitude, task.address.geo.longitude]
-    const marker = MapHelper.createMarker(coords, icon, 'marker', color)
+    let marker = this.taskMarkers.get(task['id'])
 
-    const doneAfter = moment(task.doneAfter).format('LT'),
-      doneBefore = moment(task.doneBefore).format('LT'),
-      taskId = /([\d]+)/.exec(task['@id'])[0]
+    if (!marker) {
+      const color = taskColor(task)
+      const icon = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
+      const coords = [task.address.geo.latitude, task.address.geo.longitude]
+      marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
-    const popupContent = `
-      <span>Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }</span>
-      <br>
-      <span>${task.address.streetAddress}</span>
-      <br>
-      <span>${doneAfter} - ${doneBefore}</span>
-    `
+      const doneAfter = moment(task.doneAfter).format('LT'),
+        doneBefore = moment(task.doneBefore).format('LT'),
+        taskId = task['id']
 
-    const popup = L.popup()
-      .setContent(popupContent)
+      const popupContent = `
+        <span>Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }</span>
+        <br>
+        <span>${task.address.streetAddress}</span>
+        <br>
+        <span>${doneAfter} - ${doneBefore}</span>
+      `
 
-    marker.bindPopup(popup)
+      const popup = L.popup()
+        .setContent(popupContent)
+
+      marker.bindPopup(popup)
+      this.taskMarkers.set(task['id'], marker)
+    }
 
     marker.addTo(this.map)
+  }
+
+  hideTask(task) {
+    const marker = this.taskMarkers.get(task['id'])
+    if (marker) {
+      this.map.removeLayer(marker)
+    }
   }
 
   getPolylineLayerGroup(username) {

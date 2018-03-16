@@ -12,7 +12,13 @@ class LeafletMap extends Component {
     this.map = MapHelper.init('map')
     this.proxy = new MapProxy(this.map)
 
-    _.forEach(this.props.tasks, task => this.proxy.addTask(task))
+    let { tasks, showFinishedTasks } = this.props
+
+    if (!showFinishedTasks) {
+      tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
+    }
+
+    _.forEach(tasks, task => this.proxy.addTask(task))
     _.forEach(this.props.polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
 
     const { socket } = this.props
@@ -27,7 +33,7 @@ class LeafletMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { polylineEnabled, polylines } = this.props
+    const { polylineEnabled, polylines, tasks } = this.props
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(polylineEnabled, (enabled, username) => {
@@ -37,6 +43,15 @@ class LeafletMap extends Component {
         this.proxy.hidePolyline(username)
       }
     })
+
+    if (prevProps.showFinishedTasks !== this.props.showFinishedTasks) {
+      const finishedTasks = _.filter(tasks, task => task.status !== 'TODO')
+      if (this.props.showFinishedTasks) {
+        _.forEach(finishedTasks, task => this.proxy.addTask(task))
+      } else {
+        _.forEach(finishedTasks, task => this.proxy.hideTask(task))
+      }
+    }
   }
 
   render() {
@@ -61,7 +76,8 @@ function mapStateToProps(state, ownProps) {
   return {
     tasks,
     polylines,
-    polylineEnabled
+    polylineEnabled,
+    showFinishedTasks: state.tasksFilters.showFinishedTasks
   }
 }
 
