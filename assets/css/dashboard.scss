@@ -284,3 +284,7 @@ html, body {
     transform: translate3d(4px, 0, 0);
   }
 }
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0;
+}
