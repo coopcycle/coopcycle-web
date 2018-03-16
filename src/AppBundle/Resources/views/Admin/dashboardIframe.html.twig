@@ -13,12 +13,14 @@
 {% block body %}
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}" id="dashboard">
     <div class="dashboard__map">
-      <div class="dashboard__map-container"></div>
       <div class="dashboard__toolbar-container">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <div id="date-picker" class="navbar-text"></div>
+              {# Date Picker #}
+              <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayBefore|date('Y-m-d') }) }}"><i class="fa fa-caret-left"></i></a>
+              <div class="dashboard__date-picker" id="date-picker"></div>
+              <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayAfter|date('Y-m-d') }) }}"><i class="fa fa-caret-right"></i></a>
               <ul class="nav navbar-nav navbar-right">
                 <li>
                   <a href="#" data-toggle="modal" data-target="#export-modal">
@@ -31,27 +33,28 @@
                   </a>
                 </li>
                 {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
-                {% set task_upload_form_errors %}
-                  {% spaceless %}
-                  <ul class="list-unstyled">
-                  {% for error in task_upload_form.file.vars.errors %}
-                    <li>{{ error.message }}</li>
-                  {% endfor %}
-                  </ul>
-                  {% endspaceless %}
-                {% endset %}
-                <li>
-                  <a id="task-upload-form-errors" href="#" data-toggle="popover" data-placement="top"
-                    data-content="{{ task_upload_form_errors|e('html_attr') }}">
-                    <span class="text-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.importErrors{% endtrans %}</span>
-                  </a>
-                </li>
+                  {% set task_upload_form_errors %}
+                    {% spaceless %}
+                      <ul class="list-unstyled">
+                        {% for error in task_upload_form.file.vars.errors %}
+                          <li>{{ error.message }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endspaceless %}
+                  {% endset %}
+                  <li>
+                    <a id="task-upload-form-errors" href="#" data-toggle="popover" data-placement="top"
+                       data-content="{{ task_upload_form_errors|e('html_attr') }}">
+                      <span class="text-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.importErrors{% endtrans %}</span>
+                    </a>
+                  </li>
                 {% endif %}
               </ul>
             </div>
           </div>
         </nav>
       </div>
+      <div class="dashboard__map-container"></div>
     </div>
     <aside class="dashboard__aside"></aside>
 </div>

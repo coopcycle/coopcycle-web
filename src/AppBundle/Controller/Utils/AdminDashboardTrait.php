@@ -92,6 +92,10 @@ trait AdminDashboardTrait
     public function dashboardFullscreenAction($date, Request $request)
     {
         $date = new \DateTime($date);
+        $dayAfter = clone $date;
+        $dayAfter->modify('+1 day');
+        $dayBefore = clone $date;
+        $dayBefore->modify('-1 day');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -255,6 +259,8 @@ trait AdminDashboardTrait
         return $this->render('@App/Admin/dashboardIframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
+            'dayAfter' => $dayAfter,
+            'dayBefore' => $dayBefore,
             'couriers' => $couriers,
             'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
