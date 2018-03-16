@@ -4,7 +4,10 @@
 {% set is_new_task = (task.id is null) %}
 
 {% set form_start_variables = {
-  attr: { class: 'modal-content' }
+  attr: {
+    class: 'modal-content',
+    'data-ajax': is_new_task ? 'false' : 'true'
+  }
 } %}
 {% if not is_new_task %}
   {% set form_start_variables = form_start_variables|merge({
@@ -33,15 +36,7 @@
       {{ form_row(form.type) }}
       {{ form_widget(form.address) }}
 
-      <div>
-        <label class="control-label">{% trans %}task.form.timeWindow{% endtrans %}</label>
-        <div class="form-group">
-          <div id="{{ form.vars.id }}_rangepicker"></div>
-        </div>
-        {{ form_row(form.doneAfter) }}
-        {{ form_row(form.doneBefore) }}
-      </div>
-
+      {{ form_row(form.dateRange) }}
       {{ form_row(form.comments) }}
       {{ form_row(form.tagsAsString) }}
 

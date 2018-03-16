@@ -19,8 +19,19 @@
 {% endspaceless %}
 {% endblock %}
 
+{% block _task_dateRange_widget %}
+  <div class="form-group">
+    <div id="{{ form.vars.id }}_widget"></div>
+  </div>
+  {{ form_widget(form) }}
+{% endblock %}
+
 {% block _task_edit_address_widget %}
 {{ block('_task_address_widget') }}
+{% endblock %}
+
+{% block _task_edit_dateRange_widget %}
+{{ block('_task_dateRange_widget') }}
 {% endblock %}
 
 {% block _task_tagsAsString_label %}

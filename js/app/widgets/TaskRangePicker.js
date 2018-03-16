@@ -1,4 +1,4 @@
-import { DatePicker, LocaleProvider } from 'antd'
+import { DatePicker, Form, LocaleProvider } from 'antd'
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
@@ -18,36 +18,28 @@ export default class TaskRangePicker {
     const afterValue = after.value
     const beforeValue = before.value
 
-    const $doneAfterHidden = $('<input>')
-      .attr('type', 'hidden')
-      .attr('name', after.getAttribute('name'))
-      .attr('id', after.getAttribute('id'))
-      .val(after.value)
+    $(after).closest('.form-group').addClass('hidden')
+    $(before).closest('.form-group').addClass('hidden')
 
-    const $doneBeforeHidden = $('<input>')
-      .attr('type', 'hidden')
-      .attr('name', before.getAttribute('name'))
-      .attr('id', before.getAttribute('id'))
-      .val(before.value)
-
-    $doneBeforeHidden.insertAfter($(el))
-    $doneAfterHidden.insertAfter($(el))
-
-    $(after).closest('.form-group').remove()
-    $(before).closest('.form-group').remove()
+    const hasError = $(after).closest('.form-group').hasClass('has-error') || $(before).closest('.form-group').hasClass('has-error')
+    const formItemProps = hasError ? { validateStatus: 'error' } : {}
 
     render(
       <LocaleProvider locale={ antdLocale }>
-        <DatePicker.RangePicker
-          style={{ width: '100%' }}
-          showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
-          format="YYYY-MM-DD HH:mm:ss"
-          defaultValue={[ moment(afterValue), moment(beforeValue) ]}
-          onChange={(value, dateString) => {
-            const [ doneAfter, doneBefore ] = dateString
-            $doneAfterHidden.val(doneAfter)
-            $doneBeforeHidden.val(doneBefore)
-          }} />
+        <Form>
+          <Form.Item { ...formItemProps }>
+            <DatePicker.RangePicker
+              style={{ width: '100%' }}
+              showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
+              format="YYYY-MM-DD HH:mm"
+              defaultValue={[ moment(afterValue), moment(beforeValue) ]}
+              onChange={(value, dateString) => {
+                const [ doneAfter, doneBefore ] = dateString
+                $(after).val(doneAfter)
+                $(before).val(doneBefore)
+              }} />
+          </Form.Item>
+        </Form>
       </LocaleProvider>,
       el
     )

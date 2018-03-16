@@ -600,7 +600,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/tasks/{id}", methods={"POST"}, name="admin_task")
+     * @Route("/admin/tasks/{id}", name="admin_task")
      */
     public function taskAction($id, Request $request)
     {
@@ -629,7 +629,7 @@ class AdminController extends Controller
                 try {
                     $taskManager->remove($task);
                 } catch (\Exception $e) {
-                    // TODO Find a way to reopen modal with error
+                    // TODO Add form error
                 }
             }
 
@@ -637,25 +637,19 @@ class AdminController extends Controller
                 ->getManagerForClass(Task::class)
                 ->flush();
 
-            return $this->redirect($request->headers->get('referer'));
+            $taskNormalized = $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
+                'resource_class' => Task::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task', 'delivery', 'place']
+            ]);
+
+            return new JsonResponse($taskNormalized);
         }
-    }
 
-    /**
-     * @Route("/admin/tasks/{id}/modal-content", name="admin_task_modal_content")
-     * @Template()
-     */
-    public function taskModalContentAction($id, Request $request)
-    {
-        $task = $this->getDoctrine()
-            ->getRepository(Task::class)
-            ->find($id);
-
-        $form = $this->createTaskEditForm($task);
-
-        return [
+        return $this->render('@App/Admin/taskModalContent.html.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**

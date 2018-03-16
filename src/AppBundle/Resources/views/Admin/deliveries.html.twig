@@ -87,7 +87,7 @@
 <script>
 window.AppData = window.AppData || {};
 window.AppData.Delivery = {
-  taskModalURL: "{{ path('admin_task_modal_content', { id: '__TASK_ID__' }) }}"
+  taskModalURL: "{{ path('admin_task', { id: '__TASK_ID__' }) }}"
 };
 </script>
 <script src="{{ asset('js/widgets.js') }}"></script>

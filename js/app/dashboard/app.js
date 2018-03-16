@@ -77,6 +77,7 @@ function configureDrake(unassignedTasksContainer, allTasks, assignTasks) {
 class DashboardApp extends React.Component {
 
   componentDidMount() {
+
     this.props.socket.on('task:done', data => this.props.updateTask(data.task))
     this.props.socket.on('task:failed', data => this.props.updateTask(data.task))
 
@@ -84,6 +85,13 @@ class DashboardApp extends React.Component {
     drake.containers.push(unassignedTasksContainer)
 
     configureDrake(unassignedTasksContainer, this.props.allTasks, this.props.assignTasks)
+
+    // This event is trigerred when the task modal is submitted successfully
+    $(document).on('task.form.success', '#task-edit-modal', (e) => {
+      const { task } = e
+      this.props.updateTask(task)
+    })
+
   }
 
   render () {

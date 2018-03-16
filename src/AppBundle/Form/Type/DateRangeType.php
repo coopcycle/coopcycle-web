@@ -13,12 +13,12 @@ class DateRangeType extends AbstractType
         $builder
             ->add('after', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss',
+                'format' => 'yyyy-MM-dd HH:mm',
                 'required' => false
             ])
             ->add('before', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss',
+                'format' => 'yyyy-MM-dd HH:mm',
                 'required' => false
             ]);
     }

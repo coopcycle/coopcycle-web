@@ -93,9 +93,9 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
     }
   })
 
-  new TaskRangePicker(document.querySelector(`#${formName}_rangepicker`), [
-    document.querySelector(`#${formName}_doneAfter`),
-    document.querySelector(`#${formName}_doneBefore`)
+  new TaskRangePicker(document.querySelector(`#${formName}_dateRange_widget`), [
+    document.querySelector(`#${formName}_dateRange_after`),
+    document.querySelector(`#${formName}_dateRange_before`)
   ])
 
   const timelineEl = document.querySelector(`form[name="${formName}"] ul[data-render="timeline"]`)
@@ -113,11 +113,52 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
     initTagSelector(formName)
   }
 
-  $(document).off('click', '.task-tags-tag').on('click', '.task-tags-tag', function(e) {
-    e.preventDefault()
-    const $target = $(e.currentTarget)
-    const tag = $target.data()
-    toggleTag(formName, tag)
-  })
+  $(document)
+    .off('click', '.task-tags-tag')
+    .on('click', '.task-tags-tag', function(e) {
+      e.preventDefault()
+      const $target = $(e.currentTarget)
+      const tag = $target.data()
+      toggleTag(formName, tag)
+    })
+
+  if ($(`form[name="${formName}"]`).data('ajax') === true) {
+
+    $(document)
+      .off('submit', `form[name="${formName}"]`)
+      .on('submit', `form[name="${formName}"]`, function(e) {
+        e.preventDefault()
+
+        const $form = $(`form[name="${formName}"]`)
+
+        fetch($form.attr('action'), {
+          credentials: 'include',
+          method: 'POST',
+          body: new URLSearchParams($form.serialize()),
+        })
+        .then(res => {
+          if (res.ok) {
+            res.text()
+              .then(text => {
+                // Try to parse the response as JSON
+                // If the response is not is JSON format, it means the form is not valid
+                try {
+                  const task = JSON.parse(text)
+                  const $modal = $form.closest('.modal')
+                  const event = $.Event('task.form.success', { task })
+                  $modal.trigger(event)
+                  $modal.modal('hide')
+                } catch(e) {
+                  $form.closest('.modal-dialog').replaceWith(text)
+                  $('.modal-dialog').addClass('modal--shake')
+                }
+              })
+          }
+        })
+
+        return false
+      })
+
+  }
 
 }

@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
+use AppBundle\Form\Type\DateRangeType;
 use AppBundle\Service\TagManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -42,14 +43,8 @@ class TaskType extends AbstractType
                 'disabled' => !$options['can_edit_type']
             ])
             ->add('address', AddressType::class)
-            ->add('doneAfter', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => false
-            ])
-            ->add('doneBefore', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss'
+            ->add('dateRange', DateRangeType::class, [
+                'mapped' => false,
             ])
             ->add('comments', TextareaType::class, [
                 'required' => false,
@@ -113,6 +108,9 @@ class TaskType extends AbstractType
             }, iterator_to_array($task->getTags()));
 
             $form->get('tagsAsString')->setData(implode(' ', $tags));
+
+            $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
+            $form->get('dateRange')->get('before')->setData($task->getDoneBefore());
         });
 
         $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
@@ -124,6 +122,15 @@ class TaskType extends AbstractType
             $tags = $this->tagManager->fromSlugs($slugs);
 
             $task->setTags($tags);
+        });
+
+        $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+
+            $data = $event->getData();
+            $task = $event->getForm()->getParent()->getData();
+
+            $task->setDoneAfter(new \DateTime($data['after']));
+            $task->setDoneBefore(new \DateTime($data['before']));
         });
     }
 

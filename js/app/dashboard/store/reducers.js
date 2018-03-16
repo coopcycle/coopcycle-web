@@ -85,22 +85,59 @@ const taskLists = (state = taskListsInitial, action) => {
       return newTaskLists
 
     case 'UPDATE_TASK':
-      if (action.task.assignedTo) {
 
-        taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
-        taskList = newTaskLists[taskListIndex]
+      // The task may have been assigned through the modal
+      // We need to lookup all the lists as we don't know if it was assigned or not
+      taskListIndex = _.findIndex(newTaskLists, taskList => {
+        const taskIds = _.map(taskList.items, task => task['@id'])
+        return _.includes(taskIds, action.task['@id'])
+      })
 
-        const taskIndex = _.findIndex(taskList.items, task => action.task['@id'] === task['@id'])
+      // The task belongs to a list
+      if (-1 !== taskListIndex) {
 
-        taskListItems = taskList.items.slice(0)
-        taskListItems.splice(taskIndex, 1, action.task)
+        // If the task is still assigned, replace it
+        if (action.task.isAssigned) {
 
-        newTaskLists.splice(taskListIndex, 1,
-          Object.assign({}, taskList, { items: taskListItems }))
+          taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
+          taskList = newTaskLists[taskListIndex]
+          taskListItems = taskList.items.slice(0)
+
+          const taskIndex = _.findIndex(taskList.items, task => action.task['@id'] === task['@id'])
+          taskListItems.splice(taskIndex, 1, action.task)
+          newTaskLists.splice(taskListIndex, 1,
+            Object.assign({}, taskList, { items: taskListItems }))
+
+        // If the task has been unassigned, remove it
+        } else {
+
+          taskList = newTaskLists[taskListIndex]
+
+          taskListItems = _.differenceWith(
+            taskList.items,
+            _.intersectionWith(taskList.items, [ action.task ], taskComparator),
+            taskComparator
+          )
+          newTaskLists.splice(taskListIndex, 1,
+            Object.assign({}, taskList, { items: taskListItems }))
+        }
 
         return newTaskLists
+
+      } else {
+
+        if (action.task.isAssigned) {
+
+          // FIXME
+          // The task has been assigned through the modal
+          // Given our architecture, it is simpler to reload the page
+          // because there may be linked tasks that have been assigned
+          // It would be more reliable to rely on data from the server to update the dashboard
+          window.location.reload()
+
+        }
+
       }
-      break
   }
 
   return state
@@ -127,10 +164,25 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
       return Array.prototype.concat(state, action.tasks)
 
     case 'UPDATE_TASK':
-      if (!action.task.assignedTo) {
-        newState = state.slice(0)
-        let index = _.findIndex(newState, (task) => action.task['@id'] === task['@id'])
-        newState.splice(index, 1, action.task)
+
+      newState = state.slice(0)
+
+      let taskIndex = _.findIndex(newState, task => action.task['@id'] === task['@id'])
+
+      if (-1 !== taskIndex) {
+
+        // If the task has been assigned, remove it
+        if (action.task.isAssigned) {
+          newState = _.differenceWith(
+            newState,
+            _.intersectionWith(newState, [ action.task ], taskComparator),
+            taskComparator
+          )
+        // If the task is still unassigned, just replace it
+        } else {
+          // let taskIndex = _.findIndex(newState, task => action.task['@id'] === task['@id'])
+          newState.splice(taskIndex, 1, Object.assign({}, action.task))
+        }
 
         return newState
       }
