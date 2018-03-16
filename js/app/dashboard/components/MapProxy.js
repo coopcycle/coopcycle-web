@@ -68,21 +68,27 @@ export default class MapProxy {
     let marker = this.taskMarkers.get(task['id'])
 
     if (!marker) {
-      const color = taskColor(task)
-      const icon = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
-      const coords = [task.address.geo.latitude, task.address.geo.longitude]
-      marker = MapHelper.createMarker(coords, icon, 'marker', color)
-
-      const doneAfter = moment(task.doneAfter).format('LT'),
+      const color = taskColor(task),
+        icon = task.type === 'PICKUP' ? 'cube' : 'arrow-down',
+        coords = [task.address.geo.latitude, task.address.geo.longitude],
+        assignedTo = task.assignedTo ? ' assignée à ' + task.assignedTo : '',
+        doneAfter = moment(task.doneAfter).format('LT'),
         doneBefore = moment(task.doneBefore).format('LT'),
         taskId = task['id']
 
+      marker = MapHelper.createMarker(coords, icon, 'marker', color)
+
       const popupContent = `
-        <span>Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }</span>
+        <span>
+            Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }
+            ${ assignedTo }
+
+        </span>
         <br>
-        <span>${task.address.streetAddress}</span>
+        <span>${task.address.streetAddress} de ${doneAfter} à ${doneBefore}</span>
         <br>
-        <span>${doneAfter} - ${doneBefore}</span>
+        ${ task.tags.map((item) => '<span style="color:#fff; padding: 2px; background-color:' + item.color + ';">' +item.name + '</span>').join(' ') }
+        <span>${ task.comments ? 'Commentaires : ' + task.comments : '' }</span>
       `
 
       const popup = L.popup()
