@@ -43,9 +43,6 @@ class TaskType extends AbstractType
                 'disabled' => !$options['can_edit_type']
             ])
             ->add('address', AddressType::class)
-            ->add('dateRange', DateRangeType::class, [
-                'mapped' => false,
-            ])
             ->add('comments', TextareaType::class, [
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'Specify any useful details to complete task']
@@ -56,6 +53,25 @@ class TaskType extends AbstractType
                 'label' => 'Tags'
             ])
             ->add('save', SubmitType::class);
+
+        if ($options['date_range']) {
+            $builder
+                ->add('dateRange', DateRangeType::class, [
+                    'mapped' => false,
+                ]);
+        } else {
+            $builder
+                ->add('doneAfter', DateType::class, [
+                    'widget' => 'single_text',
+                    'format' => 'yyyy-MM-dd HH:mm:ss',
+                    'required' => false
+                ])
+                ->add('doneBefore', DateType::class, [
+                    'widget' => 'single_text',
+                    'format' => 'yyyy-MM-dd HH:mm:ss',
+                    'required' => false
+                ]);
+        }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
@@ -109,8 +125,10 @@ class TaskType extends AbstractType
 
             $form->get('tagsAsString')->setData(implode(' ', $tags));
 
-            $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
-            $form->get('dateRange')->get('before')->setData($task->getDoneBefore());
+            if ($form->has('dateRange')) {
+                $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
+                $form->get('dateRange')->get('before')->setData($task->getDoneBefore());
+            }
         });
 
         $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
@@ -124,14 +142,16 @@ class TaskType extends AbstractType
             $task->setTags($tags);
         });
 
-        $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        if ($builder->has('dateRange')) {
+            $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
 
-            $data = $event->getData();
-            $task = $event->getForm()->getParent()->getData();
+                $data = $event->getData();
+                $task = $event->getForm()->getParent()->getData();
 
-            $task->setDoneAfter(new \DateTime($data['after']));
-            $task->setDoneBefore(new \DateTime($data['before']));
-        });
+                $task->setDoneAfter(new \DateTime($data['after']));
+                $task->setDoneBefore(new \DateTime($data['before']));
+            });
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -139,6 +159,7 @@ class TaskType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Task::class,
             'can_edit_type' => true,
+            'date_range' => false,
         ));
     }
 }

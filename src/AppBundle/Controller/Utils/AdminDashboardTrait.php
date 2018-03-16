@@ -106,7 +106,9 @@ trait AdminDashboardTrait
 
         $task = $this->createDefaultTask($date);
 
-        $newTaskForm = $this->createForm(TaskType::class, $task);
+        $newTaskForm = $this->createForm(TaskType::class, $task, [
+            'date_range' => true
+        ]);
 
         $taskExport = new \stdClass();
         $taskExport->date = $date;

@@ -34,6 +34,7 @@ trait TaskTrait
     {
         return $this->get('form.factory')->createNamed('task_edit', TaskType::class, $task, [
             'can_edit_type' => false,
+            'date_range' => true
         ]);
     }
 }
