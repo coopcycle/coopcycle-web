@@ -125,8 +125,8 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
   if ($(`form[name="${formName}"]`).data('ajax') === true) {
 
     $(document)
-      .off('submit', `form[name="${formName}"]`)
-      .on('submit', `form[name="${formName}"]`, function(e) {
+      .off('click', `#${formName}_save`)
+      .on('click', `#${formName}_save`, function(e) {
         e.preventDefault()
 
         const $form = $(`form[name="${formName}"]`)

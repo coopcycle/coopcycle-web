@@ -617,20 +617,27 @@ class AdminController extends Controller
 
             $task = $form->getData();
 
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                try {
+                    $taskManager->remove($task);
+                } catch (\Exception $e) {
+                    // TODO Add form error
+                }
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Task::class)
+                    ->flush();
+
+                return $this->redirect($request->headers->get('referer'));
+            }
+
             $user = $form->get('assign')->getData();
 
             if (null === $user) {
                 $task->unassign();
             } else {
                 $task->assignTo($user);
-            }
-
-            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
-                try {
-                    $taskManager->remove($task);
-                } catch (\Exception $e) {
-                    // TODO Add form error
-                }
             }
 
             $this->getDoctrine()
