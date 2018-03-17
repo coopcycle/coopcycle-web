@@ -2,7 +2,7 @@
 
 {% block content %}
   {{ 'delivery.confirmed.body' | trans({
-    '%stripe_payment_url%': url('embed_payment', { uuid: stripe_payment.uuid }),
+    '%url%': url('public_delivery', { number: order.number }),
   }, 'emails') | raw }}
   <br>
   <br>

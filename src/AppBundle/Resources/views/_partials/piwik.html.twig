@@ -1,0 +1,14 @@
+{% if not piwik_disabled %}
+<!-- Piwik -->
+<script type="text/javascript">//<![CDATA[
+var _paq = (_paq||[]).concat([["enableLinkTracking"],["trackPageView"]]);
+
+(function() {
+    var u=(("https:" == document.location.protocol) ? "https" : "http") + "://piwik.coopcycle.org/";
+    _paq.push(["setTrackerUrl", u+"piwik.js"]);
+    _paq.push(["setSiteId", "{{ piwik_site_id }}"]);    _paq.push(['setAPIUrl', u]);    var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+    g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+})();
+//]]></script>
+<!-- End Piwik Code -->
+{% endif %}

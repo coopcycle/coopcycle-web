@@ -1,0 +1,68 @@
+winzou_state_machine:
+    sylius_order:
+        class: "%sylius.model.order.class%"
+        property_path: state
+        graph: sylius_order
+        state_machine_class: "%sylius.state_machine.class%"
+        states:
+            cart: ~
+            new: ~
+            cancelled: ~
+            fulfilled: ~
+        transitions:
+            create:
+                from: [cart]
+                to: new
+            cancel:
+                from: [new]
+                to: cancelled
+            fulfill:
+                from: [new]
+                to: fulfilled
+        callbacks:
+            before:
+                sylius_assign_number:
+                    on: "create"
+                    do: ["@sylius.order_number_assigner", "assignNumber"]
+                    args: ["object"]
+            after:
+                coopcycle_confirm_order:
+                    on: "create"
+                    do: ["@coopcycle.delivery.manager", "confirmOrder"]
+                    args: ["object"]
+    sylius_payment:
+        class: AppBundle\Entity\StripePayment
+        property_path: state
+        graph: sylius_payment
+        state_machine_class: "%sylius.state_machine.class%"
+        states:
+            cart: ~
+            new: ~
+            processing: ~
+            completed: ~
+            failed: ~
+            cancelled: ~
+            void: ~
+            refunded: ~
+        transitions:
+            create:
+                from: [cart]
+                to: new
+            process:
+                from: [new]
+                to: processing
+            complete:
+                from: [new, processing]
+                to: completed
+            fail:
+                from: [new, processing]
+                to: failed
+            cancel:
+                from: [new, processing]
+                to: cancelled
+            refund:
+                from: [completed]
+                to: refunded
+            void:
+                from: [new, processing]
+                to: void
