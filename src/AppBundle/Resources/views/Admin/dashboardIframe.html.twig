@@ -11,7 +11,7 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
-<div class="dashboard" id="dashboard">
+<div class="dashboard {% if nav %}dashboard--nav{% endif %}" id="dashboard">
     <div class="dashboard__map">
       <div class="dashboard__map-container"></div>
       <div class="dashboard__toolbar-container">
