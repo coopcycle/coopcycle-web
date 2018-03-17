@@ -28,12 +28,12 @@
         <!-- Default panel contents -->
         <div class="panel-heading"><h4 class="nomargin">Résumé</h4></div>
         <div class="panel-body">
-          <p><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
-          <p class="nomargin">
+          <p class="nomargin"><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+          {# <p class="nomargin">
             <a href="{{ path('public_invoice', { number: order.number }) }}">
               <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger la facture
             </a>
-          </p>
+          </p> #}
         </div>
         <table class="table">
           <tbody>
@@ -120,9 +120,11 @@ new CoopCycle.DeliveryMap('map', {
   dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ],
   polyline: "{{ delivery.polyline|e('js') }}"
 })
+{% if stripe_payment.state == 'new' %}
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
   publishableKey: "{{ craue_setting('stripe_publishable_key') }}",
   tokenElement: document.querySelector('#stripe_payment_stripeToken')
 })
+{% endif %}
 </script>
 {% endblock %}
