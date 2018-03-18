@@ -91,8 +91,8 @@ trait StoreTrait
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
-        $delivery = new Delivery();
-        $delivery->setOriginAddress($store->getAddress());
+        $delivery = Delivery::create();
+        $delivery->getPickup()->setAddress($store->getAddress());
 
         return $this->renderDeliveryForm($delivery, $request, $store);
     }
