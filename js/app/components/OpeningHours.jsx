@@ -46,7 +46,7 @@ export default class extends React.Component {
       start: start,
       end: end,
       weekdays: _.map(weekdays, (weekday) => {
-        return _.extend({ checked: _.contains(days, weekday.key) }, weekday)
+        return _.extend({ checked: _.includes(days, weekday.key) }, weekday)
       })
     }
   }
