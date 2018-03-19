@@ -635,16 +635,28 @@ class Order implements OrderInterface
      */
     public function getState(): string
     {
-        if (in_array($this->status, [self::STATUS_CREATED, self::STATUS_WAITING])) {
-            return OrderInterface::STATE_CART;
-        }
+        $stateMapping = [
+            OrderInterface::STATE_CART => [
+                self::STATUS_CREATED,
+                self::STATUS_WAITING
+            ],
+            OrderInterface::STATE_NEW => [
+                self::STATUS_ACCEPTED,
+            ],
+            OrderInterface::STATE_CANCELLED => [
+                self::STATUS_CANCELED,
+                self::STATUS_PAYMENT_ERROR,
+                self::STATUS_REFUSED,
+            ],
+            OrderInterface::STATE_FULFILLED => [
+                self::STATUS_READY
+            ]
+        ];
 
-        if ($this->status === self::STATUS_ACCEPTED) {
-            return OrderInterface::STATE_NEW;
-        }
-
-        if ($this->status === self::STATUS_CANCELED) {
-            return OrderInterface::STATE_CANCELLED;
+        foreach ($stateMapping as $state => $values) {
+            if (in_array($this->status, $values)) {
+                return $state;
+            }
         }
     }
 
