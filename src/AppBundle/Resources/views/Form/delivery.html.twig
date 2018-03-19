@@ -130,24 +130,3 @@
   {{ block('hidden_widget') }}
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {% endblock %}
-
-{% block _delivery_store_row %}
-  {% set store = form.vars.data %}
-  {% spaceless %}
-    <div class="form-group">
-      {{ form_label(form, 'Store'|trans({}, 'messages')) }}
-      <div class="col-sm-10">
-        <div id="store-search"></div>
-        {{ block('hidden_widget') }}
-      </div>
-    </div>
-    <div id="selected-store" class="form-group {% if store is null %}hidden{% endif %}">
-      <div class="col-sm-offset-2 col-sm-10">
-        <div class="alert alert-info alert-dismissible nomargin" role="alert">
-          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <span id="selected-store-name">{% if store is not null %}{{ store.name }}{% endif %}</span>
-        </div>
-      </div>
-    </div>
-  {% endspaceless %}
-{% endblock %}

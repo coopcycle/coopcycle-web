@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryOrder;
@@ -26,6 +27,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class EmbedController extends Controller
 {
+    use DeliveryTrait;
+
+    protected function getDeliveryRoutes()
+    {
+        return [];
+    }
+
     private function createDeliveryForm()
     {
         $delivery = Delivery::create();
@@ -46,31 +54,6 @@ class EmbedController extends Controller
         } catch (\RuntimeException $e) {}
 
         return $pricingRuleSet;
-    }
-
-    private function applyDistanceDuration(FormInterface $form)
-    {
-        $pickup   = $form->get('pickup')->getData();
-        $dropoff  = $form->get('dropoff')->getData();
-        $delivery = $form->getData();
-
-        $coordinates = [];
-        foreach ($delivery->getTasks() as $task) {
-            $coordinates[] = $task->getAddress()->getGeo();
-        }
-
-        $data = $this->get('routing_service')->getServiceResponse('route', $coordinates, [
-            'steps' => 'true',
-            'overview' => 'full'
-        ]);
-
-        $distance = $data['routes'][0]['distance'];
-        $duration = $data['routes'][0]['duration'];
-        $polyline = $data['routes'][0]['geometry'];
-
-        $delivery->setDistance((int) $distance);
-        $delivery->setDuration((int) $duration);
-        $delivery->setPolyline($polyline);
     }
 
     private function applyTaxes(Delivery $delivery, PricingRuleSet $pricingRuleSet)
@@ -136,7 +119,6 @@ class EmbedController extends Controller
 
                 $delivery = $form->getData();
 
-                $this->applyDistanceDuration($form);
                 $this->applyTaxes($delivery, $pricingRuleSet);
 
                 return $this->render('@App/Embed/Delivery/summary.html.twig', [
@@ -152,23 +134,6 @@ class EmbedController extends Controller
         return $this->render('@App/Embed/Delivery/start.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
-
-    private function createOrder(Delivery $delivery)
-    {
-        $orderFactory = $this->container->get('sylius.factory.order');
-        $orderItemFactory = $this->container->get('sylius.factory.order_item');
-
-        $order = $orderFactory->createNew();
-        $orderItem = $orderItemFactory->createNew();
-
-        $orderItem->setUnitPrice($delivery->getTotalIncludingTax() * 100);
-
-        $order->addItem($orderItem);
-        $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
-        $this->container->get('sylius.order_processing.order_processor')->process($order);
-
-        return $order;
     }
 
     /**
@@ -197,7 +162,6 @@ class EmbedController extends Controller
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
 
-            $this->applyDistanceDuration($form);
             $this->applyTaxes($delivery, $pricingRuleSet);
 
             $userManipulator = $this->get('fos_user.util.user_manipulator');
@@ -222,23 +186,7 @@ class EmbedController extends Controller
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
-            $order = $this->createOrder($delivery);
-
-            $orderRepository = $this->container->get('sylius.repository.order');
-            $orderRepository->add($order);
-
-            $deliveryOrder = new DeliveryOrder($order, $user);
-            $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);
-
-            $stripePayment = StripePayment::create($order);
-
-            $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->persist($deliveryOrder);
-            $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->persist($deliveryOrderItem);
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
-
-            $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->flush();
-            $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->flush();
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+            $order = $this->createOrderForDelivery($delivery, $this->getUser());
 
             $administrators = $this->getDoctrine()
                 ->getRepository(ApiUser::class)

@@ -12,7 +12,6 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
-use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
@@ -254,15 +253,6 @@ class ProfileController extends Controller
             'date' => $date,
             'tasks' => $tasks,
         ];
-    }
-
-    public function editDeliveryAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
     }
 
     /**

@@ -116,9 +116,6 @@ delivery.status.DISPATCHED.verb: Assigner
 delivery.status.PICKED.verb: Récupérer
 delivery.status.DELIVERED.verb: Livrer
 
-deliveryForm.noPriceWarning: Le prix de la course n'a pas pu être calculé. Veuillez l'entrer manuellement.
-deliveryForm.noPriceFromPricingWarning: Le prix de la course n'a pas pu être calculé à partir de la tarification. Veuillez l'entrer manuellement ou éditer la tarification.
-
 delivery.list.status: Statut
 delivery.list.date: Date
 delivery.list.fromTo: De / À
@@ -300,6 +297,7 @@ form.delivery.duration.label: Durée
 form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Rechercher un magasin…
 form.delivery.confirm.label: Confirmer
+form.delivery.price.label: Prix
 
 form.delivery.to_be_confirmed.warning: Vous devez confirmer la commande
 form.delivery.has_order.info: Cette livraison est liée à une commande

@@ -25,32 +25,6 @@ trait StoreTrait
             'page' => $page,
             'store_route' => $routes['store'],
             'store_delivery_route' => $routes['store_delivery'],
-            'store_deliveries_route' => $routes['store_deliveries'],
-        ]);
-    }
-
-    public function storeDeliveriesAction($id, Request $request) {
-
-        $routes = $request->attributes->get('routes');
-
-        $store = $this->getDoctrine()
-            ->getRepository(Store::class)->find($id);
-
-        $deliveries = $store->getDeliveries();
-
-        $deliveries = $this->get('knp_paginator')->paginate(
-            $deliveries,
-            $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE
-        );
-
-        return $this->render('AppBundle:Store:storeDeliveries.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'deliveries' => $deliveries,
-            'store' => $store,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'delivery_route' => $routes['delivery']
         ]);
     }
 
@@ -83,18 +57,53 @@ trait StoreTrait
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_delivery_route' => $routes['store_delivery'],
-            'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
 
     public function newStoreDeliveryAction($id, Request $request)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $deliveryManager = $this->get('coopcycle.delivery.manager');
+        $routes = $request->attributes->get('routes');
+
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)
+            ->find($id);
 
         $delivery = Delivery::create();
         $delivery->getPickup()->setAddress($store->getAddress());
 
-        return $this->renderDeliveryForm($delivery, $request, $store);
+        $form = $this->createDeliveryForm($delivery, [
+            'pricing_rule_set' => $store->getPricingRuleSet(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->handleDeliveryForm($form, $store->getPricingRuleSet());
+
+            if ($form->isValid()) {
+
+                $delivery = $form->getData();
+
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+
+                $order = $this->createOrderForDelivery($delivery, $this->getUser());
+
+                // TODO Send email
+
+                return $this->redirectToRoute($routes['success']);
+            }
+        }
+
+        return $this->render('@App/Store/deliveryForm.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'form' => $form->createView(),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'calculate_price_route' => $routes['calculate_price'],
+        ]);
     }
 
     public function storeAction($id, Request $request)

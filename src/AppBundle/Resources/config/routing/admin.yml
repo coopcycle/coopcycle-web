@@ -4,8 +4,6 @@ admin_deliveries_new:
       _controller: AppBundle:Admin:newDelivery
       layout: AppBundle::admin.html.twig
       routes:
-          stores: admin_stores
-          store: admin_store
           success: admin_deliveries
           calculate_price: admin_deliveries_calculate_price
   methods:  [ GET, POST ]
@@ -20,8 +18,6 @@ admin_delivery:
       _controller: AppBundle:Admin:editDelivery
       layout: AppBundle::admin.html.twig
       routes:
-          stores: admin_stores
-          store: admin_store
           success: admin_deliveries
           calculate_price: admin_deliveries_calculate_price
   methods:  [ GET, POST ]
@@ -202,7 +198,6 @@ admin_stores:
         routes:
             store: admin_store
             store_delivery: admin_store_delivery
-            store_deliveries: admin_store_deliveries
     methods:  [ GET ]
 
 admin_store_new:
@@ -213,7 +208,6 @@ admin_store_new:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
-            store_deliveries: admin_store_deliveries
     methods:  [ GET, POST ]
 
 admin_store:
@@ -224,7 +218,6 @@ admin_store:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
-            store_deliveries: admin_store_deliveries
     methods:  [ GET, POST ]
 
 admin_store_delivery:
@@ -235,19 +228,9 @@ admin_store_delivery:
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_deliveries
+            success: admin_orders
             calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
-
-admin_store_deliveries:
-    path: /admin/stores/{id}/deliveries
-    defaults:
-        _controller: AppBundle:Admin:storeDeliveries
-        layout: AppBundle::admin.html.twig
-        routes:
-            stores: admin_stores
-            store: admin_store
-    methods:  [ GET ]
 
 admin_tag_new:
     path: /admin/settings/tags/new

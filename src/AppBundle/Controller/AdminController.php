@@ -328,7 +328,7 @@ class AdminController extends Controller
     {
         $delivery = Delivery::create();
 
-        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
+        return $this->renderDeliveryForm($delivery, $request);
     }
 
     public function editDeliveryAction($id, Request $request)
@@ -337,7 +337,7 @@ class AdminController extends Controller
             ->getRepository(Delivery::class)
             ->find($id);
 
-        return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
+        return $this->renderDeliveryForm($delivery, $request);
     }
 
     protected function getDeliveryRoutes()

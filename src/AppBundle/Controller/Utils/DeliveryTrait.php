@@ -8,12 +8,14 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Store;
+use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryType;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 trait DeliveryTrait
 {
@@ -33,80 +35,123 @@ trait DeliveryTrait
         }
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, Store $store = null, array $options = [])
+    /**
+     * @param Delivery $delivery
+     * @return Sylius\Component\Order\Model\OrderInterface
+     */
+    protected function createOrderForDelivery(Delivery $delivery, UserInterface $user)
     {
-        $isNew = $delivery->getId() === null;
-        $routes = $request->attributes->get('routes');
-        $deliveryOrder = null;
+        $orderFactory = $this->container->get('sylius.factory.order');
+        $orderItemFactory = $this->container->get('sylius.factory.order_item');
 
-        if ($isNew) {
-            if ($store) {
-                $delivery->setDate($store->getNextOpeningDate());
-            } else {
-                $date = new \DateTime('+1 hour');
-                while (($date->format('i') % 15) !== 0) {
-                    $date->modify('+1 minute');
-                }
-                $delivery->setDate($date);
+        $orderItem = $orderItemFactory->createNew();
+        $orderItem->setUnitPrice($delivery->getTotalIncludingTax() * 100);
+
+        $order = $orderFactory->createNew();
+        $order->addItem($orderItem);
+
+        $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
+        $this->container->get('sylius.order_processing.order_processor')->process($order);
+
+        $orderRepository = $this->container->get('sylius.repository.order');
+        $orderRepository->add($order);
+
+        $deliveryOrder = new DeliveryOrder($order, $user);
+        $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);
+
+        $stripePayment = StripePayment::create($order);
+
+        $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->persist($deliveryOrder);
+        $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->persist($deliveryOrderItem);
+        $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
+
+        $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->flush();
+        $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->flush();
+        $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+
+        return $order;
+    }
+
+    protected function createDeliveryForm(Delivery $delivery, array $options = [])
+    {
+        if ($delivery->getId() === null) {
+
+            $pickupDoneBefore = new \DateTime('+1 day');
+            while (($pickupDoneBefore->format('i') % 15) !== 0) {
+                $pickupDoneBefore->modify('+1 minute');
             }
-        } else {
-            if ($this->getUser()->hasRole('ROLE_ADMIN')) {
-                $deliveryOrder = $this->getDeliveryOrder($delivery);
-            }
+
+            $dropoffDoneBefore = clone $pickupDoneBefore;
+            $dropoffDoneBefore->modify('+1 hour');
+
+            $delivery->getPickup()->setDoneBefore($pickupDoneBefore);
+            $delivery->getDropoff()->setDoneBefore($dropoffDoneBefore);
         }
 
-        $defaultOptions = [
-            'free_pricing' => $store === null,
-            'pricing_rule_set' => $store !== null ? $store->getPricingRuleSet() : null
-        ];
-        $options = array_merge($defaultOptions, $options);
+        return $this->createForm(DeliveryType::class, $delivery, $options);
+    }
 
-        $form = $this->createForm(DeliveryType::class, $delivery, $options);
+    protected function handleDeliveryForm(FormInterface $form, PricingRuleSet $pricingRuleSet = null)
+    {
+        $deliveryManager = $this->get('coopcycle.delivery.manager');
+
+        $delivery = $form->getData();
+
+        if (!$pricingRuleSet) {
+            $pricingRuleSet = $form->get('pricingRuleSet')->getData();
+        }
+
+        $totalIncludingTax = $deliveryManager->getPrice($delivery, $pricingRuleSet);
+
+        if (null === $totalIncludingTax) {
+            $form->addError(
+                new FormError($this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators'))
+            );
+        } else {
+            // FIXME This is deprecated
+            $delivery->setPrice($totalIncludingTax);
+            $delivery->setTotalIncludingTax($totalIncludingTax);
+
+            $deliveryManager->applyTaxes($delivery);
+        }
+    }
+
+    private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])
+    {
+        $routes = $request->attributes->get('routes');
+
+        $isNew = $delivery->getId() === null;
+        $deliveryOrder = null;
+
+        if (!$isNew && $this->getUser()->hasRole('ROLE_ADMIN')) {
+            $deliveryOrder = $this->getDeliveryOrder($delivery);
+        }
+
+        $form = $this->createDeliveryForm($delivery, $options);
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
 
-            $delivery = $form->getData();
-            $user = $this->getUser();
-
-            $em = $this->getDoctrine()->getManagerForClass(Delivery::class);
-
-            if (!$store && !$user->hasRole('ROLE_ADMIN')) {
-                $form->addError(new FormError('Unable to create a delivery not linked to a store for a non-admin user'));
-            }
+            $this->handleDeliveryForm($form);
 
             if ($form->isValid()) {
 
-                $deliveryManager = $this->get('coopcycle.delivery.manager');
-
-                if ($store) {
-                    // if the user is not admin, he cannot override the set pricing
-                    if (!$user->hasRole('ROLE_ADMIN')) {
-                        $price = $deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
-                        $delivery->setPrice($price);
-                    }
-                    $delivery->setStore($store);
-                }
-
-                $deliveryManager->applyTaxes($delivery);
+                $delivery = $form->getData();
 
                 if ($isNew) {
-                    $em->persist($delivery);
+                    $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
                 }
 
-                $em->flush();
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
                 return $this->redirectToRoute($routes['success']);
             }
         }
 
-        return $this->render("AppBundle:Delivery:form.html.twig", [
+        return $this->render('AppBundle:Delivery:form.html.twig', [
             'layout' => $request->attributes->get('layout'),
-            'store' => $store,
             'delivery' => $delivery,
             'form' => $form->createView(),
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
             'calculate_price_route' => $routes['calculate_price'],
             'delivery_order' => $deliveryOrder
         ]);

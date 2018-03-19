@@ -3,17 +3,16 @@
 {% form_theme form 'AppBundle:Form:delivery.html.twig' %}
 
 {% block breadcrumb %}
-{% if store is not null %}
-<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-{% else %}
+
+{% set delivery = form.vars.value %}
+
 <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-{% endif %}
 {% if delivery.id is not null %}
 <li>#{{ delivery.id }}</li>
 {% else %}
 <li>{% trans %}adminDashboard.deliveries.createNew{% endtrans %}</li>
 {% endif %}
+
 {% endblock %}
 
 {% block content %}
@@ -50,17 +49,10 @@
 
   <div class="row">
     <div class="col-sm-6">
-
       {{ form_row(form.vehicle) }}
       {{ form_row(form.weight) }}
-
-      {% if form.store is defined %}
-      {{ form_row(form.store) }}
-      {% endif %}
-
       {{ form_row(form.pickup) }}
       {{ form_row(form.dropoff) }}
-
     </div>
     <div class="col-sm-6">
       <div class="embed-responsive embed-responsive-16by9">
@@ -69,22 +61,16 @@
       <hr>
       <div class="form-horizontal">
 
-        {% if store is not null and is_granted('ROLE_ADMIN') %}
-          <div class="alert alert-info">
-            {% set trans_params = {
-              '%name%': store.pricingRuleSet.name,
-              '%link%': path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id })
-            } %}
-            {% trans with trans_params %}form.delivery.pricing_rule_set.about{% endtrans %}
-          </div>
-          <div id="no-price-warning" class="alert alert-warning" style="display:none;">{% trans %}deliveryForm.noPriceFromPricingWarning{% endtrans %}</div>
-        {% endif %}
+        {% block disclaimer %}{% endblock %}
 
+        {{ form_errors(form) }}
         <div id="no-price-warning" class="alert alert-warning" style="display:none;">
-          {% trans %}deliveryForm.noPriceWarning{% endtrans %}
+          {% trans from 'validators' %}delivery.price.error.priceCalculation{% endtrans %}
         </div>
 
-        {{ form_row(form.pricingRuleSet) }}
+        {% if form.pricingRuleSet is defined %}
+          {{ form_row(form.pricingRuleSet) }}
+        {% endif %}
 
         <div class="form-group">
           <label class="col-sm-2 control-label" for="delivery_distance">
@@ -92,7 +78,11 @@
           </label>
           <div class="col-sm-10">
             <p class="form-control-static">
-              <span id="delivery_distance"></span>
+              <span id="delivery_distance">
+                {% if delivery.distance is not empty %}
+                  {{ delivery.distance|meters_to_kilometers }}
+                {% endif %}
+              </span>
             </p>
           </div>
         </div>
@@ -103,16 +93,34 @@
           </label>
           <div class="col-sm-10">
             <p class="form-control-static">
-              <span id="delivery_duration"></span>
+              <span id="delivery_duration">
+                {% if delivery.duration is not empty %}
+                  {{ delivery.duration|seconds_to_minutes }}
+                {% endif %}
+              </span>
             </p>
           </div>
         </div>
 
-        {{ form_row(form.price) }}
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="delivery_price">
+            {% trans %}form.delivery.price.label{% endtrans %}
+          </label>
+          <div class="col-sm-10">
+            <p class="form-control-static">
+              <span id="delivery_price">
+                {% if delivery.price is not empty %}
+                  {{ delivery.price|price_format }}
+                {% endif %}
+              </span>
+            </p>
+          </div>
+        </div>
 
       </div>
       <hr>
       <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
+        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
         {% trans %}adminDashboard.deliveries.save{% endtrans %}
       </button>
 
@@ -124,15 +132,10 @@
 
 {% block scripts %}
 <script>
-  let isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};
   window.AppData = window.AppData || {};
-  window.AppData.isAdmin = isAdmin
   window.AppData.DeliveryForm = {
     calculatePriceURL: "{{ path(calculate_price_route) }}"
   };
-  if (isAdmin) {
-    window.AppData.adminStoreSearchUrl = "{{ path('admin_stores_search', { format: 'json'  }) }}";
-  }
 </script>
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script src="{{ asset('js/delivery-form.js') }}"></script>

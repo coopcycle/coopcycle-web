@@ -16,54 +16,14 @@ let markers = {
   dropoff: null,
 }
 
-const storeSearch = document.querySelector('#store-search')
-
-if (storeSearch) {
-
-  var options = {
-    url: window.AppData.adminStoreSearchUrl,
-    placeholder: document.querySelector('#delivery_store').getAttribute('placeholder'),
-    clearOnSelect: true,
-    onSuggestionSelected: function(store) {
-
-      $('#delivery_store').val(store.id)
-      $('#delivery_pricingRuleSet').val(store.pricingRuleSetId)
-
-      document.querySelector('#delivery_pickup_address_streetAddress').value = store.address.streetAddress
-      document.querySelector('#delivery_pickup_address_latitude').value = store.address.latitude
-      document.querySelector('#delivery_pickup_address_longitude').value = store.address.longitude
-      document.querySelector('#delivery_pickup_address_postalCode').value = store.address.postalCode
-      document.querySelector('#delivery_pickup_address_addressLocality').value = store.address.addressLocality
-
-      $('#selected-store-name').text(store.name)
-      $('#selected-store').removeClass('hidden')
-
-      // refresh the map on the right
-      onLocationChange(store.address, 'pickup')
-      markAddressChecked('pickup')
-      setTimeout(() => $('#delivery_pickup_collapse').collapse('hide'), 500)
-    }
-  }
-
-  new CoopCycle.Search(storeSearch, options);
-
-  $('#selected-store .alert .close').on('click', function (e) {
-    e.preventDefault()
-    $('#delivery_store').val('')
-    $('#delivery_pricingRuleSet').val('')
-    $('#selected-store').addClass('hidden')
-  })
-
-}
-
 function disableForm() {
-  $('#delivery_price').attr('disabled', true)
   $('#delivery-submit').attr('disabled', true)
+  $('#loader').removeClass('hidden')
 }
 
 function enableForm() {
-  $('#delivery_price').attr('disabled', false)
   $('#delivery-submit').attr('disabled', false)
+  $('#loader').addClass('hidden')
 }
 
 function calculatePrice(distance, dropoff) {
@@ -81,18 +41,13 @@ function calculatePrice(distance, dropoff) {
 
   $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
     .then(price => {
-
-      enableForm()
-
-      // we couldn't calculate the price
       if (isNaN(price)) {
         $('#no-price-warning').show()
-        if (!$('#delivery_price').val()) {
-          $('#delivery_price').focus()
-        }
+        $('#delivery_price').text('')
       } else {
-        $('#delivery_price').val(numeral(price).format('0,0.00'))
+        $('#delivery_price').text(numeral(price).format('0,0.00 $'))
       }
+      enableForm()
     })
     .catch(e => enableForm())
 }
@@ -104,10 +59,13 @@ function refreshRouting() {
 
   const { pickup, dropoff } = markers
 
+  disableForm()
+
   MapHelper.route([
     [ pickup.getLatLng().lat, pickup.getLatLng().lng ],
     [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ]
-  ]).then(route => {
+  ])
+  .then(route => {
 
     var duration = parseInt(route.duration, 10);
     var distance = parseInt(route.distance, 10);
@@ -118,12 +76,11 @@ function refreshRouting() {
     $('#delivery_distance').text(kms + ' Km');
     $('#delivery_duration').text(minutes + ' min');
 
-    if (window.AppData.DeliveryForm.calculatePriceURL) {
-      calculatePrice(distance, dropoff)
-    }
+    calculatePrice(distance, dropoff)
 
     // return decodePolyline(data.routes[0].geometry);
   })
+  .catch(e => enableForm())
 }
 
 const markerIcons = {
@@ -235,11 +192,6 @@ window.initMap = function() {
 }
 
 map = MapHelper.init('map');
-
-// For non-admin disable submit until the price has been calculated
-if (!window.AppData.isAdmin) {
-  $('#delivery-submit').attr('disabled', true)
-}
 
 // Update price when parameters have changed
 if ($('#delivery_pricingRuleSet').is('select')) {

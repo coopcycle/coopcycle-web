@@ -195,12 +195,12 @@ services:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   'AppBundle\Form\DeliveryType':
-    arguments: [ '@security.authorization_checker', '@translator' ]
+    arguments: [ '@doctrine', '@security.authorization_checker', '@routing_service', '@translator' ]
     tags:
       - { name: form.type }
 
   'AppBundle\Form\DeliveryEmbedType':
-    arguments: [ '@security.authorization_checker', '@translator', '%country_iso%' ]
+    arguments: [ '@doctrine', '@security.authorization_checker', '@routing_service', '@translator', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\MenuType\MenuItemModifierType':
