@@ -1,4 +1,4 @@
-FROM osrm/osrm-backend:latest
+FROM osrm/osrm-backend:v5.9.2
 
 COPY ./start.sh /usr/local/bin/osrm-start
 
