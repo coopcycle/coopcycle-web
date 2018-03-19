@@ -7,15 +7,19 @@ use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Entity\Base\MenuItem;
 use AppBundle\Entity\Model\TaxableTrait;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Ramsey\Uuid\Uuid;
+use Sylius\Component\Order\Model\AdjustmentInterface;
+use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -47,7 +51,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * )
  * @AssertOrder
  */
-class Order
+class Order implements OrderInterface
 {
     use TaxableTrait;
 
@@ -320,30 +324,27 @@ class Order
         return $this;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt()
+    public function setCreatedAt(?\DateTimeInterface $createdAt)
+    {
+
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function getTotal()
+    public function setUpdatedAt(?\DateTimeInterface $createdAt)
     {
-        $total = 0;
 
-        if ($this->getDelivery()) {
-            $total = $this->getDelivery()->getPrice();
-        }
-
-        $total += $this->getItemsTotal();
-
-        return $total;
     }
 
-    public function getItemsTotal()
+    public function getItemsTotal(): int
     {
         $total = 0;
 
@@ -449,5 +450,237 @@ class Order
     public function getDuration()
     {
         return Restaurant::PREPARATION_DELAY * 60;
+    }
+
+    /* AdjustableInterface methods */
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustments(?string $type = null): Collection
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAdjustment(AdjustmentInterface $adjustment): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAdjustment(AdjustmentInterface $adjustment): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustmentsTotal(?string $type = null): int
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAdjustments(?string $type = null): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function recalculateAdjustmentsTotal(): void
+    {
+    }
+
+    /* OrderInterface methods */
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCheckoutCompletedAt(): ?\DateTimeInterface
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCheckoutCompletedAt(?\DateTimeInterface $checkoutCompletedAt): void
+    {
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCheckoutCompleted(): bool
+    {
+        // TODO Implement
+    }
+
+    public function completeCheckout(): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNumber(): ?string
+    {
+        return $this->getUuid();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNumber(?string $number): void
+    {
+        $this->uuid = $number;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNotes(): ?string
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNotes(?string $notes): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItems(): Collection
+    {
+        // TODO Implement
+    }
+
+    public function clearItems(): void
+    {
+        // TODO Implement
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function countItems(): int
+    {
+        return count($this->orderedItem);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addItem(OrderItemInterface $item): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeItem(OrderItemInterface $item): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasItem(OrderItemInterface $item): bool
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    // public function getItemsTotal(): int
+    // {
+    // }
+
+    public function recalculateItemsTotal(): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTotal(): int
+    {
+        $total = 0;
+
+        if ($this->getDelivery()) {
+            $total = $this->getDelivery()->getPrice();
+        }
+
+        $total += $this->getItemsTotal();
+
+        return $total * 100;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTotalQuantity(): int
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getState(): string
+    {
+        if (in_array($this->status, [self::STATUS_CREATED, self::STATUS_WAITING])) {
+            return OrderInterface::STATE_CART;
+        }
+
+        if ($this->status === self::STATUS_ACCEPTED) {
+            return OrderInterface::STATE_NEW;
+        }
+
+        if ($this->status === self::STATUS_CANCELED) {
+            return OrderInterface::STATE_CANCELLED;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setState(string $state): void
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty(): bool
+    {
+        return $this->countItems() === 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustmentsRecursively(?string $type = null): Collection
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustmentsTotalRecursively(?string $type = null): int
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAdjustmentsRecursively(?string $type = null): void
+    {
     }
 }

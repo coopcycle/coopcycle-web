@@ -86,7 +86,7 @@ class OrderTest extends BaseTest
         $saladItem = new CartItem($cart, $salad, 2);
         $order->addCartItem($saladItem, $salad);
 
-        $this->assertEquals(50, $order->getTotal());
+        $this->assertEquals(5000, $order->getTotal());
     }
 
     public function testTotalWithDelivery()
@@ -112,7 +112,7 @@ class OrderTest extends BaseTest
 
         $delivery = new Delivery($order);
 
-        $this->assertEquals(50, $order->getTotal());
+        $this->assertEquals(5000, $order->getTotal());
     }
 
     public function testDistanceValidation()

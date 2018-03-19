@@ -243,13 +243,22 @@ order.status.PICKED: Recogido
 order.status.DELIVERED: Entregado
 order.status.PAYMENT_ERROR: Error de pago
 
-order.list.order: Pedido
-order.list.delivery: Entrega
-order.list.restaurant: Restaurante
-order.list.totalIncludingTax: Total con impuestos
-order.list.duration: Duración
+order.state.cart: Esperando
+order.state.new: Confirmado
+
+order.list.total: Total
 order.list.createdAt: Creado
 order.list.cancel: Cancelar
+order.list.type: Tipo
+order.list.customer: Cliente
+order.list.state: Estado
+order.list.summary: Resumen
+order.list.summary.restaurant.text: Entrega al restaurante <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.delivery.text: Entrega %distance%, %vehicle%
+order.list.invoice: Factura
+
+vehicle.bike: Bicicleta
+vehicle.cargo_bike: Bicicleta cargo
 
 task.form.create: Crear tarea
 task.form.timeWindow: Periodo

@@ -26,9 +26,9 @@
 
     {% if delivery_order.state == 'cart' %}
     <div class="alert alert-warning">
-      <i class="fa fa-exclamation-triangle"></i> {{ 'form.delivery.to_be_confirmed.alert'|trans }}
+      <i class="fa fa-exclamation-triangle"></i> {{ 'form.delivery.to_be_confirmed.warning'|trans }}
       <span class="pull-right">
-        <a class="btn btn-xs btn-success" href="{{ path('admin_delivery_order', { id: delivery.id }) }}">
+        <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: delivery_order.id, type: 'sylius' }) }}">
           {{ 'form.delivery.view_order'|trans }}
         </a>
       </span>
@@ -39,7 +39,7 @@
     <div class="alert alert-info">
       <i class="fa fa-info-circle"></i> {{ 'form.delivery.has_order.info'|trans }}
       <span class="pull-right">
-        <a class="btn btn-xs btn-success" href="{{ path('admin_delivery_order', { id: delivery.id }) }}">
+        <a class="btn btn-xs btn-success" href="{{ path('admin_order', { id: delivery_order.id, type: 'sylius' }) }}">
           {{ 'form.delivery.view_order'|trans }}
         </a>
       </span>

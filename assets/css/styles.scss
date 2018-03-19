@@ -29,6 +29,11 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
+.row--full-height {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .footer {
   width: 100%;
   padding: $base-margin 0;
@@ -687,6 +692,15 @@ form[name="menu"] {
   width: 100%;
   > label {
     min-width: 50%;
+  }
+}
+
+.map-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  &__map {
+    flex: 1;
   }
 }
 

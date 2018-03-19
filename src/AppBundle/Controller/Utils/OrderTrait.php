@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Order;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -125,5 +126,41 @@ trait OrderTrait
         $this->cancelOrderById($id);
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'));
+    }
+
+    protected function normalizeOrders(array $syliusOrders, array $coopcycleOrders)
+    {
+        $syliusOrders = array_map(function ($syliusOrder) {
+
+            $order = $syliusOrder->getOrder();
+            $user  = $syliusOrder->getUser();
+
+            $delivery = $this->getDoctrine()
+                ->getRepository(DeliveryOrderItem::class)
+                ->findOneByOrderItem($order->getItems()->get(0))
+                ->getDelivery();
+
+            return [
+                'id' => $order->getId(),
+                'customer' => [
+                    'username' => $user->getUsername(),
+                ],
+                'createdAt' => $order->getCreatedAt(),
+                'state' => $order->getState(),
+                'total' => $order->getTotal(),
+                'delivery' => $delivery,
+            ];
+
+        }, $syliusOrders);
+
+        $orders = array_merge($coopcycleOrders, $syliusOrders);
+
+        usort($orders, function ($a, $b) {
+            $createdAtA = is_array($a) ? $a['createdAt'] : $a->getCreatedAt();
+            $createdAtB = is_array($b) ? $b['createdAt'] : $b->getCreatedAt();
+            return $createdAtA < $createdAtB ? 1 : -1;
+        });
+
+        return $orders;
     }
 }

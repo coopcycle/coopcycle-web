@@ -34,7 +34,6 @@ delivery.to_be_confirmed.body: |
   Bonjour, <br><br>
   Nous avons bien enregistré votre demande.
   <br>
-  <br>
   Nous vérifions dans les plus brefs délais votre commande, et nous vous recontactons lorsque celle-ci est confirmée.
 delivery.to_be_confirmed.outro: Merci pour votre confiance
 
@@ -55,4 +54,4 @@ delivery.has_to_be_confirmed.body: |
   Une nouvelle livraison a été commandée.
   <br>
   <br>
-  Pour vérifier les détails, et confirmer la livraison, <a href="%delivery_url%">cliquez ici</a>.
+  Pour vérifier les détails, et confirmer la livraison, <a href="%order_url%">cliquez ici</a>.

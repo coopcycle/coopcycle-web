@@ -1,0 +1,166 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+<li>#{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if order.state == 'cart' %}
+  {% if is_granted('ROLE_ADMIN') %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> Lorsque vous aurez confirmé la commande, le client sera notifié par email.
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> Notre équipe doit encore confirmer la livraison.
+  </div>
+  {% endif %}
+
+{% endif %}
+
+<div class="row row--full-height">
+  <div class="col-md-8 map-container">
+    <div class="map-container__map hidden-xs hidden-sm" id="map"></div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Client</h3>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th><i class="fa fa-user"></i></th>
+                <td class="text-right">
+                  <a href="{{ path('admin_user_details', { username: user.username }) }}">
+                    {{ user.username }}
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <th><i class="fa fa-envelope"></i></th>
+                <td class="text-right">
+                  {{ user.email }}
+                </td>
+              </tr>
+              {% if user.telephone is not empty %}
+              <tr>
+                <th><i class="fa fa-phone"></i></th>
+                <td class="text-right">
+                  {{ user.telephone|phone_number_format('NATIONAL') }}
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href="{{ path('admin_delivery', { id: delivery.id }) }}">
+              <h3 class="panel-title">Livraison #{{ delivery.id }}</h3>
+            </a>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>
+                  <i class="fa fa-cube"></i>
+                </th>
+                <td class="text-right">
+                  {{ delivery.pickup.address.streetAddress }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  <i class="fa fa-clock-o"></i>
+                </th>
+                <td class="text-right">
+                  {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  <i class="fa fa-flag"></i>
+                </th>
+                <td class="text-right">
+                  {{ delivery.dropoff.address.streetAddress }}
+                </td>
+              </tr>
+              <tr>
+                <th>
+                  <i class="fa fa-clock-o"></i>
+                </th>
+                <td class="text-right">
+                  {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              Commande #{{ order.id }}
+              <span class="pull-right">
+              {% include '@App/_partials/Order/state.html.twig' %}
+              </span>
+            </h3>
+          </div>
+          <div class="panel-body">
+            Livraison {{ delivery.distance|meters_to_kilometers }}
+            <br>
+            Créée le {{ order.createdAt|localizeddate('medium', 'short') }}
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>Total HT</th>
+                <td class="text-right">
+                  {{ delivery.totalExcludingTax }}€
+                </td>
+              </tr>
+              <tr>
+                <th>Total TVA</th>
+                <td class="text-right">
+                  {{ delivery.totalTax }}€
+                </td>
+              </tr>
+              <tr>
+                <th>Total TTC</th>
+                <td class="text-right">
+                  {{ delivery.totalIncludingTax }}€
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {% if form is defined %}
+        {{ form_start(form) }}
+          {% if form.confirm is defined %}
+            {{ form_widget(form.confirm, { attr: { class: 'btn btn-block btn-success' } }) }}
+          {% endif %}
+        {{ form_end(form) }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+new CoopCycle.DeliveryMap('map', {
+  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ],
+  polyline: "{{ delivery.polyline|e('js') }}"
+})
+</script>
+{% endblock %}

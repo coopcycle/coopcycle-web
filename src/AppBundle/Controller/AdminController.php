@@ -15,6 +15,7 @@ use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryOrder;
+use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
@@ -72,8 +73,6 @@ class AdminController extends Controller
 
     protected function getOrderList(Request $request)
     {
-        $orderRepository = $this->getDoctrine()->getRepository(Order::class);
-
         $showCanceled = false;
         if ($request->query->has('show_canceled')) {
             $showCanceled = $request->query->getBoolean('show_canceled');
@@ -91,19 +90,80 @@ class AdminController extends Controller
             $statusList[] = Order::STATUS_CANCELED;
         }
 
-        $countAll = $orderRepository->countByStatus($statusList);
+        $syliusOrders = $this->getDoctrine()
+            ->getRepository(DeliveryOrder::class)
+            ->findAll();
 
-        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
-        $page = $request->query->get('p', 1);
+        $coopcycleOrders = $this->getDoctrine()
+            ->getRepository(Order::class)
+            ->findByStatus($statusList);
 
+        $orders = $this->normalizeOrders($syliusOrders, $coopcycleOrders);
+
+        $pages  = ceil(count($orders) / self::ITEMS_PER_PAGE);
+        $page   = $request->query->get('p', 1);
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
-        $orders = $orderRepository->findByStatus($statusList, [
-            'updatedAt' => 'DESC',
-            'createdAt' => 'DESC'
-        ], self::ITEMS_PER_PAGE, $offset);
+        $orders = array_slice($orders, $offset, self::ITEMS_PER_PAGE);
 
         return [ $orders, $pages, $page ];
+    }
+
+    /**
+     * @Route("/admin/orders/{id}", name="admin_order")
+     * @Template
+     */
+    public function orderAction($id, Request $request)
+    {
+        if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
+
+            $order = $this->container->get('sylius.repository.order')->find($id);
+
+            $user = $this->getDoctrine()
+                ->getRepository(DeliveryOrder::class)
+                ->findOneByOrder($order)
+                ->getUser();
+
+            $delivery = $this->getDoctrine()
+                ->getRepository(DeliveryOrderItem::class)
+                ->findOneByOrderItem($order->getItems()->get(0))
+                ->getDelivery();
+
+            $form = $this->createForm(DeliveryOrderType::class, $order);
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
+
+                    $stateMachineFactory = $this->get('sm.factory');
+
+                    $stripePayment = $this->getDoctrine()
+                        ->getRepository(StripePayment::class)
+                        ->findOneByOrder($order);
+
+                    $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+                    $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+
+                    $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
+                    $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+
+                    $this->get('sylius.manager.order')->flush();
+                    $stripePayment = $this->getDoctrine()
+                        ->getManagerForClass(StripePayment::class)
+                        ->flush();
+
+                    return $this->redirectToRoute('admin_orders');
+                }
+            }
+
+            return $this->render('@App/Order/sylius.html.twig', [
+                'layout' => '@App/admin.html.twig',
+                'order' => $order,
+                'delivery' => $delivery,
+                'user' => $user,
+                'form' => $form->createView(),
+            ]);
+        }
     }
 
     /**
@@ -247,10 +307,6 @@ class AdminController extends Controller
             return $user->hasRole('ROLE_COURIER');
         });
 
-        $toBeConfirmed = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->findToBeConfirmed();
-
         usort($couriers, function (UserInterface $a, UserInterface $b) {
             return $a->getUsername() < $b->getUsername() ? -1 : 1;
         });
@@ -265,7 +321,6 @@ class AdminController extends Controller
             'couriers' => $couriers,
             'tasks' => $tasks,
             'routes' => $this->getDeliveryRoutes(),
-            'to_be_confirmed' => $toBeConfirmed
         ];
     }
 
@@ -283,63 +338,6 @@ class AdminController extends Controller
             ->find($id);
 
         return $this->renderDeliveryForm($delivery, $request, null, ['with_stores' => true]);
-    }
-
-    /**
-     * @Route("/admin/deliveries/{id}/order", name="admin_delivery_order")
-     * @Template()
-     */
-    public function deliveryOrderAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        $order = $this->get('sylius.repository.order')->findOneByDelivery($delivery);
-
-        if (null === $order) {
-            throw new NotFoundHttpException(sprintf('Delivery #%d has no associated order', $delivery->getId()));
-        }
-
-        $form = $this->createForm(DeliveryOrderType::class, $order);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
-
-                $stateMachineFactory = $this->get('sm.factory');
-
-                $stripePayment = $this->getDoctrine()
-                    ->getRepository(StripePayment::class)
-                    ->findOneByOrder($order);
-
-                $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-                $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-
-                $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
-                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
-
-                $this->get('sylius.manager.order')->flush();
-                $stripePayment = $this->getDoctrine()
-                    ->getManagerForClass(StripePayment::class)
-                    ->flush();
-
-                return $this->redirectToRoute('admin_delivery_order', ['id' => $id]);
-            }
-        }
-
-        $deliveryOrder = $this->getDoctrine()
-            ->getRepository(DeliveryOrder::class)
-            ->findOneByOrder($order);
-
-        $user = $deliveryOrder->getUser();
-
-        return [
-            'delivery' => $delivery,
-            'order' => $order,
-            'order_user' => $user,
-            'form' => $form->createView()
-        ];
     }
 
     protected function getDeliveryRoutes()

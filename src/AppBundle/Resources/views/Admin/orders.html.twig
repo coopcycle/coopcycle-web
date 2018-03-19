@@ -62,7 +62,7 @@
 </div>
 
 {% include "AppBundle:Admin:pagination.html.twig" %}
-{% include "AppBundle::_partials/Order/list.html.twig" %}
+{% include "AppBundle::_partials/Order/list.html.twig" with { order_route: 'admin_order' } %}
 {% endblock %}
 
 {% block scripts %}

@@ -1,0 +1,6 @@
+{% set state_label_class = {
+  'cart': 'label-warning',
+  'new': 'label-success',
+} %}
+{% set trans_key = 'order.state.' ~ order.state %}
+<span class="label {{ state_label_class[order.state] }}">{{ trans_key|trans }}</span>

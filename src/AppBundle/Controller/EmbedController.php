@@ -253,7 +253,7 @@ class EmbedController extends Controller
 
             // Send email to administrators
             foreach ($administrators as $administrator) {
-                $notificationManager->notifyDeliveryHasToBeConfirmed($delivery, $administrator->getEmail());
+                $notificationManager->notifyDeliveryHasToBeConfirmed($order, $administrator->getEmail());
             }
 
             $this->addFlash(

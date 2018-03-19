@@ -103,13 +103,13 @@ class NotificationManager
         $this->mailer->send($email);
     }
 
-    public function notifyDeliveryHasToBeConfirmed(Delivery $delivery, $to)
+    public function notifyDeliveryHasToBeConfirmed(OrderInterface $order, $to)
     {
         $email = new \Swift_Message($this->translator->trans('delivery.has_to_be_confirmed.subject', [], 'emails'));
         $email->setFrom($this->getFrom());
         $email->setTo($to);
         $email->setBody($this->templating->render('@App/Emails/Delivery/hasToBeConfirmed.html.twig', [
-            'delivery' => $delivery,
+            'order' => $order,
         ]), 'text/html');
 
         $this->mailer->send($email);

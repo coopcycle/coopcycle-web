@@ -2,6 +2,6 @@
 
 {% block content %}
   {{ 'delivery.has_to_be_confirmed.body' | trans({
-    '%delivery_url%': url('admin_delivery', { id: delivery.id }),
+    '%order_url%': url('admin_order', { id: order.id, type: 'sylius' }),
   }, 'emails') | raw }}
 {% endblock %}

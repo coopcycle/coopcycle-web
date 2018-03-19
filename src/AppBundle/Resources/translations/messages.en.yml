@@ -242,13 +242,22 @@ order.status.PICKED: Picked
 order.status.DELIVERED: Delivered
 order.status.PAYMENT_ERROR: Payment Error
 
-order.list.order: Order
-order.list.delivery: Delivery
-order.list.restaurant: Restaurant
-order.list.totalIncludingTax: Total including Tax
-order.list.duration: Duration
+order.state.cart: Waiting
+order.state.new: Confirmed
+
+order.list.total: Total
 order.list.createdAt: Created at
 order.list.cancel: Cancel
+order.list.type: Type
+order.list.customer: Customer
+order.list.state: State
+order.list.summary: Summary
+order.list.summary.restaurant.text: Delivery at restaurant <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.delivery.text: Delivery %distance%, %vehicle%
+order.list.invoice: Invoice
+
+vehicle.bike: Bike
+vehicle.cargo_bike: Cargo bike
 
 task.form.create: Create task
 task.form.timeWindow: Time window

@@ -14,6 +14,8 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryOrder;
+use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
@@ -66,39 +68,49 @@ class ProfileController extends Controller
 
     protected function getOrderList(Request $request)
     {
-        $orderRepository = $this->getDoctrine()->getRepository(Order::class);
+        $syliusOrders = $this->getDoctrine()
+            ->getRepository(DeliveryOrder::class)
+            ->findByUser($this->getUser());
 
-        $page = $request->query->get('page', 1);
+        $coopcycleOrders = $this->getDoctrine()
+            ->getRepository(Order::class)
+            ->findByCustomer($this->getUser());
 
-        $qb = $orderRepository->createQueryBuilder('o');
+        $orders = $this->normalizeOrders($syliusOrders, $coopcycleOrders);
 
-        $qb->select($qb->expr()->count('o'))
-           ->where('o.customer = ?1')
-           ->setParameter(1, $this->getUser());
+        $pages  = ceil(count($orders) / self::ITEMS_PER_PAGE);
+        $page   = $request->query->get('p', 1);
+        $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
-        $query = $qb->getQuery();
-        $ordersCount = $query->getSingleScalarResult();
-
-        $perPage = 15;
-
-        $pages = ceil($ordersCount / $perPage);
-        $offset = $perPage * ($page - 1);
-
-        $orders = $orderRepository->findBy(
-            ['customer' => $this->getUser()],
-            ['createdAt' => 'DESC'],
-            $perPage,
-            $offset
-        );
+        $orders = array_slice($orders, $offset, self::ITEMS_PER_PAGE);
 
         return [ $orders, $pages, $page ];
     }
 
-    /**
-     * @Template("@App/Order/details.html.twig")
-     */
     public function orderAction($id, Request $request)
     {
+        if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
+
+            $order = $this->container->get('sylius.repository.order')->find($id);
+
+            $user = $this->getDoctrine()
+                ->getRepository(DeliveryOrder::class)
+                ->findOneByOrder($order)
+                ->getUser();
+
+            $delivery = $this->getDoctrine()
+                ->getRepository(DeliveryOrderItem::class)
+                ->findOneByOrderItem($order->getItems()->get(0))
+                ->getDelivery();
+
+            return $this->render('@App/Order/sylius.html.twig', [
+                'layout' => '@App/profile.html.twig',
+                'order' => $order,
+                'delivery' => $delivery,
+                'user' => $user
+            ]);
+        }
+
         $order = $this->getDoctrine()
             ->getRepository(Order::class)->find($id);
 
@@ -118,14 +130,14 @@ class ProfileController extends Controller
             ];
         }
 
-        return array(
+        return $this->render('@App/Order/details.html.twig', [
+            'layout' => '@App/profile.html.twig',
             'order' => $order,
             'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
             'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
             'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
-            'layout' => 'AppBundle::profile.html.twig',
             'breadcrumb_path' => 'profile_orders'
-        );
+        ]);
     }
 
     /**
