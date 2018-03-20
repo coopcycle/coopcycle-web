@@ -9,7 +9,6 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -17,8 +16,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  *
- * @ORM\Entity(repositoryClass="AppBundle\Entity\DeliveryRepository")
- * @ORM\EntityListeners({"AppBundle\Entity\Listener\DeliveryListener"})
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={},
  *   itemOperations={
@@ -58,64 +55,41 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
 
     /**
      * @Groups({"place", "order"})
-     * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $originAddress;
 
     /**
      * @Groups({"order_create", "place", "order"})
-     * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/Place")
      */
     private $deliveryAddress;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Order", inversedBy="delivery")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id")
-     */
     private $order;
 
     /**
      * @var string
      *
      * @Groups({"delivery", "order"})
-     * @ORM\Column(type="string", nullable=true)
      */
     private $status;
 
     /**
      * @Groups({"order_create", "delivery", "order"})
-     * @ORM\Column(type="datetime")
      */
     private $date;
 
-    /**
-     * @ORM\OneToMany(targetEntity="DeliveryEvent", mappedBy="delivery")
-     * @ORM\OrderBy({"createdAt" = "ASC"})
-     */
     private $events;
 
     /**
      * @Groups({"order"})
-     * @ORM\Column(type="float")
      */
     private $price;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Taxation\Model\TaxCategoryInterface")
-     * @ORM\JoinColumn(name="tax_category_id", referencedColumnName="id", nullable=false)
-     */
     private $taxCategory;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
     private $weight;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     private $vehicle = self::VEHICLE_BIKE;
 
     public function __construct(Order $order = null)

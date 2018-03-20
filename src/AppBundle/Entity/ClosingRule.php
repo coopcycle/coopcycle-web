@@ -2,45 +2,29 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="closing_rule")
- */
 class ClosingRule
 {
-
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Restaurant", inversedBy="closingRules")
-     */
     private $restaurant;
 
     /**
      * @Groups({"planning"})
-     * @ORM\Column(type="datetime")
      */
     private $startDate;
 
     /**
      * @Groups({"planning"})
-     * @ORM\Column(type="datetime")
      */
     private $endDate;
 
     /**
      * @Groups({"planning"})
-     * @ORM\Column(type="string", nullable=true)
      */
     private $reason;
 

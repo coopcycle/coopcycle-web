@@ -2,42 +2,20 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Utils\GeoUtils;
 
-/**
- * @ORM\Entity
- * @ORM\Table(
- *   indexes={
- *     @ORM\Index(name="idx_tracking_position_coordinates", columns={"coordinates"}, flags={"spatial"})
- *   }
- * )
- */
 class TrackingPosition implements \JsonSerializable
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ApiUser")
-     */
     private $courier;
 
-    /**
-     * @ORM\Column(type="geography", options={"geometry_type"="GEOMETRY", "srid"=4326})
-     */
     protected $coordinates;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
     protected $date;
 
     /**

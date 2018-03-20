@@ -90,6 +90,9 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        mappings:
+            AppBundle:
+                type: yml
         dql:
             string_functions:
                 ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin

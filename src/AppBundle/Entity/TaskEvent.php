@@ -2,44 +2,25 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity
- * @ORM\Table
- */
 class TaskEvent
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Task", inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
-     */
     private $task;
 
     /**
-     * @ORM\Column(type="string")
      * @Groups({"task"})
      */
     private $name;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @Groups({"task"})
      */
     private $notes;
 
     /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
      * @Groups({"task"})
      */
     private $createdAt;

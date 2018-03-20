@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Base;
 
 use AppBundle\Utils\TimeRange;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,15 +12,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A particular physical business or branch of an organization. Examples of LocalBusiness include a restaurant, a particular branch of a restaurant chain, a branch of a bank, a medical practice, a club, a bowling alley, etc.
  *
  * @see http://schema.org/LocalBusiness Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class LocalBusiness
 {
     /**
      * @var string The official name of the organization, e.g. the registered company name.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
     protected $legalName;
 
@@ -32,7 +27,6 @@ abstract class LocalBusiness
      *             - Here is an example: `<time itemprop="openingHours" datetime="Tu,Th 16:00-20:00">Tuesdays and Thursdays 4-8pm</time>`.
      *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
      *
-     * @ORM\Column(type="json_array", nullable=true)
      * @ApiProperty(iri="https://schema.org/openingHours")
      * @Groups({"restaurant", "store"})
      */
@@ -41,21 +35,15 @@ abstract class LocalBusiness
     /**
      * @var string The telephone number.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      */
     protected $telephone;
 
     /**
      * @var string The Value-added Tax ID of the organization or person.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
     protected $vatID;
 
-    /**
-     * @ORM\Column(type="json_array", nullable=true)
-     */
     protected $additionalProperties = [];
 
     public function getLegalName()

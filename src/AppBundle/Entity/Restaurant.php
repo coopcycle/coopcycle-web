@@ -9,9 +9,7 @@ use AppBundle\Filter\RestaurantFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -24,7 +22,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @see http://schema.org/Restaurant Documentation on Schema.org
  *
- * @ORM\Entity(repositoryClass="AppBundle\Entity\RestaurantRepository")
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
  *     "filters"={RestaurantFilter::class},
@@ -38,7 +35,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={"method"="GET"}
  *   }
  * )
-
  * @Vich\Uploadable
  * @CustomAssert\IsActivableRestaurant(groups="activable")
  */
@@ -75,9 +71,6 @@ class Restaurant extends FoodEstablishment
     /**
      * @var int
      *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Groups({"restaurant"})
      */
     private $id;
@@ -86,7 +79,6 @@ class Restaurant extends FoodEstablishment
      * @var string The name of the item
      *
      * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      * @Groups({"restaurant", "order"})
      */
@@ -95,9 +87,6 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The cuisine of the restaurant.
      *
-     * @ORM\ManyToMany(targetEntity="Cuisine", cascade={"persist"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     * @ORM\OrderBy({"name"="ASC"})
      * @ApiProperty(iri="https://schema.org/servesCuisine")
      * @Groups({"restaurant"})
      */
@@ -108,7 +97,6 @@ class Restaurant extends FoodEstablishment
      *
      * A disable restaurant is not shown to visitors, either on search page or on its detail page.
      *
-     * @ORM\Column(type="boolean", options={"default": false})
      * @Groups({"restaurant"})
      */
     protected $enabled = false;
@@ -121,13 +109,11 @@ class Restaurant extends FoodEstablishment
     private $imageFile;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * @var string
      */
     private $imageName;
 
     /**
-     * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
      * @Groups({"restaurant"})
      */
     private $address;
@@ -135,7 +121,6 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The website of the restaurant.
      *
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="https://schema.org/URL")
      */
     private $website;
@@ -143,23 +128,18 @@ class Restaurant extends FoodEstablishment
     /**
      * @var string The telephone number.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      */
     protected $telephone;
 
     /**
      * @var string The Stripe params of the restaurant.
-     *
-     * @ORM\ManyToOne(targetEntity="StripeParams")
      */
     private $stripeParams;
 
     /**
      * @var string The menu of the restaurant.
      *
-     * @ORM\OneToOne(targetEntity="Menu", inversedBy="restaurant", cascade={"all"})
-     * @ORM\JoinColumn(name="menu_id")
      * @ApiProperty(iri="https://schema.org/Menu")
      * @Groups({"restaurant"})
      */
@@ -167,27 +147,15 @@ class Restaurant extends FoodEstablishment
 
     private $maxDistance = 3000;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ClosingRule", mappedBy="restaurant", cascade={"all"})
-     */
     private $closingRules;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
     private $createdAt;
 
-    /**
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
     private $updatedAt;
 
     /**
      * @var Contract
      * @Groups({"order_create"})
-     * @ORM\OneToOne(targetEntity="Contract", mappedBy="restaurant", cascade={"persist"})
      */
     private $contract;
 

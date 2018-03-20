@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -13,29 +12,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * There are two concrete implementations of TaskCollection: Delivery & TaskList.
  *
  * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html
- *
- * @ORM\Entity
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({
- *   "delivery"  = "AppBundle\Entity\Delivery",
- *   "task_list" = "AppBundle\Entity\TaskList"
- * })
  */
 abstract class TaskCollection
 {
     use TaskCollectionTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
     protected $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="TaskCollectionItem", mappedBy="parent", orphanRemoval=true, cascade={"all"})
-     * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"task_collection", "task"})
      */
     protected $items;

@@ -2,69 +2,28 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 
-/**
- * @ORM\Entity
- */
 class StripePayment implements PaymentInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
     protected $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Order\Model\Order")
-     */
     protected $order;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
     protected $charge;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
     protected $currencyCode;
 
-    /**
-     * @var int
-     * @ORM\Column(type="integer")
-     */
     protected $amount = 0;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
     protected $state = PaymentInterface::STATE_CART;
 
-    /**
-     * @var array
-     * @ORM\Column(type="json_array")
-     */
     protected $details = [];
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
     protected $createdAt;
 
-    /**
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
     protected $updatedAt;
 
     public function getId()

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Base;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,17 +11,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A person (alive, dead, undead, or fictional).
  *
  * @see http://schema.org/Person Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class Person
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -30,7 +23,6 @@ abstract class Person
      * @var \DateTime Date of birth.
      *
      * @Groups({"person"})
-     * @ORM\Column(type="date", nullable=true)
      * @Assert\Date
      * @ApiProperty(iri="https://schema.org/birthDate")
      */
@@ -40,7 +32,6 @@ abstract class Person
      * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
      *
      * @Groups({"person"})
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/familyName")
      */
@@ -49,7 +40,6 @@ abstract class Person
     /**
      * @var string Gender of the person.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/gender")
      */
@@ -59,7 +49,6 @@ abstract class Person
      * @var string The name of the item.
      *
      * @Groups({"person"})
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/name")
      */

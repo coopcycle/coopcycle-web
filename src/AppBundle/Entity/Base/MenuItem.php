@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Base;
 
 use AppBundle\Entity\Base\Thing;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -12,24 +11,14 @@ use Sylius\Component\Taxation\Model\TaxableInterface;
  * A food or drink item listed in a menu or menu section.
  *
  * @see http://schema.org/MenuItem Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class MenuItem extends Thing implements TaxableInterface
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Sylius\Component\Taxation\Model\TaxCategoryInterface")
-     * @ORM\JoinColumn(name="tax_category_id", referencedColumnName="id", nullable=false)
-     */
     private $taxCategory;
 
     /**
@@ -42,7 +31,6 @@ abstract class MenuItem extends Thing implements TaxableInterface
      *            - Note that both [RDFa](http://www.w3.org/TR/xhtml-rdfa-primer/#using-the-content-attribute) and Microdata syntax allow the use of a "content=" attribute for publishing simple machine-readable values alongside more human-friendly formatting.
      *            - Use values from 0123456789 (Unicode 'DIGIT ZERO' (U+0030) to 'DIGIT NINE' (U+0039)) rather than superficially similiar Unicode symbols.
      *
-     * @ORM\Column(type="float", nullable=true)
      * @ApiProperty(iri="https://schema.org/price")
      */
     protected $price;

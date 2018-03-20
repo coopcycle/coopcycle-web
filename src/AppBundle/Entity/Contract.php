@@ -2,36 +2,22 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- *
  * Represents a contract between a restaurant and a coop
- *
- * @ORM\Entity
- * @ORM\Table(name="contract")
  */
 class Contract
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
-     */
     private $id;
 
     /**
-     *
      * @var Restaurant
-     * @ORM\OneToOne(targetEntity="Restaurant", inversedBy="contract", cascade={"persist"})
-     * @ORM\JoinColumn(name="restaurant_id", referencedColumnName="id")
      */
     private $restaurant;
 
     /**
      * @var float
-     * @ORM\Column(type="float")
      * @Assert\NotBlank
      * @Assert\Type("float")
      */
@@ -39,7 +25,6 @@ class Contract
 
     /**
      * @var float
-     * @ORM\Column(type="float")
      * @Assert\NotBlank
      * @Assert\Type("float")
      */

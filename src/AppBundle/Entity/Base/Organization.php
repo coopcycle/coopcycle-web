@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Base;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -11,23 +10,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  * An organization such as a school, NGO, corporation, club, etc.
  *
  * @see http://schema.org/Organization Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class Organization
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+
     /**
      * @var string A short description of the item.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/description")
      */
@@ -35,7 +28,6 @@ abstract class Organization
     /**
      * @var string The name of the item.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/name")
      */
@@ -43,7 +35,6 @@ abstract class Organization
     /**
      * @var string URL of the item.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Url
      * @ApiProperty(iri="https://schema.org/url")
      */

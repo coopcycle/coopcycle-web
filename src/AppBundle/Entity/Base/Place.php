@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Base;
 
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use AppBundle\Utils\GeoUtils;
 
@@ -10,8 +9,6 @@ use AppBundle\Utils\GeoUtils;
  * Entities that have a somewhat fixed, physical extension.
  *
  * @see http://schema.org/Place Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class Place extends PostalAddress
 {
@@ -19,7 +16,6 @@ abstract class Place extends PostalAddress
      * @var GeoCoordinates The geo coordinates of the place.
      *
      * @Groups({"place"})
-     * @ORM\Column(type="geography", nullable=true, options={"geometry_type"="GEOMETRY", "srid"=4326})
      */
     protected $geo;
 

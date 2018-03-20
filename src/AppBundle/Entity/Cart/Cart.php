@@ -8,7 +8,6 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Validator\Constraints\Cart as AssertCart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
 
 class AddProductException extends \Exception {}
 
@@ -21,53 +20,35 @@ class RestaurantMismatchException extends AddProductException {}
  * Class Cart
  * @package AppBundle\Utils
  *
- * @ORM\Entity
  * @AssertCart
  */
 class Cart
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
     /**
-     *
-     * Restaurant the cart is linked to
-     *
      * @var Restaurant
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Restaurant", cascade={"all"})
-     *
+     * Restaurant the cart is linked to
      */
     private $restaurant;
 
     /**
-     * Delivery address for the cart
-     *
      * @var Address
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Address", cascade={"all"})
-     *
+     * Delivery address for the cart
      */
     private $address;
 
     /**
-     * Delivery date for the cart
-     *
      * @var string
-     *
-     * @ORM\Column(type="datetime")
+     * Delivery date for the cart
      */
     private $date;
 
     /**
      * @var CartItem[]
-     *
-     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade={"all"})
      */
     private $items;
 

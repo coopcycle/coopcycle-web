@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -12,7 +11,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *
  * Links between an OrderItem, a Modifier and a MenuItem (= selected item)
  *
- * @ORM\Entity()
  * @ApiResource(
  *   attributes={
  *     "denormalization_context"={"groups"={"order"}},
@@ -25,17 +23,11 @@ class OrderItemModifier
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var OrderItem
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OrderItem", inversedBy="modifiers", cascade={"persist"})
      */
     private $orderItem;
 
@@ -43,7 +35,6 @@ class OrderItemModifier
      * Name of the selected modifier
      *
      * @Groups({"order"})
-     * @ORM\Column(type="string")
      */
     private $name;
 
@@ -52,7 +43,6 @@ class OrderItemModifier
      * Description of the selected modifier
      *
      * @Groups({"order"})
-     * @ORM\Column(type="string", nullable=true)
      */
     private $description;
 
@@ -68,7 +58,6 @@ class OrderItemModifier
      * @var MenuItemModifier
      *
      * @Groups({"order"})
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItemModifier", cascade={"persist"})
      */
     private $modifier;
 

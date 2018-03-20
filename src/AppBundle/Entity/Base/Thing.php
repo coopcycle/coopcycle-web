@@ -4,7 +4,6 @@ namespace AppBundle\Entity\Base;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,8 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * The most generic type of item.
  *
  * @see http://schema.org/Thing Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class Thing
 {
@@ -21,7 +18,6 @@ abstract class Thing
      * @var string A description of the item
      *
      * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/description")
      * @Groups({"restaurant"})
      */
@@ -31,7 +27,6 @@ abstract class Thing
      * @var string The name of the item
      *
      * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      * @Groups({"restaurant"})
      */

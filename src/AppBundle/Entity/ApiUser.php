@@ -5,13 +5,11 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
  * @ApiResource(
  *   itemOperations={
  *     "get"={"method"="GET"},
@@ -28,11 +26,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ApiUser extends BaseUser
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
     protected $id;
 
     /**
@@ -51,47 +44,28 @@ class ApiUser extends BaseUser
 
     /**
      * @Assert\NotBlank()
-     * @ORM\Column(type="string", nullable=true)
      * @ApiProperty(iri="https://schema.org/givenName")
     */
     protected $givenName;
 
     /**
      * @Assert\NotBlank()
-     * @ORM\Column(type="string", nullable=true)
      * @ApiProperty(iri="https://schema.org/familyName")
      */
     protected $familyName;
 
     /**
      * @Assert\NotBlank()
-     * @ORM\Column(type="phone_number", nullable=true)
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Restaurant", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     */
     private $restaurants;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Store", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     */
     private $stores;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Address", cascade={"all"})
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn()})
-     */
     private $addresses;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="StripeParams", cascade={"all"})
-     * @ORM\JoinTable(joinColumns={@ORM\JoinColumn(unique=true)})
-     */
     private $stripeParams;
 
     public function __construct()

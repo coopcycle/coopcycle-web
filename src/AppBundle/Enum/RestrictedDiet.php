@@ -72,7 +72,6 @@ class RestrictedDiet extends Enum
      * @var string The name of the item
      *
      * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      */
     protected $name;

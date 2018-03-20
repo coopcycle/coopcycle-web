@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\NameTrait;
@@ -17,8 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @see http://schema.org/OrderItem Documentation on Schema.org
  *
- * @ORM\Entity
- * @ORM\EntityListeners({"AppBundle\Entity\Listener\OrderItemListener"})
  * @ApiResource(iri="http://schema.org/OrderItem",
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -33,10 +30,6 @@ class OrderItem
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -44,7 +37,6 @@ class OrderItem
      * @var MenuItem
      *
      * @Assert\NotBlank()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", cascade={"persist"})
      * @ApiProperty(iri="https://schema.org/MenuItem")
      * @Groups({"order_create", "order"})
      */
@@ -54,21 +46,16 @@ class OrderItem
      * @var int
      *
      * @Assert\NotBlank()
-     * @ORM\Column(type="integer")
      * @Groups({"order_create", "order"})
      */
     private $quantity;
 
     /**
      * @var Order
-     *
-     * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderedItem", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
      */
     private $order;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItemModifier", mappedBy="orderItem", cascade={"all", "persist"})
      * @Groups({"order"})
      */
     private $modifiers;

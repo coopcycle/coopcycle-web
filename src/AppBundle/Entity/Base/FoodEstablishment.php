@@ -13,8 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A food-related business.
  *
  * @see http://schema.org/FoodEstablishment Documentation on Schema.org
- *
- * @ORM\MappedSuperclass
  */
 abstract class FoodEstablishment extends LocalBusiness
 {

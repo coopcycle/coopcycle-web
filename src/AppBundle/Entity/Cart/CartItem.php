@@ -2,63 +2,32 @@
 
 namespace AppBundle\Entity\Cart;
 
-
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Menu\Modifier;
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="cart_item")
- */
 class CartItem
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
     /**
      * @var MenuItem
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem")
      */
     protected $menuItem;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     protected $modifiersDescription;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     protected $quantity;
 
-    /**
-     * @ORM\Column(type="array")
-     */
     protected $modifierChoices;
 
-    /**
-     * @ORM\Column(type="string")
-     */
     protected $key;
 
-    /**
-     * @ORM\Column(type="float")
-     */
     protected $unitPrice;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Cart", inversedBy="items", cascade={"persist"})
-     */
     protected $cart;
-
 
     public function __construct(Cart $cart, MenuItem $menuItem, $quantity, $modifierChoices = [])
     {

@@ -1,21 +1,17 @@
 <?php
 
-
 namespace AppBundle\Entity\Menu;
-
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\Thing;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class MenuItemModifier
  * Represent a modifier that can be added to a MenuItem
  *
- * @ORM\Entity()
  * @ApiResource(
  *  shortName="MenuItemModifier",
  *  itemOperations={
@@ -31,14 +27,11 @@ class MenuItemModifier extends Thing
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
+     * @var string
      * The strategy to calculate the extra-price involved by adding the modifier.
      *
      * Possible values:
@@ -46,16 +39,11 @@ class MenuItemModifier extends Thing
      *  - ADD_MENUITEM_PRICE add price of the extra
      *  - ADD_MODIFIER_PRICE add the fixed price of the menu item
      *
-     * @var string
-     *
-     * @ORM\Column(type="string")
      * @Groups({"restaurant"})
-     *
      */
     protected $calculusStrategy;
 
     /**
-     * @ORM\Column(type="float")
      * @ApiProperty(iri="https://schema.org/price")
      * @Groups({"restaurant"})
      */
@@ -63,15 +51,12 @@ class MenuItemModifier extends Thing
 
     /**
      * The menu item this modifier belongs to
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItem", inversedBy="modifiers", cascade={"persist"})
      */
     protected $menuItem;
 
     /**
      * The choices the user can select from.
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\Modifier", mappedBy="menuItemModifier", cascade={"persist"})
      * @Groups({"restaurant"})
      */
     protected $modifierChoices;

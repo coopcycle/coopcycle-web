@@ -7,13 +7,9 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\TaskRepository")
- * @ORM\EntityListeners({"AppBundle\Entity\Listener\TaskListener"})
  * @ApiResource(
  *   attributes={
  *     "denormalization_context"={"groups"={"task"}},
@@ -52,91 +48,62 @@ class Task implements TaggableInterface
     const STATUS_DONE = 'DONE';
 
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Groups({"task"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string")
      * @Groups({"task"})
      */
     private $type = self::TYPE_DROPOFF;
 
     /**
-     * @ORM\Column(type="string")
      * @Groups({"task"})
      */
     private $status = self::STATUS_TODO;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Delivery")
-     * @ORM\JoinColumn(nullable=true)
-     */
     private $delivery;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Address", cascade={"persist"})
      * @Groups({"task"})
      */
     private $address;
 
     /**
-     * @ORM\Column(type="datetime")
      * @Groups({"task"})
      */
     private $doneAfter;
 
     /**
-     * @ORM\Column(type="datetime")
      * @Groups({"task"})
      */
     private $doneBefore;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @Groups({"task"})
      */
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity="TaskEvent", mappedBy="task", cascade={"all"})
-     * @ORM\OrderBy({"createdAt" = "ASC"})
      * @Groups({"task"})
      */
     private $events;
 
     /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
      * @Groups({"task"})
      */
     private $createdAt;
 
     /**
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
      * @Groups({"task"})
      */
     private $updatedAt;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Task")
-     * @ORM\JoinColumn(name="previous_task_id", referencedColumnName="id", nullable=true)
-     */
     private $previous;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Task\Group", cascade={"persist"})
-     * @ORM\JoinColumn(name="group_id", referencedColumnName="id", nullable=true)
-     */
     private $group;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ApiUser")
-     * @ORM\JoinColumn(name="assigned_to", referencedColumnName="id", nullable=true)
      * @Groups({"task"})
      */
     private $assignedTo;

@@ -5,9 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\LocalBusiness;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,7 +16,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @see http://schema.org/Store Documentation on Schema.org
  *
- * @ORM\Entity
  * @ApiResource(iri="http://schema.org/Store",
  *   attributes={
  *     "normalization_context"={"groups"={"store", "place"}}
@@ -36,10 +33,6 @@ class Store extends LocalBusiness
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -47,7 +40,6 @@ class Store extends LocalBusiness
      * @var string The name of the item
      *
      * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="http://schema.org/name")
      * @Groups({"store"})
      */
@@ -56,7 +48,6 @@ class Store extends LocalBusiness
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean", options={"default": false})
      * @Groups({"store"})
      */
     protected $enabled = false;
@@ -69,13 +60,11 @@ class Store extends LocalBusiness
     private $imageFile;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * @var string
      */
     private $imageName;
 
     /**
-     * @ORM\OneToOne(targetEntity="Address", cascade={"all"})
      * @Groups({"store"})
      */
     private $address;
@@ -83,7 +72,6 @@ class Store extends LocalBusiness
     /**
      * @var string The website.
      *
-     * @ORM\Column(nullable=true)
      * @ApiProperty(iri="https://schema.org/URL")
      */
     private $website;
@@ -91,41 +79,22 @@ class Store extends LocalBusiness
     /**
      * @var string The telephone number.
      *
-     * @ORM\Column(nullable=true)
      * @Assert\Type(type="string")
      */
     protected $telephone;
 
     /**
      * @var string The Stripe params
-     *
-     * @ORM\ManyToOne(targetEntity="StripeParams")
      */
     private $stripeParams;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
     private $createdAt;
 
-    /**
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
     private $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Delivery\PricingRuleSet", cascade={"persist"})
-     * @ORM\JoinColumn(name="pricing_rule_set_id", referencedColumnName="id")
-     */
     private $pricingRuleSet;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Delivery", mappedBy="store")
-     */
     private $deliveries;
-
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();

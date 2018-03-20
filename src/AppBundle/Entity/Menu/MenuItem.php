@@ -7,16 +7,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\MenuItem as BaseMenuItem;
 use AppBundle\Entity\Menu\MenuItemModifier;
 use AppBundle\Entity\Restaurant;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="menu_item")
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  * @ApiResource(
  *  shortName="MenuItem",
  *  iri="http://schema.org/MenuItem",
@@ -27,28 +22,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MenuItem extends BaseMenuItem
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuSection", inversedBy="items", cascade={"all"})
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
-     */
     private $section;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuItemModifier",
-     *                mappedBy="menuItem",
-     *                cascade={"all"})
      * @Groups({"restaurant"})
      */
     protected $modifiers;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
     private $deletedAt;
 
     /**
      * @Groups({"restaurant"})
-     * @ORM\Column(type="boolean", options={"default": true})
      */
     private $isAvailable = true;
 

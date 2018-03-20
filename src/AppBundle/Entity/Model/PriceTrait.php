@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Model;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,7 +17,6 @@ trait PriceTrait
      *  - Note that both [RDFa](http://www.w3.org/TR/xhtml-rdfa-primer/#using-the-content-attribute) and Microdata syntax allow the use of a "content=" attribute for publishing simple machine-readable values alongside more human-friendly formatting.
      *  - Use values from 0123456789 (Unicode 'DIGIT ZERO' (U+0030) to 'DIGIT NINE' (U+0039)) rather than superficially similiar Unicode symbols.
      *
-     * @ORM\Column(type="float", nullable=true)
      * @ApiProperty(iri="https://schema.org/price")
      * @Groups({"order"})
      */

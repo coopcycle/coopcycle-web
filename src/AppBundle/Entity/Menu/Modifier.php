@@ -1,15 +1,10 @@
 <?php
 
-
 namespace AppBundle\Entity\Menu;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\MenuItem as BaseMenuItem;
-use Doctrine\ORM\Mapping as ORM;
-
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="modifier")
  * @ApiResource(
  *  shortName="Modifier",
  *  iri="http://schema.org/MenuItem",
@@ -20,9 +15,6 @@ class Modifier extends BaseMenuItem
 
     /**
      * @var MenuItemModifier
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Menu\MenuItemModifier", inversedBy="modifierChoices", cascade={"persist"})
-     *
      */
     private $menuItemModifier;
 

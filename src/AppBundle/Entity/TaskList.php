@@ -4,17 +4,12 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A TaskList represents the daily planning for a courier.
  * It is a concrete implementation of a TaskCollection.
  *
- * @ORM\Entity
- * @ORM\Table(name="task_list", uniqueConstraints={
- *   @ORM\UniqueConstraint(name="task_list_unique", columns={"date", "courier_id"})}
- * )
  * @ApiResource(
  *   collectionOperations={},
  *   itemOperations={
@@ -27,15 +22,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class TaskList extends TaskCollection implements TaskCollectionInterface
 {
-    /**
-     * @ORM\Column(type="date")
-     */
     private $date;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ApiUser")
-     * @ORM\JoinColumn(nullable=false)
-     */
     private $courier;
 
     public function getDate()

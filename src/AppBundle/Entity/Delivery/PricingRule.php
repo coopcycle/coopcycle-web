@@ -3,50 +3,34 @@
 namespace AppBundle\Entity\Delivery;
 
 use AppBundle\Entity\Delivery;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="pricing_rule")
- */
 class PricingRule
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
     /**
      * @Groups({"original_rules"})
-     * @ORM\Column(type="text")
      * @Assert\Type(type="string")
      */
     protected $expression;
 
     /**
      * @Groups({"original_rules"})
-     * @ORM\Column(type="text")
      * @Assert\Type(type="string")
      */
     protected $price;
 
     /**
      * @Groups({"original_rules"})
-     * @ORM\Column(type="integer", nullable=true)
      */
     protected $position;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="PricingRuleSet", inversedBy="rules", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
     protected $ruleSet;
 
     /**

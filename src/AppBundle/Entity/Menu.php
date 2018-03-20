@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\CreativeWork;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,7 +13,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @see http://schema.org/Menu Documentation on Schema.org
  *
- * @ORM\Entity
  * @ApiResource(iri="http://schema.org/Menu",
  *   attributes={
  *     "normalization_context"={"groups"={"restaurant"}}
@@ -29,23 +27,16 @@ class Menu extends CreativeWork
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Menu\MenuSection", mappedBy="menu", cascade={"all"})
      * @Groups({"restaurant"})
      */
     private $sections;
 
     /**
      * @var string The menu of the restaurant.
-     *
-     * @ORM\OneToOne(targetEntity="Restaurant", mappedBy="hasMenu", cascade={"all"})
      */
     private $restaurant;
 

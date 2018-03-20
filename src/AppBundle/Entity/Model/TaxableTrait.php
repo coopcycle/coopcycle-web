@@ -2,23 +2,12 @@
 
 namespace AppBundle\Entity\Model;
 
-use Doctrine\ORM\Mapping as ORM;
-
 trait TaxableTrait
 {
-    /**
-     * @ORM\Column(type="float")
-     */
     private $totalExcludingTax;
 
-    /**
-     * @ORM\Column(type="float")
-     */
     private $totalTax;
 
-    /**
-     * @ORM\Column(type="float")
-     */
     private $totalIncludingTax;
 
     public function getTotalExcludingTax()
