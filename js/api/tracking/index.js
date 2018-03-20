@@ -2,6 +2,9 @@ var path = require('path');
 var _ = require('lodash');
 var http = require('http');
 
+var winston = require('winston')
+winston.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+
 var ROOT_DIR = __dirname + '/../../..';
 
 var envMap = {
@@ -94,19 +97,19 @@ io.on('connection', function (socket) {
 
   if (!subscribed) {
 
-    console.log('A client is connected, subscribing...');
+    winston.info('A client is connected, subscribing...');
 
     sub.on('subscribe', (channel, count) => {
-      console.log(`Subscribed to ${channel}`)
+      winston.info(`Subscribed to ${channel}`)
     })
 
     sub.on('psubscribe', (channel, count) => {
-      console.log(`Subscribed to ${channel}`)
+      winston.info(`Subscribed to ${channel}`)
     })
 
     sub.on('message', function(channelWithPrefix, message) {
 
-      console.log(`Received message on channel ${channelWithPrefix}`)
+      winston.debug(`Received message on channel ${channelWithPrefix}`)
 
       const channel = sub.unprefixedChannel(channelWithPrefix)
       const { toJSON } = channels[channel]
@@ -117,7 +120,7 @@ io.on('connection', function (socket) {
 
     sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
 
-      console.log(`Received pmessage on channel ${channelWithPrefix}`)
+      winston.debug(`Received pmessage on channel ${channelWithPrefix}`)
 
       const channel = sub.unprefixedChannel(channelWithPrefix)
       const pattern = sub.unprefixedChannel(patternWithPrefix)

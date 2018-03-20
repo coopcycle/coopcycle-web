@@ -94,7 +94,7 @@ wsServer.on('connection', function(ws) {
 
       if (type === 'position') {
 
-        console.log(`Position received from ${user.username}`)
+        winston.debug(`Position received from ${user.username}`)
 
         const { username } = user
         const { latitude, longitude } = data

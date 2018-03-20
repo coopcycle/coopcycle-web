@@ -105,7 +105,6 @@ export default class MapProxy {
   }
 
   setOnline(username) {
-    console.log(`User ${username} is online`)
     if (!this.courierMarkers.has(username)) {
       return
     }
