@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash'
+import moment from 'moment'
 
 function addLinkProperty(tasks) {
   let tasksById = _.keyBy(tasks, task => task['@id'])
@@ -29,6 +30,13 @@ const tasksInitial = addLinkProperty(window.AppData.Dashboard.tasks),
         Object.assign(taskList, { items: addLinkProperty(taskList.items) })
       ),
       unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
+
+unassignedTasksInitial.sort((a, b) => {
+  const doneBeforeA = moment(a.doneBefore)
+  const doneBeforeB = moment(b.doneBefore)
+
+  return doneBeforeA.isBefore(doneBeforeB) ? -1 : 1
+})
 
 let polylineEnabledByUser = {}
 _.forEach(taskLists, taskList => {
