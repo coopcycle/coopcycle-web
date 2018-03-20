@@ -7,6 +7,7 @@ restaurant.notActivable: Aún no puedes activar éste restaurante
 address.tooFar: Esta dirección está muy lejos
 
 cart.date.tooSoon: Ésta fecha es demasiado pronto
+cart.address.empty: Por favor seleccione una dirección
 
 order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%
 

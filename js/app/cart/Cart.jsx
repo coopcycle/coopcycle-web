@@ -152,8 +152,15 @@ class Cart extends React.Component
   }
 
   componentDidMount() {
-    // FIXME this.props.geohash & this.props.streetAddress may be empty
-    this.onAddressChange(this.props.geohash, this.props.streetAddress)
+    if (this.props.geohash && this.props.streetAddress) {
+      this.onAddressChange(this.props.geohash, this.props.streetAddress)
+    } else {
+      $.post(this.resolveAddToCartURL(), {
+        date: this.state.date,
+      })
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
+    }
   }
 
   renderWarningAlerts(messages) {
@@ -209,10 +216,6 @@ class Cart extends React.Component
 
     const warningAlerts = []
     const dangerAlerts = []
-
-    if (!address) {
-      warningAlerts.push('Veuillez sélectionner une adresse')
-    }
 
     if (errors) {
       if (errors.total) {

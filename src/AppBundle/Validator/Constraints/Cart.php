@@ -12,6 +12,7 @@ class Cart extends Constraint
     public $dateTooSoonMessage = 'cart.date.tooSoon';
     public $addressTooFarMessage = 'address.tooFar';
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
+    public $addressEmptyMessage = 'cart.address.empty';
 
     public function validatedBy()
     {

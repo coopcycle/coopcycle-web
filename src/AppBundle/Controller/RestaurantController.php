@@ -198,7 +198,7 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{id}/cart", name="restaurant_add_to_cart")
+     * @Route("/restaurant/{id}/cart", name="restaurant_add_to_cart", methods={"POST"})
      */
     public function addToCartAction($id, Request $request)
     {
