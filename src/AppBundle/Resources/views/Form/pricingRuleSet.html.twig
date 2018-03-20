@@ -6,9 +6,8 @@
     {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__expression">
-    <div class="rule-expression-container">
-    </div>
-    {{ form_widget(form.expression, { attr: { placeholder: 'Enter an expression'|trans([], 'messages'), class: 'text-monospace' } }) }}
+    <div class="rule-expression-container"></div>
+    {{ form_widget(form.expression) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__price">
     {{ form_row(form.price) }}

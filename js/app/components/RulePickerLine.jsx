@@ -64,7 +64,7 @@ class RulePickerLine extends React.Component {
      */
 
     // zone
-    let zoneTest = /in_zone\(deliveryAddress, ([\w]+)\)/.exec(this.props.line)
+    let zoneTest = /in_zone\(deliveryAddress, "([\w]+)"\)/.exec(this.props.line)
     if (zoneTest) {
       return ['zone', 'in_zone', [zoneTest[1]]]
     }
@@ -100,7 +100,7 @@ class RulePickerLine extends React.Component {
         case '<':
           return state.typeValue + ' < ' + state.boundValues[0]
         case 'in_zone':
-          return 'in_zone(deliveryAddress, ' + state.boundValues[0] + ')'
+          return 'in_zone(deliveryAddress, "' + state.boundValues[0] + '")'
         case '==':
           return state.typeValue + ' == "' + state.boundValues[0] + '"'
       }
@@ -156,6 +156,7 @@ class RulePickerLine extends React.Component {
       case 'in_zone':
         return (
           <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
+              <option value="">-</option>
               { this.props.rulePicker.props.zones.map((item, index) => {
                   return (<option value={item} key={index}>{item}</option>)
                 }
@@ -166,6 +167,7 @@ class RulePickerLine extends React.Component {
       case '==':
         return (
           <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
+            <option value="">-</option>
             <option value="bike">Vélo</option>
             <option value="cargo_bike">Vélo Cargo</option>
           </select>

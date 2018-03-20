@@ -50,6 +50,9 @@ class RulePicker extends React.Component {
             </button>
           </div>
         </div>
+        <div className="row rule-picker-preview">
+          <pre>{ this.state.lines.filter(item => item).join(' and ') }</pre>
+        </div>
       </div>
     )
   }

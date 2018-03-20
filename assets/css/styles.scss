@@ -611,8 +611,16 @@ form[name="menu"] {
 }
 
 .rule-picker {
-  padding: 15px;
+  padding: 15px 15px 0 15px;
   border: 1px solid black;
+  border-radius: 4px;
+  &-preview {
+    margin-top: 10px;
+    pre {
+      margin: 0;
+      font-size: 11px;
+    }
+  }
 }
 
 
