@@ -322,6 +322,10 @@ form.settings.latlng.label: Geographical coordinates
 form.settings.latlng.help: |
   Specify the default latitude and longitude. You can get it on <a href="https://www.latlong.net/">latlong.net</a>
 
+form.registration.username.help: |
+  Your username cannot be longer than 15 characters.
+  A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
+
 cart.modal.title: Warning
 cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?
 cart.modal.confirm: Add

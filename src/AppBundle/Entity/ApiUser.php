@@ -37,6 +37,8 @@ class ApiUser extends BaseUser
 
     /**
      * @Assert\NotBlank()
+     * @Assert\Length(min="3", max="15")
+     * @Assert\Regex(pattern="/^[a-zA-Z0-9_]{3,15}$/")
      * @var string
      */
     protected $username;

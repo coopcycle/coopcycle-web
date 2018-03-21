@@ -79,7 +79,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $output->writeln('Creating users...');
         for ($i = 1; $i <= 50; $i++) {
-            $username = "user-{$i}";
+            $username = "user_{$i}";
             $user = $this->createUser($username, ['password' => $username]);
             $user->addAddress($this->faker->randomAddress);
         }
@@ -87,7 +87,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $output->writeln('Creating couriers...');
         for ($i = 1; $i <= 50; $i++) {
-            $this->createCourier("bot-{$i}");
+            $this->createCourier("bot_{$i}");
         }
 
         $output->writeln('Creating restaurants...');
@@ -337,7 +337,7 @@ class InitDemoCommand extends ContainerAwareCommand
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
             $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
 
-            $username = "resto-{$i}";
+            $username = "resto_{$i}";
             $user = $this->createUser($username, [
                 'password' => $username,
                 'roles' => ['ROLE_RESTAURANT']
@@ -358,7 +358,7 @@ class InitDemoCommand extends ContainerAwareCommand
             $this->doctrine->getManagerForClass(Entity\Store::class)->persist($store);
             $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
 
-            $username = "store-{$i}";
+            $username = "store_{$i}";
             $user = $this->createUser($username, [
                 'password' => $username,
                 'roles' => ['ROLE_STORE']
