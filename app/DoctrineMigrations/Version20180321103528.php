@@ -31,8 +31,9 @@ class Version20180321103528 extends AbstractMigration
                 $username = substr($username, 0, 15);
             }
 
-            $this->addSql('UPDATE api_user SET username = :username, username_canonical = :username WHERE id = :id', [
+            $this->addSql('UPDATE api_user SET username = :username, username_canonical = :username_canonical WHERE id = :id', [
                 'username' => $username,
+                'username_canonical' => strtolower($username),
                 'id' => $user['id']
             ]);
         }
