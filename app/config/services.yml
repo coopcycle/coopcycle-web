@@ -22,9 +22,9 @@ services:
 
   app.form.registration:
     class: AppBundle\Form\RegistrationType
-    arguments: ['%country_iso%']
+    arguments: ['%country_iso%', '%is_demo%']
     tags:
-      - { name: form.type, alias: app_user_registration }
+      - { name: form.type }
 
   app.form.update_profile:
     class: AppBundle\Form\UpdateProfileType

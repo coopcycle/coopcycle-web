@@ -34,21 +34,24 @@ class RegistrationListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
 
-        $accountType = $form->get('accountType')->getData();
+        if ($form->has('accountType')) {
 
-        $roles = [];
-        switch ($accountType) {
-            case 'COURIER':
-                $roles = ['ROLE_COURIER'];
-                break;
-            case 'STORE':
-                $roles = ['ROLE_STORE'];
-                break;
-            case 'RESTAURANT':
-                $roles = ['ROLE_RESTAURANT'];
-                break;
+            $accountType = $form->get('accountType')->getData();
+
+            $roles = [];
+            switch ($accountType) {
+                case 'COURIER':
+                    $roles = ['ROLE_COURIER'];
+                    break;
+                case 'STORE':
+                    $roles = ['ROLE_STORE'];
+                    break;
+                case 'RESTAURANT':
+                    $roles = ['ROLE_RESTAURANT'];
+                    break;
+            }
+
+            $form->getData()->setRoles($roles);
         }
-
-        $form->getData()->setRoles($roles);
     }
 }

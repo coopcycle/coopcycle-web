@@ -12,10 +12,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 class RegistrationType extends AbstractType
 {
     private $countryIso;
+    private $isDemo;
 
-    public function __construct($countryIso)
+    public function __construct($countryIso, $isDemo)
     {
         $this->countryIso = strtoupper($countryIso);
+        $this->isDemo = $isDemo;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -26,8 +28,10 @@ class RegistrationType extends AbstractType
             ->add('telephone', PhoneNumberType::class, [
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso)
-            ])
-            ->add('accountType', ChoiceType::class, [
+            ]);
+
+        if ($this->isDemo) {
+            $builder->add('accountType', ChoiceType::class, [
                 'mapped' => false,
                 'required' => true,
                 'choices'  => [
@@ -37,22 +41,12 @@ class RegistrationType extends AbstractType
                     'Store' => 'STORE',
                 ]
             ]);
+        }
     }
 
     public function getParent()
     {
         return 'FOS\UserBundle\Form\Type\RegistrationFormType';
 
-    }
-
-    public function getBlockPrefix()
-    {
-        return 'app_user_registration';
-    }
-
-    // For Symfony 2.x
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 }
