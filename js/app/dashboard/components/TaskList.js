@@ -149,7 +149,7 @@ class TaskList extends React.Component {
       <div className="panel panel-default nomargin">
         <div className="panel-heading">
           <h3 className="panel-title">
-            <i className="fa fa-user"></i> 
+            <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
             <a role="button" data-toggle="collapse" data-parent="#accordion" href={ '#collapse-' + username }>{ username }</a> 
             { collapsed && ( <i className="fa fa-caret-down"></i> ) }
             { !collapsed && ( <i className="fa fa-caret-up"></i> ) }

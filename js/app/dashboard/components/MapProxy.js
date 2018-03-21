@@ -40,6 +40,17 @@ const polylineOptions = {
   opacity: 0.7
 }
 
+const createIcon = username => {
+  const iconUrl = window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username)
+
+  return L.icon({
+    iconUrl: iconUrl,
+    iconSize:    [20, 20], // size of the icon
+    iconAnchor:  [10, 10], // point of the icon which will correspond to marker's location
+    popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
+  });
+}
+
 export default class MapProxy {
 
   constructor(map) {
@@ -109,7 +120,8 @@ export default class MapProxy {
       return
     }
     const marker = this.courierMarkers.get(username)
-    marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#000'))
+    marker.setIcon(createIcon(username))
+    marker.setOpacity(1)
   }
 
   setOffline(username) {
@@ -118,13 +130,17 @@ export default class MapProxy {
       return
     }
     const marker = this.courierMarkers.get(username)
-    marker.setIcon(MapHelper.createMarkerIcon('bicycle', 'circle', '#CCC'))
+    marker.setIcon(createIcon(username))
+    marker.setOpacity(0.5)
   }
 
   setGeolocation(username, position) {
     let marker = this.courierMarkers.get(username)
     if (!marker) {
-      marker = MapHelper.createMarker(position, 'bicycle', 'circle', '#000')
+
+      marker = L.marker(position, { icon: createIcon(username) })
+      marker.setOpacity(1)
+
       const popupContent = `<div class="text-center">${username}</div>`
       marker.bindPopup(popupContent, {
         offset: [3, 70]

@@ -43,7 +43,7 @@
         {% if app.user %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              {{ app.user.username }} <span class="caret"></span>
+              <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20">  {{ app.user.username }} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li>
