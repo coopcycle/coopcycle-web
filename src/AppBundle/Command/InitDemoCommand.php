@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\Store\FlockStore;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class InitDemoCommand extends ContainerAwareCommand
@@ -26,6 +28,7 @@ class InitDemoCommand extends ContainerAwareCommand
     private $redis;
     private $ormPurger;
     private $craueConfig;
+    private $lockFactory;
 
     private static $users = [
         'admin' => [
@@ -62,44 +65,54 @@ class InitDemoCommand extends ContainerAwareCommand
             'craue_config_setting',
             'migration_versions',
         ]);
+
+        $store = new FlockStore();
+        $this->lockFactory = new LockFactory($store);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Purging database...');
-        $this->ormPurger->purge();
+        $lock = $this->lockFactory->createLock('orm-purger');
 
-        $output->writeln('Verifying database config...');
-        $this->handleCraueConfig($input, $output);
+        if ($lock->acquire()) {
 
-        $output->writeln('Creating super users...');
-        foreach (self::$users as $username => $params) {
-            $this->createUser($username, $params);
-        }
+            $output->writeln('Purging database…');
+            $this->ormPurger->purge();
 
-        $output->writeln('Creating users...');
-        for ($i = 1; $i <= 50; $i++) {
-            $username = "user_{$i}";
-            $user = $this->createUser($username, ['password' => $username]);
-            $user->addAddress($this->faker->randomAddress);
-        }
-        $this->doctrine->getManagerForClass(Entity\ApiUser::class)->flush();
+            $output->writeln('Verifying database config…');
+            $this->handleCraueConfig($input, $output);
 
-        $output->writeln('Creating couriers...');
-        for ($i = 1; $i <= 50; $i++) {
-            $this->createCourier("bot_{$i}");
-        }
+            $output->writeln('Creating super users…');
+            foreach (self::$users as $username => $params) {
+                $this->createUser($username, $params);
+            }
 
-        $output->writeln('Creating restaurants...');
-        $this->createRestaurants($output);
+            $output->writeln('Creating users…');
+            for ($i = 1; $i <= 50; $i++) {
+                $username = "user_{$i}";
+                $user = $this->createUser($username, ['password' => $username]);
+                $user->addAddress($this->faker->randomAddress);
+            }
+            $this->doctrine->getManagerForClass(Entity\ApiUser::class)->flush();
 
-        $output->writeln('Creating stores...');
-        $this->createStores();
+            $output->writeln('Creating couriers…');
+            for ($i = 1; $i <= 50; $i++) {
+                $this->createCourier("bot_{$i}");
+            }
 
-        $output->writeln('Removing data from Redis...');
-        $keys = $this->redis->keys('*');
-        foreach ($keys as $key) {
-            $this->redis->del($key);
+            $output->writeln('Creating restaurants…');
+            $this->createRestaurants($output);
+
+            $output->writeln('Creating stores…');
+            $this->createStores();
+
+            $output->writeln('Removing data from Redis…');
+            $keys = $this->redis->keys('*');
+            foreach ($keys as $key) {
+                $this->redis->del($key);
+            }
+
+            $lock->release();
         }
     }
 

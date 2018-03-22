@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\Store\FlockStore;
 
 class FlushTrackingCommand extends ContainerAwareCommand
 {
@@ -16,6 +18,7 @@ class FlushTrackingCommand extends ContainerAwareCommand
     private $redis;
     private $userManager;
     private $batchSize = 50;
+    private $lockFactory;
 
     protected function configure()
     {
@@ -31,11 +34,26 @@ class FlushTrackingCommand extends ContainerAwareCommand
         $this->userManager = $this->getContainer()->get('fos_user.user_manager');
 
         $this->em = $this->doctrine->getManagerForClass(TrackingPosition::class);
+
+        $store = new FlockStore();
+        $this->lockFactory = new LockFactory($store);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $lock = $this->lockFactory->createLock('orm-purger');
+
+        if (!$lock->acquire()) {
+            $output->writeln('<error>Database is being purged, aborting.</error>');
+            return;
+        }
+
         $keys = $this->redis->keys('tracking:*');
+
+        if (count($keys) === 0) {
+            $output->writeln('<info>Nothing to do!</info>');
+            return;
+        }
 
         $usernames = [];
         foreach ($keys as $key) {
@@ -49,6 +67,9 @@ class FlushTrackingCommand extends ContainerAwareCommand
     private function flushTracking(UserInterface $user, $key, OutputInterface $output)
     {
         $key = str_replace($this->redis->getOptions()->prefix->getPrefix(), '', $key);
+
+        $length = $this->redis->llen($key);
+        $output->writeln(sprintf('<info>Found %d events to flush for user %s</info>', $length, $user->getUsername()));
 
         $i = 0;
         while ($json = $this->redis->lpop($key)) {
