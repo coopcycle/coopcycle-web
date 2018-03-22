@@ -30,13 +30,23 @@ const taskColor = task => {
 
 const taskIcon = task => {
 
-  if (task.status === 'DONE') {
-    return 'check'
-  } else if (task.status === 'FAILED') {
-    return 'remove'
-  } else if (task.type === 'PICKUP') {
-    return 'cube'
+  if (task.status === 'TODO') {
+    if (task.type === 'PICKUP') {
+      return 'cube'
+    }
+    if (task.type === 'DROPOFF') {
+      return 'arrow-down'
+    }
+  } else {
+    if (task.status === 'DONE') {
+      return 'check'
+    }
+    if (task.status === 'FAILED') {
+      return 'remove'
+    }
   }
+
+  return 'question'
 }
 
 const polylineOptions = {
