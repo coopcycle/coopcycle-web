@@ -19,6 +19,7 @@ adminDashboard.dashboard.export: Exportar
 adminDashboard.dashboard.importErrors: Importar errores
 adminDashboard.dashboard.importTasks: Importar tareas
 adminDashboard.dashboard.exportTasks: Export tareas
+adminDashboard.dashboard.filters: Filtros
 adminDashboard.dashboard.cancel: Cancelar
 adminDashboard.dashboard.deleteTaskGroup: Eliminar grupo de tareas
 adminDashboard.dashboard.display: Mostrar

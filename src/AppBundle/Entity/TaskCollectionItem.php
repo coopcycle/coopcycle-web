@@ -24,7 +24,6 @@ class TaskCollectionItem
     private $id;
 
     /**
-     * @Gedmo\SortableGroup
      * @ORM\ManyToOne(targetEntity="TaskCollection", inversedBy="items")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      */
@@ -38,7 +37,6 @@ class TaskCollectionItem
     private $task;
 
     /**
-     * @Gedmo\SortablePosition
      * @ORM\Column(name="position", type="integer")
      * @Groups({"task_collection"})
      */

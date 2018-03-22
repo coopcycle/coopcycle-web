@@ -126,12 +126,17 @@ class TaskList extends React.Component {
 
   render() {
 
-    const { duration, distance, username, tasks, polylineEnabled } = this.props
+    const { duration, distance, username, polylineEnabled, showFinishedTasks } = this.props
+    let { tasks } = this.props
     const { collapsed } = this.state
 
     tasks.sort((a, b) => {
       return a.position > b.position ? 1 : -1
     })
+
+    if (!showFinishedTasks) {
+      tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
+    }
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -193,6 +198,7 @@ function mapStateToProps(state, ownProps) {
     tasks: ownProps.items,
     distance: ownProps.distance,
     duration: ownProps.duration,
+    showFinishedTasks: state.tasksFilters.showFinishedTasks
   }
 }
 

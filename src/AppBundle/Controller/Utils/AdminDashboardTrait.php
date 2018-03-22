@@ -92,6 +92,10 @@ trait AdminDashboardTrait
     public function dashboardFullscreenAction($date, Request $request)
     {
         $date = new \DateTime($date);
+        $dayAfter = clone $date;
+        $dayAfter->modify('+1 day');
+        $dayBefore = clone $date;
+        $dayBefore->modify('-1 day');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -255,6 +259,8 @@ trait AdminDashboardTrait
         return $this->render('@App/Admin/dashboardIframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
+            'dayAfter' => $dayAfter,
+            'dayBefore' => $dayBefore,
             'couriers' => $couriers,
             'tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
@@ -301,30 +307,12 @@ trait AdminDashboardTrait
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);
 
-        $assignedTasks = new \SplObjectStorage();
-        foreach ($taskList->getItems() as $taskListItem) {
-            $assignedTasks[$taskListItem->getTask()] = $taskListItem->getPosition();
-        }
-
-        $tasksToAssign = new \SplObjectStorage();
+        $tasksToAssign = [];
         foreach ($data as $item) {
-            $task = $this->getResourceFromIri($item['task']);
-            $tasksToAssign[$task] = $item['position'];
+            $tasksToAssign[$item['position']] = $this->getResourceFromIri($item['task']);
         }
 
-        $tasksToUnassign = [];
-        foreach ($assignedTasks as $task) {
-            if (!$tasksToAssign->contains($task)) {
-                $tasksToUnassign[] = $task;
-            }
-        }
-
-        foreach ($tasksToUnassign as $task) {
-            $taskList->removeTask($task);
-        }
-        foreach ($tasksToAssign as $task) {
-            $taskList->addTask($task, $tasksToAssign[$task]);
-        }
+        $taskList->setTasks($tasksToAssign);
 
         $this->getDoctrine()
             ->getManagerForClass(TaskList::class)

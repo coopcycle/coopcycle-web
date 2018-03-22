@@ -1,3 +1,5 @@
+@import "vars.scss";
+
 html, body {
   width: 100%;
   height: 100%;
@@ -32,19 +34,16 @@ html, body {
   }
 
   &__map {
-    padding-bottom: 50px;
-    position: relative;
+    flex-direction: column;
   }
   &__map-container {
     flex: 1;
   }
   &__toolbar-container {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
     .navbar {
       margin-bottom: 0;
+      border-radius: 0;
     }
   }
 
@@ -72,6 +71,38 @@ html, body {
 
   &__map {
     flex: 7.5;
+  }
+
+  &__date {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  &__date-picker {
+    margin: 9px 0;
+    display: inline-block;
+
+    .ant-calendar-picker {
+      margin: 0;
+    }
+  }
+
+  &__date-link {
+    color: #777;
+
+    &:hover {
+      color: $dark;
+    }
+
+    font-size: 24px;
+    position: relative;
+    top: 2px;
+    padding: 0 4px;
+  }
+
+  &__filters__icon {
+    position: relative;
+    right: 8px;
   }
 
   &__aside {
@@ -225,10 +256,6 @@ html, body {
   z-index: 0;
 }
 
-#date-picker {
-  margin: 9px 0;
-}
-
 #task_edit_history {
   padding-top: 10px;
 }
@@ -256,4 +283,8 @@ html, body {
   40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0;
 }

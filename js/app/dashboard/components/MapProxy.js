@@ -25,14 +25,28 @@ const taskColor = task => {
     return tag.color
   }
 
-  switch (task.type) {
-    case 'PICKUP':
-      return DEFAULT_PICKUP_COLOR
-    case 'DROPOFF':
-      return DEFAULT_DROPOFF_COLOR
-    default:
-      return '#DEDEDE'
+  return '#777'
+}
+
+const taskIcon = task => {
+
+  if (task.status === 'TODO') {
+    if (task.type === 'PICKUP') {
+      return 'cube'
+    }
+    if (task.type === 'DROPOFF') {
+      return 'arrow-down'
+    }
+  } else {
+    if (task.status === 'DONE') {
+      return 'check'
+    }
+    if (task.status === 'FAILED') {
+      return 'remove'
+    }
   }
+
+  return 'question'
 }
 
 const polylineOptions = {
@@ -57,35 +71,55 @@ export default class MapProxy {
     this.map = map
     this.polylineLayerGroups = new Map()
 
+    this.taskMarkers = new Map()
+
     this.courierMarkers = new Map()
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
   }
 
   addTask(task) {
-    const color  = taskColor(task)
-    const icon   = task.type === 'PICKUP' ? 'cube' : 'arrow-down'
-    const coords = [task.address.geo.latitude, task.address.geo.longitude]
-    const marker = MapHelper.createMarker(coords, icon, 'marker', color)
+    let marker = this.taskMarkers.get(task['id'])
 
-    const doneAfter = moment(task.doneAfter).format('LT'),
-      doneBefore = moment(task.doneBefore).format('LT'),
-      taskId = /([\d]+)/.exec(task['@id'])[0]
+    if (!marker) {
+      const color = taskColor(task),
+        icon = taskIcon(task),
+        coords = [task.address.geo.latitude, task.address.geo.longitude],
+        assignedTo = task.assignedTo ? ' assignée à ' + task.assignedTo : '',
+        doneAfter = moment(task.doneAfter).format('LT'),
+        doneBefore = moment(task.doneBefore).format('LT'),
+        taskId = task['id']
 
-    const popupContent = `
-      <span>Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }</span>
-      <br>
-      <span>${task.address.streetAddress}</span>
-      <br>
-      <span>${doneAfter} - ${doneBefore}</span>
-    `
+      marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
-    const popup = L.popup()
-      .setContent(popupContent)
+      const popupContent = `
+        <span>
+            Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }
+            ${ assignedTo }
 
-    marker.bindPopup(popup)
+        </span>
+        <br>
+        <span>${task.address.streetAddress} de ${doneAfter} à ${doneBefore}</span>
+        <br>
+        ${ task.tags.map((item) => '<span style="color:#fff; padding: 2px; background-color:' + item.color + ';">' +item.name + '</span>').join(' ') }
+        <span>${ task.comments ? 'Commentaires : ' + task.comments : '' }</span>
+      `
+
+      const popup = L.popup()
+        .setContent(popupContent)
+
+      marker.bindPopup(popup)
+      this.taskMarkers.set(task['id'], marker)
+    }
 
     marker.addTo(this.map)
+  }
+
+  hideTask(task) {
+    const marker = this.taskMarkers.get(task['id'])
+    if (marker) {
+      this.map.removeLayer(marker)
+    }
   }
 
   getPolylineLayerGroup(username) {

@@ -26,6 +26,10 @@ function modifyTaskListRequestSuccess(taskList) {
   return { type: 'MODIFY_TASK_LIST_REQUEST_SUCCESS', taskList }
 }
 
+function toggleShowFinishedTasks() {
+  return { type: 'TOGGLE_SHOW_FINISHED_TASKS' }
+}
+
 function modifyTaskList(username, tasks) {
   const url = window.AppData.Dashboard.modifyTaskListURL.replace('__USERNAME__', username)
   const data = tasks.map((task, index) => {
@@ -95,4 +99,5 @@ export {
   closeAddUserModal,
   togglePolyline,
   setTaskListGroupMode,
+  toggleShowFinishedTasks,
 }

@@ -251,6 +251,16 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
+const tasksFilters = (state = {showFinishedTasks: true}, action) => {
+  switch (action.type) {
+    case 'TOGGLE_SHOW_FINISHED_TASKS':
+      let showFinishedTasks = !state.showFinishedTasks
+      return {...state, showFinishedTasks}
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   allTasks,
   unassignedTasks,
@@ -259,4 +269,5 @@ export default combineReducers({
   addModalIsOpen,
   polylineEnabled,
   taskListGroupMode,
+  tasksFilters
 })

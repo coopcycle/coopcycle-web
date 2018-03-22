@@ -36,8 +36,12 @@ class TaskLists extends React.Component {
 
   render() {
 
-    let { addModalIsOpen, taskLists, taskListsLoading } = this.props
+    const { addModalIsOpen, taskLists, taskListsLoading, couriersList } = this.props
     let { uncollapsed, selectedCourier } = this.state
+
+    // filter out couriers that are already in planning
+    const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
+
 
     if (!uncollapsed && taskLists.length > 0) {
       uncollapsed = _.first(taskLists).username
@@ -87,7 +91,7 @@ class TaskLists extends React.Component {
                   <select name="courier" className="form-control" value={selectedCourier} onChange={(e) => this.onCourierSelect(e)}>
                     <option></option>
                     {
-                      this.props.couriersList.map(function (item, index) {
+                      availableCouriers.map(function (item, index) {
                         return (<option value={ item.username } key={ index }>{item.username}</option>)
                       })
                     }

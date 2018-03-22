@@ -11,15 +11,33 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
+
+{% set dashboard_route_params = {} %}
+{% if not nav %}
+  {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
+{% endif %}
+
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}" id="dashboard">
     <div class="dashboard__map">
-      <div class="dashboard__map-container"></div>
       <div class="dashboard__toolbar-container">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <div id="date-picker" class="navbar-text"></div>
-              <ul class="nav navbar-nav navbar-right">
+              <ul class="nav navbar-nav" id="dashboard-controls">
+                {# Date Picker #}
+                <li>
+                  <div class="dashboard__date">
+                    <a class="dashboard__date-link"
+                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayBefore|date('Y-m-d') })) }}">
+                      <i class="fa fa-caret-left"></i>
+                    </a>
+                    <div class="dashboard__date-picker" id="date-picker"></div>
+                    <a class="dashboard__date-link"
+                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayAfter|date('Y-m-d') })) }}">
+                      <i class="fa fa-caret-right"></i>
+                    </a>
+                  </div>
+                </li>
                 <li>
                   <a href="#" data-toggle="modal" data-target="#export-modal">
                     <i class="fa fa-download" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.export{% endtrans %}
@@ -31,27 +49,35 @@
                   </a>
                 </li>
                 {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
-                {% set task_upload_form_errors %}
-                  {% spaceless %}
-                  <ul class="list-unstyled">
-                  {% for error in task_upload_form.file.vars.errors %}
-                    <li>{{ error.message }}</li>
-                  {% endfor %}
-                  </ul>
-                  {% endspaceless %}
-                {% endset %}
-                <li>
-                  <a id="task-upload-form-errors" href="#" data-toggle="popover" data-placement="top"
-                    data-content="{{ task_upload_form_errors|e('html_attr') }}">
-                    <span class="text-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.importErrors{% endtrans %}</span>
+                  {% set task_upload_form_errors %}
+                    {% spaceless %}
+                      <ul class="list-unstyled">
+                        {% for error in task_upload_form.file.vars.errors %}
+                          <li>{{ error.message }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endspaceless %}
+                  {% endset %}
+                  <li>
+                    <a id="task-upload-form-errors" href="#" data-toggle="popover" data-placement="top"
+                       data-content="{{ task_upload_form_errors|e('html_attr') }}">
+                      <span class="text-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.importErrors{% endtrans %}</span>
+                    </a>
+                  </li>
+                {% endif %}
+                {# Filters #}
+                <li class="dropdown" id="dashboard-filters">
+                  <a class="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button"
+                    aria-haspopup="true" aria-expanded="false">
+                    {% trans %}adminDashboard.dashboard.filters{% endtrans %} <span class="caret"></span>
                   </a>
                 </li>
-                {% endif %}
               </ul>
             </div>
           </div>
         </nav>
       </div>
+      <div class="dashboard__map-container"></div>
     </div>
     <aside class="dashboard__aside"></aside>
 </div>
