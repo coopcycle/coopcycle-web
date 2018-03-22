@@ -29,16 +29,15 @@ render(
   document.querySelector('.dashboard__aside')
 )
 
-let li = document.createElement('li');
-
 render(
   <Provider store={store}>
     <Filters />
   </Provider>,
-  li,
+  document.createElement('div'),
   function () {
-    document.querySelector('#dashboard-controls').appendChild(findDOMNode(this))
-})
+    document.querySelector('#dashboard-filters').appendChild(findDOMNode(this))
+  }
+)
 
 render(
   <LocaleProvider locale={antdLocale}>

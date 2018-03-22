@@ -14,10 +14,6 @@ class Filters extends Component {
     const { showFinishedTasks } = this.props
 
     return (
-      <li className="dropdown">
-        <a className="admin-navbar__link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-        Filtres <span className="caret"></span>
-      </a>
       <ul className="dropdown-menu">
         <li>
           <a onClick={(e) => this.onClick(e)}>{ showFinishedTasks && (<i className="fa fa-check dashboard__filters__icon"></i>)}
@@ -25,7 +21,6 @@ class Filters extends Component {
           </a>
         </li>
       </ul>
-    </li>
     )
   }
 }
