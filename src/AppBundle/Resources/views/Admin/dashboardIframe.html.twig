@@ -11,6 +11,12 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
+
+{% set dashboard_route_params = {} %}
+{% if not nav %}
+  {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
+{% endif %}
+
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}" id="dashboard">
     <div class="dashboard__map">
       <div class="dashboard__toolbar-container">
@@ -20,10 +26,16 @@
               <ul class="nav navbar-nav" id="dashboard-controls">
                 {# Date Picker #}
                 <li>
-                  <div class="dashboard__date"}>
-                    <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayBefore|date('Y-m-d') }) }}"><i class="fa fa-caret-left"></i></a>
+                  <div class="dashboard__date">
+                    <a class="dashboard__date-link"
+                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayBefore|date('Y-m-d') })) }}">
+                      <i class="fa fa-caret-left"></i>
+                    </a>
                     <div class="dashboard__date-picker" id="date-picker"></div>
-                    <a class="dashboard__date-link" href="{{ path('admin_dashboard_fullscreen', { date: dayAfter|date('Y-m-d') }) }}"><i class="fa fa-caret-right"></i></a>
+                    <a class="dashboard__date-link"
+                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayAfter|date('Y-m-d') })) }}">
+                      <i class="fa fa-caret-right"></i>
+                    </a>
                   </div>
                 </li>
                 <li>
