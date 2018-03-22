@@ -93,7 +93,6 @@ function getPolyline(origin, destination) {
 module.exports = {
   init: init,
   createMarker: createMarker,
-  createMarkerIcon: createMarkerIcon,
   fitToLayers: fitToLayers,
   decodePolyline: decodePolyline,
   getPolyline: getPolyline,

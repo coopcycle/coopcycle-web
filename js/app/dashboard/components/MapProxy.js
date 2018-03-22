@@ -25,13 +25,17 @@ const taskColor = task => {
     return tag.color
   }
 
-  switch (task.type) {
-    case 'PICKUP':
-      return DEFAULT_PICKUP_COLOR
-    case 'DROPOFF':
-      return DEFAULT_DROPOFF_COLOR
-    default:
-      return '#DEDEDE'
+  return '#777'
+}
+
+const taskIcon = task => {
+
+  if (task.status === 'DONE') {
+    return 'check'
+  } else if (task.status === 'FAILED') {
+    return 'remove'
+  } else if (task.type === 'PICKUP') {
+    return 'cube'
   }
 }
 
@@ -69,7 +73,7 @@ export default class MapProxy {
 
     if (!marker) {
       const color = taskColor(task),
-        icon = task.type === 'PICKUP' ? 'cube' : 'arrow-down',
+        icon = taskIcon(task),
         coords = [task.address.geo.latitude, task.address.geo.longitude],
         assignedTo = task.assignedTo ? ' assignée à ' + task.assignedTo : '',
         doneAfter = moment(task.doneAfter).format('LT'),
