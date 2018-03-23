@@ -11,7 +11,7 @@ help_admin_roles:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/roles/index
-        title: Roles
+        title: roles.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
@@ -21,7 +21,7 @@ help_admin_pricing:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/pricing/index
-        title: Pricing
+        title: pricing.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
@@ -31,7 +31,7 @@ help_admin_zones:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/zones/index
-        title: Zones
+        title: zones.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
@@ -41,17 +41,17 @@ help_admin_stores:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/stores/index
-        title: Stores
+        title: stores.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
 
-help_admin_smartphone_apps:
+help_admin_native_app:
     path: /{_locale}/help/admin/apps
     defaults:
         _controller: AppBundle:Help:renderMarkdown
-        template: admin/SmartphoneApps/index
-        title: Smartphone Applications
+        template: admin/nativeapp/index
+        title: nativeapp.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
@@ -61,7 +61,7 @@ help_admin_tasks:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/tasks/index
-        title: Tasks
+        title: tasks.title
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
@@ -71,7 +71,7 @@ help_admin_tasks_import:
     defaults:
         _controller: AppBundle:Help:renderMarkdown
         template: admin/tasks/import
-        title: Import tasks
+        title: tasks.import.title
         nav: false
     requirements:
         _locale: "%locale_regex%"

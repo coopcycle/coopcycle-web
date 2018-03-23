@@ -24,10 +24,12 @@ class HelpController extends Controller
 
                 $nav = isset($defaults['nav']) ? $defaults['nav'] : true;
                 if ($nav) {
-                    $menu[$name] = $defaults['title'];
+                    $menu[$name] = $this->get('translator')->trans($defaults['title'], [], 'help');
                 }
             }
         }
+
+        asort($menu);
 
         return $menu;
     }
