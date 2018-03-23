@@ -97,6 +97,7 @@ adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
 
 adminDashboard.taxation.title: Taxation
+adminDashboard.taxation.button: Add taxation
 
 adminDashboard.zones.title: Zones
 adminDashboard.zones.cancel: Cancel

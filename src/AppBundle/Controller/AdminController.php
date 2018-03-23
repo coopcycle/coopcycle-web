@@ -33,6 +33,7 @@ use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\SettingsType;
+use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,6 +44,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\OrderTransitions;
 use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Taxation\Model\TaxCategory;
+use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -401,6 +404,80 @@ class AdminController extends Controller
 
         return [
             'taxCategories' => $taxCategories
+        ];
+    }
+
+    /**
+     * @Route("/admin/settings/taxation/new", name="admin_taxation_settings_new")
+     * @Template("@App/Admin/taxationForm.html.twig")
+     */
+    public function newTaxationAction(Request $request)
+    {
+        $slugify = $this->get('slugify');
+
+        $taxRate = new TaxRate();
+        $taxRate->setIncludedInPrice(true);
+        $taxRate->setCalculator('float');
+
+        $taxCategory = new TaxCategory();
+        $taxCategory->addRate($taxRate);
+
+        $form = $this->createForm(TaxationType::class, $taxCategory);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $taxCategory = $form->getData();
+            $taxRate = $form->get('taxRate')->getData();
+
+            $taxCategoryCode = $slugify->slugify(
+                $taxCategory->getName(),
+                ['separator' => '_']
+            );
+
+            $taxCategory->setCode($taxCategoryCode);
+
+            $taxRateCode = $slugify->slugify(
+                sprintf('vat_%02d', $taxRate->getAmount() * 100),
+                ['separator' => '_']
+            );
+
+            $taxRate->setCode($taxRateCode);
+            $taxRate->setName(sprintf('VAT %s%%', $taxRate->getAmount() * 100));
+
+            $taxCategoryRepository = $this->get('sylius.repository.tax_category');
+            $taxCategoryRepository->add($taxCategory);
+
+            return $this->redirectToRoute('admin_taxation_settings');
+        }
+
+        return [
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/admin/settings/taxation/{code}", name="admin_taxation_settings_edit")
+     * @Template("@App/Admin/taxationForm.html.twig")
+     */
+    public function editTaxationAction($code, Request $request)
+    {
+        $taxCategory = $this->get('sylius.repository.tax_category')->findOneByCode($code);
+
+        $form = $this->createForm(TaxationType::class, $taxCategory);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $taxCategory = $form->getData();
+
+            $this->get('sylius.manager.tax_category')->flush();
+
+            return $this->redirectToRoute('admin_taxation_settings');
+        }
+
+        return [
+            'form' => $form->createView()
         ];
     }
 
