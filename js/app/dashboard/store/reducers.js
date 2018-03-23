@@ -251,11 +251,35 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-const tasksFilters = (state = {showFinishedTasks: true}, action) => {
+const taskFinishedFilter = (state = true, action) => {
   switch (action.type) {
     case 'TOGGLE_SHOW_FINISHED_TASKS':
-      let showFinishedTasks = !state.showFinishedTasks
-      return {...state, showFinishedTasks}
+      let showFinishedTasks = !state
+      return showFinishedTasks
+    default:
+      return state
+  }
+}
+
+const tagsFilter = (state = window.AppData.Dashboard.tags, action ) => {
+
+  let selectedTags = state.slice(0)
+  let selectedTagsNames
+
+  switch (action.type) {
+
+    case 'FILTER_TAG_BY_TAGNAME':
+      selectedTagsNames = _.map(selectedTags, tag => tag.name)
+
+      if (selectedTagsNames.includes(action.tag.name)) {
+        // removing the tag from visible list
+        selectedTags = _.filter(selectedTags, tag => tag.name != action.tag.name)
+      } else {
+        // adding the tag to visible list
+        selectedTags.push(action.tag)
+      }
+
+      return selectedTags
     default:
       return state
   }
@@ -269,5 +293,6 @@ export default combineReducers({
   addModalIsOpen,
   polylineEnabled,
   taskListGroupMode,
-  tasksFilters
+  taskFinishedFilter,
+  tagsFilter
 })

@@ -126,7 +126,7 @@ class TaskList extends React.Component {
 
   render() {
 
-    const { duration, distance, username, polylineEnabled, showFinishedTasks } = this.props
+    const { duration, distance, username, polylineEnabled, showFinishedTasks, selectedTags } = this.props
     let { tasks } = this.props
     const { collapsed } = this.state
 
@@ -137,6 +137,9 @@ class TaskList extends React.Component {
     if (!showFinishedTasks) {
       tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
     }
+
+    // tag filtering - task should have at least one of the selected tags
+    tasks = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -198,7 +201,8 @@ function mapStateToProps(state, ownProps) {
     tasks: ownProps.items,
     distance: ownProps.distance,
     duration: ownProps.duration,
-    showFinishedTasks: state.tasksFilters.showFinishedTasks
+    showFinishedTasks: state.taskFinishedFilter,
+    selectedTags: state.tagsFilter,
   }
 }
 

@@ -39,6 +39,17 @@ render(
   }
 )
 
+$('#dashboard-filters > a').on('click', function (event) {
+  $(this).parent().toggleClass("open")
+})
+
+// keep the filters dropdown open if click on filters - close if click outside
+$('body').on('click', function (e) {
+  if (!$('#dashboard-filters').is(e.target) && $('#dashboard-filters').has(e.target).length === 0) {
+    $('#dashboard-filters').removeClass('open');
+  }
+});
+
 render(
   <LocaleProvider locale={antdLocale}>
     <DatePicker

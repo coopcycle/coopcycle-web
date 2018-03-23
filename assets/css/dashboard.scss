@@ -101,6 +101,10 @@ html, body {
   }
 
   &__filters__icon {
+    // keep same width with or without content
+    display: inline-block;
+    width: 15px;
+
     position: relative;
     right: 8px;
   }

@@ -30,6 +30,10 @@ function toggleShowFinishedTasks() {
   return { type: 'TOGGLE_SHOW_FINISHED_TASKS' }
 }
 
+function setSelectedTagList (tag) {
+    return {type: 'FILTER_TAG_BY_TAGNAME', tag: tag }
+}
+
 function modifyTaskList(username, tasks) {
   const url = window.AppData.Dashboard.modifyTaskListURL.replace('__USERNAME__', username)
   const data = tasks.map((task, index) => {
@@ -90,6 +94,7 @@ function addTaskList(username) {
 }
 
 export {
+  setSelectedTagList,
   updateTask,
   addTaskList,
   modifyTaskList,
