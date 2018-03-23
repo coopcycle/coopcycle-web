@@ -807,6 +807,10 @@ class AdminController extends Controller
 
             $data = $form->getData();
 
+            if ($data['default_tax_category'] instanceof TaxCategory) {
+                $data['default_tax_category'] = $data['default_tax_category']->getCode();
+            }
+
             foreach ($data as $name => $value) {
                 $settingsManager->set($name, $value);
             }

@@ -22,3 +22,8 @@
 {{ block('form_widget') }}
 <span class="help-block">{% trans %}form.settings.latlng.help{% endtrans %}</span>
 {% endblock %}
+
+{% block _settings_default_tax_category_widget %}
+{{ block('choice_widget') }}
+<span class="help-block">{% trans %}form.settings.default_tax_category.help{% endtrans %}</span>
+{% endblock %}

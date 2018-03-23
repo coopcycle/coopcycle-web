@@ -323,6 +323,8 @@ form.settings.google_api_key.help: |
 form.settings.latlng.label: Geographical coordinates
 form.settings.latlng.help: |
   Specify the default latitude and longitude. You can get it on <a href="https://www.latlong.net/">latlong.net</a>
+form.settings.default_tax_category.label: VAT rate for deliveries
+form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.

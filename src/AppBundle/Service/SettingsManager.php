@@ -19,6 +19,7 @@ class SettingsManager
         'stripe_secret_key',
         'google_api_key',
         'latlng',
+        'default_tax_category'
     ];
 
     private $secretSettings = [
