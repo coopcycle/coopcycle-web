@@ -8,6 +8,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NotificationManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
+use AppBundle\Service\SettingsManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
@@ -42,6 +43,7 @@ class TestCase extends BaseTestCase
         $taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
         $expressionLanguage = $this->prophesize(ExpressionLanguage::class);
         $notificationManager = $this->prophesize(NotificationManager::class);
+        $settingsManager = $this->prophesize(SettingsManager::class);
 
         $this->user = new Entity\ApiUser();
 
@@ -52,10 +54,10 @@ class TestCase extends BaseTestCase
 
         $deliveryManager = new DeliveryManager(
             $doctrine->reveal(),
+            $settingsManager->reveal(),
             $taxRateResolver->reveal(),
             $calculator->reveal(),
             $taxCategoryRepository->reveal(),
-            'tva_livraison',
             $expressionLanguage->reveal(),
             $notificationManager->reveal()
         );

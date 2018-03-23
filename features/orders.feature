@@ -5,6 +5,7 @@ Feature: Orders
     And the current time is "2017-09-02 11:00:00"
     And the fixtures file "restaurants.yml" is loaded
     And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |

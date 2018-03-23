@@ -19,6 +19,7 @@ class DeliveryManagerTest extends BaseTest
     private $taxCategoryRepository;
     private $expressionLanguage;
     private $notificationManager;
+    private $settingsManager;
 
     public function setUp()
     {
@@ -29,6 +30,7 @@ class DeliveryManagerTest extends BaseTest
         $this->taxCategoryRepository = static::$kernel->getContainer()->get('sylius.repository.tax_category');
         $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
         $this->notificationManager = $this->prophesize(NotificationManager::class);
+        $this->settingsManager = $this->prophesize(SettingsManager::class);
     }
 
     public function testGetPrice()
@@ -54,10 +56,10 @@ class DeliveryManagerTest extends BaseTest
 
         $deliveryManager = new DeliveryManager(
             $this->doctrine,
+            $this->settingsManager->reveal(),
             $this->taxRateResolver,
             $this->calculator,
             $this->taxCategoryRepository,
-            'tva_livraison',
             $this->expressionLanguage,
             $this->notificationManager->reveal()
         );
@@ -72,12 +74,16 @@ class DeliveryManagerTest extends BaseTest
     {
         $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20, 'float');
 
+        $this->settingsManager
+            ->get('default_tax_category')
+            ->willReturn('tva_livraison');
+
         $deliveryManager = new DeliveryManager(
             $this->doctrine,
+            $this->settingsManager->reveal(),
             $this->taxRateResolver,
             $this->calculator,
             $this->taxCategoryRepository,
-            'tva_livraison',
             $this->expressionLanguage,
             $this->notificationManager->reveal()
         );

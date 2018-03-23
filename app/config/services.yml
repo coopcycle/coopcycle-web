@@ -117,10 +117,10 @@ services:
     class: AppBundle\Service\DeliveryManager
     arguments:
       - "@doctrine"
+      - "@coopcycle.settings_manager"
       - "@sylius.tax_rate_resolver"
       - "@sylius.tax_calculator"
       - "@sylius.repository.tax_category"
-      - 'tva_livraison' # TODO Load from settings
       - "@coopcycle.expression_language"
       - "@coopcycle.notification_manager"
 

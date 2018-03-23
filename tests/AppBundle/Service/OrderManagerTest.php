@@ -9,6 +9,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Service\SettingsManager;
 
 class OrderManagerTest extends BaseTest
 {
@@ -19,6 +20,16 @@ class OrderManagerTest extends BaseTest
     public function setUp()
     {
         parent::setUp();
+
+        $settingsManager = $this->prophesize(SettingsManager::class);
+        $settingsManager
+            ->get('default_tax_category')
+            ->willReturn('tva_livraison');
+        $settingsManager
+            ->get('stripe_secret_key')
+            ->willReturn('sk_test_123456789');
+
+        static::$kernel->getContainer()->set('coopcycle.settings_manager', $settingsManager->reveal());
 
         $this->orderManager = static::$kernel->getContainer()->get('order.manager');
 

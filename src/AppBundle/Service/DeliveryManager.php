@@ -16,30 +16,33 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 class DeliveryManager
 {
     private $doctrine;
+    private $settingsManager;
     private $taxRateResolver;
     private $calculator;
     private $taxCategoryRepository;
-    private $taxCategoryCode;
     private $expressionLanguage;
     private $notificationManager;
 
-    public function __construct(ManagerRegistry $doctrine,
+    public function __construct(ManagerRegistry $doctrine, SettingsManager $settingsManager,
         TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, $taxCategoryCode, ExpressionLanguage $expressionLanguage,
+        TaxCategoryRepositoryInterface $taxCategoryRepository,
+        ExpressionLanguage $expressionLanguage,
         NotificationManager $notificationManager)
     {
         $this->doctrine = $doctrine;
+        $this->settingsManager = $settingsManager;
         $this->taxRateResolver = $taxRateResolver;
         $this->calculator = $calculator;
         $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxCategoryCode = $taxCategoryCode;
         $this->expressionLanguage = $expressionLanguage;
         $this->notificationManager = $notificationManager;
     }
 
     public function applyTaxes(Delivery $delivery)
     {
-        $taxCategory = $this->taxCategoryRepository->findOneBy(['code' => $this->taxCategoryCode]);
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $this->settingsManager->get('default_tax_category')
+        ]);
 
         $delivery->setTaxCategory($taxCategory);
 
