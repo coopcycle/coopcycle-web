@@ -261,6 +261,20 @@ const tasksFilters = (state = {showFinishedTasks: true}, action) => {
   }
 }
 
+const allTags = (state = window.AppData.Dashboard.tags, action) => {
+  return state
+}
+
+const tagsFilters = (state = {selectedTags: false}, action ) => {
+  switch (action.type) {
+    case 'FILTER_TAG_BY_TAGNAME':
+      let selectedTags = action.tagName
+      return {...state, selectedTags}
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   allTasks,
   unassignedTasks,
@@ -269,5 +283,7 @@ export default combineReducers({
   addModalIsOpen,
   polylineEnabled,
   taskListGroupMode,
-  tasksFilters
+  tasksFilters,
+  allTags,
+  tagsFilters,
 })

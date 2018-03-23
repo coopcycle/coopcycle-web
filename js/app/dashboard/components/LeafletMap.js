@@ -33,7 +33,7 @@ class LeafletMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { polylineEnabled, polylines, tasks } = this.props
+    const { polylineEnabled, polylines, tasks, selectedTags } = this.props
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(polylineEnabled, (enabled, username) => {
@@ -52,6 +52,16 @@ class LeafletMap extends Component {
         _.forEach(finishedTasks, task => this.proxy.hideTask(task))
       }
     }
+
+    if ( prevProps.selectedTags !== this.props.selectedTags ) {
+
+      const selectedTasks = _.filter(tasks, (task) => {
+        return !task.tags.map(tag => tag.name).includes(this.props.selectedTags) })
+      _.forEach(selectedTasks, task => this.proxy.hideTask(task))
+    }
+
+
+
   }
 
   render() {
@@ -77,7 +87,8 @@ function mapStateToProps(state, ownProps) {
     tasks,
     polylines,
     polylineEnabled,
-    showFinishedTasks: state.tasksFilters.showFinishedTasks
+    showFinishedTasks: state.tasksFilters.showFinishedTasks,
+    selectedTags: state.tagsFilters.selectedTags,
   }
 }
 

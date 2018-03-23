@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Tag;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskType;
@@ -256,6 +257,19 @@ trait AdminDashboardTrait
             ->getQuery()
             ->getResult();
 
+        $allTags = $this->getDoctrine()
+            ->getRepository(Tag::class)
+            ->findAll();
+
+        $normalizedTags = [];
+        foreach ($allTags as $tag) {
+            $normalizedTags[] = [
+                'name' => $tag->getName(),
+                'slug' => $tag->getSlug(),
+                'color' => $tag->getColor(),
+            ];
+        }
+
         return $this->render('@App/Admin/dashboardIframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
@@ -268,6 +282,7 @@ trait AdminDashboardTrait
             'task_export_form' => $taskExportForm->createView(),
             'new_task_form' => $newTaskForm->createView(),
             'task_group_form' => $taskGroupForm->createView(),
+            'tags' => $normalizedTags,
         ]);
     }
 
