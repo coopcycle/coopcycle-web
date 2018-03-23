@@ -56,6 +56,7 @@ class LeafletMap extends Component {
 
     if ( prevProps.selectedTags !== this.props.selectedTags ) {
 
+
       let toAdd = _.map(_.filter(this.props.selectedTags, tag => prevProps.selectedTags.indexOf(tag) < 0), tag => tag.name)
 
       let toDelete = _.map(_.filter(prevProps.selectedTags, tag => this.props.selectedTags.indexOf(tag) < 0 ), tag => tag.name)

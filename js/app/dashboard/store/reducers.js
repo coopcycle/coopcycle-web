@@ -292,7 +292,6 @@ const tagsFilters = (state = {selectedTags:  tagsInitial}, action ) => {
   }
 }
 
-
 export default combineReducers({
   allTasks,
   allTags,

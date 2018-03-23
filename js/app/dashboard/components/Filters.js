@@ -16,9 +16,7 @@ class Filters extends Component {
     this.props.setSelectedTagList(tag)
   }
 
-
   render() {
-
     const { showFinishedTasks, selectedTags, allTags, debug_state } = this.props
 
     let selectedTagsName = _.map(selectedTags, tag => tag.name)
@@ -46,7 +44,6 @@ class Filters extends Component {
       </ul>
     </li>
   )
-
   }
 }
 
