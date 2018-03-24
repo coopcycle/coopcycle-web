@@ -1,0 +1,10 @@
+AppBundle\Entity\Sylius\Order:
+    type: entity
+    table: sylius_order
+    manyToOne:
+        customer:
+            targetEntity: AppBundle\Entity\ApiUser
+            joinColumns:
+                customer_id:
+                    referencedColumnName: id
+                    nullable: true
