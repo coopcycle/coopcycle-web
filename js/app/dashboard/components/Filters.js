@@ -1,28 +1,32 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {toggleShowFinishedTasks, toggleShowTaggedTasks} from "../store/actions"
+import {toggleShowFinishedTasks, setSelectedTagList} from "../store/actions"
 
 
 class Filters extends Component {
+
 
   onClick(e) {
     e.preventDefault()
     this.props.toggleFinishedTasks()
   }
 
-  onTagClick(e, tagName) {
+  onTagClick(e, tag) {
     e.preventDefault()
-    this.props.toggleTaggedTasks(tagName)
+    this.props.setSelectedTagList(tag)
   }
 
 
-  render() {
-    const { showFinishedTasks, allTags } = this.props
 
-    let tagsComponents = allTags.map((tag) => {
+  render() {
+
+    const { showFinishedTasks, selectedTags, allTags, debug_state } = this.props
+
+    let selectedTagsName = _.map(selectedTags, tag => tag.name)
+
+    let tagsComponents = _.map(allTags, (tag) => {
       return (
-        <a className="dropdown-item" onClick={(e) => this.onTagClick(e, tag.name)}>
-        <i className="fa fa-check dashboard__filters__icon"></i>
+        <a className="dropdown-item" onClick={(e) => this.onTagClick(e, tag)}>{selectedTagsName.includes(tag.name) && (<i className="fa fa-check dashboard__filters__icon"></i>)}
           <span className="label label-default" style={{backgroundColor: tag.color}}>{tag.name}</span>
         </a>
       )
@@ -50,13 +54,15 @@ function mapStateToProps (state) {
   return {
     showFinishedTasks: state.tasksFilters.showFinishedTasks,
     allTags: state.allTags,
+    debug_state: state,
+    selectedTags: state.tagsFilters.selectedTags,
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     toggleFinishedTasks: () => { dispatch(toggleShowFinishedTasks()) },
-    toggleTaggedTasks: tagName => {  dispatch(toggleShowTaggedTasks(tagName)) },
+    setSelectedTagList: tagName => {  dispatch(setSelectedTagList(tagName)) },
     }
   }
 

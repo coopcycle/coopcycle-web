@@ -89,8 +89,8 @@ function addTaskList(username) {
   }
 }
 
-function toggleShowTaggedTasks (tagName) {
-  return {type: 'FILTER_TAG_BY_TAGNAME', tagName: tagName }
+function setSelectedTagList (tag) {
+  return {type: 'FILTER_TAG_BY_TAGNAME', tag: tag }
 }
 
 
@@ -105,5 +105,5 @@ export {
   togglePolyline,
   setTaskListGroupMode,
   toggleShowFinishedTasks,
-  toggleShowTaggedTasks,
+  setSelectedTagList,
 }

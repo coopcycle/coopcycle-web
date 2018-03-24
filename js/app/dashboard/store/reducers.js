@@ -29,7 +29,9 @@ const tasksInitial = addLinkProperty(window.AppData.Dashboard.tasks),
       taskListsInitial = window.AppData.Dashboard.taskLists.map(taskList =>
         Object.assign(taskList, { items: addLinkProperty(taskList.items) })
       ),
-      unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
+      unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned),
+      tagsInitial = window.AppData.Dashboard.tags;
+
 
 unassignedTasksInitial.sort((a, b) => {
   const doneBeforeA = moment(a.doneBefore)
@@ -261,14 +263,28 @@ const tasksFilters = (state = {showFinishedTasks: true}, action) => {
   }
 }
 
-const allTags = (state = window.AppData.Dashboard.tags, action) => {
+const allTags = (state = tagsInitial, action) => {
   return state
 }
 
-const tagsFilters = (state = {selectedTags: false}, action ) => {
+
+const tagsFilters = (state = {selectedTags:  tagsInitial}, action ) => {
+
+  let selectedTags = state.selectedTags.slice(0)
+  let selectedTagsName
+
+
   switch (action.type) {
+
     case 'FILTER_TAG_BY_TAGNAME':
-      let selectedTags = action.tagName
+      selectedTagsName = _.map(selectedTags, tag => tag.name)
+
+      if (selectedTagsName.includes(action.tag.name)) {
+        selectedTags = _.filter(selectedTags, tag => tag.name != action.tag.name)
+      } else {
+        selectedTags.push(action.tag)
+      }
+
       return {...state, selectedTags}
     default:
       return state
@@ -277,6 +293,7 @@ const tagsFilters = (state = {selectedTags: false}, action ) => {
 
 export default combineReducers({
   allTasks,
+  allTags,
   unassignedTasks,
   taskLists,
   taskListsLoading,
@@ -284,6 +301,5 @@ export default combineReducers({
   polylineEnabled,
   taskListGroupMode,
   tasksFilters,
-  allTags,
   tagsFilters,
 })

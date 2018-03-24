@@ -7,6 +7,7 @@ import _ from 'lodash'
 
 class LeafletMap extends Component {
 
+
   componentDidMount() {
 
     this.map = MapHelper.init('map')
@@ -55,12 +56,25 @@ class LeafletMap extends Component {
 
     if ( prevProps.selectedTags !== this.props.selectedTags ) {
 
-      const selectedTasks = _.filter(tasks, (task) => {
-        return !task.tags.map(tag => tag.name).includes(this.props.selectedTags) })
-      _.forEach(selectedTasks, task => this.proxy.hideTask(task))
+
+
+
+      let toAdd = _.map(_.filter(this.props.selectedTags, tag => prevProps.selectedTags.indexOf(tag) < 0), tag => tag.name)
+
+      let toDelete = _.map(_.filter(prevProps.selectedTags, tag => this.props.selectedTags.indexOf(tag) < 0 ), tag => tag.name)
+
+
+      for (let i=0; i<tasks.length; i++) {
+
+        let taskTagsName = _.map(tasks[i].tags, tag => tag.name)
+
+        if ( taskTagsName.some( tagName => toDelete.indexOf(tagName) > -1)) {
+          this.proxy.hideTask(tasks[i])
+        } else if (taskTagsName.some( tagName => toAdd.indexOf(tagName) > -1)) {
+          this.proxy.addTask(tasks[i])
+        }
+      }
     }
-
-
 
   }
 
