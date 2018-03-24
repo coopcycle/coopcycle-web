@@ -1,9 +1,8 @@
 <?php
 
-namespace AppBundle\Entity\Delivery;
+namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 

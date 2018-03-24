@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -68,10 +67,6 @@ class DeliveryManager
 
     public function confirmOrder(OrderInterface $order)
     {
-        $deliveryOrder = $this->doctrine
-            ->getRepository(DeliveryOrder::class)
-            ->findOneByOrder($order);
-
-        $this->notificationManager->notifyDeliveryConfirmed($order, $deliveryOrder->getUser()->getEmail());
+        $this->notificationManager->notifyDeliveryConfirmed($order, $order->getCustomer()->getEmail());
     }
 }

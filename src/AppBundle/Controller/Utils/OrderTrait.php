@@ -130,10 +130,7 @@ trait OrderTrait
 
     protected function normalizeOrders(array $syliusOrders, array $coopcycleOrders)
     {
-        $syliusOrders = array_map(function ($syliusOrder) {
-
-            $order = $syliusOrder->getOrder();
-            $user  = $syliusOrder->getUser();
+        $syliusOrders = array_map(function ($order) {
 
             $delivery = $this->getDoctrine()
                 ->getRepository(DeliveryOrderItem::class)
@@ -143,7 +140,7 @@ trait OrderTrait
             return [
                 'id' => $order->getId(),
                 'customer' => [
-                    'username' => $user->getUsername(),
+                    'username' => $order->getCustomer()->getUsername(),
                 ],
                 'createdAt' => $order->getCreatedAt(),
                 'state' => $order->getState(),

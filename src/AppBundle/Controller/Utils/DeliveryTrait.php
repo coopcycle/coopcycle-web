@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
@@ -24,17 +23,6 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    private function getDeliveryOrder(Delivery $delivery)
-    {
-        $deliveryOrderItem = $this->getDoctrine()
-                ->getRepository(DeliveryOrderItem::class)
-                ->findOneByDelivery($delivery);
-
-        if ($deliveryOrderItem) {
-            return $deliveryOrderItem->getOrderItem()->getOrder();
-        }
-    }
-
     /**
      * @param Delivery $delivery
      * @return Sylius\Component\Order\Model\OrderInterface
@@ -48,6 +36,7 @@ trait DeliveryTrait
         $orderItem->setUnitPrice($delivery->getTotalIncludingTax() * 100);
 
         $order = $orderFactory->createNew();
+        $order->setCustomer($user);
         $order->addItem($orderItem);
 
         $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
@@ -56,16 +45,13 @@ trait DeliveryTrait
         $orderRepository = $this->container->get('sylius.repository.order');
         $orderRepository->add($order);
 
-        $deliveryOrder = new DeliveryOrder($order, $user);
         $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);
 
         $stripePayment = StripePayment::create($order);
 
-        $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->persist($deliveryOrder);
         $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->persist($deliveryOrderItem);
         $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
 
-        $this->getDoctrine()->getManagerForClass(DeliveryOrder::class)->flush();
         $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->flush();
         $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
 
@@ -121,10 +107,12 @@ trait DeliveryTrait
         $routes = $request->attributes->get('routes');
 
         $isNew = $delivery->getId() === null;
-        $deliveryOrder = null;
+        $order = null;
 
         if (!$isNew && $this->getUser()->hasRole('ROLE_ADMIN')) {
-            $deliveryOrder = $this->getDeliveryOrder($delivery);
+            $order = $this->container
+                ->get('sylius.repository.order')
+                ->findOneByDelivery($delivery);
         }
 
         $form = $this->createDeliveryForm($delivery, $options);
@@ -153,7 +141,7 @@ trait DeliveryTrait
             'delivery' => $delivery,
             'form' => $form->createView(),
             'calculate_price_route' => $routes['calculate_price'],
-            'delivery_order' => $deliveryOrder
+            'order' => $order
         ]);
     }
 

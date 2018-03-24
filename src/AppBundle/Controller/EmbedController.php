@@ -5,8 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
-use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;

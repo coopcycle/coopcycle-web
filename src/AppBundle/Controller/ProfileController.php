@@ -13,7 +13,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -67,9 +66,9 @@ class ProfileController extends Controller
 
     protected function getOrderList(Request $request)
     {
-        $syliusOrders = $this->getDoctrine()
-            ->getRepository(DeliveryOrder::class)
-            ->findByUser($this->getUser());
+        $syliusOrders = $this->container
+            ->get('sylius.repository.order')
+            ->findByCustomer($this->getUser());
 
         $coopcycleOrders = $this->getDoctrine()
             ->getRepository(Order::class)
@@ -92,11 +91,6 @@ class ProfileController extends Controller
 
             $order = $this->container->get('sylius.repository.order')->find($id);
 
-            $user = $this->getDoctrine()
-                ->getRepository(DeliveryOrder::class)
-                ->findOneByOrder($order)
-                ->getUser();
-
             $delivery = $this->getDoctrine()
                 ->getRepository(DeliveryOrderItem::class)
                 ->findOneByOrderItem($order->getItems()->get(0))
@@ -106,7 +100,7 @@ class ProfileController extends Controller
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
                 'delivery' => $delivery,
-                'user' => $user
+                'user' => $order->getCustomer()
             ]);
         }
 

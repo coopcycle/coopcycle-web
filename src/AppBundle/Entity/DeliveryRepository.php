@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\DeliveryOrder;
-use AppBundle\Entity\DeliveryOrderItem;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
@@ -97,18 +95,5 @@ class DeliveryRepository extends EntityRepository
         }
 
         return '0min';
-    }
-
-    public function findToBeConfirmed()
-    {
-        $qb = $this->createQueryBuilder('d')
-            ->join(DeliveryOrderItem::class, 'doi', Expr\Join::WITH, 'd.id = doi.delivery')
-            ->join(OrderItem::class,         'oi',  Expr\Join::WITH, 'oi.id = doi.orderItem')
-            ->join(DeliveryOrder::class,     'do',  Expr\Join::WITH, 'do.order = oi.order')
-            ->join(Order::class,             'o',   Expr\Join::WITH, 'do.order = o.id')
-            ->where('o.state = :state')
-            ->setParameter('state', OrderInterface::STATE_CART);
-
-        return $qb->getQuery()->getResult();
     }
 }

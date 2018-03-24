@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\StripePaymentType;
@@ -99,21 +98,16 @@ class PublicController extends Controller
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
-        $deliveryOrder = $this->getDoctrine()
-            ->getRepository(DeliveryOrder::class)
-            ->findOneByOrder($order);
-
         $deliveryOrderItem = $this->getDoctrine()
             ->getRepository(DeliveryOrderItem::class)
             ->findOneByOrderItem($order->getItems()->get(0));
 
-        $user = $deliveryOrder->getUser();
         $delivery = $deliveryOrderItem->getDelivery();
 
         $html = $this->renderView('@App/Pdf/delivery.html.twig', [
             'order' => $order,
             'delivery' => $delivery,
-            'customer' => $user
+            'customer' => $order->getCustomer()
         ]);
 
         return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [

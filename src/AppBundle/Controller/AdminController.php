@@ -14,7 +14,6 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrder;
 use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
@@ -93,8 +92,8 @@ class AdminController extends Controller
             $statusList[] = Order::STATUS_CANCELED;
         }
 
-        $syliusOrders = $this->getDoctrine()
-            ->getRepository(DeliveryOrder::class)
+        $syliusOrders = $this->container
+            ->get('sylius.repository.order')
             ->findAll();
 
         $coopcycleOrders = $this->getDoctrine()
@@ -121,11 +120,6 @@ class AdminController extends Controller
         if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
 
             $order = $this->container->get('sylius.repository.order')->find($id);
-
-            $user = $this->getDoctrine()
-                ->getRepository(DeliveryOrder::class)
-                ->findOneByOrder($order)
-                ->getUser();
 
             $delivery = $this->getDoctrine()
                 ->getRepository(DeliveryOrderItem::class)
@@ -163,7 +157,7 @@ class AdminController extends Controller
                 'layout' => '@App/admin.html.twig',
                 'order' => $order,
                 'delivery' => $delivery,
-                'user' => $user,
+                'user' => $order->getCustomer(),
                 'form' => $form->createView(),
             ]);
         }
