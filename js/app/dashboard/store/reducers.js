@@ -263,7 +263,6 @@ const tasksFilters = (state = {showFinishedTasks: true}, action) => {
   }
 }
 
-
 const allTags = (state = tagsInitial, action) => {
   return state
 }

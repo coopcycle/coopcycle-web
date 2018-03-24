@@ -63,6 +63,14 @@ class LeafletMap extends Component {
 
       for (let i=0; i<tasks.length; i++) {
 
+
+      let toAdd = _.map(_.filter(this.props.selectedTags, tag => prevProps.selectedTags.indexOf(tag) < 0), tag => tag.name)
+
+      let toDelete = _.map(_.filter(prevProps.selectedTags, tag => this.props.selectedTags.indexOf(tag) < 0 ), tag => tag.name)
+
+
+      for (let i=0; i<tasks.length; i++) {
+
         let taskTagsName = _.map(tasks[i].tags, tag => tag.name)
 
         if ( taskTagsName.some( tagName => toDelete.indexOf(tagName) > -1)) {
@@ -72,6 +80,7 @@ class LeafletMap extends Component {
         }
       }
     }
+
   }
 
   render() {
