@@ -26,7 +26,7 @@ class Filters extends Component {
 
     let tagsComponents = _.map(allTags, (tag) => {
       return (
-        <a className="dropdown-item" onClick={(e) => this.onTagClick(e, tag)}>{selectedTagsName.includes(tag.name) && (<i className="fa fa-check dashboard__filters__icon"></i>)}
+        <a key={tag.name} className="dropdown-item" onClick={(e) => this.onTagClick(e, tag)}>{selectedTagsName.includes(tag.name) && (<i className="fa fa-check dashboard__filters__icon"></i>)}
           <span className="label label-default" style={{backgroundColor: tag.color}}>{tag.name}</span>
         </a>
       )
