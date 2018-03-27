@@ -1,3 +1,12 @@
 AppBundle\Entity\Sylius\OrderItem:
     type: entity
     table: sylius_order_item
+    manyToOne:
+        variant:
+            targetEntity: Sylius\Component\Product\Model\ProductVariantInterface
+            joinColumns:
+                variant_id:
+                    referencedColumnName: id
+                    nullable: false
+            cascade:
+                - persist

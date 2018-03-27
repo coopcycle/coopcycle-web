@@ -26,6 +26,24 @@ services:
     tags:
       - { name: sylius.context.locale, priority: 128 }
 
+  sylius.order_processing.order_taxes_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
+    arguments:
+      - "@sylius.factory.adjustment"
+      - "@sylius.tax_rate_resolver"
+      - "@sylius.tax_calculator"
+    tags:
+      - { name: sylius.order_processor, priority: 32 }
+
+  coopcycle.sylius.factory.product_variant:
+    class: AppBundle\Sylius\Product\ProductVariantFactory
+    decorates: sylius.factory.product_variant
+    arguments:
+      - "@coopcycle.sylius.factory.product_variant.inner"
+      - "@sylius.repository.product"
+      - "@translator"
+    public: false
+
   app.form.api_registration:
     class: AppBundle\Form\ApiRegistrationType
     arguments: ['%country_iso%']
