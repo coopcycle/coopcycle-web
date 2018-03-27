@@ -14,6 +14,18 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  sylius.context.locale.request_based:
+    class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
+    arguments: ['@request_stack', '@sylius.locale_provider']
+    tags:
+      - { name: sylius.context.locale, priority: 64 }
+
+  sylius.context.locale.immutable:
+    class: Sylius\Component\Locale\Context\ImmutableLocaleContext
+    arguments: ['%sylius_locale.locale%']
+    tags:
+      - { name: sylius.context.locale, priority: 128 }
+
   app.form.api_registration:
     class: AppBundle\Form\ApiRegistrationType
     arguments: ['%country_iso%']
