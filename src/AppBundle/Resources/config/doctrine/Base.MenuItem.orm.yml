@@ -9,7 +9,7 @@ AppBundle\Entity\Base\MenuItem:
                 strategy: IDENTITY
     manyToOne:
         taxCategory:
-            targetEntity: Sylius\Component\Taxation\Model\TaxCategory
+            targetEntity: Sylius\Component\Taxation\Model\TaxCategoryInterface
             fetch: LAZY
             joinColumns:
                 tax_category_id:

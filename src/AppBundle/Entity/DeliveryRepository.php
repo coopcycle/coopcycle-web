@@ -5,9 +5,6 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
-use Sylius\Component\Order\Model\OrderItem;
-use Sylius\Component\Order\Model\Order;
-use Sylius\Component\Order\Model\OrderInterface;
 
 class DeliveryRepository extends EntityRepository
 {

@@ -8,7 +8,7 @@ AppBundle\Entity\DeliveryOrderItem:
             associationKey: true
     manyToOne:
         orderItem:
-            targetEntity: Sylius\Component\Order\Model\OrderItem
+            targetEntity: Sylius\Component\Order\Model\OrderItemInterface
             fetch: LAZY
             mappedBy: null
             joinColumns:
