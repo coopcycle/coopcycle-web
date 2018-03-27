@@ -9,6 +9,7 @@ use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryType;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,20 +30,40 @@ trait DeliveryTrait
      */
     protected function createOrderForDelivery(Delivery $delivery, UserInterface $user)
     {
+        $settingsManager = $this->container->get('coopcycle.settings_manager');
         $orderFactory = $this->container->get('sylius.factory.order');
         $orderItemFactory = $this->container->get('sylius.factory.order_item');
+        $orderRepository = $this->container->get('sylius.repository.order');
+
+        $taxCategoryRepository = $this->container->get('sylius.repository.tax_category');
+        $adjustmentFactory = $this->container->get('sylius.factory.adjustment');
+        $taxRateResolver = $this->container->get('sylius.tax_rate_resolver');
+        $taxCalculator = $this->container->get('sylius.tax_calculator');
+
+        $taxCategory = $taxCategoryRepository->findOneBy([
+            'code' => $settingsManager->get('default_tax_category')
+        ]);
+        $taxRate = $taxRateResolver->resolve($delivery);
+
+        $order = $orderFactory->createNew();
+        $order->setCustomer($user);
 
         $orderItem = $orderItemFactory->createNew();
         $orderItem->setUnitPrice($delivery->getTotalIncludingTax() * 100);
 
-        $order = $orderFactory->createNew();
-        $order->setCustomer($user);
-        $order->addItem($orderItem);
-
         $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
+
+        $order->addItem($orderItem);
+        $taxAdjustment = $adjustmentFactory->createWithData(
+            AdjustmentInterface::TAX_ADJUSTMENT,
+            $taxRate->getName(),
+            (int) $taxCalculator->calculate($orderItem->getTotal(), $taxRate),
+            $neutral = true
+        );
+        $orderItem->addAdjustment($taxAdjustment);
+
         $this->container->get('sylius.order_processing.order_processor')->process($order);
 
-        $orderRepository = $this->container->get('sylius.repository.order');
         $orderRepository->add($order);
 
         $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);

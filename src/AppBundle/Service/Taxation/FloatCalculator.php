@@ -23,6 +23,7 @@ final class FloatCalculator implements CalculatorInterface
 
     private function numberFormat(float $amount)
     {
+        // TODO Do not cast as float
         return (float) number_format($amount, 2, '.', '');
     }
 }

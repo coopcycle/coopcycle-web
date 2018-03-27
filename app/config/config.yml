@@ -217,6 +217,9 @@ sylius_order:
             classes:
                 model: AppBundle\Entity\Sylius\Order
                 repository: AppBundle\Entity\Sylius\OrderRepository
+        order_item:
+            classes:
+                model: AppBundle\Entity\Sylius\OrderItem
 
 knp_snappy:
     pdf:
