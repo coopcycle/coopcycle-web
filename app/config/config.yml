@@ -221,6 +221,12 @@ sylius_order:
             classes:
                 model: AppBundle\Entity\Sylius\OrderItem
 
+sylius_product:
+    resources:
+        product_variant:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductVariant
+
 sylius_locale:
     locale: "%locale%"
 
