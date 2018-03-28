@@ -93,6 +93,10 @@ class NotificationManager
 
     public function notifyDeliveryToBeConfirmed(Delivery $delivery, $to)
     {
+        if (preg_match('/@demo.coopcycle.org$/', $to)) {
+            return;
+        }
+
         $email = new \Swift_Message($this->translator->trans('delivery.to_be_confirmed.subject', [], 'emails'));
         $email->setFrom($this->getFrom());
         $email->setTo($to);
@@ -105,6 +109,10 @@ class NotificationManager
 
     public function notifyDeliveryHasToBeConfirmed(OrderInterface $order, $to)
     {
+        if (preg_match('/@demo.coopcycle.org$/', $to)) {
+            return;
+        }
+
         $email = new \Swift_Message($this->translator->trans('delivery.has_to_be_confirmed.subject', [], 'emails'));
         $email->setFrom($this->getFrom());
         $email->setTo($to);
@@ -117,6 +125,10 @@ class NotificationManager
 
     public function notifyDeliveryConfirmed(OrderInterface $order, $to)
     {
+        if (preg_match('/@demo.coopcycle.org$/', $to)) {
+            return;
+        }
+
         $email = new \Swift_Message($this->translator->trans('delivery.confirmed.subject', [], 'emails'));
         $email->setFrom($this->getFrom());
         $email->setTo($to);
