@@ -17,6 +17,11 @@ export default class extends React.Component {
 
   render() {
     const { group, tasks } = this.props
+
+    tasks.sort((a, b) => {
+      return a.id > b.id ? 1 : -1
+    })
+
     return (
       <div className="panel panel-default nomargin task__draggable">
         <div className="panel-heading" role="tab">
