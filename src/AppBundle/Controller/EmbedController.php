@@ -184,7 +184,7 @@ class EmbedController extends Controller
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
-            $order = $this->createOrderForDelivery($delivery, $this->getUser());
+            $order = $this->createOrderForDelivery($delivery, $user);
 
             $administrators = $this->getDoctrine()
                 ->getRepository(ApiUser::class)
