@@ -113,9 +113,12 @@
             </h3>
           </div>
           <div class="panel-body">
-            Livraison {{ delivery.distance|meters_to_kilometers }}
-            <br>
-            Créée le {{ order.createdAt|localizeddate('medium', 'short') }}
+            <p>Créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+            <ul class="list-group nomargin">
+            {% for item in order.items %}
+              <li class="list-group-item">{{ item.variant.name }} <span class="text-muted">× {{ item.quantity }}</span></li>
+            {% endfor %}
+            </ul>
           </div>
           <table class="table">
             <tbody>
