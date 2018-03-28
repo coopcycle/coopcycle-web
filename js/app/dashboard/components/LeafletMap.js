@@ -80,8 +80,8 @@ class LeafletMap extends Component {
         }
       }
     }
-
   }
+}
 
   render() {
     return (
