@@ -6,17 +6,38 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Query\Expr;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Me
 {
     use ActionTrait;
+
+    /**
+     * @Route(
+     *   name="my_tasks_list",
+     *   path="/me/tasks-list/{date}",
+     *   defaults={
+     *     "_api_resource_class"=TaskList::class,
+     *     "_api_collection_operation_name"="my_tasks_list"
+     *   }
+     * )
+     * @Method("GET")
+     */
+    public function tasksListAction($date)
+    {
+        $date = new \DateTime($date);
+
+        $taskList = $this->doctrine
+            ->getRepository(TaskList::class)
+            ->findOneBy([
+                'courier' => $this->getUser(),
+                'date' => $date
+            ]);
+
+        return $taskList;
+    }
 
     /**
      * @Route(

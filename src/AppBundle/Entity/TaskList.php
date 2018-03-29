@@ -11,7 +11,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * It is a concrete implementation of a TaskCollection.
  *
  * @ApiResource(
- *   collectionOperations={},
+ *   collectionOperations={
+ *      "my_tasks" = {
+ *       "route_name" = "my_tasks",
+ *       "swagger_context" = {
+ *         "parameters" = {{
+ *           "name" = "date",
+ *           "in" = "path",
+ *           "required" = "true",
+ *           "type" = "string"
+ *         }}
+ *       }
+ *     }
+ *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
  *   },
