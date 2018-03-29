@@ -38,17 +38,24 @@ class Version20180327083035 extends AbstractMigration implements ContainerAwareI
 
         $orders = $orderRepository->findAll();
 
+        $stmt = $this->connection->prepare('SELECT id AS order_item_id, total FROM sylius_order_item WHERE order_id = :order_id');
+
         foreach ($orders as $order) {
-            foreach ($order->getItems() as $orderItem) {
+
+            $stmt->bindParam('order_id', $order->getId);
+            $stmt->execute();
+
+            while ($row = $stmt->fetch()) {
+
                 $taxAdjustment = $adjustmentFactory->createWithData(
                     AdjustmentInterface::TAX_ADJUSTMENT,
                     $taxRate->getName(),
-                    (int) $taxCalculator->calculate($orderItem->getTotal(), $taxRate),
+                    (int) $taxCalculator->calculate($row['total'], $taxRate),
                     $neutral = true
                 );
 
                 $this->addSql('INSERT INTO sylius_adjustment (order_item_id, type, label, amount, is_neutral, is_locked, created_at, updated_at) VALUES (:order_item_id, :type, :label, :amount, :is_neutral, :is_locked, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [
-                    'order_item_id' => $orderItem->getId(),
+                    'order_item_id' => $row['order_item_id'],
                     'type' => $taxAdjustment->getType(),
                     'label' => $taxAdjustment->getLabel(),
                     'amount' => $taxAdjustment->getAmount(),
