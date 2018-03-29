@@ -88,6 +88,10 @@ trait DeliveryTrait
 
         $delivery = $form->getData();
 
+        if (null !== $delivery->getId()) {
+            return;
+        }
+
         if (!$pricingRuleSet) {
             $pricingRuleSet = $form->get('pricingRuleSet')->getData();
         }
@@ -98,13 +102,14 @@ trait DeliveryTrait
             $form->addError(
                 new FormError($this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators'))
             );
-        } else {
-            // FIXME This is deprecated
-            $delivery->setPrice($totalIncludingTax);
-            $delivery->setTotalIncludingTax($totalIncludingTax);
-
-            $deliveryManager->applyTaxes($delivery);
+            return;
         }
+
+        // FIXME This is deprecated
+        $delivery->setPrice($totalIncludingTax);
+        $delivery->setTotalIncludingTax($totalIncludingTax);
+
+        $deliveryManager->applyTaxes($delivery);
     }
 
     private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])

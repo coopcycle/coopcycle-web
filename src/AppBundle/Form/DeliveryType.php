@@ -19,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
@@ -27,18 +26,15 @@ use Symfony\Component\Validator\Constraints;
 class DeliveryType extends AbstractType
 {
     private $doctrine;
-    private $authorizationChecker;
     private $routing;
     private $translator;
 
     public function __construct(
         ManagerRegistry $doctrine,
-        AuthorizationCheckerInterface $authorizationChecker,
         RoutingInterface $routing,
         TranslatorInterface $translator)
     {
         $this->doctrine = $doctrine;
-        $this->authorizationChecker = $authorizationChecker;
         $this->routing = $routing;
         $this->translator = $translator;
     }
@@ -49,8 +45,6 @@ class DeliveryType extends AbstractType
             $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
             $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
         ];
-
-        $isAdmin = $this->authorizationChecker->isGranted('ROLE_ADMIN');
 
         $builder
             ->add('weight', NumberType::class, [
@@ -139,13 +133,15 @@ class DeliveryType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options, $isAdmin) {
+            function (FormEvent $event) use ($options) {
 
                 $form = $event->getForm();
                 $delivery = $form->getData();
 
-                if ($options['pricing_rule_set']) {
-                    $event->getForm()
+                if (null !== $delivery->getId()) {
+                    $form->remove('pricingRuleSet');
+                } else if ($options['pricing_rule_set']) {
+                    $form
                         ->get('pricingRuleSet')
                         ->setData($options['pricing_rule_set']);
                 }

@@ -13,18 +13,16 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DeliveryEmbedType extends DeliveryType
 {
     public function __construct(
         ManagerRegistry $doctrine,
-        AuthorizationCheckerInterface $authorizationChecker,
         RoutingInterface $routing,
         TranslatorInterface $translator, $countryCode)
     {
-        parent::__construct($doctrine, $authorizationChecker, $routing, $translator);
+        parent::__construct($doctrine, $routing, $translator);
 
         $this->countryCode = $countryCode;
     }

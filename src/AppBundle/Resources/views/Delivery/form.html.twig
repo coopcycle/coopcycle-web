@@ -102,6 +102,7 @@
           </div>
         </div>
 
+        {% if delivery.id is null %}
         <div class="form-group">
           <label class="col-sm-2 control-label" for="delivery_price">
             {% trans %}form.delivery.price.label{% endtrans %}
@@ -116,6 +117,7 @@
             </p>
           </div>
         </div>
+        {% endif %}
 
       </div>
       <hr>

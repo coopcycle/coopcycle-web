@@ -298,6 +298,7 @@ form.delivery.distance.label: Distance
 form.delivery.duration.label: Duration
 form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Search a store…
+form.delivery.price.label: Price
 
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
