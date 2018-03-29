@@ -18,13 +18,13 @@ services:
     class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
     arguments: ['@request_stack', '@sylius.locale_provider']
     tags:
-      - { name: sylius.context.locale, priority: 64 }
+      - { name: sylius.context.locale, priority: 128 }
 
   sylius.context.locale.immutable:
     class: Sylius\Component\Locale\Context\ImmutableLocaleContext
     arguments: ['%sylius_locale.locale%']
     tags:
-      - { name: sylius.context.locale, priority: 128 }
+      - { name: sylius.context.locale, priority: 64 }
 
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
