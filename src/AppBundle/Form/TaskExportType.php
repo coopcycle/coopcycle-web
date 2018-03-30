@@ -41,12 +41,16 @@ class TaskExportType extends AbstractType
                 'status',
                 'comments',
                 'event.DONE.notes',
-                'event.FAILED.notes'
+                'event.FAILED.notes',
+                'finishedAt'
             ]);
 
             $records = [];
             foreach ($assignedTasks as $task) {
                 $address = $task->getAddress();
+                $doneAt = $task->hasEvent(Task::STATUS_DONE) ?  $task->getFirstEvent(Task::STATUS_DONE)->getCreatedAt() : '';
+                $failedAt = $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getCreatedAt() : '';
+                $finishedAt = $doneAt || $failedAt;
 
                 $records[] = [
                     $task->getId(),
@@ -57,7 +61,8 @@ class TaskExportType extends AbstractType
                     $task->getStatus(),
                     $task->getComments(),
                     $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : '',
-                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getNotes() : ''
+                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getNotes() : '',
+                    $finishedAt
                 ];
             }
             $csv->insertAll($records);
