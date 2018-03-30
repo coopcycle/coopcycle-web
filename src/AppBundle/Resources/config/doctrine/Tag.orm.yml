@@ -27,6 +27,10 @@ AppBundle\Entity\Tag:
             unique: true
             nullable: false
             precision: 0
+            gedmo:
+                slug:
+                    fields:
+                        - name
         color:
             type: string
             scale: 0
