@@ -54,27 +54,10 @@ class LeafletMap extends Component {
     }
 
     if ( prevProps.selectedTags !== selectedTags ) {
-
-
-      for (let i = 0; i < tasks.length; i++) {
-
-
-        let toAdd = _.map(_.filter(this.props.selectedTags, tag => prevProps.selectedTags.indexOf(tag) < 0), tag => tag.name)
-
-        let toDelete = _.map(_.filter(prevProps.selectedTags, tag => this.props.selectedTags.indexOf(tag) < 0), tag => tag.name)
-
-
-        for (let i = 0; i < tasks.length; i++) {
-
-          let taskTagsName = _.map(tasks[i].tags, tag => tag.name)
-
-          if (taskTagsName.some(tagName => toDelete.indexOf(tagName) > -1)) {
-            this.proxy.hideTask(tasks[i])
-          } else if (taskTagsName.some(tagName => toAdd.indexOf(tagName) > -1)) {
-            this.proxy.addTask(tasks[i])
-          }
-        }
-      }
+      let toShow = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+      _.forEach(toShow, task => this.proxy.addTask(task))
+      let toHide = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+      _.forEach(toHide, task => this.proxy.hideTask(task))
     }
 
   }
