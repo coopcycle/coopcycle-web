@@ -1,6 +1,11 @@
 AppBundle\Entity\Sylius\Order:
     type: entity
     table: sylius_order
+    fields:
+        shippedAt:
+            type: datetime
+            column: shipped_at
+            nullable: true
     manyToOne:
         customer:
             targetEntity: AppBundle\Entity\ApiUser
@@ -8,3 +13,18 @@ AppBundle\Entity\Sylius\Order:
                 customer_id:
                     referencedColumnName: id
                     nullable: true
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            joinColumns:
+                restaurant_id:
+                    referencedColumnName: id
+                    nullable: true
+        shippingAddress:
+            targetEntity: AppBundle\Entity\Address
+            joinColumns:
+                shipping_address_id:
+                    referencedColumnName: id
+                    nullable: true
+            cascade:
+                - persist
+
