@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Menu\MenuItem;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -74,6 +75,21 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
 
         $productVariant->setCode($code);
+
+        return $productVariant;
+    }
+
+    public function createForMenuItem(MenuItem $menuItem): ProductVariantInterface
+    {
+        $productVariant = $this->createNew();
+
+        $code = sprintf('CPCCL-FDTCH-%d-001', $menuItem->getId());
+
+        $productVariant->setCode($code);
+        $productVariant->setName($menuItem->getName());
+        $productVariant->setPrice((int) ($menuItem->getPrice() * 100));
+        $productVariant->setTaxCategory($menuItem->getTaxCategory());
+        $productVariant->setPosition(1);
 
         return $productVariant;
     }

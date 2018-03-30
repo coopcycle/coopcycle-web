@@ -226,6 +226,7 @@ sylius_product:
         product_variant:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
+                repository: AppBundle\Entity\Sylius\ProductVariantRepository
 
 sylius_locale:
     locale: "%locale%"

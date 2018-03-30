@@ -44,6 +44,14 @@ services:
       - "@translator"
     public: false
 
+  coopcycle.sylius.factory.product:
+    class: AppBundle\Sylius\Product\ProductFactory
+    decorates: sylius.factory.product
+    arguments:
+      - "@coopcycle.sylius.factory.product.inner"
+      - "@slugify"
+    public: false
+
   app.form.api_registration:
     class: AppBundle\Form\ApiRegistrationType
     arguments: ['%country_iso%']
@@ -174,6 +182,16 @@ services:
   task.entity_listener:
     class: AppBundle\Entity\Listener\TaskListener
     arguments: [ "@event_dispatcher", "@logger" ]
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  menu_item.entity_listener:
+    class: AppBundle\Entity\Listener\MenuItemListener
+    arguments:
+      - "@sylius.factory.product"
+      - "@sylius.factory.product_variant"
+      - "@sylius.repository.product"
+      - "@sylius.repository.product_variant"
     tags:
       - { name: doctrine.orm.entity_listener }
 
