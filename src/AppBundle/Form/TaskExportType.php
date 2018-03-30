@@ -51,9 +51,9 @@ class TaskExportType extends AbstractType
                 $finishedAt = '';
 
                 if ($task->hasEvent(Task::STATUS_DONE)) {
-                    $finishedAt = $task->getFirstEvent(Task::STATUS_DONE)->getCreatedAt();
+                    $finishedAt = $task->getFirstEvent(Task::STATUS_DONE)->getCreatedAt()->format('Y-m-d H:i:s');
                 } else if ($task->hasEvent(Task::STATUS_FAILED)) {
-                    $finishedAt = $task->getFirstEvent(Task::STATUS_FAILED)->getCreatedAt();
+                    $finishedAt = $task->getFirstEvent(Task::STATUS_FAILED)->getCreatedAt()->format('Y-m-d H:i:s');
                 }
 
                 $records[] = [
@@ -66,7 +66,7 @@ class TaskExportType extends AbstractType
                     $task->getComments(),
                     $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : '',
                     $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getNotes() : '',
-                    $finishedAt->format('Y-m-d H:i:s')
+                    $finishedAt
                 ];
             }
             $csv->insertAll($records);

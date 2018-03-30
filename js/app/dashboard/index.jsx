@@ -46,9 +46,12 @@ $('#dashboard-filters > a').on('click', function (event) {
 // keep the filters dropdown open if click on filters - close if click outside
 $('body').on('click', function (e) {
   if (!$('#dashboard-filters').is(e.target) && $('#dashboard-filters').has(e.target).length === 0) {
-    $('#dashboard-filters').removeClass('open');
+    $('#dashboard-filters').removeClass('open')
   }
-});
+})
+
+// hide export modal after button click
+$('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
 
 render(
   <LocaleProvider locale={antdLocale}>
