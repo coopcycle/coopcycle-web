@@ -126,7 +126,7 @@ class TaskList extends React.Component {
 
   render() {
 
-    const { duration, distance, username, polylineEnabled, showFinishedTasks, selectedTags } = this.props
+    const { duration, distance, username, polylineEnabled, showFinishedTasks, selectedTags, showUntaggedTasks } = this.props
     let { tasks } = this.props
     const { collapsed } = this.state
 
@@ -139,7 +139,10 @@ class TaskList extends React.Component {
     }
 
     // tag filtering - task should have at least one of the selected tags
-    tasks = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+    tasks = _.filter(tasks, (task) =>
+      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
+      (task.tags.length === 0 && showUntaggedTasks)
+    )
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -202,7 +205,8 @@ function mapStateToProps(state, ownProps) {
     distance: ownProps.distance,
     duration: ownProps.duration,
     showFinishedTasks: state.taskFinishedFilter,
-    selectedTags: state.tagsFilter,
+    selectedTags: state.tagsFilter.selectedTagsList,
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
   }
 }
 

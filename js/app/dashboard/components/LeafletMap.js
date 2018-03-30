@@ -33,7 +33,7 @@ class LeafletMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { polylineEnabled, polylines, tasks, selectedTags } = this.props
+    const { polylineEnabled, polylines, tasks, selectedTags, showUntaggedTasks, showFinishedTasks } = this.props
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(polylineEnabled, (enabled, username) => {
@@ -44,9 +44,9 @@ class LeafletMap extends Component {
       }
     })
 
-    if (prevProps.showFinishedTasks !== this.props.showFinishedTasks) {
+    if (prevProps.showFinishedTasks !== showFinishedTasks) {
       const finishedTasks = _.filter(tasks, task => task.status !== 'TODO')
-      if (this.props.showFinishedTasks) {
+      if (showFinishedTasks) {
         _.forEach(finishedTasks, task => this.proxy.addTask(task))
       } else {
         _.forEach(finishedTasks, task => this.proxy.hideTask(task))
@@ -54,10 +54,19 @@ class LeafletMap extends Component {
     }
 
     if ( prevProps.selectedTags !== selectedTags ) {
-      let toShow = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
-      _.forEach(toShow, task => this.proxy.addTask(task))
-      let toHide = _.filter(tasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+      let toHide = _.filter(tasks, (task) => task.tags.length > 0 && _.intersectionBy(task.tags, selectedTags, 'name').length === 0)
       _.forEach(toHide, task => this.proxy.hideTask(task))
+      let toShow = _.filter(tasks, (task) => task.tags.length > 0 && _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+      _.forEach(toShow, task => this.proxy.addTask(task))
+    }
+
+    if ( prevProps.showUntaggedTasks !== showUntaggedTasks ) {
+      let untaggedTasks = _.filter(tasks, (task) => task.tags.length === 0)
+      if (showUntaggedTasks) {
+        _.forEach(untaggedTasks, task => this.proxy.addTask(task))
+      } else {
+        _.forEach(untaggedTasks, task => this.proxy.hideTask(task))
+      }
     }
 
   }
@@ -86,7 +95,8 @@ function mapStateToProps(state, ownProps) {
     polylines,
     polylineEnabled,
     showFinishedTasks: state.taskFinishedFilter,
-    selectedTags: state.tagsFilter,
+    selectedTags: state.tagsFilter.selectedTagsList,
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
   }
 }
 

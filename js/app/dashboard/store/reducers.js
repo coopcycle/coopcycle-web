@@ -261,25 +261,24 @@ const taskFinishedFilter = (state = true, action) => {
   }
 }
 
-const tagsFilter = (state = window.AppData.Dashboard.tags, action ) => {
-
-  let selectedTags = state.slice(0)
-  let selectedTagsNames
+const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action ) => {
 
   switch (action.type) {
 
     case 'FILTER_TAG_BY_TAGNAME':
-      selectedTagsNames = _.map(selectedTags, tag => tag.name)
+      let selectedTagsList = state.selectedTagsList.slice(0)
 
-      if (selectedTagsNames.includes(action.tag.name)) {
+      if (_.find(selectedTagsList, tag => tag.name === action.tag.name)) {
         // removing the tag from visible list
-        selectedTags = _.filter(selectedTags, tag => tag.name != action.tag.name)
+        selectedTagsList = _.filter(selectedTagsList, tag => tag.name != action.tag.name)
       } else {
         // adding the tag to visible list
-        selectedTags.push(action.tag)
+        selectedTagsList.push(action.tag)
       }
-
-      return selectedTags
+      return {...state, selectedTagsList}
+    case 'TOGGLE_SHOW_UNTAGGED_TASKS':
+      let showUntaggedTasks = !state.showUntaggedTasks
+      return {...state, showUntaggedTasks}
     default:
       return state
   }

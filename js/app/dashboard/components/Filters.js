@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {toggleShowFinishedTasks, setSelectedTagList} from "../store/actions"
+import {toggleShowFinishedTasks, setSelectedTagList, toggleShowUntaggedTasks} from "../store/actions"
 
 
 class Filters extends Component {
@@ -15,8 +15,13 @@ class Filters extends Component {
     this.props.setSelectedTagList(tag)
   }
 
+  onShowUntaggedClick(e, tag) {
+    e.preventDefault()
+    this.props.toggleShowUntaggedTasks(tag)
+  }
+
   render() {
-    const { showFinishedTasks, selectedTags } = this.props
+    const { showFinishedTasks, selectedTags, showUntaggedTasks } = this.props
 
     let selectedTagsNames = _.map(selectedTags, tag => tag.name)
 
@@ -39,6 +44,12 @@ class Filters extends Component {
             Tâches terminées
           </a>
         </li>
+        <li>
+          <a onClick={(e) => this.onShowUntaggedClick(e)}>
+            { showUntaggedTasks ? (<i className="fa fa-check dashboard__filters__icon"></i>) : (<i className="dashboard__filters__icon"></i>)}
+            Tâches non tagguées
+          </a>
+        </li>
         { tagsComponents }
       </ul>
     )
@@ -48,14 +59,16 @@ class Filters extends Component {
 function mapStateToProps (state) {
   return {
     showFinishedTasks: state.taskFinishedFilter,
-    selectedTags: state.tagsFilter
+    selectedTags: state.tagsFilter.selectedTagsList,
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     toggleFinishedTasks: () => { dispatch(toggleShowFinishedTasks()) },
-    setSelectedTagList: (tagName) => {  dispatch(setSelectedTagList(tagName)) }
+    setSelectedTagList: (tagName) => {  dispatch(setSelectedTagList(tagName)) },
+    toggleShowUntaggedTasks: () => { dispatch(toggleShowUntaggedTasks())}
   }
 }
 

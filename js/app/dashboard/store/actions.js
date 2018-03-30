@@ -30,6 +30,10 @@ function toggleShowFinishedTasks() {
   return { type: 'TOGGLE_SHOW_FINISHED_TASKS' }
 }
 
+function toggleShowUntaggedTasks() {
+  return { type: 'TOGGLE_SHOW_UNTAGGED_TASKS' }
+}
+
 function setSelectedTagList (tag) {
     return {type: 'FILTER_TAG_BY_TAGNAME', tag: tag }
 }
@@ -105,4 +109,5 @@ export {
   togglePolyline,
   setTaskListGroupMode,
   toggleShowFinishedTasks,
+  toggleShowUntaggedTasks
 }

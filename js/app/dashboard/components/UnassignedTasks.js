@@ -37,14 +37,17 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode, selectedTags } = this.props
+    const { taskListGroupMode, selectedTags, showUntaggedTasks } = this.props
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
     let standaloneTasks = []
 
     // tag filtering - task should have at least one of the selected tags
-    unassignedTasks = _.filter(unassignedTasks, (task) => _.intersectionBy(task.tags, selectedTags, 'name').length > 0)
+    unassignedTasks = _.filter(unassignedTasks, (task) =>
+      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
+      (task.tags.length === 0 && showUntaggedTasks)
+    )
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
 
@@ -106,7 +109,8 @@ function mapStateToProps (state) {
   return {
     unassignedTasks: state.unassignedTasks,
     taskListGroupMode: state.taskListGroupMode,
-    selectedTags: state.tagsFilter,
+    selectedTags: state.tagsFilter.selectedTagsList,
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
   }
 }
 
