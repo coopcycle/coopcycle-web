@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
     /**
-     * @var ProductFactoryInterface
+     * @var ProductVariantFactoryInterface
      */
     private $factory;
 
@@ -21,7 +21,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     private $translator;
 
     /**
-     * @param ProductFactoryInterface $factory
+     * @param ProductVariantFactoryInterface $factory
      */
     public function __construct(
         ProductVariantFactoryInterface $factory,
@@ -65,7 +65,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setName($name);
         $productVariant->setPosition(1);
 
-        $productVariant->setPrice((int) $delivery->getTotalIncludingTax() * 100);
+        $productVariant->setPrice((int) ($delivery->getTotalIncludingTax() * 100));
         $productVariant->setTaxCategory($delivery->getTaxCategory());
 
         // TODO Make sure the same variant does not exist
