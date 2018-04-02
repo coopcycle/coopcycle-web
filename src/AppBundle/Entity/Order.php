@@ -560,13 +560,7 @@ class Order implements OrderInterface
      */
     public function getTotal(): int
     {
-        $total = 0;
-
-        if ($this->getDelivery()) {
-            $total = $this->getDelivery()->getPrice();
-        }
-
-        $total += $this->getItemsTotal();
+        $total = $this->getItemsTotal();
 
         return $total * 100;
     }

@@ -109,11 +109,7 @@
           </label>
           <div class="col-sm-10">
             <p class="form-control-static">
-              <span id="delivery_price">
-                {% if delivery.price is not empty %}
-                  {{ delivery.price|price_format }}
-                {% endif %}
-              </span>
+              <span id="delivery_price"></span>
             </p>
           </div>
         </div>

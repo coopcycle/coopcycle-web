@@ -6,29 +6,11 @@ AppBundle\Entity\Delivery:
         status:
             type: string
             nullable: true
-        date:
-            type: datetime
-            nullable: true
-        price:
-            type: float
-            nullable: true
         weight:
             type: integer
             nullable: true
         vehicle:
             type: string
-            nullable: true
-        totalExcludingTax:
-            type: float
-            column: total_excluding_tax
-            nullable: true
-        totalTax:
-            type: float
-            column: total_tax
-            nullable: true
-        totalIncludingTax:
-            type: float
-            column: total_including_tax
             nullable: true
     manyToOne:
         originAddress:
@@ -47,13 +29,6 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 delivery_address_id:
                     referencedColumnName: id
-        taxCategory:
-            targetEntity: Sylius\Component\Taxation\Model\TaxCategoryInterface
-            fetch: LAZY
-            joinColumns:
-                tax_category_id:
-                    referencedColumnName: id
-                    nullable: true
     oneToOne:
         order:
             targetEntity: AppBundle\Entity\Order
