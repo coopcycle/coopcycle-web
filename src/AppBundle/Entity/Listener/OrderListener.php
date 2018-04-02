@@ -77,9 +77,6 @@ class OrderListener
                 $em->persist($modifier);
             }
         }
-
-        // Apply taxes
-        $this->orderManager->applyTaxes($order);
     }
 
     /**

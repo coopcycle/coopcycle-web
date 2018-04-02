@@ -60,7 +60,7 @@ AppBundle\Entity\Order:
             scale: 0
             length: null
             unique: false
-            nullable: false
+            nullable: true
             precision: 0
             column: total_excluding_tax
         totalTax:
@@ -68,7 +68,7 @@ AppBundle\Entity\Order:
             scale: 0
             length: null
             unique: false
-            nullable: false
+            nullable: true
             precision: 0
             column: total_tax
         totalIncludingTax:
@@ -76,7 +76,7 @@ AppBundle\Entity\Order:
             scale: 0
             length: null
             unique: false
-            nullable: false
+            nullable: true
             precision: 0
             column: total_including_tax
     manyToOne:

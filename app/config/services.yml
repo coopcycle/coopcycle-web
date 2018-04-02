@@ -142,25 +142,17 @@ services:
     public: true
     class: AppBundle\Service\OrderManager
     arguments:
-      - "@payment_service"
+      - "@doctrine"
       - "@snc_redis.default"
       - "@serializer"
-      - "@sylius.tax_rate_resolver"
-      - "@sylius.tax_calculator"
-      - "@sylius.repository.tax_category"
-      - "@coopcycle.delivery.manager"
+      - "@routing_service"
+      - "@coopcycle.notification_manager"
       - "@event_dispatcher"
 
   coopcycle.delivery.manager:
     class: AppBundle\Service\DeliveryManager
     arguments:
-      - "@doctrine"
-      - "@coopcycle.settings_manager"
-      - "@sylius.tax_rate_resolver"
-      - "@sylius.tax_calculator"
-      - "@sylius.repository.tax_category"
       - "@coopcycle.expression_language"
-      - "@coopcycle.notification_manager"
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService

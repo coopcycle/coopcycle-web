@@ -104,14 +104,14 @@ Feature: Orders
         "status":"WAITING",
         "date":"@string@.startsWith('2017-09-02')",
         "price": @double@,
-        "totalExcludingTax":@double@,
-        "totalTax":@double@,
-        "totalIncludingTax":@double@
+        "totalExcludingTax":null,
+        "totalTax":null,
+        "totalIncludingTax":null
       },
       "total":@number@,
-      "totalExcludingTax":@double@,
-      "totalTax":@double@,
-      "totalIncludingTax":@double@,
+      "totalExcludingTax":null,
+      "totalTax":null,
+      "totalIncludingTax":null,
       "publicUrl":@string@,
       "status":"CREATED",
       "preparationDate":"@string@.startsWith('2017-09-02T11:45:00')"
