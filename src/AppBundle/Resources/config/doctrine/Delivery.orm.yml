@@ -8,8 +8,10 @@ AppBundle\Entity\Delivery:
             nullable: true
         date:
             type: datetime
+            nullable: true
         price:
             type: float
+            nullable: true
         weight:
             type: integer
             nullable: true
@@ -19,12 +21,15 @@ AppBundle\Entity\Delivery:
         totalExcludingTax:
             type: float
             column: total_excluding_tax
+            nullable: true
         totalTax:
             type: float
             column: total_tax
+            nullable: true
         totalIncludingTax:
             type: float
             column: total_including_tax
+            nullable: true
     manyToOne:
         originAddress:
             targetEntity: AppBundle\Entity\Address
@@ -48,7 +53,7 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 tax_category_id:
                     referencedColumnName: id
-                    nullable: false
+                    nullable: true
     oneToOne:
         order:
             targetEntity: AppBundle\Entity\Order
@@ -56,6 +61,11 @@ AppBundle\Entity\Delivery:
             inversedBy: delivery
             joinColumns:
                 order_id:
+                    referencedColumnName: id
+        syliusOrder:
+            targetEntity: Sylius\Component\Order\Model\OrderInterface
+            joinColumns:
+                sylius_order_id:
                     referencedColumnName: id
     oneToMany:
         events:

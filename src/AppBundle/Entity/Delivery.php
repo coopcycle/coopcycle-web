@@ -9,6 +9,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -66,6 +67,8 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
     private $deliveryAddress;
 
     private $order;
+
+    private $syliusOrder;
 
     /**
      * @var string
@@ -160,6 +163,18 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         $this->setOriginAddressFromOrder($order);
 
         $this->order = $order;
+
+        return $this;
+    }
+
+    public function getSyliusOrder()
+    {
+        return $this->syliusOrder;
+    }
+
+    public function setSyliusOrder(OrderInterface $order)
+    {
+        $this->syliusOrder = $order;
 
         return $this;
     }
