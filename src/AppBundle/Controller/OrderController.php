@@ -3,17 +3,19 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Cart\Cart;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryAddressType;
 use AppBundle\Form\StripePaymentType;
-use Doctrine\Common\Collections\Criteria;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Stripe;
+use Sylius\Component\Order\OrderTransitions;
+use Sylius\Component\Payment\PaymentTransitions;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -21,98 +23,35 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OrderController extends Controller
 {
-    private function getCart(Request $request)
-    {
-        $cartId = $request->getSession()->get('cartId');
-        if (!is_null($cartId)) {
-            $cartRepo = $this->getDoctrine()->getRepository(Cart::class);
-
-            return $cartRepo->find($cartId);
-        }
-    }
-
-    private function createOrderFromRequest(Request $request)
-    {
-        $cart = $this->getCart($request);
-
-        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
-
-        $restaurant = $restaurantRepository->find($cart->getRestaurantId());
-
-        $order = new Order();
-        $order->setRestaurant($restaurant);
-        $order->setCustomer($this->getUser());
-
-        foreach ($cart->getItems() as $item) {
-            $menuItemRepo = $this->getDoctrine()->getRepository(MenuItem::class);
-            $menuItem = $menuItemRepo->find($item->getMenuItem()->getId());
-            $order->addCartItem($item, $menuItem);
-        }
-
-        $delivery = new Delivery($order);
-        $delivery->setDate($cart->getDate());
-        $delivery->setDeliveryAddress($cart->getAddress());
-
-        return $order;
-    }
-
     /**
      * @Route("/", name="order")
      * @Template()
      */
     public function indexAction(Request $request)
     {
-        if (null === $this->getCart($request)) {
-            return [];
-        }
+        $cart = $this->get('sylius.context.cart')->getCart();
 
-        $order = $this->createOrderFromRequest($request);
-        $deliveryAddress =  $order->getDelivery()->getDeliveryAddress();
+        // TODO Check if cart is empty
+
+        $deliveryAddress = $cart->getShippingAddress();
 
         $form = $this->createForm(DeliveryAddressType::class, $deliveryAddress);
 
-        if (!$request->isMethod('POST') && $request->getSession()->has('deliveryAddress')) {
-            $deliveryAddress = $request->getSession()->get('deliveryAddress');
-            $deliveryAddress = $this->getDoctrine()
-                ->getManagerForClass(Address::class)->merge($deliveryAddress);
-
-            $form->setData($deliveryAddress);
-        }
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+
             $deliveryAddress = $form->getData();
 
-            $user = $this->getUser();
-
-            $hasAlreadySaved = $user->getAddresses()->filter(
-                    function ($address) use ($deliveryAddress) {
-                        return $deliveryAddress->getGeo()->getLatitude() === $address->getGeo()->getLatitude() &&
-                            $deliveryAddress->getGeo()->getLongitude() === $address->getGeo()->getLongitude();
-                    }
-                )->count() > 0;
-
-            if (!$hasAlreadySaved) {
-                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->persist($deliveryAddress);
-                $this->getDoctrine()->getManagerForClass('AppBundle:Address')->flush();
-
-                $this->getUser()->addAddress($deliveryAddress);
-
-                $this->getDoctrine()->getManagerForClass('AppBundle:ApiUser')->flush();
-            }
-
-            $request->getSession()->set('deliveryAddress', $deliveryAddress);
+            $this->getDoctrine()->getManagerForClass(Address::class)->flush();
 
             return $this->redirectToRoute('order_payment');
         }
 
         return array(
-            'order' => $order,
+            'order' => $cart,
             'form' => $form->createView(),
-            'restaurant' => $order->getRestaurant(),
+            'restaurant' => $cart->getRestaurant(),
             'deliveryAddress' => $deliveryAddress,
-            'cart' => $this->getCart($request),
         );
     }
 
@@ -122,24 +61,27 @@ class OrderController extends Controller
      */
     public function paymentAction(Request $request)
     {
-        if (!$request->getSession()->has('deliveryAddress')) {
-            return $this->redirectToRoute('order');
+        $stateMachineFactory = $this->get('sm.factory');
+        $settingsManager = $this->get('coopcycle.settings_manager');
+
+        $order = $this->get('sylius.context.cart')->getCart();
+
+        $stripePayment = $this->getDoctrine()
+            ->getRepository(StripePayment::class)
+            ->findOneByOrder($order);
+
+        if (null === $stripePayment) {
+            $stripePayment = StripePayment::create($order);
+
+            $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
+            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
         }
-
-        $order = $this->createOrderFromRequest($request);
-        $orderManager = $this->get('order.manager');
-
-        $deliveryAddress = $request->getSession()->get('deliveryAddress');
-        $deliveryAddress = $this->getDoctrine()
-            ->getManagerForClass('AppBundle:Address')->merge($deliveryAddress);
-
-        $order->getDelivery()->setDeliveryAddress($deliveryAddress);
 
         $form = $this->createForm(StripePaymentType::class);
 
-        $templateData =  [
+        $parameters =  [
             'order' => $order,
-            'deliveryAddress' => $order->getDelivery()->getDeliveryAddress(),
+            'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
             'form' => $form->createView(),
         ];
@@ -147,29 +89,56 @@ class OrderController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stripeToken = $form->get('stripeToken')->getData();
+            // Create order, to generate a number
+            $order->setCustomer($this->getUser());
+            $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+            $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
+            $this->get('sylius.manager.order')->flush();
 
-            $this->getDoctrine()->getManagerForClass(Order::class)->persist($order);
-            $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+            // Authorize payment
+            $apiKey = $settingsManager->get('stripe_secret_key');
+            Stripe\Stripe::setApiKey($apiKey);
+
+            $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
             try {
-                $orderManager->pay($order, $stripeToken);
-            } catch (\Exception $e) {
-                $templateData['error'] = $e->getMessage();
-                $order->setStatus(Order::STATUS_PAYMENT_ERROR);
 
-                return $templateData;
+                $stripeToken = $form->get('stripeToken')->getData();
+
+                $charge = Stripe\Charge::create(array(
+                    'amount' => $order->getTotal(),
+                    'currency' => 'eur',
+                    'source' => $stripeToken,
+                    'description' => sprintf('Order %s', $order->getNumber()),
+                    // To authorize a payment without capturing it,
+                    // make a charge request that also includes the capture parameter with a value of false.
+                    // This instructs Stripe to only authorize the amount on the customer’s card.
+                    'capture' => false,
+                ));
+
+                $stripePayment->setCharge($charge->id);
+
+                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+
+            } catch (\Exception $e) {
+
+                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+
+                return array_merge($parameters, [
+                    'error' => $e->getMessage()
+                ]);
+
             } finally {
-                $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+                $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
             }
 
-            $request->getSession()->remove('cartId');
-            $request->getSession()->remove('deliveryAddress');
+            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+            $request->getSession()->remove($sessionKeyName);
 
-            return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
+            return $this->redirectToRoute('profile_order', array('id' => $order->getNumber()));
         }
 
-        return $templateData;
+        return $parameters;
     }
 
     /**

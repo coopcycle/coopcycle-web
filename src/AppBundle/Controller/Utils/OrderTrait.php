@@ -2,8 +2,12 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Entity\DeliveryOrderItem;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\StripePayment;
+use AppBundle\Sylius\Order\OrderTransitions;
+use Sylius\Component\Payment\PaymentTransitions;
+use Stripe;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,11 +64,40 @@ trait OrderTrait
 
     public function acceptOrderAction($restaurantId, $orderId, Request $request)
     {
-        $order = $this->getDoctrine()->getRepository(Order::class)->find($orderId);
+        $order = $this->get('sylius.repository.order')->find($orderId);
+
         $this->accessControl($order->getRestaurant());
 
-        $this->get('order.manager')->accept($order);
-        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+        $stateMachineFactory = $this->get('sm.factory');
+        $settingsManager = $this->get('coopcycle.settings_manager');
+
+        $apiKey = $settingsManager->get('stripe_secret_key');
+        Stripe\Stripe::setApiKey($apiKey);
+
+        $stripePayment = $this->getDoctrine()
+            ->getRepository(StripePayment::class)
+            ->findOneByOrder($order);
+
+
+        $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+
+        try {
+
+            $charge = Stripe\Charge::retrieve($stripePayment->getCharge());
+            if (!$charge->captured) {
+                $charge->capture();
+            }
+            $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+
+            $orderStateMachine->apply(OrderTransitions::TRANSITION_ACCEPT);
+            $this->get('sylius.manager.order')->flush();
+
+        } catch (\Exception $e) {
+            $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+        } finally {
+            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+        }
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,
@@ -74,12 +107,16 @@ trait OrderTrait
 
     public function refuseOrderAction($restaurantId, $orderId, Request $request)
     {
-        $order = $this->getDoctrine()->getRepository(Order::class)->find($orderId);
+        $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
-        $order->setStatus(Order::STATUS_REFUSED);
-        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+        $stateMachineFactory = $this->get('sm.factory');
+
+        $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+
+        $orderStateMachine->apply(OrderTransitions::TRANSITION_REFUSE);
+        $this->get('sylius.manager.order')->flush();
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,
@@ -126,38 +163,5 @@ trait OrderTrait
         $this->cancelOrderById($id);
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'));
-    }
-
-    protected function normalizeOrders(array $syliusOrders, array $coopcycleOrders)
-    {
-        $syliusOrders = array_map(function ($order) {
-
-            $delivery = $this->getDoctrine()
-                ->getRepository(DeliveryOrderItem::class)
-                ->findOneByOrderItem($order->getItems()->get(0))
-                ->getDelivery();
-
-            return [
-                'id' => $order->getId(),
-                'customer' => [
-                    'username' => $order->getCustomer()->getUsername(),
-                ],
-                'createdAt' => $order->getCreatedAt(),
-                'state' => $order->getState(),
-                'total' => $order->getTotal(),
-                'delivery' => $delivery,
-            ];
-
-        }, $syliusOrders);
-
-        $orders = array_merge($coopcycleOrders, $syliusOrders);
-
-        usort($orders, function ($a, $b) {
-            $createdAtA = is_array($a) ? $a['createdAt'] : $a->getCreatedAt();
-            $createdAtB = is_array($b) ? $b['createdAt'] : $b->getCreatedAt();
-            return $createdAtA < $createdAtB ? 1 : -1;
-        });
-
-        return $orders;
     }
 }

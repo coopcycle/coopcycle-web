@@ -25,24 +25,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @see http://schema.org/Order Documentation on Schema.org
  *
- * @ApiResource(iri="http://schema.org/Order",
- *   collectionOperations={
- *     "get"={"method"="GET"},
- *     "post"={"method"="POST"},
- *     "my_orders"={"method"="GET", "route_name"="my_orders"}
- *   },
- *   itemOperations={
- *     "get"={"method"="GET"},
- *     "pay"={"route_name"="order_pay"},
- *     "accept"={"route_name"="order_accept"},
- *     "refuse"={"route_name"="order_refuse"},
- *     "ready"={"route_name"="order_ready"}
- *   },
- *   attributes={
- *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"order", "place"}}
- *   }
- * )
  * @AssertOrder
  */
 class Order implements OrderInterface

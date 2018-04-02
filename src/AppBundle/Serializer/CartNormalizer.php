@@ -22,31 +22,7 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data =  $this->normalizer->normalize($object, $format, $context);
-
-        unset($data['items']);
-
-        $data['items'] = array_map(function (OrderItemInterface $item) {
-
-            $adjustments = array_map(function (BaseAdjustmentInterface $adjustment) {
-                return [
-                    'id' => $adjustment->getId(),
-                    'label' => $adjustment->getLabel(),
-                    'amount' => $adjustment->getAmount(),
-                ];
-            }, $item->getAdjustments(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray());
-
-            return [
-                'id' => $item->getId(),
-                'name' => $item->getVariant()->getProduct()->getName(),
-                'unitPrice' => $item->getUnitPrice(),
-                'quantity' => $item->getQuantity(),
-                'total' => $item->getTotal(),
-                'adjustments' => [
-                    AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT => array_values($adjustments)
-                ]
-            ];
-        }, $object->getItems()->toArray());
+        $data = $this->normalizer->normalize($object, $format, $context);
 
         // Make sure the array is zero-indexed
         $data['items'] = array_values($data['items']);
@@ -111,9 +87,9 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format)
+        return $format === 'json'
+            && $this->normalizer->supportsNormalization($data, $format)
             && $data instanceof OrderInterface
-            // && $data->getState() === OrderInterface::STATE_CART
             ;
     }
 

@@ -2,36 +2,80 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Entity\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
+use Carbon\Carbon;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class OrderValidator extends ConstraintValidator
 {
-    private function validateMinimumAmount($expected, $actual, $message)
-    {
-        $constraint = new Assert\GreaterThanOrEqual(['value' => $expected]);
+    private $routing;
 
-        $violations = $this->context->getValidator()->validate($actual, $constraint);
-        if (count($violations) > 0) {
-            $this->context->buildViolation($message)
-                ->setParameter('%minimum_amount%', $expected)
-                ->atPath('totalIncludingTax')
-                ->addViolation();
-        }
+    public function __construct(RoutingInterface $routing)
+    {
+        $this->routing = $routing;
     }
 
     public function validate($object, Constraint $constraint)
     {
-        if (!$object instanceof Order) {
-            throw new \InvalidArgumentException('$object should be an Order instance');
+        if (!$object instanceof OrderInterface) {
+            throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', OrderInterface::class));
         }
 
-        $minimumAmount = $object->getRestaurant()->getMinimumCartAmount();
-        $totalIncludingTax = $object->getItemsTotal();
+        $now = Carbon::now();
 
-        $this->validateMinimumAmount($minimumAmount, $totalIncludingTax, $constraint->totalIncludingTaxTooLowMessage);
+        $order = $object;
+        $isNew = $order->getId() === null;
+
+        $restaurant = $order->getRestaurant();
+        $shippedAt = $order->getShippedAt();
+
+        if ($isNew && $shippedAt < $now) {
+            $this->context->buildViolation($constraint->dateHasPassedMessage)
+                ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
+                ->atPath('shippedAt')
+                ->addViolation();
+
+            return;
+        }
+
+        if (!$restaurant->isOpen($shippedAt)) {
+            $this->context->buildViolation($constraint->restaurantClosedMessage)
+                ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
+                ->atPath('shippedAt')
+                ->addViolation();
+
+            return;
+        }
+
+        $data = $this->routing->getRawResponse(
+            $restaurant->getAddress()->getGeo(),
+            $order->getShippingAddress()->getGeo()
+        );
+
+        $distance = $data['routes'][0]['distance'];
+        $duration = $data['routes'][0]['duration'];
+
+        $maxDistance = $restaurant->getMaxDistance();
+
+        if ($distance > $maxDistance) {
+            $this->context->buildViolation($constraint->addressTooFarMessage)
+                ->atPath('shippingAddress')
+                ->addViolation();
+
+            return;
+        }
+
+        $minimumAmount = (int) ($restaurant->getMinimumCartAmount() * 100);
+        $itemsTotal = $order->getItemsTotal();
+
+        if ($itemsTotal < $minimumAmount) {
+            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
+                ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
+                ->atPath('total')
+                ->addViolation();
+        }
     }
 }

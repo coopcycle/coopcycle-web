@@ -60,37 +60,23 @@
         "cart.widget.button": "{% trans %}cart.widget.button{% endtrans %}"
       }
     </script>
-
     <script src="{{ asset('manifest.js') }}"></script>
     <script src="{{ asset('js/vendor.js') }}"></script>
     <script src="{{ asset('js/common.js') }}"></script>
+
     {% set cart = cart_provider.getCart() %}
     <script>
-      window.AppData.Cart = {
-        {% if cart is not empty %}
-        items: {{ cart.normalizedItems|json_encode()|raw }},
-        date: {% if cart.date is not empty %}"{{ cart.date|date('Y-m-d H:i:s') }}"{% else %}null{% endif %},
-        {# FIXME Cannot serialize cart.restaurant directly #}
-        restaurant: {
-          id: {{ cart.restaurant.id }},
-          flatDeliveryPrice: {{ cart.restaurant.flatDeliveryPrice }}
-        },
-        total: {{ cart.total }},
-        {% else %}
-        items: [],
-        date: null,
-        restaurant: null,
-        total: 0,
-        {% endif %}
+      window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
         addToCartURL: "{{ path('restaurant_add_to_cart', { 'id': '__RESTAURANT_ID__' }) }}",
         removeFromCartURL: "{{ path('restaurant_remove_from_cart', { 'id': '__RESTAURANT_ID__', 'itemKey': '__ITEM_KEY__' }) }}",
         restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}",
         validateCartURL: "{{ path('order') }}"
-      };
+      })
     </script>
     {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% block scripts %}{% endblock %}
-      <script src="{{ asset('js/cart.js') }}"></script>
+    <script src="{{ asset('js/cart.js') }}"></script>
+
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}

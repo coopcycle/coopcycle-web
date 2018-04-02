@@ -7,56 +7,26 @@ class OrderFollow extends React.Component {
 
   constructor(props) {
     super(props)
-    let { orderEvents, deliveryEvents } = this.props
     this.state = {
-      hasBeenAccepted: this.hasBeenAccepted(orderEvents),
-      hasBeenPrepared: this.hasBeenPrepared(orderEvents),
-      hasBeenDelivered: this.hasBeenDelivered(deliveryEvents),
+      order: this.props.order,
     }
   }
 
-  hasBeenAccepted (orderEvents) {
-    return orderEvents.filter(function (item) {
-      return item.status === 'ACCEPTED'
-    }).length > 0
-  }
-
-  hasBeenPrepared (orderEvents) {
-    return orderEvents.filter(function (item) {
-      return item.status === 'READY'
-    }).length > 0
-  }
-
-  hasBeenDelivered (deliveryEvents) {
-    return deliveryEvents.filter(function (item) {
-      return item.status === 'DELIVERED'
-    }).length > 0
-  }
-
-  handleDeliveryEvent(event) {
-    /* Handle a delivery event */
-    if (event.status === 'DELIVERED') {
-      this.setState({ hasBeenDelivered : true})
-    }
-
-  }
-
-  handleOrderEvent(event) {
-    /* Handle an order event */
-    if (event.status === 'ACCEPTED') {
-      this.setState({ hasBeenAccepted : true})
-    } else if (event.status === 'READY') {
-      this.setState({ hasBeenPrepared : true})
-    }
+  updateOrder(order) {
+    this.setState({ order })
   }
 
   render () {
-    let { order } = this.props
-    let { hasBeenAccepted, hasBeenPrepared, hasBeenDelivered } = this.state
-    let isWaitingPreparation = !hasBeenPrepared && hasBeenAccepted;
-    let isWaitingForDelivery = hasBeenPrepared && !hasBeenDelivered
 
-    const deliveryMoment = moment(order.delivery.date)
+    const { order } = this.state
+
+    const hasBeenAccepted  = order.state === 'accepted'
+    const hasBeenPrepared  = order.state === 'ready'
+    const hasBeenDelivered = false
+    const isWaitingPreparation = !hasBeenPrepared && hasBeenAccepted;
+    const isWaitingForDelivery = hasBeenPrepared && !hasBeenDelivered
+
+    const deliveryMoment = moment(order.shippedAt)
     const deliveryTime = deliveryMoment.format('HH[h]mm')
     const formattedDeliveryDate = deliveryMoment.format('dddd D MMMM')
     const deliveryIsToday = formattedDeliveryDate === moment(Date.now()).format('dddd D MMMM')

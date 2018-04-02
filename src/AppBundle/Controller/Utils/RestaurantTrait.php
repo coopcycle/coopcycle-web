@@ -12,6 +12,7 @@ use AppBundle\Form\MenuType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -116,7 +117,7 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request);
     }
 
-    private function renderRestaurantDashboard(Request $request, Restaurant $restaurant, Order $order = null)
+    private function renderRestaurantDashboard(Request $request, Restaurant $restaurant, OrderInterface $order = null)
     {
         $this->accessControl($restaurant);
 
@@ -126,11 +127,17 @@ trait RestaurantTrait
         }
         $date->modify('-1 day');
 
-        $orders = $this->getDoctrine()->getRepository(Order::class)
-            ->getWaitingOrdersForRestaurant($restaurant, $date);
-        $ordersJson = array_map(function ($order) {
-            return $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]);
-        }, $orders);
+        $qb = $this->get('sylius.repository.order')
+            ->createQueryBuilder('o')
+            ->andWhere('o.restaurant = :restaurant')
+            ->andWhere('DATE(o.shippedAt) >= :date')
+            ->andWhere('o.state != :state')
+            ->setParameter('restaurant', $restaurant)
+            ->setParameter('date', $date)
+            ->setParameter('state', OrderInterface::STATE_CART);
+            ;
+
+        $orders = $qb->getQuery()->getResult();
 
         $routes = $request->attributes->get('routes');
 
@@ -139,9 +146,9 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
             'orders' => $orders,
-            'orders_json' => '[' . implode(',', $ordersJson) . ']', // FIXME This is ugly...
             'order' => $order,
-            'order_json' => $this->get('serializer')->serialize($order, 'jsonld', ['groups' => ['order']]),
+            'orders_normalized' => $this->get('serializer')->normalize($orders, 'json', ['groups' => ['order']]),
+            'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'routes' => $routes,
@@ -151,10 +158,9 @@ trait RestaurantTrait
 
     public function restaurantDashboardAction($restaurantId, Request $request)
     {
-        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
-        $orderRepository      = $this->getDoctrine()->getRepository(Order::class);
-
-        $restaurant = $restaurantRepository->find($restaurantId);
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
 
         return $this->renderRestaurantDashboard($request, $restaurant);
     }
@@ -162,10 +168,9 @@ trait RestaurantTrait
     public function restaurantDashboardOrderAction($restaurantId, $orderId, Request $request)
     {
         $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
-        $orderRepository      = $this->getDoctrine()->getRepository(Order::class);
 
         $restaurant = $restaurantRepository->find($restaurantId);
-        $order = $orderRepository->find($orderId);
+        $order = $this->get('sylius.repository.order')->find($orderId);
 
         return $this->renderRestaurantDashboard($request, $restaurant, $order);
     }

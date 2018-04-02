@@ -1,7 +1,7 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
+  sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
 
 services:
 #    service_name:
@@ -41,6 +41,8 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.product_variant.inner"
       - "@sylius.repository.product"
+      - "@sylius.repository.tax_category"
+      - "@coopcycle.settings_manager"
       - "@translator"
     public: false
 
@@ -51,6 +53,25 @@ services:
       - "@coopcycle.sylius.factory.product.inner"
       - "@slugify"
     public: false
+
+  coopcycle.sylius.factory.order:
+    class: AppBundle\Sylius\Order\OrderFactory
+    decorates: sylius.factory.order
+    arguments:
+      - "@coopcycle.sylius.factory.order.inner"
+      - "@sylius.factory.adjustment"
+    public: false
+
+  sylius.context.cart.restaurant:
+    class: AppBundle\Sylius\Cart\RestaurantCartContext
+    arguments:
+      - "@session"
+      - "@sylius.repository.order"
+      - "@sylius.factory.order"
+      - "@coopcycle.repository.restaurant"
+      - "%sylius_cart_restaurant_session_key_name%"
+    tags:
+      - { name: sylius.context.cart, priority: 32 }
 
   app.form.api_registration:
     class: AppBundle\Form\ApiRegistrationType
@@ -157,8 +178,8 @@ services:
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
     arguments:
-      - "@doctrine"
-      - "@request_stack"
+      - "@sylius.context.cart"
+      - "@serializer"
 
   delivery.entity_listener:
     class: AppBundle\Entity\Listener\DeliveryListener
@@ -234,6 +255,31 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  coopcycle.normalizer.cart:
+    class: AppBundle\Serializer\CartNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.order.jsonld:
+    class: AppBundle\Serializer\JsonLd\OrderNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@api_platform.iri_converter"
+      - "@coopcycle.sylius.factory.order"
+      - "@sylius.repository.product_variant"
+      - "@sylius.factory.order_item"
+      - "@sylius.factory.adjustment"
+      - "@sylius.order_item_quantity_modifier"
+      - "@sylius.order_modifier"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.order_item.json:
+    class: AppBundle\Serializer\Json\OrderItemNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   'AppBundle\Form\DeliveryType':
     arguments: [ '@doctrine', '@routing_service', '@translator' ]
     tags:
@@ -285,6 +331,12 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Task
+
+  coopcycle.repository.restaurant:
+    class: AppBundle\Entity\RestaurantRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Restaurant
 
   routing_service:
     public: true
@@ -363,6 +415,11 @@ services:
       - { name: validator.constraint_validator }
 
   'AppBundle\Validator\Constraints\DeliveryValidator':
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }
+
+  'AppBundle\Validator\Constraints\OrderValidator':
     arguments: [ '@routing_service' ]
     tags:
       - { name: validator.constraint_validator }

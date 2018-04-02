@@ -4,10 +4,12 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
+use AppBundle\Service\SettingsManager;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
@@ -19,6 +21,10 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
     private $productRepository;
 
+    private $taxCategoryRepository;
+
+    private $settingsManager;
+
     private $translator;
 
     /**
@@ -27,10 +33,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     public function __construct(
         ProductVariantFactoryInterface $factory,
         ProductRepositoryInterface $productRepository,
+        TaxCategoryRepositoryInterface $taxCategoryRepository,
+        SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
         $this->factory = $factory;
         $this->productRepository = $productRepository;
+        $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->settingsManager = $settingsManager;
         $this->translator = $translator;
     }
 
@@ -50,11 +60,17 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $this->factory->createForProduct($product);
     }
 
-    public function createForDelivery(Delivery $delivery): ProductVariantInterface
+    /**
+     * @param Delivery $delivery
+     * @param int $price
+     */
+    public function createForDelivery(Delivery $delivery, int $price): ProductVariantInterface
     {
-        // TODO Check Delivery has price, etc...
-
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $this->settingsManager->get('default_tax_category')
+        ]);
 
         $productVariant = $this->createForProduct($product);
 
@@ -66,8 +82,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setName($name);
         $productVariant->setPosition(1);
 
-        $productVariant->setPrice((int) ($delivery->getTotalIncludingTax() * 100));
-        $productVariant->setTaxCategory($delivery->getTaxCategory());
+        $productVariant->setPrice($price);
+        $productVariant->setTaxCategory($taxCategory);
 
         // TODO Make sure the same variant does not exist
 

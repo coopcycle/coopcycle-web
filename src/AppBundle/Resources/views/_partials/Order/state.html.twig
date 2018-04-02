@@ -1,6 +1,9 @@
 {% set state_label_class = {
-  'cart': 'label-warning',
-  'new': 'label-success',
+  'cart': 'label-default',
+  'new': 'label-primary',
+  'accepted': 'label-success',
+  'refused': 'label-danger'
 } %}
 {% set trans_key = 'order.state.' ~ order.state %}
-<span class="label {{ state_label_class[order.state] }}">{{ trans_key|trans }}</span>
+{% set label_class = order.state in state_label_class|keys ? state_label_class[order.state] : 'label-default' %}
+<span class="label {{ label_class }}">{{ trans_key|trans }}</span>

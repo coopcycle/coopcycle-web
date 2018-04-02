@@ -22,14 +22,11 @@ class OrderList extends React.Component {
   resolveOrderRoute(route) {
 
     const restaurant = this.props.restaurant;
-    const restaurantId = restaurant['@id'].replace('/api/restaurants/', '');
-
     const order = this.state.order;
-    const orderId = order['@id'].replace('/api/orders/', '');
 
     return this.props.routes[route]
-      .replace('__RESTAURANT_ID__', restaurantId)
-      .replace('__ORDER_ID__', orderId)
+      .replace('__RESTAURANT_ID__', restaurant.id)
+      .replace('__ORDER_ID__', order.id)
   }
 
   resolveUserRoute(route) {
@@ -88,10 +85,10 @@ class OrderList extends React.Component {
     return (
       <table className="table table-condensed">
         <tbody>
-          { this.state.order.orderedItem.map((item, key) =>
+          { this.state.order.items.map((item, key) =>
             <tr key={ key }>
               <td>{ item.quantity } x { item.name }</td>
-              <td className="text-right">{ numeral(item.quantity * item.price).format('0,0.00 $') }</td>
+              <td className="text-right">{ numeral(item.total / 100).format('0,0.00 $') }</td>
             </tr>
           ) }
         </tbody>
@@ -104,16 +101,12 @@ class OrderList extends React.Component {
       <table className="table">
         <tbody>
           <tr>
-            <td><strong>Total HT</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.totalExcludingTax).format('0,0.00 $') }</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Total TVA</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.totalTax).format('0,0.00 $') }</strong></td>
-          </tr>
-          <tr>
             <td><strong>Total TTC</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.totalIncludingTax).format('0,0.00 $') }</strong></td>
+            <td className="text-right"><strong>{ numeral(this.state.order.total / 100).format('0,0.00 $') }</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Dont TVA</strong></td>
+            <td className="text-right"><strong>{ numeral(this.state.order.taxTotal / 100).format('0,0.00 $') }</strong></td>
           </tr>
         </tbody>
       </table>
@@ -137,7 +130,7 @@ class OrderList extends React.Component {
     return (
       <div className="restaurant-dashboard__details__container">
         <h4>
-          <span>{ this.props.i18n['Order'] } #{ order['@id'].replace('/api/orders/', '') }</span>
+          <span>{ this.props.i18n['Order'] } #{ order.id }</span>
           <button type="button" className="close" onClick={ () => this.props.onClose() }>
             <span aria-hidden="true">&times;</span>
           </button>
@@ -165,8 +158,8 @@ class OrderList extends React.Component {
           { this.renderOrderTotal() }
         </div>
         <div className="restaurant-dashboard__details__buttons">
-          { order.status === 'WAITING' && this.renderWaitingButtons() }
-          { order.status === 'ACCEPTED' && this.renderAcceptedButtons() }
+          { order.state === 'new' && this.renderWaitingButtons() }
+          { order.state === 'accepted' && this.renderAcceptedButtons() }
         </div>
       </div>
     )

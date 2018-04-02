@@ -78,6 +78,8 @@ if (cart) {
           deliveryDate={initialDate}
           availabilities={availabilities}
           items={window.AppData.Cart.items}
+          total={window.AppData.Cart.total}
+          adjustments={window.AppData.Cart.adjustments}
           restaurant={window.AppData.Restaurant}
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}

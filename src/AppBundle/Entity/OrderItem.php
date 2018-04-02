@@ -11,18 +11,6 @@ use AppBundle\Entity\Menu\MenuItem;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * An order item is a line of an order. It includes the quantity and shipping details of a bought offer.
- *
- * @see http://schema.org/OrderItem Documentation on Schema.org
- *
- * @ApiResource(iri="http://schema.org/OrderItem",
- *   attributes={
- *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"order"}}
- *   }
- * )
- */
 class OrderItem
 {
     use NameTrait;

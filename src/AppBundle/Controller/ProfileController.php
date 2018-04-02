@@ -13,16 +13,16 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use Doctrine\ORM\Query\Expr;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sylius\Component\Order\Model\OrderInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends Controller
@@ -66,21 +66,28 @@ class ProfileController extends Controller
 
     protected function getOrderList(Request $request)
     {
-        $syliusOrders = $this->container
-            ->get('sylius.repository.order')
-            ->findByCustomer($this->getUser());
+        $qb = $this->get('sylius.repository.order')
+            ->createQueryBuilder('o')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state != :state')
+            ->setParameter('customer', $this->getUser())
+            ->setParameter('state', OrderInterface::STATE_CART);
 
-        $coopcycleOrders = $this->getDoctrine()
-            ->getRepository(Order::class)
-            ->findByCustomer($this->getUser());
+        $count = (clone $qb)
+            ->select('COUNT(o)')
+            ->getQuery()
+            ->getSingleScalarResult();
 
-        $orders = $this->normalizeOrders($syliusOrders, $coopcycleOrders);
-
-        $pages  = ceil(count($orders) / self::ITEMS_PER_PAGE);
+        $pages  = ceil($count / self::ITEMS_PER_PAGE);
         $page   = $request->query->get('p', 1);
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
-        $orders = array_slice($orders, $offset, self::ITEMS_PER_PAGE);
+        $orders = (clone $qb)
+            ->setMaxResults(self::ITEMS_PER_PAGE)
+            ->setFirstResult($offset)
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return [ $orders, $pages, $page ];
     }
@@ -92,9 +99,8 @@ class ProfileController extends Controller
             $order = $this->container->get('sylius.repository.order')->find($id);
 
             $delivery = $this->getDoctrine()
-                ->getRepository(DeliveryOrderItem::class)
-                ->findOneByOrderItem($order->getItems()->get(0))
-                ->getDelivery();
+                ->getRepository(Delivery::class)
+                ->findOneBySyliusOrder($order);
 
             return $this->render('@App/Order/sylius.html.twig', [
                 'layout' => '@App/profile.html.twig',
@@ -104,31 +110,14 @@ class ProfileController extends Controller
             ]);
         }
 
-        $order = $this->getDoctrine()
-            ->getRepository(Order::class)->find($id);
-
-        $orderEvents = [];
-        foreach ($order->getEvents() as $event) {
-            $orderEvents[] = [
-                'status' => $event->getEventName(),
-                'timestamp' => $event->getCreatedAt()->getTimestamp()
-            ];
-        }
-
-        $deliveryEvents = [];
-        foreach ($order->getDelivery()->getEvents() as $event) {
-            $deliveryEvents[] = [
-                'status' => $event->getEventName(),
-                'timestamp' => $event->getCreatedAt()->getTimestamp()
-            ];
-        }
+        $order = $this->get('sylius.repository.order')->findOneBy([
+            'number' => $id
+        ]);
 
         return $this->render('@App/Order/details.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
-            'order_json' => $this->get('serializer')->serialize($order, 'jsonld'),
-            'order_events_json' => $this->get('serializer')->serialize($orderEvents, 'json'),
-            'delivery_events_json' => $this->get('serializer')->serialize($deliveryEvents, 'json'),
+            'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
             'breadcrumb_path' => 'profile_orders'
         ]);
     }

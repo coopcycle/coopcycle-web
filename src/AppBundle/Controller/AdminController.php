@@ -14,11 +14,9 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Tag;
@@ -35,13 +33,14 @@ use AppBundle\Form\SettingsType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
+use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sylius\Component\Order\OrderTransitions;
+use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
@@ -82,31 +81,32 @@ class AdminController extends Controller
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
-        $statusList = [
-            Order::STATUS_WAITING,
-            Order::STATUS_ACCEPTED,
-            Order::STATUS_REFUSED,
-            Order::STATUS_READY,
-        ];
-        if ($showCanceled) {
-            $statusList[] = Order::STATUS_CANCELED;
+        $qb = $this->get('sylius.repository.order')
+            ->createQueryBuilder('o')
+            ->andWhere('o.state != :state_cart')
+            ->setParameter('state_cart', OrderInterface::STATE_CART);
+
+        if (!$showCanceled) {
+            $qb
+                ->andWhere('o.state != :state_cancelled')
+                ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
-        $syliusOrders = $this->container
-            ->get('sylius.repository.order')
-            ->findAll();
+        $count = (clone $qb)
+            ->select('COUNT(o)')
+            ->getQuery()
+            ->getSingleScalarResult();
 
-        $coopcycleOrders = $this->getDoctrine()
-            ->getRepository(Order::class)
-            ->findByStatus($statusList);
-
-        $orders = $this->normalizeOrders($syliusOrders, $coopcycleOrders);
-
-        $pages  = ceil(count($orders) / self::ITEMS_PER_PAGE);
+        $pages  = ceil($count / self::ITEMS_PER_PAGE);
         $page   = $request->query->get('p', 1);
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
-        $orders = array_slice($orders, $offset, self::ITEMS_PER_PAGE);
+        $orders = (clone $qb)
+            ->setMaxResults(self::ITEMS_PER_PAGE)
+            ->setFirstResult($offset)
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return [ $orders, $pages, $page ];
     }
@@ -117,14 +117,15 @@ class AdminController extends Controller
      */
     public function orderAction($id, Request $request)
     {
+        $stateMachineFactory = $this->get('sm.factory');
+
         if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
 
             $order = $this->container->get('sylius.repository.order')->find($id);
 
             $delivery = $this->getDoctrine()
-                ->getRepository(DeliveryOrderItem::class)
-                ->findOneByOrderItem($order->getItems()->get(0))
-                ->getDelivery();
+                ->getRepository(Delivery::class)
+                ->findOneBySyliusOrder($order);
 
             $form = $this->createForm(DeliveryOrderType::class, $order);
 
@@ -132,19 +133,22 @@ class AdminController extends Controller
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
 
-                    $stateMachineFactory = $this->get('sm.factory');
+                    $orderStateMachine =
+                        $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+
+                    $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
 
                     $stripePayment = $this->getDoctrine()
                         ->getRepository(StripePayment::class)
                         ->findOneByOrder($order);
 
-                    $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-                    $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+                    $stripePaymentStateMachine =
+                        $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-                    $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
                     $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
 
                     $this->get('sylius.manager.order')->flush();
+
                     $stripePayment = $this->getDoctrine()
                         ->getManagerForClass(StripePayment::class)
                         ->flush();

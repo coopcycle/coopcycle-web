@@ -54,23 +54,6 @@ class EmbedController extends Controller
         return $pricingRuleSet;
     }
 
-    private function applyTaxes(Delivery $delivery, PricingRuleSet $pricingRuleSet)
-    {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
-
-        $totalIncludingTax = $deliveryManager->getPrice($delivery, $pricingRuleSet);
-
-        if (null === $totalIncludingTax) {
-            throw new \Exception('Impossible de déterminer le prix de la livraison');
-        }
-
-        // FIXME This is deprecated
-        $delivery->setPrice($totalIncludingTax);
-        $delivery->setTotalIncludingTax($totalIncludingTax);
-
-        $deliveryManager->applyTaxes($delivery);
-    }
-
     /**
      * @Route("/embed/delivery/start", name="embed_delivery_start")
      * @Template
@@ -103,6 +86,8 @@ class EmbedController extends Controller
             $this->container->get('profiler')->disable();
         }
 
+        $deliveryManager = $this->get('coopcycle.delivery.manager');
+
         $pricingRuleSet = $this->getPricingRuleSet();
         if (!$pricingRuleSet) {
             throw new NotFoundHttpException('Pricing rule set not configured');
@@ -116,10 +101,10 @@ class EmbedController extends Controller
             try {
 
                 $delivery = $form->getData();
-
-                $this->applyTaxes($delivery, $pricingRuleSet);
+                $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
 
                 return $this->render('@App/Embed/Delivery/summary.html.twig', [
+                    'price' => $price,
                     'form' => $form->createView(),
                 ]);
 
@@ -157,10 +142,9 @@ class EmbedController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
+
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
-
-            $this->applyTaxes($delivery, $pricingRuleSet);
 
             $userManipulator = $this->get('fos_user.util.user_manipulator');
             $userManager = $this->get('fos_user.user_manager');
@@ -181,10 +165,15 @@ class EmbedController extends Controller
                 $userManager->updateUser($user);
             }
 
+            $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
+            $order = $this->createOrderForDelivery($delivery, $price, $user);
+
+            $this->container->get('sylius.repository.order')->add($order);
+
+            $delivery->setSyliusOrder($order);
+
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            $order = $this->createOrderForDelivery($delivery, $user);
 
             $administrators = $this->getDoctrine()
                 ->getRepository(ApiUser::class)

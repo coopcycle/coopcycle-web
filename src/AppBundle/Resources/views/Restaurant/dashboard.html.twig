@@ -34,17 +34,13 @@
 <script src="/tracking/socket.io/socket.io.js"></script>
 <script>
 window.__order_status_i18n = {
-  'CREATED':  "{{ 'order.status.CREATED'|trans }}",
-  'CANCELED': "{{ 'order.status.CANCELED'|trans }}",
-  'WAITING':  "{{ 'order.status.WAITING'|trans }}",
-  'ACCEPTED': "{{ 'order.status.ACCEPTED'|trans }}",
-  'REFUSED':  "{{ 'order.status.REFUSED'|trans }}",
-  'READY':    "{{ 'order.status.READY'|trans }}",
+  'new':      "{{ 'order.state.new'|trans }}",
+  'accepted': "{{ 'order.state.accepted'|trans }}",
+  'refused':  "{{ 'order.state.refused'|trans }}"
 };
 window.__restaurant = {{ restaurant_json|raw }};
-window.__restaurant = {{ restaurant_json|raw }};
-window.__orders = {{ orders_json|raw }};
-window.__order = {{ order_json|raw }};
+window.__orders = {{ orders_normalized|json_encode()|raw }};
+window.__order = {{ order_normalized|json_encode()|raw }};
 window.__routes = {
   'order_accept':    "{{ path(routes.order_accept,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
   'order_refuse':    "{{ path(routes.order_refuse,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",

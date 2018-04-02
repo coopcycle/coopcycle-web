@@ -6,6 +6,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
+use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
 class OrderItem extends BaseOrderItem implements OrderItemInterface
 {
@@ -42,5 +43,13 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     public function setVariant(?ProductVariantInterface $variant): void
     {
         $this->variant = $variant;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function equals(BaseOrderItemInterface $item): bool
+    {
+        return parent::equals($item) || ($item instanceof static && $item->getVariant() === $this->variant);
     }
 }

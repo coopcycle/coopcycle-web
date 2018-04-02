@@ -126,4 +126,21 @@ class OrderManager
     {
         $this->notificationManager->notifyDeliveryConfirmed($order, $order->getCustomer()->getEmail());
     }
+
+    public function publishRedisEvent(OrderInterface $order, $eventName)
+    {
+        switch ($eventName) {
+            case 'order.accept':
+                $channel = sprintf('order:%d:state_changed', $order->getId());
+                $this->redis->publish($channel, $this->serializer->serialize($order, 'json', ['groups' => ['order']]));
+                break;
+
+            case 'order.payment.create':
+                if (null !== $order->getRestaurant()) {
+                    $channel = sprintf('restaurant:%d:orders', $order->getRestaurant()->getId());
+                    $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']]));
+                }
+                break;
+        }
+    }
 }

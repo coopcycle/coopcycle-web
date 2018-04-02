@@ -79,16 +79,20 @@ trait StoreTrait
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->handleDeliveryForm($form, $store->getPricingRuleSet());
+            $price = $this->handleDeliveryForm($form, $store->getPricingRuleSet());
 
             if ($form->isValid()) {
 
                 $delivery = $form->getData();
 
+                $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
+
+                $this->container->get('sylius.repository.order')->add($order);
+
+                $delivery->setSyliusOrder($order);
+
                 $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
                 $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-                $order = $this->createOrderForDelivery($delivery, $this->getUser());
 
                 // TODO Send email
 

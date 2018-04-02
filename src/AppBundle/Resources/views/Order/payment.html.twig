@@ -38,7 +38,7 @@
 
             <div class="text-center">
               <button type="submit" class="btn btn-block btn-primary">
-                {% trans with { '%total%': order.total } %}order.payment.total{% endtrans %}
+                {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
               </button>
             </div>
 

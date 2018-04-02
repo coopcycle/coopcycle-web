@@ -48,9 +48,8 @@ class OrderList extends React.Component
               <th>#</th>
               <th>État</th>
               <th>Date de préparation</th>
-              <th className="text-right">Commande</th>
-              <th className="text-right">Livraison</th>
               <th></th>
+              <th className="text-right">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -64,18 +63,17 @@ class OrderList extends React.Component
   renderOrderRow(order) {
 
     let className = ''
-    if (this.state.active && this.state.active['@id'] === order['@id']) {
+    if (this.state.active && this.state.active['id'] === order['id']) {
       className = 'active'
     }
 
     return (
-      <tr key={ order['@id'] } onClick={ () => this.props.onOrderClick(order) } style={{ cursor: 'pointer' }} className={ className }>
-        <td>{ order['@id'].replace('/api/orders/', '') }</td>
+      <tr key={ order['id'] } onClick={ () => this.props.onOrderClick(order) } style={{ cursor: 'pointer' }} className={ className }>
+        <td>{ order.id }</td>
         <td><OrderLabel order={ order } /></td>
-        <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.preparationDate).format('lll') }</td>
-        <td className="text-right">{ numeral(order.totalIncludingTax).format('0,0.00 $') }</td>
-        <td className="text-right">{ numeral(order.delivery.totalIncludingTax).format('0,0.00 $') }</td>
-        <td className="text-right">{ order.customer.username }</td>
+        <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.shippedAt).format('lll') }</td>
+        <td>{ `${order.items.length} plats` }</td>
+        <td className="text-right">{ numeral(order.total / 100).format('0,0.00 $') }</td>
       </tr>
     )
   }
@@ -90,11 +88,11 @@ class OrderList extends React.Component
       )
     }
 
-    const preparationDate = order => moment(order.preparationDate).format('YYYY-MM-DD')
-    const ordersByDate = _.mapValues(_.groupBy(orders, preparationDate), orders => {
+    const shippedAt = order => moment(order.shippedAt).format('YYYY-MM-DD')
+    const ordersByDate = _.mapValues(_.groupBy(orders, shippedAt), orders => {
       orders.sort((a, b) => {
-        const dateA = moment(a.preparationDate);
-        const dateB = moment(b.preparationDate);
+        const dateA = moment(a.shippedAt);
+        const dateB = moment(b.shippedAt);
         if (dateA === dateB) {
           return 0;
         }
