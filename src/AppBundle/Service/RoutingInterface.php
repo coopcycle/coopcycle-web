@@ -13,4 +13,6 @@ interface RoutingInterface
     public function getPoints(GeoCoordinates $origin, GeoCoordinates $destination);
 
     public function getDistance(GeoCoordinates $origin, GeoCoordinates $destination);
+
+    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination);
 }
