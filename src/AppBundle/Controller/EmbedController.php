@@ -216,6 +216,7 @@ class EmbedController extends Controller
 
         return $this->render('@App/Embed/Delivery/delivery.html.twig', [
             'delivery' => $delivery,
+            'order' => $delivery->getSyliusOrder(),
         ]);
     }
 }

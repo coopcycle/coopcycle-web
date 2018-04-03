@@ -9,6 +9,7 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
+use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -20,6 +21,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     private $factory;
 
     private $productRepository;
+
+    private $productVariantRepository;
 
     private $taxCategoryRepository;
 
@@ -33,12 +36,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     public function __construct(
         ProductVariantFactoryInterface $factory,
         ProductRepositoryInterface $productRepository,
+        ProductVariantRepositoryInterface $productVariantRepository,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
         $this->factory = $factory;
         $this->productRepository = $productRepository;
+        $this->productVariantRepository = $productVariantRepository;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->settingsManager = $settingsManager;
         $this->translator = $translator;
@@ -66,6 +71,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
      */
     public function createForDelivery(Delivery $delivery, int $price): ProductVariantInterface
     {
+        $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $price);
+        $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
+
+        if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
+
+            return $productVariant;
+        }
+
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
 
         $taxCategory = $this->taxCategoryRepository->findOneBy([
@@ -84,12 +97,6 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
-
-        // TODO Make sure the same variant does not exist
-
-        $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $productVariant->getPrice());
-        $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-
         $productVariant->setCode($code);
 
         return $productVariant;
