@@ -72,8 +72,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      */
     private $status;
 
-    private $events;
-
     private $weight;
 
     private $vehicle = self::VEHICLE_BIKE;
@@ -88,8 +86,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             $this->setOrder($order);
             $order->setDelivery($this);
         }
-
-        $this->events = new ArrayCollection();
     }
 
     public function getOriginAddress()
@@ -161,14 +157,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return $this;
     }
 
-    /**
-     * @return ArrayCollection|OrderEvent[]
-    */
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
     public function getWeight()
     {
         return $this->weight;
@@ -179,29 +167,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $this->weight = $weight;
 
         return $this;
-    }
-
-    public function getActualDuration()
-    {
-        if ($this->status === self::STATUS_DELIVERED) {
-
-            $criteria = Criteria::create()
-                ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DISPATCHED));
-            $dispatched = $this->events->matching($criteria)->first();
-
-            $criteria = Criteria::create()
-                ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DELIVERED));
-            $delivered = $this->events->matching($criteria)->first();
-
-            if ($dispatched && $delivered) {
-                $diff = $delivered->getCreatedAt()->diff($dispatched->getCreatedAt());
-
-                $hours = $diff->format('%h');
-                $minutes = $diff->format('%i');
-
-                return $hours > 0 ? "{$hours}h {$minutes}min" : "{$minutes}min";
-            }
-        }
     }
 
     public function getVehicle()

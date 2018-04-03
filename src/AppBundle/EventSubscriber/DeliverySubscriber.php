@@ -4,7 +4,6 @@ namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryEvent;
 use AppBundle\Event\DeliveryCreateEvent;
 use AppBundle\Service\NotificationManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
@@ -39,20 +38,10 @@ final class DeliverySubscriber implements EventSubscriberInterface
         ];
     }
 
-    private function persistEvent(Delivery $delivery, $eventName)
-    {
-        $event = new DeliveryEvent($delivery, $eventName);
-
-        $this->doctrine->getManagerForClass(DeliveryEvent::class)->persist($event);
-        $this->doctrine->getManagerForClass(DeliveryEvent::class)->flush();
-    }
-
     public function onDeliveryCreated(DeliveryCreateEvent $event)
     {
         $delivery = $event->getDelivery();
 
         $this->logger->info(sprintf('Delivery #%d created', $delivery->getId()));
-
-        $this->persistEvent($delivery, 'CREATE');
     }
 }

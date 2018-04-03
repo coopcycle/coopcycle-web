@@ -42,13 +42,6 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 sylius_order_id:
                     referencedColumnName: id
-    oneToMany:
-        events:
-            targetEntity: AppBundle\Entity\DeliveryEvent
-            fetch: LAZY
-            mappedBy: delivery
-            orderBy:
-                createdAt: ASC
     entityListeners:
         AppBundle\Entity\Listener\DeliveryListener:
             prePersist:

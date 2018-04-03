@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryEvent;
 use AppBundle\Event\DeliveryCreateEvent;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
