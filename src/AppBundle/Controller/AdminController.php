@@ -436,7 +436,7 @@ class AdminController extends Controller
             $taxCategory->setCode($taxCategoryCode);
 
             $taxRateCode = $slugify->slugify(
-                sprintf('vat_%02d', $taxRate->getAmount() * 100),
+                join('_', [sprintf('vat_%02d', $taxRate->getAmount() * 100), $taxCategoryCode]),
                 ['separator' => '_']
             );
 
