@@ -6,25 +6,12 @@ AppBundle\Entity\Delivery:
         status:
             type: string
             nullable: true
-        date:
-            type: datetime
-        price:
-            type: float
         weight:
             type: integer
             nullable: true
         vehicle:
             type: string
             nullable: true
-        totalExcludingTax:
-            type: float
-            column: total_excluding_tax
-        totalTax:
-            type: float
-            column: total_tax
-        totalIncludingTax:
-            type: float
-            column: total_including_tax
     manyToOne:
         originAddress:
             targetEntity: AppBundle\Entity\Address
@@ -42,13 +29,6 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 delivery_address_id:
                     referencedColumnName: id
-        taxCategory:
-            targetEntity: Sylius\Component\Taxation\Model\TaxCategoryInterface
-            fetch: LAZY
-            joinColumns:
-                tax_category_id:
-                    referencedColumnName: id
-                    nullable: false
     oneToOne:
         order:
             targetEntity: AppBundle\Entity\Order
@@ -57,13 +37,11 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 order_id:
                     referencedColumnName: id
-    oneToMany:
-        events:
-            targetEntity: AppBundle\Entity\DeliveryEvent
-            fetch: LAZY
-            mappedBy: delivery
-            orderBy:
-                createdAt: ASC
+        syliusOrder:
+            targetEntity: Sylius\Component\Order\Model\OrderInterface
+            joinColumns:
+                sylius_order_id:
+                    referencedColumnName: id
     entityListeners:
         AppBundle\Entity\Listener\DeliveryListener:
             prePersist:

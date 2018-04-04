@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryType;
@@ -26,19 +25,21 @@ trait DeliveryTrait
 
     /**
      * @param Delivery $delivery
+     * @param int $price
+     * @param UserInterface $user
+     *
      * @return Sylius\Component\Order\Model\OrderInterface
      */
-    protected function createOrderForDelivery(Delivery $delivery, UserInterface $user)
+    protected function createOrderForDelivery(Delivery $delivery, int $price, UserInterface $user)
     {
         $orderFactory = $this->container->get('sylius.factory.order');
         $orderItemFactory = $this->container->get('sylius.factory.order_item');
-        $orderRepository = $this->container->get('sylius.repository.order');
         $productVariantFactory = $this->get('sylius.factory.product_variant');
 
         $order = $orderFactory->createNew();
         $order->setCustomer($user);
 
-        $variant = $productVariantFactory->createForDelivery($delivery);
+        $variant = $productVariantFactory->createForDelivery($delivery, $price);
 
         $orderItem = $orderItemFactory->createNew();
         $orderItem->setVariant($variant);
@@ -47,18 +48,6 @@ trait DeliveryTrait
 
         $order->addItem($orderItem);
         $this->container->get('sylius.order_processing.order_processor')->process($order);
-
-        $orderRepository->add($order);
-
-        $deliveryOrderItem = new DeliveryOrderItem($order->getItems()->get(0), $delivery);
-
-        $stripePayment = StripePayment::create($order);
-
-        $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->persist($deliveryOrderItem);
-        $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
-
-        $this->getDoctrine()->getManagerForClass(DeliveryOrderItem::class)->flush();
-        $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
 
         return $order;
     }
@@ -82,10 +71,20 @@ trait DeliveryTrait
         return $this->createForm(DeliveryType::class, $delivery, $options);
     }
 
+    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet)
+    {
+        $price = $this->get('coopcycle.delivery.manager')
+            ->getPrice($delivery, $pricingRuleSet);
+
+        if (null === $price) {
+            throw new \Exception('Price could not be calculated');
+        }
+
+        return (int) ($price * 100);
+    }
+
     protected function handleDeliveryForm(FormInterface $form, PricingRuleSet $pricingRuleSet = null)
     {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
-
         $delivery = $form->getData();
 
         if (null !== $delivery->getId()) {
@@ -96,20 +95,12 @@ trait DeliveryTrait
             $pricingRuleSet = $form->get('pricingRuleSet')->getData();
         }
 
-        $totalIncludingTax = $deliveryManager->getPrice($delivery, $pricingRuleSet);
-
-        if (null === $totalIncludingTax) {
-            $form->addError(
-                new FormError($this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators'))
-            );
-            return;
+        try {
+            return $this->getDeliveryPrice($delivery, $pricingRuleSet);
+        } catch (\Exception $e) {
+            $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+            $form->addError(new FormError($message));
         }
-
-        // FIXME This is deprecated
-        $delivery->setPrice($totalIncludingTax);
-        $delivery->setTotalIncludingTax($totalIncludingTax);
-
-        $deliveryManager->applyTaxes($delivery);
     }
 
     private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])
@@ -120,9 +111,7 @@ trait DeliveryTrait
         $order = null;
 
         if (!$isNew && $this->getUser()->hasRole('ROLE_ADMIN')) {
-            $order = $this->container
-                ->get('sylius.repository.order')
-                ->findOneByDelivery($delivery);
+            $order = $delivery->getSyliusOrder();
         }
 
         $form = $this->createDeliveryForm($delivery, $options);

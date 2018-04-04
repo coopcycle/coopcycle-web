@@ -40,6 +40,8 @@ adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.deliveries.save: Save
 
+adminDashboard.embed.title: External Display
+
 adminDashboard.menuCategories.title: Menu categories
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categories
@@ -246,6 +248,7 @@ order.status.PAYMENT_ERROR: Payment Error
 
 order.state.cart: Waiting
 order.state.new: Confirmed
+order.state.fulfilled: Delivered
 
 order.list.total: Total
 order.list.createdAt: Created at

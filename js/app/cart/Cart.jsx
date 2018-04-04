@@ -21,10 +21,12 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, deliveryDate, streetAddress, isMobileCart, geohash } = this.props;
+    let { items, total, adjustments, deliveryDate, streetAddress, isMobileCart, geohash } = this.props;
 
     this.state = {
       items,
+      total,
+      adjustments,
       toggled: !isMobileCart,
       date: deliveryDate,
       address: streetAddress,
@@ -36,27 +38,10 @@ class Cart extends React.Component
     this.onAddressChange = this.onAddressChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
-    this.computeCartTotal = this.computeCartTotal.bind(this)
   }
 
   onHeaderClick() {
     this.setState({'toggled': !this.state.toggled})
-  }
-
-  computeCartTotal() {
-
-    // Sum delivery price when there is at least one item
-    if (this.state.items.length === 0) {
-      return 0
-    }
-
-    const { flatDeliveryPrice } = this.props.restaurant
-
-    const itemsTotalPrice = _.reduce(this.state.items, function(memo, item) {
-      return memo + item.total;
-    }, 0)
-
-    return (itemsTotalPrice + flatDeliveryPrice).toFixed(2)
   }
 
   resolveAddToCartURL() {
@@ -75,7 +60,7 @@ class Cart extends React.Component
 
   removeItem(item) {
     $.ajax({
-      url: this.resolveRemoveFromCartURL(item.props.itemKey),
+      url: this.resolveRemoveFromCartURL(item.props.id),
       type: 'DELETE',
     })
     .then(res => this.handleAjaxResponse(res))
@@ -95,9 +80,15 @@ class Cart extends React.Component
   }
 
   handleAjaxResponse(res) {
-    this.setState({ items: res.cart.items, errors: res.errors })
-    let total = this.computeCartTotal()
-    this.props.onCartChange(total)
+    this.setState({
+      items: res.cart.items,
+      total: res.cart.total,
+      date: res.cart.date,
+      address: res.cart.shippingAddress ? res.cart.shippingAddress.streetAddress : null,
+      errors: res.errors
+    })
+
+    this.props.onCartChange(res.cart.total)
   }
 
   onDateChange(dateString) {
@@ -175,12 +166,27 @@ class Cart extends React.Component
     ))
   }
 
+  renderAdjustments() {
+    const { adjustments } = this.state
+    if (adjustments.hasOwnProperty('delivery')) {
+      return (
+        <div>
+          { adjustments.delivery.map(adjustment =>
+            <div key={ adjustment.id }>
+              <span>{ adjustment.label }</span>
+              <strong className="pull-right">{ numeral(adjustment.amount / 100).format('0,0.00 $') }</strong>
+            </div>
+          )}
+        </div>
+      )
+    }
+  }
+
   render() {
 
-    let { items, toggled, errors, date, geohash, address } = this.state,
+    let { items, total, toggled, errors, date, geohash, address } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
-        { flatDeliveryPrice } = this.props.restaurant,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
 
     if (items.length > 0) {
@@ -190,12 +196,10 @@ class Cart extends React.Component
             cart={this}
             id={item.id}
             key={key}
-            itemKey={item.key}
             name={item.name}
             total={item.total}
             quantity={item.quantity}
-            modifiersDescription={item.modifiersDescription}
-          />
+            adjustments={item.adjustments} />
         )
       })
 
@@ -206,13 +210,9 @@ class Cart extends React.Component
       cartContent = ( <div className="alert alert-warning">Votre panier est vide</div> )
     }
 
-    let itemsTotalPrice = _.reduce(items, function(memo, item) {
-      return memo + (item.total);
-    }, 0),
-        itemCount = _.reduce(items, function(memo, item) {
+    const itemCount = _.reduce(items, function(memo, item) {
       return memo + (item.quantity);
-    }, 0),
-        total = items.length > 0 ? ( itemsTotalPrice + flatDeliveryPrice ) : 0
+    }, 0)
 
     const warningAlerts = []
     const dangerAlerts = []
@@ -221,14 +221,14 @@ class Cart extends React.Component
       if (errors.total) {
         errors.total.forEach((message, key) => warningAlerts.push(message))
       }
-      if (errors.address) {
-        errors.address.forEach((message, key) => dangerAlerts.push(message))
+      if (errors.shippingAddress) {
+        errors.shippingAddress.forEach((message, key) => dangerAlerts.push(message))
       }
-      if (errors.date) {
-        errors.date.forEach((message, key) => dangerAlerts.push(message))
+      if (errors.shippedAt) {
+        errors.shippedAt.forEach((message, key) => dangerAlerts.push(message))
       }
-      if (errors.item) {
-        errors.item.forEach((message, key) => dangerAlerts.push(message))
+      if (errors.items) {
+        errors.items.forEach((message, key) => dangerAlerts.push(message))
       }
     }
 
@@ -269,17 +269,10 @@ class Cart extends React.Component
               <hr />
               {cartContent}
               <hr />
-              {
-                items.length > 0 && (
-                  <div>
-                    <span>Prix de la course </span>
-                    <strong className="pull-right">{ numeral(flatDeliveryPrice).format('0,0.00 $') }</strong>
-                  </div>
-                )
-              }
+              { items.length > 0 && this.renderAdjustments() }
               <div>
                 <span>Total</span>
-                <strong className="pull-right">{ numeral(total).format('0,0.00 $') }</strong>
+                <strong className="pull-right">{ numeral(total / 100).format('0,0.00 $') }</strong>
               </div>
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
@@ -294,6 +287,8 @@ class Cart extends React.Component
 
 Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
+  total: PropTypes.number.isRequired,
+  adjustments: PropTypes.object.isRequired,
   streetAddress: PropTypes.string.isRequired,
   deliveryDate: PropTypes.string.isRequired,
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,

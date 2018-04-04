@@ -9,6 +9,8 @@ winzou_state_machine:
             new: ~
             cancelled: ~
             fulfilled: ~
+            accepted: ~
+            refused: ~
         transitions:
             create:
                 from: [cart]
@@ -19,16 +21,49 @@ winzou_state_machine:
             fulfill:
                 from: [new]
                 to: fulfilled
+            accept:
+                from: [new]
+                to: accepted
+            refuse:
+                from: [new]
+                to: refused
+            confirm:
+                from: [cart]
+                to: new
         callbacks:
             before:
-                sylius_assign_number:
+                before_create_assign_number:
                     on: "create"
                     do: ["@sylius.order_number_assigner", "assignNumber"]
                     args: ["object"]
+                before_confirm_assign_number:
+                    on: "confirm"
+                    do: ["@sylius.order_number_assigner", "assignNumber"]
+                    args: ["object"]
+                before_confirm_create_stripe_payment:
+                    on: "confirm"
+                    do: ["@order.manager", "createStripePayment"]
+                    args: ["object"]
             after:
-                coopcycle_confirm_order:
-                    on: "create"
-                    do: ["@coopcycle.delivery.manager", "confirmOrder"]
+                after_accept_create_delivery:
+                    on: "accept"
+                    do: ["@order.manager", "createDelivery"]
+                    args: ["object"]
+                after_accept_publish_redis_event:
+                    on: "accept"
+                    do: ["@order.manager", "publishRedisEvent"]
+                    args: ["object", "'order.accept'"]
+                after_accept_send_email:
+                    on: "accept"
+                    do: ["@order.manager", "sendAcceptEmail"]
+                    args: ["object"]
+                after_refuse_send_email:
+                    on: "refuse"
+                    do: ["@order.manager", "sendRefuseEmail"]
+                    args: ["object"]
+                after_confirm_send_email:
+                    on: "confirm"
+                    do: ["@order.manager", "sendConfirmEmail"]
                     args: ["object"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
@@ -66,3 +101,9 @@ winzou_state_machine:
             void:
                 from: [new, processing]
                 to: void
+        callbacks:
+            after:
+                after_create_publish_redis_event:
+                    on: "create"
+                    do: ["@order.manager", "publishRedisEvent"]
+                    args: ["object.getOrder()", "'order.payment.create'"]

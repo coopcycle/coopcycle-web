@@ -78,7 +78,7 @@ class MenuItem extends BaseMenuItem
      */
     public function getIsAvailable()
     {
-        return $this->isAvailable;
+        return $this->isAvailable();
     }
 
     /**
@@ -87,6 +87,11 @@ class MenuItem extends BaseMenuItem
     public function setIsAvailable($isUnavailable)
     {
         $this->isAvailable = $isUnavailable;
+    }
+
+    public function isAvailable()
+    {
+        return $this->isAvailable;
     }
 
     /**

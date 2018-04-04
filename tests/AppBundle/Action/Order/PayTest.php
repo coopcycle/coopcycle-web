@@ -21,6 +21,8 @@ class PayTest extends TestCase
 
     public function testOnlyOrdersWithStatusCreatedCanBePaid()
     {
+        $this->markTestSkipped();
+
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
         $order = new Entity\Order();
@@ -48,6 +50,8 @@ class PayTest extends TestCase
 
     public function testWrongCustomerThrowsException()
     {
+        $this->markTestSkipped();
+
         $this->expectException(AccessDeniedHttpException::class);
 
         $this->user->setRoles(['ROLE_RESTAURANT']);
@@ -63,6 +67,8 @@ class PayTest extends TestCase
 
     public function testMissingStripeTokenThrowsException()
     {
+        $this->markTestSkipped();
+
         $this->expectException(BadRequestHttpException::class);
 
         $this->user->setRoles(['ROLE_RESTAURANT']);
@@ -78,6 +84,8 @@ class PayTest extends TestCase
 
     public function testOrderHasStatusWaiting()
     {
+        $this->markTestSkipped();
+
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
         $restaurant = new Entity\Restaurant();

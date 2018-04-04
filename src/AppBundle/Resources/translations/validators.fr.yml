@@ -1,10 +1,11 @@
 restaurant.openingHours.notBlank: Sélectionnez au moins un créneau d'ouverture
 restaurant.telephone.notBlank: Entrez votre numéro de téléphone
 restaurant.name.notBlank: Entrez le nom de votre restaurant
-restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être admin)
+restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être administrateur de la plateforme)
 restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
 
 address.tooFar: Cette addresse est trop éloignée
+address.notSet: Veuillez choisir une adresse
 
 cart.date.tooSoon: Cette date est trop proche
 cart.address.empty: Veuillez sélectionner une adresse

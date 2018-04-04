@@ -4,21 +4,21 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Cart\RestaurantMismatchException;
-use AppBundle\Entity\Cart\UnavailableProductException;
-use AppBundle\Entity\Cart\Cart;
+use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
 use League\Geotools\Coordinate\Coordinate;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use League\Geotools\Geotools;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use League\Geotools\Geotools;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -27,47 +27,72 @@ class RestaurantController extends Controller
 {
     const ITEMS_PER_PAGE = 15;
 
-    private function getCart(Request $request, Restaurant $restaurant)
-    {
+    private function setCartAddress(OrderInterface $cart, Request $request) {
 
-        $cartId = $request->getSession()->get('cartId');
-
-        if (null === $cartId) {
-            $cart = new Cart($restaurant);
-        } else {
-            $cartRepo = $this->getDoctrine()->getRepository(Cart::class);
-            $cart = $cartRepo->find($cartId);
-        }
-
-        if (!$cart->isForRestaurant($restaurant)) {
-            $cart = new Cart($restaurant);
-        }
-
-        return $cart;
-    }
-
-    private function saveCart(Request $request, Cart $cart)
-    {
-        $cartManager = $this->getDoctrine()->getManagerForClass(Cart::class);
-        $cartManager->persist($cart);
-        $cartManager->flush();
-        $cartId = $cart->getId();
-        $request->getSession()->set('cartId', $cartId);
-    }
-
-    private function setCartAddress(Request $request, Cart $cart) {
+        // TODO Avoid duplicating adresses
+        // If the user is authenticated,
+        // try to match the address with an existing address
 
         $addressData = $request->request->get('address');
 
-        $address = $cart->getAddress() ? $cart->getAddress() : new Address();
+        $address = $cart->getShippingAddress();
+        if (null === $address) {
+            $address = new Address();
+        }
+
         $address->setAddressLocality($addressData['addressLocality']);
         $address->setAddressCountry($addressData['addressCountry']);
         $address->setAddressRegion($addressData['addressRegion']);
         $address->setPostalCode($addressData['postalCode']);
         $address->setStreetAddress($addressData['streetAddress']);
         $address->setGeo(new GeoCoordinates($addressData['latitude'], $addressData['longitude']));
-        $cart->setAddress($address);
+
+        $cart->setShippingAddress($address);
+
         return $address;
+    }
+
+    private function addMenuItemModifiersAdjustment(OrderItemInterface $cartItem, MenuItem $menuItem, array $payload)
+    {
+        $adjustmentFactory = $this->get('sylius.factory.adjustment');
+
+        foreach ($payload as $menuItemModifierId => $modifiersIds) {
+
+            $menuItemModifier = $menuItem->getModifiers()
+                ->filter(function ($menuItemModifier) use ($menuItemModifierId) {
+                    return $menuItemModifier->getId() == $menuItemModifierId;
+                })
+                ->first();
+
+            foreach ($modifiersIds as $modifierId) {
+
+                $modifier = $menuItemModifier->getModifierChoices()
+                    ->filter(function ($modifier) use ($modifierId) {
+                        return $modifier->getId() == $modifierId;
+                    })
+                    ->first();
+
+                $adjustment = $adjustmentFactory->createWithData(
+                    AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+                    $modifier->getName(),
+                    (int) ($menuItemModifier->getModifierPrice($modifier) * 100),
+                    $neutral = false
+                );
+                $cartItem->addAdjustment($adjustment);
+            }
+        }
+    }
+
+    private function jsonResponse(OrderInterface $cart, array $errors)
+    {
+        $serializerContext = [
+            'groups' => ['order']
+        ];
+
+        return new JsonResponse([
+            'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
+            'errors' => $errors,
+        ], count($errors) > 0 ? 400 : 200);
     }
 
     /**
@@ -164,7 +189,6 @@ class RestaurantController extends Controller
      */
     public function indexAction($id, $slug, Request $request)
     {
-
         $user = $this->getUser();
 
         // Preview mode for admin + restaurant owner
@@ -188,12 +212,12 @@ class RestaurantController extends Controller
             }
         }
 
-        $availabilities = $restaurant->getAvailabilities();
+        // This will be used by RestaurantCartContext
+        $request->getSession()->set('restaurantId', $id);
 
         return array(
             'restaurant' => $restaurant,
-            'availabilities' => $availabilities,
-            'cart' => $this->getCart($request, $restaurant),
+            'availabilities' => $restaurant->getAvailabilities(),
         );
     }
 
@@ -205,53 +229,74 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
-        $cart = $this->getCart($request, $restaurant);
+        $cart = $this->get('sylius.context.cart')->getCart();
 
         if ($request->request->has('selectedItemData')) {
 
+            $menuItemRepository = $this->getDoctrine()->getRepository(MenuItem::class);
             $item = $request->request->get('selectedItemData');
-            $repo = $this->getDoctrine()->getRepository(MenuItem::class);
-            $menuItem = $repo->find($item['menuItemId']);
-            $modifierChoices = isset($item['modifiers']) ? $item['modifiers'] : [];
+
+            $menuItem = $menuItemRepository->find($item['menuItemId']);
+
+            if (!$menuItem->isAvailable()) {
+                $errors = [
+                    'items' => [
+                        sprintf('Item %s is not available', $menuItem->getName())
+                    ]
+                ];
+
+                return $this->jsonResponse($cart, $errors);
+            }
+
+            if ($menuItem->getRestaurant() !== $cart->getRestaurant()) {
+                $errors = [
+                    'restaurant' => [
+                        sprintf('Unable to add %s', $menuItem->getName())
+                    ]
+                ];
+
+                return $this->jsonResponse($cart, $errors);
+            }
+
+            // $modifierChoices = isset($item['modifiers']) ? $item['modifiers'] : [];
             $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
 
-            try {
-                $cart->addItem($menuItem, $quantity, $modifierChoices);
-            } catch (RestaurantMismatchException $e) {
-                return new JsonResponse([
-                    'errors' => [
-                        'item' => [
-                            sprintf('Unable to add %s', $menuItem->getName())
-                        ]
-                    ]
-                ], 400);
-            } catch (UnavailableProductException $e) {
-                return new JsonResponse([
-                    'errors' => [
-                        'item' => [
-                            sprintf('Item %s is unavailable', $menuItem->getName())
-                        ]
-                    ]
-                ], 400);
+            $productVariantRepository = $this->get('sylius.repository.product_variant');
+            $orderItemFactory = $this->get('sylius.factory.order_item');
+
+            $productVariant = $productVariantRepository->findOneByMenuItem($menuItem);
+
+            $cartItem = $orderItemFactory->createNew();
+            $cartItem->setVariant($productVariant);
+            $cartItem->setUnitPrice($productVariant->getPrice());
+            if (isset($item['modifiers'])) {
+                $this->addMenuItemModifiersAdjustment($cartItem, $menuItem, $item['modifiers']);
             }
+
+            $this->get('sylius.order_item_quantity_modifier')->modify($cartItem, $quantity);
+
+            $this->get('sylius.order_modifier')->addToOrder($cart, $cartItem);
         }
 
         if ($request->request->has('date')) {
-            $cart->setDate(new \DateTime($request->request->get('date')));
+            $cart->setShippedAt(new \DateTime($request->request->get('date')));
         }
 
         if ($request->request->has('address')) {
-            $this->setCartAddress($request, $cart);
+            $this->setCartAddress($cart, $request);
         }
 
+        $this->get('sylius.manager.order')->persist($cart);
+        $this->get('sylius.manager.order')->flush();
+
+        // TODO Find a better way to do this
+        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+        $request->getSession()->set($sessionKeyName, $cart->getId());
+
         $errors = $this->get('validator')->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
 
-        $this->saveCart($request, $cart);
-
-        return new JsonResponse([
-            'cart' => $cart->toArray(),
-            'errors' => ValidationUtils::serializeValidationErrors($errors)
-        ], count($errors) > 0 ? 400 : 200);
+        return $this->jsonResponse($cart, $errors);
     }
 
     /**
@@ -260,19 +305,20 @@ class RestaurantController extends Controller
     public function removeFromCartAction($id, $itemKey, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository('AppBundle:Restaurant')->find($id);
+            ->getRepository(Restaurant::class)->find($id);
 
-        $cart = $this->getCart($request, $restaurant);
+        $cart = $this->get('sylius.context.cart')->getCart();
+        $cartItem = $this->get('sylius.repository.order_item')->find($itemKey);
 
-        $cart->removeItem($itemKey);
+        $this->get('sylius.order_modifier')->removeFromOrder($cart, $cartItem);
+
+        $this->get('sylius.manager.order')->persist($cart);
+        $this->get('sylius.manager.order')->flush();
 
         $errors = $this->get('validator')->validate($cart);
-        $this->saveCart($request, $cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
 
-        return new JsonResponse([
-            'cart' => $cart->toArray(),
-            'errors' => ValidationUtils::serializeValidationErrors($errors)
-        ], count($errors) > 0 ? 400 : 200);
+        return $this->jsonResponse($cart, $errors);
     }
 
     /**

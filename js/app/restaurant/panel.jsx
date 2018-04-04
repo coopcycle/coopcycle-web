@@ -25,11 +25,9 @@ orderList = render(
       orderList.setActive(order)
       orderDetails.setOrder(order)
 
-      const orderId = order['@id'].replace('/api/orders/', '')
-
       const url = window.__routes['dashboard_order']
         .replace('__RESTAURANT_ID__', restaurant.id)
-        .replace('__ORDER_ID__', orderId)
+        .replace('__ORDER_ID__', order.id)
 
       window.history.pushState({}, '', url)
 

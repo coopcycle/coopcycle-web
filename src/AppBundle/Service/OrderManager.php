@@ -4,40 +4,37 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Task;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
-use AppBundle\Service\PaymentService;
+use AppBundle\Service\RoutingInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
-use Sylius\Component\Taxation\Calculator\CalculatorInterface;
-use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderManager
 {
-    private $payment;
+    private $doctrine;
     private $redis;
     private $serializer;
-    private $taxRateResolver;
-    private $calculator;
-    private $taxCategoryRepository;
-    private $deliveryManager;
     private $eventDispatcher;
 
-    public function __construct(PaymentService $payment,
-        Redis $redis, SerializerInterface $serializer,
-        TaxRateResolverInterface $taxRateResolver, CalculatorInterface $calculator,
-        TaxCategoryRepositoryInterface $taxCategoryRepository, DeliveryManager $deliveryManager,
+    public function __construct(
+        ManagerRegistry $doctrine,
+        Redis $redis,
+        SerializerInterface $serializer,
+        RoutingInterface $routing,
+        NotificationManager $notificationManager,
         EventDispatcherInterface $eventDispatcher)
     {
-        $this->payment = $payment;
+        $this->doctrine = $doctrine;
         $this->redis = $redis;
         $this->serializer = $serializer;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->calculator = $calculator;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->deliveryManager = $deliveryManager;
+        $this->routing = $routing;
+        $this->notificationManager = $notificationManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -73,29 +70,77 @@ class OrderManager
         $this->eventDispatcher->dispatch(OrderCancelEvent::NAME, new OrderCancelEvent($order));
     }
 
-    public function applyTaxes(Order $order)
+    public function createDelivery(OrderInterface $order)
     {
-        $orderTotalTax = 0;
-        $orderTotalIncludingTax = 0;
+        $pickupAddress = $order->getRestaurant()->getAddress();
+        $dropoffAddress = $order->getShippingAddress();
 
-        foreach ($order->getOrderedItem() as $item) {
-            $rate = $this->taxRateResolver->resolve($item->getMenuItem());
+        $duration = $this->routing->getDuration(
+            $pickupAddress->getGeo(),
+            $dropoffAddress->getGeo()
+        );
 
-            if (null === $rate) {
-                continue;
-            }
+        $dropoffDoneBefore = $order->getShippedAt();
 
-            $itemTotalIncludingTax = $item->getPrice() * $item->getQuantity();
+        $pickupDoneBefore = clone $dropoffDoneBefore;
+        $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
 
-            $orderTotalTax += $this->calculator->calculate($itemTotalIncludingTax, $rate);
-            $orderTotalIncludingTax += $itemTotalIncludingTax;
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setAddress($pickupAddress);
+        $pickup->setDoneBefore($pickupDoneBefore);
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff->setDoneBefore($dropoffDoneBefore);
+
+        $delivery = new Delivery();
+        $delivery->setSyliusOrder($order);
+        $delivery->addTask($pickup);
+        $delivery->addTask($dropoff);
+
+        $this->doctrine->getManagerForClass(Delivery::class)->persist($delivery);
+        $this->doctrine->getManagerForClass(Delivery::class)->flush();
+    }
+
+    public function createStripePayment(OrderInterface $order)
+    {
+        $stripePayment = StripePayment::create($order);
+
+        $this->doctrine->getManagerForClass(StripePayment::class)->persist($stripePayment);
+        $this->doctrine->getManagerForClass(StripePayment::class)->flush();
+    }
+
+    public function sendAcceptEmail(OrderInterface $order)
+    {
+        // TODO
+    }
+
+    public function sendRefuseEmail(OrderInterface $order)
+    {
+        // TODO
+    }
+
+    public function sendConfirmEmail(OrderInterface $order)
+    {
+        $this->notificationManager->notifyDeliveryConfirmed($order, $order->getCustomer()->getEmail());
+    }
+
+    public function publishRedisEvent(OrderInterface $order, $eventName)
+    {
+        switch ($eventName) {
+            case 'order.accept':
+                $channel = sprintf('order:%d:state_changed', $order->getId());
+                $this->redis->publish($channel, $this->serializer->serialize($order, 'json', ['groups' => ['order']]));
+                break;
+
+            case 'order.payment.create':
+                if (null !== $order->getRestaurant()) {
+                    $channel = sprintf('restaurant:%d:orders', $order->getRestaurant()->getId());
+                    $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']]));
+                }
+                break;
         }
-
-        $order->setTotalExcludingTax($orderTotalIncludingTax - $orderTotalTax);
-        $order->setTotalTax($orderTotalTax);
-        $order->setTotalIncludingTax($orderTotalIncludingTax);
-
-        // Also apply taxes on delivery
-        $this->deliveryManager->applyTaxes($order->getDelivery());
     }
 }

@@ -2,27 +2,31 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Cart\Cart;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Model\OrderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CartProviderService
 {
-    public function __construct($doctrine, RequestStack $requestStack)
+    private $cartContext;
+
+    private $serializer;
+
+    public function __construct(CartContextInterface $cartContext, SerializerInterface $serializer)
     {
-        $this->doctrine = $doctrine;
-        $this->requestStack = $requestStack;
-
+        $this->cartContext = $cartContext;
+        $this->serializer = $serializer;
     }
 
-    public function getCart() {
-        $request = $this->requestStack->getCurrentRequest();
-        $cartRepository = $this->doctrine->getRepository(Cart::class);
-        $cartId = $request->getSession()->get('cartId');
-
-        if(!is_null($cartId)) {
-            return $cartRepository->find($cartId);
-        }
-
+    public function getCart()
+    {
+        return $this->cartContext->getCart();
     }
 
+    public function normalize(OrderInterface $cart)
+    {
+        return $this->serializer->normalize($cart, 'json', [
+            'groups' => ['order']
+        ]);
+    }
 }

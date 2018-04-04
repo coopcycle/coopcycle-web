@@ -3,7 +3,7 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
@@ -29,9 +29,11 @@ final class OrderSubscriber implements EventSubscriberInterface
     private $redis;
     private $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage,
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
         NotificationManager $notificationManager,
-        MetricsHelper $metricsHelper, Redis $redis,
+        MetricsHelper $metricsHelper,
+        Redis $redis,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
@@ -70,31 +72,23 @@ final class OrderSubscriber implements EventSubscriberInterface
 
     public function preValidate(GetResponseForControllerResultEvent $event)
     {
-        $order = $event->getControllerResult();
+        $result = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
 
-        if (!$order instanceof Order || Request::METHOD_POST !== $method) {
+        if (!($result instanceof Order && Request::METHOD_POST === $method)) {
             return;
         }
 
-        $delivery = $order->getDelivery();
+        $order = $result;
 
-        // Convert date to DateTime
-        if (!$delivery->getDate() instanceof \DateTime) {
-            $delivery->setDate(new \DateTime($delivery->getDate()));
-        }
+        // // Convert date to DateTime
+        // if (!$delivery->getDate() instanceof \DateTime) {
+        //     $delivery->setDate(new \DateTime($delivery->getDate()));
+        // }
 
         // Make sure customer is set
         if (null === $order->getCustomer()) {
             $order->setCustomer($this->getUser());
-        }
-
-        // Make sure models are associated
-        $delivery->setOrder($order);
-
-        // Make sure originAddress is set
-        if (null === $delivery->getOriginAddress()) {
-            $delivery->setOriginAddress($order->getRestaurant()->getAddress());
         }
 
         $event->setControllerResult($order);

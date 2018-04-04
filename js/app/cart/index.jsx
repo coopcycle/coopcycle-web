@@ -63,12 +63,12 @@ if (cart) {
 
 // 1. User picked date on the restaurant list page
 // 2. User has opened a Cart before
-  var initialDate = localStorage.getItem('search__date') || window.AppData.Cart.date || '',
+  var initialDate = window.AppData.Cart.date || localStorage.getItem('search__date') || '',
       availabilities = window.AppData.availabilities,
       // TODO : check with someone knowledgeable in React if it is the right place to do this
       initialDate = moment(initialDate).isAfter(moment(availabilities[0])) ? initialDate : availabilities[0],
       geohash = localStorage.getItem('search_geohash') || '',
-      streetAddress = localStorage.getItem('search_address') || '';
+      streetAddress = window.AppData.Cart.shippingAddress.streetAddress || localStorage.getItem('search_address') || '';
 
   cartComponent = render(
         <Cart
@@ -78,6 +78,8 @@ if (cart) {
           deliveryDate={initialDate}
           availabilities={availabilities}
           items={window.AppData.Cart.items}
+          total={window.AppData.Cart.total}
+          adjustments={window.AppData.Cart.adjustments}
           restaurant={window.AppData.Restaurant}
           addToCartURL={window.AppData.Cart.addToCartURL}
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}

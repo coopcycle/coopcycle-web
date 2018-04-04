@@ -63,14 +63,6 @@ const channels = {
     toJSON: true,
     psubscribe: false
   },
-  'delivery_events': {
-    toJSON: true,
-    psubscribe: false
-  },
-  'order_events': {
-    toJSON: true,
-    psubscribe: false
-  },
   'autoscheduler:begin_delivery': {
     toJSON: true,
     psubscribe: false
@@ -91,6 +83,10 @@ const channels = {
     toJSON: true,
     psubscribe: true
   },
+  'order:*:state_changed': {
+    toJSON: true,
+    psubscribe: true
+  }
 }
 
 io.on('connection', function (socket) {

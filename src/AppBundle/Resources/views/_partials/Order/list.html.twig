@@ -19,18 +19,20 @@
 
   <tr>
     <td width="5%">
-      {% if order.restaurant is defined %}
+      {% if order.restaurant is not null %}
         {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: order.restaurant.id, orderId: order.id }) }}">#{{ order.id }}</a>
+        <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: order.restaurant.id, orderId: order.id }) }}">
+          #{{ order.id }}
+        </a>
         {% else %}
-        <a href="{{ path('profile_order', { id: order.id }) }}">#{{ order.id }}</a>
+        <a href="{{ path('profile_order', { id: order.number }) }}">{{ order.number }}</a>
         {% endif %}
       {% else %}
         <a href="{{ path(order_route, { id: order.id, type: 'sylius' }) }}">#{{ order.id }}</a>
       {% endif %}
     </td>
     <td width="5%">
-      {% if order.restaurant is defined %}
+      {% if order.restaurant is not null %}
         <i class="fa fa-cutlery"></i>
       {% else %}
         <i class="fa fa-bicycle"></i>
@@ -38,30 +40,31 @@
     </td>
     {% if is_granted('ROLE_ADMIN') %}
     <td width="10%">
+      {% if order.customer is not null %}
       <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
         <i class="fa fa-user"></i> {{ order.customer.username }}
       </a>
+      {% endif %}
     </td>
     {% endif %}
     <td width="10%">{% include '@App/_partials/Order/state.html.twig' %}</td>
     <td>
-      {% if order.restaurant is defined %}
+      {% if order.restaurant is not null %}
         {% trans with {
           '%restaurant_url%': path(routes.restaurant, { id: order.restaurant.id }),
           '%restaurant_name%': order.restaurant.name
         } %}order.list.summary.restaurant.text{% endtrans %}
       {% else %}
-        {% trans with {
-          '%distance%': order.delivery.distance|meters_to_kilometers,
-          '%vehicle%': ('vehicle.' ~ order.delivery.vehicle)|trans
-        } %}order.list.summary.delivery.text{% endtrans %}
+        {% for item in order.items %}
+          {{ item.variant.name }}
+        {% endfor %}
       {% endif %}
     </td>
     <td class="text-right">
       <span>{{ order.total|price_format }} €</span>
     </td>
-    <td width="10%">
-      {% if order.restaurant is defined %}
+    <td width="10%" class="text-right">
+      {% if order.restaurant is not null %}
       <a target="_blank" href="{{ path(routes.order_invoice, { id: order.id }) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
@@ -70,7 +73,7 @@
     <td class="text-right">{{ order.createdAt|ago }}</td>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <td>
-      {% if order.restaurant is defined and order.state == 'cart' %}
+      {% if order.restaurant is not null and order.state in ['new', 'accepted'] %}
       <form method="post" action="{{ path('admin_orders_order_cancel', { id: order.id }) }}">
         <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}order.list.cancel{% endtrans %}</button>
       </form>

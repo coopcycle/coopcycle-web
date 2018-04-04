@@ -121,4 +121,16 @@ class Osrm extends Base
 
         return $response['routes'][0]['distance'];
     }
+
+    /**
+     * @param GeoCoordinates $origin
+     * @param GeoCoordinates $destination
+     * @return mixed
+     */
+    public function getDuration(GeoCoordinates $origin, GeoCoordinates $destination)
+    {
+        $response = $this->getRawResponse($origin, $destination);
+
+        return $response['routes'][0]['duration'];
+    }
 }

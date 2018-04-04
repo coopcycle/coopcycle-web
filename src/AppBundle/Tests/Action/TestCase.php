@@ -8,6 +8,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NotificationManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PaymentService;
+use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
@@ -44,6 +45,7 @@ class TestCase extends BaseTestCase
         $expressionLanguage = $this->prophesize(ExpressionLanguage::class);
         $notificationManager = $this->prophesize(NotificationManager::class);
         $settingsManager = $this->prophesize(SettingsManager::class);
+        $routing = $this->prophesize(RoutingInterface::class);
 
         $this->user = new Entity\ApiUser();
 
@@ -53,23 +55,15 @@ class TestCase extends BaseTestCase
         $tokenStorage->getToken()->willReturn($token->reveal());
 
         $deliveryManager = new DeliveryManager(
-            $doctrine->reveal(),
-            $settingsManager->reveal(),
-            $taxRateResolver->reveal(),
-            $calculator->reveal(),
-            $taxCategoryRepository->reveal(),
-            $expressionLanguage->reveal(),
-            $notificationManager->reveal()
+            $expressionLanguage->reveal()
         );
 
         $orderManager = new OrderManager(
-            $paymentService->reveal(),
+            $doctrine->reveal(),
             $this->redisProphecy->reveal(),
             $serializer->reveal(),
-            $taxRateResolver->reveal(),
-            $calculator->reveal(),
-            $taxCategoryRepository->reveal(),
-            $deliveryManager,
+            $routing->reveal(),
+            $notificationManager->reveal(),
             $this->eventDispatcher->reveal()
         );
 

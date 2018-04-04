@@ -19,6 +19,8 @@ class AcceptTest extends TestCase
 
     public function testOnlyRestaurantsCanAcceptOrders()
     {
+        $this->markTestSkipped();
+
         $restaurant = new Entity\Restaurant();
 
         $order = new Entity\Order();
@@ -37,6 +39,8 @@ class AcceptTest extends TestCase
 
     public function testOnlyOrdersWithStatusWaitingCanBeAccepted()
     {
+        $this->markTestSkipped();
+
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
         $restaurant = new Entity\Restaurant();

@@ -13,3 +13,37 @@ AppBundle\Entity\Base\MenuItem:
   attributes:
     offers:
       groups: ['restaurant']
+
+Sylius\Component\Order\Model\Order:
+  attributes:
+    id:
+      groups: ['order']
+    restaurant:
+      groups: ['order', 'order_create']
+    shippingAddress:
+      groups: ['order', 'order_create']
+    shippedAt:
+      groups: ['order', 'order_create']
+    customer:
+      groups: ['order']
+    items:
+      groups: ['order', 'order_create']
+    total:
+      groups: ['order']
+    taxTotal:
+      groups: ['order']
+    state:
+      groups: ['order']
+    createdAt:
+      groups: ['order']
+
+Sylius\Component\Order\Model\OrderItem:
+  attributes:
+    id:
+      groups: ['order']
+    quantity:
+      groups: ['order']
+    total:
+      groups: ['order']
+    unitPrice:
+      groups: ['order']

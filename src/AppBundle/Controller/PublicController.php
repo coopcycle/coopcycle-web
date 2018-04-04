@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryOrderItem;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\StripePaymentType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -39,11 +38,9 @@ class PublicController extends Controller
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
-        $deliveryOrderItem = $this->getDoctrine()
-            ->getRepository(DeliveryOrderItem::class)
-            ->findOneByOrderItem($order->getItems()->get(0));
-
-        $delivery = $deliveryOrderItem->getDelivery();
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->findOneBySyliusOrder($order);
 
         $stripePayment = $this->getDoctrine()
             ->getRepository(StripePayment::class)
@@ -98,11 +95,9 @@ class PublicController extends Controller
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
-        $deliveryOrderItem = $this->getDoctrine()
-            ->getRepository(DeliveryOrderItem::class)
-            ->findOneByOrderItem($order->getItems()->get(0));
-
-        $delivery = $deliveryOrderItem->getDelivery();
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->findOneBySyliusOrder($order);
 
         $html = $this->renderView('@App/Pdf/delivery.html.twig', [
             'order' => $order,

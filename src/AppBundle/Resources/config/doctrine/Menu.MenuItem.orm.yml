@@ -41,3 +41,7 @@ AppBundle\Entity\Menu\MenuItem:
                 - all
             fetch: LAZY
             mappedBy: menuItem
+    entityListeners:
+        AppBundle\Entity\Listener\MenuItemListener:
+            postPersist:
+                - postPersist

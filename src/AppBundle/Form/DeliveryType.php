@@ -170,13 +170,6 @@ class DeliveryType extends AbstractType
             $delivery->setDuration((int) $duration);
             $delivery->setPolyline($polyline);
         });
-
-        // Make sure legacy "date" field is set
-        $builder->get('dropoff')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
-            $delivery = $event->getForm()->getParent()->getData();
-            $data = $event->getData();
-            $delivery->setDate(new \DateTime($data['doneBefore']));
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -4,13 +4,10 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\Model\TaxableTrait;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Sylius\Component\Taxation\Model\TaxCategoryInterface;
-use Sylius\Component\Taxation\Model\TaxableInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -26,12 +23,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
- * @AssertDelivery
  */
-class Delivery extends TaskCollection implements TaxableInterface, TaskCollectionInterface
+class Delivery extends TaskCollection implements TaskCollectionInterface
 {
-    use TaxableTrait;
-
     // default status when the delivery is created along the order
     const STATUS_WAITING    = 'WAITING';
     // the delivery has been accepted by a courier
@@ -67,26 +61,14 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
 
     private $order;
 
+    private $syliusOrder;
+
     /**
      * @var string
      *
      * @Groups({"delivery", "order"})
      */
     private $status;
-
-    /**
-     * @Groups({"order_create", "delivery", "order"})
-     */
-    private $date;
-
-    private $events;
-
-    /**
-     * @Groups({"order"})
-     */
-    private $price;
-
-    private $taxCategory;
 
     private $weight;
 
@@ -102,8 +84,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
             $this->setOrder($order);
             $order->setDelivery($this);
         }
-
-        $this->events = new ArrayCollection();
     }
 
     public function getOriginAddress()
@@ -137,18 +117,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         return $this;
     }
 
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
     public function getOrder()
     {
         return $this->order;
@@ -156,10 +124,21 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
 
     public function setOrder(Order $order)
     {
-        $this->setPriceFromOrder($order);
         $this->setOriginAddressFromOrder($order);
 
         $this->order = $order;
+
+        return $this;
+    }
+
+    public function getSyliusOrder()
+    {
+        return $this->syliusOrder;
+    }
+
+    public function setSyliusOrder(OrderInterface $order)
+    {
+        $this->syliusOrder = $order;
 
         return $this;
     }
@@ -176,49 +155,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         return $this;
     }
 
-    /**
-     * @return ArrayCollection|OrderEvent[]
-    */
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param float $price
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-    }
-
-    public function setPriceFromOrder(Order $order)
-    {
-        if (null !== $order->getRestaurant()) {
-            $this->price = $order->getRestaurant()->getFlatDeliveryPrice();
-        }
-    }
-
-    public function getTaxCategory(): ?TaxCategoryInterface
-    {
-        return $this->taxCategory;
-    }
-
-    public function setTaxCategory(TaxCategoryInterface $taxCategory)
-    {
-        $this->taxCategory = $taxCategory;
-
-        return $this;
-    }
-
     public function getWeight()
     {
         return $this->weight;
@@ -229,29 +165,6 @@ class Delivery extends TaskCollection implements TaxableInterface, TaskCollectio
         $this->weight = $weight;
 
         return $this;
-    }
-
-    public function getActualDuration()
-    {
-        if ($this->status === self::STATUS_DELIVERED) {
-
-            $criteria = Criteria::create()
-                ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DISPATCHED));
-            $dispatched = $this->events->matching($criteria)->first();
-
-            $criteria = Criteria::create()
-                ->andWhere(Criteria::expr()->eq('eventName', self::STATUS_DELIVERED));
-            $delivered = $this->events->matching($criteria)->first();
-
-            if ($dispatched && $delivered) {
-                $diff = $delivered->getCreatedAt()->diff($dispatched->getCreatedAt());
-
-                $hours = $diff->format('%h');
-                $minutes = $diff->format('%i');
-
-                return $hours > 0 ? "{$hours}h {$minutes}min" : "{$minutes}min";
-            }
-        }
     }
 
     public function getVehicle()
