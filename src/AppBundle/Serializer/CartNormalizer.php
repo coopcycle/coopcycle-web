@@ -50,7 +50,8 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
                 'latlng' => [
                     $shippingAddress->getGeo()->getLatitude(),
                     $shippingAddress->getGeo()->getLongitude(),
-                ]
+                ],
+                'streetAddress' => $shippingAddress->getStreetAddress()
             ];
         }
 
