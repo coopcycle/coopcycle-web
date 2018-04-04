@@ -289,7 +289,7 @@ Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
   total: PropTypes.number.isRequired,
   adjustments: PropTypes.object.isRequired,
-  streetAddress: PropTypes.string.isRequired,
+  streetAddress: PropTypes.string,
   deliveryDate: PropTypes.string.isRequired,
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,
   validateCartURL: PropTypes.string.isRequired,

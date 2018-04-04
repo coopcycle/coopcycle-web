@@ -157,7 +157,7 @@ AddressPicker.propTypes = {
       suggestion: PropTypes.string.isRequired,
       preferred: PropTypes.bool.isRequired,
   })).isRequired,
-  address: PropTypes.string.isRequired,
+  address: PropTypes.string,
   geohash: PropTypes.string.isRequired,
   onPlaceChange: PropTypes.func.isRequired,
   inputProps: PropTypes.object

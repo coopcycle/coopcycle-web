@@ -67,8 +67,10 @@ if (cart) {
       availabilities = window.AppData.availabilities,
       // TODO : check with someone knowledgeable in React if it is the right place to do this
       initialDate = moment(initialDate).isAfter(moment(availabilities[0])) ? initialDate : availabilities[0],
-      geohash = localStorage.getItem('search_geohash') || '',
-      streetAddress = window.AppData.Cart.shippingAddress.streetAddress || localStorage.getItem('search_address') || '';
+      geohash = localStorage.getItem('search_geohash') || ''
+
+  const shippingAddress = window.AppData.Cart.shippingAddress
+  const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
 
   cartComponent = render(
         <Cart
