@@ -25,7 +25,6 @@
     <div class="col-md-6">
 
       <div class="panel panel-default">
-        <!-- Default panel contents -->
         <div class="panel-heading"><h4 class="nomargin">Résumé</h4></div>
         <div class="panel-body">
           <p class="nomargin"><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
@@ -38,21 +37,15 @@
         <table class="table">
           <tbody>
             <tr>
-              <th>Total HT</th>
-              <td class="text-right">
-                {{ delivery.totalExcludingTax }}€
-              </td>
-            </tr>
-            <tr>
-              <th>Total TVA</th>
-              <td class="text-right">
-                {{ delivery.totalTax }}€
-              </td>
-            </tr>
-            <tr>
               <th>Total TTC</th>
               <td class="text-right">
-                {{ delivery.totalIncludingTax }}€
+                {{ order.total|price_format }}€
+              </td>
+            </tr>
+            <tr>
+              <th>Dont TVA</th>
+              <td class="text-right">
+                {{ order.taxTotal|price_format }}€
               </td>
             </tr>
           </tbody>
@@ -87,7 +80,7 @@
           </div>
 
           <button type="submit" class="btn btn-block btn-lg btn-primary">
-            {% trans with { '%total%': (stripe_payment.amount / 100) } %}order.payment.total{% endtrans %}
+            {% trans with { '%total%': stripe_payment.amount|price_format } %}order.payment.total{% endtrans %}
           </button>
 
         {{ form_end(form) }}
