@@ -15,7 +15,10 @@ class DatePicker extends Component {
 
     let availableTimes, date, time
 
-    if (value && moment(value).isAfter(moment(availabilities[0]))) {
+    // cases we ignore the initial date :
+    // - the initial date is in the past
+    // - the initial date day is not open for this restaurant (can happen if set in another restaurant)
+    if (value && moment(value).isAfter(moment(availabilities[0])) && days.hasOwnProperty(moment(value).format('YYYY-MM-DD'))) {
       let day = moment(value).format('YYYY-MM-DD')
       availableTimes = days[day].map(date => moment(date).format('HH:mm'))
       const deliveryDateMoment = moment(value)
