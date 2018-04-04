@@ -18,32 +18,14 @@ class OrderValidator extends ConstraintValidator
         $this->routing = $routing;
     }
 
-    public function validate($object, Constraint $constraint)
+    private function validateRestaurant($object, Constraint $constraint)
     {
-        if (!$object instanceof OrderInterface) {
-            throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', OrderInterface::class));
-        }
-
-        $now = Carbon::now();
-
         $order = $object;
-        $isNew = $order->getId() === null;
-
         $restaurant = $order->getRestaurant();
-        $shippedAt = $order->getShippedAt();
 
-        if ($isNew && $shippedAt < $now) {
-            $this->context->buildViolation($constraint->dateHasPassedMessage)
-                ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
-                ->atPath('shippedAt')
-                ->addViolation();
-
-            return;
-        }
-
-        if (!$restaurant->isOpen($shippedAt)) {
+        if (!$restaurant->isOpen($order->getShippedAt())) {
             $this->context->buildViolation($constraint->restaurantClosedMessage)
-                ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
+                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
                 ->atPath('shippedAt')
                 ->addViolation();
 
@@ -85,6 +67,31 @@ class OrderValidator extends ConstraintValidator
                 ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
                 ->atPath('total')
                 ->addViolation();
+        }
+    }
+
+    public function validate($object, Constraint $constraint)
+    {
+        if (!$object instanceof OrderInterface) {
+            throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', OrderInterface::class));
+        }
+
+        $now = Carbon::now();
+
+        $order = $object;
+        $isNew = $order->getId() === null;
+
+        if ($isNew && $order->getShippedAt() < $now) {
+            $this->context->buildViolation($constraint->dateHasPassedMessage)
+                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
+                ->atPath('shippedAt')
+                ->addViolation();
+
+            return;
+        }
+
+        if (null !== $order->getRestaurant()) {
+            $this->validateRestaurant($object, $constraint);
         }
     }
 }
