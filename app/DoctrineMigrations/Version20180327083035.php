@@ -15,12 +15,24 @@ class Version20180327083035 extends AbstractMigration implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
+    private function findAllOrders()
+    {
+        $stmt = $this->connection->prepare('SELECT * FROM sylius_order');
+        $stmt->execute();
+
+        $orders = [];
+        while ($order = $stmt->fetch()) {
+            $orders[] = $order;
+        }
+
+        return $orders;
+    }
+
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
 
         $settingsManager       = $this->container->get('coopcycle.settings_manager');
-        $orderRepository       = $this->container->get('sylius.repository.order');
         $taxCategoryRepository = $this->container->get('sylius.repository.tax_category');
         $taxCalculator         = $this->container->get('sylius.tax_calculator');
         $adjustmentFactory     = $this->container->get('sylius.factory.adjustment');
@@ -36,13 +48,11 @@ class Version20180327083035 extends AbstractMigration implements ContainerAwareI
         ]);
         $taxRate = $taxCategory->getRates()->get(0);
 
-        $orders = $orderRepository->findAll();
-
         $stmt = $this->connection->prepare('SELECT id AS order_item_id, total FROM sylius_order_item WHERE order_id = :order_id');
 
-        foreach ($orders as $order) {
+        foreach ($this->findAllOrders() as $order) {
 
-            $stmt->bindParam('order_id', $order->getId);
+            $stmt->bindParam('order_id', $order['id']);
             $stmt->execute();
 
             while ($row = $stmt->fetch()) {

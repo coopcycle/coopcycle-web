@@ -2,7 +2,6 @@
 
 namespace Application\Migrations;
 
-use AppBundle\Entity\DeliveryOrderItem;
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -16,6 +15,19 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
     use ContainerAwareTrait;
 
     const PRODUCT_CODE = 'CPCCL-ODDLVR';
+
+    private function findAllDeliveryOrderItems()
+    {
+        $stmt = $this->connection->prepare('SELECT delivery_order_item.order_item_id, delivery.vehicle, delivery.total_including_tax, task_collection.distance FROM delivery_order_item JOIN delivery ON delivery_order_item.delivery_id = delivery.id JOIN task_collection ON task_collection.id = delivery.id');
+        $stmt->execute();
+
+        $deliveryOrderItems = [];
+        while ($deliveryOrderItem = $stmt->fetch()) {
+            $deliveryOrderItems[] = $deliveryOrderItem;
+        }
+
+        return $deliveryOrderItems;
+    }
 
     public function up(Schema $schema)
     {
@@ -48,17 +60,13 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
             ]);
         }
 
-        $deliveryOrderItems = $doctrine->getRepository(DeliveryOrderItem::class)->findAll();
-        foreach ($deliveryOrderItems as $deliveryOrderItem) {
+        foreach ($this->findAllDeliveryOrderItems() as $deliveryOrderItem) {
 
-            $orderItem = $deliveryOrderItem->getOrderItem();
-            $delivery = $deliveryOrderItem->getDelivery();
+            $price = (int) ($deliveryOrderItem['total_including_tax'] * 100);
 
-            $price = (int) $delivery->getTotalIncludingTax() * 100;
-
-            $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $price);
+            $hash = sprintf('%s-%d-%d', $deliveryOrderItem['vehicle'], $deliveryOrderItem['distance'], $price);
             $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-            $name = sprintf('Livraison %d km', number_format($delivery->getDistance() / 1000, 2));
+            $name = sprintf('Livraison %d km', number_format($deliveryOrderItem['distance'] / 1000, 2));
 
             $this->addSql('INSERT INTO sylius_product_variant (product_id, code, position, tax_category_id, price, created_at, updated_at) SELECT id, :code, :position, :tax_category_id, :price, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM sylius_product WHERE code = :product_code', [
                 'code' => $code,
@@ -76,7 +84,7 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
 
             $this->addSql('UPDATE sylius_order_item SET variant_id = (SELECT id FROM sylius_product_variant WHERE code = :code) WHERE id = :order_item_id', [
                 'code' => $code,
-                'order_item_id' => $orderItem->getId()
+                'order_item_id' => $deliveryOrderItem['order_item_id']
             ]);
         }
 
