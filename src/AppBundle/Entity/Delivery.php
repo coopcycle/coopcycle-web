@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -23,6 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
+ *
+ * @AssertDelivery
  */
 class Delivery extends TaskCollection implements TaskCollectionInterface
 {

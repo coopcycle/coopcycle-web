@@ -15,3 +15,8 @@ order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%
 delivery.date.restaurantClosed: Restaurant is closed at %date%
 delivery.date.hasPassed: Date %date% has passed
 delivery.date.tooSoon: Date %date% is too soon
+
+delivery.price.error.priceCalculation: The delivery price could not be calculated.
+
+delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
+delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.

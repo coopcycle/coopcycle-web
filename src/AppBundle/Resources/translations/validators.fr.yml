@@ -17,3 +17,6 @@ delivery.date.hasPassed: La date %date% est dépassée
 delivery.date.tooSoon: La date %date% est trop proche
 
 delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être calculé.
+
+delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
+delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
