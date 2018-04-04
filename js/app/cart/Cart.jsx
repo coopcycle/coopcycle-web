@@ -83,6 +83,7 @@ class Cart extends React.Component
     this.setState({
       items: res.cart.items,
       total: res.cart.total,
+      date: res.cart.date,
       address: res.cart.shippingAddress ? res.cart.shippingAddress.streetAddress : null,
       errors: res.errors
     })
