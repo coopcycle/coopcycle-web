@@ -40,6 +40,8 @@ adminDashboard.deliveries.originAddress: Dirección de origen
 adminDashboard.deliveries.deliveryAddress: Dirección de entrega
 adminDashboard.deliveries.save: Guardar
 
+adminDashboard.embed.title: Integración
+
 adminDashboard.menuCategories.title: Categorías de la carta
 adminDashboard.menuCategories.menu: Carta
 adminDashboard.menuCategories.categories: Categorías
@@ -247,6 +249,7 @@ order.status.PAYMENT_ERROR: Error de pago
 
 order.state.cart: Esperando
 order.state.new: Confirmado
+order.state.fulfilled: Entregado
 
 order.list.total: Total
 order.list.createdAt: Creado
