@@ -5,6 +5,7 @@ restaurant.contract.notValid: Introduce los términos de contrato (requiere priv
 restaurant.notActivable: Aún no puedes activar éste restaurante
 
 address.tooFar: Esta dirección está muy lejos
+address.notSet: Please pick an address
 
 cart.date.tooSoon: Ésta fecha es demasiado pronto
 cart.address.empty: Por favor seleccione una dirección

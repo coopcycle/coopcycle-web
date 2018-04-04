@@ -12,6 +12,7 @@ class Order extends Constraint
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
     public $restaurantClosedMessage = 'delivery.date.restaurantClosed';
     public $addressTooFarMessage = 'address.tooFar';
+    public $addressNotSetMessage = 'address.notSet';
     public $dateHasPassedMessage = 'delivery.date.hasPassed';
 
     public function validatedBy()

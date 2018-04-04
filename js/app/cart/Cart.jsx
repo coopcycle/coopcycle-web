@@ -182,7 +182,7 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, total, toggled, errors, date, geohash, address fr} = this.state,
+    let { items, total, toggled, errors, date, geohash, address } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'

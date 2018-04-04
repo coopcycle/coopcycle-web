@@ -5,6 +5,7 @@ restaurant.contract.notValid: Enter the delivery contract terms (require adminis
 restaurant.notActivable: You can't enable this restaurant yet
 
 address.tooFar: This address is too far
+address.notSet: Please pick an address
 
 cart.date.tooSoon: This date is too soon
 cart.address.empty: Please select an address

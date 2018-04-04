@@ -50,23 +50,32 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $data = $this->routing->getRawResponse(
-            $restaurant->getAddress()->getGeo(),
-            $order->getShippingAddress()->getGeo()
-        );
+        if ($order->getShippingAddress()) {
+            $data = $this->routing->getRawResponse(
+                $restaurant->getAddress()->getGeo(),
+                $order->getShippingAddress()->getGeo()
+            );
 
-        $distance = $data['routes'][0]['distance'];
-        $duration = $data['routes'][0]['duration'];
+            $distance = $data['routes'][0]['distance'];
+            $duration = $data['routes'][0]['duration'];
 
-        $maxDistance = $restaurant->getMaxDistance();
+            $maxDistance = $restaurant->getMaxDistance();
 
-        if ($distance > $maxDistance) {
-            $this->context->buildViolation($constraint->addressTooFarMessage)
+            if ($distance > $maxDistance) {
+                $this->context->buildViolation($constraint->addressTooFarMessage)
+                    ->atPath('shippingAddress')
+                    ->addViolation();
+
+                return;
+            }
+        } else {
+            $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->atPath('shippingAddress')
                 ->addViolation();
 
             return;
         }
+
 
         $minimumAmount = (int) ($restaurant->getMinimumCartAmount() * 100);
         $itemsTotal = $order->getItemsTotal();
