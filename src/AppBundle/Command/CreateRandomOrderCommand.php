@@ -4,10 +4,10 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Order;
-use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Menu\MenuItem;
 use Stripe;
+use Sylius\Component\Order\OrderTransitions;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,23 +29,39 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
             ->setDescription('Creates a random order. Useful for testing.')
             ->addArgument('restaurant', InputArgument::REQUIRED, 'The restaurant.')
             ->addArgument('username', InputArgument::REQUIRED, 'The username.')
-            ->addArgument('delivery_date', InputArgument::REQUIRED, 'The date of delivery.');
+            ->addArgument('shipped_at', InputArgument::OPTIONAL, 'The date of delivery.');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->restaurantRepository = $this->doctrine->getRepository(Restaurant::class);
-        $this->orderRepository = $this->doctrine->getRepository(Order::class);
         $this->userManager = $this->getContainer()->get('fos_user.user_manager');
-        $this->orderManager = $this->getContainer()->get('coopcycle.order_manager');
+
+        $this->orderFactory = $this->getContainer()->get('sylius.factory.order');
+        $this->orderRepository = $this->getContainer()->get('sylius.repository.order');
+        $this->orderManager = $this->getContainer()->get('sylius.manager.order');
+
+        $this->productVariantRepository = $this->getContainer()->get('sylius.repository.product_variant');
+        $this->orderItemFactory = $this->getContainer()->get('sylius.factory.order_item');
+        $this->orderItemQuantityModifier = $this->getContainer()->get('sylius.order_item_quantity_modifier');
+        $this->orderModifier = $this->getContainer()->get('sylius.order_modifier');
+        $this->stateMachineFactory = $this->getContainer()->get('sm.factory');
+
+        Stripe\Stripe::setApiKey($this->getContainer()->get('coopcycle.settings_manager')->get('stripe_secret_key'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $restaurantId = $input->getArgument('restaurant');
         $username = $input->getArgument('username');
-        $deliveryDate = $input->getArgument('delivery_date');
+        $shippedAt = $input->getArgument('shipped_at');
+
+        if ($shippedAt) {
+            $shippedAt = new \DateTime($shippedAt);
+        } else {
+            $shippedAt = new \DateTime('+2 hours');
+        }
 
         $restaurant = $this->restaurantRepository->find($restaurantId);
         $user = $this->userManager->findUserByUsername($username);
@@ -54,12 +70,9 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
 
         $order->setCustomer($user);
         $order->setRestaurant($restaurant);
+        $order->setShippedAt($shippedAt);
 
-        $delivery = new Delivery($order);
-        $delivery->setDate(new \DateTime($deliveryDate));
-        $delivery->setOriginAddress($restaurant->getAddress());
-        $delivery->setDeliveryAddress($user->getAddresses()->first());
-        $delivery->setPrice($restaurant->getContract()->getFlatDeliveryPrice());
+        $this->orderRepository->add($order);
 
         $stripeToken = Stripe\Token::create([
             'card' => [
@@ -70,19 +83,15 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
             ]
         ]);
 
-        $this->doctrine->getManagerForClass(Order::class)->persist($order);
-        $this->doctrine->getManagerForClass(Order::class)->flush();
+        $stripePayment = $order->getLastPayment();
+        $stripePayment->setStripeToken($stripeToken->id);
 
-        try {
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_CREATE);
 
-            $this->orderManager->pay($order, $stripeToken->id);
-            $this->doctrine->getManagerForClass(Order::class)->flush();
+        $this->orderManager->flush();
 
-            $output->writeln(sprintf('Order #%d created!', $order->getId()));
-
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
-        }
+        $output->writeln(sprintf('<info>Order #%d created!</info>', $order->getId()));
     }
 
     private function createRandomOrder(Restaurant $restaurant)
@@ -95,18 +104,21 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
 
         $numberOfItems = random_int(1, count($menuItemsWithoutModifiers));
 
-        $order = new Order();
+        $order = $this->orderFactory->createForRestaurant($restaurant);
 
-        while (count($order->getOrderedItem()) < $numberOfItems) {
+        while (count($order->getItems()) < $numberOfItems) {
 
             $randomIndex = rand(0, (count($menuItemsWithoutModifiers) - 1));
             $menuItem = $menuItemsWithoutModifiers[$randomIndex];
 
-            $orderItem = new OrderItem();
-            $orderItem->setMenuItem($menuItem);
-            $orderItem->setQuantity(1);
+            $productVariant = $this->productVariantRepository->findOneByMenuItem($menuItem);
 
-            $order->addOrderedItem($orderItem);
+            $cartItem = $this->orderItemFactory->createNew();
+            $cartItem->setVariant($productVariant);
+            $cartItem->setUnitPrice($productVariant->getPrice());
+
+            $this->orderItemQuantityModifier->modify($cartItem, 1);
+            $this->orderModifier->addToOrder($order, $cartItem);
         }
 
         return $order;
