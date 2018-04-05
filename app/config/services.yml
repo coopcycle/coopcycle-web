@@ -374,6 +374,13 @@ services:
     tags:
       - { name: twig.extension }
 
+  coopcycle.twig.runtime.order_state_resolver:
+    class: AppBundle\Twig\OrderStateResolver
+    arguments: [ '@sm.factory' ]
+    public: false
+    tags:
+      - { name: twig.runtime }
+
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
 

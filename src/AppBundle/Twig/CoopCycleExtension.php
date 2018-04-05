@@ -10,6 +10,7 @@ class CoopCycleExtension extends \Twig_Extension
             new \Twig_SimpleFilter('meters_to_kilometers', array($this, 'metersToKilometers')),
             new \Twig_SimpleFilter('seconds_to_minutes', array($this, 'secondsToMinutes')),
             new \Twig_SimpleFilter('price_format', array($this, 'priceFormat')),
+            new \Twig_SimpleFilter('order_can_transition', array(OrderStateResolver::class, 'orderCanTransitionFilter')),
         );
     }
 

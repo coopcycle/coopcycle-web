@@ -69,7 +69,7 @@
     <td class="text-right">{{ order.createdAt|ago }}</td>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <td>
-      {% if order.foodtech and order.state in ['new', 'accepted'] %}
+      {% if order|order_can_transition('cancel') %}
       <form method="post" action="{{ path('admin_orders_order_cancel', { id: order.id }) }}">
         <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}order.list.cancel{% endtrans %}</button>
       </form>
