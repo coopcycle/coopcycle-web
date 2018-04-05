@@ -2,17 +2,14 @@
 
 namespace AppBundle\Action\Order;
 
-use AppBundle\Action\ActionTrait;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Sylius\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Accept
+class Accept extends Base
 {
-    use ActionTrait;
-
     /**
      * @Route(
      *     name="order_accept",

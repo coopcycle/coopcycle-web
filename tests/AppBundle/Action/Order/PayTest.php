@@ -1,14 +1,15 @@
 <?php
 
-namespace AppBundle\Action\Order;
+namespace Tests\AppBundle\Action\Order;
 
 use AppBundle\Action\Order\Pay;
-use AppBundle\Entity;
-use AppBundle\Tests\Action\TestCase;
+use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Sylius\Order;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tests\AppBundle\Action\Order\TestCase;
 
 class PayTest extends TestCase
 {
@@ -19,46 +20,12 @@ class PayTest extends TestCase
         parent::setUp();
     }
 
-    public function testOnlyOrdersWithStatusCreatedCanBePaid()
-    {
-        $this->markTestSkipped();
-
-        $this->user->setRoles(['ROLE_RESTAURANT']);
-
-        $order = new Entity\Order();
-        $order->setCustomer($this->user);
-
-        $request = Request::create('/foo');
-
-        $statusList = [
-            Entity\Order::STATUS_WAITING,
-            Entity\Order::STATUS_ACCEPTED,
-            Entity\Order::STATUS_REFUSED,
-            Entity\Order::STATUS_READY,
-            Entity\Order::STATUS_CANCELED,
-        ];
-
-        foreach ($statusList as $status) {
-            try {
-                $order->setStatus($status);
-                call_user_func_array($this->action, [$order, $request]);
-            } catch (\Exception $e) {
-                $this->assertInstanceOf(BadRequestHttpException::class, $e);
-            }
-        }
-    }
-
     public function testWrongCustomerThrowsException()
     {
-        $this->markTestSkipped();
-
         $this->expectException(AccessDeniedHttpException::class);
 
-        $this->user->setRoles(['ROLE_RESTAURANT']);
-
-        $order = new Entity\Order();
-        $order->setCustomer(new Entity\ApiUser);
-        $order->setStatus(Entity\Order::STATUS_CREATED);
+        $order = new Order();
+        $order->setCustomer(new ApiUser);
 
         $request = Request::create('/foo');
 
@@ -67,43 +34,15 @@ class PayTest extends TestCase
 
     public function testMissingStripeTokenThrowsException()
     {
-        $this->markTestSkipped();
-
         $this->expectException(BadRequestHttpException::class);
 
         $this->user->setRoles(['ROLE_RESTAURANT']);
 
-        $order = new Entity\Order();
+        $order = new Order();
         $order->setCustomer($this->user);
-        $order->setStatus(Entity\Order::STATUS_CREATED);
 
         $request = Request::create('/foo');
 
         $response = call_user_func_array($this->action, [$order, $request]);
-    }
-
-    public function testOrderHasStatusWaiting()
-    {
-        $this->markTestSkipped();
-
-        $this->user->setRoles(['ROLE_RESTAURANT']);
-
-        $restaurant = new Entity\Restaurant();
-
-        $order = new Entity\Order();
-        $order->setRestaurant($restaurant);
-        $order->setCustomer($this->user);
-        $order->setStatus(Entity\Order::STATUS_CREATED);
-
-        $data = [
-            'stripeToken' => 'abcdef123456'
-        ];
-
-        $request = Request::create('/foo', 'POST', [], [], [], [], json_encode($data));
-
-        $response = call_user_func_array($this->action, [$order, $request]);
-
-        $this->assertSame($order, $response);
-        $this->assertEquals(Entity\Order::STATUS_WAITING, $order->getStatus());
     }
 }

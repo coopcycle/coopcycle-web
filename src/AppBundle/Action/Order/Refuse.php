@@ -2,18 +2,14 @@
 
 namespace AppBundle\Action\Order;
 
-use AppBundle\Action\ActionTrait;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Sylius\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Refuse
+class Refuse extends Base
 {
-    use ActionTrait;
-
     /**
      * @Route(
      *     name="order_refuse",
@@ -33,12 +29,11 @@ class Refuse
 
         $order = $data;
 
-        // Order MUST have status = WAITING
-        if ($order->getStatus() !== Order::STATUS_WAITING) {
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be refused anymore', $order->getId()));
+        try {
+            $this->orderManager->refuse($order);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e);
         }
-
-        $order->setStatus(Order::STATUS_REFUSED);
 
         return $order;
     }

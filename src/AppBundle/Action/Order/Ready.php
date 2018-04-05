@@ -2,17 +2,14 @@
 
 namespace AppBundle\Action\Order;
 
-use AppBundle\Action\ActionTrait;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Sylius\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Ready
+class Ready extends Base
 {
-    use ActionTrait;
-
     /**
      * @Route(
      *     name="order_ready",
@@ -32,16 +29,11 @@ class Ready
 
         $order = $data;
 
-        if (!$this->getUser()->ownsRestaurant($order->getRestaurant())) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot set order to ready', $user->getId()));
+        try {
+            $this->orderManager->ready($order);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e);
         }
-
-        // Order MUST have status = ACCEPTED
-        if ($order->getStatus() !== Order::STATUS_ACCEPTED) {
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be set to ready anymore', $order->getId()));
-        }
-
-        $order->setStatus(Order::STATUS_READY);
 
         return $order;
     }

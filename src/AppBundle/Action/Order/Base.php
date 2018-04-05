@@ -1,45 +1,30 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Action\Order;
 
+use AppBundle\Action\Utils\TokenStorageTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Predis\Client as Redis;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 
-trait ActionTrait
+abstract class Base
 {
-    protected $tokenStorage;
+    use TokenStorageTrait;
+
     protected $redis;
     protected $doctrine;
     protected $orderManager;
-    protected $deliveryManager;
 
     public function __construct(TokenStorageInterface $tokenStorage, Redis $redis,
-        DoctrineRegistry $doctrine, OrderManager $orderManager, DeliveryManager $deliveryManager)
+        DoctrineRegistry $doctrine, OrderManager $orderManager)
     {
         $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
         $this->doctrine = $doctrine;
         $this->orderManager = $orderManager;
-        $this->deliveryManager = $deliveryManager;
-    }
-
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
     }
 
     protected function verifyRole($role, $message)

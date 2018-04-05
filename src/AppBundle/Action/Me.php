@@ -2,22 +2,33 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Me
 {
-    use ActionTrait;
+    use TokenStorageTrait;
+
+    protected $doctrine;
+
+    public function __construct(TokenStorageInterface $tokenStorage, DoctrineRegistry $doctrine)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
+    }
 
     /**
      * @Route(
      *   name="my_tasks_list",
-     *   path="/me/tasks-list/{date}",
+     *   path="/me/task_list/{date}",
      *   defaults={
      *     "_api_resource_class"=TaskList::class,
      *     "_api_collection_operation_name"="my_tasks_list"
@@ -25,7 +36,7 @@ class Me
      * )
      * @Method("GET")
      */
-    public function tasksListAction($date)
+    public function taskListAction($date)
     {
         $date = new \DateTime($date);
 
@@ -67,62 +78,6 @@ class Me
         }
 
         return $tasks;
-    }
-
-    /**
-     * @Route(
-     *     name="me_status",
-     *     path="/me/status",
-     * )
-     * @Method("GET")
-     */
-    public function statusAction()
-    {
-        $user = $this->getUser();
-
-        $status = 'AVAILABLE';
-
-        // Check if courier has accepted a delivery previously
-        $delivery = $this->doctrine
-            ->getRepository(Delivery::class)
-            ->findOneBy([
-                'courier' => $user,
-                'status' => ['DISPATCHED', 'PICKED'],
-            ]);
-
-        if (null !== $delivery) {
-            $status = 'DELIVERING';
-        }
-
-        $data = [
-            'status' => $status,
-        ];
-
-        if (null !== $delivery) {
-
-            $order = null;
-            if (null !== $delivery->getOrder()) {
-                $order = [
-                    'id' => $delivery->getOrder()->getId(),
-                ];
-            }
-
-            $data['delivery'] = [
-                'id' => $delivery->getId(),
-                'status' => $delivery->getStatus(),
-                'originAddress' => [
-                    'longitude' => $delivery->getOriginAddress()->getGeo()->getLongitude(),
-                    'latitude' => $delivery->getOriginAddress()->getGeo()->getLatitude(),
-                ],
-                'deliveryAddress' => [
-                    'longitude' => $delivery->getDeliveryAddress()->getGeo()->getLongitude(),
-                    'latitude' => $delivery->getDeliveryAddress()->getGeo()->getLatitude(),
-                ],
-                'order' => $order,
-            ];
-        }
-
-        return new JsonResponse($data);
     }
 
     /**

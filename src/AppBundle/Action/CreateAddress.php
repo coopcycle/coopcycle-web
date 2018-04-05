@@ -2,17 +2,24 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CreateAddress
 {
-    use ActionTrait;
+    use TokenStorageTrait;
+
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
 
     /**
      * @Route(

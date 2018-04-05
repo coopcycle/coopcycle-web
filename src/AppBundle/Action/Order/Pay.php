@@ -2,18 +2,15 @@
 
 namespace AppBundle\Action\Order;
 
-use AppBundle\Action\ActionTrait;
-use AppBundle\Entity\Order;
+use AppBundle\Entity\Sylius\Order;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Pay
+class Pay extends Base
 {
-    use ActionTrait;
-
     /**
      * @Route(
      *     name="order_pay",
@@ -27,11 +24,6 @@ class Pay
         $user = $this->getUser();
 
         $order = $data;
-
-        // Order MUST have status = CREATED
-        if ($order->getStatus() !== Order::STATUS_CREATED) {
-            throw new BadRequestHttpException(sprintf('Order #%d cannot be paid anymore', $order->getId()));
-        }
 
         // Make sure the customer paying the order is correct
         if ($order->getCustomer() !== $user) {
@@ -51,7 +43,6 @@ class Pay
         try {
             $this->orderManager->pay($order, $data['stripeToken']);
         } catch (\Exception $e) {
-            $order->setStatus(Order::STATUS_PAYMENT_ERROR);
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 

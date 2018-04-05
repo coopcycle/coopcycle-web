@@ -4,6 +4,8 @@ namespace AppBundle\Action\Utils;
 
 trait TokenStorageTrait
 {
+    protected $tokenStorage;
+
     protected function getUser()
     {
         if (null === $token = $this->tokenStorage->getToken()) {

@@ -2,14 +2,24 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Entity\Order;
+use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Entity\Sylius\Order;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class MyOrders
 {
-    use ActionTrait;
+    use TokenStorageTrait;
+
+    protected $doctrine;
+
+    public function __construct(TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
+    }
 
     /**
      * @Route(
