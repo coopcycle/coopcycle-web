@@ -299,12 +299,6 @@ services:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
 
-  my.order_repository:
-    class: AppBundle\Entity\OrderRepository
-    factory: ['@doctrine.orm.default_entity_manager', getRepository]
-    arguments:
-      - AppBundle\Entity\Order
-
   my.delivery_repository:
     class: AppBundle\Entity\DeliveryRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
