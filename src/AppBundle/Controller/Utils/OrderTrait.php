@@ -119,11 +119,11 @@ trait OrderTrait
 
     private function cancelOrderById($id)
     {
-        $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
+        $order = $this->get('sylius.repository.order')->find($id);
         $this->accessControl($order->getRestaurant());
 
         $this->get('coopcycle.order_manager')->cancel($order);
-        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+        $this->get('sylius.manager.order')->flush();
     }
 
     public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request)
