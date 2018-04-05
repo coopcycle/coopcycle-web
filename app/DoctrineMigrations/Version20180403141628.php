@@ -2,7 +2,6 @@
 
 namespace Application\Migrations;
 
-use AppBundle\Entity\Order;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\DBAL\Migrations\AbstractMigration;
@@ -16,14 +15,14 @@ class Version20180403141628 extends AbstractMigration
     private static function statusToState($status)
     {
         switch ($status) {
-            case Order::STATUS_CREATED:
-            case Order::STATUS_WAITING:
+            case 'CREATED':
+            case 'WAITING':
                 return OrderInterface::STATE_NEW;
-            case Order::STATUS_ACCEPTED:
+            case 'ACCEPTED':
                 return OrderInterface::STATE_ACCEPTED;
-            case Order::STATUS_REFUSED:
+            case 'REFUSED':
                 return OrderInterface::STATE_REFUSED;
-            case Order::STATUS_READY:
+            case 'READY':
                 return OrderInterface::STATE_FULFILLED;
             default:
                 return OrderInterface::STATE_CANCELLED;
