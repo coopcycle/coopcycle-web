@@ -228,6 +228,8 @@ profile.email: Email
 profile.telephone: Teléfono
 profile.familyName: Apellidos
 profile.givenName: Nombre
+profile.managedStores: Stores managed by user
+profile.managedRestaurants: Restaurants managed by user
 
 order.payment.title: Tu información de pago
 order.payment.expiration.label: Caducidad
@@ -350,6 +352,9 @@ roles.ROLE_STORE: 'Tienda'
 roles.ROLE_USER: 'Usuario'
 
 user.edit.roles.help: Configura los permisos de éste usuario. <a href="%link%">Más información.</a>
+user.edit.enabled.label: Enabled
+user.edit.disabled.label: Disabled
+user.edit.enabled.help: A deactivated user will be logged out and can't login back on the platform.
 user.profile.familyName: Apellidos
 user.profile.givenName: Nombre
 

@@ -28,6 +28,7 @@ Encore
   .addEntry('js/restaurants-map', './js/app/restaurants-map/index.jsx')
   .addEntry('js/task-modal', './js/app/task/modal.js')
   .addEntry('js/user-tracking', './js/app/user/tracking.jsx')
+  .addEntry('js/user-form', './js/app/user/form.jsx')
   .addEntry('js/widgets', './js/app/widgets/index.js')
   .addEntry('js/zone-preview', './js/app/zone/preview.jsx')
 

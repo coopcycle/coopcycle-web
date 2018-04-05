@@ -7,6 +7,7 @@ use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -32,11 +33,11 @@ class UpdateProfileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('username', TextType::class)
-                ->add('familyName', TextType::class, array('label' => 'Family name'))
-                ->add('givenName', TextType::class, array('label' => 'Given name'))
+        $builder->add('username', TextType::class, array('label' => 'profile.username'))
+                ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
+                ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
                 ->add('telephone', PhoneNumberType::class,
-                    array('label' => 'Telephone',
+                    array('label' => 'profile.telephone',
                           'format' => PhoneNumberFormat::NATIONAL,
                           'default_region' => strtoupper($this->countryIso)));
 
@@ -53,6 +54,13 @@ class UpdateProfileType extends AbstractType
             function (FormEvent $event) use ($options, $isAdmin) {
 
                 $user = $event->getData();
+
+                if ($isAdmin) {
+                    $event->getForm()->add('enabled', CheckboxType::class, [
+                        'label' => 'user.edit.enabled.label',
+                        'required' => false
+                    ]);
+                }
 
                 if ($isAdmin && $options['with_roles'] && !empty($options['editable_roles'])) {
                     $data = array_filter($user->getRoles(), function ($role) use ($options) {
@@ -82,6 +90,7 @@ class UpdateProfileType extends AbstractType
                         ),
                         'allow_add' => true,
                         'allow_delete' => true,
+                        'label' => 'profile.managedRestaurants'
                     ));
                 }
 
@@ -95,6 +104,7 @@ class UpdateProfileType extends AbstractType
                         ),
                         'allow_add' => true,
                         'allow_delete' => true,
+                        'label' => 'profile.managedStores'
                     ));
                 }
             }

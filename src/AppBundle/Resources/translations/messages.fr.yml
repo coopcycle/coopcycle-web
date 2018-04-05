@@ -76,7 +76,7 @@ adminDashboard.users.save: Enregister
 adminDashboard.users.searchRestaurant: Rechercher un restaurant…
 adminDashboard.users.searchStore: Rechercher un magasin…
 adminDashboard.users.roles: Rôles
-adminDashboard.users.editUser: Modier l'utilisateur
+adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 
@@ -223,6 +223,8 @@ profile.email: Email
 profile.telephone: Numéro de téléphone
 profile.familyName: Nom
 profile.givenName: Prénom
+profile.managedStores: Magasins gérés par l'utilisateur
+profile.managedRestaurants: Restaurants gérés par l'utilisateur
 
 order.payment.title: Vos informations de paiement
 order.payment.expiration.label: Expiration
@@ -358,6 +360,9 @@ roles.ROLE_STORE: Magasin
 roles.ROLE_USER: Utilisateur
 
 user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En savoir plus</a>
+user.edit.enabled.label: Activé
+user.edit.disabled.label: Désactivé
+user.edit.enabled.help: Un utilisateur désactivé est déconnecté et ne peut plus se connecter à la plateforme.
 user.profile.familyName: Nom
 user.profile.givenName: Prénom
 
