@@ -78,11 +78,11 @@ export default class MapProxy {
     this.courierLayerGroup.addTo(this.map)
   }
 
-  addTask(task) {
+  addTask(task, markerColor) {
     let marker = this.taskMarkers.get(task['id'])
 
     if (!marker) {
-      const color = taskColor(task),
+      const color = markerColor || taskColor(task),
         icon = taskIcon(task),
         coords = [task.address.geo.latitude, task.address.geo.longitude],
         assignedTo = task.assignedTo ? ' assignée à ' + task.assignedTo : '',
@@ -120,6 +120,10 @@ export default class MapProxy {
     if (marker) {
       this.map.removeLayer(marker)
     }
+  }
+
+  removeTask(task) {
+    this.taskMarkers.delete(task['id'])
   }
 
   getPolylineLayerGroup(username) {

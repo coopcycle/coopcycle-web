@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import TaskTimeline from './TaskTimeline'
 import moment from 'moment'
 
 moment.locale($('html').attr('lang'))
@@ -8,6 +7,12 @@ moment.locale($('html').attr('lang'))
 const taskModalURL = window.AppData.Dashboard.taskModalURL
 
 class Task extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.onClick = this.onClick.bind(this)
+  }
 
   renderStatusIcon() {
 
@@ -42,6 +47,11 @@ class Task extends React.Component {
         )
       }
     }
+  }
+
+  onClick () {
+    const { highlightTask, task } = this.props
+    highlightTask(task)
   }
 
   renderLinkedIcon() {
@@ -80,7 +90,7 @@ class Task extends React.Component {
 
   render() {
 
-    const { task } = this.props
+    const { task, highlightedTask } = this.props
 
     const classNames = [
       'list-group-item',
@@ -94,8 +104,12 @@ class Task extends React.Component {
       taskAttributes = Object.assign(taskAttributes, { 'data-link': task.link })
     }
 
+    if (task === highlightedTask) {
+      classNames.push('task__highlighted')
+    }
+
     return (
-      <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes }>
+      <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes } onClick={this.onClick}>
         <div>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
           <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}

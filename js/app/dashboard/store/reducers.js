@@ -242,6 +242,19 @@ const polylineEnabled = (state = polylineEnabledByUser, action) => {
   }
 }
 
+const highlightedTask = (state = null, action) => {
+  switch(action.type) {
+    case 'HIGHLIGHT_TASK':
+      if (action.task === state) {
+        return null
+      } else {
+        return action.task
+      }
+    default:
+      return null
+  }
+}
+
 const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   switch (action.type) {
     case 'SET_TASK_LIST_GROUP_MODE':
@@ -293,5 +306,6 @@ export default combineReducers({
   polylineEnabled,
   taskListGroupMode,
   taskFinishedFilter,
-  tagsFilter
+  tagsFilter,
+  highlightedTask
 })

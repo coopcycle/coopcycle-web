@@ -5,7 +5,7 @@ import moment from 'moment'
 import dragula from 'react-dragula'
 import _ from 'lodash'
 import Task from './Task'
-import { removeTasks, modifyTaskList, togglePolyline } from '../store/actions'
+import { removeTasks, modifyTaskList, togglePolyline, highlightTask } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -126,7 +126,16 @@ class TaskList extends React.Component {
 
   render() {
 
-    const { duration, distance, username, polylineEnabled, showFinishedTasks, selectedTags, showUntaggedTasks } = this.props
+    const {
+      duration,
+      distance,
+      username,
+      polylineEnabled,
+      showFinishedTasks,
+      selectedTags,
+      showUntaggedTasks,
+      highlightedTask
+    } = this.props
     let { tasks } = this.props
     const { collapsed } = this.state
 
@@ -189,6 +198,8 @@ class TaskList extends React.Component {
                 task={ task }
                 assigned={ true }
                 onRemove={ task => this.remove(task) }
+                highlightedTask={ highlightedTask }
+                highlightTask={ this.props.highlightTask }
               />
             ))}
           </div>
@@ -206,7 +217,8 @@ function mapStateToProps(state, ownProps) {
     duration: ownProps.duration,
     showFinishedTasks: state.taskFinishedFilter,
     selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
+    highlightedTask: state.highlightedTask
   }
 }
 
@@ -214,7 +226,8 @@ function mapDispatchToProps(dispatch) {
   return {
     removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
     modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
-    togglePolyline: username => { dispatch(togglePolyline(username)) }
+    togglePolyline: (username) => { dispatch(togglePolyline(username)) },
+    highlightTask: (task) => { dispatch(highlightTask(task)) }
   }
 }
 

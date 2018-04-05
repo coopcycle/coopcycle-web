@@ -67,6 +67,10 @@ function togglePolyline(username) {
   return { type: 'TOGGLE_POLYLINE', username }
 }
 
+function highlightTask(task) {
+  return { type: 'HIGHLIGHT_TASK', task }
+}
+
 function setTaskListGroupMode(mode) {
   return { type: 'SET_TASK_LIST_GROUP_MODE', mode }
 }
@@ -109,5 +113,6 @@ export {
   togglePolyline,
   setTaskListGroupMode,
   toggleShowFinishedTasks,
-  toggleShowUntaggedTasks
+  toggleShowUntaggedTasks,
+  highlightTask
 }

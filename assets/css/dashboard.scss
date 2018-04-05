@@ -218,6 +218,10 @@ html, body {
   }
 }
 
+.task__highlighted {
+  background-color: $yellow!important;
+}
+
 .task__tags {
   > i {
     margin-left: 5px;
