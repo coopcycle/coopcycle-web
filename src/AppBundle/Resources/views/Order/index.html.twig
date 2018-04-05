@@ -1,7 +1,7 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% if form is defined %}
-  {% form_theme form with ['AppBundle:Order:order_fields.html.twig'] %}
+  {% form_theme form with ['AppBundle:Form:order.html.twig'] %}
 {% endif %}
 
 {% block body %}
