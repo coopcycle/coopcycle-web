@@ -1,7 +1,7 @@
 profile_order_invoice:
-    path:     /profile/orders/{id}.pdf
+    path:     /profile/orders/CPCCL-{number}.pdf
     defaults: { _controller: AppBundle:Profile:orderInvoice }
-    requirements: { id: '\d+' }
+    requirements: { number: '\d+' }
     methods:  [ GET ]
 
 profile_order:

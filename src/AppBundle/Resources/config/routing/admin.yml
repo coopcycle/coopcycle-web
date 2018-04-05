@@ -23,9 +23,14 @@ admin_delivery:
   methods:  [ GET, POST ]
 
 admin_order_invoice:
-    path:     /admin/orders/{id}.pdf
+    path:     /admin/orders/CPCCL-{number}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }
-    requirements: { id: '\d+' }
+    requirements: { number: '\d+' }
+    methods:  [ GET ]
+
+admin_order:
+    path:     /admin/orders/{id}
+    defaults: { _controller: AppBundle:Admin:order }
     methods:  [ GET ]
 
 admin_orders:

@@ -119,10 +119,6 @@ class AdminController extends Controller
         return [ $orders, $pages, $page ];
     }
 
-    /**
-     * @Route("/admin/orders/{id}", name="admin_order")
-     * @Template
-     */
     public function orderAction($id, Request $request)
     {
         $stateMachineFactory = $this->get('sm.factory');

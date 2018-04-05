@@ -61,7 +61,7 @@
     </td>
     <td width="10%" class="text-right">
       {% if order.foodtech %}
-      <a target="_blank" href="{{ path(routes.order_invoice, { id: order.id }) }}">
+      <a target="_blank" href="{{ path(routes.order_invoice, { number: order.number }) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
       {% endif %}

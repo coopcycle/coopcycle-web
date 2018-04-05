@@ -40,14 +40,11 @@ trait OrderTrait
         ], $response);
     }
 
-    /**
-     * @Route("/profile/orders/{id}.pdf", name="profile_order_invoice", requirements={"id" = "\d+"})
-     */
-    public function orderInvoiceAction($id, Request $request)
+    public function orderInvoiceAction($number, Request $request)
     {
-        $order = $this->getDoctrine()
-            ->getRepository(Order::class)
-            ->find($id);
+        $order = $this->get('sylius.repository.order')->findOneBy([
+            'number'=> $number
+        ]);
 
         $this->accessControl($order);
 
