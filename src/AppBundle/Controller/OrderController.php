@@ -6,7 +6,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryAddressType;
 use AppBundle\Form\StripePaymentType;

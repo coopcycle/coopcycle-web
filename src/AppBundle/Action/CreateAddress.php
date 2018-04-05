@@ -3,7 +3,6 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\Address;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;

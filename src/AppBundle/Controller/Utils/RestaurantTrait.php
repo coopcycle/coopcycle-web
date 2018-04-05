@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
 use AppBundle\Form\ClosingRuleType;

@@ -3,7 +3,6 @@
 namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Order;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
