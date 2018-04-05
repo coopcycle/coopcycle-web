@@ -8,13 +8,9 @@ use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
 use AppBundle\Event\TaskDoneEvent;
-use AppBundle\Service\NotificationManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Utils\MetricsHelper;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use M6Web\Component\Statsd\Client as StatsdClient;
-use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,26 +23,17 @@ final class OrderSubscriber implements EventSubscriberInterface
 {
     private $doctrine;
     private $tokenStorage;
-    private $notificationManager;
-    private $metricsHelper;
-    private $redis;
     private $orderManager;
     private $logger;
 
     public function __construct(
         ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
-        NotificationManager $notificationManager,
-        MetricsHelper $metricsHelper,
-        Redis $redis,
         OrderManager $orderManager,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
-        $this->notificationManager = $notificationManager;
-        $this->metricsHelper = $metricsHelper;
-        $this->redis = $redis;
         $this->orderManager = $orderManager;
         $this->logger = $logger;
     }

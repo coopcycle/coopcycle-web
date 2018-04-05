@@ -5,7 +5,6 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Event\DeliveryCreateEvent;
-use AppBundle\Service\NotificationManager;
 use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
@@ -16,17 +15,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
-    private $notificationManager;
     private $redis;
     private $logger;
 
     public function __construct(DoctrineRegistry $doctrine,
-        NotificationManager $notificationManager,
         Redis $redis,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
-        $this->notificationManager = $notificationManager;
         $this->redis = $redis;
         $this->logger = $logger;
     }

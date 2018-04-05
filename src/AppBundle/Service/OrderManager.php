@@ -183,11 +183,6 @@ class OrderManager
         }
     }
 
-    public function sendConfirmEmail(OrderInterface $order)
-    {
-        $this->notificationManager->notifyDeliveryConfirmed($order, $order->getCustomer()->getEmail());
-    }
-
     public function publishRedisEvent(OrderInterface $order, $eventName)
     {
         switch ($eventName) {
