@@ -30,7 +30,7 @@ admin_order_invoice:
 admin_order:
     path:     /admin/orders/{id}
     defaults: { _controller: AppBundle:Admin:order }
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
 
 admin_orders:
     path:     /admin/orders
