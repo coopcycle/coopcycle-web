@@ -122,11 +122,3 @@ AppBundle\Entity\Order:
     lifecycleCallbacks:
         prePersist:
             - prePersist
-    entityListeners:
-        AppBundle\Entity\Listener\OrderListener:
-            prePersist:
-                - prePersist
-            postPersist:
-                - postPersist
-            postUpdate:
-                - postUpdate

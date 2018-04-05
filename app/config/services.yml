@@ -148,20 +148,6 @@ services:
     class: AppBundle\Service\TagManager
     arguments: [ '@doctrine' ]
 
-  order.entity_listener:
-    class: AppBundle\Entity\Listener\OrderListener
-    # lazy = true is mandatory
-    # https://symfony.com/doc/3.3/doctrine/event_listeners_subscribers.html#lazy-loading-for-event-listeners
-    # https://github.com/doctrine/DoctrineBundle/issues/300
-    arguments:
-      - "@security.token_storage"
-      - "@snc_redis.default"
-      - "@serializer"
-      - "@coopcycle.order_manager"
-      - "@event_dispatcher"
-    tags:
-      - { name: doctrine.orm.entity_listener, lazy: true }
-
   coopcycle.tax_calculator.float:
     class: AppBundle\Service\Taxation\FloatCalculator
     tags:
@@ -194,11 +180,6 @@ services:
   delivery.entity_listener:
     class: AppBundle\Entity\Listener\DeliveryListener
     arguments: [ '@event_dispatcher' ]
-    tags:
-      - { name: doctrine.orm.entity_listener }
-
-  order_item.entity_listener:
-    class: AppBundle\Entity\Listener\OrderItemListener
     tags:
       - { name: doctrine.orm.entity_listener }
 

@@ -42,7 +42,3 @@ AppBundle\Entity\OrderItem:
                 - all
             fetch: LAZY
             mappedBy: orderItem
-    entityListeners:
-        AppBundle\Entity\Listener\OrderItemListener:
-            prePersist:
-                - prePersist

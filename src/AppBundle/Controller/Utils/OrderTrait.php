@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
