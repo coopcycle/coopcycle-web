@@ -87,9 +87,9 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant = $this->createForProduct($product);
 
-        $name = sprintf('Livraison %s, %d km',
+        $name = sprintf('Livraison %s, %s km',
             $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
-            number_format($delivery->getDistance() / 1000, 2)
+            (string) number_format($delivery->getDistance() / 1000, 2)
         );
 
         $productVariant->setName($name);
