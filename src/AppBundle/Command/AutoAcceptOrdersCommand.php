@@ -25,7 +25,7 @@ class AutoAcceptOrdersCommand extends ContainerAwareCommand
     {
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->orderRepository = $this->doctrine->getRepository(Order::class);
-        $this->orderManager = $this->getContainer()->get('order.manager');
+        $this->orderManager = $this->getContainer()->get('coopcycle.order_manager');
         $this->logger = $this->getContainer()->get('logger');
     }
 

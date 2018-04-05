@@ -14,6 +14,7 @@ use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Predis\Client as Redis;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
@@ -46,6 +47,7 @@ class TestCase extends BaseTestCase
         $notificationManager = $this->prophesize(NotificationManager::class);
         $settingsManager = $this->prophesize(SettingsManager::class);
         $routing = $this->prophesize(RoutingInterface::class);
+        $stateMachine = $this->prophesize(StateMachineFactoryInterface::class);
 
         $this->user = new Entity\ApiUser();
 
@@ -63,6 +65,8 @@ class TestCase extends BaseTestCase
             $this->redisProphecy->reveal(),
             $serializer->reveal(),
             $routing->reveal(),
+            $stateMachine->reveal(),
+            $settingsManager->reveal(),
             $notificationManager->reveal(),
             $this->eventDispatcher->reveal()
         );

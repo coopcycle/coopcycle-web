@@ -38,7 +38,7 @@ class CreateRandomOrderCommand extends ContainerAwareCommand
         $this->restaurantRepository = $this->doctrine->getRepository(Restaurant::class);
         $this->orderRepository = $this->doctrine->getRepository(Order::class);
         $this->userManager = $this->getContainer()->get('fos_user.user_manager');
-        $this->orderManager = $this->getContainer()->get('order.manager');
+        $this->orderManager = $this->getContainer()->get('coopcycle.order_manager');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

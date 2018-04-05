@@ -31,7 +31,7 @@ class OrderManagerTest extends BaseTest
 
         static::$kernel->getContainer()->set('coopcycle.settings_manager', $settingsManager->reveal());
 
-        $this->orderManager = static::$kernel->getContainer()->get('order.manager');
+        $this->orderManager = static::$kernel->getContainer()->get('coopcycle.order_manager');
 
         $this->taxCategoryImmediate = $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate',
             'TVA 10%', 'tva_10', 0.10, 'float');

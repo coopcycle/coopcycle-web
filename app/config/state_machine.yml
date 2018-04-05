@@ -40,30 +40,30 @@ winzou_state_machine:
                     on: "confirm"
                     do: ["@sylius.order_number_assigner", "assignNumber"]
                     args: ["object"]
-                before_confirm_create_stripe_payment:
-                    on: "confirm"
-                    do: ["@order.manager", "createStripePayment"]
-                    args: ["object"]
             after:
+                after_create_authorize_payment:
+                    on: "create"
+                    do: ["@coopcycle.order_manager", "authorizePayment"]
+                    args: ["object"]
                 after_accept_create_delivery:
                     on: "accept"
-                    do: ["@order.manager", "createDelivery"]
+                    do: ["@coopcycle.order_manager", "createDelivery"]
                     args: ["object"]
                 after_accept_publish_redis_event:
                     on: "accept"
-                    do: ["@order.manager", "publishRedisEvent"]
+                    do: ["@coopcycle.order_manager", "publishRedisEvent"]
                     args: ["object", "'order.accept'"]
                 after_accept_send_email:
                     on: "accept"
-                    do: ["@order.manager", "sendAcceptEmail"]
+                    do: ["@coopcycle.order_manager", "sendAcceptEmail"]
                     args: ["object"]
                 after_refuse_send_email:
                     on: "refuse"
-                    do: ["@order.manager", "sendRefuseEmail"]
+                    do: ["@coopcycle.order_manager", "sendRefuseEmail"]
                     args: ["object"]
                 after_confirm_send_email:
                     on: "confirm"
-                    do: ["@order.manager", "sendConfirmEmail"]
+                    do: ["@coopcycle.order_manager", "sendConfirmEmail"]
                     args: ["object"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
@@ -73,6 +73,7 @@ winzou_state_machine:
         states:
             cart: ~
             new: ~
+            authorized: ~
             processing: ~
             completed: ~
             failed: ~
@@ -83,6 +84,9 @@ winzou_state_machine:
             create:
                 from: [cart]
                 to: new
+            authorize:
+                from: [new]
+                to: authorized
             process:
                 from: [new]
                 to: processing
@@ -103,7 +107,7 @@ winzou_state_machine:
                 to: void
         callbacks:
             after:
-                after_create_publish_redis_event:
+                after_authorize_publish_redis_event:
                     on: "create"
-                    do: ["@order.manager", "publishRedisEvent"]
-                    args: ["object.getOrder()", "'order.payment.create'"]
+                    do: ["@coopcycle.order_manager", "publishRedisEvent"]
+                    args: ["object.getOrder()", "'order.payment_authorized'"]

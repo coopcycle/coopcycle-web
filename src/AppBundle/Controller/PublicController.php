@@ -42,33 +42,40 @@ class PublicController extends Controller
             ->getRepository(Delivery::class)
             ->findOneBySyliusOrder($order);
 
-        $stripePayment = $this->getDoctrine()
-            ->getRepository(StripePayment::class)
-            ->findOneByOrder($order);
+        $stripePayment = $order->getLastPayment();
 
-        $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $stateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
         $form = $this->createForm(StripePaymentType::class, $stripePayment);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stripeToken = $form->get('stripeToken')->getData();
+            try {
 
-            $charge = Stripe\Charge::create([
-              'amount' => $stripePayment->getAmount(),
-              'currency' => strtolower($stripePayment->getCurrencyCode()),
-              'description' => sprintf('Order %s', $order->getNumber()),
-              'metadata' => [
-                'order_id' => $order->getId()
-              ],
-              'source' => $stripeToken,
-            ]);
+                $stripeToken = $form->get('stripeToken')->getData();
 
-            $stripePayment->setCharge($charge->id);
-            $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                $charge = Stripe\Charge::create([
+                  'amount' => $stripePayment->getAmount(),
+                  'currency' => strtolower($stripePayment->getCurrencyCode()),
+                  'description' => sprintf('Order %s', $order->getNumber()),
+                  'metadata' => [
+                    'order_id' => $order->getId()
+                  ],
+                  'source' => $stripeToken,
+                ]);
 
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+                $stripePayment->setCharge($charge->id);
+                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+
+            } catch (\Exception $e) {
+
+                $stripePayment->setLastError($e->getMessage());
+                $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+
+            } finally {
+                $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+            }
 
             return $this->redirectToRoute('public_delivery', ['number' => $number]);
         }

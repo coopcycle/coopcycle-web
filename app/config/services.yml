@@ -35,6 +35,13 @@ services:
     tags:
       - { name: sylius.order_processor, priority: 32 }
 
+  sylius.order_processing.order_payment_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
+    arguments:
+      - "@doctrine"
+    tags:
+      - { name: sylius.order_processor, priority: 16 }
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
     decorates: sylius.factory.product_variant
@@ -150,7 +157,7 @@ services:
       - "@security.token_storage"
       - "@snc_redis.default"
       - "@serializer"
-      - "@order.manager"
+      - "@coopcycle.order_manager"
       - "@event_dispatcher"
     tags:
       - { name: doctrine.orm.entity_listener, lazy: true }
@@ -160,7 +167,7 @@ services:
     tags:
       - { name: sylius.tax_calculator, calculator: float, label: "Float" }
 
-  order.manager:
+  coopcycle.order_manager:
     public: true
     class: AppBundle\Service\OrderManager
     arguments:
@@ -168,6 +175,8 @@ services:
       - "@snc_redis.default"
       - "@serializer"
       - "@routing_service"
+      - "@sm.factory"
+      - "@coopcycle.settings_manager"
       - "@coopcycle.notification_manager"
       - "@event_dispatcher"
 

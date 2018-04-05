@@ -41,6 +41,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
@@ -149,25 +150,17 @@ class AdminController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
 
+                $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
                 $orderStateMachine =
                     $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-
-                $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
-
-                $stripePayment = $this->getDoctrine()
-                    ->getRepository(StripePayment::class)
-                    ->findOneByOrder($order);
-
                 $stripePaymentStateMachine =
                     $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
+                $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
                 $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
 
                 $this->get('sylius.manager.order')->flush();
-
-                $stripePayment = $this->getDoctrine()
-                    ->getManagerForClass(StripePayment::class)
-                    ->flush();
 
                 return $this->redirectToRoute('admin_orders');
             }

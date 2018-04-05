@@ -167,6 +167,32 @@ class StripePayment implements PaymentInterface
         $this->updatedAt = $updatedAt;
     }
 
+    public function setStripeToken($stripeToken)
+    {
+        $this->details = array_merge($this->details, ['stripe_token' => $stripeToken]);
+    }
+
+    public function getStripeToken()
+    {
+        if (isset($this->details['stripe_token'])) {
+
+            return $this->details['stripe_token'];
+        }
+    }
+
+    public function setLastError($message)
+    {
+        $this->details = array_merge($this->details, ['last_error' => $message]);
+    }
+
+    public function getLastError()
+    {
+        if (isset($this->details['last_error'])) {
+
+            return $this->details['last_error'];
+        }
+    }
+
     public static function create(OrderInterface $order)
     {
         $stripePayment = new self();

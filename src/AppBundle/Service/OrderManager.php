@@ -11,7 +11,11 @@ use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
+use Stripe;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -20,6 +24,9 @@ class OrderManager
     private $doctrine;
     private $redis;
     private $serializer;
+    private $routing;
+    private $stateMachineFactory;
+    private $notificationManager;
     private $eventDispatcher;
 
     public function __construct(
@@ -27,6 +34,8 @@ class OrderManager
         Redis $redis,
         SerializerInterface $serializer,
         RoutingInterface $routing,
+        StateMachineFactoryInterface $stateMachineFactory,
+        SettingsManager $settingsManager,
         NotificationManager $notificationManager,
         EventDispatcherInterface $eventDispatcher)
     {
@@ -34,6 +43,8 @@ class OrderManager
         $this->redis = $redis;
         $this->serializer = $serializer;
         $this->routing = $routing;
+        $this->stateMachineFactory = $stateMachineFactory;
+        $this->settingsManager = $settingsManager;
         $this->notificationManager = $notificationManager;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -104,12 +115,42 @@ class OrderManager
         $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
-    public function createStripePayment(OrderInterface $order)
+    public function authorizePayment(OrderInterface $order)
     {
-        $stripePayment = StripePayment::create($order);
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
 
-        $this->doctrine->getManagerForClass(StripePayment::class)->persist($stripePayment);
-        $this->doctrine->getManagerForClass(StripePayment::class)->flush();
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+
+        try {
+
+            $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+
+            $stripeToken = $stripePayment->getStripeToken();
+
+            $charge = Stripe\Charge::create(array(
+                'amount' => $order->getTotal(),
+                'currency' => strtolower($stripePayment->getCurrencyCode()),
+                'source' => $stripeToken,
+                'description' => sprintf('Order %s', $order->getNumber()),
+                // To authorize a payment without capturing it,
+                // make a charge request that also includes the capture parameter with a value of false.
+                // This instructs Stripe to only authorize the amount on the customer’s card.
+                'capture' => false,
+            ));
+
+            $stripePayment->setCharge($charge->id);
+
+            // TODO Use constant
+            $stateMachine->apply('authorize');
+
+        } catch (\Exception $e) {
+            $stripePayment->setLastError($e->getMessage());
+            $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+        } finally {
+            $this->doctrine->getManagerForClass(StripePayment::class)->flush();
+        }
     }
 
     public function sendAcceptEmail(OrderInterface $order)
@@ -135,7 +176,7 @@ class OrderManager
                 $this->redis->publish($channel, $this->serializer->serialize($order, 'json', ['groups' => ['order']]));
                 break;
 
-            case 'order.payment.create':
+            case 'order.payment_authorized':
                 if (null !== $order->getRestaurant()) {
                     $channel = sprintf('restaurant:%d:orders', $order->getRestaurant()->getId());
                     $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']]));

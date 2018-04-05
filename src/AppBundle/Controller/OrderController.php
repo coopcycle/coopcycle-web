@@ -11,9 +11,8 @@ use AppBundle\Form\DeliveryAddressType;
 use AppBundle\Form\StripePaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Stripe;
 use Sylius\Component\Order\OrderTransitions;
-use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -65,16 +64,7 @@ class OrderController extends Controller
 
         $order = $this->get('sylius.context.cart')->getCart();
 
-        $stripePayment = $this->getDoctrine()
-            ->getRepository(StripePayment::class)
-            ->findOneByOrder($order);
-
-        if (null === $stripePayment) {
-            $stripePayment = StripePayment::create($order);
-
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->persist($stripePayment);
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
-        }
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         $form = $this->createForm(StripePaymentType::class);
 
@@ -88,53 +78,28 @@ class OrderController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $stripeToken = $form->get('stripeToken')->getData();
+
+            $stripePayment->setStripeToken($stripeToken);
+
             // Create order, to generate a number
             $order->setCustomer($this->getUser());
+
             $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
             $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
+
             $this->get('sylius.manager.order')->flush();
 
-            // Authorize payment
-            $apiKey = $settingsManager->get('stripe_secret_key');
-            Stripe\Stripe::setApiKey($apiKey);
-
-            $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-
-            try {
-
-                $stripeToken = $form->get('stripeToken')->getData();
-
-                $charge = Stripe\Charge::create(array(
-                    'amount' => $order->getTotal(),
-                    'currency' => 'eur',
-                    'source' => $stripeToken,
-                    'description' => sprintf('Order %s', $order->getNumber()),
-                    // To authorize a payment without capturing it,
-                    // make a charge request that also includes the capture parameter with a value of false.
-                    // This instructs Stripe to only authorize the amount on the customer’s card.
-                    'capture' => false,
-                ));
-
-                $stripePayment->setCharge($charge->id);
-
-                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
-
-            } catch (\Exception $e) {
-
-                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
-
+            if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
                 return array_merge($parameters, [
-                    'error' => $e->getMessage()
+                    'error' => $stripePayment->getLastError()
                 ]);
-
-            } finally {
-                $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
             }
 
             $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
             $request->getSession()->remove($sessionKeyName);
 
-            return $this->redirectToRoute('profile_order', array('id' => $order->getNumber()));
+            return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
         }
 
         return $parameters;

@@ -52,6 +52,10 @@
         </table>
       </div>
 
+      {% if stripe_payment.state == 'failed' %}
+        <div class="alert alert-danger">{{ stripe_payment.lastError }}</div>
+      {% endif %}
+
       {% if stripe_payment.state == 'completed' %}
         <div class="alert alert-success">
           <i class="fa fa-check"></i> Paiement effectué le {{ stripe_payment.updatedAt|localizeddate('medium', 'short') }}

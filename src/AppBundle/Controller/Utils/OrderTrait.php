@@ -143,7 +143,7 @@ trait OrderTrait
         $order = $this->getDoctrine()->getRepository(Order::class)->find($id);
         $this->accessControl($order->getRestaurant());
 
-        $this->get('order.manager')->cancel($order);
+        $this->get('coopcycle.order_manager')->cancel($order);
         $this->getDoctrine()->getManagerForClass(Order::class)->flush();
     }
 
