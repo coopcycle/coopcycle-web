@@ -406,19 +406,16 @@ embed.breadcrumb.confirm: Confirmation
 embed.payment.heading: Payer ma commande
 
 embed.delivery.summary: |
-  Merci !
+  Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong> à l'adresse suivante : <strong>%dropoff_address%</strong>
   <br>
-  Vous avez commandé une course qui vous sera déposée le <strong>%dropoff_date%</strong> à l'adresse suivante :
+  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>. Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>.
   <br>
-  <strong>%dropoff_address%</strong>
-  <br>
-  <br>
-  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>
-  <br>
-  Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>
+  Veuillez cliquer sur "suivant" pour confirmer le devis et commander la course.
 
 embed.delivery.confirm_message: |
-  Nous avons bien enregistré votre demande.
+  Merci !
   <br>
-  Nous allons vous envoyer un email d'ici quelques minutes.
+  Nous avons bien enregistré votre demande. Votre course est en attente de validation.
+  <br>
+  Nous allons vous envoyer un email d'ici quelques minutes. Vous recevrez un second mail dès que la course est confirmée.
 
