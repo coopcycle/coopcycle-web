@@ -313,6 +313,8 @@ form.delivery.view_order: Voir la commande
 
 form.delivery_order.confirm.label: ✓ Confirmer la commande
 
+form.delivery_embed.contact_name.label: Nom de la personne à contacter / nom de l'entreprise
+
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
 form.address.floor.label: Étage

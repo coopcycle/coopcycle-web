@@ -145,6 +145,7 @@ class EmbedController extends Controller
 
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
+            $contactName = $form->get('contactName')->getData();
 
             $userManipulator = $this->get('fos_user.util.user_manipulator');
             $userManager = $this->get('fos_user.user_manager');
@@ -167,6 +168,8 @@ class EmbedController extends Controller
 
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
             $order = $this->createOrderForDelivery($delivery, $price, $user);
+
+            $order->setNotes($contactName);
 
             $this->container->get('sylius.repository.order')->add($order);
 

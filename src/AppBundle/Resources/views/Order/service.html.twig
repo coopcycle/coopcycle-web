@@ -25,6 +25,9 @@
     <div class="map-container__map hidden-xs hidden-sm" id="map"></div>
   </div>
   <div class="col-md-4">
+
+    <p class="text-right">Créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+
     <div class="panel panel-default">
       <div class="panel-body">
         <div class="panel panel-default">
@@ -113,7 +116,7 @@
             </h3>
           </div>
           <div class="panel-body">
-            <p>Créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+            <p><strong>Articles</strong></p>
             <ul class="list-group nomargin">
             {% for item in order.items %}
               <li class="list-group-item">{{ item.variant.name }} <span class="text-muted">× {{ item.quantity }}</span></li>
@@ -136,6 +139,10 @@
               </tr>
             </tbody>
           </table>
+        </div>
+        <h5><strong>Notes</strong></h5>
+        <div class="form-group">
+          <textarea class="form-control" disabled>{{ order.notes }}</textarea>
         </div>
         {% if form is defined %}
         {{ form_start(form) }}

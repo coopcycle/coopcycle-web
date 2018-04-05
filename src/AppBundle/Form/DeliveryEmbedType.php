@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,6 +33,10 @@ class DeliveryEmbedType extends DeliveryType
         parent::buildForm($builder, $options);
 
         $builder
+            ->add('contactName', TextType::class, [
+                'mapped' => false,
+                'label' => 'form.delivery_embed.contact_name.label',
+            ])
             ->add('email', EmailType::class, [
                 'mapped' => false,
                 'label' => 'form.email',

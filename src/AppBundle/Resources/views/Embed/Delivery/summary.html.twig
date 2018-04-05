@@ -32,12 +32,18 @@
   {{ form_start(form, { action: path('embed_delivery_process') }) }}
 
     <div class="hidden">
+
       {{ form_row(form.pickup) }}
       {{ form_row(form.dropoff) }}
       {{ form_row(form.vehicle) }}
+
+      {{ form_row(form.contactName) }}
+
       {{ form_row(form.email) }}
       {{ form_row(form.telephone) }}
+
       {{ form_widget(form._token) }}
+
     </div>
 
     <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
