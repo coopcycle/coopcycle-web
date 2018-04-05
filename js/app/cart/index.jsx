@@ -25,6 +25,7 @@ if (topCart) {
       restaurantURL={window.AppData.Cart.restaurantURL}
       restaurant={window.AppData.Cart.restaurant}
       total={window.AppData.Cart.total}
+      itemsTotal={window.AppData.Cart.itemsTotal}
       i18n={window.__i18n} />,
     topCart
   );
@@ -80,6 +81,7 @@ if (cart) {
           deliveryDate={initialDate}
           availabilities={availabilities}
           items={window.AppData.Cart.items}
+          itemsTotal={window.AppData.Cart.itemsTotal}
           total={window.AppData.Cart.total}
           adjustments={window.AppData.Cart.adjustments}
           restaurant={window.AppData.Restaurant}
@@ -87,7 +89,7 @@ if (cart) {
           removeFromCartURL={window.AppData.Cart.removeFromCartURL}
           validateCartURL={window.AppData.Cart.validateCartURL}
           isMobileCart={ isXsDevice }
-          onCartChange={total => topCartComponent.setTotal(total)}
+          onCartChange={(itemsTotal, total) => topCartComponent.setTotal(itemsTotal, total)}
         />,
     cart);
 

@@ -21,11 +21,12 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, total, adjustments, deliveryDate, streetAddress, isMobileCart, geohash } = this.props;
+    let { items, total, itemsTotal, adjustments, deliveryDate, streetAddress, isMobileCart, geohash } = this.props;
 
     this.state = {
       items,
       total,
+      itemsTotal,
       adjustments,
       toggled: !isMobileCart,
       date: deliveryDate,
@@ -83,12 +84,13 @@ class Cart extends React.Component
     this.setState({
       items: res.cart.items,
       total: res.cart.total,
+      itemsTotal: res.cart.itemsTotal,
       date: res.cart.date,
       address: res.cart.shippingAddress ? res.cart.shippingAddress.streetAddress : null,
       errors: res.errors
     })
 
-    this.props.onCartChange(res.cart.total)
+    this.props.onCartChange(res.cart.itemsTotal, res.cart.total)
   }
 
   onDateChange(dateString) {
@@ -182,6 +184,24 @@ class Cart extends React.Component
     }
   }
 
+  renderTotal() {
+    const { items, total, itemsTotal } = this.state
+    const amount = itemsTotal > 0 ? total : itemsTotal
+
+    if (itemsTotal > 0) {
+      return (
+        <div>
+          <hr />
+          { this.renderAdjustments() }
+          <div>
+            <span>Total</span>
+            <strong className="pull-right">{ numeral(total / 100).format('0,0.00 $') }</strong>
+          </div>
+        </div>
+      )
+    }
+  }
+
   render() {
 
     let { items, total, toggled, errors, date, geohash, address } = this.state,
@@ -267,13 +287,8 @@ class Cart extends React.Component
                 value={date}
                 onChange={this.onDateChange} />
               <hr />
-              {cartContent}
-              <hr />
-              { items.length > 0 && this.renderAdjustments() }
-              <div>
-                <span>Total</span>
-                <strong className="pull-right">{ numeral(total / 100).format('0,0.00 $') }</strong>
-              </div>
+              { cartContent }
+              { this.renderTotal() }
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
             </div>

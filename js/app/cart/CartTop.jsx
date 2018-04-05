@@ -12,12 +12,13 @@ class CartTop extends React.Component
     super(props);
     this.state = {
       total: props.total,
+      itemsTotal: props.itemsTotal,
       restaurant: props.restaurant
     }
   }
 
-  setTotal(total) {
-    this.setState({ total })
+  setTotal(itemsTotal, total) {
+    this.setState({ itemsTotal, total })
   }
 
   setRestaurant(restaurant) {
@@ -27,16 +28,18 @@ class CartTop extends React.Component
   render() {
 
     const { restaurantURL } = this.props
-    const { restaurant, total } = this.state
+    const { restaurant, total, itemsTotal } = this.state
 
     let anchorURL = '#'
     if (restaurant) {
       anchorURL = restaurantURL.replace('__RESTAURANT_ID__', restaurant.id)
     }
 
+    const amount = itemsTotal > 0 ? total : itemsTotal
+
     return (
       <a href={ anchorURL } className="btn btn-default navbar-btn navbar-right">
-        { this.props.i18n['Cart'] } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { numeral(total / 100).format('0,0.00 $') }
+        { this.props.i18n['Cart'] } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { numeral(amount / 100).format('0,0.00 $') }
       </a>
     );
   }
