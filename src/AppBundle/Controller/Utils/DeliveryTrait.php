@@ -46,7 +46,6 @@ trait DeliveryTrait
         $orderItem->setUnitPrice($variant->getPrice());
         $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
 
-        $order->addItem($orderItem);
         $this->get('sylius.order_modifier')->addToOrder($order, $orderItem);
 
         return $order;
