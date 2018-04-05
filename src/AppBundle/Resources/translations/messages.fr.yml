@@ -243,11 +243,11 @@ order.status.DELIVERED: Livrée
 order.status.PAYMENT_ERROR: Erreur de paiement
 
 order.state.cart: Panier
-order.state.new: Nouveau
 order.state.accepted: Accepté
 order.state.refused: Refusé
 order.state.new: Confirmée
 order.state.fulfilled: Livrée
+order.state.cancelled: Annulée
 
 order.list.total: Total
 order.list.createdAt: Créée le

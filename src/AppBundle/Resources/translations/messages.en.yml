@@ -246,9 +246,12 @@ order.status.PICKED: Picked
 order.status.DELIVERED: Delivered
 order.status.PAYMENT_ERROR: Payment Error
 
-order.state.cart: Waiting
+order.state.cart: Cart
 order.state.new: Confirmed
+order.state.accepted: Accepted
 order.state.fulfilled: Delivered
+order.state.cancelled: Cancelled
+order.state.refused: Refused
 
 order.list.total: Total
 order.list.createdAt: Created at

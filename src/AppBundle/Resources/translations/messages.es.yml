@@ -249,6 +249,9 @@ order.status.PAYMENT_ERROR: Error de pago
 
 order.state.cart: Esperando
 order.state.new: Confirmado
+order.state.refused: Negarado
+order.state.accepted: Aceptado
+order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
 
 order.list.total: Total
