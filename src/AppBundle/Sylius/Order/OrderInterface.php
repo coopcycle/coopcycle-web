@@ -30,4 +30,9 @@ interface OrderInterface extends BaseOrderInterface
      * @return DateTime|null
      */
     public function getShippedAt(): ?\DateTime;
+
+    /**
+     * @return boolean
+     */
+    public function isFoodtech(): bool;
 }

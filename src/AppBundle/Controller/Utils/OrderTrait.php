@@ -78,7 +78,6 @@ trait OrderTrait
             ->getRepository(StripePayment::class)
             ->findOneByOrder($order);
 
-
         $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
         $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
 

@@ -8,7 +8,7 @@
       {%  trans %}profile.orders.empty{%  endtrans %}
     </div>
   {% else %}
-    {% include "AppBundle::_partials/Order/list.html.twig" with { order_route: 'profile_order' } %}
+    {% include "AppBundle::_partials/Order/list.html.twig" with { show_order_number: true } %}
   {% endif %}
 {% endblock %}
 

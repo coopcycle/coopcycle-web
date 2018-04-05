@@ -126,52 +126,60 @@ class AdminController extends Controller
     {
         $stateMachineFactory = $this->get('sm.factory');
 
-        if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
+        $order = $this->container->get('sylius.repository.order')->find($id);
 
-            $order = $this->container->get('sylius.repository.order')->find($id);
+        if (!$order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
 
-            $delivery = $this->getDoctrine()
-                ->getRepository(Delivery::class)
-                ->findOneBySyliusOrder($order);
-
-            $form = $this->createForm(DeliveryOrderType::class, $order);
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
-
-                    $orderStateMachine =
-                        $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-
-                    $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
-
-                    $stripePayment = $this->getDoctrine()
-                        ->getRepository(StripePayment::class)
-                        ->findOneByOrder($order);
-
-                    $stripePaymentStateMachine =
-                        $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-
-                    $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
-
-                    $this->get('sylius.manager.order')->flush();
-
-                    $stripePayment = $this->getDoctrine()
-                        ->getManagerForClass(StripePayment::class)
-                        ->flush();
-
-                    return $this->redirectToRoute('admin_orders');
-                }
-            }
-
-            return $this->render('@App/Order/sylius.html.twig', [
-                'layout' => '@App/admin.html.twig',
-                'order' => $order,
-                'delivery' => $delivery,
-                'user' => $order->getCustomer(),
-                'form' => $form->createView(),
+        if ($order->isFoodtech()) {
+            return $this->redirectToRoute('admin_restaurant_dashboard_order', [
+                'restaurantId' => $order->getRestaurant()->getId(),
+                'orderId' => $order->getId()
             ]);
         }
+
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->findOneBySyliusOrder($order);
+
+        $form = $this->createForm(DeliveryOrderType::class, $order);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
+
+                $orderStateMachine =
+                    $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+
+                $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
+
+                $stripePayment = $this->getDoctrine()
+                    ->getRepository(StripePayment::class)
+                    ->findOneByOrder($order);
+
+                $stripePaymentStateMachine =
+                    $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+
+                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+
+                $this->get('sylius.manager.order')->flush();
+
+                $stripePayment = $this->getDoctrine()
+                    ->getManagerForClass(StripePayment::class)
+                    ->flush();
+
+                return $this->redirectToRoute('admin_orders');
+            }
+        }
+
+        return $this->render('@App/Order/service.html.twig', [
+            'layout' => '@App/admin.html.twig',
+            'order' => $order,
+            'delivery' => $delivery,
+            'user' => $order->getCustomer(),
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

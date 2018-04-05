@@ -18,6 +18,7 @@ profile_orders:
         routes:
             restaurant: restaurant
             order_invoice: profile_order_invoice
+            order: profile_order
     methods:  [ GET ]
 
 profile_restaurant_new:

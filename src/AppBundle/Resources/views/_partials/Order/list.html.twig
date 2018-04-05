@@ -19,20 +19,16 @@
 
   <tr>
     <td width="5%">
-      {% if order.restaurant is not null %}
-        {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('admin_restaurant_dashboard_order', { restaurantId: order.restaurant.id, orderId: order.id }) }}">
-          #{{ order.id }}
-        </a>
+      <a href="{{ path(routes.order, { id: order.id }) }}">
+        {% if order.foodtech and show_order_number is defined and show_order_number %}
+        {{ order.number }}
         {% else %}
-        <a href="{{ path('profile_order', { id: order.number }) }}">{{ order.number }}</a>
+        #{{ order.id }}
         {% endif %}
-      {% else %}
-        <a href="{{ path(order_route, { id: order.id, type: 'sylius' }) }}">#{{ order.id }}</a>
-      {% endif %}
+      </a>
     </td>
     <td width="5%">
-      {% if order.restaurant is not null %}
+      {% if order.foodtech %}
         <i class="fa fa-cutlery"></i>
       {% else %}
         <i class="fa fa-bicycle"></i>
@@ -49,7 +45,7 @@
     {% endif %}
     <td width="10%">{% include '@App/_partials/Order/state.html.twig' %}</td>
     <td>
-      {% if order.restaurant is not null %}
+      {% if order.foodtech %}
         {% trans with {
           '%restaurant_url%': path(routes.restaurant, { id: order.restaurant.id }),
           '%restaurant_name%': order.restaurant.name
@@ -64,7 +60,7 @@
       <span>{{ order.total|price_format }} €</span>
     </td>
     <td width="10%" class="text-right">
-      {% if order.restaurant is not null %}
+      {% if order.foodtech %}
       <a target="_blank" href="{{ path(routes.order_invoice, { id: order.id }) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
@@ -73,7 +69,7 @@
     <td class="text-right">{{ order.createdAt|ago }}</td>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <td>
-      {% if order.restaurant is not null and order.state in ['new', 'accepted'] %}
+      {% if order.foodtech and order.state in ['new', 'accepted'] %}
       <form method="post" action="{{ path('admin_orders_order_cancel', { id: order.id }) }}">
         <button type="submit" class="btn btn-xs btn-danger pull-right">{% trans %}order.list.cancel{% endtrans %}</button>
       </form>

@@ -93,31 +93,30 @@ class ProfileController extends Controller
 
     public function orderAction($id, Request $request)
     {
-        if ($request->query->has('type') && 'sylius' === $request->query->get('type')) {
+        $order = $this->container->get('sylius.repository.order')->find($id);
 
-            $order = $this->container->get('sylius.repository.order')->find($id);
+        if ($order->getCustomer() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
 
-            $delivery = $this->getDoctrine()
-                ->getRepository(Delivery::class)
-                ->findOneBySyliusOrder($order);
-
-            return $this->render('@App/Order/sylius.html.twig', [
+        if ($order->isFoodtech()) {
+            return $this->render('@App/Order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
-                'delivery' => $delivery,
-                'user' => $order->getCustomer()
+                'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
+                'breadcrumb_path' => 'profile_orders'
             ]);
         }
 
-        $order = $this->get('sylius.repository.order')->findOneBy([
-            'number' => $id
-        ]);
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->findOneBySyliusOrder($order);
 
-        return $this->render('@App/Order/details.html.twig', [
+        return $this->render('@App/Order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
-            'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
-            'breadcrumb_path' => 'profile_orders'
+            'delivery' => $delivery,
+            'user' => $order->getCustomer()
         ]);
     }
 

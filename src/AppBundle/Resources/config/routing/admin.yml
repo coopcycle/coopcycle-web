@@ -37,6 +37,7 @@ admin_orders:
         routes:
             restaurant: admin_restaurant
             order_invoice: admin_order_invoice
+            order: admin_order
     methods:  [ GET ]
 
 admin_restaurant_new:

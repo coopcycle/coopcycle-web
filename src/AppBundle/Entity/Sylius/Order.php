@@ -91,6 +91,14 @@ class Order extends BaseOrder implements OrderInterface
     /**
      * {@inheritdoc}
      */
+    public function isFoodtech(): bool
+    {
+        return null !== $this->getRestaurant();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getShippingAddress(): ?Address
     {
         return $this->shippingAddress;
