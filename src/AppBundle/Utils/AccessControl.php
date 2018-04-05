@@ -3,8 +3,8 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserInterface;
 
 class AccessControl
@@ -17,7 +17,7 @@ class AccessControl
         return $isAdmin || $isCourier;
     }
 
-    public static function order(UserInterface $user, Order $order)
+    public static function order(UserInterface $user, OrderInterface $order)
     {
         $isAdmin = $user->hasRole('ROLE_ADMIN');
         $ownsRestaurant = $user->ownsRestaurant($order->getRestaurant());

@@ -3,8 +3,8 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\AccessControl;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -18,7 +18,7 @@ trait AccessControlTrait
             }
         }
 
-        if ($object instanceof Order) {
+        if ($object instanceof OrderInterface) {
             if (!AccessControl::order($this->getUser(), $object)) {
                 throw new AccessDeniedHttpException();
             }
