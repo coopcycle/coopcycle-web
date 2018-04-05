@@ -27,4 +27,11 @@ AppBundle\Entity\Sylius\Order:
                     nullable: true
             cascade:
                 - persist
+    oneToMany:
+        payments:
+            targetEntity: AppBundle\Entity\StripePayment
+            mappedBy: order
+            orphanRemoval: true
+            cascade:
+                - all
 

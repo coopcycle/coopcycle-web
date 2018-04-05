@@ -10,7 +10,10 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Order\Model\Order as BaseOrder;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -48,6 +51,15 @@ class Order extends BaseOrder implements OrderInterface
     protected $shippingAddress;
 
     protected $shippedAt;
+
+    protected $payments;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->payments = new ArrayCollection();
+    }
 
     public function getCustomer()
     {
@@ -120,5 +132,67 @@ class Order extends BaseOrder implements OrderInterface
     public function setShippedAt(?\DateTime $shippedAt): void
     {
         $this->shippedAt = $shippedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPayments(): bool
+    {
+        return !$this->payments->isEmpty();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addPayment(PaymentInterface $payment): void
+    {
+        if (!$this->hasPayment($payment)) {
+            $this->payments->add($payment);
+            $payment->setOrder($this);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removePayment(PaymentInterface $payment): void
+    {
+        if ($this->hasPayment($payment)) {
+            $this->payments->removeElement($payment);
+            $payment->setOrder(null);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPayment(PaymentInterface $payment): bool
+    {
+        return $this->payments->contains($payment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastPayment(?string $state = null): ?PaymentInterface
+    {
+        if ($this->payments->isEmpty()) {
+            return null;
+        }
+
+        $payment = $this->payments->filter(function (PaymentInterface $payment) use ($state): bool {
+            return null === $state || $payment->getState() === $state;
+        })->last();
+
+        return $payment !== false ? $payment : null;
     }
 }
