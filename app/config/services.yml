@@ -199,11 +199,6 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  my.order_normalizer:
-    class: AppBundle\Serializer\OrderNormalizer
-    arguments: [ "@api_platform.jsonld.normalizer.item", "@router" ]
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
   my.delivery_normalizer:
     class: AppBundle\Serializer\DeliveryNormalizer
     arguments: [ "@api_platform.jsonld.normalizer.item" ]
