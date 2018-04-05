@@ -110,7 +110,7 @@ trait DeliveryTrait
         $order = null;
 
         if (!$isNew && $this->getUser()->hasRole('ROLE_ADMIN')) {
-            $order = $delivery->getSyliusOrder();
+            $order = $delivery->getOrder();
         }
 
         $form = $this->createDeliveryForm($delivery, $options);

@@ -140,7 +140,7 @@ class AdminController extends Controller
 
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->findOneBySyliusOrder($order);
+            ->findOneByOrder($order);
 
         $form = $this->createForm(DeliveryOrderType::class, $order);
 

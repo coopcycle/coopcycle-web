@@ -110,7 +110,7 @@ class ProfileController extends Controller
 
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->findOneBySyliusOrder($order);
+            ->findOneByOrder($order);
 
         return $this->render('@App/Order/service.html.twig', [
             'layout' => '@App/profile.html.twig',

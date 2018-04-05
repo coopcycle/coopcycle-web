@@ -64,8 +64,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $order;
 
-    private $syliusOrder;
-
     /**
      * @var string
      *
@@ -77,18 +75,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $vehicle = self::VEHICLE_BIKE;
 
-    public function __construct(Order $order = null)
-    {
-        parent::__construct();
-
-        $this->status = self::STATUS_WAITING;
-
-        if ($order) {
-            $this->setOrder($order);
-            $order->setDelivery($this);
-        }
-    }
-
     public function getOriginAddress()
     {
         return $this->originAddress;
@@ -99,13 +85,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $this->originAddress = $originAddress;
 
         return $this;
-    }
-
-    public function setOriginAddressFromOrder(Order $order)
-    {
-        if (null !== $order->getRestaurant()) {
-            $this->originAddress = $order->getRestaurant()->getAddress();
-        }
     }
 
     public function getDeliveryAddress()
@@ -125,23 +104,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return $this->order;
     }
 
-    public function setOrder(Order $order)
+    public function setOrder(OrderInterface $order)
     {
-        $this->setOriginAddressFromOrder($order);
-
         $this->order = $order;
-
-        return $this;
-    }
-
-    public function getSyliusOrder()
-    {
-        return $this->syliusOrder;
-    }
-
-    public function setSyliusOrder(OrderInterface $order)
-    {
-        $this->syliusOrder = $order;
 
         return $this;
     }

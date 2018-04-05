@@ -89,7 +89,7 @@ trait StoreTrait
 
                 $this->container->get('sylius.repository.order')->add($order);
 
-                $delivery->setSyliusOrder($order);
+                $delivery->setOrder($order);
 
                 $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
                 $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();

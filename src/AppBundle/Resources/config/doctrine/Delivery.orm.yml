@@ -31,16 +31,9 @@ AppBundle\Entity\Delivery:
                     referencedColumnName: id
     oneToOne:
         order:
-            targetEntity: AppBundle\Entity\Order
-            fetch: LAZY
-            inversedBy: delivery
-            joinColumns:
-                order_id:
-                    referencedColumnName: id
-        syliusOrder:
             targetEntity: Sylius\Component\Order\Model\OrderInterface
             joinColumns:
-                sylius_order_id:
+                order_id:
                     referencedColumnName: id
     entityListeners:
         AppBundle\Entity\Listener\DeliveryListener:

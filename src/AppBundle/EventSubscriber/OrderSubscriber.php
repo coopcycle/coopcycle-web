@@ -171,7 +171,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         if ($task->isDropoff() && null !== $delivery) {
 
-            $order = $delivery->getSyliusOrder();
+            $order = $delivery->getOrder();
 
             if (null !== $order && $order->isFoodtech()) {
 

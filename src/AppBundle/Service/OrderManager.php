@@ -116,7 +116,7 @@ class OrderManager
         $dropoff->setDoneBefore($dropoffDoneBefore);
 
         $delivery = new Delivery();
-        $delivery->setSyliusOrder($order);
+        $delivery->setOrder($order);
         $delivery->addTask($pickup);
         $delivery->addTask($dropoff);
 

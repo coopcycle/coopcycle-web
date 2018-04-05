@@ -173,7 +173,7 @@ class EmbedController extends Controller
 
             $this->container->get('sylius.repository.order')->add($order);
 
-            $delivery->setSyliusOrder($order);
+            $delivery->setOrder($order);
 
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
@@ -219,7 +219,7 @@ class EmbedController extends Controller
 
         return $this->render('@App/Embed/Delivery/delivery.html.twig', [
             'delivery' => $delivery,
-            'order' => $delivery->getSyliusOrder(),
+            'order' => $delivery->getOrder(),
         ]);
     }
 }

@@ -40,7 +40,7 @@ class PublicController extends Controller
 
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->findOneBySyliusOrder($order);
+            ->findOneByOrder($order);
 
         $stripePayment = $order->getLastPayment();
 
@@ -104,7 +104,7 @@ class PublicController extends Controller
 
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->findOneBySyliusOrder($order);
+            ->findOneByOrder($order);
 
         $html = $this->renderView('@App/Pdf/delivery.html.twig', [
             'order' => $order,

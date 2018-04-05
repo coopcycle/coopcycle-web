@@ -119,16 +119,6 @@ AppBundle\Entity\Order:
             orphanRemoval: false
             orderBy:
                 createdAt: ASC
-    oneToOne:
-        delivery:
-            targetEntity: AppBundle\Entity\Delivery
-            cascade:
-                - all
-            fetch: LAZY
-            mappedBy: order
-            inversedBy: null
-            joinColumns: {  }
-            orphanRemoval: false
     lifecycleCallbacks:
         prePersist:
             - prePersist
