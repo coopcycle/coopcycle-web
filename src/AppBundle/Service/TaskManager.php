@@ -42,6 +42,10 @@ class TaskManager
 
     public function markAsDone(Task $task, $notes = null)
     {
+        if ($task->hasPrevious() && $task->getPrevious()->getStatus() === Task::STATUS_TODO) {
+            throw new \Exception('task.previous_task_not_completed_yet');
+        }
+
         $task->setStatus(Task::STATUS_DONE);
 
         $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignedCourier(), $notes));

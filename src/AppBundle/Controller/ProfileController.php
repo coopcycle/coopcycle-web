@@ -257,11 +257,19 @@ class ProfileController extends Controller
             $notes = $form->get('notes')->getData();
 
             if ($form->getClickedButton()) {
-                if ('done' === $form->getClickedButton()->getName()) {
-                    $taskManager->markAsDone($task);
-                }
-                if ('fail' === $form->getClickedButton()->getName()) {
-                    $taskManager->markAsFailed($task, $notes);
+
+                try {
+                    if ('done' === $form->getClickedButton()->getName()) {
+                        $taskManager->markAsDone($task);
+                    }
+                    if ('fail' === $form->getClickedButton()->getName()) {
+                        $taskManager->markAsFailed($task, $notes);
+                    }
+                } catch (\Exception $e) {
+                    $this->addFlash(
+                        'error',
+                        $this->get('translator')->trans($e->getMessage())
+                    );
                 }
             }
 
