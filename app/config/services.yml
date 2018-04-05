@@ -330,12 +330,6 @@ services:
     arguments:
       - '@csa_guzzle.client.osrm'
 
-  payment_service:
-    class: AppBundle\Service\PaymentService
-    arguments:
-      - "@coopcycle.settings_manager"
-      - "@logger"
-
   'AppBundle\Filter\RestaurantFilter':
     arguments: [ '@doctrine', '@request_stack', '@logger', { distance: "exact", coordinate: "exact" } ]
     tags: [ 'api_platform.filter' ]
