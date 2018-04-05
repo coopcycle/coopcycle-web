@@ -1,7 +1,6 @@
 AppBundle\Entity\Order:
     type: entity
     table: order_
-    repositoryClass: AppBundle\Entity\OrderRepository
     id:
         id:
             type: integer
