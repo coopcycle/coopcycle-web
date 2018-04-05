@@ -80,6 +80,7 @@ Feature: Orders
       ],
       "id":@integer@,
       "total":@integer@,
+      "itemsTotal":@integer@,
       "taxTotal":@integer@,
       "state":"cart",
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
