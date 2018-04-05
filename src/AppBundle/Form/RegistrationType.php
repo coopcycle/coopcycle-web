@@ -35,11 +35,12 @@ class RegistrationType extends AbstractType
                 'mapped' => false,
                 'required' => true,
                 'choices'  => [
-                    'Customer' => 'CUSTOMER',
-                    'Courier' => 'COURIER',
-                    'Restaurant' => 'RESTAURANT',
-                    'Store' => 'STORE',
-                ]
+                    'roles.ROLE_USER' => 'CUSTOMER',
+                    'roles.ROLE_COURIER' => 'COURIER',
+                    'roles.ROLE_RESTAURANT' => 'RESTAURANT',
+                    'roles.ROLE_STORE' => 'STORE',
+                ],
+                'label' => 'profile.accountType'
             ]);
         }
     }
