@@ -86,7 +86,7 @@ trait OrderTrait
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->accept($order);
+            $this->get('coopcycle.order_manager')->refuse($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
