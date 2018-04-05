@@ -25,7 +25,6 @@ admin_delivery:
 admin_order_invoice:
     path:     /admin/orders/CPCCL-{number}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }
-    requirements: { number: '\d+' }
     methods:  [ GET ]
 
 admin_order:
