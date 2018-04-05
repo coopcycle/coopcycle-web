@@ -102,14 +102,11 @@ final class OrderSubscriber implements EventSubscriberInterface
         $event->setControllerResult($order);
     }
 
-    public function onOrderCreated(Event $event)
+    public function onOrderCreated(OrderCreateEvent $event)
     {
         $order = $event->getOrder();
 
         $this->logger->info(sprintf('Order #%d created', $order->getId()));
-
-        $this->notificationManager->notifyOrderCreated($order);
-        $this->metricsHelper->incrementOrdersWaiting();
     }
 
     public function onOrderAccepted(OrderAcceptEvent $event)
@@ -117,49 +114,13 @@ final class OrderSubscriber implements EventSubscriberInterface
         $order = $event->getOrder();
 
         $this->logger->info(sprintf('Order #%d accepted', $order->getId()));
-
-        $this->notificationManager->notifyOrderAccepted($order);
-        $this->metricsHelper->decrementOrdersWaiting();
-
-        $originAddress = $order->getDelivery()->getOriginAddress();
-        $deliveryAddress = $order->getDelivery()->getDeliveryAddress();
-
-        $this->redis->geoadd(
-            'deliveries:geo',
-            $originAddress->getGeo()->getLongitude(),
-            $originAddress->getGeo()->getLatitude(),
-            'delivery:'.$order->getDelivery()->getId()
-        );
-
-        $this->redis->geoadd(
-            'restaurants:geo',
-            $originAddress->getGeo()->getLongitude(),
-            $originAddress->getGeo()->getLatitude(),
-            'delivery:'.$order->getDelivery()->getId()
-        );
-        $this->redis->geoadd(
-            'delivery_addresses:geo',
-            $deliveryAddress->getGeo()->getLongitude(),
-            $deliveryAddress->getGeo()->getLatitude(),
-            'delivery:'.$order->getDelivery()->getId()
-        );
-
-        $this->redis->lpush(
-            'deliveries:waiting',
-            $order->getDelivery()->getId()
-        );
     }
 
-    public function onOrderCanceled(Event $event)
+    public function onOrderCanceled(OrderCancelEvent $event)
     {
         $order = $event->getOrder();
 
         $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
-
-        $this->notificationManager->notifyOrderCanceled($order);
-        $this->metricsHelper->decrementOrdersWaiting();
-
-        $this->redis->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
     }
 
     public function onTaskDone(TaskDoneEvent $event)

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Event;
 
-use AppBundle\Entity\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class OrderCancelEvent extends Event
@@ -11,7 +11,7 @@ class OrderCancelEvent extends Event
 
     protected $order;
 
-    public function __construct(Order $order)
+    public function __construct(OrderInterface $order)
     {
         $this->order = $order;
     }

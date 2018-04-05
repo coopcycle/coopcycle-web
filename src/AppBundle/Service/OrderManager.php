@@ -5,8 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
-use AppBundle\Event\OrderAcceptEvent;
-use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
