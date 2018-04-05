@@ -36,7 +36,8 @@
 window.__order_status_i18n = {
   'new':      "{{ 'order.state.new'|trans }}",
   'accepted': "{{ 'order.state.accepted'|trans }}",
-  'refused':  "{{ 'order.state.refused'|trans }}"
+  'refused':  "{{ 'order.state.refused'|trans }}",
+  'fulfilled':  "{{ 'order.state.fulfilled'|trans }}"
 };
 window.__restaurant = {{ restaurant_json|raw }};
 window.__orders = {{ orders_normalized|json_encode()|raw }};

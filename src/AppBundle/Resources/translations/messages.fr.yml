@@ -274,6 +274,8 @@ form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
 task.type.DROPOFF: Dépôt
 
+task.previous_task_not_completed_yet: La tâche précédente n'a pas été complétée
+
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>

@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
@@ -59,26 +60,34 @@ class OrderManager
         $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld'));
     }
 
-    public function accept(Order $order)
+    public function accept(OrderInterface $order)
     {
-        // Order MUST have status = WAITING
-        if ($order->getStatus() !== Order::STATUS_WAITING) {
-            throw new \Exception(sprintf('Order #%d cannot be accepted anymore', $order->getId()));
-        }
-
-        $this->payment->capture($order);
-
-        $order->setStatus(Order::STATUS_ACCEPTED);
-
-        $this->eventDispatcher->dispatch(OrderAcceptEvent::NAME, new OrderAcceptEvent($order));
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_ACCEPT);
     }
 
-    public function cancel(Order $order)
+    public function refuse(OrderInterface $order)
     {
-        $order->setStatus(Order::STATUS_CANCELED);
-        $order->getDelivery()->setStatus(Delivery::STATUS_CANCELED);
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_REFUSE);
+    }
 
-        $this->eventDispatcher->dispatch(OrderCancelEvent::NAME, new OrderCancelEvent($order));
+    public function ready(OrderInterface $order)
+    {
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_READY);
+    }
+
+    public function fulfill(OrderInterface $order)
+    {
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_FULFILL);
+    }
+
+    public function cancel(OrderInterface $order)
+    {
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_CANCEL);
     }
 
     public function createDelivery(OrderInterface $order)
@@ -150,6 +159,35 @@ class OrderManager
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         } finally {
             $this->doctrine->getManagerForClass(StripePayment::class)->flush();
+        }
+    }
+
+    public function capturePayment(OrderInterface $order)
+    {
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+
+        if (null === $stripePayment) {
+            return;
+        }
+
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+
+        try {
+
+            $charge = Stripe\Charge::retrieve($stripePayment->getCharge());
+            if ($charge->captured) {
+                throw new \Exception('Charge already captured');
+            }
+
+            $charge->capture();
+
+            $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+
+        } catch (\Exception $e) {
+            $stripePayment->setLastError($e->getMessage());
+            $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         }
     }
 

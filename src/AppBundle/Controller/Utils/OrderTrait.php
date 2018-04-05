@@ -5,9 +5,7 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
-use AppBundle\Sylius\Order\OrderTransitions;
 use Sylius\Component\Payment\PaymentTransitions;
-use Stripe;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,34 +66,11 @@ trait OrderTrait
 
         $this->accessControl($order->getRestaurant());
 
-        $stateMachineFactory = $this->get('sm.factory');
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
-        $apiKey = $settingsManager->get('stripe_secret_key');
-        Stripe\Stripe::setApiKey($apiKey);
-
-        $stripePayment = $this->getDoctrine()
-            ->getRepository(StripePayment::class)
-            ->findOneByOrder($order);
-
-        $stripePaymentStateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-        $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-
         try {
-
-            $charge = Stripe\Charge::retrieve($stripePayment->getCharge());
-            if (!$charge->captured) {
-                $charge->capture();
-            }
-            $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
-
-            $orderStateMachine->apply(OrderTransitions::TRANSITION_ACCEPT);
+            $this->get('coopcycle.order_manager')->accept($order);
             $this->get('sylius.manager.order')->flush();
-
         } catch (\Exception $e) {
-            $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
-        } finally {
-            $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+            // TODO Add flash message
         }
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
@@ -110,12 +85,12 @@ trait OrderTrait
 
         $this->accessControl($order->getRestaurant());
 
-        $stateMachineFactory = $this->get('sm.factory');
-
-        $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-
-        $orderStateMachine->apply(OrderTransitions::TRANSITION_REFUSE);
-        $this->get('sylius.manager.order')->flush();
+        try {
+            $this->get('coopcycle.order_manager')->accept($order);
+            $this->get('sylius.manager.order')->flush();
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,
@@ -125,12 +100,16 @@ trait OrderTrait
 
     public function readyOrderAction($restaurantId, $orderId, Request $request)
     {
-        $order = $this->getDoctrine()->getRepository(Order::class)->find($orderId);
+        $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
-        $order->setStatus(Order::STATUS_READY);
-        $this->getDoctrine()->getManagerForClass(Order::class)->flush();
+        try {
+            $this->get('coopcycle.order_manager')->ready($order);
+            $this->get('sylius.manager.order')->flush();
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,

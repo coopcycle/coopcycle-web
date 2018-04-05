@@ -7,10 +7,12 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
-use AppBundle\Event\TaskCollectionChangeEvent;
+use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Service\NotificationManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Utils\MetricsHelper;
 use ApiPlatform\Core\EventListener\EventPriorities;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use M6Web\Component\Statsd\Client as StatsdClient;
 use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
@@ -23,23 +25,29 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
+    private $doctrine;
     private $tokenStorage;
     private $notificationManager;
     private $metricsHelper;
     private $redis;
+    private $orderManager;
     private $logger;
 
     public function __construct(
+        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         NotificationManager $notificationManager,
         MetricsHelper $metricsHelper,
         Redis $redis,
+        OrderManager $orderManager,
         LoggerInterface $logger)
     {
+        $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->notificationManager = $notificationManager;
         $this->metricsHelper = $metricsHelper;
         $this->redis = $redis;
+        $this->orderManager = $orderManager;
         $this->logger = $logger;
     }
 
@@ -52,7 +60,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
             OrderCancelEvent::NAME => 'onOrderCanceled',
-            TaskCollectionChangeEvent::NAME => 'onTaskCollectionChanged',
+            TaskDoneEvent::NAME    => 'onTaskDone',
         ];
     }
 
@@ -154,22 +162,23 @@ final class OrderSubscriber implements EventSubscriberInterface
         $this->redis->lrem('deliveries:waiting', 0, $order->getDelivery()->getId());
     }
 
-    public function onTaskCollectionChanged(TaskCollectionChangeEvent $event)
+    public function onTaskDone(TaskDoneEvent $event)
     {
-        $taskCollection = $event->getTaskCollection();
+        $task = $event->getTask();
+        $user = $event->getUser();
 
-        if ($taskCollection instanceof Delivery) {
+        $delivery = $task->getDelivery();
 
-            $delivery = $taskCollection;
-            $order = $delivery->getOrder();
+        if ($task->isDropoff() && null !== $delivery) {
 
-            if (null !== $order && null === $order->getReadyAt()) {
+            $order = $delivery->getSyliusOrder();
 
-                // Given the time it takes to deliver,
-                // calculate when the order should be ready
-                $readyAt = clone $delivery->getDate();
-                $readyAt->modify(sprintf('-%d seconds', $delivery->getDuration()));
-                $order->setReadyAt($readyAt);
+            if (null !== $order && $order->isFoodtech()) {
+
+                $this->orderManager->capturePayment($order);
+                $this->orderManager->fulfill($order);
+
+                $this->doctrine->getManager()->flush();
             }
         }
     }

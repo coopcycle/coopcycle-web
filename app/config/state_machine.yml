@@ -16,10 +16,10 @@ winzou_state_machine:
                 from: [cart]
                 to: new
             cancel:
-                from: [new]
+                from: [new, accepted]
                 to: cancelled
             fulfill:
-                from: [new]
+                from: [new, accepted]
                 to: fulfilled
             accept:
                 from: [new]
@@ -27,6 +27,9 @@ winzou_state_machine:
             refuse:
                 from: [new]
                 to: refused
+            ready:
+                from: [accepted]
+                to: ready
             confirm:
                 from: [cart]
                 to: new
@@ -91,10 +94,10 @@ winzou_state_machine:
                 from: [new]
                 to: processing
             complete:
-                from: [new, processing]
+                from: [new, authorized, processing]
                 to: completed
             fail:
-                from: [new, processing]
+                from: [new, authorized, processing]
                 to: failed
             cancel:
                 from: [new, processing]

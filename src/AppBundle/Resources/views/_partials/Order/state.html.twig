@@ -1,8 +1,8 @@
 {% set state_label_class = {
-  'cart': 'label-warning',
   'new': 'label-primary',
-  'accepted': 'label-success',
-  'refused': 'label-danger'
+  'accepted': 'label-warning',
+  'refused': 'label-danger',
+  'fulfilled': 'label-success'
 } %}
 {% set trans_key = 'order.state.' ~ order.state %}
 {% set label_class = order.state in state_label_class|keys ? state_label_class[order.state] : 'label-default' %}
