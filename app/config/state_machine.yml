@@ -71,7 +71,7 @@ winzou_state_machine:
                 after_confirm_send_email:
                     on: "confirm"
                     do: ["@coopcycle.notification_manager", "notifyDeliveryConfirmed"]
-                    args: ["object", "object.getCustomer().getEmail()"]
+                    args: ["object"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
         property_path: state

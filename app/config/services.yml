@@ -380,8 +380,8 @@ services:
     class: AppBundle\Service\SettingsManager
     arguments: ["@craue_config", "%craue_config.entity_name%", "@doctrine", "@logger"]
 
-  coopcycle.notification_manager:
-    class: AppBundle\Service\NotificationManager
+  coopcycle.email_manager:
+    class: AppBundle\Service\EmailManager
     arguments:
       - "@mailer"
       - "@templating"

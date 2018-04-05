@@ -125,7 +125,7 @@ class EmbedController extends Controller
      */
     public function deliveryProcessAction(Request $request)
     {
-        $notificationManager = $this->get('coopcycle.notification_manager');
+        $emailManager = $this->get('coopcycle.email_manager');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -187,11 +187,11 @@ class EmbedController extends Controller
                 ->getResult();
 
             // Send email to customer
-            $notificationManager->notifyDeliveryToBeConfirmed($delivery, $user->getEmail());
+            $emailManager->notifyDeliveryToBeConfirmed($order);
 
             // Send email to administrators
             foreach ($administrators as $administrator) {
-                $notificationManager->notifyDeliveryHasToBeConfirmed($order, $administrator->getEmail());
+                $emailManager->notifyDeliveryHasToBeConfirmed($order, $administrator->getEmail());
             }
 
             $this->addFlash(
