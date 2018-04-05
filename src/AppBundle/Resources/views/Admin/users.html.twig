@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block content %}
+<p class="text-right">
+  <a href="{{ path('admin_users_add') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.createNew{% endtrans %}
+  </a>
+</p>
 <table class="table">
 <thead>
   <th>#</th>

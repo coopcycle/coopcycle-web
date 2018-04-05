@@ -23,11 +23,12 @@ class RegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('givenName', TextType::class)
-            ->add('familyName', TextType::class)
+            ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
+            ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
             ->add('telephone', PhoneNumberType::class, [
                 'format' => PhoneNumberFormat::NATIONAL,
-                'default_region' => strtoupper($this->countryIso)
+                'default_region' => strtoupper($this->countryIso),
+                'label' => 'profile.telephone'
             ]);
 
         if ($this->isDemo) {

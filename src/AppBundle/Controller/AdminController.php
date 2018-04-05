@@ -11,6 +11,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\TaskTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
@@ -18,7 +19,6 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
@@ -35,7 +35,6 @@ use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
 use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -47,8 +46,7 @@ use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class AdminController extends Controller
 {
@@ -119,6 +117,10 @@ class AdminController extends Controller
         return [ $orders, $pages, $page ];
     }
 
+    /**
+     * @Route("/admin/orders/{id}", name="admin_order")
+     * @Template
+     */
     public function orderAction($id, Request $request)
     {
         $stateMachineFactory = $this->get('sm.factory');
@@ -184,6 +186,23 @@ class AdminController extends Controller
         return array(
             'users' => $users,
         );
+    }
+
+    /**
+     * @Route("/admin/users/add", name="admin_users_add")
+     * @Template
+     */
+    public function userAddAction(Request $request)
+    {
+        $form = $this->createForm(RegistrationType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->redirectToRoute('admin_users');
+        }
+
+        return [
+            'form' => $form->createView(),
+        ];
     }
 
     /**
