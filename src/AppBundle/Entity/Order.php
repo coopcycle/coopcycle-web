@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Cart\CartItem;
 use AppBundle\Entity\Menu\Modifier;
 use AppBundle\Entity\Base\MenuItem;
 use AppBundle\Entity\Model\TaxableTrait;
@@ -194,41 +193,6 @@ class Order implements OrderInterface
         $this->orderedItem->add($orderedItem);
 
         return $this;
-    }
-
-    public function addCartItem(CartItem $cartItem, MenuItem $menuItem) {
-
-        $orderedItem = new OrderItem();
-        $orderedItem->setMenuItem($menuItem);
-        $orderedItem->setQuantity($cartItem->getQuantity());
-        $orderedItem->setPrice($cartItem->getUnitPrice());
-
-        foreach ($cartItem->getModifierChoices() as $modifierId => $selectedMenuItems) {
-
-            $modifier = $menuItem->getModifiers()->filter(function ($element) use ($modifierId) {
-                return $element->getId() == $modifierId;
-            })->first();
-
-            foreach ($selectedMenuItems as $selectedModifierId) {
-                $orderedItemModifier = new OrderItemModifier();
-
-                // get the price for each selected menu item (depends on the Modifier's calculus strategy)
-                $menuItem = $modifier->getModifierChoices()->filter(
-                    function (Modifier $element) use ($selectedModifierId) {
-                        return $element->getId() == $selectedModifierId;
-                    }
-                )->first();
-
-                $orderedItemModifier->setName($menuItem->getName());
-                $orderedItemModifier->setDescription($menuItem->getDescription());
-                $orderedItemModifier->setAdditionalPrice($menuItem->getPrice());
-                $orderedItemModifier->setModifier($modifier);
-                $orderedItem->addModifier($orderedItemModifier);
-            }
-        }
-
-        $this->addOrderedItem($orderedItem);
-
     }
 
     /**
