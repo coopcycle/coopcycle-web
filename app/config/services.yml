@@ -163,7 +163,6 @@ services:
       - "@routing_service"
       - "@sm.factory"
       - "@coopcycle.settings_manager"
-      - "@coopcycle.notification_manager"
       - "@event_dispatcher"
 
   coopcycle.delivery.manager:

@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
 use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -34,7 +33,7 @@ class NotificationManager
         ];
     }
 
-    public function notifyOrderCreated(Order $order)
+    public function notifyOrderCreated(OrderInterface $order)
     {
         if (preg_match('/@demo.coopcycle.org$/', $order->getCustomer()->getEmail())) {
             return;
@@ -53,7 +52,7 @@ class NotificationManager
         $this->mailer->send($email);
     }
 
-    public function notifyOrderAccepted(Order $order)
+    public function notifyOrderAccepted(OrderInterface $order)
     {
         if (preg_match('/@demo.coopcycle.org$/', $order->getCustomer()->getEmail())) {
             return;
@@ -72,7 +71,7 @@ class NotificationManager
         $this->mailer->send($email);
     }
 
-    public function notifyOrderCanceled(Order $order)
+    public function notifyOrderCanceled(OrderInterface $order)
     {
         if (preg_match('/@demo.coopcycle.org$/', $order->getCustomer()->getEmail())) {
             return;

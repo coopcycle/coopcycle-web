@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Event\OrderAcceptEvent;
@@ -27,7 +26,6 @@ class OrderManager
     private $serializer;
     private $routing;
     private $stateMachineFactory;
-    private $notificationManager;
     private $eventDispatcher;
 
     public function __construct(
@@ -37,7 +35,6 @@ class OrderManager
         RoutingInterface $routing,
         StateMachineFactoryInterface $stateMachineFactory,
         SettingsManager $settingsManager,
-        NotificationManager $notificationManager,
         EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
@@ -46,18 +43,15 @@ class OrderManager
         $this->routing = $routing;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->settingsManager = $settingsManager;
-        $this->notificationManager = $notificationManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function pay(Order $order, $stripeToken)
+    public function pay(OrderInterface $order, $stripeToken)
     {
-        $this->payment->authorize($order, $stripeToken);
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $stripePayment->setStripeToken($stripeToken);
 
-        $order->setStatus(Order::STATUS_WAITING);
-
-        $channel = sprintf('restaurant:%d:orders', $order->getRestaurant()->getId());
-        $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld'));
+        $this->authorizePayment($order);
     }
 
     public function accept(OrderInterface $order)
@@ -189,16 +183,6 @@ class OrderManager
             $stripePayment->setLastError($e->getMessage());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         }
-    }
-
-    public function sendAcceptEmail(OrderInterface $order)
-    {
-        // TODO
-    }
-
-    public function sendRefuseEmail(OrderInterface $order)
-    {
-        // TODO
     }
 
     public function sendConfirmEmail(OrderInterface $order)
