@@ -1,0 +1,29 @@
+AppBundle\Entity\Notification:
+    type: entity
+    table: notification
+    repositoryClass: AppBundle\Entity\NotificationRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        message:
+            type: text
+        read:
+            column: is_read
+            type: boolean
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        user:
+            targetEntity: AppBundle\Entity\ApiUser
+            joinColumns:
+                user_id:
+                    referencedColumnName: id
+                    nullable: false
