@@ -69,7 +69,7 @@ class TaskType extends AbstractType
                 ->add('doneBefore', DateType::class, [
                     'widget' => 'single_text',
                     'format' => 'yyyy-MM-dd HH:mm:ss',
-                    'required' => false
+                    'required' => true
                 ]);
         }
 
@@ -124,7 +124,6 @@ class TaskType extends AbstractType
             }, iterator_to_array($task->getTags()));
 
             $form->get('tagsAsString')->setData(implode(' ', $tags));
-
             if ($form->has('dateRange')) {
                 $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
                 $form->get('dateRange')->get('before')->setData($task->getDoneBefore());

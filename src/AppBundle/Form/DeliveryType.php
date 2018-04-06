@@ -21,7 +21,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class DeliveryType extends AbstractType
 {
@@ -53,11 +53,17 @@ class DeliveryType extends AbstractType
             ])
             ->add('pickup', TaskType::class, [
                 'mapped' => false,
-                'label' => 'form.delivery.pickup.label'
+                'label' => 'form.delivery.pickup.label',
+                'constraints' => [
+                    new Assert\Valid()
+                ]
             ])
             ->add('dropoff', TaskType::class, [
                 'mapped' => false,
-                'label' => 'form.delivery.dropoff.label'
+                'label' => 'form.delivery.dropoff.label',
+                'constraints' => [
+                    new Assert\Valid()
+                ]
             ])
             ->add('vehicle', ChoiceType::class, [
                 'required' => true,
