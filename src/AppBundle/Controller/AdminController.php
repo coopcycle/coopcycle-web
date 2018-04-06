@@ -350,7 +350,7 @@ class AdminController extends Controller
 
     public function newDeliveryAction(Request $request)
     {
-        $delivery = Delivery::create();
+        $delivery = Delivery::createWithDefaults();
 
         return $this->renderDeliveryForm($delivery, $request);
     }

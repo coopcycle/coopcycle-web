@@ -69,7 +69,7 @@ trait StoreTrait
             ->getRepository(Store::class)
             ->find($id);
 
-        $delivery = Delivery::create();
+        $delivery = Delivery::createWithDefaults();
         $delivery->getPickup()->setAddress($store->getAddress());
 
         $form = $this->createDeliveryForm($delivery, [

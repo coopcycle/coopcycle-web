@@ -197,23 +197,31 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     public static function create()
     {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+
+        $delivery = new self();
+        $delivery->addTask($pickup);
+        $delivery->addTask($dropoff);
+
+        return $delivery;
+    }
+
+    public static function createWithDefaults()
+    {
         $pickupDoneBefore = new \DateTime();
         $pickupDoneBefore->modify('+1 day');
 
         $dropoffDoneBefore = clone $pickupDoneBefore;
         $dropoffDoneBefore->modify('+1 hour');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-        $pickup->setDoneBefore($pickupDoneBefore);
+        $delivery = self::create();
 
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
-        $dropoff->setDoneBefore($dropoffDoneBefore);
-
-        $delivery = new self();
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
+        $delivery->getPickup()->setDoneBefore($pickupDoneBefore);
+        $delivery->getDropoff()->setDoneBefore($dropoffDoneBefore);
 
         return $delivery;
     }
