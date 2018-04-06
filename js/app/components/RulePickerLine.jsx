@@ -64,7 +64,7 @@ class RulePickerLine extends React.Component {
      */
 
     // zone
-    let zoneTest = /in_zone\(deliveryAddress, "([\w]+)"\)/.exec(this.props.line)
+    let zoneTest = /in_zone\(deliveryAddress, ['|"](.+)['|"]\)/.exec(this.props.line)
     if (zoneTest) {
       return ['zone', 'in_zone', [zoneTest[1]]]
     }
