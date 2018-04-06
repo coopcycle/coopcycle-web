@@ -51,15 +51,27 @@
 {% endblock %}
 
 {% block scripts %}
+
+{% set pickup_date = null %}
+{% set dropoff_date = null %}
+
+{% if form.pickup.doneBefore.vars.value is not empty %}
+  {% set pickup_date = form.pickup.doneBefore.vars.value|date('Y-m-d H:i:s') %}
+{% endif %}
+
+{% if form.dropoff.doneBefore.vars.value is not empty %}
+  {% set dropoff_date = form.dropoff.doneBefore.vars.value|date('Y-m-d H:i:s') %}
+{% endif %}
+
 <script>
 function initMap() {
 
   var tasks = {
     pickup: {
-      doneBefore: "{{ form.pickup.doneBefore.vars.value|date('Y-m-d H:i:s') }}",
+      doneBefore: {{ pickup_date|json_encode()|raw }},
     },
     dropoff: {
-      doneBefore: "{{ form.dropoff.doneBefore.vars.value|date('Y-m-d H:i:s') }}"
+      doneBefore: {{ dropoff_date|json_encode()|raw }}
     }
   }
 
@@ -67,7 +79,9 @@ function initMap() {
     new CoopCycle.DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
       defaultValue: data.doneBefore,
       onChange: function(date, dateString) {
-        document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+        if (date) {
+          document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+        }
       }
     });
     new CoopCycle.AddressInput(document.querySelector(`#delivery_${type}_address_streetAddress`), {

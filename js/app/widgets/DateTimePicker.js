@@ -38,7 +38,11 @@ class DateTimePicker extends React.Component {
 
   onDateChange(date, dateString) {
 
-    const { value } = this.state;
+    let { value } = this.state;
+
+    if (!value) {
+      value = moment()
+    }
 
     value.set('date', date.get('date'));
     value.set('month', date.get('month'));
@@ -51,7 +55,11 @@ class DateTimePicker extends React.Component {
 
   onTimeChange(date, timeString) {
 
-    const { value } = this.state
+    let { value } = this.state
+
+    if (!value) {
+      value = moment()
+    }
 
     value.set('hour', date.get('hour'))
     value.set('minute', date.get('minute'))
@@ -112,6 +120,6 @@ class DateTimePicker extends React.Component {
 export default (el, options) => {
 
   render(<DateTimePicker
-    defaultValue={ moment(options.defaultValue) }
+    defaultValue={ options.defaultValue ? moment(options.defaultValue) : null }
     onChange={ options.onChange } />, el)
 }
