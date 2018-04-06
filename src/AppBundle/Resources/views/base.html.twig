@@ -68,7 +68,7 @@
     {% if app.user %}
     <script src="{{ asset('js/notifications.js') }}"></script>
     <script>
-      new window.CoopCycle.NotificationsListener("{{ app.user.username }}", {
+      new window.CoopCycle.NotificationsListener($('#notifications'), "{{ app.user.username }}", {
         notificationsURL: "{{ path('profile_notifications') }}",
         unreadCountURL: "{{ path('profile_notifications_unread') }}",
         markAsReadURL: "{{ path('profile_notifications_mark_as_read') }}",
@@ -78,7 +78,6 @@
         }
       })
     </script>
-    <script id="notifications-template" type="text/template"></script>
     {% endif %}
 
     {% set cart = cart_provider.getCart() %}

@@ -4,9 +4,16 @@ import NotificationList from './NotificationList'
 
 window.CoopCycle = window.CoopCycle || {}
 
-window.CoopCycle.NotificationsListener = (username, options) => {
+window.CoopCycle.NotificationsListener = ($popover, username, options) => {
 
-  const $popover = $('#notifications')
+  if ($popover.length === 0) {
+    return
+  }
+
+  let template = document.createElement('script')
+  template.type = 'text/template'
+  document.body.appendChild(template)
+
   let component
 
   const initPopover = () => {
@@ -32,7 +39,7 @@ window.CoopCycle.NotificationsListener = (username, options) => {
   }
 
   const setPopoverContent = () => {
-    $popover.attr('data-content', document.querySelector('#notifications-template').innerHTML)
+    $popover.attr('data-content', template.innerHTML)
   }
 
   const socket = io('//' + window.location.hostname, { path: '/tracking/socket.io' })
@@ -51,7 +58,7 @@ window.CoopCycle.NotificationsListener = (username, options) => {
           url={ options.notificationsURL }
           emptyMessage={ options.emptyMessage }
           onUpdate={ () => setPopoverContent() } />,
-        document.querySelector('#notifications-template'),
+        template,
         () => {
           setPopoverContent()
           initPopover()
