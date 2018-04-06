@@ -384,6 +384,8 @@ admin.settings.missing_mandatory_settings: |
 index.map.tip: Usa el mapa para encontrar restaurantes
 index.banner: Platos deliciosos del restaurante a tu casa
 
+notifications.empty: Ninguna notificación
+
 pagination.previous: Anterior
 pagination.next: Siguiente
 

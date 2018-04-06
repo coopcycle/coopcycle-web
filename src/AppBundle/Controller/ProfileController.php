@@ -12,6 +12,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Notification;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
@@ -23,6 +24,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
@@ -279,5 +282,57 @@ class ProfileController extends Controller
         return [
             'form' => $form->createView(),
         ];
+    }
+
+    /**
+     * @Route("/profile/notifications", name="profile_notifications")
+     */
+    public function notificationsAction(Request $request)
+    {
+        $notificationRepository = $this->getDoctrine()->getRepository(Notification::class);
+
+        $notifications = $notificationRepository->findByUser($this->getUser());
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            return new JsonResponse($this->get('serializer')->normalize($notifications, 'json'));
+        }
+
+        $notificationRepository->markAllAsRead($this->getUser());
+
+        return $this->render('@App/Profile/notifications.html.twig', [
+            'notifications' => $notifications
+        ]);
+    }
+
+    /**
+     * @Route("/profile/notifications/unread", name="profile_notifications_unread")
+     */
+    public function unreadNotificationsAction(Request $request)
+    {
+        $unread = $this->getDoctrine()
+            ->getRepository(Notification::class)
+            ->countUnreadByUser($this->getUser());
+
+        return new JsonResponse((int) $unread);
+    }
+
+    /**
+     * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
+     */
+    public function markNotificationsAsReadAction(Request $request)
+    {
+        $ids = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $ids = json_decode($content, true);
+        }
+
+        $this->getDoctrine()
+            ->getRepository(Notification::class)
+            ->markAsRead($this->getUser(), $ids);
+
+        $this->get('coopcycle.notification_manager')->publishCount($this->getUser());
+
+        return new Response('', 204);
     }
 }

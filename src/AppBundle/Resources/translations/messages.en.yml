@@ -383,6 +383,8 @@ admin.settings.missing_mandatory_settings: |
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered at your place
 
+notifications.empty: No notifications
+
 pagination.previous: Previous
 pagination.next: Next
 

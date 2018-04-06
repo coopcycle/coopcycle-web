@@ -21,6 +21,7 @@ Encore
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
   .addEntry('js/delivery-list', './js/app/delivery/list.jsx')
   .addEntry('js/delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
+  .addEntry('js/notifications', './js/app/notifications/index.js')
   .addEntry('js/restaurant-form', './js/app/restaurant/form.jsx')
   .addEntry('js/restaurant-menu', './js/app/restaurant/menu.jsx')
   .addEntry('js/restaurant-planning', './js/app/restaurant/planning.jsx')

@@ -63,6 +63,23 @@
     <script src="{{ asset('manifest.js') }}"></script>
     <script src="{{ asset('js/vendor.js') }}"></script>
     <script src="{{ asset('js/common.js') }}"></script>
+    <script src="/tracking/socket.io/socket.io.js"></script>
+
+    {% if app.user %}
+    <script src="{{ asset('js/notifications.js') }}"></script>
+    <script>
+      new window.CoopCycle.NotificationsListener("{{ app.user.username }}", {
+        notificationsURL: "{{ path('profile_notifications') }}",
+        unreadCountURL: "{{ path('profile_notifications_unread') }}",
+        markAsReadURL: "{{ path('profile_notifications_mark_as_read') }}",
+        emptyMessage: "{{ 'notifications.empty'|trans }}",
+        elements: {
+          count: document.querySelector('#notifications .badge')
+        }
+      })
+    </script>
+    <script id="notifications-template" type="text/template"></script>
+    {% endif %}
 
     {% set cart = cart_provider.getCart() %}
     <script>

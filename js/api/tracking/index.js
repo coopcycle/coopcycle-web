@@ -86,6 +86,14 @@ const channels = {
   'order:*:state_changed': {
     toJSON: true,
     psubscribe: true
+  },
+  'user:*:notifications': {
+    toJSON: true,
+    psubscribe: true
+  },
+  'user:*:notifications:count': {
+    toJSON: true,
+    psubscribe: true
   }
 }
 

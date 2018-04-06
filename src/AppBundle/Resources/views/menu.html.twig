@@ -68,6 +68,11 @@
               <li><a href="{{ path('fos_user_security_logout') }}">{% trans from 'FOSUserBundle' %}layout.logout{% endtrans %}</a></li>
             </ul>
           </li>
+          <li>
+            <a href="#" id="notifications">
+              <span class="badge">0</span>
+            </a>
+          </li>
           {% if is_granted('ROLE_ADMIN') %}
           <li>
             <p class="navbar-btn">
