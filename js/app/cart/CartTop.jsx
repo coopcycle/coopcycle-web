@@ -38,7 +38,7 @@ class CartTop extends React.Component
     const amount = itemsTotal > 0 ? total : itemsTotal
 
     return (
-      <a href={ anchorURL } className="btn btn-default navbar-btn navbar-right">
+      <a href={ anchorURL } className="btn btn-default">
         { this.props.i18n['Cart'] } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { numeral(amount / 100).format('0,0.00 $') }
       </a>
     );
