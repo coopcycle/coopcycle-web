@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
@@ -129,6 +128,7 @@ class EmbedController extends Controller
     public function deliveryProcessAction(Request $request)
     {
         $emailManager = $this->get('coopcycle.email_manager');
+        $settingsManager = $this->get('coopcycle.settings_manager');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -150,8 +150,6 @@ class EmbedController extends Controller
             $telephone = $form->get('telephone')->getData();
             $contactName = $form->get('contactName')->getData();
             $billingAddress = $form->get('billingAddress')->getData();
-
-
 
             $userManipulator = $this->get('fos_user.util.user_manipulator');
             $userManager = $this->get('fos_user.user_manager');
@@ -185,24 +183,11 @@ class EmbedController extends Controller
             $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
-            $administrators = $this->getDoctrine()
-                ->getRepository(ApiUser::class)
-                ->createQueryBuilder('u')
-                ->where('u.roles LIKE :roles')
-                ->setParameter('roles', '%ROLE_ADMIN%')
-                ->getQuery()
-                ->getResult();
-
-            $emails = [];
-            foreach ($administrators as $administrator) {
-                $emails[] = $administrator->getEmail();
-            }
-
             // Send email to customer
             $emailManager->notifyDeliveryToBeConfirmed($order);
 
-            // Send email to administrators
-            $emailManager->notifyDeliveryHasToBeConfirmed($order, $emails);
+            // Send email to administrator
+            $emailManager->notifyDeliveryHasToBeConfirmed($order, $settingsManager->get('administrator_email'));
 
             $this->addFlash(
                 'notice',

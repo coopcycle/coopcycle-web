@@ -347,6 +347,8 @@ form.settings.latlng.help: |
   Spécifiez la latitude et la longitude par défaut. Vous pouvez l'obtenir sur <a href="https://www.latlong.net/">latlong.net</a>
 form.settings.default_tax_category.label: Taux de TVA livraison
 form.settings.default_tax_category.help: Définissez le taux de TVA à appliquer pour les livraisons
+form.settings.administrator_email.label: Email de l'administrateur
+form.settings.administrator_email.help: Les notifications seront envoyées à cet email
 
 form.registration.username.help: |
   Votre nom d'utilisateur ne peut pas dépasser 15 caractères.
