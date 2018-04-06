@@ -33,9 +33,11 @@ class AddressType extends AbstractType
                 ]
             ])
             ->add('addressLocality', TextType::class, [
+                'required' => false,
                 'label' => 'form.address.addressLocality.label'
             ])
             ->add('postalCode', TextType::class, [
+                'required' => false,
                 'label' => 'form.address.postalCode.label'
             ])
             ->add('floor', TextType::class, [

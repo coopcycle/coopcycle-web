@@ -25,7 +25,6 @@ AppBundle\Entity\Address:
             nullable: true
         geo:
             type: geography
-            nullable: true
             options:
                 geometry_type: GEOMETRY
                 srid: 4326
@@ -37,6 +36,7 @@ AppBundle\Entity\Address:
         addressLocality:
             type: string
             column: address_locality
+            nullable: true
         addressRegion:
             type: string
             nullable: true
@@ -44,6 +44,7 @@ AppBundle\Entity\Address:
         postalCode:
             type: string
             column: postal_code
+            nullable: true
         postOfficeBoxNumber:
             type: string
             nullable: true

@@ -25,7 +25,6 @@ abstract class PostalAddress
      * @var string The locality. For example, Mountain View.
      *
      * @Assert\Type(type="string")
-     * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
     protected $addressLocality;
@@ -50,7 +49,6 @@ abstract class PostalAddress
     /**
      * @var string The postal code. For example, 94043.
      *
-     * @Assert\NotBlank()
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/postalCode")
      */
