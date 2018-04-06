@@ -27,6 +27,11 @@ interface OrderInterface extends BaseOrderInterface
     public function getShippingAddress(): ?Address;
 
     /**
+     * @return Address|null
+     */
+    public function getBillingAddress(): ?Address;
+
+    /**
      * @return DateTime|null
      */
     public function getShippedAt(): ?\DateTime;

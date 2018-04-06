@@ -24,7 +24,7 @@ class AddressType extends AbstractType
     {
         $builder
             ->add('streetAddress', SearchType::class, [
-                'label' => 'Street address',
+                'label' => 'form.address.streetAddress.label',
                 'attr' => [
                     // autocomplete="off" doesn't work in Chrome
                     // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
@@ -53,6 +53,22 @@ class AddressType extends AbstractType
             ->add('longitude', HiddenType::class, [
                 'mapped' => false,
             ]);
+
+        if (true === $options['extended']) {
+            $builder
+                ->add('firstName', TextType::class, [
+                    'label' => 'form.address.firstName.label',
+                    'required' => false,
+                ])
+                ->add('lastName', TextType::class, [
+                    'label' => 'form.address.lastName.label',
+                    'required' => false,
+                ])
+                ->add('company', TextType::class, [
+                    'label' => 'form.address.company.label',
+                    'required' => false,
+                ]);
+        }
 
         $constraints = [
             new Constraints\NotBlank(),
@@ -101,6 +117,7 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Address::class,
+            'extended' => false
         ));
     }
 }

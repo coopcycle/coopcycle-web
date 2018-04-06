@@ -27,6 +27,14 @@ AppBundle\Entity\Sylius\Order:
                     nullable: true
             cascade:
                 - persist
+        billingAddress:
+            targetEntity: AppBundle\Entity\Address
+            joinColumns:
+                billing_address_id:
+                    referencedColumnName: id
+                    nullable: true
+            cascade:
+                - persist
     oneToMany:
         payments:
             targetEntity: AppBundle\Entity\StripePayment

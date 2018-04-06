@@ -43,11 +43,6 @@ AppBundle\Entity\Address:
             column: address_region
         postalCode:
             type: string
-            scale: 0
-            length: null
-            unique: false
-            nullable: false
-            precision: 0
             column: postal_code
         postOfficeBoxNumber:
             type: string
@@ -56,3 +51,15 @@ AppBundle\Entity\Address:
         streetAddress:
             type: string
             column: street_address
+        firstName:
+            type: string
+            nullable: true
+            column: first_name
+        lastName:
+            type: string
+            nullable: true
+            column: last_name
+        company:
+            type: string
+            nullable: true
+            column: company

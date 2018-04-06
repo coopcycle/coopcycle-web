@@ -50,6 +50,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $shippingAddress;
 
+    protected $billingAddress;
+
     protected $shippedAt;
 
     protected $payments;
@@ -119,6 +121,21 @@ class Order extends BaseOrder implements OrderInterface
     public function setShippingAddress(?Address $shippingAddress): void
     {
         $this->shippingAddress = $shippingAddress;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBillingAddress(): ?Address
+    {
+        return $this->billingAddress;
+    }
+
+    public function setBillingAddress($billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
+
+        return $this;
     }
 
     /**
