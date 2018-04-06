@@ -58,19 +58,19 @@ winzou_state_machine:
                     args: ["object", "'order.accept'"]
                 after_accept_send_email:
                     on: "accept"
-                    do: ["@coopcycle.notification_manager", "notifyOrderAccepted"]
+                    do: ["@coopcycle.email_manager", "notifyOrderAccepted"]
                     args: ["object"]
                 after_refuse_send_email:
                     on: "refuse"
-                    do: ["@coopcycle.notification_manager", "notifyOrderCanceled"]
+                    do: ["@coopcycle.email_manager", "notifyOrderCanceled"]
                     args: ["object"]
                 after_cancel_send_email:
                     on: "cancel"
-                    do: ["@coopcycle.notification_manager", "notifyOrderCanceled"]
+                    do: ["@coopcycle.email_manager", "notifyOrderCanceled"]
                     args: ["object"]
                 after_confirm_send_email:
                     on: "confirm"
-                    do: ["@coopcycle.notification_manager", "notifyDeliveryConfirmed"]
+                    do: ["@coopcycle.email_manager", "notifyDeliveryConfirmed"]
                     args: ["object"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
@@ -116,7 +116,7 @@ winzou_state_machine:
             after:
                 after_authorize_send_email:
                     on: "authorize"
-                    do: ["@coopcycle.notification_manager", "notifyOrderCreated"]
+                    do: ["@coopcycle.email_manager", "notifyOrderCreated"]
                     args: ["object.getOrder()"]
                 after_authorize_publish_redis_event:
                     on: "authorize"

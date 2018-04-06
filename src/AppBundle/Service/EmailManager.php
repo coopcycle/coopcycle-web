@@ -141,10 +141,6 @@ class EmailManager
 
     public function notifyDeliveryConfirmed(OrderInterface $order)
     {
-        if (preg_match('/@demo.coopcycle.org$/', $to)) {
-            return;
-        }
-
         $subject = $this->translator->trans('delivery.confirmed.subject', [], 'emails');
 
         $body = $this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
