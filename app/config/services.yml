@@ -389,6 +389,14 @@ services:
       - "@coopcycle.settings_manager"
       - "%transactional_address%"
 
+  coopcycle.notification_manager:
+    class: AppBundle\Service\NotificationManager
+    arguments:
+      - "@doctrine"
+      - "@snc_redis.default"
+      - "@serializer"
+      - "@translator"
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:
