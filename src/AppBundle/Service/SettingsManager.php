@@ -15,11 +15,12 @@ class SettingsManager
 
     private $settings = [
         'brand_name',
+        'administrator_email',
         'stripe_publishable_key',
         'stripe_secret_key',
         'google_api_key',
         'latlng',
-        'default_tax_category'
+        'default_tax_category',
     ];
 
     private $secretSettings = [
