@@ -193,13 +193,16 @@ class EmbedController extends Controller
                 ->getQuery()
                 ->getResult();
 
+            $emails = [];
+            foreach ($administrators as $administrator) {
+                $emails[] = $administrator->getEmail();
+            }
+
             // Send email to customer
             $emailManager->notifyDeliveryToBeConfirmed($order);
 
             // Send email to administrators
-            foreach ($administrators as $administrator) {
-                $emailManager->notifyDeliveryHasToBeConfirmed($order, $administrator->getEmail());
-            }
+            $emailManager->notifyDeliveryHasToBeConfirmed($order, $emails);
 
             $this->addFlash(
                 'notice',
