@@ -27,6 +27,16 @@
     {{ form_row(form.email) }}
     {{ form_row(form.telephone) }}
 
+    <p class="text-center">
+        <a role="button" data-toggle="collapse" data-target="#billing-address" aria-expanded="false" aria-controls="billing-address">
+        Spécifier une adresse de facturation
+      </a>
+    </p>
+    <div class="collapse" id="billing-address">
+      <h3>Adresse de facturation</h3>
+      {{ form_widget(form.billingAddress) }}
+    </div>
+
     {{ form_widget(form._token) }}
 
     <hr>
@@ -69,6 +79,15 @@ function initMap() {
       }
     });
   })
+
+  new CoopCycle.AddressInput(document.querySelector(`#delivery_billingAddress_streetAddress`), {
+    elements: {
+      latitude: document.querySelector(`#delivery_billingAddress_latitude`),
+      longitude: document.querySelector(`#delivery_billingAddress_longitude `),
+      postalCode: document.querySelector(`#delivery_billingAddress_postalCode`),
+      addressLocality: document.querySelector(`#delivery_billingAddress_addressLocality`)
+    }
+  });
 
 }
 </script>

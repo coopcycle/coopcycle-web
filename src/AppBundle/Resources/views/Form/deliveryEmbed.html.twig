@@ -67,3 +67,31 @@
 {% block _delivery_dropoff_address_addressLocality_widget %}
   {{ block('hidden_widget') }}
 {% endblock %}
+
+{% block _delivery_billingAddress_widget %}
+
+<div class="row">
+  <div class="col-xs-6">
+    {{ form_row(form.firstName) }}
+  </div>
+  <div class="col-xs-6">
+    {{ form_row(form.lastName) }}
+  </div>
+</div>
+{{ form_row(form.company) }}
+{{ form_row(form.streetAddress) }}
+
+{{ form_widget(form.latitude) }}
+{{ form_widget(form.longitude) }}
+{{ form_widget(form.postalCode) }}
+{{ form_widget(form.addressLocality) }}
+
+{% endblock %}
+
+{% block _delivery_billingAddress_postalCode_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_billingAddress_addressLocality_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}

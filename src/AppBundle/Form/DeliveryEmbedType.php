@@ -46,6 +46,10 @@ class DeliveryEmbedType extends DeliveryType
                 'mapped' => false,
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryCode)
+            ])
+            ->add('billingAddress', AddressType::class, [
+                'mapped' => false,
+                'extended' => true,
             ]);
     }
 }

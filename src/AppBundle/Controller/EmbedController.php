@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Sylius\Order\OrderInterface;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -58,7 +60,7 @@ class EmbedController extends Controller
      * @Route("/embed/delivery/start", name="embed_delivery_start")
      * @Template
      */
-    public function deliveryStartAction()
+    public function deliveryStartAction(Request $request)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -70,6 +72,7 @@ class EmbedController extends Controller
         }
 
         $form = $this->createDeliveryForm();
+        $form->handleRequest($request);
 
         return $this->render('@App/Embed/Delivery/start.html.twig', [
             'form' => $form->createView(),
@@ -146,6 +149,9 @@ class EmbedController extends Controller
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
             $contactName = $form->get('contactName')->getData();
+            $billingAddress = $form->get('billingAddress')->getData();
+
+
 
             $userManipulator = $this->get('fos_user.util.user_manipulator');
             $userManager = $this->get('fos_user.user_manager');
@@ -169,6 +175,7 @@ class EmbedController extends Controller
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
             $order = $this->createOrderForDelivery($delivery, $price, $user);
 
+            $this->setBillingAddress($order, $billingAddress);
             $order->setNotes($contactName);
 
             $this->container->get('sylius.repository.order')->add($order);
@@ -205,6 +212,16 @@ class EmbedController extends Controller
         return $this->render('@App/Embed/Delivery/summary.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    private function setBillingAddress(OrderInterface $order, Address $address)
+    {
+        if (null !== $address->getFirstName()
+        ||  null !== $address->getLastName()
+        ||  null !== $address->getCompany()
+        ||  null !== $address->getStreetAddress()) {
+            $order->setBillingAddress($address);
+        }
     }
 
     /**

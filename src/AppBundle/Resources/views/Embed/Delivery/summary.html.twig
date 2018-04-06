@@ -16,6 +16,7 @@
 
   <h3>Résumé de votre commande</h3>
 
+  {{ form_start(form, { action: path('embed_delivery_process') }) }}
   <div class="alert alert-info">
     {% trans with {
       '%dropoff_date%': delivery.dropoff.doneBefore|localizeddate('medium', 'short'),
@@ -25,30 +26,27 @@
     } %}
       embed.delivery.summary
     {% endtrans %}
+    <br>
+    <br>
+
+    <p class="text-center">
+      <button id="modify-form" type="button" class="btn btn-xs btn-default">Modifier</button>
+    </p>
   </div>
 
-  <div id="map" style="height: 250px; margin-bottom: 20px;"></div>
+  {% include "@App/Embed/Delivery/_partials/formFields.html.twig" %}
 
-  {{ form_start(form, { action: path('embed_delivery_process') }) }}
+  <p class="text-center">
+    <small class="text-muted">{{ 'embed.delivery.submit.help'|trans }}</small>
+  </p>
 
-    <div class="hidden">
-
-      {{ form_row(form.pickup) }}
-      {{ form_row(form.dropoff) }}
-      {{ form_row(form.vehicle) }}
-
-      {{ form_row(form.contactName) }}
-
-      {{ form_row(form.email) }}
-      {{ form_row(form.telephone) }}
-
-      {{ form_widget(form._token) }}
-
-    </div>
-
-    <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
+  <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}  →</button>
 
   {{ form_end(form, { render_rest: false }) }}
+
+  <hr>
+
+  <div id="map" style="height: 250px; margin-bottom: 20px;"></div>
 
   {% include "@App/Embed/Delivery/footer.html.twig" %}
 
@@ -63,10 +61,18 @@
 
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script>
+
 new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ pickup.address.geo.latitude }}, {{ pickup.address.geo.longitude }} ],
   dropoff: [ {{ dropoff.address.geo.latitude }}, {{ dropoff.address.geo.longitude }} ],
   polyline: "{{ delivery.polyline|e('js') }}"
 })
+
+$("#modify-form").on('click', function() {
+  $('form[name="delivery"]')
+    .attr('action', "{{ path('embed_delivery_start') }}")
+    .submit()
+})
+
 </script>
 {% endblock %}

@@ -317,11 +317,15 @@ form.delivery_order.confirm.label: ✓ Confirmer la commande
 
 form.delivery_embed.contact_name.label: Nom de la personne à contacter / nom de l'entreprise
 
+form.address.streetAddress.label: Adresse
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
 form.address.floor.label: Étage
 form.address.description.label: Instructions
 form.address.description.placeholder: 2ème porte à gauche…
+form.address.firstName.label: Prénom
+form.address.lastName.label: Nom
+form.address.company.label: Entreprise
 
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
@@ -417,9 +421,11 @@ embed.payment.heading: Payer ma commande
 embed.delivery.summary: |
   Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong> à l'adresse suivante : <strong>%dropoff_address%</strong>
   <br>
-  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>. Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>.
+  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>.
   <br>
-  Veuillez cliquer sur "suivant" pour confirmer le devis et commander la course.
+  Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>.
+
+embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
 
 embed.delivery.confirm_message: |
   Merci !
