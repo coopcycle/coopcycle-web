@@ -3,21 +3,19 @@
 namespace AppBundle\Event;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class OrderAcceptEvent extends Event
+class OrderAcceptEvent extends GenericEvent
 {
     const NAME = 'order.accept';
 
-    protected $order;
-
     public function __construct(OrderInterface $order)
     {
-        $this->order = $order;
+        parent::__construct($order);
     }
 
     public function getOrder()
     {
-        return $this->order;
+        return $this->getSubject();
     }
 }
