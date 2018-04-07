@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Notification;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -28,6 +29,40 @@ class NotificationManager
         $this->serializer = $serializer;
         $this->translator = $translator;
         $this->notificationRepository = $this->doctrine->getRepository(Notification::class);
+    }
+
+    private function findUsersByRole($role)
+    {
+        return $this->doctrine
+            ->getRepository(ApiUser::class)
+            ->createQueryBuilder('u')
+            ->where('u.roles LIKE :roles')
+            ->setParameter('roles', '%'.$role.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function createForAdministrators($message)
+    {
+        $notifications = [];
+        foreach ($this->findUsersByRole('ROLE_ADMIN') as $user) {
+            $notification = new Notification();
+            $notification->setUser($user);
+            $notification->setMessage($message);
+
+            $notifications[] = $notification;
+        }
+
+        return $notifications;
+    }
+
+    public function createForUser(UserInterface $user, $message)
+    {
+        $notification = new Notification();
+        $notification->setUser($user);
+        $notification->setMessage($message);
+
+        return $notification;
     }
 
     public function push(Notification $notification)

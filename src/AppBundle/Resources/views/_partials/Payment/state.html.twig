@@ -1,0 +1,9 @@
+{% set state_label_class = {
+  'new': 'label-primary',
+  'accepted': 'label-warning',
+  'refused': 'label-danger',
+  'fulfilled': 'label-success'
+} %}
+{% set trans_key = 'payment.state.' ~ payment.state %}
+{% set label_class = payment.state in state_label_class|keys ? state_label_class[payment.state] : 'label-default' %}
+<span class="label {{ label_class }}">{{ trans_key|trans }}</span>

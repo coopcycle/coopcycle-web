@@ -2,7 +2,7 @@
 
 {% block content %}
   {{ 'delivery.confirmed.body' | trans({
-    '%url%': url('public_delivery', { number: order.number }),
+    '%url%': url('public_order', { number: order.number }),
   }, 'emails') | raw }}
   <br>
   <br>

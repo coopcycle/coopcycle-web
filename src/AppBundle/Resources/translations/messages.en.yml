@@ -249,7 +249,7 @@ order.status.DELIVERED: Delivered
 order.status.PAYMENT_ERROR: Payment Error
 
 order.state.cart: Cart
-order.state.new: Confirmed
+order.state.new: New
 order.state.accepted: Accepted
 order.state.fulfilled: Delivered
 order.state.cancelled: Cancelled

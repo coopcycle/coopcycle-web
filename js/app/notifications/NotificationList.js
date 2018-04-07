@@ -43,7 +43,7 @@ class NotificationList extends React.Component {
       <ul className="nav nav-pills nav-stacked">
         { notifications.map(notification => (
           <li key={ notification.id }>
-            <a href={ `${this.props.url}` }>
+            <a href={ notification.url ? notification.url : '#' }>
               { notification.message }
               <br />
               <small>{ moment(notification.createdAt).fromNow() }</small>

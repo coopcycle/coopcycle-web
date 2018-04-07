@@ -247,9 +247,16 @@ order.status.PAYMENT_ERROR: Erreur de paiement
 order.state.cart: Panier
 order.state.accepted: Accepté
 order.state.refused: Refusé
-order.state.new: Confirmée
+order.state.new: Nouveau
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
+
+payment.state.cart: Panier
+payment.state.new: Nouveau
+payment.state.authorized: Autorisé
+payment.state.completed: Terminé
+payment.state.failed: Echec
+payment.state.cancelled: Annulé
 
 order.list.total: Total
 order.list.createdAt: Créée le
@@ -313,12 +320,15 @@ form.delivery.to_be_confirmed.warning: Vous devez confirmer la commande
 form.delivery.has_order.info: Cette livraison est liée à une commande
 form.delivery.view_order: Voir la commande
 
-form.delivery_order.confirm.label: ✓ Confirmer la commande
+form.order.accept.label: Accepter
+form.order.accept.help: Lorsque vous aurez accepté la commande, le client sera notifié par email.
+form.order.cancel.label: Annuler
+form.order.fulfill.label: Terminer
+form.order.payment_complete.label: Valider
 
 form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
 form.delivery_embed.telephone.label: Numéro de téléphone
-
 
 form.address.streetAddress.label: Adresse
 form.address.addressLocality.label: Ville
@@ -422,6 +432,8 @@ embed.breadcrumb.summary: Résumé
 embed.breadcrumb.confirm: Confirmation
 
 embed.payment.heading: Payer ma commande
+
+notifications.order.created: Nouvelle commande
 
 embed.delivery.summary: |
   Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong> à l'adresse suivante : <strong>%dropoff_address%</strong>

@@ -62,41 +62,42 @@ class EmailManager
         $this->mailer->send($message);
     }
 
-    public function notifyOrderCreated(OrderInterface $order)
+    public function sendTo(\Swift_Message $message, $to)
     {
-        $subject = $this->translator->trans('order.confirmationMail.subject', [
-            '%orderId%' => $order->getId()
-        ], 'emails');
-
-        $body = $this->templating->render('AppBundle::Emails/orderConfirmation.html.twig', [
-            'order' => $order,
-            'orderId' => $order->getId()
-        ]);
-
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($order->getCustomer()->getEmail(), $order->getCustomer()->getFullName());
+        $message->setTo($to);
 
         $this->send($message);
     }
 
-    public function notifyOrderAccepted(OrderInterface $order)
+    public function createOrderCreatedMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.acceptedMail.subject', [
-            '%orderId%' => $order->getId()
-        ], 'emails');
+        if ($order->isFoodtech()) {
+            $subject = $this->translator->trans('order.confirmationMail.subject', [
+                '%orderId%' => $order->getId()
+            ], 'emails');
+            $body = $this->templating->render('AppBundle::Emails/orderConfirmation.html.twig', [
+                'order' => $order,
+                'orderId' => $order->getId()
+            ]);
+        } else {
+            $subject = $this->translator->trans('delivery.to_be_confirmed.subject', [], 'emails');
+            $body = $this->templating->render('@App/Emails/Delivery/toBeConfirmed.html.twig');
+        }
 
-        $body = $this->templating->render('AppBundle::Emails/orderAccepted.html.twig', [
-            'order' => $order,
-            'orderId' => $order->getId()
-        ]);
-
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($order->getCustomer()->getEmail(), $order->getCustomer()->getFullName());
-
-        $this->send($message);
+        return $this->createHtmlMessage($subject, $body);
     }
 
-    public function notifyOrderCanceled(OrderInterface $order)
+    public function createOrderCreatedMessageForAdmin(OrderInterface $order)
+    {
+        $subject = $this->translator->trans('delivery.has_to_be_confirmed.subject', [], 'emails');
+        $body = $this->templating->render('@App/Emails/Delivery/hasToBeConfirmed.html.twig', [
+            'order' => $order,
+        ]);
+
+        return $this->createHtmlMessage($subject, $body);
+    }
+
+    public function createOrderCancelledMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.cancellationMail.subject', [
             '%orderId%' => $order->getId()
@@ -107,49 +108,26 @@ class EmailManager
             'orderId' => $order->getId()
         ]);
 
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($order->getCustomer()->getEmail(), $order->getCustomer()->getFullName());
-
-        $this->send($message);
+        return $this->createHtmlMessage($subject, $body);
     }
 
-    public function notifyDeliveryToBeConfirmed(OrderInterface $order)
+    public function createOrderAcceptedMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('delivery.to_be_confirmed.subject', [], 'emails');
+        if ($order->isFoodtech()) {
+            $subject = $this->translator->trans('order.acceptedMail.subject', [
+                '%orderId%' => $order->getId()
+            ], 'emails');
+            $body = $this->templating->render('AppBundle::Emails/orderAccepted.html.twig', [
+                'order' => $order,
+                'orderId' => $order->getId()
+            ]);
+        } else {
+            $subject = $this->translator->trans('delivery.confirmed.subject', [], 'emails');
+            $body = $this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
+                'order' => $order,
+            ]);
+        }
 
-        $body = $this->templating->render('@App/Emails/Delivery/toBeConfirmed.html.twig');
-
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($order->getCustomer()->getEmail());
-
-        $this->send($message);
-    }
-
-    public function notifyDeliveryHasToBeConfirmed(OrderInterface $order, $to)
-    {
-        $subject = $this->translator->trans('delivery.has_to_be_confirmed.subject', [], 'emails');
-
-        $body = $this->templating->render('@App/Emails/Delivery/hasToBeConfirmed.html.twig', [
-            'order' => $order,
-        ]);
-
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($to);
-
-        $this->send($message);
-    }
-
-    public function notifyDeliveryConfirmed(OrderInterface $order)
-    {
-        $subject = $this->translator->trans('delivery.confirmed.subject', [], 'emails');
-
-        $body = $this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
-            'order' => $order,
-        ]);
-
-        $message = $this->createHtmlMessage($subject, $body);
-        $message->setTo($order->getCustomer()->getEmail());
-
-        $this->send($message);
+        return $this->createHtmlMessage($subject, $body);
     }
 }

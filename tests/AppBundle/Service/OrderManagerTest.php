@@ -1,84 +1,76 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace Tests\AppBundle\Service;
 
-use AppBundle\BaseTest;
-use AppBundle\Entity\Cart\Cart;
-use AppBundle\Entity\Cart\CartItem;
-use AppBundle\Entity\Contract;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Order;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\StripePayment;
+use AppBundle\Service\OrderManager;
+use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use PHPUnit\Framework\TestCase;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\PaymentTransitions;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class OrderManagerTest extends BaseTest
+class OrderManagerTest extends TestCase
 {
     private $orderManager;
-    private $taxCategoryImmediate;
-    private $taxCategoryDeferred;
 
     public function setUp()
     {
-        parent::setUp();
+        $this->doctrine = $this->prophesize(ManagerRegistry::class);
+        $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->stateMachineFactory = $this->prophesize(StateMachineFactoryInterface::class);
+        $this->settingsManager = $this->prophesize(SettingsManager::class);
+        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $settingsManager = $this->prophesize(SettingsManager::class);
-        $settingsManager
-            ->get('default_tax_category')
-            ->willReturn('tva_livraison');
-        $settingsManager
+        $this->settingsManager
             ->get('stripe_secret_key')
-            ->willReturn('sk_test_123456789');
+            ->willReturn('sk_1234567890');
 
-        static::$kernel->getContainer()->set('coopcycle.settings_manager', $settingsManager->reveal());
-
-        $this->orderManager = static::$kernel->getContainer()->get('coopcycle.order_manager');
-
-        $this->taxCategoryImmediate = $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate',
-            'TVA 10%', 'tva_10', 0.10, 'float');
-        $this->taxCategoryDeferred = $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee',
-            'TVA 5.5%', 'tva_5_5', 0.055, 'float');
-
-        $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20, 'float');
+        $this->orderManager = new OrderManager(
+            $this->doctrine->reveal(),
+            $this->routing->reveal(),
+            $this->stateMachineFactory->reveal(),
+            $this->settingsManager->reveal(),
+            $this->eventDispatcher->reveal()
+        );
     }
 
-    public function testApplyTaxes()
+    public function testAuthorizePaymentDoesNothing()
     {
-        $this->markTestSkipped();
+        $stripePayment = new StripePayment();
 
-        // 5 - (5 / (1 + 0.10)) = 0.45
-        $item1 = $this->createMenuItem('Item 1', 5.00, $this->taxCategoryImmediate);
-        // 10 - (10 / (1 + 0.055)) = 0.52
-        $item2 = $this->createMenuItem('Item 2', 10.00, $this->taxCategoryDeferred);
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_CART)
+            ->willReturn($stripePayment);
 
-        $contract = new Contract();
-        // 3.5 - (3.5 / (1 + 0.20)) = 0.58
-        $contract->setFlatDeliveryPrice(3.5);
+        $this->stateMachineFactory
+            ->get($stripePayment, PaymentTransitions::GRAPH)
+            ->shouldNotBeCalled();
 
-        $restaurant = new Restaurant();
-        $restaurant->setContract($contract);
+        $this->orderManager->authorizePayment($order->reveal());
 
+        $this->assertEquals(PaymentInterface::STATE_CART, $stripePayment->getState());
+    }
+
+    public function testCreateDeliveryDoesNothing()
+    {
         $delivery = new Delivery();
-        $delivery->setDate(new \DateTime('today 12:30:00'));
-        $delivery->setDuration(30);
-        $delivery->setDistance(1500);
 
-        $order = new Order();
-        $order->setRestaurant($restaurant);
-        $order->setDelivery($delivery);
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getDelivery()
+            ->willReturn($delivery);
 
-        $cart = new Cart();
+        $order
+            ->setDelivery($delivery)
+            ->shouldNotBeCalled();
 
-        $order->addCartItem(new CartItem($cart, $item1, 1), $item1);
-        $order->addCartItem(new CartItem($cart, $item2, 1), $item2);
-
-        $this->orderManager->applyTaxes($order);
-
-        $this->assertEquals(02.92, $delivery->getTotalExcludingTax());
-        $this->assertEquals(00.58, $delivery->getTotalTax());
-        $this->assertEquals(03.50, $delivery->getTotalIncludingTax());
-
-        $this->assertEquals(14.03, $order->getTotalExcludingTax());
-        $this->assertEquals(00.97, $order->getTotalTax());
-        $this->assertEquals(15.00, $order->getTotalIncludingTax());
+        $this->orderManager->createDelivery($order->reveal());
     }
 }

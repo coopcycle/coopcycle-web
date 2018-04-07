@@ -5,39 +5,36 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
+use AppBundle\Event\OrderCancelEvent;
+use AppBundle\Event\OrderCreateEvent;
+use AppBundle\Event\OrderAcceptEvent;
+use AppBundle\Event\PaymentAuthorizeEvent;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Predis\Client as Redis;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Stripe;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderManager
 {
     private $doctrine;
-    private $redis;
-    private $serializer;
     private $routing;
     private $stateMachineFactory;
+    private $settingsManager;
     private $eventDispatcher;
 
     public function __construct(
         ManagerRegistry $doctrine,
-        Redis $redis,
-        SerializerInterface $serializer,
         RoutingInterface $routing,
         StateMachineFactoryInterface $stateMachineFactory,
         SettingsManager $settingsManager,
         EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
-        $this->redis = $redis;
-        $this->serializer = $serializer;
         $this->routing = $routing;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->settingsManager = $settingsManager;
@@ -50,6 +47,16 @@ class OrderManager
         $stripePayment->setStripeToken($stripeToken);
 
         $this->authorizePayment($order);
+    }
+
+    public function create(OrderInterface $order)
+    {
+        $orderStateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
+
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $paymentStateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $paymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
     }
 
     public function accept(OrderInterface $order)
@@ -84,6 +91,10 @@ class OrderManager
 
     public function createDelivery(OrderInterface $order)
     {
+        if (null !== $order->getDelivery()) {
+            return;
+        }
+
         $pickupAddress = $order->getRestaurant()->getAddress();
         $dropoffAddress = $order->getShippingAddress();
 
@@ -108,9 +119,10 @@ class OrderManager
         $dropoff->setDoneBefore($dropoffDoneBefore);
 
         $delivery = new Delivery();
-        $delivery->setOrder($order);
         $delivery->addTask($pickup);
         $delivery->addTask($dropoff);
+
+        $order->setDelivery($delivery);
 
         $this->doctrine->getManagerForClass(Delivery::class)->persist($delivery);
         $this->doctrine->getManagerForClass(Delivery::class)->flush();
@@ -121,14 +133,15 @@ class OrderManager
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $stripeToken = $stripePayment->getStripeToken();
 
-        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        if (null === $stripeToken) {
+            return;
+        }
 
         try {
 
-            $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
-
-            $stripeToken = $stripePayment->getStripeToken();
+            $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
             $charge = Stripe\Charge::create(array(
                 'amount' => $order->getTotal(),
@@ -183,19 +196,32 @@ class OrderManager
         }
     }
 
-    public function publishRedisEvent(OrderInterface $order, $eventName)
+    public function completePayment(PaymentInterface $payment)
+    {
+        $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+        $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+    }
+
+    public function dispatchOrderEvent(OrderInterface $order, $eventName)
     {
         switch ($eventName) {
-            case 'order.accept':
-                $channel = sprintf('order:%d:state_changed', $order->getId());
-                $this->redis->publish($channel, $this->serializer->serialize($order, 'json', ['groups' => ['order']]));
+            case OrderCancelEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderCancelEvent::NAME, new OrderCancelEvent($order));
                 break;
+            case OrderCreateEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderCreateEvent::NAME, new OrderCreateEvent($order));
+                break;
+            case OrderAcceptEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderAcceptEvent::NAME, new OrderAcceptEvent($order));
+                break;
+        }
+    }
 
-            case 'order.payment_authorized':
-                if (null !== $order->getRestaurant()) {
-                    $channel = sprintf('restaurant:%d:orders', $order->getRestaurant()->getId());
-                    $this->redis->publish($channel, $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']]));
-                }
+    public function dispatchPaymentEvent(PaymentInterface $payment, $eventName)
+    {
+        switch ($eventName) {
+            case PaymentAuthorizeEvent::NAME:
+                $this->eventDispatcher->dispatch(PaymentAuthorizeEvent::NAME, new PaymentAuthorizeEvent($payment));
                 break;
         }
     }

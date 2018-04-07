@@ -87,14 +87,9 @@ trait StoreTrait
 
                 $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
 
-                $this->container->get('sylius.repository.order')->add($order);
-
-                $delivery->setOrder($order);
-
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-                // TODO Send email
+                $this->get('sylius.repository.order')->add($order);
+                $this->get('coopcycle.order_manager')->create($order);
+                $this->get('sylius.manager.order')->flush();
 
                 return $this->redirectToRoute($routes['success']);
             }

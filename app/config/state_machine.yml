@@ -19,7 +19,7 @@ winzou_state_machine:
                 from: [new, accepted]
                 to: cancelled
             fulfill:
-                from: [new, accepted]
+                from: [accepted]
                 to: fulfilled
             accept:
                 from: [new]
@@ -30,17 +30,10 @@ winzou_state_machine:
             ready:
                 from: [accepted]
                 to: ready
-            confirm:
-                from: [cart]
-                to: new
         callbacks:
             before:
                 before_create_assign_number:
                     on: "create"
-                    do: ["@sylius.order_number_assigner", "assignNumber"]
-                    args: ["object"]
-                before_confirm_assign_number:
-                    on: "confirm"
                     do: ["@sylius.order_number_assigner", "assignNumber"]
                     args: ["object"]
             after:
@@ -48,30 +41,26 @@ winzou_state_machine:
                     on: "create"
                     do: ["@coopcycle.order_manager", "authorizePayment"]
                     args: ["object"]
+                after_create_dispatch_event:
+                    on: "create"
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.create'"]
                 after_accept_create_delivery:
                     on: "accept"
                     do: ["@coopcycle.order_manager", "createDelivery"]
                     args: ["object"]
-                after_accept_publish_redis_event:
+                after_accept_dispatch_event:
                     on: "accept"
-                    do: ["@coopcycle.order_manager", "publishRedisEvent"]
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
                     args: ["object", "'order.accept'"]
-                after_accept_send_email:
-                    on: "accept"
-                    do: ["@coopcycle.email_manager", "notifyOrderAccepted"]
-                    args: ["object"]
                 after_refuse_send_email:
                     on: "refuse"
-                    do: ["@coopcycle.email_manager", "notifyOrderCanceled"]
-                    args: ["object"]
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.cancel'"]
                 after_cancel_send_email:
                     on: "cancel"
-                    do: ["@coopcycle.email_manager", "notifyOrderCanceled"]
-                    args: ["object"]
-                after_confirm_send_email:
-                    on: "confirm"
-                    do: ["@coopcycle.email_manager", "notifyDeliveryConfirmed"]
-                    args: ["object"]
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.cancel'"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
         property_path: state
@@ -114,11 +103,7 @@ winzou_state_machine:
                 to: void
         callbacks:
             after:
-                after_authorize_send_email:
+                after_authorize_dispatch_event:
                     on: "authorize"
-                    do: ["@coopcycle.email_manager", "notifyOrderCreated"]
-                    args: ["object.getOrder()"]
-                after_authorize_publish_redis_event:
-                    on: "authorize"
-                    do: ["@coopcycle.order_manager", "publishRedisEvent"]
-                    args: ["object.getOrder()", "'order.payment_authorized'"]
+                    do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]
+                    args: ["object", "'payment.authorize'"]

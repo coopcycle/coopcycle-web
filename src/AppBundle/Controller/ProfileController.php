@@ -16,6 +16,7 @@ use AppBundle\Entity\Notification;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use Doctrine\ORM\Query\Expr;
@@ -111,15 +112,27 @@ class ProfileController extends Controller
             ]);
         }
 
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->findOneByOrder($order);
+        $form = $this->createForm(OrderType::class, $order);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->getClickedButton()) {
+
+                if ('cancel' === $form->getClickedButton()->getName()) {
+                    $this->get('coopcycle.order_manager')->cancel($order);
+                }
+
+                $this->get('sylius.manager.order')->flush();
+
+                return $this->redirectToRoute('profile_orders');
+            }
+        }
 
         return $this->render('@App/Order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
-            'delivery' => $delivery,
-            'user' => $order->getCustomer()
+            'delivery' => $order->getDelivery(),
+            'form' => $form->createView(),
         ]);
     }
 

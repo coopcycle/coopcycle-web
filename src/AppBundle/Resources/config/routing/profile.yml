@@ -6,7 +6,7 @@ profile_order_invoice:
 profile_order:
     path:     /profile/orders/{id}
     defaults: { _controller: AppBundle:Profile:order }
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
 
 profile_orders:
     path:     /profile/orders

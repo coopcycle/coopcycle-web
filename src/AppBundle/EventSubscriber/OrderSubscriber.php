@@ -11,6 +11,7 @@ use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Service\OrderManager;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,23 +19,30 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
     private $doctrine;
+    private $redis;
     private $tokenStorage;
     private $orderManager;
+    private $serializer;
     private $logger;
 
     public function __construct(
         ManagerRegistry $doctrine,
+        Redis $redis,
         TokenStorageInterface $tokenStorage,
         OrderManager $orderManager,
+        SerializerInterface $serializer,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
+        $this->redis = $redis;
         $this->tokenStorage = $tokenStorage;
         $this->orderManager = $orderManager;
+        $this->serializer = $serializer;
         $this->logger = $logger;
     }
 
@@ -101,6 +109,11 @@ final class OrderSubscriber implements EventSubscriberInterface
         $order = $event->getOrder();
 
         $this->logger->info(sprintf('Order #%d accepted', $order->getId()));
+
+        $this->redis->publish(
+            sprintf('order:%d:state_changed', $order->getId()),
+            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
+        );
     }
 
     public function onOrderCanceled(OrderCancelEvent $event)

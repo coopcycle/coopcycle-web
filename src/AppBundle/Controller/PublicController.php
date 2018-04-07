@@ -20,10 +20,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PublicController extends Controller
 {
     /**
-     * @Route("/d/{number}", name="public_delivery")
+     * @Route("/o/{number}", name="public_order")
      * @Template
      */
-    public function deliveryAction($number, Request $request)
+    public function orderAction($number, Request $request)
     {
         $settingsManager = $this->get('coopcycle.settings_manager');
         $stateMachineFactory = $this->get('sm.factory');
@@ -38,54 +38,54 @@ class PublicController extends Controller
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->findOneByOrder($order);
-
         $stripePayment = $order->getLastPayment();
-
         $stateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-        $form = $this->createForm(StripePaymentType::class, $stripePayment);
+        $parameters = [
+            'order' => $order,
+            'stripe_payment' => $stripePayment,
+        ];
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
 
-            try {
+            $form = $this->createForm(StripePaymentType::class, $stripePayment);
 
-                $stripeToken = $form->get('stripeToken')->getData();
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
 
-                $charge = Stripe\Charge::create([
-                  'amount' => $stripePayment->getAmount(),
-                  'currency' => strtolower($stripePayment->getCurrencyCode()),
-                  'description' => sprintf('Order %s', $order->getNumber()),
-                  'metadata' => [
-                    'order_id' => $order->getId()
-                  ],
-                  'source' => $stripeToken,
-                ]);
+                try {
 
-                $stripePayment->setCharge($charge->id);
-                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                    $stripeToken = $form->get('stripeToken')->getData();
 
-            } catch (\Exception $e) {
+                    $charge = Stripe\Charge::create([
+                      'amount' => $stripePayment->getAmount(),
+                      'currency' => strtolower($stripePayment->getCurrencyCode()),
+                      'description' => sprintf('Order %s', $order->getNumber()),
+                      'metadata' => [
+                        'order_id' => $order->getId()
+                      ],
+                      'source' => $stripeToken,
+                    ]);
 
-                $stripePayment->setLastError($e->getMessage());
-                $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+                    $stripePayment->setCharge($charge->id);
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
 
-            } finally {
-                $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+                } catch (\Exception $e) {
+
+                    $stripePayment->setLastError($e->getMessage());
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
+
+                } finally {
+                    $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
+                }
+
+                return $this->redirectToRoute('public_order', ['number' => $number]);
             }
 
-            return $this->redirectToRoute('public_delivery', ['number' => $number]);
+            $parameters = array_merge($parameters, ['form' => $form->createView()]);
         }
 
-        return [
-            'order' => $order,
-            'delivery' => $delivery,
-            'stripe_payment' => $stripePayment,
-            'form' => $form->createView(),
-        ];
+        return $parameters;
     }
 
     /**

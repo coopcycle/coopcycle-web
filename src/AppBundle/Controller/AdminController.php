@@ -22,9 +22,9 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
-use AppBundle\Form\DeliveryOrderType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\MenuCategoryType;
+use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
@@ -123,7 +123,7 @@ class AdminController extends Controller
      */
     public function orderAction($id, Request $request)
     {
-        $stateMachineFactory = $this->get('sm.factory');
+        $orderManager = $this->get('coopcycle.order_manager');
 
         $order = $this->container->get('sylius.repository.order')->find($id);
 
@@ -138,25 +138,29 @@ class AdminController extends Controller
             ]);
         }
 
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->findOneByOrder($order);
-
-        $form = $this->createForm(DeliveryOrderType::class, $order);
+        $form = $this->createForm(OrderType::class, $order);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->getClickedButton() && 'confirm' === $form->getClickedButton()->getName()) {
+            if ($form->getClickedButton()) {
 
-                $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+                if ('accept' === $form->getClickedButton()->getName()) {
+                    $orderManager->accept($order);
+                }
 
-                $orderStateMachine =
-                    $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-                $stripePaymentStateMachine =
-                    $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+                if ('fulfill' === $form->getClickedButton()->getName()) {
+                    $orderManager->fulfill($order);
+                }
 
-                $orderStateMachine->apply(OrderTransitions::TRANSITION_CONFIRM);
-                $stripePaymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+                if ('cancel' === $form->getClickedButton()->getName()) {
+                    $orderManager->cancel($order);
+                }
+
+                foreach ($order->getPayments() as $payment) {
+                    if (sprintf('payment_%d_complete', $payment->getId()) === $form->getClickedButton()->getName()) {
+                        $orderManager->completePayment($payment);
+                    }
+                }
 
                 $this->get('sylius.manager.order')->flush();
 
@@ -167,8 +171,7 @@ class AdminController extends Controller
         return $this->render('@App/Order/service.html.twig', [
             'layout' => '@App/admin.html.twig',
             'order' => $order,
-            'delivery' => $delivery,
-            'user' => $order->getCustomer(),
+            'delivery' => $order->getDelivery(),
             'form' => $form->createView(),
         ]);
     }

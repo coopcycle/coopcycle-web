@@ -28,11 +28,13 @@
         <div class="panel-heading"><h4 class="nomargin">Résumé</h4></div>
         <div class="panel-body">
           <p class="nomargin"><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
-          {# <p class="nomargin">
+          {#
+          <p class="nomargin">
             <a href="{{ path('public_invoice', { number: order.number }) }}">
               <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger la facture
             </a>
-          </p> #}
+          </p>
+          #}
         </div>
         <table class="table">
           <tbody>
@@ -62,7 +64,7 @@
         </div>
       {% endif %}
 
-      {% if stripe_payment.state == 'new' %}
+      {% if form is defined %}
 
         {{ form_start(form) }}
 
@@ -113,9 +115,9 @@
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script>
 new CoopCycle.DeliveryMap('map', {
-  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
-  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ],
-  polyline: "{{ delivery.polyline|e('js') }}"
+  pickup: [ {{ order.delivery.pickup.address.geo.latitude }}, {{ order.delivery.pickup.address.geo.longitude }} ],
+  dropoff: [ {{ order.delivery.dropoff.address.geo.latitude }}, {{ order.delivery.dropoff.address.geo.longitude }} ],
+  polyline: "{{ order.delivery.polyline|e('js') }}"
 })
 {% if stripe_payment.state == 'new' %}
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {

@@ -11,7 +11,6 @@ use AppBundle\Form\DeliveryAddressType;
 use AppBundle\Form\StripePaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sylius\Component\Order\OrderTransitions;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +58,7 @@ class OrderController extends Controller
      */
     public function paymentAction(Request $request)
     {
-        $stateMachineFactory = $this->get('sm.factory');
+        $orderManager = $this->get('coopcycle.order_manager');
         $settingsManager = $this->get('coopcycle.settings_manager');
 
         $order = $this->get('sylius.context.cart')->getCart();
@@ -78,15 +77,13 @@ class OrderController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stripeToken = $form->get('stripeToken')->getData();
+            $stripePayment->setStripeToken($form->get('stripeToken')->getData());
 
-            $stripePayment->setStripeToken($stripeToken);
-
-            // Create order, to generate a number
+            // TODO Set customer via listeners
             $order->setCustomer($this->getUser());
 
-            $orderStateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
-            $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
+            // Create order, to generate a number
+            $orderManager->create($order);
 
             $this->get('sylius.manager.order')->flush();
 

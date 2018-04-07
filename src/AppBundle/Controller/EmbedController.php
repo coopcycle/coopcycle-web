@@ -10,7 +10,6 @@ use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Sylius\Order\OrderInterface;
-use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -53,6 +52,29 @@ class EmbedController extends Controller
         } catch (\RuntimeException $e) {}
 
         return $pricingRuleSet;
+    }
+
+    private function findOrCreateUser($email, $telephone)
+    {
+        $userManipulator = $this->get('fos_user.util.user_manipulator');
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByEmail($email);
+        if (!$user) {
+
+            [ $localPart, $domain ] = explode('@', $email);
+            $username = $this->get('slugify')->slugify($localPart, ['separator' => '_']);
+            $password = random_bytes(16);
+
+            $user = $userManipulator->create($username, $password, $email, true, false);
+        }
+
+        if (null === $user->getTelephone() || !$user->getTelephone()->equals($telephone)) {
+            $user->setTelephone($telephone);
+            $userManager->updateUser($user);
+        }
+
+        return $user;
     }
 
     /**
@@ -127,9 +149,6 @@ class EmbedController extends Controller
      */
     public function deliveryProcessAction(Request $request)
     {
-        $emailManager = $this->get('coopcycle.email_manager');
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
         }
@@ -146,56 +165,29 @@ class EmbedController extends Controller
 
             $delivery = $form->getData();
 
-            $name = $form->get('name')->getData();
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
 
-            $billingAddress = $form->get('billingAddress')->getData();
-
-            $userManipulator = $this->get('fos_user.util.user_manipulator');
-            $userManager = $this->get('fos_user.user_manager');
-            $phoneNumberUtil = $this->get('libphonenumber.phone_number_util');
-
-            $user = $userManager->findUserByEmail($email);
-            if (!$user) {
-
-                [ $localPart, $domain ] = explode('@', $email);
-                $username = $this->get('slugify')->slugify($localPart, ['separator' => '_']);
-                $password = random_bytes(16);
-
-                $user = $userManipulator->create($username, $password, $email, true, false);
-            }
-
-            if (null === $user->getTelephone() || !$user->getTelephone()->equals($telephone)) {
-                $user->setTelephone($telephone);
-                $userManager->updateUser($user);
-            }
-
+            $user  = $this->findOrCreateUser($email, $telephone);
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
             $order = $this->createOrderForDelivery($delivery, $price, $user);
 
+            $billingAddress = $form->get('billingAddress')->getData();
             $this->setBillingAddress($order, $billingAddress);
+
+            $name = $form->get('name')->getData();
             $order->setNotes($name);
 
-            $this->container->get('sylius.repository.order')->add($order);
-
-            $delivery->setOrder($order);
-
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            // Send email to customer
-            $emailManager->notifyDeliveryToBeConfirmed($order);
-
-            // Send email to administrator
-            $emailManager->notifyDeliveryHasToBeConfirmed($order, $settingsManager->get('administrator_email'));
+            $this->get('sylius.repository.order')->add($order);
+            $this->get('coopcycle.order_manager')->create($order);
+            $this->get('sylius.manager.order')->flush();
 
             $this->addFlash(
                 'notice',
                 $this->get('translator')->trans('embed.delivery.confirm_message')
             );
 
-            return $this->redirectToRoute('embed_delivery', ['id' => $delivery->getId()]);
+            return $this->redirectToRoute('public_order', ['number' => $order->getNumber()]);
         }
 
         return $this->render('@App/Embed/Delivery/summary.html.twig', [
@@ -211,21 +203,5 @@ class EmbedController extends Controller
         ||  null !== $address->getStreetAddress()) {
             $order->setBillingAddress($address);
         }
-    }
-
-    /**
-     * @Route("/embed/delivery/{id}", name="embed_delivery")
-     * @Template
-     */
-    public function deliveryAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        return $this->render('@App/Embed/Delivery/delivery.html.twig', [
-            'delivery' => $delivery,
-            'order' => $delivery->getOrder(),
-        ]);
     }
 }

@@ -158,8 +158,6 @@ services:
     class: AppBundle\Service\OrderManager
     arguments:
       - "@doctrine"
-      - "@snc_redis.default"
-      - "@serializer"
       - "@routing_service"
       - "@sm.factory"
       - "@coopcycle.settings_manager"
@@ -265,6 +263,14 @@ services:
       - "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  coopcycle.normalizer.notification.json:
+    class: AppBundle\Serializer\Json\NotificationNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+      - "@router"
+      - "@translator"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   'AppBundle\Form\DeliveryType':
     arguments: [ '@doctrine', '@routing_service', '@translator' ]
     tags:
@@ -276,6 +282,10 @@ services:
 
   'AppBundle\Form\MenuType\MenuItemModifierType':
     arguments: [ '@translator' ]
+    tags: [ form.type ]
+
+  'AppBundle\Form\OrderType':
+    arguments: [ '@sm.factory', '@security.authorization_checker' ]
     tags: [ form.type ]
 
   'AppBundle\Form\TaskUploadType':
