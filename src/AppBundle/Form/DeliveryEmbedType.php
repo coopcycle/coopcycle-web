@@ -33,9 +33,9 @@ class DeliveryEmbedType extends DeliveryType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('contactName', TextType::class, [
+            ->add('name', TextType::class, [
                 'mapped' => false,
-                'label' => 'form.delivery_embed.contact_name.label',
+                'label' => 'form.delivery_embed.name.label',
             ])
             ->add('email', EmailType::class, [
                 'mapped' => false,
@@ -45,7 +45,8 @@ class DeliveryEmbedType extends DeliveryType
             ->add('telephone', PhoneNumberType::class, [
                 'mapped' => false,
                 'format' => PhoneNumberFormat::NATIONAL,
-                'default_region' => strtoupper($this->countryCode)
+                'default_region' => strtoupper($this->countryCode),
+                'label' => 'form.delivery_embed.telephone.label',
             ])
             ->add('billingAddress', AddressType::class, [
                 'mapped' => false,

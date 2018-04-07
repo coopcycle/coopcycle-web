@@ -315,7 +315,10 @@ form.delivery.view_order: Voir la commande
 
 form.delivery_order.confirm.label: ✓ Confirmer la commande
 
-form.delivery_embed.contact_name.label: Nom de la personne à contacter / nom de l'entreprise
+form.delivery_embed.name.label: Nom
+form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
+form.delivery_embed.telephone.label: Numéro de téléphone
+
 
 form.address.streetAddress.label: Adresse
 form.address.addressLocality.label: Ville

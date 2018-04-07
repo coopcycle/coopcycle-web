@@ -24,6 +24,11 @@
 {{ block('vehicle_widget') }}
 {% endblock %}
 
+{% block _delivery_name_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.delivery_embed.name.help{% endtrans %}</span>
+{% endblock %}
+
 {# Pickup #}
 
 {% block _delivery_pickup_row %}
