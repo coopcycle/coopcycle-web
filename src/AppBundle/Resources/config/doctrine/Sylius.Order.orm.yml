@@ -42,4 +42,9 @@ AppBundle\Entity\Sylius\Order:
             orphanRemoval: true
             cascade:
                 - all
-
+    oneToOne:
+        delivery:
+            targetEntity: AppBundle\Entity\Delivery
+            mappedBy: order
+            cascade:
+                - persist

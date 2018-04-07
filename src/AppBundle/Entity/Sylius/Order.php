@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -55,6 +56,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $shippedAt;
 
     protected $payments;
+
+    protected $delivery;
 
     public function __construct()
     {
@@ -211,5 +214,23 @@ class Order extends BaseOrder implements OrderInterface
         })->last();
 
         return $payment !== false ? $payment : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDelivery(): ?Delivery
+    {
+        return $this->delivery;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDelivery(Delivery $delivery): void
+    {
+        $delivery->setOrder($this);
+
+        $this->delivery = $delivery;
     }
 }
