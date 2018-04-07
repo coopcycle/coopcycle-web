@@ -3,7 +3,7 @@
     <tbody>
     {% for restaurant in restaurants %}
       <tr>
-        <td><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
         <td>{{ restaurant.name }}</td>
         <td>{{ restaurant.address.streetAddress }}</td>
         <td>
@@ -39,6 +39,7 @@
         <td class="text-right">
           <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
             <i class="fa fa-external-link" aria-hidden="true"></i>
+          </a>
         </td>
       </tr>
     {% endfor %}
