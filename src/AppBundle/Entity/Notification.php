@@ -17,6 +17,10 @@ class Notification
 
     protected $message;
 
+    protected $routeName;
+
+    protected $routeParameters = [];
+
     protected $read = false;
 
     protected $createdAt;
@@ -46,6 +50,30 @@ class Notification
     public function setMessage($message)
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getRouteName()
+    {
+        return $this->routeName;
+    }
+
+    public function setRouteName($name)
+    {
+        $this->routeName = $name;
+
+        return $this;
+    }
+
+    public function getRouteParameters()
+    {
+        return $this->routeParameters;
+    }
+
+    public function setRouteParameters(array $parameters = [])
+    {
+        $this->routeParameters = $parameters;
 
         return $this;
     }

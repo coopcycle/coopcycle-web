@@ -11,6 +11,14 @@ AppBundle\Entity\Notification:
     fields:
         message:
             type: text
+        routeName:
+            type: string
+            nullable: true
+            column: route_name
+        routeParameters:
+            type: json_array
+            nullable: true
+            column: route_parameters
         read:
             column: is_read
             type: boolean
