@@ -99,18 +99,6 @@ services:
     tags:
       - { name: form.type, alias: app_update_profile }
 
-  app.form.restaurant:
-    class: AppBundle\Form\RestaurantType
-    arguments: [ '@security.token_storage' ]
-    tags:
-      - { name: form.type, alias: app_restaurant }
-
-  app.form.store:
-    class: AppBundle\Form\StoreType
-    arguments: [ '@security.token_storage' ]
-    tags:
-      - { name: form.type, alias: app_store }
-
   coopcycle.repository.zone:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -302,6 +290,14 @@ services:
 
   'AppBundle\Form\TaskType':
     arguments: [ '@coopcycle.tag_manager' ]
+    tags: [ form.type ]
+
+  'AppBundle\Form\RestaurantType':
+    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
+    tags: [ form.type ]
+
+  'AppBundle\Form\StoreType':
+    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
     tags: [ form.type ]
 
   my.jwt_listener:

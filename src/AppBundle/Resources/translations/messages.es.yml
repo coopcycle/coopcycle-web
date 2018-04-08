@@ -160,6 +160,7 @@ restaurant.form.accessPlanning: Acceder al calendario
 restaurant.form.createRestaurant: Crear restaurante
 restaurant.form.save: Guardar
 restaurant.contract.title: Contrato
+restaurant.stripe_account.title: Cuenta Stripe
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Precio de entrega fijo
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones de contrato.
@@ -339,6 +340,9 @@ form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.registration.username.help: |
   Su nombre de usuario no puede tener más de 15 caracteres.
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números 0-9) con la excepción de los guiones bajos.
+
+form.local_business.stripe_account.placeholder: Escoge una cueanta Stripe
+form.local_business.stripe_account.label: Cuenta Stripe
 
 cart.modal.title: Atención
 cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres iniciar un pedido nuevo en éste restaurante?

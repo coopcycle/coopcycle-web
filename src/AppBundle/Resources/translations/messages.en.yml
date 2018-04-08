@@ -160,6 +160,7 @@ restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.contract.title: Contract
+restaurant.stripe_account.title: Stripe Account
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
@@ -338,6 +339,9 @@ form.settings.default_tax_category.help: Specify the VAT rate to use for deliver
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.
   A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
+
+form.local_business.stripe_account.placeholder: Choose a Stripe account
+form.local_business.stripe_account.label: Stripe account
 
 cart.modal.title: Warning
 cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?

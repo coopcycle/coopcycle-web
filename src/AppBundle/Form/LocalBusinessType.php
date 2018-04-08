@@ -2,6 +2,11 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\StripeAccount;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -16,10 +21,23 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class LocalBusinessType extends AbstractType
 {
+    protected $authorizationChecker;
+    protected $tokenStorage;
+
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStorageInterface $tokenStorage)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenStorage = $tokenStorage;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -50,6 +68,31 @@ abstract class LocalBusinessType extends AbstractType
                 'mapped' => false,
             ]);
         }
+
+        $builder
+            ->add('stripeAccount', EntityType::class, array(
+                // 'mapped' => false,
+                'required' => false,
+                'placeholder' => 'form.local_business.stripe_account.placeholder',
+                'label' => 'form.local_business.stripe_account.label',
+                'class' => StripeAccount::class,
+                'choice_label' => 'displayName',
+                'query_builder' => function (EntityRepository $er) {
+
+                    $qb = $er
+                        ->createQueryBuilder('sa')
+                        ->orderBy('sa.displayName', 'ASC');
+
+                    if (!$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                        $user = $this->tokenStorage->getToken()->getUser();
+                        $qb
+                            ->andWhere('sa.id in (:stripe_accounts)')
+                            ->setParameter('stripe_accounts', $user->getStripeAccounts()->toArray());
+                    }
+
+                    return $qb;
+                }
+            ));
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();

@@ -11,43 +11,14 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RestaurantType extends LocalBusinessType
 {
-    private $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
 
-        $isAdmin = false;
-        if ($token = $this->tokenStorage->getToken()) {
-            if ($user = $token->getUser()) {
-                $isAdmin = $user->hasRole('ROLE_ADMIN');
-            }
-        }
-
-        // ->add('servesCuisine', CollectionType::class, array(
-        //     'entry_type' => EntityType::class,
-        //     'entry_options' => array(
-        //         'label' => 'Cuisine',
-        //         'class' => 'AppBundle:Cuisine',
-        //         'choice_label' => 'name',
-        //         'query_builder' => function (EntityRepository $er) {
-        //             return $er->createQueryBuilder('c')->orderBy('c.name', 'ASC');
-        //         },
-        //     ),
-        //     'allow_add' => true,
-        //     'allow_delete' => true,
-        // ))
-
-        if ($isAdmin) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder->add('contract', ContractType::class);
         }
     }

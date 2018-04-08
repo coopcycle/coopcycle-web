@@ -158,6 +158,9 @@
     {% endif %}
   {% endif %}
 
+  <h4>{% trans %}restaurant.stripe_account.title{% endtrans %}</h4>
+  {{ form_row(form.stripeAccount) }}
+
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
       <button type="submit" class="btn btn-block btn-primary">{% trans %}restaurant.form.save{% endtrans %}</button>
