@@ -198,3 +198,16 @@ profile_store_delivery:
             success: profile_orders
             calculate_price: profile_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+profile_restaurant_order:
+    path: /profile/restaurants/{id}/orders/new
+    defaults:
+        _controller: AppBundle:Profile:newRestaurantOrder
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Profile:newRestaurantOrder.html.twig
+        # routes:
+        #     stores: profile_stores
+        #     store: profile_store
+        #     success: profile_orders
+        #     calculate_price: profile_deliveries_calculate_price
+    methods:  [ GET, POST ]

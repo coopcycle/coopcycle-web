@@ -442,4 +442,11 @@ trait RestaurantTrait
             'form' => $form->createView()
         ]);
     }
+
+    public function newRestaurantOrderAction($id, Request $request)
+    {
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+        ]);
+    }
 }
