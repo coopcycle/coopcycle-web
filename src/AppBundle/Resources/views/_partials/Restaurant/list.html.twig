@@ -4,9 +4,9 @@
     {% for restaurant in restaurants %}
       <tr>
         <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
-        <td>{{ restaurant.name }}</td>
-        <td>{{ restaurant.address.streetAddress }}</td>
-        <td>
+        <td width="20%">{{ restaurant.name }}</td>
+        <td width="25%">{{ restaurant.address.streetAddress }}</td>
+        <td width="35%">
           <div class="restaurant-opening-hours"
             data-opening-hours="{{ restaurant.openingHours|json_encode() }}"></div>
         </td>
@@ -36,7 +36,7 @@
             </ul>
           </div>
         </td>
-        <td class="text-right">
+        <td class="text-right" width="5%">
           <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
             <i class="fa fa-external-link" aria-hidden="true"></i>
           </a>
