@@ -79,6 +79,7 @@ adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
+adminDashboard.users.createNew: Ajouter un utilisateur
 
 adminDashboard.settings.title: Paramètres
 
@@ -138,8 +139,13 @@ dashboard.assigned: Assignées
 
 norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre heure de livraison.
 
-local_business.form.enabled.label: Activé
-
+localBusiness.form.enabled: Activé
+localBusiness.form.disabled: Désactivé
+localBusiness.form.name: Nom
+localBusiness.form.legalName: Nom légal
+localBusiness.form.website: Site web
+localBusiness.form.telephone: Numéro de téléphone
+localBusiness.form.openingHours: Heures d'ouvertures
 
 restaurant.available: Disponible
 restaurant.unavailable: Indisponible
@@ -226,6 +232,7 @@ profile.familyName: Nom
 profile.givenName: Prénom
 profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
+profile.accountType: Type de compte
 
 order.payment.title: Vos informations de paiement
 order.payment.expiration.label: Expiration

@@ -41,7 +41,7 @@ monolog:
         #    level:  info
 
 # Uncomment to send emails in dev
-# fos_user:
-#     registration:
-#         confirmation:
-#             enabled: true
+#fos_user:
+#   registration:
+#       confirmation:
+#           enabled: true

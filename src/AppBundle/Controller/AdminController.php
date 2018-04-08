@@ -200,6 +200,11 @@ class AdminController extends Controller
         $form = $this->createForm(RegistrationType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $user->setEnabled(true);
+
+            $this->getDoctrine()->getManagerForClass(ApiUser::class)->persist($user);
+            $this->getDoctrine()->getManagerForClass(ApiUser::class)->flush();
             return $this->redirectToRoute('admin_users');
         }
 

@@ -42,24 +42,25 @@ abstract class LocalBusinessType extends AbstractType
     {
         $builder
             ->add('enabled', CheckboxType::class, [
-                'label' => 'local_business.form.enabled.label',
+                'label' => 'localBusiness.form.enabled',
                 'required' => false
             ])
-            ->add('name', TextType::class)
-            ->add('legalName', TextType::class, ['required' => false])
-            ->add('website', UrlType::class, ['required' => false])
+            ->add('name', TextType::class, ['label' => 'localBusiness.form.name',])
+            ->add('legalName', TextType::class, ['required' => false, 'label' => 'localBusiness.form.legalName',])
+            ->add('website', UrlType::class, ['required' => false, 'label' => 'localBusiness.form.website',])
             ->add('address', AddressType::class)
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'download_uri' => false,
             ])
-            ->add('telephone', TextType::class, ['required' => false])
+            ->add('telephone', TextType::class, ['required' => false, 'label' => 'localBusiness.form.telephone',])
             ->add('openingHours', CollectionType::class, [
                 'entry_type' => HiddenType::class,
                 'required' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
+                'label' => 'localBusiness.form.openingHours',
             ]);
 
         if (in_array('siret', $options['additional_properties'])) {
