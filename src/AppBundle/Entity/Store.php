@@ -84,9 +84,9 @@ class Store extends LocalBusiness
     protected $telephone;
 
     /**
-     * @var string The Stripe params
+     * @var StripeAccount The Stripe account
      */
-    private $stripeParams;
+    private $stripeAccount;
 
     private $createdAt;
 
@@ -219,14 +219,14 @@ class Store extends LocalBusiness
         return $this->imageFile;
     }
 
-    public function getStripeParams()
+    public function getStripeAccount()
     {
-        return $this->stripeParams;
+        return $this->stripeAccount;
     }
 
-    public function setStripeParams(StripeParams $stripeParams)
+    public function setStripeAccount(StripeAccount $stripeAccount)
     {
-        $this->stripeParams = $stripeParams;
+        $this->stripeAccount = $stripeAccount;
 
         return $this;
     }

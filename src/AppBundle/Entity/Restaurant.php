@@ -133,9 +133,9 @@ class Restaurant extends FoodEstablishment
     protected $telephone;
 
     /**
-     * @var string The Stripe params of the restaurant.
+     * @var StripeAccount The StripeAccount of the restaurant.
      */
-    private $stripeParams;
+    private $stripeAccount;
 
     /**
      * @var string The menu of the restaurant.
@@ -396,14 +396,14 @@ class Restaurant extends FoodEstablishment
         return $this->servesCuisine;
     }
 
-    public function getStripeParams()
+    public function getStripeAccount()
     {
-        return $this->stripeParams;
+        return $this->stripeAccount;
     }
 
-    public function setStripeParams(StripeParams $stripeParams)
+    public function setStripeAccount(StripeAccount $stripeAccount)
     {
-        $this->stripeParams = $stripeParams;
+        $this->stripeAccount = $stripeAccount;
 
         return $this;
     }

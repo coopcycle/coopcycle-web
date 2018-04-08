@@ -37,7 +37,7 @@
           {% endif %}
 
           {% if is_granted('ROLE_RESTAURANT') %}
-            <li><a href="{{ path('profile_payment') }}"><i class="fa fa fa-credit-card"></i>  {% trans %}profile.payment{% endtrans %}</a></li>
+            <li><a href="{{ path('profile_stripe') }}"><i class="fa fa fa-credit-card"></i>  {% trans %}profile.payment{% endtrans %}</a></li>
             {% if is_granted('ROLE_STORE') or is_granted('ROLE_COURIER') %}
               <a class="navbar-brand" href="{{ path('profile_restaurants') }}">{% trans %}profile.myRestaurants{% endtrans %}</a>
             {% endif %}

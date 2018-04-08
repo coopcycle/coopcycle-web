@@ -64,11 +64,10 @@ AppBundle\Entity\Store:
                 address_id:
                     referencedColumnName: id
     manyToOne:
-        stripeParams:
-            targetEntity: AppBundle\Entity\StripeParams
-            fetch: LAZY
+        stripeAccount:
+            targetEntity: AppBundle\Entity\StripeAccount
             joinColumns:
-                stripe_params_id:
+                stripe_account_id:
                     referencedColumnName: id
         pricingRuleSet:
             targetEntity: AppBundle\Entity\Delivery\PricingRuleSet

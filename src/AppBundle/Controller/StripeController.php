@@ -2,28 +2,30 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\StripeParams;
+use AppBundle\Entity\StripeAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Stripe;
 use Symfony\Component\HttpFoundation\Request;
-
 
 class StripeController extends Controller
 {
     /**
-     * @Route("/stripe/connect", name="stripe_connect")
+     * @Route("/stripe/connect/standard", name="stripe_connect_standard_account")
      */
-    public function connectAction(Request $request)
+    public function connectStandardAccountAction(Request $request)
     {
         // curl https://connect.stripe.com/oauth/token \
-       // -d client_secret=XXX \
-       // -d code=AUTHORIZATION_CODE \
-       // -d grant_type=authorization_code
+        // -d client_secret=XXX \
+        // -d code=AUTHORIZATION_CODE \
+        // -d grant_type=authorization_code
+
+        $settingsManager = $this->get('coopcycle.settings_manager');
 
         $params = array(
             'grant_type' => 'authorization_code',
             'code' => $request->query->get('code'),
-            'client_secret' => $this->getParameter('stripe_secret_key'),
+            'client_secret' => $settingsManager->get('stripe_secret_key'),
         );
 
         $req = curl_init('https://connect.stripe.com/oauth/token');
@@ -33,30 +35,32 @@ class StripeController extends Controller
 
         // TODO: Additional error handling
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
-        $resp = json_decode(curl_exec($req), true);
+        $res = json_decode(curl_exec($req), true);
         curl_close($req);
 
-        if (isset($resp['error']) && !empty($resp['error'])) {
-            // TODO error handling
-            throw new \Exception($resp['error_description']);
+        if (isset($res['error']) && !empty($res['error'])) {
+            $this->addFlash(
+                'error',
+                $res['error_description']
+            );
+        } else {
+
+            Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
+
+            $account = Stripe\Account::retrieve($res['stripe_user_id']);
+
+            $stripeAccount = new StripeAccount();
+            $stripeAccount
+                ->setType($account->type)
+                ->setDisplayName($account->display_name)
+                ->setTransfersEnabled($account->transfers_enabled)
+                ->setStripeUserId($res['stripe_user_id'])
+                ->setRefreshToken($res['refresh_token']);
+
+            $this->getUser()->addStripeAccount($stripeAccount);
+            $this->get('fos_user.user_manager')->updateUser($this->getUser());
         }
 
-        $stripeParams = new StripeParams();
-        $stripeParams
-            ->setUserId($resp['stripe_user_id'])
-            // ->setPublishableKey($resp['stripe_publishable_key'])
-            // ->setAccessToken($resp['access_token'])
-            // ->setRefreshToken($resp['refresh_token'])
-            ;
-
-        $this->getUser()->setStripeParams($stripeParams);
-        foreach ($this->getUser()->getRestaurants() as $restaurant) {
-            $restaurant->setStripeParams($stripeParams);
-        }
-
-        $em = $this->getDoctrine()->getManagerForClass(get_class($this->getUser()));
-        $em->flush();
-
-        return $this->redirectToRoute('profile_payment');
+        return $this->redirectToRoute('profile_stripe');
     }
 }

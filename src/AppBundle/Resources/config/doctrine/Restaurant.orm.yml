@@ -155,16 +155,11 @@ AppBundle\Entity\Restaurant:
             joinColumns: {  }
             orphanRemoval: false
     manyToOne:
-        stripeParams:
-            targetEntity: AppBundle\Entity\StripeParams
-            cascade: {  }
-            fetch: LAZY
-            mappedBy: null
-            inversedBy: null
+        stripeAccount:
+            targetEntity: AppBundle\Entity\StripeAccount
             joinColumns:
-                stripe_params_id:
+                stripe_account_id:
                     referencedColumnName: id
-            orphanRemoval: false
     oneToMany:
         closingRules:
             targetEntity: AppBundle\Entity\ClosingRule

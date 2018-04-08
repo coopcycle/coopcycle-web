@@ -1,0 +1,36 @@
+AppBundle\Entity\StripeAccount:
+    type: entity
+    table: stripe_account
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        type:
+            type: string
+        displayName:
+            type: string
+            column: display_name
+        transfersEnabled:
+            type: boolean
+            column: transfers_enabled
+        stripeUserId:
+            type: string
+            column: stripe_user_id
+        refreshToken:
+            type: string
+            column: refresh_token
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: create

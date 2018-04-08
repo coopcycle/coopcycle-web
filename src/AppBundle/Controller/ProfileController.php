@@ -27,6 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProfileController extends Controller
 {
@@ -187,19 +188,26 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/payment", name="profile_payment")
+     * @Route("/profile/stripe", name="profile_stripe")
      * @Template()
      */
-    public function paymentAction(Request $request)
+    public function stripeAction(Request $request)
     {
-        $stripeParams = $this->getUser()->getStripeParams();
+        $settingsManager = $this->get('coopcycle.settings_manager');
 
-        $stripeClientId = $this->getParameter('stripe_connect_client_id');
-        $stripeAuthorizeURL = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$stripeClientId.'&scope=read_write';
+        // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
+        // @see https://stripe.com/docs/connect/oauth-reference
+        $queryString = http_build_query([
+            'response_type' => 'code',
+            'client_id' => $settingsManager->get('stripe_connect_client_id'),
+            'scope' => 'read_write',
+            'redirect_uri' => $this->get('router')->generate('stripe_connect_standard_account', [], UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+        $stripeAuthorizeURL = 'https://connect.stripe.com/oauth/authorize?' . $queryString;
 
         return [
             'stripe_authorize_url' => $stripeAuthorizeURL,
-            'stripe_user_id' => $stripeParams ? $stripeParams->getUserId() : null
+            'stripe_accounts' => $this->getUser()->getStripeAccounts()
         ];
     }
 

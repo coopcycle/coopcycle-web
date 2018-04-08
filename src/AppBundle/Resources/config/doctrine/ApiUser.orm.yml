@@ -83,25 +83,16 @@ AppBundle\Entity\ApiUser:
                         referencedColumnName: id
                         onDelete: CASCADE
             orderBy: null
-        stripeParams:
-            targetEntity: AppBundle\Entity\StripeParams
+        stripeAccounts:
+            targetEntity: AppBundle\Entity\StripeAccount
             cascade:
                 - all
-            fetch: LAZY
             joinTable:
-                name: api_user_stripe_params
+                name: api_user_stripe_account
                 joinColumns:
-                    -
-                        name: api_user_id
-                        unique: true
-                        nullable: true
-                        onDelete: null
-                        columnDefinition: null
-                        referencedColumnName: id
+                    - name: user_id
+                      referencedColumnName: id
                 inverseJoinColumns:
-                    -
-                        name: stripe_params_id
-                        referencedColumnName: id
-                        onDelete: CASCADE
-            orderBy: null
-    lifecycleCallbacks: {  }
+                    - name: stripe_account_id
+                      referencedColumnName: id
+                      onDelete: CASCADE

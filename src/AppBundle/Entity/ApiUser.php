@@ -66,14 +66,14 @@ class ApiUser extends BaseUser
 
     private $addresses;
 
-    private $stripeParams;
+    private $stripeAccounts;
 
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
         $this->stores = new ArrayCollection();
-        $this->stripeParams = new ArrayCollection();
+        $this->stripeAccounts = new ArrayCollection();
 
         parent::__construct();
     }
@@ -193,14 +193,14 @@ class ApiUser extends BaseUser
         return $this->addresses;
     }
 
-    public function getStripeParams()
+    public function getStripeAccounts()
     {
-        return count($this->stripeParams) === 0 ? null : $this->stripeParams[0];
+        return $this->stripeAccounts;
     }
 
-    public function setStripeParams(StripeParams $stripeParams)
+    public function addStripeAccount(StripeAccount $stripeAccount)
     {
-        $this->stripeParams[0] = $stripeParams;
+        $this->stripeAccounts->add($stripeAccount);
 
         return $this;
     }
