@@ -18,6 +18,7 @@ class SettingsManager
         'administrator_email',
         'stripe_publishable_key',
         'stripe_secret_key',
+        'stripe_connect_client_id',
         'google_api_key',
         'latlng',
         'default_tax_category',

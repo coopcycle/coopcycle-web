@@ -17,6 +17,12 @@
 <span class="help-block">{% trans %}form.settings.stripe_secret_key.help{% endtrans %}</span>
 {% endblock %}
 
+{% block _settings_stripe_connect_client_id_widget %}
+{% set disabled = is_demo %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.stripe_connect_client_id.help{% endtrans %}</span>
+{% endblock %}
+
 {% block _settings_google_api_key_widget %}
 {% set disabled = is_demo %}
 {{ block('form_widget') }}

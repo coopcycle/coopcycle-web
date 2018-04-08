@@ -352,6 +352,10 @@ form.settings.stripe_publishable_key.help: |
 form.settings.stripe_secret_key.label: Clé secrète Stripe
 form.settings.stripe_secret_key.help: |
   Créez un compte Stripe pour récupérer votre <a href="https://stripe.com/docs/dashboard#api-keys">clé secrète</a>
+form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
+form.settings.stripe_connect_client_id.help: |
+  Récupérez l'identifiant Stripe Connect sur la <a href="https://dashboard.stripe.com/account/applications/settings">page des paramètres</a>
+
 form.settings.google_api_key.label: Clé d'API Google
 form.settings.google_api_key.help: |
   Créez un compte Google pour récupérer votre <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé d'API</a>
