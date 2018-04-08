@@ -80,18 +80,21 @@
     </script>
     {% endif %}
 
+    <script src="{{ asset('js/cart.js') }}"></script>
     {% set cart = cart_provider.getCart() %}
     <script>
       window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
-        addToCartURL: "{{ path('restaurant_add_to_cart', { 'id': '__RESTAURANT_ID__' }) }}",
-        removeFromCartURL: "{{ path('restaurant_remove_from_cart', { 'id': '__RESTAURANT_ID__', 'itemKey': '__ITEM_KEY__' }) }}",
-        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}",
-        validateCartURL: "{{ path('order') }}"
+        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
       })
+      window.AppData.CartHelper = new CoopCycle.Cart({
+        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}",
+        validateCartURL: "{{ path('order') }}"
+      });
+      window.AppData.CartHelper.initTop(document.querySelector('#cart-top'), window.AppData.Cart);
     </script>
+
     {% include "AppBundle::_partials/mapHelper.html.twig" %}
     {% block scripts %}{% endblock %}
-    <script src="{{ asset('js/cart.js') }}"></script>
 
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>

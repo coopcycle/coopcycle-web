@@ -6,8 +6,6 @@ import Sticky from 'react-stickynode';
 import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
-import CartTop from "./CartTop.jsx"
-import { geocodeByAddress } from 'react-places-autocomplete';
 
 import numeral  from 'numeral';
 import 'numeral/locales'
@@ -32,128 +30,44 @@ class Cart extends React.Component
       date: deliveryDate,
       address: streetAddress,
       geohash: geohash,
-      errors: {}
+      errors: {},
+      loading: false
     }
 
-    this.onDateChange = this.onDateChange.bind(this)
     this.onAddressChange = this.onAddressChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
+  }
+
+  getCart() {
+    const { address, date } = this.state
+
+    return { address, date }
+  }
+
+  setCart(cart) {
+    this.setState(cart)
+  }
+
+  setErrors(errors) {
+    this.setState({ errors })
+  }
+
+  setLoading(loading) {
+    this.setState({ loading })
   }
 
   onHeaderClick() {
     this.setState({'toggled': !this.state.toggled})
   }
 
-  resolveAddToCartURL() {
-    const { addToCartURL, restaurant } = this.props
-
-    return addToCartURL.replace('__RESTAURANT_ID__', restaurant.id)
-  }
-
-  resolveRemoveFromCartURL(itemKey) {
-    const { removeFromCartURL, restaurant } = this.props
-
-    return removeFromCartURL
-      .replace('__RESTAURANT_ID__', restaurant.id)
-      .replace('__ITEM_KEY__', itemKey)
-  }
-
-  removeItem(item) {
-    $.ajax({
-      url: this.resolveRemoveFromCartURL(item.props.id),
-      type: 'DELETE',
-    })
-    .then(res => this.handleAjaxResponse(res))
-    .fail(e => this.handleAjaxResponse(e.responseJSON))
-  }
-
-  addMenuItemById(id, modifiers) {
-    $.post(this.resolveAddToCartURL(), {
-      selectedItemData: {
-        menuItemId: id,
-        modifiers: modifiers
-      },
-      date: this.state.date
-    })
-    .then(res => this.handleAjaxResponse(res))
-    .fail(e => this.handleAjaxResponse(e.responseJSON))
-  }
-
-  handleAjaxResponse(res) {
-    this.setState({
-      items: res.cart.items,
-      total: res.cart.total,
-      itemsTotal: res.cart.itemsTotal,
-      date: res.cart.date,
-      address: res.cart.shippingAddress ? res.cart.shippingAddress.streetAddress : null,
-      errors: res.errors
-    })
-
-    this.props.onCartChange(res.cart.itemsTotal, res.cart.total)
-  }
-
-  onDateChange(dateString) {
-    $.post(this.resolveAddToCartURL(), {
-      date: dateString,
-    })
-    .then(res => this.handleAjaxResponse(res))
-    .fail(e => this.handleAjaxResponse(e.responseJSON))
-  }
-
-  onAddressChange (geohash, addressString) {
-    geocodeByAddress(addressString).then((results) => {
-      if (results.length === 1) {
-
-        // format Google's places format to a clean dict
-        let place = results[0],
-          addressDict = {},
-          lat = place.geometry.location.lat(),
-          lng = place.geometry.location.lng();
-
-        place.address_components.forEach(function (item) {
-          addressDict[item.types[0]] = item.long_name
-        });
-
-        addressDict.streetAddress = addressDict.street_number ? addressDict.street_number + ' ' + addressDict.route : addressDict.route;
-
-        let address = {
-          'latitude': lat,
-          'longitude': lng,
-          'addressCountry': addressDict.country || '',
-          'addressLocality': addressDict.locality || '',
-          'addressRegion': addressDict.administrative_area_level_1 || '',
-          'postalCode': addressDict.postal_code || '',
-          'streetAddress': addressDict.streetAddress || '',
-        }
-
-        $.post(this.resolveAddToCartURL(), {
-          date: this.state.date, // do not remove this line (used to set `date` on `componentDidMount` event)
-          address: address
-        })
-        .then(res => this.handleAjaxResponse(res))
-        .fail(e => this.handleAjaxResponse(e.responseJSON))
-
-      } else {
-        throw new Error('More than 1 place returned with value ' + this.props.address)
-      }
-    }).catch((err) => { console.log(err) });
+  onAddressChange(geohash, addressString) {
+    this.props.onAddressChange(addressString)
   }
 
   onAddressSelect(geohash, address) {
+    this.setState({ address })
     this.onAddressChange(geohash, address)
-  }
-
-  componentDidMount() {
-    if (this.props.geohash && this.props.streetAddress) {
-      this.onAddressChange(this.props.geohash, this.props.streetAddress)
-    } else {
-      $.post(this.resolveAddToCartURL(), {
-        date: this.state.date,
-      })
-      .then(res => this.handleAjaxResponse(res))
-      .fail(e => this.handleAjaxResponse(e.responseJSON))
-    }
   }
 
   renderWarningAlerts(messages) {
@@ -192,6 +106,10 @@ class Cart extends React.Component
       return (
         <div>
           <hr />
+          <div>
+            <span>Total produits</span>
+            <strong className="pull-right">{ numeral(itemsTotal / 100).format('0,0.00 $') }</strong>
+          </div>
           { this.renderAdjustments() }
           <div>
             <span>Total</span>
@@ -204,7 +122,7 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, total, toggled, errors, date, geohash, address } = this.state,
+    let { items, total, toggled, errors, date, geohash, address, loading } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
@@ -213,13 +131,13 @@ class Cart extends React.Component
       let cartItemComponents = items.map((item, key) => {
         return (
           <CartItem
-            cart={this}
             id={item.id}
             key={key}
             name={item.name}
             total={item.total}
             quantity={item.quantity}
-            adjustments={item.adjustments} />
+            adjustments={item.adjustments}
+            onClickRemove={ () => this.props.onRemoveItem(item) } />
         )
       })
 
@@ -254,7 +172,7 @@ class Cart extends React.Component
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
 
-    if (items.length === 0 || !address || _.size(errors) > 0) {
+    if (items.length === 0 || !address || _.size(errors) > 0 || loading) {
       btnClasses.push('disabled')
     }
 
@@ -267,9 +185,9 @@ class Cart extends React.Component
       <Sticky enabled={!isMobileCart} top={ 30 }>
         <div className={ panelClasses.join(' ') }>
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
-              <span className="cart-heading--items">{ itemCount }</span>
-              <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
-              { this.props.i18n[cartTitleKey] }
+            <span className="cart-heading--items">{ itemCount }</span>
+            <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
+            { this.props.i18n[cartTitleKey] }
           </div>
           <div className="panel-body">
             { this.renderWarningAlerts(warningAlerts) }
@@ -279,18 +197,19 @@ class Cart extends React.Component
                 preferredResults={[]}
                 address={address}
                 geohash={geohash}
-                onPlaceChange={this.onAddressSelect}
-              />
+                onPlaceChange={this.onAddressSelect} />
               <hr />
               <DatePicker
                 availabilities={availabilities}
                 value={date}
-                onChange={this.onDateChange} />
+                onChange={this.props.onDateChange} />
               <hr />
               { cartContent }
               { this.renderTotal() }
               <hr />
-              <a href={validateCartURL} className={btnClasses.join(' ')}>Commander</a>
+              <a href={validateCartURL} className={btnClasses.join(' ')}>
+                { loading && <i className="fa fa-spinner fa-spin"></i> }  <span>Commander</span>
+              </a>
             </div>
           </div>
         </div>
@@ -299,7 +218,6 @@ class Cart extends React.Component
   }
 }
 
-
 Cart.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object),
   total: PropTypes.number.isRequired,
@@ -307,12 +225,7 @@ Cart.propTypes = {
   streetAddress: PropTypes.string,
   deliveryDate: PropTypes.string.isRequired,
   availabilities: PropTypes.arrayOf(PropTypes.string).isRequired,
-  validateCartURL: PropTypes.string.isRequired,
-  removeFromCartURL: PropTypes.string.isRequired,
-  addToCartURL: PropTypes.string.isRequired,
   isMobileCart: PropTypes.bool.isRequired,
-  restaurant: PropTypes.object.isRequired
 }
-
 
 module.exports = Cart

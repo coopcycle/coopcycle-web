@@ -409,8 +409,8 @@ form.local_business.stripe_account.link_ok: |
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
-cart.modal.confirm: Ajouter
-cart.modal.cancel: Retour
+cart.modal.confirm: Commencer une nouvelle commande
+cart.modal.cancel: Retourner à ma commande
 
 roles.ROLE_ADMIN: Administrateur
 roles.ROLE_COURIER: Coursier

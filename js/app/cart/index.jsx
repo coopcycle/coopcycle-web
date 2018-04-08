@@ -1,116 +1,182 @@
 import React from 'react'
-import {render} from 'react-dom'
+import { render, findDOMNode } from 'react-dom'
 import Cart from './Cart.jsx'
 import CartTop from './CartTop.jsx'
 import moment from 'moment'
+import { geocodeByAddress } from 'react-places-autocomplete'
+import Promise from 'promise'
 
-let isXsDevice = $('.visible-xs').is(':visible'),
-    topCart = document.getElementById('cart-top'),
-    topCartComponent,
-    cart = document.getElementById('cart'),
-    cartComponent,
-    restaurantChangeWarning = false
+let isXsDevice = $('.visible-xs').is(':visible')
 
-// It means we are on a restaurant page
-if (window.AppData.Restaurant && window.AppData.Cart.restaurant) {
-  if (window.AppData.Restaurant.id !== window.AppData.Cart.restaurant.id) {
-    restaurantChangeWarning = true
+window.CoopCycle = window.CoopCycle || {}
+
+class CartHelper {
+
+  constructor(options) {
+    this.options = options
+  }
+
+  init(el, options) {
+
+    this.options = Object.assign(this.options, options)
+
+    const {
+      adjustments,
+      date,
+      items,
+      itemsTotal,
+      shippingAddress,
+      total
+    } = window.AppData.Cart
+
+    const geohash = localStorage.getItem('search_geohash') || ''
+    const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
+    const deliveryDate = date || localStorage.getItem('search__date') || options.restaurant.availabilities[0]
+
+    this.cartComponentRef = React.createRef()
+
+    const onRender = () => {
+      const cart = this.cartComponentRef.current.getCart()
+      if (cart.address) {
+        this
+          ._geocode(cart.address)
+          .then(address => this.updateCart({ address, date: cart.date }))
+      } else {
+        this.updateCart({ date: cart.date })
+      }
+    }
+
+    render(
+      <Cart
+        ref={ this.cartComponentRef }
+        streetAddress={ streetAddress }
+        geohash={ geohash }
+        i18n={ window.__i18n }
+        deliveryDate={ deliveryDate }
+        availabilities={ options.restaurant.availabilities }
+        items={ items }
+        itemsTotal={ itemsTotal }
+        total={ total }
+        adjustments={ adjustments }
+        isMobileCart={ isXsDevice }
+        validateCartURL={ this.options.validateCartURL }
+        onDateChange={ date => this.updateCart({ date }) }
+        onAddressChange={ streetAddress => this._onAddressChange(streetAddress) }
+        onRemoveItem={ item => this.removeCartItem(item) } />, el, onRender)
+  }
+
+  initTop(el, cart) {
+    render(
+      <CartTop
+        restaurantURL={ this.options.restaurantURL }
+        restaurant={ cart.restaurant }
+        total={ cart.total }
+        itemsTotal={ cart.itemsTotal }
+        i18n={ window.__i18n } />, el)
+  }
+
+  _geocode(streetAddress) {
+    return new Promise((resolve, reject) => {
+      geocodeByAddress(streetAddress)
+        .then(results => {
+
+          if (results.length === 0) {
+            reject()
+            return
+          }
+
+          // format Google's places format to a clean dict
+          let place = results[0],
+            addressDict = {},
+            lat = place.geometry.location.lat(),
+            lng = place.geometry.location.lng();
+
+          place.address_components.forEach(function (item) {
+            addressDict[item.types[0]] = item.long_name
+          });
+
+          addressDict.streetAddress = addressDict.street_number ? addressDict.street_number + ' ' + addressDict.route : addressDict.route;
+
+          resolve({
+            'latitude': lat,
+            'longitude': lng,
+            'addressCountry': addressDict.country || '',
+            'addressLocality': addressDict.locality || '',
+            'addressRegion': addressDict.administrative_area_level_1 || '',
+            'postalCode': addressDict.postal_code || '',
+            'streetAddress': addressDict.streetAddress || '',
+          })
+
+        })
+        .catch(e => reject(e))
+    })
+  }
+
+  _onAddressChange(streetAddress) {
+    this
+      ._geocode(streetAddress)
+      .then(address => this.updateCart({ address }))
+  }
+
+  handleAjaxResponse(res) {
+
+    this.cartComponentRef.current.setLoading(false)
+
+    const { cart, errors } = res
+
+    if (errors.hasOwnProperty('restaurant')) {
+      this.options.onCartWarning()
+    } else {
+      this.cartComponentRef.current.setCart(cart)
+      this.cartComponentRef.current.setErrors(errors)
+
+      const event = new CustomEvent('cart:change', { detail: cart })
+      document.querySelectorAll('[data-cart-listener]').forEach(listener => listener.dispatchEvent(event))
+    }
+  }
+
+  updateCart(payload) {
+    this.cartComponentRef.current.setLoading(true)
+    $.post(this.options.cartURL, payload)
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
+  }
+
+  addMenuItem(url, quantity) {
+    this.cartComponentRef.current.setLoading(true)
+    $.post(url, {
+      quantity: quantity
+    })
+    .then(res => this.handleAjaxResponse(res))
+    .fail(e => this.handleAjaxResponse(e.responseJSON))
+  }
+
+  addMenuItemWithModifiers(url, data, quantity) {
+    this.cartComponentRef.current.setLoading(true)
+    data.push({
+      name: 'quantity',
+      value: quantity
+    })
+    $.post(url, data)
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
+  }
+
+  removeCartItem(item) {
+    this.cartComponentRef.current.setLoading(true)
+    $.ajax({
+      url: this.options.removeFromCartURL.replace('__CART_ITEM_ID__', item.id),
+      type: 'DELETE',
+    })
+    .then(res => this.handleAjaxResponse(res))
+    .fail(e => this.handleAjaxResponse(e.responseJSON))
+  }
+
+  reset() {
+    $.post(this.options.resetCartURL)
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 }
 
-if (topCart) {
-
-  topCartComponent = render(
-    <CartTop
-      restaurantURL={window.AppData.Cart.restaurantURL}
-      restaurant={window.AppData.Cart.restaurant}
-      total={window.AppData.Cart.total}
-      itemsTotal={window.AppData.Cart.itemsTotal}
-      i18n={window.__i18n} />,
-    topCart
-  );
-
-}
-
-function addItemToBasket(event) {
-  event.preventDefault();
-  var $target = $(event.currentTarget),
-      menuItemId = $target.data('menu-item-id'),
-      modifiersModal = $('#' + menuItemId + '-modifiersModal'),
-      modifiers = {};
-
-  // handle modifiers
-  if (modifiersModal.length > 0) {
-    modifiersModal.find('form').each(function () {
-      var modifierId = $(this).data('modifierId'),
-          modifierChoices = [],
-          selectedChoices= $(this).find('input:checked');
-
-        selectedChoices.each(function () {
-          modifierChoices.push($(this).val());
-        });
-
-        modifiers[modifierId] = modifierChoices;
-      });
-
-      $(modifiersModal).modal('hide');
-    }
-
-    cartComponent.addMenuItemById(menuItemId, modifiers);
-}
-
-
-if (cart) {
-
-// 1. User picked date on the restaurant list page
-// 2. User has opened a Cart before
-  var initialDate = window.AppData.Cart.date || localStorage.getItem('search__date') || '',
-      availabilities = window.AppData.availabilities,
-      // TODO : check with someone knowledgeable in React if it is the right place to do this
-      initialDate = moment(initialDate).isAfter(moment(availabilities[0])) ? initialDate : availabilities[0],
-      geohash = localStorage.getItem('search_geohash') || ''
-
-  const shippingAddress = window.AppData.Cart.shippingAddress
-  const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
-
-  cartComponent = render(
-        <Cart
-          streetAddress={streetAddress}
-          geohash={geohash}
-          i18n={window.__i18n}
-          deliveryDate={initialDate}
-          availabilities={availabilities}
-          items={window.AppData.Cart.items}
-          itemsTotal={window.AppData.Cart.itemsTotal}
-          total={window.AppData.Cart.total}
-          adjustments={window.AppData.Cart.adjustments}
-          restaurant={window.AppData.Restaurant}
-          addToCartURL={window.AppData.Cart.addToCartURL}
-          removeFromCartURL={window.AppData.Cart.removeFromCartURL}
-          validateCartURL={window.AppData.Cart.validateCartURL}
-          isMobileCart={ isXsDevice }
-          onCartChange={(itemsTotal, total) => topCartComponent.setTotal(itemsTotal, total)}
-        />,
-    cart);
-
-  $('.js-add-to-cart').on('click', function(e) {
-      if (restaurantChangeWarning) {
-        $('#cart-warning-modal').modal('show');
-        $('#cart-warning-primary').on('click', function(ev) {
-            restaurantChangeWarning = false;
-            topCartComponent.setRestaurant(window.AppData.Restaurant);
-            $('#cart-warning-modal').modal('hide');
-            addItemToBasket(e);
-        });
-      } else {
-        addItemToBasket(e);
-      }
-    });
-
-  // Small helper for better display (remove when changing the modifier modal by a React Component)
-  $('.modifier-modal .modifier-item').on('click', function () {
-      $(this).closest('.modifier-modal').find('.modifier-item').removeClass('modifier-item__selected') ;
-      $(this).addClass('modifier-item__selected');
-  });
-
-}
+window.CoopCycle.Cart = CartHelper

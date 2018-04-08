@@ -36,7 +36,7 @@ class CartItem extends React.Component {
       <li className="list-group-item">
         <span>{name}</span>
         <span className="text-muted"> x {this.props.quantity}</span>
-        <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.cart.removeItem(this)}>
+        <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.onClickRemove()}>
           <span aria-hidden="true">×</span>
         </button>
         <span className="pull-right">{ numeral(this.props.total / 100).format('0,0.00 $') }</span>

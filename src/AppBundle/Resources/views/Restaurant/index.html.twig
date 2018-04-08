@@ -43,7 +43,7 @@
         <div class="list-group">
           {% for menuItem in menuSection.items %}
             {% if not menuItem.isAvailable %}
-              <a  class="list-group-item menu-item menu-item--unavailable">
+              <a class="list-group-item menu-item menu-item--unavailable">
                 <span class="menu-item-content">{{ menuItem.name }}</span>
                 {% if menuItem.description is not null %}
                   <p class="menu-item-description">{{ menuItem.description }}</p>
@@ -51,50 +51,23 @@
                 <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
               </a>
             {% else %}
-              <a  class="list-group-item menu-item {% if menuItem.modifiers.count == 0 %}js-add-to-cart{% endif %}"
+              <a  class="list-group-item menu-item"
                   data-menu-item-id="{{ menuItem.id }}"
-                  {%  if menuItem.modifiers.count > 0 %}
-                    data-toggle="modal" data-target="#{{ menuItem.id }}-modifiersModal"
-                {%  endif %}
-              >
+                  data-menu-item-has-modifiers="{{ (menuItem.modifiers.count > 0) ? 'true' : 'false' }}"
+                  {% if menuItem.modifiers.count > 0 %}
+                  data-toggle="modal"
+                  data-target="#{{ menuItem.id }}-modifiersModal"
+                  href="#"
+                  {% else %}
+                  href="{{ path('restaurant_add_menu_item_to_cart', { restaurantId: restaurant.id, menuItemId: menuItem.id }) }}"
+                  {% endif %}>
                 <span class="menu-item-content">{{ menuItem.name }}
                   {% if menuItem.description is not null %}
                     <p class="menu-item-description">{{ menuItem.description }}</p>
                   {%  endif %}
                 </span>
                 <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
-              </a >
-              {%  if menuItem.modifiers.count > 0 %}
-                <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">{{ menuItem.name }}</h4>
-                      </div>
-                      <div class="modal-body">
-                        {%  for modifier in  menuItem.modifiers %}
-                            <form data-modifier-id="{{ modifier.id }}">
-                              <h4>{{ modifier.name }}
-                                {%  if modifier.calculusStrategy == 'ADD_MODIFIER_PRICE' %} - {{ modifier.price }}€{% endif %}
-                              </h4>
-                              <div class="list-group">
-                                {%  for choice in modifier.modifierChoices %}
-                                  <div class="list-group-item radio menu-item modifier-item">
-                                      <input value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice" name="{{ modifier.id }}-choice"><label for="{{ choice.id }}-choice">{{ choice.name }}{%  if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}</label>
-                                  </div>
-                                {%  endfor %}
-                              </div>
-                            </form>
-                        {%  endfor %}
-                        <button class="js-add-to-cart btn btn-block btn-primary" data-menu-item-id="{{ menuItem.id }}">Add</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              {%  endif %}
+              </a>
             {% endif %}
           {% endfor %}
         </div>
@@ -112,43 +85,125 @@
   </div>
 </div>
 
+{# Modals for modifiers #}
+
+{% for menuSection in restaurant.menu.sections %}
+  {% for menuItem in menuSection.items %}
+    {% if menuItem.isAvailable and menuItem.modifiers.count > 0 %}
+    <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">{{ menuItem.name }}</h4>
+          </div>
+          <div class="modal-body">
+            <form
+              action="{{ path('restaurant_add_menu_item_to_cart', { restaurantId: restaurant.id, menuItemId: menuItem.id }) }}"
+              data-menu-item-modifier>
+              {% for modifier in menuItem.modifiers %}
+              <h4>{{ modifier.name }}
+                {% if modifier.calculusStrategy == 'ADD_MODIFIER_PRICE' %} - {{ modifier.price }}€{% endif %}
+              </h4>
+              <div class="list-group">
+                {% for choice in modifier.modifierChoices %}
+                  <div class="list-group-item radio menu-item modifier-item">
+                    <input
+                      name="modifiers[{{ modifier.id }}][]"
+                      value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice">
+                    <label for="{{ choice.id }}-choice">{{ choice.name }}{% if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}</label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-block btn-primary">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
 <div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
       </div>
       <div class="modal-body">
         <p>{{ 'cart.modal.content'|trans }}</p>
       </div>
       <div class="modal-footer">
-        <button id="cart-warning-default" type="button" class="btn btn-default" data-dismiss="modal">
+        <button id="cart-warning-cancel" type="button" class="btn btn-default">
           {{ 'cart.modal.cancel'|trans }}
         </button>
-        <button id="cart-warning-primary" type="button" class="btn btn-primary">{{ 'cart.modal.confirm'|trans }}</button>
+        <button id="cart-warning-confirm" type="button" class="btn btn-primary">
+          {{ 'cart.modal.confirm'|trans }}
+        </button>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script>
-window.AppData = window.AppData || {};
-window.AppData.availabilities = {{ availabilities|json_encode()|raw }};
-window.AppData.Restaurant = {
-  id: {{ restaurant.id }},
-  minimumCartAmount: {{ restaurant.minimumCartAmount }},
-  flatDeliveryPrice: {{ restaurant.flatDeliveryPrice }}
-};
 
 new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   openingHours: {{ restaurant.openingHours|json_encode()|raw }},
   locale: $('html').attr('lang')
 })
+
+$('[data-menu-item-id]').on('click', function(e) {
+  e.preventDefault();
+  var $target = $(e.currentTarget);
+  if (!$target.data('menuItemHasModifiers')) {
+    window.AppData.CartHelper.addMenuItem($target.attr('href'), 1);
+  }
+})
+
+$('form[data-menu-item-modifier]').on('submit', function(e) {
+  e.preventDefault();
+  var data = $(this).serializeArray();
+  if (data.length > 0) {
+    window.AppData.CartHelper.addMenuItemWithModifiers($(this).attr('action'), data, 1);
+    $(this).closest('.modal').modal('hide');
+  }
+})
+
+function initMap() {
+
+  $('#cart-warning-cancel').on('click', function(e) {
+    {% set cart = cart_provider.getCart() %}
+    window.location.replace("{{ path('restaurant', { id: cart.restaurant.id }) }}")
+    $('#cart-warning-modal').modal('hide');
+  })
+
+  $('#cart-warning-confirm').on('click', function(e) {
+    window.AppData.CartHelper.reset();
+    $('#cart-warning-modal').modal('hide');
+  })
+
+  window.AppData.CartHelper.init(document.querySelector('#cart'), {
+    restaurant: {
+      id: {{ restaurant.id }},
+      availabilities: {{ availabilities|json_encode()|raw }}
+    },
+    cartURL: "{{ path('restaurant_cart', { id: restaurant.id }) }}",
+    removeFromCartURL: "{{ path('restaurant_remove_from_cart', { restaurantId: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+    resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    onCartWarning: function() {
+      $('#cart-warning-modal').modal('show');
+    }
+  });
+}
+
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
 {% endblock %}
