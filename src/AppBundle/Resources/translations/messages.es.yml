@@ -327,7 +327,6 @@ form.address.description.placeholder: 2da puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
-form.pricing_rule.price.help: Precio fijo o expresión
 
 form.settings.brand_name.label: Marca de fábrica
 form.settings.stripe_publishable_key.label: Clave pública de stripe

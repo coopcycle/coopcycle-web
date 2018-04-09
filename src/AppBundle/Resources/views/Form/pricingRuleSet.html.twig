@@ -19,7 +19,4 @@
 
 {% block _pricing_rule_set_rules_entry_price_widget %}
   {{ block('form_widget') }}
-  {% if form.vars.valid %}
-  <span class="help-block"><i class="fa fa-info-circle"></i> {{ 'form.pricing_rule.price.help'|trans }}</span>
-  {% endif %}
 {% endblock %}
