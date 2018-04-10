@@ -2,6 +2,7 @@ restaurant.openingHours.notBlank: Sélectionnez au moins un créneau d'ouverture
 restaurant.telephone.notBlank: Entrez votre numéro de téléphone
 restaurant.name.notBlank: Entrez le nom de votre restaurant
 restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être administrateur de la plateforme)
+restaurant.stripeAccount.notSet: Liez le restaurant à un compte Stripe
 restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
 
 address.tooFar: Cette addresse est trop éloignée
