@@ -163,6 +163,7 @@ class OrderManager
             $stripePayment->setLastError($e->getMessage());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         } finally {
+            $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
             $this->doctrine->getManagerForClass(StripePayment::class)->flush();
         }
     }
