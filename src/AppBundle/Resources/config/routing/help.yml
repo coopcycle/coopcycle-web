@@ -76,3 +76,14 @@ help_admin_tasks_import:
     requirements:
         _locale: "%locale_regex%"
     methods:  [ GET ]
+
+help_admin_payments:
+    path: /{_locale}/help/admin/payments
+    defaults:
+        _controller: AppBundle:Help:renderMarkdown
+        template: admin/payments
+        title: payments.title
+        nav: false
+    requirements:
+        _locale: "%locale_regex%"
+    methods:  [ GET ]

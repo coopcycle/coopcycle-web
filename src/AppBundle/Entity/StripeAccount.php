@@ -20,7 +20,7 @@ class StripeAccount
 
     private $displayName;
 
-    private $transfersEnabled;
+    private $payoutsEnabled;
 
     private $stripeUserId;
 
@@ -59,14 +59,14 @@ class StripeAccount
         return $this;
     }
 
-    public function isTransfersEnabled()
+    public function isPayoutsEnabled()
     {
-        return $this->transfersEnabled;
+        return $this->payoutsEnabled;
     }
 
-    public function setTransfersEnabled($transfersEnabled)
+    public function setPayoutsEnabled($payoutsEnabled)
     {
-        $this->transfersEnabled = $transfersEnabled;
+        $this->payoutsEnabled = $payoutsEnabled;
 
         return $this;
     }

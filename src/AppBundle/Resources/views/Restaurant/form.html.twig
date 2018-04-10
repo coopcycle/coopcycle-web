@@ -91,12 +91,12 @@
     </div>
     <div class="col-sm-8">
       {{ form_row(form.name) }}
-      <div class="switch-wrapper margin-bottom-md">
+      <div class="switch-wrapper">
         {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
-        <a data-toggle="tooltip" data-placement="top" data-html="true" title="{{ "restaurant.form.enabled.tooltip" | trans | raw }}">
-          <i class="fa fa-info-circle"></i>
-        </a>
       </div>
+      <span class="help-block">
+          <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.form.enabled.tooltip" | trans | raw }}
+      </span>
       {{ form_row(form.legalName) }}
       {{ form_row(form.website) }}
       {{ form_row(form.telephone) }}
@@ -121,10 +121,10 @@
   #}
 
   {% if restaurant.id is not null %}
-  <p>
-    <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
-    <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
-  </p>
+    <p class="help-block">
+      <i class="fa fa-info-circle"></i> {% trans %}restaurant.form.temporaryClosingRule{% endtrans %}  
+      <a href="{{ path(planning_route, { id: restaurant.id }) }}">{% trans %}restaurant.form.accessPlanning{% endtrans %}</a>
+    </p>
   {% endif %}
 
   {{ form_row(form.openingHours) }}
@@ -138,6 +138,29 @@
   {{ form_widget(form.address.latitude) }}
   {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
   {% do form.address.setRendered %}
+
+  <hr>
+
+  {# Stripe accounts have to be created by restaurant owner itself so we link it to correct account in callback #}
+  <h4>Compte Stripe</h4>
+  {% if is_granted('ROLE_ADMIN') %}
+    <div class="alert alert-warning">
+      {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}
+    </div>
+  {% elseif restaurant.id is null and restaurant.stripeAccount is null %}
+    <div class="alert alert-warning">
+      {% trans %}form.local_business.stripe_account.save_warning{% endtrans %}
+    </div>
+  {% elseif restaurant.stripeAccount is null %}
+    <div class="alert alert-warning">
+      {{ 'form.local_business.stripe_account.need_stripe_account' | trans({'%stripeAuthorizeURL%': stripeAuthorizeURL}) | raw }}
+    </div>
+  {% else %}
+    <div class="alert alert-success">
+      <p>{{ 'form.local_business.stripe_account.link_ok' | trans | raw }}</p>
+    </div>
+  {% endif %}
+  <a class="help-block" href="{{ path('help_admin_payments') }}"><i class="fa fa-info-circle"></i>&nbsp;Cliquez ici pour en savoir plus sur la configuration et la gestion des paiements via Stripe.</a>
 
   <hr>
 
@@ -175,9 +198,6 @@
     </div>
     {% endif %}
   {% endif %}
-
-  <h4>{% trans %}restaurant.stripe_account.title{% endtrans %}</h4>
-  {{ form_row(form.stripeAccount) }}
 
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
