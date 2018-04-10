@@ -145,7 +145,7 @@ norestaurantfound: No restaurant open at this time!<br>Try a different delivery 
 
 localBusiness.form.enabled: Enabled
 localBusiness.form.disabled: Disabled
-localBusinesss.form.name: Name
+localBusiness.form.name: Name
 localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
 localBusiness.form.telephone: Telephone

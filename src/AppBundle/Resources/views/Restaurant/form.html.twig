@@ -177,8 +177,8 @@
 
   window.AppData = window.AppData || {};
   window.AppData.__i18n = window.AppData.__i18n || {};
-  window.AppData.__i18n['Enabled'] = {% trans %}localBusiness.form.enabled{% endtrans %};
-  window.AppData.__i18n['Disabled'] = {% trans %}localBusiness.form.disabled{% endtrans %};
+  window.AppData.__i18n['Enabled'] = "{% trans %}localBusiness.form.enabled{% endtrans %}";
+  window.AppData.__i18n['Disabled'] = "{% trans %}localBusiness.form.disabled{% endtrans %}";
   window.AppData.__isActivable = {% if 'enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys %}false{% else %}true{% endif %};
 
   new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
