@@ -210,9 +210,12 @@ $('#task-group-modal').on('show.bs.modal', function (event) {
 })
 </script>
 <script>
-function initMap() {
-  new CoopCycle.TaskModal("{{ new_task_form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
-}
+  function initMap() {
+    new CoopCycle.TaskModal("{{ new_task_form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
+  }
+  {% if not new_task_form.vars.valid %}
+    $('#task-modal').modal('show');
+  {% endif %}
 </script>
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script src="{{ asset('js/task-modal.js') }}"></script>

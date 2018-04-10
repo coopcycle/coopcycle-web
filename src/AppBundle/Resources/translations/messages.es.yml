@@ -318,6 +318,7 @@ form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
 
+form.address.streetAddress.label: Address
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.floor.label: Piso
@@ -336,6 +337,9 @@ form.settings.stripe_publishable_key.help: |
 form.settings.stripe_secret_key.label: Clave secreta de stripe
 form.settings.stripe_secret_key.help: |
   Crea una cuenta Stripe para obtener tu <a href="https://stripe.com/docs/dashboard#api-keys">clave secreta</a>
+form.settings.stripe_connect_client_id.label: Stripe Connect identifier
+form.settings.stripe_connect_client_id.help: |
+  Get the identifier on the <a href="https://dashboard.stripe.com/account/applications/settings">parameters page</a>
 form.settings.google_api_key.label: Clave API de google
 form.settings.google_api_key.help: |
   Crea una cuenta Google para obtener tu <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clave API</a>
@@ -344,6 +348,8 @@ form.settings.latlng.help: |
   Especifica la latitud y longitud por defecto del mapa. Puedes obtenerla en <a href="https://www.latlong.net/">latlong.net</a>
 form.settings.default_tax_category.label: IVA para entregas
 form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
+form.settings.administrator_email.label: Administrator email
+form.settings.administrator_email.help: Notifications will be sent to this email
 
 form.registration.username.help: |
   Su nombre de usuario no puede tener más de 15 caracteres.
