@@ -66,7 +66,7 @@ trait RestaurantTrait
 
                 $this->addFlash(
                     'notice',
-                    $this->get('translator')->trans('Your changes were saved.')
+                    $this->get('translator')->trans('global.changesSaved')
                 );
 
                 return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
@@ -330,7 +330,7 @@ trait RestaurantTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('Your changes were saved.')
+                $this->get('translator')->trans('global.changesSaved')
             );
 
             if ($addMenuSection) {
@@ -373,7 +373,7 @@ trait RestaurantTrait
             $manager->flush();
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('Your changes were saved.')
+                $this->get('translator')->trans('global.changesSaved')
             );
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }

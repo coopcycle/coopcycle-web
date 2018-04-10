@@ -43,7 +43,7 @@ trait StoreTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('Your changes were saved.')
+                $this->get('translator')->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute('admin_stores');
