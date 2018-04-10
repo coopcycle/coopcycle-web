@@ -210,6 +210,11 @@ html, body {
     padding-right: 5px;
     transform: none;
   }
+  &--edit {
+    height: 20px;
+    width: 20px;
+    text-align: center;
+  }
 }
 
 .task__draggable {
