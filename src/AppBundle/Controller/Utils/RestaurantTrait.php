@@ -45,10 +45,10 @@ trait RestaurantTrait
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
-            'validation_groups' => ['activable'],
         ]);
 
         $activationErrors = [];
+        $formErrors = [];
         $routes = $request->attributes->get('routes');
 
         $form->handleRequest($request);
@@ -57,12 +57,11 @@ trait RestaurantTrait
             if ($form->isValid()) {
                 $restaurant = $form->getData();
 
-                if ($restaurant->getId() === null) {
-                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);
-                    // FIXME Do this only when user is not admin ?
+                if ($restaurant->getId() === null && !$this->getUser()->hasRole('ROLE_ADMIN')) {
                     $this->getUser()->addRestaurant($restaurant);
                 }
 
+                $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);
                 $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
                 $this->addFlash(
@@ -76,7 +75,7 @@ trait RestaurantTrait
                 foreach ($form->getErrors(true) as $error) {
                     $violations->add($error->getCause());
                 }
-                $activationErrors = ValidationUtils::serializeValidationErrors($violations);
+                $formErrors = ValidationUtils::serializeValidationErrors($violations);
             }
 
         } else {
@@ -88,6 +87,7 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), [
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
+            'formErrors' => $formErrors,
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'menu_route' => $routes['menu'],

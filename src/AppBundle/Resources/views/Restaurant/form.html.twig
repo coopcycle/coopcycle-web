@@ -46,6 +46,24 @@
   </div>
 {% endfor %}
 
+{% if formErrors is not empty %}
+  <div class="row margin-bottom-md">
+    <div class="col-sm-6 col-md-offset-3">
+      <div class="alert alert-danger">
+        <ul class="restaurant-availability-errors">
+          {% for field, errors in activationErrors %}
+            {% if field != 'enabled' and field != 'data.enabled' %}
+              <li class="margin-left-l">
+                {{ errors|first }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif  %}
+
 {% if activationErrors is not empty %}
   <div class="row margin-bottom-md">
     <div class="col-sm-6 col-md-offset-3">
