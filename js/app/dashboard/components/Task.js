@@ -81,6 +81,7 @@ class Task extends React.Component {
 
   showTaskModal(e) {
     e.preventDefault()
+    e.stopPropagation()
 
     const { task } = this.props
 
@@ -116,7 +117,7 @@ class Task extends React.Component {
           { this.renderTags() }
           &nbsp;&nbsp;
           <a onClick={ this.showTaskModal.bind(this) }>
-            <i className="fa fa-pencil"></i>
+            <i className="fa fa-pencil task__icon--edit"></i>
           </a>
         </div>
         <div>
