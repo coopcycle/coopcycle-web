@@ -4,6 +4,7 @@ const map = {
   'cart': 'label-default',
   'new': 'label-primary',
   'accepted': 'label-success',
+  'ready': 'label-success',
   'refused': 'label-danger'
 };
 

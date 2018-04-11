@@ -11,7 +11,7 @@ address.notSet: Veuillez choisir une adresse
 cart.date.tooSoon: Cette date est trop proche
 cart.address.empty: Veuillez sélectionner une adresse
 
-order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%
+order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%€
 
 delivery.date.restaurantClosed: Le restaurant est fermé à %date%
 delivery.date.hasPassed: La date %date% est dépassée
