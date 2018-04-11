@@ -62,11 +62,14 @@ class TaskTest extends TestCase
     public function testGetLastEvent()
     {
         $first_event = new TaskEvent($this->task, "PICKUP");
+        $first_event->setCreatedAt(strtotime('2018-04-11 12:00:00'));
         $this->task->getEvents()->add($first_event);
         $second_event = new TaskEvent($this->task, "DELIVERY");
+        $second_event->setCreatedAt(strtotime('2018-04-11 13:00:00'));
         $this->task->getEvents()->add($second_event);
         $third_event = new TaskEvent($this->task, "PICKUP");
-        $this->task->getEvents()->add($first_event);
+        $third_event->setCreatedAt(strtotime('2018-04-11 14:00:00'));
+        $this->task->getEvents()->add($third_event);
         $this->assertSame($this->task->getLastEvent("PICKUP"), $third_event);
     }
 }

@@ -58,4 +58,12 @@ class TaskEvent
     {
         return $this->createdAt;
     }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
 }
