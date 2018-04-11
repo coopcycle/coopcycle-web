@@ -266,6 +266,7 @@ order.state.refused: Rechazado
 order.state.accepted: Aceptado
 order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
+order.state.ready: Ready
 
 order.list.total: Total
 order.list.createdAt: Creado

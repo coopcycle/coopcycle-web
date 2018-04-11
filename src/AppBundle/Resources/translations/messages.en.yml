@@ -263,6 +263,7 @@ order.state.cart: Cart
 order.state.new: New
 order.state.accepted: Accepted
 order.state.fulfilled: Delivered
+order.state.ready: Ready
 order.state.cancelled: Cancelled
 order.state.refused: Refused
 

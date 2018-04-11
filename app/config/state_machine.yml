@@ -11,6 +11,7 @@ winzou_state_machine:
             fulfilled: ~
             accepted: ~
             refused: ~
+            ready: ~
         transitions:
             create:
                 from: [cart]

@@ -258,6 +258,7 @@ order.state.cart: Panier
 order.state.accepted: Accepté
 order.state.refused: Refusé
 order.state.new: Nouveau
+order.state.ready: Prête
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
 
