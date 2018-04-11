@@ -16,6 +16,12 @@
 {% block body %}
 <div class="container">
 
+  {% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+      {{ message|raw }}
+    </div>
+  {% endfor %}
+
   <div class="row">
     <div class="col-md-6">
       <section>
@@ -25,9 +31,13 @@
     <div class="col-md-6">
 
       <div class="panel panel-default">
-        <div class="panel-heading"><h4 class="nomargin">Résumé</h4></div>
+        <div class="panel-heading">
+          <h4 class="nomargin">Résumé de votre commande</h4>
+        </div>
         <div class="panel-body">
-          <p class="nomargin"><i class="fa fa-clock-o"></i> Commande créée le {{ order.createdAt|localizeddate('medium', 'short') }}</p>
+          <p class="nomargin text-right">
+            <i class="fa fa-clock-o"></i> Créée le {{ order.createdAt|localizeddate('medium', 'short') }}
+          </p>
           {#
           <p class="nomargin">
             <a href="{{ path('public_invoice', { number: order.number }) }}">
@@ -36,22 +46,7 @@
           </p>
           #}
         </div>
-        <table class="table">
-          <tbody>
-            <tr>
-              <th>Total TTC</th>
-              <td class="text-right">
-                {{ order.total|price_format }}€
-              </td>
-            </tr>
-            <tr>
-              <th>Dont TVA</th>
-              <td class="text-right">
-                {{ order.taxTotal|price_format }}€
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {% include "AppBundle::_partials/Order/items.html.twig" %}
       </div>
 
       {% if stripe_payment.state == 'failed' %}
@@ -64,7 +59,7 @@
         </div>
       {% endif %}
 
-      {% if form is defined %}
+      {% if order.state != 'new' and form is defined %}
 
         {{ form_start(form) }}
 

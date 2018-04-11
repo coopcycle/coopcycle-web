@@ -463,8 +463,6 @@ embed.delivery.summary: |
 embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
 
 embed.delivery.confirm_message: |
-  Merci !
-  <br>
   Nous avons bien enregistré votre demande. Votre course est en attente de validation.
   <br>
   Nous allons vous envoyer un email d'ici quelques minutes. Vous recevrez un second mail dès que la course est confirmée.
