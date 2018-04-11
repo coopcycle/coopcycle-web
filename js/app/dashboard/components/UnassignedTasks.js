@@ -3,7 +3,7 @@ import _ from 'lodash'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import { connect } from 'react-redux'
-import { setTaskListGroupMode } from '../store/actions'
+import {highlightTask, setTaskListGroupMode} from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -37,7 +37,7 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode, selectedTags, showUntaggedTasks } = this.props
+    const { taskListGroupMode, selectedTags, showUntaggedTasks, highlightedTask } = this.props
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
@@ -95,6 +95,8 @@ class UnassignedTasks extends React.Component {
                 <Task
                   key={ key }
                   task={ task }
+                  highlightedTask={ highlightedTask }
+                  highlightTask={ this.props.highlightTask }
                 />
               )
             })}
@@ -110,13 +112,15 @@ function mapStateToProps (state) {
     unassignedTasks: state.unassignedTasks,
     taskListGroupMode: state.taskListGroupMode,
     selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
+    highlightedTask: state.highlightedTask
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
+    highlightTask: (task) => { dispatch(highlightTask(task)) }
   }
 }
 
