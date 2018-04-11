@@ -19,7 +19,7 @@
   {% if is_new_task %}
     {% trans %}task.form.create{% endtrans %}
   {% else %}
-    {% trans with { '%id%': ('#' ~ task.id) } %}Edit task %id%{% endtrans %}
+    {{ 'task.form.edit' | trans({ '%id%': ('#' ~ task.id) }) }}
   {% endif %}
 {% endset %}
 
@@ -29,45 +29,66 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
-      <h4 class="modal-title">{{ modal_title }}</h4>
+      <h4 class="modal-title">
+        {{ modal_title }}
+        {%  if form.status is defined %}
+          <a class="pull-right margin-right-md" id="show-task-finish">{% trans %}task.form.finish{%  endtrans %}</a>
+          <a class="pull-right margin-right-md" id="show-task-details" style="display:none;">{% trans %}task.form.details{%  endtrans %}</a>
+        {% endif %}
+      </h4>
     </div>
     <div class="modal-body">
 
-      {{ form_row(form.type) }}
-      {{ form_widget(form.address) }}
-
-      {{ form_row(form.dateRange) }}
-      {{ form_row(form.comments) }}
-      {{ form_row(form.tagsAsString) }}
-
-      {% if form.assign is defined %}
-        {{ form_row(form.assign) }}
+      {%  if form.status is defined %}
+        <div id="task-finish" style="display:none;">
+          {{ form_row(form.status) }}
+          {{ form_row(form.notes) }}
+        </div>
       {% endif %}
 
-      {% if not is_new_task %}
-      <p>
-        <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_history">
-          <i class="fa fa-plus"></i> {% trans from 'messages' %}task.form.showHistory{% endtrans %}
-        </a>
-      </p>
-      <div class="collapse" id="{{ form.vars.id }}_history">
-        <ul class="list-unstyled" data-render="timeline">
-          {% for event in task.events %}
-            <li data-event="{{ event.name }}">
-              <time datetime="{{ event.createdAt|date('c') }}">{{ event.createdAt|localizeddate('short', 'short') }}</time> 
-              <span>{{ event.name }}</span> 
-              {% if event.notes is not empty %}
-              <pre>
-                {{ event.notes }}
-              </pre>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
+      <div id="task-details">
+
+        {% if task.isFinished and form.notes is defined %}
+          <p>{{ 'task.form.finish.info' | trans({ '%status%': task.status }) }}</p>
+          {{ form_row(form.notes) }}
+        {% endif %}
+
+        {{ form_row(form.type) }}
+        {{ form_widget(form.address) }}
+
+        {{ form_row(form.dateRange) }}
+        {{ form_row(form.comments) }}
+        {{ form_row(form.tagsAsString) }}
+
+        {% if form.assign is defined %}
+          {{ form_row(form.assign) }}
+        {% endif %}
+
+        {% if not is_new_task %}
+          <p>
+            <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_history">
+              <i class="fa fa-plus"></i> {% trans from 'messages' %}task.form.showHistory{% endtrans %}
+            </a>
+          </p>
+          <div class="collapse" id="{{ form.vars.id }}_history">
+            <ul class="list-unstyled" data-render="timeline">
+              {% for event in task.events %}
+                <li data-event="{{ event.name }}">
+                  <time datetime="{{ event.createdAt|date('c') }}">{{ event.createdAt|localizeddate('short', 'short') }}</time> 
+                  <span>{{ event.name }}</span> 
+                  {% if event.notes is not empty %}
+                    <pre>
+                  {{ event.notes }}
+                </pre>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
       </div>
-      {% endif %}
-
     </div>
+
     <div class="modal-footer">
       {% if form.delete is defined %}
       {{ form_widget(form.delete, { attr: { class: 'btn btn-danger pull-left' } }) }}
@@ -80,6 +101,16 @@
 
 {% if init_javascript|default(false) %}
 <script>
-new CoopCycle.TaskModal("{{ form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
+  new CoopCycle.TaskModal("{{ form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
+  $('#show-task-finish').on('click', function (event) {
+    var $modal = $(event.target).closest('.modal-dialog');
+    $(event.target).hide(400, function () {$modal.find("#show-task-details").fadeIn()});
+    $modal.find("#task-details").hide(400, function () {$modal.find("#task-finish").fadeIn()});
+  });
+  $('#show-task-details').on('click', function (event) {
+    var $modal = $(event.target).closest('.modal-dialog');
+    $(event.target).hide(400, function () {$modal.find("#show-task-finish").fadeIn()});
+    $modal.find("#task-finish").hide(400, function () {$modal.find("#task-details").fadeIn()});
+  });
 </script>
 {% endif %}

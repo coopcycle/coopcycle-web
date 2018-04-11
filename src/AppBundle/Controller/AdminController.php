@@ -813,11 +813,18 @@ class AdminController extends Controller
                 'groups' => ['task', 'delivery', 'place']
             ]);
 
+            if ($task->getStatus() === Task::STATUS_DONE) {
+                $taskManager->markAsDone($task, $form->get('notes')->getData());
+            } else if ($task->getStatus() === Task::STATUS_FAILED) {
+                $taskManager->markAsFailed($task, $form->get('notes')->getData());
+            }
+
             return new JsonResponse($taskNormalized);
         }
 
         return $this->render('@App/Admin/taskModalContent.html.twig', [
             'form' => $form->createView(),
+            'task' => $task
         ]);
     }
 

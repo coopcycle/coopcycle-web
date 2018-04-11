@@ -51,9 +51,9 @@ class TaskExportType extends AbstractType
                 $finishedAt = '';
 
                 if ($task->hasEvent(Task::STATUS_DONE)) {
-                    $finishedAt = $task->getFirstEvent(Task::STATUS_DONE)->getCreatedAt()->format('Y-m-d H:i:s');
+                    $finishedAt = $task->getLastEvent(Task::STATUS_DONE)->getCreatedAt()->format('Y-m-d H:i:s');
                 } else if ($task->hasEvent(Task::STATUS_FAILED)) {
-                    $finishedAt = $task->getFirstEvent(Task::STATUS_FAILED)->getCreatedAt()->format('Y-m-d H:i:s');
+                    $finishedAt = $task->getLastEvent(Task::STATUS_FAILED)->getCreatedAt()->format('Y-m-d H:i:s');
                 }
 
                 $records[] = [
@@ -64,8 +64,8 @@ class TaskExportType extends AbstractType
                     implode(',', [$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]),
                     $task->getStatus(),
                     $task->getComments(),
-                    $task->hasEvent(Task::STATUS_DONE) ? $task->getFirstEvent(Task::STATUS_DONE)->getNotes() : '',
-                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getFirstEvent(Task::STATUS_FAILED)->getNotes() : '',
+                    $task->hasEvent(Task::STATUS_DONE) ? $task->getLastEvent(Task::STATUS_DONE)->getNotes() : '',
+                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getLastEvent(Task::STATUS_FAILED)->getNotes() : '',
                     $finishedAt
                 ];
             }

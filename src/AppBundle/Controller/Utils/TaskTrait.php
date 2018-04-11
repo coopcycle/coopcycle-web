@@ -4,8 +4,6 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Task;
 use AppBundle\Form\TaskType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 trait TaskTrait
 {

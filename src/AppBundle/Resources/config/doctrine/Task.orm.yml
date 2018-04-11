@@ -116,7 +116,7 @@ AppBundle\Entity\Task:
             inversedBy: null
             orphanRemoval: false
             orderBy:
-                createdAt: ASC
+                createdAt: DESC
     oneToOne:
         previous:
             targetEntity: AppBundle\Entity\Task

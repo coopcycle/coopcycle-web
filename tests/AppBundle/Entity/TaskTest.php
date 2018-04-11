@@ -59,7 +59,7 @@ class TaskTest extends TestCase
         $this->assertFalse($this->task->hasEvent("DROPOFF"));
     }
 
-    public function testGetFirstEvent()
+    public function testGetLastEvent()
     {
         $first_event = new TaskEvent($this->task, "PICKUP");
         $this->task->getEvents()->add($first_event);
@@ -67,7 +67,6 @@ class TaskTest extends TestCase
         $this->task->getEvents()->add($second_event);
         $third_event = new TaskEvent($this->task, "PICKUP");
         $this->task->getEvents()->add($first_event);
-        $this->assertSame($this->task->getFirstEvent("PICKUP"),
-                           $first_event);
+        $this->assertSame($this->task->getLastEvent("PICKUP"), $third_event);
     }
 }

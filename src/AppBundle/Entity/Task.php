@@ -176,6 +176,11 @@ class Task implements TaggableInterface
         return $this->status === self::STATUS_FAILED;
     }
 
+    public function isFinished()
+    {
+        return $this->isDone() || $this->isFailed();
+    }
+
     public function getAddress()
     {
         return $this->address;
@@ -287,7 +292,7 @@ class Task implements TaggableInterface
         return false;
     }
 
-    public function getFirstEvent($name)
+    public function getLastEvent($name)
     {
         foreach ($this->getEvents() as $event) {
             if ($event->getName() === $name) {
