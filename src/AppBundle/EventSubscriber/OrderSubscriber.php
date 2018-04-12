@@ -138,7 +138,6 @@ final class OrderSubscriber implements EventSubscriberInterface
 
                 $this->orderManager->capturePayment($order);
                 $this->orderManager->fulfill($order);
-
                 $this->doctrine->getManager()->flush();
             }
         }

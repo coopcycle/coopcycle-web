@@ -37,6 +37,10 @@ winzou_state_machine:
                     on: "create"
                     do: ["@sylius.order_number_assigner", "assignNumber"]
                     args: ["object"]
+                before_fulfill_capture_payment:
+                    on: "fulfill"
+                    do: ["@coopcycle.order_manager", "capturePayment"]
+                    args: ["object"]
             after:
                 after_create_create_payment:
                     on: ["create"]
@@ -86,7 +90,7 @@ winzou_state_machine:
                 from: [cart]
                 to: new
             authorize:
-                from: [new]
+                from: [new, cart]
                 to: authorized
             process:
                 from: [new]
@@ -95,10 +99,10 @@ winzou_state_machine:
                 from: [new, authorized, processing]
                 to: completed
             fail:
-                from: [new, authorized, processing]
+                from: [new, authorized]
                 to: failed
             cancel:
-                from: [new, processing]
+                from: [new]
                 to: cancelled
             refund:
                 from: [completed]
@@ -112,3 +116,27 @@ winzou_state_machine:
                     on: "authorize"
                     do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]
                     args: ["object", "'payment.authorize'"]
+                after_complete_create_transfer:
+                    on: "complete"
+                    do: ["@coopcycle.order_manager", "createTransfer"]
+                    args: ["object"]
+    stripe_transfer:
+        class: AppBundle\Entity\StripeTransfer
+        property_path: state
+        graph: stripe_transfer
+        state_machine_class: "%sylius.state_machine.class%"
+        states:
+            new: ~
+            completed: ~
+            failed: ~
+            refunded: ~
+        transitions:
+            complete:
+                from: [new]
+                to: completed
+            fail:
+                from: [new]
+                to: failed
+            refund:
+                from: [completed]
+                to: refunded
