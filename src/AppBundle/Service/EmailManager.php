@@ -71,27 +71,20 @@ class EmailManager
 
     public function createOrderCreatedMessage(OrderInterface $order)
     {
-        if ($order->isFoodtech()) {
-            $subject = $this->translator->trans('order.confirmationMail.subject', [
-                '%orderId%' => $order->getId()
-            ], 'emails');
-            $body = $this->templating->render('AppBundle::Emails/orderConfirmation.html.twig', [
-                'order' => $order,
-                'orderId' => $order->getId()
-            ]);
-        } else {
-            $subject = $this->translator->trans('delivery.to_be_confirmed.subject', [], 'emails');
-            $body = $this->templating->render('@App/Emails/Delivery/toBeConfirmed.html.twig');
-        }
+        $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
+            'order' => $order,
+        ]);
 
         return $this->createHtmlMessage($subject, $body);
     }
 
     public function createOrderCreatedMessageForAdmin(OrderInterface $order)
     {
-        $subject = $this->translator->trans('delivery.has_to_be_confirmed.subject', [], 'emails');
-        $body = $this->templating->render('@App/Emails/Delivery/hasToBeConfirmed.html.twig', [
+        $subject = $this->translator->trans('admin.order.created.subject', [], 'emails');
+        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
             'order' => $order,
+            'is_admin' => true
         ]);
 
         return $this->createHtmlMessage($subject, $body);
@@ -99,13 +92,9 @@ class EmailManager
 
     public function createOrderCancelledMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.cancellationMail.subject', [
-            '%orderId%' => $order->getId()
-        ], 'emails');
-
-        $body = $this->templating->render('AppBundle::Emails/orderCancelled.html.twig', [
+        $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->templating->render('@App/Emails/Order/cancelled.html.twig', [
             'order' => $order,
-            'orderId' => $order->getId()
         ]);
 
         return $this->createHtmlMessage($subject, $body);
@@ -113,20 +102,10 @@ class EmailManager
 
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
-        if ($order->isFoodtech()) {
-            $subject = $this->translator->trans('order.acceptedMail.subject', [
-                '%orderId%' => $order->getId()
-            ], 'emails');
-            $body = $this->templating->render('AppBundle::Emails/orderAccepted.html.twig', [
-                'order' => $order,
-                'orderId' => $order->getId()
-            ]);
-        } else {
-            $subject = $this->translator->trans('delivery.confirmed.subject', [], 'emails');
-            $body = $this->templating->render('@App/Emails/Delivery/confirmed.html.twig', [
-                'order' => $order,
-            ]);
-        }
+        $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->templating->render('@App/Emails/Order/accepted.html.twig', [
+            'order' => $order,
+        ]);
 
         return $this->createHtmlMessage($subject, $body);
     }

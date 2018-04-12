@@ -1,5 +1,0 @@
-{% extends 'AppBundle::Emails/layout.html.twig' %}
-
-{% block content %}
-  {{ 'order.cancellationMail.body' | trans({'%orderId%': orderId}, 'emails') | raw }}
-{% endblock %}

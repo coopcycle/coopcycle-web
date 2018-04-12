@@ -1,8 +1,0 @@
-{% extends '@App/Emails/layout.html.twig' %}
-
-{% block content %}
-  {{ 'delivery.to_be_confirmed.body' | trans({}, 'emails') | raw }}
-  <br>
-  <br>
-  {% trans from 'emails' %}delivery.to_be_confirmed.outro{% endtrans %}
-{% endblock %}

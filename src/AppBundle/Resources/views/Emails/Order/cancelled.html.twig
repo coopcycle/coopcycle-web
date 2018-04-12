@@ -1,0 +1,10 @@
+{% extends '@App/Emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'order.cancelled.body.intro' | trans({}, 'emails') | raw }}
+  {% if order.foodtech %}
+  <br>
+  <br>
+  {{ 'order.foodtech.cancelled' | trans({}, 'emails') | raw }}
+  {% endif %}
+{% endblock %}

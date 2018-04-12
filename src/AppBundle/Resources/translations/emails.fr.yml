@@ -11,47 +11,46 @@ registration.email.textMessage: |
   Bienvenue!\n\n
   L'équipe CoopCycle
 
-order.confirmationMail.subject: "Confirmation de votre commande #%orderId%"
-order.confirmationMail.quantity: "Quantité"
-order.confirmationMail.delivery: "Livraison"
-order.confirmationMail.body: "Votre commande #%orderId% est confirmée.<br><br>Le restaurateur doit maintenant l'accepter. Vous serez débité après qu'il ait accepté votre commande."
-order.confirmationMail.outro: "Merci pour votre commande,<br><br>L'équipe CoopCycle"
+order.quantity: Quantité
+order.public_url: |
+  Pour suivre l'état de votre commande, <a href="%order.public_url%">cliquez ici</a>.
+order.foodtech.accepted: |
+  Le cuisinier commence à préparer votre commande.
+  <br>
+  Un coursier arrive pour vous l'apporter !
+order.foodtech.cancelled: |
+  Le restaurateur n'est pas en mesure de préparer votre commande %order.number%.
+  <br>
+  Votre compte n'a pas été débité.
 
-order.cancellationMail.subject: "Votre commande #%orderId% a été annulée"
-order.cancellationMail.body: |
-  Le restaurateur n'est pas en mesure de préparer votre commande #%orderId%. Votre compte n'a pas été débité.<br><br>
-  Veuillez nous en excusez,<br><br>
-  L'équipe CoopCycle
+admin.order.created.subject: Nouvelle commande à confirmer
+admin.order.created.body: |
+  Bonjour,
+  <br>
+  <br>
+  Une nouvelle commande a été créée.
+  <br>
+  Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
 
-order.acceptedMail.subject: "Votre commande #%orderId% a été validée"
-order.acceptedMail.body: |
-  Le cuisinier a commencé à préparer votre commande #%orderId%.<br><br>
-  Un coursier arrive pour vous l'apporter!<br><br>
-  L'équipe CoopCycle
-
-delivery.to_be_confirmed.subject: Commande enregistrée !
-delivery.to_be_confirmed.body: |
-  Bonjour, <br><br>
-  Nous avons bien enregistré votre demande.
+order.created.subject: Confirmation de votre commande %order.number%
+order.created.body: |
+  Bonjour,
+  <br>
+  <br>
+  Nous avons bien enregistré votre commande.
   <br>
   Nous vérifions dans les plus brefs délais votre commande, et nous vous recontactons lorsque celle-ci est confirmée.
-delivery.to_be_confirmed.outro: Merci pour votre confiance
 
-delivery.confirmed.subject: Votre livraison est confirmée !
-delivery.confirmed.body: |
+order.accepted.subject: Votre commande %order.number% a été acceptée
+order.accepted.body.intro: |
   Bonjour,
   <br>
-  Votre livraison est confirmée.
   <br>
-  <br>
-  Pour suivre l'état de votre commande ou payer par carte bancaire, <a href="%url%">cliquez ici</a>.
-delivery.confirmed.outro: Merci pour votre confiance
+  Votre commande est confirmée.
 
-delivery.has_to_be_confirmed.subject: Nouvelle livraison à confirmer
-delivery.has_to_be_confirmed.body: |
+order.cancelled.subject: Votre commande %order.number% a été annulée
+order.cancelled.body.intro: |
   Bonjour,
   <br>
-  Une nouvelle livraison a été commandée.
   <br>
-  <br>
-  Pour vérifier les détails, et confirmer la livraison, <a href="%order_url%">cliquez ici</a>.
+  Nous sommes désolé, mais votre commande a été annulée.

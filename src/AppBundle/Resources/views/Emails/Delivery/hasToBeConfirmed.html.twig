@@ -1,7 +1,0 @@
-{% extends '@App/Emails/layout.html.twig' %}
-
-{% block content %}
-  {{ 'delivery.has_to_be_confirmed.body' | trans({
-    '%order_url%': url('admin_order', { id: order.id }),
-  }, 'emails') | raw }}
-{% endblock %}
