@@ -80,7 +80,7 @@ trait DeliveryTrait
             throw new \Exception('Price could not be calculated');
         }
 
-        return (int) ($price * 100);
+        return (int) ($price);
     }
 
     protected function handleDeliveryForm(FormInterface $form, PricingRuleSet $pricingRuleSet = null)

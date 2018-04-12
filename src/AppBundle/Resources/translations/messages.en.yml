@@ -330,7 +330,6 @@ form.address.streetAddress.label: Address
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule.price.label: Price
-form.pricing_rule.price.help: Fixed price or expression
 
 form.settings.brand_name.label: Brand name
 form.settings.stripe_publishable_key.label: Stripe publishable key
