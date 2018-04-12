@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Form\Type\DateRangeType;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -58,6 +59,7 @@ class TaskType extends AbstractType
             $builder
                 ->add('dateRange', DateRangeType::class, [
                     'mapped' => false,
+                    'label' => 'task.form.dateRange'
                 ]);
         } else {
             $builder
@@ -89,7 +91,7 @@ class TaskType extends AbstractType
                 // Only existing tasks can be assigned
                 $assignOptions = array(
                     'mapped' => false,
-                    'label' => 'Courier',
+                    'label' => 'adminDashboard.task.form.courier',
                     'required' => false,
                     'class' => ApiUser::class,
                     'query_builder' => function (EntityRepository $entityRepository) {
@@ -109,6 +111,40 @@ class TaskType extends AbstractType
 
                 if ($task->isAssigned()) {
                     $form->get('assign')->setData($task->getAssignedCourier());
+
+                    // we disallow un-doing a task as it will break things here and there
+                    if ($task->getStatus() === Task::STATUS_TODO) {
+                        $form->add(
+                            'status',
+                            ChoiceType::class,
+                            [
+                                'choices' => [
+                                    'task.status.done' => Task::STATUS_DONE,
+                                    'task.status.failed' => Task::STATUS_FAILED,
+                                ],
+                                'data' => $task->getStatus(),
+                                'label' => 'adminDashboard.task.form.status'
+                            ]
+                        );
+                    }
+
+                    $notesOptions = [];
+
+                    if ($task->getStatus() !== Task::STATUS_TODO) {
+                        $notesOptions['data'] = $task->hasEvent(Task::STATUS_DONE) ? $task->getLastEvent(Task::STATUS_DONE)->getNotes() : $task->getLastEvent(Task::STATUS_FAILED)->getNotes();
+                    }
+
+                    $form->add('notes', TextareaType::class,
+                        array_merge(
+                            $notesOptions,
+                            [
+                                'required' => false,
+                                'mapped' => false,
+                                'attr' => ['rows' => '2', 'placeholder' => 'adminDashboard.task.form.notes.placeholder'],
+                                'label' => 'adminDashboard.task.form.notes'
+                            ]
+                        )
+                    );
                 }
             }
 
@@ -151,6 +187,7 @@ class TaskType extends AbstractType
                 $task->setDoneBefore(new \DateTime($data['before']));
             });
         }
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

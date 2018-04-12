@@ -200,14 +200,14 @@ window.AppData.Dashboard = {
 </script>
 <script src="{{ asset('js/dashboard.js') }}"></script>
 <script>
-$('#task-upload-form-errors').popover({
-  html: true,
-  container: 'body'
-})
-$('#task-group-modal').on('show.bs.modal', function (event) {
-  var $btn = $(event.relatedTarget);
-  $('#task_group_id').val($btn.data('group'));
-})
+  $('#task-upload-form-errors').popover({
+    html: true,
+    container: 'body'
+  })
+  $('#task-group-modal').on('show.bs.modal', function (event) {
+    var $btn = $(event.relatedTarget);
+    $('#task_group_id').val($btn.data('group'));
+  })
 </script>
 <script>
   function initMap() {

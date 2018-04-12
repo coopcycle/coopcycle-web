@@ -287,6 +287,12 @@ task.form.timeWindow: Periodo
 task.form.cancel: Cancelar
 task.form.showHistory: Mostrar historial
 task.form.modal.moreOptions: Más opciones
+task.form.edit: Modify task %id%
+task.form.dateRange: Date range
+task.form.finish: Finish task
+task.form.details: Task details
+task.form.finish.info: Task is finished with status %status%. You can change the note that was written at completion.
+
 form.task_upload.file: Archivo
 form.task_complete.done.label: Completada
 form.task_complete.fail.label: Informar del problema
