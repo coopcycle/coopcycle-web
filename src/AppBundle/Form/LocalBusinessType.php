@@ -70,31 +70,6 @@ abstract class LocalBusinessType extends AbstractType
             ]);
         }
 
-        $builder
-            ->add('stripeAccount', EntityType::class, array(
-                // 'mapped' => false,
-                'required' => false,
-                'placeholder' => 'form.local_business.stripe_account.placeholder',
-                'label' => 'form.local_business.stripe_account.label',
-                'class' => StripeAccount::class,
-                'choice_label' => 'displayName',
-                'query_builder' => function (EntityRepository $er) {
-
-                    $qb = $er
-                        ->createQueryBuilder('sa')
-                        ->orderBy('sa.displayName', 'ASC');
-
-                    if (!$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                        $user = $this->tokenStorage->getToken()->getUser();
-                        $qb
-                            ->andWhere('sa.id in (:stripe_accounts)')
-                            ->setParameter('stripe_accounts', $user->getStripeAccounts()->toArray());
-                    }
-
-                    return $qb;
-                }
-            ));
-
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
             $localBusiness = $event->getData();

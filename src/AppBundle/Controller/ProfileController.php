@@ -11,7 +11,6 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -19,7 +18,6 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
-use Doctrine\ORM\Query\Expr;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -185,30 +183,6 @@ class ProfileController extends Controller
     protected function getStoreList(Request $request)
     {
         return [ $this->getUser()->getStores(), 1, 1 ];
-    }
-
-    /**
-     * @Route("/profile/stripe", name="profile_stripe")
-     * @Template()
-     */
-    public function stripeAction(Request $request)
-    {
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
-        // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
-        // @see https://stripe.com/docs/connect/oauth-reference
-        $queryString = http_build_query([
-            'response_type' => 'code',
-            'client_id' => $settingsManager->get('stripe_connect_client_id'),
-            'scope' => 'read_write',
-            'redirect_uri' => $this->get('router')->generate('stripe_connect_standard_account', [], UrlGeneratorInterface::ABSOLUTE_URL)
-        ]);
-        $stripeAuthorizeURL = 'https://connect.stripe.com/oauth/authorize?' . $queryString;
-
-        return [
-            'stripe_authorize_url' => $stripeAuthorizeURL,
-            'stripe_accounts' => $this->getUser()->getStripeAccounts()
-        ];
     }
 
     protected function getDeliveryRoutes()

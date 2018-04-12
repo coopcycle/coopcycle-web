@@ -2,6 +2,7 @@ restaurant.openingHours.notBlank: Select at least one opened schedule
 restaurant.telephone.notBlank: Enter your phone number
 restaurant.name.notBlank: Enter your restaurant's name
 restaurant.contract.notValid: Enter the delivery contract terms (require administrator privileges)
+restaurant.stripeAccount.notSet: Link the restaurant to a Stripe account
 restaurant.notActivable: You can't enable this restaurant yet
 
 address.tooFar: This address is too far
@@ -10,7 +11,7 @@ address.notSet: Please pick an address
 cart.date.tooSoon: This date is too soon
 cart.address.empty: Please select an address
 
-order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%
+order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%€
 
 delivery.date.restaurantClosed: Restaurant is closed at %date%
 delivery.date.hasPassed: Date %date% has passed

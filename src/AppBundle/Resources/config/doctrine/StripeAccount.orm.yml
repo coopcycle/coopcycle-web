@@ -13,9 +13,10 @@ AppBundle\Entity\StripeAccount:
         displayName:
             type: string
             column: display_name
-        transfersEnabled:
+        payoutsEnabled:
             type: boolean
-            column: transfers_enabled
+            column: payouts_enabled
+            default: false
         stripeUserId:
             type: string
             column: stripe_user_id

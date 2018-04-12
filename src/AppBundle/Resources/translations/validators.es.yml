@@ -2,6 +2,7 @@ restaurant.openingHours.notBlank: Introduce al menos un horario de apertura
 restaurant.telephone.notBlank: Introduce un número de teléfono
 restaurant.name.notBlank: Introduce el nombre del restaurante
 restaurant.contract.notValid: Introduce los términos de contrato (requiere privilegios de administrador)
+restaurant.stripeAccount.notSet: Link the restaurant to a Stripe account
 restaurant.notActivable: Aún no puedes activar éste restaurante
 
 address.tooFar: Esta dirección está muy lejos
@@ -10,7 +11,7 @@ address.notSet: Sírvase elegir una dirección
 cart.date.tooSoon: Ésta fecha es demasiado pronto
 cart.address.empty: Por favor seleccione una dirección
 
-order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%
+order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%€
 
 delivery.date.restaurantClosed: Restaurante cerrado el %date%
 delivery.date.hasPassed: La fecha %date% ya ha pasado

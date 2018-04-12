@@ -114,6 +114,8 @@ class Restaurant extends FoodEstablishment
     private $imageName;
 
     /**
+     * @var Address
+     *
      * @Groups({"restaurant"})
      */
     private $address;

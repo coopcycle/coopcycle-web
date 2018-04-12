@@ -158,7 +158,7 @@ restaurant.closedWarning: |
 restaurant.temporaryClosedWarning: |
   Ce restaurant est exceptionnellement fermé. Vous pouvez commander pour plus tard!
 restaurant.form.enabled.tooltip: |
-  Un restaurant desactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
+  Un restaurant désactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
 restaurant.form.accessPlanning: Accéder au planning
 restaurant.form.createRestaurant: Créer un restaurant
@@ -383,6 +383,15 @@ form.registration.username.help: |
 
 form.local_business.stripe_account.placeholder: Choisissez un compte Stripe
 form.local_business.stripe_account.label: Compte Stripe
+form.local_business.stripe_account.success: Compte Stripe créé avec succès.
+form.local_business.stripe_account.admin_warning: Aucun compte Stripe créé pour ce restaurant par le restaurateur. Le compte Stripe doit être créé par le restaurateur.
+form.local_business.stripe_account.save_warning: Vous devez sauvegarder ce restaurant avant de pouvoir le lier à un compte Stripe.
+form.local_business.stripe_account.need_stripe_account: |
+  Vous n'avez pas encore créé de compte Stripe pour ce restaurant. Stripe est notre prestataire pour les paiements, qui nous permet de sécuriser les paiements sur la plateforme et de transférer les fonds vers votre compte bancaire.<br>
+  Pour créer un compte Stripe pour ce restaurant <a href="%stripeAuthorizeURL%">cliquez ici</a>.
+form.local_business.stripe_account.link_ok: |
+  Ce restaurant est lié à un compte Stripe et peut donc recevoir des paiements depuis la plateforme.<br>
+  Pour accéder au compte Stripe lié, <a href="https://dashboard.stripe.com/" target="_blank">rendez vous sur votre dashboard Stripe</a>.
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?

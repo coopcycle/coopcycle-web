@@ -14,6 +14,7 @@ class IsActivableRestaurant extends Constraint
     public $telephoneMessage = 'restaurant.telephone.notBlank';
     public $openingHoursMessage = 'restaurant.openingHours.notBlank';
     public $contractMessage = 'restaurant.contract.notValid';
+    public $stripeAccountMessage = 'restaurant.stripeAccount.notSet';
 
     public function validatedBy()
     {

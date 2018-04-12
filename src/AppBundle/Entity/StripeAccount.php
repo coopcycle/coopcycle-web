@@ -2,12 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class StripeAccount
 {
@@ -20,7 +14,7 @@ class StripeAccount
 
     private $displayName;
 
-    private $transfersEnabled;
+    private $payoutsEnabled;
 
     private $stripeUserId;
 
@@ -59,14 +53,14 @@ class StripeAccount
         return $this;
     }
 
-    public function isTransfersEnabled()
+    public function isPayoutsEnabled()
     {
-        return $this->transfersEnabled;
+        return $this->payoutsEnabled;
     }
 
-    public function setTransfersEnabled($transfersEnabled)
+    public function setPayoutsEnabled($payoutsEnabled)
     {
-        $this->transfersEnabled = $transfersEnabled;
+        $this->payoutsEnabled = $payoutsEnabled;
 
         return $this;
     }
