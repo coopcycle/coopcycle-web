@@ -20,7 +20,7 @@ winzou_state_machine:
                 from: [new, accepted]
                 to: cancelled
             fulfill:
-                from: [accepted]
+                from: [accepted, ready]
                 to: fulfilled
             accept:
                 from: [new]
