@@ -167,6 +167,7 @@ html, body {
   cursor: pointer;
   color: #fff;
   border-radius: 0;
+  padding: 8px;
   &:last-child {
     border-radius: 0;
   }
@@ -198,8 +199,8 @@ html, body {
 }
 
 .task__icon {
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 14px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
