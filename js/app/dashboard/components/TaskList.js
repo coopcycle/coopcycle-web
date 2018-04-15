@@ -139,9 +139,7 @@ class TaskList extends React.Component {
     let { tasks } = this.props
     const { collapsed } = this.state
 
-    tasks.sort((a, b) => {
-      return a.position > b.position ? 1 : -1
-    })
+    tasks = _.orderBy(tasks, ['position', 'id'])
 
     if (!showFinishedTasks) {
       tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
