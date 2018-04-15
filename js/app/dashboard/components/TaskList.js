@@ -11,13 +11,6 @@ moment.locale($('html').attr('lang'))
 
 class TaskList extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      collapsed: props.collapsed,
-    }
-  }
-
   componentDidMount() {
     this.props.taskListDidMount(this)
 
@@ -36,8 +29,10 @@ class TaskList extends React.Component {
     }
 
     // handler to change the task order within a courier tasklist
-    const container = findDOMNode(this).querySelector('.courier-task-list')
-    dragula([container], {
+    const currentNode = findDOMNode(this),
+      container = currentNode.querySelector('.courier-task-list'),
+      scrollableWrapper = currentNode.querySelector('#scrollable-wrapper')
+    let drake = dragula([container], {
       // You can set accepts to a method with the following signature: (el, target, source, sibling).
       // It'll be called to make sure that an element el, that came from container source,
       // can be dropped on container target before a sibling element.
@@ -100,6 +95,19 @@ class TaskList extends React.Component {
 
     })
 
+    let autoScroll = require('dom-autoscroller')
+    autoScroll([
+        scrollableWrapper
+      ],{
+        margin: 20,
+        maxSpeed: 5,
+        scrollWhenOutside: true,
+        autoScroll: function(){
+          //Only scroll when the pointer is down, and there is a child being dragged.
+          return drake.dragging
+        }
+    })
+
   }
 
   componentDidUpdate(prevProps) {
@@ -137,7 +145,6 @@ class TaskList extends React.Component {
       highlightedTask
     } = this.props
     let { tasks } = this.props
-    const { collapsed } = this.state
 
     tasks = _.orderBy(tasks, ['position', 'id'])
 
@@ -168,17 +175,13 @@ class TaskList extends React.Component {
         <div className="panel-heading">
           <h3 className="panel-title">
             <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
-            <a role="button" data-toggle="collapse" data-parent="#accordion" href={ '#collapse-' + username }>{ username }</a> 
-            { collapsed && ( <i className="fa fa-caret-down"></i> ) }
-            { !collapsed && ( <i className="fa fa-caret-up"></i> ) }
+            <a role="button">{ username }</a> 
           </h3>
         </div>
-        <div id={ 'collapse-' + username } className="panel-collapse collapse" role="tabpanel">
+        <div role="tabpanel">
           { tasks.length > 0 && (
             <div className="panel-body taskList__summary">
-              <strong>Durée</strong>  <span>{ durationFormatted }</span>
-              <br />
-              <strong>Distance</strong>  <span>{ distanceFormatted }</span>
+              <strong>Durée</strong>  <span>{ durationFormatted }</span> - <strong>Distance</strong>  <span>{ distanceFormatted }</span>
               <a role="button" className={ polylineClassNames.join(' ') } onClick={ e => this.props.togglePolyline(username) }>
                 <i className="fa fa-map fa-2x"></i>
               </a>
@@ -189,17 +192,19 @@ class TaskList extends React.Component {
               Déposez les livraisons ici
             </div>
           </div>
-          <div className="list-group courier-task-list">
-            { tasks.map(task => (
-              <Task
-                key={ task['@id'] }
-                task={ task }
-                assigned={ true }
-                onRemove={ task => this.remove(task) }
-                highlightedTask={ highlightedTask }
-                highlightTask={ this.props.highlightTask }
-              />
-            ))}
+          <div id="scrollable-wrapper" style={{overflow: 'auto', maxHeight: '250px'}}>
+            <div className="list-group courier-task-list">
+              { tasks.map(task => (
+                <Task
+                  key={ task['@id'] }
+                  task={ task }
+                  assigned={ true }
+                  onRemove={ task => this.remove(task) }
+                  highlightedTask={ highlightedTask }
+                  highlightTask={ this.props.highlightTask }
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

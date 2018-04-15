@@ -120,7 +120,7 @@ class Task extends React.Component {
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
           #{/([\d]+)/.exec(task['@id'])[0]} - { task.address.name || task.address.streetAddress } avant { moment(task.doneBefore).format('HH[h]mm') }
           { this.renderTags() }
-          &nbsp;&nbsp;
+          &nbsp;
           <a onClick={ this.showTaskModal.bind(this) }>
             <i className="fa fa-pencil task__icon--edit"></i>
           </a>

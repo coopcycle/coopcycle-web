@@ -64,6 +64,11 @@ html, body {
         }
       }
     }
+
+    &.dashboard__panel--assignees {
+      flex: 2;
+    }
+
     &__scroll {
       overflow: scroll;
     }
