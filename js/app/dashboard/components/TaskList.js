@@ -175,7 +175,7 @@ class TaskList extends React.Component {
         <div className="panel-heading">
           <h3 className="panel-title">
             <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
-            <a role="button">{ username }</a> 
+            <a role="button">{ username } <span className="badge">{ tasks.length }</span></a> 
           </h3>
         </div>
         <div role="tabpanel">
