@@ -110,27 +110,24 @@ class Task extends React.Component {
     }
 
     return (
-      <div key={ task['@id'] } className={ classNames.join(' ') } data-task-id={ task['@id'] } { ...taskAttributes } onClick={this.onClick}>
-        <div>
+      <span
+        style={{display: 'block'}}
+        key={task['@id']}
+        className={classNames.join(' ')}
+        data-task-id={task['@id']}
+        {...taskAttributes}
+        onClick={this.onClick}>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          <span>Tâche #{/([\d]+)/.exec(task['@id'])[0]}</span>{ task.address.name && (<span> - { task.address.name }</span>)}
+          #{/([\d]+)/.exec(task['@id'])[0]} - { task.address.name || task.address.streetAddress } avant { moment(task.doneBefore).format('HH[h]mm') }
           { this.renderTags() }
           &nbsp;&nbsp;
           <a onClick={ this.showTaskModal.bind(this) }>
             <i className="fa fa-pencil task__icon--edit"></i>
           </a>
-        </div>
-        <div>
-          <span>{ task.address.name || task.address.streetAddress }</span>
-        </div>
-        <div>
-          <span>{ moment(task.doneAfter).format('LT') } - { moment(task.doneBefore).format('LT') }</span>
-        </div>
-        <div>
-          { this.renderLinkedIcon() }
-        </div>
-        {this.renderStatusIcon()}
-      </div>
+          {this.renderLinkedIcon()}
+          {this.renderStatusIcon()}
+      </span>
+
     )
 
   }

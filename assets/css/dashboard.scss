@@ -49,8 +49,8 @@ html, body {
 
   &__panel {
     display: flex;
-    flex: 1;
     flex-direction: column;
+    flex: 1;
     > h4 {
       padding: 15px;
       margin: 0;
@@ -65,7 +65,7 @@ html, body {
       }
     }
     &__scroll {
-      overflow: auto;
+      overflow: scroll;
     }
   }
 
@@ -128,6 +128,7 @@ html, body {
       box-sizing: border-box;
       background-color: lighten(#F39C12, 30%);
       border: 3px dashed #F1C40F;
+      margin-bottom: 0;
 
       &--over {
         background-color: lighten(#F39C12, 30%);
@@ -158,7 +159,6 @@ html, body {
 .list-group-item {
   font-size: 12px;
   position: relative;
-  padding-right: 60px;
   cursor: pointer;
   color: #fff;
   border-radius: 0;
