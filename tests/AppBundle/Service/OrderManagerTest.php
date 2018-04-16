@@ -46,7 +46,7 @@ class OrderManagerTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getLastPayment(PaymentInterface::STATE_CART)
+            ->getLastPayment(PaymentInterface::STATE_NEW)
             ->willReturn($stripePayment);
 
         $this->stateMachineFactory
