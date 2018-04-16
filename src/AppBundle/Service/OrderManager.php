@@ -127,15 +127,16 @@ class OrderManager
 
     public function authorizePayment(OrderInterface $order)
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
-
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
         $stripeToken = $stripePayment->getStripeToken();
-        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+
 
         if (null === $stripeToken) {
             return;
         }
+
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
         try {
 
@@ -188,7 +189,6 @@ class OrderManager
         } catch (\Exception $e) {
             $stripePayment->setLastError($e->getMessage());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
-            return;
         }
      }
 
