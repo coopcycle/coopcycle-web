@@ -275,7 +275,7 @@ class InitDemoCommand extends ContainerAwareCommand
         }
 
         for ($i = 1; $i <= 5; $i++) {
-            array_push($prices, random_int(5, 20));
+            array_push($prices, random_int(500, 2000));
         }
 
         sort($distances);
