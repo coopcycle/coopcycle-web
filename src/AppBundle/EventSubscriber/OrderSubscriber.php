@@ -136,9 +136,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
             if (null !== $order && $order->isFoodtech()) {
 
-                $this->orderManager->capturePayment($order);
                 $this->orderManager->fulfill($order);
-
                 $this->doctrine->getManager()->flush();
             }
         }

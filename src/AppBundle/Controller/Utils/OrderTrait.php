@@ -100,12 +100,10 @@ trait OrderTrait
 
         $this->accessControl($order->getRestaurant());
 
-        try {
+
             $this->get('coopcycle.order_manager')->ready($order);
             $this->get('sylius.manager.order')->flush();
-        } catch (\Exception $e) {
-            // TODO Add flash message
-        }
+
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,

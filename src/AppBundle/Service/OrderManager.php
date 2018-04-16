@@ -4,13 +4,14 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\StripeTransfer;
 use AppBundle\Entity\Task;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\PaymentAuthorizeEvent;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
+use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Stripe;
@@ -126,18 +127,18 @@ class OrderManager
 
     public function authorizePayment(OrderInterface $order)
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
-
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
         $stripeToken = $stripePayment->getStripeToken();
+
 
         if (null === $stripeToken) {
             return;
         }
 
-        try {
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-            $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        try {
 
             $charge = Stripe\Charge::create(array(
                 'amount' => $order->getTotal(),
@@ -152,7 +153,6 @@ class OrderManager
 
             $stripePayment->setCharge($charge->id);
 
-            // TODO Use constant
             $stateMachine->apply('authorize');
 
         } catch (\Exception $e) {
@@ -190,6 +190,47 @@ class OrderManager
             $stripePayment->setLastError($e->getMessage());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         }
+     }
+
+    public function createTransfer(PaymentInterface $stripePayment) {
+
+        $order = $stripePayment->getOrder();
+
+        if (
+            // no need to transfer is order is for the coop
+            is_null($order->getRestaurant()) || \
+            // useful for demo & tests
+            is_null($order->getRestaurant()->getStripeAccount())) {
+            return;
+        }
+
+        $toTransfer = $order->getTotal() - $order->getDeliveryPrice();
+        $stripeAccount = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+
+        $stripeTransfer = StripeTransfer::create($stripePayment, $toTransfer);
+        $stripeTransfer->setStripeAccount($stripeAccount);
+
+        $transferStateMachine = $this->stateMachineFactory->get($stripeTransfer, StripeTransferTransitions::GRAPH);
+
+        // transfer the correct amount to restaurant owner/shop
+        // ref https://stripe.com/docs/connect/charges-transfers
+        try {
+            $transfer = Stripe\Transfer::create([
+                'amount' => $toTransfer,
+                'currency' => strtolower($stripePayment->getCurrencyCode()),
+                'destination' => $stripeAccount,
+                // ref https://stripe.com/docs/connect/charges-transfers#transfer-availability
+                'source_transaction' => $stripePayment->getCharge()
+            ]);
+
+            $stripeTransfer->setTransfer($transfer->id);
+
+            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_COMPLETE);
+        } catch (\Exception $e) {
+            $stripeTransfer->setLastError($e->getMessage());
+            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_FAIL);
+        }
+
     }
 
     public function completePayment(PaymentInterface $payment)
