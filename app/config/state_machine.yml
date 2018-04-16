@@ -38,6 +38,10 @@ winzou_state_machine:
                     do: ["@sylius.order_number_assigner", "assignNumber"]
                     args: ["object"]
             after:
+                after_create_create_payment:
+                    on: ["create"]
+                    do: ["@sm.callback.cascade_transition", "apply"]
+                    args: ["object.getLastPayment('cart')", "event", "'create'", "'sylius_payment'"]
                 after_create_authorize_payment:
                     on: "create"
                     do: ["@coopcycle.order_manager", "authorizePayment"]

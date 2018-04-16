@@ -51,17 +51,8 @@ class OrderManager
 
     public function create(OrderInterface $order)
     {
-        $orderStateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $paymentStateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-        $paymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
-
-        // apply the order transition after because we need the payment in state new in the create order hook
-        $orderStateMachine->apply(OrderTransitions::TRANSITION_CREATE);
-
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $paymentStateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-        $paymentStateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+        $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $stateMachine->apply(OrderTransitions::TRANSITION_CREATE);
     }
 
     public function accept(OrderInterface $order)
