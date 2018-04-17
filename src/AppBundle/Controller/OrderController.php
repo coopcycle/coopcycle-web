@@ -12,6 +12,7 @@ use AppBundle\Form\StripePaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,11 +27,11 @@ class OrderController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $cart = $this->get('sylius.context.cart')->getCart();
+        $order = $this->get('sylius.context.cart')->getCart();
+
 
         // TODO Check if cart is empty
-
-        $deliveryAddress = $cart->getShippingAddress();
+        $deliveryAddress = $order->getShippingAddress();
 
         $form = $this->createForm(DeliveryAddressType::class, $deliveryAddress);
 
@@ -45,9 +46,9 @@ class OrderController extends Controller
         }
 
         return array(
-            'order' => $cart,
+            'order' => $order,
             'form' => $form->createView(),
-            'restaurant' => $cart->getRestaurant(),
+            'restaurant' => $order->getRestaurant(),
             'deliveryAddress' => $deliveryAddress,
         );
     }
@@ -58,12 +59,14 @@ class OrderController extends Controller
      */
     public function paymentAction(Request $request)
     {
-        $orderManager = $this->get('coopcycle.order_manager');
-        $settingsManager = $this->get('coopcycle.settings_manager');
 
         $order = $this->get('sylius.context.cart')->getCart();
+        $orderManager = $this->get('coopcycle.order_manager');
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
+        $stateMachineFactory = $this->get('sm.factory');
+        $stateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
         $form = $this->createForm(StripePaymentType::class);
 
@@ -79,11 +82,7 @@ class OrderController extends Controller
 
             $stripePayment->setStripeToken($form->get('stripeToken')->getData());
 
-            // TODO Set customer via listeners
-            $order->setCustomer($this->getUser());
-
-            // Create order, to generate a number
-            $orderManager->create($order);
+            $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
 
             $this->get('sylius.manager.order')->flush();
 
@@ -92,6 +91,14 @@ class OrderController extends Controller
                     'error' => $stripePayment->getLastError()
                 ]);
             }
+
+            // TODO Set customer via listeners
+            $order->setCustomer($this->getUser());
+
+            // Create order, to generate a number
+            $orderManager->create($order);
+
+            $this->get('sylius.manager.order')->flush();
 
             $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
             $request->getSession()->remove($sessionKeyName);

@@ -42,14 +42,6 @@ winzou_state_machine:
                     do: ["@coopcycle.order_manager", "capturePayment"]
                     args: ["object"]
             after:
-                after_create_create_payment:
-                    on: ["create"]
-                    do: ["@sm.callback.cascade_transition", "apply"]
-                    args: ["object.getLastPayment('cart')", "event", "'create'", "'sylius_payment'"]
-                after_create_authorize_payment:
-                    on: "create"
-                    do: ["@coopcycle.order_manager", "authorizePayment"]
-                    args: ["object"]
                 after_create_dispatch_event:
                     on: "create"
                     do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
@@ -112,6 +104,10 @@ winzou_state_machine:
                 to: void
         callbacks:
             after:
+                after_create_authorize_payment:
+                    on: "create"
+                    do: ["@coopcycle.order_manager", "authorizePayment"]
+                    args: ["object.getOrder()"]
                 after_authorize_dispatch_event:
                     on: "authorize"
                     do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]
@@ -120,6 +116,10 @@ winzou_state_machine:
                     on: "complete"
                     do: ["@coopcycle.order_manager", "createTransfer"]
                     args: ["object"]
+                after_fail_transfer:
+                    on: "fail"
+                    do: ["@coopcycle.order_manager", "afterPaymentFailed"]
+                    args: ["object.getOrder()"]
     stripe_transfer:
         class: AppBundle\Entity\StripeTransfer
         property_path: state
