@@ -20,9 +20,9 @@ class MenuItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, ['label' => 'form.menu_item.name.label'])
             ->add('description', TextareaType::class, ['required' => false])
-            ->add('price', MoneyType::class)
+            ->add('price', MoneyType::class, ['label' => 'form.menu_item.price.label'])
             ->add('taxCategory', TaxCategoryChoiceType::class)
             ->add('isAvailable', CheckboxType::class, [
                 'label' => 'Available product?',

@@ -26,14 +26,15 @@ class MenuItemModifierType extends AbstractType
     {
         $choices =
         $builder
-            ->add('name', TextType::class)
-            ->add('price', MoneyType::class)
+            ->add('name', TextType::class, ['label' => 'form.menu_item_modifier.name.label'])
+            ->add('price', MoneyType::class, ['label' => 'form.menu_item_modifier.price.label'])
             ->add('calculusStrategy', ChoiceType::class, [
                 'choices' => [
                     $this->translator->trans('menu.modifier.STRATEGY_FREE') => MenuItemModifier::STRATEGY_FREE,
                     $this->translator->trans('menu.modifier.STRATEGY_ADD_MODIFIER_PRICE') => MenuItemModifier::STRATEGY_ADD_MODIFIER_PRICE,
                     $this->translator->trans('menu.modifier.STRATEGY_ADD_MENUITEM_PRICE') => MenuItemModifier::STRATEGY_ADD_MENUITEM_PRICE,
-                ]
+                ],
+                'label' => 'form.menu_item_modifier.calculusStrategy.label'
             ])
             ->add('modifierChoices', CollectionType::class, [
                 'entry_type' => ModifierType::class,

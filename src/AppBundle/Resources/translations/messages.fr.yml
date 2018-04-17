@@ -408,6 +408,13 @@ form.local_business.stripe_account.link_ok: |
   Ce restaurant est lié à un compte Stripe et peut donc recevoir des paiements depuis la plateforme.<br>
   Pour accéder au compte Stripe lié, <a href="https://dashboard.stripe.com/" target="_blank">rendez vous sur votre dashboard Stripe</a>.
 
+form.menu_item.name.label: Nom
+form.menu_item.price.label: Prix
+
+form.menu_item_modifier.name.label: Nom
+form.menu_item_modifier.price.label: Prix
+form.menu_item_modifier.calculusStrategy.label: Calcul du prix
+
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Commencer une nouvelle commande

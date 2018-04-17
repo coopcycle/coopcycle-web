@@ -385,6 +385,13 @@ form.local_business.stripe_account.link_ok: |
   This restaurant is linked to a Stripe account and can receive payments from the platform.<br>
   To manage your Stripe account and the transfers to your account, please use the <a href="https://dashboard.stripe.com/" target="_blank">Stripe dashboard</a>.
 
+form.menu_item.name.label: Nombre
+form.menu_item.price.label: Precio
+
+form.menu_item_modifier.name.label: Nombre
+form.menu_item_modifier.price.label: Precio
+form.menu_item_modifier.calculusStrategy.label: Cálculo del precio
+
 cart.modal.title: Atención
 cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres iniciar un pedido nuevo en éste restaurante?
 cart.modal.confirm: Confirmar
