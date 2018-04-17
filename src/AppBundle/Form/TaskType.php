@@ -107,6 +107,10 @@ class TaskType extends AbstractType
                     $assignOptions['data'] = $task->getAssignedCourier();
                 }
 
+                if ($task->isFinished()) {
+                    $assignOptions['disabled'] = true;
+                }
+
                 $form->add('assign', EntityType::class, $assignOptions);
 
                 if ($task->isAssigned()) {

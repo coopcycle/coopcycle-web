@@ -73,6 +73,11 @@ adminDashboard.orders.invoice.totalIncludingTax: Total con impuestos
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
 
+adminDashboard.task.form.courier: Courier
+adminDashboard.task.form.status: Status
+adminDashboard.task.form.notes: Notes
+adminDashboard.task.form.notes.placeholder: Enter details about task's end
+
 adminDashboard.users.title: Usuarios
 adminDashboard.users.edit: Editar
 adminDashboard.users.save: Guardar
@@ -292,6 +297,7 @@ task.form.dateRange: Date range
 task.form.finish: Finish task
 task.form.details: Task details
 task.form.finish.info: Task is finished with status %status%. You can change the note that was written at completion.
+
 
 task.status.done: Success
 task.status.failed: Failure
