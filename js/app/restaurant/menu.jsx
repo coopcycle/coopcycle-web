@@ -144,7 +144,9 @@ $(function() {
   autoDismissMessages();
 
   // Activate Bootstrap tooltips
-  $('[data-toggle="tooltip"]').tooltip();
+  $('body').tooltip({
+    selector: '[data-toggle="tooltip"]'
+  });
 
   // Show/hide inputs on page load
   $form.find('.modifier-calculus-strategy').each((index, input) => renderCalculusStrategy($(input)));
