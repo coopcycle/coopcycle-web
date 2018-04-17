@@ -39,7 +39,6 @@ class OrderValidator extends ConstraintValidator
             );
 
             $distance = $data['routes'][0]['distance'];
-            $duration = $data['routes'][0]['duration'];
 
             $maxDistance = $restaurant->getMaxDistance();
 

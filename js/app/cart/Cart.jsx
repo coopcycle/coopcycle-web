@@ -99,8 +99,7 @@ class Cart extends React.Component
   }
 
   renderTotal() {
-    const { items, total, itemsTotal } = this.state
-    const amount = itemsTotal > 0 ? total : itemsTotal
+    const { total, itemsTotal } = this.state
 
     if (itemsTotal > 0) {
       return (
@@ -122,7 +121,7 @@ class Cart extends React.Component
 
   render() {
 
-    let { items, total, toggled, errors, date, geohash, address, loading } = this.state,
+    let { items, toggled, errors, date, geohash, address, loading } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
