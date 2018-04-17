@@ -119,6 +119,7 @@ class TaskType extends AbstractType
                             ChoiceType::class,
                             [
                                 'choices' => [
+                                    'task.status.todo' => Task::STATUS_TODO,
                                     'task.status.done' => Task::STATUS_DONE,
                                     'task.status.failed' => Task::STATUS_FAILED,
                                 ],

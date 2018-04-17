@@ -292,12 +292,15 @@ task.form.finish: Finish task
 task.form.details: Task details
 task.form.finish.info: Task is finished with status %status%. You can change the note that was written at completion.
 
+task.status.done: Success
+task.status.failed: Failure
+task.status.todo: To do
+
 form.task_upload.file: File
 form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 task.type.PICKUP: Pickup
 task.type.DROPOFF: Dropoff
-
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>

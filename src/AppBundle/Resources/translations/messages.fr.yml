@@ -301,6 +301,7 @@ task.form.finish.info: La tâche est finie avec le statut %status%. Vous pouvez 
 
 task.status.done: Succès
 task.status.failed: Échec
+task.status.todo: À faire
 
 form.task_upload.file: Fichier
 form.task_complete.done.label: Terminer

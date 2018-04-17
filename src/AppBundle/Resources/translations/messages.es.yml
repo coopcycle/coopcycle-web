@@ -293,6 +293,10 @@ task.form.finish: Finish task
 task.form.details: Task details
 task.form.finish.info: Task is finished with status %status%. You can change the note that was written at completion.
 
+task.status.done: Success
+task.status.failed: Failure
+task.status.todo: To do
+
 form.task_upload.file: Archivo
 form.task_complete.done.label: Completada
 form.task_complete.fail.label: Informar del problema
