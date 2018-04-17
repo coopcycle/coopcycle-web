@@ -38,7 +38,7 @@ class OrderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $deliveryAddress = $form->getData();
-
+            $this->getDoctrine()->getManagerForClass(Address::class)->persist($deliveryAddress);
             $this->getDoctrine()->getManagerForClass(Address::class)->flush();
 
             return $this->redirectToRoute('order_payment');
