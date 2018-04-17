@@ -94,6 +94,11 @@ const taskLists = (state = taskListsInitial, action) => {
 
     case 'UPDATE_TASK':
 
+      // Task new due date is different from the one displayed -> reload to hide task
+      if (moment(action.task.doneAfter).isAfter(window.AppData.Dashboard.date, 'day')) {
+        window.location.reload()
+      }
+
       // The task may have been assigned through the modal
       // We need to lookup all the lists as we don't know if it was assigned or not
       taskListIndex = _.findIndex(newTaskLists, taskList => {
@@ -172,6 +177,11 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
       return Array.prototype.concat(state, action.tasks)
 
     case 'UPDATE_TASK':
+
+      // Task new due date is different from the one displayed -> reload to hide task
+      if (moment(action.task.doneAfter).isAfter(window.AppData.Dashboard.date, 'day')) {
+        window.location.reload()
+      }
 
       newState = state.slice(0)
 
