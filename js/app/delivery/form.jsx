@@ -45,7 +45,7 @@ function calculatePrice(distance, dropoff) {
         $('#no-price-warning').show()
         $('#delivery_price').text('')
       } else {
-        $('#delivery_price').text(numeral(price).format('0,0.00 $'))
+        $('#delivery_price').text(numeral(price / 100).format('0,0.00 $'))
       }
       enableForm()
     })
