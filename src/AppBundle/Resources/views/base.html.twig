@@ -90,7 +90,10 @@
         restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}",
         validateCartURL: "{{ path('order') }}"
       });
-      window.AppData.CartHelper.initTop(document.querySelector('#cart-top'), window.AppData.Cart);
+      var cartTopElement = document.querySelector('#cart-top');
+      if(cartTopElement) {
+        window.AppData.CartHelper.initTop(cartTopElement, window.AppData.Cart);
+      }
     </script>
 
     {% include "AppBundle::_partials/mapHelper.html.twig" %}
