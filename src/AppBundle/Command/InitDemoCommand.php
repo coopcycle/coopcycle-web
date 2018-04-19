@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker;
 use GuzzleHttp\Client;
 use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
+use Sylius\Component\Locale\Model\Locale;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -82,6 +83,9 @@ class InitDemoCommand extends ContainerAwareCommand
             $output->writeln('Verifying database config…');
             $this->handleCraueConfig($input, $output);
 
+            $output->writeln('Create lang...');
+            $this->createLangs();
+
             $output->writeln('Creating super users…');
             foreach (self::$users as $username => $params) {
                 $this->createUser($username, $params);
@@ -114,6 +118,21 @@ class InitDemoCommand extends ContainerAwareCommand
 
             $lock->release();
         }
+    }
+
+    private function createLangs() {
+        $en = new Locale();
+        $en->setCode('en');
+        $fr = new Locale();
+        $fr->setCode('fr');
+        $es = new Locale();
+        $es->setCode('es');
+
+        $em = $this->doctrine->getManagerForClass(Locale::class);
+        $em->persist($en);
+        $em->persist($es);
+        $em->persist($fr);
+        $em-> flush();
     }
 
     private function createCraueConfigSetting($name, $value, $section = 'general')
