@@ -1,16 +1,20 @@
-function assignTasks (username, tasks) {
+function assignTasks(username, tasks) {
   return {type: 'ASSIGN_TASKS', username, tasks}
 }
 
-function removeTasks (username, tasks) {
+function addCreatedTask(task) {
+  return {type: 'ADD_CREATED_TASK', task}
+}
+
+function removeTasks(username, tasks) {
   return {type: 'REMOVE_TASKS', username, tasks}
 }
 
-function updateTask (task) {
+function updateTask(task) {
   return {type: 'UPDATE_TASK', task}
 }
 
-function openAddUserModal () {
+function openAddUserModal() {
   return {type: 'OPEN_ADD_USER'}
 }
 
@@ -114,5 +118,6 @@ export {
   setTaskListGroupMode,
   toggleShowFinishedTasks,
   toggleShowUntaggedTasks,
-  highlightTask
+  highlightTask,
+  addCreatedTask
 }

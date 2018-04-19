@@ -79,6 +79,10 @@ const channels = {
     toJSON: true,
     psubscribe: false
   },
+  'task:created': {
+    toJSON: true,
+    psubscribe: false
+  },
   'restaurant:*:orders': {
     toJSON: true,
     psubscribe: true

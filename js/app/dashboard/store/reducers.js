@@ -92,10 +92,33 @@ const taskLists = (state = taskListsInitial, action) => {
 
       return newTaskLists
 
+    case 'ADD_CREATED_TASK':
+
+      if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+        return newTaskLists
+      }
+
+      if (action.task.isAssigned) {
+        taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
+
+        if (taskListIndex && !_.find(taskList.items, (task) => { task['id'] === action.task.id })) {
+          taskList = newTaskLists[taskListIndex]
+          taskListItems = Array.prototype.concat(taskList.items, [action.task])
+          newTaskLists.splice(taskListIndex, 1,
+            Object.assign({}, taskList, { items: taskListItems })
+          )
+          return newTaskLists
+        } else {
+          // TODO : create a new TaskList object
+          window.location.reload()
+        }
+      }
+      break;
+
     case 'UPDATE_TASK':
 
       // Task new due date is different from the one displayed -> reload to hide task
-      if (moment(action.task.doneAfter).isAfter(window.AppData.Dashboard.date, 'day')) {
+      if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
         window.location.reload()
       }
 
@@ -164,6 +187,15 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 
   switch (action.type) {
 
+    case 'ADD_CREATED_TASK':
+      if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+        return newState
+      }
+
+      if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
+        return Array.prototype.concat(state, [action.task])
+      }
+      break;
     case 'ASSIGN_TASKS':
       newState = state.slice(0)
       newState = _.differenceWith(
@@ -179,7 +211,7 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
     case 'UPDATE_TASK':
 
       // Task new due date is different from the one displayed -> reload to hide task
-      if (moment(action.task.doneAfter).isAfter(window.AppData.Dashboard.date, 'day')) {
+      if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
         window.location.reload()
       }
 

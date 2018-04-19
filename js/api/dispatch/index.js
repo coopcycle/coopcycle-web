@@ -50,7 +50,8 @@ const channels = [
   'task:assign',
   'task:done',
   'task:failed',
-  'tasks:changed'
+  'tasks:changed',
+  'tasks:created'
 ]
 
 _.each(channels, (channel) => { sub.prefixedSubscribe(channel) })

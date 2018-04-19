@@ -54,12 +54,12 @@ final class TaskSubscriber implements EventSubscriberInterface
             ->flush();
     }
 
-    private function publishTaskEventToRedis(Task $task, UserInterface $user, $channelName) {
-        $serializedUser = $this->serializer->normalize($user, 'jsonld', [
+    private function publishTaskEventToRedis(Task $task, UserInterface $user = null, $channelName) {
+        $serializedUser = !is_null($user) ? $this->serializer->normalize($user, 'jsonld', [
             'resource_class' => ApiUser::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get'
-        ]);
+        ]) : null;
 
         $serializedTask = $this->serializer->normalize($task, 'jsonld', [
             'resource_class' => Task::class,
@@ -96,6 +96,7 @@ final class TaskSubscriber implements EventSubscriberInterface
         $task = $event->getTask();
 
         $this->addEvent($task, 'CREATE');
+        $this->publishTaskEventToRedis($task, null, 'task:created');
     }
 
     public function onTaskDone(TaskDoneEvent $event)
