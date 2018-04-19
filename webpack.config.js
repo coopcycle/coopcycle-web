@@ -9,7 +9,7 @@ Encore
   .addStyleEntry('css/dashboard', './assets/css/dashboard.scss')
   .addStyleEntry('css/styles', './assets/css/main.scss')
 
-  .createSharedEntry('js/vendor', [ 'jquery', 'bootstrap', 'es6-set', 'whatwg-fetch' ])
+  .createSharedEntry('js/vendor', [ 'jquery', 'bootstrap-sass', 'es6-set', 'whatwg-fetch' ])
   .addEntry('js/common', './js/app/common.js')
 
   .addEntry('js/dashboard', './js/app/dashboard/index.jsx')

@@ -64,7 +64,7 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-3": "^6.24.1",
-    "bootstrap": "^3.3.7",
+    "bootstrap-sass": "^3.3.7",
     "copy-webpack-plugin": "^4.5.1",
     "database-cleaner": "^1.2.0",
     "es6-set": "^0.1.5",
