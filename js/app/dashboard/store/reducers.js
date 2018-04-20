@@ -189,7 +189,7 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 
     case 'ADD_CREATED_TASK':
       if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
-        return newState
+        return state.slice(0)
       }
 
       if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
