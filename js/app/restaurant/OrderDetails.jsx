@@ -1,12 +1,9 @@
 import React from 'react';
 import OrderLabel from '../order/Label.jsx';
 import moment from 'moment';
-import numeral  from 'numeral';
-import 'numeral/locales'
 
 const locale = $('html').attr('lang')
 
-numeral.locale(locale)
 moment.locale(locale)
 
 class OrderList extends React.Component {
@@ -88,7 +85,7 @@ class OrderList extends React.Component {
           { this.state.order.items.map((item, key) =>
             <tr key={ key }>
               <td>{ item.quantity } x { item.name }</td>
-              <td className="text-right">{ numeral(item.total / 100).format('0,0.00 $') }</td>
+              <td className="text-right">{ (item.total / 100).formatMoney() }</td>
             </tr>
           ) }
         </tbody>
@@ -102,11 +99,11 @@ class OrderList extends React.Component {
         <tbody>
           <tr>
             <td><strong>Total TTC</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.total / 100).format('0,0.00 $') }</strong></td>
+            <td className="text-right"><strong>{ (this.state.order.total / 100).formatMoney() }</strong></td>
           </tr>
           <tr>
             <td><strong>Dont TVA</strong></td>
-            <td className="text-right"><strong>{ numeral(this.state.order.taxTotal / 100).format('0,0.00 $') }</strong></td>
+            <td className="text-right"><strong>{ (this.state.order.taxTotal / 100).formatMoney() }</strong></td>
           </tr>
         </tbody>
       </table>

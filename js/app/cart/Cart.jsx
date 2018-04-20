@@ -7,13 +7,6 @@ import CartItem from './CartItem.jsx';
 import DatePicker from './DatePicker.jsx';
 import AddressPicker from "../address/AddressPicker.jsx";
 
-import numeral  from 'numeral';
-import 'numeral/locales'
-
-const locale = $('html').attr('lang')
-
-numeral.locale(locale)
-
 class Cart extends React.Component
 {
   constructor(props) {
@@ -90,7 +83,7 @@ class Cart extends React.Component
           { adjustments.delivery.map(adjustment =>
             <div key={ adjustment.id }>
               <span>{ adjustment.label }</span>
-              <strong className="pull-right">{ numeral(adjustment.amount / 100).format('0,0.00 $') }</strong>
+              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
             </div>
           )}
         </div>
@@ -107,12 +100,12 @@ class Cart extends React.Component
           <hr />
           <div>
             <span>Total produits</span>
-            <strong className="pull-right">{ numeral(itemsTotal / 100).format('0,0.00 $') }</strong>
+            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
             <span>Total</span>
-            <strong className="pull-right">{ numeral(total / 100).format('0,0.00 $') }</strong>
+            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
           </div>
         </div>
       )

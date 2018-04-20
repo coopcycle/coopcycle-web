@@ -1,11 +1,5 @@
 import React from 'react'
 import { findDOMNode } from 'react-dom'
-import numeral  from 'numeral';
-import 'numeral/locales'
-
-const locale = $('html').attr('lang')
-
-numeral.locale(locale)
 
 class CartTop extends React.Component
 {
@@ -43,7 +37,7 @@ class CartTop extends React.Component
 
     return (
       <a href={ anchorURL } className="btn btn-default" data-cart-listener>
-        { this.props.i18n['Cart'] } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { numeral(amount / 100).format('0,0.00 $') }
+        { this.props.i18n['Cart'] } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { (amount / 100).formatMoney() }
       </a>
     );
   }

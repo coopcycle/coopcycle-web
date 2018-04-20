@@ -3,11 +3,6 @@ import _ from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
-import numeral  from 'numeral';
-import 'numeral/locales'
-
-const locale = $('html').attr('lang')
-numeral.locale(locale)
 
 var map;
 
@@ -45,7 +40,7 @@ function calculatePrice(distance, dropoff) {
         $('#no-price-warning').show()
         $('#delivery_price').text('')
       } else {
-        $('#delivery_price').text(numeral(price / 100).format('0,0.00 $'))
+        $('#delivery_price').text((price / 100).formatMoney())
       }
       enableForm()
     })

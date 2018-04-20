@@ -2,11 +2,6 @@ import React from 'react'
 import OrderLabel from '../order/Label.jsx'
 import _ from 'lodash'
 import moment from 'moment'
-import numeral  from 'numeral'
-import 'numeral/locales'
-
-const locale = $('html').attr('lang')
-numeral.locale(locale)
 
 class OrderList extends React.Component
 {
@@ -73,7 +68,7 @@ class OrderList extends React.Component
         <td><OrderLabel order={ order } /></td>
         <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.shippedAt).format('lll') }</td>
         <td>{ `${order.items.length} plats` }</td>
-        <td className="text-right">{ numeral(order.total / 100).format('0,0.00 $') }</td>
+        <td className="text-right">{ (order.total / 100).formatMoney() }</td>
       </tr>
     )
   }

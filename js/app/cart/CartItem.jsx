@@ -1,10 +1,4 @@
 import React from 'react'
-import numeral  from 'numeral'
-import 'numeral/locales'
-
-const locale = $('html').attr('lang')
-
-numeral.locale(locale)
 
 class CartItem extends React.Component {
 
@@ -17,7 +11,7 @@ class CartItem extends React.Component {
           { adjustments.menu_item_modifier.map(adjustment =>
             <div key={ adjustment.id }>
               <small>{ adjustment.label }</small>
-              <small className="pull-right">{ numeral(adjustment.amount / 100).format('0,0.00 $') }</small>
+              <small className="pull-right">{ (adjustment.amount / 100).formatMoney() }</small>
             </div>
           )}
         </div>
@@ -39,7 +33,7 @@ class CartItem extends React.Component {
         <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.onClickRemove()}>
           <span aria-hidden="true">×</span>
         </button>
-        <span className="pull-right">{ numeral(this.props.total / 100).format('0,0.00 $') }</span>
+        <span className="pull-right">{ (this.props.total / 100).formatMoney() }</span>
         { this.renderAdjustments() }
       </li>
     );
