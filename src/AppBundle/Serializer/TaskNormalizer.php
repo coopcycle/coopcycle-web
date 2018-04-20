@@ -34,6 +34,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
         }
 
+        $data['deliveryColor'] = null;
+        if (!is_null($object->getDelivery())) {
+            $data['deliveryColor'] = $object->getDelivery()->getColor();
+        }
+
         $data['group'] = null;
         if (null !== $object->getGroup()) {
 

@@ -21,11 +21,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
 
-        unset($data['items']);
+        if (isset($data['items'])) {
+            unset($data['items']);
+        }
 
-        $data['totalExcludingTax'] = $object->getTotalExcludingTax();
-        $data['totalTax'] = $object->getTotalTax();
-        $data['totalIncludingTax'] = $object->getTotalIncludingTax();
+        $data['color'] = $object->getColor();
 
         return $data;
     }

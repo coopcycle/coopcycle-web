@@ -19,11 +19,10 @@
       <th>{% trans %}adminDashboard.deliveries.dueDate{% endtrans %}</th>
       <th>{% trans %}adminDashboard.deliveries.courier{% endtrans %}</th>
       <th>{% trans %}adminDashboard.deliveries.address{% endtrans %}</th>
-      <th>{% trans %}adminDashboard.deliveries.delivery{% endtrans %}</th>
     </thead>
     <tbody>
     {% for task in tasks %}
-      <tr>
+      <tr {% if task.delivery is not null %}style="border-left: 6px solid {{ task.delivery.color }};"{% endif %}>
         <td width="1%">
           {% include "AppBundle::_partials/Task/statusIcon.html.twig" %}
         </td>
@@ -47,14 +46,6 @@
         </td>
         <td>
           {{ task.address.streetAddress }}
-        </td>
-        <td width="5%" class="text-right">
-          {% if task.delivery is not null %}
-          <a href="{{ path(routes.view, { id: task.delivery.id }) }}"
-            title="{% trans with { '%id%': task.delivery.id } %}Delivery #%id%{% endtrans %}">
-            <i class="fa fa-exchange"></i>
-          </a>
-          {% endif %}
         </td>
       </tr>
     {% endfor %}
