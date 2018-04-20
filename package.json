@@ -24,6 +24,7 @@
     "co": "^4.6.0",
     "coopcycle-js": "git+https://git@github.com/coopcycle/coopcycle-js.git",
     "deepmerge": "^1.5.2",
+    "dom-autoscroller": "^2.3.4",
     "dragula": "^3.7.2",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",

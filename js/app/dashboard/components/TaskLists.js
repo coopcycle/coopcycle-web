@@ -10,7 +10,6 @@ class TaskLists extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      uncollapsed: null,
       selectedCourier: ''
     }
 
@@ -37,18 +36,13 @@ class TaskLists extends React.Component {
   render() {
 
     const { addModalIsOpen, taskLists, taskListsLoading, couriersList } = this.props
-    let { uncollapsed, selectedCourier } = this.state
+    let { selectedCourier } = this.state
 
     // filter out couriers that are already in planning
     const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
 
-
-    if (!uncollapsed && taskLists.length > 0) {
-      uncollapsed = _.first(taskLists).username
-    }
-
     return (
-      <div className="dashboard__panel">
+      <div className="dashboard__panel dashboard__panel--assignees">
         <h4>
           <span>{ window.AppData.Dashboard.i18n['Assigned'] }</span>
           { taskListsLoading ?
@@ -117,7 +111,6 @@ class TaskLists extends React.Component {
                   distance={ taskList.distance }
                   duration={ taskList.duration }
                   items={ taskList.items }
-                  collapsed={ uncollapsed !== taskList.username }
                   taskListDidMount={ this.props.taskListDidMount } />
               )
             })

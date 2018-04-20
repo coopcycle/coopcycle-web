@@ -49,8 +49,8 @@ html, body {
 
   &__panel {
     display: flex;
-    flex: 1;
     flex-direction: column;
+    flex: 1;
     > h4 {
       padding: 15px;
       margin: 0;
@@ -64,8 +64,13 @@ html, body {
         }
       }
     }
+
+    &.dashboard__panel--assignees {
+      flex: 2;
+    }
+
     &__scroll {
-      overflow: auto;
+      overflow: scroll;
     }
   }
 
@@ -128,6 +133,7 @@ html, body {
       box-sizing: border-box;
       background-color: lighten(#F39C12, 30%);
       border: 3px dashed #F1C40F;
+      margin-bottom: 0;
 
       &--over {
         background-color: lighten(#F39C12, 30%);
@@ -158,10 +164,10 @@ html, body {
 .list-group-item {
   font-size: 12px;
   position: relative;
-  padding-right: 60px;
   cursor: pointer;
   color: #fff;
   border-radius: 0;
+  padding: 8px;
   &:last-child {
     border-radius: 0;
   }
@@ -193,8 +199,8 @@ html, body {
 }
 
 .task__icon {
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 14px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
