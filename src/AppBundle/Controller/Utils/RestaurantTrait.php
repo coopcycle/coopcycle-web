@@ -315,6 +315,10 @@ trait RestaurantTrait
                             }
                             foreach ($modifier->getModifierChoices() as $modifierChoice) {
                                 $modifierChoice->setMenuItemModifier($modifier);
+                                // FIXME
+                                // Copy the tax category from the menu item
+                                // We should be able to define a tax category for a modifier
+                                $modifierChoice->setTaxCategory($item->getTaxCategory());
                             }
                         }
                     }
