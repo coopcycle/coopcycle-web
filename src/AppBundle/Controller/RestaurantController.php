@@ -52,10 +52,9 @@ class RestaurantController extends Controller
         return $address;
     }
 
-    private function addMenuItemModifiersAdjustment(OrderItemInterface $cartItem, MenuItem $menuItem, array $payload)
+    private function resolveModifiers(MenuItem $menuItem, array $payload)
     {
-        $adjustmentFactory = $this->get('sylius.factory.adjustment');
-
+        $modifiers = [];
         foreach ($payload as $menuItemModifierId => $modifiersIds) {
 
             $menuItemModifier = $menuItem->getModifiers()
@@ -65,21 +64,34 @@ class RestaurantController extends Controller
                 ->first();
 
             foreach ($modifiersIds as $modifierId) {
-
                 $modifier = $menuItemModifier->getModifierChoices()
                     ->filter(function ($modifier) use ($modifierId) {
                         return $modifier->getId() == $modifierId;
                     })
                     ->first();
 
-                $adjustment = $adjustmentFactory->createWithData(
-                    AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
-                    $modifier->getName(),
-                    (int) ($menuItemModifier->getModifierPrice($modifier) * 100),
-                    $neutral = false
-                );
-                $cartItem->addAdjustment($adjustment);
+                $modifiers[] = $modifier;
             }
+        }
+
+        return $modifiers;
+    }
+
+    private function addModifiersAdjustments(OrderItemInterface $cartItem, array $modifiers)
+    {
+        $adjustmentFactory = $this->get('sylius.factory.adjustment');
+
+        foreach ($modifiers as $modifier) {
+
+            $menuItemModifier = $modifier->getMenuItemModifier();
+
+            $adjustment = $adjustmentFactory->createWithData(
+                AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+                $modifier->getName(),
+                (int) ($menuItemModifier->getModifierPrice($modifier) * 100),
+                $neutral = true
+            );
+            $cartItem->addAdjustment($adjustment);
         }
     }
 
@@ -329,16 +341,34 @@ class RestaurantController extends Controller
         $quantity = $request->request->getInt('quantity', 1);
 
         $productVariantRepository = $this->get('sylius.repository.product_variant');
+        $productVariantFactory = $this->get('sylius.factory.product_variant');
         $orderItemFactory = $this->get('sylius.factory.order_item');
 
-        $productVariant = $productVariantRepository->findOneByMenuItem($menuItem);
-
         $cartItem = $orderItemFactory->createNew();
+
+        $modifiers = [];
+        // FIXME
+        // Here we should check if the product actually has options
+        // For example using Product::isSimple
+        if ($request->request->has('modifiers')) {
+
+            $modifiers = $this->resolveModifiers($menuItem, $request->request->get('modifiers'));
+            $productVariant = $productVariantRepository->findOneByMenuItemWithModifiers($menuItem, $modifiers);
+
+            if (!$productVariant) {
+                $productVariant = $productVariantFactory->createForMenuItemWithModifiers($menuItem, $modifiers);
+                $productVariantRepository->add($productVariant);
+            }
+
+        } else {
+            $productVariant = $productVariantRepository->findOneByMenuItem($menuItem);
+        }
+
         $cartItem->setVariant($productVariant);
         $cartItem->setUnitPrice($productVariant->getPrice());
 
-        if ($request->request->has('modifiers')) {
-            $this->addMenuItemModifiersAdjustment($cartItem, $menuItem, $request->request->get('modifiers'));
+        if (!empty($modifiers)) {
+            $this->addModifiersAdjustments($cartItem, $modifiers);
         }
 
         $this->get('sylius.order_item_quantity_modifier')->modify($cartItem, $quantity);

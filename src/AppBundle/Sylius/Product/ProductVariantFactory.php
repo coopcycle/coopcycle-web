@@ -8,8 +8,10 @@ use AppBundle\Service\SettingsManager;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
+use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -38,13 +40,22 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         ProductRepositoryInterface $productRepository,
         ProductVariantRepositoryInterface $productVariantRepository,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
+        ProductOptionRepositoryInterface $productOptionRepository,
+        FactoryInterface $productOptionFactory,
+        FactoryInterface $productOptionValueFactory,
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
         $this->factory = $factory;
+
         $this->productRepository = $productRepository;
         $this->productVariantRepository = $productVariantRepository;
         $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->productOptionRepository = $productOptionRepository;
+
+        $this->productOptionFactory = $productOptionFactory;
+        $this->productOptionValueFactory = $productOptionValueFactory;
+
         $this->settingsManager = $settingsManager;
         $this->translator = $translator;
     }
@@ -111,6 +122,58 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setCode($code);
         $productVariant->setName($menuItem->getName());
         $productVariant->setPrice((int) ($menuItem->getPrice() * 100));
+        $productVariant->setTaxCategory($menuItem->getTaxCategory());
+        $productVariant->setPosition(1);
+
+        return $productVariant;
+    }
+
+    public function createForMenuItemWithModifiers(MenuItem $menuItem, array $modifiers): ProductVariantInterface
+    {
+        $product = $this->productRepository->findOneByCode(sprintf('CPCCL-FDTCH-%d', $menuItem->getId()));
+        $productVariant = $this->createForProduct($product);
+
+        $price = (int) ($menuItem->getPrice() * 100);
+        foreach ($modifiers as $modifier) {
+
+            $menuItemModifier = $modifier->getMenuItemModifier();
+
+            $optionCode = sprintf('CPCCL-FDTCH-%d-OPT-%d', $menuItem->getId(), $menuItemModifier->getId());
+            $optionValueCode = sprintf('%s-%d', $optionCode, $modifier->getId());
+
+            $option = $this->productOptionRepository->findOneByCode($optionCode);
+            if (!$option) {
+                $option = $this->productOptionFactory->createNew();
+                $option->setName($menuItemModifier->getName());
+                $option->setCode($optionCode);
+                $option->setPosition(1);
+
+                $product->addOption($option);
+            }
+
+            $optionValue = $this->productOptionValueFactory->createNew();
+
+            $optionValue->setCode($optionValueCode);
+            // $optionValue->setFallbackLocale($values['locale']);
+            // $optionValue->setCurrentLocale($values['locale']);
+            $optionValue->setValue($modifier->getName());
+
+            $option->addValue($optionValue);
+            $productVariant->addOptionValue($optionValue);
+
+            $price += (int) ($menuItemModifier->getModifierPrice($modifier) * 100);
+        }
+
+        $modifiersIds = array_map(function ($modifier) {
+            return $modifier->getId();
+        }, $modifiers);
+        sort($modifiersIds);
+
+        $code = sprintf('CPCCL-FDTCH-%d-MOD-%s', $menuItem->getId(), implode('-', $modifiersIds));
+
+        $productVariant->setCode($code);
+        $productVariant->setName($menuItem->getName());
+        $productVariant->setPrice($price);
         $productVariant->setTaxCategory($menuItem->getTaxCategory());
         $productVariant->setPosition(1);
 
