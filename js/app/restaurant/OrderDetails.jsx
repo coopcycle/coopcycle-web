@@ -6,6 +6,8 @@ const locale = $('html').attr('lang')
 
 moment.locale(locale)
 
+const hasAdjustments = (item) => item.adjustments.hasOwnProperty('menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
+
 class OrderList extends React.Component {
 
   constructor(props) {
@@ -79,17 +81,32 @@ class OrderList extends React.Component {
   }
 
   renderOrderItems() {
+
     return (
       <table className="table table-condensed">
         <tbody>
           { this.state.order.items.map((item, key) =>
             <tr key={ key }>
-              <td>{ item.quantity } x { item.name }</td>
+              <td>
+                <span>{ item.quantity } x { item.name }</span>
+                { hasAdjustments(item) && ( <br /> ) }
+                { hasAdjustments(item) && this.renderOrderItemAdjustments(item) }
+              </td>
               <td className="text-right">{ (item.total / 100).formatMoney() }</td>
             </tr>
           ) }
         </tbody>
       </table>
+    )
+  }
+
+  renderOrderItemAdjustments(item) {
+    return (
+      <span className="text-muted">
+        { item.adjustments['menu_item_modifier'].map((adjustment, key) =>
+          <small key={ adjustment.id }>{ adjustment.label }</small>
+        ) }
+      </span>
     )
   }
 
@@ -136,7 +153,7 @@ class OrderList extends React.Component {
           <p>
             <span className="text-left"><OrderLabel order={ order } /></span>
             <strong className="pull-right text-success">
-                { moment(order.preparationDate).format('lll') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
+                { moment(order.shippedAt).format('lll') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
             </strong>
           </p>
           { order.customer.telephone &&
