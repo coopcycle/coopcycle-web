@@ -211,3 +211,21 @@ profile_restaurant_order:
         #     success: profile_orders
         #     calculate_price: profile_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+profile_restaurant_cart:
+    path: /profile/restaurants/{id}/cart
+    defaults:
+        _controller: AppBundle:Profile:cart
+    methods:  [ GET, POST ]
+
+profile_restaurant_add_menu_item_to_cart:
+    path: /profile/restaurants/{restaurantId}/cart/menu-item/{menuItemId}
+    defaults:
+        _controller: AppBundle:Profile:addMenuItemToCart
+    methods:  [ POST ]
+
+profile_restaurant_remove_from_cart:
+    path: /profile/restaurants/{restaurantId}/cart/{cartItemId}
+    defaults:
+        _controller: AppBundle:Profile:removeFromCart
+    methods:  [ DELETE ]

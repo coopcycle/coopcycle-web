@@ -46,20 +46,37 @@ final class RestaurantCartContext implements CartContextInterface
      */
     public function getCart(): OrderInterface
     {
-        if (!$this->session->has('restaurantId')) {
+        // if (!$this->session->has('restaurantId')) {
+        //     throw new CartNotFoundException('There is no restaurant in session');
+        // }
+
+        if (!$this->session->has('_coopcycle.cart.context.restaurant')) {
             throw new CartNotFoundException('There is no restaurant in session');
         }
 
-        if (!$this->session->has($this->sessionKeyName)) {
-            $restaurant = $this->restaurantRepository->find($this->session->get('restaurantId'));
+        $restaurant = $this->session->get('_coopcycle.cart.context.restaurant');
+        $this->session->remove('_coopcycle.cart.context.restaurant');
 
+        $isGlobal = true;
+        if ($this->session->has('_coopcycle.cart.context.global')) {
+            $isGlobal = $this->session->get('_coopcycle.cart.context.global');
+            $this->session->remove('_coopcycle.cart.context.global');
+        }
+
+        $sessionKeyName = $this->sessionKeyName;
+        if ($this->session->has('_coopcycle.cart.context.session_key_name')) {
+            $sessionKeyName = $this->session->get('_coopcycle.cart.context.session_key_name');
+            $this->session->remove('_coopcycle.cart.context.session_key_name');
+        }
+
+        if (!$this->session->has($sessionKeyName)) {
             return $this->orderFactory->createForRestaurant($restaurant);
         }
 
-        $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
+        $cart = $this->orderRepository->findCartById($this->session->get($sessionKeyName));
 
         if (null === $cart) {
-            $this->session->remove($this->sessionKeyName);
+            $this->session->remove($sessionKeyName);
 
             throw new CartNotFoundException('Unable to find the cart in session');
         }

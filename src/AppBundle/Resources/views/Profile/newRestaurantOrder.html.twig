@@ -1,8 +1,88 @@
 {% extends "AppBundle::profile.html.twig" %}
 
 {% block content %}
-YO
+<div class="row">
+
+  <div class="col-xs-12 col-sm-8">
+    {% for menuSection in restaurant.menu.sections %}
+      <h2>{{ menuSection.name }}</h2>
+      <div class="list-group">
+        {% for menuItem in menuSection.items %}
+          {% if not menuItem.isAvailable %}
+            <a class="list-group-item menu-item menu-item--unavailable">
+              <span class="menu-item-content">{{ menuItem.name }}</span>
+              {% if menuItem.description is not null %}
+                <p class="menu-item-description">{{ menuItem.description }}</p>
+              {%  endif %}
+              <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
+            </a>
+          {% else %}
+            <a  class="list-group-item menu-item"
+                data-menu-item-id="{{ menuItem.id }}"
+                data-menu-item-has-modifiers="{{ (menuItem.modifiers.count > 0) ? 'true' : 'false' }}"
+                {% if menuItem.modifiers.count > 0 %}
+                data-toggle="modal"
+                data-target="#{{ menuItem.id }}-modifiersModal"
+                href="#"
+                {% else %}
+                href="{{ path('profile_restaurant_add_menu_item_to_cart', { restaurantId: restaurant.id, menuItemId: menuItem.id }) }}"
+                {% endif %}>
+              <span class="menu-item-content">{{ menuItem.name }}
+                {% if menuItem.description is not null %}
+                  <small class="menu-item-description">{{ menuItem.description }}</small>
+                {%  endif %}
+              </span>
+              <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="col-xs-12 col-sm-4">
+    <div id="cart"></div>
+  </div>
+
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+
+$('[data-menu-item-id]').on('click', function(e) {
+  e.preventDefault();
+  var $target = $(e.currentTarget);
+  if (!$target.data('menuItemHasModifiers')) {
+    window.AppData.CartHelper.addMenuItem($target.attr('href'), 1);
+  }
+})
+
+$('form[data-menu-item-modifier]').on('submit', function(e) {
+  e.preventDefault();
+  var data = $(this).serializeArray();
+  if (data.length > 0) {
+    window.AppData.CartHelper.addMenuItemWithModifiers($(this).attr('action'), data, 1);
+    $(this).closest('.modal').modal('hide');
+  }
+})
+
+function initMap() {
+
+  window.AppData.CartHelper.init(document.querySelector('#cart'), {
+    restaurant: {
+      id: {{ restaurant.id }},
+      availabilities: {{ restaurant.availabilities|json_encode()|raw }}
+    },
+    cartURL: "{{ path('profile_restaurant_cart', { id: restaurant.id }) }}",
+    removeFromCartURL: "{{ path('profile_restaurant_remove_from_cart', { restaurantId: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+    resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    onCartWarning: function() {
+      $('#cart-warning-modal').modal('show');
+    }
+  });
+}
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ craue_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
 {% endblock %}

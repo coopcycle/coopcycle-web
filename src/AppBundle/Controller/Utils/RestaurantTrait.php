@@ -445,8 +445,13 @@ trait RestaurantTrait
 
     public function newRestaurantOrderAction($id, Request $request)
     {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
+use AppBundle\Controller\Utils\CartTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -11,6 +12,7 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -32,6 +34,7 @@ class ProfileController extends Controller
     const ITEMS_PER_PAGE = 20;
 
     use AccessControlTrait;
+    use CartTrait;
     use DeliveryTrait;
     use LocalBusinessTrait;
     use OrderTrait;
@@ -329,5 +332,16 @@ class ProfileController extends Controller
         $this->get('coopcycle.notification_manager')->publishCount($this->getUser());
 
         return new Response('', 204);
+    }
+
+    protected function prepareCartContext(Request $request, Restaurant $restaurant)
+    {
+        $request->getSession()->set('_coopcycle.cart.context.restaurant', $restaurant);
+        $request->getSession()->set('_coopcycle.cart.context.global', false);
+
+        $sessionKeyName = sprintf('_coopcycle.sylius.cart.restaurant.%d', $restaurant->getId());
+        $request->getSession()->set('_coopcycle.cart.context.session_key_name', $sessionKeyName);
+
+        return $sessionKeyName;
     }
 }
