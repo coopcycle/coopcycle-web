@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import dragula from 'react-dragula'
 import _ from 'lodash'
+import autoScroll from 'dom-autoscroller'
 import Task from './Task'
 import { removeTasks, modifyTaskList, togglePolyline, highlightTask } from '../store/actions'
 
@@ -29,10 +30,7 @@ class TaskList extends React.Component {
     }
 
     // handler to change the task order within a courier tasklist
-    const currentNode = findDOMNode(this),
-      container = currentNode.querySelector('.courier-task-list'),
-      scrollableWrapper = currentNode.querySelector('#scrollable-wrapper')
-    let drake = dragula([container], {
+    let drake = dragula([ this.refs.taskList ], {
       // You can set accepts to a method with the following signature: (el, target, source, sibling).
       // It'll be called to make sure that an element el, that came from container source,
       // can be dropped on container target before a sibling element.
@@ -95,10 +93,7 @@ class TaskList extends React.Component {
 
     })
 
-    let autoScroll = require('dom-autoscroller')
-    autoScroll([
-        scrollableWrapper
-      ],{
+    autoScroll([ this.refs.scrollable ],{
         margin: 20,
         maxSpeed: 5,
         scrollWhenOutside: true,
@@ -192,8 +187,8 @@ class TaskList extends React.Component {
               Déposez les livraisons ici
             </div>
           </div>
-          <div id="scrollable-wrapper" style={{overflow: 'auto', maxHeight: '250px'}}>
-            <div className="list-group courier-task-list">
+          <div ref="scrollable" style={{ overflow: 'auto', maxHeight: '250px' }}>
+            <div ref="taskList" className="list-group nomargin">
               { tasks.map(task => (
                 <Task
                   key={ task['@id'] }
