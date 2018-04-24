@@ -155,6 +155,8 @@ class Restaurant extends FoodEstablishment
 
     private $updatedAt;
 
+    private $owners;
+
     /**
      * @var Contract
      * @Groups({"order_create"})
@@ -165,6 +167,7 @@ class Restaurant extends FoodEstablishment
     {
         $this->servesCuisine = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
+        $this->owners = new ArrayCollection();
     }
 
     /**
@@ -468,5 +471,10 @@ class Restaurant extends FoodEstablishment
         if ($this->contract) {
             return $this->contract->getMinimumCartAmount();
         }
+    }
+
+    public function getOwners()
+    {
+        return $this->owners;
     }
 }

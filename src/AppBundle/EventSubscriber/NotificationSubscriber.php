@@ -95,10 +95,28 @@ final class NotificationSubscriber implements EventSubscriberInterface
         $order = $payment->getOrder();
 
         if ($order->isFoodtech()) {
+
+            // Send email to customer
             $this->emailManager->sendTo(
                 $this->emailManager->createOrderCreatedMessage($order),
                 $order->getCustomer()->getEmail()
             );
+
+            // Push notification to restaurant owners
+            foreach ($order->getRestaurant()->getOwners() as $owner) {
+
+                $notification = $this->notificationManager
+                    ->createForUser($owner, 'notifications.order.created');
+
+                $notification->setRouteName('profile_restaurant_dashboard_order');
+                $notification->setRouteParameters([
+                    'restaurantId' => $order->getRestaurant()->getId(),
+                    'orderId' => $order->getId()
+                ]);
+
+                $this->notificationManager->push($notification);
+            }
+
             $this->redis->publish(
                 sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
                 $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])

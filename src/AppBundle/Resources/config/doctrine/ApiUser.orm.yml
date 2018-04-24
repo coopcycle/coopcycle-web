@@ -22,6 +22,7 @@ AppBundle\Entity\ApiUser:
     manyToMany:
         restaurants:
             targetEntity: AppBundle\Entity\Restaurant
+            inversedBy: owners
             cascade:
                 - all
             fetch: LAZY

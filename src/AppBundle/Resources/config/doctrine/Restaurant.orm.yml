@@ -106,14 +106,11 @@ AppBundle\Entity\Restaurant:
             inversedBy: null
             joinTable:
                 name: restaurant_cuisine
-                schema: null
                 inverseJoinColumns:
                     -
                         name: cuisine_id
                         unique: false
                         nullable: true
-                        onDelete: null
-                        columnDefinition: null
                         referencedColumnName: id
                 joinColumns:
                     -
@@ -122,6 +119,9 @@ AppBundle\Entity\Restaurant:
                         onDelete: CASCADE
             orderBy:
                 name: ASC
+        owners:
+            targetEntity: AppBundle\Entity\ApiUser
+            mappedBy: restaurants
     oneToOne:
         address:
             targetEntity: AppBundle\Entity\Address
