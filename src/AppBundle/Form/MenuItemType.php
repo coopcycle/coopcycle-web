@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -24,6 +25,7 @@ class MenuItemType extends AbstractType
             ->add('description', TextareaType::class, ['required' => false])
             ->add('price', MoneyType::class, ['label' => 'form.menu_item.price.label'])
             ->add('taxCategory', TaxCategoryChoiceType::class)
+            ->add('position', HiddenType::class)
             ->add('isAvailable', CheckboxType::class, [
                 'label' => 'Available product?',
                 'required' => false

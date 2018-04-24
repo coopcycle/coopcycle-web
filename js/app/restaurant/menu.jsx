@@ -1,9 +1,15 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Switch from 'antd/lib/switch';
+import dragula from 'dragula';
 
 function collapseAll() {
   $('#menu_sections .panel-collapse').collapse('hide');
+}
+
+function refreshPositions() {
+  const menuItems = [].slice.call(document.querySelectorAll('[data-menu-item]'))
+  menuItems.forEach((menuItem, index) => menuItem.querySelector('[data-position]').value = (index + 1))
 }
 
 function addMenuItemForm($container) {
@@ -15,11 +21,13 @@ function addMenuItemForm($container) {
   var $form = $(form);
 
   $container.append($form);
+  refreshPositions();
 
   if (!$container.closest('.collapse').hasClass('in')) {
     collapseAll();
     $container.closest('.collapse').collapse('show');
   }
+  $form.find('> .collapse').collapse('show');
 }
 
 function addMenuItemModifierForm($container) {
@@ -158,6 +166,7 @@ $(function() {
     e.preventDefault();
     var selector = $(e.target).closest('.close').data('target');
     $(selector).remove();
+    refreshPositions();
   });
 
   $(document).on('click', '[data-toggle="add-menu-item"]', function(e) {
@@ -269,5 +278,15 @@ $(function() {
       enableForm($form, true);
     });
   })
+
+  const drakeContainers = [].slice.call(document.querySelectorAll('.menuForm__menuItems'))
+
+  const drake = dragula(drakeContainers, {
+    moves: (el, container, handle) => {
+      return handle.classList.contains('menuForm__menuItem__heading__arrows')
+        || handle.parentNode.classList.contains('menuForm__menuItem__heading__arrows')
+    }
+  })
+  .on('dragend', el => refreshPositions(el.parentNode))
 
 });

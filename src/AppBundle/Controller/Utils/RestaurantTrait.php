@@ -226,7 +226,6 @@ trait RestaurantTrait
         $form = $this->createForm(MenuType::class, $menu, [
             'section_added' => $sectionAdded,
         ]);
-        $form->add('submit', SubmitType::class, array('label' => 'Save'));
 
         return $form;
     }

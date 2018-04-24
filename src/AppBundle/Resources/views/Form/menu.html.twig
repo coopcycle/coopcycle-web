@@ -52,7 +52,7 @@
     </div>
 
     <div id="{{ collapseSelector }}" class="panel-collapse collapse {% if form.vars.name < 1 %}in{% endif %}" role="tabpanel" aria-labelledby="{{ headingSelector }}">
-      {{ form_row(form.items, { attr: {class: 'list-group', style: 'margin-bottom: 0' } }) }}
+      {{ form_row(form.items, { attr: {class: 'menuForm__menuItems', style: 'margin-bottom: 0' } }) }}
     </div>
 
   </div>
@@ -61,72 +61,95 @@
 {% endblock %}
 
 {% block _menu_sections_entry_items_row %}
-  <div class="list-group">
-    {{- form_label(form) -}}
-    {{- form_widget(form) -}}
-    {{- form_errors(form) -}}
-  </div>
+  {{- form_label(form) -}}
+  {{- form_widget(form) -}}
+  {{- form_errors(form) -}}
 {% endblock %}
 
 {% block _menu_sections_entry_items_entry_row %}
 {% spaceless %}
   {% set containerSelector = form.vars.id ~ '_container' %}
-  <div class="list-group-item" id="{{ form.vars.id }}">
-    <div class="form-group row">
-      <div class="col-sm-3">
-        {{ form_label(form.name) }}
-        {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form_label(form.price) }}
-        {{ form_widget(form.price, { attr: { class: 'input-sm text-right' } }) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form_label(form.taxCategory, 'VAT'|trans([], 'messages')) }}
-        {{ form_widget(form.taxCategory) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form_widget(form.isAvailable, { attr: { class: 'checkbox switch' }}) }}
-        <div class="pull-right">
-          <button type="button" class="close" aria-label="Close" tabindex="-1"
-            data-target="{{ '#' ~ form.vars.id }}">
-            <i class="fa fa-trash"></i>
-          </button>
+  {% set collapseSelector = form.vars.id ~ '_collapse' %}
+  <div class="menuForm__menuItem" id="{{ form.vars.id }}" data-menu-item>
+    {{ form_widget(form.position, { attr: { 'data-position': true } }) }}
+    <div class="menuForm__menuItem__heading">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            {{ form_label(form.name, null, { label_attr: { class: 'sr-only' } }) }}
+            <a role="button"
+              class="menuForm__menuItem__heading__toggle collapsed"
+              data-toggle="collapse" href="#{{ collapseSelector }}"
+              aria-expanded="false" aria-controls="{{ collapseSelector }}">
+              <i class="fa fa-caret-down"></i>
+              <i class="fa fa-caret-up"></i>
+            </a>
+            {{ form_widget(form.name, { attr: { class: 'input-sm' } }) }}
+            <a role="button"
+              class="menuForm__menuItem__heading__arrows"
+              data-toggle="collapse" href="#{{ collapseSelector }}"
+              aria-expanded="false" aria-controls="{{ collapseSelector }}">
+              <i class="fa fa-arrows"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          {{ form_widget(form.isAvailable, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+        <div class="col-sm-3">
+          <div class="pull-right">
+            <button type="button" class="close" aria-label="Close" tabindex="-1"
+              data-target="{{ '#' ~ form.vars.id }}">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="form-group show-description">
-      <div>
-        <a class="text-muted"
-          data-toggle="collapse" data-target="#{{ containerSelector }}"
-          aria-expanded="false" aria-controls="{{ containerSelector }}">
-          {# form.vars may be null when used for prototype #}
-          {% if form.vars.value and form.vars.value.description %}
-            <i class="fa fa-pencil"></i>  <small>{% trans %}restaurant.menu.form.modifyDescription{% endtrans %}</small>
-          {% else %}
-            <i class="fa fa-plus"></i>  <small>{% trans %}restaurant.menu.form.addDescription{% endtrans %}</small>
-          {% endif %}
-        </a>
+    <div id="{{ collapseSelector }}" class="menuForm__menuItem__body collapse">
+      <div class="form-group row">
+        <div class="col-sm-3">
+          {{ form_label(form.price) }}
+          {{ form_widget(form.price, { attr: { class: 'input-sm text-right' } }) }}
+        </div>
+        <div class="col-sm-3">
+          {{ form_label(form.taxCategory, 'VAT'|trans([], 'messages')) }}
+          {{ form_widget(form.taxCategory, { attr: { class: 'input-sm' } }) }}
+        </div>
       </div>
+      <div class="form-group show-description">
+        <div>
+          <a class="text-muted"
+            data-toggle="collapse" data-target="#{{ containerSelector }}"
+            aria-expanded="false" aria-controls="{{ containerSelector }}">
+            {# form.vars may be null when used for prototype #}
+            {% if form.vars.value and form.vars.value.description %}
+              <i class="fa fa-pencil"></i>  <small>{% trans %}restaurant.menu.form.modifyDescription{% endtrans %}</small>
+            {% else %}
+              <i class="fa fa-plus"></i>  <small>{% trans %}restaurant.menu.form.addDescription{% endtrans %}</small>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+      <div class="form-group row collapse" id="{{ containerSelector }}">
+        <div class="col-sm-8">
+          {{ form_label(form.description) }}
+          {{ form_widget(form.description, { attr: { class: 'input-sm' } }) }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <label class="control-label">{% trans %}restaurant.menu.form.extraGroups{% endtrans %}</label>
+        </div>
+        <div class="col-sm-6 text-right">
+          <button type="button" class="btn btn-xs btn-success"
+            data-toggle="add-menu-item-modifier-group" data-target="{{ '#' ~ form.modifiers.vars.id }}">
+            <i class="fa fa-plus"></i> {% trans %}restaurant.menu.form.addExtraGroup{% endtrans %}
+          </button>
+        </div>
+      </div>
+      {{ form_widget(form.modifiers) }}
     </div>
-    <div class="form-group row collapse" id="{{ containerSelector }}">
-      <div class="col-sm-8">
-        {{ form_label(form.description) }}
-        {{ form_widget(form.description, { attr: { class: 'input-sm' } }) }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-6">
-        <label class="control-label">{% trans %}restaurant.menu.form.extraGroups{% endtrans %}</label>
-      </div>
-      <div class="col-sm-6 text-right">
-        <button type="button" class="btn btn-xs btn-success"
-          data-toggle="add-menu-item-modifier-group" data-target="{{ '#' ~ form.modifiers.vars.id }}">
-          <i class="fa fa-plus"></i> {% trans %}restaurant.menu.form.addExtraGroup{% endtrans %}
-        </button>
-      </div>
-    </div>
-    {{ form_widget(form.modifiers) }}
   </div>
 {% endspaceless %}
 {% endblock %}

@@ -41,5 +41,6 @@ AppBundle\Entity\Menu\MenuSection:
             mappedBy: section
             inversedBy: null
             orphanRemoval: false
-            orderBy: null
+            orderBy:
+              position: ASC
     lifecycleCallbacks: {  }

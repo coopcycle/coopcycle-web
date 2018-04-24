@@ -36,6 +36,8 @@ class MenuItem extends BaseMenuItem
      */
     private $isAvailable = true;
 
+    protected $position;
+
     public function __construct()
     {
         $this->modifiers = new ArrayCollection();
@@ -115,4 +117,15 @@ class MenuItem extends BaseMenuItem
         $this->modifiers->add($modifier);
     }
 
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
 }

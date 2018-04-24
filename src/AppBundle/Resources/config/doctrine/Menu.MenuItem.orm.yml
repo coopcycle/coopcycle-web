@@ -24,6 +24,9 @@ AppBundle\Entity\Menu\MenuItem:
         name:
             type: string
             nullable: true
+        position:
+            type: integer
+            nullable: true
     manyToOne:
         section:
             targetEntity: AppBundle\Entity\Menu\MenuSection
