@@ -102,6 +102,19 @@ class Menu extends CreativeWork
         return $modifiers;
     }
 
+    public function getAllModifierChoices()
+    {
+        $modifierChoices = new ArrayCollection();
+
+        foreach ($this->getAllModifiers() as $modifier) {
+            foreach ($modifier->getModifierChoices() as $modifierChoice) {
+                $modifierChoices->add($modifierChoice);
+            }
+        }
+
+        return $modifierChoices;
+    }
+
     /**
      * @return Restaurant
      */

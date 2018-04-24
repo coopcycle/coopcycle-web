@@ -283,8 +283,12 @@ trait RestaurantTrait
         }
 
         $originalModifiers = new ArrayCollection();
+        $originalModifierChoices = new ArrayCollection();
         foreach ($menu->getAllModifiers() as $modifier) {
             $originalModifiers->add($modifier);
+            foreach ($modifier->getModifierChoices() as $modifierChoice) {
+                $originalModifierChoices->add($modifierChoice);
+            }
         }
 
         $form = $this->createMenuForm($menu);
@@ -362,14 +366,13 @@ trait RestaurantTrait
 
                 foreach ($originalModifiers as $originalModifier) {
                     if (false === $menu->getAllModifiers()->contains($originalModifier)) {
-                        // TODO Soft delete modifier items
-                        $originalModifier->setMenuItem(null);
-                    } else {
-                        foreach ($menu->getAllModifiers() as $updatedModifier) {
-                            if ($updatedModifier === $originalModifier) {
-                                // TODO Manage delete items
-                            }
-                        }
+                        $em->remove($originalModifier);
+                    }
+                }
+
+                foreach ($originalModifierChoices as $originalModifierChoice) {
+                    if (false === $menu->getAllModifierChoices()->contains($originalModifierChoice)) {
+                        $em->remove($originalModifierChoice);
                     }
                 }
             }

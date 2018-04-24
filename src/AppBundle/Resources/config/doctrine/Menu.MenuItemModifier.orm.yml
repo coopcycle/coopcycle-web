@@ -48,12 +48,11 @@ AppBundle\Entity\Menu\MenuItemModifier:
             cascade:
                 - persist
             fetch: LAZY
-            mappedBy: null
             inversedBy: modifiers
             joinColumns:
                 menu_item_id:
                     referencedColumnName: id
-            orphanRemoval: false
+                    onDelete: 'SET NULL'
     oneToMany:
         modifierChoices:
             targetEntity: AppBundle\Entity\Menu\Modifier

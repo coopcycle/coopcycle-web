@@ -30,10 +30,9 @@ AppBundle\Entity\Menu\Modifier:
             cascade:
                 - persist
             fetch: LAZY
-            mappedBy: null
             inversedBy: modifierChoices
             joinColumns:
                 menu_item_modifier_id:
                     referencedColumnName: id
-            orphanRemoval: false
+                    onDelete: 'SET NULL'
     lifecycleCallbacks: {  }
