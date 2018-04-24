@@ -39,7 +39,7 @@
     <div class="col-xs-12 col-sm-8">
 
       {% for menuSection in restaurant.menu.sections %}
-        <h2 class="h2">{{ menuSection.name }}</h2>
+        <h2>{{ menuSection.name }}</h2>
         <div class="list-group">
           {% for menuItem in menuSection.items %}
             {% if not menuItem.isAvailable %}
@@ -63,7 +63,7 @@
                   {% endif %}>
                 <span class="menu-item-content">{{ menuItem.name }}
                   {% if menuItem.description is not null %}
-                    <p class="menu-item-description">{{ menuItem.description }}</p>
+                    <small class="menu-item-description">{{ menuItem.description }}</small>
                   {%  endif %}
                 </span>
                 <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
@@ -109,11 +109,15 @@
               </h4>
               <div class="list-group">
                 {% for choice in modifier.modifierChoices %}
-                  <div class="list-group-item radio menu-item modifier-item">
-                    <input
-                      name="modifiers[{{ modifier.id }}][]"
-                      value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice">
-                    <label for="{{ choice.id }}-choice">{{ choice.name }}{% if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}</label>
+                  <div class="list-group-item menu-item modifier-item">
+                    <div class="radio nomargin">
+                      <label for="{{ choice.id }}-choice">
+                        <input
+                          name="modifiers[{{ modifier.id }}][]"
+                          value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice">
+                        {{ choice.name }}{% if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}
+                      </label>
+                    </div>
                   </div>
                 {% endfor %}
               </div>
