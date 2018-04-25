@@ -28,7 +28,16 @@ admin.order.created.body: |
   Bonjour,
   <br>
   <br>
-  Une nouvelle commande a été créée.
+  Une nouvelle commande a été créée pour le restaurant %restaurant.name%.
+  <br>
+  Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
+
+owner.order.created.subject: Nouvelle commande à confirmer
+owner.order.created.body: |
+  Bonjour,
+  <br>
+  <br>
+  Une nouvelle commande a été créée pour votre restaurant %restaurant.name%.
   <br>
   Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
 

@@ -32,6 +32,15 @@ admin.order.created.body: |
   <br>
   Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
 
+owner.order.created.subject: New order to confirm
+owner.order.created.body: |
+  Hi,
+  <br>
+  <br>
+  A new order has been placed for your restaurant %restaurant.name%.
+  <br>
+  To check the details and confirm the order, <a href="%order.url%">click here</a>.
+
 order.created.subject: Confirmación de tu pedido %order.number%
 order.created.body: |
   Buenos dias,

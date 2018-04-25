@@ -98,9 +98,11 @@ final class NotificationSubscriber implements EventSubscriberInterface
 
             // Send email to customer
             $this->emailManager->sendTo(
-                $this->emailManager->createOrderCreatedMessage($order),
-                $order->getCustomer()->getEmail()
+                $this->emailManager->createOrderCreatedMessageForCustomer($order),
+                [$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]
             );
+
+            $ownerMails = [];
 
             // Push notification to restaurant owners
             foreach ($order->getRestaurant()->getOwners() as $owner) {
@@ -115,7 +117,15 @@ final class NotificationSubscriber implements EventSubscriberInterface
                 ]);
 
                 $this->notificationManager->push($notification);
+
+                $ownerMails[$owner->getEmail()] = $owner->getFullName();
             }
+
+            // Send email to restaurant owners
+            $this->emailManager->sendTo(
+                $this->emailManager->createOrderCreatedMessageForOwner($order),
+                $ownerMails
+            );
 
             $this->redis->publish(
                 sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),

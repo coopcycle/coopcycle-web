@@ -69,11 +69,25 @@ class EmailManager
         $this->send($message);
     }
 
-    public function createOrderCreatedMessage(OrderInterface $order)
+    public function createOrderCreatedMessageForCustomer(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
         $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
             'order' => $order,
+        ]);
+
+        return $this->createHtmlMessage($subject, $body);
+    }
+
+    public function createOrderCreatedMessageForOwner(OrderInterface $order)
+    {
+        $subject = $this->translator->trans(
+            'owner.order.created.subject',
+            ['%order.number%' => $order->getNumber()],
+            'emails');
+        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
+            'order' => $order,
+            'is_owner' => true
         ]);
 
         return $this->createHtmlMessage($subject, $body);
