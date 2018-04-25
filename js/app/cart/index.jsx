@@ -30,8 +30,10 @@ class CartHelper {
     } = window.AppData.Cart
 
     const geohash = localStorage.getItem('search_geohash') || ''
+    const availabilities = options.restaurant.availabilities
     const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
-    const deliveryDate = date || localStorage.getItem('search__date') || options.restaurant.availabilities[0]
+    let deliveryDate = date || localStorage.getItem('search__date') || options.restaurant.availabilities[0]
+    deliveryDate = _.find(availabilities, (date) => moment(deliveryDate).isSame(date)) ? deliveryDate : options.restaurant.availabilities[0]
 
     this.cartComponentRef = React.createRef()
 
@@ -53,7 +55,7 @@ class CartHelper {
         geohash={ geohash }
         i18n={ window.__i18n }
         deliveryDate={ deliveryDate }
-        availabilities={ options.restaurant.availabilities }
+        availabilities={ availabilities }
         items={ items }
         itemsTotal={ itemsTotal }
         total={ total }
