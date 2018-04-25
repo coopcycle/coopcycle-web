@@ -400,6 +400,7 @@ form.local_business.stripe_account.placeholder: Choisissez un compte Stripe
 form.local_business.stripe_account.label: Compte Stripe
 form.local_business.stripe_account.success: Compte Stripe créé avec succès.
 form.local_business.stripe_account.admin_warning: Aucun compte Stripe créé pour ce restaurant par le restaurateur. Le compte Stripe doit être créé par le restaurateur.
+form.local_business.stripe_account.admin_success: Compte Stripe créé et lié avec succès par le restaurateur.
 form.local_business.stripe_account.save_warning: Vous devez sauvegarder ce restaurant avant de pouvoir le lier à un compte Stripe.
 form.local_business.stripe_account.need_stripe_account: |
   Vous n'avez pas encore créé de compte Stripe pour ce restaurant. Stripe est notre prestataire pour les paiements, qui nous permet de sécuriser les paiements sur la plateforme et de transférer les fonds vers votre compte bancaire.<br>

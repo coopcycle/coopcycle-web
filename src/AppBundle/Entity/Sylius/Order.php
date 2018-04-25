@@ -66,6 +66,9 @@ class Order extends BaseOrder implements OrderInterface
         $this->payments = new ArrayCollection();
     }
 
+    /**
+     * @return ApiUser
+     */
     public function getCustomer()
     {
         return $this->customer;

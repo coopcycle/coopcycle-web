@@ -35,7 +35,7 @@
 {% block _update_profile_restaurants_row %}
 {% spaceless %}
 <div class="form-group">
-  {{ form_label(form, 'Restaurants managed by user'|trans({}, 'messages')) }}
+  {{ form_label(form, 'profile.managedRestaurants'|trans({}, 'messages')) }}
   <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e }}">
     <tbody>
     {% for child in form.children %}
@@ -58,7 +58,7 @@
 {% block _update_profile_stores_row %}
 {% spaceless %}
 <div class="form-group">
-  {{ form_label(form, 'Stores managed by user'|trans({}, 'messages')) }}
+  {{ form_label(form, 'profile.managedStores'|trans({}, 'messages')) }}
   <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e }}">
     <tbody>
     {% for child in form.children %}

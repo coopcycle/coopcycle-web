@@ -375,6 +375,7 @@ form.local_business.stripe_account.placeholder: Choose a Stripe account
 form.local_business.stripe_account.label: Stripe account
 form.local_business.stripe_account.success: Stripe account created successfully.
 form.local_business.stripe_account.admin_warning: No Stripe account created for this restaurant. The Stripe account must be created by the restaurant owner.
+form.local_business.stripe_account.admin_success: Stripe account created and linked correctly by the restaurant owner.
 form.local_business.stripe_account.save_warning: You need to save this restaurant once before linking it to a Stripe account.
 form.local_business.stripe_account.need_stripe_account: |
   You didn't create a Stripe account for this restaurant yet. Stripe is a payment platform which allows us to handle securely card payments and transfers to your bank account.<br>
