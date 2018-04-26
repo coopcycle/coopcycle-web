@@ -94,22 +94,7 @@ admin_restaurant_menu:
             success: admin_restaurant_menu
             restaurants: admin_restaurants
             restaurant: admin_restaurant
-            add_section: admin_restaurant_menu_add_section
     methods: [ GET, POST ]
-
-admin_restaurant_menu_add_section:
-    path: /admin/restaurants/{id}/menu/sections
-    defaults:
-        _controller: AppBundle:Admin:restaurantMenu
-        layout: AppBundle::admin.html.twig
-        template: AppBundle:Restaurant:form-menu.html.twig
-        routes:
-            success: admin_restaurant_menu
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-            add_section: admin_restaurant_menu_add_section
-        add_menu_section: true
-    methods: [ POST ]
 
 admin_restaurant_planning:
     path: /admin/restaurants/{id}/planning

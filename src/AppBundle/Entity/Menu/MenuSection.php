@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *  shortName="MenuSection",
  *  iri="http://schema.org/MenuSection",
  *  attributes={
- *    "normalization_context"={"groups"={"restaurant"}}
+ *    "normalization_context"={"groups"={"menu_section", "restaurant"}}
  *  },
  *  collectionOperations={},
  *  itemOperations={
@@ -35,6 +35,7 @@ class MenuSection
 
     /**
      * @var int
+     * @Groups({"menu_section"})
      */
     private $id;
 
@@ -42,7 +43,7 @@ class MenuSection
      * @var string The name of the section
      *
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant"})
+     * @Groups({"menu_section", "restaurant"})
      */
     protected $name;
 

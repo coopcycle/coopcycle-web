@@ -22,6 +22,7 @@ function addMenuItemForm($container) {
 
   $container.append($form);
   refreshPositions();
+  renderSwitch($form.find('.switch'));
 
   if (!$container.closest('.collapse').hasClass('in')) {
     collapseAll();
@@ -127,14 +128,21 @@ function renderSwitch($input) {
 
 }
 
+function initFormControls() {
+  const $form = $('form[name="menu"]')
+  $('body').tooltip({
+    selector: '[data-toggle="tooltip"]'
+  })
+  $form.find('.modifier-calculus-strategy').each((index, input) => renderCalculusStrategy($(input)));
+  $form.find('.switch').each((index, el) => renderSwitch($(el)));
+}
+
 function enableForm($form, enable) {
   if (enable) {
-    $('#menu_addSection').removeAttr('disabled');
-    $('#add-menu-section').removeAttr('disabled');
+    $('#menu_sectionName').removeAttr('disabled');
     $form.find('[type="submit"]').removeAttr('disabled');
   } else {
-    $('#menu_addSection').attr('disabled', true);
-    $('#add-menu-section').attr('disabled', true);
+    $('#menu_sectionName').attr('disabled', true);
     $form.find('[type="submit"]').attr('disabled', true);
   }
 }
@@ -150,17 +158,7 @@ $(function() {
   var $form = $('form[name="menu"]');
 
   autoDismissMessages();
-
-  // Activate Bootstrap tooltips
-  $('body').tooltip({
-    selector: '[data-toggle="tooltip"]'
-  });
-
-  // Show/hide inputs on page load
-  $form.find('.modifier-calculus-strategy').each((index, input) => renderCalculusStrategy($(input)));
-
-  // Render Switch on page load
-  $form.find('.switch').each((index, el) => renderSwitch($(el)));
+  initFormControls();
 
   $(document).on('click', '.close', function(e) {
     e.preventDefault();
@@ -212,27 +210,24 @@ $(function() {
       data : data
     })
     .then(function(html) {
+
       enableForm($form, true);
       $copy.remove();
+
       $('#messages').replaceWith(
         $(html).find('#messages')
       );
       $('#menu_sections').replaceWith(
         $(html).find('#menu_sections')
       );
-      $('#add-section-wrapper').replaceWith(
-        $(html).find('#add-section-wrapper')
-      );
+
       autoDismissMessages();
+      initFormControls();
+
     })
     .catch(function(e) {
       enableForm($form, true);
     });
-  });
-
-  $('#menu_suggestions a').on('click', function(e) {
-    e.preventDefault();
-    $('#menu_addSection').val($(this).text());
   });
 
   $(document).on('show.bs.collapse', '[role="tabpanel"] .list-group-item .collapse', function () {
@@ -243,41 +238,16 @@ $(function() {
     renderCalculusStrategy($(this));
   })
 
-  $(document).on('click', '#add-menu-section', function(e) {
-    e.preventDefault();
-
-    var data = $form.serialize();
-    enableForm($form, false);
-
-    $.ajax({
-      url : window.__addSectionURL,
-      type: $form.attr('method'),
-      data : data
-    })
-    .then(function(html) {
-
-      enableForm($form, true);
-
-      $('#messages').replaceWith(
-        $(html).find('#messages')
-      );
-      $('#menu_sections').replaceWith(
-        $(html).find('#menu_sections')
-      );
-      autoDismissMessages();
-
-      var sectionAdded = $('#menu_sections').data('section-added');
-      if (sectionAdded) {
-        var $el = $('[data-section-id="' + sectionAdded + '"]');
-        addMenuItemForm($('#' + $el.attr('id') + '_items'));
-        $('#menu_sections').removeAttr('data-section-added');
-        $('#menu_addSection').val('');
-      }
-    })
-    .catch(function(e) {
-      enableForm($form, true);
-    });
+  $('#menu_save').on('click', function(e) {
+    $('#menu_sectionName').removeAttr('required')
   })
+
+  if (window.AppData.MenuForm.newSections.length > 0) {
+    window.AppData.MenuForm.newSections.forEach(section => {
+      const $el = $(`[data-section-id="${section.id}"]`);
+      addMenuItemForm($('#' + $el.attr('id') + '_items'));
+    })
+  }
 
   const drakeContainers = [].slice.call(document.querySelectorAll('.menuForm__menuItems'))
 

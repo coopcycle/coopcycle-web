@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,18 +21,12 @@ class MenuType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('addSection', TextType::class, array(
+            ->add('sectionName', TextType::class, array(
                 'mapped' => false,
-                'required' => false,
+                'required' => true,
             ))
-            ->add('suggestions', EntityType::class, array(
-                'mapped' => false,
-                'class' => Menu\MenuCategory::class,
-                'choice_label' => 'name',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')->orderBy('s.name', 'ASC');
-                }
-            ));
+            ->add('save', SubmitType::class)
+            ->add('addSection', SubmitType::class);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $event->getForm()->add('sections', CollectionType::class, [
@@ -40,9 +35,6 @@ class MenuType extends AbstractType
                 'allow_delete' => true,
                 'prototype' => false,
                 'label' => false,
-                'attr' => [
-                    'data-section-added' => $options['section_added'] ? $options['section_added']->getId() : ''
-                ],
             ]);
         });
     }
@@ -51,7 +43,6 @@ class MenuType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Menu::class,
-            'section_added' => null,
         ));
     }
 }

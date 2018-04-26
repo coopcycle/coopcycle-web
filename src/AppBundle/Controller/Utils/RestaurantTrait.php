@@ -221,15 +221,6 @@ trait RestaurantTrait
         return $this->renderRestaurantDashboard($request, $restaurant, $order);
     }
 
-    private function createMenuForm(Menu $menu, Menu\MenuSection $sectionAdded = null)
-    {
-        $form = $this->createForm(MenuType::class, $menu, [
-            'section_added' => $sectionAdded,
-        ]);
-
-        return $form;
-    }
-
     private function removeSoftDeletedItems(Menu\MenuSection $section)
     {
         $em = $this->getDoctrine()->getManagerForClass(Menu\MenuItem::class);
@@ -256,8 +247,6 @@ trait RestaurantTrait
         $routes = $request->attributes->get('routes');
 
         $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
-        $addMenuSection = $request->attributes->get('add_menu_section', false);
-        $sectionAdded = null;
 
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -291,18 +280,24 @@ trait RestaurantTrait
             }
         }
 
-        $form = $this->createMenuForm($menu);
+        $form = $this->createForm(MenuType::class, $menu);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $menu = $form->getData();
 
-            if ($addMenuSection) {
-                $sectionAdded = new Menu\MenuSection();
-                $sectionAdded->setName($form->get('addSection')->getData());
+            $newSection = null;
 
-                $menu->addSection($sectionAdded);
+            if ($form->getClickedButton() && 'addSection' === $form->getClickedButton()->getName()) {
+
+                $sectionName = $form->get('sectionName')->getData();
+
+                $newSection = new Menu\MenuSection();
+                $newSection->setName($sectionName);
+
+                $menu->addSection($newSection);
 
             } else {
 
@@ -386,22 +381,22 @@ trait RestaurantTrait
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            if ($addMenuSection) {
-                $em->refresh($menu);
-                $form = $this->createMenuForm($menu, $sectionAdded);
-            } else {
-                return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+            if (null !== $newSection) {
+                $this->addFlash(
+                    'menu_form',
+                    $this->get('serializer')->serialize($newSection, 'json')
+                );
             }
+
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-            'section_added' => $sectionAdded,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
-            'add_section_route' => $routes['add_section'],
         ]);
     }
 
