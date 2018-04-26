@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
@@ -23,6 +25,31 @@ trait CartTrait
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
+    }
+
+    protected function setCartAddress(OrderInterface $cart, Request $request) {
+
+        // TODO Avoid duplicating adresses
+        // If the user is authenticated,
+        // try to match the address with an existing address
+
+        $addressData = $request->request->get('address');
+
+        $address = $cart->getShippingAddress();
+        if (null === $address) {
+            $address = new Address();
+        }
+
+        $address->setAddressLocality($addressData['addressLocality']);
+        $address->setAddressCountry($addressData['addressCountry']);
+        $address->setAddressRegion($addressData['addressRegion']);
+        $address->setPostalCode($addressData['postalCode']);
+        $address->setStreetAddress($addressData['streetAddress']);
+        $address->setGeo(new GeoCoordinates($addressData['latitude'], $addressData['longitude']));
+
+        $cart->setShippingAddress($address);
+
+        return $address;
     }
 
     public function cartAction($id, Request $request)
