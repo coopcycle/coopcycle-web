@@ -5,11 +5,11 @@ import TimeRange from '../utils/TimeRange'
 const templates = {
   en: {
     single: (day, open, close) => `Open on ${day} ${open} to ${close}`,
-    range: (fromDay, toDay, open, close) => `Open from ${fromDay} to ${toDay} ${open} to ${close}`
+    range: (fromDay, toDay, open, close) => `Deliveries from ${fromDay} to ${toDay} ${open} to ${close}`
   },
   fr: {
     single: (day, open, close) => `Ouvert le ${day} de ${open} à ${close}`,
-    range: (fromDay, toDay, open, close) => `Ouvert du ${fromDay} au ${toDay} de ${open} à ${close}`
+    range: (fromDay, toDay, open, close) => `Livraisons possibles du ${fromDay} au ${toDay} de ${open} à ${close}`
   }
 }
 
