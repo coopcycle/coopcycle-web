@@ -3,10 +3,11 @@
 namespace AppBundle\Entity;
 
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 
-class StripePayment implements PaymentInterface
+class StripePayment implements PaymentInterface, OrderAwareInterface
 {
     protected $id;
 
@@ -31,16 +32,14 @@ class StripePayment implements PaymentInterface
         return $this->id;
     }
 
-    public function getOrder()
+    public function getOrder(): ?OrderInterface
     {
         return $this->order;
     }
 
-    public function setOrder(OrderInterface $order)
+    public function setOrder(?OrderInterface $order): void
     {
         $this->order = $order;
-
-        return $this;
     }
 
     public function getCharge()
