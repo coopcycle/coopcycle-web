@@ -194,6 +194,7 @@ restaurant.list.createNewRestaurant: Create a new restaurant
 
 restaurant.form.uploadImage: Upload an image
 
+restaurant.menu.form.addSection.placeholder: Section name (Appetizers, Dishes, ...)
 restaurant.menu.form.addSection: Add section
 restaurant.menu.form.delete: Delete
 restaurant.menu.form.addDescription: Add description
