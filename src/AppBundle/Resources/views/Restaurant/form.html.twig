@@ -167,9 +167,17 @@
   {#<a class="help-block" href="{{ path('help_admin_payments') }}"><i class="fa fa-info-circle"></i>&nbsp;Cliquez ici pour en savoir plus sur la configuration et la gestion des paiements via Stripe.</a>#}
 
   <hr>
+    <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
+    {{ form_widget(form.deliveryPerimeterExpression) }}
+    <div id="restaurant_deliveryPerimeterExpression__picker">
+    </div>
+    <span class="help-block">
+      <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.deliveryPerimeterExpression.help" | trans({'%zoneHelpUrl%': path('help_admin_zones')}) | raw }}
+    </span>
+  <hr>
 
   {% if form.contract is defined or restaurant.id is not null %}
-  <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
+    <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
   {% endif %}
 
   {% if form.contract is defined %}
@@ -222,6 +230,8 @@
   window.AppData.__i18n['Enabled'] = "{% trans %}localBusiness.form.enabled{% endtrans %}";
   window.AppData.__i18n['Disabled'] = "{% trans %}localBusiness.form.disabled{% endtrans %}";
   window.AppData.__isActivable = {% if 'enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys %}false{% else %}true{% endif %};
+  window.AppData.deliveryPerimeterExpression = {{ deliveryPerimeterExpression|raw }};
+  window.AppData.zones = {{ zoneNames|raw }};
 
   new CoopCycle.OpeningHoursInput(document.querySelector('#restaurant_openingHours'), {
     locale: $('html').attr('lang')

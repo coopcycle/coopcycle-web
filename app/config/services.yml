@@ -425,7 +425,7 @@ services:
       - { name: validator.constraint_validator }
 
   'AppBundle\Validator\Constraints\OrderValidator':
-    arguments: [ '@routing_service' ]
+    arguments: [ '@routing_service', '@coopcycle.expression_language' ]
     tags:
       - { name: validator.constraint_validator }
 

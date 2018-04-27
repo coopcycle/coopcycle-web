@@ -5,6 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -13,9 +14,12 @@ class OrderValidator extends ConstraintValidator
 {
     private $routing;
 
-    public function __construct(RoutingInterface $routing)
+    private $expressionLanguage;
+
+    public function __construct(RoutingInterface $routing, ExpressionLanguage $expressionLanguage)
     {
         $this->routing = $routing;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     private function validateRestaurant($object, Constraint $constraint)
@@ -40,9 +44,7 @@ class OrderValidator extends ConstraintValidator
 
             $distance = $data['routes'][0]['distance'];
 
-            $maxDistance = $restaurant->getMaxDistance();
-
-            if ($distance > $maxDistance) {
+            if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
                 $this->context->buildViolation($constraint->addressTooFarMessage)
                     ->atPath('shippingAddress')
                     ->addViolation();

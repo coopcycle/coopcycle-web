@@ -2,7 +2,6 @@
 
 namespace AppBundle\Validator;
 
-use AppBundle\BaseTest;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Contract;
@@ -13,6 +12,8 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use AppBundle\Validator\Constraints\OrderValidator;
 use Carbon\Carbon;
+use Prophecy\Argument;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class OrderValidatorTest extends ConstraintValidatorTestCase
@@ -35,7 +36,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
     protected function createValidator()
     {
-        return new OrderValidator($this->routing->reveal());
+        return new OrderValidator($this->routing->reveal(), new ExpressionLanguage());
     }
 
     private function prophesizeGetRawResponse(GeoCoordinates $origin, GeoCoordinates $destination, $distance, $duration)
@@ -63,7 +64,12 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         return $address;
     }
 
-    private function createRestaurantProphecy(Address $address, $minimumCartAmount, $maxDistance)
+    private function createRestaurantProphecy(
+        Address $address,
+        Address $shippingAddress,
+        $minimumCartAmount,
+        $maxDistanceExpression,
+        $canDeliver)
     {
         $restaurant = $this->prophesize(Restaurant::class);
 
@@ -76,8 +82,12 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($minimumCartAmount);
 
         $restaurant
-            ->getMaxDistance()
-            ->willReturn($maxDistance);
+            ->getDeliveryPerimeterExpression()
+            ->willReturn($maxDistanceExpression);
+
+        $restaurant
+            ->canDeliverAddress(Argument::any(), Argument::any(), Argument::any())
+            ->willReturn($canDeliver);
 
         return $restaurant;
     }
@@ -116,8 +126,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
+            $shippingAddress->reveal(),
             $minimumCartAmount = 20,
-            $maxDistance = 3000
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = false
         );
         $restaurant
             ->isOpen($shippedAt)
@@ -158,7 +170,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $contract->setFlatDeliveryPrice(10);
 
         $restaurant = new Restaurant();
-        $restaurant->setMaxDistance(3000);
+        $restaurant->setMaxDistanceExpression('distance < 3000');
         $restaurant->addOpeningHour('Mo-Sa 11:30-14:30');
         $restaurant->setContract($contract);
 
@@ -218,8 +230,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
+            $shippingAddress->reveal(),
             $minimumCartAmount = 20,
-            $maxDistance = 3000
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
         );
         $restaurant
             ->isOpen($shippedAt)
@@ -239,7 +253,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,
             $shippingAddressCoords,
-            $distance = 1500,
+            $maxDistanceExpression = 'distance < 1500',
             $duration = 300
         );
 
