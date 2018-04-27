@@ -206,10 +206,10 @@ restaurant.menu.form.addExtraGroup: Add an extra groups
 restaurant.menu.form.addItem: Add a new item
 menu.modifier.STRATEGY_FREE: Free extra
 menu.modifier.STRATEGY_FREE.description: The extra is free
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Fixed price for all
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: All extras have a fixed price
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Fixed price for each
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Each extra has a custom price
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Same price regardless of the choice
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: All extras have the same price, added to the order's total
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Price depends on extra choice
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Each extra has a its own price, added to the order's total
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: No address saved yet!

@@ -205,12 +205,12 @@ restaurant.menu.form.addExtra: Añadir extra
 restaurant.menu.form.extraGroups: Grupo de extras
 restaurant.menu.form.addExtraGroup: Añadir un grupo de extras
 restaurant.menu.form.addItem: Añadir elemento
-menu.modifier.STRATEGY_FREE: Extra gratuito
-menu.modifier.STRATEGY_FREE.description: El extra es gratuito
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Precio fijo para todos
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: Todos los extras tienen un mismo precio
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Precio fijo para cada uno
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Cada extra tiene un precio único
+menu.modifier.STRATEGY_FREE: Free extra
+menu.modifier.STRATEGY_FREE.description: The extra is free
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Same price regardless of the choice
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: All extras have the same price, added to the order's total
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Price depends on extra choice
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Each extra has a its own price, added to the order's total
 
 profile.addresses.breadcrumb: Direcciones
 profile.addresses.empty: Aún no hay direcciones guardadas!

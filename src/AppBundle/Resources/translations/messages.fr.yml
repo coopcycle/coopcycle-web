@@ -201,10 +201,10 @@ restaurant.menu.form.addExtraGroup: Ajouter un groupe de supplément
 restaurant.menu.form.addItem: Nouvel élément
 menu.modifier.STRATEGY_FREE: Gratuit
 menu.modifier.STRATEGY_FREE.description: Le supplément est gratuit
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix du produit
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: Tous les suppléments ont un prix fixe
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Supplément
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Chaque supplément a un prix différent
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix fixe quelque soit le choix
+menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: Tous les suppléments du groupe ont le même prix, ajouté au total de la commande
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Prix en fonction du supplément
+menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Chaque supplément du groupe a un prix différent, ajouté au total de la commande
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment !
@@ -413,9 +413,9 @@ form.local_business.stripe_account.link_ok: |
 form.menu_item.name.label: Nom
 form.menu_item.price.label: Prix
 
-form.menu_item_modifier.name.label: Nom
+form.menu_item_modifier.name.label: Nom du groupe
 form.menu_item_modifier.price.label: Prix
-form.menu_item_modifier.calculusStrategy.label: Calcul du prix
+form.menu_item_modifier.calculusStrategy.label: Coût du supplément
 
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
