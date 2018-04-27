@@ -41,6 +41,7 @@ class MenuItemModifierType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
+                'prototype_name' => '__modifierChoices__',
                 'label' => false,
             ]);
     }

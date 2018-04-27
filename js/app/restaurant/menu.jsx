@@ -17,7 +17,7 @@ function addMenuItemForm($container) {
   var prototype = $container.data('prototype');
   var index = $container.children().length;
 
-  var form = prototype.replace(/__name__/g, index);
+  var form = prototype.replace(/__items__/g, index);
   var $form = $(form);
 
   $container.append($form);
@@ -31,23 +31,23 @@ function addMenuItemForm($container) {
   $form.find('> .collapse').collapse('show');
 }
 
-function addMenuItemModifierForm($container) {
-
-  var prototype = $container.data('prototype');
-  var index = $container.children().length;
-
-  var form = prototype.replace(/__name__/g, index);
-  var $form = $(form);
-
-  $container.append($form);
-}
-
 function addMenuItemModifierGroupForm($container) {
 
   var prototype = $container.data('prototype');
   var index = $container.children().length;
 
-  var form = prototype.replace(/__name__/g, index);
+  var form = prototype.replace(/__modifiers__/g, index);
+  var $form = $(form);
+
+  $container.append($form);
+}
+
+function addMenuItemModifierForm($container) {
+
+  var prototype = $container.data('prototype');
+  var index = $container.children().length;
+
+  var form = prototype.replace(/__modifierChoices__/g, index);
   var $form = $(form);
 
   $container.append($form);

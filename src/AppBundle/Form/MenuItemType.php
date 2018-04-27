@@ -36,6 +36,7 @@ class MenuItemType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'prototype' => true,
+                'prototype_name' => '__modifiers__',
                 'label' => false,
             ]);
     }

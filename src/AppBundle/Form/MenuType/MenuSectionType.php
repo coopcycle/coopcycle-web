@@ -18,7 +18,9 @@ class MenuSectionType extends AbstractType
                 'entry_type' => MenuItemType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'label' => false
+                'label' => false,
+                'prototype' => true,
+                'prototype_name' => '__items__'
             ]);
     }
 
