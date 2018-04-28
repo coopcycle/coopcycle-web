@@ -31,7 +31,7 @@
     "form-data": "^2.3.1",
     "js-yaml": "^3.10.0",
     "json-loader": "^0.5.7",
-    "jsonwebtoken": "^7.4.3",
+    "jsonwebtoken": "^8.2.1",
     "leaflet": "^1.3.1",
     "leaflet-providers": "^1.1.17",
     "locutus": "^2.0.9",
@@ -59,7 +59,7 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@symfony/webpack-encore": "^0.19.0",
+    "@symfony/webpack-encore": "^0.20.1",
     "autoprefixer": "^8.1.0",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
@@ -71,7 +71,7 @@
     "file-loader": "^1.1.11",
     "jquery": "^3.2.1",
     "mocha": "^3.5.3",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.9.0",
     "postcss-loader": "^2.1.1",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
