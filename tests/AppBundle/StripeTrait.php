@@ -2,7 +2,10 @@
 
 namespace Tests\AppBundle;
 
+use Prophecy\Argument;
+use Stripe\ApiRequestor;
 use Stripe\Stripe;
+use Stripe\HttpClient;
 
 trait StripeTrait
 {
@@ -29,10 +32,10 @@ trait StripeTrait
         Stripe::setAccountId(null);
 
         // Set up the HTTP client mocker
-        // $this->clientMock = $this->getMock('\Stripe\HttpClient\ClientInterface');
+        $this->stripeHttpClient = $this->prophesize(HttpClient\ClientInterface::class);
 
         // By default, use the real HTTP client
-        // ApiRequestor::setHttpClient(HttpClient\CurlClient::instance());
+        ApiRequestor::setHttpClient(HttpClient\CurlClient::instance());
     }
 
     protected function tearDown()
@@ -42,5 +45,21 @@ trait StripeTrait
         Stripe::setApiKey($this->origApiKey);
         Stripe::setApiVersion($this->origApiVersion);
         Stripe::setAccountId($this->origAccountId);
+    }
+
+    private function shouldSendStripeRequest($method, $path, $params = null, $headers = null, $hasFile = false)
+    {
+        ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
+
+        $absUrl = Stripe::$apiBase . $path;
+
+        $this->stripeHttpClient
+            ->request(strtolower($method), $absUrl, Argument::type('array'), $params, $hasFile)
+            ->will(function ($args) {
+                $curlClient = HttpClient\CurlClient::instance();
+                ApiRequestor::setHttpClient($curlClient);
+
+                return $curlClient->request($args[0], $args[1], $args[2], $args[3], $args[4]);
+            });
     }
 }

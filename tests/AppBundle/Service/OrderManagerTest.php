@@ -71,6 +71,7 @@ class OrderManagerTest extends TestCase
         $stripePayment = new StripePayment();
         $stripePayment->setState(PaymentInterface::STATE_NEW);
         $stripePayment->setStripeToken('tok_123456');
+        $stripePayment->setCurrencyCode('EUR');
 
         $stateMachine = $this->prophesize(StateMachineInterface::class);
 
@@ -93,7 +94,13 @@ class OrderManagerTest extends TestCase
             ->get($stripePayment, PaymentTransitions::GRAPH)
             ->willReturn($stateMachine->reveal());
 
-        // TODO Add assertions for Stripe requests
+        $this->shouldSendStripeRequest('POST', '/v1/charges', [
+            'amount' => 900,
+            'currency' => 'eur',
+            'source' => 'tok_123456',
+            'description' => 'Order 000001',
+            'capture' => 'false',
+        ]);
 
         $this->orderManager->authorizePayment($order->reveal());
 
