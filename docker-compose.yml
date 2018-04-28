@@ -61,9 +61,11 @@ services:
       - redis
       - osrm
       - graphite
+      - stripe_mock
     links:
       - osrm
       - graphite
+      - stripe_mock
     environment:
       SYMFONY_ENV: 'dev'
     volumes:
@@ -104,6 +106,11 @@ services:
       - graphite
     links:
       - graphite
+
+  stripe_mock:
+    image: stripemock/stripe-mock:latest
+    ports:
+      - '12111:12111'
 
 volumes:
   node_modules:

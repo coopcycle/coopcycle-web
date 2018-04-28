@@ -20,7 +20,10 @@ php:
   - '7.2.0RC6'
 
 env:
-  - SYMFONY_ENV=test
+  global:
+    - STRIPE_MOCK_API_BASE=http://localhost:12111
+  matrix:
+    - SYMFONY_ENV=test
 
 before_install:
   - sudo apt-get update -qq
@@ -38,6 +41,7 @@ install:
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-partition /data/paris-france.osrm
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-customize /data/paris-france.osrm
   - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:latest osrm-routed --algorithm mld /data/paris-france.osrm
+  - docker run -t -d -p 12111:12111 stripemock/stripe-mock
 
 before_script:
   - phpenv config-rm xdebug.ini
