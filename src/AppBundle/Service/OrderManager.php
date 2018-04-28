@@ -158,8 +158,6 @@ class OrderManager
         } catch (\Exception $e) {
             $stripePayment->setLastError($e->getMessage());
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
-        } finally {
-            $this->doctrine->getManagerForClass(StripePayment::class)->flush();
         }
     }
 
