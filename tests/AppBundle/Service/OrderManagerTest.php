@@ -107,6 +107,35 @@ class OrderManagerTest extends TestCase
         $this->assertNotNull($stripePayment->getCharge());
     }
 
+    public function testCapturePaymentCapturesCharge()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setState(PaymentInterface::STATE_AUTHORIZED);
+        $stripePayment->setStripeToken('tok_123456');
+        $stripePayment->setCurrencyCode('EUR');
+        $stripePayment->setCharge('ch_123456');
+
+        $stateMachine = $this->prophesize(StateMachineInterface::class);
+
+        $stateMachine
+            ->apply(PaymentTransitions::TRANSITION_COMPLETE)
+            ->shouldBeCalled();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
+            ->willReturn($stripePayment);
+
+        $this->stateMachineFactory
+            ->get($stripePayment, PaymentTransitions::GRAPH)
+            ->willReturn($stateMachine->reveal());
+
+        $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
+        $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
+
+        $this->orderManager->capturePayment($order->reveal());
+    }
+
     public function testCreateDeliveryDoesNothing()
     {
         $delivery = new Delivery();

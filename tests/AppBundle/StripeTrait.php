@@ -47,7 +47,7 @@ trait StripeTrait
         Stripe::setAccountId($this->origAccountId);
     }
 
-    private function shouldSendStripeRequest($method, $path, $params = null, $headers = null, $hasFile = false)
+    private function shouldSendStripeRequest($method, $path, array $params = [], $headers = null, $hasFile = false)
     {
         ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
 
@@ -55,10 +55,9 @@ trait StripeTrait
 
         $this->stripeHttpClient
             ->request(strtolower($method), $absUrl, Argument::type('array'), $params, $hasFile)
+            ->shouldBeCalled()
             ->will(function ($args) {
                 $curlClient = HttpClient\CurlClient::instance();
-                ApiRequestor::setHttpClient($curlClient);
-
                 return $curlClient->request($args[0], $args[1], $args[2], $args[3], $args[4]);
             });
     }
