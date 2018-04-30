@@ -66,6 +66,18 @@ winzou_state_machine:
                     on: "refuse"
                     do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
                     args: ["object", "'order.cancel'"]
+                after_ready_dispatch_event:
+                    on: "ready"
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.ready'"]
+                after_fulfill_dispatch_event:
+                    on: "fulfill"
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.fulfill'"]
+                after_refuse_dispatch_event:
+                    on: "refuse"
+                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
+                    args: ["object", "'order.refuse'"]
                 after_cancel_send_email:
                     on: "cancel"
                     do: ["@coopcycle.order_manager", "dispatchOrderEvent"]

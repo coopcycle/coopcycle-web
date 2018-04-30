@@ -9,6 +9,9 @@ use AppBundle\Entity\Task;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
 use AppBundle\Event\OrderAcceptEvent;
+use AppBundle\Event\OrderFullfillEvent;
+use AppBundle\Event\OrderReadyEvent;
+use AppBundle\Event\OrderRefuseEvent;
 use AppBundle\Event\PaymentAuthorizeEvent;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
@@ -206,7 +209,6 @@ class OrderManager
         $stripeAccount = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
 
         $stripeTransfer = StripeTransfer::create($stripePayment, $toTransfer);
-        $stripeTransfer->setStripeAccount($stripeAccount);
 
         $transferStateMachine = $this->stateMachineFactory->get($stripeTransfer, StripeTransferTransitions::GRAPH);
 
@@ -246,8 +248,17 @@ class OrderManager
             case OrderCreateEvent::NAME:
                 $this->eventDispatcher->dispatch(OrderCreateEvent::NAME, new OrderCreateEvent($order));
                 break;
+            case OrderRefuseEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderRefuseEvent::NAME, new OrderRefuseEvent($order));
+                break;
             case OrderAcceptEvent::NAME:
                 $this->eventDispatcher->dispatch(OrderAcceptEvent::NAME, new OrderAcceptEvent($order));
+                break;
+            case OrderReadyEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderReadyEvent::NAME, new OrderReadyEvent($order));
+                break;
+            case OrderFullfillEvent::NAME:
+                $this->eventDispatcher->dispatch(OrderFullfillEvent::NAME, new OrderFullfillEvent($order));
                 break;
         }
     }

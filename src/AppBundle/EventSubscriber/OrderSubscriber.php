@@ -7,6 +7,9 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Event\OrderAcceptEvent;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
+use AppBundle\Event\OrderFullfillEvent;
+use AppBundle\Event\OrderReadyEvent;
+use AppBundle\Event\OrderRefuseEvent;
 use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Service\OrderManager;
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -55,6 +58,9 @@ final class OrderSubscriber implements EventSubscriberInterface
             OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
             OrderCancelEvent::NAME => 'onOrderCanceled',
+            OrderRefuseEvent::NAME => 'onOrderRefused',
+            OrderReadyEvent::NAME => 'onOrderReady',
+            OrderFullfillEvent::NAME => 'onOrderFullfilled',
             TaskDoneEvent::NAME    => 'onTaskDone',
         ];
     }
@@ -119,6 +125,47 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function onOrderCanceled(OrderCancelEvent $event)
     {
         $order = $event->getOrder();
+
+        $this->redis->publish(
+            sprintf('order:%d:state_changed', $order->getId()),
+            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
+        );
+
+        $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
+    }
+
+    public function onOrderFullfilled(OrderFullfillEvent $event)
+    {
+        $order = $event->getOrder();
+
+        $this->redis->publish(
+            sprintf('order:%d:state_changed', $order->getId()),
+            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
+        );
+
+        $this->logger->info(sprintf('Order #%d fulfilled', $order->getId()));
+    }
+
+    public function onOrderReady(OrderReadyEvent $event)
+    {
+        $order = $event->getOrder();
+
+        $this->redis->publish(
+            sprintf('order:%d:state_changed', $order->getId()),
+            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
+        );
+
+        $this->logger->info(sprintf('Order #%d ready', $order->getId()));
+    }
+
+    public function onOrderRefused(OrderRefuseEvent $event)
+    {
+        $order = $event->getOrder();
+
+        $this->redis->publish(
+            sprintf('order:%d:state_changed', $order->getId()),
+            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
+        );
 
         $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
     }
