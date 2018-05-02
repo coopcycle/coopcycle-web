@@ -51,6 +51,8 @@ class PublicController extends Controller
             $form = $this->createForm(StripePaymentType::class, $stripePayment);
 
             $form->handleRequest($request);
+
+            // TODO : handle this with orderManager
             if ($form->isSubmitted() && $form->isValid()) {
 
                 try {

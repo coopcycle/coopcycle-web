@@ -233,6 +233,21 @@ class OrderManager
 
     }
 
+    /**
+     * Create a fresh payment after payment failure
+     *
+     * @param OrderInterface $order
+     */
+    public function afterPaymentFailed(OrderInterface $order) {
+
+        if ($order->getTotal() === 0) {
+            return;
+        }
+
+        $payment = StripePayment::create($order);
+        $order->addPayment($payment);
+    }
+
     public function completePayment(PaymentInterface $payment)
     {
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
