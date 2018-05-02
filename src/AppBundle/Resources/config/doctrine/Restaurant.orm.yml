@@ -72,6 +72,12 @@ AppBundle\Entity\Restaurant:
             nullable: true
             precision: 0
             column: legal_name
+        deliveryPerimeterExpression:
+            type: string
+            nullable: false
+            unique: false
+            options:
+              default: 'distance < 3000'
         openingHours:
             type: json_array
             scale: 0

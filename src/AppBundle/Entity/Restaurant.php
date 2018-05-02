@@ -10,6 +10,7 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -147,7 +148,12 @@ class Restaurant extends FoodEstablishment
      */
     private $hasMenu;
 
-    private $maxDistance = 3000;
+    /**
+     * @var string
+     *
+     * @Assert\Type(type="string")
+     */
+    private $deliveryPerimeterExpression = 'distance < 3000';
 
     private $closingRules;
 
@@ -432,16 +438,20 @@ class Restaurant extends FoodEstablishment
         $this->hasMenu = $menu;
     }
 
-    public function getMaxDistance()
+    /**
+     * @return string
+     */
+    public function getDeliveryPerimeterExpression()
     {
-        return $this->maxDistance;
+        return $this->deliveryPerimeterExpression;
     }
 
-    public function setMaxDistance($maxDistance)
+    /**
+     * @param string $deliveryPerimeterExpression
+     */
+    public function setDeliveryPerimeterExpression(string $deliveryPerimeterExpression)
     {
-        $this->maxDistance = $maxDistance;
-
-        return $this;
+        $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
     }
 
     /**
@@ -476,5 +486,17 @@ class Restaurant extends FoodEstablishment
     public function getOwners()
     {
         return $this->owners;
+    }
+
+    public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        return $language->evaluate($this->deliveryPerimeterExpression, [
+            'distance' => $distance,
+            'deliveryAddress' => $address,
+        ]);
     }
 }

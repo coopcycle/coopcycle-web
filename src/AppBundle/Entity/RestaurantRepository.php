@@ -8,9 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 
 class RestaurantRepository extends EntityRepository
 {
-    // default $distance parameter should be less than the value of `maxDistance`
-    // see why: https://github.com/coopcycle/coopcycle-web/pull/160#issue-279389044
-    private function createNearbyQueryBuilder($latitude, $longitude, $distance = 2000)
+    // TODO : fix this to check that restaurants are really in delivery/radius zone
+    private function createNearbyQueryBuilder($latitude, $longitude, $distance = 3500)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -24,9 +23,8 @@ class RestaurantRepository extends EntityRepository
         return $qb;
     }
 
-    // default $distance parameter should be less than the value of `maxDistance`
-    // see why: https://github.com/coopcycle/coopcycle-web/pull/160#issue-279389044
-    public static function addNearbyQueryClause(QueryBuilder $qb, $latitude, $longitude, $distance = 2000)
+    // TODO : fix this to check that restaurants are really in delivery/radius zone
+    public static function addNearbyQueryClause(QueryBuilder $qb, $latitude, $longitude, $distance = 3500)
     {
         $qb->innerJoin($qb->getRootAlias() . '.address', 'a', Expr\Join::WITH);
 

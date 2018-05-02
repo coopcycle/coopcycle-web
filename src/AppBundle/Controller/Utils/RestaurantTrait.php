@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
+use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuType;
@@ -130,7 +131,14 @@ trait RestaurantTrait
             $stripeAuthorizeURL = 'https://connect.stripe.com/oauth/authorize?' . $queryString;
         }
 
+        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
+        $zoneNames = [];
+        foreach ($zones as $zone) {
+            array_push($zoneNames, $zone->getName());
+        }
+
         return $this->render($request->attributes->get('template'), [
+            'zoneNames' => json_encode($zoneNames),
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,
@@ -140,7 +148,8 @@ trait RestaurantTrait
             'dashboard_route' => $routes['dashboard'],
             'planning_route' => $routes['planning'],
             'restaurants_route' => $routes['restaurants'],
-            'stripeAuthorizeURL' => $stripeAuthorizeURL
+            'stripeAuthorizeURL' => $stripeAuthorizeURL,
+            'deliveryPerimeterExpression' => json_encode($restaurant->getDeliveryPerimeterExpression())
         ]);
     }
 
