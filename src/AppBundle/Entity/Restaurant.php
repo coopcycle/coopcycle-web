@@ -44,12 +44,12 @@ class Restaurant extends FoodEstablishment
     /**
      *  Delay for preparation (in minutes)
      */
-    const PREPARATION_DELAY = 30;
+    const PREPARATION_DELAY = 20;
 
     /**
      *  Delay for delivery (in minutes)
      */
-    const DELIVERY_DELAY = 15;
+    const DELIVERY_DELAY = 25;
 
     /**
      *  Delay for preparation + delivery (in minutes)
@@ -96,11 +96,18 @@ class Restaurant extends FoodEstablishment
     /**
      * @var boolean Is the restaurant enabled?
      *
-     * A disable restaurant is not shown to visitors, either on search page or on its detail page.
+     * A disable restaurant is not shown to visitors, but remain accessible in preview to admins and owners.
      *
      * @Groups({"restaurant"})
+     *
      */
     protected $enabled = false;
+
+    /**
+     * @var integer Additional time to delay ordering
+     *
+     */
+    protected $orderingDelayMinutes;
 
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
@@ -331,9 +338,7 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * Return potential delivery times for a restaurant.
-     *
-     * We allow ordering at J+1.
+     * Return potential delivery times for a restaurant, pickables by the customer.
      *
      * @param \DateTime|null $now
      * @return array
@@ -344,7 +349,7 @@ class Restaurant extends FoodEstablishment
             $now = new \DateTime();
         }
 
-        $now->modify('+'.(self::CHECKOUT_MAX_DURATION + self::PREPARATION_AND_DELIVERY_DELAY).' minutes');
+        $now->modify('+'.(self::CHECKOUT_MAX_DURATION + self::PREPARATION_AND_DELIVERY_DELAY + $this->getOrderingDelayMinutes()).' minutes');
 
         $nextOpeningDate = $this->getNextOpeningDate($now);
 
@@ -452,6 +457,22 @@ class Restaurant extends FoodEstablishment
     public function setDeliveryPerimeterExpression(string $deliveryPerimeterExpression)
     {
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderingDelayMinutes()
+    {
+        return $this->orderingDelayMinutes;
+    }
+
+    /**
+     * @param int $orderingDelayMinutes
+     */
+    public function setOrderingDelayMinutes(int $orderingDelayMinutes)
+    {
+        $this->orderingDelayMinutes = $orderingDelayMinutes;
     }
 
     /**

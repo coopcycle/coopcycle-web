@@ -30,6 +30,12 @@ AppBundle\Entity\Restaurant:
             precision: 0
             options:
                 default: false
+        orderingDelayMinutes:
+            type: integer
+            unique: false
+            nullable: false
+            options:
+                default: 0
         imageName:
             type: string
             scale: 0

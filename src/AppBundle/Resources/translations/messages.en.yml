@@ -150,6 +150,10 @@ dashboard.assigned: Assigned
 
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
+localBusiness.form.orderingDelayMinutes: Additional delay before ordering
+localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before the customer can order. This setting don't change the times kept for cooking (20 minutes) and cycling (25 minutes).
+localBusiness.form.orderingDelayDays: Day(s)
+localBusiness.form.orderingDelayHours: Hour(s)
 localBusiness.form.enabled: Enabled
 localBusiness.form.disabled: Disabled
 localBusiness.form.name: Name

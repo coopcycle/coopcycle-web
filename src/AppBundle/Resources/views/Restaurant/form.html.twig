@@ -19,7 +19,11 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        {% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}restaurant.form.createRestaurant{% endtrans %}{% endif %}
+        {% if restaurant.id is not empty %}
+          {{ restaurant.name }}&nbsp;&nbsp;<a href="{{ path('restaurant', { id: restaurant.id }) }}" target="_blank"><i class="fa fa-external-link"></i></a>
+        {% else %}
+          {% trans %}restaurant.form.createRestaurant{% endtrans %}
+        {% endif %}
       </span>
     </div>
     <div class="collapse navbar-collapse" id="restaurant-navbar">
@@ -129,6 +133,19 @@
 
   {{ form_row(form.openingHours) }}
   <div id="opening-hours"></div>
+  <label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
+  <div class="row">
+    <div class="col-sm-3">
+      {{ form_row(form.orderingDelayDays) }}
+    </div>
+    <div class="col-sm-3">
+      {{ form_row(form.orderingDelayHours) }}
+    </div>
+  </div>
+  <span class="help-block">
+    <i class="fa fa-info-circle"></i>&nbsp;{{ "localBusiness.form.orderingDelayMinutes.help" | trans | raw }}
+  </span>
+
   <hr>
 
   {{ form_row(form.address.streetAddress) }}
