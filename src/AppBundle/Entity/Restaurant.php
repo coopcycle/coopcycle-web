@@ -107,7 +107,7 @@ class Restaurant extends FoodEstablishment
      * @var integer Additional time to delay ordering
      *
      */
-    protected $orderingDelayMinutes;
+    protected $orderingDelayMinutes = 0;
 
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
