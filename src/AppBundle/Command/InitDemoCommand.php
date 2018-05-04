@@ -161,6 +161,13 @@ class InitDemoCommand extends ContainerAwareCommand
         }
 
         try {
+            $this->craueConfig->get('brand_name');
+        } catch (\RuntimeException $e) {
+            $brandName = $this->createCraueConfigSetting('brand_name', 'CoopCycle');
+            $em->persist($brandName);
+        }
+
+        try {
             $this->craueConfig->get('google_api_key');
         } catch (\RuntimeException $e) {
             $question = new Question('Please enter a Google API key');
