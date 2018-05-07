@@ -8,42 +8,75 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
+    use TargetPathTrait;
 
-    public function __construct(UrlGeneratorInterface $router)
+    private $httpUtils;
+    private $router;
+    private $providerKey;
+    private $options;
+
+    public function __construct(HttpUtils $httpUtils, UrlGeneratorInterface $router)
     {
+        $this->httpUtils = $httpUtils;
         $this->router = $router;
     }
 
-    public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
+    /**
+     * Set the provider key.
+     * This is injected by CustomAuthenticationSuccessHandler.
+     *
+     * @param string $providerKey
+     */
+    public function setProviderKey($providerKey)
     {
-        $token = $event->getAuthenticationToken();
-        $request = $event->getRequest();
-        $this->onAuthenticationSuccess($request, $token);
+        $this->providerKey = $providerKey;
+    }
+
+    /**
+     * Set the options.
+     * This is injected by CustomAuthenticationSuccessHandler.
+     *
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-        if ($token->getUser()->hasRole('ROLE_ADMIN')) {
-            return new RedirectResponse($this->router->generate('admin_index'));
+        // This is the URL (if any) the user visited that forced them to login
+        $targetPath = $this->getTargetPath($request->getSession(), $this->providerKey);
+
+        // If there is no target path, redirect depending on role
+        if (!$targetPath) {
+
+            if ($token->getUser()->hasRole('ROLE_ADMIN')) {
+                return new RedirectResponse($this->router->generate('admin_index'));
+            }
+
+            if ($token->getUser()->hasRole('ROLE_RESTAURANT')) {
+                return new RedirectResponse($this->router->generate('profile_orders'));
+            }
+
+            if ($token->getUser()->hasRole('ROLE_COURIER')) {
+                return new RedirectResponse($this->router->generate('profile_tasks'));
+            }
+
+            if ($token->getUser()->hasRole('ROLE_STORE')) {
+                return new RedirectResponse($this->router->generate('profile_stores'));
+            }
+
+            return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);
         }
 
-        if ($token->getUser()->hasRole('ROLE_RESTAURANT')) {
-            return new RedirectResponse($this->router->generate('profile_orders'));
-        }
-
-        if ($token->getUser()->hasRole('ROLE_COURIER')) {
-            return new RedirectResponse($this->router->generate('profile_tasks'));
-        }
-
-        if ($token->getUser()->hasRole('ROLE_STORE')) {
-            return new RedirectResponse($this->router->generate('profile_stores'));
-        }
-
-        return new RedirectResponse($request->headers->get('referer'));
+        return new RedirectResponse($targetPath);
     }
 }
 

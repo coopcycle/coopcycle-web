@@ -379,7 +379,7 @@ services:
 
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
-    arguments: ['@router']
+    arguments: ['@security.http_utils', '@router']
 
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
