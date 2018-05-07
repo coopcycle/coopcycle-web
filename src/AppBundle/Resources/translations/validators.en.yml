@@ -6,7 +6,7 @@ restaurant.stripeAccount.notSet: Link the restaurant to a Stripe account
 restaurant.notActivable: You can't enable this restaurant yet
 
 address.tooFar: This address is too far
-address.notSet: Please pick an address
+address.notSet: Please enter the delivery address
 
 cart.date.tooSoon: This date is too soon
 cart.address.empty: Please select an address
