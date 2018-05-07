@@ -59,7 +59,6 @@ class OrderController extends Controller
      */
     public function paymentAction(Request $request)
     {
-
         $order = $this->get('sylius.context.cart')->getCart();
         $orderManager = $this->get('coopcycle.order_manager');
 
@@ -80,6 +79,9 @@ class OrderController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // TODO Set customer via listeners
+            $order->setCustomer($this->getUser());
+
             $stripePayment->setStripeToken($form->get('stripeToken')->getData());
 
             $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
@@ -91,9 +93,6 @@ class OrderController extends Controller
                     'error' => $stripePayment->getLastError()
                 ]);
             }
-
-            // TODO Set customer via listeners
-            $order->setCustomer($this->getUser());
 
             // Create order, to generate a number
             $orderManager->create($order);
