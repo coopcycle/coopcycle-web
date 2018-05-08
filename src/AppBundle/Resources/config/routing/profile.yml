@@ -134,7 +134,7 @@ profile_restaurant_menu:
             success: profile_restaurant_menu
             restaurants: profile_restaurants
             restaurant: profile_restaurant
-    methods: [ GET ]
+    methods: [ GET, POST ]
 
 profile_restaurant_planning:
     path: /profile/restaurants/{id}/planning
