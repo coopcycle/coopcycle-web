@@ -4,31 +4,19 @@ AppBundle\Entity\Contract:
     id:
         id:
             type: integer
-            scale: 0
-            length: null
-            unique: false
-            nullable: false
-            precision: 0
             id: true
             generator:
                 strategy: IDENTITY
     fields:
         minimumCartAmount:
             type: float
-            scale: 0
-            length: null
-            unique: false
-            nullable: false
-            precision: 0
             column: minimum_cart_amount
         flatDeliveryPrice:
             type: float
-            scale: 0
-            length: null
-            unique: false
-            nullable: false
-            precision: 0
             column: flat_delivery_price
+        feeRate:
+            type: float
+            column: fee_rate
     oneToOne:
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant

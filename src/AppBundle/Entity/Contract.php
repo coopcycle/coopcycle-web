@@ -31,6 +31,13 @@ class Contract
     private $flatDeliveryPrice;
 
     /**
+     * @var float
+     * @Assert\NotBlank
+     * @Assert\Type("float")
+     */
+    private $feeRate;
+
+    /**
      * @return Restaurant
      */
     public function getRestaurant()
@@ -57,7 +64,7 @@ class Contract
     /**
      * @param float $minimumCartAmount
      */
-    public function setMinimumCartAmount(float $minimumCartAmount = null)
+    public function setMinimumCartAmount(float $minimumCartAmount)
     {
         $this->minimumCartAmount = $minimumCartAmount;
     }
@@ -73,9 +80,26 @@ class Contract
     /**
      * @param float $flatDeliveryPrice
      */
-    public function setFlatDeliveryPrice(float $flatDeliveryPrice = null)
+    public function setFlatDeliveryPrice(float $flatDeliveryPrice)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
     }
 
+    /**
+     * @return float
+     */
+    public function getFeeRate()
+    {
+        return $this->feeRate;
+    }
+
+    /**
+     * @param float $feeRate
+     */
+    public function setFeeRate(float $feeRate)
+    {
+        $this->feeRate = $feeRate;
+
+        return $this;
+    }
 }
