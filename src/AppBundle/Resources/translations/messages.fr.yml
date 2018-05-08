@@ -468,8 +468,6 @@ admin.settings.missing_mandatory_settings: |
 index.map.tip: Utilisez la carte ci-dessous pour trouver des restaurants
 index.banner: De bons plats livrés à domicile
 
-notifications.empty: Aucune notification
-
 pagination.previous: Précédent
 pagination.next: Suivante
 
@@ -490,6 +488,7 @@ embed.breadcrumb.confirm: Confirmation
 
 embed.payment.heading: Payer ma commande
 
+notifications.empty: Aucune notification
 notifications.order.created: Nouvelle commande
 
 embed.delivery.summary: |

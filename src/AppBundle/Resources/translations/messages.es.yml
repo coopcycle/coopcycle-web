@@ -446,6 +446,7 @@ index.map.tip: Usa el mapa para encontrar restaurantes
 index.banner: Platos deliciosos del restaurante a tu casa
 
 notifications.empty: Ninguna notificación
+notifications.order.created: Nuevo pedido
 
 pagination.previous: Anterior
 pagination.next: Siguiente
