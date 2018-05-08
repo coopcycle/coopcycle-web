@@ -95,6 +95,17 @@ class Order extends BaseOrder implements OrderInterface
         return $taxTotal;
     }
 
+    public function getFeeTotal(): int
+    {
+        $feeTotal = 0;
+
+        foreach ($this->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT) as $feeAdjustment) {
+            $feeTotal += $feeAdjustment->getAmount();
+        }
+
+        return $feeTotal;
+    }
+
     /**
      * {@inheritdoc}
      */

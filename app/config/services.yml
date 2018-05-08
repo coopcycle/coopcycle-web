@@ -26,6 +26,13 @@ services:
     tags:
       - { name: sylius.context.locale, priority: 64 }
 
+  sylius.order_processing.order_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - { name: sylius.order_processor, priority: 64 }
+
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
     arguments:
