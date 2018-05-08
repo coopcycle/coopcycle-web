@@ -12,6 +12,7 @@ use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -28,6 +29,10 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
     private $taxCategoryRepository;
 
+    private $productOptionRepository;
+
+    private $productOptionValueRepository;
+
     private $settingsManager;
 
     private $translator;
@@ -41,6 +46,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         ProductVariantRepositoryInterface $productVariantRepository,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         ProductOptionRepositoryInterface $productOptionRepository,
+        RepositoryInterface $productOptionValueRepository,
         FactoryInterface $productOptionFactory,
         FactoryInterface $productOptionValueFactory,
         SettingsManager $settingsManager,
@@ -52,6 +58,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $this->productVariantRepository = $productVariantRepository;
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->productOptionRepository = $productOptionRepository;
+        $this->productOptionValueRepository = $productOptionValueRepository;
 
         $this->productOptionFactory = $productOptionFactory;
         $this->productOptionValueFactory = $productOptionValueFactory;
@@ -151,12 +158,12 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
                 $product->addOption($option);
             }
 
-            $optionValue = $this->productOptionValueFactory->createNew();
-
-            $optionValue->setCode($optionValueCode);
-            // $optionValue->setFallbackLocale($values['locale']);
-            // $optionValue->setCurrentLocale($values['locale']);
-            $optionValue->setValue($modifier->getName());
+            $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
+            if (!$optionValue) {
+                $optionValue = $this->productOptionValueFactory->createNew();
+                $optionValue->setCode($optionValueCode);
+                $optionValue->setValue($modifier->getName());
+            }
 
             $option->addValue($optionValue);
             $productVariant->addOptionValue($optionValue);

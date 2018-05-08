@@ -51,6 +51,7 @@ services:
       - "@sylius.repository.product_variant"
       - "@sylius.repository.tax_category"
       - "@sylius.repository.product_option"
+      - "@sylius.repository.product_option_value"
       - "@sylius.factory.product_option"
       - "@sylius.factory.product_option_value"
       - "@coopcycle.settings_manager"
