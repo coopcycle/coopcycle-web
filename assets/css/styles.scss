@@ -262,6 +262,21 @@ $cart-heading-height: 40px;
   }
 }
 
+.cart {
+  &__items {
+    @extend .list-group;
+  }
+  &__item {
+    @extend .list-group-item;
+    &__heading {
+      @include clearfix;
+    }
+    &__adjustments {
+      @extend .text-muted;
+    }
+  }
+}
+
 #map-wrapper {
   padding: 60px 0;
 }

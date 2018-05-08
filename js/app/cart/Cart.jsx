@@ -134,7 +134,7 @@ class Cart extends React.Component
       })
 
       cartContent = (
-        <div className="list-group">{cartItemComponents}</div>
+        <div className="cart__items">{cartItemComponents}</div>
       )
     } else {
       cartContent = ( <div className="alert alert-warning">Votre panier est vide</div> )
