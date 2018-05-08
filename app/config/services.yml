@@ -126,6 +126,12 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  coopcycle.web_authentication_listener:
+    class: AppBundle\EventListener\WebAuthenticationListener
+    arguments: ['@sylius.manager.order', '@sylius.context.cart']
+    tags:
+      - { name: kernel.event_subscriber }
+
   'AppBundle\EventListener\SyliusIdGeneratorSubscriber':
     tags:
       - { name: doctrine.event_subscriber, connection: default }

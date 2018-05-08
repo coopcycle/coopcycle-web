@@ -29,6 +29,13 @@ class OrderController extends Controller
     {
         $order = $this->get('sylius.context.cart')->getCart();
 
+        // At this step, we are pretty sure the customer is logged in
+        // Make sure the order actually has a customer, if not set previously
+        // @see AppBundle\EventListener\WebAuthenticationListener
+        if ($this->getUser() !== $order->getCustomer()) {
+            $order->setCustomer($this->getUser());
+            $this->get('sylius.manager.order')->flush();
+        }
 
         // TODO Check if cart is empty
         $deliveryAddress = $order->getShippingAddress();
@@ -78,9 +85,6 @@ class OrderController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-            // TODO Set customer via listeners
-            $order->setCustomer($this->getUser());
 
             $stripePayment->setStripeToken($form->get('stripeToken')->getData());
 
