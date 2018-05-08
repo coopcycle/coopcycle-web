@@ -53,6 +53,10 @@ export default class extends React.Component {
 
   onStartChange(key, date, timeString) {
 
+    if (!timeString) {
+      timeString = '00:00'
+    }
+
     const { rows } = this.state;
     const row = rows[key];
 
@@ -65,6 +69,10 @@ export default class extends React.Component {
   }
 
   onEndChange(key, date, timeString) {
+
+    if (!timeString) {
+      timeString = '00:00'
+    }
 
     const { rows } = this.state;
     const row = rows[key];
