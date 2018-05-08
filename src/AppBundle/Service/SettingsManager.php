@@ -27,6 +27,7 @@ class SettingsManager
     private $secretSettings = [
         'stripe_publishable_key',
         'stripe_secret_key',
+        'stripe_connect_client_id',
         'google_api_key',
     ];
 
