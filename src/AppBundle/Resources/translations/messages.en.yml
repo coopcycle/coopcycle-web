@@ -184,6 +184,7 @@ restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries. You can chose a radius (in km) or a <a target="_blank" href="%zoneHelpUrl%">zone</a>.
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Fixed delivery price
+restaurant.contract.feeRate.label: Fee rate
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
 

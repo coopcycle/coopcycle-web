@@ -184,6 +184,7 @@ restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for d
 restaurant.stripe_account.title: Cuenta Stripe
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Precio de entrega fijo
+restaurant.contract.feeRate.label: Porcentaje de comisión
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones de contrato.
 restaurant.contract.noContract: No existen condiciones de contrato. Por favor contacte a un administrador.
 

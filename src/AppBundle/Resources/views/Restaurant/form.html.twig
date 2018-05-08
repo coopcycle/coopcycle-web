@@ -198,14 +198,9 @@
   {% endif %}
 
   {% if form.contract is defined %}
-    <div class="row margin-bottom-md">
-      <div class="col-md-6">
-        {{ form_row(form.contract.minimumCartAmount) }}
-      </div>
-      <div class="col-md-6">
-        {{ form_row(form.contract.flatDeliveryPrice) }}
-      </div>
-    </div>
+    {{ form_row(form.contract.minimumCartAmount) }}
+    {{ form_row(form.contract.flatDeliveryPrice) }}
+    {{ form_row(form.contract.feeRate) }}
   {% else %}
     {% if restaurant.id is not null %}
     <div class="row margin-bottom-md">
@@ -216,6 +211,7 @@
           </div>
           <p>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}: {{ restaurant.contract.minimumCartAmount }}€</p>
           <p>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}: {{ restaurant.contract.flatDeliveryPrice }}€</p>
+          <p>{% trans %}restaurant.contract.feeRate.label{% endtrans %}: {{ restaurant.contract.feeRate }}%</p>
         </div>
       {% else %}
         <div class="col-md-12">

@@ -179,6 +179,7 @@ restaurant.contract.title: Contrat
 restaurant.stripe_account.title: Compte Stripe
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Prix fixe de la course
+restaurant.contract.feeRate.label: Pourcentage de commission
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 
