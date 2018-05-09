@@ -5,10 +5,8 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\Sylius\ProductVariantRepository;
-use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -22,7 +20,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $orderFactory;
     private $productVariantRepository;
     private $orderItemFactory;
-    private $adjustmentFactory;
     private $orderItemQuantityModifier;
     private $orderModifier;
 
@@ -32,7 +29,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         OrderFactory $orderFactory,
         ProductVariantRepository $productVariantRepository,
         FactoryInterface $orderItemFactory,
-        AdjustmentFactoryInterface $adjustmentFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderModifierInterface $orderModifier)
     {
@@ -41,7 +37,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderFactory = $orderFactory;
         $this->productVariantRepository = $productVariantRepository;
         $this->orderItemFactory = $orderItemFactory;
-        $this->adjustmentFactory = $adjustmentFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
     }
@@ -82,14 +77,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             return $orderItem;
 
         }, $data['items']);
-
-        $adjustment = $this->adjustmentFactory->createWithData(
-            AdjustmentInterface::DELIVERY_ADJUSTMENT,
-            'Livraison',
-            $order->getRestaurant()->getFlatDeliveryPrice(),
-            $neutral = false
-        );
-        $order->addAdjustment($adjustment);
 
         $order->clearItems();
         foreach ($orderItems as $orderItem) {

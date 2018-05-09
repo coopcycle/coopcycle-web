@@ -20,6 +20,11 @@ interface OrderInterface extends BaseOrderInterface, PaymentsSubjectInterface
     public function getTaxTotal(): int;
 
     /**
+     * @return int
+     */
+    public function getFeeTotal(): int;
+
+    /**
      * @return Restaurant
      */
     public function getRestaurant(): ?Restaurant;

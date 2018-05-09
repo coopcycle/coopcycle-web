@@ -3,13 +3,18 @@
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\StripeTransfer;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use SM\StateMachine\StateMachineInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -150,5 +155,101 @@ class OrderManagerTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->orderManager->createDelivery($order->reveal());
+    }
+
+    public function testCreateTransferWithNoRestaurant()
+    {
+        $stripePayment = $this->prophesize(StripePayment::class);
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getRestaurant()
+            ->willReturn(null);
+
+        $stripePayment
+            ->getOrder()
+            ->willReturn($order->reveal());
+
+        $this->shouldNotSendStripeRequest();
+
+        $this->orderManager->createTransfer($stripePayment->reveal());
+    }
+
+    public function testCreateTransferWithNoStripeAccount()
+    {
+        $stripePayment = $this->prophesize(StripePayment::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        $restaurant
+            ->getStripeAccount()
+            ->willReturn(null);
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+
+        $stripePayment
+            ->getOrder()
+            ->willReturn($order->reveal());
+
+        $this->shouldNotSendStripeRequest();
+
+        $this->orderManager->createTransfer($stripePayment->reveal());
+    }
+
+    public function testCreateTransfer()
+    {
+        $stripePayment = $this->prophesize(StripePayment::class);
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        $stripeAccount
+            ->getStripeUserId()
+            ->willReturn('acct_123');
+
+        $restaurant
+            ->getStripeAccount()
+            ->willReturn($stripeAccount->reveal());
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+        $order
+            ->getTotal()
+            ->willReturn(10000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(500);
+
+        $stripePayment
+            ->getOrder()
+            ->willReturn($order->reveal());
+        $stripePayment
+            ->getCurrencyCode()
+            ->willReturn('EUR');
+        $stripePayment
+            ->getCharge()
+            ->willReturn('ch_123456');
+
+        $stateMachine = $this->prophesize(StateMachineInterface::class);
+
+        $stateMachine
+            ->apply(StripeTransferTransitions::TRANSITION_COMPLETE)
+            ->shouldBeCalled();
+
+        $this->stateMachineFactory
+            ->get(Argument::type(StripeTransfer::class), StripeTransferTransitions::GRAPH)
+            ->willReturn($stateMachine->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/transfers', [
+            'amount' => 9500,
+            'currency' => 'eur',
+            'destination' => 'acct_123',
+            'source_transaction' => 'ch_123456',
+        ]);
+
+        $this->orderManager->createTransfer($stripePayment->reveal());
     }
 }

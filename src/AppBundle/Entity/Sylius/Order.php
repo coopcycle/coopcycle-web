@@ -247,15 +247,4 @@ class Order extends BaseOrder implements OrderInterface
 
         $this->delivery = $delivery;
     }
-
-    public function getDeliveryPrice()
-    {
-        if (!is_null($this->delivery)) {
-            $deliveryAdjusment =  $this->getAdjustments()->filter(function ($adjusment) {
-                return $adjusment->getType() == 'delivery';
-            })->first();
-
-            return $deliveryAdjusment->getAmount();
-        }
-    }
 }

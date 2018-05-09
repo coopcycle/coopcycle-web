@@ -24,14 +24,14 @@ class OrderFeeProcessorTest extends KernelTestCase
         self::bootKernel();
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
-
         $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory);
     }
 
-    private static function createContract($flatDeliveryPrice, $feeRate)
+    private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate)
     {
         $contract = new Contract();
         $contract->setFlatDeliveryPrice($flatDeliveryPrice);
+        $contract->setCustomerAmount($customerAmount);
         $contract->setFeeRate($feeRate);
 
         return $contract;
@@ -66,14 +66,14 @@ class OrderFeeProcessorTest extends KernelTestCase
 
     public function testOrderWithoutRestaurantFees()
     {
-        $contract = self::createContract(500, 0.00);
+        $contract = self::createContract(0, 0, 0.00);
 
         $restaurant = new Restaurant();
         $restaurant->setContract($contract);
 
         $order = new Order();
         $order->setRestaurant($restaurant);
-        $order->addItem($this->createOrderItem(100));
+        $order->addItem($this->createOrderItem(1000));
 
         $this->orderFeeProcessor->process($order);
 
@@ -85,29 +85,60 @@ class OrderFeeProcessorTest extends KernelTestCase
 
     public function testOrderWithRestaurantFees()
     {
-        $contract = self::createContract(500, 0.25);
+        $contract = self::createContract(0, 0, 0.25);
 
         $restaurant = new Restaurant();
         $restaurant->setContract($contract);
 
         $order = new Order();
         $order->setRestaurant($restaurant);
-        $order->addItem($this->createOrderItem(100));
-
-        // Add a non-neutral adjustment to make sure fees are calculated on the items total
-        $adjustment = $this->adjustmentFactory->createWithData(
-            'foo',
-            'Foo',
-            350,
-            $neutral = false
-        );
-        $order->addAdjustment($adjustment);
+        $order->addItem($this->createOrderItem(1000));
 
         $this->orderFeeProcessor->process($order);
 
         $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
 
         $this->assertCount(1, $adjustments);
-        $this->assertEquals(25, $order->getFeeTotal());
+        $this->assertEquals(250, $order->getFeeTotal());
+    }
+
+    public function testOrderWithBusinessAmount()
+    {
+        $contract = self::createContract(500, 0, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $this->orderFeeProcessor->process($order);
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(500, $order->getFeeTotal());
+    }
+
+    public function testOrderWithBusinessAmountAndCustomerAmount()
+    {
+        $contract = self::createContract(500, 500, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $this->orderFeeProcessor->process($order);
+
+        $this->assertEquals(1500, $order->getTotal());
+
+        $adjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(500, $order->getFeeTotal());
     }
 }
