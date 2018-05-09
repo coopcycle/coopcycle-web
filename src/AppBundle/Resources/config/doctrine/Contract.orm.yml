@@ -17,6 +17,11 @@ AppBundle\Entity\Contract:
         feeRate:
             type: float
             column: fee_rate
+        customerAmount:
+            type: integer
+            column: customer_amount
+            options:
+                default: 0
     oneToOne:
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant

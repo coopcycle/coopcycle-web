@@ -22,6 +22,10 @@ class ContractType extends AbstractType
                 'label' => 'restaurant.contract.flatDeliveryPrice.label',
                 'divisor' => 100,
             ])
+            ->add('customerAmount', MoneyType::class, [
+                'label' => 'restaurant.contract.customerAmount.label',
+                'divisor' => 100,
+            ])
             ->add('feeRate', PercentType::class, [
                 'label' => 'restaurant.contract.feeRate.label'
             ]);

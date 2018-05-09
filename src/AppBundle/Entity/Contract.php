@@ -17,18 +17,27 @@ class Contract
     private $restaurant;
 
     /**
-     * @var float
+     * @var int
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private $minimumCartAmount;
 
     /**
-     * @var float
+     * @var int
+     * The amount (in cents) charged by the platform.
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private $flatDeliveryPrice;
+
+    /**
+     * @var int
+     * The amount (in cents) paid by the customer.
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private $customerAmount = 0;
 
     /**
      * @var float
@@ -99,6 +108,18 @@ class Contract
     public function setFeeRate(float $feeRate)
     {
         $this->feeRate = $feeRate;
+
+        return $this;
+    }
+
+    public function getCustomerAmount()
+    {
+        return $this->customerAmount;
+    }
+
+    public function setCustomerAmount(int $customerAmount)
+    {
+        $this->customerAmount = $customerAmount;
 
         return $this;
     }
