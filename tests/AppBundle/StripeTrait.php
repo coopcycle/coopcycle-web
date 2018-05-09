@@ -47,7 +47,22 @@ trait StripeTrait
         Stripe::setAccountId($this->origAccountId);
     }
 
-    private function shouldSendStripeRequest($method, $path, array $params = [], $headers = null, $hasFile = false)
+    protected function shouldNotSendStripeRequest()
+    {
+        ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
+
+        $this->stripeHttpClient
+            ->request(
+                Argument::type('string'),
+                Argument::type('string'),
+                Argument::type('array'),
+                Argument::type('array'),
+                Argument::type('bool')
+            )
+            ->shouldNotBeCalled();
+    }
+
+    protected function shouldSendStripeRequest($method, $path, array $params = [], $headers = null, $hasFile = false)
     {
         ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
 

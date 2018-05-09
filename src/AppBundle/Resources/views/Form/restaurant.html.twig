@@ -28,3 +28,17 @@
   {{ form_row(form.delete) }}
   {% endif %}
 {% endblock %}
+
+{% block money_widget %}
+  {{ parent() }}
+  {% if help is defined %}
+    <span class="help-block">{{ help|trans }}</span>
+  {% endif %}
+{% endblock %}
+
+{% block percent_widget %}
+  {{ parent() }}
+  {% if help is defined %}
+    <span class="help-block">{{ help|trans }}</span>
+  {% endif %}
+{% endblock %}

@@ -196,29 +196,36 @@ class OrderManager
     public function createTransfer(PaymentInterface $stripePayment) {
 
         $order = $stripePayment->getOrder();
+        $restaurant = $order->getRestaurant();
 
-        if (
-            // no need to transfer is order is for the coop
-            is_null($order->getRestaurant()) || \
-            // useful for demo & tests
-            is_null($order->getRestaurant()->getStripeAccount())) {
+        // There is no restaurant
+        if (null === $restaurant) {
             return;
         }
 
-        $toTransfer = $order->getTotal() - $order->getDeliveryPrice();
-        $stripeAccount = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+        $stripeAccount = $restaurant->getStripeAccount();
 
-        $stripeTransfer = StripeTransfer::create($stripePayment, $toTransfer);
+        // There is no Stripe account
+        if (null === $stripeAccount) {
+            return;
+        }
+
+        $amount = $order->getTotal() - $order->getFeeTotal();
+
+        $stripeTransfer = StripeTransfer::create($stripePayment, $amount);
 
         $transferStateMachine = $this->stateMachineFactory->get($stripeTransfer, StripeTransferTransitions::GRAPH);
 
         // transfer the correct amount to restaurant owner/shop
         // ref https://stripe.com/docs/connect/charges-transfers
         try {
+
+            Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+
             $transfer = Stripe\Transfer::create([
-                'amount' => $toTransfer,
+                'amount' => $amount,
                 'currency' => strtolower($stripePayment->getCurrencyCode()),
-                'destination' => $stripeAccount,
+                'destination' => $stripeAccount->getStripeUserId(),
                 // ref https://stripe.com/docs/connect/charges-transfers#transfer-availability
                 'source_transaction' => $stripePayment->getCharge()
             ]);

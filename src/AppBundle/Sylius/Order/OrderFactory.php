@@ -4,8 +4,6 @@ namespace AppBundle\Sylius\Order;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Sylius\Order\AdjustmentInterface;
-use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -17,17 +15,12 @@ class OrderFactory implements FactoryInterface
      */
     private $factory;
 
-    private $adjustmentFactory;
-
     /**
      * @param FactoryInterface $factory
      */
-    public function __construct(
-        FactoryInterface $factory,
-        AdjustmentFactoryInterface $adjustmentFactory)
+    public function __construct(FactoryInterface $factory)
     {
         $this->factory = $factory;
-        $this->adjustmentFactory = $adjustmentFactory;
     }
 
     /**
@@ -42,14 +35,6 @@ class OrderFactory implements FactoryInterface
     {
         $order = $this->createNew();
         $order->setRestaurant($restaurant);
-
-        $adjustment = $this->adjustmentFactory->createWithData(
-            AdjustmentInterface::DELIVERY_ADJUSTMENT,
-            'Livraison',
-            (int) ($restaurant->getFlatDeliveryPrice() * 100),
-            $neutral = false
-        );
-        $order->addAdjustment($adjustment);
 
         return $order;
     }

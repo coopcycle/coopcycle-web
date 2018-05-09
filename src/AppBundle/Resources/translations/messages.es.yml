@@ -183,7 +183,12 @@ restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries. You can chose a radius (in km) or a <a target="_blank" href="%zoneHelpUrl%">zone</a>.
 restaurant.stripe_account.title: Cuenta Stripe
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
-restaurant.contract.flatDeliveryPrice.label: Precio de entrega fijo
+restaurant.contract.flatDeliveryPrice.label: Suma cargada por la plataforma
+restaurant.contract.flatDeliveryPrice.help: Esta suma no se mostrará en el carrito y no aumentará el precio total
+restaurant.contract.customerAmount.label: Suma pagada por el cliente
+restaurant.contract.customerAmount.help: Esta suma se mostrará en el carrito y aumentará el precio total
+restaurant.contract.feeRate.label: Porcentaje de comisión
+restaurant.contract.feeRate.help: Este porcentaje será retenido por la plataforma en el total de los productos
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones de contrato.
 restaurant.contract.noContract: No existen condiciones de contrato. Por favor contacte a un administrador.
 

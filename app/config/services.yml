@@ -26,6 +26,13 @@ services:
     tags:
       - { name: sylius.context.locale, priority: 64 }
 
+  sylius.order_processing.order_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - { name: sylius.order_processor, priority: 64 }
+
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
     arguments:
@@ -71,7 +78,6 @@ services:
     decorates: sylius.factory.order
     arguments:
       - "@coopcycle.sylius.factory.order.inner"
-      - "@sylius.factory.adjustment"
     public: false
 
   sylius.context.cart.restaurant:
@@ -250,7 +256,6 @@ services:
       - "@coopcycle.sylius.factory.order"
       - "@sylius.repository.product_variant"
       - "@sylius.factory.order_item"
-      - "@sylius.factory.adjustment"
       - "@sylius.order_item_quantity_modifier"
       - "@sylius.order_modifier"
     tags: [ { name: serializer.normalizer, priority: 128 } ]

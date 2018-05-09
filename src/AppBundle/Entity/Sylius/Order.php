@@ -95,6 +95,17 @@ class Order extends BaseOrder implements OrderInterface
         return $taxTotal;
     }
 
+    public function getFeeTotal(): int
+    {
+        $feeTotal = 0;
+
+        foreach ($this->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT) as $feeAdjustment) {
+            $feeTotal += $feeAdjustment->getAmount();
+        }
+
+        return $feeTotal;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -235,16 +246,5 @@ class Order extends BaseOrder implements OrderInterface
         $delivery->setOrder($this);
 
         $this->delivery = $delivery;
-    }
-
-    public function getDeliveryPrice()
-    {
-        if (!is_null($this->delivery)) {
-            $deliveryAdjusment =  $this->getAdjustments()->filter(function ($adjusment) {
-                return $adjusment->getType() == 'delivery';
-            })->first();
-
-            return $deliveryAdjusment->getAmount();
-        }
     }
 }

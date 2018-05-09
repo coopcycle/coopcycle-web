@@ -167,7 +167,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $contract = new Contract();
         $contract->setMinimumCartAmount(0);
-        $contract->setFlatDeliveryPrice(10);
+        $contract->setFlatDeliveryPrice(1000);
 
         $restaurant = new Restaurant();
         $restaurant->setMaxDistanceExpression('distance < 3000');
@@ -231,7 +231,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $restaurant = $this->createRestaurantProphecy(
             $restaurantAddress->reveal(),
             $shippingAddress->reveal(),
-            $minimumCartAmount = 20,
+            $minimumCartAmount = 2000,
             $maxDistanceExpression = 'distance < 3000',
             $canDeliver = true
         );

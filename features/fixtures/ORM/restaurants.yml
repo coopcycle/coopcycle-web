@@ -103,13 +103,16 @@ AppBundle\Entity\Restaurant:
 AppBundle\Entity\Contract:
   contract_1:
     restaurant: "@restaurant_1"
-    minimumCartAmount: 15
-    flatDeliveryPrice: 3.5
+    minimumCartAmount: 1500
+    flatDeliveryPrice: 350
+    feeRate: 0.00
   contract_2:
     restaurant: "@restaurant_2"
-    minimumCartAmount: 15
-    flatDeliveryPrice: 3.5
+    minimumCartAmount: 1500
+    flatDeliveryPrice: 350
+    feeRate: 0.00
   contract_3:
     restaurant: "@restaurant_3"
-    minimumCartAmount: 15
-    flatDeliveryPrice: 3.5
+    minimumCartAmount: 1500
+    flatDeliveryPrice: 350
+    feeRate: 0.00

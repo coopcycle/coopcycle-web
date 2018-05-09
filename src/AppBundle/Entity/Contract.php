@@ -17,18 +17,34 @@ class Contract
     private $restaurant;
 
     /**
-     * @var float
+     * @var int
      * @Assert\NotBlank
-     * @Assert\Type("float")
+     * @Assert\Type("integer")
      */
     private $minimumCartAmount;
+
+    /**
+     * @var int
+     * The amount (in cents) charged by the platform.
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private $flatDeliveryPrice;
+
+    /**
+     * @var int
+     * The amount (in cents) paid by the customer.
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private $customerAmount = 0;
 
     /**
      * @var float
      * @Assert\NotBlank
      * @Assert\Type("float")
      */
-    private $flatDeliveryPrice;
+    private $feeRate;
 
     /**
      * @return Restaurant
@@ -47,7 +63,7 @@ class Contract
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getMinimumCartAmount()
     {
@@ -55,15 +71,15 @@ class Contract
     }
 
     /**
-     * @param float $minimumCartAmount
+     * @param int $minimumCartAmount
      */
-    public function setMinimumCartAmount(float $minimumCartAmount = null)
+    public function setMinimumCartAmount(int $minimumCartAmount)
     {
         $this->minimumCartAmount = $minimumCartAmount;
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getFlatDeliveryPrice()
     {
@@ -71,11 +87,40 @@ class Contract
     }
 
     /**
-     * @param float $flatDeliveryPrice
+     * @param int $flatDeliveryPrice
      */
-    public function setFlatDeliveryPrice(float $flatDeliveryPrice = null)
+    public function setFlatDeliveryPrice(int $flatDeliveryPrice)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
     }
 
+    /**
+     * @return float
+     */
+    public function getFeeRate()
+    {
+        return $this->feeRate;
+    }
+
+    /**
+     * @param float $feeRate
+     */
+    public function setFeeRate(float $feeRate)
+    {
+        $this->feeRate = $feeRate;
+
+        return $this;
+    }
+
+    public function getCustomerAmount()
+    {
+        return $this->customerAmount;
+    }
+
+    public function setCustomerAmount(int $customerAmount)
+    {
+        $this->customerAmount = $customerAmount;
+
+        return $this;
+    }
 }
