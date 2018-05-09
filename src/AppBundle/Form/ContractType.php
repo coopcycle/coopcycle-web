@@ -15,10 +15,12 @@ class ContractType extends AbstractType
     {
         $builder
             ->add('minimumCartAmount', MoneyType::class, [
-                'label' => 'restaurant.contract.minimumCartAmount.label'
+                'label' => 'restaurant.contract.minimumCartAmount.label',
+                'divisor' => 100,
             ])
             ->add('flatDeliveryPrice', MoneyType::class, [
-                'label' => 'restaurant.contract.flatDeliveryPrice.label'
+                'label' => 'restaurant.contract.flatDeliveryPrice.label',
+                'divisor' => 100,
             ])
             ->add('feeRate', PercentType::class, [
                 'label' => 'restaurant.contract.feeRate.label'

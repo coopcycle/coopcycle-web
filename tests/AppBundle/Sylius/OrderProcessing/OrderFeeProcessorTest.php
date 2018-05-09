@@ -66,7 +66,7 @@ class OrderFeeProcessorTest extends KernelTestCase
 
     public function testOrderWithoutRestaurantFees()
     {
-        $contract = self::createContract(5.00, 0.00);
+        $contract = self::createContract(500, 0.00);
 
         $restaurant = new Restaurant();
         $restaurant->setContract($contract);
@@ -85,7 +85,7 @@ class OrderFeeProcessorTest extends KernelTestCase
 
     public function testOrderWithRestaurantFees()
     {
-        $contract = self::createContract(5.00, 0.25);
+        $contract = self::createContract(500, 0.25);
 
         $restaurant = new Restaurant();
         $restaurant->setContract($contract);

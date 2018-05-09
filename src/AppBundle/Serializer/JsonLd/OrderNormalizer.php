@@ -86,7 +86,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $adjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::DELIVERY_ADJUSTMENT,
             'Livraison',
-            (int) ($order->getRestaurant()->getFlatDeliveryPrice() * 100),
+            $order->getRestaurant()->getFlatDeliveryPrice(),
             $neutral = false
         );
         $order->addAdjustment($adjustment);

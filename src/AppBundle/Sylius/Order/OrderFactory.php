@@ -46,7 +46,7 @@ class OrderFactory implements FactoryInterface
         $adjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::DELIVERY_ADJUSTMENT,
             'Livraison',
-            (int) ($restaurant->getFlatDeliveryPrice() * 100),
+            $restaurant->getFlatDeliveryPrice(),
             $neutral = false
         );
         $order->addAdjustment($adjustment);

@@ -9,10 +9,10 @@ AppBundle\Entity\Contract:
                 strategy: IDENTITY
     fields:
         minimumCartAmount:
-            type: float
+            type: integer
             column: minimum_cart_amount
         flatDeliveryPrice:
-            type: float
+            type: integer
             column: flat_delivery_price
         feeRate:
             type: float

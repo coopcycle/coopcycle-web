@@ -19,14 +19,14 @@ class Contract
     /**
      * @var float
      * @Assert\NotBlank
-     * @Assert\Type("float")
+     * @Assert\Type("integer")
      */
     private $minimumCartAmount;
 
     /**
      * @var float
      * @Assert\NotBlank
-     * @Assert\Type("float")
+     * @Assert\Type("integer")
      */
     private $flatDeliveryPrice;
 
@@ -54,7 +54,7 @@ class Contract
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getMinimumCartAmount()
     {
@@ -62,15 +62,15 @@ class Contract
     }
 
     /**
-     * @param float $minimumCartAmount
+     * @param int $minimumCartAmount
      */
-    public function setMinimumCartAmount(float $minimumCartAmount)
+    public function setMinimumCartAmount(int $minimumCartAmount)
     {
         $this->minimumCartAmount = $minimumCartAmount;
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getFlatDeliveryPrice()
     {
@@ -78,9 +78,9 @@ class Contract
     }
 
     /**
-     * @param float $flatDeliveryPrice
+     * @param int $flatDeliveryPrice
      */
-    public function setFlatDeliveryPrice(float $flatDeliveryPrice)
+    public function setFlatDeliveryPrice(int $flatDeliveryPrice)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
     }

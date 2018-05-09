@@ -105,7 +105,7 @@ Feature: Manage restaurants
       "openingHours":@array@,
       "availabilities":@array@,
       "minimumCartAmount":@integer@,
-      "flatDeliveryPrice":@double@
+      "flatDeliveryPrice":@integer@
     }
     """
 
