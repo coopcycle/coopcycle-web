@@ -170,6 +170,10 @@ class Restaurant extends FoodEstablishment
 
     private $owners;
 
+    private $products;
+
+    private $productOptions;
+
     /**
      * @var Contract
      * @Groups({"order_create"})
@@ -181,14 +185,8 @@ class Restaurant extends FoodEstablishment
         $this->servesCuisine = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
         $this->owners = new ArrayCollection();
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
+        $this->products = new ArrayCollection();
+        $this->productOptions = new ArrayCollection();
     }
 
     /**
@@ -507,6 +505,16 @@ class Restaurant extends FoodEstablishment
     public function getOwners()
     {
         return $this->owners;
+    }
+
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    public function getProductOptions()
+    {
+        return $this->productOptions;
     }
 
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)

@@ -235,6 +235,12 @@ sylius_product:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
                 repository: AppBundle\Entity\Sylius\ProductVariantRepository
+        product_option:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductOption
+        product_option_value:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductOptionValue
 
 sylius_locale:
     locale: "%locale%"

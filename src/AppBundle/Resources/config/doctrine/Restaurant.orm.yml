@@ -134,6 +134,34 @@ AppBundle\Entity\Restaurant:
         owners:
             targetEntity: AppBundle\Entity\ApiUser
             mappedBy: restaurants
+        products:
+            targetEntity: Sylius\Component\Product\Model\ProductInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_product
+                inverseJoinColumns:
+                    -
+                        name: product_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
+        productOptions:
+            targetEntity: Sylius\Component\Product\Model\ProductOptionInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_product_option
+                inverseJoinColumns:
+                    -
+                        name: option_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
     oneToOne:
         address:
             targetEntity: AppBundle\Entity\Address
