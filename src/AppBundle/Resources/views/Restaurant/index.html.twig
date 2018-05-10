@@ -37,12 +37,13 @@
   <div class="row">
 
     <div class="col-xs-12 col-sm-8">
-
-      {% for menuSection in restaurant.menu.sections %}
-        <h2>{{ menuSection.name }}</h2>
+      {% for child in restaurant.menuTaxon.children %}
+        <h2>{{ child.name }}</h2>
         <div class="list-group">
-          {% for menuItem in menuSection.items %}
-            {% if not menuItem.isAvailable %}
+          {% for product in child.products %}
+            {% set variant = product|sylius_resolve_variant %}
+            {# TODO Skip if no variant is defined #}
+            {% if not product.enabled %}
               <a class="list-group-item menu-item menu-item--unavailable">
                 <span class="menu-item-content">{{ menuItem.name }}</span>
                 {% if menuItem.description is not null %}
@@ -52,21 +53,21 @@
               </a>
             {% else %}
               <a  class="list-group-item menu-item"
-                  data-menu-item-id="{{ menuItem.id }}"
-                  data-menu-item-has-modifiers="{{ (menuItem.modifiers.count > 0) ? 'true' : 'false' }}"
-                  {% if menuItem.modifiers.count > 0 %}
-                  data-toggle="modal"
-                  data-target="#{{ menuItem.id }}-modifiersModal"
-                  href="#"
+                  {% if product.simple %}
+                  data-product-code="{{ product.code }}"
+                  href="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
                   {% else %}
-                  href="{{ path('restaurant_add_menu_item_to_cart', { restaurantId: restaurant.id, menuItemId: menuItem.id }) }}"
+                  data-toggle="modal"
+                  data-target="#{{ product.code }}-options"
+                  href="#"
                   {% endif %}>
-                <span class="menu-item-content">{{ menuItem.name }}
-                  {% if menuItem.description is not null %}
-                    <small class="menu-item-description">{{ menuItem.description }}</small>
+                <span class="menu-item-content">
+                  {{ product.name }}
+                  {% if product.description is not null %}
+                    <small class="menu-item-description">{{ product.description }}</small>
                   {%  endif %}
                 </span>
-                <span class="menu-item-price">{{ menuItem.price|number_format(2) }} €</span>
+                <span class="menu-item-price">{{ variant.price|price_format }} €</span>
               </a>
             {% endif %}
           {% endfor %}
@@ -87,35 +88,37 @@
 
 {# Modals for modifiers #}
 
-{% for menuSection in restaurant.menu.sections %}
-  {% for menuItem in menuSection.items %}
-    {% if menuItem.isAvailable and menuItem.modifiers.count > 0 %}
-    <div id="{{ menuItem.id }}-modifiersModal" class="modal modifier-modal fade">
+{% for child in restaurant.menuTaxon.children %}
+  {% for product in child.products %}
+    {% if product.enabled and not product.simple %}
+    <div id="{{ product.code }}-options" class="modal modifier-modal fade">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title">{{ menuItem.name }}</h4>
+            <h4 class="modal-title">{{ product.name }}</h4>
           </div>
           <div class="modal-body">
             <form
-              action="{{ path('restaurant_add_menu_item_to_cart', { restaurantId: restaurant.id, menuItemId: menuItem.id }) }}"
-              data-menu-item-modifier>
-              {% for modifier in menuItem.modifiers %}
-              <h4>{{ modifier.name }}
-                {% if modifier.calculusStrategy == 'ADD_MODIFIER_PRICE' %} - {{ modifier.price }}€{% endif %}
+              action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+              data-product-options>
+              {% for option in product.options %}
+              <h4>
+                {{ option.name }}
+                {% if option.strategy == 'option' %} - {{ option.price }}€{% endif %}
               </h4>
               <div class="list-group">
-                {% for choice in modifier.modifierChoices %}
+                {% for option_value in option.values %}
                   <div class="list-group-item menu-item modifier-item">
                     <div class="radio nomargin">
-                      <label for="{{ choice.id }}-choice">
+                      <label>
                         <input
-                          name="modifiers[{{ modifier.id }}][]"
-                          value="{{ choice.id }}" type="radio" id="{{ choice.id }}-choice">
-                        {{ choice.name }}{% if modifier.calculusStrategy == 'ADD_MENUITEM_PRICE' %} - {{ choice.price }}€{% endif %}
+                          name="options[{{ option.code }}]"
+                          value="{{ option_value.code }}" type="radio">
+                        {{ option_value.value }}
+                        {% if option.strategy == 'option_value' %} - {{ option_value.price }}€{% endif %}
                       </label>
                     </div>
                   </div>
@@ -164,19 +167,17 @@ new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   locale: $('html').attr('lang')
 })
 
-$('[data-menu-item-id]').on('click', function(e) {
+$('[data-product-code]').on('click', function(e) {
   e.preventDefault();
   var $target = $(e.currentTarget);
-  if (!$target.data('menuItemHasModifiers')) {
-    window.AppData.CartHelper.addMenuItem($target.attr('href'), 1);
-  }
+  window.AppData.CartHelper.addProduct($target.attr('href'), 1);
 })
 
-$('form[data-menu-item-modifier]').on('submit', function(e) {
+$('form[data-product-options]').on('submit', function(e) {
   e.preventDefault();
   var data = $(this).serializeArray();
   if (data.length > 0) {
-    window.AppData.CartHelper.addMenuItemWithModifiers($(this).attr('action'), data, 1);
+    window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
     $(this).closest('.modal').modal('hide');
   }
 })

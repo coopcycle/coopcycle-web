@@ -1,0 +1,22 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _product_option_values_entry_row %}
+  <div class="row">
+    <div class="col-sm-6">
+      {{ form_row(form.translations, { label: false }) }}
+    </div>
+    <div class="col-sm-6">
+      {{ form_row(form.price) }}
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block _product_option_values_entry_translations_entry_row %}
+  {{ form_widget(form) }}
+{% endblock %}
+
+{% block _product_option_values_widget %}
+  {{ form_widget(form) }}
+  <button type="button" class="btn btn-success" id="add-option-value">Add a value</button>
+{% endblock %}

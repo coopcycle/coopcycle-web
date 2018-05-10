@@ -198,11 +198,21 @@ restaurant.closingForm.dates.label: Cerrado de/hasta
 
 restaurant.list.manage: Gestionar
 restaurant.list.orders: Pedidos
+restaurant.list.products: Productos
+restaurant.list.product_options: Opciones
 restaurant.list.menu: Carta
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes.
 restaurant.list.createNewRestaurant: Crear restaurante
+
+restaurant.product_options.help: |
+  Las opciones hacen que los productos sean <strong>configurables</strong>
+  <br>
+  Permiten, por ejemplo, agregar suplementos o elegir los elementos de un menú (acompañamiento, bebida…)
+  <br>
+  Para cada opción, puede definir una lista de valores
+restaurant.product_options.list.values: Valores
 
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
@@ -406,6 +416,38 @@ form.menu_item_modifier.name.label: Nombre
 form.menu_item_modifier.price.label: Precio
 form.menu_item_modifier.calculusStrategy.label: Cálculo del precio
 
+form.menu_taxon.name.label: Nombre
+form.menu_taxon.add_child.label: Añadir una sección
+form.menu_taxon.child_name.placeholder: |
+  Ejemplo : platos, postres…
+
+form.menu_editor.products_panel.title: Productos
+form.menu_editor.save.label: Guardar cambios
+
+form.menu_editor.help: |
+  Use el editor a continuación para componer los elementos del menú
+  <br>
+  Arrastra y suelta los productos en las secciones de la izquierda
+  <br>
+  No olvides hacer clic en el botón « Guardar cambios » a continuación
+
+form.product.name.label: Nombre
+form.product.description.label: Descripción
+form.product.price.label: Precio
+form.product.taxCategory.label: Impuestos
+form.product.enabled.label: Activado
+
+form.product_option.name.label: Nombre
+form.product_option.strategy.label: Cálculo del precio
+form.product_option.price.label: Precio
+
+form.product_option_value.value.label: Valor
+form.product_option_value.price.label: Precio
+
+product_option.strategy.STRATEGY_FREE: Gratis
+product_option.strategy.STRATEGY_OPTION: Precio fijo sea cual sea la elección
+product_option.strategy.STRATEGY_OPTION_VALUE: Precio según la elección
+
 cart.modal.title: Atención
 cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres iniciar un pedido nuevo en éste restaurante?
 cart.modal.confirm: Confirmar
@@ -457,3 +499,5 @@ pagination.previous: Anterior
 pagination.next: Siguiente
 
 basics.save: Guardar
+basics.add: Añadir
+basics.edit: Modificar

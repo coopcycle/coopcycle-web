@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
@@ -52,45 +53,57 @@ class RestaurantController extends Controller
         return $address;
     }
 
-    private function resolveModifiers(MenuItem $menuItem, array $payload)
+    private function matchOptions($variant, array $optionValues)
     {
-        $modifiers = [];
-        foreach ($payload as $menuItemModifierId => $modifiersIds) {
-
-            $menuItemModifier = $menuItem->getModifiers()
-                ->filter(function ($menuItemModifier) use ($menuItemModifierId) {
-                    return $menuItemModifier->getId() == $menuItemModifierId;
-                })
-                ->first();
-
-            foreach ($modifiersIds as $modifierId) {
-                $modifier = $menuItemModifier->getModifierChoices()
-                    ->filter(function ($modifier) use ($modifierId) {
-                        return $modifier->getId() == $modifierId;
-                    })
-                    ->first();
-
-                $modifiers[] = $modifier;
+        foreach ($optionValues as $optionValue) {
+            if (!$variant->hasOptionValue($optionValue)) {
+                return false;
             }
         }
 
-        return $modifiers;
+        return true;
     }
 
-    private function addModifiersAdjustments(OrderItemInterface $cartItem, array $modifiers)
+    private function resolveProductVariant($product, array $optionValues)
+    {
+        foreach ($product->getVariants() as $variant) {
+            if (count($variant->getOptionValues()) !== count($optionValues)) {
+                continue;
+            }
+
+            if ($this->matchOptions($variant, $optionValues)) {
+                return $variant;
+            }
+        }
+    }
+
+    private function addOptionsAdjustments(OrderItemInterface $cartItem)
     {
         $adjustmentFactory = $this->get('sylius.factory.adjustment');
 
-        foreach ($modifiers as $modifier) {
+        $variant = $cartItem->getVariant();
 
-            $menuItemModifier = $modifier->getMenuItemModifier();
+        foreach ($variant->getOptionValues() as $optionValue) {
+
+            $option = $optionValue->getOption();
+
+            $amount = 0;
+            switch ($option->getStrategy()) {
+                case ProductOptionInterface::STRATEGY_OPTION:
+                    $amount = $option->getPrice();
+                    break;
+                case ProductOptionInterface::STRATEGY_OPTION_VALUE:
+                    $amount = $optionValue->getPrice();
+                    break;
+            }
 
             $adjustment = $adjustmentFactory->createWithData(
                 AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
-                $modifier->getName(),
-                (int) ($menuItemModifier->getModifierPrice($modifier) * 100),
-                $neutral = true
+                $optionValue->getValue(),
+                $amount,
+                $neutral = false
             );
+
             $cartItem->addAdjustment($adjustment);
         }
     }
@@ -306,32 +319,32 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{restaurantId}/cart/menu-item/{menuItemId}", name="restaurant_add_menu_item_to_cart", methods={"POST"})
+     * @Route("/restaurant/{id}/cart/product/{code}", name="restaurant_add_product_to_cart", methods={"POST"})
      */
-    public function addMenuItemToCartAction($restaurantId, $menuItemId, Request $request)
+    public function addProductToCartAction($id, $code, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($restaurantId);
+            ->getRepository(Restaurant::class)->find($id);
+
+        $product = $this->get('sylius.repository.product')
+            ->findOneByCode($code);
 
         $cart = $this->get('sylius.context.cart')->getCart();
 
-        $menuItem = $this->getDoctrine()
-            ->getRepository(MenuItem::class)->find($menuItemId);
-
-        if (!$menuItem->isAvailable()) {
+        if (!$product->isEnabled()) {
             $errors = [
                 'items' => [
-                    sprintf('Item %s is not available', $menuItem->getName())
+                    sprintf('Product %s is not enabled', $product->getCode())
                 ]
             ];
 
             return $this->jsonResponse($cart, $errors);
         }
 
-        if ($menuItem->getRestaurant() !== $cart->getRestaurant()) {
+        if (!$restaurant->hasProduct($product)) {
             $errors = [
                 'restaurant' => [
-                    sprintf('Unable to add %s', $menuItem->getName())
+                    sprintf('Unable to add product %s', $product->getCode())
                 ]
             ];
 
@@ -340,35 +353,33 @@ class RestaurantController extends Controller
 
         $quantity = $request->request->getInt('quantity', 1);
 
-        $productVariantRepository = $this->get('sylius.repository.product_variant');
-        $productVariantFactory = $this->get('sylius.factory.product_variant');
-        $orderItemFactory = $this->get('sylius.factory.order_item');
+        $cartItem = $this->get('sylius.factory.order_item')->createNew();
 
-        $cartItem = $orderItemFactory->createNew();
+        if ($product->isSimple()) {
+            $productVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
+        } else {
 
-        $modifiers = [];
-        // FIXME
-        // Here we should check if the product actually has options
-        // For example using Product::isSimple
-        if ($request->request->has('modifiers')) {
+            $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
+            $options = $request->request->get('options');
 
-            $modifiers = $this->resolveModifiers($menuItem, $request->request->get('modifiers'));
-            $productVariant = $productVariantRepository->findOneByMenuItemWithModifiers($menuItem, $modifiers);
-
-            if (!$productVariant) {
-                $productVariant = $productVariantFactory->createForMenuItemWithModifiers($menuItem, $modifiers);
-                $productVariantRepository->add($productVariant);
+            $optionValues = [];
+            foreach ($options as $optionCode => $optionValueCode) {
+                $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
+                $optionValues[] = $optionValue;
             }
 
-        } else {
-            $productVariant = $productVariantRepository->findOneByMenuItem($menuItem);
+            $productVariant = $this->resolveProductVariant($product, $optionValues);
+
+            if (!$productVariant) {
+                // TODO Handle variant not found
+            }
         }
 
         $cartItem->setVariant($productVariant);
         $cartItem->setUnitPrice($productVariant->getPrice());
 
-        if (!empty($modifiers)) {
-            $this->addModifiersAdjustments($cartItem, $modifiers);
+        if (!$product->isSimple()) {
+            $this->addOptionsAdjustments($cartItem);
         }
 
         $this->get('sylius.order_item_quantity_modifier')->modify($cartItem, $quantity);

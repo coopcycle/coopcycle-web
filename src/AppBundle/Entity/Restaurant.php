@@ -446,6 +446,16 @@ class Restaurant extends FoodEstablishment
         $this->hasMenu = $menu;
     }
 
+    public function hasMenuTaxon()
+    {
+        return null !== $this->getMenu();
+    }
+
+    public function getMenuTaxon()
+    {
+        return $this->taxons->first();
+    }
+
     /**
      * @return string
      */
@@ -515,6 +525,11 @@ class Restaurant extends FoodEstablishment
     public function getProducts()
     {
         return $this->products;
+    }
+
+    public function hasProduct(ProductInterface $product)
+    {
+        return $this->products->contains($product);
     }
 
     public function addProduct(ProductInterface $product)

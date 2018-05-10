@@ -1,0 +1,27 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}Menus{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  {% if menus|length > 0 %}
+  <table class="table">
+    <thead>
+      <th>Name</th>
+    </thead>
+    <tbody>
+      {% for menu in menus %}
+      <tr>
+        <td><a href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">{{ menu.name }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="alert alert-warning">No menus found</div>
+  {% endif %}
+
+{% endblock %}

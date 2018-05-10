@@ -1,0 +1,69 @@
+{% extends layout %}
+
+{% form_theme form '@App/Form/productOption.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li><a href="{{ path(product_options_route, { id: restaurant.id }) }}">{% trans %}restaurant.list.product_options{% endtrans %}</a></li>
+  <li>{{ product_option.name }}</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_row(form.name) }}
+  {{ form_row(form.strategy) }}
+  {{ form_row(form.price) }}
+  <hr>
+  {{ form_widget(form.values) }}
+  <hr>
+  {# {{ form_widget(form) }} #}
+  <button type="submit" class="btn btn-block btn-primary">Save</button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+if ($('#product_option_strategy').val() !== 'option') {
+  $('#product_option_price').closest('.form-group').hide();
+}
+
+if ($('#product_option_strategy').val() !== 'option_value') {
+  $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
+}
+
+$('#product_option_strategy').on('change', function(e) {
+  var value = $(this).val();
+  if (value === 'option') {
+    $('#product_option_price').closest('.form-group').show();
+  } else {
+    $('#product_option_price').closest('.form-group').hide();
+  }
+  if (value === 'option_value') {
+    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').show();
+  } else {
+    $('#product_option_values').find("input[name$='[price]']").closest('.form-group').hide();
+  }
+});
+
+$('#add-option-value').on('click', function(e) {
+
+  e.preventDefault();
+
+  var prototype = $('#product_option_values').data('prototype');
+  var index = $('#product_option_values').children().length;
+
+  var form = prototype.replace(/__name__/g, index);
+  var $form = $(form);
+
+  if ($('#product_option_strategy').val() !== 'option_value') {
+    $form.find("input[name$='[price]']").closest('.form-group').hide();
+  }
+
+  $('#product_option_values').append($form);
+
+});
+
+</script>
+{% endblock %}

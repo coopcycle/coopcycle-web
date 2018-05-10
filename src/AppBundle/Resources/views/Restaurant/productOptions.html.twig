@@ -1,0 +1,34 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.product_options{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {% trans %}restaurant.product_options.help{% endtrans %}
+</div>
+<table class="table">
+  <thead>
+    <th>{{ 'form.product_option.name.label'|trans }}</th>
+    <th>{{ 'form.product_option.strategy.label'|trans }}</th>
+    <th class="text-right">{{ 'restaurant.product_options.list.values'|trans }}</th>
+    <th></th>
+  </thead>
+  <tbody>
+    {% for option in options %}
+    <tr>
+      <td>{{ option.name }}</td>
+      <td>{{ option.strategy }}</td>
+      <td class="text-right">{{ option.values|length }}</td>
+      <td class="text-right">
+        <a href="{{ path(product_option_route, { restaurantId: restaurant.id, optionId: option.id }) }}"
+          class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

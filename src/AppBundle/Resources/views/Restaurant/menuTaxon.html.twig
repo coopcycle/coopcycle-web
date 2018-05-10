@@ -1,0 +1,105 @@
+{% extends layout %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme menu_editor_form '@App/Form/menuEditor.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}Menus{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  {% set menu = form.vars.value %}
+
+  {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    <div class="form-group row">
+      <div class="col-md-10">
+        {{ form_row(form.name) }}
+      </div>
+      <div class="col-md-2">
+        <label> </label>
+        <button id="menu_taxon_save" type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+      </div>
+    </div>
+
+    {% if menu.id is not null %}
+      <div class="form-group row">
+        <div class="col-md-10">
+          {{ form_widget(form.childName) }}
+        </div>
+        <div class="col-md-2">
+          {{ form_widget(form.addChild, { attr: { class: 'btn btn-block btn-success' } }) }}
+        </div>
+      </div>
+    {% endif %}
+
+  {{ form_end(form) }}
+
+  {% if menu.id is not null %}
+
+    {{ form_start(menu_editor_form) }}
+
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i> {% trans %}form.menu_editor.help{% endtrans %}
+    </div>
+
+    <div class="menuEditor">
+      <div class="menuEditor__left">
+        {% for child in menu_editor_form.children %}
+          <div class="menuEditor__panel">
+            <h4 class="menuEditor__panel__title">{{ child.vars.value.name }}</h4>
+            <div class="menuEditor__panel__body" data-draggable-target data-taxon-id="{{ child.vars.value.id }}">
+              {% for product in child.vars.value.products %}
+              <div class="menuEditor__product" data-product-id="{{ product.id }}">
+                {{ product.name }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="menuEditor__right">
+        <div class="menuEditor__panel menuEditor__productList">
+          <h4 class="menuEditor__panel__title">
+            {{ 'form.menu_editor.products_panel.title'|trans }}
+          </h4>
+          <div class="menuEditor__panel__body" data-draggable-source>
+            {% for product in menu_editor_form.vars.value.products %}
+              <div class="menuEditor__product" data-product-id="{{ product.id }}">
+                {{ product.name }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-lg btn-primary">
+      {{ 'form.menu_editor.save.label'|trans }}
+    </button>
+
+    {# Useful for debugging #}
+    {% set debug_menu_editor = false %}
+    <div class="{% if not debug_menu_editor %}hidden{% endif %}">
+    {{ form_widget(menu_editor_form.children, { label: false }) }}
+    </div>
+
+    {{ form_end(menu_editor_form) }}
+
+  {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#menu_taxon_save').on('click', function(e) {
+  $('#menu_taxon_childName').removeAttr('required')
+});
+</script>
+<script src="{{ asset('js/restaurant-menu-editor.js') }}"></script>
+{% endblock %}

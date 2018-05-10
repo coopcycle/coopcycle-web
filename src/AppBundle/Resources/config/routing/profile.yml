@@ -44,6 +44,10 @@ profile_restaurant:
             success: profile_restaurant
             restaurants: profile_restaurants
             menu: profile_restaurant_menu
+            menu_taxons: profile_restaurant_menu_taxons
+            menu_taxon: profile_restaurant_menu_taxon
+            products: profile_restaurant_products
+            product_options: profile_restaurant_product_options
             dashboard: profile_restaurant_dashboard
             planning: profile_restaurant_planning
     methods: [ GET, POST ]
@@ -136,6 +140,79 @@ profile_restaurant_menu:
             restaurant: profile_restaurant
     methods: [ GET, POST ]
 
+profile_restaurant_menu_taxons:
+    path: /profile/restaurants/{id}/menus
+    defaults:
+        _controller: AppBundle:Profile:restaurantMenuTaxons
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:menuTaxons.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            menu: profile_restaurant_menu_taxon
+    methods: [ GET ]
+
+profile_restaurant_menu_taxon:
+    path: /profile/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle:Profile:restaurantMenuTaxon
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            menu: profile_restaurant_menu_taxon
+            success: profile_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+profile_restaurant_new_menu_taxon:
+    path: /profile/restaurants/{id}/menus/new
+    defaults:
+        _controller: AppBundle:Profile:newRestaurantMenuTaxon
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            menu: profile_restaurant_menu_taxon
+            success: profile_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+profile_restaurant_products:
+    path: /profile/restaurants/{id}/products
+    defaults:
+        _controller: AppBundle:Profile:restaurantProducts
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:products.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            product: profile_restaurant_product
+            new_product: profile_restaurant_product_new
+    methods: [ GET ]
+
+profile_restaurant_product_new:
+    path: /profile/restaurants/{id}/products/new
+    defaults:
+        _controller: AppBundle:Profile:newRestaurantProduct
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:product.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            products: profile_restaurant_products
+
+profile_restaurant_product:
+    path: /profile/restaurants/{restaurantId}/products/{productId}
+    defaults:
+        _controller: AppBundle:Profile:restaurantProduct
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:product.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            products: profile_restaurant_products
+
 profile_restaurant_planning:
     path: /profile/restaurants/{id}/planning
     defaults:
@@ -145,6 +222,30 @@ profile_restaurant_planning:
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
+    methods: [ GET, POST ]
+
+profile_restaurant_product_options:
+    path: /profile/restaurants/{id}/product-options
+    defaults:
+        _controller: AppBundle:Profile:restaurantProductOptions
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:productOptions.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            product_option: profile_restaurant_product_option
+    methods: [ GET ]
+
+profile_restaurant_product_option:
+    path: /profile/restaurants/{restaurantId}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle:Profile:restaurantProductOption
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:productOption.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            product_options: profile_restaurant_product_options
     methods: [ GET, POST ]
 
 profile_deliveries_calculate_price:
