@@ -16,12 +16,12 @@ services:
 
 
     # Doctrine Extension listeners to handle behaviors
-    # gedmo.listener.tree:
-    #     class: Gedmo\Tree\TreeListener
-    #     tags:
-    #         - { name: doctrine.event_subscriber, connection: default }
-    #     calls:
-    #         - [ setAnnotationReader, [ "@annotation_reader" ] ]
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
     # gedmo.listener.translatable:
     #     class: Gedmo\Translatable\TranslatableListener
