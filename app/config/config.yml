@@ -231,6 +231,9 @@ sylius_order:
 
 sylius_product:
     resources:
+        product:
+            classes:
+                model: AppBundle\Entity\Sylius\Product
         product_variant:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
@@ -241,6 +244,13 @@ sylius_product:
         product_option_value:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOptionValue
+
+sylius_taxonomy:
+    resources:
+        taxon:
+            classes:
+                model: AppBundle\Entity\Sylius\Taxon
+                # interface: Sylius\Component\Taxonomy\Model\TaxonInterface
 
 sylius_locale:
     locale: "%locale%"

@@ -1,0 +1,3 @@
+AppBundle\Entity\Sylius\Product:
+    type: entity
+    table: sylius_product

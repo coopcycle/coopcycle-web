@@ -162,6 +162,20 @@ AppBundle\Entity\Restaurant:
                     -
                         name: restaurant_id
                         referencedColumnName: id
+        taxons:
+            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_taxon
+                inverseJoinColumns:
+                    -
+                        name: taxon_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
     oneToOne:
         address:
             targetEntity: AppBundle\Entity\Address

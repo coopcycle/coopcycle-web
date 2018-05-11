@@ -10,6 +10,8 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -174,6 +176,8 @@ class Restaurant extends FoodEstablishment
 
     private $productOptions;
 
+    private $taxons;
+
     /**
      * @var Contract
      * @Groups({"order_create"})
@@ -187,6 +191,7 @@ class Restaurant extends FoodEstablishment
         $this->owners = new ArrayCollection();
         $this->products = new ArrayCollection();
         $this->productOptions = new ArrayCollection();
+        $this->taxons = new ArrayCollection();
     }
 
     /**
@@ -512,9 +517,27 @@ class Restaurant extends FoodEstablishment
         return $this->products;
     }
 
+    public function addProduct(ProductInterface $product)
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
+    }
+
     public function getProductOptions()
     {
         return $this->productOptions;
+    }
+
+    public function getTaxons()
+    {
+        return $this->taxons;
+    }
+
+    public function addTaxon(TaxonInterface $taxon)
+    {
+        // TODO Check if this is a root taxon
+        $this->taxons->add($taxon);
     }
 
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
