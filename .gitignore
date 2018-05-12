@@ -14,6 +14,7 @@
 /var/sessions/*
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
+!var/sql
 /vendor/
 
 # Build with webpack
