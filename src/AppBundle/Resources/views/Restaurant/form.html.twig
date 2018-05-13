@@ -210,10 +210,24 @@
           <div class="alert alert-warning">
             {% trans %}restaurant.contract.onlyAdmin{% endtrans %}
           </div>
-          <p>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}: {{ restaurant.contract.minimumCartAmount }}€</p>
-          <p>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}: {{ restaurant.contract.customerAmount }}€</p>
-          <p>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}: {{ restaurant.contract.flatDeliveryPrice }}€</p>
-          <p>{% trans %}restaurant.contract.feeRate.label{% endtrans %}: {{ restaurant.contract.feeRate }}%</p>
+          <table class="table">
+            <tr>
+              <th>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.minimumCartAmount|price_format }}€</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.customerAmount|price_format }}€</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}€</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
+              <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
+            </tr>
+          </table>
         </div>
       {% else %}
         <div class="col-md-12">
