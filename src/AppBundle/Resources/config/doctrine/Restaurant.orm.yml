@@ -196,7 +196,7 @@ AppBundle\Entity\Restaurant:
             mappedBy: null
             inversedBy: restaurant
             joinColumns:
-                menu_id:
+                legacy_menu_id:
                     referencedColumnName: id
             orphanRemoval: false
         contract:
