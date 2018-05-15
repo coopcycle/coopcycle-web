@@ -40,14 +40,14 @@ adminDashboard.deliveries.address: Adresse
 adminDashboard.deliveries.delivery: Livraison
 adminDashboard.deliveries.originAddress: Adresse de départ
 adminDashboard.deliveries.deliveryAddress: Adresse de livraison
-adminDashboard.deliveries.save: Enregister
+adminDashboard.deliveries.save: Enregistrer
 admin.deliveries.to_be_confirmed.alert: Vous avez des livraisons à confirmer. Cliquez sur l'icône « Livraison » dans la colonne de droite.
 
 adminDashboard.menuCategories.title: Catégories du menu
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
-adminDashboard.menuCategories.save: Enregister
+adminDashboard.menuCategories.save: Enregistrer
 
 adminDashboard.stores.title: Magasins
 adminDashboard.stores.createNew: Créer un magasin
@@ -79,7 +79,7 @@ adminDashboard.task.form.notes.placeholder: Spécifiez les détails de fin de t�
 
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.edit: Modifier
-adminDashboard.users.save: Enregister
+adminDashboard.users.save: Enregistrer
 adminDashboard.users.searchRestaurant: Rechercher un restaurant…
 adminDashboard.users.searchStore: Rechercher un magasin…
 adminDashboard.users.roles: Rôles
@@ -100,7 +100,7 @@ adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tari
 adminDashboard.pricing.addRule: Ajouter une règle
 
 adminDashboard.tags.title: Tags
-adminDashboard.tags.save: Enregister
+adminDashboard.tags.save: Enregistrer
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Couleur
@@ -110,7 +110,7 @@ adminDashboard.taxation.button: Ajouter une taxe
 
 adminDashboard.zones.title: Zones
 adminDashboard.zones.cancel: Annuler
-adminDashboard.zones.save: Enregister
+adminDashboard.zones.save: Enregistrer
 adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
@@ -172,9 +172,9 @@ restaurant.form.enabled.tooltip: |
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant
 restaurant.form.accessPlanning: Accéder au planning
 restaurant.form.createRestaurant: Créer un restaurant
-restaurant.form.save: Enregister
+restaurant.form.save: Enregistrer
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
-restaurant.deliveryPerimeterExpression.help: Défini le périmètre de livraison accepté. Vous pouvez choisir un rayon (en km) ou une <a target="_blank" href="%zoneHelpUrl%">zone</a>.
+restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté. Vous pouvez choisir un rayon (en km) ou une <a target="_blank" href="%zoneHelpUrl%">zone</a>.
 restaurant.contract.title: Contrat
 restaurant.stripe_account.title: Compte Stripe
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
@@ -248,9 +248,9 @@ profile.task.dueDate: Échéance
 profile.task.address: Adresse
 profile.task.complete: Terminer
 profile.task.date: Date
-profile.edit.save: Enregister
+profile.edit.save: Enregistrer
 profile.addresses.newAddress: Nouvelle adresse
-profile.addresses.save: Enregister
+profile.addresses.save: Enregistrer
 profile.addresses.add: Ajouter
 profile.editProfile: Modifier le profil
 profile.payment.title: Paiement
@@ -498,7 +498,7 @@ roles.ROLE_RESTAURANT.help: |
 roles.ROLE_STORE.help: |
   Magasin : gérer les magasins qui lui sont assignés, créer des courses…
 
-stores.form.save: Enregister
+stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
@@ -518,7 +518,7 @@ index.banner: De bons plats livrés à domicile
 pagination.previous: Précédent
 pagination.next: Suivante
 
-basics.save: Enregister
+basics.save: Enregistrer
 basics.next: Suivant
 basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
