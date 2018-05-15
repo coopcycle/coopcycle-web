@@ -468,15 +468,23 @@ trait RestaurantTrait
             $restaurant->addTaxon($menuTaxon);
             $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+            return $this->redirectToRoute($routes['menu_taxon'], [
+                'restaurantId' => $restaurant->getId(),
+                'menuId' => $menuTaxon->getId()
+            ]);
         }
+
+        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
+        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
 
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
+            'menu_taxons_route' => $routes['menu_taxons'],
             'form' => $form->createView(),
+            'menu_editor_form' => $menuEditorForm->createView(),
         ]);
     }
 
@@ -558,9 +566,9 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            // 'products' => $products,
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
+            'menu_taxons_route' => $routes['menu_taxons'],
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
         ]);

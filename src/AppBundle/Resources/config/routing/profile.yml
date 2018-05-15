@@ -152,20 +152,6 @@ profile_restaurant_menu_taxons:
             menu: profile_restaurant_menu_taxon
     methods: [ GET ]
 
-profile_restaurant_menu_taxon:
-    path: /profile/restaurants/{restaurantId}/menus/{menuId}
-    defaults:
-        _controller: AppBundle:Profile:restaurantMenuTaxon
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:menuTaxon.html.twig
-        routes:
-            restaurants: profile_restaurants
-            restaurant: profile_restaurant
-            menu_taxon: profile_restaurant_menu_taxon
-            menu_taxons: profile_restaurant_menu_taxons
-            success: profile_restaurant_menu_taxons
-    methods: [ GET, POST ]
-
 profile_restaurant_new_menu_taxon:
     path: /profile/restaurants/{id}/menus/new
     defaults:
@@ -175,7 +161,21 @@ profile_restaurant_new_menu_taxon:
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
-            menu: profile_restaurant_menu_taxon
+            menu_taxons: profile_restaurant_menu_taxons
+            menu_taxon: profile_restaurant_menu_taxon
+            success: profile_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+profile_restaurant_menu_taxon:
+    path: /profile/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle:Profile:restaurantMenuTaxon
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            menu_taxons: profile_restaurant_menu_taxons
             success: profile_restaurant_menu_taxons
     methods: [ GET, POST ]
 

@@ -113,19 +113,6 @@ admin_restaurant_menu_taxons:
             menu: admin_restaurant_menu_taxon
     methods: [ GET ]
 
-admin_restaurant_menu_taxon:
-    path: /admin/restaurants/{restaurantId}/menus/{menuId}
-    defaults:
-        _controller: AppBundle:Admin:restaurantMenuTaxon
-        layout: AppBundle::admin.html.twig
-        template: AppBundle:Restaurant:menuTaxon.html.twig
-        routes:
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-            menu: admin_restaurant_menu_taxon
-            success: admin_restaurant_menu_taxons
-    methods: [ GET, POST ]
-
 admin_restaurant_new_menu_taxon:
     path: /admin/restaurants/{id}/menus/new
     defaults:
@@ -135,7 +122,21 @@ admin_restaurant_new_menu_taxon:
         routes:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
-            menu: admin_restaurant_menu_taxon
+            menu_taxons: admin_restaurant_menu_taxons
+            menu_taxon: admin_restaurant_menu_taxon
+            success: admin_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+admin_restaurant_menu_taxon:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle:Admin:restaurantMenuTaxon
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu_taxons: admin_restaurant_menu_taxons
             success: admin_restaurant_menu_taxons
     methods: [ GET, POST ]
 
