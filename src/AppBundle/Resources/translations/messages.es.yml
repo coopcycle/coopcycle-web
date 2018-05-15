@@ -381,6 +381,8 @@ form.settings.stripe_secret_key.help: |
 form.settings.stripe_connect_client_id.label: Stripe Connect identifier
 form.settings.stripe_connect_client_id.help: |
   Get the identifier on the <a href="https://dashboard.stripe.com/account/applications/settings">parameters page</a>
+form.settings.stripe_livemode.label: Usar Stripe en modo « live »
+
 form.settings.google_api_key.label: Clave API de google
 form.settings.google_api_key.help: |
   Crea una cuenta Google para obtener tu <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clave API</a>

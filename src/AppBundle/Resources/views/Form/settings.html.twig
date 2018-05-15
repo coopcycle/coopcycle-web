@@ -5,22 +5,22 @@
 <span class="help-block">{% trans %}form.settings.administrator_email.help{% endtrans %}</span>
 {% endblock %}
 
-{% block _settings_stripe_publishable_key_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.stripe_publishable_key.help{% endtrans %}</span>
-{% endblock %}
-
-{% block _settings_stripe_secret_key_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.stripe_secret_key.help{% endtrans %}</span>
-{% endblock %}
-
-{% block _settings_stripe_connect_client_id_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.stripe_connect_client_id.help{% endtrans %}</span>
+{% block password_widget %}
+{% if form.vars.name matches '/^stripe_/' %}
+  {% set disabled = is_demo %}
+  <div class="input-group">
+    <span class="input-group-addon">
+      {% if form.vars.name matches '/^stripe_live_/' %}
+        LIVE
+      {% else %}
+        TEST
+      {% endif %}
+    </span>
+    {{ block('form_widget') }}
+  </div>
+{% else %}
+  {{ parent() }}
+{% endif %}
 {% endblock %}
 
 {% block _settings_google_api_key_widget %}

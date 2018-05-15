@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -16,18 +17,25 @@ class SettingsManager
     private $settings = [
         'brand_name',
         'administrator_email',
-        'stripe_publishable_key',
-        'stripe_secret_key',
-        'stripe_connect_client_id',
+        'stripe_test_publishable_key',
+        'stripe_test_secret_key',
+        'stripe_test_connect_client_id',
+        'stripe_live_publishable_key',
+        'stripe_live_secret_key',
+        'stripe_live_connect_client_id',
+        'stripe_livemode',
         'google_api_key',
         'latlng',
         'default_tax_category',
     ];
 
     private $secretSettings = [
-        'stripe_publishable_key',
-        'stripe_secret_key',
-        'stripe_connect_client_id',
+        'stripe_test_publishable_key',
+        'stripe_test_secret_key',
+        'stripe_test_connect_client_id',
+        'stripe_live_publishable_key',
+        'stripe_live_secret_key',
+        'stripe_live_connect_client_id',
         'google_api_key',
     ];
 
@@ -51,9 +59,32 @@ class SettingsManager
 
     public function get($name)
     {
+        switch ($name) {
+            case 'stripe_publishable_key':
+                $name = $this->isStripeLivemode() ? 'stripe_live_publishable_key' : 'stripe_test_publishable_key';
+                break;
+            case 'stripe_secret_key':
+                $name = $this->isStripeLivemode() ? 'stripe_live_secret_key' : 'stripe_test_secret_key';
+                break;
+            case 'stripe_connect_client_id':
+                $name = $this->isStripeLivemode() ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
+                break;
+        }
+
         try {
             return $this->craueConfig->get($name);
         } catch (\RuntimeException $e) {}
+    }
+
+    private function isStripeLivemode()
+    {
+        $livemode = $this->get('stripe_livemode');
+
+        if (!$livemode) {
+            return false;
+        }
+
+        return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
     }
 
     public function set($name, $value)
@@ -96,5 +127,19 @@ class SettingsManager
         }
 
         return true;
+    }
+
+    public function asEntity()
+    {
+        $settings = new Settings();
+
+        foreach ($this->settings as $name) {
+            try {
+                $value = $this->craueConfig->get($name);
+                $settings->$name = $value;
+            } catch (\RuntimeException $e) {}
+        }
+
+        return $settings;
     }
 }

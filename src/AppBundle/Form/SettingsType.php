@@ -15,7 +15,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -37,38 +40,89 @@ class SettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('brand_name', TextType::class, [
+                'label' => 'form.settings.brand_name.label'
+            ])
+            ->add('administrator_email', EmailType::class, [
+                'label' => 'form.settings.administrator_email.label'
+            ])
+            ->add('stripe_test_publishable_key', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_publishable_key.label'
+            ])
+            ->add('stripe_test_secret_key', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_secret_key.label'
+            ])
+            ->add('stripe_test_connect_client_id', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_connect_client_id.label'
+            ])
+            ->add('stripe_live_publishable_key', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_publishable_key.label'
+            ])
+            ->add('stripe_live_secret_key', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_secret_key.label'
+            ])
+            ->add('stripe_live_connect_client_id', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.stripe_connect_client_id.label'
+            ])
+            ->add('stripe_livemode', ChoiceType::class, [
+                'choices'  => [
+                    'No' => 'no',
+                    'Yes' => 'yes',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'label' => 'form.settings.stripe_livemode.label'
+            ])
+            ->add('google_api_key', TextType::class, [
+                'label' => 'form.settings.google_api_key.label'
+            ])
+            ->add('latlng', TextType::class, [
+                'label' => 'form.settings.latlng.label'
+            ])
             ->add('default_tax_category', TaxCategoryChoiceType::class, [
                 'label' => 'form.settings.default_tax_category.label'
             ]);
 
-        foreach ($this->settingsManager->getSettings() as $name) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
-            if ($builder->has($name)) {
-                continue;
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            foreach ($data as $name => $value) {
+                if ($this->settingsManager->isSecret($name)) {
+
+                    $config = $form->get($name)->getConfig();
+                    $options = $config->getOptions();
+
+                    $options['empty_data'] = $value;
+                    $options['required'] = false;
+                    $options['attr'] = [
+                        'placeholder' => $this->createPlaceholder($value)
+                    ];
+
+                    $form->add($name, PasswordType::class, $options);
+                }
             }
 
-            $type = TextType::class;
-            $secret = $this->settingsManager->isSecret($name);
-            $options = [
-                'required' => true,
-                'label' => sprintf('form.settings.%s.label', $name)
-            ];
+            // Make sure there is an empty choice
+            if (!$data->default_tax_category) {
 
-            if ($secret) {
-                $type = PasswordType::class;
-            }
+                $defaultTaxCategory = $form->get('default_tax_category');
+                $options = $defaultTaxCategory->getConfig()->getOptions();
 
-            $value = $this->settingsManager->get($name);
-            if ($secret && $value) {
-                $options['empty_data'] = $value;
+                $options['placeholder'] = '';
                 $options['required'] = false;
-                $options['attr'] = [
-                    'placeholder' => $this->createPlaceholder($value)
-                ];
+
+                $form->add('default_tax_category', TaxCategoryChoiceType::class, $options);
             }
 
-            $builder->add($name, $type, $options);
-        }
+        });
 
         $builder->get('default_tax_category')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -82,49 +136,15 @@ class SettingsType extends AbstractType
                     break;
                 }
             }
+
         });
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
-
-            $form = $event->getForm();
-
-            $data = [];
-            foreach ($this->settingsManager->getSettings() as $name) {
-                $value = $this->settingsManager->get($name);
-                if ($value) {
-                    $data[$name] = $value;
-                }
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($builder) {
+            $data = $event->getData();
+            if (null !== $data->default_tax_category) {
+                $data->default_tax_category = $data->default_tax_category->getCode();
             }
-
             $event->setData($data);
-
-            // Make sure there is an empty choice
-            if (!isset($data['default_tax_category']) || !$data['default_tax_category']) {
-
-                $defaultTaxCategory = $form->get('default_tax_category');
-                $options = $defaultTaxCategory->getConfig()->getOptions();
-
-                $options['placeholder'] = '';
-                $options['required'] = false;
-
-                $form->add('default_tax_category', TaxCategoryChoiceType::class, $options);
-            }
         });
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $defaultTaxCategory = null;
-        foreach ($view as $name => $field) {
-            if ($name === 'default_tax_category') {
-                $defaultTaxCategory = $field;
-                $view->offsetUnset($name);
-            }
-        }
-
-        // Put default_tax_category at the end
-        $view->children[] = $defaultTaxCategory;
-
-        parent::finishView($view, $form, $options);
     }
 }

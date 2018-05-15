@@ -836,16 +836,14 @@ class AdminController extends Controller
     {
         $settingsManager = $this->get('coopcycle.settings_manager');
 
-        $form = $this->createForm(SettingsType::class);
+        $settings = $settingsManager->asEntity();
+
+        $form = $this->createForm(SettingsType::class, $settings);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = $form->getData();
-
-            if ($data['default_tax_category'] instanceof TaxCategory) {
-                $data['default_tax_category'] = $data['default_tax_category']->getCode();
-            }
 
             foreach ($data as $name => $value) {
                 $settingsManager->set($name, $value);
