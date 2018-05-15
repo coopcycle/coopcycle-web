@@ -45,6 +45,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 
+    const COLORS_LIST = ['#213ab2', '#b2213a', '#5221b2', '#93c63f', '#b22182', '#3ab221', '#b25221', '#2182b2', '#3ab221', '#9c21b2', '#c63f4f', '#b2217f', '#82b221', '#5421b2', '#3f93c6', '#21b252', '#c6733f'];
+
     /**
      * @Groups({"delivery"})
      */
@@ -224,5 +226,13 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $delivery->getDropoff()->setDoneBefore($dropoffDoneBefore);
 
         return $delivery;
+    }
+
+    public function getColor()
+    {
+        if(!is_null($this->getId())) {
+            return $this::COLORS_LIST[$this->getId() % count($this::COLORS_LIST)];
+        }
+
     }
 }

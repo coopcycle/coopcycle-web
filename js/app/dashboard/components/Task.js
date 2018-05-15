@@ -60,11 +60,6 @@ class Task extends React.Component {
     const classNames = ['task__icon']
     classNames.push(assigned ? 'task__icon--left' : 'task__icon--right')
 
-    if (task.hasOwnProperty('link')) {
-      return (
-        <span className={ classNames.join(' ') }><i className="fa fa-exchange"></i></span>
-      )
-    }
   }
 
   renderTags() {
@@ -111,7 +106,7 @@ class Task extends React.Component {
 
     return (
       <span
-        style={{display: 'block'}}
+        style={{display: 'block', borderLeft: '6px solid ' + task.deliveryColor}}
         key={task['@id']}
         className={classNames.join(' ')}
         data-task-id={task['@id']}
