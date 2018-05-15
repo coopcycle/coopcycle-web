@@ -84,7 +84,8 @@ admin_restaurants:
         template: AppBundle:Admin:restaurants.html.twig
         routes:
             dashboard: admin_restaurant_dashboard
-            menu: admin_restaurant_menu
+            menu_taxon: admin_restaurant_menu_taxon
+            menu_taxons: admin_restaurant_menu_taxons
             restaurant: admin_restaurant
     methods: [ GET ]
 

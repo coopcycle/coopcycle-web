@@ -24,7 +24,11 @@
               </li>
               {% endif %}
               <li>
-                <a href="{{ path(menu_route, { id: restaurant.id }) }}">
+                {% if restaurant.menuTaxon is not null %}
+                <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}">
+                {% else %}
+                <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">
+                {% endif %}
                   {% trans %}restaurant.list.menu{% endtrans %}
                 </a>
               </li>

@@ -45,7 +45,8 @@ trait RestaurantTrait
             'pages' => $pages,
             'page' => $page,
             'dashboard_route' => $routes['dashboard'],
-            'menu_route' => $routes['menu'],
+            'menu_taxon_route' => $routes['menu_taxon'],
+            'menu_taxons_route' => $routes['menu_taxons'],
             'restaurant_route' => $routes['restaurant'],
         ]);
     }
