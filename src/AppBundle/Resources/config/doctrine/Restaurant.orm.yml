@@ -134,6 +134,48 @@ AppBundle\Entity\Restaurant:
         owners:
             targetEntity: AppBundle\Entity\ApiUser
             mappedBy: restaurants
+        products:
+            targetEntity: Sylius\Component\Product\Model\ProductInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_product
+                inverseJoinColumns:
+                    -
+                        name: product_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
+        productOptions:
+            targetEntity: Sylius\Component\Product\Model\ProductOptionInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_product_option
+                inverseJoinColumns:
+                    -
+                        name: option_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
+        taxons:
+            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
+            cascade:
+                - persist
+            joinTable:
+                name: restaurant_taxon
+                inverseJoinColumns:
+                    -
+                        name: taxon_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
     oneToOne:
         address:
             targetEntity: AppBundle\Entity\Address
@@ -154,7 +196,7 @@ AppBundle\Entity\Restaurant:
             mappedBy: null
             inversedBy: restaurant
             joinColumns:
-                menu_id:
+                legacy_menu_id:
                     referencedColumnName: id
             orphanRemoval: false
         contract:

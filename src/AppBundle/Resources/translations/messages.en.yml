@@ -198,11 +198,21 @@ restaurant.closingForm.dates.label: Closing from/to
 
 restaurant.list.manage: Manage
 restaurant.list.orders: Orders
+restaurant.list.products: Products
+restaurant.list.product_options: Options
 restaurant.list.menu: Menu
 restaurant.list.planning: Planning
 restaurant.list.settings: Settings
 restaurant.list.norestaurant: There are no restaurants yet.
 restaurant.list.createNewRestaurant: Create a new restaurant
+
+restaurant.product_options.help: |
+  Options all products to be <strong>configurable</strong>
+  <br>
+  They allow for example to add supplements, or to choose the elements of a menu (accompaniment, drink…)
+  <br>
+  For each option, you can define a list of values
+restaurant.product_options.list.values: Values
 
 restaurant.form.uploadImage: Upload an image
 
@@ -404,6 +414,38 @@ form.menu_item_modifier.name.label: Name
 form.menu_item_modifier.price.label: Price
 form.menu_item_modifier.calculusStrategy.label: Price calculation
 
+form.menu_taxon.name.label: Name
+form.menu_taxon.add_child.label: Add section
+form.menu_taxon.child_name.placeholder: |
+  Example: main courses, desserts…
+
+form.menu_editor.products_panel.title: Products
+form.menu_editor.save.label: Save Changes
+
+form.menu_editor.help: |
+  Use the editor below to compose the menu items
+  <br>
+  Drag and drop the products into the sections on the left
+  <br>
+  Do not forget to click on the « Save Changes » button below
+
+form.product.name.label: Name
+form.product.description.label: Description
+form.product.price.label: Price
+form.product.taxCategory.label: Taxes
+form.product.enabled.label: Enabled
+
+form.product_option.name.label: Name
+form.product_option.strategy.label: Price calculation
+form.product_option.price.label: Price
+
+form.product_option_value.value.label: Value
+form.product_option_value.price.label: Price
+
+product_option.strategy.STRATEGY_FREE: Free
+product_option.strategy.STRATEGY_OPTION: Fixed price whatever the choice
+product_option.strategy.STRATEGY_OPTION_VALUE: Price according to the choice
+
 cart.modal.title: Warning
 cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?
 cart.modal.confirm: Add
@@ -456,3 +498,5 @@ pagination.next: Next
 
 basics.save: Save
 basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
+basics.add: Add
+basics.edit: Edit

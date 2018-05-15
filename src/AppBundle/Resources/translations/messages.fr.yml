@@ -193,11 +193,21 @@ restaurant.closingForm.dates.label: Fermeture de/à
 
 restaurant.list.manage: Gérer
 restaurant.list.orders: Commandes
+restaurant.list.products: Produits
+restaurant.list.product_options: Options
 restaurant.list.menu: Menu
 restaurant.list.planning: Planning
 restaurant.list.settings: Paramètres
 restaurant.list.norestaurant: Pas de restaurant pour le moment
 restaurant.list.createNewRestaurant: Créer un restaurant
+
+restaurant.product_options.help: |
+  Les options permettent de rendre les produits <strong>configurables</strong>
+  <br>
+  Ils permettent par exemple d'ajouter des suppléments, ou de choisir les éléments d'un menu (accompagnement, boisson…)
+  <br>
+  Pour chaque option, vous pouvez définir une liste de valeurs
+restaurant.product_options.list.values: Valeurs
 
 restaurant.form.uploadImage: Uploader une image
 
@@ -429,6 +439,38 @@ form.menu_item_modifier.name.label: Nom du groupe
 form.menu_item_modifier.price.label: Prix
 form.menu_item_modifier.calculusStrategy.label: Coût du supplément
 
+form.menu_taxon.name.label: Nom
+form.menu_taxon.add_child.label: Ajouter une section
+form.menu_taxon.child_name.placeholder: |
+  Exemple : plats, desserts…
+
+form.menu_editor.products_panel.title: Produits
+form.menu_editor.save.label: Enregistrer les modifications
+
+form.menu_editor.help: |
+  Utilisez l'éditeur ci-dessous pour composer les élements du menu
+  <br>
+  Glissez-déposez les produits dans les sections sur la gauche
+  <br>
+  N'oubliez pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous
+
+form.product.name.label: Nom
+form.product.description.label: Description
+form.product.price.label: Prix
+form.product.taxCategory.label: Taxes
+form.product.enabled.label: Activé
+
+form.product_option.name.label: Nom
+form.product_option.strategy.label: Calcul du prix
+form.product_option.price.label: Prix
+
+form.product_option_value.value.label: Valeur
+form.product_option_value.price.label: Prix
+
+product_option.strategy.STRATEGY_FREE: Gratuit
+product_option.strategy.STRATEGY_OPTION: Prix fixe quelque soit le choix
+product_option.strategy.STRATEGY_OPTION_VALUE: Prix en fonction du choix
+
 cart.modal.title: Attention
 cart.modal.content: Vous avez commencé votre commande dans un autre restaurant. Souhaitez vous commencer une nouvelle commande dans ce restaurant ?
 cart.modal.confirm: Commencer une nouvelle commande
@@ -480,6 +522,8 @@ basics.save: Enregister
 basics.next: Suivant
 basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
+basics.edit: Modifier
+basics.add: Ajouter
 
 adminDashboard.embed.title: Intégration
 

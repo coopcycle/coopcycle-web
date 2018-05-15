@@ -144,7 +144,7 @@ class CartHelper {
       .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 
-  addMenuItem(url, quantity) {
+  addProduct(url, quantity) {
     this.cartComponentRef.current.setLoading(true)
     $.post(url, {
       quantity: quantity
@@ -153,7 +153,7 @@ class CartHelper {
     .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 
-  addMenuItemWithModifiers(url, data, quantity) {
+  addProductWithOptions(url, data, quantity) {
     this.cartComponentRef.current.setLoading(true)
     data.push({
       name: 'quantity',

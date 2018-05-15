@@ -68,6 +68,10 @@ admin_restaurant:
             success: admin_restaurant
             restaurants: admin_restaurants
             menu: admin_restaurant_menu
+            menu_taxons: admin_restaurant_menu_taxons
+            menu_taxon: admin_restaurant_menu_taxon
+            products: admin_restaurant_products
+            product_options: admin_restaurant_product_options
             dashboard: admin_restaurant_dashboard
             planning: admin_restaurant_planning
     methods: [ GET, POST ]
@@ -96,6 +100,79 @@ admin_restaurant_menu:
             restaurant: admin_restaurant
     methods: [ GET, POST ]
 
+admin_restaurant_menu_taxons:
+    path: /admin/restaurants/{id}/menus
+    defaults:
+        _controller: AppBundle:Admin:restaurantMenuTaxons
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:menuTaxons.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu: admin_restaurant_menu_taxon
+    methods: [ GET ]
+
+admin_restaurant_menu_taxon:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}
+    defaults:
+        _controller: AppBundle:Admin:restaurantMenuTaxon
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu: admin_restaurant_menu_taxon
+            success: admin_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+admin_restaurant_new_menu_taxon:
+    path: /admin/restaurants/{id}/menus/new
+    defaults:
+        _controller: AppBundle:Admin:newRestaurantMenuTaxon
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:menuTaxon.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            menu: admin_restaurant_menu_taxon
+            success: admin_restaurant_menu_taxons
+    methods: [ GET, POST ]
+
+admin_restaurant_products:
+    path: /admin/restaurants/{id}/products
+    defaults:
+        _controller: AppBundle:Admin:restaurantProducts
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:products.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product: admin_restaurant_product
+            new_product: admin_restaurant_product_new
+    methods: [ GET ]
+
+admin_restaurant_product_new:
+    path: /admin/restaurants/{id}/products/new
+    defaults:
+        _controller: AppBundle:Admin:newRestaurantProduct
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:product.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            products: admin_restaurant_products
+
+admin_restaurant_product:
+    path: /admin/restaurants/{restaurantId}/products/{productId}
+    defaults:
+        _controller: AppBundle:Admin:restaurantProduct
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:product.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            products: admin_restaurant_products
+
 admin_restaurant_planning:
     path: /admin/restaurants/{id}/planning
     defaults:
@@ -106,6 +183,30 @@ admin_restaurant_planning:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             success: admin_restaurant_planning
+    methods: [ GET, POST ]
+
+admin_restaurant_product_options:
+    path: /admin/restaurants/{id}/product-options
+    defaults:
+        _controller: AppBundle:Admin:restaurantProductOptions
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:productOptions.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_option: admin_restaurant_product_option
+    methods: [ GET ]
+
+admin_restaurant_product_option:
+    path: /admin/restaurants/{restaurantId}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle:Admin:restaurantProductOption
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:productOption.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_options: admin_restaurant_product_options
     methods: [ GET, POST ]
 
 admin_restaurant_dashboard:

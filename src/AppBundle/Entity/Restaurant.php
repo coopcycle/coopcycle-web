@@ -10,6 +10,8 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -170,6 +172,12 @@ class Restaurant extends FoodEstablishment
 
     private $owners;
 
+    private $products;
+
+    private $productOptions;
+
+    private $taxons;
+
     /**
      * @var Contract
      * @Groups({"order_create"})
@@ -181,14 +189,9 @@ class Restaurant extends FoodEstablishment
         $this->servesCuisine = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
         $this->owners = new ArrayCollection();
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
+        $this->products = new ArrayCollection();
+        $this->productOptions = new ArrayCollection();
+        $this->taxons = new ArrayCollection();
     }
 
     /**
@@ -443,6 +446,16 @@ class Restaurant extends FoodEstablishment
         $this->hasMenu = $menu;
     }
 
+    public function hasMenuTaxon()
+    {
+        return null !== $this->getMenu();
+    }
+
+    public function getMenuTaxon()
+    {
+        return $this->taxons->first();
+    }
+
     /**
      * @return string
      */
@@ -507,6 +520,39 @@ class Restaurant extends FoodEstablishment
     public function getOwners()
     {
         return $this->owners;
+    }
+
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    public function hasProduct(ProductInterface $product)
+    {
+        return $this->products->contains($product);
+    }
+
+    public function addProduct(ProductInterface $product)
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
+    }
+
+    public function getProductOptions()
+    {
+        return $this->productOptions;
+    }
+
+    public function getTaxons()
+    {
+        return $this->taxons;
+    }
+
+    public function addTaxon(TaxonInterface $taxon)
+    {
+        // TODO Check if this is a root taxon
+        $this->taxons->add($taxon);
     }
 
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)

@@ -1,0 +1,11 @@
+AppBundle\Entity\Sylius\ProductOption:
+    type: entity
+    table: sylius_product_option
+    fields:
+        strategy:
+            type: string
+            options:
+                default: 'free'
+        price:
+            type: integer
+            nullable: true

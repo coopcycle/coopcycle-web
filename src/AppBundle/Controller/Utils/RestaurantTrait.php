@@ -5,13 +5,20 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Menu;
+use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\RestaurantMenuType;
+use AppBundle\Form\MenuEditorType;
+use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
+use AppBundle\Form\ProductOptionType;
+use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
@@ -144,7 +151,11 @@ trait RestaurantTrait
             'formErrors' => $formErrors,
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
+            'products_route' => $routes['products'],
+            'product_options_route' => $routes['product_options'],
             'menu_route' => $routes['menu'],
+            'menu_taxons_route' => $routes['menu_taxons'],
+            'menu_taxon_route' => $routes['menu_taxon'],
             'dashboard_route' => $routes['dashboard'],
             'planning_route' => $routes['planning'],
             'restaurants_route' => $routes['restaurants'],
@@ -409,8 +420,153 @@ trait RestaurantTrait
         ]);
     }
 
-    public function restaurantPlanningAction($id, Request $request) {
+    public function restaurantMenuTaxonsAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
 
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(ClosingRuleType::class);
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'menus' => $restaurant->getTaxons(),
+            'restaurant' => $restaurant,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'menu_route' => $routes['menu'],
+        ]);
+    }
+
+    public function newRestaurantMenuTaxonAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        $menuTaxon = $this->get('sylius.factory.taxon')->createNew();
+
+        $uuid = Uuid::uuid1()->toString();
+
+        $menuTaxon->setCode($uuid);
+        $menuTaxon->setSlug($uuid);
+
+        $form = $this->createForm(MenuTaxonType::class, $menuTaxon);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $menuTaxon = $form->getData();
+
+            $this->get('sylius.repository.taxon')->add($menuTaxon);
+
+            $restaurant->addTaxon($menuTaxon);
+            $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $menuTaxon = $this->get('sylius.repository.taxon')
+            ->find($menuId);
+
+        $form = $this->createForm(MenuTaxonType::class, $menuTaxon);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $menuTaxon = $form->getData();
+
+            if ($form->getClickedButton() && 'addChild' === $form->getClickedButton()->getName()) {
+
+                $childName = $form->get('childName')->getData();
+
+                $uuid = Uuid::uuid1()->toString();
+
+                $childTaxon = $this->get('sylius.factory.taxon')->createNew();
+                $childTaxon->setCode($uuid);
+                $childTaxon->setSlug($uuid);
+                $childTaxon->setName($childName);
+
+                $menuTaxon->addChild($childTaxon);
+                $this->get('sylius.manager.taxon')->flush();
+
+                return $this->redirect($request->headers->get('referer'));
+            }
+
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+        }
+
+        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
+        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
+
+        $originalTaxonProducts = new \SplObjectStorage();
+        foreach ($menuEditor->getChildren() as $child) {
+            $taxonProducts = new ArrayCollection();
+            foreach ($child->getTaxonProducts() as $taxonProduct) {
+                $taxonProducts->add($taxonProduct);
+            }
+
+            $originalTaxonProducts[$child] = $taxonProducts;
+        }
+
+        $menuEditorForm->handleRequest($request);
+        if ($menuEditorForm->isSubmitted() && $menuEditorForm->isValid()) {
+
+            $menuEditor = $menuEditorForm->getData();
+
+            foreach ($menuEditor->getChildren() as $child) {
+                foreach ($child->getTaxonProducts() as $taxonProduct) {
+
+                    $taxonProduct->setTaxon($child);
+
+                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
+                        if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
+                            $child->getTaxonProducts()->removeElement($originalTaxonProduct);
+                            $this->getDoctrine()->getManagerForClass(ProductTaxon::class)->remove($originalTaxonProduct);
+                        }
+                    }
+                }
+            }
+
+            $this->get('sylius.manager.taxon')->flush();
+
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            // 'products' => $products,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'form' => $form->createView(),
+            'menu_editor_form' => $menuEditorForm->createView(),
+        ]);
+    }
+
+    public function restaurantPlanningAction($id, Request $request)
+    {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
             ->find($id);
@@ -444,6 +600,161 @@ trait RestaurantTrait
             'restaurant_route' => $routes['restaurant'],
             'routes' => $routes,
             'form' => $form->createView()
+        ]);
+    }
+
+    public function restaurantProductsAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'products' => $restaurant->getProducts(),
+            'restaurant' => $restaurant,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'product_route' => $routes['product'],
+            'new_product_route' => $routes['new_product'],
+        ]);
+    }
+
+    public function restaurantProductAction($restaurantId, $productId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $product = $this->get('sylius.repository.product')
+            ->find($productId);
+
+        // FIXME
+        // Configure mapping to avoid having to call this
+        $product->setRestaurant($restaurant);
+
+        $form = $this->createForm(ProductType::class, $product);
+
+        $routes = $request->attributes->get('routes');
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $product = $form->getData();
+
+            $this->get('sylius.manager.product')->flush();
+
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'product' => $product,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'products_route' => $routes['products'],
+            'form' => $form->createView()
+        ]);
+    }
+
+    public function newRestaurantProductAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $product = $this->get('sylius.factory.product')
+            ->createNew();
+
+        $product->setEnabled(false);
+
+        // FIXME
+        // Configure mapping to avoid having to call this
+        $product->setRestaurant($restaurant);
+
+        $form = $this->createForm(ProductType::class, $product);
+
+        $routes = $request->attributes->get('routes');
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $product = $form->getData();
+
+            $this->get('sylius.repository.product')->add($product);
+
+            return $this->redirectToRoute($routes['products'], ['id' => $id]);
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'product' => $product,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'products_route' => $routes['products'],
+            'form' => $form->createView()
+        ]);
+    }
+
+    public function restaurantProductOptionsAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'options' => $restaurant->getProductOptions(),
+            'restaurant' => $restaurant,
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'product_option_route' => $routes['product_option'],
+        ]);
+    }
+
+    public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $productOption = $this->get('sylius.repository.product_option')
+            ->find($optionId);
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(ProductOptionType::class, $productOption);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $productOption = $form->getData();
+
+            foreach ($productOption->getValues() as $optionValue) {
+                if (null === $optionValue->getCode()) {
+                    $optionValue->setCode(Uuid::uuid4()->toString());
+                }
+            }
+
+            $this->get('sylius.manager.product_option')->flush();
+
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'product_option' => $productOption,
+            'form' => $form->createView(),
+            'restaurants_route' => $routes['restaurants'],
+            'restaurant_route' => $routes['restaurant'],
+            'product_options_route' => $routes['product_options'],
         ]);
     }
 }
