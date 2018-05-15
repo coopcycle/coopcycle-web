@@ -6,36 +6,41 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Entity\Sylius\ProductVariantRepository;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
-    private $iriConverter;
     private $orderFactory;
-    private $productVariantRepository;
+    private $productRepository;
+    private $productOptionValueRepository;
+    private $variantResolver;
     private $orderItemFactory;
     private $orderItemQuantityModifier;
     private $orderModifier;
 
     public function __construct(
         ItemNormalizer $normalizer,
-        IriConverterInterface $iriConverter,
         OrderFactory $orderFactory,
-        ProductVariantRepository $productVariantRepository,
+        ProductRepositoryInterface $productRepository,
+        RepositoryInterface $productOptionValueRepository,
+        ProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderModifierInterface $orderModifier)
     {
         $this->normalizer = $normalizer;
-        $this->iriConverter = $iriConverter;
         $this->orderFactory = $orderFactory;
-        $this->productVariantRepository = $productVariantRepository;
+        $this->productRepository = $productRepository;
+        $this->productOptionValueRepository = $productOptionValueRepository;
+        $this->variantResolver = $variantResolver;
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
@@ -59,14 +64,48 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Order;
     }
 
+    private function matchOptions($variant, array $optionValues)
+    {
+        foreach ($optionValues as $optionValue) {
+            if (!$variant->hasOptionValue($optionValue)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function resolveProductVariant($product, array $optionValues)
+    {
+        foreach ($product->getVariants() as $variant) {
+            if (count($variant->getOptionValues()) !== count($optionValues)) {
+                continue;
+            }
+
+            if ($this->matchOptions($variant, $optionValues)) {
+                return $variant;
+            }
+        }
+    }
+
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
 
         $orderItems = array_map(function ($item) {
 
-            $menuItem = $this->iriConverter->getItemFromIri($item['menuItem']);
-            $productVariant = $this->productVariantRepository->findOneByMenuItem($menuItem);
+            $product = $this->productRepository->findOneByCode($item['product']);
+
+            if (isset($item['options'])) {
+                $optionValues = [];
+                foreach ($item['options'] as $optionValueCode) {
+                    $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
+                    $optionValues[] = $optionValue;
+                }
+                $productVariant = $this->resolveProductVariant($product, $optionValues);
+            } else {
+                $productVariant = $this->variantResolver->getVariant($product);
+            }
 
             $orderItem = $this->orderItemFactory->createNew();
             $orderItem->setVariant($productVariant);

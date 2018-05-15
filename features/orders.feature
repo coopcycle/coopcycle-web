@@ -3,7 +3,12 @@ Feature: Orders
   Scenario: Create order
     Given the database is empty
     And the current time is "2017-09-02 11:00:00"
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
@@ -23,10 +28,13 @@ Feature: Orders
         "shippingAddress": "/api/addresses/4",
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
-          "menuItem": "/api/menu_items/1",
-          "quantity": 1
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
         }, {
-          "menuItem": "/api/menu_items/2",
+          "product": "HAMBURGER",
           "quantity": 2
         }]
       }
@@ -91,6 +99,7 @@ Feature: Orders
   Scenario: Refuse order when restaurant is closed
     Given the database is empty
     And the current time is "2017-09-02 12:00:00"
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -108,10 +117,13 @@ Feature: Orders
         "shippingAddress": "/api/addresses/4",
         "shippedAt": "2017-09-03 12:00:00",
         "items": [{
-          "menuItem": "/api/menu_items/1",
-          "quantity": 1
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
         }, {
-          "menuItem": "/api/menu_items/2",
+          "product": "HAMBURGER",
           "quantity": 2
         }]
       }
@@ -137,6 +149,7 @@ Feature: Orders
   Scenario: Delivery exceeds max distance
     Given the database is empty
     And the current time is "2017-09-02 11:00:00"
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -154,10 +167,13 @@ Feature: Orders
         "shippingAddress": "/api/addresses/4",
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
-          "menuItem": "/api/menu_items/1",
-          "quantity": 1
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
         }, {
-          "menuItem": "/api/menu_items/2",
+          "product": "HAMBURGER",
           "quantity": 2
         }]
       }
@@ -231,6 +247,7 @@ Feature: Orders
   Scenario: the delivery is in the past
     Given the database is empty
     And the current time is "2017-09-03 12:00:00"
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -248,10 +265,13 @@ Feature: Orders
         "shippingAddress": "/api/addresses/4",
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
-          "menuItem": "/api/menu_items/1",
-          "quantity": 1
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
         }, {
-          "menuItem": "/api/menu_items/2",
+          "product": "HAMBURGER",
           "quantity": 2
         }]
       }
@@ -277,6 +297,7 @@ Feature: Orders
   Scenario: Amount is not sufficient
     Given the database is empty
     And the current time is "2017-09-02 11:00:00"
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
@@ -297,7 +318,7 @@ Feature: Orders
         "shippingAddress": "/api/addresses/4",
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
-          "menuItem": "/api/menu_items/1",
+          "product": "HAMBURGER",
           "quantity": 1
         }]
       }

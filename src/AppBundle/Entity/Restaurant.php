@@ -35,7 +35,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={"method"="GET"}
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "restaurant_menu"={"route_name"="api_restaurant_menu"},
  *   }
  * )
  * @Vich\Uploadable
@@ -151,9 +152,6 @@ class Restaurant extends FoodEstablishment
 
     /**
      * @var string The menu of the restaurant.
-     *
-     * @ApiProperty(iri="https://schema.org/Menu")
-     * @Groups({"restaurant"})
      */
     private $hasMenu;
 
@@ -176,6 +174,9 @@ class Restaurant extends FoodEstablishment
 
     private $productOptions;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     private $taxons;
 
     /**

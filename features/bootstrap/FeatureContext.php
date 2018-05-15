@@ -18,6 +18,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Behatch\HttpCall\HttpCallResultPool;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Carbon\Carbon;
 
@@ -448,5 +449,60 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $settingsManager->set($name, $value);
         $settingsManager->flush();
+    }
+
+    /**
+     * @Given the restaurant with id :id has products:
+     */
+    public function theRestaurantWithIdHasProducts($id, TableNode $table)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $productCodes = array_map(function ($row) {
+            return $row['code'];
+        }, $table->getColumnsHash());
+
+        foreach ($productCodes as $productCode) {
+            $product = $this->getContainer()->get('sylius.repository.product')->findOneByCode($productCode);
+            $restaurant->addProduct($product);
+        }
+
+        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
+    }
+
+    /**
+     * @Given the restaurant with id :id has menu:
+     */
+    public function theRestaurantWithIdHasMenu($id, TableNode $table)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $menu = $this->getContainer()->get('sylius.factory.taxon')->createNew();
+        $menu->setCode(Uuid::uuid4()->toString());
+        $menu->setSlug(Uuid::uuid4()->toString());
+        $menu->setName('Menu');
+
+        $children = array_map(function ($row) {
+
+            $section = $this->getContainer()->get('sylius.factory.taxon')->createNew();
+            $section->setCode(Uuid::uuid4()->toString());
+            $section->setSlug(Uuid::uuid4()->toString());
+            $section->setName($row['section']);
+
+            $product = $this->getContainer()->get('sylius.repository.product')->findOneByCode($row['product']);
+
+            $section->addProduct($product);
+
+            return $section;
+
+        }, $table->getColumnsHash());
+
+        foreach ($children as $child) {
+            $menu->addChild($child);
+        }
+
+        $restaurant->addTaxon($menu);
+
+        $this->doctrine->getManagerForClass(Restaurant::class)->flush();
     }
 }
