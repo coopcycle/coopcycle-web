@@ -39,14 +39,13 @@
           {% if restaurant.menuTaxon is not null %}
           <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}"
             class="btn btn-default navbar-btn">
-            <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.menu{% endtrans %}
-          </a>
-          {% else %}
-          <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}"
-            class="btn btn-default navbar-btn">
-            <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.menu{% endtrans %}
+            <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.activeMenu{% endtrans %}
           </a>
           {% endif %}
+          <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}"
+            class="btn btn-default navbar-btn">
+            <i class="fa fa-list"></i>  {% trans %}restaurant.list.menus{% endtrans %}
+          </a>
 
           <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}" class="btn btn-default navbar-btn">
             <i class="fa fa-cube"></i>  {% trans %}restaurant.list.orders{% endtrans %}

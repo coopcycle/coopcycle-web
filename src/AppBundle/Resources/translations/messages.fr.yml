@@ -186,6 +186,9 @@ restaurant.contract.feeRate.label: Pourcentage de commission
 restaurant.contract.feeRate.help: Ce pourcentage sera retenu par la plateforme sur le total des produits
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
+restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
+restaurant.menus.activate: Activer
+restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais affiché sur la page du restaurant.
 
 restaurant.closingForm.title: Ajouter une fermeture temporaire
 restaurant.closingForm.reason.label: Motif
@@ -195,7 +198,8 @@ restaurant.list.manage: Gérer
 restaurant.list.orders: Commandes
 restaurant.list.products: Produits
 restaurant.list.product_options: Options
-restaurant.list.menu: Menu
+restaurant.list.menus: Menus
+restaurant.list.activeMenu: Menu activé
 restaurant.list.planning: Planning
 restaurant.list.settings: Paramètres
 restaurant.list.norestaurant: Pas de restaurant pour le moment

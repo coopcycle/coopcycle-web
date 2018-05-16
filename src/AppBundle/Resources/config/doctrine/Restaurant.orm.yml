@@ -214,6 +214,12 @@ AppBundle\Entity\Restaurant:
             joinColumns:
                 stripe_account_id:
                     referencedColumnName: id
+        activeMenuTaxon:
+            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
+            joinColumns:
+                active_menu_taxon_id:
+                    referencedColumnName: id
+                    nullable: true
     oneToMany:
         closingRules:
             targetEntity: AppBundle\Entity\ClosingRule

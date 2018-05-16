@@ -438,6 +438,33 @@ trait RestaurantTrait
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'menu_route' => $routes['menu'],
+            'new_menu_route' => $routes['new_menu'],
+            'menu_activate_route' => $routes['menu_activate'],
+        ]);
+    }
+
+    public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $menuTaxon = $this->get('sylius.repository.taxon')
+            ->find($menuId);
+
+        $restaurant->setMenuTaxon($menuTaxon);
+
+        $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->get('translator')->trans('restaurant.menus.activated', ['%menu_name%' => $menuTaxon->getName()])
+        );
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['menu_taxons'], [
+            'id' => $restaurant->getId(),
         ]);
     }
 

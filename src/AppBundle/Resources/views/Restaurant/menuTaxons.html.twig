@@ -7,21 +7,55 @@
 {% endblock %}
 
 {% block content %}
+  {% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+      {{ message|raw }}
+    </div>
+  {% endfor %}
+  <p class="text-right">
+    <a class="btn btn-success" href="{{ path(new_menu_route, { id: restaurant.id }) }}">
+      <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+    </a>
+  </p>
   {% if menus|length > 0 %}
   <table class="table">
     <thead>
+      <th></th>
       <th>Name</th>
+      <th></th>
+      <th></th>
     </thead>
     <tbody>
       {% for menu in menus %}
-      <tr>
-        <td><a href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">{{ menu.name }}</a></td>
+      <tr {% if restaurant.menuTaxon == menu %}class="active"{% endif %}>
+        <td width="5%">
+          {% if restaurant.menuTaxon == menu %}
+            <i class="fa fa-check"></i>
+          {% endif %}
+        </td>
+        <td>
+          {{ menu.name }}
+        </td>
+        <td class="text-right" width="10%">
+          {% if restaurant.menuTaxon != menu %}
+            <form method="post" action="{{ path(menu_activate_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">
+              <button type="submit" class="btn btn-xs btn-success">
+                <i class="fa fa-check"></i> {{ 'restaurant.menus.activate'|trans }}
+              </button>
+            </form>
+          {% endif %}
+        </td>
+        <td class="text-right" width="10%">
+          <a class="btn btn-xs btn-default" href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">
+            <i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-    <div class="alert alert-warning">No menus found</div>
+    <div class="alert alert-warning">{% trans %}restaurant.menus.noMenus{% endtrans %}</div>
   {% endif %}
 
 {% endblock %}

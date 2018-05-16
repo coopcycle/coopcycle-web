@@ -502,6 +502,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         }
 
         $restaurant->addTaxon($menu);
+        $restaurant->setMenuTaxon($menu);
 
         $this->doctrine->getManagerForClass(Restaurant::class)->flush();
     }

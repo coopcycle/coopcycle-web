@@ -191,6 +191,9 @@ restaurant.contract.feeRate.label: Fee rate
 restaurant.contract.feeRate.help: This percentage will be retained by the platform on the total of the products
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+restaurant.menus.noMenus: You have not created any menu for the moment.
+restaurant.menus.activate: Activate
+restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now be displayed on the restaurant page
 
 restaurant.closingForm.title: Add a temporary closure
 restaurant.closingForm.reason.label: Reason
@@ -200,7 +203,8 @@ restaurant.list.manage: Manage
 restaurant.list.orders: Orders
 restaurant.list.products: Products
 restaurant.list.product_options: Options
-restaurant.list.menu: Menu
+restaurant.list.menus: Menus
+restaurant.list.activeMenu: Active menu
 restaurant.list.planning: Planning
 restaurant.list.settings: Settings
 restaurant.list.norestaurant: There are no restaurants yet.
