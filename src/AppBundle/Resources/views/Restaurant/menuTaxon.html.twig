@@ -62,7 +62,19 @@
       <div class="menuEditor__left">
         {% for child in menu_editor_form.children %}
           <div class="menuEditor__panel">
-            <h4 class="menuEditor__panel__title">{{ child.vars.value.name }}</h4>
+            <h4 class="menuEditor__panel__title">
+              {{ child.vars.value.name }}
+              {% set delete_section_params = {
+                restaurantId: restaurant.id,
+                menuId: menu.id,
+                sectionId: child.vars.value.id
+              } %}
+              <a class="pull-right"
+                href="{{ path(delete_section_route, delete_section_params) }}"
+                data-delete-taxon-id="{{ child.vars.value.id }}">
+                <i class="fa fa-close"></i>
+              </a>
+            </h4>
             <div class="menuEditor__panel__body" data-draggable-target data-taxon-id="{{ child.vars.value.id }}">
               {% for product in child.vars.value.products %}
               <div class="menuEditor__product" data-product-id="{{ product.id }}">
@@ -105,6 +117,8 @@
 
     {{ form_end(menu_editor_form) }}
 
+    <form id="delete_section" method="post" action=""></form>
+
   {% endif %}
 
 {% endblock %}
@@ -114,6 +128,11 @@
 $('#menu_taxon_save').on('click', function(e) {
   $('#menu_taxon_childName').removeAttr('required')
 });
+$('[data-delete-taxon-id]').on('click', function(e) {
+  e.preventDefault();
+  $('#delete_section').attr('action', $(this).attr('href'));
+  $('#delete_section').submit();
+})
 setTimeout(function() {
   $('#menu_editor_messages .alert').fadeOut();
 }, 1000);

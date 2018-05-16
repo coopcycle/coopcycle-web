@@ -468,6 +468,28 @@ trait RestaurantTrait
         ]);
     }
 
+
+    public function deleteRestaurantMenuTaxonChildAction($restaurantId, $menuId, $sectionId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $menuTaxon = $this->get('sylius.repository.taxon')->find($menuId);
+        $toRemove = $this->get('sylius.repository.taxon')->find($sectionId);
+
+        $menuTaxon->removeChild($toRemove);
+
+        $this->get('sylius.manager.taxon')->flush();
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['menu_taxon'], [
+            'restaurantId' => $restaurant->getId(),
+            'menuId' => $menuTaxon->getId()
+        ]);
+    }
+
     public function newRestaurantMenuTaxonAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
@@ -607,6 +629,7 @@ trait RestaurantTrait
             'restaurant_route' => $routes['restaurant'],
             'menu_taxons_route' => $routes['menu_taxons'],
             'products_route' => $routes['products'],
+            'delete_section_route' => $routes['delete_section'],
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
         ]);

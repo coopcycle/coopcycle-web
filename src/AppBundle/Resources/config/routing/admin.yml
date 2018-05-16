@@ -140,6 +140,7 @@ admin_restaurant_menu_taxon:
             restaurant: admin_restaurant
             menu_taxons: admin_restaurant_menu_taxons
             products: admin_restaurant_products
+            delete_section: admin_delete_restaurant_menu_taxon_child
             success: admin_restaurant_menu_taxons
     methods: [ GET, POST ]
 
@@ -150,6 +151,15 @@ admin_restaurant_menu_taxon_activate:
         layout: AppBundle::admin.html.twig
         routes:
             menu_taxons: admin_restaurant_menu_taxons
+    methods: [ POST ]
+
+admin_delete_restaurant_menu_taxon_child:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle:Admin:deleteRestaurantMenuTaxonChild
+        layout: AppBundle::admin.html.twig
+        routes:
+            menu_taxon: admin_restaurant_menu_taxon
     methods: [ POST ]
 
 admin_restaurant_products:

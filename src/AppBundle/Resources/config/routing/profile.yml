@@ -179,6 +179,8 @@ profile_restaurant_menu_taxon:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
             menu_taxons: profile_restaurant_menu_taxons
+            products: profile_restaurant_products
+            delete_section: profile_delete_restaurant_menu_taxon_child
             success: profile_restaurant_menu_taxons
     methods: [ GET, POST ]
 
@@ -189,6 +191,15 @@ profile_restaurant_menu_taxon_activate:
         layout: AppBundle::profile.html.twig
         routes:
             menu_taxons: profile_restaurant_menu_taxons
+    methods: [ POST ]
+
+profile_delete_restaurant_menu_taxon_child:
+    path: /profile/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle:Profile:deleteRestaurantMenuTaxonChild
+        layout: AppBundle::profile.html.twig
+        routes:
+            menu_taxon: profile_restaurant_menu_taxon
     methods: [ POST ]
 
 profile_restaurant_products:
