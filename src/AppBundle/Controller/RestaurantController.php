@@ -77,37 +77,6 @@ class RestaurantController extends Controller
         }
     }
 
-    private function addOptionsAdjustments(OrderItemInterface $cartItem)
-    {
-        $adjustmentFactory = $this->get('sylius.factory.adjustment');
-
-        $variant = $cartItem->getVariant();
-
-        foreach ($variant->getOptionValues() as $optionValue) {
-
-            $option = $optionValue->getOption();
-
-            $amount = 0;
-            switch ($option->getStrategy()) {
-                case ProductOptionInterface::STRATEGY_OPTION:
-                    $amount = $option->getPrice();
-                    break;
-                case ProductOptionInterface::STRATEGY_OPTION_VALUE:
-                    $amount = $optionValue->getPrice();
-                    break;
-            }
-
-            $adjustment = $adjustmentFactory->createWithData(
-                AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
-                $optionValue->getValue(),
-                $amount,
-                $neutral = false
-            );
-
-            $cartItem->addAdjustment($adjustment);
-        }
-    }
-
     private function jsonResponse(OrderInterface $cart, array $errors)
     {
         $serializerContext = [
@@ -377,10 +346,6 @@ class RestaurantController extends Controller
 
         $cartItem->setVariant($productVariant);
         $cartItem->setUnitPrice($productVariant->getPrice());
-
-        if (!$product->isSimple()) {
-            $this->addOptionsAdjustments($cartItem);
-        }
 
         $this->get('sylius.order_item_quantity_modifier')->modify($cartItem, $quantity);
 

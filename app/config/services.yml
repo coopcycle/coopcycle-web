@@ -33,6 +33,13 @@ services:
     tags:
       - { name: sylius.order_processor, priority: 64 }
 
+  sylius.order_processing.order_options_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - { name: sylius.order_processor, priority: 48 }
+
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
     arguments:
