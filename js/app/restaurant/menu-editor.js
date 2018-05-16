@@ -7,6 +7,15 @@ containers.push(source)
 
 const childrenContainer = document.querySelector('#menu_editor_children')
 
+function resolveProductInput(taxonId, productId) {
+  const formContainer = childrenContainer
+    .querySelector(`[data-taxon-id="${taxonId}"]`)
+    .querySelector('[data-prototype]')
+  return $(formContainer)
+    .find("[name$='[product]']")
+    .filter((index, el) => $(el).val() === productId)
+}
+
 function reorderProducts(taxonId) {
 
   const drakeContainer = document
@@ -17,7 +26,6 @@ function reorderProducts(taxonId) {
     .querySelector('[data-prototype]')
 
   const productPositions = [].slice.call(drakeContainer.children).map((el, index) => {
-    console.log(el.getAttribute('data-product-id'), index)
     return {
       product: el.getAttribute('data-product-id'),
       position: (index + 1)
@@ -25,16 +33,13 @@ function reorderProducts(taxonId) {
   })
 
   productPositions.forEach(productPosition => {
-
-    const productInput = $(formContainer)
-      // .find("[name$='[product]']")
-      .find(`[value="${productPosition.product}"]`)
-
-    $(productInput)
-      .closest('div')
-      .find("[name$='[position]']")
-      .val(productPosition.position)
-
+    const productInput = resolveProductInput(taxonId, productPosition.product)
+    if (productInput) {
+      $(productInput)
+        .closest('div')
+        .find("[name$='[position]']")
+        .val(productPosition.position)
+    }
   })
 
 }
@@ -43,12 +48,10 @@ function removeProduct(taxonId, productId) {
   const formContainer = childrenContainer
     .querySelector(`[data-taxon-id="${taxonId}"]`)
     .querySelector('[data-prototype]')
-
-  const productInput = $(formContainer)
-    // .find("[name$='[product]']")
-    .find(`[value="${productId}"]`)
-
-  $(productInput).closest('div').remove()
+  const productInput = resolveProductInput(taxonId, productId)
+  if (productInput) {
+    $(productInput).closest('div').remove()
+  }
 }
 
 const drake = dragula(containers)
