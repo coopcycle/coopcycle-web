@@ -38,6 +38,7 @@
 
     <div class="col-xs-12 col-sm-8">
       {% for child in restaurant.menuTaxon.children %}
+        {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
         <div class="list-group">
           {% for product in child.products %}
@@ -72,6 +73,7 @@
             {% endif %}
           {% endfor %}
         </div>
+        {% endif %}
       {% endfor %}
 
     </div>
