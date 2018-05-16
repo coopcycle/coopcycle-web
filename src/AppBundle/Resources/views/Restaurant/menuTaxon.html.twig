@@ -13,6 +13,14 @@
 
 {% block content %}
 
+  <div id="menu_editor_messages">
+  {% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+      {{ message }}
+    </div>
+  {% endfor %}
+  </div>
+
   {% set menu = form.vars.value %}
 
   {{ form_start(form) }}
@@ -81,6 +89,10 @@
       </div>
     </div>
 
+    <p class="help-block">
+      {% trans with { '%products_url%': path(products_route, { id: restaurant.id }) } %}form.menu_editor.products.help{% endtrans %}
+    </p>
+
     <button type="submit" class="btn btn-block btn-lg btn-primary">
       {{ 'form.menu_editor.save.label'|trans }}
     </button>
@@ -102,6 +114,9 @@
 $('#menu_taxon_save').on('click', function(e) {
   $('#menu_taxon_childName').removeAttr('required')
 });
+setTimeout(function() {
+  $('#menu_editor_messages .alert').fadeOut();
+}, 1000);
 </script>
 <script src="{{ asset('js/restaurant-menu-editor.js') }}"></script>
 {% endblock %}

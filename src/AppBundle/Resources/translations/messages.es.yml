@@ -435,7 +435,12 @@ form.menu_editor.help: |
   <br>
   Arrastra y suelta los productos en las secciones de la izquierda
   <br>
+  Si desea retirar un producto del menú, deposítelo en la sección "Productos" a la derecha
+  <br>
   No olvides hacer clic en el botón « Guardar cambios » a continuación
+
+form.menu_editor.products.help: |
+  Para añadir productos en la lista de la derecha, primero tiene que modificar el <a href="%products_url%">catálogo</a>
 
 form.product.name.label: Nombre
 form.product.description.label: Descripción

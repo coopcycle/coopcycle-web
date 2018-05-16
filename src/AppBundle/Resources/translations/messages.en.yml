@@ -432,7 +432,12 @@ form.menu_editor.help: |
   <br>
   Drag and drop the products into the sections on the left
   <br>
+  If you want to remove a product from the menu, drop it in the « Products » section on the right
+  <br>
   Do not forget to click on the « Save Changes » button below
+
+form.menu_editor.products.help: |
+  To add products to the list on the right, add them to the <a href="%products_url%">catalog</a> first
 
 form.product.name.label: Name
 form.product.description.label: Description

@@ -165,6 +165,7 @@ profile_restaurant_new_menu_taxon:
             restaurant: profile_restaurant
             menu_taxons: profile_restaurant_menu_taxons
             menu_taxon: profile_restaurant_menu_taxon
+            products: profile_restaurant_products
             success: profile_restaurant_menu_taxons
     methods: [ GET, POST ]
 

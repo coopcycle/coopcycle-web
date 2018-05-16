@@ -455,9 +455,14 @@ form.menu_editor.save.label: Enregistrer les modifications
 form.menu_editor.help: |
   Utilisez l'éditeur ci-dessous pour composer les élements du menu
   <br>
-  Glissez-déposez les produits dans les sections sur la gauche
+  Glissez-déposez les produits dans les sections sur la gauche pour les rendre disponibles à la vente
+  <br>
+  Si vous souhaitez retirer un produit de la vente, déposez-le dans la section « Produits » à droite
   <br>
   N'oubliez pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous
+
+form.menu_editor.products.help: |
+  Pour ajouter des produits dans la liste de droite, ajoutez-les d'abord au <a href="%products_url%">catalogue</a>
 
 form.product.name.label: Nom
 form.product.description.label: Description

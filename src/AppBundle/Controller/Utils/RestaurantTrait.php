@@ -545,6 +545,11 @@ trait RestaurantTrait
                 $menuTaxon->addChild($childTaxon);
                 $this->get('sylius.manager.taxon')->flush();
 
+                $this->addFlash(
+                    'notice',
+                    $this->get('translator')->trans('global.changesSaved')
+                );
+
                 return $this->redirect($request->headers->get('referer'));
             }
 
@@ -585,6 +590,11 @@ trait RestaurantTrait
 
             $this->get('sylius.manager.taxon')->flush();
 
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
             return $this->redirect($request->headers->get('referer'));
         }
 
@@ -596,6 +606,7 @@ trait RestaurantTrait
             'restaurants_route' => $routes['restaurants'],
             'restaurant_route' => $routes['restaurant'],
             'menu_taxons_route' => $routes['menu_taxons'],
+            'products_route' => $routes['products'],
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
         ]);

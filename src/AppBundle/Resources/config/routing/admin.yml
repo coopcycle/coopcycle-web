@@ -139,6 +139,7 @@ admin_restaurant_menu_taxon:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             menu_taxons: admin_restaurant_menu_taxons
+            products: admin_restaurant_products
             success: admin_restaurant_menu_taxons
     methods: [ GET, POST ]
 
