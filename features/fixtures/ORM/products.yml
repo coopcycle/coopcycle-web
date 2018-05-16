@@ -1,0 +1,83 @@
+Sylius\Component\Taxation\Model\TaxCategory:
+  tva_conso_immediate:
+    code: tva_conso_immediate
+    name: "TVA consommation immédiate"
+  tva_livraison:
+    code: tva_livraison
+    name: "TVA livraison"
+
+Sylius\Component\Taxation\Model\TaxRate:
+  tva_10:
+    name: "TVA 10%"
+    code: tva_10
+    category: "@tva_conso_immediate"
+    amount: 0.10
+    includedInPrice: true
+    calculator: float
+  tva_20:
+    name: "TVA 20%"
+    code: tva_20
+    category: "@tva_livraison"
+    amount: 0.20
+    includedInPrice: true
+    calculator: float
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  pizza_topping_pepperoni:
+    code: PIZZA_TOPPING_PEPPERONI
+    currentLocale: fr
+    value: Pepperoni
+  pizza_topping_extra_cheese:
+    code: PIZZA_TOPPING_EXTRA_CHEESE
+    currentLocale: fr
+    value: Extra cheese
+
+AppBundle\Entity\Sylius\ProductOption:
+  pizza_topping:
+    code: PIZZA_TOPPING
+    strategy: free
+    currentLocale: fr
+    name: Pizza topping
+    values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+
+AppBundle\Entity\Sylius\ProductVariant:
+  pizza_pepperoni:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Pizza Pepperoni
+    code: PIZZA_PEPPERONI
+    price: 900
+    optionValues: [ "@pizza_topping_pepperoni" ]
+  pizza_extra_cheese:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Pizza Extra Cheese
+    code: PIZZA_EXTRA_CHEESE
+    price: 900
+    optionValues: [ "@pizza_topping_extra_cheese" ]
+  hamburger_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Hamburger
+    code: HAMBURGER_DEFAULT
+    price: 900
+
+AppBundle\Entity\Sylius\Product:
+  pizza:
+    code: PIZZA
+    currentLocale: fr
+    name: Pizza
+    slug: pizza
+    enabled: true
+    options: [ "@pizza_topping" ]
+    variants: [ "@pizza_pepperoni", "@pizza_extra_cheese" ]
+  hamburger:
+    code: HAMBURGER
+    currentLocale: fr
+    name: Hamburger
+    slug: hamburger
+    enabled: true
+    variants: [ "@hamburger_default" ]
+  salad:
+    code: SALAD
+    enabled: true

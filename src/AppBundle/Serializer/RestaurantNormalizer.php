@@ -20,6 +20,13 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
 
+        if (isset($data['taxons'])) {
+            // FIXME Return active menu instead of the first one
+            $taxon = current($data['taxons']);
+            $data['hasMenu'] = $taxon;
+            unset($data['taxons']);
+        }
+
         $data['availabilities'] = $object->getAvailabilities();
         $data['minimumCartAmount'] = $object->getMinimumCartAmount();
         $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();

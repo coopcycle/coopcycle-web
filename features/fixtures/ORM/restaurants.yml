@@ -1,27 +1,3 @@
-Sylius\Component\Taxation\Model\TaxCategory:
-  tva_conso_immediate:
-    code: tva_conso_immediate
-    name: "TVA consommation immédiate"
-  tva_livraison:
-    code: tva_livraison
-    name: "TVA livraison"
-
-Sylius\Component\Taxation\Model\TaxRate:
-  tva_10:
-    name: "TVA 10%"
-    code: tva_10
-    category: "@tva_conso_immediate"
-    amount: 0.10
-    includedInPrice: true
-    calculator: float
-  tva_20:
-    name: "TVA 20%"
-    code: tva_20
-    category: "@tva_livraison"
-    amount: 0.20
-    includedInPrice: true
-    calculator: float
-
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
     __construct: [ "48.864577", "2.333338" ]
@@ -29,36 +5,6 @@ AppBundle\Entity\Base\GeoCoordinates:
     __construct: [ "48.846656", "2.369052" ]
   geo_3:
     __construct: [ "48.878658", "2.341055" ]
-
-AppBundle\Entity\Menu\MenuItem:
-  menu_item_{1..9}:
-    name: <name()>
-    price: <numberBetween(5, 10)>.99
-    tax_category: "@tva_conso_immediate"
-
-AppBundle\Entity\Menu\MenuSection:
-  menu_section_1:
-    name: "Appetizers"
-    items: [ "@menu_item_1", "@menu_item_2" ]
-  menu_section_2:
-    name: "Dishes"
-    items: [ "@menu_item_3", "@menu_item_4" ]
-  menu_section_3:
-    name: "Appetizers"
-    items: [ "@menu_item_5", "@menu_item_6" ]
-  menu_section_4:
-    name: "Dishes"
-    items: [ "@menu_item_7", "@menu_item_8" ]
-
-AppBundle\Entity\Menu:
-  menu_1:
-    name: Menu
-    sections: [ "@menu_section_1", "@menu_section_2" ]
-  menu_2:
-    name: Menu
-    sections: [ "@menu_section_3", "@menu_section_4" ]
-  menu_3:
-    name: Menu
 
 AppBundle\Entity\Address:
   address_1:
@@ -77,42 +23,39 @@ AppBundle\Entity\Address:
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
 
-AppBundle\Entity\Restaurant:
-  restaurant_1:
-    name: 'Nodaiwa'
-    address: "@address_1"
-    hasMenu: "@menu_1"
-    orderingDelayMinutes: 0
-    openingHours: ['Mo-Sa 11:30-14:30']
-    enabled: true
-  restaurant_2:
-    name: 'Café Barjot'
-    address: "@address_2"
-    hasMenu: "@menu_2"
-    openingHours: ['Mo-Sa 11:30-14:30']
-    orderingDelayMinutes: 0
-    enabled: true
-  restaurant_3:
-    name: 'La Cantina Clandestina'
-    orderingDelayMinutes: 0
-    address: "@address_3"
-    hasMenu: "@menu_3"
-    openingHours: ['Mo-Sa 11:30-14:30']
-    enabled: true
-
 AppBundle\Entity\Contract:
   contract_1:
-    restaurant: "@restaurant_1"
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
   contract_2:
-    restaurant: "@restaurant_2"
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
   contract_3:
-    restaurant: "@restaurant_3"
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
     feeRate: 0.00
+
+AppBundle\Entity\Restaurant:
+  restaurant_1:
+    name: 'Nodaiwa'
+    address: "@address_1"
+    orderingDelayMinutes: 0
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_1"
+  restaurant_2:
+    name: 'Café Barjot'
+    address: "@address_2"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    orderingDelayMinutes: 0
+    enabled: true
+    contract: "@contract_2"
+  restaurant_3:
+    name: 'La Cantina Clandestina'
+    orderingDelayMinutes: 0
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_3"

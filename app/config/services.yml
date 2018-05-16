@@ -259,9 +259,10 @@ services:
     class: AppBundle\Serializer\JsonLd\OrderNormalizer
     arguments:
       - "@api_platform.jsonld.normalizer.item"
-      - "@api_platform.iri_converter"
       - "@coopcycle.sylius.factory.order"
-      - "@sylius.repository.product_variant"
+      - "@sylius.repository.product"
+      - "@sylius.repository.product_option_value"
+      - "@sylius.product_variant_resolver.default"
       - "@sylius.factory.order_item"
       - "@sylius.order_item_quantity_modifier"
       - "@sylius.order_modifier"
@@ -279,6 +280,13 @@ services:
       - "@serializer.normalizer.object"
       - "@router"
       - "@translator"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.restaurant_menu.jsonld:
+    class: AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@sylius.locale_provider"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   'AppBundle\Form\DeliveryType':

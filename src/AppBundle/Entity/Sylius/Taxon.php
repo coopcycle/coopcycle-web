@@ -2,11 +2,15 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
 
+/**
+ * @ApiResource
+ */
 class Taxon extends BaseTaxon
 {
     private $taxonProducts;
@@ -26,6 +30,15 @@ class Taxon extends BaseTaxon
     public function setTaxonProducts(Collection $taxonProducts)
     {
         $this->taxonProducts = $taxonProducts;
+    }
+
+    public function addProduct(ProductInterface $product)
+    {
+        $productTaxon = new ProductTaxon();
+        $productTaxon->setTaxon($this);
+        $productTaxon->setProduct($product);
+
+        $this->taxonProducts->add($productTaxon);
     }
 
     public function getProducts()

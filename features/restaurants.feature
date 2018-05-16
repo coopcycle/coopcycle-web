@@ -57,7 +57,17 @@ Feature: Manage restaurants
 
   Scenario: Retrieve a restaurant
     Given the database is empty
+    And the fixtures file "sylius_locales.yml" is loaded
+    And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1"
     Then the response status code should be 200
@@ -83,24 +93,49 @@ Feature: Manage restaurants
         "name":null
       },
       "hasMenu":{
-        "@id":"@string@.startsWith('/api/menus')",
-        "@type":"http://schema.org/Menu",
         "hasMenuSection":[
           {
-            "@id":"@string@.startsWith('/api/menu_sections')",
-            "@type":"http://schema.org/MenuSection",
-            "hasMenuItem":@array@,
-            "name":@string@
+            "name":"Pizzas",
+            "hasMenuItem":[
+              {
+                "@type":"MenuItem",
+                "name":"Pizza",
+                "description":null,
+                "identifier":"PIZZA",
+                "menuAddOn":[
+                  {
+                    "@type":"MenuSection",
+                    "name":"Pizza topping",
+                    "identifier":"PIZZA_TOPPING",
+                    "hasMenuItem":[
+                      {
+                        "@type":"MenuItem",
+                        "name":"Extra cheese",
+                        "identifier":"PIZZA_TOPPING_EXTRA_CHEESE"
+                      },
+                      {
+                        "@type":"MenuItem",
+                        "name":"Pepperoni",
+                        "identifier":"PIZZA_TOPPING_PEPPERONI"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
-            "@id":"@string@.startsWith('/api/menu_sections')",
-            "@type":"http://schema.org/MenuSection",
-            "hasMenuItem":@array@,
-            "name":@string@
+            "name":"Burger",
+            "hasMenuItem":[
+              {
+                "@type":"MenuItem",
+                "name":"Hamburger",
+                "description":null,
+                "identifier":"HAMBURGER"
+              }
+            ]
           }
-        ],
-        "description":null,
-        "name":"Menu"
+        ]
       },
       "openingHours":@array@,
       "availabilities":@array@,

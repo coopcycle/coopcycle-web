@@ -9,6 +9,11 @@ AppBundle\Entity\ApiUser:
     telephone:
       groups: ['order']
 
+AppBundle\Entity\Sylius\Taxon:
+  attributes:
+    code:
+      groups: ['restaurant']
+
 AppBundle\Entity\Base\MenuItem:
   attributes:
     offers:
