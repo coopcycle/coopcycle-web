@@ -179,6 +179,8 @@ class Restaurant extends FoodEstablishment
      */
     private $taxons;
 
+    private $activeMenuTaxon;
+
     /**
      * @var Contract
      * @Groups({"order_create"})
@@ -447,14 +449,14 @@ class Restaurant extends FoodEstablishment
         $this->hasMenu = $menu;
     }
 
-    public function hasMenuTaxon()
-    {
-        return null !== $this->getMenu();
-    }
-
     public function getMenuTaxon()
     {
-        return $this->taxons->first();
+        return $this->activeMenuTaxon;
+    }
+
+    public function setMenuTaxon(TaxonInterface $taxon)
+    {
+        $this->activeMenuTaxon = $taxon;
     }
 
     /**

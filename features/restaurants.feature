@@ -93,6 +93,8 @@ Feature: Manage restaurants
         "name":null
       },
       "hasMenu":{
+        "@type":"Menu",
+        "identifier":@string@,
         "hasMenuSection":[
           {
             "name":"Pizzas",

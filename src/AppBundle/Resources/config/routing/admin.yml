@@ -111,6 +111,8 @@ admin_restaurant_menu_taxons:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             menu: admin_restaurant_menu_taxon
+            menu_activate: admin_restaurant_menu_taxon_activate
+            new_menu: admin_restaurant_new_menu_taxon
     methods: [ GET ]
 
 admin_restaurant_new_menu_taxon:
@@ -139,6 +141,15 @@ admin_restaurant_menu_taxon:
             menu_taxons: admin_restaurant_menu_taxons
             success: admin_restaurant_menu_taxons
     methods: [ GET, POST ]
+
+admin_restaurant_menu_taxon_activate:
+    path: /admin/restaurants/{restaurantId}/menus/{menuId}/activate
+    defaults:
+        _controller: AppBundle:Admin:activateRestaurantMenuTaxon
+        layout: AppBundle::admin.html.twig
+        routes:
+            menu_taxons: admin_restaurant_menu_taxons
+    methods: [ POST ]
 
 admin_restaurant_products:
     path: /admin/restaurants/{id}/products

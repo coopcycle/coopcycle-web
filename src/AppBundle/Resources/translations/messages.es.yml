@@ -191,6 +191,9 @@ restaurant.contract.feeRate.label: Porcentaje de comisión
 restaurant.contract.feeRate.help: Este porcentaje será retenido por la plataforma en el total de los productos
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones de contrato.
 restaurant.contract.noContract: No existen condiciones de contrato. Por favor contacte a un administrador.
+restaurant.menus.noMenus: No has creado un menú por el momento.
+restaurant.menus.activate: Activar
+restaurant.menus.activated: El menú « %menu_name% » ha sido activado. Ahora se mostrará en la página del restaurante.
 
 restaurant.closingForm.title: Añadir cierre temporal
 restaurant.closingForm.reason.label: Razón
@@ -200,7 +203,8 @@ restaurant.list.manage: Gestionar
 restaurant.list.orders: Pedidos
 restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
-restaurant.list.menu: Carta
+restaurant.list.menus: Cartas
+restaurant.list.activeMenu: Carta activada
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes.

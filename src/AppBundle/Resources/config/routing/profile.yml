@@ -150,6 +150,8 @@ profile_restaurant_menu_taxons:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
             menu: profile_restaurant_menu_taxon
+            menu_activate: profile_restaurant_menu_taxon_activate
+            new_menu: profile_restaurant_new_menu_taxon
     methods: [ GET ]
 
 profile_restaurant_new_menu_taxon:
@@ -178,6 +180,15 @@ profile_restaurant_menu_taxon:
             menu_taxons: profile_restaurant_menu_taxons
             success: profile_restaurant_menu_taxons
     methods: [ GET, POST ]
+
+profile_restaurant_menu_taxon_activate:
+    path: /profile/restaurants/{restaurantId}/menus/{menuId}/activate
+    defaults:
+        _controller: AppBundle:Profile:activateRestaurantMenuTaxon
+        layout: AppBundle::profile.html.twig
+        routes:
+            menu_taxons: profile_restaurant_menu_taxons
+    methods: [ POST ]
 
 profile_restaurant_products:
     path: /profile/restaurants/{id}/products
