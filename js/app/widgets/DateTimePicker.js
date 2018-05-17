@@ -86,6 +86,21 @@ class DateTimePicker extends React.Component {
       validateStatus: "error",
     } : {}
 
+    let datePickerProps = {}
+    console.log(this.props)
+    if (this.props.hasOwnProperty('getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
+      datePickerProps = {
+        getCalendarContainer: this.props.getDatePickerContainer
+      }
+    }
+
+    let timePickerProps = {}
+    if (this.props.hasOwnProperty('getTimePickerContainer') && typeof this.props.getTimePickerContainer === 'function') {
+      timePickerProps = {
+        getPopupContainer: this.props.getTimePickerContainer
+      }
+    }
+
     return (
       <div>
         <FormItem {...formItemProps}>
@@ -96,6 +111,7 @@ class DateTimePicker extends React.Component {
               format={dateFormat}
               placeholder="Date"
               defaultValue={this.props.defaultValue}
+              { ...datePickerProps }
             />
           </LocaleProvider>
           <LocaleProvider locale={frBE}>
@@ -109,6 +125,7 @@ class DateTimePicker extends React.Component {
               addon={panel => (
                 <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
               )}
+              { ...timePickerProps }
             />
           </LocaleProvider>
         </FormItem>
@@ -119,7 +136,15 @@ class DateTimePicker extends React.Component {
 
 export default (el, options) => {
 
+  const defaultProps = {
+    getDatePickerContainer: null,
+    getTimePickerContainer: null,
+    onChange: () => {}
+  }
+
+  const props = { ...defaultProps, ...options }
+
   render(<DateTimePicker
     defaultValue={ options.defaultValue ? moment(options.defaultValue) : null }
-    onChange={ options.onChange } />, el)
+    { ...props } />, el)
 }

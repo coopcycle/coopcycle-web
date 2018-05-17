@@ -78,6 +78,12 @@ function initMap() {
   $.each(tasks, function(type, data) {
     new CoopCycle.DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
       defaultValue: data.doneBefore,
+      getDatePickerContainer: function(trigger) {
+        return trigger.parentNode;
+      },
+      getTimePickerContainer: function(trigger) {
+        return trigger.parentNode;
+      },
       onChange: function(date, dateString) {
         if (date) {
           document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
