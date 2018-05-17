@@ -52,8 +52,9 @@ final class RestaurantCartContext implements CartContextInterface
 
         if (!$this->session->has($this->sessionKeyName)) {
             $restaurant = $this->restaurantRepository->find($this->session->get('restaurantId'));
-
-            return $this->orderFactory->createForRestaurant($restaurant);
+            if (null !== $restaurant) {
+                return $this->orderFactory->createForRestaurant($restaurant);
+            }
         }
 
         $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
