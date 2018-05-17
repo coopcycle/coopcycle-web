@@ -60,7 +60,8 @@ profile_restaurants:
         template: AppBundle:Profile:restaurants.html.twig
         routes:
             dashboard: profile_restaurant_dashboard
-            menu: profile_restaurant_menu_taxon
+            menu_taxon: profile_restaurant_menu_taxon
+            menu_taxons: profile_restaurant_menu_taxons
             restaurant: profile_restaurant
     methods: [ GET ]
 
