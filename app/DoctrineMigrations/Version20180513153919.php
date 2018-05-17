@@ -160,6 +160,10 @@ class Version20180513153919 extends AbstractMigration
                 ++$i;
             }
 
+            if (count($optionSet) === 0) {
+                continue;
+            }
+
             $permutations = $this->setBuilder->build($optionSet);
 
             foreach ($permutations as $permutation) {
