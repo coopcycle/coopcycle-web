@@ -63,7 +63,7 @@ final class NotificationSubscriber implements EventSubscriberInterface
 
         if (!$order->isFoodtech()) {
             $this->emailManager->sendTo(
-                $this->emailManager->createOrderCreatedMessage($order),
+                $this->emailManager->createOrderCreatedMessageForCustomer($order),
                 $order->getCustomer()->getEmail()
             );
             $this->emailManager->sendTo(
