@@ -18,7 +18,7 @@ AppBundle\Entity\Address:
                 strategy: IDENTITY
     fields:
         description:
-            type: string
+            type: text
             nullable: true
         floor:
             type: string
