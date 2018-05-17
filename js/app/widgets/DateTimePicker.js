@@ -87,7 +87,6 @@ class DateTimePicker extends React.Component {
     } : {}
 
     let datePickerProps = {}
-    console.log(this.props)
     if (this.props.hasOwnProperty('getDatePickerContainer') && typeof this.props.getDatePickerContainer === 'function') {
       datePickerProps = {
         getCalendarContainer: this.props.getDatePickerContainer
