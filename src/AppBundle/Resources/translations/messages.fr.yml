@@ -43,7 +43,6 @@ adminDashboard.deliveries.deliveryAddress: Adresse de livraison
 adminDashboard.deliveries.save: Enregistrer
 admin.deliveries.to_be_confirmed.alert: Vous avez des livraisons à confirmer. Cliquez sur l'icône « Livraison » dans la colonne de droite.
 
-adminDashboard.menuCategories.title: Catégories du menu
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Catégories
 adminDashboard.menuCategories.addCategory: Ajouter une catégorie
@@ -214,23 +213,6 @@ restaurant.product_options.help: |
 restaurant.product_options.list.values: Valeurs
 
 restaurant.form.uploadImage: Uploader une image
-
-restaurant.menu.form.addSection.placeholder: Nom de la section (Plat, Dessert, ...)
-restaurant.menu.form.addSection: Ajouter une section
-restaurant.menu.form.delete: Supprimer
-restaurant.menu.form.addDescription: Ajouter une description
-restaurant.menu.form.modifyDescription: Modifier la description
-restaurant.menu.form.extras: Suppléments
-restaurant.menu.form.addExtra: Ajouter un supplément
-restaurant.menu.form.extraGroups: Groupes de suppléments
-restaurant.menu.form.addExtraGroup: Ajouter un groupe de supplément
-restaurant.menu.form.addItem: Nouvel élément
-menu.modifier.STRATEGY_FREE: Gratuit
-menu.modifier.STRATEGY_FREE.description: Le supplément est gratuit
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Prix fixe quelque soit le choix
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: Tous les suppléments du groupe ont le même prix, ajouté au total de la commande
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Prix en fonction du supplément
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Chaque supplément du groupe a un prix différent, ajouté au total de la commande
 
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment !

@@ -8,7 +8,6 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
-use AppBundle\Entity\Menu\MenuItem;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
 use League\Geotools\Coordinate\Coordinate;

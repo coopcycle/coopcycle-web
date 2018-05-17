@@ -2,8 +2,6 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Menu;
-use AppBundle\Form\MenuType\MenuSectionType;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;

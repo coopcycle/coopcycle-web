@@ -151,11 +151,6 @@ class Restaurant extends FoodEstablishment
     private $stripeAccount;
 
     /**
-     * @var string The menu of the restaurant.
-     */
-    private $hasMenu;
-
-    /**
      * @var string
      *
      * @Assert\Type(type="string")
@@ -428,25 +423,6 @@ class Restaurant extends FoodEstablishment
         $this->stripeAccount = $stripeAccount;
 
         return $this;
-    }
-
-    public function getHasMenu()
-    {
-        return $this->getMenu();
-    }
-
-    public function getMenu()
-    {
-        if (!$this->hasMenu) {
-            $this->hasMenu = new Menu();
-        }
-
-        return $this->hasMenu;
-    }
-
-    public function setMenu(Menu $menu)
-    {
-        $this->hasMenu = $menu;
     }
 
     public function getMenuTaxon()

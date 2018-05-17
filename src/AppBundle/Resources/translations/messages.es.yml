@@ -44,7 +44,6 @@ adminDashboard.deliveries.save: Guardar
 
 adminDashboard.embed.title: Integración
 
-adminDashboard.menuCategories.title: Categorías de la carta
 adminDashboard.menuCategories.menu: Carta
 adminDashboard.menuCategories.categories: Categorías
 adminDashboard.menuCategories.addCategory: Añadir categoría
@@ -220,23 +219,6 @@ restaurant.product_options.list.values: Valores
 
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
-
-restaurant.menu.form.addSection.placeholder: Section name (Appetizers, Dishes, ...)
-restaurant.menu.form.addSection: Añadir sección
-restaurant.menu.form.delete: Eliminar
-restaurant.menu.form.addDescription: Añadir descripción
-restaurant.menu.form.modifyDescription: Modificar descripción
-restaurant.menu.form.extras: Extras
-restaurant.menu.form.addExtra: Añadir extra
-restaurant.menu.form.extraGroups: Grupo de extras
-restaurant.menu.form.addExtraGroup: Añadir un grupo de extras
-restaurant.menu.form.addItem: Añadir elemento
-menu.modifier.STRATEGY_FREE: Free extra
-menu.modifier.STRATEGY_FREE.description: The extra is free
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE: Same price regardless of the choice
-menu.modifier.STRATEGY_ADD_MODIFIER_PRICE.description: All extras have the same price, added to the order's total
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE: Price depends on extra choice
-menu.modifier.STRATEGY_ADD_MENUITEM_PRICE.description: Each extra has a its own price, added to the order's total
 
 profile.addresses.breadcrumb: Direcciones
 profile.addresses.empty: Aún no hay direcciones guardadas!

@@ -188,17 +188,6 @@ AppBundle\Entity\Restaurant:
                 address_id:
                     referencedColumnName: id
             orphanRemoval: false
-        hasMenu:
-            targetEntity: AppBundle\Entity\Menu
-            cascade:
-                - all
-            fetch: LAZY
-            mappedBy: null
-            inversedBy: restaurant
-            joinColumns:
-                legacy_menu_id:
-                    referencedColumnName: id
-            orphanRemoval: false
         contract:
             targetEntity: AppBundle\Entity\Contract
             cascade:
