@@ -109,7 +109,7 @@
               {% for option in product.options %}
               <h4>
                 {{ option.name }}
-                {% if option.strategy == 'option' %} - {{ option.price }}€{% endif %}
+                {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
               </h4>
               <div class="list-group" data-product-option>
                 {% for option_value in option.values %}
@@ -120,7 +120,7 @@
                           name="options[{{ option.code }}]"
                           value="{{ option_value.code }}" type="radio">
                         {{ option_value.value }}
-                        {% if option.strategy == 'option_value' %} - {{ option_value.price }}€{% endif %}
+                        {% if option.strategy == 'option_value' %} - {{ option_value.price|price_format }}€{% endif %}
                       </label>
                     </div>
                   </div>
