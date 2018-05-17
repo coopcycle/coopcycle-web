@@ -93,7 +93,7 @@
 {% for child in restaurant.menuTaxon.children %}
   {% for product in child.products %}
     {% if product.enabled and not product.simple %}
-    <div id="{{ product.code }}-options" class="modal modifier-modal fade">
+    <div id="{{ product.code }}-options" class="modal fade">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -111,9 +111,9 @@
                 {{ option.name }}
                 {% if option.strategy == 'option' %} - {{ option.price }}€{% endif %}
               </h4>
-              <div class="list-group">
+              <div class="list-group" data-product-option>
                 {% for option_value in option.values %}
-                  <div class="list-group-item menu-item modifier-item">
+                  <div class="list-group-item modifier-item">
                     <div class="radio nomargin">
                       <label>
                         <input
@@ -127,7 +127,7 @@
                 {% endfor %}
               </div>
               {% endfor %}
-              <button type="submit" class="btn btn-block btn-primary">Add</button>
+              <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
             </form>
           </div>
         </div>
@@ -175,12 +175,29 @@ $('[data-product-code]').on('click', function(e) {
   window.AppData.CartHelper.addProduct($target.attr('href'), 1);
 })
 
+// Make sure all options have been checked
+$('form[data-product-options] input[type="radio"]').on('click', function(e) {
+
+  var $options = $(this).closest('form').find('[data-product-option]');
+  var checkedOptionsCount = 0;
+  $options.each(function(index, el) {
+    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
+  });
+
+  if ($options.length === checkedOptionsCount) {
+    $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
+  }
+})
+
 $('form[data-product-options]').on('submit', function(e) {
   e.preventDefault();
   var data = $(this).serializeArray();
   if (data.length > 0) {
     window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
     $(this).closest('.modal').modal('hide');
+    // Uncheck all options
+    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+    $(this).closest('form').find('button[type="submit"]').attr('disabled', true);
   }
 })
 

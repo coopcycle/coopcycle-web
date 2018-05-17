@@ -294,7 +294,7 @@ $cart-heading-height: 40px;
   opacity: 0.8;
 }
 
-.menu-item {
+.menu-item, .modifier-item {
   position: relative;
   display: flex;
   align-items: center;
@@ -304,6 +304,14 @@ $cart-heading-height: 40px;
 .menu-item:after {
   font-family: 'Glyphicons Halflings';
   content: "\002b";
+  color: #bdc3c7;
+  position: absolute;
+  right: 15px;
+}
+
+.modifier-item:after {
+  font-family: 'FontAwesome';
+  content: "\F00C";
   color: #bdc3c7;
   position: absolute;
   right: 15px;
@@ -333,20 +341,17 @@ $cart-heading-height: 40px;
   text-align: right;
 }
 
-.modifier-item input[type="radio"] {
-  position: relative;
-  margin-left: 0;
+.modifier-item {
+  &:hover {
+    background-color: $main-blue-light;
+  }
+  .radio {
+    width: 100%;
+    label {
+      width: 100%;
+    }
+  }
 }
-
-.modifier-item:hover {
-  background-color: $main-blue-light;
-}
-
-.modifier-item__selected {
-  background-color: $main-blue;
-}
-
-
 
 .order-map__wrapper {
   height: 100%;
