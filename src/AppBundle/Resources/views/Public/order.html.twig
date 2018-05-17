@@ -7,7 +7,7 @@
       <a class="navbar-brand" href="{{ path('homepage') }}">
         <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
       </a>
-      <a class="navbar-brand" href="{{ path('homepage') }}">{{ craue_setting('brand_name') }}</a>
+      <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     </div>
   </div>
 </nav>
@@ -116,7 +116,7 @@ new CoopCycle.DeliveryMap('map', {
 })
 {% if stripe_payment.state == 'new' %}
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
-  publishableKey: "{{ craue_setting('stripe_publishable_key') }}",
+  publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
   tokenElement: document.querySelector('#stripe_payment_stripeToken')
 })
 {% endif %}

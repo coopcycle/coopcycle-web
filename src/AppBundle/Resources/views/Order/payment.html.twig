@@ -65,7 +65,7 @@
       'lng': "{{ deliveryAddress.geo.longitude }}"
     };
     new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
-      publishableKey: "{{ craue_setting('stripe_publishable_key') }}",
+      publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
       tokenElement: document.querySelector('#stripe_payment_stripeToken')
     })
   </script>

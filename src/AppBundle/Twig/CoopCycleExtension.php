@@ -15,6 +15,13 @@ class CoopCycleExtension extends \Twig_Extension
         );
     }
 
+    public function getFunctions()
+    {
+        return array(
+            new \Twig_SimpleFunction('coopcycle_setting', array(SettingResolver::class, 'resolveSetting')),
+        );
+    }
+
     public function metersToKilometers($meters)
     {
         return sprintf('%s km', number_format($meters / 1000, 2));

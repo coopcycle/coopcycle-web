@@ -399,6 +399,13 @@ services:
     tags:
       - { name: twig.runtime }
 
+  coopcycle.twig.runtime.setting_resolver:
+    class: AppBundle\Twig\SettingResolver
+    arguments: [ '@coopcycle.settings_manager' ]
+    public: false
+    tags:
+      - { name: twig.runtime }
+
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
 
