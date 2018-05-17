@@ -364,7 +364,8 @@ form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
 
-form.address.streetAddress.label: Address
+form.address.streetAddress.label: Dirección
+form.address.streetAddress.error.noLatLng: Seleccione una dirección en el menú desplegable
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.floor.label: Piso

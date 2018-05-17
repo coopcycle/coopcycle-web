@@ -289,6 +289,11 @@ services:
       - "@sylius.locale_provider"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  'AppBundle\Form\AddressType':
+    arguments: [ '@translator' ]
+    tags:
+      - { name: form.type }
+
   'AppBundle\Form\DeliveryType':
     arguments: [ '@doctrine', '@routing_service', '@translator' ]
     tags:

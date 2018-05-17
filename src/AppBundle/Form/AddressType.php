@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use AppBundle\Entity\Address;
@@ -20,6 +21,13 @@ use AppBundle\Entity\Base\GeoCoordinates;
 
 class AddressType extends AbstractType
 {
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -93,8 +101,11 @@ class AddressType extends AbstractType
                 $longitudeViolations = $validator->validate($longitude, $constraints);
 
                 if (count($latitudeViolations) > 0 || count($longitudeViolations) > 0) {
-                    $form->get('streetAddress')
-                        ->addError(new FormError('Please select an address in the dropdown'));
+
+                    $message = 'form.address.streetAddress.error.noLatLng';
+                    $error = new FormError($this->translator->trans($message), $message);
+
+                    $form->get('streetAddress')->addError($error);
                 } else {
                     $address->setGeo(new GeoCoordinates($latitude, $longitude));
                 }

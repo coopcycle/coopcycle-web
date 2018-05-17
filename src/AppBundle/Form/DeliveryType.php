@@ -156,6 +156,12 @@ class DeliveryType extends AbstractType
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
+            $form = $event->getForm();
+
+            if (!$form->isValid()) {
+                return;
+            }
+
             $delivery = $event->getForm()->getData();
 
             $coordinates = [];
