@@ -31,6 +31,13 @@ admin.order.created.body: |
   Se ha creado un nuevo pedido.
   <br>
   Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
+admin.order_foodtech.created.body: |
+  Buenos dias,
+  <br>
+  <br>
+  Se ha creado un nuevo pedido para el restaurante %restaurant.name%.
+  <br>
+  Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
 
 owner.order.created.subject: New order to confirm
 owner.order.created.body: |

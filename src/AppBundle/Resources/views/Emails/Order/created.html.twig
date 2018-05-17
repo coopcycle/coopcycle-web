@@ -2,10 +2,16 @@
 
 {% block content %}
   {% if is_admin is defined and is_admin %}
-    {{ 'admin.order.created.body' | trans({
-      '%order.url%': url('admin_order', { id: order.id }),
-      '%restaurant.name%': order.restaurant.name
-    }, 'emails') | raw }}
+    {% if order.foodtech %}
+      {{ 'admin.order_foodtech.created.body' | trans({
+        '%order.url%': url('admin_order', { id: order.id }),
+        '%restaurant.name%': order.restaurant.name
+      }, 'emails') | raw }}
+    {% else %}
+      {{ 'admin.order.created.body' | trans({
+        '%order.url%': url('admin_order', { id: order.id }),
+      }, 'emails') | raw }}
+    {% endif %}
   {% elseif is_owner is defined and is_owner %}
     {{ 'owner.order.created.body' | trans({
       '%order.url%': url('profile_restaurant_dashboard_order', { orderId: order.id, restaurantId: order.restaurant.id }),

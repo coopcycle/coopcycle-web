@@ -28,6 +28,13 @@ admin.order.created.body: |
   Hello,
   <br>
   <br>
+  A new order has been created.
+  <br>
+  To check the details, and confirm the order, <a href="%order.url%">click here</a>
+admin.order_foodtech.created.body: |
+  Hello,
+  <br>
+  <br>
   A new order has been created for the restaurant %restaurant.name%.
   <br>
   To check the details, and confirm the order, <a href="%order.url%">click here</a>
