@@ -294,6 +294,11 @@ services:
     tags:
       - { name: form.type }
 
+  'AppBundle\Form\DeliveryAddressType':
+    arguments: [ '@translator' ]
+    tags:
+      - { name: form.type }
+
   'AppBundle\Form\DeliveryType':
     arguments: [ '@doctrine', '@routing_service', '@translator' ]
     tags:
