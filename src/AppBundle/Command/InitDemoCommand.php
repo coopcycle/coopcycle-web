@@ -30,6 +30,9 @@ class InitDemoCommand extends ContainerAwareCommand
     private $ormPurger;
     private $craueConfig;
     private $lockFactory;
+    private $productVariantGenerator;
+    private $taxonFactory;
+    private $batchSize = 10;
 
     private static $users = [
         'admin' => [
@@ -56,16 +59,21 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurantProvider = new RestaurantProvider($this->faker);
 
         $this->faker->addProvider($restaurantProvider);
+
         $this->fixturesLoader->addProvider($restaurantProvider);
 
         $this->redis = $this->getContainer()->get('snc_redis.default');
 
         $this->craueConfig = $this->getContainer()->get('craue_config');
 
+        $this->productVariantGenerator = $this->getContainer()->get('sylius.generator.product_variant');
+        $this->taxonFactory = $this->getContainer()->get('sylius.factory.taxon');
+
         $this->ormPurger = new ORMPurger($this->getContainer()->get('doctrine')->getManager(), [
             'craue_config_setting',
             'migration_versions',
         ]);
+        // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         $store = new FlockStore();
         $this->lockFactory = new LockFactory($store);
@@ -78,6 +86,7 @@ class InitDemoCommand extends ContainerAwareCommand
         if ($lock->acquire()) {
 
             $output->writeln('Purging database…');
+
             $this->ormPurger->purge();
 
             $output->writeln('Verifying database config…');
@@ -213,6 +222,12 @@ class InitDemoCommand extends ContainerAwareCommand
 
     private function createTaxCategory($taxCategoryName, $taxCategoryCode, $taxRateName, $taxRateCode, $taxRateAmount)
     {
+        $taxCategoryRepository = $this->getContainer()->get('sylius.repository.tax_category');
+
+        if ($taxCategory = $taxCategoryRepository->findOneByCode($taxCategoryCode)) {
+            return $taxCategory;
+        }
+
         $taxCategoryFactory = $this->getContainer()->get('sylius.factory.tax_category');
         $taxCategoryManager = $this->getContainer()->get('sylius.manager.tax_category');
         $taxRateFactory = $this->getContainer()->get('sylius.factory.tax_rate');
@@ -239,33 +254,98 @@ class InitDemoCommand extends ContainerAwareCommand
         return $taxCategory;
     }
 
-    private function createMenuCategory($name)
+    private function createMenuTaxon($appetizers, $dishes, $desserts)
     {
-        $category = new Entity\Menu\MenuCategory();
-        $category->setName($name);
+        $menu = $this->taxonFactory->createNew();
 
-        $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->persist($category);
+        $menu->setCode($this->faker->uuid);
+        $menu->setSlug($this->faker->uuid);
+        $menu->setName('Default');
 
-        return $category;
-    }
-
-    private function createMenu(TaxCategoryInterface $taxCategory)
-    {
-        $objects = $this->fixturesLoader->load(__DIR__ . '/Resources/menu.yml');
-
-        $menu = $objects['menu'];
-
-        foreach ($menu->getAllItems() as $menuItem) {
-            $menuItem->setTaxCategory($taxCategory);
+        $appetizersTaxon = $this->taxonFactory->createNew();
+        $appetizersTaxon->setCode($this->faker->uuid);
+        $appetizersTaxon->setSlug($this->faker->uuid);
+        $appetizersTaxon->setName('Entrées');
+        foreach ($appetizers as $product) {
+            $appetizersTaxon->addProduct($product);
         }
 
-        foreach ($menu->getAllModifiers() as $menuItemModifier) {
-            foreach ($menuItemModifier->getModifierChoices() as $modifier) {
-                $modifier->setTaxCategory($taxCategory);
-            }
+        $dishesTaxon = $this->taxonFactory->createNew();
+        $dishesTaxon->setCode($this->faker->uuid);
+        $dishesTaxon->setSlug($this->faker->uuid);
+        $dishesTaxon->setName('Plats');
+        foreach ($dishes as $product) {
+            $dishesTaxon->addProduct($product);
         }
+
+        $dessertsTaxon = $this->taxonFactory->createNew();
+        $dessertsTaxon->setCode($this->faker->uuid);
+        $dessertsTaxon->setSlug($this->faker->uuid);
+        $dessertsTaxon->setName('Desserts');
+        foreach ($desserts as $product) {
+            $dessertsTaxon->addProduct($product);
+        }
+
+        $menu->addChild($appetizersTaxon);
+        $menu->addChild($dishesTaxon);
+        $menu->addChild($dessertsTaxon);
 
         return $menu;
+    }
+
+    private function createAppetizers(TaxCategoryInterface $taxCategory)
+    {
+        $products = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $appetizer = $this->fixturesLoader->load(__DIR__ . '/Resources/appetizer.yml', [
+                'tax_category' => $taxCategory,
+            ]);
+            $appetizer['variant']->setTaxCategory($taxCategory);
+            $appetizer['product']->addVariant($appetizer['variant']);
+            $products[] = $appetizer['product'];
+        }
+
+        return $products;
+    }
+
+    private function createDishes(TaxCategoryInterface $taxCategory)
+    {
+        $products = [];
+
+        $options = $this->fixturesLoader->load(__DIR__ . '/Resources/product_options.yml');
+
+        for ($i = 0; $i < 5; $i++) {
+            $dish = $this->fixturesLoader->load(__DIR__ . '/Resources/dish.yml', [
+                'accompaniments' => $options['accompaniments'],
+                'drinks' => $options['drinks']
+            ]);
+            $this->productVariantGenerator->generate($dish['product']);
+            foreach ($dish['product']->getVariants() as $variant) {
+                $variant->setPrice($this->faker->numberBetween(499, 999));
+                $variant->setTaxCategory($taxCategory);
+                $variant->setCode($this->faker->uuid);
+            }
+            $products[] = $dish['product'];
+        }
+
+        return $products;
+    }
+
+    private function createDesserts(TaxCategoryInterface $taxCategory)
+    {
+        $products = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $dessert = $this->fixturesLoader->load(__DIR__ . '/Resources/dessert.yml', [
+                'tax_category' => $taxCategory,
+            ]);
+            $dessert['variant']->setTaxCategory($taxCategory);
+            $dessert['product']->addVariant($dessert['variant']);
+            $products[] = $dessert['product'];
+        }
+
+        return $products;
     }
 
     private function createRandomTimeRange($min, $max)
@@ -339,15 +419,16 @@ class InitDemoCommand extends ContainerAwareCommand
     private function createRestaurant(Entity\Address $address, TaxCategoryInterface $taxCategory)
     {
         $contract = new Entity\Contract();
-        $contract->setMinimumCartAmount(15);
-        $contract->setFlatDeliveryPrice(3.5);
+        $contract->setMinimumCartAmount(1500);
+        $contract->setFlatDeliveryPrice(350);
+        $contract->setCustomerAmount(350);
+        $contract->setFeeRate(0);
 
         $restaurant = new Entity\Restaurant();
 
         $restaurant->setEnabled(true);
         $restaurant->setTelephone('+33623456789');
         $restaurant->setAddress($address);
-        $restaurant->setMenu($this->createMenu($taxCategory));
         $restaurant->setName($this->faker->restaurantName);
         $restaurant->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));
         $restaurant->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('19:30', '23:30'));
@@ -355,26 +436,52 @@ class InitDemoCommand extends ContainerAwareCommand
         $restaurant->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('19:00', '01:30'));
         $restaurant->setContract($contract);
 
+        $appetizers = $this->createAppetizers($taxCategory);
+        $dishes = $this->createDishes($taxCategory);
+        $desserts = $this->createDesserts($taxCategory);
+
+        foreach ($appetizers as $product) {
+            $restaurant->addProduct($product);
+            foreach ($product->getOptions() as $productOption) {
+                $restaurant->addProductOption($productOption);
+            }
+        }
+        foreach ($dishes as $product) {
+            $restaurant->addProduct($product);
+            foreach ($product->getOptions() as $productOption) {
+                $restaurant->addProductOption($productOption);
+            }
+        }
+        foreach ($desserts as $product) {
+            $restaurant->addProduct($product);
+            foreach ($product->getOptions() as $productOption) {
+                $restaurant->addProductOption($productOption);
+            }
+        }
+
+        $menuTaxon = $this->createMenuTaxon($appetizers, $dishes, $desserts);
+
+        $restaurant->addTaxon($menuTaxon);
+        $restaurant->setMenuTaxon($menuTaxon);
+
         return $restaurant;
     }
 
     private function createRestaurants(OutputInterface $output)
     {
-        foreach (['Entrées', 'Plats', 'Desserts'] as $name) {
-            $this->createMenuCategory($name);
-        }
-        $this->doctrine->getManagerForClass(Entity\Menu\MenuCategory::class)->flush();
-
         $foodTaxCategory =
             $this->createTaxCategory('TVA consommation immédiate', 'tva_conso_immediate', 'TVA 10%', 'tva_10', 0.10);
 
         $this->createTaxCategory('TVA consommation différée', 'tva_conso_differee', 'TVA 5.5%', 'tva_5_5', 0.055);
         $this->createTaxCategory('TVA livraison', 'tva_livraison', 'TVA 20%', 'tva_20', 0.20);
 
-        for ($i = 0; $i < 100; $i++) {
+        $em = $this->doctrine->getManagerForClass(Entity\Restaurant::class);
+
+        for ($i = 0; $i < 50; $i++) {
+
             $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
-            $this->doctrine->getManagerForClass(Entity\Restaurant::class)->persist($restaurant);
-            $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
+
+            $em->persist($restaurant);
 
             $username = "resto_{$i}";
             $user = $this->createUser($username, [
@@ -382,14 +489,25 @@ class InitDemoCommand extends ContainerAwareCommand
                 'roles' => ['ROLE_RESTAURANT']
             ]);
             $user->addRestaurant($restaurant);
+
+            if (($i % $this->batchSize) === 0) {
+
+                $output->writeln('Flushing data…');
+
+                $em->flush();
+                $em->clear();
+
+                // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
+                $taxCategoryRepository = $this->getContainer()->get('sylius.repository.tax_category');
+                $foodTaxCategory = $taxCategoryRepository->findOneByCode('tva_conso_immediate');
+            }
         }
 
-        $this->doctrine->getManagerForClass(Entity\Restaurant::class)->flush();
+        $em->flush();
     }
 
     private function createStores()
     {
-
         for ($i = 0; $i < 25; $i++) {
             $store = $this->createStore($this->faker->randomAddress);
             $pricingRuleSet = $this->createPricingRuleSet($store);

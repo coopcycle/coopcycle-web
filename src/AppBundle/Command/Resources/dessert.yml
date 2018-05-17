@@ -1,0 +1,14 @@
+AppBundle\Entity\Sylius\ProductVariant:
+  variant:
+    currentLocale: fr
+    name: Default
+    code: <uuid()>
+    price: <numberBetween(499, 999)>
+
+AppBundle\Entity\Sylius\Product:
+  product:
+    code: <uuid()>
+    currentLocale: fr
+    name: <dessertName()>
+    slug: <uuid()>
+    enabled: true

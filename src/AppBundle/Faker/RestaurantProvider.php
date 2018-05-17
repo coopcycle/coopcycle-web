@@ -143,6 +143,21 @@ class RestaurantProvider extends BaseProvider
         return static::randomElement(static::$dishAdditionalIngredients);
     }
 
+    /* Accompaniments / drinks */
+
+    protected static $accompaniments = array(
+        'frites', 'salade', 'gratin dauphinois', 'purée',
+        'boulgour', 'carottes râpées', 'petits pois', 'légumes grillés',
+        'algues marinées', 'pousses de bambou', 'salade de chou'
+    );
+
+    protected static $drinks = array(
+        'eau', 'eau pétillante',
+        'jus de carotte', 'ginseng', 'thé vert',
+        'soda', 'limonade',
+        'bière', 'vin',
+    );
+
     /* Desserts */
 
     protected static $dessertMainIngredients = array(
@@ -164,14 +179,6 @@ class RestaurantProvider extends BaseProvider
     {
         return static::randomElement(static::$dessertAdditionalIngredients);
     }
-
-    /* Menu Item Modifiers */
-
-    protected static $calculusMethods = array(
-        'ADD_MENUITEM_PRICE',
-        'ADD_MODIFIER_PRICE',
-        'FREE'
-    );
 
     /* API */
 
@@ -208,7 +215,13 @@ class RestaurantProvider extends BaseProvider
         return ucfirst($this->generator->parse($format));
     }
 
-    public function calculusMethod() {
-        return static::randomElement(static::$calculusMethods);
+    public function accompanimentName()
+    {
+        return ucfirst(static::randomElement(static::$accompaniments));
+    }
+
+    public function drinkName()
+    {
+        return ucfirst(static::randomElement(static::$drinks));
     }
 }

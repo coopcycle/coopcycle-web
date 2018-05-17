@@ -11,6 +11,7 @@ use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
@@ -521,6 +522,13 @@ class Restaurant extends FoodEstablishment
     public function getProductOptions()
     {
         return $this->productOptions;
+    }
+
+    public function addProductOption(ProductOptionInterface $productOption)
+    {
+        if (!$this->productOptions->contains($productOption)) {
+            $this->productOptions->add($productOption);
+        }
     }
 
     public function getTaxons()
