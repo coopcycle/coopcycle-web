@@ -539,6 +539,8 @@ trait RestaurantTrait
 
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
     {
+        $routes = $request->attributes->get('routes');
+
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
             ->find($restaurantId);
@@ -619,8 +621,6 @@ trait RestaurantTrait
 
             return $this->redirect($request->headers->get('referer'));
         }
-
-        $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), [
             'layout' => $request->attributes->get('layout'),
