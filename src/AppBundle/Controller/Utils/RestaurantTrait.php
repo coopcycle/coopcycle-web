@@ -577,6 +577,8 @@ trait RestaurantTrait
                 return $this->redirect($request->headers->get('referer'));
             }
 
+            $this->get('sylius.manager.taxon')->flush();
+
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
