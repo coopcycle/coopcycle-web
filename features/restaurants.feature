@@ -104,6 +104,10 @@ Feature: Manage restaurants
                 "name":"Pizza",
                 "description":null,
                 "identifier":"PIZZA",
+                "offers": {
+                  "@type":"Offer",
+                  "price":@integer@
+                },
                 "menuAddOn":[
                   {
                     "@type":"MenuSection",
@@ -133,7 +137,11 @@ Feature: Manage restaurants
                 "@type":"MenuItem",
                 "name":"Hamburger",
                 "description":null,
-                "identifier":"HAMBURGER"
+                "identifier":"HAMBURGER",
+                "offers": {
+                  "@type":"Offer",
+                  "price":@integer@
+                }
               }
             ]
           }

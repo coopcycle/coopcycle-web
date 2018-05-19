@@ -5,6 +5,7 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Taxon;
 use Sylius\Component\Locale\Provider\LocaleProvider;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -17,11 +18,17 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
+    private $localeProvider;
+    private $variantResolver;
 
-    public function __construct(ItemNormalizer $normalizer, LocaleProvider $localeProvider)
+    public function __construct(
+        ItemNormalizer $normalizer,
+        LocaleProvider $localeProvider,
+        ProductVariantResolverInterface $variantResolver)
     {
         $this->normalizer = $normalizer;
         $this->localeProvider = $localeProvider;
+        $this->variantResolver = $variantResolver;
     }
 
     private function normalizeOptions($options)
@@ -84,6 +91,8 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
             foreach ($child->getProducts() as $product) {
 
+                $defaultVariant = $this->variantResolver->getVariant($product);
+
                 $product->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
                 $item = [
@@ -91,6 +100,10 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                     'name' => $product->getName(),
                     'description' => $product->getDescription(),
                     'identifier' => $product->getCode(),
+                    'offers' => [
+                        '@type' => 'Offer',
+                        'price' => $defaultVariant->getPrice(),
+                    ]
                 ];
                 if ($product->hasOptions()) {
                     $item['menuAddOn'] = $this->normalizeOptions($product->getOptions());
