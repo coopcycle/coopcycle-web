@@ -4,11 +4,9 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Menu;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
-use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
@@ -154,7 +152,6 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'products_route' => $routes['products'],
             'product_options_route' => $routes['product_options'],
-            'menu_route' => $routes['menu'],
             'menu_taxons_route' => $routes['menu_taxons'],
             'menu_taxon_route' => $routes['menu_taxon'],
             'dashboard_route' => $routes['dashboard'],
@@ -240,185 +237,6 @@ trait RestaurantTrait
         $order = $this->get('sylius.repository.order')->find($orderId);
 
         return $this->renderRestaurantDashboard($request, $restaurant, $order);
-    }
-
-    private function removeSoftDeletedItems(Menu\MenuSection $section)
-    {
-        $em = $this->getDoctrine()->getManagerForClass(Menu\MenuItem::class);
-
-        // Disable SoftDeleteable behavior to retrieve all items
-        $em->getFilters()->disable('soft_deleteable');
-
-        // FIXME
-        // MenuSection::getItems does not return soft deleted items
-        $items = $this->getDoctrine()
-            ->getRepository(Menu\MenuItem::class)
-            ->findBy(['section' => $section]);
-
-        foreach ($items as $item) {
-            $section->getItems()->removeElement($item);
-            $item->setSection(null);
-        }
-
-        $em->getFilters()->enable('soft_deleteable');
-    }
-
-    public function restaurantMenuAction($id, Request $request)
-    {
-        $routes = $request->attributes->get('routes');
-
-        $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
-
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $this->accessControl($restaurant);
-
-        $menu = $restaurant->getMenu();
-
-        $originalSections = new ArrayCollection();
-        foreach ($menu->getSections() as $section) {
-            $originalSections->add($section);
-        }
-
-        $originalItems = new \SplObjectStorage();
-        foreach ($menu->getSections() as $section) {
-            $items = new ArrayCollection();
-            foreach ($section->getItems() as $item) {
-                $items->add($item);
-            }
-
-            $originalItems[$section] = $items;
-        }
-
-        $originalModifiers = new ArrayCollection();
-        $originalModifierChoices = new ArrayCollection();
-        foreach ($menu->getAllModifiers() as $modifier) {
-            $originalModifiers->add($modifier);
-            foreach ($modifier->getModifierChoices() as $modifierChoice) {
-                $originalModifierChoices->add($modifierChoice);
-            }
-        }
-
-        $form = $this->createForm(MenuType::class, $menu);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $menu = $form->getData();
-
-            $newSection = null;
-
-            if ($form->getClickedButton() && 'addSection' === $form->getClickedButton()->getName()) {
-
-                $sectionName = $form->get('sectionName')->getData();
-
-                $newSection = new Menu\MenuSection();
-                $newSection->setName($sectionName);
-
-                $menu->addSection($newSection);
-
-            } else {
-
-                // Make sure objects are mapped
-                foreach ($menu->getSections() as $section) {
-                    foreach ($section->getItems() as $item) {
-                        if (null === $item->getSection()) {
-                            $item->setSection($section);
-                        }
-                        foreach ($item->getModifiers() as $modifier) {
-                            if (null === $modifier->getMenuItem()) {
-                                $modifier->setMenuItem($item);
-                            }
-                            foreach ($modifier->getModifierChoices() as $modifierChoice) {
-                                $modifierChoice->setMenuItemModifier($modifier);
-                                // FIXME
-                                // Copy the tax category from the menu item
-                                // We should be able to define a tax category for a modifier
-                                $modifierChoice->setTaxCategory($item->getTaxCategory());
-                            }
-                        }
-                    }
-                }
-
-                foreach ($originalSections as $originalSection) {
-
-                    // Remove deleted sections
-                    // Remove mapping between section & items
-                    if (false === $menu->getSections()->contains($originalSection)) {
-
-                        // First, soft delete items
-                        foreach ($originalSection->getItems() as $item) {
-                            // Don't remove the item to keep association with OrderItem
-                            $originalSection->getItems()->removeElement($item);
-                            $item->setSection(null);
-                            $em->remove($item);
-                        }
-
-                        // Then, remove association for soft deleted items
-                        $this->removeSoftDeletedItems($originalSection);
-
-                        $originalSection->setMenu(null);
-                        $em->remove($originalSection);
-
-                    } else {
-
-                        // Remove mapping between section & deleted item
-                        foreach ($menu->getSections() as $updatedSection) {
-                            if ($updatedSection === $originalSection) {
-                                foreach ($originalItems[$originalSection] as $originalItem) {
-                                    if (false === $updatedSection->getItems()->contains($originalItem)) {
-                                        $originalSection->getItems()->removeElement($originalItem);
-                                        $originalItem->setSection(null);
-                                        $em->remove($originalItem);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                foreach ($originalModifiers as $originalModifier) {
-                    if (false === $menu->getAllModifiers()->contains($originalModifier)) {
-                        $em->remove($originalModifier);
-                    }
-                }
-
-                foreach ($originalModifierChoices as $originalModifierChoice) {
-                    if (false === $menu->getAllModifierChoices()->contains($originalModifierChoice)) {
-                        $em->remove($originalModifierChoice);
-                    }
-                }
-            }
-
-            $restaurant->setMenu($menu);
-
-            $em->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-
-            if (null !== $newSection) {
-                $this->addFlash(
-                    'menu_form',
-                    $this->get('serializer')->serialize($newSection, 'json')
-                );
-            }
-
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
-        }
-
-        return $this->render($request->attributes->get('template'), [
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-        ]);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request)

@@ -11,6 +11,7 @@ use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
@@ -149,11 +150,6 @@ class Restaurant extends FoodEstablishment
      * @var StripeAccount The StripeAccount of the restaurant.
      */
     private $stripeAccount;
-
-    /**
-     * @var string The menu of the restaurant.
-     */
-    private $hasMenu;
 
     /**
      * @var string
@@ -430,25 +426,6 @@ class Restaurant extends FoodEstablishment
         return $this;
     }
 
-    public function getHasMenu()
-    {
-        return $this->getMenu();
-    }
-
-    public function getMenu()
-    {
-        if (!$this->hasMenu) {
-            $this->hasMenu = new Menu();
-        }
-
-        return $this->hasMenu;
-    }
-
-    public function setMenu(Menu $menu)
-    {
-        $this->hasMenu = $menu;
-    }
-
     public function getMenuTaxon()
     {
         return $this->activeMenuTaxon;
@@ -545,6 +522,13 @@ class Restaurant extends FoodEstablishment
     public function getProductOptions()
     {
         return $this->productOptions;
+    }
+
+    public function addProductOption(ProductOptionInterface $productOption)
+    {
+        if (!$this->productOptions->contains($productOption)) {
+            $this->productOptions->add($productOption);
+        }
     }
 
     public function getTaxons()

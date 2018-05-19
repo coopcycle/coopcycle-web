@@ -14,11 +14,6 @@ AppBundle\Entity\Sylius\Taxon:
     code:
       groups: ['restaurant']
 
-AppBundle\Entity\Base\MenuItem:
-  attributes:
-    offers:
-      groups: ['restaurant']
-
 Sylius\Component\Order\Model\Order:
   attributes:
     id:

@@ -53,7 +53,6 @@ admin_restaurant_new:
         routes:
             success: admin_restaurant
             restaurants: admin_restaurants
-            menu: admin_restaurant_menu
             dashboard: admin_restaurant_dashboard
             planning: admin_restaurant_planning
     methods: [ GET, POST ]
@@ -67,7 +66,6 @@ admin_restaurant:
         routes:
             success: admin_restaurant
             restaurants: admin_restaurants
-            menu: admin_restaurant_menu
             menu_taxons: admin_restaurant_menu_taxons
             menu_taxon: admin_restaurant_menu_taxon
             products: admin_restaurant_products
@@ -88,18 +86,6 @@ admin_restaurants:
             menu_taxons: admin_restaurant_menu_taxons
             restaurant: admin_restaurant
     methods: [ GET ]
-
-admin_restaurant_menu:
-    path: /admin/restaurants/{id}/menu
-    defaults:
-        _controller: AppBundle:Admin:restaurantMenu
-        layout: AppBundle::admin.html.twig
-        template: AppBundle:Restaurant:form-menu.html.twig
-        routes:
-            success: admin_restaurant_menu
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-    methods: [ GET, POST ]
 
 admin_restaurant_menu_taxons:
     path: /admin/restaurants/{id}/menus

@@ -237,7 +237,6 @@ sylius_product:
         product_variant:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
-                repository: AppBundle\Entity\Sylius\ProductVariantRepository
         product_option:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOption

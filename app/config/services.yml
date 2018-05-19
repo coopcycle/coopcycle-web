@@ -64,20 +64,8 @@ services:
       - "@sylius.repository.product"
       - "@sylius.repository.product_variant"
       - "@sylius.repository.tax_category"
-      - "@sylius.repository.product_option"
-      - "@sylius.repository.product_option_value"
-      - "@sylius.factory.product_option"
-      - "@sylius.factory.product_option_value"
       - "@coopcycle.settings_manager"
       - "@translator"
-    public: false
-
-  coopcycle.sylius.factory.product:
-    class: AppBundle\Sylius\Product\ProductFactory
-    decorates: sylius.factory.product
-    arguments:
-      - "@coopcycle.sylius.factory.product.inner"
-      - "@slugify"
     public: false
 
   coopcycle.sylius.factory.order:
@@ -197,25 +185,10 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  menu_item.entity_listener:
-    class: AppBundle\Entity\Listener\MenuItemListener
-    arguments:
-      - "@sylius.factory.product"
-      - "@sylius.factory.product_variant"
-      - "@sylius.repository.product"
-      - "@sylius.repository.product_variant"
-    tags:
-      - { name: doctrine.orm.entity_listener }
 
   my.delivery_normalizer:
     class: AppBundle\Serializer\DeliveryNormalizer
     arguments: [ "@api_platform.jsonld.normalizer.item" ]
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  app.menu_normalizer:
-    class: AppBundle\Serializer\MenuNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   app.restaurant_normalizer:
@@ -233,18 +206,6 @@ services:
 
   coopcycle.api.normalizer.task_list:
     class: AppBundle\Serializer\TaskListNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  app.menu_section:
-    class: AppBundle\Serializer\MenuSectionNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  app.menu_item_normalizer:
-    class: AppBundle\Serializer\MenuItemNormalizer
     arguments:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
@@ -306,10 +267,6 @@ services:
 
   'AppBundle\Form\DeliveryEmbedType':
     arguments: [ '@doctrine', '@routing_service', '@translator', '%country_iso%' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\MenuType\MenuItemModifierType':
-    arguments: [ '@translator' ]
     tags: [ form.type ]
 
   'AppBundle\Form\OrderType':

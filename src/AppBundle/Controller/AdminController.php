@@ -16,17 +16,14 @@ use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Menu;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\EmbedSettingsType;
-use AppBundle\Form\MenuCategoryType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
-use AppBundle\Form\RestaurantMenuType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\SettingsType;
@@ -379,45 +376,6 @@ class AdminController extends Controller
             'pick'     => 'admin_delivery_pick',
             'deliver'  => 'admin_delivery_deliver',
             'view'     => 'admin_delivery'
-        ];
-    }
-
-    /**
-     * @Route("/admin/menu/categories", name="admin_menu_categories")
-     * @Template
-     */
-    public function menuCategoriesAction(Request $request)
-    {
-        $categories = $this->getDoctrine()
-            ->getRepository(Menu\MenuCategory::class)
-            ->findBy([], ['name' => 'ASC']);
-
-        return [
-            'categories' => $categories,
-        ];
-    }
-
-    /**
-     * @Route("/admin/menu/categories/new", name="admin_menu_category_new")
-     * @Template
-     */
-    public function newMenuCategoryAction(Request $request)
-    {
-        $category = new Menu\MenuCategory();
-
-        $form = $this->createForm(MenuCategoryType::class, $category);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-            $this->getDoctrine()->getManagerForClass(Menu\MenuCategory::class)->persist($category);
-            $this->getDoctrine()->getManagerForClass(Menu\MenuCategory::class)->flush();
-
-            return $this->redirectToRoute('admin_menu_categories');
-        }
-
-        return [
-            'form' => $form->createView(),
         ];
     }
 

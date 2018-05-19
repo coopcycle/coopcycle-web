@@ -29,7 +29,6 @@ profile_restaurant_new:
         routes:
             success: profile_restaurant
             restaurants: profile_restaurants
-            menu: profile_restaurant_menu
             dashboard: profile_restaurant_dashboard
             planning: profile_restaurant_planning
     methods: [ GET, POST ]
@@ -43,7 +42,6 @@ profile_restaurant:
         routes:
             success: profile_restaurant
             restaurants: profile_restaurants
-            menu: profile_restaurant_menu
             menu_taxons: profile_restaurant_menu_taxons
             menu_taxon: profile_restaurant_menu_taxon
             products: profile_restaurant_products
@@ -128,18 +126,6 @@ profile_restaurant_dashboard_order_cancel:
         _controller: AppBundle:Profile:cancelOrderFromDashboard
         redirect_route: profile_restaurant_dashboard_order
     methods: [ POST ]
-
-profile_restaurant_menu:
-    path: /profile/restaurants/{id}/menu
-    defaults:
-        _controller: AppBundle:Profile:restaurantMenu
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:form-menu.html.twig
-        routes:
-            success: profile_restaurant_menu
-            restaurants: profile_restaurants
-            restaurant: profile_restaurant
-    methods: [ GET, POST ]
 
 profile_restaurant_menu_taxons:
     path: /profile/restaurants/{id}/menus
