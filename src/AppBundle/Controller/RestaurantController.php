@@ -7,13 +7,14 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
-use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
+use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sylius\Component\Product\Model\ProductInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,7 +64,7 @@ class RestaurantController extends Controller
         return true;
     }
 
-    private function resolveProductVariant($product, array $optionValues)
+    private function resolveProductVariant(ProductInterface $product, array $optionValues)
     {
         foreach ($product->getVariants() as $variant) {
             if (count($variant->getOptionValues()) !== count($optionValues)) {
@@ -74,6 +75,39 @@ class RestaurantController extends Controller
                 return $variant;
             }
         }
+    }
+
+    private function matchNonExistingOption(ProductInterface $product, array $optionValues)
+    {
+        foreach ($optionValues as $optionValue) {
+            if (!$product->hasOption($optionValue->getOption())) {
+                return $optionValue->getOption();
+            }
+        }
+    }
+
+    private function createProductVariant(ProductInterface $product, array $optionValues)
+    {
+        $productVariant = $this->get('sylius.factory.product_variant')->createForProduct($product);
+        $values = [];
+        foreach ($optionValues as $optionValue) {
+            $productVariant->addOptionValue($optionValue);
+            $values[] = $optionValue->getValue();
+        }
+
+        $this->get('logger')->info(sprintf('Creating product variant for product %s with values %s',
+            $product->getCode(), implode(' + ', $values)));
+
+        $productVariant->setName($product->getName());
+        $productVariant->setCode(Uuid::uuid4()->toString());
+
+        $defaultVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
+
+        // Copy price & tax category from default variant
+        $productVariant->setPrice($defaultVariant->getPrice());
+        $productVariant->setTaxCategory($defaultVariant->getTaxCategory());
+
+        return $productVariant;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -323,7 +357,7 @@ class RestaurantController extends Controller
 
         $cartItem = $this->get('sylius.factory.order_item')->createNew();
 
-        if ($product->isSimple()) {
+        if (!$product->hasOptions()) {
             $productVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
         } else {
 
@@ -336,10 +370,25 @@ class RestaurantController extends Controller
                 $optionValues[] = $optionValue;
             }
 
+            $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);
+            if (null !== $nonExistingOption) {
+                $errors = [
+                    'items' => [
+                        sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode())
+                    ]
+                ];
+
+                return $this->jsonResponse($cart, $errors);
+            }
+
             $productVariant = $this->resolveProductVariant($product, $optionValues);
 
+            // Lazily create a product variant
+            // As we "hide" product variants, some variants may not have been created yet
+            // At this step, we are pretty sure the options are valid
             if (!$productVariant) {
-                // TODO Handle variant not found
+                $productVariant = $this->createProductVariant($product, $optionValues);
+                $this->get('sylius.repository.product_variant')->add($productVariant);
             }
         }
 
