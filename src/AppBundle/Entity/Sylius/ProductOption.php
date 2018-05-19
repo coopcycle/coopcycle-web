@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
@@ -47,5 +48,10 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setPrice(?int $price): void
     {
         $this->price = $price;
+    }
+
+    public function setRestaurant(Restaurant $restaurant)
+    {
+        $restaurant->addProductOption($this);
     }
 }

@@ -1,15 +1,22 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block _product_option_values_entry_row %}
-  <div class="row">
-    <div class="col-sm-6">
+  {% set row_id = form.vars.id ~ '_row' %}
+  <div class="row" id="{{ row_id }}">
+    <div class="col-sm-5">
       {{ form_row(form.translations, { label: false }) }}
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-5">
       {{ form_row(form.price) }}
     </div>
+    <div class="col-sm-2 text-right">
+      <div class="form-group form-group-delete">
+        <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-danger">
+          <i class="fa fa-trash"></i> {{ 'basics.delete'|trans }}
+        </button>
+      </div>
+    </div>
   </div>
-
 {% endblock %}
 
 {% block _product_option_values_entry_translations_entry_row %}
@@ -18,5 +25,7 @@
 
 {% block _product_option_values_widget %}
   {{ form_widget(form) }}
-  <button type="button" class="btn btn-success" id="add-option-value">Add a value</button>
+  <button type="button" class="btn btn-success" id="add-option-value">
+    <i class="fa fa-plus"></i> {{ 'form.product_option.add_value.label'|trans }}
+  </button>
 {% endblock %}

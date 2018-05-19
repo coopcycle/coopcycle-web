@@ -434,13 +434,15 @@ form.product.enabled.label: Activado
 form.product_option.name.label: Nombre
 form.product_option.strategy.label: Cálculo del precio
 form.product_option.price.label: Precio
+form.product_option.add_value.label: Añadir valor
+form.product_option.values.title: Valores
 
 form.product_option_value.value.label: Valor
 form.product_option_value.price.label: Precio
 
-product_option.strategy.STRATEGY_FREE: Gratis
-product_option.strategy.STRATEGY_OPTION: Precio fijo sea cual sea la elección
-product_option.strategy.STRATEGY_OPTION_VALUE: Precio según la elección
+product_option.strategy.free: Gratis
+product_option.strategy.option: Precio fijo sea cual sea la elección
+product_option.strategy.option_value: Precio según la elección
 
 cart.modal.title: Atención
 cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres iniciar un pedido nuevo en éste restaurante?
@@ -495,3 +497,4 @@ pagination.next: Siguiente
 basics.save: Guardar
 basics.add: Añadir
 basics.edit: Modificar
+basics.delete: Eliminar

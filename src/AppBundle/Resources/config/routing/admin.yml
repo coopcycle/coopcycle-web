@@ -205,7 +205,20 @@ admin_restaurant_product_options:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             product_option: admin_restaurant_product_option
+            new_product_option: admin_restaurant_product_option_new
     methods: [ GET ]
+
+admin_restaurant_product_option_new:
+    path: /admin/restaurants/{id}/product-options/new
+    defaults:
+        _controller: AppBundle:Admin:newRestaurantProductOption
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:productOption.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            product_options: admin_restaurant_product_options
+    methods: [ GET, POST ]
 
 admin_restaurant_product_option:
     path: /admin/restaurants/{restaurantId}/product-options/{optionId}

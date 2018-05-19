@@ -24,20 +24,28 @@ class ProductOptionType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $strategies = [
+            ProductOptionInterface::STRATEGY_FREE,
+            ProductOptionInterface::STRATEGY_OPTION,
+            ProductOptionInterface::STRATEGY_OPTION_VALUE
+        ];
+
+        $strategyChoices = [];
+        foreach ($strategies as $strategy) {
+            $strategyChoices[$this->translator->trans(sprintf('product_option.strategy.%s', $strategy))] = $strategy;
+        }
+
         $builder
             ->add('name', TextType::class, [
                 'label' => 'form.product_option.name.label'
             ])
             ->add('strategy', ChoiceType::class, [
-                'choices' => [
-                    $this->translator->trans('product_option.strategy.STRATEGY_FREE') => ProductOptionInterface::STRATEGY_FREE,
-                    $this->translator->trans('product_option.strategy.STRATEGY_OPTION') => ProductOptionInterface::STRATEGY_OPTION,
-                    $this->translator->trans('product_option.strategy.STRATEGY_OPTION_VALUE') => ProductOptionInterface::STRATEGY_OPTION_VALUE,
-                ],
+                'choices' => $strategyChoices,
                 'label' => 'form.product_option.strategy.label'
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'form.product_option.price.label',
+                'divisor' => 100,
                 'required' => false
             ])
             ->add('values', CollectionType::class, [

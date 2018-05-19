@@ -10,6 +10,11 @@
 <div class="alert alert-info">
   <i class="fa fa-info-circle"></i> {% trans %}restaurant.product_options.help{% endtrans %}
 </div>
+<p class="text-right">
+  <a href="{{ path(new_product_option_route, { id: restaurant.id }) }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
+  </a>
+</p>
 <table class="table">
   <thead>
     <th>{{ 'form.product_option.name.label'|trans }}</th>
@@ -21,7 +26,7 @@
     {% for option in options %}
     <tr>
       <td>{{ option.name }}</td>
-      <td>{{ option.strategy }}</td>
+      <td>{{ ('product_option.strategy.' ~ option.strategy)|trans }}</td>
       <td class="text-right">{{ option.values|length }}</td>
       <td class="text-right">
         <a href="{{ path(product_option_route, { restaurantId: restaurant.id, optionId: option.id }) }}"

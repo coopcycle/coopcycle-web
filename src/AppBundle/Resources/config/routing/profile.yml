@@ -245,7 +245,20 @@ profile_restaurant_product_options:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
             product_option: profile_restaurant_product_option
+            new_product_option: profile_restaurant_product_option_new
     methods: [ GET ]
+
+profile_restaurant_product_option_new:
+    path: /profile/restaurants/{id}/product-options/new
+    defaults:
+        _controller: AppBundle:Profile:newRestaurantProductOption
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:productOption.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            product_options: profile_restaurant_product_options
+    methods: [ GET, POST ]
 
 profile_restaurant_product_option:
     path: /profile/restaurants/{restaurantId}/product-options/{optionId}
