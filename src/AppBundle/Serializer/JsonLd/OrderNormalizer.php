@@ -92,34 +92,36 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
 
-        $orderItems = array_map(function ($item) {
+        if (isset($data['items'])) {
+            $orderItems = array_map(function ($item) {
 
-            $product = $this->productRepository->findOneByCode($item['product']);
+                $product = $this->productRepository->findOneByCode($item['product']);
 
-            if (isset($item['options'])) {
-                $optionValues = [];
-                foreach ($item['options'] as $optionValueCode) {
-                    $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                    $optionValues[] = $optionValue;
+                if (isset($item['options'])) {
+                    $optionValues = [];
+                    foreach ($item['options'] as $optionValueCode) {
+                        $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
+                        $optionValues[] = $optionValue;
+                    }
+                    $productVariant = $this->resolveProductVariant($product, $optionValues);
+                } else {
+                    $productVariant = $this->variantResolver->getVariant($product);
                 }
-                $productVariant = $this->resolveProductVariant($product, $optionValues);
-            } else {
-                $productVariant = $this->variantResolver->getVariant($product);
+
+                $orderItem = $this->orderItemFactory->createNew();
+                $orderItem->setVariant($productVariant);
+                $orderItem->setUnitPrice($productVariant->getPrice());
+
+                $this->orderItemQuantityModifier->modify($orderItem, $item['quantity']);
+
+                return $orderItem;
+
+            }, $data['items']);
+
+            $order->clearItems();
+            foreach ($orderItems as $orderItem) {
+                $this->orderModifier->addToOrder($order, $orderItem);
             }
-
-            $orderItem = $this->orderItemFactory->createNew();
-            $orderItem->setVariant($productVariant);
-            $orderItem->setUnitPrice($productVariant->getPrice());
-
-            $this->orderItemQuantityModifier->modify($orderItem, $item['quantity']);
-
-            return $orderItem;
-
-        }, $data['items']);
-
-        $order->clearItems();
-        foreach ($orderItems as $orderItem) {
-            $this->orderModifier->addToOrder($order, $orderItem);
         }
 
         return $order;
