@@ -62,6 +62,10 @@ final class WebAuthenticationListener implements EventSubscriberInterface
 
         $cart->setCustomer($user);
 
+        if (null === $cart->getRestaurant()) {
+            return;
+        }
+
         $this->cartManager->persist($cart);
         $this->cartManager->flush();
     }
