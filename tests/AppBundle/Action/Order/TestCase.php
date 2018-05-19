@@ -7,7 +7,7 @@ use AppBundle\Service\OrderManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use Predis\Client as Redis;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -18,14 +18,13 @@ abstract class TestCase extends BaseTestCase
     protected $actionClass;
 
     protected $tokenStorage;
-    protected $redis;
     protected $doctrine;
 
     public function setUp()
     {
         $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
-        $this->redis = $this->prophesize(Redis::class);
         $this->doctrine = $this->prophesize(DoctrineRegistry::class);
+        $this->stateMachineFactory = $this->prophesize(StateMachineFactoryInterface::class);
 
         $this->user = new ApiUser();
 
@@ -46,9 +45,9 @@ abstract class TestCase extends BaseTestCase
     {
         return new $this->actionClass(
             $this->tokenStorage->reveal(),
-            $this->redis->reveal(),
             $this->doctrine->reveal(),
-            $orderManager
+            $orderManager,
+            $this->stateMachineFactory->reveal()
         );
     }
 
