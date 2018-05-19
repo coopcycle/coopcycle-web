@@ -45,14 +45,6 @@ class OrderManager
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function pay(OrderInterface $order, $stripeToken)
-    {
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $stripePayment->setStripeToken($stripeToken);
-
-        $this->authorizePayment($order);
-    }
-
     public function create(OrderInterface $order)
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);

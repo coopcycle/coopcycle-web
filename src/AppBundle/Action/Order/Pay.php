@@ -3,7 +3,10 @@
 namespace AppBundle\Action\Order;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\StripePayment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -40,10 +43,16 @@ class Pay extends Base
             throw new BadRequestHttpException('Stripe token is missing');
         }
 
-        try {
-            $this->orderManager->pay($order, $data['stripeToken']);
-        } catch (\Exception $e) {
-            throw new BadRequestHttpException($e->getMessage(), $e);
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $stripePayment->setStripeToken($data['stripeToken']);
+
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+
+        $this->doctrine->getManagerForClass(StripePayment::class)->flush();
+
+        if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
+            throw new BadRequestHttpException($stripePayment->getLastError());
         }
 
         return $order;
