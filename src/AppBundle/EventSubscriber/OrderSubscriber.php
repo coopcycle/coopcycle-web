@@ -54,6 +54,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
+                ['postWrite', EventPriorities::POST_WRITE],
             ],
             OrderCreateEvent::NAME => 'onOrderCreated',
             OrderAcceptEvent::NAME => 'onOrderAccepted',
@@ -99,6 +100,24 @@ final class OrderSubscriber implements EventSubscriberInterface
         if (null === $order->getCustomer()) {
             $order->setCustomer($this->getUser());
         }
+
+        $event->setControllerResult($order);
+    }
+
+    public function postWrite(GetResponseForControllerResultEvent $event)
+    {
+        $result = $event->getControllerResult();
+        $method = $event->getRequest()->getMethod();
+
+        if (!($result instanceof Order && Request::METHOD_POST === $method)) {
+            return;
+        }
+
+        $order = $result;
+
+        $this->orderManager->create($order);
+
+        $this->doctrine->getManagerForClass(Order::class)->flush();
 
         $event->setControllerResult($order);
     }

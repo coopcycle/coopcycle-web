@@ -90,7 +90,7 @@ Feature: Orders
       "total":@integer@,
       "itemsTotal":@integer@,
       "taxTotal":@integer@,
-      "state":"cart",
+      "state":"new",
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "createdAt":@string@
     }
