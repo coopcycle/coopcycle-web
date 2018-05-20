@@ -469,3 +469,9 @@ services:
           - '@doctrine'
           - '@logger'
       tags: [ 'kernel.event_subscriber' ]
+
+  'AppBundle\Action\Settings':
+      arguments:
+          - '@coopcycle.settings_manager'
+          - '%country_iso%'
+          - '%coopcycle.locale%'
