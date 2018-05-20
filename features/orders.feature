@@ -56,7 +56,17 @@ Feature: Orders
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
-        "name":"Nodaiwa"
+        "name":"Nodaiwa",
+        "address":{
+          "@id":"@string@.startsWith('/api/addresses')",
+          "@type":"http://schema.org/Place",
+          "geo":{
+            "latitude":@double@,
+            "longitude":@double@
+          },
+          "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+          "name":null
+        }
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",

@@ -128,7 +128,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Address
      *
-     * @Groups({"restaurant"})
+     * @Groups({"restaurant", "order"})
      */
     private $address;
 
