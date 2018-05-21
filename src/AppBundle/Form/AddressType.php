@@ -93,6 +93,15 @@ class AddressType extends AbstractType
                 ]);
         }
 
+        if (true === $options['with_name']) {
+            $builder
+                ->add('name', TextType::class, [
+                    'required' => false,
+                    'label' => 'form.address.name.label',
+                    'attr' => ['placeholder' => 'form.address.name.placeholder']
+                ]);
+        }
+
         $constraints = [
             new Constraints\NotBlank(),
             new Constraints\Type(['type' => 'numeric']),
@@ -144,7 +153,8 @@ class AddressType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Address::class,
             'extended' => false,
-            'with_telephone' => false
+            'with_telephone' => false,
+            'with_name' => false
         ));
     }
 }

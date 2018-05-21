@@ -367,6 +367,8 @@ form.delivery_embed.telephone.label: Numéro de téléphone
 
 form.address.streetAddress.label: Adresse
 form.address.streetAddress.error.noLatLng: Veuillez sélectionner une adresse dans la liste déroulante
+form.address.name.label: Nom
+form.address.name.placeholder: Maison, bureau…
 form.address.addressLocality.label: Ville
 form.address.postalCode.label: Code postal
 form.address.floor.label: Étage

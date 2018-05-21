@@ -350,6 +350,8 @@ form.address.description.label: Instructions
 form.address.description.placeholder: 2nd door on the left…
 form.address.streetAddress.label: Address
 form.address.streetAddress.error.noLatLng: Please select an address in the dropdown
+form.address.name.label: Name
+form.address.name.placeholder: Home, work…
 
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules

@@ -44,7 +44,8 @@ class TaskType extends AbstractType
                 'disabled' => !$options['can_edit_type']
             ])
             ->add('address', AddressType::class, [
-                'with_telephone' => true
+                'with_telephone' => true,
+                'with_name' => true
             ])
             ->add('comments', TextareaType::class, [
                 'required' => false,

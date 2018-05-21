@@ -348,6 +348,8 @@ form.delivery.price.label: Precio
 
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Seleccione una dirección en el menú desplegable
+form.address.name.label: Nombre
+form.address.name.placeholder: Casa, oficina…
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.floor.label: Piso

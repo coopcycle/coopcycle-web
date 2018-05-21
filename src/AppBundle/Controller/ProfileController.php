@@ -154,7 +154,9 @@ class ProfileController extends Controller
     {
         $address = new Address();
 
-        $form = $this->createForm(AddressType::class, $address);
+        $form = $this->createForm(AddressType::class, $address, [
+            'with_name' => true
+        ]);
 
         $form->handleRequest($request);
 
