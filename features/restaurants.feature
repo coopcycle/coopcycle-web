@@ -90,7 +90,8 @@ Feature: Manage restaurants
           "longitude":@double@
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-        "name":null
+        "name":null,
+        "telephone": null
       },
       "hasMenu":{
         "@type":"Menu",

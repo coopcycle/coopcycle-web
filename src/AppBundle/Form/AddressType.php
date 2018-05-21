@@ -2,6 +2,10 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,16 +20,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 
 class AddressType extends AbstractType
 {
     private $translator;
+    private $country;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, $country)
     {
         $this->translator = $translator;
+        $this->country = $country;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -80,6 +84,15 @@ class AddressType extends AbstractType
                 ]);
         }
 
+        if (true === $options['with_telephone']) {
+            $builder
+                ->add('telephone', PhoneNumberType::class, [
+                    'format' => PhoneNumberFormat::NATIONAL,
+                    'default_region' => strtoupper($this->country),
+                    'required' => false,
+                ]);
+        }
+
         $constraints = [
             new Constraints\NotBlank(),
             new Constraints\Type(['type' => 'numeric']),
@@ -130,7 +143,8 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Address::class,
-            'extended' => false
+            'extended' => false,
+            'with_telephone' => false
         ));
     }
 }

@@ -9,8 +9,15 @@
     </a>
   </div>
   <div class="collapse" id="{{ form.vars.id }}_options">
-    {{ form_row(form.postalCode) }}
-    {{ form_row(form.addressLocality) }}
+    <div class="row">
+      <div class="col-sm-6">
+        {{ form_row(form.postalCode) }}
+      </div>
+      <div class="col-sm-6">
+        {{ form_row(form.addressLocality) }}
+      </div>
+    </div>
+    {{ form_row(form.telephone) }}
     {{ form_row(form.floor) }}
     {{ form_row(form.description) }}
   </div>

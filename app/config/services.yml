@@ -252,7 +252,7 @@ services:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   'AppBundle\Form\AddressType':
-    arguments: [ '@translator' ]
+    arguments: [ '@translator', '%country_iso%' ]
     tags:
       - { name: form.type }
 

@@ -65,7 +65,8 @@ Feature: Orders
             "longitude":@double@
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
-          "name":null
+          "name":null,
+          "telephone": null
         }
       },
       "shippingAddress":{
@@ -76,7 +77,8 @@ Feature: Orders
           "longitude":2.359207
         },
         "streetAddress":"1, rue de Rivoli",
-        "name":null
+        "name":null,
+        "telephone": null
       },
       "items":[
         {
