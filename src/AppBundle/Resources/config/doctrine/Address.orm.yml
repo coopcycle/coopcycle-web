@@ -64,3 +64,6 @@ AppBundle\Entity\Address:
             type: string
             nullable: true
             column: company
+        telephone:
+            type: phone_number
+            nullable: true

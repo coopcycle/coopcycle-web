@@ -73,6 +73,12 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
+     * @Groups({"place"})
+     * @ApiProperty(iri="https://schema.org/telephone")
+     */
+    protected $telephone;
+
+    /**
      * Sets addressCountry.
      *
      * @param string $addressCountry
@@ -238,5 +244,17 @@ abstract class PostalAddress
     public function getStreetAddress()
     {
         return $this->streetAddress;
+    }
+
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+
+        return $this;
     }
 }
