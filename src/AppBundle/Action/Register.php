@@ -97,7 +97,7 @@ class Register
             // TODO Customize FOSUserBundle manipulator to pass all fields at once
             $user = $this->userManipulator->create($username, $password, $email, true, false);
             $jwt = $this->jwtManager->create($user);
-            $user->setTelephone($form->get('tdelephone')->getData());
+            $user->setTelephone($form->get('telephone')->getData());
             $user->setGivenName($form->get('givenName')->getData());
             $user->setFamilyName($form->get('familyName')->getData());
             $this->userManager->updateUser($user);
