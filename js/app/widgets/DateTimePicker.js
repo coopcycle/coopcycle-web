@@ -141,9 +141,13 @@ export default (el, options) => {
     onChange: () => {}
   }
 
+  if (null !== options.defaultValue) {
+    options.defaultValue = moment(options.defaultValue)
+  } else {
+    delete options.defaultValue
+  }
+
   const props = { ...defaultProps, ...options }
 
-  render(<DateTimePicker
-    defaultValue={ options.defaultValue ? moment(options.defaultValue) : null }
-    { ...props } />, el)
+  render(<DateTimePicker { ...props } />, el)
 }
