@@ -40,5 +40,5 @@ test:
         SYMFONY_ENV: test
 
     script:
-      - phpunit
+      - vendor/bin/phpunit
       - php vendor/bin/behat -f progress
