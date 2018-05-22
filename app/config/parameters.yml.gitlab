@@ -2,9 +2,9 @@ parameters:
     country_iso: fr
     coopcycle.locale: fr
     database_driver: pdo_pgsql
-    database_host: postgresql
+    database_host: postgres
     database_port: 5432
-    database_name: coopcycle_test
+    database_name: coopcycle
     database_user: postgres
     database_password: ~
     mailer_transport:  smtp

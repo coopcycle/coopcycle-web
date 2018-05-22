@@ -27,7 +27,8 @@ test:
     # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
     # See http://docs.gitlab.com/ce/ci/services/README.html for examples.
     services:
-      - mdillon/postgis:9.4-alpine
+      - name: mdillon/postgis:9.4-alpine
+        alias: postgres
       - redis:alpine
       - osrm/osrm-backend:v5.16.0
       - stripemock/stripe-mock:latest
