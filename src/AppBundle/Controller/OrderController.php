@@ -11,7 +11,6 @@ use AppBundle\Form\StripePaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -70,9 +69,6 @@ class OrderController extends Controller
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-        $stateMachineFactory = $this->get('sm.factory');
-        $stateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-
         $form = $this->createForm(StripePaymentType::class);
 
         $parameters =  [
@@ -87,7 +83,8 @@ class OrderController extends Controller
 
             $stripePayment->setStripeToken($form->get('stripeToken')->getData());
 
-            $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+            $orderManager->create($order);
+            $orderManager->authorizePayment($order);
 
             $this->get('sylius.manager.order')->flush();
 
@@ -96,11 +93,6 @@ class OrderController extends Controller
                     'error' => $stripePayment->getLastError()
                 ]);
             }
-
-            // Create order, to generate a number
-            $orderManager->create($order);
-
-            $this->get('sylius.manager.order')->flush();
 
             $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
             $request->getSession()->remove($sessionKeyName);

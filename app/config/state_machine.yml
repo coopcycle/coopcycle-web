@@ -42,6 +42,12 @@ winzou_state_machine:
                     do: ["@coopcycle.order_manager", "capturePayment"]
                     args: ["object"]
             after:
+                # We can safely apply create transition on all payments,
+                # because SM\Callback\CascadeTransitionCallback uses $soft = true
+                after_create_cascade:
+                    on: "create"
+                    do: ["@sm.callback.cascade_transition", "apply"]
+                    args: ["object.getPayments()", "event", "'create'", "'sylius_payment'"]
                 after_create_dispatch_event:
                     on: "create"
                     do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
@@ -116,10 +122,6 @@ winzou_state_machine:
                 to: void
         callbacks:
             after:
-                after_create_authorize_payment:
-                    on: "create"
-                    do: ["@coopcycle.order_manager", "authorizePayment"]
-                    args: ["object.getOrder()"]
                 after_authorize_dispatch_event:
                     on: "authorize"
                     do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]

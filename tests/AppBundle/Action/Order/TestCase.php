@@ -7,7 +7,6 @@ use AppBundle\Service\OrderManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -24,7 +23,6 @@ abstract class TestCase extends BaseTestCase
     {
         $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $this->doctrine = $this->prophesize(DoctrineRegistry::class);
-        $this->stateMachineFactory = $this->prophesize(StateMachineFactoryInterface::class);
 
         $this->user = new ApiUser();
 
@@ -46,8 +44,7 @@ abstract class TestCase extends BaseTestCase
         return new $this->actionClass(
             $this->tokenStorage->reveal(),
             $this->doctrine->reveal(),
-            $orderManager,
-            $this->stateMachineFactory->reveal()
+            $orderManager
         );
     }
 
