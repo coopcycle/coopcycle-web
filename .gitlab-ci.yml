@@ -31,14 +31,14 @@ test:
         alias: postgres
       - redis:alpine
       - osrm/osrm-backend:v5.16.0
-      - stripemock/stripe-mock:latest
+      - name: stripemock/stripe-mock:latest
+        alias: stripe_mock
 
     # Set any variables we need
     variables:
         POSTGRES_DB: coopcycle_test
-        STRIPE_MOCK_API_BASE: http://localhost:12111
         SYMFONY_ENV: test
 
     script:
-      - vendor/bin/phpunit
-      - php vendor/bin/behat -f progress
+      - "vendor/bin/phpunit"
+      - "php vendor/bin/behat -f progress"
