@@ -257,7 +257,7 @@ services:
       - { name: form.type }
 
   'AppBundle\Form\DeliveryAddressType':
-    arguments: [ '@translator' ]
+    arguments: [ '@translator', '%country_iso%' ]
     tags:
       - { name: form.type }
 
