@@ -30,9 +30,8 @@ test:
       - name: mdillon/postgis:9.4-alpine
         alias: postgres
       - redis:alpine
-      - name: osrm/osrm-backend:v5.16.0
+      - name: coopcycle/osrm-test
         alias: osrm
-        command: ["osrm-routed --algorithm mld /data/data.osrm"]
       - name: stripemock/stripe-mock:latest
         alias: stripe_mock
 
