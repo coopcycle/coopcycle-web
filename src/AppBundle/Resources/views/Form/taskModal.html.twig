@@ -71,3 +71,8 @@
 {% block _task_edit_tagsAsString_widget %}
 {{ block('_task_tagsAsString_widget') }}
 {% endblock %}
+
+{% block _task_edit_lastEvent_notes_widget %}
+  {{ block('textarea_widget') }}
+  <small class="help-block">{% trans %}form.task_event.notes.help{% endtrans %}</small>
+{% endblock %}

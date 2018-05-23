@@ -125,16 +125,24 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
   if ($(`form[name="${formName}"]`).data('ajax') === true) {
 
     $(document)
-      .off('click', `#${formName}_save`)
-      .on('click', `#${formName}_save`, function(e) {
+      .off('click', `form[name="${formName}"] button[type="submit"]`)
+      .on('click', `form[name="${formName}"] button[type="submit"]`, function(e) {
         e.preventDefault()
 
         const $form = $(`form[name="${formName}"]`)
 
+        const data = $form.serializeArray()
+
+        // We add the name of the button that was actually clicked
+        data.push({
+          name: $(e.target).attr('name'),
+          value: ""
+        })
+
         fetch($form.attr('action'), {
           credentials: 'include',
           method: 'POST',
-          body: new URLSearchParams($form.serialize()),
+          body: new URLSearchParams($.param(data)),
         })
         .then(res => {
           if (res.ok) {

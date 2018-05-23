@@ -71,11 +71,6 @@ adminDashboard.orders.invoice.totalIncludingTax: Total TTC
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 
-adminDashboard.task.form.courier: Coursier
-adminDashboard.task.form.status: Statut
-adminDashboard.task.form.notes: Note de fin
-adminDashboard.task.form.notes.placeholder: Spécifiez les détails de fin de tâche
-
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.edit: Modifier
 adminDashboard.users.save: Enregistrer
@@ -306,11 +301,19 @@ task.form.modal.moreOptions: Plus d'options
 task.form.dateRange: Créneau pour la réalisation
 task.form.finish: Terminer la tâche
 task.form.details: Détails de la tâche
-task.form.finish.info: La tâche est finie avec le statut %status%. Vous pouvez changer la note écrite à la fin de la tâche.
+task.form.finish.DONE.info: La tâche a été réalisée avec succès
+task.form.finish.FAILED.info: La tâche n'a pas pu être réalisée
 
 task.status.done: Succès
 task.status.failed: Échec
 task.status.todo: À faire
+
+form.task.courier.label: Coursier
+form.task.status.label: Status
+
+form.task_event.notes.placeholder: |
+  Ex : adresse introuvable, aucun problème…
+form.task_event.notes.help: Vous pouvez modifier le commentaire
 
 form.task_upload.file: Fichier
 form.task_complete.done.label: Terminer
