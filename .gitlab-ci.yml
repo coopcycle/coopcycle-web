@@ -43,3 +43,21 @@ test:
     script:
       - "vendor/bin/phpunit"
       - "php vendor/bin/behat -f progress"
+
+deploy_paris:
+  image: coopcycle/deployer:latest
+  stage: deploy
+  script:
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_PRIVATE_KEY" > /root/.ssh/id_rsa
+    - echo "$DEPLOY_PUBLIC_KEY" > /root/.ssh/id_rsa.pub
+    - chmod 700 /root/.ssh
+    - chmod 600 /root/.ssh/id_rsa /root/.ssh/id_rsa.pub
+    - cd /app
+    # enable agent forwarding so deployer can pull github from production server
+    - eval `ssh-agent -s` && ssh-add
+    - php vendor/bin/dep deploy --hosts=paris.coopcycle.org
+  environment:
+    name: paris
+  only:
+    - master
