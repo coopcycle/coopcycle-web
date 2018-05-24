@@ -485,6 +485,10 @@ services:
       - "%country_iso%"
       - "%coopcycle.locale%"
 
+  coopcycle.user_manager:
+    class: AppBundle\Service\UserManager
+    parent: fos_user.user_manager.default
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:
