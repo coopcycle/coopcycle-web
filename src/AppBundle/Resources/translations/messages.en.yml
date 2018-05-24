@@ -166,6 +166,8 @@ restaurant.closedWarning: |
   This restaurant is closed now. You can still order for later on though!
 restaurant.temporaryClosedWarning: |
   This restaurant is exceptionally closed. You can still order for later on though!
+restaurant.noMenuWarning: |
+  This restaurant has no menu for now
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
 restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link

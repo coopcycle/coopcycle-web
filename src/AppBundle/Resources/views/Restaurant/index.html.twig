@@ -34,6 +34,7 @@
     </div>
   </div>
 
+  {% if restaurant.menuTaxon is not null %}
   <div class="row">
 
     <div class="col-xs-12 col-sm-8">
@@ -75,7 +76,6 @@
         </div>
         {% endif %}
       {% endfor %}
-
     </div>
 
     <div class="col-xs-12 col-sm-4">
@@ -86,56 +86,65 @@
     </div>
 
   </div>
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans %}restaurant.noMenuWarning{% endtrans %}
+    </div>
+  {% endif %}
+
 </div>
 
 {# Modals for modifiers #}
 
-{% for child in restaurant.menuTaxon.children %}
-  {% for product in child.products %}
-    {% if product.enabled and not product.simple %}
-    <div id="{{ product.code }}-options" class="modal fade">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">{{ product.name }}</h4>
-          </div>
-          <div class="modal-body">
-            <form
-              action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-              data-product-options>
-              {% for option in product.options %}
-              <h4>
-                {{ option.name }}
-                {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
-              </h4>
-              <div class="list-group" data-product-option>
-                {% for option_value in option.values %}
-                  <div class="list-group-item modifier-item">
-                    <div class="radio nomargin">
-                      <label>
-                        <input
-                          name="options[{{ option.code }}]"
-                          value="{{ option_value.code }}" type="radio">
-                        {{ option_value.value }}
-                        {% if option.strategy == 'option_value' %} - {{ option_value.price|price_format }}€{% endif %}
-                      </label>
+{% if restaurant.menuTaxon is not null %}
+  {% for child in restaurant.menuTaxon.children %}
+    {% for product in child.products %}
+      {% if product.enabled and not product.simple %}
+      <div id="{{ product.code }}-options" class="modal fade">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">{{ product.name }}</h4>
+            </div>
+            <div class="modal-body">
+              <form
+                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                data-product-options>
+                {% for option in product.options %}
+                <h4>
+                  {{ option.name }}
+                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
+                </h4>
+                <div class="list-group" data-product-option>
+                  {% for option_value in option.values %}
+                    <div class="list-group-item modifier-item">
+                      <div class="radio nomargin">
+                        <label>
+                          <input
+                            name="options[{{ option.code }}]"
+                            value="{{ option_value.code }}" type="radio">
+                          {{ option_value.value }}
+                          {% if option.strategy == 'option_value' %} - {{ option_value.price|price_format }}€{% endif %}
+                        </label>
+                      </div>
                     </div>
-                  </div>
+                  {% endfor %}
+                </div>
                 {% endfor %}
-              </div>
-              {% endfor %}
-              <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
-            </form>
+                <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    {% endif %}
+      {% endif %}
+    {% endfor %}
   {% endfor %}
-{% endfor %}
+{% endif %}
 
 <div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">

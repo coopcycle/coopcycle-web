@@ -161,6 +161,8 @@ restaurant.closedWarning: |
   Ce restaurant est actuellement fermé. Vous pouvez commander pour plus tard!
 restaurant.temporaryClosedWarning: |
   Ce restaurant est exceptionnellement fermé. Vous pouvez commander pour plus tard!
+restaurant.noMenuWarning: |
+  Ce restaurant n'a pas de menu pour l'instant
 restaurant.form.enabled.tooltip: |
   Un restaurant désactivé n'est ni visible ni référencé sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée n'est pas accessible par les visiteurs.
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre restaurant

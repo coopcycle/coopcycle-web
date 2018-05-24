@@ -166,6 +166,8 @@ restaurant.closedWarning: |
   Éste restaurante está actualmente cerrado pero puedes hacer un pedido para más tarde.
 restaurant.temporaryClosedWarning: |
   Éste restaurante está cerrado temporalmente pero puedes hacer un pedido para más tarde.
+restaurant.noMenuWarning: |
+  Este restaurante no tiene menú por ahora
 restaurant.form.enabled.tooltip: |
   Un restaurante desactivado no és visible en la plataforma, no aparece en los resultados de búsqueda ni es accesible para los visitantes.
 restaurant.form.temporaryClosingRule: Si desea cerrar el restaurante temporalmente siga el siguiente enlace
