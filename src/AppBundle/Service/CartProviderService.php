@@ -23,6 +23,7 @@ class CartProviderService
         return $this->cartContext->getCart();
     }
 
+    // TODO Remove this method
     public function normalize(OrderInterface $cart)
     {
         return $this->serializer->normalize($cart, 'json', [

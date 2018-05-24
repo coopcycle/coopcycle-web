@@ -12,6 +12,7 @@ class CoopCycleExtension extends \Twig_Extension
             new \Twig_SimpleFilter('price_format', array(PriceFormatResolver::class, 'priceFormat')),
             new \Twig_SimpleFilter('order_can_transition', array(OrderStateResolver::class, 'orderCanTransitionFilter')),
             new \Twig_SimpleFilter('sylius_resolve_variant', array(SyliusVariantResolver::class, 'resolveVariant')),
+            new \Twig_SimpleFilter('serializer_normalize', array(Serializer::class, 'normalize')),
         );
     }
 

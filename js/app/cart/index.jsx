@@ -16,7 +16,7 @@ class CartHelper {
     this.options = options
   }
 
-  init(el, options) {
+  init(el, cart, options) {
 
     this.options = Object.assign(this.options, options)
 
@@ -27,7 +27,7 @@ class CartHelper {
       itemsTotal,
       shippingAddress,
       total
-    } = window.AppData.Cart
+    } = cart
 
     const geohash = localStorage.getItem('search_geohash') || ''
     const availabilities = options.restaurant.availabilities
@@ -73,6 +73,7 @@ class CartHelper {
         restaurant={ cart.restaurant }
         total={ cart.total }
         itemsTotal={ cart.itemsTotal }
+        cart={ cart }
       />, el)
   }
 

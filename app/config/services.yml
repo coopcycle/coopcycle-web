@@ -410,6 +410,13 @@ services:
     tags:
       - { name: twig.runtime }
 
+  coopcycle.twig.runtime.serializer:
+    class: AppBundle\Twig\Serializer
+    arguments: [ '@serializer' ]
+    public: false
+    tags:
+      - { name: twig.runtime }
+
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
 

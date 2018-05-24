@@ -21,6 +21,9 @@ class CartTop extends React.Component
   }
 
   _onCartChange(cart) {
+    if (cart.id !== this.props.cart.id) {
+      return
+    }
     const { itemsTotal, total, restaurant } = cart
     this.setState({ itemsTotal, total, restaurant })
   }
