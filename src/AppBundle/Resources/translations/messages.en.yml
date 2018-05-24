@@ -72,11 +72,6 @@ adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Create a new restaurant
 
-adminDashboard.task.form.courier: Courier
-adminDashboard.task.form.status: Status
-adminDashboard.task.form.notes: Notes
-adminDashboard.task.form.notes.placeholder: Enter details about task's end
-
 adminDashboard.users.title: Users
 adminDashboard.users.edit: Edit
 adminDashboard.users.save: Save
@@ -304,11 +299,19 @@ task.form.edit: Modify task %id%
 task.form.dateRange: Date range
 task.form.finish: Finish task
 task.form.details: Task details
-task.form.finish.info: Task is finished with status %status%. You can change the note that was written at completion.
+task.form.finish.DONE.info: The task was successfully completed
+task.form.finish.FAIL.info: The task could not be completed
 
 task.status.done: Success
 task.status.failed: Failure
 task.status.todo: To do
+
+form.task.courier.label: Courier
+form.task.status.label: Status
+
+form.task_event.notes.placeholder: |
+  Ex: address not found, no problem…
+form.task_event.notes.help: You can edit the comment
 
 form.task_upload.file: File
 form.task_complete.done.label: Complete

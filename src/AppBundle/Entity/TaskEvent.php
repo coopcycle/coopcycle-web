@@ -54,6 +54,11 @@ class TaskEvent
         return $this->notes;
     }
 
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+    }
+
     public function getCreatedAt()
     {
         return $this->createdAt;

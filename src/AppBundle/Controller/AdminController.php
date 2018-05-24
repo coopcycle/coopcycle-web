@@ -21,6 +21,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
+use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
@@ -41,9 +42,9 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
 
 class AdminController extends Controller
 {
@@ -752,6 +753,30 @@ class AdminController extends Controller
                 return $this->redirect($request->headers->get('referer'));
             }
 
+            if ($form->has('complete')) {
+                if ($form->get('complete')->getClickedButton()) {
+                    $notes = $form->get('complete')->get('notes')->getData();
+                    try {
+                        if ('done' === $form->get('complete')->getClickedButton()->getName()) {
+                            $taskManager->markAsDone($task, $notes);
+                        }
+                        if ('fail' === $form->get('complete')->getClickedButton()->getName()) {
+                            $taskManager->markAsFailed($task, $notes);
+                        }
+                    } catch (PreviousTaskNotCompletedException $e) {
+
+                        $message = $this->get('translator')->trans('task.previous_task_not_completed_yet');
+
+                        $form->addError(new FormError($message));
+
+                        return $this->render('@App/Admin/taskModalContent.html.twig', [
+                            'form' => $form->createView(),
+                            'task' => $task
+                        ]);
+                    }
+                }
+            }
+
             $user = $form->get('assign')->getData();
 
             if (null === $user) {
@@ -770,12 +795,6 @@ class AdminController extends Controller
                 'item_operation_name' => 'get',
                 'groups' => ['task', 'delivery', 'place']
             ]);
-
-            if ($task->getStatus() === Task::STATUS_DONE) {
-                $taskManager->markAsDone($task, $form->get('notes')->getData());
-            } else if ($task->getStatus() === Task::STATUS_FAILED) {
-                $taskManager->markAsFailed($task, $form->get('notes')->getData());
-            }
 
             return new JsonResponse($taskNormalized);
         }

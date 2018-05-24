@@ -56,7 +56,9 @@ class TaskType extends AbstractType
                 'required' => false,
                 'label' => 'Tags'
             ])
-            ->add('save', SubmitType::class);
+            ->add('save', SubmitType::class, [
+                'label' => 'basics.save'
+            ]);
 
         if ($options['date_range']) {
             $builder
@@ -94,7 +96,7 @@ class TaskType extends AbstractType
                 // Only existing tasks can be assigned
                 $assignOptions = array(
                     'mapped' => false,
-                    'label' => 'adminDashboard.task.form.courier',
+                    'label' => 'form.task.courier.label',
                     'required' => false,
                     'class' => ApiUser::class,
                     'query_builder' => function (EntityRepository $entityRepository) {
@@ -109,53 +111,36 @@ class TaskType extends AbstractType
                 if ($task->isAssigned()) {
                     $assignOptions['data'] = $task->getAssignedCourier();
                 }
-
                 if ($task->isFinished()) {
                     $assignOptions['disabled'] = true;
                 }
 
                 $form->add('assign', EntityType::class, $assignOptions);
 
-                if ($task->isAssigned()) {
-                    $form->get('assign')->setData($task->getAssignedCourier());
+                // We disallow un-doing a task as it will break things here and there
+                if (!$task->isFinished()) {
+                    $form->add('complete', TaskCompleteType::class, [
+                        'data' => $task,
+                        'mapped' => false,
+                    ]);
+                } else {
 
-                    // we disallow un-doing a task as it will break things here and there
-                    if ($task->getStatus() === Task::STATUS_TODO) {
-                        $form->add(
-                            'status',
-                            ChoiceType::class,
-                            [
-                                'choices' => [
-                                    'task.status.todo' => Task::STATUS_TODO,
-                                    'task.status.done' => Task::STATUS_DONE,
-                                    'task.status.failed' => Task::STATUS_FAILED,
-                                ],
-                                'data' => $task->getStatus(),
-                                'label' => 'adminDashboard.task.form.status'
-                            ]
-                        );
+                    $lastEvent = null;
+                    if ($task->isDone() && $task->hasEvent(Task::STATUS_DONE)) {
+                        $lastEvent = $task->getLastEvent(Task::STATUS_DONE);
+                    }
+                    if ($task->isFailed() && $task->hasEvent(Task::STATUS_FAILED)) {
+                        $lastEvent = $task->getLastEvent(Task::STATUS_FAILED);
                     }
 
-                    $notesOptions = [];
-
-                    if ($task->getStatus() !== Task::STATUS_TODO) {
-                        $notesOptions['data'] = $task->hasEvent(Task::STATUS_DONE) ? $task->getLastEvent(Task::STATUS_DONE)->getNotes() : $task->getLastEvent(Task::STATUS_FAILED)->getNotes();
+                    if ($lastEvent) {
+                        $form->add('lastEvent', TaskEventType::class, [
+                            'mapped' => false,
+                            'data' => $lastEvent
+                        ]);
                     }
-
-                    $form->add('notes', TextareaType::class,
-                        array_merge(
-                            $notesOptions,
-                            [
-                                'required' => false,
-                                'mapped' => false,
-                                'attr' => ['rows' => '2', 'placeholder' => 'adminDashboard.task.form.notes.placeholder'],
-                                'label' => 'adminDashboard.task.form.notes'
-                            ]
-                        )
-                    );
                 }
             }
-
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -174,7 +159,7 @@ class TaskType extends AbstractType
             }
         });
 
-        $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
             $task = $event->getForm()->getParent()->getData();
 
@@ -186,7 +171,7 @@ class TaskType extends AbstractType
         });
 
         if ($builder->has('dateRange')) {
-            $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+            $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
                 $data = $event->getData();
                 $task = $event->getForm()->getParent()->getData();
@@ -195,7 +180,6 @@ class TaskType extends AbstractType
                 $task->setDoneBefore(new \DateTime($data['before']));
             });
         }
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

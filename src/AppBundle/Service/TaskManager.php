@@ -7,6 +7,7 @@ use AppBundle\Event\TaskDoneEvent;
 use AppBundle\Event\TaskFailedEvent;
 use AppBundle\Event\TaskAssignEvent;
 use AppBundle\Event\TaskUnassignEvent;
+use AppBundle\Exception\PreviousTaskNotCompletedException;
 use FOS\UserBundle\Model\UserInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -43,7 +44,7 @@ class TaskManager
     public function markAsDone(Task $task, $notes = null)
     {
         if ($task->hasPrevious() && $task->getPrevious()->getStatus() === Task::STATUS_TODO) {
-            throw new \Exception('task.previous_task_not_completed_yet');
+            throw new PreviousTaskNotCompletedException('Previous task must be completed first');
         }
 
         $task->setStatus(Task::STATUS_DONE);

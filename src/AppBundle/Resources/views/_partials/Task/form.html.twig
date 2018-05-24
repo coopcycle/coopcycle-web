@@ -31,7 +31,7 @@
       </button>
       <h4 class="modal-title">
         {{ modal_title }}
-        {%  if form.status is defined %}
+        {% if form.complete is defined %}
           <a class="pull-right margin-right-md" id="show-task-finish">{% trans %}task.form.finish{%  endtrans %}</a>
           <a class="pull-right margin-right-md" id="show-task-details" style="display:none;">{% trans %}task.form.details{%  endtrans %}</a>
         {% endif %}
@@ -39,18 +39,19 @@
     </div>
     <div class="modal-body">
 
-      {%  if form.status is defined %}
+      {{ form_errors(form) }}
+
+      {% if form.complete is defined %}
         <div id="task-finish" style="display:none;">
-          {{ form_row(form.status) }}
-          {{ form_row(form.notes) }}
+          {{ form_row(form.complete.notes) }}
         </div>
       {% endif %}
 
       <div id="task-details">
 
-        {% if task.isFinished and form.notes is defined %}
-          <p>{{ 'task.form.finish.info' | trans({ '%status%': task.status }) }}</p>
-          {{ form_row(form.notes) }}
+        {% if form.lastEvent is defined %}
+          <p>{{ ('task.form.finish.' ~ task.status ~ '.info')|trans }}</p>
+          {{ form_row(form.lastEvent.notes, { label: false }) }}
         {% endif %}
 
         {{ form_row(form.type) }}
@@ -95,6 +96,10 @@
       {% endif %}
       <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}task.form.cancel{% endtrans %}</button>
       {{ form_widget(form.save, { attr: { class: 'btn btn-primary' } }) }}
+      {% if form.complete is defined %}
+        {{ form_widget(form.complete.done, { attr: { class: 'btn btn-success', style: 'display: none;' } }) }}
+        {{ form_widget(form.complete.fail, { attr: { class: 'btn btn-danger', style: 'display: none;' } }) }}
+      {% endif %}
     </div>
   {{ form_end(form) }}
 </div>
@@ -106,11 +111,17 @@
     var $modal = $(event.target).closest('.modal-dialog');
     $(event.target).hide(400, function () {$modal.find("#show-task-details").fadeIn()});
     $modal.find("#task-details").hide(400, function () {$modal.find("#task-finish").fadeIn()});
+    $('#task_edit_save').hide();
+    $('#task_edit_complete_done').show();
+    $('#task_edit_complete_fail').show();
   });
   $('#show-task-details').on('click', function (event) {
     var $modal = $(event.target).closest('.modal-dialog');
     $(event.target).hide(400, function () {$modal.find("#show-task-finish").fadeIn()});
     $modal.find("#task-finish").hide(400, function () {$modal.find("#task-details").fadeIn()});
+    $('#task_edit_complete_done').hide();
+    $('#task_edit_complete_fail').hide();
+    $('#task_edit_save').show();
   });
 </script>
 {% endif %}
