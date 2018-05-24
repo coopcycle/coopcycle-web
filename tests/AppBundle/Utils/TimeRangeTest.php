@@ -7,6 +7,34 @@ use AppBundle\Utils\TimeRange;
 
 class TimeRangeTest extends TestCase
 {
+    public function testEmptyTimeRangeThrowsException()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $timeRange = new TimeRange('');
+    }
+
+
+    public function invalidRangeProvider()
+    {
+        return [
+            ['Fo-Ba', 'Unexpected day Fo'],
+            ['Mo-Ba', 'Unexpected day Ba'],
+            ['Ba 10:00-11:00', 'Unexpected day Ba'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidRangeProvider
+     */
+    public function testInvalidTimeRangeThrowsException($range, $message)
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage($message);
+
+        $timeRange = new TimeRange($range);
+    }
+
     public function testIsOpen()
     {
         $timeRange = new TimeRange('Mo-Sa 11:45-14:45');

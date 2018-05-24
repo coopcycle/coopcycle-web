@@ -4,7 +4,6 @@ namespace AppBundle\Utils;
 
 class TimeRange
 {
-    private $range;
     private $weekdays = [];
     private $timeRanges = [];
 
@@ -18,9 +17,13 @@ class TimeRange
         7 => 'Su'
     ];
 
-    public function __construct($range)
+    public function __construct(string $range)
     {
-        $this->range = $range;
+        $range = trim($range);
+
+        if (empty($range)) {
+            throw new \RuntimeException('$range must be a non-empty string');
+        }
 
         $parts = preg_split('/[\s,]+/', $range);
 
@@ -39,10 +42,19 @@ class TimeRange
                 list($start, $end) = explode('-', $day);
                 $startIndex = array_search($start, self::DAYS);
                 $endIndex = array_search($end, self::DAYS);
+                if (false === $startIndex) {
+                    throw new \RuntimeException(sprintf('Unexpected day %s', $start));
+                }
+                if (false === $endIndex) {
+                    throw new \RuntimeException(sprintf('Unexpected day %s', $end));
+                }
                 for ($i = $startIndex; $i <= $endIndex; $i++) {
                     $weekdays[] = self::DAYS[$i];
                 }
             } else {
+                if (false === array_search($day, self::DAYS)) {
+                    throw new \RuntimeException(sprintf('Unexpected day %s', $day));
+                }
                 $weekdays[] = $day;
             }
         }
