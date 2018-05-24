@@ -86,6 +86,8 @@ Feature: Authenticate
       "@type": "ApiUser",
       "addresses": [],
       "username": "bob",
+      "givenName": null,
+      "familyName": null,
       "email": "bob@coopcycle.org"
     }
     """

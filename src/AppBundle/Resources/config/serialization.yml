@@ -4,6 +4,10 @@ AppBundle\Entity\ApiUser:
       groups: ['user', 'order']
     email:
       groups: ['user']
+    givenName:
+      groups: ['user']
+    familyName:
+      groups: ['user']
     addresses:
       groups: ['user']
     telephone:
