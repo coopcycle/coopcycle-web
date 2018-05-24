@@ -255,7 +255,7 @@ function initMap() {
     $('#cart-warning-modal').modal('hide');
   })
 
-  window.AppData.CartHelper.init(document.querySelector('#cart'), {
+  window.AppData.CartHelper.init(document.querySelector('#cart'), window.AppData.Cart, {
     restaurant: {
       id: {{ restaurant.id }},
       availabilities: {{ availabilities|json_encode()|raw }}

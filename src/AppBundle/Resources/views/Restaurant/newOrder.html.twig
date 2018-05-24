@@ -1,0 +1,134 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+  {# <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li><a href="{{ path(products_route, { id: restaurant.id }) }}">{{ 'restaurant.list.products'|trans }}</a></li>
+  <li>{{ product.name }}</li> #}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-8">
+      {% for child in restaurant.menuTaxon.children %}
+        {% if child.products|length > 0 %}
+        <h2>{{ child.name }}</h2>
+        <div class="list-group">
+          {% for product in child.products %}
+            {% set variant = product|sylius_resolve_variant %}
+            {# TODO Skip if no variant is defined #}
+            {% if not product.enabled %}
+              <a class="list-group-item menu-item menu-item--unavailable">
+                <span class="menu-item-content">{{ product.name }}</span>
+                {% if product.description is not null %}
+                  <p class="menu-item-description">{{ product.description }}</p>
+                {%  endif %}
+                <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
+              </a>
+            {% else %}
+              <a  class="list-group-item menu-item"
+                  {% if product.simple %}
+                  data-product-code="{{ product.code }}"
+                  href="{{ path(add_product_to_order_route, { id: restaurant.id, code: product.code }) }}"
+                  {% else %}
+                  data-toggle="modal"
+                  data-target="#{{ product.code }}-options"
+                  href="#"
+                  {% endif %}>
+                <span class="menu-item-content">
+                  {{ product.name }}
+                  {% if product.description is not null %}
+                    <small class="menu-item-description">{{ product.description }}</small>
+                  {%  endif %}
+                </span>
+                <span class="menu-item-price">{{ variant.price|price_format }} €</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Client
+        </div>
+        <div class="panel-body">
+          <div id="customer-search"></div>
+        </div>
+      </div>
+      <hr>
+      <div id="cart"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+
+$('[data-product-code]').on('click', function(e) {
+  e.preventDefault();
+  var $target = $(e.currentTarget);
+  window.AppData.CartHelper.addProduct($target.attr('href'), 1);
+})
+
+// Make sure all options have been checked
+$('form[data-product-options] input[type="radio"]').on('click', function(e) {
+
+  var $options = $(this).closest('form').find('[data-product-option]');
+  var checkedOptionsCount = 0;
+  $options.each(function(index, el) {
+    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
+  });
+
+  if ($options.length === checkedOptionsCount) {
+    $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
+  }
+})
+
+$('form[data-product-options]').on('submit', function(e) {
+  e.preventDefault();
+  var data = $(this).serializeArray();
+  if (data.length > 0) {
+    window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
+    $(this).closest('.modal').modal('hide');
+    // Uncheck all options
+    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+    $(this).closest('form').find('button[type="submit"]').attr('disabled', true);
+  }
+})
+
+function initMap() {
+
+  var cart = {{ cart|serializer_normalize('json', [ 'order' ])|json_encode()|raw }};
+
+  window.AppData.CartHelper.init(document.querySelector('#cart'), cart, {
+    restaurant: {
+      id: {{ restaurant.id }},
+      availabilities: {{ restaurant.availabilities|json_encode()|raw }}
+    },
+    cartURL: "{{ path(cart_route, { id: restaurant.id }) }}",
+    removeFromCartURL: "{{ path(remove_item_from_cart_route, { restaurantId: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+    resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    validateCartURL: "{{ path(checkout_route, { id: restaurant.id }) }}"
+  });
+
+}
+
+new CoopCycle.Search(document.querySelector('#customer-search'), {
+  url: "{{ path(search_user_route, { format: 'json' }) }}",
+  placeholder: 'Rechercher un client…',
+  onSuggestionSelected: function(suggestion) {
+    console.log(user)
+    window.AppData.CartHelper.updateCart({
+      customer: suggestion.user
+    })
+  }
+});
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+{% endblock %}

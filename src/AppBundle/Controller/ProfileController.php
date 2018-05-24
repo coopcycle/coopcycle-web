@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
+use AppBundle\Controller\Utils\CartTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -32,6 +33,7 @@ class ProfileController extends Controller
     const ITEMS_PER_PAGE = 20;
 
     use AccessControlTrait;
+    use CartTrait;
     use DeliveryTrait;
     use LocalBusinessTrait;
     use OrderTrait;

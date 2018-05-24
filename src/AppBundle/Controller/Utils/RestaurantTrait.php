@@ -6,12 +6,15 @@ use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
+use AppBundle\Exception\CartException;
+use AppBundle\Form\Checkout\AddressType as CheckoutAddressType;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
+use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\ValidationUtils;
@@ -667,5 +670,233 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes));
+    }
+
+    private function getRestaurantCartSessionKeyName(Restaurant $restaurant)
+    {
+        return sprintf('_coopcycle.sylius.cart.restaurant.%d', $restaurant->getId());
+    }
+
+    private function getRestaurantCart(Restaurant $restaurant, Request $request)
+    {
+        $sessionKeyName = $this->getRestaurantCartSessionKeyName($restaurant);
+
+        if (!$request->getSession()->has($sessionKeyName)) {
+
+            return $this->get('sylius.factory.order')->createForRestaurant($restaurant);
+        }
+
+        $cart = $this->get('sylius.repository.order')->findCartById($request->getSession()->get($sessionKeyName));
+
+        if (null === $cart) {
+            $request->getSession()->remove($sessionKeyName);
+
+            return $this->get('sylius.factory.order')->createForRestaurant($restaurant);
+        }
+
+        return $cart;
+    }
+
+    private function saveRestaurantCart(OrderInterface $cart, Request $request)
+    {
+        $this->get('sylius.manager.order')->persist($cart);
+        $this->get('sylius.manager.order')->flush();
+
+        $sessionKeyName = $this->getRestaurantCartSessionKeyName($cart->getRestaurant());
+        $request->getSession()->set($sessionKeyName, $cart->getId());
+    }
+
+    public function newRestaurantOrderAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'cart' => $cart,
+            'add_product_to_order_route' => $routes['add_product_to_order'],
+            'remove_item_from_cart_route' => $routes['remove_item_from_cart'],
+            'cart_route' => $routes['cart'],
+            'search_user_route' => $routes['search_user'],
+            'checkout_route' => $routes['checkout'],
+        ]);
+    }
+
+    public function restaurantCheckoutAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        $userManager = $this->get('fos_user.user_manager');
+
+        // TODO Check if cart is empty etc...
+
+        // exit('ok');
+
+        $routes = $request->attributes->get('routes');
+
+        $newCustomerForm = $this->createForm(RegistrationType::class);
+
+        $newCustomerForm->handleRequest($request);
+
+        if ($newCustomerForm->isSubmitted() && $newCustomerForm->isValid()) {
+
+            // $user = $form->getData();
+            // $user->setEnabled(true);
+
+            // $this->getDoctrine()->getManagerForClass(ApiUser::class)->persist($user);
+            // $this->getDoctrine()->getManagerForClass(ApiUser::class)->flush();
+
+            // return $this->redirectToRoute('admin_users');
+        }
+
+
+        if ($request->isMethod('POST')) {
+            if ($request->request->has('customer')) {
+
+                $customer = $userManager->findUserBy(['id' => $request->request->get('customer')]);
+
+                $cart->setCustomer($customer);
+
+                $this->get('sylius.manager.order')->persist($cart);
+                $this->get('sylius.manager.order')->flush();
+
+                return $this->redirectToRoute($routes['checkout_address'], ['id' => $id]);
+            }
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'new_customer_form' => $newCustomerForm->createView(),
+            'cart' => $cart,
+            'checkout_customer_route' => $routes['checkout_customer'],
+            'checkout_address_route' => $routes['checkout_address'],
+            'search_user_route' => $routes['search_user'],
+        ]);
+    }
+
+    public function restaurantCheckoutAddressAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        // TODO Check if cart is empty etc...
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(CheckoutAddressType::class, $cart);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // $address = $form->get('address')->getData();
+
+            $address = $form->get('newAddress')->getData();
+
+            $cart->setShippingAddress($address);
+
+            $this->get('sylius.manager.order')->persist($cart);
+            $this->get('sylius.manager.order')->flush();
+
+            return $this->redirectToRoute($routes['checkout_items'], ['id' => $id]);
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'cart' => $cart,
+            'checkout_customer_route' => $routes['checkout_customer'],
+            'checkout_address_route' => $routes['checkout_address'],
+        ]);
+    }
+
+    public function restaurantOrderAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        if ($request->isMethod('POST')) {
+
+            if ($request->request->has('date')) {
+                $cart->setShippedAt(new \DateTime($request->request->get('date')));
+            }
+
+            if ($request->request->has('address')) {
+                $this->setCartAddress($cart, $request);
+            }
+
+            if ($request->request->has('customer')) {
+                // $this->setCartAddress($cart, $request);
+            }
+
+            $this->saveRestaurantCart($cart, $request);
+        }
+
+        $errors = $this->get('validator')->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+
+        return $this->cartJsonResponse($cart, $errors);
+    }
+
+    public function addProductToRestaurantOrderAction($id, $code, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        $errors = [];
+        try {
+            $this->addProductToCart($cart, $code, $request);
+        } catch (CartException $e) {
+            $errors = $e->getErrors();
+        } finally {
+            $this->saveRestaurantCart($cart, $request);
+        }
+
+        $errors = array_merge($errors, ValidationUtils::serializeValidationErrors($this->get('validator')->validate($cart)));
+
+        return $this->cartJsonResponse($cart, $errors);
+    }
+
+    public function removeItemFromRestaurantCartAction($restaurantId, $cartItemId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $cartItem = $this->get('sylius.repository.order_item')
+            ->find($cartItemId);
+
+        $cart = $this->getRestaurantCart($restaurant, $request);
+
+        $this->removeItemFromCart($cart, $cartItem);
+
+        $this->get('sylius.manager.order')->persist($cart);
+        $this->get('sylius.manager.order')->flush();
+
+        $errors = $this->get('validator')->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+
+        return $this->cartJsonResponse($cart, $errors);
     }
 }

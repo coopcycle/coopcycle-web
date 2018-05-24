@@ -37,6 +37,62 @@ profile_restaurant_new:
             planning: profile_restaurant_planning
     methods: [ GET, POST ]
 
+profile_restaurant_new_order:
+    path: /profile/restaurants/{id}/orders/new
+    defaults:
+        _controller: AppBundle:Profile:newRestaurantOrder
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:newOrder.html.twig
+        routes:
+            cart: profile_restaurant_order
+            add_product_to_order: profile_restaurant_add_product_to_order
+            remove_item_from_cart: profile_restaurant_remove_item_from_cart
+            search_user: profile_user_search
+            checkout: profile_restaurant_checkout
+    methods: [ GET, POST ]
+
+profile_restaurant_checkout:
+    path: /profile/restaurants/{id}/checkout
+    defaults:
+        _controller: AppBundle:Profile:restaurantCheckout
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:checkout.html.twig
+        routes:
+            search_user: profile_user_search
+            checkout_customer: profile_restaurant_checkout
+            checkout_address: profile_restaurant_checkout_address
+    methods: [ GET, POST ]
+
+profile_restaurant_checkout_address:
+    path: /profile/restaurants/{id}/checkout/address
+    defaults:
+        _controller: AppBundle:Profile:restaurantCheckoutAddress
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:checkoutAddress.html.twig
+        routes:
+            checkout_customer: profile_restaurant_checkout
+            checkout_address: profile_restaurant_checkout_address
+            checkout_items: profile_restaurant_checkout
+    methods: [ GET, POST ]
+
+profile_restaurant_order:
+    path: /profile/restaurants/{id}/cart
+    defaults:
+        _controller: AppBundle:Profile:restaurantOrder
+    methods: [ GET, POST ]
+
+profile_restaurant_add_product_to_order:
+    path: /profile/restaurants/{id}/cart/product/{code}
+    defaults:
+        _controller: AppBundle:Profile:addProductToRestaurantOrder
+    methods: [ POST ]
+
+profile_restaurant_remove_item_from_cart:
+    path: /profile/restaurants/{restaurantId}/cart/{cartItemId}
+    defaults:
+        _controller: AppBundle:Profile:removeItemFromRestaurantCart
+    methods: [ DELETE ]
+
 profile_restaurant:
     path: /profile/restaurants/{id}
     defaults:
@@ -323,3 +379,9 @@ profile_store_api_keys:
             stores: profile_stores
             success: profile_store_api_keys
     methods:  [ GET, POST ]
+
+profile_user_search:
+    path: /profile/users/search
+    defaults:
+        _controller: AppBundle:Profile:searchUsers
+    methods:  [ GET ]

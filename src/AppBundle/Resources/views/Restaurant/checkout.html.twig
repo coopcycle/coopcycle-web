@@ -1,0 +1,65 @@
+{% extends layout %}
+
+{% form_theme new_customer_form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+
+  {% include '@App/Restaurant/_partials/checkoutBreadcrumb.html.twig' with { step: 'customer' } %}
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="customer-search"></div>
+          <form class="form-inline hidden" name="old-customer" method="post">
+            <hr>
+            <input type="hidden" name="customer">
+            <div class="form-group">
+              <p class="form-control-static"><i class="fa fa-user"></i> <span id="customer-username"></span></p>
+            </div>
+            <button type="submit" class="btn btn-success pull-right">Continuer</button>
+          </form>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-block btn-primary" data-toggle="collapse" data-target="#new-customer">
+        Créer un nouveau client
+      </button>
+
+      <div id="new-customer" class="collapse">
+        <hr>
+        {{ form_start(new_customer_form) }}
+          {{ form_widget(new_customer_form) }}
+          <button type="submit" class="btn btn-block btn-success">Continuer</button>
+        {{ form_end(new_customer_form) }}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+
+function initMap() {
+
+}
+
+new CoopCycle.Search(document.querySelector('#customer-search'), {
+  url: "{{ path(search_user_route, { format: 'json' }) }}",
+  placeholder: 'Rechercher un client…',
+  onSuggestionSelected: function(suggestion) {
+
+    $('#customer-username').text(suggestion.user.username);
+    $('form[name="old-customer"]').find('input[name="customer"]').val(suggestion.id);
+    $('form[name="old-customer"]').removeClass('hidden');
+
+
+    console.log(suggestion)
+  }
+});
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+{% endblock %}

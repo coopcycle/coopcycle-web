@@ -1,0 +1,52 @@
+{% extends layout %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+
+  {% include '@App/Restaurant/_partials/checkoutBreadcrumb.html.twig' with { step: 'address' } %}
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+
+      {{ form_start(form) }}
+
+        {{ form_errors(form) }}
+
+        {{ form_widget(form.newAddress) }}
+        {{ form_widget(form.createNewAddress, { attr: { class: 'btn btn-block btn-success' } }) }}
+
+        {% if form.existingAddress is defined %}
+        <hr>
+        {{ form_widget(form.existingAddress) }}
+        {{ form_widget(form.chooseExistingAddress, { attr: { class: 'btn btn-block btn-success' } }) }}
+        {% endif %}
+
+      {{ form_end(form) }}
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+
+function initMap() {
+  new CoopCycle.AddressInput(document.querySelector('#address_newAddress_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#address_newAddress_latitude'),
+      longitude: document.querySelector('#address_newAddress_longitude'),
+      postalCode: document.querySelector('#address_newAddress_postalCode'),
+      addressLocality: document.querySelector('#address_newAddress_addressLocality')
+    }
+  })
+}
+
+$('#address_chooseExistingAddress').on('click', function(e) {
+  $('#address_newAddress input').attr('required', false);
+});
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+{% endblock %}
