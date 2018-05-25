@@ -1,8 +1,10 @@
 html, body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   min-height: 100%;
-  display: flex;
-  flex-direction: column;
+  @media screen and (min-width: $screen-md-min) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .content {
