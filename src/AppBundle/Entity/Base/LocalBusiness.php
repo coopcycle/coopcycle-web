@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Base;
 
 use AppBundle\Utils\TimeRange;
+use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -29,6 +30,9 @@ abstract class LocalBusiness
      *
      * @ApiProperty(iri="https://schema.org/openingHours")
      * @Groups({"restaurant", "store"})
+     * @Assert\All({
+     *   @AssertTimeRange,
+     * })
      */
     protected $openingHours;
 

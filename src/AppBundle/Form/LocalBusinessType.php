@@ -47,11 +47,15 @@ abstract class LocalBusinessType extends AbstractType
             ->add('telephone', TextType::class, ['required' => false, 'label' => 'localBusiness.form.telephone',])
             ->add('openingHours', CollectionType::class, [
                 'entry_type' => HiddenType::class,
+                'entry_options' => [
+                    'error_bubbling' => false
+                ],
                 'required' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
                 'label' => 'localBusiness.form.openingHours',
+                'error_bubbling' => false
             ]);
 
         if (in_array('siret', $options['additional_properties'])) {

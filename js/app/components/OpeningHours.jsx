@@ -24,6 +24,7 @@ export default class extends React.Component {
     super(props);
     this.state = {
       weekdays: TimeRange.weekdaysShort(props.locale),
+      rowsWithErrors: props.rowsWithErrors,
       rows: []
     };
   }
@@ -156,8 +157,13 @@ export default class extends React.Component {
     const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null;
     const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null;
 
+    const rowClasses = [];
+    if (-1 !== this.props.rowsWithErrors.indexOf(key)) {
+      rowClasses.push('danger')
+    }
+
     return (
-      <tr key={key}>
+      <tr key={key} className={rowClasses.join(' ')}>
         <td>
           <LocaleProvider locale={frBE}>
             <TimePicker

@@ -2,6 +2,9 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Exception\TimeRange\EmptyRangeException;
+use AppBundle\Exception\TimeRange\NoWeekdayException;
+
 class TimeRange
 {
     private $weekdays = [];
@@ -17,12 +20,12 @@ class TimeRange
         7 => 'Su'
     ];
 
-    public function __construct(string $range)
+    public function __construct(string $range = null)
     {
         $range = trim($range);
 
         if (empty($range)) {
-            throw new \RuntimeException('$range must be a non-empty string');
+            throw new EmptyRangeException('$range must be a non-empty string');
         }
 
         $parts = preg_split('/[\s,]+/', $range);
@@ -57,6 +60,10 @@ class TimeRange
                 }
                 $weekdays[] = $day;
             }
+        }
+
+        if (empty($weekdays)) {
+            throw new NoWeekdayException();
         }
 
         $this->timeRanges = $hours;

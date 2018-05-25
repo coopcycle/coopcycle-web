@@ -21,3 +21,6 @@ delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calcu
 
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
 delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la fecha de retiro.
+
+time_range.empty: No seleccionó ningún valor
+time_range.no_weekday: No seleccionó un día de la semana

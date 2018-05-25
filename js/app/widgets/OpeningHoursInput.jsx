@@ -12,9 +12,10 @@ export default (el, options) => {
   const addRow = (index, value) => {
     const $input = $(template.replace(/__name__/g, index))
       .attr('data-opening-hour', index)
-    if (value) {
-      $input.val(value)
+    if (!value) {
+      value = '00:00-23:59'
     }
+    $input.val(value)
     $(el).append($input)
   }
 
@@ -23,6 +24,7 @@ export default (el, options) => {
   render(<OpeningHours
       value={ value }
       locale={ options.locale }
+      rowsWithErrors={ options.rowsWithErrors }
       onLoad={rows => _.each(rows, (value, index) => addRow(index, value))}
       onChange={rows => {
         _.each(rows, (value, index) => el.querySelector(`[data-opening-hour="${index}"]`).setAttribute('value', value))
