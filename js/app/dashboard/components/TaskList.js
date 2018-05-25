@@ -188,7 +188,7 @@ class TaskList extends React.Component {
             </div>
           </div>
           <div ref="scrollable" style={{ overflow: 'auto', maxHeight: '250px' }}>
-            <div ref="taskList" className="list-group nomargin">
+            <div ref="taskList" className="taskList__tasks list-group nomargin">
               { tasks.map(task => (
                 <Task
                   key={ task['@id'] }

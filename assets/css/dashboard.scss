@@ -177,6 +177,12 @@ html, body {
   }
 }
 
+.taskList__tasks {
+  .list-group-item {
+    padding: 8px 32px 8px 8px;
+  }
+}
+
 .task__icon {
   font-size: 14px;
   line-height: 14px;
@@ -185,7 +191,7 @@ html, body {
   transform: translateY(-50%);
 
   &--right {
-    right: 15px;
+    right: 12px;
   }
   &--left {
     right: 40px;
@@ -195,10 +201,13 @@ html, body {
     padding-right: 5px;
     transform: none;
   }
-  &--edit {
-    height: 20px;
-    width: 20px;
-    text-align: center;
+}
+
+.task__edit {
+  padding-left: 4px;
+  text-align: center;
+  &:hover {
+    color: lighten(#333333, 50%);
   }
 }
 

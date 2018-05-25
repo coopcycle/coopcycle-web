@@ -116,8 +116,8 @@ class Task extends React.Component {
           #{/([\d]+)/.exec(task['@id'])[0]} - { task.address.name || task.address.streetAddress } avant { moment(task.doneBefore).format('HH[h]mm') }
           { this.renderTags() }
           &nbsp;
-          <a onClick={ this.showTaskModal.bind(this) }>
-            <i className="fa fa-pencil task__icon--edit"></i>
+          <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
+            <i className="fa fa-pencil"></i>
           </a>
           {this.renderLinkedIcon()}
           {this.renderStatusIcon()}
