@@ -40,4 +40,15 @@ AppBundle\Entity\Task:
     doneBefore: 2018-03-02 12:30:00
     comments: "#bob"
     status: "DONE"
+  task_4:
+    address: "@address_1"
+    doneAfter: 2018-03-03 12:00:00
+    doneBefore: 2018-03-03 12:30:00
+    comments: "#bob"
+  task_5:
+    address: "@address_2"
+    doneAfter: 2018-03-03 13:00:00
+    doneBefore: 2018-03-03 13:30:00
+    comments: "#bob"
+    previous: "@task_4"
 

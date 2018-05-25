@@ -54,6 +54,10 @@ class TaskManager
 
     public function markAsFailed(Task $task, $notes = null)
     {
+        if ($task->hasPrevious() && $task->getPrevious()->getStatus() === Task::STATUS_TODO) {
+            throw new PreviousTaskNotCompletedException('Previous task must be completed first');
+        }
+
         $task->setStatus(Task::STATUS_FAILED);
 
         $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignedCourier(), $notes));

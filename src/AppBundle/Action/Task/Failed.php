@@ -3,8 +3,10 @@
 namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Task;
+use AppBundle\Exception\PreviousTaskNotCompletedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Failed extends Base
@@ -25,7 +27,11 @@ class Failed extends Base
         $task = $data;
 
         $this->accessControl($task);
-        $this->taskManager->markAsFailed($task, $this->getNotes($request));
+        try {
+            $this->taskManager->markAsFailed($task, $this->getNotes($request));
+        } catch (PreviousTaskNotCompletedException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
         return $task;
     }

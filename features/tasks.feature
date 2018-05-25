@@ -160,6 +160,62 @@ Feature: Tasks
       }
       """
 
+  Scenario: Previous task must be completed before marking as done
+    Given the database is empty
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the fixtures file "tasks.yml" is loaded
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/5/done" with body:
+      """
+      {}
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "trace":@array@
+      }
+      """
+
+  Scenario: Previous task must be completed before marking as failed
+    Given the database is empty
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the fixtures file "tasks.yml" is loaded
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/5/failed" with body:
+      """
+      {}
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "trace":@array@
+      }
+      """
+
   Scenario: Only assigned courier can mark a task as done
     Given the database is empty
     And the courier "bob" is loaded:
