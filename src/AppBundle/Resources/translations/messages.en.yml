@@ -141,7 +141,6 @@ delivery.createNew: Create new delivery
 help.title: Help
 help.home: Home
 
-dashboard.unassigned: Unassigned
 dashboard.assigned: Assigned
 
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.

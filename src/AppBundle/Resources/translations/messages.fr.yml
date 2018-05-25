@@ -116,6 +116,7 @@ delivery.pastDeliveries: Dernières livraisons
 delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil
+
 dashboard.unassigned: En attente
 dashboard.assigned: Assignées
 norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre

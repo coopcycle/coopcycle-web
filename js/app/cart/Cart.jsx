@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import Sticky from 'react-stickynode';
+import React from 'react'
+import PropTypes from 'prop-types'
+import _ from 'lodash'
+import Sticky from 'react-stickynode'
+import i18n from '../i18n'
 
-import CartItem from './CartItem.jsx';
-import DatePicker from './DatePicker.jsx';
-import AddressPicker from "../address/AddressPicker.jsx";
+import CartItem from './CartItem.jsx'
+import DatePicker from './DatePicker.jsx'
+import AddressPicker from "../address/AddressPicker.jsx"
 
 class Cart extends React.Component
 {
