@@ -245,7 +245,7 @@ profile.email: Email
 profile.telephone: Teléfono
 profile.familyName: Apellidos
 profile.givenName: Nombre
-profile.managedStores: Stores managed by user
+profile.managedStores: Tiendas administradas por el usuario
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
 order.payment.title: Tu información de pago
