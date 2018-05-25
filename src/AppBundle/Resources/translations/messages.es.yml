@@ -291,9 +291,9 @@ task.form.timeWindow: Periodo
 task.form.cancel: Cancelar
 task.form.showHistory: Mostrar historial
 task.form.modal.moreOptions: Más opciones
-task.form.edit: Modify task %id%
-task.form.dateRange: Date range
-task.form.finish: Finish task
+task.form.edit: Modificar tarea %id%
+task.form.dateRange: Rango de fechas
+task.form.finish: Terminar tarea
 task.form.details: Task details
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no pudo ser completada
