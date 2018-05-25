@@ -31,6 +31,8 @@ trait RestaurantTrait
 {
     abstract protected function getRestaurantList(Request $request);
 
+    abstract protected function getRestaurantRoutes();
+
     public function restaurantListAction(Request $request)
     {
         $routes = $request->attributes->get('routes');
@@ -49,7 +51,19 @@ trait RestaurantTrait
         ]);
     }
 
-    private function renderRestaurantForm(Restaurant $restaurant, Request $request)
+    protected function withRoutes($params, $routes)
+    {
+        $routes = array_merge($routes, $this->getRestaurantRoutes());
+
+        $routeParams = [];
+        foreach ($routes as $key => $value) {
+            $routeParams[sprintf('%s_route', $key)] = $value;
+        }
+
+        return array_merge($params, $routeParams);
+    }
+
+    protected function renderRestaurantForm(Restaurant $restaurant, Request $request)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
@@ -149,23 +163,16 @@ trait RestaurantTrait
             array_push($zoneNames, $zone->getName());
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'zoneNames' => json_encode($zoneNames),
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
-            'products_route' => $routes['products'],
-            'product_options_route' => $routes['product_options'],
-            'menu_taxons_route' => $routes['menu_taxons'],
-            'menu_taxon_route' => $routes['menu_taxon'],
-            'dashboard_route' => $routes['dashboard'],
-            'planning_route' => $routes['planning'],
-            'restaurants_route' => $routes['restaurants'],
             'stripeAuthorizeURL' => $stripeAuthorizeURL,
             'deliveryPerimeterExpression' => json_encode($restaurant->getDeliveryPerimeterExpression())
-        ]);
+        ], $routes));
     }
 
     public function restaurantAction($id, Request $request)
@@ -187,7 +194,7 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request);
     }
 
-    private function renderRestaurantDashboard(Request $request, Restaurant $restaurant, OrderInterface $order = null)
+    protected function renderRestaurantDashboard(Request $request, Restaurant $restaurant, OrderInterface $order = null)
     {
         $this->accessControl($restaurant);
 
@@ -211,7 +218,7 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
@@ -219,11 +226,9 @@ trait RestaurantTrait
             'order' => $order,
             'orders_normalized' => $this->get('serializer')->normalize($orders, 'json', ['groups' => ['order']]),
             'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
             'routes' => $routes,
             'date' => $date,
-        ]);
+        ], $routes));
     }
 
     public function restaurantDashboardAction($restaurantId, Request $request)
@@ -255,16 +260,11 @@ trait RestaurantTrait
 
         $form = $this->createForm(ClosingRuleType::class);
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'menus' => $restaurant->getTaxons(),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'menu_route' => $routes['menu'],
-            'new_menu_route' => $routes['new_menu'],
-            'menu_activate_route' => $routes['menu_activate'],
-        ]);
+        ], $routes));
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
@@ -350,15 +350,12 @@ trait RestaurantTrait
         $menuEditor = new MenuEditor($restaurant, $menuTaxon);
         $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'menu_taxons_route' => $routes['menu_taxons'],
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
-        ]);
+        ], $routes));
     }
 
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
@@ -448,17 +445,12 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'menu_taxons_route' => $routes['menu_taxons'],
-            'products_route' => $routes['products'],
-            'delete_section_route' => $routes['delete_section'],
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
-        ]);
+        ], $routes));
     }
 
     public function restaurantPlanningAction($id, Request $request)
@@ -487,16 +479,14 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
             'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
             'routes' => $routes,
             'form' => $form->createView()
-        ]);
+        ], $routes));
     }
 
     public function restaurantProductsAction($id, Request $request)
@@ -507,15 +497,11 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $restaurant->getProducts(),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'product_route' => $routes['product'],
-            'new_product_route' => $routes['new_product'],
-        ]);
+        ], $routes));
     }
 
     public function restaurantProductAction($restaurantId, $productId, Request $request)
@@ -545,15 +531,12 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'product' => $product,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'products_route' => $routes['products'],
             'form' => $form->createView()
-        ]);
+        ], $routes));
     }
 
     public function newRestaurantProductAction($id, Request $request)
@@ -585,15 +568,12 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['products'], ['id' => $id]);
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'product' => $product,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'products_route' => $routes['products'],
             'form' => $form->createView()
-        ]);
+        ], $routes));
     }
 
     public function restaurantProductOptionsAction($id, Request $request)
@@ -604,15 +584,11 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'options' => $restaurant->getProductOptions(),
             'restaurant' => $restaurant,
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'product_option_route' => $routes['product_option'],
-            'new_product_option_route' => $routes['new_product_option'],
-        ]);
+        ], $routes));
     }
 
     public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
@@ -689,13 +665,10 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['product_options'], ['id' => $id]);
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'product_options_route' => $routes['product_options'],
-        ]);
+        ], $routes));
     }
 }

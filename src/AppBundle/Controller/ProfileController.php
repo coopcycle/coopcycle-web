@@ -39,6 +39,19 @@ class ProfileController extends Controller
     use StoreTrait;
     use UserTrait;
 
+    protected function getRestaurantRoutes()
+    {
+        return [
+            'restaurant' => 'profile_restaurant',
+            'menu_taxons' => 'profile_restaurant_menu_taxons',
+            'menu_taxon' => 'profile_restaurant_menu_taxon',
+            'products' => 'profile_restaurant_products',
+            'product_options' => 'profile_restaurant_product_options',
+            'dashboard' => 'profile_restaurant_dashboard',
+            'planning' => 'profile_restaurant_planning',
+        ];
+    }
+
     /**
      * @Route("/profile/edit", name="profile_edit")
      * @Template()

@@ -60,6 +60,19 @@ class AdminController extends Controller
     use TaskTrait;
     use UserTrait;
 
+    protected function getRestaurantRoutes()
+    {
+        return [
+            'restaurant' => 'admin_restaurant',
+            'menu_taxons' => 'admin_restaurant_menu_taxons',
+            'menu_taxon' => 'admin_restaurant_menu_taxon',
+            'products' => 'admin_restaurant_products',
+            'product_options' => 'admin_restaurant_product_options',
+            'dashboard' => 'admin_restaurant_dashboard',
+            'planning' => 'admin_restaurant_planning',
+        ];
+    }
+
     /**
      * @Route("/admin", name="admin_index")
      * @Template("@App/Admin/dashboard.html.twig")
