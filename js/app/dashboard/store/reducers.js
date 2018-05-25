@@ -43,6 +43,8 @@ _.forEach(taskLists, taskList => {
   polylineEnabledByUser[taskList.username] = false
 })
 
+const selectedTasksInitial = []
+
 const taskLists = (state = taskListsInitial, action) => {
 
   let newTaskLists = state.slice(0)
@@ -284,17 +286,29 @@ const polylineEnabled = (state = polylineEnabledByUser, action) => {
   }
 }
 
-const highlightedTask = (state = null, action) => {
-  switch(action.type) {
-    case 'HIGHLIGHT_TASK':
-      if (action.task === state) {
-        return null
-      } else {
-        return action.task
+const selectedTasks = (state = selectedTasksInitial, action) => {
+
+  let newState = state.slice(0)
+
+  switch (action.type) {
+    case 'TOGGLE_TASK':
+
+      if (-1 !== state.indexOf(action.task)) {
+        if (!action.multiple) {
+          return []
+        }
+        return _.filter(state, task => task !== action.task)
       }
-    default:
-      return null
+
+      if (!action.multiple) {
+        newState = []
+      }
+      newState.push(action.task)
+
+      return newState
   }
+
+  return state
 }
 
 const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
@@ -349,5 +363,5 @@ export default combineReducers({
   taskListGroupMode,
   taskFinishedFilter,
   tagsFilter,
-  highlightedTask
+  selectedTasks
 })

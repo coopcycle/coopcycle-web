@@ -49,9 +49,10 @@ class Task extends React.Component {
     }
   }
 
-  onClick () {
-    const { highlightTask, task } = this.props
-    highlightTask(task)
+  onClick(e) {
+    const multiple = (e.ctrlKey || e.metaKey)
+    const { toggleTask, task } = this.props
+    toggleTask(task, multiple)
   }
 
   renderLinkedIcon() {
@@ -86,7 +87,7 @@ class Task extends React.Component {
 
   render() {
 
-    const { task, highlightedTask } = this.props
+    const { task, selected } = this.props
 
     const classNames = [
       'list-group-item',
@@ -100,7 +101,7 @@ class Task extends React.Component {
       taskAttributes = Object.assign(taskAttributes, { 'data-link': task.link })
     }
 
-    if (task === highlightedTask) {
+    if (selected) {
       classNames.push('task__highlighted')
     }
 

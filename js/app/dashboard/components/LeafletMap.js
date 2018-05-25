@@ -33,7 +33,15 @@ class LeafletMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { polylineEnabled, polylines, tasks, selectedTags, showUntaggedTasks, showFinishedTasks, highlightedTask } = this.props
+    const {
+      polylineEnabled,
+      polylines,
+      tasks,
+      selectedTags,
+      showUntaggedTasks,
+      showFinishedTasks,
+      selectedTasks
+    } = this.props
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(polylineEnabled, (enabled, username) => {
@@ -69,15 +77,16 @@ class LeafletMap extends Component {
       }
     }
 
-    if ( prevProps.highlightedTask !== highlightedTask ) {
-      if (prevProps.highlightedTask) {
-        this.proxy.removeTask(prevProps.highlightedTask)
-        this.proxy.addTask(prevProps.highlightedTask)
-      }
-      if (highlightedTask) {
-        this.proxy.removeTask(highlightedTask)
-        this.proxy.addTask(highlightedTask, '#EEB516') // show task in yellow
-      }
+    if (prevProps.selectedTasks !== selectedTasks) {
+      // TODO Find a better way to do this instead of looping over & over
+      prevProps.selectedTasks.forEach(task => {
+        this.proxy.removeTask(task)
+        this.proxy.addTask(task)
+      })
+      selectedTasks.forEach(task => {
+        this.proxy.removeTask(task)
+        this.proxy.addTask(task, '#EEB516')
+      })
     }
 
   }
@@ -108,7 +117,7 @@ function mapStateToProps(state, ownProps) {
     showFinishedTasks: state.taskFinishedFilter,
     selectedTags: state.tagsFilter.selectedTagsList,
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
-    highlightedTask: state.highlightedTask
+    selectedTasks: state.selectedTasks
   }
 }
 

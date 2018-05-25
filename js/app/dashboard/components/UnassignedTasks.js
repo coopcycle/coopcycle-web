@@ -3,7 +3,7 @@ import _ from 'lodash'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import { connect } from 'react-redux'
-import {highlightTask, setTaskListGroupMode} from '../store/actions'
+import { setTaskListGroupMode, toggleTask } from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -37,7 +37,7 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode, selectedTags, showUntaggedTasks, highlightedTask } = this.props
+    const { taskListGroupMode, selectedTags, showUntaggedTasks } = this.props
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
@@ -95,8 +95,8 @@ class UnassignedTasks extends React.Component {
                 <Task
                   key={ key }
                   task={ task }
-                  highlightedTask={ highlightedTask }
-                  highlightTask={ this.props.highlightTask }
+                  toggleTask={ this.props.toggleTask }
+                  selected={ -1 !== this.props.selectedTasks.indexOf(task) }
                 />
               )
             })}
@@ -113,14 +113,14 @@ function mapStateToProps (state) {
     taskListGroupMode: state.taskListGroupMode,
     selectedTags: state.tagsFilter.selectedTagsList,
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
-    highlightedTask: state.highlightedTask
+    selectedTasks: state.selectedTasks,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
-    highlightTask: (task) => { dispatch(highlightTask(task)) }
+    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) }
   }
 }
 
