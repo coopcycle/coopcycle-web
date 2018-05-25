@@ -184,7 +184,7 @@ restaurant.contract.noContract: No existen condiciones de contrato. Por favor co
 restaurant.menus.noMenus: No has creado un menú por el momento.
 restaurant.menus.activate: Activar
 restaurant.menus.activated: El menú « %menu_name% » ha sido activado. Ahora se mostrará
-  en la página del restaurante.
+  en la página del restaurante
 restaurant.closingForm.title: Añadir cierre temporal
 restaurant.closingForm.reason.label: Razón
 restaurant.closingForm.dates.label: Cerrado de/hasta
@@ -273,7 +273,7 @@ order.state.refused: Rechazado
 order.state.accepted: Aceptado
 order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
-order.state.ready: Ready
+order.state.ready: Listo
 order.list.total: Total
 order.list.createdAt: Creado
 order.list.cancel: Cancelar
@@ -291,10 +291,10 @@ task.form.timeWindow: Periodo
 task.form.cancel: Cancelar
 task.form.showHistory: Mostrar historial
 task.form.modal.moreOptions: Más opciones
-task.form.edit: Modify task %id%
-task.form.dateRange: Date range
-task.form.finish: Finish task
-task.form.details: Task details
+task.form.edit: Modificar tarea %id%
+task.form.dateRange: Rango de fechas
+task.form.finish: Terminar tarea
+task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no pudo ser completada
 task.status.done: Success
@@ -515,3 +515,4 @@ basics.save: Guardar
 basics.add: Añadir
 basics.edit: Modificar
 basics.delete: Eliminar
+basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
