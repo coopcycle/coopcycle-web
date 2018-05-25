@@ -96,31 +96,17 @@ class SetupCommand extends ContainerAwareCommand
             $output->writeln('Product « on demand delivery » already exists');
         }
 
-        $translations = $product->getTranslations();
+        $output->writeln('Verifying translations for product « on demand delivery »');
 
-        $translated = [];
-        foreach ($translations as $translation) {
-            $translated[] = $translation->getLocale();
-        }
-
-        $missing = array_diff($this->locales, $translated);
-
-        if (count($missing) === 0) {
-            $output->writeln('All translations for product « on demand delivery » already exists');
-            return;
-        }
-
-        foreach ($missing as $locale) {
+        foreach ($this->locales as $locale) {
 
             $name = $this->onDemandDeliveryProductNames[$locale];
 
+            $product->setFallbackLocale($locale);
             $translation = $product->getTranslation($locale);
 
-            $translation->setLocale($locale);
             $translation->setName($name);
             $translation->setSlug($this->slugify->slugify($name));
-
-            $output->writeln(sprintf('Creating translation for product « on demand delivery » with locale "%s"', $locale));
         }
 
         $this->productManager->flush();
