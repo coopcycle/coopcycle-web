@@ -246,7 +246,7 @@ profile.telephone: Teléfono
 profile.familyName: Apellidos
 profile.givenName: Nombre
 profile.managedStores: Tiendas administradas por el usuario
-profile.managedRestaurants: Restaurants managed by user
+profile.managedRestaurants: Restaurantes administrados por el usuario
 profile.accountType: Account type
 order.payment.title: Tu información de pago
 order.payment.expiration.label: Caducidad
