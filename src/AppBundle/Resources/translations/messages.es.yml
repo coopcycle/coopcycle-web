@@ -294,7 +294,7 @@ task.form.modal.moreOptions: Más opciones
 task.form.edit: Modificar tarea %id%
 task.form.dateRange: Rango de fechas
 task.form.finish: Terminar tarea
-task.form.details: Task details
+task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no pudo ser completada
 task.status.done: Success
