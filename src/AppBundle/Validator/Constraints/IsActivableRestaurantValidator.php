@@ -45,14 +45,14 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->atPath('contract')
                 ->addViolation();
         }
-        
+
         if (is_null($object->getStripeAccount())) {
             $this->context->buildViolation($constraint->stripeAccountMessage)
                 ->atPath('stripeAccount')
                 ->addViolation();
         }
 
-        $hasErrors = count($nameErrors) > 0 || count($telephoneErrors) > 0 || count($openingHoursErrors);
+        $hasErrors = count($this->context->getViolations()) > 0;
 
         if ($hasErrors) {
             $this->context->buildViolation($constraint->enabledMessage)

@@ -40,10 +40,13 @@ function renderSwitch($input) {
     .attr('value', $input.attr('value'))
 
   $parent.prepend($switch)
-  $parent.prepend($hidden)
 
   const checked = $input.is(':checked'),
         disabled = !window.AppData.__isActivable
+
+  if (checked) {
+    $parent.prepend($hidden)
+  }
 
   $input.closest('div.checkbox').remove()
 

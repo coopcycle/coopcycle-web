@@ -69,6 +69,12 @@ trait RestaurantTrait
                     $this->getUser()->addRestaurant($restaurant);
                 }
 
+                // Make sure the restaurant can be enabled, or disable it
+                $violations = $this->get('validator')->validate($restaurant, null, ['activable']);
+                if (count($violations) > 0) {
+                    $restaurant->setEnabled(false);
+                }
+
                 $this->getDoctrine()->getManagerForClass(Restaurant::class)->persist($restaurant);
                 $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
@@ -105,8 +111,8 @@ trait RestaurantTrait
             $prefillingData = [
                 'stripe_user[email]' => $user->getEmail(),
                 'stripe_user[url]' => $restaurant->getWebsite(),
-//                TODO : set this after https://github.com/coopcycle/coopcycle-web/issues/234 is solved
-//                'stripe_user[country]' => $restaurant->getAddress()->getCountry(),
+                // TODO : set this after https://github.com/coopcycle/coopcycle-web/issues/234 is solved
+                // 'stripe_user[country]' => $restaurant->getAddress()->getCountry(),
                 'stripe_user[phone_number]' => $restaurant->getTelephone(),
                 'stripe_user[business_name]' => $restaurant->getLegalName(),
                 'stripe_user[business_type]' => 'Restaurant',
