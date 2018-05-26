@@ -297,8 +297,8 @@ task.form.finish: Terminar tarea
 task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no pudo ser completada
-task.status.done: Success
-task.status.failed: Failure
+task.status.done: Éxito
+task.status.failed: Fallo
 task.status.todo: To do
 form.task.courier.label: Mensajero
 form.task.status.label: Estado
@@ -474,8 +474,8 @@ user.edit.roles.help: Configura los permisos de éste usuario. <a href="%link%">
   información.</a>
 user.edit.enabled.label: Enabled
 user.edit.disabled.label: Disabled
-user.edit.enabled.help: A deactivated user will be logged out and can't login back
-  on the platform.
+user.edit.enabled.help: Un usuario desactivado sera desconectado y no podrá volver
+  a iniciar sesión en la plataforma.
 user.profile.familyName: Apellidos
 user.profile.givenName: Nombre
 roles.ROLE_ADMIN.help: 'Administrador : Acceso total a todas las opciones
