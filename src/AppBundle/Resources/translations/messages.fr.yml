@@ -174,12 +174,12 @@ restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraiso
 restaurant.contract.title: Contrat
 restaurant.stripe_account.title: Compte Stripe
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
-restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme
-restaurant.contract.flatDeliveryPrice.help: Ce montant ne sera pas affiché dans le panier et n'augmentera pas le prix total
-restaurant.contract.customerAmount.label: Montant payé par le client
-restaurant.contract.customerAmount.help: Ce montant sera affiché dans le panier et augmentera le prix total
-restaurant.contract.feeRate.label: Pourcentage de commission
-restaurant.contract.feeRate.help: Ce pourcentage sera retenu par la plateforme sur le total des produits
+restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour la livraison
+restaurant.contract.flatDeliveryPrice.help: Ce montant sera versé à la société de livraison pour ses services. Il sera prélevé sur le paiement du client mais ne sera pas affiché dans le panier.
+restaurant.contract.customerAmount.label: Montant payé par le client pour la livraison
+restaurant.contract.customerAmount.help: Ce montant sera payé par le client pour la livraison. Il sera ajouté au prix des produits et affiché dans le panier.
+restaurant.contract.feeRate.label: Pourcentage de commission facturé par la plateforme pour la livraison
+restaurant.contract.feeRate.help: Ce pourcentage sera retenu sur le total des produits et versé à la société de livraison pour ses services. Il sera prélevé sur le paiement du client mais ne sera pas affiché dans le panier.
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez contacter un administrateur.
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.

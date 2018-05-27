@@ -528,7 +528,7 @@ trait RestaurantTrait
 
             $this->get('sylius.manager.product')->flush();
 
-            return $this->redirect($request->headers->get('referer'));
+            return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
         }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
