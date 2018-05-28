@@ -121,7 +121,7 @@ dashboard.unassigned: No asignado
 dashboard.assigned: Asignado
 norestaurantfound: No hay ningún restaurante abierto a ésta hora!<br>Pruba un horario
   distinto.
-localBusiness.form.orderingDelayMinutes: Additional delay before ordering
+localBusiness.form.orderingDelayMinutes: Tiempo adicional para poder efectuar un pedido
 localBusiness.form.orderingDelayMinutes.help: Use these fields to add some time before
   the customer can order. This setting don't change the times kept for cooking (20
   minutes) and cycling (25 minutes).
@@ -134,7 +134,7 @@ localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
 localBusiness.form.telephone: Teléfono
 localBusiness.form.openingHours: Horas de oficina
-localBusiness.form.deliveryPerimeterExpression: Zone or max distance for delivery
+localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia para la entrega
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
 restaurant.disabledWarning: 'Éste restaurante está desactivado así que los visitantes
@@ -163,9 +163,9 @@ restaurant.form.accessPlanning: Acceder al calendario
 restaurant.form.createRestaurant: Crear restaurante
 restaurant.form.save: Guardar
 restaurant.contract.title: Contrato
-restaurant.deliveryPerimeterExpression.title: Delivery perimeter
-restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
-  You can chose a radius (in km) or a <a target="_blank" href="%zoneHelpUrl%">zone</a>.
+restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
+restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
+  entrega. Puedes escoger un radio (en km) o una <a target="_blank" href="%zoneHelpUrl%">zona</a>.
 restaurant.stripe_account.title: Cuenta Stripe
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Suma cargada por la plataforma
@@ -325,7 +325,7 @@ form.delivery.pricing_rule_set.about: 'Se aplicará la siguiente tarifa: <a href
 
   '
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
-form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
 form.delivery.vehicle.placeholder: Escoge un vehículo
 form.delivery.pickup.label: Recogida
@@ -362,9 +362,10 @@ form.settings.stripe_secret_key.help: 'Crea una cuenta Stripe para obtener tu <a
   secreta</a>
 
   '
-form.settings.stripe_connect_client_id.label: Stripe Connect identifier
-form.settings.stripe_connect_client_id.help: 'Get the identifier on the <a href="https://dashboard.stripe.com/account/applications/settings">parameters
-  page</a>
+form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
+form.settings.stripe_connect_client_id.help: 'Puedes encontrar tu identificador en
+  <a href="https://dashboard.stripe.com/account/applications/settings">la página de
+  parámetros</a>
 
   '
 form.settings.stripe_livemode.label: Usar Stripe en modo « live »
@@ -381,7 +382,7 @@ form.settings.latlng.help: 'Especifica la latitud y longitud por defecto del map
 form.settings.default_tax_category.label: IVA para entregas
 form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Administrator email
-form.settings.administrator_email.help: Notifications will be sent to this email
+form.settings.administrator_email.help: Las notificaciones se enviarán a éste email
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números
@@ -390,26 +391,25 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
   '
 form.local_business.stripe_account.placeholder: Escoge una cueanta Stripe
 form.local_business.stripe_account.label: Cuenta Stripe
-form.local_business.stripe_account.success: Stripe account created successfully.
-form.local_business.stripe_account.admin_warning: No Stripe account created for this
-  restaurant. The Stripe account must be created by the restaurant owner.
-form.local_business.stripe_account.admin_success: Stripe account created and linked
-  correctly by the restaurant owner.
-form.local_business.stripe_account.save_warning: You need to save this restaurant
-  once before linking it to a Stripe account.
-form.local_business.stripe_account.need_stripe_account: 'You didn''t create a Stripe
-  account for this restaurant yet. Stripe is a payment platform which allows us to
-  handle securely card payments and transfers to your bank account.<br>
-
-  To create a Stripe account for this restaurant please <a href="%stripeAuthorizeURL%">click
-  here</a>.
+form.local_business.stripe_account.success: La cuenta Stripe ha sido creada satisfactoriamente.
+form.local_business.stripe_account.admin_warning: No existe ninguna cuenta Stripe
+  para éste restaurante. La cuenta Stripe debe ser creada por el propietario del restaurante.
+form.local_business.stripe_account.admin_success: La cuenta Stipe ha sido creada y
+  enlazada correctamente por el propietario del restaurante.
+form.local_business.stripe_account.save_warning: Tienes que salvar éste restaurante
+  antes de poderlo enlazar con una cuenta Stripe.
+form.local_business.stripe_account.need_stripe_account: 'Aún no has creado una cuenta
+  Stripe para éste restaurante. Stripe és una plataforma de pagos que nos permite
+  gestionar de forma segura los pagos con tarjeta de crédito y las transferencia a
+  tu cuenta bancaria. Para crear una cuenta Stripe para éste restaurante por favor
+  haz <a href="%stripeAuthorizeURL%">clic aquí</a>.
 
   '
-form.local_business.stripe_account.link_ok: 'This restaurant is linked to a Stripe
-  account and can receive payments from the platform.<br>
+form.local_business.stripe_account.link_ok: 'Éste restaurante ha sido enlazado a una
+  cuenta Stripe y puede recibir pagos de la plataforma.<br>
 
-  To manage your Stripe account and the transfers to your account, please use the
-  <a href="https://dashboard.stripe.com/" target="_blank">Stripe dashboard</a>.
+  Para gestionar tu cuenta Stripe por favor usa el <a href="https://dashboard.stripe.com/"
+  target="_blank">panel de administración de Stripe</a>.
 
   '
 form.menu_item.name.label: Nombre
@@ -472,8 +472,8 @@ roles.ROLE_STORE: Tienda
 roles.ROLE_USER: Usuario
 user.edit.roles.help: Configura los permisos de éste usuario. <a href="%link%">Más
   información.</a>
-user.edit.enabled.label: Enabled
-user.edit.disabled.label: Disabled
+user.edit.enabled.label: Activado
+user.edit.disabled.label: Desactivado
 user.edit.enabled.help: Un usuario desactivado sera desconectado y no podrá volver
   a iniciar sesión en la plataforma.
 user.profile.familyName: Apellidos
