@@ -291,11 +291,11 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\RestaurantType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
+    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\StoreType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
+    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\ProductOptionType':

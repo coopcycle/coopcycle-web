@@ -24,7 +24,7 @@ AppBundle\Entity\Store:
             type: string
             nullable: true
         telephone:
-            type: string
+            type: phone_number
             nullable: true
         createdAt:
             type: datetime

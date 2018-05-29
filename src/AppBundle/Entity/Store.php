@@ -77,13 +77,6 @@ class Store extends LocalBusiness
     private $website;
 
     /**
-     * @var string The telephone number.
-     *
-     * @Assert\Type(type="string")
-     */
-    protected $telephone;
-
-    /**
      * @var StripeAccount The Stripe account
      */
     private $stripeAccount;

@@ -140,13 +140,6 @@ class Restaurant extends FoodEstablishment
     private $website;
 
     /**
-     * @var string The telephone number.
-     *
-     * @Assert\Type(type="string")
-     */
-    protected $telephone;
-
-    /**
      * @var StripeAccount The StripeAccount of the restaurant.
      */
     private $stripeAccount;
