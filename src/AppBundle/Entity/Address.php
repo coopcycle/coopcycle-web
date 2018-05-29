@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Base\BaseAddress;
+use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 
@@ -26,8 +27,14 @@ class Address extends BaseAddress
      */
     private $id;
 
+    /**
+     * @Groups({"task"})
+     */
     private $firstName;
 
+    /**
+     * @Groups({"task"})
+     */
     private $lastName;
 
     private $company;
