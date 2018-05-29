@@ -199,6 +199,14 @@ class TaskUploadType extends AbstractType
                         $address->setName($record['address.name']);
                     }
 
+                    if (isset($record['address.description']) && !empty($record['address.description'])) {
+                        $address->setDescription($record['address.description']);
+                    }
+
+                    if (isset($record['address.floor']) && !empty($record['address.floor'])) {
+                        $address->setFloor($record['address.floor']);
+                    }
+
                     if (isset($record['address.telephone']) && !empty($record['address.telephone'])) {
                         try {
                             $phoneNumber = $this->phoneNumberUtil->parse($record['address.telephone'], strtoupper($this->countryCode));
