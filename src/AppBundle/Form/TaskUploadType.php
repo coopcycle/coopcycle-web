@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
+use Cocur\Slugify\SlugifyInterface;
 use Craue\ConfigBundle\Util\Config;
 use GuzzleHttp\Client;
 use libphonenumber\NumberParseException;
@@ -40,6 +41,7 @@ class TaskUploadType extends AbstractType
         Client $client,
         TranslatorInterface $translator,
         TagManager $tagManager,
+        SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
         $countryCode)
     {
@@ -49,6 +51,7 @@ class TaskUploadType extends AbstractType
         $this->tagManager = $tagManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
+        $this->slugify = $slugify;
     }
 
     private function validateHeader(array $header)
@@ -93,6 +96,7 @@ class TaskUploadType extends AbstractType
 
         if (!empty($tagsAsString)) {
             $slugs = explode(' ', $tagsAsString);
+            $slugs = array_map([$this->slugify, 'slugify'], $slugs);
             $tags = $this->tagManager->fromSlugs($slugs);
             $task->setTags($tags);
         }
