@@ -31,6 +31,7 @@
     "locutus": "^2.0.9",
     "lodash": "^4.17.10",
     "lynx": "^0.2.0",
+    "minimist": "^1.2.0",
     "moment": "^2.22.1",
     "mustache": "^2.3.0",
     "ngeohash": "^0.6.0",

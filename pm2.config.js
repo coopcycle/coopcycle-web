@@ -1,5 +1,5 @@
 var argv = require('minimist')(process.argv.slice(2));
-var _ = require('underscore');
+var _ = require('lodash');
 var ConfigLoader = require('./js/api/ConfigLoader');
 
 var watchOptions = {
