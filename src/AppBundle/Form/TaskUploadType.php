@@ -9,6 +9,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use Craue\ConfigBundle\Util\Config;
 use GuzzleHttp\Client;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 use League\Csv\Exception as CsvReaderException;
 use League\Csv\Reader as CsvReader;
 use Symfony\Component\Form\AbstractType;
@@ -26,17 +28,27 @@ class TaskUploadType extends AbstractType
     private $client;
     private $translator;
     private $tagManager;
+    private $phoneNumberUtil;
+    private $countryCode;
 
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
 
-    public function __construct(Config $config, Client $client, TranslatorInterface $translator, TagManager $tagManager)
+    public function __construct(
+        Config $config,
+        Client $client,
+        TranslatorInterface $translator,
+        TagManager $tagManager,
+        PhoneNumberUtil $phoneNumberUtil,
+        $countryCode)
     {
         $this->config = $config;
         $this->client = $client;
         $this->translator = $translator;
         $this->tagManager = $tagManager;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->countryCode = $countryCode;
     }
 
     private function validateHeader(array $header)
@@ -185,6 +197,16 @@ class TaskUploadType extends AbstractType
 
                     if (isset($record['address.name']) && !empty($record['address.name'])) {
                         $address->setName($record['address.name']);
+                    }
+
+                    if (isset($record['address.telephone']) && !empty($record['address.telephone'])) {
+                        try {
+                            $phoneNumber = $this->phoneNumberUtil->parse($record['address.telephone'], strtoupper($this->countryCode));
+                            $address->setTelephone($phoneNumber);
+                        } catch (NumberParseException $e) {
+                            $event->getForm()->addError(new FormError($e->getMessage()));
+                            return;
+                        }
                     }
 
                     $task = new Task();

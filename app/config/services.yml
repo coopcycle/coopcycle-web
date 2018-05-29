@@ -275,7 +275,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\TaskUploadType':
-    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager' ]
+    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\TaskExportType':
