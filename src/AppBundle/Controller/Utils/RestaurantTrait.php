@@ -625,14 +625,11 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-            'restaurants_route' => $routes['restaurants'],
-            'restaurant_route' => $routes['restaurant'],
-            'product_options_route' => $routes['product_options'],
-        ]);
+        ], $routes));
     }
 
     public function newRestaurantProductOptionAction($id, Request $request)
