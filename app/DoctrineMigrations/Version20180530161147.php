@@ -1,0 +1,47 @@
+<?php declare(strict_types = 1);
+
+namespace Application\Migrations;
+
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+class Version20180530161147 extends AbstractMigration implements ContainerAwareInterface
+{
+    use ContainerAwareTrait;
+
+    public function up(Schema $schema)
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $stmt = $this->connection->prepare("SELECT * FROM restaurant where telephone is not null");
+        $stmt->execute();
+
+        $phoneNumberUtil = $this->container->get('libphonenumber.phone_number_util');
+
+        while ($restaurant = $stmt->fetch()) {
+            try {
+                $phoneNumber = $phoneNumberUtil->parse($restaurant['telephone'], strtoupper($this->container->getParameter('country_iso')));
+            } catch (NumberParseException $e) {
+                $this->addSql("UPDATE restaurant SET telephone = NULL WHERE id = :id", $restaurant);
+                break;
+            }
+
+            $phoneNumber = $phoneNumberUtil->format($phoneNumber, PhoneNumberFormat::E164);
+            $this->addSql(
+                "UPDATE restaurant SET telephone = :telephone WHERE id = :id",
+                ['id' => $restaurant['id'], 'telephone' => $phoneNumber]);
+        }
+    }
+
+    public function down(Schema $schema)
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+
+    }
+}
