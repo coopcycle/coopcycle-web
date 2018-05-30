@@ -382,6 +382,14 @@ $cart-heading-height: 40px;
   }
 }
 
+.btn-payment > .fa-spinner {
+  display:none;
+}
+
+.btn-payment__loading > .fa-spinner {
+  display:inline-block;
+}
+
 .order-map__image {
   margin-bottom: 20px;
 }
