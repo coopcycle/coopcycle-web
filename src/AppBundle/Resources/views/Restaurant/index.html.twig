@@ -28,9 +28,16 @@
   {%  endif %}
 
   <div class="page-header restaurant-header">
-    <h1>{{ restaurant.name }}</h1>
-    <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
-    <div id="opening-hours">
+    {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
+    {% if restaurant_image is not empty %}
+      <div class="restaurant-image" style="background-image: url({{ vich_uploader_asset(restaurant, 'imageFile') }});">
+      </div>
+    {% endif %}
+    <div class="restaurant-title">
+      <h1>{{ restaurant.name }}</h1>
+      <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+      <div id="opening-hours">
+      </div>
     </div>
   </div>
 
