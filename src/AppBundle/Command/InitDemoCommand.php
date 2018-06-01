@@ -249,7 +249,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $taxRate->setCategory($taxCategory);
         $taxRate->setAmount($taxRateAmount);
         $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('float');
+        $taxRate->setCalculator('default');
 
         $taxRateManager->persist($taxRate);
         $taxRateManager->flush();

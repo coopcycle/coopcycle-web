@@ -113,6 +113,7 @@ Feature: Orders
     And the current time is "2017-09-02 12:00:00"
     And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
+    And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -163,6 +164,7 @@ Feature: Orders
     And the current time is "2017-09-02 11:00:00"
     And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
+    And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
@@ -261,6 +263,7 @@ Feature: Orders
     And the current time is "2017-09-03 12:00:00"
     And the fixtures file "products.yml" is loaded
     And the fixtures file "restaurants.yml" is loaded
+    And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
       | password | 123456            |
