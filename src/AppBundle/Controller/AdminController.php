@@ -418,7 +418,7 @@ class AdminController extends Controller
 
         $taxRate = new TaxRate();
         $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('float');
+        $taxRate->setCalculator('default');
 
         $taxCategory = new TaxCategory();
         $taxCategory->addRate($taxRate);

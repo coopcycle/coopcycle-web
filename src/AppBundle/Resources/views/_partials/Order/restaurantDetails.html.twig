@@ -5,4 +5,4 @@
 {{ order.restaurant.name }}<br><br>
 {{ order.restaurant.address.streetAddress }}<br>
 {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}<br>
-{{ order.restaurant.telephone }}
+{% if order.restaurant.telephone %}{{ order.restaurant.telephone |phone_number_format('NATIONAL') }}{% endif %}

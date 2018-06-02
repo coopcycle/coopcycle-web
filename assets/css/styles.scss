@@ -188,6 +188,10 @@ h1, h2, h3, h4, h5, h6 {
 
 // ------------------ Cart ------------------
 
+#cart {
+  margin-top: $base-margin;
+}
+
 #cart .list-group-item .close {
   margin-left: 10px;
 }
@@ -281,6 +285,21 @@ $cart-heading-height: 40px;
 
 #map-wrapper {
   padding: 60px 0;
+}
+
+.restaurant-title {
+  display:inline-block;
+
+}
+
+.restaurant-image {
+  display: inline-block;
+  width: 150px;
+  height: 100px;
+  margin-right: $base-margin-l;
+  background-size: contain;
+  background-position: center bottom;
+  background-repeat: no-repeat;
 }
 
 .restaurant-list-filter {
@@ -380,6 +399,14 @@ $cart-heading-height: 40px;
     margin: 20px 10px 0;
     padding: 10px;
   }
+}
+
+.btn-payment > .fa-spinner {
+  display:none;
+}
+
+.btn-payment__loading > .fa-spinner {
+  display:inline-block;
 }
 
 .order-map__image {

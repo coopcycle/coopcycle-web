@@ -2,6 +2,8 @@
 
 namespace AppBundle\Form;
 
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -23,10 +25,12 @@ abstract class LocalBusinessType extends AbstractType
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        $countryIso)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
+        $this->countryIso = $countryIso;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -44,7 +48,12 @@ abstract class LocalBusinessType extends AbstractType
                 'required' => false,
                 'download_uri' => false,
             ])
-            ->add('telephone', TextType::class, ['required' => false, 'label' => 'localBusiness.form.telephone',])
+            ->add('telephone',
+                PhoneNumbertype::class,
+                [   'default_region' => strtoupper($this->countryIso),
+                    'format' => PhoneNumberFormat::NATIONAL,
+                    'required' => false,
+                    'label' => 'localBusiness.form.telephone',])
             ->add('openingHours', CollectionType::class, [
                 'entry_type' => HiddenType::class,
                 'entry_options' => [
@@ -88,6 +97,17 @@ abstract class LocalBusinessType extends AbstractType
                     $value = $event->getForm()->get('siret')->getData();
                     $localBusiness->setAdditionalProperty('siret', $value);
                 }
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($options) {
+
+                $localBusiness = $event->getForm()->getData();
+                $address = $localBusiness->getAddress();
+                $address->setName($localBusiness->getName());
+                $address->setTelephone($localBusiness->getTelephone());
             }
         );
     }

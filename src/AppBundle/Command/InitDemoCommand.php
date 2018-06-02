@@ -32,6 +32,7 @@ class InitDemoCommand extends ContainerAwareCommand
     private $lockFactory;
     private $productVariantGenerator;
     private $taxonFactory;
+    private $phoneNumberUtil;
     private $batchSize = 10;
 
     private static $users = [
@@ -68,6 +69,8 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $this->productVariantGenerator = $this->getContainer()->get('sylius.generator.product_variant');
         $this->taxonFactory = $this->getContainer()->get('sylius.factory.taxon');
+
+        $this->phoneNumberUtil = $this->getContainer()->get('libphonenumber.phone_number_util');
 
         $this->ormPurger = new ORMPurger($this->getContainer()->get('doctrine')->getManager(), [
             'craue_config_setting',
@@ -246,7 +249,7 @@ class InitDemoCommand extends ContainerAwareCommand
         $taxRate->setCategory($taxCategory);
         $taxRate->setAmount($taxRateAmount);
         $taxRate->setIncludedInPrice(true);
-        $taxRate->setCalculator('float');
+        $taxRate->setCalculator('default');
 
         $taxRateManager->persist($taxRate);
         $taxRateManager->flush();
@@ -404,8 +407,10 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $shop = new Entity\Store();
 
+        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+
         $shop->setEnabled(true);
-        $shop->setTelephone('+33623456789');
+        $shop->setTelephone($phoneNumber);
         $shop->setAddress($address);
         $shop->setName($this->faker->storeName);
         $shop->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));
@@ -426,8 +431,10 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $restaurant = new Entity\Restaurant();
 
+        $phoneNumber = $this->phoneNumberUtil->parse($this->faker->phoneNumber, 'FR');
+
         $restaurant->setEnabled(true);
-        $restaurant->setTelephone('+33623456789');
+        $restaurant->setTelephone($phoneNumber);
         $restaurant->setAddress($address);
         $restaurant->setName($this->faker->restaurantName);
         $restaurant->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));

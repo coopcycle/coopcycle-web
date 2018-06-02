@@ -201,33 +201,47 @@ class AddressProvider extends BaseProvider
         $lngMin = 2.290198;
         $lngMax = 2.398345;
 
-        $latitude = self::latitude([$latMin, $latMax]);
-        $longitude = self::longitude([$lngMin, $lngMax]);
+        for ($i = 0; $i < 10; $i++) {
 
-        $response = $this->client->request('GET', "/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$this->apiKey}");
+            $latitude = self::latitude([$latMin, $latMax]);
+            $longitude = self::longitude([$lngMin, $lngMax]);
 
-        $raw_data = json_decode((string) $response->getBody(), true)['results'][0];
-        $data = $raw_data['address_components'];
-        $formatted_data = [];
+            $response = $this->client->request('GET', "/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$this->apiKey}");
+            $data = json_decode((string) $response->getBody(), true);
 
-        foreach ($data as $val) {
-            $formatted_data[$val['types'][0]] = $val['long_name'];
+            if ('OK' === $data['status']) {
+
+                $raw_data = $data['results'][0];
+
+                if (!in_array('street_address', $raw_data['types'])) {
+                    continue;
+                }
+
+                $data = $raw_data['address_components'];
+                $formatted_data = [];
+
+                foreach ($data as $val) {
+                    $formatted_data[$val['types'][0]] = $val['long_name'];
+                }
+
+                if (array_key_exists('street_number', $formatted_data)) {
+                    $streetAddress = $formatted_data['street_number'].' '.$formatted_data['route'];
+                } else if (array_key_exists('route', $formatted_data)) {
+                    $streetAddress = $formatted_data['route'];
+                } else {
+                    $streetAddress = $raw_data['formatted_address'];
+                }
+
+                $address = new Address();
+                $address->setAddressLocality($formatted_data['locality']);
+                $address->setPostalCode($formatted_data['postal_code']);
+                $address->setStreetAddress($streetAddress);
+                $address->setGeo(new GeoCoordinates($latitude, $longitude));
+
+                return $address;
+            }
         }
 
-        if (array_key_exists('street_number', $formatted_data)) {
-            $streetAddress = $formatted_data['street_number'].' '.$formatted_data['route'];
-        } else if (array_key_exists('route', $formatted_data)) {
-            $streetAddress = $formatted_data['route'];
-        } else {
-            $streetAddress = $raw_data['formatted_address'];
-        }
-
-        $address = new Address();
-        $address->setAddressLocality($formatted_data['locality']);
-        $address->setPostalCode($formatted_data['postal_code']);
-        $address->setStreetAddress($streetAddress);
-        $address->setGeo(new GeoCoordinates($latitude, $longitude));
-
-        return $address;
+        throw new \Exception('Could not generate an address');
     }
 }

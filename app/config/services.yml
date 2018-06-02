@@ -46,6 +46,8 @@ services:
       - "@sylius.factory.adjustment"
       - "@sylius.tax_rate_resolver"
       - "@sylius.tax_calculator"
+      - "@coopcycle.settings_manager"
+      - "@sylius.repository.tax_category"
     tags:
       - { name: sylius.order_processor, priority: 32 }
 
@@ -146,11 +148,6 @@ services:
   coopcycle.tag_manager:
     class: AppBundle\Service\TagManager
     arguments: [ '@doctrine' ]
-
-  coopcycle.tax_calculator.float:
-    class: AppBundle\Service\Taxation\FloatCalculator
-    tags:
-      - { name: sylius.tax_calculator, calculator: float, label: "Float" }
 
   coopcycle.order_manager:
     public: true
@@ -275,7 +272,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\TaskUploadType':
-    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager' ]
+    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager', '@slugify', '@libphonenumber.phone_number_util', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\TaskExportType':
@@ -291,11 +288,11 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\RestaurantType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
+    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\StoreType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage' ]
+    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\ProductOptionType':

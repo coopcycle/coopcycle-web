@@ -38,8 +38,6 @@ abstract class LocalBusiness
 
     /**
      * @var string The telephone number.
-     *
-     * @Assert\Type(type="string")
      */
     protected $telephone;
 

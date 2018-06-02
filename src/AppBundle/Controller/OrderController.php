@@ -26,12 +26,13 @@ class OrderController extends Controller
     public function indexAction(Request $request)
     {
         $order = $this->get('sylius.context.cart')->getCart();
+        $user = $this->getUser();
 
         // At this step, we are pretty sure the customer is logged in
         // Make sure the order actually has a customer, if not set previously
         // @see AppBundle\EventListener\WebAuthenticationListener
-        if ($this->getUser() !== $order->getCustomer()) {
-            $order->setCustomer($this->getUser());
+        if ($user !== $order->getCustomer()) {
+            $order->setCustomer($user);
             $this->get('sylius.manager.order')->flush();
         }
 
@@ -44,6 +45,9 @@ class OrderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $deliveryAddress = $form->getData();
+            $deliveryAddress->setFirstName($user->getGivenName());
+            $deliveryAddress->setLastName($user->getFamilyName());
+            $deliveryAddress->setTelephone($user->getTelephone());
             $this->getDoctrine()->getManagerForClass(Address::class)->persist($deliveryAddress);
             $this->getDoctrine()->getManagerForClass(Address::class)->flush();
 

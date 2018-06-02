@@ -35,9 +35,13 @@ export default (form, options) => {
 
   form.addEventListener('submit', function(event) {
     event.preventDefault();
+    $('.btn-payment').addClass('btn-payment__loading')
+    $('.btn-payment').attr('disabled', true)
 
     stripe.createToken(card).then(function(result) {
       if (result.error) {
+        $('.btn-payment').removeClass('btn-payment__loading')
+        $('.btn-payment').attr('disabled', false)
         var errorElement = document.getElementById('card-errors')
         errorElement.textContent = result.error.message
       } else {

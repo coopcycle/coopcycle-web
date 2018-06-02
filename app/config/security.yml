@@ -17,6 +17,9 @@ security:
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username_email
+        # jwt:
+        #     lexik_jwt:
+        #         class: AppBundle\Entity\ApiUser
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -44,6 +47,15 @@ security:
         api_deliveries:
             pattern:   ^/api/deliveries
             stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+        api_me_location:
+            pattern:   ^/api/me/location
+            stateless: true
+            # FIXME Doesn't work
+            # provider: jwt
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator

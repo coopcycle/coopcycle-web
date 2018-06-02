@@ -8,21 +8,31 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Predis\Client as Redis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Psr\Log\LoggerInterface;
 
 class Me
 {
     use TokenStorageTrait;
 
     protected $doctrine;
+    protected $redis;
 
-    public function __construct(TokenStorageInterface $tokenStorage, DoctrineRegistry $doctrine)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        DoctrineRegistry $doctrine,
+        Redis $redis,
+        LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
+        $this->redis = $redis;
+        $this->logger = $logger;
     }
 
     /**
@@ -91,5 +101,59 @@ class Me
     public function meAction()
     {
         return $this->getUser();
+    }
+
+    /**
+     * @Route(path="/me/location", name="me_location")
+     * @Method("POST")
+     */
+    public function locationAction(Request $request)
+    {
+        $data = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        $username = $this->getUser()->getUsername();
+
+        if (count($data) === 0) {
+            return new JsonResponse([]);
+        }
+
+        $data = array_map(function ($location) {
+            $location['time'] = ((int) $location['time']) / 1000;
+            return $location;
+        }, $data);
+
+        usort($data, function ($a, $b) {
+            return $a['time'] < $b['time'] ? -1 : 1;
+        });
+
+        foreach ($data as $location) {
+            $key = sprintf('tracking:%s', $username);
+            $this->redis->rpush($key, json_encode([
+                'latitude' => (float) $location['latitude'],
+                'longitude' => (float) $location['longitude'],
+                'timestamp' => (int) $location['time'],
+            ]));
+        }
+
+        $lastLocation = array_pop($data);
+
+        $datetime = new \DateTime();
+        $datetime->setTimestamp($lastLocation['time']);
+
+        $this->logger->info(sprintf('Last position recorded at %s', $datetime->format('Y-m-d H:i:s')));
+
+        $this->redis->publish('tracking', json_encode([
+            'user' => $username,
+            'coords' => [
+                'lat' => (float) $lastLocation['latitude'],
+                'lng' => (float) $lastLocation['longitude'],
+            ]
+        ]));
+
+        return new JsonResponse([]);
     }
 }

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */
-class ApiUser extends BaseUser
+class ApiUser extends BaseUser implements JWTUserInterface
 {
     protected $id;
 
@@ -207,5 +208,16 @@ class ApiUser extends BaseUser
 
     public function getFullName() {
         return join(' ', [$this->givenName, $this->familyName]);
+    }
+
+    public static function createFromPayload($username, array $payload)
+    {
+        $user = new self();
+        $user->setUsername($payload['username']);
+        if (isset($payload['roles'])) {
+            $user->setRoles($payload['roles']);
+        }
+
+        return $user;
     }
 }

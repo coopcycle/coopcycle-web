@@ -52,12 +52,8 @@ AppBundle\Entity\Restaurant:
             nullable: true
             precision: 0
         telephone:
-            type: string
-            scale: 0
-            length: null
-            unique: false
+            type: phone_number
             nullable: true
-            precision: 0
         createdAt:
             type: datetime
             column: created_at
