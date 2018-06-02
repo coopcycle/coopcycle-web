@@ -1,1 +1,16 @@
-{}
+adminDashboard.dashboard.courier: Koerier
+adminDashboard.deliveries.courier: Koerier
+adminDashboard.users.searchRestaurant: Restauranten bezoeken
+delivery.list.courier: Koerier
+localBusiness.form.telephone: Telefoonnummer
+profile.telephone: Telefoonnummer
+profile.familyName: Naam
+profile.givenName: Voornaam
+order.list.customer: Klant
+form.task.courier.label: Koerier
+roles.ROLE_COURIER: Koerier
+roles.ROLE_RESTAURANT: Restaurant
+user.profile.familyName: Naam
+user.profile.givenName: Voornaam
+pagination.previous: Vorige
+pagination.next: Volgende
