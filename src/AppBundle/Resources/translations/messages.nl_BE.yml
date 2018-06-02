@@ -1,6 +1,6 @@
 adminDashboard.dashboard.courier: Koerier
 adminDashboard.deliveries.courier: Koerier
-adminDashboard.users.searchRestaurant: Restauranten bezoeken
+adminDashboard.users.searchRestaurant: Restauranten bezoeken…
 delivery.list.courier: Koerier
 localBusiness.form.telephone: Telefoonnummer
 profile.telephone: Telefoonnummer
@@ -14,3 +14,8 @@ user.profile.familyName: Naam
 user.profile.givenName: Voornaam
 pagination.previous: Vorige
 pagination.next: Volgende
+navbar.myAccount: Mijn account
+profile.myAccount: Mijn account
+profile.myOrders: Mijn bestellingen
+profile.email: Email
+cart.widget.button: Mijn bestelling
