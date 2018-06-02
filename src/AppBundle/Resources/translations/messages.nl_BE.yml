@@ -39,3 +39,12 @@ form.address.postalCode.label: Postcode
 form.address.streetAddress.error.noLatLng: Gelieve een adres te kiezen aub
 roles.ROLE_USER: Gebruiker
 index.banner: lekkere gerechten aan huis geleverd
+global.changesSaved: Opgeslagen wijzigingen
+navbar.login: Login
+base.footer.contactUs: neem contact met ons op
+base.footer.help: hulp
+adminDashboard.configuration: configuratie
+adminDashboard.dashboard.add: Toevoegen
+help.title: hulp
+profile.addresses.add: Toevoegen
+basics.add: Toevoegen
