@@ -19,3 +19,23 @@ profile.myAccount: Mijn account
 profile.myOrders: Mijn bestellingen
 profile.email: Email
 cart.widget.button: Mijn bestelling
+adminDashboard.deliveries.title: Bestellingen
+adminDashboard.deliveries.delivery: Bestelling
+adminDashboard.menuCategories.menu: menu
+adminDashboard.orders.ready: Klaar!
+adminDashboard.restaurants.title: Restauranten
+adminDashboard.users.title: Gebruikspersonen
+restaurant.available: Beschikbaar
+restaurant.unavailable: Niet beschikbaar
+profile.myDeliveries: Mijn bestellingen
+profile.myRestaurants: Mijn restauranten
+profile.myAddresses: Mijn adressen
+profile.addresses.newAddress: Nieuw adres
+profile.editProfile: 'De profiel wijzigen '
+profile.username: Username
+profile.accountType: soort rekening
+form.address.addressLocality.label: Stad
+form.address.postalCode.label: Postcode
+form.address.streetAddress.error.noLatLng: Gelieve een adres te kiezen aub
+roles.ROLE_USER: Gebruiker
+index.banner: lekkere gerechten aan huis geleverd
