@@ -45,6 +45,10 @@ class Settings
             $data[$key] = $this->settingsManager->get($key);
         }
 
+        if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
+            return new JsonResponse(sha1(json_encode($data)));
+        }
+
         return new JsonResponse($data);
     }
 }
