@@ -66,6 +66,8 @@ adminDashboard.orders.noOrders: No orders yet
 adminDashboard.orders.clickForDetails: Click on an order to display details
 adminDashboard.orders.invoice.title: Invoice
 adminDashboard.orders.invoice.totalExcludingTax: Total excluding tax
+adminDashboard.orders.invoice.productsTotal: Products total
+adminDashboard.orders.invoice.deliveryTotal: Delivery total
 adminDashboard.orders.invoice.totalTax: Total tax
 adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 

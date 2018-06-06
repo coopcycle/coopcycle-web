@@ -59,6 +59,8 @@ adminDashboard.orders.invoice.title: Facture
 adminDashboard.orders.invoice.totalExcludingTax: Total HT
 adminDashboard.orders.invoice.totalTax: Total TVA
 adminDashboard.orders.invoice.totalIncludingTax: Total TTC
+adminDashboard.orders.invoice.productsTotal: Total des produits
+adminDashboard.orders.invoice.deliveryTotal: Total de la livraison
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
