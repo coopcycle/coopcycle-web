@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -35,14 +36,34 @@ trait AdminDashboardTrait
         return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
     }
 
-    protected function publishTasksChangedEvent(array $normalizedTasks, UserInterface $user)
+    protected function notifyTasksChanged(UserInterface $user, \DateTime $date, array $normalizedTasks)
     {
+        $remotePushNotificationManager = $this->get('coopcycle.remote_push_notification_manager');
+        $remotePushTokenRepository = $this->getDoctrine()->getRepository(RemotePushToken::class);
+
+        $tokens = $remotePushTokenRepository->findByUser($user);
+
+        // We can't send the whole serialized tasks,
+        // because the JSON payload is limited in size
+        $data = [
+            'event' => [
+                'name' => 'tasks:changed',
+                'data' => [
+                    'date' => $date->format('Y-m-d')
+                ]
+            ]
+        ];
+
+        foreach ($tokens as $token) {
+            $remotePushNotificationManager
+                ->send(sprintf('Tasks for %s changed!', $date->format('Y-m-d')), $token, $data);
+        }
+
         $normalizedUser = $this->get('serializer')->normalize($user, 'jsonld', [
             'resource_class' => ApiUser::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get'
         ]);
-
         $this->get('snc_redis.default')->publish('tasks:changed', json_encode([
             'tasks' => $normalizedTasks,
             'user' => $normalizedUser
@@ -340,8 +361,7 @@ trait AdminDashboardTrait
             'groups' => ['task_collection', 'task', 'delivery', 'place']
         ]);
 
-        // Publish a Redis event in task:changed channel
-        $this->publishTasksChangedEvent($taskListNormalized['items'], $user);
+        $this->notifyTasksChanged($user, $date, $taskListNormalized['items']);
 
         return new JsonResponse($taskListNormalized);
     }
