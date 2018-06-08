@@ -133,18 +133,27 @@ class OrderManager
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
+        $restaurantStripeId = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+        $applicationFee = $order->getFeeTotal();
+
         try {
 
-            $charge = Stripe\Charge::create(array(
-                'amount' => $order->getTotal(),
-                'currency' => strtolower($stripePayment->getCurrencyCode()),
-                'source' => $stripeToken,
-                'description' => sprintf('Order %s', $order->getNumber()),
-                // To authorize a payment without capturing it,
-                // make a charge request that also includes the capture parameter with a value of false.
-                // This instructs Stripe to only authorize the amount on the customer’s card.
-                'capture' => false,
-            ));
+            $charge = Stripe\Charge::create(
+                array(
+                    'amount' => $order->getTotal(),
+                    'currency' => strtolower($stripePayment->getCurrencyCode()),
+                    'source' => $stripeToken,
+                    'description' => sprintf('Order %s', $order->getNumber()),
+                    // To authorize a payment without capturing it,
+                    // make a charge request that also includes the capture parameter with a value of false.
+                    // This instructs Stripe to only authorize the amount on the customer’s card.
+                    'capture' => false,
+                    'application_fee' => $applicationFee
+                ),
+                array(
+                    'stripe_account' => $restaurantStripeId
+                )
+            );
 
             $stripePayment->setCharge($charge->id);
 
@@ -168,9 +177,16 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
+        $restaurantStripeId = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+
         try {
 
-            $charge = Stripe\Charge::retrieve($stripePayment->getCharge());
+            $charge = Stripe\Charge::retrieve(
+                $stripePayment->getCharge(),
+                array(
+                    'stripe_account' => $restaurantStripeId
+            ));
+
             if ($charge->captured) {
                 throw new \Exception('Charge already captured');
             }
@@ -184,53 +200,6 @@ class OrderManager
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
         }
      }
-
-    public function createTransfer(PaymentInterface $stripePayment) {
-
-        $order = $stripePayment->getOrder();
-        $restaurant = $order->getRestaurant();
-
-        // There is no restaurant
-        if (null === $restaurant) {
-            return;
-        }
-
-        $stripeAccount = $restaurant->getStripeAccount();
-
-        // There is no Stripe account
-        if (null === $stripeAccount) {
-            return;
-        }
-
-        $amount = $order->getTotal() - $order->getFeeTotal();
-
-        $stripeTransfer = StripeTransfer::create($stripePayment, $amount);
-
-        $transferStateMachine = $this->stateMachineFactory->get($stripeTransfer, StripeTransferTransitions::GRAPH);
-
-        // transfer the correct amount to restaurant owner/shop
-        // ref https://stripe.com/docs/connect/charges-transfers
-        try {
-
-            Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
-
-            $transfer = Stripe\Transfer::create([
-                'amount' => $amount,
-                'currency' => strtolower($stripePayment->getCurrencyCode()),
-                'destination' => $stripeAccount->getStripeUserId(),
-                // ref https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                'source_transaction' => $stripePayment->getCharge()
-            ]);
-
-            $stripeTransfer->setTransfer($transfer->id);
-
-            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_COMPLETE);
-        } catch (\Exception $e) {
-            $stripeTransfer->setLastError($e->getMessage());
-            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_FAIL);
-        }
-
-    }
 
     /**
      * Create a fresh payment after payment failure

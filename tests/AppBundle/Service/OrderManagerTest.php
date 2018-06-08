@@ -84,13 +84,31 @@ class OrderManagerTest extends TestCase
             ->apply('authorize')
             ->shouldBeCalled();
 
+        $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        $stripeAccount
+            ->getStripeUserId()
+            ->willReturn('acct_123');
+
+        $restaurant
+            ->getStripeAccount()
+            ->willReturn($stripeAccount->reveal());
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+
         $order
             ->getLastPayment(PaymentInterface::STATE_NEW)
             ->willReturn($stripePayment);
         $order
             ->getTotal()
             ->willReturn(900);
+        $order
+            ->getFeeTotal()
+            ->willReturn(250);
         $order
             ->getNumber()
             ->willReturn('000001');
@@ -105,6 +123,7 @@ class OrderManagerTest extends TestCase
             'source' => 'tok_123456',
             'description' => 'Order 000001',
             'capture' => 'false',
+            'application_fee' => 250
         ]);
 
         $this->orderManager->authorizePayment($order->reveal());
@@ -126,7 +145,22 @@ class OrderManagerTest extends TestCase
             ->apply(PaymentTransitions::TRANSITION_COMPLETE)
             ->shouldBeCalled();
 
+        $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        $stripeAccount
+            ->getStripeUserId()
+            ->willReturn('acct_123');
+
+        $restaurant
+            ->getStripeAccount()
+            ->willReturn($stripeAccount->reveal());
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+
         $order
             ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
             ->willReturn($stripePayment);
@@ -155,101 +189,5 @@ class OrderManagerTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->orderManager->createDelivery($order->reveal());
-    }
-
-    public function testCreateTransferWithNoRestaurant()
-    {
-        $stripePayment = $this->prophesize(StripePayment::class);
-        $order = $this->prophesize(OrderInterface::class);
-
-        $order
-            ->getRestaurant()
-            ->willReturn(null);
-
-        $stripePayment
-            ->getOrder()
-            ->willReturn($order->reveal());
-
-        $this->shouldNotSendStripeRequest();
-
-        $this->orderManager->createTransfer($stripePayment->reveal());
-    }
-
-    public function testCreateTransferWithNoStripeAccount()
-    {
-        $stripePayment = $this->prophesize(StripePayment::class);
-        $order = $this->prophesize(OrderInterface::class);
-        $restaurant = $this->prophesize(Restaurant::class);
-
-        $restaurant
-            ->getStripeAccount()
-            ->willReturn(null);
-
-        $order
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-
-        $stripePayment
-            ->getOrder()
-            ->willReturn($order->reveal());
-
-        $this->shouldNotSendStripeRequest();
-
-        $this->orderManager->createTransfer($stripePayment->reveal());
-    }
-
-    public function testCreateTransfer()
-    {
-        $stripePayment = $this->prophesize(StripePayment::class);
-        $stripeAccount = $this->prophesize(StripeAccount::class);
-        $order = $this->prophesize(OrderInterface::class);
-        $restaurant = $this->prophesize(Restaurant::class);
-
-        $stripeAccount
-            ->getStripeUserId()
-            ->willReturn('acct_123');
-
-        $restaurant
-            ->getStripeAccount()
-            ->willReturn($stripeAccount->reveal());
-
-        $order
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $order
-            ->getTotal()
-            ->willReturn(10000);
-        $order
-            ->getFeeTotal()
-            ->willReturn(500);
-
-        $stripePayment
-            ->getOrder()
-            ->willReturn($order->reveal());
-        $stripePayment
-            ->getCurrencyCode()
-            ->willReturn('EUR');
-        $stripePayment
-            ->getCharge()
-            ->willReturn('ch_123456');
-
-        $stateMachine = $this->prophesize(StateMachineInterface::class);
-
-        $stateMachine
-            ->apply(StripeTransferTransitions::TRANSITION_COMPLETE)
-            ->shouldBeCalled();
-
-        $this->stateMachineFactory
-            ->get(Argument::type(StripeTransfer::class), StripeTransferTransitions::GRAPH)
-            ->willReturn($stateMachine->reveal());
-
-        $this->shouldSendStripeRequest('POST', '/v1/transfers', [
-            'amount' => 9500,
-            'currency' => 'eur',
-            'destination' => 'acct_123',
-            'source_transaction' => 'ch_123456',
-        ]);
-
-        $this->orderManager->createTransfer($stripePayment->reveal());
     }
 }

@@ -126,10 +126,6 @@ winzou_state_machine:
                     on: "authorize"
                     do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]
                     args: ["object", "'payment.authorize'"]
-                after_complete_create_transfer:
-                    on: "complete"
-                    do: ["@coopcycle.order_manager", "createTransfer"]
-                    args: ["object"]
                 after_fail_transfer:
                     on: "fail"
                     do: ["@coopcycle.order_manager", "afterPaymentFailed"]
