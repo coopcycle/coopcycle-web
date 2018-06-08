@@ -156,11 +156,14 @@ class OrderList extends React.Component {
                 { moment(order.shippedAt).format('lll') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
             </strong>
           </p>
+          <p className="text-right">
+            <i className="fa fa-user" aria-hidden="true"></i> { order.customer.givenName } { order.customer.familyName }
+          </p>
           { order.customer.telephone &&
-          <p className="text-right">{ order.customer.telephone }  <i className="fa fa-phone" aria-hidden="true"></i></p> }
+          <p className="text-right"><i className="fa fa-phone" aria-hidden="true"></i> { order.customer.telephone }</p> }
           <p className="text-right">
             <a href={ this.resolveUserRoute('user_details') }>
-              { order.customer.username }  <i className="fa fa-user" aria-hidden="true"></i>
+              <i className="fa fa-external-link" aria-hidden="true"></i> { order.customer.username } 
             </a>
           </p>
         </div>

@@ -8,6 +8,7 @@ use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } }
  *   },
  *   attributes={
- *     "normalization_context"={ "groups"={"user"} }
+ *     "normalization_context"={ "groups"={"user", "order"} }
  *   }
  * )
  * @UniqueEntity("email")
@@ -44,18 +45,21 @@ class ApiUser extends BaseUser implements JWTUserInterface
     protected $email;
 
     /**
+     * @Groups({"order"})
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/givenName")
     */
     protected $givenName;
 
     /**
+     * @Groups({"order"})
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/familyName")
      */
     protected $familyName;
 
     /**
+     * @Groups({"order"})
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/telephone")
      */
