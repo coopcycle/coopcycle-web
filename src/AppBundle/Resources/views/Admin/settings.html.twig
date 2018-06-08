@@ -11,6 +11,14 @@
   {{ form_row(form.brand_name) }}
   {{ form_row(form.administrator_email) }}
 
+  <hr>
+
+  <h4>{% trans %}form.settings.stripe.title{% endtrans %}</h4>
+
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> {{ "form.settings.stripe.help" | trans | raw }}
+  </div>
+
   <div class="form-group">
     <label class="control-label">{% trans %}form.settings.stripe_publishable_key.label{% endtrans %}</label>
     <div class="row">
@@ -48,6 +56,12 @@
         {{ form_widget(form.stripe_live_connect_client_id) }}
       </div>
     </div>
+  </div>
+
+  <hr>
+
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> {{ "form.settings.stripe.mode.help" | trans | raw }}
   </div>
 
   {{ form_rest(form) }}

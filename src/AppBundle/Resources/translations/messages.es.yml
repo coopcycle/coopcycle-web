@@ -354,6 +354,17 @@ form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
 form.settings.brand_name.label: Marca de fábrica
+form.settings.stripe.title: Stripe Account
+form.settings.stripe.help: '
+  Stripe is the payment service we use to handle credit cards. To use the e-commerce part of the platform it is necessary
+  to configure this section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
+  (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid by the shop owner.
+'
+form.settings.stripe.mode.help: '
+  If you pick ''No'' Stripe will be in test mode. You will have to use <a href="https://stripe.com/docs/testing">test credit cards</a> number to pay
+  on the platform (typically 4242 4242 4242 4242).
+  <strong>No money will be exchanged.</strong>
+'
 form.settings.stripe_publishable_key.label: Clave pública de stripe
 form.settings.stripe_publishable_key.help: 'Crea una cuenta Stripe para obtener tu
   <a href="https://stripe.com/docs/dashboard#api-keys">clave pública</a>

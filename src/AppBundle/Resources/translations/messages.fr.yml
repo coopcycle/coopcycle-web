@@ -378,6 +378,16 @@ form.address.company.label: Entreprise
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
+form.settings.stripe.title: Compte Stripe
+form.settings.stripe.help: '
+  Stripe est le service de paiement que nous utilisons pour sécuriser le paiement par carte bleue.
+  Pour utiliser la partie e-commerce de la plateforme, il est nécessaire de configurer cette section, ainsi que Stripe Connect.
+  Stripe prend une commission de 0.25cts + 1.4% par paiement (indicatif, tarifs actualisés <a href="https://stripe.com/fr/pricing">ici</a>) à la charge du commerçant.
+'
+form.settings.stripe.mode.help: '
+  Si vous cochez "non", Stripe sera en mode test. Il faudra utiliser des <a href="https://stripe.com/docs/testing">cartes tests</a>
+  pour faire des achats (typiquement 4242 4242 4242 4242). <strong>Personne ne sera débité, aucun argent échangé.</strong>
+'
 form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe
 form.settings.stripe_publishable_key.help: 'Créez un compte Stripe pour récupérer
