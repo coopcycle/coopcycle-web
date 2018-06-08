@@ -135,7 +135,9 @@
                             name="options[{{ option.code }}]"
                             value="{{ option_value.code }}" type="radio">
                           {{ option_value.value }}
-                          {% if option.strategy == 'option_value' %} - {{ option_value.price|price_format }}€{% endif %}
+                          {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                            +{{ option_value.price|price_format }}€
+                          {% endif %}
                         </label>
                       </div>
                     </div>
