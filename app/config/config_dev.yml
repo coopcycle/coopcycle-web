@@ -41,11 +41,18 @@ monolog:
         #    level:  info
 
 services:
+    apns_php.logger:
+        class: AppBundle\Utils\ApnsPHPLogger
+        arguments: [ '@logger' ]
     apns_php.push:
         class: \ApnsPHP_Push
         arguments:
             - 1
             - "%apns_certificate_file%"
+        calls:
+            - method: setLogger
+              arguments:
+                  - '@apns_php.logger'
 
 # Uncomment to send emails in dev
 #fos_user:
