@@ -204,9 +204,25 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $user = $manipulator->create($username, $password, $email, true, false);
 
+        $needsUpdate = false;
+
         if (isset($data['telephone'])) {
             $phoneNumber = $this->phoneNumberUtil->parse($data['telephone'], 'FR');
             $user->setTelephone($phoneNumber);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['givenName'])) {
+            $user->setGivenName($data['givenName']);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['familyName'])) {
+            $user->setFamilyName($data['familyName']);
+            $needsUpdate = true;
+        }
+
+        if ($needsUpdate) {
             $manager->updateUser($user);
         }
     }
