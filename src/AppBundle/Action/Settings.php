@@ -18,6 +18,7 @@ class Settings
     private $keys = [
         'stripe_publishable_key',
         'google_api_key',
+        'latlng',
     ];
 
     public function __construct(SettingsManager $settingsManager, $country, $locale)
