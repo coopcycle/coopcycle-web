@@ -526,6 +526,7 @@ trait RestaurantTrait
 
             $product = $form->getData();
 
+            $this->get('sylius.repository.product')->add($product);
             $this->get('sylius.manager.product')->flush();
 
             return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
@@ -564,6 +565,7 @@ trait RestaurantTrait
             $product = $form->getData();
 
             $this->get('sylius.repository.product')->add($product);
+            $this->get('sylius.manager.product')->flush();
 
             return $this->redirectToRoute($routes['products'], ['id' => $id]);
         }
