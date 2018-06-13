@@ -12,6 +12,12 @@
 {% block content %}
 {{ form_start(form) }}
 
+  {% if not form.vars.valid %}
+    <div class="alert alert-danger">
+      {{ form_errors(form) }}
+    </div>
+  {% endif %}
+
   {{ form_row(form.name) }}
   {{ form_row(form.description) }}
   {{ form_row(form.enabled) }}
