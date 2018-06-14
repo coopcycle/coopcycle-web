@@ -53,30 +53,6 @@ class RestaurantController extends Controller
         return $address;
     }
 
-    private function matchOptions($variant, array $optionValues)
-    {
-        foreach ($optionValues as $optionValue) {
-            if (!$variant->hasOptionValue($optionValue)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function resolveProductVariant(ProductInterface $product, array $optionValues)
-    {
-        foreach ($product->getVariants() as $variant) {
-            if (count($variant->getOptionValues()) !== count($optionValues)) {
-                continue;
-            }
-
-            if ($this->matchOptions($variant, $optionValues)) {
-                return $variant;
-            }
-        }
-    }
-
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
     {
         foreach ($optionValues as $optionValue) {
@@ -84,30 +60,6 @@ class RestaurantController extends Controller
                 return $optionValue->getOption();
             }
         }
-    }
-
-    private function createProductVariant(ProductInterface $product, array $optionValues)
-    {
-        $productVariant = $this->get('sylius.factory.product_variant')->createForProduct($product);
-        $values = [];
-        foreach ($optionValues as $optionValue) {
-            $productVariant->addOptionValue($optionValue);
-            $values[] = $optionValue->getValue();
-        }
-
-        $this->get('logger')->info(sprintf('Creating product variant for product %s with values %s',
-            $product->getCode(), implode(' + ', $values)));
-
-        $productVariant->setName($product->getName());
-        $productVariant->setCode(Uuid::uuid4()->toString());
-
-        $defaultVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
-
-        // Copy price & tax category from default variant
-        $productVariant->setPrice($defaultVariant->getPrice());
-        $productVariant->setTaxCategory($defaultVariant->getTaxCategory());
-
-        return $productVariant;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -357,8 +309,10 @@ class RestaurantController extends Controller
 
         $cartItem = $this->get('sylius.factory.order_item')->createNew();
 
+        $variantResolver = $this->get('coopcycle.sylius.product_variant_resolver.lazy');
+
         if (!$product->hasOptions()) {
-            $productVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
+            $productVariant = $variantResolver->getVariant($product);
         } else {
 
             $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
@@ -381,15 +335,7 @@ class RestaurantController extends Controller
                 return $this->jsonResponse($cart, $errors);
             }
 
-            $productVariant = $this->resolveProductVariant($product, $optionValues);
-
-            // Lazily create a product variant
-            // As we "hide" product variants, some variants may not have been created yet
-            // At this step, we are pretty sure the options are valid
-            if (!$productVariant) {
-                $productVariant = $this->createProductVariant($product, $optionValues);
-                $this->get('sylius.repository.product_variant')->add($productVariant);
-            }
+            $productVariant = $variantResolver->getVariantForOptionValues($product, $optionValues);
         }
 
         $cartItem->setVariant($productVariant);

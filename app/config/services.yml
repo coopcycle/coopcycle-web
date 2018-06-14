@@ -8,6 +8,8 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
+
   app.locale_listener:
     class: AppBundle\EventListener\LocaleListener
     arguments: ['%kernel.default_locale%']
@@ -76,6 +78,13 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.order.inner"
     public: false
+
+  coopcycle.sylius.product_variant_resolver.lazy:
+    class: AppBundle\Sylius\Product\LazyProductVariantResolver
+    arguments:
+      - "@sylius.product_variant_resolver.default"
+      - "@sylius.factory.product_variant"
+    public: true
 
   sylius.context.cart.restaurant:
     class: AppBundle\Sylius\Cart\RestaurantCartContext
