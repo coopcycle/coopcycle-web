@@ -304,7 +304,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\ProductType':
-    arguments: [ '@sylius.generator.product_variant', '@sylius.factory.product_variant', '@sylius.product_variant_resolver.default' ]
+    arguments: [ '@sylius.factory.product_variant', '@sylius.product_variant_resolver.default' ]
     tags: [ form.type ]
 
   my.jwt_listener:
