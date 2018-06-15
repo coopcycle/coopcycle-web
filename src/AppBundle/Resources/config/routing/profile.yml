@@ -228,6 +228,17 @@ profile_restaurant_product:
             restaurant: profile_restaurant
             products: profile_restaurant_products
 
+profile_restaurant_product_variants:
+    path: /profile/restaurants/{restaurantId}/products/{productId}/variants
+    defaults:
+        _controller: AppBundle:Profile:restaurantProductVariants
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Restaurant:productVariants.html.twig
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+            products: profile_restaurant_products
+
 profile_restaurant_planning:
     path: /profile/restaurants/{id}/planning
     defaults:

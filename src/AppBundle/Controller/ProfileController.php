@@ -47,6 +47,7 @@ class ProfileController extends Controller
             'menu_taxon' => 'profile_restaurant_menu_taxon',
             'products' => 'profile_restaurant_products',
             'product_options' => 'profile_restaurant_product_options',
+            'product_variants' => 'profile_restaurant_product_variants',
             'dashboard' => 'profile_restaurant_dashboard',
             'planning' => 'profile_restaurant_planning',
         ];

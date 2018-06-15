@@ -539,6 +539,24 @@ trait RestaurantTrait
         ], $routes));
     }
 
+    public function restaurantProductVariantsAction($restaurantId, $productId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($restaurantId);
+
+        $product = $this->get('sylius.repository.product')
+            ->find($productId);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'product' => $product,
+        ], $routes));
+    }
+
     public function newRestaurantProductAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()

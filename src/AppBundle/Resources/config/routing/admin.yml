@@ -187,6 +187,17 @@ admin_restaurant_product:
             restaurant: admin_restaurant
             products: admin_restaurant_products
 
+admin_restaurant_product_variants:
+    path: /admin/restaurants/{restaurantId}/products/{productId}/variants
+    defaults:
+        _controller: AppBundle:Admin:restaurantProductVariants
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:productVariants.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            products: admin_restaurant_products
+
 admin_restaurant_planning:
     path: /admin/restaurants/{id}/planning
     defaults:

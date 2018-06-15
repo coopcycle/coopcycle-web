@@ -1,0 +1,44 @@
+{% extends '@App/Restaurant/layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li><a href="{{ path(products_route, { id: restaurant.id }) }}">{{ 'restaurant.list.products'|trans }}</a></li>
+  <li>{{ product.name }}</li>
+{% endblock %}
+
+{% block content %}
+
+  {% for variant in product.variants %}
+
+    {% set values = [] %}
+    {% for optionValue in variant.optionValues %}
+      {% set values = values|merge([ optionValue.value ]) %}
+    {% endfor %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {% if values|length > 0 %}
+          {{ values|join(' + ') }}
+        {% else %}
+          Default
+        {% endif %}
+        <span class="pull-right">{{ variant.code }}</span>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-4">
+            {{ variant.name }}
+          </div>
+          <div class="col-sm-4">
+            {{ variant.price }}
+          </div>
+          <div class="col-sm-4">
+            {# {{ form_row(form.taxCategory) }} #}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+{% endblock %}
