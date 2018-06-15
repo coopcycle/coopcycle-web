@@ -484,6 +484,8 @@ form.product_option.add_value.label: Ajouter une valeur
 form.product_option.values.title: Valeurs
 form.product_option_value.value.label: Valeur
 form.product_option_value.price.label: Prix
+form.product_option.additional.label: Cette option est un supplément
+form.product_option.additional.help: Le client pourra choisir plusieurs valeurs, sans être obligé d'en choisir au moins une
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix
 product_option.strategy.option_value: Prix en fonction du choix

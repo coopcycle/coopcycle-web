@@ -344,8 +344,18 @@ class RestaurantController extends Controller
 
             $optionValues = [];
             foreach ($options as $optionCode => $optionValueCode) {
-                $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
-                $optionValues[] = $optionValue;
+
+                $optionValueCodes = [];
+                if (is_array($optionValueCode)) {
+                    $optionValueCodes = $optionValueCode;
+                } else {
+                    $optionValueCodes[] = $optionValueCode;
+                }
+
+                foreach ($optionValueCodes as $optionValueCode) {
+                    $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
+                    $optionValues[] = $optionValue;
+                }
             }
 
             $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);

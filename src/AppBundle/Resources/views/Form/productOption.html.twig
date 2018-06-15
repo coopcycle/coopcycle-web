@@ -19,6 +19,11 @@
   </div>
 {% endblock %}
 
+{% block _product_option_additional_widget %}
+  {{ block('checkbox_widget') }}
+  <span class="help-block">{% trans %}form.product_option.additional.help{% endtrans %}</span>
+{% endblock %}
+
 {% block _product_option_values_entry_translations_entry_row %}
   {{ form_widget(form) }}
 {% endblock %}
