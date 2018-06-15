@@ -102,6 +102,12 @@ final class NotificationSubscriber implements EventSubscriberInterface
                 [$order->getCustomer()->getEmail() => $order->getCustomer()->getFullName()]
             );
 
+            // Send email to admin
+            $this->emailManager->sendTo(
+                $this->emailManager->createOrderCreatedMessageForAdmin($order),
+                $this->settingsManager->get('administrator_email')
+            );
+
             $ownerMails = [];
 
             // Push notification to restaurant owners
