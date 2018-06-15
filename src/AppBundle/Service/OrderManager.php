@@ -132,8 +132,14 @@ class OrderManager
 
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $stripeAccount = $order->getRestaurant()->getStripeAccount();
 
-        $restaurantStripeId = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+        if (!is_null($stripeAccount)) {
+            $restaurantStripeId = $stripeAccount->getStripeUserId();
+        } else {
+            $restaurantStripeId = null;
+        }
+
         $applicationFee = $order->getFeeTotal();
 
         try {
@@ -177,7 +183,13 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-        $restaurantStripeId = $order->getRestaurant()->getStripeAccount()->getStripeUserId();
+        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+
+        if (!is_null($stripeAccount)) {
+            $restaurantStripeId = $stripeAccount->getStripeUserId();
+        } else {
+            $restaurantStripeId = null;
+        }
 
         try {
 
