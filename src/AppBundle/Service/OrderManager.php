@@ -134,28 +134,30 @@ class OrderManager
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
         $stripeAccount = $order->getRestaurant()->getStripeAccount();
 
+        $applicationFee = $order->getFeeTotal();
+
+        $stripeParams = array(
+            'amount' => $order->getTotal(),
+            'currency' => strtolower($stripePayment->getCurrencyCode()),
+            'source' => $stripeToken,
+            'description' => sprintf('Order %s', $order->getNumber()),
+            // To authorize a payment without capturing it,
+            // make a charge request that also includes the capture parameter with a value of false.
+            // This instructs Stripe to only authorize the amount on the customer’s card.
+            'capture' => false
+        );
+
         if (!is_null($stripeAccount)) {
             $restaurantStripeId = $stripeAccount->getStripeUserId();
+            $stripeParams['application_fee'] = $applicationFee;
         } else {
             $restaurantStripeId = null;
         }
 
-        $applicationFee = $order->getFeeTotal();
-
         try {
 
             $charge = Stripe\Charge::create(
-                array(
-                    'amount' => $order->getTotal(),
-                    'currency' => strtolower($stripePayment->getCurrencyCode()),
-                    'source' => $stripeToken,
-                    'description' => sprintf('Order %s', $order->getNumber()),
-                    // To authorize a payment without capturing it,
-                    // make a charge request that also includes the capture parameter with a value of false.
-                    // This instructs Stripe to only authorize the amount on the customer’s card.
-                    'capture' => false,
-                    'application_fee' => $applicationFee
-                ),
+                $stripeParams,
                 array(
                     'stripe_account' => $restaurantStripeId
                 )
