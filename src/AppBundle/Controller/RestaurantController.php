@@ -195,6 +195,11 @@ class RestaurantController extends Controller
         $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
         $seoPage
             ->addMeta('property', 'og:title', $seoPage->getTitle())
+            ->addMeta('property', 'og:description', sprintf('%s, %s %s',
+                $restaurant->getAddress()->getStreetAddress(),
+                $restaurant->getAddress()->getPostalCode(),
+                $restaurant->getAddress()->getAddressLocality()
+            ))
             // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
             ->addMeta('property', 'og:type', 'restaurant.restaurant')
             ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
