@@ -169,7 +169,7 @@ class OrderList extends React.Component {
             </a>
           </p>
         </div>
-        <h4>{ i18n('ADMIN_DASHBOARD_ORDERS_DISHES') }</h4>
+        <h4>{ i18n.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h4>
         <div className="restaurant-dashboard__details__dishes">
           { this.renderOrderItems() }
         </div>
