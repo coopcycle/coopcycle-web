@@ -2,6 +2,8 @@ import React from 'react'
 import { render } from 'react-dom'
 import Switch from 'antd/lib/switch'
 
+import i18n from '../i18n'
+
 var $restaurants = $('#update_profile_restaurants');
 var $stores = $('#update_profile_stores');
 
@@ -12,7 +14,7 @@ if ($restaurants.length === 1 && restaurantSearch) {
 
   var options = {
     url: window.AppData.restaurantsSearchUrl,
-    placeholder: window.AppData.__i18n.restaurantsSearch,
+    placeholder: i18n.t('ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT'),
     onSuggestionSelected: function(restaurant) {
       var newRestaurant = $restaurants.attr('data-prototype');
       newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
@@ -35,7 +37,7 @@ if ($stores.length === 1 && storeSearch) {
 
   var options = {
     url: window.AppData.storesSearchUrl,
-    placeholder: window.AppData.__i18n.storesSearch,
+    placeholder: i18n.t('ADMIN_DASHBOARD_USERS_SEARCHSTORE'),
     onSuggestionSelected: function(store) {
       var newStore = $stores.attr('data-prototype');
       newStore = newStore.replace(/__name__/g, $stores.find('tbody > tr').length);
@@ -79,8 +81,8 @@ function renderSwitch($input) {
   render(
     <Switch
       defaultChecked={ checked }
-      checkedChildren={ window.AppData.__i18n['Enabled'] }
-      unCheckedChildren={ window.AppData.__i18n['Disabled'] }
+      checkedChildren={ i18n.t('USER_EDIT_ENABLED_LABEL') }
+      unCheckedChildren={ i18n.t('USER_EDIT_DISABLED_LABEL') }
       onChange={(checked) => {
         if (checked) {
           $parent.append($hidden)

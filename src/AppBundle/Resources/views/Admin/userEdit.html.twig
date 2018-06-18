@@ -37,12 +37,6 @@
     window.AppData = window.AppData || {}
     window.AppData.restaurantsSearchUrl = "{{ path('admin_restaurants_search', { format: 'json'  }) }}"
     window.AppData.storesSearchUrl = "{{ path('admin_stores_search', { format: 'json'  }) }}"
-    window.AppData.__i18n = {
-      restaurantsSearch: "{% trans %}adminDashboard.users.searchRestaurant{% endtrans %}",
-      storesSearch: "{% trans %}adminDashboard.users.searchStore{% endtrans %}",
-      Enabled: "{% trans %}user.edit.enabled.label{% endtrans %}",
-      Disabled: "{% trans %}user.edit.disabled.label{% endtrans %}"
-    }
   </script>
   <script src="{{ asset('js/widgets.js') }}"></script>
   <script src="{{ asset('js/user-form.js') }}"></script>

@@ -1,4 +1,5 @@
 import React from 'react';
+import i18n from '../i18n';
 
 const map = {
   'cart': 'label-default',
@@ -8,7 +9,6 @@ const map = {
   'refused': 'label-danger'
 };
 
-const i18n = window.__order_status_i18n;
 
 class Label extends React.Component
 {
@@ -22,7 +22,7 @@ class Label extends React.Component
     }
 
     return (
-      <span className={ classes.join(' ') }>{ i18n[this.props.order.state] }</span>
+      <span className={ classes.join(' ') }>{ i18n.t(this.props.order.state) }</span>
     );
   }
 }

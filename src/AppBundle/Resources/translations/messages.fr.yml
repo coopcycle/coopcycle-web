@@ -17,14 +17,10 @@ adminDashboard.dashboard.filters: Filtres
 adminDashboard.dashboard.importErrors: Erreurs d'importation
 adminDashboard.dashboard.importTasks: Importer des tâches
 adminDashboard.dashboard.exportTasks: Exporter des tâches
-adminDashboard.dashboard.cancel: Annuler
 adminDashboard.dashboard.deleteTaskGroup: Supprimer un groupe de tâches
-adminDashboard.dashboard.display: Affichage
 adminDashboard.dashboard.displayByGroups: Afficher par groupe
 adminDashboard.dashboard.displayAll: Afficher tout
-adminDashboard.dashboard.add: Ajouter
-adminDashboard.dashboard.addUserToPlanning: Ajouter un utilisateur au planning
-adminDashboard.dashboard.courier: Coursier
+
 adminDashboard.deliveries.title: Livraisons
 adminDashboard.deliveries.createNew: Créer une livraison
 adminDashboard.deliveries.type: Type
@@ -45,16 +41,12 @@ adminDashboard.stores.title: Magasins
 adminDashboard.stores.createNew: Créer un magasin
 adminDashboard.stores.form.uploadImage: Uploader une image
 adminDashboard.orders.title: Commandes
-adminDashboard.orders.order: Commande
-adminDashboard.orders.dishes: Plats
-adminDashboard.orders.refuse: Refuser
-adminDashboard.orders.accept: Accepter
-adminDashboard.orders.cancel: Annuler
-adminDashboard.orders.ready: Prêt !
+
+
 adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
-adminDashboard.orders.clickForDetails: Cliquez sur une commande pour l'afficher
+
 adminDashboard.orders.invoice.title: Facture
 adminDashboard.orders.invoice.totalExcludingTax: Total HT
 adminDashboard.orders.invoice.totalTax: Total TVA
@@ -66,8 +58,6 @@ adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.edit: Modifier
 adminDashboard.users.save: Enregistrer
-adminDashboard.users.searchRestaurant: Rechercher un restaurant…
-adminDashboard.users.searchStore: Rechercher un magasin…
 adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
@@ -117,18 +107,14 @@ delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil
 
-dashboard.unassigned: En attente
-dashboard.assigned: Assignées
-norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre
-  heure de livraison.
+norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre heure de livraison.
+
 localBusiness.form.orderingDelayMinutes: Délai additionel pour les prises de commandes
 localBusiness.form.orderingDelayMinutes.help: Utilisez ces champs pour ajouter un
   délai avant la commande. N'influe pas sur le temps réservé à la préparation (20
   minutes) ni sur le temps réservé à la course (25 minutes).
 localBusiness.form.orderingDelayDays: Jour(s)
 localBusiness.form.orderingDelayHours: Heure(s)
-localBusiness.form.enabled: Activé
-localBusiness.form.disabled: Désactivé
 localBusiness.form.name: Nom
 localBusiness.form.legalName: Nom légal
 localBusiness.form.website: Site web
@@ -278,6 +264,7 @@ order.state.new: Nouveau
 order.state.ready: Prête
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
+
 payment.state.cart: Panier
 payment.state.new: Nouveau
 payment.state.authorized: Autorisé
@@ -322,6 +309,7 @@ form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
 task.type.DROPOFF: Dépôt
 task.previous_task_not_completed_yet: La tâche précédente n'a pas été complétée
+
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i
@@ -329,6 +317,7 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide
 cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
+
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
 form.delivery.pricing_rule_set.about: 'La tarification suivante sera appliquée : <a
@@ -514,12 +503,14 @@ roles.ROLE_COURIER: Coursier
 roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Magasin
 roles.ROLE_USER: Utilisateur
+
 user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En
   savoir plus</a>
 user.edit.enabled.label: Activé
 user.edit.disabled.label: Désactivé
 user.edit.enabled.help: Un utilisateur désactivé est déconnecté et ne peut plus se
   connecter à la plateforme.
+
 user.profile.familyName: Nom
 user.profile.givenName: Prénom
 roles.ROLE_ADMIN.help: 'Administrateur : Accès total à toutes les fonctions
@@ -599,3 +590,4 @@ deliveryForm.noPriceWarning: 'Le tarif ne peut être calculé. Veuillez intégre
 deliveryForm.noPriceFromPricingWarning: 'Le tarif ne peut pas être calculé à partir
   du prix. Entrez le manuellement ou éditez le prix. '
 task.form.finish.FAIL.info: La tâche n'a pas pu être effectuée
+

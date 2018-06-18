@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import _ from 'lodash'
+import { translate } from 'react-i18next'
+
 import { addTaskList, closeAddUserModal, openAddUserModal } from '../store/actions'
 import TaskList from './TaskList'
 
@@ -44,11 +46,11 @@ class TaskLists extends React.Component {
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
         <h4>
-          <span>{ window.AppData.Dashboard.i18n['Assigned'] }</span>
+          <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?
             (<span className="pull-right"><i className="fa fa-spinner"></i></span>) :
             (<a className="pull-right" onClick={this.props.openAddUserModal}>
-              <i className="fa fa-plus"></i> <i className="fa fa-user"></i>
+              <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-user"></i>
             </a>)
           }
         </h4>
@@ -73,13 +75,13 @@ class TaskLists extends React.Component {
         >
           <div className="modal-header">
             <button type="button" className="close" onClick={this.props.closeAddUserModal} aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 className="modal-title" id="user-modal-label">{window.AppData.Dashboard.i18n['Add a user to the planning']}</h4>
+            <h4 className="modal-title" id="user-modal-label">{this.props.t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING')}</h4>
           </div>
           <div className="modal-body">
             <form method="post" className="form-horizontal">
               <div className="form-group" data-action="dispatch">
                 <label htmlFor="courier" className="col-sm-2 control-label">
-                  {window.AppData.Dashboard.i18n['Courier']}
+                  { this.props.t('ADMIN_DASHBOARD_COURIER') }
                 </label>
                 <div className="col-sm-10">
                   <select name="courier" className="form-control" value={selectedCourier} onChange={(e) => this.onCourierSelect(e)}>
@@ -95,8 +97,8 @@ class TaskLists extends React.Component {
             </form>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-default" onClick={this.props.closeAddUserModal}>{window.AppData.Dashboard.i18n['Cancel']}</button>
-            <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{window.AppData.Dashboard.i18n['Add']}</button>
+            <button type="button" className="btn btn-default" onClick={this.props.closeAddUserModal}>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
+            <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
           </div>
         </Modal>
         <div className="dashboard__panel__scroll" style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -138,4 +140,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(TaskLists)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(translate()(TaskLists))

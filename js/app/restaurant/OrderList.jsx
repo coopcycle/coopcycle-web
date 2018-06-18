@@ -79,7 +79,7 @@ class OrderList extends React.Component
 
     if (orders.length === 0) {
       return (
-        <div className="alert alert-warning">{ this.props.i18n['No orders yet'] }</div>
+        <div className="alert alert-warning">{ i18n.t('ADMIN_DASHBOARD_ORDERS_NOORDERS') }</div>
       )
     }
 

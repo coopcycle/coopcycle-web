@@ -5,8 +5,7 @@ import { translate } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import { connect } from 'react-redux'
-import { highlightTask, setTaskListGroupMode, toggleTask } from '../store/actions'
+import {highlightTask, setTaskListGroupMode, toggleTask} from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -80,14 +79,15 @@ class UnassignedTasks extends React.Component {
         <h4>
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span className="pull-right">
-            <a href="#" id="task-list-group-mode" title={ window.AppData.Dashboard.i18n['Display'] }>
-              <i className="fa fa-list"></i>
-            </a>
             <a href="#" onClick={ e => {
               e.preventDefault();
               $('#task-modal').modal('show')
             }}>
               <i className="fa fa-plus"></i>
+            </a>
+            &nbsp;
+            <a href="#" id="task-list-group-mode" title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
+              <i className="fa fa-list"></i>
             </a>
           </span>
         </h4>

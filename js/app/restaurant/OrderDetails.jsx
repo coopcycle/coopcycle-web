@@ -2,6 +2,8 @@ import React from 'react';
 import OrderLabel from '../order/Label.jsx';
 import moment from 'moment';
 
+import i18n from '../i18n'
+
 const locale = $('html').attr('lang')
 
 moment.locale(locale)
@@ -40,14 +42,14 @@ class OrderList extends React.Component {
         <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_refuse') }>
             <button type="submit" className="btn btn-block btn-sm btn-danger">
-              <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.i18n['Refuse'] }
+              <i className="fa fa-ban" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
             </button>
           </form>
         </div>
         <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_accept') }>
             <button type="submit" className="btn btn-block btn-sm btn-success">
-              <i className="fa fa-check" aria-hidden="true"></i>  { this.props.i18n['Accept'] }
+              <i className="fa fa-check" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
             </button>
           </form>
         </div>
@@ -61,14 +63,14 @@ class OrderList extends React.Component {
         <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_cancel') }>
             <button type="submit" className="btn btn-block btn-sm btn-danger">
-              <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.i18n['Cancel'] }
+              <i className="fa fa-ban" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
             </button>
           </form>
         </div>
         <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_ready') }>
             <button type="submit" className="btn btn-block btn-sm btn-success">
-              <i className="fa fa-check" aria-hidden="true"></i>  { this.props.i18n['Ready!'] }
+              <i className="fa fa-check" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_READY!') }
             </button>
           </form>
         </div>
@@ -135,7 +137,7 @@ class OrderList extends React.Component {
       return (
         <div className="restaurant-dashboard__details__container restaurant-dashboard__details__container--empty">
           <div>
-          { this.props.i18n['Click on an order to display details'] }
+          { i18n.t('ADMIN_DASHBOARD_CLICK_FOR_DETAILS') }
           </div>
         </div>
       )
@@ -144,7 +146,7 @@ class OrderList extends React.Component {
     return (
       <div className="restaurant-dashboard__details__container">
         <h4>
-          <span>{ this.props.i18n['Order'] } #{ order.id }</span>
+          <span>{ i18n.t('ADMIN_DASHBOARD_ORDERS_ORDER') } #{ order.id }</span>
           <button type="button" className="close" onClick={ () => this.props.onClose() }>
             <span aria-hidden="true">&times;</span>
           </button>
@@ -167,7 +169,7 @@ class OrderList extends React.Component {
             </a>
           </p>
         </div>
-        <h4>{ this.props.i18n['Dishes'] }</h4>
+        <h4>{ i18n('ADMIN_DASHBOARD_ORDERS_DISHES') }</h4>
         <div className="restaurant-dashboard__details__dishes">
           { this.renderOrderItems() }
         </div>
