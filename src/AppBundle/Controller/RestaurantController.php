@@ -192,8 +192,9 @@ class RestaurantController extends Controller
         }
 
         $seoPage = $this->get('sonata.seo.page');
+        $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
         $seoPage
-            ->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()))
+            ->addMeta('property', 'og:title', $seoPage->getTitle())
             // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
             ->addMeta('property', 'og:type', 'restaurant.restaurant')
             ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
