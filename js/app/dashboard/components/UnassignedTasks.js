@@ -1,9 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
+import { connect } from 'react-redux'
+import { translate } from 'react-i18next'
+
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import { connect } from 'react-redux'
-import { setTaskListGroupMode, toggleTask } from '../store/actions'
+import {highlightTask, setTaskListGroupMode, toggleTask} from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -75,15 +77,17 @@ class UnassignedTasks extends React.Component {
     return (
       <div className="dashboard__panel">
         <h4>
-          <span>{ window.AppData.Dashboard.i18n['Unassigned'] }</span>
+          <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span className="pull-right">
-            <a href="#" id="task-list-group-mode" title={ window.AppData.Dashboard.i18n['Display'] }>
-              <i className="fa fa-list"></i>
-            </a>   <a href="#" onClick={ e => {
+            <a href="#" onClick={ e => {
               e.preventDefault();
               $('#task-modal').modal('show')
             }}>
               <i className="fa fa-plus"></i>
+            </a>
+            &nbsp;
+            <a href="#" id="task-list-group-mode" title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
+              <i className="fa fa-list"></i>
             </a>
           </span>
         </h4>
@@ -124,4 +128,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedTasks)
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(UnassignedTasks))

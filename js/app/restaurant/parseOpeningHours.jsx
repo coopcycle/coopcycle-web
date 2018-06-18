@@ -1,17 +1,7 @@
 import moment from 'moment'
 import _ from 'lodash'
 import TimeRange from '../utils/TimeRange'
-
-const templates = {
-  en: {
-    single: (day, open, close) => `Open on ${day} ${open} to ${close}`,
-    range: (fromDay, toDay, open, close) => `Deliveries from ${fromDay} to ${toDay} ${open} to ${close}`
-  },
-  fr: {
-    single: (day, open, close) => `Ouvert le ${day} de ${open} à ${close}`,
-    range: (fromDay, toDay, open, close) => `Livraisons possibles du ${fromDay} au ${toDay} de ${open} à ${close}`
-  }
-}
+import i18n from '../i18n'
 
 /*
   Takes an opening interval as formatted in the DB and returns it as a human-readable string
@@ -22,9 +12,6 @@ function openingHourIntervalToReadable(openingHourInterval, locale) {
 
   let startDay = _.first(days),
       endDay = _.last(days)
-
-  const template = templates.hasOwnProperty(locale) ? templates[locale] : templates['en']
-  const { single, range } = template
 
   // Format time according to locale
 
@@ -38,9 +25,9 @@ function openingHourIntervalToReadable(openingHourInterval, locale) {
   const endFormatted = localeMoment.hour(endHour).minute(endMinute).format('LT')
 
   if (startDay === endDay) {
-    return single(TimeRange.weekday(startDay, locale), startFormatted, endFormatted)
+    return i18n.t("OPENING_HOURS_SINGLE", {day: TimeRange.weekday(startDay, locale), open: startFormatted, close: endFormatted})
   } else {
-    return range(TimeRange.weekday(startDay, locale), TimeRange.weekday(endDay, locale), startFormatted, endFormatted)
+    return i18n.t("OPENING_HOURS_RANGE", {fromDay: TimeRange.weekday(startDay, locale), toDay: TimeRange.weekday(endDay, locale), open: startFormatted, close: endFormatted})
   }
 }
 

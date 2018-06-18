@@ -22,14 +22,9 @@ adminDashboard.dashboard.importErrors: Import errors
 adminDashboard.dashboard.importTasks: Import tasks
 adminDashboard.dashboard.exportTasks: Export tasks
 adminDashboard.dashboard.filters: Filters
-adminDashboard.dashboard.cancel: Cancel
 adminDashboard.dashboard.deleteTaskGroup: Delete task group
-adminDashboard.dashboard.display: Display
 adminDashboard.dashboard.displayByGroups: Display by groups
 adminDashboard.dashboard.displayAll: Display all
-adminDashboard.dashboard.add: Add
-adminDashboard.dashboard.addUserToPlanning: Add a user to the planning
-adminDashboard.dashboard.courier: Courier
 
 adminDashboard.deliveries.title: Deliveries
 adminDashboard.deliveries.createNew: Create new delivery
@@ -54,16 +49,10 @@ adminDashboard.stores.createNew: Create a new store
 adminDashboard.stores.form.uploadImage: Upload an image
 
 adminDashboard.orders.title: Orders
-adminDashboard.orders.order: Order
-adminDashboard.orders.dishes: Dishes
-adminDashboard.orders.refuse: Refuse
-adminDashboard.orders.accept: Accept
-adminDashboard.orders.cancel: Cancel
-adminDashboard.orders.ready: Ready!
+
 adminDashboard.orders.previousOrders: Previous orders
 adminDashboard.orders.showCanceled: Show canceled orders
-adminDashboard.orders.noOrders: No orders yet
-adminDashboard.orders.clickForDetails: Click on an order to display details
+
 adminDashboard.orders.invoice.title: Invoice
 adminDashboard.orders.invoice.totalExcludingTax: Total excluding tax
 adminDashboard.orders.invoice.productsTotal: Products total
@@ -77,8 +66,6 @@ adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.users.title: Users
 adminDashboard.users.edit: Edit
 adminDashboard.users.save: Save
-adminDashboard.users.searchRestaurant: Search restaurant…
-adminDashboard.users.searchStore: Search store…
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
@@ -141,17 +128,12 @@ delivery.createNew: Create new delivery
 help.title: Help
 help.home: Home
 
-dashboard.unassigned: Unassigned
-dashboard.assigned: Assigned
-
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before the customer can order. This setting don't change the times kept for cooking (20 minutes) and cycling (25 minutes).
 localBusiness.form.orderingDelayDays: Day(s)
 localBusiness.form.orderingDelayHours: Hour(s)
-localBusiness.form.enabled: Enabled
-localBusiness.form.disabled: Disabled
 localBusiness.form.name: Name
 localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
@@ -273,12 +255,6 @@ order.status.DELIVERED: Delivered
 order.status.PAYMENT_ERROR: Payment Error
 
 order.state.cart: Cart
-order.state.new: New
-order.state.accepted: Accepted
-order.state.fulfilled: Delivered
-order.state.ready: Ready
-order.state.cancelled: Cancelled
-order.state.refused: Refused
 
 order.list.total: Total
 order.list.createdAt: Created at
@@ -326,9 +302,8 @@ task.type.DROPOFF: Dropoff
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
 
-cart.title: Cart
 cart.widget.title: Your delivery details
-cart.widget.button: My order
+cart.widget.button: Order
 
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
@@ -473,8 +448,6 @@ roles.ROLE_STORE: 'Store'
 roles.ROLE_USER: 'User'
 
 user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>
-user.edit.enabled.label: Enabled
-user.edit.disabled.label: Disabled
 user.edit.enabled.help: A deactivated user will be logged out and can't login back on the platform.
 user.profile.familyName: Family name
 user.profile.givenName: Given name

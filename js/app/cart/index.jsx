@@ -53,7 +53,6 @@ class CartHelper {
         ref={ this.cartComponentRef }
         streetAddress={ streetAddress }
         geohash={ geohash }
-        i18n={ window.__i18n }
         deliveryDate={ deliveryDate }
         availabilities={ availabilities }
         items={ items }
@@ -74,7 +73,7 @@ class CartHelper {
         restaurant={ cart.restaurant }
         total={ cart.total }
         itemsTotal={ cart.itemsTotal }
-        i18n={ window.__i18n } />, el)
+      />, el)
   }
 
   _geocode(streetAddress) {

@@ -2,10 +2,11 @@ import React from 'react'
 import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import dragula from 'dragula'
+import _ from 'lodash'
+
 import { assignTasks, updateTask, addCreatedTask } from './store/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
-import _ from 'lodash'
 
 const drake = dragula({
   copy: true,
