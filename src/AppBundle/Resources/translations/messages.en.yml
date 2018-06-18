@@ -469,7 +469,7 @@ stores.list.noStores: There are no stores yet
 
 zones.help: <a href="%link%">Get help about zones.</a>
 
-meta.title: Delivery platform for worker-owned business.
+meta.title: Delivery platform for worker-owned business
 
 admin.settings.missing_mandatory_settings: |
   Mandatory settings are missing.

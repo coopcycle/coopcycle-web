@@ -534,7 +534,7 @@ stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
 stores.list.noStores: Pas de magasin pour le moment
 zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
-meta.title: Plateforme de livraison pour les sociétés coopératives.
+meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
 
   Allez à la <a href="%settings_url%">page des paramètres</a> pour les configurer.

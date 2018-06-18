@@ -191,6 +191,24 @@ class RestaurantController extends Controller
             }
         }
 
+        $seoPage = $this->get('sonata.seo.page');
+        $seoPage
+            ->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()))
+            // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
+            ->addMeta('property', 'og:type', 'restaurant.restaurant')
+            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
+            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
+            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
+            ->addMeta('property', 'place:location:latitude', $restaurant->getAddress()->getGeo()->getLatitude())
+            ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
+            ;
+
+        $uploaderHelper = $this->get('vich_uploader.templating.helper.uploader_helper');
+        $imagePath = $uploaderHelper->asset($restaurant, 'imageFile');
+        if (null !== $imagePath) {
+            $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
+        }
+
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 

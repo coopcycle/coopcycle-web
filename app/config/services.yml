@@ -16,6 +16,12 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  coopcycle.seo.event_listener:
+    class: AppBundle\EventListener\SeoListener
+    arguments: ['@translator', '@sonata.seo.page.default']
+    tags:
+      - { name: kernel.event_listener, event: kernel.request }
+
   sylius.context.locale.request_based:
     class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
     arguments: ['@request_stack', '@sylius.locale_provider']

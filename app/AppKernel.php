@@ -46,6 +46,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+            new Sonata\SeoBundle\SonataSeoBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
