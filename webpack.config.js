@@ -46,7 +46,6 @@ Encore
   .autoProvidejQuery()
 
   .enableVersioning(Encore.isProduction())
-  .enableSourceMaps(true)
 
 let webpackConfig = Encore.getWebpackConfig()
 
