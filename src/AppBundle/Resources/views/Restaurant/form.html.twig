@@ -125,7 +125,7 @@
   <hr>
 
   {# Stripe accounts have to be created by restaurant owner itself so we link it to correct account in callback #}
-  <h4>Compte Stripe</h4>
+  <h4>{% trans %}form.local_business.stripe_account.title{% endtrans %}</h4>
   {% if is_granted('ROLE_ADMIN') and restaurant.stripeAccount is null %}
     <div class="alert alert-warning">
       {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}

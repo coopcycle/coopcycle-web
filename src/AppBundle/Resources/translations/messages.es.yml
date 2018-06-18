@@ -407,7 +407,7 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
 
   '
 form.local_business.stripe_account.placeholder: Selecciona una cuenta Stripe
-form.local_business.stripe_account.label: Cuenta Stripe
+form.local_business.stripe_account.title: Cuenta Stripe
 form.local_business.stripe_account.success: Cuenta Stripe creada con éxito.
 form.local_business.stripe_account.admin_warning: No existe ninguna cuenta Stripe
   para éste restaurante. La cuenta Stripe debe ser creada por el propietario del restaurante.

@@ -420,7 +420,7 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
 
   '
 form.local_business.stripe_account.placeholder: Choisissez un compte Stripe
-form.local_business.stripe_account.label: Compte Stripe
+form.local_business.stripe_account.title: Compte Stripe
 form.local_business.stripe_account.success: Compte Stripe créé avec succès.
 form.local_business.stripe_account.admin_warning: Aucun compte Stripe créé pour ce
   restaurant par le restaurateur. Le compte Stripe doit être créé par le restaurateur.
