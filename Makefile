@@ -7,13 +7,13 @@ install:
 	$(MAKE) osrm
 	@printf "\e[0;32mCreating database..\e[0m\n"
 	@docker-compose run php composer install --prefer-dist --no-progress --no-suggest
-	@docker-compose run php bin/console doctrine:database:create --if-not-exists --env=dev
-	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=dev
-	@docker-compose run php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
+	@docker-compose run php php bin/console doctrine:database:create --if-not-exists --env=dev
+	@docker-compose run php php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=dev
+	@docker-compose run php php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
-	@docker-compose run php bin/console doctrine:schema:create --env=dev
-	@docker-compose run php bin/demo --env=dev
-	@docker-compose run php bin/console doctrine:migrations:version --add --all
+	@docker-compose run php php bin/console doctrine:schema:create --env=dev
+	@docker-compose run php php bin/demo --env=dev
+	@docker-compose run php php bin/console doctrine:migrations:version --add --all
 
 osrm:
 	@[ -d var/osrm ] || mkdir -p var/osrm
