@@ -41,3 +41,12 @@ migrations-migrate:
 
 email-preview:
 	@docker-compose run php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.html
+
+clean:
+	docker rm -f $(docker ps -a -q)
+	docker volume prune
+	docker network prune
+
+clear:
+	"$(MAKE)" clean
+	docker rmi $(docker images -q)
