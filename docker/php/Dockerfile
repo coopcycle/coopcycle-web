@@ -62,7 +62,7 @@ RUN chmod +x /usr/local/bin/docker-app-install-composer
 RUN set -xe \
     && apk add --no-cache --virtual .fetch-deps \
         openssl \
-    && docker-app-install-composer \
+    && sh /usr/local/bin/docker-app-install-composer \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
