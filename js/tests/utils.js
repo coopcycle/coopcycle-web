@@ -276,6 +276,8 @@ TestUtils.prototype.createRandomOrder = function(username, restaurant, taxCatego
 
 };
 
+let timeoutId;
+
 TestUtils.prototype.waitServerUp = function (host, port, timeout) {
   /*
     Wait for the connection to be open at the specified host/port
