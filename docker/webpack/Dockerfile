@@ -8,4 +8,4 @@ RUN npm install
 
 COPY docker/webpack/start.sh /
 
-CMD /start.sh
+ENTRYPOINT ["/start.sh"]
