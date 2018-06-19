@@ -4,7 +4,7 @@ install:
 	@openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096;
 	@openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	$(MAKE) osrm
+	"$(MAKE)" osrm
 	@printf "\e[0;32mCreating database..\e[0m\n"
 	@docker-compose run php composer install --prefer-dist --no-progress --no-suggest
 	@docker-compose run php php bin/console doctrine:database:create --if-not-exists --env=dev
