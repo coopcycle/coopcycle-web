@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Delivery;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -97,12 +98,7 @@ class PricingRule
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'deliveryAddress' => $delivery->getDeliveryAddress(),
-            'vehicle' => $delivery->getVehicle()
-        ]);
+        return $language->evaluate($this->getPrice(), self::toExpressionLanguageValues($delivery));
     }
 
     public function matches(Delivery $delivery, ExpressionLanguage $language = null)
@@ -111,11 +107,30 @@ class PricingRule
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getExpression(), [
+        return $language->evaluate($this->getExpression(), self::toExpressionLanguageValues($delivery));
+    }
+
+    private static function createTaskObject(?Task $task)
+    {
+        $taskObject = new \stdClass();
+        if ($task) {
+            $taskObject->address = $task->getAddress();
+        }
+
+        return $taskObject;
+    }
+
+    public static function toExpressionLanguageValues(Delivery $delivery)
+    {
+        $pickup = self::createTaskObject($delivery->getPickup());
+        $dropoff = self::createTaskObject($delivery->getDropoff());
+
+        return [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
-            'deliveryAddress' => $delivery->getDeliveryAddress(),
-            'vehicle' => $delivery->getVehicle()
-        ]);
+            'vehicle' => $delivery->getVehicle(),
+            'pickup' => $pickup,
+            'dropoff' => $dropoff,
+        ];
     }
 }

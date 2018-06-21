@@ -49,6 +49,20 @@ class ZoneExpressionLanguageProviderTest extends TestCase
         $this->assertTrue($this->language->evaluate('in_zone(address, "paris_south_area")', [
             'address' => $address,
         ]));
+
+        // Test with dot notation
+
+        $pickup = new \stdClass();
+        $pickup->address = $address;
+
+        $this->assertTrue($this->language->evaluate('in_zone(pickup.address, zone)', [
+            'pickup' => $pickup,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertTrue($this->language->evaluate('in_zone(pickup.address, "paris_south_area")', [
+            'pickup' => $pickup,
+        ]));
     }
 
     public function testInZoneReturnsFalse()

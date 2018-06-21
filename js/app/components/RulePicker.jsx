@@ -39,7 +39,6 @@ class RulePicker extends React.Component {
   }
 
   render () {
-    console.log(this.state.lines)
     return (
       <div className="rule-picker">
         { this.state.lines.map((line, index) => <RulePickerLine key={index} index={index} rulePicker={this} line={line} />) }
