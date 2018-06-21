@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Entity\Rrule;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -13,6 +14,9 @@ use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskType;
 use AppBundle\Form\TaskUploadType;
 use FOS\UserBundle\Model\UserInterface;
+use Recurr\Rule;
+use Recurr\Transformer\ArrayTransformer;
+use Recurr\Transformer\Constraint\BetweenConstraint;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -245,6 +249,75 @@ trait AdminDashboardTrait
         $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
             ->findByDate($date);
+
+        $rrules = $this->getDoctrine()->getRepository(Rrule::class)->findRulesForDate($date);
+
+        $dayAfter = clone $date;
+        $dayAfter->modify('+2 day');
+
+        $transformer = new ArrayTransformer();
+        $constraint = new BetweenConstraint($date, $dayAfter);
+
+        foreach ($rrules as $rrule) {
+            $recurrentTask = array_filter($allTasks, function (Task $task) use ($rrule) {
+                return $task->getFromRrule() == $rrule;
+            });
+
+            // did we create the task linked to this rrule
+            if (count($recurrentTask) == 0) {
+                $timezone    = 'Europe/Paris';
+                $startDate   = $rrule->getStart();
+                $endDate = null;
+
+                if (!is_null($rrule->getEnd())) {
+                    $endDate = $rrule->getEnd(); // Optional
+                }
+
+
+                $occurences = $transformer->transform(
+                    new Rule($rrule->getRule(), $startDate, $endDate, new \DateTimeZone($timezone)),
+                    $constraint
+                );
+
+                // we assume we can find at most one occurence per date (recurrence is daily or less)
+                if (count($occurences) == 1) {
+
+                    $recurrentTask = new Task();
+                    $recurrentTask->setType($rrule->getTask()->getType());
+                    $recurrentTask->setAddress($rrule->getTask()->getAddress());
+
+                    $originDoneBefore = $rrule->getTask()->getDoneBefore();
+                    $doneBefore = clone $date;
+                    $doneBefore->setTime(
+                        (int)$originDoneBefore->format('H'),
+                        (int)$originDoneBefore->format('i'),
+                        (int)$originDoneBefore->format('s')
+                    );
+
+                    $recurrentTask->setDoneBefore($doneBefore);
+
+                    $originDoneAfter = $rrule->getTask()->getDoneBefore();
+                    $doneAfter = clone $date;
+                    $doneAfter->setTime(
+                        (int)$originDoneAfter->format('H'),
+                        (int)$originDoneAfter->format('i'),
+                        (int)$originDoneAfter->format('s')
+                    );
+                    $recurrentTask->setDoneAfter($doneAfter);
+                    $recurrentTask->setFromRrule($rrule);
+
+                    $this->getDoctrine()
+                        ->getManagerForClass(Task::class)
+                        ->persist($recurrentTask);
+
+                    $this->getDoctrine()
+                        ->getManagerForClass(Task::class)
+                        ->flush();
+
+                    array_push($allTasks, $recurrentTask);
+                }
+            }
+        }
 
         $taskLists = $this->getDoctrine()
             ->getRepository(TaskList::class)

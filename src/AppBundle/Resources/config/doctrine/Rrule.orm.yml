@@ -1,0 +1,49 @@
+AppBundle\Entity\Rrule:
+    type: entity
+    table: rrule
+    repositoryClass: AppBundle\Entity\RruleRepository
+    id:
+        id:
+            type: integer
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        start:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+            column: start
+        end:
+            type: datetime
+            scale: 0
+            length: null
+            unique: false
+            nullable: true
+            precision: 0
+            column: end
+        rule:
+            type: string
+            scale: 0
+            length: null
+            unique: false
+            nullable: false
+            precision: 0
+    oneToOne:
+        task:
+            targetEntity: AppBundle\Entity\Task
+            cascade:
+                - all
+            fetch: LAZY
+            joinColumns:
+                task_id:
+                    referencedColumnName: id
+            inversedBy: rrule

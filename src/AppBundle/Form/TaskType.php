@@ -10,6 +10,7 @@ use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -47,6 +48,11 @@ class TaskType extends AbstractType
                 'with_telephone' => true,
                 'with_name' => true
             ])
+            ->add('recurrent', CheckboxType::class, [
+                'label' => 'Tâche récurrente ?',
+                'mapped' => false
+            ])
+            ->add('rrule', RruleType::class, ['label' => null ])
             ->add('comments', TextareaType::class, [
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'Specify any useful details to complete task']

@@ -106,6 +106,10 @@ class Task implements TaggableInterface
 
     private $group;
 
+    private $rrule;
+
+    private $fromRrule;
+
     /**
      * @Groups({"task"})
      */
@@ -119,6 +123,14 @@ class Task implements TaggableInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     public function getDelivery()
@@ -251,6 +263,39 @@ class Task implements TaggableInterface
 
         return $this;
     }
+
+    /**
+     * @return Rrule
+     */
+    public function getRrule()
+    {
+        return $this->rrule;
+    }
+
+    /**
+     * @param mixed $rrule
+     */
+    public function setRrule(Rrule $rrule = null)
+    {
+        $this->rrule = $rrule;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFromRrule()
+    {
+        return $this->fromRrule;
+    }
+
+    /**
+     * @param mixed $fromRrule
+     */
+    public function setFromRrule(Rrule $fromRrule = null)
+    {
+        $this->fromRrule = $fromRrule;
+    }
+
 
     public function hasPrevious()
     {

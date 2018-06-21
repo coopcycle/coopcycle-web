@@ -106,6 +106,16 @@ AppBundle\Entity\Task:
                 assigned_to:
                     referencedColumnName: id
             orphanRemoval: false
+        fromRrule:
+            targetEntity: AppBundle\Entity\Rrule
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                from_rrule:
+                    referencedColumnName: id
+            orphanRemoval: false
     oneToMany:
         events:
             targetEntity: AppBundle\Entity\TaskEvent
@@ -128,6 +138,11 @@ AppBundle\Entity\Task:
                 previous_task_id:
                     referencedColumnName: id
             orphanRemoval: false
+        rrule:
+            targetEntity: AppBundle\Entity\Rrule
+            mappedBy: task
+            cascade:
+                - persist
     lifecycleCallbacks: {  }
     entityListeners:
         AppBundle\Entity\Listener\TaskListener:
