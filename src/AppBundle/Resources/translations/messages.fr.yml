@@ -250,13 +250,7 @@ order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#car
 
   '
 order.payment.cvc: CVC
-order.status.CREATED: Créée
-order.status.CANCELED: Annulée
-order.status.WAITING: En attente
-order.status.ACCEPTED: Acceptée
-order.status.PICKED: Récupéree
-order.status.DELIVERED: Livrée
-order.status.PAYMENT_ERROR: Erreur de paiement
+
 order.state.cart: Panier
 order.state.accepted: Accepté
 order.state.refused: Refusé

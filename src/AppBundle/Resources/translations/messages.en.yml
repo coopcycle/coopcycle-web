@@ -246,15 +246,14 @@ order.payment.card_number.help: >
   A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
 order.payment.cvc: CVC
 
-order.status.CREATED: Created
-order.status.CANCELED: Canceled
-order.status.WAITING: Waiting
-order.status.ACCEPTED: Accepted
-order.status.PICKED: Picked
-order.status.DELIVERED: Delivered
-order.status.PAYMENT_ERROR: Payment Error
 
 order.state.cart: Cart
+order.state.accepted: Accepted
+order.state.refused: Refused
+order.state.new: New
+order.state.ready: Ready
+order.state.fulfilled: Delivered
+order.state.cancelled: Cancelled
 
 order.list.total: Total
 order.list.createdAt: Created at

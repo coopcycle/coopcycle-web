@@ -259,13 +259,7 @@ order.payment.card_number.help: 'Hemos introducido un <a href="https://stripe.co
 
   '
 order.payment.cvc: CVC
-order.status.CREATED: Creado
-order.status.CANCELED: Canceledo
-order.status.WAITING: Esperando
-order.status.ACCEPTED: Aceptado
-order.status.PICKED: Recogido
-order.status.DELIVERED: Entregado
-order.status.PAYMENT_ERROR: Error de pago
+
 order.state.cart: Cesta
 order.state.new: Nuevo
 order.state.refused: Rechazado
