@@ -295,3 +295,11 @@ html, body {
 .leaflet-popup-content-wrapper {
   border-radius: 0;
 }
+
+.leaflet-container a {
+  color: initial;
+}
+
+.leaflet-container a:hover {
+  text-decoration: none;
+}
