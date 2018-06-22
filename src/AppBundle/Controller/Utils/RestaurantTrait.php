@@ -10,8 +10,6 @@ use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
-use AppBundle\Form\ProductOptionType;
-use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\ValidationUtils;
@@ -19,19 +17,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
 
 trait RestaurantTrait
 {
-    abstract protected function getRestaurantList(Request $request);
+    use ProductTrait;
+    use WithRoutesTrait;
 
-    abstract protected function getRestaurantRoutes();
+    abstract protected function getRestaurantList(Request $request);
 
     public function restaurantListAction(Request $request)
     {
@@ -49,18 +44,6 @@ trait RestaurantTrait
             'menu_taxons_route' => $routes['menu_taxons'],
             'restaurant_route' => $routes['restaurant'],
         ]);
-    }
-
-    protected function withRoutes($params, $routes)
-    {
-        $routes = array_merge($routes, $this->getRestaurantRoutes());
-
-        $routeParams = [];
-        foreach ($routes as $key => $value) {
-            $routeParams[sprintf('%s_route', $key)] = $value;
-        }
-
-        return array_merge($params, $routeParams);
     }
 
     protected function renderRestaurantForm(Restaurant $restaurant, Request $request)
@@ -491,181 +474,38 @@ trait RestaurantTrait
 
     public function restaurantProductsAction($id, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'products' => $restaurant->getProducts(),
-            'restaurant' => $restaurant,
-        ], $routes));
+        return $this->productsAction($id, Restaurant::class, $request);
     }
 
     public function restaurantProductAction($restaurantId, $productId, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($restaurantId);
-
-        $product = $this->get('sylius.repository.product')
-            ->find($productId);
-
-        // FIXME
-        // Configure mapping to avoid having to call this
-        $product->setRestaurant($restaurant);
-
-        $form = $this->createForm(ProductType::class, $product);
-
-        $routes = $request->attributes->get('routes');
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $product = $form->getData();
-
-            $this->get('sylius.manager.product')->flush();
-
-            return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'product' => $product,
-            'form' => $form->createView()
-        ], $routes));
+        return $this->productAction($restaurantId, Restaurant::class, $productId, $request);
     }
 
     public function newRestaurantProductAction($id, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $product = $this->get('sylius.factory.product')
-            ->createNew();
-
-        $product->setEnabled(false);
-
-        // FIXME
-        // Configure mapping to avoid having to call this
-        $product->setRestaurant($restaurant);
-
-        $form = $this->createForm(ProductType::class, $product);
-
-        $routes = $request->attributes->get('routes');
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $product = $form->getData();
-
-            $this->get('sylius.repository.product')->add($product);
-
-            return $this->redirectToRoute($routes['products'], ['id' => $id]);
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'product' => $product,
-            'form' => $form->createView()
-        ], $routes));
+        return $this->newProductAction($id, Restaurant::class, $request);
     }
 
     public function restaurantProductOptionsAction($id, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'options' => $restaurant->getProductOptions(),
-            'restaurant' => $restaurant,
-        ], $routes));
+        return $this->productOptionsAction($id, Restaurant::class, $request);
     }
 
     public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($restaurantId);
-
-        $productOption = $this->get('sylius.repository.product_option')
-            ->find($optionId);
-
-        $routes = $request->attributes->get('routes');
-
-        $form = $this->createForm(ProductOptionType::class, $productOption);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $productOption = $form->getData();
-
-            foreach ($productOption->getValues() as $optionValue) {
-                if (null === $optionValue->getCode()) {
-                    $optionValue->setCode(Uuid::uuid4()->toString());
-                }
-            }
-
-            $this->get('sylius.manager.product_option')->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-        ], $routes));
+        return $this->productOptionAction(
+            $restaurantId,
+            Restaurant::class,
+            $optionId,
+            $request);
     }
 
     public function newRestaurantProductOptionAction($id, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $productOption = $this->get('sylius.factory.product_option')
-            ->createNew();
-
-        $productOption->setRestaurant($restaurant);
-
-        $routes = $request->attributes->get('routes');
-
-        $form = $this->createForm(ProductOptionType::class, $productOption);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $productOption = $form->getData();
-
-            $productOption->setCode(Uuid::uuid4()->toString());
-            foreach ($productOption->getValues() as $optionValue) {
-                $optionValue->setCode(Uuid::uuid4()->toString());
-            }
-
-            $this->get('sylius.manager.product_option')->flush();
-
-            return $this->redirectToRoute($routes['product_options'], ['id' => $id]);
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-        ], $routes));
+        return $this->newProductOptionAction(
+            $id,
+            Restaurant::class,
+            $request);
     }
 }

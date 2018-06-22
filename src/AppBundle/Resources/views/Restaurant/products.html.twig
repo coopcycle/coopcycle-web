@@ -1,37 +1,17 @@
 {% extends '@App/Restaurant/layout.html.twig' %}
 
+{% use 'AppBundle::_partials/LocalBusiness/products.html.twig' %}
+
+{% set title = 'adminDashboard.restaurants.title' %}
+{% set productsTitle = 'restaurant.list.products' %}
+{% set local_businesses_route = restaurants_route %}
+{% set local_business_route = restaurant_route %}
+{% set local_business = restaurant %}
+
 {% block breadcrumb %}
-  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
-  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
-  <li>{% trans %}restaurant.list.products{% endtrans %}</li>
+  {{ parent() }}
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
-    class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
-</p>
-<table class="table">
-  <thead>
-    <th>{{ 'form.product.name.label'|trans }}</th>
-    <th class="text-right">Options</th>
-    <th class="text-right">{{ 'form.product.enabled.label'|trans }}</th>
-    <th></th>
-  </thead>
-  <tbody>
-    {% for product in products %}
-    <tr>
-      <td>{{ product.name }}</td>
-      <td class="text-right">{{ product.options|length }}</td>
-      <td class="text-right">
-        {% if product.enabled %}<i class="fa fa-check"></i>{% endif %}
-      </td>
-      <td class="text-right">
-        <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
-          class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  {{ parent() }}
 {% endblock %}

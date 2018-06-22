@@ -6,6 +6,7 @@ use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
+use AppBundle\Controller\Utils\ProductTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
@@ -39,7 +40,7 @@ class ProfileController extends Controller
     use StoreTrait;
     use UserTrait;
 
-    protected function getRestaurantRoutes()
+    protected function getRoutes()
     {
         return [
             'restaurant' => 'profile_restaurant',

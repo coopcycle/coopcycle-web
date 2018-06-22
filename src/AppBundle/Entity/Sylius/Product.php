@@ -8,6 +8,9 @@ use Sylius\Component\Product\Model\Product as BaseProduct;
 
 class Product extends BaseProduct implements ProductInterface
 {
+
+    protected $enabled = false;
+
     protected $restaurant;
 
     /**
