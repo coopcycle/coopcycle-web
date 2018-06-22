@@ -12,6 +12,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\TaskTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Controller\Utils\WithRoutesTrait;
 use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiUser;
@@ -56,6 +57,7 @@ class AdminController extends Controller
     use DeliveryTrait;
     use OrderTrait;
     use LocalBusinessTrait;
+    use WithRoutesTrait;
     use RestaurantTrait;
     use StoreTrait;
     use TaskTrait;
@@ -64,6 +66,7 @@ class AdminController extends Controller
     protected function getRoutes()
     {
         return [
+            // restaurants
             'restaurant' => 'admin_restaurant',
             'menu_taxons' => 'admin_restaurant_menu_taxons',
             'menu_taxon' => 'admin_restaurant_menu_taxon',
@@ -71,6 +74,12 @@ class AdminController extends Controller
             'product_options' => 'admin_restaurant_product_options',
             'dashboard' => 'admin_restaurant_dashboard',
             'planning' => 'admin_restaurant_planning',
+
+            // store
+            'store_route' => 'admin_store',
+            'stores_route' => 'admin_stores',
+            'store_delivery' => 'admin_store_delivery',
+            'calculate_price' => 'admin_deliveries_calculate_price'
         ];
     }
 

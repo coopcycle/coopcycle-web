@@ -24,7 +24,6 @@ use Symfony\Component\Validator\ConstraintViolationList;
 trait RestaurantTrait
 {
     use ProductTrait;
-    use WithRoutesTrait;
 
     abstract protected function getRestaurantList(Request $request);
 

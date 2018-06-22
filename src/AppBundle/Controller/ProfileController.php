@@ -10,6 +10,7 @@ use AppBundle\Controller\Utils\ProductTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Controller\Utils\WithRoutesTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Notification;
@@ -36,6 +37,7 @@ class ProfileController extends Controller
     use DeliveryTrait;
     use LocalBusinessTrait;
     use OrderTrait;
+    use WithRoutesTrait;
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;
@@ -43,6 +45,8 @@ class ProfileController extends Controller
     protected function getRoutes()
     {
         return [
+
+            // restaurants
             'restaurant' => 'profile_restaurant',
             'menu_taxons' => 'profile_restaurant_menu_taxons',
             'menu_taxon' => 'profile_restaurant_menu_taxon',
@@ -50,6 +54,12 @@ class ProfileController extends Controller
             'product_options' => 'profile_restaurant_product_options',
             'dashboard' => 'profile_restaurant_dashboard',
             'planning' => 'profile_restaurant_planning',
+
+            // stores
+            'store_route' => 'profile_store',
+            'stores_route' => 'profile_stores',
+            'store_delivery' => 'profile_store_delivery',
+            'calculate_price' => 'profile_deliveries_calculate_price'
         ];
     }
 

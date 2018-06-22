@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait StoreTrait
 {
+
     abstract protected function getStoreList(Request $request);
 
     public function storeListAction(Request $request)
@@ -18,14 +19,12 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'stores' => $stores,
             'pages' => $pages,
-            'page' => $page,
-            'store_route' => $routes['store'],
-            'store_delivery_route' => $routes['store_delivery'],
-        ]);
+            'page' => $page
+        ], $routes));
     }
 
     protected function renderStoreForm(Store $store, Request $request)
@@ -51,13 +50,11 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('AppBundle:Store:form.html.twig', [
+        return $this->render('AppBundle:Store:form.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
-            'form' => $form->createView(),
-            'stores_route' => $routes['stores'],
-            'store_delivery_route' => $routes['store_delivery'],
-        ]);
+            'form' => $form->createView()
+        ], $routes));
     }
 
     public function newStoreDeliveryAction($id, Request $request)
@@ -95,14 +92,11 @@ trait StoreTrait
             }
         }
 
-        return $this->render('@App/Store/deliveryForm.html.twig', [
+        return $this->render('@App/Store/deliveryForm.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
-            'form' => $form->createView(),
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'calculate_price_route' => $routes['calculate_price'],
-        ]);
+            'form' => $form->createView()
+        ], $routes));
     }
 
     public function storeAction($id, Request $request)
