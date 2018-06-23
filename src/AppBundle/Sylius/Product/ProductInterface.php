@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use Sylius\Component\Product\Model\ProductInterface as BaseProductInterface;
 
 interface ProductInterface extends BaseProductInterface
@@ -20,4 +21,14 @@ interface ProductInterface extends BaseProductInterface
      * @param Restaurant $restaurant
      */
     public function setRestaurant(?Restaurant $restaurant): void;
+
+    /**
+     * @return Store
+     */
+    public function getStore(): ?Store;
+
+    /**
+     * @param Store $store
+     */
+    public function setStore(?Store $store): void;
 }

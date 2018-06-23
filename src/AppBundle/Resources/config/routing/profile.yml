@@ -218,7 +218,7 @@ profile_restaurant_product_new:
             products: profile_restaurant_products
 
 profile_restaurant_product:
-    path: /profile/restaurants/{restaurantId}/products/{productId}
+    path: /profile/restaurants/{id}/products/{productId}
     defaults:
         _controller: AppBundle:Profile:restaurantProduct
         layout: AppBundle::profile.html.twig
@@ -265,7 +265,7 @@ profile_restaurant_product_option_new:
     methods: [ GET, POST ]
 
 profile_restaurant_product_option:
-    path: /profile/restaurants/{restaurantId}/product-options/{optionId}
+    path: /profile/restaurants/{id}/product-options/{optionId}
     defaults:
         _controller: AppBundle:Profile:restaurantProductOption
         layout: AppBundle::profile.html.twig
@@ -312,3 +312,75 @@ profile_store_delivery:
             success: profile_orders
             calculate_price: profile_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+profile_store_products:
+    path: /profile/stores/{id}/products
+    defaults:
+        _controller: AppBundle:Profile:storeProducts
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:products.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            product: profile_store_product
+            new_product: profile_store_product_new
+    methods: [ GET ]
+
+profile_store_product_new:
+    path: /profile/stores/{id}/products/new
+    defaults:
+        _controller: AppBundle:Profile:newStoreProduct
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:product.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            products: profile_store_products
+
+profile_store_product:
+    path: /profile/stores/{id}/products/{productId}
+    defaults:
+        _controller: AppBundle:Profile:storeProduct
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:product.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            products: profile_store_products
+
+profile_store_product_options:
+    path: /profile/stores/{id}/product-options
+    defaults:
+        _controller: AppBundle:Profile:storeProductOptions
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:productOptions.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            product_option: profile_store_product_option
+            new_product_option: profile_store_product_option_new
+    methods: [ GET ]
+
+profile_store_product_option_new:
+    path: /profile/stores/{id}/product-options/new
+    defaults:
+        _controller: AppBundle:Profile:newStoreProductOption
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:productOption.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            product_options: profile_store_product_options
+    methods: [ GET, POST ]
+
+profile_store_product_option:
+    path: /profile/stores/{id}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle:Profile:storeProductOption
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:productOption.html.twig
+        routes:
+            stores: profile_stores
+            store: profile_store
+            product_options: profile_store_product_options
+    methods: [ GET, POST ]

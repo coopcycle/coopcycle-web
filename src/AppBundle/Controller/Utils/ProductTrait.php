@@ -6,13 +6,16 @@ use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\ProductOptionType;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 
 trait ProductTrait
 {
     public function createProductForm(LocalBusiness $localBusiness, Product $product) {
 
-        call_user_func(array($product, 'set'. (new \ReflectionClass($localBusiness))->getShortName()), $localBusiness);
+        call_user_func(
+            array($product, 'set'. (new \ReflectionClass($localBusiness))->getShortName()),
+            $localBusiness);
 
         return $this->createForm(ProductType::class, $product);
     }
@@ -28,7 +31,7 @@ trait ProductTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $localBusiness->getProducts(),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
         ], $routes));
     }
 
@@ -55,7 +58,7 @@ trait ProductTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
             'product' => $product,
             'form' => $form->createView()
         ], $routes));
@@ -86,7 +89,7 @@ trait ProductTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
             'product' => $product,
             'form' => $form->createView()
         ], $routes));
@@ -103,7 +106,7 @@ trait ProductTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'options' => $localBusiness->getProductOptions(),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
         ], $routes));
     }
 
@@ -143,7 +146,7 @@ trait ProductTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
             'form' => $form->createView(),
         ], $routes));
     }
@@ -157,7 +160,9 @@ trait ProductTrait
         $productOption = $this->get('sylius.factory.product_option')
             ->createNew();
 
-        call_user_func(array($productOption, 'set'. (new \ReflectionClass($localBusiness))->getShortName()), $localBusiness);
+        call_user_func(
+            array($productOption, 'set'. (new \ReflectionClass($localBusiness))->getShortName()),
+            $localBusiness);
 
         $routes = $request->attributes->get('routes');
 
@@ -180,7 +185,7 @@ trait ProductTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant' => $localBusiness,
+            'local_business' => $localBusiness,
             'form' => $form->createView(),
         ], $routes));
     }

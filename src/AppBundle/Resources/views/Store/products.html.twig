@@ -1,0 +1,16 @@
+{% extends layout %}
+
+{% use 'AppBundle::_partials/LocalBusiness/products.html.twig' %}
+
+{% set title = 'adminDashboard.stores.title' %}
+{% set productsTitle = 'restaurant.list.products' %}
+{% set local_businesses_route = stores_route %}
+{% set local_business_route = store_route %}
+
+{% block breadcrumb %}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+  {{ parent() }}
+{% endblock %}

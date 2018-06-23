@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Sylius\Taxon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -90,7 +91,11 @@ class Store extends LocalBusiness
     private $deliveries;
 
     public function __construct() {
+        parent::__construct();
         $this->deliveries = new ArrayCollection();
+        $catalog = new Taxon();
+        $catalog->setName('Catalog');
+        $this->activeMenuTaxon = $catalog;
     }
 
     /**

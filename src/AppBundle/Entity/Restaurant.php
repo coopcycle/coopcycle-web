@@ -159,16 +159,10 @@ class Restaurant extends FoodEstablishment
 
     private $owners;
 
-    private $products;
-
-    private $productOptions;
-
     /**
      * @Groups({"restaurant"})
      */
     private $taxons;
-
-    private $activeMenuTaxon;
 
     /**
      * @var Contract
@@ -178,11 +172,10 @@ class Restaurant extends FoodEstablishment
 
     public function __construct()
     {
+        parent::__construct();
         $this->servesCuisine = new ArrayCollection();
         $this->closingRules = new ArrayCollection();
         $this->owners = new ArrayCollection();
-        $this->products = new ArrayCollection();
-        $this->productOptions = new ArrayCollection();
         $this->taxons = new ArrayCollection();
     }
 
@@ -419,16 +412,6 @@ class Restaurant extends FoodEstablishment
         return $this;
     }
 
-    public function getMenuTaxon()
-    {
-        return $this->activeMenuTaxon;
-    }
-
-    public function setMenuTaxon(TaxonInterface $taxon)
-    {
-        $this->activeMenuTaxon = $taxon;
-    }
-
     /**
      * @return string
      */
@@ -493,35 +476,6 @@ class Restaurant extends FoodEstablishment
     public function getOwners()
     {
         return $this->owners;
-    }
-
-    public function getProducts()
-    {
-        return $this->products;
-    }
-
-    public function hasProduct(ProductInterface $product)
-    {
-        return $this->products->contains($product);
-    }
-
-    public function addProduct(ProductInterface $product)
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-        }
-    }
-
-    public function getProductOptions()
-    {
-        return $this->productOptions;
-    }
-
-    public function addProductOption(ProductOptionInterface $productOption)
-    {
-        if (!$this->productOptions->contains($productOption)) {
-            $this->productOptions->add($productOption);
-        }
     }
 
     public function getTaxons()

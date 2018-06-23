@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
@@ -53,5 +54,10 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setRestaurant(Restaurant $restaurant)
     {
         $restaurant->addProductOption($this);
+    }
+
+    public function setStore(Store $store)
+    {
+        $store->addProductOption($this);
     }
 }

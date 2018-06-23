@@ -476,9 +476,9 @@ trait RestaurantTrait
         return $this->productsAction($id, Restaurant::class, $request);
     }
 
-    public function restaurantProductAction($restaurantId, $productId, Request $request)
+    public function restaurantProductAction($id, $productId, Request $request)
     {
-        return $this->productAction($restaurantId, Restaurant::class, $productId, $request);
+        return $this->productAction($id, Restaurant::class, $productId, $request);
     }
 
     public function newRestaurantProductAction($id, Request $request)
@@ -491,10 +491,10 @@ trait RestaurantTrait
         return $this->productOptionsAction($id, Restaurant::class, $request);
     }
 
-    public function restaurantProductOptionAction($restaurantId, $optionId, Request $request)
+    public function restaurantProductOptionAction($id, $optionId, Request $request)
     {
         return $this->productOptionAction(
-            $restaurantId,
+            $id,
             Restaurant::class,
             $optionId,
             $request);

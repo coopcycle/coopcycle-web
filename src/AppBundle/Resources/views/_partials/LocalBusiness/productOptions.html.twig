@@ -1,12 +1,7 @@
 {% block breadcrumb %}
   <li><a href="{{ path(local_businesses_route) }}">{{ title | trans }}</a></li>
   <li><a href="{{ path(local_business_route, { id: local_business.id }) }}">{{ local_business.name }}</a></li>
-  <li>
-    <a href="{{ path(product_options_route, { id: local_business.id }) }}">
-      {{ productsOptionTitle | trans }}
-    </a>
-  </li>
-  <li>
+  <li>{{ productsOptionTitle | trans }}</li>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +9,7 @@
     <i class="fa fa-info-circle"></i> {% trans %}restaurant.product_options.help{% endtrans %}
   </div>
   <p class="text-right">
-    <a href="{{ path(new_product_option_route, { id: restaurant.id }) }}" class="btn btn-success">
+    <a href="{{ path(new_product_option_route, { id: local_business.id }) }}" class="btn btn-success">
       <i class="fa fa-plus"></i> {{ 'basics.add'|trans }}
     </a>
   </p>
@@ -32,7 +27,7 @@
         <td>{{ ('product_option.strategy.' ~ option.strategy)|trans }}</td>
         <td class="text-right">{{ option.values|length }}</td>
         <td class="text-right">
-          <a href="{{ path(product_option_route, { restaurantId: restaurant.id, optionId: option.id }) }}"
+          <a href="{{ path(product_option_route, { id: local_business.id, optionId: option.id }) }}"
              class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
         </td>
       </tr>

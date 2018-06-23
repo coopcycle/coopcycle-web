@@ -6,7 +6,7 @@
 
 {% block content %}
   <p class="text-right">
-    <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
+    <a href="{{ path(new_product_route, { id: local_business.id }) }}"
        class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
   </p>
   <table class="table">
@@ -25,7 +25,7 @@
           {% if product.enabled %}<i class="fa fa-check"></i>{% endif %}
         </td>
         <td class="text-right">
-          <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
+          <a href="{{ path(product_route, { id: local_business.id, productId: product.id }) }}"
              class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
         </td>
       </tr>

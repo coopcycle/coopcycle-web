@@ -6,7 +6,9 @@ trait WithRoutesTrait
 {
     protected function withRoutes($params, $routes)
     {
-        $routes = array_merge($routes, $this->getRoutes());
+        $routes = $routes ? $routes : [];
+        $routes = array_merge($this->getRoutes(), $routes);
+
         $routeParams = [];
         foreach ($routes as $key => $value) {
             $routeParams[sprintf('%s_route', $key)] = $value;

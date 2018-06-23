@@ -78,6 +78,18 @@ admin_restaurant:
             planning: admin_restaurant_planning
     methods: [ GET, POST ]
 
+admin_restaurant_planning:
+    path: /admin/restaurants/{id}/planning
+    defaults:
+        _controller: AppBundle:Admin:restaurantPlanning
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Restaurant:planning.html.twig
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            success: admin_restaurant_planning
+    methods: [ GET, POST ]
+
 admin_restaurants:
     path: /admin/restaurants
     defaults:
@@ -171,13 +183,10 @@ admin_restaurant_product_new:
         _controller: AppBundle:Admin:newRestaurantProduct
         layout: AppBundle::admin.html.twig
         template: AppBundle:Restaurant:product.html.twig
-        routes:
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-            products: admin_restaurant_products
+
 
 admin_restaurant_product:
-    path: /admin/restaurants/{restaurantId}/products/{productId}
+    path: /admin/restaurants/{id}/products/{productId}
     defaults:
         _controller: AppBundle:Admin:restaurantProduct
         layout: AppBundle::admin.html.twig
@@ -186,18 +195,6 @@ admin_restaurant_product:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             products: admin_restaurant_products
-
-admin_restaurant_planning:
-    path: /admin/restaurants/{id}/planning
-    defaults:
-        _controller: AppBundle:Admin:restaurantPlanning
-        layout: AppBundle::admin.html.twig
-        template: AppBundle:Restaurant:planning.html.twig
-        routes:
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-            success: admin_restaurant_planning
-    methods: [ GET, POST ]
 
 admin_restaurant_product_options:
     path: /admin/restaurants/{id}/product-options
@@ -225,7 +222,7 @@ admin_restaurant_product_option_new:
     methods: [ GET, POST ]
 
 admin_restaurant_product_option:
-    path: /admin/restaurants/{restaurantId}/product-options/{optionId}
+    path: /admin/restaurants/{id}/product-options/{optionId}
     defaults:
         _controller: AppBundle:Admin:restaurantProductOption
         layout: AppBundle::admin.html.twig
@@ -349,6 +346,78 @@ admin_store_delivery:
             success: admin_orders
             calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
+
+admin_store_products:
+    path: /admin/stores/{id}/products
+    defaults:
+        _controller: AppBundle:Admin:storeProducts
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:products.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            product: admin_store_product
+            new_product: admin_store_product_new
+    methods: [ GET ]
+
+admin_store_product_new:
+    path: /admin/stores/{id}/products/new
+    defaults:
+        _controller: AppBundle:Admin:newStoreProduct
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:product.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            products: admin_store_products
+
+admin_store_product:
+    path: /admin/stores/{id}/products/{productId}
+    defaults:
+        _controller: AppBundle:Admin:storeProduct
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:product.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            products: admin_store_products
+
+admin_store_product_options:
+    path: /admin/stores/{id}/product-options
+    defaults:
+        _controller: AppBundle:Admin:storeProductOptions
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:productOptions.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            product_option: admin_store_product_option
+            new_product_option: admin_store_product_option_new
+    methods: [ GET ]
+
+admin_store_product_option_new:
+    path: /admin/stores/{id}/product-options/new
+    defaults:
+        _controller: AppBundle:Admin:newStoreProductOption
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:productOption.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            product_options: admin_store_product_options
+    methods: [ GET, POST ]
+
+admin_store_product_option:
+    path: /admin/stores/{id}/product-options/{optionId}
+    defaults:
+        _controller: AppBundle:Admin:storeProductOption
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:productOption.html.twig
+        routes:
+            stores: admin_stores
+            store: admin_store
+            product_options: admin_store_product_options
+    methods: [ GET, POST ]
 
 admin_tag_new:
     path: /admin/settings/tags/new

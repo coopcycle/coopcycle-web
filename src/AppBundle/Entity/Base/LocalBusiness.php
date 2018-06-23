@@ -2,10 +2,14 @@
 
 namespace AppBundle\Entity\Base;
 
+use AppBundle\Sylius\Product\ProductInterface;
+use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -47,6 +51,18 @@ abstract class LocalBusiness
     protected $vatID;
 
     protected $additionalProperties = [];
+
+    protected $products;
+
+    protected $productOptions;
+
+    protected $activeMenuTaxon;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+        $this->productOptions = new ArrayCollection();
+    }
 
     public function getLegalName()
     {
@@ -108,6 +124,45 @@ abstract class LocalBusiness
         }
 
         return false;
+    }
+
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    public function hasProduct(ProductInterface $product)
+    {
+        return $this->products->contains($product);
+    }
+
+    public function addProduct(ProductInterface $product)
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
+    }
+
+    public function getProductOptions()
+    {
+        return $this->productOptions;
+    }
+
+    public function addProductOption(ProductOptionInterface $productOption)
+    {
+        if (!$this->productOptions->contains($productOption)) {
+            $this->productOptions->add($productOption);
+        }
+    }
+
+    public function getMenuTaxon()
+    {
+        return $this->activeMenuTaxon;
+    }
+
+    public function setMenuTaxon(TaxonInterface $taxon)
+    {
+        $this->activeMenuTaxon = $taxon;
     }
 
     /**

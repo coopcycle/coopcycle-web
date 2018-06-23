@@ -1,0 +1,17 @@
+{% extends layout %}
+
+{% form_theme form 'AppBundle::Form/product.html.twig' %}
+
+{% use 'AppBundle::_partials/LocalBusiness/product.html.twig' %}
+
+{% set title = 'adminDashboard.stores.title' %}
+{% set local_businesses_route = stores_route %}
+{% set local_business_route = store_route %}
+
+{% block breadcrumb %}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+  {{ parent() }}
+{% endblock %}

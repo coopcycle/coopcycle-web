@@ -70,7 +70,7 @@ class ProductType extends AbstractType
 
             $form->add('options', EntityType::class, [
                 'class' => ProductOption::class,
-                'choices' => $product->getRestaurant()->getProductOptions(),
+                'choices' => $product->getLocalBusiness()->getProductOptions(),
                 'expanded' => true,
                 'multiple' => true,
             ]);

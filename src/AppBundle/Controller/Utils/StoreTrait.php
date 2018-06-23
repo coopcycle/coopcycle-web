@@ -105,4 +105,41 @@ trait StoreTrait
 
         return $this->renderStoreForm($store, $request);
     }
+
+    public function storeProductsAction($id, Request $request)
+    {
+        return $this->productsAction($id, Store::class, $request);
+    }
+
+    public function storeProductAction($id, $productId, Request $request)
+    {
+        return $this->productAction($id, Store::class, $productId, $request);
+    }
+
+    public function newStoreProductAction($id, Request $request)
+    {
+        return $this->newProductAction($id, Store::class, $request);
+    }
+
+    public function storeProductOptionsAction($id, Request $request)
+    {
+        return $this->productOptionsAction($id, Store::class, $request);
+    }
+
+    public function storeProductOptionAction($id, $optionId, Request $request)
+    {
+        return $this->productOptionAction(
+            $id,
+            Store::class,
+            $optionId,
+            $request);
+    }
+
+    public function newStoreProductOptionAction($id, Request $request)
+    {
+        return $this->newProductOptionAction(
+            $id,
+            Store::class,
+            $request);
+    }
 }

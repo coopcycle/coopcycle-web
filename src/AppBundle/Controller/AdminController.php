@@ -68,6 +68,7 @@ class AdminController extends Controller
         return [
             // restaurants
             'restaurant' => 'admin_restaurant',
+            'restaurants' => 'admin_restaurants',
             'menu_taxons' => 'admin_restaurant_menu_taxons',
             'menu_taxon' => 'admin_restaurant_menu_taxon',
             'products' => 'admin_restaurant_products',
@@ -76,8 +77,8 @@ class AdminController extends Controller
             'planning' => 'admin_restaurant_planning',
 
             // store
-            'store_route' => 'admin_store',
-            'stores_route' => 'admin_stores',
+            'store' => 'admin_store',
+            'stores' => 'admin_stores',
             'store_delivery' => 'admin_store_delivery',
             'calculate_price' => 'admin_deliveries_calculate_price'
         ];

@@ -63,6 +63,35 @@ AppBundle\Entity\Store:
             joinColumns:
                 address_id:
                     referencedColumnName: id
+    manyToMany:
+        products:
+            targetEntity: Sylius\Component\Product\Model\ProductInterface
+            cascade:
+                - persist
+            joinTable:
+                name: store_product
+                inverseJoinColumns:
+                    -
+                        name: product_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: restaurant_id
+                        referencedColumnName: id
+        productOptions:
+            targetEntity: Sylius\Component\Product\Model\ProductOptionInterface
+            cascade:
+                - persist
+            joinTable:
+                name: store_product_option
+                inverseJoinColumns:
+                    -
+                        name: option_id
+                        referencedColumnName: id
+                joinColumns:
+                    -
+                        name: store_id
+                        referencedColumnName: id
     manyToOne:
         stripeAccount:
             targetEntity: AppBundle\Entity\StripeAccount
@@ -77,6 +106,12 @@ AppBundle\Entity\Store:
             joinColumns:
                 pricing_rule_set_id:
                     referencedColumnName: id
+#        activeMenuTaxon:
+#            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
+#            joinColumns:
+#                active_menu_taxon_id:
+#                    referencedColumnName: id
+#                    nullable: true
     oneToMany:
         deliveries:
             targetEntity: AppBundle\Entity\Delivery
