@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\Product;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 
@@ -32,12 +33,17 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariantForOptionValues(ProductInterface $product, array $optionValues): ?ProductVariantInterface
     {
+        $mandatoryOptionValues = $this->filterOptionValues($optionValues);
+
         foreach ($product->getVariants() as $variant) {
-            if (count($variant->getOptionValues()) !== count($optionValues)) {
+
+            $variantOptionValues = $variant->getOptionValues()->toArray();
+
+            if (count($this->filterOptionValues($variantOptionValues)) !== count($mandatoryOptionValues)) {
                 continue;
             }
 
-            if ($this->matchOptions($variant, $optionValues)) {
+            if ($this->matchOptions($variant, $mandatoryOptionValues)) {
                 return $variant;
             }
         }
@@ -45,7 +51,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         // No variant found
         $variant = $this->variantFactory->createForProduct($product);
         $values = [];
-        foreach ($optionValues as $optionValue) {
+        foreach ($mandatoryOptionValues as $optionValue) {
             $variant->addOptionValue($optionValue);
         }
 
@@ -59,6 +65,13 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         $variant->setTaxCategory($defaultVariant->getTaxCategory());
 
         return $variant;
+    }
+
+    private function filterOptionValues(array $optionValues)
+    {
+        return array_filter($optionValues, function (ProductOptionValueInterface $optionValue) {
+            return !$optionValue->getOption()->isAdditional();
+        });
     }
 
     private function matchOptions(ProductVariantInterface $variant, array $optionValues)
