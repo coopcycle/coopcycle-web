@@ -1,6 +1,5 @@
 {% extends "AppBundle::base.html.twig" %}
-{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
-{% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
+{% set local_business = restaurant %}
 
 {% block body %}
 <div class="container">
@@ -41,141 +40,30 @@
     </div>
   </div>
 
-  {% if restaurant.menuTaxon is not null %}
-  <div class="row">
+  {% include "AppBundle:_partials/LocalBusiness/itemsChoiceList.html.twig" with {local_business: store} %}
 
-    <div class="col-xs-12 col-sm-8">
-      {% for child in restaurant.menuTaxon.children %}
-        {% if child.products|length > 0 %}
-        <h2>{{ child.name }}</h2>
-        <div class="list-group">
-          {% for product in child.products %}
-            {% set variant = product|sylius_resolve_variant %}
-            {# TODO Skip if no variant is defined #}
-            {% if not product.enabled %}
-              <a class="list-group-item menu-item menu-item--unavailable">
-                <span class="menu-item-content">{{ product.name }}</span>
-                {% if product.description is not null %}
-                  <p class="menu-item-description">{{ product.description }}</p>
-                {%  endif %}
-                <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
-              </a>
-            {% else %}
-              <a  class="list-group-item menu-item"
-                  {% if product.simple %}
-                  data-product-code="{{ product.code }}"
-                  href="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                  {% else %}
-                  data-toggle="modal"
-                  data-target="#{{ product.code }}-options"
-                  href="#"
-                  {% endif %}>
-                <span class="menu-item-content">
-                  {{ product.name }}
-                  {% if product.description is not null %}
-                    <small class="menu-item-description">{{ product.description }}</small>
-                  {%  endif %}
-                </span>
-                <span class="menu-item-price">{{ variant.price|price_format }} €</span>
-              </a>
-            {% endif %}
-          {% endfor %}
+  <div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
         </div>
-        {% endif %}
-      {% endfor %}
-    </div>
-
-    <div class="col-xs-12 col-sm-4">
-        <div id="cart"></div>
-    </div>
-
-    <div class="visible-xs">
-    </div>
-
-  </div>
-
-  {% else %}
-    <div class="alert alert-warning">
-      {% trans %}restaurant.noMenuWarning{% endtrans %}
-    </div>
-  {% endif %}
-
-</div>
-
-{# Modals for modifiers #}
-
-{% if restaurant.menuTaxon is not null %}
-  {% for child in restaurant.menuTaxon.children %}
-    {% for product in child.products %}
-      {% if product.enabled and not product.simple %}
-      <div id="{{ product.code }}-options" class="modal fade">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h4 class="modal-title">{{ product.name }}</h4>
-            </div>
-            <div class="modal-body">
-              <form
-                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                data-product-options>
-                {% for option in product.options %}
-                <h4>
-                  {{ option.name }}
-                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
-                </h4>
-                <div class="list-group" data-product-option>
-                  {% for option_value in option.values %}
-                    <div class="list-group-item modifier-item">
-                      <div class="radio nomargin">
-                        <label>
-                          <input
-                            name="options[{{ option.code }}]"
-                            value="{{ option_value.code }}" type="radio">
-                          {{ option_value.value }}
-                          {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                            +{{ option_value.price|price_format }}€
-                          {% endif %}
-                        </label>
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
-              </form>
-            </div>
-          </div>
+        <div class="modal-body">
+          <p>{{ 'cart.modal.content'|trans }}</p>
         </div>
-      </div>
-      {% endif %}
-    {% endfor %}
-  {% endfor %}
-{% endif %}
-
-<div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
-      </div>
-      <div class="modal-body">
-        <p>{{ 'cart.modal.content'|trans }}</p>
-      </div>
-      <div class="modal-footer">
-        <button id="cart-warning-cancel" type="button" class="btn btn-default">
-          {{ 'cart.modal.cancel'|trans }}
-        </button>
-        <button id="cart-warning-confirm" type="button" class="btn btn-primary">
-          {{ 'cart.modal.confirm'|trans }}
-        </button>
+        <div class="modal-footer">
+          <button id="cart-warning-cancel" type="button" class="btn btn-default">
+            {{ 'cart.modal.cancel'|trans }}
+          </button>
+          <button id="cart-warning-confirm" type="button" class="btn btn-primary">
+            {{ 'cart.modal.confirm'|trans }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+</div>
 {% endblock %}
 
 {% block scripts %}

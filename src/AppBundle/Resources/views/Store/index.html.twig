@@ -1,0 +1,7 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+  <div class="container">
+    {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig" with {local_business: store} %}
+  </div>
+{% endblock %}

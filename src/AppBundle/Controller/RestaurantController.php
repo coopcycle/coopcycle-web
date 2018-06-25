@@ -4,14 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
-use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
-use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Product\Model\ProductInterface;

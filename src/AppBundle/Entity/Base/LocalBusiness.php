@@ -21,6 +21,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
 abstract class LocalBusiness
 {
     /**
+     *  Delay for preparation (in minutes)
+     */
+    const PREPARATION_DELAY = 20;
+
+    /**
+     *  Delay for delivery (in minutes)
+     */
+    const DELIVERY_DELAY = 25;
+
+    /**
+     *  Delay for preparation + delivery (in minutes)
+     */
+    const PREPARATION_AND_DELIVERY_DELAY = self::PREPARATION_DELAY + self::DELIVERY_DELAY;
+
+    /**
+     *
+     * Checkout duration (in minutes)
+     * We need to take into account the time the user will take to complete checkout.
+     *
+     */
+    const CHECKOUT_MAX_DURATION = 5;
+
+    /**
+     *  We allow ordering for the next two opened days
+     */
+    const NUMBER_OF_AVAILABLE_DAYS = 2;
+
+    /**
      * @var string The official name of the organization, e.g. the registered company name.
      */
     protected $legalName;
@@ -187,6 +215,74 @@ abstract class LocalBusiness
         sort($dates);
 
         return array_shift($dates);
+    }
+
+    public function hasClosingRuleForNow(\DateTime $now = null) {
+        return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderingDelayMinutes()
+    {
+        return 0;
+    }
+
+    /**
+     * Return potential delivery times for a restaurant, pickables by the customer.
+     *
+     * @param \DateTime|null $now
+     * @return array
+     */
+    public function getAvailabilities(\DateTime $now = null) {
+
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        $now->modify('+'.(self::CHECKOUT_MAX_DURATION + self::PREPARATION_AND_DELIVERY_DELAY + $this->getOrderingDelayMinutes()).' minutes');
+
+        $nextOpeningDate = $this->getNextOpeningDate($now);
+
+        if (is_null($nextOpeningDate)) {
+            return [];
+        }
+
+        $date =  clone $nextOpeningDate;
+
+        $availabilities = [$date->format(\DateTime::ATOM)];
+
+        $currentDay = $date->format('Ymd');
+        $dayCount = 1;
+
+        while ($dayCount <= self::NUMBER_OF_AVAILABLE_DAYS) {
+
+            $date->modify('+15 minutes');
+
+            $nextOpeningDate = $this->getNextOpeningDate($date);
+
+            if (is_null($nextOpeningDate)) {
+                return $availabilities;
+            }
+
+            $nextOpenedDate = clone $nextOpeningDate;
+
+            $day = $nextOpenedDate->format('Ymd');
+
+            if ($day !== $currentDay) {
+                $currentDay = $day;
+                $dayCount++;
+            }
+            else {
+                $date = $nextOpenedDate;
+                if (!$this->hasClosingRuleForNow($date)) {
+                    $availabilities[] = $date->format(\DateTime::ATOM);
+                }
+            }
+        }
+
+        return $availabilities;
     }
 
     public function getTelephone()
