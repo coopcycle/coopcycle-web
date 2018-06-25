@@ -21,12 +21,12 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
     {
         $zoneRepository = $this->zoneRepository;
 
-        $compiler = function (Address $address, $zoneName) use ($zoneRepository) {
+        $inZoneCompiler = function (Address $address, $zoneName) use ($zoneRepository) {
             // FIXME Need to test compilation
             return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && $zone->containsAddress($address))', $zoneName);
         };
 
-        $evaluator = function ($arguments, Address $address, $zoneName) use ($zoneRepository) {
+        $inZoneEvaluator = function ($arguments, Address $address, $zoneName) use ($zoneRepository) {
 
             if ($zone = $zoneRepository->findOneBy(['name' => $zoneName])) {
                 return $zone->containsAddress($address);
@@ -35,8 +35,23 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
             return false;
         };
 
+        $outZoneCompiler = function (Address $address, $zoneName) use ($zoneRepository) {
+            // FIXME Need to test compilation
+            return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && !$zone->containsAddress($address))', $zoneName);
+        };
+
+        $outZoneEvaluator = function ($arguments, Address $address, $zoneName) use ($zoneRepository) {
+
+            if ($zone = $zoneRepository->findOneBy(['name' => $zoneName])) {
+                return !$zone->containsAddress($address);
+            }
+
+            return true;
+        };
+
         return array(
-            new ExpressionFunction('in_zone', $compiler, $evaluator)
+            new ExpressionFunction('in_zone', $inZoneCompiler, $inZoneEvaluator),
+            new ExpressionFunction('out_zone', $outZoneCompiler, $outZoneEvaluator),
         );
     }
 }

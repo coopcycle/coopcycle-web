@@ -541,9 +541,12 @@ class Restaurant extends FoodEstablishment
             $language = new ExpressionLanguage();
         }
 
+        $dropoff = new \stdClass();
+        $dropoff->address = $address;
+
         return $language->evaluate($this->deliveryPerimeterExpression, [
             'distance' => $distance,
-            'deliveryAddress' => $address,
+            'dropoff' => $dropoff,
         ]);
     }
 }

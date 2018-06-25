@@ -1,14 +1,24 @@
 import React from 'react'
+import parsePricingRule from '../delivery/pricing-rule-parser'
 
 export class DeliveryZonePicker extends React.Component {
   constructor (props) {
     super(props)
 
-    const initial = this.parseInitialLine()
+    let operator, value
+    if (this.props.expression) {
+      const [ result ] = parsePricingRule(this.props.expression)
+      operator = result.left
+      value = result.right
+    }
+
+    if (operator && operator === 'distance') {
+      value = (value / 1000).toFixed(2)
+    }
 
     this.state = {
-      operator: initial[0],
-      value: initial[1]
+      operator: operator || '',
+      value: value || ''
     }
 
     this.onOperatorSelect = this.onOperatorSelect.bind(this)
@@ -23,10 +33,10 @@ export class DeliveryZonePicker extends React.Component {
     if (operator && value && (operator !== prevState.operator || value !== prevState.value)) {
       switch (operator) {
         case 'in_zone':
-          onExprChange('in_zone(deliveryAddress, "' + value + '")')
+          onExprChange(`in_zone(dropoff.address, "${value}")`)
           break
         case 'distance':
-          onExprChange('distance < ' + value * 1000)
+          onExprChange(`distance < ${value * 1000}`)
           break
       }
     }
@@ -58,29 +68,10 @@ export class DeliveryZonePicker extends React.Component {
         )
       case 'distance':
         return (
-          <input type="number" value={value} onChange={this.onChange} className="form-control" />
+          <input type="number" value={ value } onChange={this.onChange} className="form-control" />
         )
     }
   }
-
-  parseInitialLine () {
-    /*
-      Parse the initial line
-     */
-
-    // zone
-    let zoneTest = /in_zone\(deliveryAddress, ['|"](.+)['|"]\)/.exec(this.props.expression)
-    if (zoneTest) {
-      return ['in_zone', zoneTest[1]]
-    }
-
-    // max distance type
-    let comparatorTest = /distance < ([\d]+)/.exec(this.props.expression)
-    if (comparatorTest) {
-      return ['distance', (comparatorTest[1] / 1000).toFixed(2)]
-    }
-  }
-
 
   render () {
     return (
@@ -91,9 +82,9 @@ export class DeliveryZonePicker extends React.Component {
             <option value="distance">Distance (km)</option>
           </select>
         </div>
-              <div className="col-md-3 form-group">
-              { this.renderInput() }
-          </div>
+        <div className="col-md-3 form-group">
+          { this.renderInput() }
+        </div>
       </div>
     )
   }

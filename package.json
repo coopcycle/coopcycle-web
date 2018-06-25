@@ -55,6 +55,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "beautifymarker": "git+https://git@github.com/alexsegura/BeautifyMarker.git",
     "bootstrap-sass": "^3.3.7",
+    "chai": "^4.1.2",
     "copy-webpack-plugin": "^4.5.1",
     "database-cleaner": "^1.2.0",
     "dom-autoscroller": "^2.3.4",

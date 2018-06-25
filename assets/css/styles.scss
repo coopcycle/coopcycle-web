@@ -687,6 +687,7 @@ $order-follow--number-width: 26px;
     &__expression {
       flex: 8;
       padding-right: 15px;
+      width: 0;
     }
     &__price {
       flex: 4;
@@ -707,6 +708,7 @@ $order-follow--number-width: 26px;
     pre {
       margin: 0;
       font-size: 11px;
+      white-space: pre-wrap;
     }
   }
 }
