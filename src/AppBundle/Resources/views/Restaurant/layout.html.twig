@@ -33,7 +33,7 @@
             </a>
 
             {% if restaurant.menuTaxon is not null %}
-            <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}"
+            <a href="{{ path(menu_taxon_route, { id: restaurant.id, taxonId: restaurant.menuTaxon.id }) }}"
               class="btn btn-default navbar-btn">
               <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.activeMenu{% endtrans %}
             </a>

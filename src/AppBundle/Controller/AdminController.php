@@ -79,6 +79,9 @@ class AdminController extends Controller
             // store
             'store' => 'admin_store',
             'stores' => 'admin_stores',
+            'store_menu_taxon' => 'admin_store_menu_taxon',
+            'store_products' => 'admin_store_products',
+            'store_product_options' => 'admin_store_product_options',
             'store_delivery' => 'admin_store_delivery',
             'calculate_price' => 'admin_deliveries_calculate_price'
         ];

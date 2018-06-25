@@ -1,0 +1,42 @@
+{% extends layout %}
+
+{% block subnav %}
+
+  <nav class="navbar">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">
+          {% if store.id is not empty %}
+            {#<a href="{{ path(local_business_route, { id: store.id }) }}">{{ store.name }}</a>#}
+            {{ store.name }}
+          {% endif %}
+        </span>
+      </div>
+      <div class="collapse navbar-collapse" id="restaurant-navbar">
+        <div class="nav navbar-nav navbar-right">
+          {% if store.id is not empty %}
+            <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
+              <i class="fa fa-bicycle"></i>  {% trans %}delivery.createNew{% endtrans %}
+            </a>
+            <a href="{{ path(store_products_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
+              <i class="fa fa-database"></i>  {% trans %}restaurant.list.products{% endtrans %}
+            </a>
+            <a href="{{ path(store_product_options_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
+              <i class="fa fa-sliders"></i>  {% trans %}restaurant.list.product_options{% endtrans %}
+            </a>
+            <a href="{{ path(store_menu_taxon_route, { id: store.id, taxonId: store.menuTaxon.id }) }}"
+               class="btn btn-default navbar-btn">
+              <i class="fa fa-list"></i>  {% trans %}stores.catalog{% endtrans %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+{% endblock %}

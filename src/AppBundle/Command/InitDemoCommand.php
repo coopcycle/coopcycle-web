@@ -78,6 +78,8 @@ class InitDemoCommand extends ContainerAwareCommand
         ]);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
+        $this->translator = $this->getContainer()->get('translator');
+
         $store = new FlockStore();
         $this->lockFactory = new LockFactory($store);
     }
@@ -417,6 +419,14 @@ class InitDemoCommand extends ContainerAwareCommand
         $shop->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('19:30', '23:30'));
         $shop->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('08:30', '15:30'));
         $shop->addOpeningHour('Sa-Su ' . $this->createRandomTimeRange('19:00', '01:30'));
+
+        $taxon = $this->taxonFactory->createNew();
+        $uuid = Uuid::uuid4()->toString();
+
+        $taxon->setCode($uuid);
+        $taxon->setSlug($uuid);
+        $taxon->setName($this->translator->trans('stores.catalog'));
+        $shop->setMenuTaxon($taxon);
 
         return $shop;
     }

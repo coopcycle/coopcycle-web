@@ -274,26 +274,15 @@ trait RestaurantTrait
         ]);
     }
 
-
-    public function deleteRestaurantMenuTaxonChildAction($restaurantId, $menuId, $sectionId, Request $request)
+    public function deleteRestaurantMenuTaxonChildAction($id, $taxonId, $sectionId, Request $request)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($restaurantId);
-
-        $menuTaxon = $this->get('sylius.repository.taxon')->find($menuId);
-        $toRemove = $this->get('sylius.repository.taxon')->find($sectionId);
-
-        $menuTaxon->removeChild($toRemove);
-
-        $this->get('sylius.manager.taxon')->flush();
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->redirectToRoute($routes['menu_taxon'], [
-            'restaurantId' => $restaurant->getId(),
-            'menuId' => $menuTaxon->getId()
-        ]);
+        $this->deleteTaxonChildAction(
+            $id,
+            Restaurant::class,
+            $taxonId,
+            $sectionId,
+            $request
+        );
     }
 
     public function newRestaurantMenuTaxonAction($id, Request $request)
@@ -340,135 +329,14 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
+    public function restaurantMenuTaxonAction($id, $taxonId, Request $request)
     {
-        $routes = $request->attributes->get('routes');
-
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($restaurantId);
-
-        $menuTaxon = $this->get('sylius.repository.taxon')
-            ->find($menuId);
-
-        $form = $this->createForm(MenuTaxonType::class, $menuTaxon);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $menuTaxon = $form->getData();
-
-            if ($form->getClickedButton() && 'addChild' === $form->getClickedButton()->getName()) {
-
-                $childName = $form->get('childName')->getData();
-
-                $uuid = Uuid::uuid1()->toString();
-
-                $childTaxon = $this->get('sylius.factory.taxon')->createNew();
-                $childTaxon->setCode($uuid);
-                $childTaxon->setSlug($uuid);
-                $childTaxon->setName($childName);
-
-                $menuTaxon->addChild($childTaxon);
-                $this->get('sylius.manager.taxon')->flush();
-
-                $this->addFlash(
-                    'notice',
-                    $this->get('translator')->trans('global.changesSaved')
-                );
-
-                return $this->redirect($request->headers->get('referer'));
-            }
-
-            $this->get('sylius.manager.taxon')->flush();
-
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
-        }
-
-        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
-        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
-
-        $originalTaxonProducts = new \SplObjectStorage();
-        foreach ($menuEditor->getChildren() as $child) {
-            $taxonProducts = new ArrayCollection();
-            foreach ($child->getTaxonProducts() as $taxonProduct) {
-                $taxonProducts->add($taxonProduct);
-            }
-
-            $originalTaxonProducts[$child] = $taxonProducts;
-        }
-
-        $menuEditorForm->handleRequest($request);
-        if ($menuEditorForm->isSubmitted() && $menuEditorForm->isValid()) {
-
-            $menuEditor = $menuEditorForm->getData();
-
-            foreach ($menuEditor->getChildren() as $child) {
-                foreach ($child->getTaxonProducts() as $taxonProduct) {
-
-                    $taxonProduct->setTaxon($child);
-
-                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
-                        if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
-                            $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $this->getDoctrine()->getManagerForClass(ProductTaxon::class)->remove($originalTaxonProduct);
-                        }
-                    }
-                }
-            }
-
-            $this->get('sylius.manager.taxon')->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-            'menu_editor_form' => $menuEditorForm->createView(),
-        ], $routes));
-    }
-
-    public function restaurantPlanningAction($id, Request $request)
-    {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->find($id);
-
-        $form = $this->createForm(ClosingRuleType::class);
-        $form->add('submit', SubmitType::class, array('label' => 'Save'));
-
-        $form->handleRequest($request);
-
-        $routes = $request->attributes->get('routes');
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $closingRule = $form->getData();
-            $closingRule->setRestaurant($restaurant);
-            $manager = $this->getDoctrine()->getManagerForClass(ClosingRule::class);
-            $manager->persist($closingRule);
-            $manager->flush();
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
-            'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
-            'restaurant' => $restaurant,
-            'routes' => $routes,
-            'form' => $form->createView()
-        ], $routes));
+       return $this->taxonAction(
+           $id,
+           Restaurant::class,
+           $taxonId,
+           $request
+       );
     }
 
     public function restaurantProductsAction($id, Request $request)
@@ -506,5 +374,41 @@ trait RestaurantTrait
             $id,
             Restaurant::class,
             $request);
+    }
+
+    public function restaurantPlanningAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $form = $this->createForm(ClosingRuleType::class);
+        $form->add('submit', SubmitType::class, array('label' => 'Save'));
+
+        $form->handleRequest($request);
+
+        $routes = $request->attributes->get('routes');
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $closingRule = $form->getData();
+            $closingRule->setRestaurant($restaurant);
+            $manager = $this->getDoctrine()->getManagerForClass(ClosingRule::class);
+            $manager->persist($closingRule);
+            $manager->flush();
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+            return $this->redirectToRoute($routes['success'], ['id' => $restaurant->getId()]);
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
+            'opening_hours_json' => json_encode($restaurant->getOpeningHours()),
+            'restaurant' => $restaurant,
+            'routes' => $routes,
+            'form' => $form->createView()
+        ], $routes));
     }
 }

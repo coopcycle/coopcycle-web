@@ -396,8 +396,9 @@ form.menu_item_modifier.name.label: Name
 form.menu_item_modifier.price.label: Price
 form.menu_item_modifier.calculusStrategy.label: Price calculation
 
-form.menu_taxon.name.label: Name
+form.menu_taxon.name.label: Menu name
 form.menu_taxon.add_child.label: Add section
+form.menu_taxon.child_name.label: Section name
 form.menu_taxon.child_name.placeholder: |
   Example: main courses, desserts…
 
@@ -405,16 +406,14 @@ form.menu_editor.products_panel.title: Products
 form.menu_editor.save.label: Save Changes
 
 form.menu_editor.help: |
-  Use the editor below to compose the menu items
+  Drag and drop the products into the sections on the left to make them available
   <br>
-  Drag and drop the products into the sections on the left
-  <br>
-  If you want to remove a product from the menu, drop it in the « Products » section on the right
+  If you want to remove a product from the store's page, drop it in the « Products » section on the right
   <br>
   Do not forget to click on the « Save Changes » button below
 
 form.menu_editor.products.help: |
-  To add products to the list on the right, add them to the <a href="%products_url%">catalog</a> first
+  To add products to the list on the right, create them <a href="%products_url%">from the products page</a> first.
 
 form.product.name.label: Name
 form.product.description.label: Description
@@ -464,6 +463,7 @@ stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery
+stores.catalog: Catalog
 stores.list.noStores: There are no stores yet
 
 zones.help: <a href="%link%">Get help about zones.</a>

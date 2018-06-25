@@ -106,12 +106,14 @@ AppBundle\Entity\Store:
             joinColumns:
                 pricing_rule_set_id:
                     referencedColumnName: id
-#        activeMenuTaxon:
-#            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
-#            joinColumns:
-#                active_menu_taxon_id:
-#                    referencedColumnName: id
-#                    nullable: true
+        activeMenuTaxon:
+            targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
+            joinColumns:
+                active_menu_taxon_id:
+                    referencedColumnName: id
+                    nullable: true
+            cascade:
+                - persist
     oneToMany:
         deliveries:
             targetEntity: AppBundle\Entity\Delivery

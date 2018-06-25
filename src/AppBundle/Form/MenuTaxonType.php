@@ -17,10 +17,12 @@ class MenuTaxonType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('name', TextType::class, [
-                'label' => 'form.menu_taxon.name.label'
-            ]);
+        if ($options['with_name']) {
+            $builder
+                ->add('name', TextType::class, [
+                    'label' => 'form.menu_taxon.name.label'
+                ]);
+        }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
@@ -31,8 +33,9 @@ class MenuTaxonType extends AbstractType
                 $form
                     ->add('childName', TextType::class, [
                         'mapped' => false,
+                        'label' => 'form.menu_taxon.child_name.label',
                         'attr' => [
-                            'placeholder' => 'form.menu_taxon.child_name.placeholder'
+                            'placeholder' => 'form.menu_taxon.child_name.placeholder',
                         ]
                     ])
                     ->add('addChild', SubmitType::class, [
@@ -46,6 +49,7 @@ class MenuTaxonType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Taxon::class,
+            'with_name' => true
         ));
     }
 }

@@ -430,27 +430,19 @@ form.menu_item_modifier.price.label: Precio
 form.menu_item_modifier.calculusStrategy.label: Cálculo del precio
 form.menu_taxon.name.label: Nombre
 form.menu_taxon.add_child.label: Añadir una sección
+form.menu_taxon.child_name.label: Section name
 form.menu_taxon.child_name.placeholder: 'Ejemplo : platos, postres…
 
   '
 form.menu_editor.products_panel.title: Productos
 form.menu_editor.save.label: Guardar cambios
-form.menu_editor.help: 'Use el editor a continuación para componer los elementos del
-  menú
-
-  <br>
-
+form.menu_editor.help: '
   Arrastra y suelta los productos en las secciones de la izquierda
-
   <br>
-
   Si desea retirar un producto del menú, deposítelo en la sección "Productos" a la
   derecha
-
   <br>
-
   No olvides hacer clic en el botón « Guardar cambios » a continuación
-
   '
 form.menu_editor.products.help: 'Para añadir productos en la lista de la derecha,
   primero tiene que modificar el <a href="%products_url%">catálogo</a>
@@ -509,6 +501,7 @@ stores.form.save: Guardar
 stores.manage: Gestionar
 stores.settings: Ajustes
 stores.createNewDelivery: Crear entrega
+stores.catalog: Catalog
 stores.list.noStores: Aún no existe ninguna tienda
 zones.help: <a href="%link%">Ayuda sobre las zonas.</a>
 meta.title: Plataforma de logística para cooperativas

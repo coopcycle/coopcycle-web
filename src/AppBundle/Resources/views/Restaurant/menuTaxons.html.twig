@@ -46,7 +46,7 @@
           {% endif %}
         </td>
         <td class="text-right" width="10%">
-          <a class="btn btn-xs btn-default" href="{{ path(menu_route, { restaurantId: restaurant.id, menuId: menu.id }) }}">
+          <a class="btn btn-xs btn-default" href="{{ path(menu_route, { id: restaurant.id, taxonId: menu.id }) }}">
             <i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}
           </a>
         </td>

@@ -56,9 +56,12 @@ class ProfileController extends Controller
             'planning' => 'profile_restaurant_planning',
 
             // stores
-            'store_route' => 'profile_store',
-            'stores_route' => 'profile_stores',
+            'store' => 'profile_store',
+            'stores' => 'profile_stores',
+            'store_menu_taxon' => 'profile_store_menu_taxon',
             'store_delivery' => 'profile_store_delivery',
+            'store_products' => 'profile_store_products',
+            'store_product_options' => 'profile_store_product_options',
             'calculate_price' => 'profile_deliveries_calculate_price'
         ];
     }

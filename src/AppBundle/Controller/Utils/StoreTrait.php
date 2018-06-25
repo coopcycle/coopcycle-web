@@ -106,6 +106,17 @@ trait StoreTrait
         return $this->renderStoreForm($store, $request);
     }
 
+    public function storeMenuTaxonAction($id, $taxonId, Request $request)
+    {
+        return $this->taxonAction(
+            $id,
+            Store::class,
+            $taxonId,
+            $request,
+            ['with_name' => false]
+        );
+    }
+
     public function storeProductsAction($id, Request $request)
     {
         return $this->productsAction($id, Store::class, $request);

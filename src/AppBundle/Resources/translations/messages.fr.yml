@@ -443,33 +443,25 @@ form.menu_item.price.label: Prix
 form.menu_item_modifier.name.label: Nom du groupe
 form.menu_item_modifier.price.label: Prix
 form.menu_item_modifier.calculusStrategy.label: Coût du supplément
-form.menu_taxon.name.label: Nom
+form.menu_taxon.name.label: Nom du menu
 form.menu_taxon.add_child.label: Ajouter une section
+form.menu_taxon.child_name.label: Nom de la section
 form.menu_taxon.child_name.placeholder: 'Exemple : plats, desserts…
 
   '
 form.menu_editor.products_panel.title: Produits
 form.menu_editor.save.label: Enregistrer les modifications
-form.menu_editor.help: 'Utilisez l''éditeur ci-dessous pour composer les élements
-  du menu
-
-  <br>
-
+form.menu_editor.help: '
   Glissez-déposez les produits dans les sections sur la gauche pour les rendre disponibles
-  à la vente
-
+  à la vente.
   <br>
-
   Si vous souhaitez retirer un produit de la vente, déposez-le dans la section « Produits
-  » à droite
-
+  » à droite.
   <br>
-
-  N''oubliez pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous
-
+  N''oubliez pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous.
   '
 form.menu_editor.products.help: 'Pour ajouter des produits dans la liste de droite,
-  ajoutez-les d''abord au <a href="%products_url%">catalogue</a>
+  créez-les d''abord via la <a href="%products_url%">page produits</a>.
 
   '
 form.product.name.label: Nom
@@ -526,6 +518,7 @@ stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
+stores.catalog: Catalogue
 stores.list.noStores: Pas de magasin pour le moment
 zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
 meta.title: Plateforme de livraison pour les sociétés coopératives

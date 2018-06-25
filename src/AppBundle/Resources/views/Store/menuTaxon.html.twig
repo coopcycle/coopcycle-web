@@ -1,11 +1,11 @@
 {% extends '@App/Store/layout.html.twig' %}
 
-{% form_theme form '@App/Form/productOption.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme menu_editor_form '@App/Form/menuEditor.html.twig' %}
 
-{% use 'AppBundle::_partials/LocalBusiness/productOption.html.twig' %}
+{% use 'AppBundle::_partials/LocalBusiness/menuTaxon.html.twig' %}
 
 {% set title = 'adminDashboard.stores.title' %}
-{% set productsOptionTitle = 'restaurant.list.product_options' %}
 {% set local_businesses_route = stores_route %}
 {% set local_business_route = store_route %}
 {% set store = local_business %}

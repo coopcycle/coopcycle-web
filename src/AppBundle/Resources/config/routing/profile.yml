@@ -161,7 +161,7 @@ profile_restaurant_new_menu_taxon:
     methods: [ GET, POST ]
 
 profile_restaurant_menu_taxon:
-    path: /profile/restaurants/{restaurantId}/menus/{menuId}
+    path: /profile/restaurants/{id}/menus/{taxonId}
     defaults:
         _controller: AppBundle:Profile:restaurantMenuTaxon
         layout: AppBundle::profile.html.twig
@@ -185,7 +185,7 @@ profile_restaurant_menu_taxon_activate:
     methods: [ POST ]
 
 profile_delete_restaurant_menu_taxon_child:
-    path: /profile/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    path: /profile/restaurants/{id}/menus/{taxonId}/sections/{sectionId}/delete
     defaults:
         _controller: AppBundle:Profile:deleteRestaurantMenuTaxonChild
         layout: AppBundle::profile.html.twig
@@ -384,3 +384,23 @@ profile_store_product_option:
             store: profile_store
             product_options: profile_store_product_options
     methods: [ GET, POST ]
+
+profile_store_menu_taxon:
+    path: /profile/stores/{id}/catalogs/{taxonId}
+    defaults:
+        _controller: AppBundle:Profile:storeMenuTaxon
+        layout: AppBundle::profile.html.twig
+        template: AppBundle:Store:menuTaxon.html.twig
+        routes:
+            delete_section: profile_delete_store_menu_taxon_child
+            success: profile_store
+    methods: [ GET, POST ]
+
+profile_delete_store_menu_taxon_child:
+    path: /profile/stores/{id}/catalogs/{taxonId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle:Profile:deleteStoreMenuTaxonChild
+        layout: AppBundle::profile.html.twig
+        routes:
+            menu_taxon: profile_store_menu_taxon
+    methods: [ POST ]

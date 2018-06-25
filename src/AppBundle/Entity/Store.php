@@ -93,9 +93,6 @@ class Store extends LocalBusiness
     public function __construct() {
         parent::__construct();
         $this->deliveries = new ArrayCollection();
-        $catalog = new Taxon();
-        $catalog->setName('Catalog');
-        $this->activeMenuTaxon = $catalog;
     }
 
     /**

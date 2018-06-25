@@ -2,18 +2,19 @@
 
 namespace AppBundle\Utils;
 
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Sylius\Taxon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 class MenuEditor
 {
-    private $restaurant;
+    private $localBusiness;
     private $menu;
 
-    public function __construct(Restaurant $restaurant, $menu)
+    public function __construct(LocalBusiness $localBusiness, Taxon $menu)
     {
-        $this->restaurant = $restaurant;
+        $this->localBusiness = $localBusiness;
         $this->menu = $menu;
     }
 
@@ -25,7 +26,7 @@ class MenuEditor
     public function getProducts()
     {
         $products = new ArrayCollection();
-        foreach ($this->restaurant->getProducts() as $product) {
+        foreach ($this->localBusiness->getProducts() as $product) {
             $products->add($product);
         }
         foreach ($this->menu->getChildren() as $child) {

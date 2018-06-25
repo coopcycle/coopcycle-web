@@ -132,7 +132,7 @@ admin_restaurant_new_menu_taxon:
     methods: [ GET, POST ]
 
 admin_restaurant_menu_taxon:
-    path: /admin/restaurants/{restaurantId}/menus/{menuId}
+    path: /admin/restaurants/{id}/menus/{taxonId}
     defaults:
         _controller: AppBundle:Admin:restaurantMenuTaxon
         layout: AppBundle::admin.html.twig
@@ -147,7 +147,7 @@ admin_restaurant_menu_taxon:
     methods: [ GET, POST ]
 
 admin_restaurant_menu_taxon_activate:
-    path: /admin/restaurants/{restaurantId}/menus/{menuId}/activate
+    path: /admin/restaurants/{id}/menus/{taxonId}/activate
     defaults:
         _controller: AppBundle:Admin:activateRestaurantMenuTaxon
         layout: AppBundle::admin.html.twig
@@ -156,7 +156,7 @@ admin_restaurant_menu_taxon_activate:
     methods: [ POST ]
 
 admin_delete_restaurant_menu_taxon_child:
-    path: /admin/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
+    path: /admin/restaurants/{id}/menus/{taxonId}/sections/{sectionId}/delete
     defaults:
         _controller: AppBundle:Admin:deleteRestaurantMenuTaxonChild
         layout: AppBundle::admin.html.twig
@@ -418,6 +418,27 @@ admin_store_product_option:
             store: admin_store
             product_options: admin_store_product_options
     methods: [ GET, POST ]
+
+admin_store_menu_taxon:
+    path: /admin/stores/{id}/menus/{taxonId}
+    defaults:
+        _controller: AppBundle:Admin:storeMenuTaxon
+        layout: AppBundle::admin.html.twig
+        template: AppBundle:Store:menuTaxon.html.twig
+        routes:
+            products: admin_store_products
+            delete_section: admin_delete_store_menu_taxon_child
+            success: admin_store
+    methods: [ GET, POST ]
+
+admin_delete_store_menu_taxon_child:
+    path: /admin/stores/{id}/menus/{taxonId}/sections/{sectionId}/delete
+    defaults:
+        _controller: AppBundle:Admin:deleteStoreMenuTaxonChild
+        layout: AppBundle::admin.html.twig
+        routes:
+            menu_taxon: admin_store_menu_taxon
+    methods: [ POST ]
 
 admin_tag_new:
     path: /admin/settings/tags/new

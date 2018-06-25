@@ -1,4 +1,4 @@
-{% extends layout %}
+{% extends '@App/Store/layout.html.twig' %}
 
 {% use 'AppBundle::_partials/LocalBusiness/productOptions.html.twig' %}
 
@@ -6,6 +6,7 @@
 {% set productsOptionTitle = 'restaurant.list.product_options' %}
 {% set local_businesses_route = stores_route %}
 {% set local_business_route = store_route %}
+{% set store = local_business %}
 
 {% block breadcrumb %}
   {{ parent() }}
