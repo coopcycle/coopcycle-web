@@ -379,12 +379,12 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{restaurantId}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
+     * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
-    public function removeFromCartAction($restaurantId, $cartItemId, Request $request)
+    public function removeFromCartAction($id, $cartItemId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($restaurantId);
+            ->getRepository(Restaurant::class)->find($id);
 
         $cart = $this->get('sylius.context.cart')->getCart();
         $cartItem = $this->get('sylius.repository.order_item')->find($cartItemId);
