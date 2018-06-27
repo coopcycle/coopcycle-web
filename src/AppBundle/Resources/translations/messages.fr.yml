@@ -168,10 +168,15 @@ restaurant.contract.feeRate.label: Pourcentage de commission facturé par la pla
 restaurant.contract.feeRate.help: Ce pourcentage sera retenu sur le total des produits
   et versé à la société de livraison pour ses services. Il sera prélevé sur le paiement
   du client mais ne sera pas affiché dans le panier.
+restaurant.contract.restaurantPaysStripeFee.label: Responsable pour le paiement des frais Stripe, des remboursements et des rétrofacturations
+restaurant.contract.restaurantPaysStripeFee.help: Sélection du responsable pour le paiement des frais Stripe, des remboursements et des rétrofacturations
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Coopérative
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux
   administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez
   contacter un administrateur.
+restaurant.contract.showAdvanced: Montrer les réglages avancés
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais

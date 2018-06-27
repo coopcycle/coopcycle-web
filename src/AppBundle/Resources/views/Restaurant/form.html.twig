@@ -168,6 +168,7 @@
     {{ form_row(form.contract.flatDeliveryPrice, { help: 'restaurant.contract.flatDeliveryPrice.help' }) }}
     {{ form_row(form.contract.customerAmount, { help: 'restaurant.contract.customerAmount.help' }) }}
     {{ form_row(form.contract.feeRate, { help: 'restaurant.contract.feeRate.help' }) }}
+    {{ form_row(form.contract.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
   {% else %}
     {% if restaurant.id is not null %}
     <div class="row margin-bottom-md">
@@ -192,6 +193,10 @@
             <tr>
               <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
               <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.restaurantPaysStripeFee ? 'restaurant.contract.restaurantPaysStripeFee.restaurant' | trans : 'restaurant.contract.restaurantPaysStripeFee.cooperative' | trans }}</td>
             </tr>
           </table>
         </div>

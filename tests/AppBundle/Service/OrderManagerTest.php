@@ -8,12 +8,11 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\StripePayment;
-use AppBundle\Entity\StripeTransfer;
+use AppBundle\Entity\Contract;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -89,10 +88,19 @@ class OrderManagerTest extends TestCase
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
         $restaurant = $this->prophesize(Restaurant::class);
+        $contract = $this->prophesize(Contract::class);
 
         $stripeAccount
             ->getStripeUserId()
             ->willReturn('acct_123');
+
+        $restaurant
+            ->getContract()
+            ->willReturn($contract->reveal());
+
+        $contract
+            ->isRestaurantPaysStripeFee()
+            ->willReturn(true);
 
         $restaurant
             ->getStripeAccount()
@@ -150,10 +158,19 @@ class OrderManagerTest extends TestCase
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
         $restaurant = $this->prophesize(Restaurant::class);
+        $contract = $this->prophesize(Contract::class);
 
         $stripeAccount
             ->getStripeUserId()
             ->willReturn('acct_123');
+
+        $restaurant
+            ->getContract()
+            ->willReturn($contract->reveal());
+
+        $contract
+            ->isRestaurantPaysStripeFee()
+            ->willReturn(true);
 
         $restaurant
             ->getStripeAccount()
