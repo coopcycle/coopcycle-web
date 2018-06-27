@@ -13,6 +13,12 @@ AppBundle\Entity\Sylius\Order:
                 customer_id:
                     referencedColumnName: id
                     nullable: true
+        store:
+            targetEntity: AppBundle\Entity\Store
+            joinColumns:
+                store_id:
+                    referencedColumnName: id
+                    nullable: true
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant
             joinColumns:

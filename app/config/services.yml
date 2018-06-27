@@ -1,7 +1,7 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-  sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  sylius_cart_session_key_name: _coopcycle.sylius.cart_restaurant
 
 services:
 #    service_name:
@@ -99,7 +99,8 @@ services:
       - "@sylius.repository.order"
       - "@sylius.factory.order"
       - "@coopcycle.repository.restaurant"
-      - "%sylius_cart_restaurant_session_key_name%"
+      - "@coopcycle.repository.store"
+      - "%sylius_cart_session_key_name%"
     tags:
       - { name: sylius.context.cart, priority: 32 }
 
@@ -343,6 +344,12 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Task
+
+  coopcycle.repository.store:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Store
 
   coopcycle.repository.restaurant:
     class: AppBundle\Entity\RestaurantRepository

@@ -5,3 +5,75 @@
     {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig" with {local_business: store} %}
   </div>
 {% endblock %}
+
+{% block scripts %}
+  <script src="{{ asset('js/widgets.js') }}"></script>
+  <script>
+
+    {#new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {#}
+      {#openingHours: {{ restaurant.openingHours|json_encode()|raw }},#}
+      {#locale: $('html').attr('lang')#}
+    {#})#}
+
+    $('[data-product-code]').on('click', function(e) {
+      e.preventDefault();
+      var $target = $(e.currentTarget);
+      window.AppData.CartHelper.addProduct($target.attr('href'), 1);
+    })
+
+    // Make sure all options have been checked
+    $('form[data-product-options] input[type="radio"]').on('click', function(e) {
+
+      var $options = $(this).closest('form').find('[data-product-option]');
+      var checkedOptionsCount = 0;
+      $options.each(function(index, el) {
+        checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
+      });
+
+      if ($options.length === checkedOptionsCount) {
+        $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
+      }
+    })
+
+    $('form[data-product-options]').on('submit', function(e) {
+      e.preventDefault();
+      var data = $(this).serializeArray();
+      if (data.length > 0) {
+        window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
+        $(this).closest('.modal').modal('hide');
+        // Uncheck all options
+        $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+        $(this).closest('form').find('button[type="submit"]').attr('disabled', true);
+      }
+    })
+
+    function initMap() {
+
+      $('#cart-warning-cancel').on('click', function(e) {
+        {% set cart = cart_provider.getCart() %}
+        window.location.replace("{{ path('restaurant', { id: cart.store.id }) }}")
+        $('#cart-warning-modal').modal('hide');
+      })
+
+      $('#cart-warning-confirm').on('click', function(e) {
+        window.AppData.CartHelper.reset();
+        $('#cart-warning-modal').modal('hide');
+      })
+
+      window.AppData.CartHelper.init(document.querySelector('#cart'), {
+        restaurant: {
+          id: {{ store.id }},
+          availabilities: {{ availabilities|json_encode()|raw }}
+        },
+        cartURL: "{{ path('restaurant_cart', { id: store.id }) }}",
+        removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: store.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+        resetCartURL: "{{ path('restaurant_cart_reset', { id: store.id }) }}",
+        onCartWarning: function() {
+          $('#cart-warning-modal').modal('show');
+        }
+      });
+    }
+
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+{% endblock %}

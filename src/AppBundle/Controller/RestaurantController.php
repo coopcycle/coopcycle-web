@@ -257,7 +257,7 @@ class RestaurantController extends Controller
             $this->get('sylius.manager.order')->flush();
 
             // TODO Find a better way to do this
-            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+            $sessionKeyName = $this->getParameter('sylius_cart_session_key_name');
             $request->getSession()->set($sessionKeyName, $cart->getId());
         }
 
@@ -369,7 +369,7 @@ class RestaurantController extends Controller
         $this->get('sylius.manager.order')->flush();
 
         // TODO Find a better way to do this
-        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+        $sessionKeyName = $this->getParameter('sylius_cart_session_key_name');
         $request->getSession()->set($sessionKeyName, $cart->getId());
 
         $errors = $this->get('validator')->validate($cart);

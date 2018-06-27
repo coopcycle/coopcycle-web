@@ -6,8 +6,10 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
@@ -48,6 +50,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $customer;
 
     protected $restaurant;
+
+    protected $store;
 
     protected $shippingAddress;
 
@@ -105,7 +109,7 @@ class Order extends BaseOrder implements OrderInterface
 
         return $feeTotal;
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -117,6 +121,22 @@ class Order extends BaseOrder implements OrderInterface
     public function setRestaurant(?Restaurant $restaurant): void
     {
         $this->restaurant = $restaurant;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
+     * @param mixed $store
+     */
+    public function setStore(Store $store)
+    {
+        $this->store = $store;
     }
 
     /**

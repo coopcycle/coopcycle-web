@@ -32,6 +32,9 @@ class StoreController extends Controller
             throw new NotFoundHttpException();
         }
 
+        // This will be used by RestaurantCartContext
+        $request->getSession()->set('storeId', $id);
+
         return array(
             'store' => $store,
             'availabilities' => $store->getAvailabilities(),

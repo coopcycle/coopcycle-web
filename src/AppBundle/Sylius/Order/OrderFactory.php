@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Order;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use AppBundle\Service\SettingsManager;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -35,6 +36,14 @@ class OrderFactory implements FactoryInterface
     {
         $order = $this->createNew();
         $order->setRestaurant($restaurant);
+
+        return $order;
+    }
+
+    public function createForStore(Store $store): OrderInterface
+    {
+        $order = $this->createNew();
+        $order->setStore($store);
 
         return $order;
     }

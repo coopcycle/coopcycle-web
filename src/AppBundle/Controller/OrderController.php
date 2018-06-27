@@ -98,7 +98,7 @@ class OrderController extends Controller
                 ]);
             }
 
-            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+            $sessionKeyName = $this->getParameter('sylius_cart_session_key_name');
             $request->getSession()->remove($sessionKeyName);
 
             return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
