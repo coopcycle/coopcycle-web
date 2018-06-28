@@ -21,11 +21,12 @@ function enableForm() {
   $('#loader').addClass('hidden')
 }
 
-function calculatePrice(distance, dropoff) {
+function calculatePrice(distance, pickup, dropoff) {
 
   const deliveryParams = {
     distance,
-    delivery_address: [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ].join(','),
+    pickup_address: [ pickup.getLatLng().lat, pickup.getLatLng().lng ].join(','),
+    dropoff_address: [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ].join(','),
     pricing_rule_set: $('#delivery_pricingRuleSet').val(),
     vehicle: $('#delivery_vehicle').val(),
     weight: $('#delivery_weight').val()
@@ -71,7 +72,7 @@ function refreshRouting() {
     $('#delivery_distance').text(kms + ' Km');
     $('#delivery_duration').text(minutes + ' min');
 
-    calculatePrice(distance, dropoff)
+    calculatePrice(distance, pickup, dropoff)
 
     // return decodePolyline(data.routes[0].geometry);
   })

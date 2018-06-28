@@ -100,24 +100,17 @@ class OrderManager
         $pickupDoneBefore = clone $dropoffDoneBefore;
         $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $delivery = new Delivery();
+
+        $pickup = $delivery->getPickup();
         $pickup->setAddress($pickupAddress);
         $pickup->setDoneBefore($pickupDoneBefore);
 
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff = $delivery->getDropoff();
         $dropoff->setAddress($dropoffAddress);
         $dropoff->setDoneBefore($dropoffDoneBefore);
 
-        $delivery = new Delivery();
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
-
         $order->setDelivery($delivery);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->persist($delivery);
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     public function authorizePayment(OrderInterface $order)

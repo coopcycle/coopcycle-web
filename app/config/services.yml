@@ -462,18 +462,10 @@ services:
     tags:
       - { name: validator.constraint_validator }
 
-  # Order of Doctrine Subscribers is important !
-  # - DeliverySubscriber
-  # - TaskCollectionSubscriber
-
-  'AppBundle\EventListener\DeliverySubscriber':
-    tags:
-      - { name: doctrine.event_subscriber, connection: default, priority: 256 }
-
   'AppBundle\EventListener\TaskCollectionSubscriber':
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
     tags:
-      - { name: doctrine.event_subscriber, connection: default, priority: 128 }
+      - { name: doctrine.event_subscriber, connection: default }
 
   'AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber':
       arguments:
