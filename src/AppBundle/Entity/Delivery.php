@@ -112,30 +112,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         throw new \RuntimeException('No additional task can be added');
     }
 
-    public function getOriginAddress()
-    {
-        return $this->originAddress;
-    }
-
-    public function setOriginAddress(Address $originAddress)
-    {
-        $this->originAddress = $originAddress;
-
-        return $this;
-    }
-
-    public function getDeliveryAddress()
-    {
-        return $this->deliveryAddress;
-    }
-
-    public function setDeliveryAddress(Address $deliveryAddress)
-    {
-        $this->deliveryAddress = $deliveryAddress;
-
-        return $this;
-    }
-
     public function getOrder()
     {
         return $this->order;
