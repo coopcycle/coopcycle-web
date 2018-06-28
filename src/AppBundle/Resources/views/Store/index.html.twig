@@ -65,7 +65,7 @@
           id: {{ store.id }},
           availabilities: {{ availabilities|json_encode()|raw }}
         },
-        cartURL: "{{ path('restaurant_cart', { id: store.id }) }}",
+        cartURL: "{{ path('store_cart', { id: store.id }) }}",
         removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: store.id, cartItemId: '__CART_ITEM_ID__' }) }}",
         resetCartURL: "{{ path('restaurant_cart_reset', { id: store.id }) }}",
         onCartWarning: function() {

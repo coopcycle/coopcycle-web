@@ -84,10 +84,12 @@
     {% set cart = cart_provider.getCart() %}
     <script>
       window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
-        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
+        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}",
+        storeURL: "{{ path('store', { 'id': '__STORE_ID__' }) }}"
       })
       window.AppData.CartHelper = new CoopCycle.Cart({
         restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}",
+        storeURL: "{{ path('store', { 'id': '__STORE_ID__' }) }}",
         validateCartURL: "{{ path('order') }}"
       });
       var cartTopElement = document.querySelector('#cart-top');

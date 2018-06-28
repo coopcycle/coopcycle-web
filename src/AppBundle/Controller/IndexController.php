@@ -17,7 +17,7 @@ class IndexController extends Controller
      * @Route("/", name="homepage")
      * @Template
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $user = $this->getUser();
 

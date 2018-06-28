@@ -109,6 +109,10 @@ class Order extends BaseOrder implements OrderInterface
 
         return $feeTotal;
     }
+
+    public function getLocalBusiness() {
+        return $this->restaurant ? $this->restaurant : $this->store;
+    }
     
     /**
      * {@inheritdoc}

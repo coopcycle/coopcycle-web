@@ -228,6 +228,8 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
+        var_dump($request->attributes);
+
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
