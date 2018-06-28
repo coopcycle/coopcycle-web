@@ -77,28 +77,39 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $vehicle = self::VEHICLE_BIKE;
 
-    public function getOriginAddress()
+    public function __construct()
     {
-        return $this->originAddress;
+        parent::__construct();
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setDelivery($this);
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->setDelivery($this);
+        $dropoff->setPrevious($pickup);
+
+        $this->addTask($pickup);
+        $this->addTask($dropoff);
     }
 
-    public function setOriginAddress(Address $originAddress)
+    public function addTask(Task $task, $position = null)
     {
-        $this->originAddress = $originAddress;
+        $pickup = $this->getPickup();
+        $dropoff = $this->getDropoff();
 
-        return $this;
-    }
+        if (null === $pickup && $task->isPickup()) {
+            parent::addTask($task, $position);
+            return;
+        }
 
-    public function getDeliveryAddress()
-    {
-        return $this->deliveryAddress;
-    }
+        if (null === $dropoff && $task->isDropoff()) {
+            parent::addTask($task, $position);
+            return;
+        }
 
-    public function setDeliveryAddress(Address $deliveryAddress)
-    {
-        $this->deliveryAddress = $deliveryAddress;
-
-        return $this;
+        throw new \RuntimeException('No additional task can be added');
     }
 
     public function getOrder()
@@ -167,49 +178,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         }
     }
 
-    public static function createTasks(Delivery $delivery)
-    {
-        $dropoffDoneBefore = clone $delivery->getDate();
-
-        $dropoffDoneAfter = clone $delivery->getDate();
-        $dropoffDoneAfter->modify('-15 minutes');
-
-        $dropoffTask = new Task();
-        $dropoffTask->setType(Task::TYPE_DROPOFF);
-        $dropoffTask->setAddress($delivery->getDeliveryAddress());
-        $dropoffTask->setDoneAfter($dropoffDoneAfter);
-        $dropoffTask->setDoneBefore($dropoffDoneBefore);
-
-        $pickupDoneBefore = clone $delivery->getDate();
-        $pickupDoneBefore->modify(sprintf('-%d seconds', $delivery->getDuration()));
-
-        $pickupDoneAfter = clone $pickupDoneBefore;
-        $pickupDoneAfter->modify('-15 minutes');
-
-        $pickupTask = new Task();
-        $pickupTask->setType(Task::TYPE_PICKUP);
-        $pickupTask->setAddress($delivery->getOriginAddress());
-        $pickupTask->setDoneAfter($pickupDoneAfter);
-        $pickupTask->setDoneBefore($pickupDoneBefore);
-
-        $dropoffTask->setPrevious($pickupTask);
-
-        return [ $pickupTask, $dropoffTask ];
-    }
-
     public static function create()
     {
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
-
-        $delivery = new self();
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
-
-        return $delivery;
+        return new self();
     }
 
     public static function createWithDefaults()

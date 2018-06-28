@@ -144,6 +144,13 @@ trait DeliveryTrait
         ]);
     }
 
+    private function createGeoCoordinates($coordsAsString)
+    {
+        [ $latitude, $longitude ] = explode(',', $coordsAsString);
+
+        return new GeoCoordinates($latitude, $longitude);
+    }
+
     public function calculateDeliveryPriceAction(Request $request)
     {
         $deliveryManager = $this->get('coopcycle.delivery.manager');
@@ -161,16 +168,18 @@ trait DeliveryTrait
         $delivery->setVehicle($request->query->get('vehicle', null));
         $delivery->setWeight($request->query->get('weight', null));
 
-        $deliveryAddressCoords = $request->query->get('delivery_address');
-        [ $latitude, $longitude ] = explode(',', $deliveryAddressCoords);
+        $pickupAddress = new Address();
+        $pickupAddress->setGeo($this->createGeoCoordinates($request->query->get('pickup_address')));
+
+        $dropoffAddress = new Address();
+        $dropoffAddress->setGeo($this->createGeoCoordinates($request->query->get('dropoff_address')));
+
+        $delivery->getPickup()->setAddress($pickupAddress);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
 
         $pricingRuleSet = $this->getDoctrine()
-            ->getRepository(PricingRuleSet::class)->find($request->query->get('pricing_rule_set'));
-
-        $deliveryAddress = new Address();
-        $deliveryAddress->setGeo(new GeoCoordinates($latitude, $longitude));
-
-        $delivery->setDeliveryAddress($deliveryAddress);
+            ->getRepository(PricingRuleSet::class)
+            ->find($request->query->get('pricing_rule_set'));
 
         return new JsonResponse($deliveryManager->getPrice($delivery, $pricingRuleSet));
     }

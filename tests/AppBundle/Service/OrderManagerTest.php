@@ -2,6 +2,8 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
@@ -187,6 +189,63 @@ class OrderManagerTest extends TestCase
         $order
             ->setDelivery($delivery)
             ->shouldNotBeCalled();
+
+        $this->orderManager->createDelivery($order->reveal());
+    }
+
+    public function testCreateDeliveryCreatesDelivery()
+    {
+        $restaurantAddressCoords = new GeoCoordinates();
+        $shippingAddressCoords = new GeoCoordinates();
+
+        $restaurantAddress = new Address();
+        $restaurantAddress->setGeo($restaurantAddressCoords);
+
+        $shippingAddress = new Address();
+        $shippingAddress->setGeo($shippingAddressCoords);
+
+        $restaurant = new Restaurant();
+        $restaurant->setAddress($restaurantAddress);
+
+        $shippedAt = new \DateTime();
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getDelivery()
+            ->willReturn(null);
+        $order
+            ->getShippedAt()
+            ->willReturn($shippedAt);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getShippingAddress()
+            ->willReturn($shippingAddress);
+
+        $this->routing
+            ->getDuration($restaurantAddressCoords, $shippingAddressCoords)
+            ->willReturn(60 * 15); // 15 minutes
+
+        $order
+            ->setDelivery(Argument::that(function (Delivery $delivery) use ($restaurantAddress, $shippingAddress, $shippedAt) {
+
+                $pickup = $delivery->getPickup();
+                $dropoff = $delivery->getDropoff();
+
+                $this->assertSame($restaurantAddress, $pickup->getAddress());
+                $this->assertSame($shippingAddress, $dropoff->getAddress());
+
+                $pickupDoneBefore = clone $shippedAt;
+                $pickupDoneBefore->modify('-15 minutes');
+
+                $this->assertEquals($pickupDoneBefore, $pickup->getDoneBefore());
+                $this->assertEquals($shippedAt, $dropoff->getDoneBefore());
+
+                return true;
+            }))
+            ->shouldBeCalled();
 
         $this->orderManager->createDelivery($order->reveal());
     }

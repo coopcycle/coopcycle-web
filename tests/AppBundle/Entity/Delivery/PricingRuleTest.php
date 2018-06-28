@@ -75,21 +75,13 @@ class PricingRuleTest extends TestCase
         $pickupAddress = new Address();
         $pickupAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-        $pickup->setAddress($pickupAddress);
-
         $dropoffAddress = new Address();
         $dropoffAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
 
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
-        $dropoff->setAddress($dropoffAddress);
-
         $delivery = new Delivery();
         $delivery->setDistance(2500);
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
+        $delivery->getPickup()->setAddress($pickupAddress);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
 
         $values = PricingRule::toExpressionLanguageValues($delivery);
 
