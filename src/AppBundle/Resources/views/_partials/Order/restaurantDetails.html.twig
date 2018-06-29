@@ -1,8 +1,12 @@
-{% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
-{% if restaurant_image is not empty %}
-  <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}" class="img-responsive order-map__image">
+{% if order is defined %}
+  {% set local_business = order.restaurant ? order.restaurant : order.store %}
 {% endif %}
-{{ order.restaurant.name }}<br><br>
-{{ order.restaurant.address.streetAddress }}<br>
-{{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}<br>
-{% if order.restaurant.telephone %}{{ order.restaurant.telephone |phone_number_format('NATIONAL') }}{% endif %}
+
+{% set image = vich_uploader_asset(local_business, 'imageFile') %}
+{% if image is not empty %}
+  <img src="{{ vich_uploader_asset(local_business, 'imageFile') }}" class="img-responsive order-map__image">
+{% endif %}
+{{ local_business.name }}<br><br>
+{{ local_business.address.streetAddress }}<br>
+{{ local_business.address.postalCode }} {{ local_business.address.addressLocality }}<br>
+{% if local_business.telephone %}{{ local_business.telephone |phone_number_format('NATIONAL') }}{% endif %}

@@ -20,6 +20,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     restaurant:
       groups: ['order', 'order_create']
+    store:
+      groups: ['order', 'order_create']
     shippingAddress:
       groups: ['order', 'order_create']
     shippedAt:

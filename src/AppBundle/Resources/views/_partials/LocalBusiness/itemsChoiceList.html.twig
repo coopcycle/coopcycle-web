@@ -21,7 +21,7 @@
                 <a  class="list-group-item menu-item"
                   {% if product.simple %}
                   data-product-code="{{ product.code }}"
-                  href="{{ path('restaurant_add_product_to_cart', { id: local_business.id, code: product.code }) }}"
+                  href="{{ path(add_product_to_cart_url, { id: local_business.id, code: product.code }) }}"
                 {% else %}
                   data-toggle="modal"
                   data-target="#{{ product.code }}-options"
@@ -76,7 +76,7 @@
               </div>
               <div class="modal-body">
                 <form
-                  action="{{ path('restaurant_add_product_to_cart', { id: local_business.id, code: product.code }) }}"
+                  action="{{ path(add_product_to_cart_url, { id: local_business.id, code: product.code }) }}"
                   data-product-options>
                   {% for option in product.options %}
                     <h4>

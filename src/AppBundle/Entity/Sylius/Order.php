@@ -128,7 +128,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
-     * @return mixed
+     * @return Store
      */
     public function getStore()
     {

@@ -71,6 +71,55 @@ class OrderValidator extends ConstraintValidator
         }
     }
 
+    private function validateStore($object, Constraint $constraint)
+    {
+        $order = $object;
+        $store = $order->getStore();
+
+        if (!$store->isOpen($order->getShippedAt())) {
+            $this->context->buildViolation($constraint->restaurantClosedMessage)
+                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
+                ->atPath('shippedAt')
+                ->addViolation();
+
+            return;
+        }
+
+        if ($order->getShippingAddress()) {
+//            $data = $this->routing->getRawResponse(
+//                $store->getAddress()->getGeo(),
+//                $order->getShippingAddress()->getGeo()
+//            );
+//
+//            $distance = $data['routes'][0]['distance'];
+//
+//            if (!$store->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
+//                $this->context->buildViolation($constraint->addressTooFarMessage)
+//                    ->atPath('shippingAddress')
+//                    ->addViolation();
+//
+//                return;
+//            }
+        } else {
+            $this->context->buildViolation($constraint->addressNotSetMessage)
+                ->atPath('shippingAddress')
+                ->addViolation();
+
+            return;
+        }
+
+
+//        $minimumAmount = $store->getMinimumCartAmount();
+//        $itemsTotal = $order->getItemsTotal();
+//
+//        if ($itemsTotal < $minimumAmount) {
+//            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
+//                ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
+//                ->atPath('total')
+//                ->addViolation();
+//        }
+    }
+
     public function validate($object, Constraint $constraint)
     {
         if (!$object instanceof OrderInterface) {
@@ -93,6 +142,10 @@ class OrderValidator extends ConstraintValidator
 
         if (null !== $order->getRestaurant()) {
             $this->validateRestaurant($object, $constraint);
+        }
+
+        if (null !== $order->getStore()) {
+            $this->validateStore($object, $constraint);
         }
     }
 }

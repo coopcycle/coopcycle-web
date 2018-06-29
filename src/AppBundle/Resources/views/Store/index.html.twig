@@ -2,7 +2,8 @@
 
 {% block body %}
   <div class="container">
-    {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig" with {local_business: store} %}
+    {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig"
+        with {local_business: store, add_product_to_cart_url: 'store_add_product_to_cart'} %}
   </div>
 {% endblock %}
 
@@ -66,7 +67,7 @@
           availabilities: {{ availabilities|json_encode()|raw }}
         },
         cartURL: "{{ path('store_cart', { id: store.id }) }}",
-        removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: store.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+        removeFromCartURL: "{{ path('store_remove_from_cart', { id: store.id, cartItemId: '__CART_ITEM_ID__' }) }}",
         resetCartURL: "{{ path('restaurant_cart_reset', { id: store.id }) }}",
         onCartWarning: function() {
           $('#cart-warning-modal').modal('show');

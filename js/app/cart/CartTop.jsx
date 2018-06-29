@@ -7,10 +7,12 @@ class CartTop extends React.Component
 {
   constructor(props) {
     super(props);
+
     this.state = {
       total: props.total,
       itemsTotal: props.itemsTotal,
-      restaurant: props.restaurant
+      restaurant: props.restaurant,
+      store: props.store
     }
   }
 
@@ -21,18 +23,20 @@ class CartTop extends React.Component
   }
 
   _onCartChange(cart) {
-    const { itemsTotal, total, restaurant } = cart
-    this.setState({ itemsTotal, total, restaurant })
+    const { itemsTotal, total, restaurant, store } = cart
+    this.setState({ itemsTotal, total, restaurant, store })
   }
 
   render() {
 
-    const { restaurantURL } = this.props
-    const { restaurant, total, itemsTotal } = this.state
+    const { restaurantURL, storeURL } = this.props
+    const { restaurant, total, itemsTotal, store } = this.state
 
     let anchorURL = '#'
     if (restaurant) {
       anchorURL = restaurantURL.replace('__RESTAURANT_ID__', restaurant.id)
+    } else if (store) {
+      anchorURL = storeURL.replace('__STORE_ID__', store.id)
     }
 
     const amount = itemsTotal > 0 ? total : itemsTotal

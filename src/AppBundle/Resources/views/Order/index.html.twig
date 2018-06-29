@@ -1,5 +1,10 @@
 {% extends "AppBundle::base.html.twig" %}
 
+{% if order is defined %}
+  {% set local_business = order.restaurant ? order.restaurant : order.store %}
+  {% set local_business_url = order.restaurant ? 'restaurant' : 'store' %}
+{% endif %}
+
 {% if form is defined %}
   {% form_theme form with ['AppBundle:Form:order.html.twig'] %}
 {% endif %}
@@ -48,8 +53,8 @@
   <script type="text/javascript">
     window.AppData = window.AppData || {};
     window.AppData.restaurantCoordinates = {
-      'lat': "{{ order.restaurant.address.geo.latitude }}",
-      'lng': "{{ order.restaurant.address.geo.longitude }}"
+      'lat': "{{ local_business.address.geo.latitude }}",
+      'lng': "{{ local_business.address.geo.longitude }}"
     };
     window.AppData.customerCoordinates = {
       'lat': "{{ deliveryAddress.geo.latitude }}",

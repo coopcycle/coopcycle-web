@@ -129,7 +129,7 @@ class ProfileController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        if ($order->isFoodtech()) {
+        if ($order->isFoodtech() || $order->getStore()) {
             return $this->render('@App/Order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,

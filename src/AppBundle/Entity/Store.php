@@ -19,7 +19,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ApiResource(iri="http://schema.org/Store",
  *   attributes={
- *     "normalization_context"={"groups"={"store", "place"}}
+ *     "denormalization_context"={"groups"={"order_create"}},
+ *     "normalization_context"={"groups"={"store", "place", "order"}}
  *   },
  *   collectionOperations={
  *     "get"={"method"="GET"}
@@ -34,6 +35,7 @@ class Store extends LocalBusiness
 {
     /**
      * @var int
+     * @Groups({"store", "order"})
      */
     private $id;
 
@@ -42,7 +44,7 @@ class Store extends LocalBusiness
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"store"})
+     * @Groups({"store", "order"})
      */
     protected $name;
 
@@ -253,5 +255,4 @@ class Store extends LocalBusiness
     {
         $this->deliveries = $deliveries;
     }
-
 }

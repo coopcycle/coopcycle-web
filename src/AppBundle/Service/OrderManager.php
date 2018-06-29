@@ -87,7 +87,7 @@ class OrderManager
             return;
         }
 
-        $pickupAddress = $order->getRestaurant()->getAddress();
+        $pickupAddress = $order->getLocalBusiness()->getAddress();
         $dropoffAddress = $order->getShippingAddress();
 
         $duration = $this->routing->getDuration(
@@ -132,7 +132,7 @@ class OrderManager
 
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
-        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $stripeAccount = $order->getLocalBusiness()->getStripeAccount();
 
         $applicationFee = $order->getFeeTotal();
 
@@ -185,7 +185,7 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $stripeAccount = $order->getLocalBusiness()->getStripeAccount();
 
         if (!is_null($stripeAccount)) {
             $restaurantStripeId = $stripeAccount->getStripeUserId();

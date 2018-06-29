@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\CartTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -24,30 +25,7 @@ class RestaurantController extends Controller
 {
     const ITEMS_PER_PAGE = 15;
 
-    private function setCartAddress(OrderInterface $cart, Request $request) {
-
-        // TODO Avoid duplicating adresses
-        // If the user is authenticated,
-        // try to match the address with an existing address
-
-        $addressData = $request->request->get('address');
-
-        $address = $cart->getShippingAddress();
-        if (null === $address) {
-            $address = new Address();
-        }
-
-        $address->setAddressLocality($addressData['addressLocality']);
-        $address->setAddressCountry($addressData['addressCountry']);
-        $address->setAddressRegion($addressData['addressRegion']);
-        $address->setPostalCode($addressData['postalCode']);
-        $address->setStreetAddress($addressData['streetAddress']);
-        $address->setGeo(new GeoCoordinates($addressData['latitude'], $addressData['longitude']));
-
-        $cart->setShippingAddress($address);
-
-        return $address;
-    }
+    use CartTrait;
 
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
     {
@@ -56,18 +34,6 @@ class RestaurantController extends Controller
                 return $optionValue->getOption();
             }
         }
-    }
-
-    private function jsonResponse(OrderInterface $cart, array $errors)
-    {
-        $serializerContext = [
-            'groups' => ['order']
-        ];
-
-        return new JsonResponse([
-            'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
-            'errors' => $errors,
-        ], count($errors) > 0 ? 400 : 200);
     }
 
     /**
@@ -228,11 +194,6 @@ class RestaurantController extends Controller
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
-        var_dump($request->attributes);
-
-        // This will be used by RestaurantCartContext
-        $request->getSession()->set('restaurantId', $id);
-
         $cart = $this->get('sylius.context.cart')->getCart();
 
         if ($cart->getRestaurant() !== $restaurant) {
@@ -245,28 +206,7 @@ class RestaurantController extends Controller
             return $this->jsonResponse($cart, $errors);
         }
 
-        if ($request->isMethod('POST')) {
-
-            if ($request->request->has('date')) {
-                $cart->setShippedAt(new \DateTime($request->request->get('date')));
-            }
-
-            if ($request->request->has('address')) {
-                $this->setCartAddress($cart, $request);
-            }
-
-            $this->get('sylius.manager.order')->persist($cart);
-            $this->get('sylius.manager.order')->flush();
-
-            // TODO Find a better way to do this
-            $sessionKeyName = $this->getParameter('sylius_cart_session_key_name');
-            $request->getSession()->set($sessionKeyName, $cart->getId());
-        }
-
-        $errors = $this->get('validator')->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
-
-        return $this->jsonResponse($cart, $errors);
+        return $this->handleCartChange($request);
     }
 
     /**
@@ -371,7 +311,7 @@ class RestaurantController extends Controller
         $this->get('sylius.manager.order')->flush();
 
         // TODO Find a better way to do this
-        $sessionKeyName = $this->getParameter('sylius_cart_session_key_name');
+        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
         $request->getSession()->set($sessionKeyName, $cart->getId());
 
         $errors = $this->get('validator')->validate($cart);

@@ -69,7 +69,9 @@ class CartHelper {
   initTop(el, cart) {
     render(
       <CartTop
+        store={ cart.store }
         restaurantURL={ this.options.restaurantURL }
+        storeURL={ this.options.storeURL }
         restaurant={ cart.restaurant }
         total={ cart.total }
         itemsTotal={ cart.itemsTotal }

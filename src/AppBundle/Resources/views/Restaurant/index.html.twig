@@ -40,7 +40,8 @@
     </div>
   </div>
 
-  {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig" with {local_business: restaurant} %}
+  {% include "AppBundle::_partials/LocalBusiness/itemsChoiceList.html.twig"
+    with {local_business: restaurant, add_product_to_cart_url: 'restaurant_add_product_to_cart'} %}
 
   <div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">

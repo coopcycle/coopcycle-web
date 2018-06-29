@@ -6,12 +6,12 @@
   {% set step = 3 %}
 {% endif %}
 
-{% if (restaurant is not defined) and (order is defined) %}
-  {% set restaurant = order.restaurant %}
-{% endif %}
-
 <ol class="breadcrumb">
-  <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
+  <li>
+    <a href="{{ path(local_business_url, {'id': local_business.id, 'slug': local_business.name|slugify }) }}">
+        {{ local_business.name }}
+    </a>
+  </li>
   <li {% if step == 2 %}class="active"{% endif %}>
     {% if order is defined %}<a href="{{ path('order') }}">{% endif %}
     {{ 'Delivery'|trans }}
