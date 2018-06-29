@@ -44,6 +44,14 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        api_deliveries_create:
+            pattern:   ^/api/deliveries
+            methods: [ POST ]
+            stateless: true
+            guard:
+                authenticators:
+                    - AppBundle\Security\StoreTokenAuthenticator
+
         api_deliveries:
             pattern:   ^/api/deliveries
             stateless: true

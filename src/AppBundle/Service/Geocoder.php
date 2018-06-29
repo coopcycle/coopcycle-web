@@ -25,6 +25,7 @@ class Geocoder
 
         // For France only, use https://adresse.data.gouv.fr/
         if ('fr' === $country) {
+            // TODO Create own provider to get results with a high score
             $providers[] = AddokProvider::withBANServer($httpClient);
         }
 
