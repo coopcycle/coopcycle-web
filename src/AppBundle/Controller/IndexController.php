@@ -21,21 +21,11 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        $user = $this->getUser();
-
-        if ($user) {
-            $addresses = $user->getAddresses();
-        }
-        else {
-            $addresses = [];
-        }
-
         $restaurants = $this->getDoctrine()
             ->getRepository(Restaurant::class)
             ->findRandom(self::MAX_RESULTS);
 
         return array(
-            'addresses' => $addresses,
             'restaurants' => $restaurants,
             'max_results' => self::MAX_RESULTS,
         );

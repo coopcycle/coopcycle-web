@@ -78,7 +78,7 @@
     "react-dragula": "^1.1.17",
     "react-i18next": "^7.12.0",
     "react-modal": "^3.5.1",
-    "react-places-autocomplete": "git+https://git@github.com/Atala/react-places-autocomplete.git",
+    "react-places-autocomplete": "^7.2.0",
     "react-redux": "^5.0.7",
     "react-stickynode": "^1.4.1",
     "redux-thunk": "^2.3.0",

@@ -126,37 +126,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: $bs-base-margin * 2;
 }
 
-.location-result {
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.location-result--active {
-  background-color: $light-gray;
-}
-
-.location-result--active .location-result--preferred {
-  background-color: $main-blue;
-}
-
-.location-result--preferred {
-  background-color: $main-blue-light;
-}
-
-.location-result--preferred::after {
-  font-family: 'FontAwesome';
-  content: '\F006';
-  color: $main-blue;
-  position: absolute;
-  top: 8px;
-  right: 4px;
-
-  font-size: 18px;
-  text-align: center;
-  width: 30px;
-}
-
 #banner {
   padding: 10px 0;
   background-color: $orange;
@@ -615,13 +584,25 @@ form[name="store"] #store_imageFile_file {
 
 .autocomplete-clear {
   position: absolute;
-  right: 4px;
-  top: 6px;
-  font-size: 18px;
+  border: none;
+  background-color: transparent;
+  right: 0;
+  top: 0;
+  font-size: $font-size-large;
   cursor: pointer;
+  height: $input-height-base;
+  width: $input-height-base;
 }
 
-$input-location-icon-width: 30px;
+.autocomplete-suggestions-wrapper {
+  position: absolute;
+  z-index: 1;
+  background-color: #fff;
+  width: 100%;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
 
 .input-location-wrapper {
   position: relative;
@@ -638,7 +619,8 @@ $input-location-icon-width: 30px;
 
   font-size: 22px;
   text-align: center;
-  width: 30px;
+  width: $input-height-base;
+  line-height: $input-height-base;
   background-color: $main-blue;
 
   // HACK: mimic the bootrstap input border-radius
@@ -647,12 +629,34 @@ $input-location-icon-width: 30px;
 }
 
 .input-location {
-  text-indent: $input-location-icon-width;
+  text-indent: $input-height-base;
+  padding-right: $input-height-base;
 }
 
 .input-height {
   line-height: $bs-input-height;
   height: $bs-input-height;
+}
+
+.location-result {
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.location-result--active {
+  background-color: $light-gray;
+}
+
+.autocomplete-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px;
+  img {
+    display: inline-block;
+    width: 150px;
+  }
 }
 
 // ------------------ Order Timeline ------------------

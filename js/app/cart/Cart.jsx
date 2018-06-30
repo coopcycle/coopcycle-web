@@ -314,7 +314,6 @@ class Cart extends React.Component
             </div>
             <div className="cart">
               <AddressPicker
-                preferredResults={[]}
                 address={address}
                 geohash={geohash}
                 onPlaceChange={this.onAddressSelect} />

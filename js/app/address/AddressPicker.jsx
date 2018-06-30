@@ -10,22 +10,6 @@ const autocompleteOptions = {
   }
 }
 
-const autocompleteStyles = {
-  autocompleteContainer: {
-    zIndex: 1
-  },
-  autocompleteItem: {
-    padding: 0
-  },
-}
-
-const autocompleteClasses = {
-  root: 'form-group input-location-wrapper',
-  input: 'form-control input-location',
-  autocompleteItemActive: 'location-result--active'
-}
-
-
 class AddressPicker extends React.Component {
 
   constructor(props) {
@@ -41,7 +25,6 @@ class AddressPicker extends React.Component {
       geohash: geohash
     }
 
-    this.insertPreferredResults = this.insertPreferredResults.bind(this);
     this.onAddressSelect = this.onAddressSelect.bind(this);
     this.onAddressChange = this.onAddressChange.bind(this);
     this.onAddressBlur = this.onAddressBlur.bind(this);
@@ -65,7 +48,7 @@ class AddressPicker extends React.Component {
   }
 
   onAddressKeyUp(evt) {
-    if(evt.key == 'Enter'){
+    if (evt.key == 'Enter') {
       this.props.onPlaceChange(this.state.geohash, this.state.address);
     }
   }
@@ -98,71 +81,61 @@ class AddressPicker extends React.Component {
     return true;
   }
 
-  insertPreferredResults ({results}, callback) {
-    return callback(this.props.preferredResults.concat(results))
-  }
-
   render () {
-    let { preferredResults, inputProps } = this.props
-    let { address } = this.state
-
-    const AutocompleteItem = (suggestion) => {
-      let classes = ["location-result"]
-
-      if (suggestion.preferred) {
-        classes.push('location-result--preferred')
-      }
-
-      return (
-        <div className={ classes.join(' ') }>
-          { suggestion.suggestion }
-        </div>)
-    }
-
-    inputProps.value = address
-    inputProps.onChange = this.onAddressChange
-    inputProps.onBlur = this.onBlur
-    inputProps.onKeyUp = this.onAddressKeyUp
-    inputProps.placeholder = i18n.t('ENTER_YOUR_ADDRESS')
-
     return (
       <div className="autocomplete-wrapper">
         <PlacesAutocomplete
-          preferredResults={ preferredResults }
-          autocompleteItem={ AutocompleteItem }
-          classNames={ autocompleteClasses }
-          inputProps={ inputProps }
-          options={ autocompleteOptions }
-          styles={ autocompleteStyles }
-          onSelect={ this.onAddressSelect }
-          onSearch={ this.insertPreferredResults }
-          highlightFirstSuggestion={ true }
-          // uncomment this if your debugging the style of the suggested addresses
-          // alwaysRenderSuggestion
-        />
-        { address &&
-          !inputProps.disabled &&
-          <i className="fa fa-times-circle autocomplete-clear" onClick={this.onClear}></i>
-        }
+          value={this.state.address}
+          onChange={this.onAddressChange}
+          onSelect={this.onAddressSelect}
+          searchOptions={autocompleteOptions}
+          highlightFirstSuggestion={true}>
+          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <div className="form-group input-location-wrapper">
+              <input
+                {...getInputProps({
+                  onKeyUp: this.onAddressKeyUp,
+                  onBlur: this.onAddressBlur,
+                  placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
+                  className: 'form-control input-location',
+                })}
+              />
+              { suggestions.length > 0 && (
+                <div className="autocomplete-suggestions-wrapper">
+                  {suggestions.map(suggestion => {
+                    const className = suggestion.active
+                      ? 'location-result location-result--active'
+                      : 'location-result';
+                    return (
+                      <div {...getSuggestionItemProps(suggestion, { className })}>
+                        <span>{suggestion.description}</span>
+                      </div>
+                    );
+                  })}
+                  <div className="autocomplete-footer">
+                    <div>
+                      <img src={ require('./powered_by_google_on_white.png') } />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </PlacesAutocomplete>
+        { this.state.address && (
+          <button className="autocomplete-clear" onClick={this.onClear}>
+            <i className="fa fa-times-circle"></i>
+          </button>
+        )}
       </div>
-    )
+    );
   }
 }
 
-AddressPicker.defaultProps = {
-  inputProps: {}
-}
-
 AddressPicker.propTypes = {
-  preferredResults:  PropTypes.arrayOf(
-    PropTypes.shape({
-      suggestion: PropTypes.string.isRequired,
-      preferred: PropTypes.bool.isRequired,
-  })).isRequired,
   address: PropTypes.string,
   geohash: PropTypes.string.isRequired,
   onPlaceChange: PropTypes.func.isRequired,
-  inputProps: PropTypes.object
 }
 
 export default AddressPicker
