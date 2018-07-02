@@ -175,6 +175,7 @@ restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
 restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperative
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+restaurant.contract.showAdvanced: Show advanced settings
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now be displayed on the restaurant page

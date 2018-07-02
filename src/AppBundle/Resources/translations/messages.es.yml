@@ -181,6 +181,7 @@ restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las con
   de contrato.
 restaurant.contract.noContract: No existen condiciones de contrato. Por favor contacte
   a un administrador.
+restaurant.contract.showAdvanced: Muestra opciones avanzadas
 restaurant.menus.noMenus: No has creado un menú por el momento.
 
 restaurant.menus.activate: Activar
