@@ -166,15 +166,18 @@ class TaskList extends React.Component {
     }
 
     return (
-      <div className="panel panel-default nomargin">
-        <div className="panel-heading">
-          <h3 className="panel-title">
+      <div className="panel panel-default nomargin noradius noborder">
+        <div className="panel-heading  dashboard__panel__heading">
+          <h3
+            className="panel-title"
+            role="button"
+            data-toggle="collapse"
+            data-target={ '#' + collabsableId }
+            aria-expanded={ collapsed ? "false" : "true" }
+          >
             <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
             <a
-              role="button"
-              data-toggle="collapse"
-              data-target={ '#' + collabsableId }
-              aria-expanded={ collapsed ? "false" : "true" }
+              className="dashboard__panel__heading__link"
             >
               { username }
               &nbsp;&nbsp;
