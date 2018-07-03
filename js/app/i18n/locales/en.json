@@ -48,7 +48,7 @@
     "ORDER_FOLLOW_STEP_3_TITLE": "Order is being delivered",
     "ORDER_FOLLOW_STEP_3_DESCRIPTION": "Your order is ready - the courier is coming!",
     "ORDER_FOLLOW_STEP_4_TITLE": "Order delivered!",
-    "ORDER_FOLLOW_STEP_4_DESCRIPTION": "Tret yourself!",
+    "ORDER_FOLLOW_STEP_4_DESCRIPTION": "Treat yourself!",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE": "Delivery expected at {{deliveryTime}} on {{deliveryDate}}.",
     "RULE_PICKER_ADD_CONDITION": "Add condition",
@@ -56,9 +56,9 @@
     "RULE_PICKER_LINE_WEIGHT": "Weight (g)",
     "RULE_PICKER_LINE_BIKE_TYPE": "Bike type",
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
-    "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Dropoff address",
-    "ORDER_LIST_STATE": "État",
-    "ORDER_LIST_PREPARATION_DATE": "Date de préparation",
+    "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Drop-off address",
+    "ORDER_LIST_STATE": "State",
+    "ORDER_LIST_PREPARATION_DATE": "Preparation date",
     "ORDER_LIST_TOTAL": "Total"
   }
 }
