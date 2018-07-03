@@ -48,8 +48,11 @@ class TaskLists extends React.Component {
 
   render() {
 
-    const { addModalIsOpen, taskLists, taskListsLoading, couriersList } = this.props
+    const { addModalIsOpen, taskListsLoading, couriersList } = this.props
+    let { taskLists } = this.props
     let { selectedCourier } = this.state
+
+    taskLists = _.orderBy(taskLists, 'username')
 
     // filter out couriers that are already in planning
     const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
