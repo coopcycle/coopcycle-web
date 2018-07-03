@@ -42,10 +42,10 @@ class OrderList extends React.Component
           <thead>
             <tr>
               <th>#</th>
-              <th>État</th>
-              <th>Date de préparation</th>
+              <th>{ i18n.t("ORDER_LIST_STATE") }</th>
+              <th>{ i18n.t("ORDER_LIST_STATE") }</th>
               <th></th>
-              <th className="text-right">Total</th>
+              <th className="text-right">{ i18n.t("ORDER_LIST_TOTAL") }</th>
             </tr>
           </thead>
           <tbody>

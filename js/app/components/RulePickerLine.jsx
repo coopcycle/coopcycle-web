@@ -1,4 +1,5 @@
 import React from 'react'
+import i18n from '../i18n'
 import parsePricingRule from '../delivery/pricing-rule-parser'
 
 /*
@@ -186,11 +187,11 @@ class RulePickerLine extends React.Component {
         <div className="col-md-3 form-group">
           <select value={this.state.type} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
-            <option value="distance">Distance (m)</option>
-            <option value="weight">Poids (g)</option>
-            <option value="vehicle">Type de vélo</option>
-            <option value="pickup.address">Adresse de retrait</option>
-            <option value="dropoff.address">Adresse de dépôt</option>
+            <option value="distance">{ i18n.t('RULE_PICKER_LINE_DISTANCE') }</option>
+            <option value="weight">{ i18n.t('RULE_PICKER_LINE_WEIGHT') }</option>
+            <option value="vehicle">{ i18n.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
+            <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
+            <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
           </select>
         </div>
         <div className="col-md-3">

@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import dragula from 'react-dragula'
+import { translate } from 'react-i18next'
 import _ from 'lodash'
 import Task from './Task'
 import { removeTasks, modifyTaskList, togglePolyline, toggleTask } from '../store/actions'
@@ -186,7 +187,7 @@ class TaskList extends React.Component {
         <div role="tabpanel" id={ collabsableId } className="collapse">
           { tasks.length > 0 && (
             <div className="panel-body taskList__summary">
-              <strong>Durée</strong>  <span>{ durationFormatted }</span> - <strong>Distance</strong>  <span>{ distanceFormatted }</span>
+              <strong>{ this.props.t('ADMIN_DASHBOARD_DURATION') }</strong>  <span>{ durationFormatted }</span> - <strong>{ this.props.t('ADMIN_DASHBOARD_DISTANCE') }</strong>  <span>{ distanceFormatted }</span>
               <a role="button" className={ polylineClassNames.join(' ') } onClick={ e => this.props.togglePolyline(username) }>
                 <i className="fa fa-map fa-2x"></i>
               </a>
@@ -194,7 +195,7 @@ class TaskList extends React.Component {
           )}
           <div className="list-group dropzone" data-username={ username }>
             <div className="list-group-item text-center dropzone-item">
-              Déposez les livraisons ici
+              { this.props.t('ADMIN_DASHBOARD_DROP_DELIVERIES') }
             </div>
           </div>
           <div ref="taskList" className="taskList__tasks list-group nomargin">
@@ -237,4 +238,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskList)
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskList))

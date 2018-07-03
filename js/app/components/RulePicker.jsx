@@ -1,5 +1,6 @@
 import React from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
+import i18n from '../i18n'
 import RulePickerLine from "./RulePickerLine.jsx"
 
 
@@ -45,7 +46,7 @@ class RulePicker extends React.Component {
         <div className="row">
           <div className="col-xs-12 text-right">
             <button className="btn btn-xs btn-primary" onClick={this.addLine}>
-              <i className="fa fa-plus"></i> Ajouter une condition
+              <i className="fa fa-plus"></i> { i18n.t("RULE_PICKER_ADD_CONDITION") }
             </button>
           </div>
         </div>

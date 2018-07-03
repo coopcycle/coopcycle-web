@@ -20,6 +20,9 @@
     "ADMIN_DASHBOARD_COURIER": "Courier",
     "ADMIN_DASHBOARD_CANCEL": "Cancel",
     "ADMIN_DASHBOARD_ADD": "Add",
+    "ADMIN_DASHBOARD_DURATION": "Duration",
+    "ADMIN_DASHBOARD_DROP_DELIVERIES":"Drag deliveries here",
+    "ADMIN_DASHBOARD_DISTANCE": "Distance",
     "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Add a user to the planning",
     "ADMIN_DASHBOARD_DISPLAY": "Display",
     "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Click on an order to display details",
@@ -47,6 +50,15 @@
     "ORDER_FOLLOW_STEP_4_TITLE": "Order delivered!",
     "ORDER_FOLLOW_STEP_4_DESCRIPTION": "Tret yourself!",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",
-    "ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE": "Delivery expected at {{deliveryTime}} on {{deliveryDate}}."
+    "ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE": "Delivery expected at {{deliveryTime}} on {{deliveryDate}}.",
+    "RULE_PICKER_ADD_CONDITION": "Add condition",
+    "RULE_PICKER_LINE_DISTANCE": "Distance (m)",
+    "RULE_PICKER_LINE_WEIGHT": "Weight (g)",
+    "RULE_PICKER_LINE_BIKE_TYPE": "Bike type",
+    "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
+    "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Dropoff address",
+    "ORDER_LIST_STATE": "État",
+    "ORDER_LIST_PREPARATION_DATE": "Date de préparation",
+    "ORDER_LIST_TOTAL": "Total"
   }
 }
