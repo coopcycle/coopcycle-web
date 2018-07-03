@@ -142,7 +142,10 @@ class OrderManager
         $stripeOptions = array();
 
         if (!is_null($stripeAccount)) {
+
             if($restaurantPaysStripeFee) {
+                // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
+                $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
                 $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
                 $stripeParams['application_fee'] = $applicationFee;
             } else {
@@ -182,12 +185,12 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-        $stripeAccount = $order->getRestaurant()->getStripeAccount();
-        $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
+        $stripeAccount = $stripePayment->getStripeUserId();
         $stripeOptions = array();
 
-        if (!is_null($stripeAccount) && $restaurantPaysStripeFee) {
-            $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
+        // stripe account & needed is set if and only the Stripe charge is a direct charge (restaurant pays stripe fee)
+        if (!is_null($stripeAccount)) {
+            $stripeOptions['stripe_account'] = $stripeAccount;
         }
 
         try {
