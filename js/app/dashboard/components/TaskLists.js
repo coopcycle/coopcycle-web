@@ -6,6 +6,7 @@ import { translate } from 'react-i18next'
 
 import { addTaskList, closeAddUserModal, openAddUserModal } from '../store/actions'
 import TaskList from './TaskList'
+import autoScroll from 'dom-autoscroller'
 
 class TaskLists extends React.Component {
 
@@ -24,6 +25,16 @@ class TaskLists extends React.Component {
     $('#accordion').on('show.bs.collapse', '.collapse', () => {
       $('#accordion').find('.collapse.in').collapse('hide')
     });
+
+    autoScroll([ this.refs.scrollable ],{
+      margin: 20,
+      maxSpeed: 5,
+      scrollWhenOutside: true,
+      autoScroll: function(){
+        //Only scroll when the pointer is down, and there is a child being dragged.
+        return true
+      }
+    })
   }
 
   addUser() {
@@ -42,6 +53,7 @@ class TaskLists extends React.Component {
 
     // filter out couriers that are already in planning
     const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
+
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
@@ -101,23 +113,28 @@ class TaskLists extends React.Component {
             <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
           </div>
         </Modal>
-        <div className="dashboard__panel__scroll" style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
-          <div id="accordion">
+        <div
+          ref="scrollable"
+          id="accordion"
+          className="dashboard__panel__scroll"
+          style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
           {
-            _.map(taskLists, taskList => {
+            _.map(taskLists, (taskList, index) => {
+              let collapsed = !(index === 0)
               return (
                 <TaskList
                   key={ taskList['@id'] }
                   ref={ taskList['@id'] }
+                  collapsed={ collapsed }
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
                   items={ taskList.items }
-                  taskListDidMount={ this.props.taskListDidMount } />
+                  taskListDidMount={ this.props.taskListDidMount }
+                />
               )
             })
           }
-          </div>
         </div>
       </div>
     )
