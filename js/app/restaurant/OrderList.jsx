@@ -43,7 +43,7 @@ class OrderList extends React.Component
             <tr>
               <th>#</th>
               <th>{ i18n.t("ORDER_LIST_STATE") }</th>
-              <th>{ i18n.t("ORDER_LIST_STATE") }</th>
+              <th>{ i18n.t("ORDER_LIST_PREPARATION_DATE") }</th>
               <th></th>
               <th className="text-right">{ i18n.t("ORDER_LIST_TOTAL") }</th>
             </tr>
