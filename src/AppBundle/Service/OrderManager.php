@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
-use AppBundle\Entity\StripeTransfer;
 use AppBundle\Entity\Task;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
@@ -14,11 +13,10 @@ use AppBundle\Event\OrderReadyEvent;
 use AppBundle\Event\OrderRefuseEvent;
 use AppBundle\Event\PaymentAuthorizeEvent;
 use AppBundle\Sylius\Order\OrderTransitions;
-use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Stripe;
-use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -126,6 +124,7 @@ class OrderManager
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
         $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
 
         $applicationFee = $order->getFeeTotal();
 
@@ -140,20 +139,28 @@ class OrderManager
             'capture' => false
         );
 
+        $stripeOptions = array();
+
         if (!is_null($stripeAccount)) {
-            $restaurantStripeId = $stripeAccount->getStripeUserId();
-            $stripeParams['application_fee'] = $applicationFee;
-        } else {
-            $restaurantStripeId = null;
+
+            if($restaurantPaysStripeFee) {
+                // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
+                $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+                $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
+                $stripeParams['application_fee'] = $applicationFee;
+            } else {
+                $stripeParams['destination'] = array(
+                    'account' => $stripeAccount->getStripeUserId(),
+                    'amount' => $order->getTotal() - $applicationFee
+                );
+            }
         }
 
         try {
 
             $charge = Stripe\Charge::create(
                 $stripeParams,
-                array(
-                    'stripe_account' => $restaurantStripeId
-                )
+                $stripeOptions
             );
 
             $stripePayment->setCharge($charge->id);
@@ -178,21 +185,20 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
-        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $stripeAccount = $stripePayment->getStripeUserId();
+        $stripeOptions = array();
 
+        // stripe account & needed is set if and only the Stripe charge is a direct charge (restaurant pays stripe fee)
         if (!is_null($stripeAccount)) {
-            $restaurantStripeId = $stripeAccount->getStripeUserId();
-        } else {
-            $restaurantStripeId = null;
+            $stripeOptions['stripe_account'] = $stripeAccount;
         }
 
         try {
 
             $charge = Stripe\Charge::retrieve(
                 $stripePayment->getCharge(),
-                array(
-                    'stripe_account' => $restaurantStripeId
-            ));
+                $stripeOptions
+            );
 
             if ($charge->captured) {
                 throw new \Exception('Charge already captured');

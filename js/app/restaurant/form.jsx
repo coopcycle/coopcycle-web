@@ -53,7 +53,8 @@ function renderSwitch($input) {
 
   render(
     <Switch defaultChecked={ checked }
-            checkedChildren={ i18n.t('ENABLED') } unCheckedChildren={ i18n.t('DISABLED') }
+            checkedChildren={ i18n.t('ENABLED') }
+            unCheckedChildren={ i18n.t('DISABLED') }
             onChange={(checked) => {
               if (checked) {
                 $parent.append($hidden)

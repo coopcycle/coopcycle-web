@@ -168,6 +168,14 @@
     {{ form_row(form.contract.flatDeliveryPrice, { help: 'restaurant.contract.flatDeliveryPrice.help' }) }}
     {{ form_row(form.contract.customerAmount, { help: 'restaurant.contract.customerAmount.help' }) }}
     {{ form_row(form.contract.feeRate, { help: 'restaurant.contract.feeRate.help' }) }}
+    <p>
+      <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
+        <i class="fa fa-plus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
+      </a>
+    </p>
+    <div class="collapse" id="{{ form.vars.id }}_advanced">
+      {{ form_row(form.contract.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
+    </div>
   {% else %}
     {% if restaurant.id is not null %}
     <div class="row margin-bottom-md">
@@ -193,6 +201,10 @@
               <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
               <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
             </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.restaurantPaysStripeFee ? 'restaurant.contract.restaurantPaysStripeFee.restaurant' | trans : 'restaurant.contract.restaurantPaysStripeFee.cooperative' | trans }}</td>
+            </tr>
           </table>
         </div>
       {% else %}
@@ -206,7 +218,7 @@
     {% endif %}
   {% endif %}
 
-  <div class="row">
+  <div class="row margin-top-l margin-bottom-l">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
       <button type="submit" class="btn btn-block btn-primary">{% trans %}restaurant.form.save{% endtrans %}</button>
     </div>

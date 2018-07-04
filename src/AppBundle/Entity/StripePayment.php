@@ -166,6 +166,18 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
         $this->updatedAt = $updatedAt;
     }
 
+    public function setStripeUserId($stripeUserId)
+    {
+        $this->details = array_merge($this->details, ['stripe_user_id' => $stripeUserId]);
+    }
+
+    public function getStripeUserId()
+    {
+        if (isset($this->details['stripe_user_id'])) {
+            return $this->details['stripe_user_id'];
+        }
+    }
+
     public function setStripeToken($stripeToken)
     {
         $this->details = array_merge($this->details, ['stripe_token' => $stripeToken]);

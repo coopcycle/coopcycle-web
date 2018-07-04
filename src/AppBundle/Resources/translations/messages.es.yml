@@ -173,10 +173,15 @@ restaurant.contract.customerAmount.help: Esta suma se mostrará en el carrito y 
 restaurant.contract.feeRate.label: Porcentaje de comisión
 restaurant.contract.feeRate.help: Este porcentaje será retenido por la plataforma
   en el total de los productos
+restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comisión Stripe, reembolsos y recargos
+restaurant.contract.restaurantPaysStripeFee.help: Escoge que parte será responsable de pagar la comisión de Stripe y gestionar reembolsos y recargos
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurante
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativa
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones
   de contrato.
 restaurant.contract.noContract: No existen condiciones de contrato. Por favor contacte
   a un administrador.
+restaurant.contract.showAdvanced: Muestra opciones avanzadas
 restaurant.menus.noMenus: No has creado un menú por el momento.
 
 restaurant.menus.activate: Activar

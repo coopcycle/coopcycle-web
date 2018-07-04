@@ -47,6 +47,13 @@ class Contract
     private $feeRate;
 
     /**
+     * @var bool
+     * Restaurant pays Stripe fee?
+     * @Assert\Type("bool")
+     */
+    private $restaurantPaysStripeFee = true;
+
+    /**
      * @return Restaurant
      */
     public function getRestaurant()
@@ -104,6 +111,7 @@ class Contract
 
     /**
      * @param float $feeRate
+     * @return Contract;
      */
     public function setFeeRate(float $feeRate)
     {
@@ -123,4 +131,21 @@ class Contract
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRestaurantPaysStripeFee(): bool
+    {
+        return $this->restaurantPaysStripeFee;
+    }
+
+    /**
+     * @param bool $restaurantPaysStripeFee
+     */
+    public function setRestaurantPaysStripeFee(bool $restaurantPaysStripeFee): void
+    {
+        $this->restaurantPaysStripeFee = $restaurantPaysStripeFee;
+    }
+
 }

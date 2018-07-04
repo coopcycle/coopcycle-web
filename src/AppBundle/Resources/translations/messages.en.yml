@@ -169,8 +169,13 @@ restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart and will increase the total amount
 restaurant.contract.feeRate.label: Fee rate
 restaurant.contract.feeRate.help: This percentage will be retained by the platform on the total of the products
+restaurant.contract.restaurantPaysStripeFee.label: Responsible for the cost of the Stripe fees, refunds, and chargebacks
+restaurant.contract.restaurantPaysStripeFee.help: Choose who will be responsible for the cost of the Stripe fees and managing refunds and chargebacks
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperative
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+restaurant.contract.showAdvanced: Show advanced settings
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now be displayed on the restaurant page

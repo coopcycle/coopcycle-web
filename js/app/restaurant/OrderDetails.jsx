@@ -70,7 +70,7 @@ class OrderList extends React.Component {
         <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_ready') }>
             <button type="submit" className="btn btn-block btn-sm btn-success">
-              <i className="fa fa-check" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_READY!') }
+              <i className="fa fa-check" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_READY') }
             </button>
           </form>
         </div>
