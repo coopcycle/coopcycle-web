@@ -6,6 +6,7 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -55,6 +56,10 @@ class ProductOptionType extends AbstractType
                 'by_reference' => false,
                 'label' => false,
                 // 'button_add_label' => 'sylius.form.option_value.add_value',
+            ])
+            ->add('additional', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.product_option.additional.label',
             ]);
     }
 

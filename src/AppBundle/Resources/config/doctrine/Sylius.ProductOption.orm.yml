@@ -9,3 +9,5 @@ AppBundle\Entity\Sylius\ProductOption:
         price:
             type: integer
             nullable: true
+        additional:
+            type: boolean

@@ -29,4 +29,14 @@ interface ProductOptionInterface extends BaseProductOptionInterface
      * @param int|null $price
      */
     public function setPrice(?int $price): void;
+
+    /**
+     * @param boolean $additional
+     */
+    public function setAdditional(bool $additional): void;
+
+    /**
+     * @return boolean
+     */
+    public function isAdditional(): bool;
 }
