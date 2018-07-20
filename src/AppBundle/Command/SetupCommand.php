@@ -30,6 +30,11 @@ class SetupCommand extends ContainerAwareCommand
         'es' => 'Entrega bajo demanda',
     ];
 
+    private $currencies = [
+        'EUR',
+        'GBP',
+    ];
+
     protected function configure()
     {
         $this
@@ -46,6 +51,9 @@ class SetupCommand extends ContainerAwareCommand
         $this->localeRepository = $this->getContainer()->get('sylius.repository.locale');
         $this->localeFactory = $this->getContainer()->get('sylius.factory.locale');
 
+        $this->currencyRepository = $this->getContainer()->get('sylius.repository.currency');
+        $this->currencyFactory = $this->getContainer()->get('sylius.factory.currency');
+
         $this->slugify = $this->getContainer()->get('slugify');
     }
 
@@ -56,6 +64,11 @@ class SetupCommand extends ContainerAwareCommand
         $output->writeln('<info>Checking Sylius locales are present…</info>');
         foreach ($this->locales as $locale) {
             $this->createSyliusLocale($locale, $output);
+        }
+
+        $output->writeln('<info>Checking Sylius currencies are present…</info>');
+        foreach ($this->currencies as $currencyCode) {
+            $this->createSyliusCurrency($currencyCode, $output);
         }
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
@@ -77,6 +90,23 @@ class SetupCommand extends ContainerAwareCommand
         $this->localeRepository->add($locale);
 
         $output->writeln(sprintf('Sylius locale "%s" created', $code));
+    }
+
+    private function createSyliusCurrency($code, OutputInterface $output)
+    {
+        $currency = $this->currencyRepository->findOneByCode($code);
+
+        if (null !== $currency) {
+            $output->writeln(sprintf('Sylius currency "%s" already exists', $code));
+            return;
+        }
+
+        $currency = $this->currencyFactory->createNew();
+        $currency->setCode($code);
+
+        $this->currencyRepository->add($currency);
+
+        $output->writeln(sprintf('Sylius currency "%s" created', $code));
     }
 
     private function createOnDemandDeliveryProduct(OutputInterface $output)
