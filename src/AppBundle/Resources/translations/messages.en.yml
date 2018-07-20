@@ -376,6 +376,7 @@ form.settings.default_tax_category.label: VAT rate for deliveries
 form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
+form.settings.currency_code.label: Currency
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.

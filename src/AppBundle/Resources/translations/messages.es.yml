@@ -399,6 +399,7 @@ form.settings.default_tax_category.label: IVA para entregas
 form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Correo del administrador
 form.settings.administrator_email.help: Las notificaciones se enviarán a éste correo
+form.settings.currency_code.label: Moneda
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números

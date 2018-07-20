@@ -418,6 +418,7 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
   A-Z, chiffres 0-9) à l''exception des underscores.
 
   '
+form.settings.currency_code.label: Devise
 form.local_business.stripe_account.placeholder: Choisissez un compte Stripe
 form.local_business.stripe_account.title: Compte Stripe
 form.local_business.stripe_account.success: Compte Stripe créé avec succès.
