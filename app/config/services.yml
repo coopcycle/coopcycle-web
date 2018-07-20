@@ -34,6 +34,12 @@ services:
     tags:
       - { name: sylius.context.locale, priority: 64 }
 
+  sylius.context.currency.settings_aware:
+    class: AppBundle\Sylius\Currency\SettingsAwareCurrencyContext
+    arguments: ['@coopcycle.settings_manager']
+    tags:
+      - { name: sylius.context.currency }
+
   sylius.order_processing.order_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
     arguments:
