@@ -48,6 +48,7 @@ twig:
         settings_manager: "@coopcycle.settings_manager"
         piwik_site_id: "%piwik_site_id%"
         piwik_disabled: "%kernel.debug%"
+        currency_context: "@sylius.context.currency"
 
 # Doctrine Configuration
 doctrine:
