@@ -69,7 +69,7 @@ class OrderList extends React.Component
         <td><OrderLabel order={ order } /></td>
         <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.shippedAt).format('lll') }</td>
         <td>{ `${order.items.length} plats` }</td>
-        <td className="text-right">{ (order.total / 100).formatMoney() }</td>
+        <td className="text-right">{ (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
       </tr>
     )
   }

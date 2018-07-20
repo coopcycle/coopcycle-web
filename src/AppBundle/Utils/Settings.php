@@ -50,4 +50,6 @@ class Settings
     public $latlng;
 
     public $default_tax_category;
+
+    public $currency_code;
 }

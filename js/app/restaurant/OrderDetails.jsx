@@ -94,7 +94,7 @@ class OrderList extends React.Component {
                 { hasAdjustments(item) && ( <br /> ) }
                 { hasAdjustments(item) && this.renderOrderItemAdjustments(item) }
               </td>
-              <td className="text-right">{ (item.total / 100).formatMoney() }</td>
+              <td className="text-right">{ (item.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
             </tr>
           ) }
         </tbody>
@@ -118,11 +118,11 @@ class OrderList extends React.Component {
         <tbody>
           <tr>
             <td><strong>Total TTC</strong></td>
-            <td className="text-right"><strong>{ (this.state.order.total / 100).formatMoney() }</strong></td>
+            <td className="text-right"><strong>{ (this.state.order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong></td>
           </tr>
           <tr>
             <td><strong>Dont TVA</strong></td>
-            <td className="text-right"><strong>{ (this.state.order.taxTotal / 100).formatMoney() }</strong></td>
+            <td className="text-right"><strong>{ (this.state.order.taxTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong></td>
           </tr>
         </tbody>
       </table>

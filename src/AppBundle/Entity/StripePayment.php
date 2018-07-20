@@ -203,15 +203,4 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
             return $this->details['last_error'];
         }
     }
-
-    public static function create(OrderInterface $order)
-    {
-        $stripePayment = new self();
-
-        $stripePayment->setOrder($order);
-        $stripePayment->setAmount($order->getTotal());
-        $stripePayment->setCurrencyCode('EUR');
-
-        return $stripePayment;
-    }
 }

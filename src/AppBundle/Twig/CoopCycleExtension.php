@@ -9,7 +9,7 @@ class CoopCycleExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFilter('meters_to_kilometers', array($this, 'metersToKilometers')),
             new \Twig_SimpleFilter('seconds_to_minutes', array($this, 'secondsToMinutes')),
-            new \Twig_SimpleFilter('price_format', array($this, 'priceFormat')),
+            new \Twig_SimpleFilter('price_format', array(PriceFormatResolver::class, 'priceFormat')),
             new \Twig_SimpleFilter('order_can_transition', array(OrderStateResolver::class, 'orderCanTransitionFilter')),
             new \Twig_SimpleFilter('sylius_resolve_variant', array(SyliusVariantResolver::class, 'resolveVariant')),
         );
@@ -30,10 +30,5 @@ class CoopCycleExtension extends \Twig_Extension
     public function secondsToMinutes($seconds)
     {
         return sprintf('%d min', ceil($seconds / 60));
-    }
-
-    public function priceFormat($cents)
-    {
-        return number_format($cents / 100, 2);
     }
 }

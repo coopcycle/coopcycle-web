@@ -76,7 +76,7 @@
                     <small class="menu-item-description">{{ product.description }}</small>
                   {%  endif %}
                 </span>
-                <span class="menu-item-price">{{ variant.price|price_format }} €</span>
+                <span class="menu-item-price">{{ variant.price|price_format }}</span>
               </a>
             {% endif %}
           {% endfor %}
@@ -124,7 +124,7 @@
                 {% for option in product.options %}
                 <h4>
                   {{ option.name }}
-                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
+                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}
                 </h4>
                 <div class="list-group" {% if not option.additional %}data-product-option{% endif %}>
                   {% for option_value in option.values %}
@@ -137,7 +137,7 @@
                               value="{{ option_value.code }}" type="checkbox">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                              +{{ option_value.price|price_format }}€
+                              +{{ option_value.price|price_format }}
                             {% endif %}
                           </label>
                         </div>
@@ -149,7 +149,7 @@
                               value="{{ option_value.code }}" type="radio">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
-                              +{{ option_value.price|price_format }}€
+                              +{{ option_value.price|price_format }}
                             {% endif %}
                           </label>
                         </div>

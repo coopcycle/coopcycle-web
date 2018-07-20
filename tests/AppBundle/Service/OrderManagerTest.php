@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use SM\StateMachine\StateMachineInterface;
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -39,6 +40,7 @@ class OrderManagerTest extends TestCase
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->stateMachineFactory = $this->prophesize(StateMachineFactoryInterface::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
+        $this->currencyContext = $this->prophesize(CurrencyContextInterface::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
         $this->settingsManager
@@ -50,6 +52,7 @@ class OrderManagerTest extends TestCase
             $this->routing->reveal(),
             $this->stateMachineFactory->reveal(),
             $this->settingsManager->reveal(),
+            $this->currencyContext->reveal(),
             $this->eventDispatcher->reveal()
         );
     }
