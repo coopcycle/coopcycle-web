@@ -75,7 +75,8 @@
         "duccio/apns-php": "^1.0",
         "sylius/taxonomy-bundle": "^1.2",
         "sonata-project/seo-bundle": "^2.5",
-        "sylius/currency-bundle": "^1.2"
+        "sylius/currency-bundle": "^1.2",
+        "ocramius/proxy-manager": "2.1.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
