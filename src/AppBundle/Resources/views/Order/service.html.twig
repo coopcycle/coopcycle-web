@@ -138,7 +138,7 @@
         {% include '@App/_partials/Payment/state.html.twig' with { payment: payment } %}
       </td>
       <td class="text-right">
-        {{ payment.amount|price_format }} €
+        {{ payment.amount|price_format }}
       </td>
       <td class="text-right">
         {{ payment.updatedAt|localizeddate('medium', 'short') }}
