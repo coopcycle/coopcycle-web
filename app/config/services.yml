@@ -9,6 +9,7 @@ services:
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
+  Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
 
   app.locale_listener:
     class: AppBundle\EventListener\LocaleListener
@@ -178,6 +179,7 @@ services:
       - "@routing_service"
       - "@sm.factory"
       - "@coopcycle.settings_manager"
+      - "@sylius.context.currency"
       - "@event_dispatcher"
 
   coopcycle.delivery.manager:
@@ -388,6 +390,15 @@ services:
   coopcycle.twig.runtime.setting_resolver:
     class: AppBundle\Twig\SettingResolver
     arguments: [ '@coopcycle.settings_manager' ]
+    public: false
+    tags:
+      - { name: twig.runtime }
+
+  coopcycle.twig.runtime.price_format_resolver:
+    class: AppBundle\Twig\PriceFormatResolver
+    arguments:
+      - '@sylius.context.currency'
+      - '@sylius.templating.helper.currency'
     public: false
     tags:
       - { name: twig.runtime }

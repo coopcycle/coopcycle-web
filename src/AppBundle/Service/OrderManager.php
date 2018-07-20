@@ -17,6 +17,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Stripe;
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -27,6 +28,7 @@ class OrderManager
     private $routing;
     private $stateMachineFactory;
     private $settingsManager;
+    private $currencyContext;
     private $eventDispatcher;
 
     public function __construct(
@@ -34,12 +36,14 @@ class OrderManager
         RoutingInterface $routing,
         StateMachineFactoryInterface $stateMachineFactory,
         SettingsManager $settingsManager,
+        CurrencyContextInterface $currencyContext,
         EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
         $this->routing = $routing;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->settingsManager = $settingsManager;
+        $this->currencyContext = $currencyContext;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -225,7 +229,11 @@ class OrderManager
             return;
         }
 
-        $payment = StripePayment::create($order);
+        $payment = new StripePayment();
+        $payment->setOrder($order);
+        $payment->setAmount($order->getTotal());
+        $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
+
         $order->addPayment($payment);
     }
 
