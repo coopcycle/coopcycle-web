@@ -84,7 +84,7 @@ class Cart extends React.Component
           { adjustments.delivery.map(adjustment =>
             <div key={ adjustment.id }>
               <span>{ adjustment.label }</span>
-              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
+              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
             </div>
           )}
         </div>
@@ -101,12 +101,12 @@ class Cart extends React.Component
           <hr />
           <div>
             <span>Total produits</span>
-            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
+            <strong className="pull-right">{ (itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
             <span>Total</span>
-            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
+            <strong className="pull-right">{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
         </div>
       )

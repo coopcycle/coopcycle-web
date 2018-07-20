@@ -41,7 +41,7 @@ function calculatePrice(distance, pickup, dropoff) {
         $('#no-price-warning').show()
         $('#delivery_price').text('')
       } else {
-        $('#delivery_price').text((price / 100).formatMoney())
+        $('#delivery_price').text((price / 100).formatMoney(2, window.AppData.currencySymbol))
       }
       enableForm()
     })

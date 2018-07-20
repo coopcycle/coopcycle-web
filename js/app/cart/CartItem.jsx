@@ -11,7 +11,7 @@ class CartItem extends React.Component {
           { adjustments.menu_item_modifier.map(adjustment =>
             <div key={ adjustment.id }>
               <small>{ adjustment.label }</small>
-              <small className="pull-right">{ (adjustment.amount / 100).formatMoney() }</small>
+              <small className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</small>
             </div>
           )}
         </div>
@@ -34,7 +34,7 @@ class CartItem extends React.Component {
           <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.onClickRemove()}>
             <span aria-hidden="true">×</span>
           </button>
-          <span className="pull-right">{ (this.props.total / 100).formatMoney() }</span>
+          <span className="pull-right">{ (this.props.total / 100).formatMoney(2, window.AppData.currencySymbol) }</span>
         </div>
         { this.renderAdjustments() }
       </div>
