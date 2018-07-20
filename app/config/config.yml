@@ -254,6 +254,9 @@ sylius_taxonomy:
 sylius_locale:
     locale: "%locale%"
 
+sylius_currency:
+    driver: doctrine/orm
+
 knp_snappy:
     pdf:
         enabled:    true
