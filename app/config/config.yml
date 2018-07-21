@@ -9,7 +9,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: "%coopcycle.locale%"
-    locale_regex: fr|en|es
+    locale_regex: fr|en|es|de
 
 framework:
     #esi:             ~

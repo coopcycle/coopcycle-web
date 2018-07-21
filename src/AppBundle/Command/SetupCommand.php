@@ -21,13 +21,15 @@ class SetupCommand extends ContainerAwareCommand
     private $locales = [
         'fr',
         'en',
-        'es'
+        'es',
+        'de'
     ];
 
     private $onDemandDeliveryProductNames = [
         'fr' => 'Livraison à la demande',
         'en' => 'On demand delivery',
         'es' => 'Entrega bajo demanda',
+        'de' => 'Lieferung auf Anfrage'
     ];
 
     private $currencies = [
