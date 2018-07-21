@@ -48,6 +48,7 @@ twig:
         settings_manager: "@coopcycle.settings_manager"
         piwik_site_id: "%piwik_site_id%"
         piwik_disabled: "%kernel.debug%"
+        currency_context: "@sylius.context.currency"
 
 # Doctrine Configuration
 doctrine:
@@ -254,6 +255,9 @@ sylius_taxonomy:
 sylius_locale:
     locale: "%locale%"
 
+sylius_currency:
+    driver: doctrine/orm
+
 knp_snappy:
     pdf:
         enabled:    true
@@ -276,3 +280,15 @@ m6_statsd:
 knp_paginator:
     template:
         pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig'
+
+sonata_seo:
+    encoding: UTF-8
+    page:
+        title: CoopCycle
+        metas:
+            name:
+                robots: index, follow
+            http-equiv:
+                'Content-Type': text/html; charset=utf-8
+            charset:
+                UTF-8: ''

@@ -1,6 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import Switch from 'antd/lib/switch'
+import i18n from '../i18n'
 
 var $deliveryService = $('#restaurant_deliveryService_type')
 $deliveryService.change(function() {
@@ -52,7 +53,8 @@ function renderSwitch($input) {
 
   render(
     <Switch defaultChecked={ checked }
-            checkedChildren={ window.AppData.__i18n['Enabled'] } unCheckedChildren={ window.AppData.__i18n['Disabled'] }
+            checkedChildren={ i18n.t('ENABLED') }
+            unCheckedChildren={ i18n.t('DISABLED') }
             onChange={(checked) => {
               if (checked) {
                 $parent.append($hidden)

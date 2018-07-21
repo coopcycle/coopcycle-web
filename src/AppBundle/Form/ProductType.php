@@ -6,7 +6,6 @@ use AppBundle\Entity\Sylius\ProductOption;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
-use Sylius\Component\Product\Generator\ProductVariantGeneratorInterface;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -16,7 +15,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -25,16 +23,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
 {
-    private $variantGenerator;
     private $variantFactory;
     private $variantResolver;
 
     public function __construct(
-        ProductVariantGeneratorInterface $variantGenerator,
         ProductVariantFactoryInterface $variantFactory,
         ProductVariantResolverInterface $variantResolver)
     {
-        $this->variantGenerator = $variantGenerator;
         $this->variantFactory = $variantFactory;
         $this->variantResolver = $variantResolver;
     }
@@ -82,29 +77,12 @@ class ProductType extends AbstractType
 
             if (null !== $product->getId()) {
 
-                if ($product->hasOptions()) {
-                    $this->variantGenerator->generate($product);
-                }
-
                 $variant = $this->variantResolver->getVariant($product);
 
                 // To keep things simple, all variants have the same price & tax category
                 $form->get('price')->setData($variant->getPrice());
                 $form->get('taxCategory')->setData($variant->getTaxCategory());
-
-                foreach ($product->getVariants() as $variant) {
-                    $variant->setName($product->getName());
-                }
             }
-
-            $form->add('variants', CollectionType::class, [
-                'entry_type' => ProductVariantType::class,
-                'allow_add' => false,
-                'allow_delete' => false,
-                'prototype' => false,
-                'label' => false,
-            ]);
-
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -119,23 +97,17 @@ class ProductType extends AbstractType
                 $product->setCode($uuid);
                 $product->setSlug($uuid);
 
-                if ($product->hasOptions()) {
-                    $this->variantGenerator->generate($product);
-                } else {
-                    $variant = $this->variantFactory->createForProduct($product);
-                    $product->addVariant($variant);
-                }
-
                 $price = $form->get('price')->getData();
                 $taxCategory = $form->get('taxCategory')->getData();
 
-                foreach ($product->getVariants() as $variant) {
-                    $variant->setName($product->getName());
-                    $variant->setCode(Uuid::uuid4()->toString());
-                    $variant->setPrice($price);
-                    $variant->setTaxCategory($taxCategory);
-                }
+                $variant = $this->variantFactory->createForProduct($product);
 
+                $variant->setName($product->getName());
+                $variant->setCode(Uuid::uuid4()->toString());
+                $variant->setPrice($price);
+                $variant->setTaxCategory($taxCategory);
+
+                $product->addVariant($variant);
             }
         });
     }

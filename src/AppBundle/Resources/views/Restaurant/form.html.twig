@@ -125,7 +125,7 @@
   <hr>
 
   {# Stripe accounts have to be created by restaurant owner itself so we link it to correct account in callback #}
-  <h4>Compte Stripe</h4>
+  <h4>{% trans %}form.local_business.stripe_account.title{% endtrans %}</h4>
   {% if is_granted('ROLE_ADMIN') and restaurant.stripeAccount is null %}
     <div class="alert alert-warning">
       {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}
@@ -168,6 +168,14 @@
     {{ form_row(form.contract.flatDeliveryPrice, { help: 'restaurant.contract.flatDeliveryPrice.help' }) }}
     {{ form_row(form.contract.customerAmount, { help: 'restaurant.contract.customerAmount.help' }) }}
     {{ form_row(form.contract.feeRate, { help: 'restaurant.contract.feeRate.help' }) }}
+    <p>
+      <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
+        <i class="fa fa-plus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
+      </a>
+    </p>
+    <div class="collapse" id="{{ form.vars.id }}_advanced">
+      {{ form_row(form.contract.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
+    </div>
   {% else %}
     {% if restaurant.id is not null %}
     <div class="row margin-bottom-md">
@@ -179,19 +187,23 @@
           <table class="table">
             <tr>
               <th>{% trans %}restaurant.contract.minimumCartAmount.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.minimumCartAmount|price_format }}€</td>
+              <td class="text-right">{{ restaurant.contract.minimumCartAmount|price_format }}</td>
             </tr>
             <tr>
               <th>{% trans %}restaurant.contract.customerAmount.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.customerAmount|price_format }}€</td>
+              <td class="text-right">{{ restaurant.contract.customerAmount|price_format }}</td>
             </tr>
             <tr>
               <th>{% trans %}restaurant.contract.flatDeliveryPrice.label{% endtrans %}</th>
-              <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}€</td>
+              <td class="text-right">{{ restaurant.contract.flatDeliveryPrice|price_format }}</td>
             </tr>
             <tr>
               <th>{% trans %}restaurant.contract.feeRate.label{% endtrans %}</th>
               <td class="text-right">{{ (restaurant.contract.feeRate * 100) }}%</td>
+            </tr>
+            <tr>
+              <th>{% trans %}restaurant.contract.restaurantPaysStripeFee.label{% endtrans %}</th>
+              <td class="text-right">{{ restaurant.contract.restaurantPaysStripeFee ? 'restaurant.contract.restaurantPaysStripeFee.restaurant' | trans : 'restaurant.contract.restaurantPaysStripeFee.cooperative' | trans }}</td>
             </tr>
           </table>
         </div>
@@ -206,7 +218,7 @@
     {% endif %}
   {% endif %}
 
-  <div class="row">
+  <div class="row margin-top-l margin-bottom-l">
     <div class="col-md-6 col-md-offset-3 col-xs-12">
       <button type="submit" class="btn btn-block btn-primary">{% trans %}restaurant.form.save{% endtrans %}</button>
     </div>
@@ -221,9 +233,6 @@
 <script type="text/javascript">
 
   window.AppData = window.AppData || {};
-  window.AppData.__i18n = window.AppData.__i18n || {};
-  window.AppData.__i18n['Enabled'] = "{% trans %}localBusiness.form.enabled{% endtrans %}";
-  window.AppData.__i18n['Disabled'] = "{% trans %}localBusiness.form.disabled{% endtrans %}";
   window.AppData.__isActivable = {% if 'enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys %}false{% else %}true{% endif %};
   window.AppData.deliveryPerimeterExpression = {{ deliveryPerimeterExpression|raw }};
   window.AppData.zones = {{ zoneNames|raw }};

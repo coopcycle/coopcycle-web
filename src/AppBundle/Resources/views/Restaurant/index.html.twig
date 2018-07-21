@@ -76,7 +76,7 @@
                     <small class="menu-item-description">{{ product.description }}</small>
                   {%  endif %}
                 </span>
-                <span class="menu-item-price">{{ variant.price|price_format }} €</span>
+                <span class="menu-item-price">{{ variant.price|price_format }}</span>
               </a>
             {% endif %}
           {% endfor %}
@@ -124,20 +124,36 @@
                 {% for option in product.options %}
                 <h4>
                   {{ option.name }}
-                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}€{% endif %}
+                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}
                 </h4>
-                <div class="list-group" data-product-option>
+                <div class="list-group" {% if not option.additional %}data-product-option{% endif %}>
                   {% for option_value in option.values %}
                     <div class="list-group-item modifier-item">
-                      <div class="radio nomargin">
-                        <label>
-                          <input
-                            name="options[{{ option.code }}]"
-                            value="{{ option_value.code }}" type="radio">
-                          {{ option_value.value }}
-                          {% if option.strategy == 'option_value' %} - {{ option_value.price|price_format }}€{% endif %}
-                        </label>
-                      </div>
+                      {% if option.additional %}
+                        <div class="checkbox nomargin">
+                          <label>
+                            <input
+                              name="options[{{ option.code }}][]"
+                              value="{{ option_value.code }}" type="checkbox">
+                            {{ option_value.value }}
+                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                              +{{ option_value.price|price_format }}
+                            {% endif %}
+                          </label>
+                        </div>
+                      {% else %}
+                        <div class="radio nomargin">
+                          <label>
+                            <input
+                              name="options[{{ option.code }}]"
+                              value="{{ option_value.code }}" type="radio">
+                            {{ option_value.value }}
+                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                              +{{ option_value.price|price_format }}
+                            {% endif %}
+                          </label>
+                        </div>
+                      {% endif %}
                     </div>
                   {% endfor %}
                 </div>
@@ -191,7 +207,7 @@ $('[data-product-code]').on('click', function(e) {
   window.AppData.CartHelper.addProduct($target.attr('href'), 1);
 })
 
-// Make sure all options have been checked
+// Make sure all (non-additional) options have been checked
 $('form[data-product-options] input[type="radio"]').on('click', function(e) {
 
   var $options = $(this).closest('form').find('[data-product-option]');
@@ -213,9 +229,18 @@ $('form[data-product-options]').on('submit', function(e) {
     $(this).closest('.modal').modal('hide');
     // Uncheck all options
     $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
-    $(this).closest('form').find('button[type="submit"]').attr('disabled', true);
+    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
   }
 })
+
+$('.modal').on('shown.bs.modal', function(e) {
+  var $form = $(this).find('form[data-product-options]');
+  if ($form.length === 1) {
+    var $options = $form.find('[data-product-option]');
+    var disabled = $options.length > 0;
+    $form.find('button[type="submit"]').attr('disabled', disabled);
+  }
+});
 
 function initMap() {
 
@@ -236,7 +261,7 @@ function initMap() {
       availabilities: {{ availabilities|json_encode()|raw }}
     },
     cartURL: "{{ path('restaurant_cart', { id: restaurant.id }) }}",
-    removeFromCartURL: "{{ path('restaurant_remove_from_cart', { restaurantId: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+    removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
     resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
     onCartWarning: function() {
       $('#cart-warning-modal').modal('show');

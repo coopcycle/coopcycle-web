@@ -12,9 +12,11 @@ Feature: Orders
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
-      | email     | bob@coopcycle.org |
-      | password  | 123456            |
-      | telephone | 0033612345678     |
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+      | givenName  | Bob               |
+      | familyName | Doe               |
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
       | geo           | 48.855799, 2.359207 |
@@ -51,7 +53,9 @@ Feature: Orders
         "@id":"@string@.startsWith('/api/api_users')",
         "@type":"ApiUser",
         "username":"bob",
-        "telephone": "+33612345678"
+        "telephone": "+33612345678",
+        "givenName":"Bob",
+        "familyName":"Doe"
       },
       "restaurant":{
         "@id":"/api/restaurants/1",

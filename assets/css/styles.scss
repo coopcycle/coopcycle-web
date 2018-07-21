@@ -41,6 +41,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: $base-margin 0;
   margin-top: $base-margin-l;
   background-color: $main-blue;
+  color: $white;
 
   a.footer-link {
     color: $white;
@@ -325,14 +326,6 @@ $cart-heading-height: 40px;
 .menu-item:after {
   font-family: 'Glyphicons Halflings';
   content: "\002b";
-  color: #bdc3c7;
-  position: absolute;
-  right: 15px;
-}
-
-.modifier-item:after {
-  font-family: 'FontAwesome';
-  content: "\F00C";
   color: #bdc3c7;
   position: absolute;
   right: 15px;
@@ -694,6 +687,7 @@ $order-follow--number-width: 26px;
     &__expression {
       flex: 8;
       padding-right: 15px;
+      width: 0;
     }
     &__price {
       flex: 4;
@@ -714,6 +708,7 @@ $order-follow--number-width: 26px;
     pre {
       margin: 0;
       font-size: 11px;
+      white-space: pre-wrap;
     }
   }
 }

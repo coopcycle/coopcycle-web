@@ -224,8 +224,8 @@ trait RestaurantTrait
             'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
             'orders' => $orders,
             'order' => $order,
-            'orders_normalized' => $this->get('serializer')->normalize($orders, 'json', ['groups' => ['order']]),
-            'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
+            'orders_normalized' => $this->get('serializer')->normalize($orders, null, ['groups' => ['order']]),
+            'order_normalized' => $this->get('serializer')->normalize($order, null, ['groups' => ['order']]),
             'routes' => $routes,
             'date' => $date,
         ], $routes));

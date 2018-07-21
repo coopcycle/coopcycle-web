@@ -18,6 +18,7 @@ class Settings
     private $keys = [
         'stripe_publishable_key',
         'google_api_key',
+        'latlng',
     ];
 
     public function __construct(SettingsManager $settingsManager, $country, $locale)
@@ -43,6 +44,10 @@ class Settings
 
         foreach ($this->keys as $key) {
             $data[$key] = $this->settingsManager->get($key);
+        }
+
+        if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
+            return new JsonResponse(sha1(json_encode($data)));
         }
 
         return new JsonResponse($data);

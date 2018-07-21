@@ -10,7 +10,7 @@
         {{ item.variant.name }} <span class="text-muted">× {{ item.quantity }}</span>
       </td>
       <td class="text-right">
-        {{ item.total|price_format }} €
+        {{ item.total|price_format }}
       </td>
     </tr>
   {% endfor %}
@@ -19,13 +19,13 @@
     <tr>
       <th>Total TTC</th>
       <td class="text-right">
-        {{ order.total|price_format }}€
+        {{ order.total|price_format }}
       </td>
     </tr>
     <tr>
       <th>Dont TVA</th>
       <td class="text-right">
-        {{ order.taxTotal|price_format }}€
+        {{ order.taxTotal|price_format }}
       </td>
     </tr>
   </tfoot>

@@ -53,7 +53,7 @@ describe('Connect to WebSocket', function() {
       var ws = new WebSocket('http://localhost:8000');
       ws.onopen = reject;
       ws.onerror = function(e) {
-        assert.equal('unexpected server response (401)', e.message);
+        assert.equal('Unexpected server response: 401', e.message);
         resolve();
       };
     });
@@ -69,7 +69,7 @@ describe('Connect to WebSocket', function() {
       });
       ws.onopen = reject;
       ws.onerror = function(e) {
-        assert.equal('unexpected server response (401)', e.message);
+        assert.equal('Unexpected server response: 401', e.message);
         resolve();
       };
     });

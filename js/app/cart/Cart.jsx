@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import Sticky from 'react-stickynode';
+import React from 'react'
+import PropTypes from 'prop-types'
+import _ from 'lodash'
+import Sticky from 'react-stickynode'
+import i18n from '../i18n'
 
-import CartItem from './CartItem.jsx';
-import DatePicker from './DatePicker.jsx';
-import AddressPicker from "../address/AddressPicker.jsx";
+import CartItem from './CartItem.jsx'
+import DatePicker from './DatePicker.jsx'
+import AddressPicker from "../address/AddressPicker.jsx"
 
 class Cart extends React.Component
 {
@@ -83,7 +84,7 @@ class Cart extends React.Component
           { adjustments.delivery.map(adjustment =>
             <div key={ adjustment.id }>
               <span>{ adjustment.label }</span>
-              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
+              <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
             </div>
           )}
         </div>
@@ -100,12 +101,12 @@ class Cart extends React.Component
           <hr />
           <div>
             <span>Total produits</span>
-            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
+            <strong className="pull-right">{ (itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
             <span>Total</span>
-            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
+            <strong className="pull-right">{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
         </div>
       )
@@ -117,7 +118,7 @@ class Cart extends React.Component
     let { items, toggled, errors, date, geohash, address, loading } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
-        cartTitleKey = isMobileCart ? 'cart.widget.button' : 'Cart'
+        cartTitleKey = isMobileCart ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
 
     if (items.length > 0) {
       let cartItemComponents = items.map((item, key) => {
@@ -137,7 +138,7 @@ class Cart extends React.Component
         <div className="cart__items">{cartItemComponents}</div>
       )
     } else {
-      cartContent = ( <div className="alert alert-warning">Votre panier est vide</div> )
+      cartContent = ( <div className="alert alert-warning">{i18n.t("CART_EMPTY")}</div> )
     }
 
     const itemCount = _.reduce(items, function(memo, item) {
@@ -179,7 +180,7 @@ class Cart extends React.Component
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
             <span className="cart-heading--items">{ itemCount }</span>
             <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
-            { this.props.i18n[cartTitleKey] }
+            { i18n.t('CART_TITLE') }
           </div>
           <div className="panel-body">
             { this.renderWarningAlerts(warningAlerts) }
@@ -200,7 +201,7 @@ class Cart extends React.Component
               { this.renderTotal() }
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>
-                { loading && <i className="fa fa-spinner fa-spin"></i> }  <span>Commander</span>
+                { loading && <i className="fa fa-spinner fa-spin"></i> }  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
               </a>
             </div>
           </div>

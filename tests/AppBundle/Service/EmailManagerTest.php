@@ -26,7 +26,7 @@ class EmailManagerTest extends TestCase
         );
     }
 
-    public function testCreateMessage()
+    public function testCreateHtmlMessage()
     {
         $this->settingsManager
             ->get('brand_name')
@@ -35,6 +35,25 @@ class EmailManagerTest extends TestCase
         $message = $this->emailManager->createHtmlMessage();
 
         $this->assertEquals(['transactional@coopcycle.org' => 'Acme'], $message->getFrom());
+        $this->assertEquals(['transactional@coopcycle.org' => 'Acme'], $message->getSender());
+        $this->assertNull($message->getReplyTo());
+    }
+
+    public function testCreateHtmlMessageWithReplyTo()
+    {
+        $this->settingsManager
+            ->get('brand_name')
+            ->willReturn('Acme');
+
+        $this->settingsManager
+            ->get('administrator_email')
+            ->willReturn('admin@acme.com');
+
+        $message = $this->emailManager->createHtmlMessageWithReplyTo();
+
+        $this->assertEquals(['transactional@coopcycle.org' => 'Acme'], $message->getFrom());
+        $this->assertEquals(['transactional@coopcycle.org' => 'Acme'], $message->getSender());
+        $this->assertEquals(['admin@acme.com' => 'Acme'], $message->getReplyTo());
     }
 
     public function testMessageIsNotSentToDemoUser()

@@ -32,14 +32,6 @@
 
 {% block scripts %}
 <script>
-window.__order_status_i18n = {
-  'new':      "{{ 'order.state.new'|trans }}",
-  'accepted': "{{ 'order.state.accepted'|trans }}",
-  'refused':  "{{ 'order.state.refused'|trans }}",
-  'fulfilled':  "{{ 'order.state.fulfilled'|trans }}",
-  'cancelled':  "{{ 'order.state.cancelled'|trans }}",
-  'ready':  "{{ 'order.state.ready'|trans }}"
-};
 window.__restaurant = {{ restaurant_json|raw }};
 window.__orders = {{ orders_normalized|json_encode()|raw }};
 window.__order = {{ order_normalized|json_encode()|raw }};
@@ -52,16 +44,6 @@ window.__routes = {
   'dashboard_order': "{{ path(routes.dashboard_order, { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
   'user_details':    "{{ path(routes.user_details,    { username: '__USERNAME__' }) }}",
 };
-window.__i18n = {
-  "No orders yet": "{% trans %}adminDashboard.orders.noOrders{% endtrans %}",
-  "Click on an order to display details": "{% trans %}adminDashboard.orders.clickForDetails{% endtrans %}",
-  "Order": "{% trans %}adminDashboard.orders.order{% endtrans %}",
-  "Dishes": "{% trans %}adminDashboard.orders.dishes{% endtrans %}",
-  "Refuse": "{% trans %}adminDashboard.orders.refuse{% endtrans %}",
-  "Accept": "{% trans %}adminDashboard.orders.accept{% endtrans %}",
-  "Cancel": "{% trans %}adminDashboard.orders.cancel{% endtrans %}",
-  "Ready!": "{% trans %}adminDashboard.orders.ready{% endtrans %}",
-}
 </script>
 <script src="{{ asset('js/restaurant-panel.js') }}"></script>
 {% endblock %}

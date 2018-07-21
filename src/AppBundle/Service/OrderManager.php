@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
-use AppBundle\Entity\StripeTransfer;
 use AppBundle\Entity\Task;
 use AppBundle\Event\OrderCancelEvent;
 use AppBundle\Event\OrderCreateEvent;
@@ -14,11 +13,11 @@ use AppBundle\Event\OrderReadyEvent;
 use AppBundle\Event\OrderRefuseEvent;
 use AppBundle\Event\PaymentAuthorizeEvent;
 use AppBundle\Sylius\Order\OrderTransitions;
-use AppBundle\Sylius\StripeTransfer\StripeTransferTransitions;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Stripe;
-use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -29,6 +28,7 @@ class OrderManager
     private $routing;
     private $stateMachineFactory;
     private $settingsManager;
+    private $currencyContext;
     private $eventDispatcher;
 
     public function __construct(
@@ -36,12 +36,14 @@ class OrderManager
         RoutingInterface $routing,
         StateMachineFactoryInterface $stateMachineFactory,
         SettingsManager $settingsManager,
+        CurrencyContextInterface $currencyContext,
         EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine = $doctrine;
         $this->routing = $routing;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->settingsManager = $settingsManager;
+        $this->currencyContext = $currencyContext;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -100,24 +102,17 @@ class OrderManager
         $pickupDoneBefore = clone $dropoffDoneBefore;
         $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $delivery = new Delivery();
+
+        $pickup = $delivery->getPickup();
         $pickup->setAddress($pickupAddress);
         $pickup->setDoneBefore($pickupDoneBefore);
 
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff = $delivery->getDropoff();
         $dropoff->setAddress($dropoffAddress);
         $dropoff->setDoneBefore($dropoffDoneBefore);
 
-        $delivery = new Delivery();
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
-
         $order->setDelivery($delivery);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->persist($delivery);
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     public function authorizePayment(OrderInterface $order)
@@ -132,19 +127,45 @@ class OrderManager
 
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
+
+        $applicationFee = $order->getFeeTotal();
+
+        $stripeParams = array(
+            'amount' => $order->getTotal(),
+            'currency' => strtolower($stripePayment->getCurrencyCode()),
+            'source' => $stripeToken,
+            'description' => sprintf('Order %s', $order->getNumber()),
+            // To authorize a payment without capturing it,
+            // make a charge request that also includes the capture parameter with a value of false.
+            // This instructs Stripe to only authorize the amount on the customer’s card.
+            'capture' => false
+        );
+
+        $stripeOptions = array();
+
+        if (!is_null($stripeAccount)) {
+
+            if($restaurantPaysStripeFee) {
+                // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
+                $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+                $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
+                $stripeParams['application_fee'] = $applicationFee;
+            } else {
+                $stripeParams['destination'] = array(
+                    'account' => $stripeAccount->getStripeUserId(),
+                    'amount' => $order->getTotal() - $applicationFee
+                );
+            }
+        }
 
         try {
 
-            $charge = Stripe\Charge::create(array(
-                'amount' => $order->getTotal(),
-                'currency' => strtolower($stripePayment->getCurrencyCode()),
-                'source' => $stripeToken,
-                'description' => sprintf('Order %s', $order->getNumber()),
-                // To authorize a payment without capturing it,
-                // make a charge request that also includes the capture parameter with a value of false.
-                // This instructs Stripe to only authorize the amount on the customer’s card.
-                'capture' => false,
-            ));
+            $charge = Stripe\Charge::create(
+                $stripeParams,
+                $stripeOptions
+            );
 
             $stripePayment->setCharge($charge->id);
 
@@ -168,9 +189,21 @@ class OrderManager
 
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
+        $stripeAccount = $stripePayment->getStripeUserId();
+        $stripeOptions = array();
+
+        // stripe account & needed is set if and only the Stripe charge is a direct charge (restaurant pays stripe fee)
+        if (!is_null($stripeAccount)) {
+            $stripeOptions['stripe_account'] = $stripeAccount;
+        }
+
         try {
 
-            $charge = Stripe\Charge::retrieve($stripePayment->getCharge());
+            $charge = Stripe\Charge::retrieve(
+                $stripePayment->getCharge(),
+                $stripeOptions
+            );
+
             if ($charge->captured) {
                 throw new \Exception('Charge already captured');
             }
@@ -185,53 +218,6 @@ class OrderManager
         }
      }
 
-    public function createTransfer(PaymentInterface $stripePayment) {
-
-        $order = $stripePayment->getOrder();
-        $restaurant = $order->getRestaurant();
-
-        // There is no restaurant
-        if (null === $restaurant) {
-            return;
-        }
-
-        $stripeAccount = $restaurant->getStripeAccount();
-
-        // There is no Stripe account
-        if (null === $stripeAccount) {
-            return;
-        }
-
-        $amount = $order->getTotal() - $order->getFeeTotal();
-
-        $stripeTransfer = StripeTransfer::create($stripePayment, $amount);
-
-        $transferStateMachine = $this->stateMachineFactory->get($stripeTransfer, StripeTransferTransitions::GRAPH);
-
-        // transfer the correct amount to restaurant owner/shop
-        // ref https://stripe.com/docs/connect/charges-transfers
-        try {
-
-            Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
-
-            $transfer = Stripe\Transfer::create([
-                'amount' => $amount,
-                'currency' => strtolower($stripePayment->getCurrencyCode()),
-                'destination' => $stripeAccount->getStripeUserId(),
-                // ref https://stripe.com/docs/connect/charges-transfers#transfer-availability
-                'source_transaction' => $stripePayment->getCharge()
-            ]);
-
-            $stripeTransfer->setTransfer($transfer->id);
-
-            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_COMPLETE);
-        } catch (\Exception $e) {
-            $stripeTransfer->setLastError($e->getMessage());
-            $transferStateMachine->apply(StripeTransferTransitions::TRANSITION_FAIL);
-        }
-
-    }
-
     /**
      * Create a fresh payment after payment failure
      *
@@ -243,7 +229,11 @@ class OrderManager
             return;
         }
 
-        $payment = StripePayment::create($order);
+        $payment = new StripePayment();
+        $payment->setOrder($order);
+        $payment->setAmount($order->getTotal());
+        $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
+
         $order->addPayment($payment);
     }
 

@@ -53,30 +53,6 @@ class RestaurantController extends Controller
         return $address;
     }
 
-    private function matchOptions($variant, array $optionValues)
-    {
-        foreach ($optionValues as $optionValue) {
-            if (!$variant->hasOptionValue($optionValue)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function resolveProductVariant(ProductInterface $product, array $optionValues)
-    {
-        foreach ($product->getVariants() as $variant) {
-            if (count($variant->getOptionValues()) !== count($optionValues)) {
-                continue;
-            }
-
-            if ($this->matchOptions($variant, $optionValues)) {
-                return $variant;
-            }
-        }
-    }
-
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
     {
         foreach ($optionValues as $optionValue) {
@@ -84,30 +60,6 @@ class RestaurantController extends Controller
                 return $optionValue->getOption();
             }
         }
-    }
-
-    private function createProductVariant(ProductInterface $product, array $optionValues)
-    {
-        $productVariant = $this->get('sylius.factory.product_variant')->createForProduct($product);
-        $values = [];
-        foreach ($optionValues as $optionValue) {
-            $productVariant->addOptionValue($optionValue);
-            $values[] = $optionValue->getValue();
-        }
-
-        $this->get('logger')->info(sprintf('Creating product variant for product %s with values %s',
-            $product->getCode(), implode(' + ', $values)));
-
-        $productVariant->setName($product->getName());
-        $productVariant->setCode(Uuid::uuid4()->toString());
-
-        $defaultVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
-
-        // Copy price & tax category from default variant
-        $productVariant->setPrice($defaultVariant->getPrice());
-        $productVariant->setTaxCategory($defaultVariant->getTaxCategory());
-
-        return $productVariant;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -239,6 +191,30 @@ class RestaurantController extends Controller
             }
         }
 
+        $seoPage = $this->get('sonata.seo.page');
+        $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
+        $seoPage
+            ->addMeta('property', 'og:title', $seoPage->getTitle())
+            ->addMeta('property', 'og:description', sprintf('%s, %s %s',
+                $restaurant->getAddress()->getStreetAddress(),
+                $restaurant->getAddress()->getPostalCode(),
+                $restaurant->getAddress()->getAddressLocality()
+            ))
+            // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
+            ->addMeta('property', 'og:type', 'restaurant.restaurant')
+            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
+            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
+            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
+            ->addMeta('property', 'place:location:latitude', $restaurant->getAddress()->getGeo()->getLatitude())
+            ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
+            ;
+
+        $uploaderHelper = $this->get('vich_uploader.templating.helper.uploader_helper');
+        $imagePath = $uploaderHelper->asset($restaurant, 'imageFile');
+        if (null !== $imagePath) {
+            $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
+        }
+
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
@@ -357,8 +333,10 @@ class RestaurantController extends Controller
 
         $cartItem = $this->get('sylius.factory.order_item')->createNew();
 
+        $variantResolver = $this->get('coopcycle.sylius.product_variant_resolver.lazy');
+
         if (!$product->hasOptions()) {
-            $productVariant = $this->get('sylius.product_variant_resolver.default')->getVariant($product);
+            $productVariant = $variantResolver->getVariant($product);
         } else {
 
             $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
@@ -366,8 +344,18 @@ class RestaurantController extends Controller
 
             $optionValues = [];
             foreach ($options as $optionCode => $optionValueCode) {
-                $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
-                $optionValues[] = $optionValue;
+
+                $optionValueCodes = [];
+                if (is_array($optionValueCode)) {
+                    $optionValueCodes = $optionValueCode;
+                } else {
+                    $optionValueCodes[] = $optionValueCode;
+                }
+
+                foreach ($optionValueCodes as $optionValueCode) {
+                    $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
+                    $optionValues[] = $optionValue;
+                }
             }
 
             $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);
@@ -381,15 +369,7 @@ class RestaurantController extends Controller
                 return $this->jsonResponse($cart, $errors);
             }
 
-            $productVariant = $this->resolveProductVariant($product, $optionValues);
-
-            // Lazily create a product variant
-            // As we "hide" product variants, some variants may not have been created yet
-            // At this step, we are pretty sure the options are valid
-            if (!$productVariant) {
-                $productVariant = $this->createProductVariant($product, $optionValues);
-                $this->get('sylius.repository.product_variant')->add($productVariant);
-            }
+            $productVariant = $variantResolver->getVariantForOptionValues($product, $optionValues);
         }
 
         $cartItem->setVariant($productVariant);
@@ -413,12 +393,12 @@ class RestaurantController extends Controller
     }
 
     /**
-     * @Route("/restaurant/{restaurantId}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
+     * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
-    public function removeFromCartAction($restaurantId, $cartItemId, Request $request)
+    public function removeFromCartAction($id, $cartItemId, Request $request)
     {
         $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($restaurantId);
+            ->getRepository(Restaurant::class)->find($id);
 
         $cart = $this->get('sylius.context.cart')->getCart();
         $cartItem = $this->get('sylius.repository.order_item')->find($cartItemId);

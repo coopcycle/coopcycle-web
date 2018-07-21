@@ -90,8 +90,16 @@
 {% block scripts %}
 <script src="{{ asset('js/widgets.js') }}"></script>
 <script>
+var rowsWithErrors = [];
+{% for key, value in form.openingHours %}
+  {% if not value.vars.valid %}
+    rowsWithErrors.push({{ key }});
+  {% endif %}
+{% endfor %}
+
 new CoopCycle.OpeningHoursInput(document.querySelector('#store_openingHours'), {
-  locale: $('html').attr('lang')
+  locale: $('html').attr('lang'),
+  rowsWithErrors: rowsWithErrors
 })
 function initMap() {
   new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {

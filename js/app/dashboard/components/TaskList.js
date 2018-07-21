@@ -3,14 +3,21 @@ import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import dragula from 'react-dragula'
+import { translate } from 'react-i18next'
 import _ from 'lodash'
-import autoScroll from 'dom-autoscroller'
 import Task from './Task'
 import { removeTasks, modifyTaskList, togglePolyline, toggleTask } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
 class TaskList extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      collapsed: props.collapsed
+    }
+  }
 
   componentDidMount() {
     this.props.taskListDidMount(this)
@@ -93,16 +100,6 @@ class TaskList extends React.Component {
 
     })
 
-    autoScroll([ this.refs.scrollable ],{
-        margin: 20,
-        maxSpeed: 5,
-        scrollWhenOutside: true,
-        autoScroll: function(){
-          //Only scroll when the pointer is down, and there is a child being dragged.
-          return drake.dragging
-        }
-    })
-
   }
 
   componentDidUpdate(prevProps) {
@@ -138,7 +135,10 @@ class TaskList extends React.Component {
       selectedTags,
       showUntaggedTasks,
     } = this.props
+
     let { tasks } = this.props
+
+    const { collapsed } = this.state
 
     tasks = _.orderBy(tasks, ['position', 'id'])
 
@@ -157,7 +157,8 @@ class TaskList extends React.Component {
       .add(duration, 'seconds')
       .format('HH:mm')
 
-    const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
+    const distanceFormatted = (distance / 1000).toFixed(2) + ' Km',
+      collabsableId = ['collapse', username].join('-')
 
     const polylineClassNames = ['pull-right', 'taskList__summary-polyline']
     if (polylineEnabled) {
@@ -165,17 +166,31 @@ class TaskList extends React.Component {
     }
 
     return (
-      <div className="panel panel-default nomargin">
-        <div className="panel-heading">
-          <h3 className="panel-title">
+      <div className="panel panel-default nomargin noradius noborder">
+        <div className="panel-heading  dashboard__panel__heading">
+          <h3
+            className="panel-title"
+            role="button"
+            data-toggle="collapse"
+            data-target={ '#' + collabsableId }
+            aria-expanded={ collapsed ? "false" : "true" }
+          >
             <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
-            <a role="button">{ username } <span className="badge">{ tasks.length }</span></a> 
+            <a
+              className="dashboard__panel__heading__link"
+            >
+              { username }
+              &nbsp;&nbsp;
+              <span className="badge">{ tasks.length }</span>
+              &nbsp;&nbsp;
+              <i className={ collapsed ? "fa fa-caret-down" : "fa fa-caret-up" }></i>
+            </a>
           </h3>
         </div>
-        <div role="tabpanel">
+        <div role="tabpanel" id={ collabsableId } className="collapse">
           { tasks.length > 0 && (
             <div className="panel-body taskList__summary">
-              <strong>Durée</strong>  <span>{ durationFormatted }</span> - <strong>Distance</strong>  <span>{ distanceFormatted }</span>
+              <strong>{ this.props.t('ADMIN_DASHBOARD_DURATION') }</strong>  <span>{ durationFormatted }</span> - <strong>{ this.props.t('ADMIN_DASHBOARD_DISTANCE') }</strong>  <span>{ distanceFormatted }</span>
               <a role="button" className={ polylineClassNames.join(' ') } onClick={ e => this.props.togglePolyline(username) }>
                 <i className="fa fa-map fa-2x"></i>
               </a>
@@ -183,22 +198,20 @@ class TaskList extends React.Component {
           )}
           <div className="list-group dropzone" data-username={ username }>
             <div className="list-group-item text-center dropzone-item">
-              Déposez les livraisons ici
+              { this.props.t('ADMIN_DASHBOARD_DROP_DELIVERIES') }
             </div>
           </div>
-          <div ref="scrollable" style={{ overflow: 'auto', maxHeight: '250px' }}>
-            <div ref="taskList" className="taskList__tasks list-group nomargin">
-              { tasks.map(task => (
-                <Task
-                  key={ task['@id'] }
-                  task={ task }
-                  assigned={ true }
-                  onRemove={ task => this.remove(task) }
-                  toggleTask={ this.props.toggleTask }
-                  selected={ -1 !== this.props.selectedTasks.indexOf(task) }
-                />
-              ))}
-            </div>
+          <div ref="taskList" className="taskList__tasks list-group nomargin">
+            { tasks.map(task => (
+              <Task
+                key={ task['@id'] }
+                task={ task }
+                assigned={ true }
+                onRemove={ task => this.remove(task) }
+                toggleTask={ this.props.toggleTask }
+                selected={ -1 !== this.props.selectedTasks.indexOf(task) }
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -220,7 +233,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  console.log('mapDispatchToProps')
   return {
     removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
     modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
@@ -229,4 +241,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskList)
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskList))

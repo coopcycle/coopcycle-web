@@ -19,16 +19,21 @@ class Version20180302223910 extends AbstractMigration
 
             $contents = Yaml::parseFile(__DIR__ . '/../config/parameters.yml');
 
-            $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
-                'name' => 'stripe_publishable_key',
-                'section' => 'general',
-                'value' => $contents['parameters']['stripe_publishable_key']
-            ]);
-            $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
-                'name' => 'stripe_secret_key',
-                'section' => 'general',
-                'value' => $contents['parameters']['stripe_secret_key']
-            ]);
+            if (isset($contents['parameters']['stripe_publishable_key'])) {
+                $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
+                    'name' => 'stripe_publishable_key',
+                    'section' => 'general',
+                    'value' => $contents['parameters']['stripe_publishable_key']
+                ]);
+            }
+
+            if (isset($contents['parameters']['stripe_secret_key'])) {
+                $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
+                    'name' => 'stripe_secret_key',
+                    'section' => 'general',
+                    'value' => $contents['parameters']['stripe_secret_key']
+                ]);
+            }
 
             $this->addSql('UPDATE craue_config_setting SET name = :new_name WHERE name = :old_name', [
                 'new_name' => 'latlng',

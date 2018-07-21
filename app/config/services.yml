@@ -8,11 +8,20 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
+  Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
+
   app.locale_listener:
     class: AppBundle\EventListener\LocaleListener
     arguments: ['%kernel.default_locale%']
     tags:
       - { name: kernel.event_subscriber }
+
+  coopcycle.seo.event_listener:
+    class: AppBundle\EventListener\SeoListener
+    arguments: ['@translator', '@sonata.seo.page.default']
+    tags:
+      - { name: kernel.event_listener, event: kernel.request }
 
   sylius.context.locale.request_based:
     class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
@@ -25,6 +34,12 @@ services:
     arguments: ['%sylius_locale.locale%']
     tags:
       - { name: sylius.context.locale, priority: 64 }
+
+  sylius.context.currency.settings_aware:
+    class: AppBundle\Sylius\Currency\SettingsAwareCurrencyContext
+    arguments: ['@coopcycle.settings_manager']
+    tags:
+      - { name: sylius.context.currency }
 
   sylius.order_processing.order_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
@@ -76,6 +91,13 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.order.inner"
     public: false
+
+  coopcycle.sylius.product_variant_resolver.lazy:
+    class: AppBundle\Sylius\Product\LazyProductVariantResolver
+    arguments:
+      - "@sylius.product_variant_resolver.default"
+      - "@sylius.factory.product_variant"
+    public: true
 
   sylius.context.cart.restaurant:
     class: AppBundle\Sylius\Cart\RestaurantCartContext
@@ -157,6 +179,7 @@ services:
       - "@routing_service"
       - "@sm.factory"
       - "@coopcycle.settings_manager"
+      - "@sylius.context.currency"
       - "@event_dispatcher"
 
   coopcycle.delivery.manager:
@@ -304,7 +327,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\ProductType':
-    arguments: [ '@sylius.generator.product_variant', '@sylius.factory.product_variant', '@sylius.product_variant_resolver.default' ]
+    arguments: [ '@sylius.factory.product_variant', '@sylius.product_variant_resolver.default' ]
     tags: [ form.type ]
 
   my.jwt_listener:
@@ -367,6 +390,15 @@ services:
   coopcycle.twig.runtime.setting_resolver:
     class: AppBundle\Twig\SettingResolver
     arguments: [ '@coopcycle.settings_manager' ]
+    public: false
+    tags:
+      - { name: twig.runtime }
+
+  coopcycle.twig.runtime.price_format_resolver:
+    class: AppBundle\Twig\PriceFormatResolver
+    arguments:
+      - '@sylius.context.currency'
+      - '@sylius.templating.helper.currency'
     public: false
     tags:
       - { name: twig.runtime }
@@ -447,18 +479,10 @@ services:
     tags:
       - { name: validator.constraint_validator }
 
-  # Order of Doctrine Subscribers is important !
-  # - DeliverySubscriber
-  # - TaskCollectionSubscriber
-
-  'AppBundle\EventListener\DeliverySubscriber':
-    tags:
-      - { name: doctrine.event_subscriber, connection: default, priority: 256 }
-
   'AppBundle\EventListener\TaskCollectionSubscriber':
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
     tags:
-      - { name: doctrine.event_subscriber, connection: default, priority: 128 }
+      - { name: doctrine.event_subscriber, connection: default }
 
   'AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber':
       arguments:

@@ -22,14 +22,9 @@ adminDashboard.dashboard.importErrors: Import errors
 adminDashboard.dashboard.importTasks: Import tasks
 adminDashboard.dashboard.exportTasks: Export tasks
 adminDashboard.dashboard.filters: Filters
-adminDashboard.dashboard.cancel: Cancel
 adminDashboard.dashboard.deleteTaskGroup: Delete task group
-adminDashboard.dashboard.display: Display
 adminDashboard.dashboard.displayByGroups: Display by groups
 adminDashboard.dashboard.displayAll: Display all
-adminDashboard.dashboard.add: Add
-adminDashboard.dashboard.addUserToPlanning: Add a user to the planning
-adminDashboard.dashboard.courier: Courier
 
 adminDashboard.deliveries.title: Deliveries
 adminDashboard.deliveries.createNew: Create new delivery
@@ -54,18 +49,14 @@ adminDashboard.stores.createNew: Create a new store
 adminDashboard.stores.form.uploadImage: Upload an image
 
 adminDashboard.orders.title: Orders
-adminDashboard.orders.order: Order
-adminDashboard.orders.dishes: Dishes
-adminDashboard.orders.refuse: Refuse
-adminDashboard.orders.accept: Accept
-adminDashboard.orders.cancel: Cancel
-adminDashboard.orders.ready: Ready!
+
 adminDashboard.orders.previousOrders: Previous orders
 adminDashboard.orders.showCanceled: Show canceled orders
-adminDashboard.orders.noOrders: No orders yet
-adminDashboard.orders.clickForDetails: Click on an order to display details
+
 adminDashboard.orders.invoice.title: Invoice
 adminDashboard.orders.invoice.totalExcludingTax: Total excluding tax
+adminDashboard.orders.invoice.productsTotal: Products total
+adminDashboard.orders.invoice.deliveryTotal: Delivery total
 adminDashboard.orders.invoice.totalTax: Total tax
 adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 
@@ -75,8 +66,6 @@ adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.users.title: Users
 adminDashboard.users.edit: Edit
 adminDashboard.users.save: Save
-adminDashboard.users.searchRestaurant: Search restaurant…
-adminDashboard.users.searchStore: Search store…
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
@@ -139,17 +128,12 @@ delivery.createNew: Create new delivery
 help.title: Help
 help.home: Home
 
-dashboard.unassigned: Unassigned
-dashboard.assigned: Assigned
-
 norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
 
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before the customer can order. This setting don't change the times kept for cooking (20 minutes) and cycling (25 minutes).
 localBusiness.form.orderingDelayDays: Day(s)
 localBusiness.form.orderingDelayHours: Hour(s)
-localBusiness.form.enabled: Enabled
-localBusiness.form.disabled: Disabled
 localBusiness.form.name: Name
 localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
@@ -185,8 +169,13 @@ restaurant.contract.customerAmount.label: Amount paid by the customer
 restaurant.contract.customerAmount.help: This amount will be displayed in the cart and will increase the total amount
 restaurant.contract.feeRate.label: Fee rate
 restaurant.contract.feeRate.help: This percentage will be retained by the platform on the total of the products
+restaurant.contract.restaurantPaysStripeFee.label: Responsible for the cost of the Stripe fees, refunds, and chargebacks
+restaurant.contract.restaurantPaysStripeFee.help: Choose who will be responsible for the cost of the Stripe fees and managing refunds and chargebacks
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperative
 restaurant.contract.onlyAdmin: Only an administrator can edit contract details.
 restaurant.contract.noContract: No contract details. Please contact an administrator.
+restaurant.contract.showAdvanced: Show advanced settings
 restaurant.menus.noMenus: You have not created any menu for the moment.
 restaurant.menus.activate: Activate
 restaurant.menus.activated: The menu « %menu_name% » has been activated. It will now be displayed on the restaurant page
@@ -262,21 +251,14 @@ order.payment.card_number.help: >
   A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
 order.payment.cvc: CVC
 
-order.status.CREATED: Created
-order.status.CANCELED: Canceled
-order.status.WAITING: Waiting
-order.status.ACCEPTED: Accepted
-order.status.PICKED: Picked
-order.status.DELIVERED: Delivered
-order.status.PAYMENT_ERROR: Payment Error
 
 order.state.cart: Cart
-order.state.new: New
 order.state.accepted: Accepted
-order.state.fulfilled: Delivered
-order.state.ready: Ready
-order.state.cancelled: Cancelled
 order.state.refused: Refused
+order.state.new: New
+order.state.ready: Ready
+order.state.fulfilled: Delivered
+order.state.cancelled: Cancelled
 
 order.list.total: Total
 order.list.createdAt: Created at
@@ -324,9 +306,8 @@ task.type.DROPOFF: Dropoff
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
 
-cart.title: Cart
 cart.widget.title: Your delivery details
-cart.widget.button: My order
+cart.widget.button: Order
 
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
@@ -363,6 +344,17 @@ form.pricing_rule_set.rules.label: Rules
 form.pricing_rule.price.label: Price
 
 form.settings.brand_name.label: Brand name
+form.settings.stripe.title: Stripe Account
+form.settings.stripe.help: '
+  Stripe is the payment service we use to handle credit cards. To use the e-commerce part of the platform it is necessary
+  to configure this section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
+  (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid by the shop owner.
+'
+form.settings.stripe.mode.help: '
+  If you pick ''No'' Stripe will be in test mode. You will have to use <a href="https://stripe.com/docs/testing">test credit cards</a> number to pay
+  on the platform (typically 4242 4242 4242 4242).
+  <strong>No money will be exchanged.</strong>
+'
 form.settings.stripe_publishable_key.label: Stripe publishable key
 form.settings.stripe_publishable_key.help: |
   Create a Stripe account to obtain your <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
@@ -384,13 +376,14 @@ form.settings.default_tax_category.label: VAT rate for deliveries
 form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
+form.settings.currency_code.label: Currency
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.
   A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
 
 form.local_business.stripe_account.placeholder: Choose a Stripe account
-form.local_business.stripe_account.label: Stripe account
+form.local_business.stripe_account.title: Stripe account
 form.local_business.stripe_account.success: Stripe account created successfully.
 form.local_business.stripe_account.admin_warning: No Stripe account created for this restaurant. The Stripe account must be created by the restaurant owner.
 form.local_business.stripe_account.admin_success: Stripe account created and linked correctly by the restaurant owner.
@@ -440,6 +433,8 @@ form.product_option.strategy.label: Price calculation
 form.product_option.price.label: Price
 form.product_option.add_value.label: Add value
 form.product_option.values.title: Values
+form.product_option.additional.label: This option is additional
+form.product_option.additional.help: The customer can choose several values, without having to choose at least one
 
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
@@ -460,8 +455,6 @@ roles.ROLE_STORE: 'Store'
 roles.ROLE_USER: 'User'
 
 user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>
-user.edit.enabled.label: Enabled
-user.edit.disabled.label: Disabled
 user.edit.enabled.help: A deactivated user will be logged out and can't login back on the platform.
 user.profile.familyName: Family name
 user.profile.givenName: Given name
@@ -483,7 +476,7 @@ stores.list.noStores: There are no stores yet
 
 zones.help: <a href="%link%">Get help about zones.</a>
 
-meta.title: Delivery platform for worker-owned business.
+meta.title: Delivery platform for worker-owned business
 
 admin.settings.missing_mandatory_settings: |
   Mandatory settings are missing.

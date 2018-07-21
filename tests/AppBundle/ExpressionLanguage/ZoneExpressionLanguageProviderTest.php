@@ -34,7 +34,7 @@ class ZoneExpressionLanguageProviderTest extends TestCase
             ->willReturn(null);
     }
 
-    public function testIsInsideZone()
+    public function testInZoneReturnsTrue()
     {
         $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
 
@@ -49,9 +49,23 @@ class ZoneExpressionLanguageProviderTest extends TestCase
         $this->assertTrue($this->language->evaluate('in_zone(address, "paris_south_area")', [
             'address' => $address,
         ]));
+
+        // Test with dot notation
+
+        $pickup = new \stdClass();
+        $pickup->address = $address;
+
+        $this->assertTrue($this->language->evaluate('in_zone(pickup.address, zone)', [
+            'pickup' => $pickup,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertTrue($this->language->evaluate('in_zone(pickup.address, "paris_south_area")', [
+            'pickup' => $pickup,
+        ]));
     }
 
-    public function testIsOutsideZone()
+    public function testInZoneReturnsFalse()
     {
         $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
 
@@ -64,6 +78,55 @@ class ZoneExpressionLanguageProviderTest extends TestCase
         ]));
 
         $this->assertFalse($this->language->evaluate('in_zone(address, "paris_south_area")', [
+            'address' => $address,
+        ]));
+    }
+
+    public function testOutZoneReturnsTrue()
+    {
+        $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
+
+        // Métro Porte de la Chapelle
+        $address = new Address();
+        $address->setGeo(new GeoCoordinates(48.897950, 2.359177));
+
+        $this->assertTrue($this->language->evaluate('out_zone(address, zone)', [
+            'address' => $address,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertTrue($this->language->evaluate('out_zone(address, "paris_south_area")', [
+            'address' => $address,
+        ]));
+
+        // Test with dot notation
+
+        $pickup = new \stdClass();
+        $pickup->address = $address;
+
+        $this->assertTrue($this->language->evaluate('out_zone(pickup.address, zone)', [
+            'pickup' => $pickup,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertTrue($this->language->evaluate('out_zone(pickup.address, "paris_south_area")', [
+            'pickup' => $pickup,
+        ]));
+    }
+
+    public function testOutZoneReturnsFalse()
+    {
+        $this->language->registerProvider(new ZoneExpressionLanguageProvider($this->zoneRepository->reveal()));
+
+        $address = new Address();
+        $address->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $this->assertFalse($this->language->evaluate('out_zone(address, zone)', [
+            'address' => $address,
+            'zone' => 'paris_south_area',
+        ]));
+
+        $this->assertFalse($this->language->evaluate('out_zone(address, "paris_south_area")', [
             'address' => $address,
         ]));
     }

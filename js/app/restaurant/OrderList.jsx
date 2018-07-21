@@ -2,6 +2,7 @@ import React from 'react'
 import OrderLabel from '../order/Label.jsx'
 import _ from 'lodash'
 import moment from 'moment'
+import i18n from '../i18n'
 
 class OrderList extends React.Component
 {
@@ -41,10 +42,10 @@ class OrderList extends React.Component
           <thead>
             <tr>
               <th>#</th>
-              <th>État</th>
-              <th>Date de préparation</th>
+              <th>{ i18n.t("ORDER_LIST_STATE") }</th>
+              <th>{ i18n.t("ORDER_LIST_PREPARATION_DATE") }</th>
               <th></th>
-              <th className="text-right">Total</th>
+              <th className="text-right">{ i18n.t("ORDER_LIST_TOTAL") }</th>
             </tr>
           </thead>
           <tbody>
@@ -68,7 +69,7 @@ class OrderList extends React.Component
         <td><OrderLabel order={ order } /></td>
         <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.shippedAt).format('lll') }</td>
         <td>{ `${order.items.length} plats` }</td>
-        <td className="text-right">{ (order.total / 100).formatMoney() }</td>
+        <td className="text-right">{ (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
       </tr>
     )
   }
@@ -79,7 +80,7 @@ class OrderList extends React.Component
 
     if (orders.length === 0) {
       return (
-        <div className="alert alert-warning">{ this.props.i18n['No orders yet'] }</div>
+        <div className="alert alert-warning">{ i18n.t('ADMIN_DASHBOARD_ORDERS_NOORDERS') }</div>
       )
     }
 

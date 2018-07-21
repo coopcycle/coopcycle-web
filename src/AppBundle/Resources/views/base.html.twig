@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
   <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}CoopCycle - {{ 'meta.title'|trans }}{% endblock %}</title>
+    {{ sonata_seo_title() }}
+    {{ sonata_seo_link_canonical() }}
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {{ sonata_seo_metadatas() }}
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:400,700">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway:400,700">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
@@ -34,15 +35,18 @@
       <footer class="footer text-center">
         <ul class="list-inline">
           <li>
-            <a class="footer-link" href="mailto:contact@coopcycle.org">
-              {% trans %}base.footer.contactUs{% endtrans %}
+            {% trans %}base.footer.contactUs{% endtrans %} :
+            <a class="footer-link" href="mailto:{{ coopcycle_setting('administrator_email') }}">
+              {{ coopcycle_setting('administrator_email') }}
             </a>
           </li>
-          <li>
-            <a class="footer-link" href="{{ path('help') }}">
-              {% trans %}base.footer.help{% endtrans %}
-            </a>
-          </li>
+          {% if is_granted('ROLE_RESTAURANT') or is_granted('ROLE_STORE') or is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER') %}
+            <li>
+              <a class="footer-link" href="{{ path('help') }}">
+                {% trans %}base.footer.help{% endtrans %}
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </footer>
     {% endblock %}
@@ -55,10 +59,7 @@
     <script>
       window.AppData = window.AppData || {};
       window.AppData.countryIso = "{{ country_iso }}";
-      window.__i18n = {
-        "Cart": "{% trans %}cart.title{% endtrans %}",
-        "cart.widget.button": "{% trans %}cart.widget.button{% endtrans %}"
-      }
+      window.AppData.currencySymbol = "{{ currency_context.currencyCode|sylius_currency_symbol }}";
     </script>
     <script src="{{ asset('manifest.js') }}"></script>
     <script src="{{ asset('js/vendor.js') }}"></script>

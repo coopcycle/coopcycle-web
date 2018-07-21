@@ -5,6 +5,9 @@ import { DatePicker, LocaleProvider } from 'antd'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 import moment from 'moment'
+import { I18nextProvider } from 'react-i18next'
+
+import i18n from '../i18n'
 import store from './store/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
@@ -17,21 +20,27 @@ const locale = $('html').attr('lang'),
 
 render(
   <Provider store={store}>
-    <LeafletMap socket={socket} />
+    <I18nextProvider i18n={i18n}>
+      <LeafletMap socket={socket} />
+    </I18nextProvider>
   </Provider>,
   document.querySelector('.dashboard__map-container')
 )
 
 render(
   <Provider store={store}>
-    <DashboardApp socket={socket} />
+    <I18nextProvider i18n={i18n}>
+      <DashboardApp socket={socket} />
+    </I18nextProvider>
   </Provider>,
   document.querySelector('.dashboard__aside')
 )
 
 render(
   <Provider store={store}>
-    <Filters />
+    <I18nextProvider i18n={i18n}>
+      <Filters />
+    </I18nextProvider>
   </Provider>,
   document.createElement('div'),
   function () {

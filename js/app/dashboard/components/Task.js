@@ -105,6 +105,9 @@ class Task extends React.Component {
       classNames.push('task__highlighted')
     }
 
+    const customerName =  task.address.firstName ?  [task.address.firstName, task.address.lastName, task.address.streetAddress].join(' ') : null,
+      addressName = task.address.name || customerName || task.address.streetAddress
+
     return (
       <span
         style={{display: 'block', borderLeft: '6px solid ' + task.deliveryColor}}
@@ -114,7 +117,7 @@ class Task extends React.Component {
         {...taskAttributes}
         onClick={this.onClick}>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          #{/([\d]+)/.exec(task['@id'])[0]} - { task.address.name || task.address.streetAddress } avant { moment(task.doneBefore).format('HH[h]mm') }
+          #{/([\d]+)/.exec(task['@id'])[0]} - { addressName } avant { moment(task.doneBefore).format('HH[h]mm') }
           { this.renderTags() }
           &nbsp;
           <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>

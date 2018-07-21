@@ -96,8 +96,10 @@ export default class MapProxy {
         <span>
             Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }
             ${ assignedTo }
-
         </span>
+        <a class="task__edit">
+          <i class="fa fa-pencil"></i>
+         </a>
         <br>
         <span>${task.address.streetAddress} de ${doneAfter} à ${doneBefore}</span>
         <br>
@@ -105,8 +107,17 @@ export default class MapProxy {
         <span>${ task.comments ? 'Commentaires : ' + task.comments : '' }</span>
       `
 
+      let innerContent = $('<div />')
+      innerContent.html(popupContent)
+      innerContent.find('.task__edit').on('click', () => {
+        $('#task-edit-modal')
+          .load(
+            window.AppData.Dashboard.taskModalURL.replace('__TASK_ID__', task.id),
+            () => $('#task-edit-modal').modal({ show: true }))
+      })
+
       const popup = L.popup()
-        .setContent(popupContent)
+        .setContent(innerContent[0])
 
       marker.bindPopup(popup)
       this.taskMarkers.set(task['id'], marker)

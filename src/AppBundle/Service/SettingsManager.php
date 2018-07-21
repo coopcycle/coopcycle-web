@@ -27,6 +27,7 @@ class SettingsManager
         'google_api_key',
         'latlng',
         'default_tax_category',
+        'currency_code',
     ];
 
     private $secretSettings = [

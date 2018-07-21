@@ -15,7 +15,6 @@
   <thead>
     <th>{{ 'form.product.name.label'|trans }}</th>
     <th class="text-right">Options</th>
-    <th class="text-right">Variants</th>
     <th class="text-right">{{ 'form.product.enabled.label'|trans }}</th>
     <th></th>
   </thead>
@@ -24,7 +23,6 @@
     <tr>
       <td>{{ product.name }}</td>
       <td class="text-right">{{ product.options|length }}</td>
-      <td class="text-right">{{ product.variants|length }}</td>
       <td class="text-right">
         {% if product.enabled %}<i class="fa fa-check"></i>{% endif %}
       </td>

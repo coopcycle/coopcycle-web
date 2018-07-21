@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import moment from 'moment'
+import i18n from '../i18n'
 
 moment.locale('fr')
 
@@ -77,7 +78,7 @@ class DatePicker extends Component {
             {
               dates.map(date => (
                 <option key={ date } value={ date } >
-                  { moment(date).calendar(null, { sameDay: '[Aujourd\'hui]',  nextDay: '[Demain]', nextWeek: 'dddd D MMM'}) }
+                  { moment(date).calendar(null, { sameDay: i18n.t("DATEPICKER_TODAY"),  nextDay: i18n.t("DATEPICKER_TOMORROW"), nextWeek: 'dddd D MMM'}) }
                 </option>
               ))
             }

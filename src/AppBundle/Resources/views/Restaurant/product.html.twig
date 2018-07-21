@@ -12,6 +12,10 @@
 {% block content %}
 {{ form_start(form) }}
 
+  {% if not form.vars.valid %}
+      {{ form_errors(form) }}
+  {% endif %}
+
   {{ form_row(form.name) }}
   {{ form_row(form.description) }}
   {{ form_row(form.enabled) }}
@@ -27,24 +31,6 @@
 
   {{ form_row(form.options) }}
 
-  {% set debug_variants = false %}
-  <div class="{% if not debug_variants %}hidden{% endif %}">
-    {{ form_widget(form.variants) }}
-  </div>
-
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
 {{ form_end(form) }}
-{% endblock %}
-
-{% block scripts %}
-<script>
-$("#product_variants input[name$='[price]']").val($('#product_price').val());
-$("#product_variants input[name$='[taxCategory]']").val($('#product_taxCategory').val());
-$('#product_price').on('change', function(e) {
-  $("#product_variants input[name$='[price]']").val($(this).val());
-});
-$('#product_taxCategory').on('change', function(e) {
-  $("#product_variants select[name$='[taxCategory]']").val($(this).val());
-});
-</script>
 {% endblock %}

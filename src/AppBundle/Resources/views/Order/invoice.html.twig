@@ -9,7 +9,7 @@
     <table style="width: 100%;">
       <tbody>
         <tr>
-          <td><h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.id }}</h1></td>
+          <td><h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.number }}</h1></td>
           <td style="text-align: right;">{{ order.createdAt|localizeddate('full', 'none') }}</td>
         </tr>
       </tbody>
@@ -57,8 +57,14 @@
       <tbody>
       {% for item in order.items %}
         <tr>
-            <td>{{ item.variant.product.name }} × {{ item.quantity }}</td>
-            <td style="text-align: right;">{{ item.total|price_format }} €</td>
+            <td>{{ item.variant.product.name }} × {{ item.quantity }}
+              {% for adjusment in item.adjustments %}
+                {% if adjusment.type == 'menu_item_modifier' %}
+                  <br><span style="color: #999;">{{ adjusment.label }} {{ adjusment.amount|price_format }}</span>
+                  {% endif %}
+              {% endfor %}
+            </td>
+            <td style="text-align: right; vertical-align: top;">{{ item.total|price_format }}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -69,12 +75,24 @@
     <table style="width: 100%;">
       <tbody>
         <tr>
-          <td><strong>{% trans %}adminDashboard.orders.invoice.totalExcludingTax{% endtrans %}</strong></td>
-          <td style="text-align: right;">{{ order.total|price_format }} €</td>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.productsTotal{% endtrans %}</strong></td>
+          <td style="text-align: right;">{{ order.itemsTotal|price_format }}</td>
+        </tr>
+        <tr>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.deliveryTotal{% endtrans %}</strong></td>
+          <td style="text-align: right;">
+            {% for adjusment in order.adjustments %}
+              {% if adjusment.type == 'delivery' %}{{ adjusment.amount|price_format }}{% endif %}
+            {% endfor %}
+          </td>
         </tr>
         <tr>
           <td><strong>{% trans %}adminDashboard.orders.invoice.totalTax{% endtrans %}</strong></td>
-          <td style="text-align: right;">{{ order.taxTotal|price_format }} €</td>
+          <td style="text-align: right;">{{ order.taxTotal|price_format }}</td>
+        </tr>
+        <tr>
+          <td><strong>{% trans %}adminDashboard.orders.invoice.totalIncludingTax{% endtrans %}</strong></td>
+          <td style="text-align: right;">{{ order.total|price_format }}</td>
         </tr>
       </tbody>
     </table>

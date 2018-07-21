@@ -1,11 +1,14 @@
 import React from 'react'
+import i18n from '../i18n'
+import parsePricingRule from '../delivery/pricing-rule-parser'
 
 /*
 
   A component to edit a rule which will be evaluated as Symfony's expression language.
 
   Variables :
-    - deliveryAddress : L'adresse de livraison
+    - pickup.address : L'adresse de retrait
+    - dropoff.address : L'adresse de dépôt
     - distance : La distance entre le point de retrait et le point de dépôt
     - weight : Le poids du colis transporté en grammes
     - vehicle : Le type de véhicule (bike ou cargo_bike)
@@ -13,15 +16,16 @@ import React from 'react'
   Examples :
     * distance in 0..3000
     * weight > 1000
-    * in_zone(deliveryAddress, "paris_est")
+    * in_zone(pickup.address, "paris_est")
     * vehicle == "cargo_bike"
 */
 
 const typeToOperators = {
   'distance': ['<', '>', 'in'],
   'weight': ['<', '>', 'in'],
-  'zone': ['in_zone'],
   'vehicle': ['=='],
+  'pickup.address': ['in_zone', 'out_zone'],
+  'dropoff.address': ['in_zone', 'out_zone'],
 }
 
 
@@ -30,23 +34,21 @@ class RulePickerLine extends React.Component {
   constructor (props) {
     super(props)
 
-    let { line } = this.props,
-      typeValue, // the variable the rule is built upon
-      operatorValue, // the operator/function used to build the rule
-      boundValues // the value(s) which complete the rule
+    const { line } = this.props
+
+    let type, operator, value
 
     if (line) {
-      [typeValue, operatorValue, boundValues] = this.parseInitialLine()
-    } else {
-      operatorValue = ''
-      typeValue = ''
-      boundValues = ['', '']
+      const [ result ] = parsePricingRule(line)
+      type = result.left
+      operator = result.operator
+      value = result.right
     }
 
     this.state = {
-      boundValues: boundValues,
-      operatorValue: operatorValue,
-      typeValue: typeValue
+      type: type || '',         // the variable the rule is built upon
+      operator: operator || '', // the operator/function used to build the rule
+      value: value || '',       // the value(s) which complete the rule
     }
 
     this.onTypeSelect = this.onTypeSelect.bind(this)
@@ -54,34 +56,10 @@ class RulePickerLine extends React.Component {
     this.renderBoundPicker = this.renderBoundPicker.bind(this)
     this.handleFirstBoundChange = this.handleFirstBoundChange.bind(this)
     this.handleSecondBoundChange = this.handleSecondBoundChange.bind(this)
+    this.handleValueChange = this.handleValueChange.bind(this)
     this.buildLine = this.buildLine.bind(this)
     this.delete = this.delete.bind(this)
   }
-
-  parseInitialLine () {
-    /*
-      Parse the initial line - not the cleanest code ever..
-     */
-
-    // zone
-    let zoneTest = /in_zone\(deliveryAddress, ['|"](.+)['|"]\)/.exec(this.props.line)
-    if (zoneTest) {
-      return ['zone', 'in_zone', [zoneTest[1]]]
-    }
-
-    // bike type
-    let bikeTest = /(vehicle) == "(cargo_bike|bike)"/.exec(this.props.line)
-    if (bikeTest) {
-      return [bikeTest[1], '==', [bikeTest[2]]]
-    }
-
-    // in, > or < type
-    let comparatorTest = /([\w]+) (in|<|>) ([\d]+)(\.\.([\d]+))?/.exec(this.props.line)
-    if (comparatorTest) {
-      return [comparatorTest[1], comparatorTest[2], [comparatorTest[3], comparatorTest[5]]]
-    }
-  }
-
 
   buildLine (state) {
     /*
@@ -90,56 +68,70 @@ class RulePickerLine extends React.Component {
       We pass explicitely the  state so we can compare previous & next state. Returns nothing if we can't build the line.
      */
 
-    if (state.boundValues[0] && state.boundValues[1] && state.operatorValue == 'in') {
-      return state.typeValue + ' in ' + state.boundValues[0] + '..' + state.boundValues[1]
+    if (state.operator === 'in' && Array.isArray(state.value) && state.value.length === 2) {
+      return `${state.type} in ${state.value[0]}..${state.value[1]}`
     }
-    else if (state.boundValues[0]) {
-      switch (state.operatorValue) {
-        case '>':
-          return state.typeValue + ' > ' + state.boundValues[0]
-        case '<':
-          return state.typeValue + ' < ' + state.boundValues[0]
-        case 'in_zone':
-          return 'in_zone(deliveryAddress, "' + state.boundValues[0] + '")'
-        case '==':
-          return state.typeValue + ' == "' + state.boundValues[0] + '"'
-      }
+
+    switch (state.operator) {
+      case '<':
+      case '>':
+        return `${state.type} ${state.operator} ${state.value}`
+      case 'in_zone':
+      case 'out_zone':
+        return `${state.operator}(${state.type}, "${state.value}")`
+      case '==':
+        return `${state.type}  == "${state.value}"`
     }
   }
 
   componentDidUpdate (prevProps, prevState) {
     let line = this.buildLine(this.state)
+
     if (this.buildLine(prevState) !== line) {
       this.props.rulePicker.updateLine(this.props.index, line)
     }
   }
 
   handleFirstBoundChange (ev) {
-    let boundValues = this.state.boundValues.slice()
-    boundValues[0] = ev.target.value
-    this.setState({boundValues})
+    let value = this.state.value.slice()
+    value[0] = ev.target.value
+    this.setState({ value })
   }
 
   handleSecondBoundChange (ev) {
-    let boundValues = this.state.boundValues.slice()
-    boundValues[1] = ev.target.value
-    this.setState({boundValues})
+    let value = this.state.value.slice()
+    value[1] = ev.target.value
+    this.setState({ value })
+  }
+
+  handleValueChange (ev) {
+    const { value } = this.state
+    if (Array.isArray(value)) {
+
+    } else {
+      this.setState({ value: ev.target.value })
+    }
   }
 
   onTypeSelect (ev) {
     ev.preventDefault()
-    let typeValue = ev.target.value,
-        operatorValue = typeToOperators[typeValue].length === 1 ? typeToOperators[typeValue][0] : ''
+    let type = ev.target.value,
+        operator = typeToOperators[type].length === 1 ? typeToOperators[type][0] : ''
     this.setState({
-      typeValue: typeValue,
-      operatorValue: operatorValue,
-      boundValues: ['', '']
+      type,
+      operator,
+      value: ''
     })
   }
 
   onOperatorSelect (ev) {
     ev.preventDefault()
-    this.setState({operatorValue: ev.target.value})
+    const operator = ev.target.value
+    let newState = { operator }
+    if ('in' === operator) {
+      newState = Object.assign(newState, { value: ['', ''] })
+    }
+    this.setState(newState)
   }
 
   delete (evt) {
@@ -151,11 +143,12 @@ class RulePickerLine extends React.Component {
     /*
      * Return the displayed input for bound selection
      */
-    switch (this.state.operatorValue) {
+    switch (this.state.operator) {
       // zone
       case 'in_zone':
+      case 'out_zone':
         return (
-          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
               <option value="">-</option>
               { this.props.rulePicker.props.zones.map((item, index) => {
                   return (<option value={item} key={index}>{item}</option>)
@@ -166,7 +159,7 @@ class RulePickerLine extends React.Component {
       // vehicle
       case '==':
         return (
-          <select onChange={this.handleFirstBoundChange} value={this.state.boundValues[0]} className="form-control input-sm">
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
             <option value="">-</option>
             <option value="bike">Vélo</option>
             <option value="cargo_bike">Vélo Cargo</option>
@@ -177,20 +170,17 @@ class RulePickerLine extends React.Component {
         return (
           <div className="row">
             <div className="col-md-6">
-              <input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>
+              <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number"></input>
             </div>
             <div className="col-md-6">
-              <input className="form-control input-sm" value={this.state.boundValues[1]} onChange={this.handleSecondBoundChange} type="number"></input>
+              <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number"></input>
             </div>
           </div>
         )
+      case '<':
       case '>':
         return (
-          (<input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
-        )
-      case '<':
-        return (
-          (<input className="form-control input-sm" value={this.state.boundValues[0]} onChange={this.handleFirstBoundChange} type="number"></input>)
+          (<input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>)
         )
     }
   }
@@ -200,20 +190,21 @@ class RulePickerLine extends React.Component {
     return (
       <div className="row">
         <div className="col-md-3 form-group">
-          <select value={this.state.typeValue} onChange={this.onTypeSelect} className="form-control input-sm">
+          <select value={this.state.type} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
-            <option value="distance">Distance (m)</option>
-            <option value="weight">Poids (g)</option>
-            <option value="zone">Zone</option>
-            <option value="vehicle">Type de vélo</option>
+            <option value="distance">{ i18n.t('RULE_PICKER_LINE_DISTANCE') }</option>
+            <option value="weight">{ i18n.t('RULE_PICKER_LINE_WEIGHT') }</option>
+            <option value="vehicle">{ i18n.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
+            <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
+            <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
           </select>
         </div>
         <div className="col-md-3">
           {
-            this.state.typeValue && (
-              <select value={this.state.operatorValue} onChange={this.onOperatorSelect} className="form-control input-sm">
+            this.state.type && (
+              <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
                 <option value="">-</option>
-                { typeToOperators[this.state.typeValue].map(function(operator, index) {
+                { typeToOperators[this.state.type].map(function(operator, index) {
                     return (<option key={index} value={operator}>{operator}</option>)
                   })
                 }
@@ -223,7 +214,7 @@ class RulePickerLine extends React.Component {
         </div>
         <div className="col-md-5">
           {
-            this.state.operatorValue && this.renderBoundPicker()
+            this.state.operator && this.renderBoundPicker()
           }
         </div>
         <div className="col-md-1" onClick={this.delete}>

@@ -1,4 +1,4 @@
-FROM node:8.5-alpine
+FROM node:8.11-alpine
 
 RUN apk update && apk add --no-cache git
 

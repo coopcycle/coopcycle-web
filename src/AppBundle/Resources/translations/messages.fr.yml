@@ -17,14 +17,10 @@ adminDashboard.dashboard.filters: Filtres
 adminDashboard.dashboard.importErrors: Erreurs d'importation
 adminDashboard.dashboard.importTasks: Importer des tâches
 adminDashboard.dashboard.exportTasks: Exporter des tâches
-adminDashboard.dashboard.cancel: Annuler
 adminDashboard.dashboard.deleteTaskGroup: Supprimer un groupe de tâches
-adminDashboard.dashboard.display: Affichage
 adminDashboard.dashboard.displayByGroups: Afficher par groupe
 adminDashboard.dashboard.displayAll: Afficher tout
-adminDashboard.dashboard.add: Ajouter
-adminDashboard.dashboard.addUserToPlanning: Ajouter un utilisateur au planning
-adminDashboard.dashboard.courier: Coursier
+
 adminDashboard.deliveries.title: Livraisons
 adminDashboard.deliveries.createNew: Créer une livraison
 adminDashboard.deliveries.type: Type
@@ -45,27 +41,23 @@ adminDashboard.stores.title: Magasins
 adminDashboard.stores.createNew: Créer un magasin
 adminDashboard.stores.form.uploadImage: Uploader une image
 adminDashboard.orders.title: Commandes
-adminDashboard.orders.order: Commande
-adminDashboard.orders.dishes: Plats
-adminDashboard.orders.refuse: Refuser
-adminDashboard.orders.accept: Accepter
-adminDashboard.orders.cancel: Annuler
-adminDashboard.orders.ready: Prêt !
+
+
 adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
-adminDashboard.orders.clickForDetails: Cliquez sur une commande pour l'afficher
+
 adminDashboard.orders.invoice.title: Facture
 adminDashboard.orders.invoice.totalExcludingTax: Total HT
 adminDashboard.orders.invoice.totalTax: Total TVA
 adminDashboard.orders.invoice.totalIncludingTax: Total TTC
+adminDashboard.orders.invoice.productsTotal: Total des produits
+adminDashboard.orders.invoice.deliveryTotal: Total de la livraison
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.edit: Modifier
 adminDashboard.users.save: Enregistrer
-adminDashboard.users.searchRestaurant: Rechercher un restaurant…
-adminDashboard.users.searchStore: Rechercher un magasin…
 adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
@@ -114,18 +106,15 @@ delivery.pastDeliveries: Dernières livraisons
 delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil
-dashboard.unassigned: En attente
-dashboard.assigned: Assignées
-norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre
-  heure de livraison.
+
+norestaurantfound: Pas de restaurant ouvert à cette heure !<br>Essayez avec une autre heure de livraison.
+
 localBusiness.form.orderingDelayMinutes: Délai additionel pour les prises de commandes
 localBusiness.form.orderingDelayMinutes.help: Utilisez ces champs pour ajouter un
   délai avant la commande. N'influe pas sur le temps réservé à la préparation (20
   minutes) ni sur le temps réservé à la course (25 minutes).
 localBusiness.form.orderingDelayDays: Jour(s)
 localBusiness.form.orderingDelayHours: Heure(s)
-localBusiness.form.enabled: Activé
-localBusiness.form.disabled: Désactivé
 localBusiness.form.name: Nom
 localBusiness.form.legalName: Nom légal
 localBusiness.form.website: Site web
@@ -179,10 +168,15 @@ restaurant.contract.feeRate.label: Pourcentage de commission facturé par la pla
 restaurant.contract.feeRate.help: Ce pourcentage sera retenu sur le total des produits
   et versé à la société de livraison pour ses services. Il sera prélevé sur le paiement
   du client mais ne sera pas affiché dans le panier.
+restaurant.contract.restaurantPaysStripeFee.label: Responsable pour le paiement des frais Stripe, des remboursements et des rétrofacturations
+restaurant.contract.restaurantPaysStripeFee.help: Sélection du responsable pour le paiement des frais Stripe, des remboursements et des rétrofacturations
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Coopérative
 restaurant.contract.onlyAdmin: Éditer les conditions contractuelles est réservé aux
   administrateurs.
 restaurant.contract.noContract: Pas de conditions contractuelles sauvegardées. Veuillez
   contacter un administrateur.
+restaurant.contract.showAdvanced: Montrer les réglages avancés
 restaurant.menus.noMenus: Vous n'avez pas créé de menu pour le moment.
 restaurant.menus.activate: Activer
 restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il sera désormais
@@ -261,13 +255,7 @@ order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#car
 
   '
 order.payment.cvc: CVC
-order.status.CREATED: Créée
-order.status.CANCELED: Annulée
-order.status.WAITING: En attente
-order.status.ACCEPTED: Acceptée
-order.status.PICKED: Récupéree
-order.status.DELIVERED: Livrée
-order.status.PAYMENT_ERROR: Erreur de paiement
+
 order.state.cart: Panier
 order.state.accepted: Accepté
 order.state.refused: Refusé
@@ -275,6 +263,7 @@ order.state.new: Nouveau
 order.state.ready: Prête
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
+
 payment.state.cart: Panier
 payment.state.new: Nouveau
 payment.state.authorized: Autorisé
@@ -319,6 +308,7 @@ form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
 task.type.DROPOFF: Dépôt
 task.previous_task_not_completed_yet: La tâche précédente n'a pas été complétée
+
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la plateforme
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i
@@ -326,6 +316,7 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide
 cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
+
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
 form.delivery.pricing_rule_set.about: 'La tarification suivante sera appliquée : <a
@@ -376,6 +367,16 @@ form.address.company.label: Entreprise
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
+form.settings.stripe.title: Compte Stripe
+form.settings.stripe.help: '
+  Stripe est le service de paiement que nous utilisons pour sécuriser le paiement par carte bleue.
+  Pour utiliser la partie e-commerce de la plateforme, il est nécessaire de configurer cette section, ainsi que Stripe Connect.
+  Stripe prend une commission de 0.25cts + 1.4% par paiement (indicatif, tarifs actualisés <a href="https://stripe.com/fr/pricing">ici</a>) à la charge du commerçant.
+'
+form.settings.stripe.mode.help: '
+  Si vous cochez "non", Stripe sera en mode test. Il faudra utiliser des <a href="https://stripe.com/docs/testing">cartes tests</a>
+  pour faire des achats (typiquement 4242 4242 4242 4242). <strong>Personne ne sera débité, aucun argent échangé.</strong>
+'
 form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe
 form.settings.stripe_publishable_key.help: 'Créez un compte Stripe pour récupérer
@@ -417,8 +418,9 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
   A-Z, chiffres 0-9) à l''exception des underscores.
 
   '
+form.settings.currency_code.label: Devise
 form.local_business.stripe_account.placeholder: Choisissez un compte Stripe
-form.local_business.stripe_account.label: Compte Stripe
+form.local_business.stripe_account.title: Compte Stripe
 form.local_business.stripe_account.success: Compte Stripe créé avec succès.
 form.local_business.stripe_account.admin_warning: Aucun compte Stripe créé pour ce
   restaurant par le restaurateur. Le compte Stripe doit être créé par le restaurateur.
@@ -488,6 +490,8 @@ form.product_option.add_value.label: Ajouter une valeur
 form.product_option.values.title: Valeurs
 form.product_option_value.value.label: Valeur
 form.product_option_value.price.label: Prix
+form.product_option.additional.label: Cette option est un supplément
+form.product_option.additional.help: Le client pourra choisir plusieurs valeurs, sans être obligé d'en choisir au moins une
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix
 product_option.strategy.option_value: Prix en fonction du choix
@@ -501,12 +505,14 @@ roles.ROLE_COURIER: Coursier
 roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Magasin
 roles.ROLE_USER: Utilisateur
+
 user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En
   savoir plus</a>
 user.edit.enabled.label: Activé
 user.edit.disabled.label: Désactivé
 user.edit.enabled.help: Un utilisateur désactivé est déconnecté et ne peut plus se
   connecter à la plateforme.
+
 user.profile.familyName: Nom
 user.profile.givenName: Prénom
 roles.ROLE_ADMIN.help: 'Administrateur : Accès total à toutes les fonctions
@@ -530,7 +536,7 @@ stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
 stores.list.noStores: Pas de magasin pour le moment
 zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
-meta.title: Plateforme de livraison pour les sociétés coopératives.
+meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
 
   Allez à la <a href="%settings_url%">page des paramètres</a> pour les configurer.
@@ -586,3 +592,4 @@ deliveryForm.noPriceWarning: 'Le tarif ne peut être calculé. Veuillez intégre
 deliveryForm.noPriceFromPricingWarning: 'Le tarif ne peut pas être calculé à partir
   du prix. Entrez le manuellement ou éditez le prix. '
 task.form.finish.FAIL.info: La tâche n'a pas pu être effectuée
+

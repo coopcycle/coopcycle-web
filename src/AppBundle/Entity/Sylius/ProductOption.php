@@ -19,6 +19,11 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     protected $price;
 
     /**
+     * @var boolean
+     */
+    protected $additional = false;
+
+    /**
      * {@inheritdoc}
      */
     public function getStrategy(): string
@@ -48,6 +53,22 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setPrice(?int $price): void
     {
         $this->price = $price;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAdditional(bool $additional): void
+    {
+        $this->additional = $additional;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAdditional(): bool
+    {
+        return $this->additional;
     }
 
     public function setRestaurant(Restaurant $restaurant)

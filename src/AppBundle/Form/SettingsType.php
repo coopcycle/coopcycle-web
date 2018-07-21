@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityRepository;
+use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -85,6 +86,9 @@ class SettingsType extends AbstractType
             ])
             ->add('default_tax_category', TaxCategoryChoiceType::class, [
                 'label' => 'form.settings.default_tax_category.label'
+            ])
+            ->add('currency_code', CurrencyChoiceType::class, [
+                'label' => 'form.settings.currency_code.label'
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -120,6 +124,18 @@ class SettingsType extends AbstractType
                 $form->add('default_tax_category', TaxCategoryChoiceType::class, $options);
             }
 
+            // Make sure there is an empty choice
+            if (!$data->currency_code) {
+
+                $currencyCode = $form->get('currency_code');
+                $options = $currencyCode->getConfig()->getOptions();
+
+                $options['placeholder'] = '';
+                $options['required'] = false;
+
+                $form->add('currency_code', CurrencyChoiceType::class, $options);
+            }
+
         });
 
         $builder->get('default_tax_category')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -131,6 +147,21 @@ class SettingsType extends AbstractType
             foreach ($options['choices'] as $taxCategory) {
                 if ($taxCategory->getCode() === $data) {
                     $form->setData($taxCategory);
+                    break;
+                }
+            }
+
+        });
+
+        $builder->get('currency_code')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $options = $form->getConfig()->getOptions();
+            foreach ($options['choices'] as $currency) {
+                if ($currency->getCode() === $data) {
+                    $form->setData($currency);
                     break;
                 }
             }
