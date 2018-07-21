@@ -126,7 +126,12 @@ class RulePickerLine extends React.Component {
 
   onOperatorSelect (ev) {
     ev.preventDefault()
-    this.setState({ operator: ev.target.value })
+    const operator = ev.target.value
+    let newState = { operator }
+    if ('in' === operator) {
+      newState = Object.assign(newState, { value: ['', ''] })
+    }
+    this.setState(newState)
   }
 
   delete (evt) {
