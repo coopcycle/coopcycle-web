@@ -105,6 +105,13 @@
         {{ delivery.pickup.address.streetAddress }}
         <br>
         {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
+        {% if delivery.pickup.address.description is not empty %}
+        <br>
+        <br>
+        <textarea class="form-control" disabled>
+          {{ delivery.pickup.address.description }}
+        </textarea>
+        {% endif %}
       </div>
     </div>
     <div class="panel panel-default">
@@ -115,6 +122,13 @@
         {{ delivery.dropoff.address.streetAddress }}
         <br>
         {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
+        {% if delivery.dropoff.address.description is not empty %}
+        <br>
+        <br>
+        <textarea class="form-control" disabled>
+          {{ delivery.pickup.address.description }}
+        </textarea>
+        {% endif %}
       </div>
     </div>
   </div>
