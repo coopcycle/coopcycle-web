@@ -52,7 +52,6 @@
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^3.0",
         "myclabs/php-enum": "^1.5",
-        "willdurand/geocoder": "3.*",
         "beberlei/DoctrineExtensions": "^1.0",
         "sentry/sentry-symfony": "^0.8.6",
         "ramsey/uuid-doctrine": "^1.4",
@@ -76,7 +75,13 @@
         "sylius/taxonomy-bundle": "^1.2",
         "sonata-project/seo-bundle": "^2.5",
         "sylius/currency-bundle": "^1.2",
-        "ocramius/proxy-manager": "2.1.*"
+        "ocramius/proxy-manager": "2.1.*",
+        "geocoder-php/google-maps-provider": "^4.2",
+        "php-http/guzzle6-adapter": "^1.1",
+        "php-http/message": "^1.6",
+        "geo6/geocoder-php-addok-provider": "^1.0",
+        "geocoder-php/chain-provider": "^4.0",
+        "geocoder-php/nominatim-provider": "^5.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
