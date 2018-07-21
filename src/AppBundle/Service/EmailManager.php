@@ -38,6 +38,13 @@ class EmailManager
         ];
     }
 
+    private function getReplyTo()
+    {
+        return [
+            $this->settingsManager->get('administrator_email') => $this->settingsManager->get('brand_name')
+        ];
+    }
+
     public function createHtmlMessage($subject = null, $body = null)
     {
         $message = \Swift_Message::newInstance($subject);
@@ -46,7 +53,18 @@ class EmailManager
             $message->setBody($body, 'text/html');
         }
 
+        $message->setSender($this->getFrom());
         $message->setFrom($this->getFrom());
+
+        return $message;
+    }
+
+    public function createHtmlMessageWithReplyTo($subject = null, $body = null)
+    {
+        $message = $this->createHtmlMessage($subject, $body);
+
+        // Allow replying to the administrator
+        $message->setReplyTo($this->getReplyTo());
 
         return $message;
     }
@@ -76,7 +94,7 @@ class EmailManager
             'order' => $order,
         ]);
 
-        return $this->createHtmlMessage($subject, $body);
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
     public function createOrderCreatedMessageForOwner(OrderInterface $order)
@@ -111,7 +129,7 @@ class EmailManager
             'order' => $order,
         ]);
 
-        return $this->createHtmlMessage($subject, $body);
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
     public function createOrderAcceptedMessage(OrderInterface $order)
@@ -121,6 +139,6 @@ class EmailManager
             'order' => $order,
         ]);
 
-        return $this->createHtmlMessage($subject, $body);
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 }
