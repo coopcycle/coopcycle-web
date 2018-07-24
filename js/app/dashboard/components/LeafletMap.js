@@ -11,6 +11,7 @@ class LeafletMap extends Component {
 
     this.map = MapHelper.init('map')
     this.proxy = new MapProxy(this.map)
+    this.onlineTrackingTimeoutMap = new Map()
 
     let { tasks, showFinishedTasks } = this.props
 
@@ -27,6 +28,13 @@ class LeafletMap extends Component {
       const { user, coords } = data
       this.proxy.setGeolocation(user, coords)
       this.proxy.setOnline(user)
+
+      if (this.onlineTrackingTimeoutMap.has(user)) {
+        clearTimeout(this.onlineTrackingTimeoutMap[user])
+      }
+
+      this.onlineTrackingTimeoutMap[user] = setTimeout(() => { this.proxy.setOffline(user) }, 5 * 60 * 1000)
+
     })
     socket.on('online', username => this.proxy.setOnline(username))
     socket.on('offline', username => this.proxy.setOffline(username))
