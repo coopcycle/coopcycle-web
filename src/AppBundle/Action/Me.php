@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
@@ -155,5 +156,19 @@ class Me
         ]));
 
         return new JsonResponse([]);
+    }
+
+    /**
+     * @Route(path="/me/restaurants", name="me_restaurants",
+     *   defaults={
+     *     "_api_resource_class"=Restaurant::class,
+     *     "_api_collection_operation_name"="me_restaurants",
+     *   }
+     * )
+     * @Method("GET")
+     */
+    public function restaurantsAction(Request $request)
+    {
+        return $this->getUser()->getRestaurants();
     }
 }
