@@ -439,6 +439,10 @@ form.product_option.additional.help: The customer can choose several values, wit
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
 
+form.store_token.generate.alert: You haven't generated a token yet
+form.store_token.generate.label: Generate
+form.store_token.token.label: Token
+
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
 product_option.strategy.option_value: Price according to the choice
@@ -473,6 +477,8 @@ stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery
 stores.list.noStores: There are no stores yet
+
+store.api_keys: API keys
 
 zones.help: <a href="%link%">Get help about zones.</a>
 

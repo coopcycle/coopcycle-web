@@ -336,6 +336,7 @@ admin_store:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
+            store_api_keys: admin_store_api_keys
     methods:  [ GET, POST ]
 
 admin_store_delivery:
@@ -348,6 +349,16 @@ admin_store_delivery:
             store: admin_store
             success: admin_orders
             calculate_price: admin_deliveries_calculate_price
+    methods:  [ GET, POST ]
+
+admin_store_api_keys:
+    path: /admin/stores/{id}/api-keys
+    defaults:
+        _controller: AppBundle:Admin:apiKeys
+        layout: AppBundle::admin.html.twig
+        routes:
+            stores: admin_stores
+            success: admin_store_api_keys
     methods:  [ GET, POST ]
 
 admin_tag_new:

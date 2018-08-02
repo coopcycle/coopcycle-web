@@ -33,7 +33,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   },
  *   collectionOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "me_restaurants"={"route_name"="me_restaurants"}
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},

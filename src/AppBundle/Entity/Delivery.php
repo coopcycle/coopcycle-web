@@ -15,7 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  *
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
- *   collectionOperations={},
+ *   collectionOperations={
+ *     "post"={"method"="POST"}
+ *   },
  *   itemOperations={
  *     "get"={"method"="GET"}
  *   },
@@ -51,18 +53,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      * @Groups({"delivery"})
      */
     protected $id;
-
-    /**
-     * @Groups({"place", "order"})
-     * @ApiProperty(iri="https://schema.org/Place")
-     */
-    private $originAddress;
-
-    /**
-     * @Groups({"order_create", "place", "order"})
-     * @ApiProperty(iri="https://schema.org/Place")
-     */
-    private $deliveryAddress;
 
     private $order;
 

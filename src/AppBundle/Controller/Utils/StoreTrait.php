@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
+use AppBundle\Form\StoreTokenType;
 use AppBundle\Form\StoreType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,6 +58,7 @@ trait StoreTrait
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_delivery_route' => $routes['store_delivery'],
+            'store_api_keys_route' => $routes['store_api_keys'],
         ]);
     }
 
@@ -110,5 +112,38 @@ trait StoreTrait
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
         return $this->renderStoreForm($store, $request);
+    }
+
+    public function apiKeysAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $token = $store->getToken();
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(StoreTokenType::class, $store);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $store = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(Store::class)
+                ->flush();
+
+            return $this->redirectToRoute($routes['success'], ['id' => $store->getId()]);
+        }
+
+        return $this->render('@App/Store/apiKeys.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'token' => $token,
+            'form' => $form->createView(),
+            'stores_route' => $routes['stores'],
+        ]);
     }
 }

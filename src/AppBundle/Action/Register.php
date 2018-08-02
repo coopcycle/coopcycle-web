@@ -9,7 +9,7 @@ use FOS\UserBundle\Util\UserManipulator;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -27,7 +27,7 @@ class Register
     public function __construct(
         UserManipulator $userManipulator,
         UserManagerInterface $userManager,
-        JWTManager $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
         FormFactoryInterface $formFactory
     )

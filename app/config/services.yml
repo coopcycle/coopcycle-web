@@ -205,10 +205,12 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-
   my.delivery_normalizer:
     class: AppBundle\Serializer\DeliveryNormalizer
-    arguments: [ "@api_platform.jsonld.normalizer.item" ]
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@coopcycle.geocoder"
+      - "@security.token_storage"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   app.restaurant_normalizer:
@@ -316,6 +318,11 @@ services:
 
   'AppBundle\Form\StoreType':
     arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
+    tags: [ form.type ]
+
+  'AppBundle\Form\StoreTokenType':
+    arguments:
+      - '@coopcycle.store_token_manager'
     tags: [ form.type ]
 
   'AppBundle\Form\ProductOptionType':
@@ -464,6 +471,13 @@ services:
       - "%apns_certificate_pass_phrase%"
       - "%fcm_server_api_key%"
 
+  coopcycle.geocoder:
+    class: AppBundle\Service\Geocoder
+    arguments:
+      - "@coopcycle.settings_manager"
+      - "%country_iso%"
+      - "%coopcycle.locale%"
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:
@@ -493,6 +507,41 @@ services:
 
   'AppBundle\Action\Settings':
       arguments:
-          - '@coopcycle.settings_manager'
-          - '%country_iso%'
-          - '%coopcycle.locale%'
+        - '@coopcycle.settings_manager'
+        - '%country_iso%'
+        - '%coopcycle.locale%'
+
+  'AppBundle\Security\StoreTokenAuthenticator':
+    parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
+    arguments: [ '@doctrine' ]
+
+  # The services below are needed to generate tokens that never expire
+  # @see https://github.com/lexik/LexikJWTAuthenticationBundle/issues/521
+
+  lexik_jwt_authentication.jws_provider.not_expiring:
+    public: true
+    parent: Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface
+    arguments:
+      index_3: ~
+
+  lexik_jwt_authentication.encoder.not_expiring:
+    parent: lexik_jwt_authentication.encoder
+    arguments:
+      index_0: '@lexik_jwt_authentication.jws_provider.not_expiring'
+
+  lexik_jwt_authentication.jwt_manager.not_expiring:
+    parent: lexik_jwt_authentication.jwt_manager
+    arguments:
+      index_0: '@lexik_jwt_authentication.encoder.not_expiring'
+
+  lexik_jwt_authentication.jwt_token_authenticator.not_expiring:
+    parent: lexik_jwt_authentication.jwt_token_authenticator
+    arguments:
+      index_0: '@lexik_jwt_authentication.jwt_manager.not_expiring'
+
+  coopcycle.store_token_manager:
+    class: AppBundle\Security\StoreTokenManager
+    arguments:
+      - '@security.token_storage'
+      - '@lexik_jwt_authentication.jwt_manager.not_expiring'
+      - '@event_dispatcher'

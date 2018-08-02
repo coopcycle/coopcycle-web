@@ -2,6 +2,8 @@
 const $ = require('jquery')
 global.$ = global.jQuery = $
 
+global.ClipboardJS = require('clipboard')
+
 // polyfill for `startsWith` not implemented in IE11
 if (!String.prototype.startsWith) {
   String.prototype.startsWith = function(searchString, position) {

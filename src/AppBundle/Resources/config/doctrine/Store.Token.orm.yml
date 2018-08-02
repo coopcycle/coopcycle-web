@@ -1,0 +1,32 @@
+AppBundle\Entity\Store\Token:
+    type: entity
+    table: store_token
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        token:
+            type: text
+            unique: true
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: create
+    oneToOne:
+        store:
+            targetEntity: AppBundle\Entity\Store
+            inversedBy: token
+            joinColumns:
+                store_id:
+                    referencedColumnName: id

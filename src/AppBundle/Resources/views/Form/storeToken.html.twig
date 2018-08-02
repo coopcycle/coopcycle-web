@@ -1,0 +1,20 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _store_token_generate_widget %}
+  <div class="alert alert-warning">
+    {% trans %}form.store_token.generate.alert{% endtrans %}
+    {{ form_widget(form, { attr: { class: 'btn btn-xs btn-success pull-right' } }) }}
+  </div>
+
+{% endblock %}
+
+{% block _store_token_token_widget %}
+  <div class="input-group">
+    {{ block('form_widget_simple') }}
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" data-clipboard-target="#{{ form.vars.id }}" id="copy">
+        <i class="fa fa-copy"></i>
+      </button>
+    </span>
+  </div>
+{% endblock %}
