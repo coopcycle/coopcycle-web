@@ -13,7 +13,7 @@ install:
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose run php bin/console doctrine:schema:create --env=dev
 	@docker-compose run php bin/demo --env=dev
-	@docker-compose run php bin/console doctrine:migrations:version --add --all
+	@docker-compose run php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
 osrm:
 	@mkdir -p var/osrm
