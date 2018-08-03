@@ -45,6 +45,7 @@ use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
@@ -762,6 +763,12 @@ class AdminController extends Controller
                 $this->getDoctrine()
                     ->getManagerForClass(Task::class)
                     ->flush();
+
+                // This will be used by the JavaScript modal
+                if ($request->headers->has('Accept')
+                &&  $request->headers->get('Accept') === 'application/json') {
+                    return new Response('', 204);
+                }
 
                 return $this->redirect($request->headers->get('referer'));
             }

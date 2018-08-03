@@ -143,24 +143,36 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
           credentials: 'include',
           method: 'POST',
           body: new URLSearchParams($.param(data)),
+          headers: new Headers({
+            'Accept': 'application/json',
+          })
         })
         .then(res => {
           if (res.ok) {
-            res.text()
-              .then(text => {
-                // Try to parse the response as JSON
-                // If the response is not is JSON format, it means the form is not valid
-                try {
-                  const task = JSON.parse(text)
-                  const $modal = $form.closest('.modal')
-                  const event = $.Event('task.form.success', { task })
-                  $modal.trigger(event)
-                  $modal.modal('hide')
-                } catch(e) {
-                  $form.closest('.modal-dialog').replaceWith(text)
-                  $('.modal-dialog').addClass('modal--shake')
-                }
-              })
+            // HTTP 204 means a task was deleted
+            // Reload the page because it's easier
+            // TODO Stop reloading the page, and update Redux
+            if (204 === res.status) {
+              window.location.reload()
+            } else {
+              res.text()
+                .then(text => {
+                  // Try to parse the response as JSON
+                  // If the response is not is JSON format, it means the form is not valid
+                  try {
+                    const task = JSON.parse(text)
+                    const $modal = $form.closest('.modal')
+                    const event = $.Event('task.form.success', { task })
+                    $modal.trigger(event)
+                    $modal.modal('hide')
+                  } catch(e) {
+                    $form.closest('.modal-dialog').replaceWith(text)
+                    $('.modal-dialog').addClass('modal--shake')
+                  }
+                })
+              }
+
+
           }
         })
 
