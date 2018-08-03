@@ -82,6 +82,13 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        api_pricing_calculate_price:
+            pattern:   ^/api/pricing/calculate-price
+            stateless: true
+            guard:
+                authenticators:
+                    - AppBundle\Security\StoreTokenAuthenticator
+
         token_check:
             pattern:   ^/api/token/check
             stateless: true
@@ -118,6 +125,7 @@ security:
         - { path: ^/api/deliveries, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/tasks, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/pricing, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
