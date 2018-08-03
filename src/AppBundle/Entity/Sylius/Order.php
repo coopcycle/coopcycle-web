@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Restaurant\Orders as RestaurantOrders;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
@@ -26,7 +27,13 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"order_create"}}
  *     },
- *     "my_orders"={"method"="GET", "route_name"="my_orders"}
+ *     "my_orders"={"method"="GET", "route_name"="my_orders"},
+ *     "restaurant_orders"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/orders",
+ *       "controller"=RestaurantOrders::class,
+ *       "defaults"={"_api_receive"=false}
+ *     }
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
