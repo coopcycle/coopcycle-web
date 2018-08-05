@@ -557,4 +557,18 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $user->addStore($store);
         $userManager->updateUser($user);
     }
+
+    /**
+     * @Given the restaurant with id :id belongs to user :username
+     */
+    public function theRestaurantWithIdBelongsToUser($id, $username)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $user->addRestaurant($restaurant);
+        $userManager->updateUser($user);
+    }
 }

@@ -59,6 +59,13 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        api_restaurant_orders:
+            pattern:   ^/api/restaurants/\d+/orders
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         api_me_location:
             pattern:   ^/api/me/location
             stateless: true
@@ -126,6 +133,7 @@ security:
         - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/tasks, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/pricing, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/restaurants/\d+/orders, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
