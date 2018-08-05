@@ -62,6 +62,7 @@ services:
       - osrm
       - graphite
       - stripe_mock
+      - elasticsearch
     links:
       - osrm
       - graphite
@@ -112,7 +113,23 @@ services:
     ports:
       - '12111:12111'
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    environment:
+      - cluster.name=coopcycle
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+        - 9200:9200
+
 volumes:
   node_modules:
   pg_data:
   php_cache:
+  esdata:
