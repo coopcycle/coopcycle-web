@@ -478,6 +478,14 @@ services:
       - "%country_iso%"
       - "%coopcycle.locale%"
 
+  coopcycle.search_manager:
+    class: AppBundle\Service\SearchManager
+    arguments:
+      - '@Elastica\Client'
+      - '@fos_user.user_manager'
+      - '%elasticsearch_prefix%'
+      - '%kernel.root_dir%/config/elastica.yml'
+
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
     tags:
@@ -552,3 +560,9 @@ services:
       - '@security.token_storage'
       - '@lexik_jwt_authentication.jwt_manager.not_expiring'
       - '@event_dispatcher'
+
+  'Elastica\Client':
+    arguments:
+      - host: '%elasticsearch_host%'
+      - ~
+      - '@logger'

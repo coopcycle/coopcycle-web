@@ -38,3 +38,5 @@ parameters:
     fcm_server_api_key: ''
     apns_certificate_file: ''
     apns_certificate_pass_phrase: ''
+    elasticsearch_host: elasticsearch
+    elasticsearch_prefix: %database_name%

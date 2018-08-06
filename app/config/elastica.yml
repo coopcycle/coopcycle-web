@@ -1,0 +1,27 @@
+settings:
+    index:
+        number_of_shards: 1
+        number_of_replicas: 0
+mappings:
+    user:
+        dynamic: false
+        properties:
+            username:
+                type: text
+                analyzer: english
+            firstname:
+                type: text
+                fields:
+                  keyword:
+                    type: text
+                    analyzer: keyword
+                  completion:
+                    type: completion
+            lastname:
+                type: text
+                fields:
+                  keyword:
+                    type: text
+                    analyzer: keyword
+                  completion:
+                    type: completion

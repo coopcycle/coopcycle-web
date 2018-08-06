@@ -1,6 +1,9 @@
 imports:
     - { resource: config_dev.yml }
 
+parameters:
+    elasticsearch_prefix: '%database_name%_test'
+
 framework:
     test: ~
     session:

@@ -13,6 +13,8 @@ parameters:
     mailer_password:   ~
     mailer_port:       ~
     mailer_encryption: ~
+    mailjet.api_key: ~
+    mailjet.secret_key: ~
     secret: ThisTokenIsNotSoSecretChangeIt
     cors_allow_origin: 'http://localhost'
     jwt_private_key_path: '%kernel.root_dir%/../var/jwt/private.pem'
@@ -30,8 +32,11 @@ parameters:
     piwik_site_id: ~
     is_demo: false
     sentry_dsn: "https://********@sentry.io/********"
+    sentry_public_dsn: "https://<public>@sentry.io/********"
     statsd_host: localhost
     statsd_port: '8125'
     fcm_server_api_key: ''
     apns_certificate_file: ''
     apns_certificate_pass_phrase: ''
+    elasticsearch_host: 127.0.0.1
+    elasticsearch_prefix: %database_name%
