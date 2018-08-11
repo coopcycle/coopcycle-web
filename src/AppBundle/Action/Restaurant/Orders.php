@@ -5,6 +5,7 @@ namespace AppBundle\Action\Restaurant;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +37,15 @@ class Orders
                 $restaurant->getId(), $this->getUser()->getUsername()));
         }
 
-        return $this->doctrine->getRepository(Order::class)->findByRestaurant($restaurant);
+        $orderRepository = $this->doctrine->getRepository(Order::class);
+
+        $qb = $orderRepository->createQueryBuilder('o');
+
+        $qb->andWhere('o.restaurant = :restaurant');
+        $qb->andWhere('o.state != :state_cart');
+        $qb->setParameter('restaurant', $restaurant);
+        $qb->setParameter('state_cart', OrderInterface::STATE_CART);
+
+        return $qb->getQuery()->getResult();
     }
 }
