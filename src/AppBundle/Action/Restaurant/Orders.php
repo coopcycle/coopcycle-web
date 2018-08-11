@@ -30,10 +30,12 @@ class Orders
     {
         $id = $request->attributes->get('id');
 
+        $date = $request->query->get('date', date('Y-m-d'));
+
         $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
 
         if (!$this->getUser()->ownsRestaurant($restaurant)) {
-            throw new AccessDeniedHttpException(sprintf('Restaurant #%d, does not belong to user "%s"',
+            throw new AccessDeniedHttpException(sprintf('Restaurant #%d does not belong to user "%s"',
                 $restaurant->getId(), $this->getUser()->getUsername()));
         }
 
@@ -43,8 +45,10 @@ class Orders
 
         $qb->andWhere('o.restaurant = :restaurant');
         $qb->andWhere('o.state != :state_cart');
+        $qb->andWhere('DATE(o.shippedAt) = :date');
         $qb->setParameter('restaurant', $restaurant);
         $qb->setParameter('state_cart', OrderInterface::STATE_CART);
+        $qb->setParameter('date', $date);
 
         return $qb->getQuery()->getResult();
     }

@@ -509,7 +509,10 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
 
         $order = $this->getContainer()->get('sylius.factory.order')->createForRestaurant($restaurant);
+
+        $order->setCustomer($user);
         $order->setState(OrderInterface::STATE_NEW);
+        $order->setShippedAt(new \DateTime());
 
         foreach ($restaurant->getProducts() as $product) {
 
