@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
+use AppBundle\Sylius\Order\OrderInterface;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -495,5 +496,34 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $user->addRestaurant($restaurant);
         $userManager->updateUser($user);
+    }
+
+    /**
+     * @Given the user :username has ordered something at the restaurant with id :id
+     */
+    public function theUserHasOrderedSomethingAtTheRestaurantWithId($username, $id)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $order = $this->getContainer()->get('sylius.factory.order')->createForRestaurant($restaurant);
+        $order->setState(OrderInterface::STATE_NEW);
+
+        foreach ($restaurant->getProducts() as $product) {
+
+            $variant = $product->getVariants()->first();
+            $item = $this->getContainer()->get('sylius.factory.order_item')->createNew();
+
+            $item->setVariant($variant);
+            $item->setUnitPrice($variant->getPrice());
+
+            $this->getContainer()->get('sylius.order_item_quantity_modifier')->modify($item, 1);
+            $this->getContainer()->get('sylius.order_modifier')->addToOrder($order, $item);
+        }
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
     }
 }
