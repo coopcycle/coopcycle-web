@@ -137,48 +137,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Given the restaurants are loaded:
-     */
-    public function theRestaurantsAreLoaded(TableNode $table)
-    {
-        $em = $this->doctrine->getManagerForClass('AppBundle:Restaurant');
-
-        $metadata = $em->getClassMetaData(Restaurant::class);
-        $metadata->setIdGenerator(new \Doctrine\ORM\Id\AssignedGenerator());
-        $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
-
-        foreach ($table as $row) {
-            $contract = new \AppBundle\Entity\Contract();
-            $contract->setMinimumCartAmount(15);
-            $contract->setFlatDeliveryPrice(3.50);
-            $restaurant = new Restaurant();
-            $restaurant->setName($row['name']);
-            $restaurant->setContract($contract);
-
-            if (isset($row['id']) && !empty($row['id'])) {
-                $property = new \ReflectionProperty(Restaurant::class, 'id');
-                $property->setAccessible(true);
-                $property->setValue($restaurant, $row['id']);
-            }
-
-            $address = new Address();
-
-            $address->setStreetAddress($row['streetAddress']);
-
-            if (isset($row['latlng']) && !empty($row['latlng'])) {
-                list($lat, $lng) = explode(',', $row['latlng']);
-                $address->setGeo(new GeoCoordinates($lat, $lng));
-            }
-
-            $restaurant->setAddress($address);
-
-            $em->persist($restaurant);
-        }
-
-        $em->flush();
-    }
-
-    /**
      * @Then the JSON should match:
      */
     public function theJsonShouldMatch(PyStringNode $string)
@@ -320,39 +278,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $token = $jwtManager->create($user);
 
         $this->tokens[$username] = $token;
-    }
-
-    /**
-     * @Given the user :username has ordered at restaurant :restaurantName for :date
-     */
-    public function theUserHasOrderedAtRestaurantFor($username, $restaurantName, $date)
-    {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $restaurantRepository = $this->doctrine->getRepository('AppBundle:Restaurant');
-        $orderManager = $this->doctrine->getManagerForClass('AppBundle:Order');
-
-        $user = $userManager->findUserByUsername($username);
-        $restaurant = $restaurantRepository->findOneByName($restaurantName);
-
-        $order = new Order();
-        $order->setRestaurant($restaurant);
-        $order->setCustomer($user);
-        $order->setStatus(Order::STATUS_WAITING);
-
-        $delivery = new Delivery($order);
-        $delivery->setPrice(3.50);
-        $delivery->setDate(new \DateTime($date));
-        $delivery->setOriginAddress($restaurant->getAddress());
-        $delivery->setDeliveryAddress($user->getAddresses()->first());
-
-        $cart = new \AppBundle\Entity\Cart\Cart();
-        foreach ($restaurant->getMenu()->getAllItems() as $menuItem) {
-            $cartItem = new \AppBundle\Entity\Cart\CartItem($cart, $menuItem, 1, []);
-            $order->addCartItem($cartItem, $menuItem);
-        }
-
-        $orderManager->persist($order);
-        $orderManager->flush();
     }
 
     /**
