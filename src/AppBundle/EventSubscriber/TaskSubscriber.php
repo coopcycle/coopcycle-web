@@ -105,19 +105,6 @@ final class TaskSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
 
         $this->addEvent($task, 'DONE', $event->getNotes());
-
-        if (null !== $task->getDelivery()) {
-            if ($task->isPickup()) {
-                $task->getDelivery()->setStatus(Delivery::STATUS_PICKED);
-            }
-            if ($task->isDropoff()) {
-                $task->getDelivery()->setStatus(Delivery::STATUS_DELIVERED);
-            }
-            $this->doctrine
-                ->getManagerForClass(Delivery::class)
-                ->flush();
-        }
-
         $this->publishTaskEventToRedis($task, $user, 'task:done');
     }
 
@@ -127,7 +114,6 @@ final class TaskSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
 
         $this->addEvent($task, 'FAILED', $event->getNotes());
-
         $this->publishTaskEventToRedis($task, $user, 'task:failed');
     }
 }

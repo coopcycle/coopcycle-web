@@ -3,9 +3,6 @@ AppBundle\Entity\Delivery:
     table: delivery
     repositoryClass: AppBundle\Entity\DeliveryRepository
     fields:
-        status:
-            type: string
-            nullable: true
         weight:
             type: integer
             nullable: true

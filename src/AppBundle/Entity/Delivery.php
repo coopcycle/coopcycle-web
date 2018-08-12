@@ -31,19 +31,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Delivery extends TaskCollection implements TaskCollectionInterface
 {
-    // default status when the delivery is created along the order
-    const STATUS_WAITING    = 'WAITING';
-    // the delivery has been accepted by a courier
-    const STATUS_DISPATCHED = 'DISPATCHED';
-    // the delivery has been picked by a courier
-    const STATUS_PICKED     = 'PICKED';
-    // delivered successfully
-    const STATUS_DELIVERED  = 'DELIVERED';
-    // the courier had an accident
-    const STATUS_ACCIDENT   = 'ACCIDENT';
-    // delivery was canceled (by an admin)
-    const STATUS_CANCELED   = 'CANCELED';
-
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 
@@ -110,18 +97,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
-
-        return $this;
-    }
-
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    public function setStatus($status)
-    {
-        $this->status = $status;
 
         return $this;
     }

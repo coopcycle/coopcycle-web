@@ -99,30 +99,9 @@ adminDashboard.zones.delete: Delete
 adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
 adminDashboard.zones.send: Send
 
-
-delivery.status.WAITING: Waiting
-delivery.status.DISPATCHED: Dispatched
-delivery.status.PICKED: Picked
-delivery.status.DELIVERED: Delivered
-delivery.status.CANCELED: Canceled
-
-delivery.status.DISPATCHED.verb: Dispatch
-delivery.status.PICKED.verb: Pick
-delivery.status.DELIVERED.verb: Deliver
-
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
 
-delivery.list.status: Status
-delivery.list.date: Date
-delivery.list.fromTo: From / To
-delivery.list.courier: Courier
-delivery.list.distance: Distance
-delivery.list.duration: Duration
-delivery.list.order: Order
-delivery.list.price: Price
-
-delivery.pastDeliveries: Past deliveries
 delivery.createNew: Create new delivery
 
 help.title: Help

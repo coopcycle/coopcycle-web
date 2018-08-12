@@ -86,23 +86,6 @@ adminDashboard.zones.save: Enregistrer
 adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
-delivery.status.WAITING: En attente
-delivery.status.DISPATCHED: Assignée
-delivery.status.PICKED: Récupérée
-delivery.status.DELIVERED: Livrée
-delivery.status.CANCELED: Annulée
-delivery.status.DISPATCHED.verb: Assigner
-delivery.status.PICKED.verb: Récupérer
-delivery.status.DELIVERED.verb: Livrer
-delivery.list.status: Statut
-delivery.list.date: Date
-delivery.list.fromTo: De / À
-delivery.list.courier: Coursier
-delivery.list.distance: Distance
-delivery.list.duration: Durée
-delivery.list.order: Commande
-delivery.list.price: Prix
-delivery.pastDeliveries: Dernières livraisons
 delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil

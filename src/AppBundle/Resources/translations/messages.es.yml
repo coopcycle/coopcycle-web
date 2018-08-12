@@ -91,28 +91,11 @@ adminDashboard.zones.save: Guardar
 adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
-delivery.status.WAITING: Esperando
-delivery.status.DISPATCHED: Asignado
-delivery.status.PICKED: Recogido
-delivery.status.DELIVERED: Entregado
-delivery.status.CANCELED: Cancelado
-delivery.status.DISPATCHED.verb: Asignar
-delivery.status.PICKED.verb: Recoger
-delivery.status.DELIVERED.verb: Entregar
 
 deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor introduzca
   un precio.
 deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a partir
   de las normas de tarificación. Introdúzcalo manualmente o edite la tarificación.
-delivery.list.status: Estado
-delivery.list.date: Fecha
-delivery.list.fromTo: De / A
-delivery.list.courier: Mensajero
-delivery.list.distance: Distáncia
-delivery.list.duration: Duración
-delivery.list.order: Pedido
-delivery.list.price: Precio
-delivery.pastDeliveries: Entregas anteriores
 delivery.createNew: Crear nueva entrega
 help.title: Ayuda
 help.home: Inicio

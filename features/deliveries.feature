@@ -32,7 +32,6 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "status":null,
         "pickup":{
           "address":{
             "@context":"/api/contexts/Address",
@@ -96,7 +95,6 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "status":null,
         "pickup":{
           "address":{
             "@context":"/api/contexts/Address",
