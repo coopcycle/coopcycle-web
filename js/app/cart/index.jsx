@@ -3,12 +3,14 @@ import { render, findDOMNode } from 'react-dom'
 import Cart from './Cart.jsx'
 import CartTop from './CartTop.jsx'
 import moment from 'moment'
+import _ from 'lodash'
 import { geocodeByAddress } from 'react-places-autocomplete'
 import Promise from 'promise'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
 window.CoopCycle = window.CoopCycle || {}
+window._paq = window._paq || []
 
 class CartHelper {
 
@@ -61,7 +63,7 @@ class CartHelper {
         adjustments={ adjustments }
         isMobileCart={ isXsDevice }
         validateCartURL={ this.options.validateCartURL }
-        onDateChange={ date => this.updateCart({ date }) }
+        onDateChange={ date => this._onDateChange(date) }
         onAddressChange={ streetAddress => this._onAddressChange(streetAddress) }
         onRemoveItem={ item => this.removeCartItem(item) } />, el, onRender)
   }
@@ -113,7 +115,13 @@ class CartHelper {
     })
   }
 
+  _onDateChange(date) {
+    window._paq.push(['trackEvent', 'Checkout', 'changeDate']);
+    this.updateCart({ date })
+  }
+
   _onAddressChange(streetAddress) {
+    window._paq.push(['trackEvent', 'Checkout', 'changeAddress']);
     this
       ._geocode(streetAddress)
       .then(address => this.updateCart({ address }))
@@ -131,6 +139,8 @@ class CartHelper {
       this.cartComponentRef.current.setCart(cart)
       this.cartComponentRef.current.setErrors(errors)
 
+      _.each(errors, (value, key) => window._paq.push(['trackEvent', 'Checkout', 'showError', key]))
+
       const event = new CustomEvent('cart:change', { detail: cart })
       document.querySelectorAll('[data-cart-listener]').forEach(listener => listener.dispatchEvent(event))
     }
@@ -144,6 +154,7 @@ class CartHelper {
   }
 
   addProduct(url, quantity) {
+    window._paq.push(['trackEvent', 'Checkout', 'addItem']);
     this.cartComponentRef.current.setLoading(true)
     $.post(url, {
       quantity: quantity
@@ -153,6 +164,7 @@ class CartHelper {
   }
 
   addProductWithOptions(url, data, quantity) {
+    window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions']);
     this.cartComponentRef.current.setLoading(true)
     data.push({
       name: 'quantity',
@@ -164,6 +176,7 @@ class CartHelper {
   }
 
   removeCartItem(item) {
+    window._paq.push(['trackEvent', 'Checkout', 'removeItem']);
     this.cartComponentRef.current.setLoading(true)
     $.ajax({
       url: this.options.removeFromCartURL.replace('__CART_ITEM_ID__', item.id),

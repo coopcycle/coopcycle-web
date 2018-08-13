@@ -216,9 +216,15 @@ $('form[data-product-options] input[type="radio"]').on('click', function(e) {
     checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
   });
 
+  _paq.push(['trackEvent', 'Checkout', 'selectOption']);
+
   if ($options.length === checkedOptionsCount) {
     $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
   }
+})
+
+$('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'addExtra']);
 })
 
 $('form[data-product-options]').on('submit', function(e) {
@@ -234,12 +240,17 @@ $('form[data-product-options]').on('submit', function(e) {
 })
 
 $('.modal').on('shown.bs.modal', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'showOptions']);
   var $form = $(this).find('form[data-product-options]');
   if ($form.length === 1) {
     var $options = $form.find('[data-product-option]');
     var disabled = $options.length > 0;
     $form.find('button[type="submit"]').attr('disabled', disabled);
   }
+});
+
+$('.modal').on('hidden.bs.modal', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
 });
 
 function initMap() {
