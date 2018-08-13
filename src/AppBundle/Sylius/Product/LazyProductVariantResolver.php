@@ -43,7 +43,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
                 continue;
             }
 
-            if ($this->matchOptions($variant, $mandatoryOptionValues)) {
+            if ($this->matchOptions($variant, $optionValues)) {
                 return $variant;
             }
         }
@@ -51,7 +51,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         // No variant found
         $variant = $this->variantFactory->createForProduct($product);
         $values = [];
-        foreach ($mandatoryOptionValues as $optionValue) {
+        foreach ($optionValues as $optionValue) {
             $variant->addOptionValue($optionValue);
         }
 

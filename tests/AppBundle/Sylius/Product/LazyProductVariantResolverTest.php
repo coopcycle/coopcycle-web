@@ -185,6 +185,6 @@ class LazyProductVariantResolverTest extends TestCase
 
         $this->assertEquals(900, $actualVariant->getPrice());
         $this->assertTrue($actualVariant->hasOptionValue($optionValue3));
-        $this->assertFalse($actualVariant->hasOptionValue($optionValue4));
+        $this->assertTrue($actualVariant->hasOptionValue($optionValue4));
     }
 }
