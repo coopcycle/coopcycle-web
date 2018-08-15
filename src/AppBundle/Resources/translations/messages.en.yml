@@ -25,6 +25,7 @@ adminDashboard.dashboard.filters: Filters
 adminDashboard.dashboard.deleteTaskGroup: Delete task group
 adminDashboard.dashboard.displayByGroups: Display by groups
 adminDashboard.dashboard.displayAll: Display all
+adminDashboard.dashboard.cancel: Cancel
 
 adminDashboard.deliveries.title: Deliveries
 adminDashboard.deliveries.createNew: Create new delivery
