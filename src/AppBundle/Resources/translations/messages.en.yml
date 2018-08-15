@@ -278,6 +278,8 @@ form.task_event.notes.placeholder: |
 form.task_event.notes.help: You can edit the comment
 
 form.task_upload.file: File
+form.task_upload.file.help: |
+  Supported file formats: csv, ods, xlsx
 form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 task.type.PICKUP: Pickup

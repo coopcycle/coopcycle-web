@@ -287,6 +287,8 @@ form.task_event.notes.placeholder: 'Ex : adresse introuvable, aucun problème…
   '
 form.task_event.notes.help: Vous pouvez modifier le commentaire
 form.task_upload.file: Fichier
+form.task_upload.file.help: |
+  Formats de fichiers supportés : csv, ods, xlsx
 form.task_complete.done.label: Terminer
 form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
