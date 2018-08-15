@@ -297,8 +297,17 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\TaskUploadType':
-    arguments: [ '@craue_config', '@csa_guzzle.client.google_maps', '@translator', '@coopcycle.tag_manager', '@slugify', '@libphonenumber.phone_number_util', '%country_iso%' ]
+    arguments: [ '@coopcycle.utils.task_spreadsheet_parser' ]
     tags: [ form.type ]
+
+  coopcycle.utils.task_spreadsheet_parser:
+    class: AppBundle\Utils\TaskSpreadsheetParser
+    arguments:
+      - "@coopcycle.geocoder"
+      - "@coopcycle.tag_manager"
+      - "@slugify"
+      - "@libphonenumber.phone_number_util"
+      - "%country_iso%"
 
   'AppBundle\Form\TaskExportType':
     arguments: [ '@coopcycle.repository.task' ]
