@@ -2,7 +2,9 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
+use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Request;
 
@@ -12,13 +14,20 @@ class RemotePushNotificationManager
     private $fcmServerApiKey;
     private $apns;
 
-    public function __construct(HttpClient $httpClient, \ApnsPHP_Push $apns, $apnsCertificatePassPhrase, $fcmServerApiKey)
+    public function __construct(
+        HttpClient $httpClient,
+        \ApnsPHP_Push $apns,
+        $apnsCertificatePassPhrase,
+        $fcmServerApiKey,
+        EntityRepository $remotePushTokenRepository)
     {
         $this->httpClient = $httpClient;
         $this->fcmServerApiKey = $fcmServerApiKey;
 
         $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
         $this->apns = $apns;
+
+        $this->remotePushTokenRepository = $remotePushTokenRepository;
     }
 
     /**
@@ -110,12 +119,27 @@ class RemotePushNotificationManager
 
     /**
      * @param string $message
-     * @param mixed $tokens
+     * @param mixed $recipients
      */
-    public function send($message, $tokens, $data = [])
+    public function send($message, $recipients, $data = [])
     {
-        if (!is_array($tokens)) {
-            $tokens = [ $tokens ];
+        if (!is_array($recipients)) {
+            $recipients = [ $recipients ];
+        }
+
+        $tokens = [];
+        foreach ($recipients as $recipient) {
+            if (!$recipient instanceof RemotePushToken && !$recipient instanceof ApiUser) {
+                throw new \InvalidArgumentException(sprintf('$recipients must be an instance of %s or %s',
+                    RemotePushToken::class, ApiUser::class));
+            }
+
+            if ($recipient instanceof RemotePushToken) {
+                $tokens[] = $recipient;
+            }
+            if ($recipient instanceof ApiUser) {
+                $tokens = array_merge($tokens, $this->remotePushTokenRepository->findByUser($recipient));
+            }
         }
 
         $fcmTokens = array_filter($tokens, function (RemotePushToken $token) {

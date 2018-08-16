@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Service\RemotePushNotificationManager;
+use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
@@ -30,12 +31,14 @@ class RemotePushNotificationManagerTest extends TestCase
     {
         $this->httpClient = $this->prophesize(HttpClient::class);
         $this->apns = $this->prophesize(\ApnsPHP_Push::class);
+        $this->remotePushTokenRepository = $this->prophesize(EntityRepository::class);
 
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->httpClient->reveal(),
             $this->apns->reveal(),
             'passphrase',
-            '1234567890'
+            '1234567890',
+            $this->remotePushTokenRepository->reveal()
         );
     }
 

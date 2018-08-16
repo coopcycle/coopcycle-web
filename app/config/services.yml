@@ -134,6 +134,12 @@ services:
     arguments:
       - AppBundle\Entity\Zone
 
+  coopcycle.repository.remote_push_token:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\RemotePushToken
+
   coopcycle.expression_language.zone.provider:
     public: false
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
@@ -479,6 +485,7 @@ services:
       - "@apns_php.push"
       - "%apns_certificate_pass_phrase%"
       - "%fcm_server_api_key%"
+      - "@coopcycle.repository.remote_push_token"
 
   coopcycle.geocoder:
     class: AppBundle\Service\Geocoder
