@@ -2,9 +2,11 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Entity\Restaurant;
 use AppBundle\Event;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\NotificationManager;
+use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\SettingsManager;
 use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
@@ -15,6 +17,7 @@ final class NotificationSubscriber implements EventSubscriberInterface
 {
     private $redis;
     private $notificationManager;
+    private $remotePushNotificationManager;
     private $emailManager;
     private $settingsManager;
     private $serializer;
@@ -23,6 +26,7 @@ final class NotificationSubscriber implements EventSubscriberInterface
     public function __construct(
         Redis $redis,
         NotificationManager $notificationManager,
+        RemotePushNotificationManager $remotePushNotificationManager,
         EmailManager $emailManager,
         SettingsManager $settingsManager,
         SerializerInterface $serializer,
@@ -30,6 +34,7 @@ final class NotificationSubscriber implements EventSubscriberInterface
     {
         $this->redis = $redis;
         $this->notificationManager = $notificationManager;
+        $this->remotePushNotificationManager = $remotePushNotificationManager;
         $this->emailManager = $emailManager;
         $this->settingsManager = $settingsManager;
         $this->serializer = $serializer;
@@ -96,6 +101,11 @@ final class NotificationSubscriber implements EventSubscriberInterface
 
         if ($order->isFoodtech()) {
 
+            $this->redis->publish(
+                sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
+                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
+            );
+
             // Send email to customer
             $this->emailManager->sendTo(
                 $this->emailManager->createOrderCreatedMessageForCustomer($order),
@@ -108,10 +118,18 @@ final class NotificationSubscriber implements EventSubscriberInterface
                 $this->settingsManager->get('administrator_email')
             );
 
+            /* Send notifications to owners */
+
+            $owners = $order->getRestaurant()->getOwners()->toArray();
+
+            if (count($owners) === 0) {
+                return;
+            }
+
             $ownerMails = [];
 
-            // Push notification to restaurant owners
-            foreach ($order->getRestaurant()->getOwners() as $owner) {
+            // Add web notification
+            foreach ($owners as $owner) {
 
                 $notification = $this->notificationManager
                     ->createForUser($owner, 'notifications.order.created');
@@ -127,16 +145,36 @@ final class NotificationSubscriber implements EventSubscriberInterface
                 $ownerMails[$owner->getEmail()] = $owner->getFullName();
             }
 
-            // Send email to restaurant owners
+            // Send email
             $this->emailManager->sendTo(
                 $this->emailManager->createOrderCreatedMessageForOwner($order),
                 $ownerMails
             );
 
-            $this->redis->publish(
-                sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
-                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
-            );
+            // Send remote push notification
+
+            $restaurantNormalized = $this->serializer->normalize($order->getRestaurant(), 'jsonld', [
+                'resource_class' => Restaurant::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get'
+            ]);
+
+            $restaurantNormalized = [
+                '@id' => $restaurantNormalized['@id'],
+                'name' => $restaurantNormalized['name']
+            ];
+
+            $data = [
+                'event' => [
+                    'name' => 'order:created',
+                    'data' => [
+                        'restaurant' => $restaurantNormalized,
+                        'date' => $order->getShippedAt()->format('Y-m-d')
+                    ]
+                ]
+            ];
+            $this->remotePushNotificationManager
+                ->send('New order to accept', $owners, $data);
         }
     }
 }
