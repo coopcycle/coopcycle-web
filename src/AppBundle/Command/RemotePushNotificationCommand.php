@@ -6,6 +6,7 @@ use AppBundle\Entity\RemotePushToken;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemotePushNotificationCommand extends ContainerAwareCommand
@@ -20,7 +21,14 @@ class RemotePushNotificationCommand extends ContainerAwareCommand
             ->setName('coopcycle:remote-notifications:push')
             ->setDescription('Push a remote notification to a user.')
             ->addArgument('username', InputArgument::REQUIRED, 'The username.')
-            ->addArgument('message', InputArgument::REQUIRED, 'The message.');;
+            ->addArgument('message', InputArgument::REQUIRED, 'The message.')
+            ->addOption(
+                'data',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                'The event data.',
+                '{}'
+            );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -35,6 +43,7 @@ class RemotePushNotificationCommand extends ContainerAwareCommand
     {
         $username = $input->getArgument('username');
         $message = $input->getArgument('message');
+        $data = json_decode($input->getOption('data'), true);
 
         $user = $this->userManager->findUserByUsername($username);
 
@@ -46,7 +55,7 @@ class RemotePushNotificationCommand extends ContainerAwareCommand
 
         foreach ($tokens as $token) {
             $output->writeln(sprintf('<info>Sending remote push notification to platform %s</info>', $token->getPlatform()));
-            $this->remotePushNotificationManager->send($message, $token);
+            $this->remotePushNotificationManager->send($message, $token, $data);
         }
     }
 }
