@@ -33,5 +33,5 @@ parameters:
     statsd_host: localhost
     statsd_port: '8125'
     fcm_server_api_key: ''
-    apns_certificate_file: ''
+    apns_certificate_file: '/dev/null'
     apns_certificate_pass_phrase: ''
