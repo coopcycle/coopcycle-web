@@ -5,6 +5,9 @@ import AddressPicker from "../address/AddressPicker.jsx";
 function onPlaceChange (geohash, address) {
     localStorage.setItem('search_geohash', geohash);
     localStorage.setItem('search_address', address);
+
+    window._paq.push(['trackEvent', 'Homepage', 'searchAddress', address]);
+
     $('#address-search-form').find('input[name=geohash]').val(geohash);
     $('#address-search-form').submit();
 }
