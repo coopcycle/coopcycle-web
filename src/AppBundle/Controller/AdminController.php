@@ -620,10 +620,7 @@ class AdminController extends Controller
         $zoneCollection = new \stdClass();
         $zoneCollection->zones = [];
 
-        $geojson = new \stdClass();
-        $geojson->features = [];
-
-        $uploadForm = $this->createForm(GeoJSONUploadType::class, $geojson);
+        $uploadForm = $this->createForm(GeoJSONUploadType::class);
         $zoneCollectionForm = $this->createForm(ZoneCollectionType::class, $zoneCollection);
 
         $zoneCollectionForm->handleRequest($request);
@@ -643,11 +640,12 @@ class AdminController extends Controller
         $uploadForm->handleRequest($request);
         if ($uploadForm->isSubmitted() && $uploadForm->isValid()) {
             $geojson = $uploadForm->getData();
-            foreach ($geojson->features as $feature) {
+            foreach ($geojson as $feature) {
                 $zone = new Zone();
-                $zone->setGeoJSON($feature['geometry']);
+                $zone->setGeoJSON($feature->getGeometry()->jsonSerialize());
                 $zoneCollection->zones[] = $zone;
             }
+
             $zoneCollectionForm->setData($zoneCollection);
         }
 

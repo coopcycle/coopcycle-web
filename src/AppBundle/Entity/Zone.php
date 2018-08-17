@@ -49,6 +49,7 @@ class Zone
 
     public function setGeoJSON(array $geoJSON)
     {
+        // FIXME Use GeoJson\GeoJson class
         if (!isset($geoJSON['type']) || !isset($geoJSON['coordinates'])
         ||  $geoJSON['type'] !== 'Polygon'
         ||  !is_array($geoJSON['coordinates'])) {

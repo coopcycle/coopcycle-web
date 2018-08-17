@@ -4,6 +4,11 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Zone;
 use Doctrine\ORM\EntityRepository;
+use GeoJson\Exception\UnserializationException;
+use GeoJson\Feature\Feature;
+use GeoJson\Feature\FeatureCollection;
+use GeoJson\GeoJson;
+use GeoJson\Geometry\Polygon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -15,6 +20,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GeoJSONUploadType extends AbstractType
 {
+    const ERROR_INVALID_JSON =
+        'The file does not contain valid JSON';
+    const ERROR_INVALID_GEOJSON =
+        'GeoJSON must contain a Feature, a FeatureCollection, or a Polygon';
+    const ERROR_POLYGON_ONLY =
+        'GeoJSON must contain Polygon geometries';
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -38,12 +50,41 @@ class GeoJSONUploadType extends AbstractType
             $data = json_decode($contents, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $event->getForm()->addError(new FormError('The JSON file is not valid'));
+                $event->getForm()->addError(new FormError(self::ERROR_INVALID_JSON));
                 return;
             }
 
-            $geojson = $event->getForm()->getParent()->getData();
-            $geojson->features = $data['features'];
+            try {
+                $geojson = GeoJson::jsonUnserialize($data);
+            } catch (UnserializationException $e) {
+                $event->getForm()->addError(new FormError($e->getMessage()));
+                return;
+            }
+
+            if (!$geojson instanceof Polygon
+            &&  !$geojson instanceof Feature
+            &&  !$geojson instanceof FeatureCollection) {
+                $event->getForm()->addError(new FormError(self::ERROR_INVALID_GEOJSON));
+                return;
+            }
+
+            // Make sure we are always using a FeatureCollection
+            if (!$geojson instanceof FeatureCollection) {
+                if ($geojson instanceof Feature) {
+                    $geojson = new FeatureCollection([$geojson]);
+                }
+                if ($geojson instanceof Polygon) {
+                    $geojson = new FeatureCollection([new Feature($geojson)]);
+                }
+            }
+
+            // Verify we are dealing with polygons
+            foreach ($geojson as $feature) {
+                if (!$feature->getGeometry() instanceof Polygon) {
+                    $event->getForm()->addError(new FormError(self::ERROR_POLYGON_ONLY));
+                    return;
+                }
+            }
 
             $event->getForm()->getParent()->setData($geojson);
         });
@@ -52,7 +93,7 @@ class GeoJSONUploadType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => \stdClass::class,
+            'data_class' => FeatureCollection::class,
         ));
     }
 }
