@@ -5,34 +5,37 @@ export class DeliveryZonePicker extends React.Component {
   constructor (props) {
     super(props)
 
-    let operator, value
+    let left, type, value
     if (this.props.expression) {
       const [ result ] = parsePricingRule(this.props.expression)
-      operator = result.left
+      left = result.left
       value = result.right
     }
 
-    if (operator && operator === 'distance') {
+    if (left && left === 'distance') {
+      type = 'distance'
       value = (value / 1000).toFixed(2)
+    } else {
+      type = 'zone'
     }
 
     this.state = {
-      operator: operator || '',
+      type: type || '',
       value: value || ''
     }
 
-    this.onOperatorSelect = this.onOperatorSelect.bind(this)
+    this.onTypeSelect = this.onTypeSelect.bind(this)
     this.renderInput = this.renderInput.bind(this)
     this.onChange = this.onChange.bind(this)
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const {operator, value} = this.state
+    const {type, value} = this.state
     const {onExprChange} = this.props
 
-    if (operator && value && (operator !== prevState.operator || value !== prevState.value)) {
-      switch (operator) {
-        case 'in_zone':
+    if (type && value && (type !== prevState.type || value !== prevState.value)) {
+      switch (type) {
+        case 'zone':
           onExprChange(`in_zone(dropoff.address, "${value}")`)
           break
         case 'distance':
@@ -42,8 +45,8 @@ export class DeliveryZonePicker extends React.Component {
     }
   }
 
-  onOperatorSelect (ev) {
-    this.setState({operator: ev.target.value, value: ''})
+  onTypeSelect (ev) {
+    this.setState({type: ev.target.value, value: ''})
   }
 
   onChange (ev) {
@@ -51,11 +54,11 @@ export class DeliveryZonePicker extends React.Component {
   }
 
   renderInput () {
-    const {operator, value} = this.state
+    const {type, value} = this.state
     const {zones} = this.props
 
-    switch (operator) {
-      case 'in_zone':
+    switch (type) {
+      case 'zone':
         return (
           <select value={value} onChange={this.onChange} className="form-control">
             <option value="">-</option>
@@ -77,8 +80,8 @@ export class DeliveryZonePicker extends React.Component {
     return (
       <div className="row">
         <div className="col-md-3 form-group">
-          <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control">
-            <option value="in_zone">Zone</option>
+          <select value={this.state.type} onChange={this.onTypeSelect} className="form-control">
+            <option value="zone">Zone</option>
             <option value="distance">Distance (km)</option>
           </select>
         </div>
