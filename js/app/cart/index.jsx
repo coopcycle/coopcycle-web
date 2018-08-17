@@ -2,6 +2,7 @@ import React from 'react'
 import { render, findDOMNode } from 'react-dom'
 import Cart from './Cart.jsx'
 import CartTop from './CartTop.jsx'
+import i18n from '../i18n'
 import moment from 'moment'
 import _ from 'lodash'
 import { geocodeByAddress } from 'react-places-autocomplete'
@@ -11,6 +12,9 @@ let isXsDevice = $('.visible-xs').is(':visible')
 
 window.CoopCycle = window.CoopCycle || {}
 window._paq = window._paq || []
+
+const NO_RESULTS = 'NO_RESULTS'
+const NOT_ENOUGH_PRECISION = 'NOT_ENOUGH_PRECISION'
 
 class CartHelper {
 
@@ -45,6 +49,7 @@ class CartHelper {
         this
           ._geocode(cart.address)
           .then(address => this.updateCart({ address, date: cart.date }))
+          .catch(e => this._handleGeocodeError(e))
       } else {
         this.updateCart({ date: cart.date })
       }
@@ -84,13 +89,20 @@ class CartHelper {
         .then(results => {
 
           if (results.length === 0) {
-            reject()
+            reject(NO_RESULTS)
+            return
+          }
+
+          const place = results[0]
+
+          // Make sure we have a "precise" street address
+          if (false === _.includes(place['types'], 'street_address')) {
+            reject(NOT_ENOUGH_PRECISION)
             return
           }
 
           // format Google's places format to a clean dict
-          let place = results[0],
-            addressDict = {},
+          let addressDict = {},
             lat = place.geometry.location.lat(),
             lng = place.geometry.location.lng();
 
@@ -125,6 +137,17 @@ class CartHelper {
     this
       ._geocode(streetAddress)
       .then(address => this.updateCart({ address }))
+      .catch(e => this._handleGeocodeError(e))
+  }
+
+  _handleGeocodeError(e) {
+    if (e === NOT_ENOUGH_PRECISION) {
+      this.cartComponentRef.current.setErrors({
+        shippingAddress: [
+          i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION')
+        ]
+      })
+    }
   }
 
   handleAjaxResponse(res) {

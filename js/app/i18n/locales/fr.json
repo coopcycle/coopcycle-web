@@ -59,6 +59,7 @@
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Adresse de dépôt",
     "ORDER_LIST_STATE": "État",
     "ORDER_LIST_PREPARATION_DATE": "Date de préparation",
-    "ORDER_LIST_TOTAL": "Total"
+    "ORDER_LIST_TOTAL": "Total",
+    "CART_ADDRESS_NOT_ENOUGH_PRECISION": "Cette adresse n'est pas assez précise"
   }
 }
