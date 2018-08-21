@@ -42,6 +42,12 @@ AppBundle\Entity\Sylius\Order:
             orphanRemoval: true
             cascade:
                 - all
+        events:
+            targetEntity: AppBundle\Entity\Sylius\OrderEvent
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: order
     oneToOne:
         delivery:
             targetEntity: AppBundle\Entity\Delivery

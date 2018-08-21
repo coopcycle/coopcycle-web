@@ -66,11 +66,14 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $delivery;
 
+    protected $events;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->payments = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     /**
@@ -253,5 +256,11 @@ class Order extends BaseOrder implements OrderInterface
         $delivery->setOrder($this);
 
         $this->delivery = $delivery;
+    }
+
+    public function addEvent(OrderEvent $event)
+    {
+        $event->setOrder($this);
+        $this->events->add($event);
     }
 }
