@@ -61,6 +61,8 @@ class Pricing
         $pickupAddress = $store->getAddress();
         $dropoffAddress = $this->geocoder->geocode($request->query->get('dropoffAddress'));
 
+        // TODO Check address has been geocoded
+
         $data = $this->routing->getRawResponse(
             $pickupAddress->getGeo(),
             $dropoffAddress->getGeo()
@@ -73,9 +75,11 @@ class Pricing
         $delivery->getDropoff()->setAddress($dropoffAddress);
         $delivery->setVehicle(Delivery::VEHICLE_BIKE);
         $delivery->setWeight($request->query->get('weight', null));
-        $delivery->setDistance($distance);
+        $delivery->setDistance(ceil($distance));
 
         $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+
+        // TODO Throw HTTP 400 when price can't be calculated
 
         return new JsonResponse($price);
     }
