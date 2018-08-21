@@ -83,7 +83,8 @@
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/nominatim-provider": "^5.0",
         "box/spout": "^2.7",
-        "jmikola/geojson": "~1.0"
+        "jmikola/geojson": "~1.0",
+        "simple-bus/symfony-bridge": "^5.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

@@ -292,3 +292,9 @@ sonata_seo:
                 'Content-Type': text/html; charset=utf-8
             charset:
                 UTF-8: ''
+
+command_bus:
+    logging: ~
+
+event_bus:
+    logging: ~
