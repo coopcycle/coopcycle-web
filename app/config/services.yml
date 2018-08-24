@@ -70,6 +70,7 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
     arguments:
       - "@doctrine"
+      - "@sylius.context.currency"
     tags:
       - { name: sylius.order_processor, priority: 16 }
 
