@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Order\Middleware;
 
-use AppBundle\Domain\Order\DomainEvent;
+use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\Order\EventStore;
 use SimpleBus\Message\Bus\Middleware\MessageBusMiddleware;
 
