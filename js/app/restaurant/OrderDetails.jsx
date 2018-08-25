@@ -155,7 +155,7 @@ class OrderList extends React.Component {
           <p>
             <span className="text-left"><OrderLabel order={ order } /></span>
             <strong className="pull-right text-success">
-                { moment(order.shippedAt).format('lll') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
+                { moment(order.preparationExpectedAt).format('LT') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
             </strong>
           </p>
           <p className="text-right">

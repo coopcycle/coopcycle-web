@@ -58,7 +58,8 @@
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Drop-off address",
     "ORDER_LIST_STATE": "State",
-    "ORDER_LIST_PREPARATION_DATE": "Preparation date",
+    "ORDER_LIST_PREPARATION_TIME": "Preparation time",
+    "ORDER_LIST_PICKUP_TIME": "Pickup time",
     "ORDER_LIST_TOTAL": "Total",
     "CART_ADDRESS_NOT_ENOUGH_PRECISION": "This address is not precise enough"
   }

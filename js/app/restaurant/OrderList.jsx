@@ -43,7 +43,8 @@ class OrderList extends React.Component
             <tr>
               <th>#</th>
               <th>{ i18n.t("ORDER_LIST_STATE") }</th>
-              <th>{ i18n.t("ORDER_LIST_PREPARATION_DATE") }</th>
+              <th>{ i18n.t("ORDER_LIST_PREPARATION_TIME") }</th>
+              <th>{ i18n.t("ORDER_LIST_PICKUP_TIME") }</th>
               <th></th>
               <th className="text-right">{ i18n.t("ORDER_LIST_TOTAL") }</th>
             </tr>
@@ -67,7 +68,8 @@ class OrderList extends React.Component
       <tr key={ order['id'] } onClick={ () => this.props.onOrderClick(order) } style={{ cursor: 'pointer' }} className={ className }>
         <td>{ order.id }</td>
         <td><OrderLabel order={ order } /></td>
-        <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.shippedAt).format('lll') }</td>
+        <td><i className="fa fa-clock-o" aria-hidden="true"></i>  { moment(order.preparationExpectedAt).format('LT') }</td>
+        <td><i className="fa fa-bicycle" aria-hidden="true"></i>  { moment(order.pickupExpectedAt).format('LT') }</td>
         <td>{ `${order.items.length} plats` }</td>
         <td className="text-right">{ (order.total / 100).formatMoney(2, window.AppData.currencySymbol) }</td>
       </tr>
@@ -84,11 +86,11 @@ class OrderList extends React.Component
       )
     }
 
-    const shippedAt = order => moment(order.shippedAt).format('YYYY-MM-DD')
-    const ordersByDate = _.mapValues(_.groupBy(orders, shippedAt), orders => {
+    const preparationExpectedAt = order => moment(order.preparationExpectedAt).format('YYYY-MM-DD')
+    const ordersByDate = _.mapValues(_.groupBy(orders, preparationExpectedAt), orders => {
       orders.sort((a, b) => {
-        const dateA = moment(a.shippedAt);
-        const dateB = moment(b.shippedAt);
+        const dateA = moment(a.preparationExpectedAt);
+        const dateB = moment(b.preparationExpectedAt);
         if (dateA === dateB) {
           return 0;
         }

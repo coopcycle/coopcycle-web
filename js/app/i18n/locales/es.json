@@ -58,7 +58,8 @@
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Dirección de recogida",
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Dirección de entrega",
     "ORDER_LIST_STATE": "Estado",
-    "ORDER_LIST_PREPARATION_DATE": "Fecha de preparación",
+    "ORDER_LIST_PREPARATION_TIME": "Hora de preparación",
+    "ORDER_LIST_PICKUP_TIME": "Hora de pickup",
     "ORDER_LIST_TOTAL": "Total",
     "CART_ADDRESS_NOT_ENOUGH_PRECISION": "Esta dirección no es suficientemente precisa"
     }
