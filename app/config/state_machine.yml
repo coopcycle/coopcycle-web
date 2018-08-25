@@ -31,55 +31,6 @@ winzou_state_machine:
             ready:
                 from: [accepted]
                 to: ready
-        callbacks:
-            before:
-                before_create_assign_number:
-                    on: "create"
-                    do: ["@sylius.order_number_assigner", "assignNumber"]
-                    args: ["object"]
-                before_fulfill_capture_payment:
-                    on: "fulfill"
-                    do: ["@coopcycle.order_manager", "capturePayment"]
-                    args: ["object"]
-            after:
-                # We can safely apply create transition on all payments,
-                # because SM\Callback\CascadeTransitionCallback uses $soft = true
-                after_create_cascade:
-                    on: "create"
-                    do: ["@sm.callback.cascade_transition", "apply"]
-                    args: ["object.getPayments()", "event", "'create'", "'sylius_payment'"]
-                after_create_dispatch_event:
-                    on: "create"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.create'"]
-                after_accept_create_delivery:
-                    on: "accept"
-                    do: ["@coopcycle.order_manager", "createDelivery"]
-                    args: ["object"]
-                after_accept_dispatch_event:
-                    on: "accept"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.accept'"]
-                after_refuse_send_email:
-                    on: "refuse"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.cancel'"]
-                after_ready_dispatch_event:
-                    on: "ready"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.ready'"]
-                after_fulfill_dispatch_event:
-                    on: "fulfill"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.fulfill'"]
-                after_refuse_dispatch_event:
-                    on: "refuse"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.refuse'"]
-                after_cancel_send_email:
-                    on: "cancel"
-                    do: ["@coopcycle.order_manager", "dispatchOrderEvent"]
-                    args: ["object", "'order.cancel'"]
     sylius_payment:
         class: AppBundle\Entity\StripePayment
         property_path: state
@@ -100,7 +51,7 @@ winzou_state_machine:
                 from: [cart]
                 to: new
             authorize:
-                from: [new, cart]
+                from: [cart, new]
                 to: authorized
             process:
                 from: [new]
@@ -109,7 +60,7 @@ winzou_state_machine:
                 from: [new, authorized, processing]
                 to: completed
             fail:
-                from: [new, authorized]
+                from: [cart, new, authorized]
                 to: failed
             cancel:
                 from: [new]
@@ -120,16 +71,6 @@ winzou_state_machine:
             void:
                 from: [new, processing]
                 to: void
-        callbacks:
-            after:
-                after_authorize_dispatch_event:
-                    on: "authorize"
-                    do: ["@coopcycle.order_manager", "dispatchPaymentEvent"]
-                    args: ["object", "'payment.authorize'"]
-                after_fail_transfer:
-                    on: "fail"
-                    do: ["@coopcycle.order_manager", "afterPaymentFailed"]
-                    args: ["object.getOrder()"]
     stripe_transfer:
         class: AppBundle\Entity\StripeTransfer
         property_path: state

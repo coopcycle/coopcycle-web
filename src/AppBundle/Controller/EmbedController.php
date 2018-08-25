@@ -179,7 +179,7 @@ class EmbedController extends Controller
             $order->setNotes($name);
 
             $this->get('sylius.repository.order')->add($order);
-            $this->get('coopcycle.order_manager')->create($order);
+            $this->get('coopcycle.order_manager')->onDemand($order);
             $this->get('sylius.manager.order')->flush();
 
             $this->addFlash(

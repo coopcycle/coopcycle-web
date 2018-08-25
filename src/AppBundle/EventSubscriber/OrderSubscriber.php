@@ -2,50 +2,36 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Event\OrderAcceptEvent;
-use AppBundle\Event\OrderCancelEvent;
-use AppBundle\Event\OrderCreateEvent;
-use AppBundle\Event\OrderFullfillEvent;
-use AppBundle\Event\OrderReadyEvent;
-use AppBundle\Event\OrderRefuseEvent;
 use AppBundle\Event\TaskDoneEvent;
-use AppBundle\Service\OrderManager;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Predis\Client as Redis;
 use Psr\Log\LoggerInterface;
+use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
     private $doctrine;
-    private $redis;
     private $tokenStorage;
-    private $orderManager;
-    private $serializer;
     private $logger;
 
     public function __construct(
         ManagerRegistry $doctrine,
-        Redis $redis,
         TokenStorageInterface $tokenStorage,
-        OrderManager $orderManager,
-        SerializerInterface $serializer,
+        EventBus $eventBus,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
-        $this->redis = $redis;
         $this->tokenStorage = $tokenStorage;
-        $this->orderManager = $orderManager;
-        $this->serializer = $serializer;
+        $this->eventBus = $eventBus;
         $this->logger = $logger;
     }
 
@@ -56,12 +42,6 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['postWrite', EventPriorities::POST_WRITE],
             ],
-            OrderCreateEvent::NAME => 'onOrderCreated',
-            OrderAcceptEvent::NAME => 'onOrderAccepted',
-            OrderCancelEvent::NAME => 'onOrderCanceled',
-            OrderRefuseEvent::NAME => 'onOrderRefused',
-            OrderReadyEvent::NAME => 'onOrderReady',
-            OrderFullfillEvent::NAME => 'onOrderFullfilled',
             TaskDoneEvent::NAME    => 'onTaskDone',
         ];
     }
@@ -115,96 +95,11 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         $order = $result;
 
-        $this->orderManager->create($order);
-
-        $this->doctrine->getManagerForClass(Order::class)->flush();
-
         $event->setControllerResult($order);
-    }
-
-    public function onOrderCreated(OrderCreateEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->logger->info(sprintf('Order #%d created', $order->getId()));
-    }
-
-    public function onOrderAccepted(OrderAcceptEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->logger->info(sprintf('Order #%d accepted', $order->getId()));
-
-        $this->redis->publish(
-            sprintf('order:%d:state_changed', $order->getId()),
-            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-        );
-    }
-
-    public function onOrderCanceled(OrderCancelEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->redis->publish(
-            sprintf('order:%d:state_changed', $order->getId()),
-            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-        );
-
-        $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
-    }
-
-    public function onOrderFullfilled(OrderFullfillEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->redis->publish(
-            sprintf('order:%d:state_changed', $order->getId()),
-            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-        );
-
-        $this->logger->info(sprintf('Order #%d fulfilled', $order->getId()));
-    }
-
-    public function onOrderReady(OrderReadyEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->redis->publish(
-            sprintf('order:%d:state_changed', $order->getId()),
-            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-        );
-
-        $this->logger->info(sprintf('Order #%d ready', $order->getId()));
-    }
-
-    public function onOrderRefused(OrderRefuseEvent $event)
-    {
-        $order = $event->getOrder();
-
-        $this->redis->publish(
-            sprintf('order:%d:state_changed', $order->getId()),
-            $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-        );
-
-        $this->logger->info(sprintf('Order #%d canceled', $order->getId()));
     }
 
     public function onTaskDone(TaskDoneEvent $event)
     {
-        $task = $event->getTask();
-        $user = $event->getUser();
-
-        $delivery = $task->getDelivery();
-
-        if ($task->isDropoff() && null !== $delivery) {
-
-            $order = $delivery->getOrder();
-
-            if (null !== $order && $order->isFoodtech()) {
-
-                $this->orderManager->fulfill($order);
-                $this->doctrine->getManager()->flush();
-            }
-        }
+        $this->eventBus->handle(new TaskDone($event->getTask()));
     }
 }

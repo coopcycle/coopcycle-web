@@ -16,7 +16,3 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 order_id:
                     referencedColumnName: id
-    entityListeners:
-        AppBundle\Entity\Listener\DeliveryListener:
-            postPersist:
-                - postPersist

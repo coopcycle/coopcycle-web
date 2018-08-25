@@ -90,7 +90,7 @@ trait StoreTrait
                 $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
 
                 $this->get('sylius.repository.order')->add($order);
-                $this->get('coopcycle.order_manager')->create($order);
+                $this->get('coopcycle.order_manager')->onDemand($order);
                 $this->get('sylius.manager.order')->flush();
 
                 return $this->redirectToRoute($routes['success']);
