@@ -100,10 +100,23 @@ trait OrderTrait
 
         $this->accessControl($order->getRestaurant());
 
+        $this->get('coopcycle.order_manager')->ready($order);
+        $this->get('sylius.manager.order')->flush();
 
-            $this->get('coopcycle.order_manager')->ready($order);
-            $this->get('sylius.manager.order')->flush();
+        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
+            'restaurantId' => $restaurantId,
+            'orderId' => $orderId
+        ]);
+    }
 
+    public function delayOrderAction($restaurantId, $orderId, Request $request)
+    {
+        $order = $this->get('sylius.repository.order')->find($orderId);
+
+        $this->accessControl($order->getRestaurant());
+
+        $this->get('coopcycle.order_manager')->delay($order);
+        $this->get('sylius.manager.order')->flush();
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,

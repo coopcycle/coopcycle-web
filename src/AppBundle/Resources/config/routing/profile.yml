@@ -82,6 +82,7 @@ profile_restaurant_dashboard:
             order_refuse: profile_restaurant_dashboard_order_refuse
             order_cancel: profile_restaurant_dashboard_order_cancel
             order_ready: profile_restaurant_dashboard_order_ready
+            order_delay: profile_restaurant_dashboard_order_delay
             user_details: user
     methods: [ GET ]
 
@@ -100,6 +101,7 @@ profile_restaurant_dashboard_order:
             order_refuse: profile_restaurant_dashboard_order_refuse
             order_cancel: profile_restaurant_dashboard_order_cancel
             order_ready: profile_restaurant_dashboard_order_ready
+            order_delay: profile_restaurant_dashboard_order_delay
             user_details: user
     methods: [ GET ]
 
@@ -121,6 +123,13 @@ profile_restaurant_dashboard_order_ready:
     path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/ready
     defaults:
         _controller: AppBundle:Profile:readyOrder
+        redirect_route: profile_restaurant_dashboard_order
+    methods: [ POST ]
+
+profile_restaurant_dashboard_order_delay:
+    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/delay
+    defaults:
+        _controller: AppBundle:Profile:delayOrder
         redirect_route: profile_restaurant_dashboard_order
     methods: [ POST ]
 

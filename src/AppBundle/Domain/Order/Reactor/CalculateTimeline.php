@@ -2,7 +2,7 @@
 
 namespace AppBundle\Domain\Order\Reactor;
 
-use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Domain\Order\Event;
 use AppBundle\Service\StripeManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use SimpleBus\Message\Bus\MessageBus;
@@ -17,13 +17,21 @@ class CalculateTimeline
         $this->calculator = $calculator;
     }
 
-    public function __invoke(OrderCreated $event)
+    public function __invoke(Event $event)
     {
         $order = $event->getOrder();
 
-        if ($order->isFoodtech()) {
+        if (!$order->isFoodtech()) {
+            return;
+        }
+
+        if ($event instanceof Event\OrderCreated) {
             $timeline = $this->calculator->calculate($order);
             $order->setTimeline($timeline);
+        }
+
+        if ($event instanceof Event\OrderDelayed) {
+            $this->calculator->delay($order, $event->getDelay());
         }
     }
 }
