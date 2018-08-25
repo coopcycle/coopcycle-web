@@ -91,3 +91,19 @@ winzou_state_machine:
             refund:
                 from: [completed]
                 to: refunded
+    task:
+        class: AppBundle\Entity\Task
+        property_path: status
+        graph: task
+        state_machine_class: "%sylius.state_machine.class%"
+        states:
+            TODO: ~
+            DONE: ~
+            FAILED: ~
+        transitions:
+            markAsDone:
+                from: [TODO]
+                to: DONE
+            markAsFailed:
+                from: [TODO]
+                to: FAILED
