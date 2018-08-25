@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: message_bus/order.yml }
     - { resource: doctrine_extensions.yml }
     - { resource: state_machine.yml }
 
@@ -297,4 +298,5 @@ command_bus:
     logging: ~
 
 event_bus:
+    event_name_resolver_strategy: named_message
     logging: ~
