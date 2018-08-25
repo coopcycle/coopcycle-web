@@ -273,7 +273,7 @@ class ProfileController extends Controller
 
                 try {
                     if ('done' === $form->getClickedButton()->getName()) {
-                        $taskManager->markAsDone($task);
+                        $taskManager->markAsDone($task, $notes);
                     }
                     if ('fail' === $form->getClickedButton()->getName()) {
                         $taskManager->markAsFailed($task, $notes);
