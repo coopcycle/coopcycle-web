@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Domain\Order\Command\Checkout as CheckoutCommand;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
@@ -71,8 +72,6 @@ class OrderController extends Controller
         $order = $this->get('sylius.context.cart')->getCart();
         $orderManager = $this->get('coopcycle.order_manager');
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
         $form = $this->createForm(StripePaymentType::class);
 
         $parameters =  [
@@ -85,10 +84,11 @@ class OrderController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stripePayment->setStripeToken($form->get('stripeToken')->getData());
+            $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-            $orderManager->create($order);
-            $orderManager->authorizePayment($order);
+            $this->get('command_bus')->handle(
+                new CheckoutCommand($order, $form->get('stripeToken')->getData())
+            );
 
             $this->get('sylius.manager.order')->flush();
 
@@ -97,9 +97,6 @@ class OrderController extends Controller
                     'error' => $stripePayment->getLastError()
                 ]);
             }
-
-            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-            $request->getSession()->remove($sessionKeyName);
 
             return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
         }

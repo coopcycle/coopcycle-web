@@ -1,5 +1,6 @@
 Feature: Orders
 
+  @debug
   Scenario: Create order
     Given the database is empty
     And the current time is "2017-09-02 11:00:00"
@@ -106,7 +107,7 @@ Feature: Orders
       "total":@integer@,
       "itemsTotal":@integer@,
       "taxTotal":@integer@,
-      "state":"new",
+      "state":"cart",
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "createdAt":@string@
     }

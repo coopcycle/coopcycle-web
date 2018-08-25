@@ -48,6 +48,8 @@ class AppKernel extends Kernel
             new Craue\ConfigBundle\CraueConfigBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Sonata\SeoBundle\SonataSeoBundle(),
+            new SimpleBus\SymfonyBridge\SimpleBusCommandBusBundle(),
+            new SimpleBus\SymfonyBridge\SimpleBusEventBusBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

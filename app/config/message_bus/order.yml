@@ -1,0 +1,161 @@
+services:
+
+  coopcycle.domain.order.event_store:
+    public: false
+    class: AppBundle\Domain\Order\EventStore
+    arguments:
+      - '@security.token_storage'
+      - '@request_stack'
+
+  coopcycle.domain.order.middleware.event_store:
+    public: false
+    class: AppBundle\Domain\Order\Middleware\EventStoreMiddleware
+    arguments:
+      - '@coopcycle.domain.order.event_store'
+    tags:
+      - { name: event_bus_middleware, priority: -255 }
+
+  #
+  # Command Handlers
+  #
+
+  coopcycle.domain.order.handler.checkout:
+    class: AppBundle\Domain\Order\Handler\CheckoutHandler
+    arguments:
+      - '@event_recorder'
+      - '@sylius.order_number_assigner'
+      - '@coopcycle.stripe_manager'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\Checkout
+
+  coopcycle.domain.order.handler.accept_order:
+    class: AppBundle\Domain\Order\Handler\AcceptOrderHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\AcceptOrder
+
+  coopcycle.domain.order.handler.refuse_order:
+    class: AppBundle\Domain\Order\Handler\RefuseOrderHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\RefuseOrder
+
+  coopcycle.domain.order.handler.cancel_order:
+    class: AppBundle\Domain\Order\Handler\CancelOrderHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\CancelOrder
+
+  coopcycle.domain.order.handler.on_demand:
+    class: AppBundle\Domain\Order\Handler\OnDemandHandler
+    arguments:
+      - '@event_recorder'
+      - '@sylius.order_number_assigner'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\OnDemand
+
+  #
+  # Event Reactors
+  #
+
+  coopcycle.domain.order.reactor.update_state:
+    class: AppBundle\Domain\Order\Reactor\UpdateState
+    arguments:
+      - '@sm.factory'
+      - '@sylius.order_processing.order_payment_processor'
+      - '@serializer'
+      - '@snc_redis.default'
+      - '@event_bus'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:accepted
+        - name: event_subscriber
+          subscribes_to: order:refused
+        - name: event_subscriber
+          subscribes_to: order:cancelled
+        - name: event_subscriber
+          subscribes_to: order:fulfilled
+        - name: event_subscriber
+          subscribes_to: order:checkout_succeeded
+        - name: event_subscriber
+          subscribes_to: order:checkout_failed
+
+  coopcycle.domain.order.reactor.create_tasks:
+    class: AppBundle\Domain\Order\Reactor\CreateTasks
+    arguments:
+      - '@routing_service'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:accepted
+          priority: 255
+
+  coopcycle.domain.order.reactor.send_email:
+    class: AppBundle\Domain\Order\Reactor\SendEmail
+    arguments:
+      - '@coopcycle.email_manager'
+      - '@coopcycle.settings_manager'
+      - '@event_bus'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+          priority: -255
+        - name: event_subscriber
+          subscribes_to: order:accepted
+          priority: -255
+        - name: event_subscriber
+          subscribes_to: order:refused
+          priority: -255
+
+  coopcycle.domain.order.reactor.send_remote_push_notification:
+    class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
+    arguments:
+      - '@coopcycle.remote_push_notification_manager'
+      - '@serializer'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.send_web_notification:
+    class: AppBundle\Domain\Order\Reactor\SendWebNotification
+    arguments:
+      - '@coopcycle.notification_manager'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.clear_session:
+    class: AppBundle\Domain\Order\Reactor\ClearSession
+    arguments:
+      - '@session'
+      - '%sylius_cart_restaurant_session_key_name%'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:checkout_succeeded
+          priority: -255
+
+  coopcycle.domain.order.reactor.pick_or_drop:
+    class: AppBundle\Domain\Order\Reactor\PickOrDrop
+    arguments:
+      - '@event_bus'
+    tags:
+        - name: event_subscriber
+          subscribes_to: task:done
+
+  coopcycle.domain.order.reactor.capture_payment:
+    class: AppBundle\Domain\Order\Reactor\CapturePayment
+    arguments:
+      - '@coopcycle.stripe_manager'
+      - '@event_bus'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:dropped

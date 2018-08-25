@@ -42,11 +42,9 @@ class Pay extends Base
             throw new BadRequestHttpException('Stripe token is missing');
         }
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
-        $stripePayment->setStripeToken($data['stripeToken']);
+        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-        $this->orderManager->authorizePayment($order);
-
+        $this->orderManager->checkout($order, $data['stripeToken']);
         $this->doctrine->getManagerForClass(Order::class)->flush();
 
         if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
