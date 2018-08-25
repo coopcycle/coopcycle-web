@@ -277,4 +277,18 @@ class Order extends BaseOrder implements OrderInterface
 
         $this->timeline = $timeline;
     }
+
+    public function getPreparationExpectedAt()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPreparationExpectedAt();
+        }
+    }
+
+    public function getPickupExpectedAt()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPickupExpectedAt();
+        }
+    }
 }
