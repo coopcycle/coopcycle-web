@@ -2,10 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
-use AppBundle\Domain\Task\Event\TaskDone;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Event\TaskDoneEvent;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -42,7 +39,6 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['postWrite', EventPriorities::POST_WRITE],
             ],
-            TaskDoneEvent::NAME    => 'onTaskDone',
         ];
     }
 
@@ -96,10 +92,5 @@ final class OrderSubscriber implements EventSubscriberInterface
         $order = $result;
 
         $event->setControllerResult($order);
-    }
-
-    public function onTaskDone(TaskDoneEvent $event)
-    {
-        $this->eventBus->handle(new TaskDone($event->getTask()));
     }
 }

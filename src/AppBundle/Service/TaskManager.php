@@ -2,25 +2,25 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Domain\Task\Command\MarkAsDone;
+use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Entity\Task;
-use AppBundle\Event\TaskDoneEvent;
-use AppBundle\Event\TaskFailedEvent;
-use AppBundle\Event\TaskAssignEvent;
-use AppBundle\Event\TaskUnassignEvent;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use FOS\UserBundle\Model\UserInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use SimpleBus\Message\Bus\MessageBus;
 
 class TaskManager
 {
     private $doctrine;
-    private $dispatcher;
+    private $commandBus;
 
-    public function __construct(ManagerRegistry $doctrine, EventDispatcherInterface $dispatcher)
+    public function __construct(
+        ManagerRegistry $doctrine,
+        MessageBus $commandBus)
     {
         $this->doctrine = $doctrine;
-        $this->dispatcher = $dispatcher;
+        $this->commandBus = $commandBus;
     }
 
     public function remove(Task $task)
@@ -43,23 +43,11 @@ class TaskManager
 
     public function markAsDone(Task $task, $notes = null)
     {
-        if ($task->hasPrevious() && $task->getPrevious()->getStatus() === Task::STATUS_TODO) {
-            throw new PreviousTaskNotCompletedException('Previous task must be completed first');
-        }
-
-        $task->setStatus(Task::STATUS_DONE);
-
-        $this->dispatcher->dispatch(TaskDoneEvent::NAME, new TaskDoneEvent($task, $task->getAssignedCourier(), $notes));
+        $this->commandBus->handle(new MarkAsDone($task, $notes));
     }
 
     public function markAsFailed(Task $task, $notes = null)
     {
-        if ($task->hasPrevious() && $task->getPrevious()->getStatus() === Task::STATUS_TODO) {
-            throw new PreviousTaskNotCompletedException('Previous task must be completed first');
-        }
-
-        $task->setStatus(Task::STATUS_FAILED);
-
-        $this->dispatcher->dispatch(TaskFailedEvent::NAME, new TaskFailedEvent($task, $task->getAssignedCourier(), $notes));
+        $this->commandBus->handle(new MarkAsFailed($task, $notes));
     }
 }

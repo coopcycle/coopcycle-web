@@ -213,7 +213,9 @@ services:
 
   task.entity_listener:
     class: AppBundle\Entity\Listener\TaskListener
-    arguments: [ "@event_dispatcher", "@logger" ]
+    arguments:
+      - "@event_bus"
+      - "@logger"
     tags:
       - { name: doctrine.orm.entity_listener }
 
@@ -461,7 +463,9 @@ services:
 
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
-    arguments: ["@doctrine", "@event_dispatcher"]
+    arguments:
+      - "@doctrine"
+      - "@command_bus"
 
   coopcycle.settings_manager:
     class: AppBundle\Service\SettingsManager
@@ -517,6 +521,11 @@ services:
 
   'AppBundle\EventListener\TaskCollectionSubscriber':
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
+  'AppBundle\EventListener\TaskSubscriber':
+    arguments: [ '@event_bus', '@logger' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
