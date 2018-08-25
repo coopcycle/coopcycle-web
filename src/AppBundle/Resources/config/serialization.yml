@@ -38,6 +38,10 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     createdAt:
       groups: ['order']
+    preparationExpectedAt:
+      groups: ['order_timeline']
+    pickupExpectedAt:
+      groups: ['order_timeline']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:

@@ -68,6 +68,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $events;
 
+    protected $timeline;
+
     public function __construct()
     {
         parent::__construct();
@@ -262,5 +264,31 @@ class Order extends BaseOrder implements OrderInterface
     {
         $event->setOrder($this);
         $this->events->add($event);
+    }
+
+    public function getTimeline(): ?OrderTimeline
+    {
+        return $this->timeline;
+    }
+
+    public function setTimeline(OrderTimeline $timeline): void
+    {
+        $timeline->setOrder($this);
+
+        $this->timeline = $timeline;
+    }
+
+    public function getPreparationExpectedAt()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPreparationExpectedAt();
+        }
+    }
+
+    public function getPickupExpectedAt()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPickupExpectedAt();
+        }
     }
 }

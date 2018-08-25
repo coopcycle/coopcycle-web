@@ -54,3 +54,8 @@ AppBundle\Entity\Sylius\Order:
             mappedBy: order
             cascade:
                 - persist
+        timeline:
+            targetEntity: AppBundle\Entity\Sylius\OrderTimeline
+            mappedBy: order
+            cascade:
+                - all

@@ -60,6 +60,11 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\OnDemand($order));
     }
 
+    public function delay(OrderInterface $order, $delay = 10)
+    {
+        $this->commandBus->handle(new OrderCommand\DelayOrder($order, $delay));
+    }
+
     public function completePayment(PaymentInterface $payment)
     {
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);

@@ -32,6 +32,7 @@
     "ADMIN_DASHBOARD_ORDERS_ORDER": "Commande",
     "ADMIN_DASHBOARD_ORDERS_DISHES": "Plats",
     "ADMIN_DASHBOARD_ORDERS_CANCEL": "Annuler",
+    "ADMIN_DASHBOARD_ORDERS_DELAY": "Retarder",
     "ADMIN_DASHBOARD_ORDERS_NOORDERS": "Pas de commande pour l'instant",
     "ADMIN_DASHBOARD_USERS_SEARCHSTORE": "Rechercher un magasin…",
     "ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT": "Rechercher un restaurant…",
@@ -58,7 +59,8 @@
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Adresse de retrait",
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Adresse de dépôt",
     "ORDER_LIST_STATE": "État",
-    "ORDER_LIST_PREPARATION_DATE": "Date de préparation",
+    "ORDER_LIST_PREPARATION_TIME": "Heure de préparation",
+    "ORDER_LIST_PICKUP_TIME": "Heure de pickup",
     "ORDER_LIST_TOTAL": "Total",
     "CART_ADDRESS_NOT_ENOUGH_PRECISION": "Cette adresse n'est pas assez précise"
   }

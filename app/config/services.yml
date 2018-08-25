@@ -195,6 +195,16 @@ services:
     arguments:
       - "@coopcycle.settings_manager"
 
+  coopcycle.order_timeline_calculator:
+    class: AppBundle\Utils\OrderTimelineCalculator
+    arguments:
+      - '@routing_service'
+      - {
+          'total <= 2000':       '10 minutes',
+          'total in 2000..5000': '15 minutes',
+          'total > 5000':        '30 minutes'
+        }
+
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
     arguments:

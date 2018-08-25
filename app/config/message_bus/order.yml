@@ -62,6 +62,14 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\OnDemand
 
+  coopcycle.domain.order.handler.delay_order:
+    class: AppBundle\Domain\Order\Handler\DelayOrderHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\DelayOrder
+
   #
   # Event Reactors
   #
@@ -157,5 +165,20 @@ services:
       - '@coopcycle.stripe_manager'
       - '@event_bus'
     tags:
+        - name: event_subscriber
+          subscribes_to: order:dropped
+
+  coopcycle.domain.order.reactor.calculate_timeline:
+    class: AppBundle\Domain\Order\Reactor\CalculateTimeline
+    arguments:
+      - '@coopcycle.order_timeline_calculator'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+          priority: -255
+        - name: event_subscriber
+          subscribes_to: order:delayed
+        - name: event_subscriber
+          subscribes_to: order:picked
         - name: event_subscriber
           subscribes_to: order:dropped

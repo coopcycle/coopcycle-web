@@ -251,6 +251,7 @@ admin_restaurant_dashboard:
             order_refuse: admin_restaurant_dashboard_order_refuse
             order_cancel: admin_restaurant_dashboard_order_cancel
             order_ready: admin_restaurant_dashboard_order_ready
+            order_delay: admin_restaurant_dashboard_order_delay
             user_details: user
     methods: [ GET ]
 
@@ -269,6 +270,7 @@ admin_restaurant_dashboard_order:
             order_refuse: admin_restaurant_dashboard_order_refuse
             order_cancel: admin_restaurant_dashboard_order_cancel
             order_ready: admin_restaurant_dashboard_order_ready
+            order_delay: admin_restaurant_dashboard_order_delay
             user_details: user
     methods: [ GET ]
 
@@ -290,6 +292,13 @@ admin_restaurant_dashboard_order_ready:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/ready
     defaults:
         _controller: AppBundle:Admin:readyOrder
+        redirect_route: admin_restaurant_dashboard_order
+    methods: [ POST ]
+
+admin_restaurant_dashboard_order_delay:
+    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/delay
+    defaults:
+        _controller: AppBundle:Admin:delayOrder
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
