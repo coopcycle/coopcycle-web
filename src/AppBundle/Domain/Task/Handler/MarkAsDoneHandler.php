@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Task\Handler;
 
 use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Event;
+use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use SimpleBus\Message\Recorder\RecordsMessages;
 
@@ -25,5 +26,7 @@ class MarkAsDoneHandler
         }
 
         $this->eventRecorder->record(new Event\TaskDone($task, $command->getNotes()));
+
+        $task->setStatus(Task::STATUS_DONE);
     }
 }
