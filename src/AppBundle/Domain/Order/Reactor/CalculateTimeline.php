@@ -33,5 +33,15 @@ class CalculateTimeline
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());
         }
+
+        if ($event instanceof Event\OrderPicked) {
+            // TODO Resolve the date from the event
+            $order->getTimeline()->setPickupAt(new \DateTime());
+        }
+
+        if ($event instanceof Event\OrderDropped) {
+            // TODO Resolve the date from the event
+            $order->getTimeline()->setDropoffAt(new \DateTime());
+        }
     }
 }

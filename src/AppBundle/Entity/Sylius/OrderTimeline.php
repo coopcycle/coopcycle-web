@@ -85,4 +85,28 @@ class OrderTimeline
 
         return $this;
     }
+
+    public function getPickupAt()
+    {
+        return $this->pickupAt;
+    }
+
+    public function setPickupAt(\DateTime $pickupAt)
+    {
+        $this->pickupAt = $pickupAt;
+
+        return $this;
+    }
+
+    public function getDropoffAt()
+    {
+        return $this->dropoffAt;
+    }
+
+    public function setDropoffAt(\DateTime $dropoffAt)
+    {
+        $this->dropoffAt = $dropoffAt;
+
+        return $this;
+    }
 }
