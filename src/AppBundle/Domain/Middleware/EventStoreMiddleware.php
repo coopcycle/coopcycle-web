@@ -21,7 +21,7 @@ class EventStoreMiddleware implements MessageBusMiddleware
     public function handle($message, callable $next)
     {
         if ($message instanceof DomainEvent) {
-            $this->eventStore->add($message);
+            $this->eventStore->addEvent($message);
         }
 
         $next($message);

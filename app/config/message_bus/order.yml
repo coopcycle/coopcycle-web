@@ -7,6 +7,14 @@ services:
       - '@security.token_storage'
       - '@request_stack'
 
+  'AppBundle\EventListener\EventStoreSubscriber':
+    arguments:
+      - '@coopcycle.domain.event_store'
+      - '@doctrine'
+      - '@logger'
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
   coopcycle.domain.middleware.event_store:
     public: false
     class: AppBundle\Domain\Middleware\EventStoreMiddleware
