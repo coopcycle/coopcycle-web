@@ -2,10 +2,11 @@
 
 namespace AppBundle\Domain\Order;
 
+use AppBundle\Domain\Event as BaseEvent;
 use AppBundle\Sylius\Order\OrderInterface;
 use SimpleBus\Message\Name\NamedMessage;
 
-abstract class Event implements NamedMessage
+abstract class Event extends BaseEvent
 {
     protected $order;
 
@@ -17,10 +18,5 @@ abstract class Event implements NamedMessage
     public function getOrder(): OrderInterface
     {
         return $this->order;
-    }
-
-    public function toPayload()
-    {
-        return [];
     }
 }

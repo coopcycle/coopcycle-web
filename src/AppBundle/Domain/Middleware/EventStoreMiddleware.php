@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Domain\Order\Middleware;
+namespace AppBundle\Domain\Middleware;
 
 use AppBundle\Domain\DomainEvent;
-use AppBundle\Domain\Order\EventStore;
+use AppBundle\Domain\EventStore;
 use SimpleBus\Message\Bus\Middleware\MessageBusMiddleware;
 
 /**

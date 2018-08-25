@@ -1,17 +1,17 @@
 services:
 
-  coopcycle.domain.order.event_store:
+  coopcycle.domain.event_store:
     public: false
-    class: AppBundle\Domain\Order\EventStore
+    class: AppBundle\Domain\EventStore
     arguments:
       - '@security.token_storage'
       - '@request_stack'
 
-  coopcycle.domain.order.middleware.event_store:
+  coopcycle.domain.middleware.event_store:
     public: false
-    class: AppBundle\Domain\Order\Middleware\EventStoreMiddleware
+    class: AppBundle\Domain\Middleware\EventStoreMiddleware
     arguments:
-      - '@coopcycle.domain.order.event_store'
+      - '@coopcycle.domain.event_store'
     tags:
       - { name: event_bus_middleware, priority: -255 }
 

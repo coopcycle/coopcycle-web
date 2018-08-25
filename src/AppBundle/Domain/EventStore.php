@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Domain\Order;
+namespace AppBundle\Domain;
 
+use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,10 +22,10 @@ class EventStore
 
     public function add(Event $event)
     {
-        $order = $event->getOrder();
-        $orderEvent = $this->createOrderEvent($event);
-
-        $order->addEvent($orderEvent);
+        if ($event instanceof OrderDomainEvent) {
+            $order = $event->getOrder();
+            $order->addEvent($this->createOrderEvent($event));
+        }
     }
 
     private function createOrderEvent(Event $event)
