@@ -110,7 +110,7 @@ AppBundle\Entity\Task:
         events:
             targetEntity: AppBundle\Entity\TaskEvent
             cascade:
-                - all
+                - persist
             fetch: LAZY
             mappedBy: task
             inversedBy: null
@@ -135,7 +135,3 @@ AppBundle\Entity\Task:
                 - prePersist
             postPersist:
                 - postPersist
-            preUpdate:
-                - preUpdate
-            postUpdate:
-                - postUpdate

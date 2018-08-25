@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Domain\Order\Middleware;
+namespace AppBundle\Domain\Middleware;
 
-use AppBundle\Domain\Order\DomainEvent;
-use AppBundle\Domain\Order\EventStore;
+use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\EventStore;
 use SimpleBus\Message\Bus\Middleware\MessageBusMiddleware;
 
 /**
@@ -21,7 +21,7 @@ class EventStoreMiddleware implements MessageBusMiddleware
     public function handle($message, callable $next)
     {
         if ($message instanceof DomainEvent) {
-            $this->eventStore->add($message);
+            $this->eventStore->addEvent($message);
         }
 
         $next($message);

@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
     - { resource: message_bus/order.yml }
+    - { resource: message_bus/task.yml }
     - { resource: doctrine_extensions.yml }
     - { resource: state_machine.yml }
 

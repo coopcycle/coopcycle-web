@@ -6,7 +6,7 @@ use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 
-class TaskDone extends Event implements DomainEvent
+class TaskFailed extends Event implements DomainEvent
 {
     private $notes;
 
@@ -24,6 +24,6 @@ class TaskDone extends Event implements DomainEvent
 
     public static function messageName()
     {
-        return 'task:done';
+        return 'task:failed';
     }
 }

@@ -1,0 +1,42 @@
+services:
+
+  #
+  # Command Handlers
+  #
+
+  coopcycle.domain.task.handler.mark_as_done:
+    class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\MarkAsDone
+
+  coopcycle.domain.task.handler.mark_as_failed:
+    class: AppBundle\Domain\Task\Handler\MarkAsFailedHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\MarkAsFailed
+
+  #
+  # Reactors
+  #
+
+  coopcycle.domain.task.reactor.publish_redis_message:
+    class: AppBundle\Domain\Task\Reactor\PublishRedisMessage
+    arguments:
+      - '@serializer'
+      - '@snc_redis.default'
+    tags:
+        - name: event_subscriber
+          subscribes_to: task:created
+        - name: event_subscriber
+          subscribes_to: task:assigned
+        - name: event_subscriber
+          subscribes_to: task:unassigned
+        - name: event_subscriber
+          subscribes_to: task:done
+        - name: event_subscriber
+          subscribes_to: task:failed

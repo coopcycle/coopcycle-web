@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Order;
+namespace AppBundle\Domain;
 
 /**
  * Events implementing this interface will be stored
