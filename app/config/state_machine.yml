@@ -71,26 +71,6 @@ winzou_state_machine:
             void:
                 from: [new, processing]
                 to: void
-    stripe_transfer:
-        class: AppBundle\Entity\StripeTransfer
-        property_path: state
-        graph: stripe_transfer
-        state_machine_class: "%sylius.state_machine.class%"
-        states:
-            new: ~
-            completed: ~
-            failed: ~
-            refunded: ~
-        transitions:
-            complete:
-                from: [new]
-                to: completed
-            fail:
-                from: [new]
-                to: failed
-            refund:
-                from: [completed]
-                to: refunded
     task:
         class: AppBundle\Entity\Task
         property_path: status
