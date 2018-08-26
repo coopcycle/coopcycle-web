@@ -3,12 +3,10 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Domain\EventStore;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\PostFlushEventArgs;
-use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 
-class EventStoreSubscriber implements EventSubscriber
+class EventStoreListener
 {
     private $eventStore;
     private $doctrine;
@@ -21,20 +19,13 @@ class EventStoreSubscriber implements EventSubscriber
         $this->logger = $logger;
     }
 
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::postFlush
-        );
-    }
-
-    public function postFlush(PostFlushEventArgs $args)
+    public function onKernelTerminate(PostResponseEvent $event)
     {
         if (0 === count($this->eventStore)) {
             return;
         }
 
-        $this->logger->debug(sprintf('EventStoreSubscriber : EventStore contains %d events', count($this->eventStore)));
+        $this->logger->debug(sprintf('EventStore contains %d events', count($this->eventStore)));
 
         $classes = [];
         foreach ($this->eventStore as $event) {

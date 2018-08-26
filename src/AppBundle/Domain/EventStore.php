@@ -28,24 +28,41 @@ class EventStore extends ArrayCollection
     public function addEvent(Event $event)
     {
         if ($event instanceof OrderDomainEvent) {
-            $order = $event->getOrder();
-            $order->addEvent($this->createOrderEvent($event));
+            $this->add($this->createOrderEvent($event));
         }
 
         if ($event instanceof TaskDomainEvent) {
-            $task = $event->getTask();
             $this->add($this->createTaskEvent($event));
         }
     }
 
     private function createOrderEvent(Event $event)
     {
-        $orderEvent = new OrderEvent();
+        return new OrderEvent(
+            $event->getOrder(),
+            $event::messageName(),
+            $event->toPayload(),
+            $this->getMetadata(),
+            new \DateTime()
+        );
+    }
 
-        $orderEvent->setType($event::messageName());
-        $orderEvent->setOrder($event->getOrder());
-        $orderEvent->setData($event->toPayload());
+    private function createTaskEvent(Event $event)
+    {
+        $data = $event->toPayload();
+        $metadata = $this->getMetadata();
 
+        return new TaskEvent(
+            $event->getTask(),
+            $event::messageName(),
+            $data,
+            $metadata,
+            new \DateTime()
+        );
+    }
+
+    private function getMetadata()
+    {
         $metadata = [];
 
         $request = $this->requestStack->getCurrentRequest();
@@ -54,23 +71,6 @@ class EventStore extends ArrayCollection
             $metadata['client_ip'] = $request->getClientIp();
         }
 
-        $orderEvent->setMetadata($metadata);
-
-        return $orderEvent;
-    }
-
-    private function createTaskEvent(Event $event)
-    {
-        $mapping = [
-            'task:created'    => 'CREATE',
-            'task:assigned'   => 'ASSIGN',
-            'task:unassigned' => 'UNASSIGN',
-            'task:done'       => 'DONE',
-            'task:failed'     => 'FAILED',
-        ];
-
-        $notes = is_callable([$event, 'getNotes']) ? $event->getNotes() : null;
-
-        return new TaskEvent($event->getTask(), $mapping[$event::messageName()], $notes);
+        return $metadata;
     }
 }

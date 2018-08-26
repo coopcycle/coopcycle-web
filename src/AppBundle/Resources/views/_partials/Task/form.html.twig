@@ -77,9 +77,9 @@
                 <li data-event="{{ event.name }}">
                   <time datetime="{{ event.createdAt|date('c') }}">{{ event.createdAt|localizeddate('short', 'short') }}</time> 
                   <span>{{ event.name }}</span> 
-                  {% if event.notes is not empty %}
+                  {% if event.data.notes is defined %}
                     <pre>
-                  {{ event.notes }}
+                  {{ event.data.notes }}
                 </pre>
                   {% endif %}
                 </li>

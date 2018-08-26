@@ -18,20 +18,31 @@ class TaskEvent
     /**
      * @Groups({"task"})
      */
-    private $notes;
+    private $data = [];
+
+    private $metadata = [];
 
     /**
      * @Groups({"task"})
      */
     private $createdAt;
 
-    public function __construct(Task $task, $name, $notes = null)
+    public function __construct(
+        Task $task,
+        $name,
+        array $data = [],
+        array $metadata = [],
+        \DateTime $createdAt = null)
     {
-        $this->name = $name;
-        $this->task = $task;
-        $this->notes = $notes;
+        if (null === $createdAt) {
+            $createdAt = new \DateTime();
+        }
 
-        $task->getEvents()->add($this);
+        $this->task = $task;
+        $this->name = $name;
+        $this->createdAt = $createdAt;
+        $this->data = $data;
+        $this->metadata = $metadata;
     }
 
     public function getId()
@@ -49,26 +60,32 @@ class TaskEvent
         return $this->name;
     }
 
-    public function getNotes()
+    public function getData($name = null)
     {
-        return $this->notes;
+        if (null === $name) {
+            return $this->data;
+        }
+
+        if (isset($this->data[$name])) {
+            return $this->data[$name];
+        }
     }
 
-    public function setNotes($notes)
+    /**
+     * FIXME setData should be allowed only on new events
+     */
+    public function setData($name, $value)
     {
-        $this->notes = $notes;
+        $this->data[$name] = $value;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    /**
-     * @param mixed $createdAt
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
     }
 }

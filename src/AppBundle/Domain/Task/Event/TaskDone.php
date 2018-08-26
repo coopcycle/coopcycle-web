@@ -17,6 +17,13 @@ class TaskDone extends Event implements DomainEvent
         $this->notes = $notes;
     }
 
+    public function toPayload()
+    {
+        return [
+            'notes' => $this->getNotes(),
+        ];
+    }
+
     public function getNotes()
     {
         return $this->notes;

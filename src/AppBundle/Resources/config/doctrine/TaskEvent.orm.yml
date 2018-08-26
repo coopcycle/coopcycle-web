@@ -10,15 +10,13 @@ AppBundle\Entity\TaskEvent:
     fields:
         name:
             type: string
-        notes:
-            type: text
-            nullable: true
+        data:
+            type: json_array
+        metadata:
+            type: json_array
         createdAt:
             type: datetime
             column: created_at
-            gedmo:
-                timestampable:
-                    on: create
     manyToOne:
         task:
             targetEntity: AppBundle\Entity\Task
