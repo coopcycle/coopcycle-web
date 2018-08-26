@@ -54,8 +54,8 @@ final class Version20180826142926 extends AbstractMigration
             ]);
         }
 
-        $this->addSql('ALTER TABLE task_event ALTER data DROP NOT NULL');
-        $this->addSql('ALTER TABLE task_event ALTER metadata DROP NOT NULL');
+        $this->addSql('ALTER TABLE task_event ALTER data SET NOT NULL');
+        $this->addSql('ALTER TABLE task_event ALTER metadata SET NOT NULL');
 
         $this->addSql('ALTER TABLE task_event DROP notes');
     }
