@@ -13,16 +13,17 @@ class OrderEvent
     private $metadata = [];
     private $createdAt;
 
+    public function __construct(OrderInterface $order, $type, array $data = [], array $metadata = [])
+    {
+        $this->order = $order;
+        $this->type = $type;
+        $this->data = $data;
+        $this->metadata = $metadata;
+    }
+
     public function getOrder(): OrderInterface
     {
         return $this->order;
-    }
-
-    public function setOrder(OrderInterface $order)
-    {
-        $this->order = $order;
-
-        return $this;
     }
 
     public function getType()
@@ -30,23 +31,9 @@ class OrderEvent
         return $this->type;
     }
 
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getData()
     {
         return $this->data;
-    }
-
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
     }
 
     public function getMetadata()
@@ -54,10 +41,8 @@ class OrderEvent
         return $this->metadata;
     }
 
-    public function setMetadata(array $metadata)
+    public function getCreatedAt()
     {
-        $this->metadata = $metadata;
-
-        return $this;
+        return $this->createdAt;
     }
 }

@@ -7,13 +7,15 @@ services:
       - '@security.token_storage'
       - '@request_stack'
 
-  'AppBundle\EventListener\EventStoreSubscriber':
+  coopcycle.domain.event_store_listener:
+    public: false
+    class: AppBundle\EventListener\EventStoreListener
     arguments:
       - '@coopcycle.domain.event_store'
       - '@doctrine'
       - '@logger'
     tags:
-      - { name: doctrine.event_subscriber, connection: default }
+      - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
 
   coopcycle.domain.middleware.event_store:
     public: false

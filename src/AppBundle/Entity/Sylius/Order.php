@@ -260,12 +260,6 @@ class Order extends BaseOrder implements OrderInterface
         $this->delivery = $delivery;
     }
 
-    public function addEvent(OrderEvent $event)
-    {
-        $event->setOrder($this);
-        $this->events->add($event);
-    }
-
     public function getTimeline(): ?OrderTimeline
     {
         return $this->timeline;

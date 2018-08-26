@@ -28,26 +28,22 @@ class EventStore extends ArrayCollection
     public function addEvent(Event $event)
     {
         if ($event instanceof OrderDomainEvent) {
-            $order = $event->getOrder();
-            $order->addEvent($this->createOrderEvent($event));
+            $this->add($this->createOrderEvent($event));
         }
 
         if ($event instanceof TaskDomainEvent) {
-            $task = $event->getTask();
             $this->add($this->createTaskEvent($event));
         }
     }
 
     private function createOrderEvent(Event $event)
     {
-        $orderEvent = new OrderEvent();
-
-        $orderEvent->setType($event::messageName());
-        $orderEvent->setOrder($event->getOrder());
-        $orderEvent->setData($event->toPayload());
-        $orderEvent->setMetadata($this->getMetadata());
-
-        return $orderEvent;
+        return new OrderEvent(
+            $event->getOrder(),
+            $event::messageName(),
+            $event->toPayload(),
+            $this->getMetadata()
+        );
     }
 
     private function createTaskEvent(Event $event)
@@ -55,7 +51,12 @@ class EventStore extends ArrayCollection
         $data = $event->toPayload();
         $metadata = $this->getMetadata();
 
-        return new TaskEvent($event->getTask(), $event::messageName(), $data, $metadata);
+        return new TaskEvent(
+            $event->getTask(),
+            $event::messageName(),
+            $data,
+            $metadata
+        );
     }
 
     private function getMetadata()
