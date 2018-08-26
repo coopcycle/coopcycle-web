@@ -47,8 +47,9 @@ final class Version20180826142926 extends AbstractMigration
                 $data['notes'] = $taskEvent['notes'];
             }
 
-            $this->addSql('UPDATE task_event SET data = :data WHERE id = :id', [
+            $this->addSql('UPDATE task_event SET data = :data, metadata = :metadata WHERE id = :id', [
                 'data' => json_encode($data),
+                'metadata' => json_encode([]),
                 'id' => $taskEvent['id'],
             ]);
         }
