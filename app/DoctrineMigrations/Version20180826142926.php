@@ -43,7 +43,7 @@ final class Version20180826142926 extends AbstractMigration
 
             $data = [];
 
-            if (!empty($taskEvent['notes'])) {
+            if (null !== $taskEvent['notes']) {
                 $data['notes'] = $taskEvent['notes'];
             }
 
