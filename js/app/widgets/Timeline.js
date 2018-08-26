@@ -5,6 +5,10 @@ import moment from 'moment'
 
 export default (ul, options) => {
 
+  options = options || {
+    itemColor: () => 'blue'
+  }
+
   const items = [].slice.call(ul.querySelectorAll('li'))
 
   const events = items.map(item => {
@@ -14,20 +18,10 @@ export default (ul, options) => {
     return {
       createdAt: time.getAttribute('datetime'),
       name: item.getAttribute('data-event'),
-      notes: notes ? notes.textContent : null
+      notes: notes ? notes.textContent : null,
+      color: options.itemColor(item)
     }
   })
-
-  const itemColor = event => {
-    if (event.name === 'DONE') {
-      return 'green'
-    }
-    if (event.name === 'FAILED') {
-      return 'red'
-    }
-
-    return 'blue'
-  }
 
   const el = document.createElement('div')
 
@@ -37,7 +31,7 @@ export default (ul, options) => {
   render(
     <Timeline>
       { events.map(event => (
-        <Timeline.Item key={ event.createdAt + '-' + event.name } color={ itemColor(event) }>
+        <Timeline.Item key={ event.createdAt + '-' + event.name } color={ event.color }>
           <p>{ moment(event.createdAt).format('LT') } { event.name }</p>
           { event.notes && (
             <p>{ event.notes }</p>

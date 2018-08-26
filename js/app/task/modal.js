@@ -100,7 +100,19 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
 
   const timelineEl = document.querySelector(`form[name="${formName}"] ul[data-render="timeline"]`)
   if (timelineEl) {
-    new CoopCycle.Timeline(timelineEl)
+    new CoopCycle.Timeline(timelineEl, {
+      itemColor: item => {
+        const eventName = item.getAttribute('data-event')
+        switch (eventName) {
+          case 'task:done':
+            return 'green'
+          case 'task:failed':
+            return 'red'
+          default:
+            return 'blue'
+        }
+      }
+    })
   }
 
   if (tags.length === 0) {
