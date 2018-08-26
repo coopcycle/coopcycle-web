@@ -3,23 +3,29 @@ import { render } from 'react-dom'
 import { Timeline } from 'antd'
 import moment from 'moment'
 
+const defaultOptions = {
+  itemColor: () => 'blue',
+  format: 'LT'
+}
+
 export default (ul, options) => {
 
-  options = options || {
-    itemColor: () => 'blue'
-  }
+  options = options || defaultOptions
 
   const items = [].slice.call(ul.querySelectorAll('li'))
+
+  const itemColor = options.itemColor || defaultOptions.itemColor
+  const format = options.format || defaultOptions.format
 
   const events = items.map(item => {
     const time = item.querySelector('time')
     const notes = item.querySelector('pre')
 
     return {
-      createdAt: time.getAttribute('datetime'),
+      createdAt: moment(time.getAttribute('datetime')).format(format),
       name: item.getAttribute('data-event'),
       notes: notes ? notes.textContent : null,
-      color: options.itemColor(item)
+      color: itemColor(item)
     }
   })
 
@@ -32,7 +38,7 @@ export default (ul, options) => {
     <Timeline>
       { events.map(event => (
         <Timeline.Item key={ event.createdAt + '-' + event.name } color={ event.color }>
-          <p>{ moment(event.createdAt).format('LT') } { event.name }</p>
+          <p>{ event.createdAt } { event.name }</p>
           { event.notes && (
             <p>{ event.notes }</p>
           ) }
