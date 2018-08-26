@@ -226,7 +226,7 @@ order.payment.expiration.label: Expiration
 order.payment.month.label: Month
 order.payment.year.label: Year
 order.payment.card_number.label: Card number
-order.payment.total: Pay %total% €
+order.payment.total: Pay %total%
 order.payment.card_number.help: >
   A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will be debited.
 order.payment.cvc: CVC

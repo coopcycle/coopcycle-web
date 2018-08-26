@@ -232,7 +232,7 @@ order.payment.expiration.label: Expiration
 order.payment.month.label: Mois
 order.payment.year.label: Année
 order.payment.card_number.label: Numéro de carte
-order.payment.total: Payer %total% €
+order.payment.total: Payer %total%
 order.payment.card_number.help: 'Un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">numéro de test</a> Stripe est pré-rempli. Aucun compte
   ne sera débité.
