@@ -23,6 +23,13 @@ class TaskAssigned extends Event implements DomainEvent
         return $this->user;
     }
 
+    public function toPayload()
+    {
+        return [
+            'username' => $this->getUser()->getUsername(),
+        ];
+    }
+
     public static function messageName()
     {
         return 'task:assigned';

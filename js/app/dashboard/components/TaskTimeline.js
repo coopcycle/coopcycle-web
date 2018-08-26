@@ -6,10 +6,10 @@ export default class extends React.Component {
   render() {
 
     const itemColor = event => {
-      if (event.name === 'DONE') {
+      if (event.name === 'task:done') {
         return 'green'
       }
-      if (event.name === 'FAILED') {
+      if (event.name === 'task:failed') {
         return 'red'
       }
 

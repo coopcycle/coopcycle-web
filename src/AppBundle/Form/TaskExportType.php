@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskRepository;
 use League\Csv\Writer as CsvWriter;
@@ -50,10 +51,14 @@ class TaskExportType extends AbstractType
                 $address = $task->getAddress();
                 $finishedAt = '';
 
-                if ($task->hasEvent(Task::STATUS_DONE)) {
-                    $finishedAt = $task->getLastEvent(Task::STATUS_DONE)->getCreatedAt()->format('Y-m-d H:i:s');
-                } else if ($task->hasEvent(Task::STATUS_FAILED)) {
-                    $finishedAt = $task->getLastEvent(Task::STATUS_FAILED)->getCreatedAt()->format('Y-m-d H:i:s');
+                if ($task->hasEvent(Event\TaskDone::messageName())) {
+                    $finishedAt = $task
+                        ->getLastEvent(Event\TaskDone::messageName())
+                        ->getCreatedAt()->format('Y-m-d H:i:s');
+                } else if ($task->hasEvent(Event\TaskFailed::messageName())) {
+                    $finishedAt = $task
+                        ->getLastEvent(Event\TaskFailed::messageName())
+                        ->getCreatedAt()->format('Y-m-d H:i:s');
                 }
 
                 $records[] = [
@@ -64,8 +69,8 @@ class TaskExportType extends AbstractType
                     implode(',', [$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]),
                     $task->getStatus(),
                     $task->getComments(),
-                    $task->hasEvent(Task::STATUS_DONE) ? $task->getLastEvent(Task::STATUS_DONE)->getNotes() : '',
-                    $task->hasEvent(Task::STATUS_FAILED) ? $task->getLastEvent(Task::STATUS_FAILED)->getNotes() : '',
+                    $task->hasEvent(Event\TaskDone::messageName()) ? $task->getLastEvent(Event\TaskDone::messageName())->getData('notes') : '',
+                    $task->hasEvent(Event\TaskFailed::messageName()) ? $task->getLastEvent(Event\TaskFailed::messageName())->getData('notes') : '',
                     $finishedAt
                 ];
             }

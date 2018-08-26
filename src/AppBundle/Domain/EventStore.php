@@ -45,7 +45,21 @@ class EventStore extends ArrayCollection
         $orderEvent->setType($event::messageName());
         $orderEvent->setOrder($event->getOrder());
         $orderEvent->setData($event->toPayload());
+        $orderEvent->setMetadata($this->getMetadata());
 
+        return $orderEvent;
+    }
+
+    private function createTaskEvent(Event $event)
+    {
+        $data = $event->toPayload();
+        $metadata = $this->getMetadata();
+
+        return new TaskEvent($event->getTask(), $event::messageName(), $data, $metadata);
+    }
+
+    private function getMetadata()
+    {
         $metadata = [];
 
         $request = $this->requestStack->getCurrentRequest();
@@ -54,23 +68,6 @@ class EventStore extends ArrayCollection
             $metadata['client_ip'] = $request->getClientIp();
         }
 
-        $orderEvent->setMetadata($metadata);
-
-        return $orderEvent;
-    }
-
-    private function createTaskEvent(Event $event)
-    {
-        $mapping = [
-            'task:created'    => 'CREATE',
-            'task:assigned'   => 'ASSIGN',
-            'task:unassigned' => 'UNASSIGN',
-            'task:done'       => 'DONE',
-            'task:failed'     => 'FAILED',
-        ];
-
-        $notes = is_callable([$event, 'getNotes']) ? $event->getNotes() : null;
-
-        return new TaskEvent($event->getTask(), $mapping[$event::messageName()], $notes);
+        return $metadata;
     }
 }

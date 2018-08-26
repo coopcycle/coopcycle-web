@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Form\Type\DateRangeType;
@@ -126,11 +127,11 @@ class TaskType extends AbstractType
                 } else {
 
                     $lastEvent = null;
-                    if ($task->isDone() && $task->hasEvent(Task::STATUS_DONE)) {
-                        $lastEvent = $task->getLastEvent(Task::STATUS_DONE);
+                    if ($task->isDone() && $task->hasEvent(Event\TaskDone::messageName())) {
+                        $lastEvent = $task->getLastEvent(Event\TaskDone::messageName());
                     }
-                    if ($task->isFailed() && $task->hasEvent(Task::STATUS_FAILED)) {
-                        $lastEvent = $task->getLastEvent(Task::STATUS_FAILED);
+                    if ($task->isFailed() && $task->hasEvent(Event\TaskFailed::messageName())) {
+                        $lastEvent = $task->getLastEvent(Event\TaskFailed::messageName());
                     }
 
                     if ($lastEvent) {

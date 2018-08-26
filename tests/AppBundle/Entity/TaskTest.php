@@ -59,17 +59,30 @@ class TaskTest extends TestCase
         $this->assertFalse($this->task->hasEvent("DROPOFF"));
     }
 
+    private function createTaskEvent($name, \DateTime $createdAt)
+    {
+        $taskEvent = new TaskEvent($this->task, $name);
+
+        $reflection = new \ReflectionObject($taskEvent);
+        $property = $reflection->getProperty('createdAt');
+        $property->setAccessible(true);
+        $property->setValue($taskEvent, $createdAt);
+
+        return $taskEvent;
+    }
+
     public function testGetLastEvent()
     {
-        $first_event = new TaskEvent($this->task, "PICKUP");
-        $first_event->setCreatedAt(strtotime('2018-04-11 12:00:00'));
-        $this->task->getEvents()->add($first_event);
-        $second_event = new TaskEvent($this->task, "DELIVERY");
-        $second_event->setCreatedAt(strtotime('2018-04-11 13:00:00'));
-        $this->task->getEvents()->add($second_event);
-        $third_event = new TaskEvent($this->task, "PICKUP");
-        $third_event->setCreatedAt(strtotime('2018-04-11 14:00:00'));
-        $this->task->getEvents()->add($third_event);
-        $this->assertSame($this->task->getLastEvent("PICKUP"), $third_event);
+        $event1 = $this->createTaskEvent('task:assigned', new \DateTime('2018-04-11 12:00:00'));
+        $event2 = $this->createTaskEvent('task:unassigned', new \DateTime('2018-04-11 13:00:00'));
+        $event3 = $this->createTaskEvent('task:assigned', new \DateTime('2018-04-11 14:00:00'));
+        $event4 = $this->createTaskEvent('task:unassigned', new \DateTime('2018-04-11 15:00:00'));
+
+        $this->task->getEvents()->add($event1);
+        $this->task->getEvents()->add($event2);
+        $this->task->getEvents()->add($event3);
+        $this->task->getEvents()->add($event4);
+
+        $this->assertSame($this->task->getLastEvent('task:assigned'), $event3);
     }
 }
