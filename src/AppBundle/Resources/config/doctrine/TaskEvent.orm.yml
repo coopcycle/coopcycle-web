@@ -17,9 +17,6 @@ AppBundle\Entity\TaskEvent:
         createdAt:
             type: datetime
             column: created_at
-            gedmo:
-                timestampable:
-                    on: create
     manyToOne:
         task:
             targetEntity: AppBundle\Entity\Task

@@ -42,7 +42,8 @@ class EventStore extends ArrayCollection
             $event->getOrder(),
             $event::messageName(),
             $event->toPayload(),
-            $this->getMetadata()
+            $this->getMetadata(),
+            new \DateTime()
         );
     }
 
@@ -55,7 +56,8 @@ class EventStore extends ArrayCollection
             $event->getTask(),
             $event::messageName(),
             $data,
-            $metadata
+            $metadata,
+            new \DateTime()
         );
     }
 

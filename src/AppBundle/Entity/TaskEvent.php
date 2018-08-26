@@ -27,10 +27,20 @@ class TaskEvent
      */
     private $createdAt;
 
-    public function __construct(Task $task, $name, array $data = [], array $metadata = [])
+    public function __construct(
+        Task $task,
+        $name,
+        array $data = [],
+        array $metadata = [],
+        \DateTime $createdAt = null)
     {
+        if (null === $createdAt) {
+            $createdAt = new \DateTime();
+        }
+
         $this->task = $task;
         $this->name = $name;
+        $this->createdAt = $createdAt;
         $this->data = $data;
         $this->metadata = $metadata;
     }

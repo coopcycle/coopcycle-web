@@ -13,10 +13,20 @@ class OrderEvent
     private $metadata = [];
     private $createdAt;
 
-    public function __construct(OrderInterface $order, $type, array $data = [], array $metadata = [])
+    public function __construct(
+        OrderInterface $order,
+        $type,
+        array $data = [],
+        array $metadata = [],
+        \DateTime $createdAt = null)
     {
+        if (null === $createdAt) {
+            $createdAt = new \DateTime();
+        }
+
         $this->order = $order;
         $this->type = $type;
+        $this->createdAt = $createdAt;
         $this->data = $data;
         $this->metadata = $metadata;
     }
