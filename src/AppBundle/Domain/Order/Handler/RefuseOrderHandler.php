@@ -19,6 +19,6 @@ class RefuseOrderHandler
     {
         $order = $command->getOrder();
 
-        $this->eventRecorder->record(new Event\OrderRefused($order));
+        $this->eventRecorder->record(new Event\OrderRefused($order, $command->getReason()));
     }
 }

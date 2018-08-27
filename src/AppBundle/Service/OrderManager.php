@@ -28,9 +28,9 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\AcceptOrder($order));
     }
 
-    public function refuse(OrderInterface $order)
+    public function refuse(OrderInterface $order, $reason = null)
     {
-        $this->commandBus->handle(new OrderCommand\RefuseOrder($order));
+        $this->commandBus->handle(new OrderCommand\RefuseOrder($order, $reason));
     }
 
     public function checkout(OrderInterface $order, $stripeToken)
