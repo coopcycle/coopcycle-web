@@ -90,15 +90,15 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $product = $event->getData();
 
+            $price = $form->get('price')->getData();
+            $taxCategory = $form->get('taxCategory')->getData();
+
             if (null === $product->getId()) {
 
                 $uuid = Uuid::uuid4()->toString();
 
                 $product->setCode($uuid);
                 $product->setSlug($uuid);
-
-                $price = $form->get('price')->getData();
-                $taxCategory = $form->get('taxCategory')->getData();
 
                 $variant = $this->variantFactory->createForProduct($product);
 
@@ -108,6 +108,13 @@ class ProductType extends AbstractType
                 $variant->setTaxCategory($taxCategory);
 
                 $product->addVariant($variant);
+
+            } else {
+
+                $variant = $this->variantResolver->getVariant($product);
+
+                $variant->setPrice($price);
+                $variant->setTaxCategory($taxCategory);
             }
         });
     }
