@@ -26,4 +26,11 @@ class OrderRefused extends Event implements DomainEvent
     {
         return $this->reason;
     }
+
+    public function toPayload()
+    {
+        return [
+            'reason' => $this->getReason(),
+        ];
+    }
 }

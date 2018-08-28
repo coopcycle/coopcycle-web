@@ -21,8 +21,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Behatch\HttpCall\HttpCallResultPool;
+use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 
 /**
@@ -221,6 +223,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $user = $userManager->findUserByUsername($data['username']);
         $user->addRole('ROLE_COURIER');
+
+        $userManager->updateUser($user);
+    }
+
+    /**
+     * @Given the user :username has role :role
+     */
+    public function theUserHasRole($username, $role)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+
+        $user = $userManager->findUserByUsername($username);
+        $user->addRole($role);
 
         $userManager->updateUser($user);
     }
@@ -499,20 +514,30 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Given the user :username has ordered something at the restaurant with id :id
+     * FIXME Too complicated, too low level
      */
-    public function theUserHasOrderedSomethingAtTheRestaurantWithId($username, $id)
+    private function createRandomOrder(Restaurant $restaurant, UserInterface $user, \DateTime $shippedAt = null)
     {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $user = $userManager->findUserByUsername($username);
+        $orderTimelineCalculator = $this->getContainer()
+            ->get('coopcycle.order_timeline_calculator');
 
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
-
-        $order = $this->getContainer()->get('sylius.factory.order')->createForRestaurant($restaurant);
+        $order = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
 
         $order->setCustomer($user);
-        $order->setState(OrderInterface::STATE_NEW);
-        $order->setShippedAt(new \DateTime());
+
+        if (null === $shippedAt) {
+            // FIXME Using next opening date makes results change randomly
+            $shippedAt = clone $restaurant->getNextOpeningDate();
+            $shippedAt->modify('+30 minutes');
+        }
+        $order->setShippedAt($shippedAt);
+
+        // FIXME Allow specifying an address in test
+        $order->setShippingAddress($restaurant->getAddress());
+        $order->setBillingAddress($restaurant->getAddress());
+
+        $order->setTimeline($orderTimelineCalculator->calculate($order));
 
         foreach ($restaurant->getProducts() as $product) {
 
@@ -526,7 +551,63 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $this->getContainer()->get('sylius.order_modifier')->addToOrder($order, $item);
         }
 
+        return $order;
+    }
+
+    /**
+     * FIXME This assumes the order is in state "new"
+     * @Given the user :username has ordered something at the restaurant with id :id
+     */
+    public function theUserHasOrderedSomethingAtTheRestaurantWithId($username, $id)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $order = $this->createRandomOrder($restaurant, $user);
+        $order->setState(OrderInterface::STATE_NEW);
+
         $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
+     * @Given the user :username has ordered something for :date at restaurant with id :id
+     */
+    public function theUserHasOrderedSomethingForAtRestaurantWithId($username, $date, $id)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
+        $order->setState(OrderInterface::STATE_NEW);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
+     * @Then the last order from :username should be in state :state
+     */
+    public function theLastOrderFromShouldBeInState($username, $state)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $orderRepository = $this->getContainer()->get('sylius.repository.order');
+
+        $order = $orderRepository->createQueryBuilder('o')
+            ->andWhere('o.customer = :customer')
+            ->setParameter('customer', $user)
+            ->orderBy('o.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        Assert::assertNotNull($order);
+        Assert::assertEquals($state, $order->getState());
     }
 }

@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Refuse extends Base
+class Delay extends Base
 {
     /**
      * @Route(
-     *     name="order_refuse",
-     *     path="/orders/{id}/refuse",
-     *     defaults={"_api_resource_class"=Order::class, "_api_item_operation_name"="refuse"}
+     *     name="order_delay",
+     *     path="/orders/{id}/delay",
+     *     defaults={"_api_resource_class"=Order::class, "_api_item_operation_name"="delay"}
      * )
      * @Method("PUT")
      */
@@ -25,7 +25,7 @@ class Refuse extends Base
 
         // Only restaurants can refuse orders
         if (!$user->hasRole('ROLE_RESTAURANT')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot refuse order', $user->getId()));
+            throw new AccessDeniedHttpException(sprintf('User #%d cannot delay order', $user->getId()));
         }
 
         $order = $data;
@@ -36,10 +36,10 @@ class Refuse extends Base
             $data = json_decode($content, true);
         }
 
-        $reason = isset($data['reason']) ? $data['reason'] : null;
+        $delay = isset($data['delay']) ? $data['delay'] : 10;
 
         try {
-            $this->orderManager->refuse($order, $reason);
+            $this->orderManager->delay($order, $delay);
         } catch (\Exception $e) {
             throw new BadRequestHttpException($e);
         }

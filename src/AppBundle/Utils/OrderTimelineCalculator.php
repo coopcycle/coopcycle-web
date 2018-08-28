@@ -94,16 +94,19 @@ class OrderTimelineCalculator
 
         $order->setShippedAt($dropoffExpectedAt);
 
-        foreach ($order->getDelivery()->getTasks() as $task) {
+        $delivery = $order->getDelivery();
+        if (null !== $delivery) {
+            foreach ($delivery->getTasks() as $task) {
 
-            $doneAfter = clone $task->getDoneAfter();
-            $doneBefore = clone $task->getDoneBefore();
+                $doneAfter = clone $task->getDoneAfter();
+                $doneBefore = clone $task->getDoneBefore();
 
-            $doneAfter->modify(sprintf('+%d minutes', $delay));
-            $doneBefore->modify(sprintf('+%d minutes', $delay));
+                $doneAfter->modify(sprintf('+%d minutes', $delay));
+                $doneBefore->modify(sprintf('+%d minutes', $delay));
 
-            $task->setDoneAfter($doneAfter);
-            $task->setDoneBefore($doneBefore);
+                $task->setDoneAfter($doneAfter);
+                $task->setDoneBefore($doneBefore);
+            }
         }
     }
 }

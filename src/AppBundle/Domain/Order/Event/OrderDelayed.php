@@ -29,10 +29,8 @@ class OrderDelayed extends Event implements DomainEvent
 
     public function toPayload()
     {
-        $payload = parent::toPayload();
-
-        return array_merge($payload, [
-            'delay' => $this->delay,
-        ]);
+        return [
+            'delay' => $this->getDelay(),
+        ];
     }
 }
