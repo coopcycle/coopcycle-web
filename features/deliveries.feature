@@ -33,6 +33,7 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
@@ -48,6 +49,7 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()"
         },
         "dropoff":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
@@ -98,6 +100,7 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
@@ -113,6 +116,7 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()"
         },
         "dropoff":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
@@ -161,6 +165,7 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
@@ -176,6 +181,7 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29')"
         },
         "dropoff":{
+          "id":@integer@,
           "address":{
             "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",

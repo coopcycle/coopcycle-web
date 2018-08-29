@@ -45,6 +45,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         ]);
 
         return [
+            'id' => $task->getId(),
             'address' => $address,
             'doneBefore' => $task->getDoneBefore()->format(\DateTime::ATOM),
         ];
