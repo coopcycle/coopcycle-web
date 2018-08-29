@@ -7,6 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\RoutingInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -24,11 +25,13 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
         TokenStorageInterface $tokenStorage,
+        RoutingInterface $routing,
         LoggerInterface $logger)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->tokenStorage = $tokenStorage;
+        $this->routing = $routing;
         $this->logger = $logger;
     }
 
@@ -42,7 +45,8 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         ]);
 
         return [
-            'address' => $address
+            'address' => $address,
+            'doneBefore' => $task->getDoneBefore()->format(\DateTime::ATOM),
         ];
     }
 
@@ -103,6 +107,22 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
                 // TODO Throw Exception
             }
             $pickup->setAddress($store->getAddress());
+        }
+
+        // If no pickup time is specified, calculate it
+        if (null === $pickup->getDoneBefore()) {
+            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
+
+                $duration = $this->routing->getDuration(
+                    $pickup->getAddress()->getGeo(),
+                    $dropoff->getAddress()->getGeo()
+                );
+
+                $pickupDoneBefore = clone $dropoff->getDoneBefore();
+                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+
+                $pickup->setDoneBefore($pickupDoneBefore);
+            }
         }
 
         return $delivery;
