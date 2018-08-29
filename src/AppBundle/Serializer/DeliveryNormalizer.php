@@ -7,6 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -17,15 +18,18 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     private $normalizer;
     private $geocoder;
     private $tokenStorage;
+    private $logger;
 
     public function __construct(
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        LoggerInterface $logger)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->tokenStorage = $tokenStorage;
+        $this->logger = $logger;
     }
 
     private function normalizeTask(Task $task)
@@ -82,24 +86,23 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
-        if (isset($data['pickup'])) {
-
-            $this->denormalizeTask($data['pickup'], $pickup);
-
-            // If no pickup address is specified, use the store address
-            if (null === $pickup->getAddress()) {
-                if (null === $token = $this->tokenStorage->getToken()) {
-                    // TODO Throw Exception
-                }
-                if (null === $store = $token->getAttribute('store')) {
-                    // TODO Throw Exception
-                }
-                $pickup->setAddress($store->getAddress());
-            }
-        }
-
         if (isset($data['dropoff'])) {
             $this->denormalizeTask($data['dropoff'], $dropoff);
+        }
+
+        if (isset($data['pickup'])) {
+            $this->denormalizeTask($data['pickup'], $pickup);
+        }
+
+        // If no pickup address is specified, use the store address
+        if (null === $pickup->getAddress()) {
+            if (null === $token = $this->tokenStorage->getToken()) {
+                // TODO Throw Exception
+            }
+            if (null === $store = $token->getAttribute('store')) {
+                // TODO Throw Exception
+            }
+            $pickup->setAddress($store->getAddress());
         }
 
         return $delivery;
