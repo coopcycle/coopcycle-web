@@ -49,7 +49,10 @@
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: {{ order.restaurant.address|latlng|json_encode() }},
-  dropoff: {{ order.shippingAddress|latlng|json_encode() }}
+  dropoff: {{ order.shippingAddress|latlng|json_encode() }},
+  onFitBoundsEnd: function(map) {
+    map.panBy([ 220, -150 ]);
+  }
 });
 </script>
 {% endblock %}

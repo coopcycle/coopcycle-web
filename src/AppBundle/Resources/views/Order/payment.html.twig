@@ -57,7 +57,10 @@
 <script type="text/javascript">
   new CoopCycle.DeliveryMap('map', {
     pickup: {{ order.restaurant.address|latlng|json_encode() }},
-    dropoff: {{ order.shippingAddress|latlng|json_encode() }}
+    dropoff: {{ order.shippingAddress|latlng|json_encode() }},
+    onFitBoundsEnd: function(map) {
+      map.panBy([ 220, -150 ]);
+    }
   });
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
     publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
