@@ -113,6 +113,10 @@ doctrine:
 api_platform:
     mapping:
         paths: ['%kernel.project_dir%/src/AppBundle/Api/Dto']
+    exception_to_status:
+        Symfony\Component\Serializer\Exception\ExceptionInterface: 400
+        ApiPlatform\Core\Exception\InvalidArgumentException: 400
+        AppBundle\Api\Exception\BadRequestHttpException: 400
 
 # Swiftmailer Configuration
 swiftmailer:
