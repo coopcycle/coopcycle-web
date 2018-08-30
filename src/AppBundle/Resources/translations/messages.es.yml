@@ -101,7 +101,7 @@ delivery.createNew: Crear nueva entrega
 help.title: Ayuda
 help.home: Inicio
 
-norestaurantfound: No hay ningún restaurante abierto a ésta hora!<br>Pruba un horario
+norestaurantfound: No hay ningún restaurante abierto a ésta hora!<br>Prueba un horario
   distinto.
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo adicional antes del pedido de un usuario. Esta opción no cambia los tiempos considerados para la preparación de la comida (20 minutos) y el reparto (25 minutos).
@@ -304,6 +304,9 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help
 cart.title: Carrito
 cart.widget.title: Tus detalles de entrega
 cart.widget.button: Pedir
+
+checkout.breadcrumb.address: Dirección
+checkout.breadcrumb.payment: Pago
 
 form.geojson_upload.file: Archivo
 form.store_type.pricing_rule_set.label: Tarifa

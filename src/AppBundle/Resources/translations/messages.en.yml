@@ -291,6 +291,9 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help
 cart.widget.title: Your delivery details
 cart.widget.button: Order
 
+checkout.breadcrumb.address: Address
+checkout.breadcrumb.payment: Payment
+
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
 form.delivery.pricing_rule_set.about: |

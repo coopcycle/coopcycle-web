@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker from "../cart/DatePicker.jsx";
 import AddressPicker from "../address/AddressPicker.jsx";
-
+import i18n from '../i18n';
 
 class RestaurantListFilter extends React.Component {
 
@@ -55,12 +55,12 @@ class RestaurantListFilter extends React.Component {
           />
         </div>
         <div className="col-md-1">
-          <span className="input-height">Quand?</span>
+          <span className="input-height">{ i18n.t('RESTAURANT_LIST_FILTER_WHEN') }</span>
         </div>
         <div className="col-md-3" >
           <select id="basic-url" value={ this.state.nowOrLater } className="form-control" onChange={ (evt) => this.onDateTimeChange(evt) }>
-            <option value="now">Au plus tôt</option>
-            <option value="later">Plus tard</option>
+            <option value="now">{ i18n.t('RESTAURANT_LIST_FILTER_ASAP') }</option>
+            <option value="later">{ i18n.t('RESTAURANT_LIST_FILTER_LATER') }</option>
           </select>
         </div>
         <div className="col-md-4" >

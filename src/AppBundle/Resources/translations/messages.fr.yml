@@ -303,6 +303,9 @@ cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
 
+checkout.breadcrumb.address: Adresse
+checkout.breadcrumb.payment: Paiement
+
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
 form.delivery.pricing_rule_set.about: 'La tarification suivante sera appliquée : <a

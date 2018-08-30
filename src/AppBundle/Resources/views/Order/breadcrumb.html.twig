@@ -14,10 +14,10 @@
   <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
   <li {% if step == 2 %}class="active"{% endif %}>
     {% if order is defined %}<a href="{{ path('order') }}">{% endif %}
-    {{ 'Delivery'|trans }}
+    {{ 'checkout.breadcrumb.address'|trans }}
     {% if order is defined %}</a>{% endif %}
   </li>
   <li {% if step == 3 %}class="active"{% endif %}>
-    {{ 'Payment'|trans }}
+    {{ 'checkout.breadcrumb.payment'|trans }}
   </li>
 </ol>
