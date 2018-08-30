@@ -81,6 +81,7 @@ class DashboardApp extends React.Component {
 
     this.props.socket.on('task:done', data => this.props.updateTask(data.task))
     this.props.socket.on('task:failed', data => this.props.updateTask(data.task))
+    this.props.socket.on('task:cancelled', data => this.props.updateTask(data.task))
     this.props.socket.on('task:created', data => this.props.addCreatedTask(data.task))
 
     const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')

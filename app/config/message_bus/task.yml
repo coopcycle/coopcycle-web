@@ -20,6 +20,23 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\MarkAsFailed
 
+  coopcycle.domain.task.handler.cancel:
+    class: AppBundle\Domain\Task\Handler\CancelHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Cancel
+
+  coopcycle.domain.task.handler.delete_group:
+    class: AppBundle\Domain\Task\Handler\DeleteGroupHandler
+    arguments:
+      - '@doctrine'
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\DeleteGroup
+
   #
   # Reactors
   #
@@ -40,3 +57,5 @@ services:
           subscribes_to: task:done
         - name: event_subscriber
           subscribes_to: task:failed
+        - name: event_subscriber
+          subscribes_to: task:cancelled

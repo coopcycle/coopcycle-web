@@ -108,6 +108,7 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
           case 'task:done':
             return 'green'
           case 'task:failed':
+          case 'task:cancelled':
             return 'red'
           default:
             return 'blue'

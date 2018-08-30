@@ -37,6 +37,7 @@
     "ADMIN_DASHBOARD_USERS_SEARCHSTORE": "Buscar una tienda…",
     "ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT": "Buscar restaurante…",
     "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Tareas terminadas",
+    "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Tareas canceladas",
     "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Tareas no etiquetadas",
     "USER_EDIT_ENABLED_LABEL": "Activado",
     "USER_EDIT_DISABLED_LABEL": "Desactivado",

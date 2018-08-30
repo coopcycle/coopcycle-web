@@ -113,6 +113,8 @@ trait AdminDashboardTrait
      */
     public function dashboardFullscreenAction($date, Request $request)
     {
+        $taskManager = $this->get('coopcycle.task_manager');
+
         $date = new \DateTime($date);
         $dayAfter = clone $date;
         $dayAfter->modify('+1 day');
@@ -213,29 +215,10 @@ trait AdminDashboardTrait
                     ->getRepository(TaskGroup::class)
                     ->find($taskGroupForm->get('id')->getData());
 
-                $tasks = $this->getDoctrine()
-                    ->getRepository(Task::class)
-                    ->findByGroup($taskGroup);
-
-                $deleteGroup = true;
-                foreach ($tasks as $task) {
-                    if (!$task->isAssigned()) {
-                        $this->getDoctrine()
-                            ->getManagerForClass(Task::class)
-                            ->remove($task);
-                    } else {
-                        $deleteGroup = false;
-                    }
-                }
-
-                if ($deleteGroup) {
-                    $this->getDoctrine()
-                        ->getManagerForClass(TaskGroup::class)
-                        ->remove($taskGroup);
-                }
+                $taskManager->deleteGroup($taskGroup);
 
                 $this->getDoctrine()
-                    ->getManagerForClass(Task::class)
+                    ->getManagerForClass(TaskGroup::class)
                     ->flush();
             }
 

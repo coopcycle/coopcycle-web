@@ -185,6 +185,9 @@ html, body {
   &:last-child {
     border-radius: 0;
   }
+  &--cancelled {
+    opacity: 0.5;
+  }
 }
 
 .taskList__tasks {

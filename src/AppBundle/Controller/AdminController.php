@@ -753,7 +753,7 @@ class AdminController extends Controller
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
 
                 try {
-                    $taskManager->remove($task);
+                    $taskManager->cancel($task);
                 } catch (\Exception $e) {
                     // TODO Add form error
                 }

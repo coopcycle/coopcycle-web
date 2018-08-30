@@ -330,6 +330,16 @@ const taskFinishedFilter = (state = true, action) => {
   }
 }
 
+const taskCancelledFilter = (state = false, action) => {
+  switch (action.type) {
+    case 'TOGGLE_SHOW_CANCELLED_TASKS':
+      let showCancelledTasks = !state
+      return showCancelledTasks
+    default:
+      return state
+  }
+}
+
 const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action ) => {
 
   switch (action.type) {
@@ -362,6 +372,7 @@ export default combineReducers({
   polylineEnabled,
   taskListGroupMode,
   taskFinishedFilter,
+  taskCancelledFilter,
   tagsFilter,
   selectedTasks
 })
