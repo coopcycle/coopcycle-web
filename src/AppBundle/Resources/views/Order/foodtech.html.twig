@@ -6,13 +6,35 @@
 {% endblock %}
 
 {% block content %}
-  {% include "AppBundle::_partials/Order/orderFollow.html.twig" %}
+  <div class="order-map__wrapper">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="order-map__column">
+          {% include "AppBundle::_partials/Order/restaurantDetails.html.twig" %}
+        </div>
+      </div>
+      <div class="col-md-5 col-md-offset-3">
+        <div class="order-map__column">
+          <div id="order-timeline"></div>
+        </div>
+      </div>
+    </div>
+    <div id="map" class="order-map hidden-xs hidden-sm"></div>
+  </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
 <script>
-  window.AppData = window.AppData || {};
-  window.AppData.order = {{ order_normalized|json_encode()|raw }};
+new CoopCycle.DeliveryMap('map', {
+  pickup: {{ order.restaurant.address|latlng|json_encode() }},
+  dropoff: {{ order.shippingAddress|latlng|json_encode() }},
+  onFitBoundsEnd: function(map) {
+    map.panBy([ 220, -150 ]);
+  }
+});
+new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
+  order: {{ order_normalized|json_encode()|raw }}
+});
 </script>
-<script src="{{ asset('js/order-tracking.js') }}"></script>
 {% endblock %}
