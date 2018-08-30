@@ -28,7 +28,9 @@ class ContractType extends AbstractType
                 'divisor' => 100,
             ])
             ->add('feeRate', PercentType::class, [
-                'label' => 'restaurant.contract.feeRate.label'
+                'label' => 'restaurant.contract.feeRate.label',
+                'scale' => 2,
+                'type' => 'fractional',
             ])
             ->add('restaurantPaysStripeFee', ChoiceType::class, [
                 'label' => 'restaurant.contract.restaurantPaysStripeFee.label',
