@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {toggleShowFinishedTasks, setSelectedTagList, toggleShowUntaggedTasks} from "../store/actions"
+import {
+  toggleShowFinishedTasks,
+  toggleShowCancelledTasks,
+  setSelectedTagList,
+  toggleShowUntaggedTasks
+} from "../store/actions"
 import { translate } from 'react-i18next'
 
 class Filters extends Component {
 
-  onClick(e) {
+  onShowFinishedClick(e) {
     e.preventDefault()
     this.props.toggleFinishedTasks()
+  }
+
+  onShowCancelledClick(e) {
+    e.preventDefault()
+    this.props.toggleCancelledTasks()
   }
 
   onTagClick(e, tag) {
@@ -21,7 +31,7 @@ class Filters extends Component {
   }
 
   render() {
-    const { showFinishedTasks, selectedTags, showUntaggedTasks } = this.props
+    const { showFinishedTasks, showCancelledTasks, selectedTags, showUntaggedTasks } = this.props
 
     let selectedTagsNames = _.map(selectedTags, tag => tag.name)
 
@@ -39,9 +49,15 @@ class Filters extends Component {
     return (
       <ul className="dropdown-menu">
         <li>
-          <a onClick={(e) => this.onClick(e)}>
+          <a onClick={(e) => this.onShowFinishedClick(e)}>
             { showFinishedTasks ? (<i className="fa fa-check dashboard__filters__icon"></i>) : (<i className="dashboard__filters__icon"></i>)}
             { this.props.t('ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS') }
+          </a>
+        </li>
+        <li>
+          <a onClick={(e) => this.onShowCancelledClick(e)}>
+            { showCancelledTasks ? (<i className="fa fa-check dashboard__filters__icon"></i>) : (<i className="dashboard__filters__icon"></i>)}
+            { this.props.t('ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS') }
           </a>
         </li>
         <li>
@@ -59,14 +75,16 @@ class Filters extends Component {
 function mapStateToProps (state) {
   return {
     showFinishedTasks: state.taskFinishedFilter,
+    showCancelledTasks: state.taskCancelledFilter,
     selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks
+    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     toggleFinishedTasks: () => { dispatch(toggleShowFinishedTasks()) },
+    toggleCancelledTasks: () => { dispatch(toggleShowCancelledTasks()) },
     setSelectedTagList: (tagName) => {  dispatch(setSelectedTagList(tagName)) },
     toggleShowUntaggedTasks: () => { dispatch(toggleShowUntaggedTasks())}
   }

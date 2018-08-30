@@ -466,7 +466,6 @@ services:
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
     arguments:
-      - "@doctrine"
       - "@command_bus"
 
   coopcycle.settings_manager:

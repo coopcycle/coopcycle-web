@@ -86,6 +86,9 @@ class Me
         $tasks = [];
         if ($taskList) {
             $tasks = $taskList->getTasks();
+            $tasks = array_filter($tasks, function (Task $task) {
+                return !$task->isCancelled();
+            });
         }
 
         return $tasks;

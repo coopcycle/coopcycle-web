@@ -45,6 +45,11 @@ class UnassignedTasks extends React.Component {
     const groups = []
     let standaloneTasks = []
 
+    // Do not show cancelled tasks
+    if (!this.props.showCancelledTasks) {
+      unassignedTasks = _.filter(unassignedTasks, (task) => { return task.status !== 'CANCELLED' })
+    }
+
     // tag filtering - task should have at least one of the selected tags
     unassignedTasks = _.filter(unassignedTasks, (task) =>
       (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
@@ -118,6 +123,7 @@ function mapStateToProps (state) {
     selectedTags: state.tagsFilter.selectedTagsList,
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
     selectedTasks: state.selectedTasks,
+    showCancelledTasks: state.taskCancelledFilter,
   }
 }
 

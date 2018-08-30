@@ -20,4 +20,10 @@ AppBundle\Entity\Task\Group:
             unique: false
             nullable: false
             precision: 0
-    lifecycleCallbacks: {  }
+    oneToMany:
+        tasks:
+            targetEntity: AppBundle\Entity\Task
+            cascade:
+                - persist
+            fetch: LAZY
+            mappedBy: group
