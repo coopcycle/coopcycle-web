@@ -52,22 +52,16 @@
 {% endblock %}
 
 {% block scripts %}
-  <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-  <script src="{{ asset('js/widgets.js') }}"></script>
-  <script type="text/javascript">
-    window.AppData = window.AppData || {};
-    window.AppData.restaurantCoordinates = {
-      'lat': "{{ order.restaurant.address.geo.latitude }}",
-      'lng': "{{ order.restaurant.address.geo.longitude }}"
-    };
-    window.AppData.customerCoordinates = {
-      'lat': "{{ deliveryAddress.geo.latitude }}",
-      'lng': "{{ deliveryAddress.geo.longitude }}"
-    };
-    new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
-      publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
-      tokenElement: document.querySelector('#stripe_payment_stripeToken')
-    })
-  </script>
-  <script type="text/javascript" src="{{ asset('js/order.js') }}"></script>
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script type="text/javascript">
+  new CoopCycle.DeliveryMap('map', {
+    pickup: {{ order.restaurant.address|latlng|json_encode() }},
+    dropoff: {{ order.shippingAddress|latlng|json_encode() }}
+  });
+  new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+    publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+    tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  });
+</script>
 {% endblock %}

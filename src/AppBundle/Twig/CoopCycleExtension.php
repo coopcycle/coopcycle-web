@@ -2,6 +2,8 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Address;
+
 class CoopCycleExtension extends \Twig_Extension
 {
     public function getFilters()
@@ -12,6 +14,7 @@ class CoopCycleExtension extends \Twig_Extension
             new \Twig_SimpleFilter('price_format', array(PriceFormatResolver::class, 'priceFormat')),
             new \Twig_SimpleFilter('order_can_transition', array(OrderStateResolver::class, 'orderCanTransitionFilter')),
             new \Twig_SimpleFilter('sylius_resolve_variant', array(SyliusVariantResolver::class, 'resolveVariant')),
+            new \Twig_SimpleFilter('latlng', array($this, 'latLng'))
         );
     }
 
@@ -30,5 +33,15 @@ class CoopCycleExtension extends \Twig_Extension
     public function secondsToMinutes($seconds)
     {
         return sprintf('%d min', ceil($seconds / 60));
+    }
+
+    public function latLng($address)
+    {
+        if ($address instanceof Address) {
+            return [
+                $address->getGeo()->getLatitude(),
+                $address->getGeo()->getLongitude(),
+            ];
+        }
     }
 }

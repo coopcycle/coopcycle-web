@@ -119,7 +119,7 @@ class ProfileController extends Controller
             return $this->render('@App/Order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
-                'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
+                'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order', 'order_timeline']]),
                 'breadcrumb_path' => 'profile_orders'
             ]);
         }

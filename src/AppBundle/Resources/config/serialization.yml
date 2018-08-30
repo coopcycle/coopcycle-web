@@ -38,6 +38,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     createdAt:
       groups: ['order']
+    timeline:
+      groups: ['order_timeline']
     preparationExpectedAt:
       groups: ['order_timeline']
     pickupExpectedAt:
@@ -53,3 +55,12 @@ Sylius\Component\Order\Model\OrderItem:
       groups: ['order']
     unitPrice:
       groups: ['order']
+
+AppBundle\Entity\Sylius\OrderTimeline:
+  attributes:
+    preparationExpectedAt:
+      groups: ['order_timeline']
+    pickupExpectedAt:
+      groups: ['order_timeline']
+    dropoffExpectedAt:
+      groups: ['order_timeline']
