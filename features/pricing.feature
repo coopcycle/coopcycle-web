@@ -12,6 +12,16 @@ Feature: Pricing
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/pricing/calculate-price"
     Then the response status code should be 400
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":"Parameter dropoffAddress is mandatory",
+        "trace":@array@
+      }
+      """
 
   Scenario: Get delivery price
     Given the database is empty

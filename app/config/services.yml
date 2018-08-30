@@ -538,18 +538,19 @@ services:
           - '@logger'
       tags: [ 'kernel.event_subscriber' ]
 
+  'AppBundle\Api\EventSubscriber\PricingSubscriber':
+      arguments:
+          - '@coopcycle.delivery.manager'
+          - '@routing_service'
+          - '@coopcycle.geocoder'
+          - '@security.token_storage'
+      tags: [ 'kernel.event_subscriber' ]
+
   'AppBundle\Action\Settings':
       arguments:
         - '@coopcycle.settings_manager'
         - '%country_iso%'
         - '%coopcycle.locale%'
-
-  'AppBundle\Action\Pricing':
-      arguments:
-        - '@coopcycle.delivery.manager'
-        - '@routing_service'
-        - '@coopcycle.geocoder'
-        - '@security.token_storage'
 
   'AppBundle\Security\StoreTokenAuthenticator':
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring

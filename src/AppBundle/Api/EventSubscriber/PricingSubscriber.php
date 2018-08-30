@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Api\EventSubscriber;
 
+use AppBundle\Api\Exception\BadRequestHttpException;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -9,14 +10,17 @@ use AppBundle\Entity\Store;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
+use ApiPlatform\Core\EventListener\EventPriorities;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class Pricing
+final class PricingSubscriber implements EventSubscriberInterface
 {
     private $deliveryManager;
     private $routing;
@@ -35,15 +39,21 @@ class Pricing
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * @Route(
-     *   name="api_calculate_price",
-     *   path="/pricing/calculate-price"
-     * )
-     * @Method("GET")
-     */
-    public function calculatePriceAction(Request $request)
+    public static function getSubscribedEvents()
     {
+        return [
+            KernelEvents::VIEW => ['calculatePrice', EventPriorities::POST_VALIDATE],
+        ];
+    }
+
+    public function calculatePrice(GetResponseForControllerResultEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_calculate_price_requests_get_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
         if (null === $token = $this->tokenStorage->getToken()) {
             // TODO Throw Exception
             return;
@@ -55,7 +65,7 @@ class Pricing
         }
 
         if (!$request->query->has('dropoffAddress')) {
-            throw new BadRequestHttpException('Parameter "dropoffAddress" is mandatory');
+            throw new BadRequestHttpException('Parameter dropoffAddress is mandatory');
         }
 
         $pickupAddress = $store->getAddress();
@@ -79,8 +89,10 @@ class Pricing
 
         $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
 
-        // TODO Throw HTTP 400 when price can't be calculated
+        if (null === $price) {
+            throw new BadRequestHttpException('Price could not be calculated');
+        }
 
-        return new JsonResponse($price);
+        $event->setResponse(new JsonResponse($price));
     }
 }
