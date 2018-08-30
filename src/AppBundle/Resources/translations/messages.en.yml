@@ -240,6 +240,9 @@ order.state.ready: Ready
 order.state.fulfilled: Delivered
 order.state.cancelled: Cancelled
 
+order.adjustment_type.delivery: Delivery
+order.adjustment_type.platform_fees: CoopCycle fees
+
 order.list.total: Total
 order.list.createdAt: Created at
 order.list.cancel: Cancel

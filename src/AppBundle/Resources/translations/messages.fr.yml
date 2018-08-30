@@ -248,6 +248,9 @@ order.state.ready: Prête
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
 
+order.adjustment_type.delivery: Livraison
+order.adjustment_type.platform_fees: Frais CoopCycle
+
 payment.state.cart: Panier
 payment.state.new: Nouveau
 payment.state.authorized: Autorisé

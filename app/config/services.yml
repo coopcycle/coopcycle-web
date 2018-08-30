@@ -45,6 +45,7 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
     arguments:
       - "@sylius.factory.adjustment"
+      - "@translator"
     tags:
       - { name: sylius.order_processor, priority: 64 }
 

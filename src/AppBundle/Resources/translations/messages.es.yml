@@ -257,6 +257,9 @@ order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
 order.state.ready: Listo
 
+order.adjustment_type.delivery: Entrega
+order.adjustment_type.platform_fees: Costos CoopCycle
+
 order.list.total: Total
 order.list.createdAt: Creado
 order.list.cancel: Cancelar
