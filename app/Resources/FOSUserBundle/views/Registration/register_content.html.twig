@@ -12,7 +12,7 @@
   {{ form_end(form) }}
 
   <hr>
-  <p>Vous avez déjà un compte ? <a href="{{ path('fos_user_security_login') }}">Identifiez-vous</a></p>
+  <p>{% trans from 'messages' %}authentication.already_registered{% endtrans %} <a href="{{ path('fos_user_security_login') }}">{% trans from 'messages' %}authentication.sign_in{% endtrans %}</a></p>
 
   </div>
 </div>

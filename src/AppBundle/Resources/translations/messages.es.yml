@@ -529,3 +529,9 @@ basics.add: Añadir
 basics.edit: Modificar
 basics.delete: Eliminar
 basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
+
+authentication.forgot_password: ¿Contraseña olvidada?
+authentication.not_registered_yet: ¿Todavía no estas registrado?
+authentication.create_account: Crea tu cuenta
+authentication.already_registered: ¿Ya tienes una cuenta?
+authentication.sign_in: Regístrate
