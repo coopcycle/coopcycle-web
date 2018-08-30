@@ -100,12 +100,12 @@ class Cart extends React.Component
         <div>
           <hr />
           <div>
-            <span>Total produits</span>
+            <span>{ i18n.t('CART_TOTAL_PRODUCTS') }</span>
             <strong className="pull-right">{ (itemsTotal / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
           { this.renderAdjustments() }
           <div>
-            <span>Total</span>
+            <span>{ i18n.t('CART_TOTAL') }</span>
             <strong className="pull-right">{ (total / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>
           </div>
         </div>

@@ -11,6 +11,7 @@ use Prophecy\Argument;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderFeeProcessorTest extends KernelTestCase
 {
@@ -23,8 +24,14 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         self::bootKernel();
 
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+
+        $this->translator
+            ->trans(Argument::type('string'))
+            ->willReturn('Foo');
+
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
-        $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory);
+        $this->orderFeeProcessor = new OrderFeeProcessor($this->adjustmentFactory, $this->translator->reveal());
     }
 
     private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate)

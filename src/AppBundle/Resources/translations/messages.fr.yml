@@ -248,6 +248,9 @@ order.state.ready: Prête
 order.state.fulfilled: Livrée
 order.state.cancelled: Annulée
 
+order.adjustment_type.delivery: Livraison
+order.adjustment_type.platform_fees: Frais CoopCycle
+
 payment.state.cart: Panier
 payment.state.new: Nouveau
 payment.state.authorized: Autorisé
@@ -302,6 +305,9 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide
 cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
+
+checkout.breadcrumb.address: Adresse
+checkout.breadcrumb.payment: Paiement
 
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
@@ -579,3 +585,8 @@ deliveryForm.noPriceFromPricingWarning: 'Le tarif ne peut pas être calculé à 
   du prix. Entrez le manuellement ou éditez le prix. '
 task.form.finish.FAIL.info: La tâche n'a pas pu être effectuée
 
+authentication.forgot_password: Mot de passe oublié ?
+authentication.not_registered_yet: Pas encore inscrit ?
+authentication.create_account: Créez votre compte
+authentication.already_registered: Vous avez déjà un compte ?
+authentication.sign_in: Identifiez-vous

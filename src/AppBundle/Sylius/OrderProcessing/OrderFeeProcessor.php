@@ -7,15 +7,20 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderFeeProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
+    private $translator;
 
-    public function __construct(AdjustmentFactoryInterface $adjustmentFactory)
+    public function __construct(
+        AdjustmentFactoryInterface $adjustmentFactory,
+        TranslatorInterface $translator)
     {
         $this->adjustmentFactory = $adjustmentFactory;
+        $this->translator = $translator;
     }
 
     /**
@@ -40,7 +45,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::FEE_ADJUSTMENT,
-            'CoopCycle fees',
+            $this->translator->trans('order.adjustment_type.platform_fees'),
             (int) (($order->getItemsTotal() * $feeRate) + $businessAmount),
             $neutral = true
         );
@@ -48,7 +53,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $deliveryAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::DELIVERY_ADJUSTMENT,
-            'Livraison',
+            $this->translator->trans('order.adjustment_type.delivery'),
             $customerAmount,
             $neutral = false
         );
