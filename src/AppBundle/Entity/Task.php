@@ -48,6 +48,7 @@ class Task implements TaggableInterface
     const STATUS_TODO = 'TODO';
     const STATUS_FAILED = 'FAILED';
     const STATUS_DONE = 'DONE';
+    const STATUS_CANCELLED = 'CANCELLED';
 
     /**
      * @Groups({"task"})
@@ -180,6 +181,11 @@ class Task implements TaggableInterface
     public function isFinished()
     {
         return $this->isDone() || $this->isFailed();
+    }
+
+    public function isCancelled()
+    {
+        return $this->status === self::STATUS_CANCELLED;
     }
 
     public function getAddress()
