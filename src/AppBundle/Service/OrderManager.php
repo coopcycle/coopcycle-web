@@ -50,9 +50,9 @@ class OrderManager
         $stateMachine->apply(OrderTransitions::TRANSITION_FULFILL);
     }
 
-    public function cancel(OrderInterface $order)
+    public function cancel(OrderInterface $order, $reason = null)
     {
-        $this->commandBus->handle(new OrderCommand\CancelOrder($order));
+        $this->commandBus->handle(new OrderCommand\CancelOrder($order, $reason));
     }
 
     public function onDemand(OrderInterface $order)
