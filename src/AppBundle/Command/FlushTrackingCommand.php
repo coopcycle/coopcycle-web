@@ -59,8 +59,11 @@ class FlushTrackingCommand extends ContainerAwareCommand
         foreach ($keys as $key) {
             preg_match('/:([^:]+)$/', $key, $matches);
             $username = $matches[1];
-            $user = $this->userManager->findUserByUsername($username);
-            $this->flushTracking($user, $key, $output);
+            if ($user = $this->userManager->findUserByUsername($username)) {
+                $this->flushTracking($user, $key, $output);
+            } else {
+                $output->writeln(sprintf('<error>User %s does not exist</error>', $username));
+            }
         }
     }
 
