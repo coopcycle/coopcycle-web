@@ -594,6 +594,17 @@ $input-location-icon-width: 30px;
   padding: $base-margin-xs $base-margin-xs;
 }
 
+table.task-table {
+  tbody {
+    tr {
+      border-left: 6px solid #fff;
+    }
+    tr.task--cancelled {
+      color: $gray-light;
+    }
+  }
+}
+
 .menuEditor {
   display: flex;
   &__left, &__right {

@@ -11,7 +11,7 @@
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.deliveries.createNew{% endtrans %}
     </a>
   </p>
-  <table class="table">
+  <table class="table task-table">
     <thead>
       <th></th>
       <th>#</th>
@@ -22,7 +22,7 @@
     </thead>
     <tbody>
     {% for task in tasks %}
-      <tr {% if task.delivery is not null %}style="border-left: 6px solid {{ task.delivery.color }};"{% endif %}>
+      <tr {% if task.cancelled %}class="task--cancelled"{% endif %} {% if task.delivery is not null %}style="border-left-color: {{ task.delivery.color }};"{% endif %}>
         <td width="1%">
           {% include "AppBundle::_partials/Task/statusIcon.html.twig" %}
         </td>
