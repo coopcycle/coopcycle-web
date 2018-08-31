@@ -91,6 +91,10 @@ const channels = {
     toJSON: true,
     psubscribe: true
   },
+  'order:*:events': {
+    toJSON: true,
+    psubscribe: true
+  },
   'user:*:notifications': {
     toJSON: true,
     psubscribe: true

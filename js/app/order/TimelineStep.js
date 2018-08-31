@@ -1,29 +1,27 @@
 import React, { Component } from 'react';
-import moment from 'moment';
-import i18n from '../i18n'
-
-moment.locale($('html').attr('lang'));
 
 export default class extends Component {
   render () {
 
-    const classNames = ['order-follow--step']
-    if (this.props.done) {
-      classNames.push('order-follow--step__done')
+    const classNames = ['order-timeline__step']
+    if (this.props.success) {
+      classNames.push('order-timeline__step--success')
+    }
+    if (this.props.danger) {
+      classNames.push('order-timeline__step--danger')
+    }
+    if (this.props.active) {
+      classNames.push('order-timeline__step--active')
     }
 
     return (
-      <div
-        className={ classNames.join(' ') }
-        style={ this.props.active ? { opacity: 1 } : {} }>
-        <span className="order-follow--number">
-          { this.props.number }
-        </span>
-        <span className="order-follow--title">
+      <div className={ classNames.join(' ') }>
+        <i className="order-timeline__step__bullet"></i>
+        <span className="order-timeline__step__title">
           { this.props.title }
         </span>
         <div
-          className="order-follow--description"
+          className="order-timeline__step__description"
           style={ this.props.active ? { display: 'block'} : {} }>
           { this.props.description }
         </div>

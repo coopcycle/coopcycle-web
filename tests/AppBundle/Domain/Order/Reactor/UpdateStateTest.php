@@ -1,0 +1,110 @@
+<?php
+
+namespace Tests\AppBundle\Domain\Order\Reactor;
+
+use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Order\Reactor\UpdateState;
+use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\OrderInterface;
+use Predis\Client as Redis;
+use Prophecy\Argument;
+use SimpleBus\Message\Bus\MessageBus;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Serializer\SerializerInterface;
+
+class UpdateStateTest extends KernelTestCase
+{
+    private $stateMachineFactory;
+    private $orderProcessor;
+    private $serializer;
+    private $redis;
+    private $eventBus;
+
+    private $updateState;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        self::bootKernel();
+
+        $this->stateMachineFactory = static::$kernel->getContainer()->get('sm.factory');
+        $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
+        $this->serializer = $this->prophesize(SerializerInterface::class);
+        $this->redis = $this->prophesize(Redis::class);
+        $this->eventBus = $this->prophesize(MessageBus::class);
+
+        $this->serializer
+            ->serialize(Argument::type(OrderInterface::class), 'json', Argument::type('array'))
+            ->willReturn(json_encode(['foo' => 'bar']));
+
+        $this->updateState = new UpdateState(
+            $this->stateMachineFactory,
+            $this->orderProcessor->reveal(),
+            $this->serializer->reveal(),
+            $this->redis->reveal(),
+            $this->eventBus->reveal()
+        );
+        }
+
+    public function testCheckoutSucceeded()
+    {
+        $order = new Order();
+        $stripePayment = new StripePayment();
+
+        $this->eventBus
+            ->handle(Argument::that(function (Event\OrderCreated $event) use ($order) {
+                return $event->getOrder() === $order;
+            }))
+            ->shouldBeCalled();
+
+        call_user_func_array($this->updateState, [ new Event\CheckoutSucceeded($order, $stripePayment) ]);
+
+        $this->assertEquals('authorized', $stripePayment->getState());
+    }
+
+    public function testCheckoutFailed()
+    {
+        $order = new Order();
+        $stripePayment = new StripePayment();
+
+        $this->orderProcessor
+            ->process(Argument::is($order))
+            ->shouldBeCalled();
+
+        call_user_func_array($this->updateState, [ new Event\CheckoutFailed($order, $stripePayment, 'Lorem ipsum') ]);
+
+        $this->assertEquals('failed', $stripePayment->getState());
+        $this->assertEquals('Lorem ipsum', $stripePayment->getLastError());
+    }
+
+    public function testOrderCreated()
+    {
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_CART);
+
+        $this->redis
+            ->publish(Argument::type('string'), Argument::type('string'))
+            ->shouldBeCalled();
+
+        call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
+
+        $this->assertEquals('new', $order->getState());
+    }
+
+    public function testOrderAccepted()
+    {
+        $order = new Order();
+        $order->setState(OrderInterface::STATE_NEW);
+
+        $this->redis
+            ->publish(Argument::type('string'), Argument::type('string'))
+            ->shouldBeCalled();
+
+        call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
+
+        $this->assertEquals('accepted', $order->getState());
+    }
+}

@@ -1,82 +1,118 @@
-import React, { Component } from 'react';
-import moment from 'moment';
+import React, { Component } from 'react'
+import moment from 'moment'
 import i18n from '../i18n'
+import _ from 'lodash'
 import TimelineStep from './TimelineStep'
 
-moment.locale($('html').attr('lang'));
+moment.locale($('html').attr('lang'))
 
 export default class extends React.Component {
 
   constructor(props) {
     super(props)
 
-    const { order } = this.props
-
     this.state = {
-      order: order,
-      step: this.getStep(order)
+      order: this.props.order,
+      events: this.props.events
     }
   }
 
-  getStep(order) {
-    if (order.state === 'accepted') {
-      return 1
-    } else if (order.state === 'ready') {
-      return 2
-    } else if (order.state === 'fulfilled') {
-      return 3
-    } else {
-      return 0
-    }
+  addEvent(event) {
+    const { events } = this.state
+
+    const newEvents = events.slice(0)
+    newEvents.push(event)
+
+    this.setState({ events: newEvents })
   }
 
   updateOrder(order) {
-    this.setState({ order, step: this.getStep(order) })
+    this.setState({ order })
   }
 
-  renderOrderTimeline(step) {
-    return (
-      <div className="order-follow">
-        <TimelineStep
-          number="1"
-          active={ step === 0 }
-          done={ step > 0 }
-          title={ step > 0 ? i18n.t('ORDER_FOLLOW_STEP_1_ORDER_VALIDATED') : i18n.t('ORDER_FOLLOW_STEP_1_ORDER_IN_VALIDATION') }
-          description={ i18n.t('ORDER_FOLLOW_STEP_1_DESCRIPTION') } />
-        <TimelineStep
-          number="2"
-          active={ step === 1 }
-          done={ step > 1 }
-          title={ step > 1 ? i18n.t('ORDER_FOLLOW_STEP_2_ORDER_READY') : i18n.t('ORDER_FOLLOW_STEP_2_ORDER_IN_PREPARATION') }
-          description={ i18n.t('ORDER_FOLLOW_STEP_2_DESCRIPTION') } />
-        <TimelineStep
-          number="3"
-          active={ step === 2 }
-          done={ step > 2 }
-          title={ i18n.t('ORDER_FOLLOW_STEP_3_TITLE') }
-          description={ i18n.t('ORDER_FOLLOW_STEP_3_DESCRIPTION') } />
-        <TimelineStep
-          number="4"
-          active={ step === 3 }
-          done={ step > 3 }
-          title={ i18n.t('ORDER_FOLLOW_STEP_4_TITLE') }
-          description={ i18n.t('ORDER_FOLLOW_STEP_4_DESCRIPTION') } />
-      </div>
-    )
+  renderEvent(event, key) {
+    switch (event.name) {
+      case 'order:created':
+        return (
+          <TimelineStep
+            success
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_CREATED_TITLE', { date: moment(event.createdAt).format('LT') }) } />
+        )
+      case 'order:accepted':
+        return (
+          <TimelineStep
+            success
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_ACCEPTED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+            description={ 'Description' } />
+        )
+      case 'order:refused':
+        return (
+          <TimelineStep
+            danger
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_REFUSED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+            description={ 'Description' } />
+        )
+      case 'order:cancelled':
+        return (
+          <TimelineStep
+            danger
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_CANCELLED_TITLE', { date: moment(event.createdAt).format('LT') }) } />
+        )
+      case 'order:picked':
+        return (
+          <TimelineStep
+            success
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_PICKED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+            description={ 'Description' } />
+        )
+      case 'order:dropped':
+        return (
+          <TimelineStep
+            success
+            key={ key }
+            title={ i18n.t('ORDER_TIMELINE_DROPPED_TITLE', { date: moment(event.createdAt).format('LT') }) }
+            description={ 'Description' } />
+        )
+    }
   }
 
-  renderOrderRefused () {
-    return (
-      <div className="alert alert-danger">
-        Votre commande ne peut pas être honorée par le restaurateur.
-      </div>
-    )
+  renderNextEvent() {
+
+    const { events } = this.state
+    const last = _.last(events)
+
+    switch (last.name) {
+      case 'order:created':
+        return (
+          <TimelineStep active
+            title={ i18n.t('ORDER_TIMELINE_AFTER_CREATED_TITLE') }
+            description={ i18n.t('ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION') } />
+        )
+      case 'order:accepted':
+        return (
+          <TimelineStep active
+            title={ i18n.t('ORDER_TIMELINE_AFTER_ACCEPTED_TITLE') }
+            description={ i18n.t('ORDER_TIMELINE_AFTER_ACCEPTED_DESCRIPTION') } />
+        )
+      case 'order:picked':
+        return (
+          <TimelineStep active
+            title={ i18n.t('ORDER_TIMELINE_AFTER_PICKED_TITLE') }
+            description={ i18n.t('ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION') } />
+        )
+    }
   }
 
-  renderOrderCancelled () {
+  renderTimeline() {
     return (
-      <div className="alert alert-danger">
-        Votre commande a été annulée.
+      <div className="order-timeline">
+        { this.state.events.map((event, key) => this.renderEvent(event, key)) }
+        { this.renderNextEvent() }
       </div>
     )
   }
@@ -90,15 +126,21 @@ export default class extends React.Component {
     const formattedDeliveryDate = deliveryMoment.format('dddd D MMMM')
     const deliveryIsToday = formattedDeliveryDate === moment(Date.now()).format('dddd D MMMM')
 
+    let message
+    if (deliveryIsToday) {
+      message = i18n.t("ORDER_FOLLOW_DELIVERY_EXPECTED_AT", { deliveryTime: deliveryTime })
+    } else {
+      message = i18n.t("ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE", {
+        deliveryTime: deliveryTime,
+        deliveryDate: formattedDeliveryDate
+      })
+    }
+
     return (
       <div>
-        <p>
-          {deliveryIsToday ? i18n.t("ORDER_FOLLOW_DELIVERY_EXPECTED_AT", {deliveryTime: deliveryTime}) : i18n.t("ORDER_FOLLOW_DELIVERY_EXPECTED_AT_WITH_DATE", {deliveryTime: deliveryTime, deliveryDate: formattedDeliveryDate})}
-        </p>
+        <p>{ message }</p>
         <hr/>
-        { order.state === 'refused' && this.renderOrderRefused()}
-        { order.state === 'cancelled' && this.renderOrderCancelled()}
-        { order.state !== 'cancelled' && order.state !== 'refused' && this.renderOrderTimeline(step)}
+        { this.renderTimeline() }
       </div>
     )
   }

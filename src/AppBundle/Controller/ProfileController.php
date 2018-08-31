@@ -18,6 +18,7 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
+use AppBundle\Utils\OrderEventCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -119,6 +120,7 @@ class ProfileController extends Controller
             return $this->render('@App/Order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
+                'events' => (new OrderEventCollection($order))->toArray(),
                 'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order', 'order_timeline']]),
                 'breadcrumb_path' => 'profile_orders'
             ]);

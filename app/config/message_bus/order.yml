@@ -198,3 +198,24 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.publish_to_redis:
+    class: AppBundle\Domain\Order\Reactor\PublishToRedis
+    arguments:
+      - '@snc_redis.default'
+      - '@serializer'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:accepted
+        - name: event_subscriber
+          subscribes_to: order:refused
+        - name: event_subscriber
+          subscribes_to: order:delayed
+        - name: event_subscriber
+          subscribes_to: order:cancelled
+        - name: event_subscriber
+          subscribes_to: order:picked
+        - name: event_subscriber
+          subscribes_to: order:dropped
