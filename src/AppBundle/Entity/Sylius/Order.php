@@ -41,7 +41,8 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *     "accept"={"route_name"="order_accept"},
  *     "refuse"={"route_name"="order_refuse"},
  *     "ready"={"route_name"="order_ready"},
- *     "delay"={"route_name"="order_delay"}
+ *     "delay"={"route_name"="order_delay"},
+ *     "cancel"={"route_name"="order_cancel"}
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},

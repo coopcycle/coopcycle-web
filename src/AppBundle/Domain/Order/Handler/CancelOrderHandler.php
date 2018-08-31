@@ -18,7 +18,8 @@ class CancelOrderHandler
     public function __invoke(CancelOrder $command)
     {
         $order = $command->getOrder();
+        $reason = $command->getReason();
 
-        $this->eventRecorder->record(new Event\OrderCancelled($order));
+        $this->eventRecorder->record(new Event\OrderCancelled($order, $reason));
     }
 }

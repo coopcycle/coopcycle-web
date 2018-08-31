@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Refuse extends Base
+class Cancel extends Base
 {
     /**
      * @Route(
-     *     name="order_refuse",
-     *     path="/orders/{id}/refuse",
-     *     defaults={"_api_resource_class"=Order::class, "_api_item_operation_name"="refuse"}
+     *     name="order_cancel",
+     *     path="/orders/{id}/cancel",
+     *     defaults={"_api_resource_class"=Order::class, "_api_item_operation_name"="cancel"}
      * )
      * @Method("PUT")
      */
@@ -23,9 +23,9 @@ class Refuse extends Base
     {
         $user = $this->getUser();
 
-        // Only restaurants can refuse orders
+        // Only restaurants can cancel orders
         if (!$user->hasRole('ROLE_RESTAURANT')) {
-            throw new AccessDeniedHttpException(sprintf('User #%d cannot refuse order', $user->getId()));
+            throw new AccessDeniedHttpException(sprintf('User #%d cannot cancel order', $user->getId()));
         }
 
         $order = $data;
@@ -39,7 +39,7 @@ class Refuse extends Base
         $reason = isset($body['reason']) ? $body['reason'] : null;
 
         try {
-            $this->orderManager->refuse($order, $reason);
+            $this->orderManager->cancel($order, $reason);
         } catch (\Exception $e) {
             throw new BadRequestHttpException($e);
         }
