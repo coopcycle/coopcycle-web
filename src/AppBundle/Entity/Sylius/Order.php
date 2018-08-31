@@ -286,4 +286,9 @@ class Order extends BaseOrder implements OrderInterface
             return $this->timeline->getPickupExpectedAt();
         }
     }
+
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
 }

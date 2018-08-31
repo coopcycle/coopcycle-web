@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\Order;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentsSubjectInterface;
@@ -65,4 +66,9 @@ interface OrderInterface extends BaseOrderInterface, PaymentsSubjectInterface
      * @param Delivery
      */
     public function setDelivery(Delivery $delivery): void;
+
+    /**
+     * @return Collection|OrderEvent[]
+     */
+    public function getEvents(): Collection;
 }
