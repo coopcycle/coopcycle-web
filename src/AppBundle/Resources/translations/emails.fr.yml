@@ -70,3 +70,10 @@ order.cancelled.body.intro: |
   <br>
   <br>
   Nous sommes désolé, mais votre commande a été annulée.
+
+order.reminder.subject: La commande %order.number% n'a pas encore été acceptée
+order.reminder.body: |
+  Bonjour,
+  <br>
+  <br>
+  Nous sommes désolé, mais votre commande a été annulée.

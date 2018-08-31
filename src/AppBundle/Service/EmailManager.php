@@ -141,4 +141,14 @@ class EmailManager
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
+
+    public function createOrderReminderMessage(OrderInterface $order)
+    {
+        $subject = $this->translator->trans('order.reminder.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->templating->render('@App/Emails/Order/reminder.html.twig', [
+            'order' => $order,
+        ]);
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
 }

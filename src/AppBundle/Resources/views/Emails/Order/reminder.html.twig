@@ -1,0 +1,12 @@
+{% extends '@App/Emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'order.reminder.body' | trans({
+    '%order.url%': url('profile_restaurant_dashboard_order', {
+      orderId: order.id,
+      restaurantId: order.restaurant.id
+    }),
+    '%restaurant.name%': order.restaurant.name
+  }, 'emails') | raw }}
+  {% include '@App/Emails/Order/_partials/items.html.twig' %}
+{% endblock %}

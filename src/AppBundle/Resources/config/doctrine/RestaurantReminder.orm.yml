@@ -1,0 +1,41 @@
+AppBundle\Entity\RestaurantReminder:
+    type: entity
+    table: restaurant_reminder
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        state:
+            type: string
+        scheduledAt:
+            type: datetime
+            column: scheduled_at
+        expiredAt:
+            type: datetime
+            column: expired_at
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            joinColumns:
+                restaurant_id:
+                    referencedColumnName: id
+        order:
+            targetEntity: Sylius\Component\Order\Model\OrderInterface
+            joinColumns:
+                order_id:
+                    referencedColumnName: id
