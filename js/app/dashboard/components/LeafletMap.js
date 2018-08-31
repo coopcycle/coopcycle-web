@@ -13,10 +13,13 @@ class LeafletMap extends Component {
     this.proxy = new MapProxy(this.map)
     this.onlineTrackingTimeoutMap = new Map()
 
-    let { tasks, showFinishedTasks } = this.props
+    let { tasks, showFinishedTasks, showCancelledTasks } = this.props
 
     if (!showFinishedTasks) {
       tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
+    }
+    if (!showCancelledTasks) {
+      tasks = _.filter(tasks, (task) => { return task.status !== 'CANCELLED' })
     }
 
     _.forEach(tasks, task => this.proxy.addTask(task))
@@ -48,6 +51,7 @@ class LeafletMap extends Component {
       selectedTags,
       showUntaggedTasks,
       showFinishedTasks,
+      showCancelledTasks,
       selectedTasks
     } = this.props
 
@@ -82,6 +86,15 @@ class LeafletMap extends Component {
         _.forEach(untaggedTasks, task => this.proxy.addTask(task))
       } else {
         _.forEach(untaggedTasks, task => this.proxy.hideTask(task))
+      }
+    }
+
+    if (prevProps.showCancelledTasks !== showCancelledTasks) {
+      const cancelledTasks = _.filter(tasks, task => task.status === 'CANCELLED')
+      if (showCancelledTasks) {
+        _.forEach(cancelledTasks, task => this.proxy.addTask(task))
+      } else {
+        _.forEach(cancelledTasks, task => this.proxy.hideTask(task))
       }
     }
 
@@ -125,6 +138,7 @@ function mapStateToProps(state, ownProps) {
     showFinishedTasks: state.taskFinishedFilter,
     selectedTags: state.tagsFilter.selectedTagsList,
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
+    showCancelledTasks: state.taskCancelledFilter,
     selectedTasks: state.selectedTasks
   }
 }

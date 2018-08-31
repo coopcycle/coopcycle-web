@@ -30,20 +30,21 @@ const taskColor = task => {
 
 const taskIcon = task => {
 
-  if (task.status === 'TODO') {
-    if (task.type === 'PICKUP') {
-      return 'cube'
-    }
-    if (task.type === 'DROPOFF') {
-      return 'arrow-down'
-    }
-  } else {
-    if (task.status === 'DONE') {
+  switch (task.status) {
+    case 'TODO':
+      if (task.type === 'PICKUP') {
+        return 'cube'
+      }
+      if (task.type === 'DROPOFF') {
+        return 'arrow-down'
+      }
+      break
+    case 'DONE':
       return 'check'
-    }
-    if (task.status === 'FAILED') {
+    case 'FAILED':
       return 'remove'
-    }
+    case 'CANCELLED':
+      return 'ban'
   }
 
   return 'question'
