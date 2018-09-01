@@ -42,7 +42,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "restaurant_menu"={"route_name"="api_restaurant_menu"},
  *     "put"={
  *       "method"="PUT",
- *       "denormalization_context"={"groups"={"restaurant_update"}}
+ *       "denormalization_context"={"groups"={"restaurant_update"}},
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
  *     }
  *   }
  * )
