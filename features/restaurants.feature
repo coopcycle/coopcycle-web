@@ -82,6 +82,7 @@ Feature: Manage restaurants
       "servesCuisine":@array@,
       "enabled":true,
       "name":"Nodaiwa",
+      "state": "normal",
       "address":{
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
@@ -170,3 +171,59 @@ Feature: Manage restaurants
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.882305,2.365448"
     Then the response status code should be 400
     And the response should be in JSON
+
+  Scenario: Change restaurant state
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
+      """
+      {
+        "state": "rush"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+
+  Scenario: User has not sufficient access rights
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
+      """
+      {
+        "state": "rush"
+      }
+      """
+    Then the response status code should be 403
+
+  Scenario: User is not authorized to modify restaurant
+    Given the database is empty
+    And the fixtures file "restaurants.yml" is loaded
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "2" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
+      """
+      {
+        "state": "rush"
+      }
+      """
+    Then the response status code should be 403

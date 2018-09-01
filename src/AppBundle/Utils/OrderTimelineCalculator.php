@@ -58,8 +58,16 @@ class OrderTimelineCalculator
 
         $preparation = null;
         foreach ($this->config as $expression => $value) {
+
+            $restaurantObject = new \stdClass();
+            $restaurantObject->state = $order->getRestaurant()->getState();
+
+            $orderObject = new \stdClass();
+            $orderObject->total = $order->getTotal();
+
             $values = [
-                'total' => $order->getTotal(),
+                'restaurant' => $restaurantObject,
+                'order' => $orderObject,
             ];
 
             if (true === $this->language->evaluate($expression, $values)) {
