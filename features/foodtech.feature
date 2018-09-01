@@ -25,7 +25,7 @@ Feature: Food Tech
     Given the user "sarah" is loaded:
       | email      | sarah@coopcycle.org |
       | password   | 123456              |
-    And the user "sarah" has ordered something for "2018-08-27 12:30:00" at restaurant with id "1"
+    And the user "sarah" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "1"
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
