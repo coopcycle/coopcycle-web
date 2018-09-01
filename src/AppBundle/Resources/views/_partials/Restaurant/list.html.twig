@@ -4,6 +4,7 @@
     {% for restaurant in restaurants %}
       <tr>
         <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
+        <td width="5%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
         <td width="20%">{{ restaurant.name }}</td>
         <td width="25%">{{ restaurant.address.streetAddress }}</td>
         <td width="35%">
