@@ -71,7 +71,9 @@ final class PricingSubscriber implements EventSubscriberInterface
         $pickupAddress = $store->getAddress();
         $dropoffAddress = $this->geocoder->geocode($request->query->get('dropoffAddress'));
 
-        // TODO Check address has been geocoded
+        if (null === $dropoffAddress) {
+            throw new BadRequestHttpException('Address could not be geocoded');
+        }
 
         $data = $this->routing->getRawResponse(
             $pickupAddress->getGeo(),
