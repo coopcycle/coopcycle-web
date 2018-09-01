@@ -17,13 +17,16 @@ class OrderTimelineCalculatorTest extends TestCase
     public function setUp()
     {
         $this->config = [
-            'total <= 2000'       => '10 minutes',
-            'total in 2000..5000' => '15 minutes',
-            'total > 5000'        => '30 minutes',
+            'restaurant.state == "rush" and order.total < 2000'        => '20 minutes',
+            'restaurant.state == "rush" and order.total in 2000..5000' => '30 minutes',
+            'restaurant.state == "rush" and order.total > 5000'        => '45 minutes',
+            'order.total <= 2000'                                      => '10 minutes',
+            'order.total in 2000..5000'                                => '15 minutes',
+            'order.total > 5000'                                       => '30 minutes',
         ];
     }
 
-    private function createOrder($total, $shippedAt)
+    private function createOrder($total, $shippedAt, $state = 'normal')
     {
         $restaurantAddressCoords = new GeoCoordinates();
         $restaurantAddress = new Address();
@@ -35,6 +38,7 @@ class OrderTimelineCalculatorTest extends TestCase
 
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
+        $restaurant->setState($state);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -56,6 +60,7 @@ class OrderTimelineCalculatorTest extends TestCase
     public function calculateProvider()
     {
         return [
+            // state = normal
             [
                 $this->createOrder(1500, '2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:30:00'),
@@ -73,6 +78,25 @@ class OrderTimelineCalculatorTest extends TestCase
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
+            ],
+            // state = rush
+            [
+                $this->createOrder(1500, '2018-08-25 13:30:00', 'rush'),
+                new \DateTime('2018-08-25 13:30:00'),
+                new \DateTime('2018-08-25 13:15:00'),
+                new \DateTime('2018-08-25 12:55:00'),
+            ],
+            [
+                $this->createOrder(3000, '2018-08-25 13:30:00', 'rush'),
+                new \DateTime('2018-08-25 13:30:00'),
+                new \DateTime('2018-08-25 13:15:00'),
+                new \DateTime('2018-08-25 12:45:00'),
+            ],
+            [
+                $this->createOrder(6000, '2018-08-25 13:30:00', 'rush'),
+                new \DateTime('2018-08-25 13:30:00'),
+                new \DateTime('2018-08-25 13:15:00'),
+                new \DateTime('2018-08-25 12:30:00'),
             ],
         ];
     }
