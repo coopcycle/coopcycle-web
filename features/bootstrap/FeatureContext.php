@@ -573,7 +573,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Given the user :username has ordered something for :date at restaurant with id :id
+     * @Given the user :username has ordered something for :date at the restaurant with id :id
      */
     public function theUserHasOrderedSomethingForAtRestaurantWithId($username, $date, $id)
     {
