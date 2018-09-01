@@ -25,6 +25,15 @@ services:
     tags:
       - { name: event_bus_middleware, priority: -255 }
 
+  'AppBundle\EventSubscriber\EntityChangeSetSubscriber':
+    public: false
+    arguments:
+      - '@event_bus'
+      - '@logger'
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+      - { name: event_recorder }
+
   #
   # Command Handlers
   #
