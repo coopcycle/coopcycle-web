@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Filter\RestaurantFilter;
 use AppBundle\Utils\ValidationUtils;
@@ -39,6 +40,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={"method"="GET"},
  *     "restaurant_menu"={"route_name"="api_restaurant_menu"},
+ *     "put"={
+ *       "method"="PUT",
+ *       "denormalization_context"={"groups"={"restaurant_update"}}
+ *     }
  *   }
  * )
  * @Vich\Uploadable
@@ -73,6 +78,9 @@ class Restaurant extends FoodEstablishment
      *  We allow ordering for the next two opened days
      */
     const NUMBER_OF_AVAILABLE_DAYS = 2;
+
+    const STATE_NORMAL = 'normal';
+    const STATE_RUSH = 'rush';
 
     /**
      * @var int
@@ -170,6 +178,11 @@ class Restaurant extends FoodEstablishment
     private $taxons;
 
     private $activeMenuTaxon;
+
+    /**
+     * @Groups({"restaurant", "restaurant_update"})
+     */
+    private $state = self::STATE_NORMAL;
 
     /**
      * @var Contract
@@ -549,5 +562,17 @@ class Restaurant extends FoodEstablishment
             'distance' => $distance,
             'dropoff' => $dropoff,
         ]);
+    }
+
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    public function setState($state)
+    {
+        $this->state = $state;
+
+        return $this;
     }
 }

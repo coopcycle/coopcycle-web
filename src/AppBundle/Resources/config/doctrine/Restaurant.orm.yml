@@ -104,6 +104,8 @@ AppBundle\Entity\Restaurant:
             nullable: true
             precision: 0
             column: additional_properties
+        state:
+            type: string
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine

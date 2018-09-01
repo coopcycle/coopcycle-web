@@ -82,6 +82,7 @@ Feature: Manage restaurants
       "servesCuisine":@array@,
       "enabled":true,
       "name":"Nodaiwa",
+      "state": "normal",
       "address":{
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
