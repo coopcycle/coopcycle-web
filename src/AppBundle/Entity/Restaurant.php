@@ -2,8 +2,11 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use AppBundle\Action\Restaurant\Orders as RestaurantOrders;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Filter\RestaurantFilter;
@@ -45,7 +48,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "denormalization_context"={"groups"={"restaurant_update"}},
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
  *     }
- *   }
+ *   },
+ *   subresourceOperations={
+ *     "orders_get_subresource"={
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
+ *     },
+ *   },
  * )
  * @Vich\Uploadable
  * @CustomAssert\IsActivableRestaurant(groups="activable")
@@ -191,6 +199,11 @@ class Restaurant extends FoodEstablishment
      */
     private $contract;
 
+    /**
+     * @ApiSubresource
+     */
+    private $orders;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -199,6 +212,7 @@ class Restaurant extends FoodEstablishment
         $this->products = new ArrayCollection();
         $this->productOptions = new ArrayCollection();
         $this->taxons = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     /**
@@ -575,5 +589,10 @@ class Restaurant extends FoodEstablishment
         $this->state = $state;
 
         return $this;
+    }
+
+    public function getOrders()
+    {
+        return $this->orders;
     }
 }

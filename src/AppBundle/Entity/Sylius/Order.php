@@ -2,13 +2,20 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Action\Restaurant\Orders as RestaurantOrders;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use AppBundle\Action\Order\Accept as OrderAccept;
+use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\Delay as OrderDelay;
+use AppBundle\Action\Order\Pay as OrderPay;
+use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
@@ -27,28 +34,47 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"order_create"}}
  *     },
- *     "my_orders"={"method"="GET", "route_name"="my_orders"},
- *     "restaurant_orders"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/orders",
- *       "controller"=RestaurantOrders::class,
- *       "defaults"={"_api_receive"=false}
- *     }
+ *     "my_orders"={"method"="GET", "route_name"="my_orders"}
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
- *     "pay"={"route_name"="order_pay"},
- *     "accept"={"route_name"="order_accept"},
- *     "refuse"={"route_name"="order_refuse"},
- *     "ready"={"route_name"="order_ready"},
- *     "delay"={"route_name"="order_delay"},
- *     "cancel"={"route_name"="order_cancel"}
+ *     "pay"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/pay",
+ *       "controller"=OrderPay::class,
+ *       "access_control"="object.getCustomer() == user"
+ *     },
+ *     "accept"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/accept",
+ *       "controller"=OrderAccept::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *     "refuse"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/refuse",
+ *       "controller"=OrderRefuse::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *     "delay"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/delay",
+ *       "controller"=OrderDelay::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *     "cancel"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/cancel",
+ *       "controller"=OrderCancel::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     }
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"order", "place"}}
  *   }
  * )
+ * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
  *
  * @AssertOrder
  */

@@ -399,6 +399,9 @@ services:
     arguments: [ '@doctrine', '@request_stack', '@logger', { distance: "exact", coordinate: "exact" } ]
     tags: [ 'api_platform.filter' ]
 
+  'AppBundle\Filter\OrderDateFilter':
+    tags: [ 'api_platform.filter' ]
+
   twig.extension.text:
     class: Twig_Extensions_Extension_Text
     tags:
@@ -547,6 +550,12 @@ services:
           - '@routing_service'
           - '@coopcycle.geocoder'
           - '@security.token_storage'
+      tags: [ 'kernel.event_subscriber' ]
+
+  'AppBundle\Api\EventSubscriber\RestaurantSubscriber':
+      arguments:
+          - '@api_platform.item_data_provider'
+          - '@api_platform.security.listener.request.deny_access'
       tags: [ 'kernel.event_subscriber' ]
 
   'AppBundle\Action\Settings':

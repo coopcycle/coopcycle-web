@@ -3,54 +3,44 @@
 namespace AppBundle\Action\Order;
 
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\StripePayment;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\Service\OrderManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 
-class Pay extends Base
+class Pay
 {
-    /**
-     * @Route(
-     *     name="order_pay",
-     *     path="/orders/{id}/pay",
-     *     defaults={"_api_resource_class"=Order::class, "_api_item_operation_name"="pay"}
-     * )
-     * @Method("PUT")
-     */
+    private $dataManager;
+    private $doctrine;
+
+    public function __construct(OrderManager $dataManager, ManagerRegistry $doctrine)
+    {
+        $this->orderManager = $dataManager;
+        $this->doctrine = $doctrine;
+    }
+
     public function __invoke(Order $data, Request $request)
     {
-        $user = $this->getUser();
-
-        $order = $data;
-
-        // Make sure the customer paying the order is correct
-        if ($order->getCustomer() !== $user) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $data = [];
+        $body = [];
         $content = $request->getContent();
         if (!empty($content)) {
-            $data = json_decode($content, true);
+            $body = json_decode($content, true);
         }
 
-        if (!isset($data['stripeToken'])) {
+        if (!isset($body['stripeToken'])) {
             throw new BadRequestHttpException('Stripe token is missing');
         }
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $stripePayment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
-        $this->orderManager->checkout($order, $data['stripeToken']);
+        $this->orderManager->checkout($data, $body['stripeToken']);
         $this->doctrine->getManagerForClass(Order::class)->flush();
 
         if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
             throw new BadRequestHttpException($stripePayment->getLastError());
         }
 
-        return $order;
+        return $data;
     }
 }
