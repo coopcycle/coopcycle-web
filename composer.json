@@ -20,8 +20,8 @@
     "require": {
         "php": "^7.1",
         "symfony/symfony": "3.4.*",
-        "symfony/property-info": "3.3.*",
-        "api-platform/core": "2.2.*",
+        "symfony/serializer": "4.*",
+        "api-platform/core": "2.3.*",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",

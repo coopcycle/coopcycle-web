@@ -17,5 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 final class CalculatePriceRequest
 {
-
+    // FIXME This is needed by PropertyInfo
+    public $dropoffAddress;
 }
