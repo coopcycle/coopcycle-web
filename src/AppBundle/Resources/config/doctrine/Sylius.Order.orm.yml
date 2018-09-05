@@ -44,10 +44,9 @@ AppBundle\Entity\Sylius\Order:
                 - all
         events:
             targetEntity: AppBundle\Entity\Sylius\OrderEvent
-            cascade:
-                - persist
-            fetch: LAZY
             mappedBy: order
+            cascade:
+                - all
     oneToOne:
         delivery:
             targetEntity: AppBundle\Entity\Delivery

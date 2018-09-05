@@ -7,16 +7,6 @@ services:
       - '@security.token_storage'
       - '@request_stack'
 
-  coopcycle.domain.event_store_listener:
-    public: false
-    class: AppBundle\EventListener\EventStoreListener
-    arguments:
-      - '@coopcycle.domain.event_store'
-      - '@doctrine'
-      - '@logger'
-    tags:
-      - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
-
   coopcycle.domain.middleware.event_store:
     public: false
     class: AppBundle\Domain\Middleware\EventStoreMiddleware

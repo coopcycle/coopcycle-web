@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain;
 
+use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
@@ -12,7 +13,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class EventStore extends ArrayCollection
 {
-    private $tokenStorage;
+    use TokenStorageTrait;
+
     private $requestStack;
 
     public function __construct(
@@ -28,11 +30,23 @@ class EventStore extends ArrayCollection
     public function addEvent(Event $event)
     {
         if ($event instanceof OrderDomainEvent) {
-            $this->add($this->createOrderEvent($event));
+            $domainEvent = $this->createOrderEvent($event);
+
+            $this->add($domainEvent);
+
+            $event->getOrder()
+                ->getEvents()
+                ->add($domainEvent);
         }
 
         if ($event instanceof TaskDomainEvent) {
-            $this->add($this->createTaskEvent($event));
+            $domainEvent = $this->createTaskEvent($event);
+
+            $this->add($domainEvent);
+
+            $event->getTask()
+                ->getEvents()
+                ->add($domainEvent);
         }
     }
 
@@ -49,14 +63,11 @@ class EventStore extends ArrayCollection
 
     private function createTaskEvent(Event $event)
     {
-        $data = $event->toPayload();
-        $metadata = $this->getMetadata();
-
         return new TaskEvent(
             $event->getTask(),
             $event::messageName(),
-            $data,
-            $metadata,
+            $event->toPayload(),
+            $this->getMetadata(),
             new \DateTime()
         );
     }
@@ -66,9 +77,13 @@ class EventStore extends ArrayCollection
         $metadata = [];
 
         $request = $this->requestStack->getCurrentRequest();
-
         if ($request) {
             $metadata['client_ip'] = $request->getClientIp();
+        }
+
+        $user = $this->getUser();
+        if ($user) {
+            $metadata['username'] = $user->getUsername();
         }
 
         return $metadata;
