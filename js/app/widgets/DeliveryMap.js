@@ -8,6 +8,11 @@ const polylineOptions = {
 
 export default (selector, options) => {
 
+  // Do not initialize map on mobile devices
+  if (!$(`#${selector}`).is(':visible')) {
+    return
+  }
+
   const map = MapHelper.init(selector)
 
   const pickup = MapHelper.createMarker(options.pickup, 'cube', 'marker', '#E74C3C')
@@ -30,11 +35,9 @@ export default (selector, options) => {
       })
   }
 
-  const pad = Math.sqrt(2) / 2
-
-  if (options.hasOwnProperty('onFitBoundsEnd')) {
-    map.once('moveend', () => options.onFitBoundsEnd(map))
+  const fitBoundsOptions = options.fitBoundsOptions || {}
+  const group = new L.featureGroup(layers)
+  if (group.getLayers().length > 0) {
+    map.fitBounds(group.getBounds().pad(Math.sqrt(2) / 2), fitBoundsOptions)
   }
-
-  setTimeout(() => MapHelper.fitToLayers(map, layers, pad), 1000)
 }
