@@ -27,6 +27,11 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
+.container--center {
+  align-items: center;
+  justify-content: center;
+}
+
 .row--full-height {
   display: flex;
   flex-wrap: wrap;
@@ -68,6 +73,13 @@ h1, h2, h3, h4, h5, h6 {
   & ~ .table > tbody > tr:first-child > td {
     border-top: none;
   }
+}
+
+.maintenance {
+  @extend .alert;
+  @extend .alert-danger;
+  text-align: center;
+  padding: 40px;
 }
 
 // ------------------ Admin ------------------

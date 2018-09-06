@@ -392,10 +392,10 @@ form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Correo del administrador
 form.settings.administrator_email.help: Las notificaciones se enviarán a éste correo
 form.settings.currency_code.label: Moneda
-form.maintenace.enable.label: Activar el mantenimiento
-form.maintenace.disable.label: Desactivar el mantenimiento
-form.maintenace.enable.alert: 'Estás a punto de activar el mantenimiento.<br>Solo los administradores tendrán acceso al sitio.'
-form.maintenace.disable.alert: Estás a punto de desactivar el mantenimiento
+form.maintenance.enable.label: Activar el mantenimiento
+form.maintenance.disable.label: Desactivar el mantenimiento
+form.maintenance.enable.alert: 'Estás a punto de activar el mantenimiento.<br>Solo los administradores tendrán acceso al sitio.'
+form.maintenance.disable.alert: Estás a punto de desactivar el mantenimiento
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números

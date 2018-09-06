@@ -13,7 +13,7 @@
   {{ form_row(form.administrator_email) }}
 
   <div class="alert alert-danger">
-    <i class="fa fa-warning"></i> {{ 'form.maintenace.enable.label'|trans }}
+    <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
       <div id="maintenance"></div>
     </div>
@@ -85,15 +85,15 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" data-enable>{{ 'form.maintenace.enable.label'|trans }}</h4>
-        <h4 class="modal-title" data-disable>{{ 'form.maintenace.disable.label'|trans }}</h4>
+        <h4 class="modal-title" data-enable>{{ 'form.maintenance.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.maintenance.disable.label'|trans }}</h4>
       </div>
       <div class="modal-body">
         <div class="alert alert-danger" data-enable>
-          {% trans %}form.maintenace.enable.alert{% endtrans %}
+          {% trans %}form.maintenance.enable.alert{% endtrans %}
         </div>
         <div class="alert alert-success" data-disable>
-          {% trans %}form.maintenace.disable.alert{% endtrans %}
+          {% trans %}form.maintenance.disable.alert{% endtrans %}
         </div>
       </div>
       <div class="modal-footer">

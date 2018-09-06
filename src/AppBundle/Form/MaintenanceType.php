@@ -12,10 +12,10 @@ class MaintenanceType extends AbstractType
     {
         $builder
             ->add('enable', SubmitType::class, [
-                'label' => 'form.maintenace.enable.label'
+                'label' => 'form.maintenance.enable.label'
             ])
             ->add('disable', SubmitType::class, [
-                'label' => 'form.maintenace.disable.label'
+                'label' => 'form.maintenance.disable.label'
             ]);
     }
 }
