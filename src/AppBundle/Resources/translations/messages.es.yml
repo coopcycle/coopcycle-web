@@ -353,17 +353,17 @@ form.settings.stripe.help: '
   to configure this section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
   (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid by the shop owner.
 '
-form.settings.stripe.mode.help: '
-  If you pick ''No'' Stripe will be in test mode. You will have to use <a href="https://stripe.com/docs/testing">test credit cards</a> number to pay
-  on the platform (typically 4242 4242 4242 4242).
-  <strong>No money will be exchanged.</strong>
+form.settings.stripe_testmode.help: '
+  En modo « test », debe usar <a href="https://stripe.com/docs/testing">números de tarjetas de prueba</a> para pagar.
+  <strong>No se intercambiará dinero.</strong>
 '
-form.settings.stripe_publishable_key.label: Clave pública de stripe
+form.settings.stripe_enable_livemode.help: 'Para activar el modo « live », primero necesita configurar las credenciales « live ».'
+form.settings.stripe_publishable_key.label: Clave pública de Stripe
 form.settings.stripe_publishable_key.help: 'Crea una cuenta Stripe para obtener tu
   <a href="https://stripe.com/docs/dashboard#api-keys">clave pública</a>
 
   '
-form.settings.stripe_secret_key.label: Clave secreta de stripe
+form.settings.stripe_secret_key.label: Clave secreta de Stripe
 form.settings.stripe_secret_key.help: 'Crea una cuenta Stripe para obtener tu <a href="https://stripe.com/docs/dashboard#api-keys">clave
   secreta</a>
 
@@ -376,7 +376,6 @@ form.settings.stripe_connect_client_id.help: 'Puedes encontrar tu identificador 
 form.settings.stripe_secret_key.help: |
   Crea una cuenta Stripe para obtener tu <a href="https://stripe.com/docs/dashboard#api-keys">clave secreta</a>
 
-form.settings.stripe_livemode.label: Usar Stripe en modo « live »
 form.settings.google_api_key.label: Clave API de google
 form.settings.google_api_key.help: 'Crea una cuenta Google para obtener tu <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clave
   API</a>
@@ -397,6 +396,12 @@ form.maintenance.enable.label: Activar el mantenimiento
 form.maintenance.disable.label: Desactivar el mantenimiento
 form.maintenance.enable.alert: 'Estás a punto de activar el mantenimiento.<br>Solo los administradores tendrán acceso al sitio.'
 form.maintenance.disable.alert: Estás a punto de desactivar el mantenimiento
+form.stripe_livemode.enable.label: Utilizar Stripe en modo « live »
+form.stripe_livemode.enable.alert: En modo « live », las tarjetas de crédito serán cargadas.
+form.stripe_livemode.disable.label: Utilizar Stripe en modo « test »
+form.stripe_livemode.disable.alert: En modo « test », las tarjetas de crédito no serán cargadas.
+form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « test » y activar el mantenimiento
+form.stripe_livemode.disable_and_enable_maintenance.alert: 'Estás utilizando el modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.'
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números

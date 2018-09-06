@@ -37,7 +37,8 @@ class SwitchWrapper extends Component {
 export default (el, options) => {
 
   const props = {
-    checked: options.checked
+    checked: options.checked,
+    disabled: options.disabled || false,
   }
 
   const component = render(<SwitchWrapper { ...props } onChange={ options.onChange } />, el)

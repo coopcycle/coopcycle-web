@@ -29,6 +29,7 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\SettingsType;
+use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\DeliveryPricingManager;
@@ -833,7 +834,33 @@ class AdminController extends Controller
         $settingsManager = $this->get('coopcycle.settings_manager');
         $redis = $this->get('snc_redis.default');
 
-        $settings = $settingsManager->asEntity();
+        /* Stripe live mode */
+
+        $isStripeLivemode = $settingsManager->isStripeLivemode();
+        $canEnableStripeLivemode = $settingsManager->canEnableStripeLivemode();
+        $stripeLivemodeForm = $this->createForm(StripeLivemodeType::class);
+
+        $stripeLivemodeForm->handleRequest($request);
+        if ($stripeLivemodeForm->isSubmitted() && $stripeLivemodeForm->isValid()) {
+
+            if ($stripeLivemodeForm->getClickedButton()) {
+                if ('enable' === $stripeLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('stripe_livemode', 'yes');
+                }
+                if ('disable' === $stripeLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('stripe_livemode', 'no');
+                }
+                if ('disable_and_enable_maintenance' === $stripeLivemodeForm->getClickedButton()->getName()) {
+                    $redis->set('maintenance', '1');
+                    $settingsManager->set('stripe_livemode', 'no');
+                }
+                $settingsManager->flush();
+            }
+
+            return $this->redirectToRoute('admin_settings');
+        }
+
+        /* Maintenance */
 
         $maintenanceForm = $this->createForm(MaintenanceType::class);
 
@@ -852,6 +879,9 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
+        /* Settings */
+
+        $settings = $settingsManager->asEntity();
         $form = $this->createForm(SettingsType::class, $settings);
 
         $form->handleRequest($request);
@@ -868,12 +898,13 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
-
-
         return [
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),
+            'stripe_livemode' => $isStripeLivemode,
+            'stripe_livemode_form' => $stripeLivemodeForm->createView(),
+            'can_enable_stripe_livemode' => $canEnableStripeLivemode,
         ];
     }
 
