@@ -403,6 +403,10 @@ form.settings.default_tax_category.help: Définissez le taux de TVA à appliquer
   les livraisons
 form.settings.administrator_email.label: Email de l'administrateur
 form.settings.administrator_email.help: Les notifications seront envoyées à cet email
+form.maintenace.enable.label: Activer la maintenance
+form.maintenace.disable.label: Désactiver la maintenance
+form.maintenace.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'
+form.maintenace.disable.alert: Vous allez désactiver le mode maintenance
 form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15
   caractères.
 
@@ -545,6 +549,7 @@ basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.add: Ajouter
 basics.delete: Supprimer
+basics.cancel: Annuler
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle

@@ -27,6 +27,7 @@ use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
+use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
@@ -830,8 +831,26 @@ class AdminController extends Controller
     public function settingsAction(Request $request)
     {
         $settingsManager = $this->get('coopcycle.settings_manager');
+        $redis = $this->get('snc_redis.default');
 
         $settings = $settingsManager->asEntity();
+
+        $maintenanceForm = $this->createForm(MaintenanceType::class);
+
+        $maintenanceForm->handleRequest($request);
+        if ($maintenanceForm->isSubmitted() && $maintenanceForm->isValid()) {
+
+            if ($maintenanceForm->getClickedButton()) {
+                if ('enable' === $maintenanceForm->getClickedButton()->getName()) {
+                    $redis->set('maintenance', '1');
+                }
+                if ('disable' === $maintenanceForm->getClickedButton()->getName()) {
+                    $redis->del('maintenance');
+                }
+            }
+
+            return $this->redirectToRoute('admin_settings');
+        }
 
         $form = $this->createForm(SettingsType::class, $settings);
 
@@ -849,8 +868,12 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
+
+
         return [
             'form' => $form->createView(),
+            'maintenance_form' => $maintenanceForm->createView(),
+            'maintenance' => $redis->get('maintenance'),
         ];
     }
 

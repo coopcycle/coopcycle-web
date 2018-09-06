@@ -364,6 +364,10 @@ form.settings.default_tax_category.label: VAT rate for deliveries
 form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
+form.maintenace.enable.label: Enable maintenance
+form.maintenace.disable.label: Disable maintenance
+form.maintenace.enable.alert: 'You are going to enable maintenance mode.<br>Only administrators will have access to the site.'
+form.maintenace.disable.alert: You are going to disable maintenance mode
 form.settings.currency_code.label: Currency
 
 form.registration.username.help: |
@@ -490,6 +494,7 @@ basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit
 basics.delete: Delete
+basics.cancel: Cancel
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

@@ -1,6 +1,7 @@
 {% extends "AppBundle::admin.html.twig" %}
 
 {% form_theme form 'AppBundle:Form:settings.html.twig' %}
+{% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.settings.title{% endtrans %}</li>
@@ -10,6 +11,13 @@
 {{ form_start(form) }}
   {{ form_row(form.brand_name) }}
   {{ form_row(form.administrator_email) }}
+
+  <div class="alert alert-danger">
+    <i class="fa fa-warning"></i> {{ 'form.maintenace.enable.label'|trans }}
+    <div class="pull-right">
+      <div id="maintenance"></div>
+    </div>
+  </div>
 
   <hr>
 
@@ -68,7 +76,67 @@
 
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
 {{ form_end(form) }}
+
+<div id="modal-maintenance" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(maintenance_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.maintenace.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.maintenace.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" data-enable>
+          {% trans %}form.maintenace.enable.alert{% endtrans %}
+        </div>
+        <div class="alert alert-success" data-disable>
+          {% trans %}form.maintenace.disable.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(maintenance_form.enable, { attr: { class: 'btn-danger', 'data-enable': 'true' } }) }}
+        {{ form_widget(maintenance_form.disable, { attr: { class: 'btn-success', 'data-disable': 'true' } }) }}
+      </div>
+      {{ form_end(maintenance_form) }}
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+  <script src="{{ asset('js/widgets.js') }}"></script>
+  <script>
+    var maintenanceSwitch;
+    var isMaintenanceEnabled = {{ maintenance is not empty ? 'true' : 'false' }};
+
+    $('#modal-maintenance').on('hidden.bs.modal', function(e) {
+      if (true === isMaintenanceEnabled) {
+        maintenanceSwitch.check();
+      } else {
+        maintenanceSwitch.uncheck();
+      }
+    });
+
+    var options = {
+      checked: isMaintenanceEnabled,
+      onChange: function(checked) {
+        if (checked !== isMaintenanceEnabled) {
+          if (checked) {
+            $('#modal-maintenance').find('[data-disable]').hide();
+          } else {
+            $('#modal-maintenance').find('[data-enable]').hide();
+          }
+          $('#modal-maintenance').modal('show');
+        }
+      }
+    };
+
+    maintenanceSwitch = new CoopCycle.Switch(document.querySelector('#maintenance'), options);
+
+  </script>
 {% endblock %}
