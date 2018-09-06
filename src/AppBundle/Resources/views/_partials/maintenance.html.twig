@@ -1,0 +1,11 @@
+{% if is_granted('ROLE_ADMIN') and coopcycle_maintenance() %}
+  <section id="banner">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center">
+          {{ 'maintenance.disclaimer'|trans|raw }}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}

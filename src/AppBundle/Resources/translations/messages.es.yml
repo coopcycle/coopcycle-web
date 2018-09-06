@@ -304,6 +304,7 @@ demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a a demo de la plata
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
   class="fa fa-info-circle"></i>  ¿Cómo usar la demo?</a>
+maintenance.disclaimer: El modo mantenimiento esta activado
 cart.title: Carrito
 cart.widget.title: Tus detalles de entrega
 cart.widget.button: Pedir

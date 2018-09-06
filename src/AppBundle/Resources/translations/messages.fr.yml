@@ -302,6 +302,7 @@ demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la pl
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i
   class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
+maintenance.disclaimer: Le mode maintenance est activé
 cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander

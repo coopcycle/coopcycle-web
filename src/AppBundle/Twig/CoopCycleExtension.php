@@ -22,6 +22,7 @@ class CoopCycleExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('coopcycle_setting', array(SettingResolver::class, 'resolveSetting')),
+            new \Twig_SimpleFunction('coopcycle_maintenance', array(MaintenanceResolver::class, 'isEnabled')),
         );
     }
 
