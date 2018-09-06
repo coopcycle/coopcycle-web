@@ -50,8 +50,8 @@ adminDashboard.orders.invoice.title: Factura
 adminDashboard.orders.invoice.totalExcludingTax: Total sin impuestos
 adminDashboard.orders.invoice.totalTax: Total impuestos
 adminDashboard.orders.invoice.totalIncludingTax: Total con impuestos
-adminDashboard.orders.invoice.productsTotal: Products total
-adminDashboard.orders.invoice.deliveryTotal: Delivery total
+adminDashboard.orders.invoice.productsTotal: Total productos
+adminDashboard.orders.invoice.deliveryTotal: Total entrega
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
 
