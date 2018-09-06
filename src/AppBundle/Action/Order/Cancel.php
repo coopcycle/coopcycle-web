@@ -26,11 +26,11 @@ class Cancel
         $reason = isset($body['reason']) ? $body['reason'] : null;
 
         try {
-            $this->orderManager->cancel($order, $reason);
+            $this->orderManager->cancel($data, $reason);
         } catch (\Exception $e) {
             throw new BadRequestHttpException($e);
         }
 
-        return $order;
+        return $data;
     }
 }
