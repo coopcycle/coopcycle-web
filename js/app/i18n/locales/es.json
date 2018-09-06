@@ -47,7 +47,7 @@
     "ORDER_TIMELINE_ACCEPTED_TITLE": "{{date}} Pedido confirmado",
     "ORDER_TIMELINE_REFUSED_TITLE": "{{date}} Pedido rechazado",
     "ORDER_TIMELINE_REFUSED_DESCRIPTION": "Tu pedido no puede ser preparado por el restaurante",
-    "ORDER_TIMELINE_PICKED_TITLE": "{{date}} Pedido recuperado",
+    "ORDER_TIMELINE_PICKED_TITLE": "{{date}} Pedido recogido",
     "ORDER_TIMELINE_DROPPED_TITLE": "{{date}} Pedido entregado",
     "ORDER_TIMELINE_CANCELLED_TITLE": "{{date}} Pedido cancelado",
     "ORDER_TIMELINE_AFTER_ACCEPTED_TITLE": "El restaurante ahora debe preparar tu pedido",
