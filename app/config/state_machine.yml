@@ -63,7 +63,7 @@ winzou_state_machine:
                 from: [cart, new, authorized]
                 to: failed
             cancel:
-                from: [new]
+                from: [cart, new, authorized]
                 to: cancelled
             refund:
                 from: [completed]

@@ -191,13 +191,12 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 
     case 'ADD_CREATED_TASK':
       if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
-        return state.slice(0)
+        return state
       }
-
       if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
-        return Array.prototype.concat(state, [action.task])
+        newState = state.slice(0)
+        return addLinkProperty(Array.prototype.concat(newState, [ action.task ]))
       }
-      break;
     case 'ASSIGN_TASKS':
       newState = state.slice(0)
       newState = _.differenceWith(
@@ -244,6 +243,22 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 }
 
 const allTasks = (state = tasksInitial, action) => {
+  let newState
+
+  switch (action.type) {
+
+    case 'ADD_CREATED_TASK':
+      if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+        return state
+      }
+
+      newState = state.slice(0)
+      return addLinkProperty(Array.prototype.concat(newState, [ action.task ]))
+
+    // case 'UPDATE_TASK':
+    //   break;
+  }
+
   return state
 }
 

@@ -40,11 +40,4 @@ abstract class Base
             return $data['reason'];
         }
     }
-
-    protected function accessControl(Task $task)
-    {
-        if (!$task->isAssignedTo($this->getUser())) {
-            throw new AccessDeniedHttpException(sprintf('User %s cannot update task', $this->getUser()->getUsername()));
-        }
-    }
 }

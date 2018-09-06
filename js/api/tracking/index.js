@@ -83,6 +83,10 @@ const channels = {
     toJSON: true,
     psubscribe: false
   },
+  'task:cancelled': {
+    toJSON: true,
+    psubscribe: false
+  },
   'restaurant:*:orders': {
     toJSON: true,
     psubscribe: true

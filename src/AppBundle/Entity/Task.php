@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\Task\Done as TaskDone;
+use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
@@ -33,8 +35,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
- *     "task_done"={"route_name"="api_task_done"},
- *     "task_failed"={"route_name"="api_task_failed"}
+ *     "task_done"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/done",
+ *       "controller"=TaskDone::class,
+ *       "access_control"="is_granted('ROLE_COURIER') and object.isAssignedTo(user)"
+ *     },
+ *     "task_failed"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/failed",
+ *       "controller"=TaskFailed::class,
+ *       "access_control"="is_granted('ROLE_COURIER') and object.isAssignedTo(user)"
+ *     }
  *   }
  * )
  */

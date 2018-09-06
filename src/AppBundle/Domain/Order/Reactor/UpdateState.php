@@ -56,12 +56,19 @@ class UpdateState
 
         $this->handleStateChange($event);
 
+        $order = $event->getOrder();
+
         if ($event instanceof Event\OrderFulfilled) {
             $stateMachine = $this->stateMachineFactory->get($event->getPayment(), PaymentTransitions::GRAPH);
             $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
         }
 
-        $order = $event->getOrder();
+        if ($event instanceof Event\OrderCancelled) {
+            foreach ($order->getPayments() as $payment) {
+                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+                $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+            }
+        }
 
         if ($event instanceof Event\OrderCreated && $order->isFoodtech()) {
             $this->redis->publish(

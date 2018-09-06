@@ -41,38 +41,44 @@ const drake = dragula({
 /**
  * Code to handle drag and drop from unassigned tasks to assigned
  */
-function configureDrake(unassignedTasksContainer, allTasks, assignTasks) {
 
+function onTaskDrop(allTasks, assignTasks, element, target, source) {
+  const username = $(target).data('username')
+  const isTask = element.hasAttribute('data-task-id')
+  const elements = isTask ? [ element ] : Array.from(element.querySelectorAll('[data-task-id]'))
+
+  let tasks = elements.map(el => _.find(allTasks, task => task['@id'] === el.getAttribute('data-task-id')))
+
+  // Make sure linked tasks are assigned too
+  const tasksWithLink = _.filter(tasks, task => task.hasOwnProperty('link'))
+  if (tasksWithLink.length > 0) {
+    const links = tasksWithLink.map(task => task.link)
+    const linkedTasks = _.filter(allTasks, task => task.hasOwnProperty('link') && _.includes(links, task.link))
+    linkedTasks.forEach(task => tasks.push(task))
+    tasks = _.uniqBy(tasks, '@id')
+  }
+
+  assignTasks(username, tasks)
+
+  $(target).removeClass('dropzone--loading')
+
+  // Remove cloned element from dropzone
+  element.remove()
+}
+
+function configureDragEnd(unassignedTasksContainer) {
   drake
+    .off('dragend')
     .on('dragend', function (el) {
       Array.from(unassignedTasksContainer.querySelectorAll('.task__draggable--dragging'))
         .forEach(el => el.classList.remove('task__draggable--dragging'))
     })
-    .on('drop', function(element, target, source) {
+}
 
-      const username = $(target).data('username')
-      const isTask = element.hasAttribute('data-task-id')
-      const elements = isTask ? [ element ] : Array.from(element.querySelectorAll('[data-task-id]'))
-
-      let tasks = elements.map(el => _.find(allTasks, task => task['@id'] === el.getAttribute('data-task-id')))
-
-      // Make sure linked tasks are assigned too
-      const tasksWithLink = _.filter(tasks, task => task.hasOwnProperty('link'))
-      if (tasksWithLink.length > 0) {
-        const links = tasksWithLink.map(task => task.link)
-        const linkedTasks = _.filter(allTasks, task => task.hasOwnProperty('link') && _.includes(links, task.link))
-        linkedTasks.forEach(task => tasks.push(task))
-        tasks = _.uniqBy(tasks, '@id')
-      }
-
-      assignTasks(username, tasks)
-
-      $(target).removeClass('dropzone--loading')
-
-      // Remove cloned element from dropzone
-      element.remove()
-    })
-
+function configureDrop(allTasks, assignTasks) {
+  drake
+    .off('drop')
+    .on('drop', onTaskDrop.bind(null, allTasks, assignTasks))
 }
 
 class DashboardApp extends React.Component {
@@ -87,7 +93,8 @@ class DashboardApp extends React.Component {
     const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')
     drake.containers.push(unassignedTasksContainer)
 
-    configureDrake(unassignedTasksContainer, this.props.allTasks, this.props.assignTasks)
+    configureDragEnd(unassignedTasksContainer)
+    configureDrop(this.props.allTasks, this.props.assignTasks)
 
     // This event is trigerred when the task modal is submitted successfully
     $(document).on('task.form.success', '#task-edit-modal', (e) => {
@@ -95,6 +102,12 @@ class DashboardApp extends React.Component {
       this.props.updateTask(task)
     })
 
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.allTasks !== prevProps.allTasks) {
+      configureDrop(this.props.allTasks, this.props.assignTasks)
+    }
   }
 
   render () {
@@ -113,7 +126,7 @@ class DashboardApp extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   return {
     allTasks: state.allTasks
   }
