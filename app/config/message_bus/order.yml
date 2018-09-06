@@ -107,6 +107,14 @@ services:
           subscribes_to: order:accepted
           priority: 255
 
+  coopcycle.domain.order.reactor.cancel_tasks:
+    class: AppBundle\Domain\Order\Reactor\CancelTasks
+    arguments:
+      - '@coopcycle.task_manager'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:cancelled
+
   coopcycle.domain.order.reactor.send_email:
     class: AppBundle\Domain\Order\Reactor\SendEmail
     arguments:
