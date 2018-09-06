@@ -302,6 +302,7 @@ demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenue sur la démo de la pl
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/fr/aide/comment-utiliser-la-demo/"><i
   class="fa fa-info-circle"></i>  Comment utiliser cette démo ?</a>
+maintenance.disclaimer: Le mode maintenance est activé
 cart.title: Panier
 cart.widget.title: Vos détails de livraison
 cart.widget.button: Commander
@@ -365,10 +366,11 @@ form.settings.stripe.help: '
   Pour utiliser la partie e-commerce de la plateforme, il est nécessaire de configurer cette section, ainsi que Stripe Connect.
   Stripe prend une commission de 0.25cts + 1.4% par paiement (indicatif, tarifs actualisés <a href="https://stripe.com/fr/pricing">ici</a>) à la charge du commerçant.
 '
-form.settings.stripe.mode.help: '
-  Si vous cochez "non", Stripe sera en mode test. Il faudra utiliser des <a href="https://stripe.com/docs/testing">cartes tests</a>
-  pour faire des achats (typiquement 4242 4242 4242 4242). <strong>Personne ne sera débité, aucun argent échangé.</strong>
+form.settings.stripe_testmode.help: '
+  En mode « test », vous devez utiliser des <a href="https://stripe.com/docs/testing">cartes de test</a>
+  pour faire des achats. <strong>Personne n''est débité, aucun argent échangé.</strong>
 '
+form.settings.stripe_enable_livemode.help: 'Pour activer le mode « live », vous devez configurer les identifiants « live ».'
 form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe
 form.settings.stripe_publishable_key.help: 'Créez un compte Stripe pour récupérer
@@ -386,7 +388,6 @@ form.settings.stripe_connect_client_id.help: 'Récupérez l''identifiant Stripe 
   des paramètres</a>
 
   '
-form.settings.stripe_livemode.label: Utiliser Stripe en mode « live »
 form.settings.google_api_key.label: Clé d'API Google
 form.settings.google_api_key.help: 'Créez un compte Google pour récupérer votre <a
   href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé
@@ -403,6 +404,16 @@ form.settings.default_tax_category.help: Définissez le taux de TVA à appliquer
   les livraisons
 form.settings.administrator_email.label: Email de l'administrateur
 form.settings.administrator_email.help: Les notifications seront envoyées à cet email
+form.maintenance.enable.label: Activer la maintenance
+form.maintenance.disable.label: Désactiver la maintenance
+form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'
+form.maintenance.disable.alert: Vous allez désactiver le mode maintenance
+form.stripe_livemode.enable.label: Utiliser Stripe en mode « live »
+form.stripe_livemode.enable.alert: En mode « live », les cartes seront débitées.
+form.stripe_livemode.disable.label: Utiliser Stripe en mode « test »
+form.stripe_livemode.disable.alert: En mode « test », les cartes ne seront pas débitées.
+form.stripe_livemode.disable_and_enable_maintenance.label: Passer en mode « test » et activer la maintenance
+form.stripe_livemode.disable_and_enable_maintenance.alert: 'Vous êtes actuellement en mode « live ».<br>Si vous souhaitez passer en « test », le mode maintenance sera activé automatiquement.'
 form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15
   caractères.
 
@@ -545,6 +556,7 @@ basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.add: Ajouter
 basics.delete: Supprimer
+basics.cancel: Annuler
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle

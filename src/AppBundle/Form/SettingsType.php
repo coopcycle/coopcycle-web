@@ -69,15 +69,6 @@ class SettingsType extends AbstractType
                 'required' => false,
                 'label' => 'form.settings.stripe_connect_client_id.label'
             ])
-            ->add('stripe_livemode', ChoiceType::class, [
-                'choices'  => [
-                    'No' => 'no',
-                    'Yes' => 'yes',
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'label' => 'form.settings.stripe_livemode.label'
-            ])
             ->add('google_api_key', TextType::class, [
                 'label' => 'form.settings.google_api_key.label'
             ])

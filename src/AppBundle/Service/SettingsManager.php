@@ -77,7 +77,7 @@ class SettingsManager
         } catch (\RuntimeException $e) {}
     }
 
-    private function isStripeLivemode()
+    public function isStripeLivemode()
     {
         $livemode = $this->get('stripe_livemode');
 
@@ -86,6 +86,20 @@ class SettingsManager
         }
 
         return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public function canEnableStripeLivemode()
+    {
+        try {
+            $stripeLivePublishableKey = $this->craueConfig->get('stripe_live_publishable_key');
+            $stripeLiveSecretKey = $this->craueConfig->get('stripe_live_secret_key');
+            $stripeLiveConnectClientId = $this->craueConfig->get('stripe_live_connect_client_id');
+
+            return !empty($stripeLivePublishableKey) && !empty($stripeLiveSecretKey) && !empty($stripeLiveConnectClientId);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
     }
 
     public function set($name, $value)

@@ -23,6 +23,16 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request }
 
+  coopcycle.listener.maintenance:
+    class: AppBundle\EventListener\MaintenanceListener
+    arguments:
+      - '@security.authorization_checker'
+      - '@security.token_storage'
+      - '@snc_redis.default'
+      - '@templating'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
   sylius.context.locale.request_based:
     class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
     arguments: ['@request_stack', '@sylius.locale_provider']
@@ -438,6 +448,14 @@ services:
     arguments:
       - '@sylius.context.currency'
       - '@sylius.templating.helper.currency'
+    public: false
+    tags:
+      - { name: twig.runtime }
+
+  coopcycle.twig.runtime.maintenance_resolver:
+    class: AppBundle\Twig\MaintenanceResolver
+    arguments:
+      - '@snc_redis.default'
     public: false
     tags:
       - { name: twig.runtime }
