@@ -11,17 +11,20 @@ export default class extends React.Component {
   constructor(props) {
     super(props)
 
+    const events = this.props.events.sort((a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1)
+
     this.state = {
       order: this.props.order,
-      events: this.props.events
+      events,
     }
   }
 
   addEvent(event) {
     const { events } = this.state
 
-    const newEvents = events.slice(0)
+    let newEvents = events.slice(0)
     newEvents.push(event)
+    newEvents = newEvents.sort((a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1)
 
     this.setState({ events: newEvents })
   }
