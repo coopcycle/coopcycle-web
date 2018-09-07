@@ -9,6 +9,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
+use Carbon\Carbon;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Ramsey\Uuid\Uuid;
@@ -218,9 +219,18 @@ class RestaurantController extends Controller
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
+        $delay = null;
+        if ($restaurant->getOrderingDelayMinutes() > 0) {
+            Carbon::setLocale($request->attributes->get('_locale'));
+            $delay = Carbon::now()
+                ->addMinutes($restaurant->getOrderingDelayMinutes())
+                ->diffForHumans(null, true);
+        }
+
         return array(
             'restaurant' => $restaurant,
             'availabilities' => $restaurant->getAvailabilities(),
+            'delay' => $delay
         );
     }
 

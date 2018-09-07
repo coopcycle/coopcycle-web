@@ -128,6 +128,8 @@ restaurant.disabledWarning: |
   This restaurant is disabled so the site visitors can't see this page. If you want to, you can <a target="_blank" href="%restaurantEditUrl%">activate it in the admin</a>.
 restaurant.closedWarning: |
   This restaurant is closed now. You can still order for later on though!
+restaurant.closedWarningWithDelay: |
+  Order now for later. Order at least %delay% in advance.
 restaurant.temporaryClosedWarning: |
   This restaurant is exceptionally closed. You can still order for later on though!
 restaurant.noMenuWarning: |

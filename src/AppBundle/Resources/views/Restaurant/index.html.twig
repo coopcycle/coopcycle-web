@@ -22,7 +22,11 @@
   {% elseif not restaurant.isOpen %}
     <div class="row">
       <div class="col-md-6 col-md-offset-3 alert alert-warning">
-        {% trans %}restaurant.closedWarning{% endtrans %}
+        {% if restaurant.orderingDelayMinutes > 0 %}
+          {% trans with { '%delay%': delay } %}restaurant.closedWarningWithDelay{% endtrans %}
+        {% else %}
+          {% trans %}restaurant.closedWarning{% endtrans %}
+        {% endif %}
       </div>
     </div>
   {%  endif %}
