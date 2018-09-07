@@ -274,12 +274,18 @@ class ProfileController extends Controller
             if ($form->getClickedButton()) {
 
                 try {
+
                     if ('done' === $form->getClickedButton()->getName()) {
                         $taskManager->markAsDone($task, $notes);
                     }
                     if ('fail' === $form->getClickedButton()->getName()) {
                         $taskManager->markAsFailed($task, $notes);
                     }
+
+                    $this->getDoctrine()
+                        ->getManagerForClass(Task::class)
+                        ->flush();
+
                 } catch (\Exception $e) {
                     $this->addFlash(
                         'error',
