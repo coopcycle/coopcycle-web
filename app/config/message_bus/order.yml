@@ -181,9 +181,9 @@ services:
     arguments:
       - '@coopcycle.order_timeline_calculator'
     tags:
-        - name: event_subscriber
-          subscribes_to: order:created
-          priority: -255
+        # - name: event_subscriber
+        #   subscribes_to: order:created
+        #   priority: -255
         - name: event_subscriber
           subscribes_to: order:delayed
         - name: event_subscriber

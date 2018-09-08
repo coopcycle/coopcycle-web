@@ -25,10 +25,10 @@ class CalculateTimeline
             return;
         }
 
-        if ($event instanceof Event\OrderCreated) {
-            $timeline = $this->calculator->calculate($order);
-            $order->setTimeline($timeline);
-        }
+        // if ($event instanceof Event\OrderCreated) {
+        //     $timeline = $this->calculator->calculate($order);
+        //     $order->setTimeline($timeline);
+        // }
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());

@@ -51,6 +51,13 @@ services:
     tags:
       - { name: sylius.context.currency }
 
+  sylius.order_processing.order_timeline_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderTimelineProcessor
+    arguments:
+      - "@coopcycle.order_timeline_calculator"
+    tags:
+      - { name: sylius.order_processor, priority: 80 }
+
   sylius.order_processing.order_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
     arguments:
