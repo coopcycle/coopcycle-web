@@ -398,8 +398,8 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   box-sizing: border-box;
   padding: 20px;
 
-  @media screen and (max-width: $screen-md-min) {
-    margin: 20px 10px 0;
+  @media screen and (max-width: $screen-md-max) {
+    margin: 0 0 20px;
     padding: 10px;
   }
 }
