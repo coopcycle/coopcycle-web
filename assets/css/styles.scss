@@ -205,51 +205,48 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 10px;
 }
 
-$cart-heading-height: 40px;
+// $panel-heading-padding is 10px 15px !default;
+// nth() allows to extract individual values
+$panel-heading-padding-vertical: nth($panel-heading-padding, 1);
+$panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
+
+$cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
 
 .cart-heading {
   position: relative;
-  height: $cart-heading-height;
 
   @media screen and (max-width: $screen-md-min) {
-    height: $cart-heading-height;
+    height: $navbar-height;
     text-align: center;
     color: $white !important;
     background-color: $main-blue-light !important;
+    line-height: $cart-heading-line-height;
   }
 }
 
-.cart-heading--items {
-  display: none;
-
-  @media screen and (max-width: $screen-md-min) {
-    display: block;
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 30px;
-    left: 30px;
-    background-color: $main-blue;
-  }
-}
-
+.cart-heading--items,
 .cart-heading--total {
   display: none;
 
   @media screen and (max-width: $screen-md-min) {
     display: block;
     position: absolute;
-    right: 40px;
-    height: 20px;
-    width: 20px;
-    padding: 0 5px;
-    border-radius: 30px;
+    width: $cart-heading-line-height;
+    height: $cart-heading-line-height;
+    border-radius: $cart-heading-line-height;
     background-color: $main-blue;
+  }
+}
 
-    .fa {
-      position: relative;
-      right: 2px;
-    }
+.cart-heading--items {
+  @media screen and (max-width: $screen-md-min) {
+    left: $panel-heading-padding-horizontal;
+  }
+}
+
+.cart-heading--total {
+  @media screen and (max-width: $screen-md-min) {
+    right: $panel-heading-padding-horizontal;
   }
 }
 
@@ -266,7 +263,7 @@ $cart-heading-height: 40px;
     bottom: 0;
     left: 0;
     right: 0;
-    transform: translateY(calc(100% - #{$cart-heading-height}));
+    transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
   }
 }
