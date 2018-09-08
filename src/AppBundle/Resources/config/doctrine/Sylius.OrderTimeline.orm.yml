@@ -19,7 +19,7 @@ AppBundle\Entity\Sylius\OrderTimeline:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
         dropoffExpectedAt:
             type: datetime
             column: dropoff_expected_at
