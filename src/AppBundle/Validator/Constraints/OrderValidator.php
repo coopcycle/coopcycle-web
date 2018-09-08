@@ -27,13 +27,15 @@ class OrderValidator extends ConstraintValidator
         $order = $object;
         $restaurant = $order->getRestaurant();
 
-        if (!$restaurant->isOpen($order->getShippedAt())) {
-            $this->context->buildViolation($constraint->restaurantClosedMessage)
-                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
-                ->atPath('shippedAt')
-                ->addViolation();
+        if (null !== $order->getPreparationExpectedAt()) {
+            if (!$restaurant->isOpen($order->getPreparationExpectedAt())) {
+                $this->context->buildViolation($constraint->restaurantClosedMessage)
+                    ->setParameter('%date%', $order->getPreparationExpectedAt()->format('Y-m-d H:i:s'))
+                    ->atPath('shippedAt')
+                    ->addViolation();
 
-            return;
+                return;
+            }
         }
 
         if ($order->getShippingAddress()) {
