@@ -181,8 +181,9 @@ class Cart extends React.Component
         <div className={ panelClasses.join(' ') }>
           <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
             <span className="cart-heading--items">{ itemCount }</span>
+            <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>
+            <span>{ i18n.t('CART_TITLE') }</span>
             <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
-            { i18n.t('CART_TITLE') }
           </div>
           <div className="panel-body">
             { this.renderWarningAlerts(warningAlerts) }
@@ -203,7 +204,8 @@ class Cart extends React.Component
               { this.renderTotal() }
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>
-                { loading && <i className="fa fa-spinner fa-spin"></i> }  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
+                <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>
+                <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
               </a>
             </div>
           </div>

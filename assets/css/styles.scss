@@ -235,6 +235,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     height: $cart-heading-line-height;
     border-radius: $cart-heading-line-height;
     background-color: $main-blue;
+    top: $panel-heading-padding-vertical;
   }
 }
 
@@ -265,6 +266,10 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     right: 0;
     transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
+  }
+
+  .fa-spinner {
+    margin-right: 4px;
   }
 }
 
