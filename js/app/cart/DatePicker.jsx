@@ -71,7 +71,7 @@ class DatePicker extends Component {
 
     return (
       <div className="row" >
-        <div className="col-sm-6" >
+        <div className="col-xs-6" >
           <select value={ date }
                   className="form-control"
                   onChange={ evt => this.onChangeDate(evt, days) } >
@@ -84,7 +84,7 @@ class DatePicker extends Component {
             }
           </select>
         </div>
-        <div className="col-sm-6" >
+        <div className="col-xs-6" >
           <select value={ time }
                   className="form-control"
                   onChange={ evt => this.onChangeTime(evt) } >
