@@ -63,7 +63,7 @@ class OrderTimelineCalculator
             $restaurantObject->state = $order->getRestaurant()->getState();
 
             $orderObject = new \stdClass();
-            $orderObject->total = $order->getTotal();
+            $orderObject->itemsTotal = $order->getItemsTotal();
 
             $values = [
                 'restaurant' => $restaurantObject,

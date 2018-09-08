@@ -17,12 +17,12 @@ class OrderTimelineCalculatorTest extends TestCase
     public function setUp()
     {
         $this->config = [
-            'restaurant.state == "rush" and order.total < 2000'        => '20 minutes',
-            'restaurant.state == "rush" and order.total in 2000..5000' => '30 minutes',
-            'restaurant.state == "rush" and order.total > 5000'        => '45 minutes',
-            'order.total <= 2000'                                      => '10 minutes',
-            'order.total in 2000..5000'                                => '15 minutes',
-            'order.total > 5000'                                       => '30 minutes',
+            'restaurant.state == "rush" and order.itemsTotal < 2000'        => '20 minutes',
+            'restaurant.state == "rush" and order.itemsTotal in 2000..5000' => '30 minutes',
+            'restaurant.state == "rush" and order.itemsTotal > 5000'        => '45 minutes',
+            'order.itemsTotal <= 2000'                                      => '10 minutes',
+            'order.itemsTotal in 2000..5000'                                => '15 minutes',
+            'order.itemsTotal > 5000'                                       => '30 minutes',
         ];
     }
 
@@ -48,7 +48,7 @@ class OrderTimelineCalculatorTest extends TestCase
             ->getShippingAddress()
             ->willReturn($shippingAddress);
         $order
-            ->getTotal()
+            ->getItemsTotal()
             ->willReturn($total);
         $order
             ->getShippedAt()
