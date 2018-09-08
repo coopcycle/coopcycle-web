@@ -39,6 +39,12 @@ class OrderTimelineCalculator
     {
         $timeline = new OrderTimeline();
 
+        if (null === $order->getRestaurant()
+        ||  null === $order->getShippedAt()
+        ||  null === $order->getShippingAddress()) {
+            return;
+        }
+
         $dropoffExpectedAt = clone $order->getShippedAt();
 
         $timeline->setDropoffExpectedAt($dropoffExpectedAt);

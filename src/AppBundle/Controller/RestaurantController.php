@@ -267,6 +267,10 @@ class RestaurantController extends Controller
                 $this->setCartAddress($cart, $request);
             }
 
+            // We call order processors to recalculate timeline when address has changed
+            // TODO Move setAddress & setShippingDate to order modifier?
+            $this->get('sylius.order_processing.order_processor')->process($cart);
+
             $this->get('sylius.manager.order')->persist($cart);
             $this->get('sylius.manager.order')->flush();
 

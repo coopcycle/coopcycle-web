@@ -34,6 +34,10 @@ final class OrderTimelineProcessor implements OrderProcessorInterface
 
         $timeline = $this->calculator->calculate($order);
 
+        if (null === $timeline) {
+            return;
+        }
+
         if (null !== $order->getTimeline()) {
             $order->getTimeline()->setPreparationExpectedAt($timeline->getPreparationExpectedAt());
             $order->getTimeline()->setPickupExpectedAt($timeline->getPickupExpectedAt());
