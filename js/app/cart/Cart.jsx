@@ -47,14 +47,14 @@ class Cart extends React.Component
     }
 
     // Stop animation when cart is open
-    if (toggled && !prevState.toggled) {
+    if (toggled) {
       clearTimeout(timeoutID)
       timeoutID = null
       return
     }
 
     // Stop animation if there are no errors anymore
-    if (_.size(errors) === 0 && _.size(prevState.errors) > 0) {
+    if (_.size(errors) === 0) {
       clearTimeout(timeoutID)
       timeoutID = null
       return
