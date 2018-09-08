@@ -298,7 +298,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 .cart-wrapper {
-  overflow-y: scroll;
   height: 100%;
 
   @media screen and (max-width: $screen-md-min) {
