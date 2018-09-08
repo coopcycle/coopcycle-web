@@ -52,7 +52,9 @@ class Cart extends React.Component
   }
 
   onHeaderClick() {
-    this.setState({'toggled': !this.state.toggled})
+    const toggled = !this.state.toggled
+    window._paq.push(['trackEvent', 'Checkout', toggled ? 'openMobileCart' : 'closeMobileCart'])
+    this.setState({ toggled })
   }
 
   onAddressChange(geohash, addressString) {
