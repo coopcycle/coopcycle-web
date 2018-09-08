@@ -1,4 +1,5 @@
 import React from 'react'
+import { findDOMNode } from 'react-dom'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import Sticky from 'react-stickynode'
@@ -7,6 +8,8 @@ import i18n from '../i18n'
 import CartItem from './CartItem.jsx'
 import DatePicker from './DatePicker.jsx'
 import AddressPicker from "../address/AddressPicker.jsx"
+
+let timeoutID = null
 
 class Cart extends React.Component
 {
@@ -31,6 +34,55 @@ class Cart extends React.Component
     this.onAddressChange = this.onAddressChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const { errors, toggled } = this.state
+    const { isMobileCart } = this.props
+
+    // Do nothing on desktop devices
+    if (!isMobileCart) {
+      return
+    }
+
+    // Stop animation when cart is open
+    if (toggled && !prevState.toggled) {
+      clearTimeout(timeoutID)
+      timeoutID = null
+      return
+    }
+
+    // Stop animation if there are no errors anymore
+    if (_.size(errors) === 0 && _.size(prevState.errors) > 0) {
+      clearTimeout(timeoutID)
+      timeoutID = null
+      return
+    }
+
+    // Do nothing if the animation is already running
+    if (timeoutID) {
+      return
+    }
+
+    const headingRight = findDOMNode(this.refs.headingRight)
+
+    const rippleClass = 'cart-heading__right--ripple'
+
+    const toggleClass = () => {
+      if (headingRight.classList.contains(rippleClass)) {
+        headingRight.classList.remove(rippleClass)
+      } else {
+        headingRight.classList.add(rippleClass)
+      }
+    }
+
+    const toggleClassWithTimeout = () => {
+      toggleClass()
+      timeoutID = setTimeout(toggleClassWithTimeout, 2000)
+    }
+
+    toggleClassWithTimeout()
   }
 
   getCart() {
@@ -115,6 +167,62 @@ class Cart extends React.Component
     }
   }
 
+  renderHeading(warningAlerts, dangerAlerts) {
+
+    const { toggled } = this.state
+
+    const headingClasses = ['panel-heading', 'cart-heading']
+    if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
+      headingClasses.push('cart-heading--warning')
+    }
+
+    return (
+      <div className={ headingClasses.join(' ') } onClick={ this.onHeaderClick }>
+        <span className="cart-heading__left">
+          { this.renderHeadingLeft(warningAlerts, dangerAlerts) }
+        </span>
+        <span className="cart-heading--title">{ i18n.t('CART_TITLE') }</span>
+        <span className="cart-heading--title-or-errors">
+          { this.headingTitle(warningAlerts, dangerAlerts) }
+        </span>
+        <span className="cart-heading__right" ref="headingRight">
+          <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
+        </span>
+      </div>
+    )
+  }
+
+  renderHeadingLeft(warningAlerts, dangerAlerts) {
+    const { loading } = this.state
+
+    if (loading) {
+      return (
+        <i className="fa fa-spinner fa-spin"></i>
+      )
+    }
+
+    if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
+      return (
+        <i className="fa fa-warning"></i>
+      )
+    }
+
+    return (
+        <i className="fa fa-check"></i>
+      )
+  }
+
+  headingTitle(warnings, errors) {
+    if (errors.length > 0) {
+      return _.first(errors)
+    }
+    if (warnings.length > 0) {
+      return _.first(warnings)
+    }
+
+    return i18n.t('CART_TITLE')
+  }
+
   render() {
 
     let { items, toggled, errors, date, geohash, address, loading } = this.state,
@@ -179,15 +287,12 @@ class Cart extends React.Component
     return (
       <Sticky enabled={!isMobileCart} top={ 30 }>
         <div className={ panelClasses.join(' ') }>
-          <div className="panel-heading cart-heading" onClick={ this.onHeaderClick }>
-            <span className="cart-heading--items">{ itemCount }</span>
-            <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>
-            <span>{ i18n.t('CART_TITLE') }</span>
-            <span className="cart-heading--total"><i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down"}></i></span>
-          </div>
+          { this.renderHeading(warningAlerts, dangerAlerts) }
           <div className="panel-body">
+            <div className="cart-wrapper__messages">
             { this.renderWarningAlerts(warningAlerts) }
             { this.renderDangerAlerts(dangerAlerts) }
+            </div>
             <div className="cart">
               <AddressPicker
                 preferredResults={[]}
@@ -204,8 +309,7 @@ class Cart extends React.Component
               { this.renderTotal() }
               <hr />
               <a href={validateCartURL} className={btnClasses.join(' ')}>
-                <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>
-                <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
+                <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
               </a>
             </div>
           </div>
