@@ -9,6 +9,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @see https://stripe.com/docs/connect/standard-accounts
+ */
 class StripeController extends Controller
 {
     /**
@@ -39,6 +42,25 @@ class StripeController extends Controller
         $res = json_decode(curl_exec($req), true);
         curl_close($req);
 
+        // Stripe returns a response containing the authentication credentials for the user:
+        //
+        // {
+        //     "token_type": "bearer",
+        //     "stripe_publishable_key": "{PUBLISHABLE_KEY}",
+        //     "scope": "read_write",
+        //     "livemode": false,
+        //     "stripe_user_id": "{ACCOUNT_ID}",
+        //     "refresh_token": "{REFRESH_TOKEN}",
+        //     "access_token": "{ACCESS_TOKEN}"
+        // }
+        //
+        // If there was a problem, we instead return an error:
+        //
+        // {
+        //     "error": "invalid_grant",
+        //     "error_description": "Authorization code does not exist: {AUTHORIZATION_CODE}"
+        // }
+
         if (isset($res['error']) && !empty($res['error'])) {
             $this->addFlash(
                 'error',
@@ -60,7 +82,9 @@ class StripeController extends Controller
                 ->setDisplayName($account->display_name)
                 ->setPayoutsEnabled($account->payouts_enabled)
                 ->setStripeUserId($res['stripe_user_id'])
-                ->setRefreshToken($res['refresh_token']);
+                ->setRefreshToken($res['refresh_token'])
+                ->setLivemode($res['livemode'])
+                ;
 
             $this->getUser()->addStripeAccount($stripeAccount);
             $this->get('fos_user.user_manager')->updateUser($this->getUser());

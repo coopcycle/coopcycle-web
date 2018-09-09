@@ -23,6 +23,9 @@ AppBundle\Entity\StripeAccount:
         refreshToken:
             type: string
             column: refresh_token
+        livemode:
+            type: boolean
+            default: false
         createdAt:
             type: datetime
             column: created_at

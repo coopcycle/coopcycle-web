@@ -20,6 +20,8 @@ class StripeAccount
 
     private $refreshToken;
 
+    private $livemode;
+
     private $createdAt;
 
     private $updatedAt;
@@ -85,6 +87,18 @@ class StripeAccount
     public function setRefreshToken($refreshToken)
     {
         $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    public function getLivemode()
+    {
+        return $this->livemode;
+    }
+
+    public function setLivemode($livemode)
+    {
+        $this->livemode = $livemode;
 
         return $this;
     }
