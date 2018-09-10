@@ -69,13 +69,6 @@ class UpdateState
                 $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
             }
         }
-
-        if ($event instanceof Event\OrderCreated && $order->isFoodtech()) {
-            $this->redis->publish(
-                sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
-                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
-            );
-        }
     }
 
     private function handleCheckoutEvent(Event $event)

@@ -31,5 +31,12 @@ class PublishToRedis
         ];
 
         $this->redis->publish($channel, json_encode($message));
+
+        if ($event instanceof Event\OrderCreated && $order->isFoodtech()) {
+            $this->redis->publish(
+                sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
+                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
+            );
+        }
     }
 }
