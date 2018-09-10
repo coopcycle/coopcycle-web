@@ -5,12 +5,10 @@ namespace AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderTransitions;
-use Predis\Client as Redis;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * This Reactor is responsible for updating the state of the aggregate.
@@ -19,8 +17,6 @@ class UpdateState
 {
     private $stateMachineFactory;
     private $orderProcessor;
-    private $serializer;
-    private $redis;
     private $eventBus;
 
     private $eventNameToTransition = [];
@@ -28,14 +24,10 @@ class UpdateState
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
         OrderProcessorInterface $orderProcessor,
-        SerializerInterface $serializer,
-        Redis $redis,
         MessageBus $eventBus)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->orderProcessor = $orderProcessor;
-        $this->serializer = $serializer;
-        $this->redis = $redis;
         $this->eventBus = $eventBus;
 
         $this->eventNameToTransition = [
@@ -105,11 +97,6 @@ class UpdateState
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
             $stateMachine->apply($transition);
-
-            $this->redis->publish(
-                sprintf('order:%d:state_changed', $order->getId()),
-                $this->serializer->serialize($order, 'json', ['groups' => ['order']])
-            );
         }
     }
 }
