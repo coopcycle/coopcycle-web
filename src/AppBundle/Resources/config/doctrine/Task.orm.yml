@@ -110,12 +110,9 @@ AppBundle\Entity\Task:
     oneToMany:
         events:
             targetEntity: AppBundle\Entity\TaskEvent
-            cascade:
-                - persist
-            fetch: LAZY
             mappedBy: task
-            inversedBy: null
-            orphanRemoval: false
+            cascade:
+                - all
             orderBy:
                 createdAt: DESC
     oneToOne:
@@ -134,5 +131,3 @@ AppBundle\Entity\Task:
         AppBundle\Entity\Listener\TaskListener:
             prePersist:
                 - prePersist
-            postPersist:
-                - postPersist

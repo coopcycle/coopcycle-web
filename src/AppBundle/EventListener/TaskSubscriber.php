@@ -2,7 +2,9 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
+use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
@@ -21,11 +23,14 @@ class TaskSubscriber implements EventSubscriber
     private $eventBus;
     private $routing;
     private $logger;
-    private $taskListCache = [];
 
-    public function __construct(MessageBus $eventBus, LoggerInterface $logger)
+    private $taskListCache = [];
+    private $createdTasks = [];
+
+    public function __construct(MessageBus $eventBus, EventStore $eventStore, LoggerInterface $logger)
     {
         $this->eventBus = $eventBus;
+        $this->eventStore = $eventStore;
         $this->logger = $logger;
     }
 
@@ -33,6 +38,7 @@ class TaskSubscriber implements EventSubscriber
     {
         return array(
             Events::onFlush,
+            Events::postFlush,
         );
     }
 
@@ -101,19 +107,30 @@ class TaskSubscriber implements EventSubscriber
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
-        $tasks = array_filter($uow->getScheduledEntityUpdates(), function ($entity) {
+        $isTask = function ($entity) {
             return $entity instanceof Task;
-        });
+        };
 
-        if (count($tasks) === 0) {
-            return;
+        $tasksToInsert = array_filter($uow->getScheduledEntityInsertions(), $isTask);
+        $tasksToUpdate = array_filter($uow->getScheduledEntityUpdates(), $isTask);
+
+        $this->debug(sprintf('Found %d instances of Task scheduled for insert', count($tasksToInsert)));
+        $this->debug(sprintf('Found %d instances of Task scheduled for update', count($tasksToUpdate)));
+
+        $this->createdTasks = [];
+        foreach ($tasksToInsert as $task) {
+            $event = $this->eventStore->createEvent(new TaskCreated($task));
+            $task->getEvents()->add($event);
+            $this->createdTasks[] = $task;
         }
 
-        $this->debug(sprintf('Found %d instances of Task scheduled for update', count($tasks)));
+        if (count($tasksToInsert) > 0) {
+            $uow->computeChangeSets();
+        }
 
         $taskRepository = $em->getRepository(Task::class);
 
-        foreach ($tasks as $task) {
+        foreach ($tasksToUpdate as $task) {
 
             if (!$this->assignedToHasChanged($task, $args)) {
                 continue;
@@ -151,11 +168,13 @@ class TaskSubscriber implements EventSubscriber
                         foreach ($tasksToAdd as $taskToAdd) {
                             $taskList->addTask($taskToAdd);
                         }
-
-                        $uow->computeChangeSet($em->getClassMetadata(TaskList::class), $taskList);
                     }
 
+                    // No need to add an event for linked tasks,
+                    // It will be handled by the same subscriber
                     $this->eventBus->handle(new TaskAssigned($task, $newValue));
+
+                    $uow->computeChangeSets();
                 }
             } else {
 
@@ -171,15 +190,25 @@ class TaskSubscriber implements EventSubscriber
                     foreach ($taskRepository->findLinked($task) as $linkedTask) {
                         $linkedTask->unassign();
                         $taskList->removeTask($task);
-
-                        $uow->computeChangeSet($em->getClassMetadata(Task::class), $linkedTask);
                     }
 
-                    $uow->computeChangeSet($em->getClassMetadata(TaskList::class), $taskList);
-
+                    // No need to add an event for linked tasks,
+                    // It will be handled by the same subscriber
                     $this->eventBus->handle(new TaskUnassigned($task, $oldValue));
+
+                    $uow->computeChangeSets();
                 }
             }
+        }
+    }
+
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        $em = $args->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        foreach ($this->createdTasks as $task) {
+            $this->eventBus->handle(new TaskCreated($task));
         }
     }
 }

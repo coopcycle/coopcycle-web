@@ -27,6 +27,17 @@ class EventStore extends ArrayCollection
         $this->requestStack = $requestStack;
     }
 
+    public function createEvent(Event $event)
+    {
+        if ($event instanceof OrderDomainEvent) {
+            return $this->createOrderEvent($event);
+        }
+
+        if ($event instanceof TaskDomainEvent) {
+            return $this->createTaskEvent($event);
+        }
+    }
+
     public function addEvent(Event $event)
     {
         if ($event instanceof OrderDomainEvent) {
@@ -40,6 +51,11 @@ class EventStore extends ArrayCollection
         }
 
         if ($event instanceof TaskDomainEvent) {
+
+            if ($event instanceof TaskDomainEvent\TaskCreated) {
+                return;
+            }
+
             $domainEvent = $this->createTaskEvent($event);
 
             $this->add($domainEvent);

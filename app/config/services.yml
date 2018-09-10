@@ -551,7 +551,7 @@ services:
       - { name: doctrine.event_subscriber, connection: default }
 
   'AppBundle\EventListener\TaskSubscriber':
-    arguments: [ '@event_bus', '@logger' ]
+    arguments: [ '@event_bus', '@coopcycle.domain.event_store', '@logger' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 

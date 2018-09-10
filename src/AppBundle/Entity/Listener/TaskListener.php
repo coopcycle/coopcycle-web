@@ -31,9 +31,4 @@ class TaskListener
             $task->setDoneAfter($doneAfter);
         }
     }
-
-    public function postPersist(Task $task, LifecycleEventArgs $args)
-    {
-        $this->eventBus->handle(new TaskCreated($task));
-    }
 }
