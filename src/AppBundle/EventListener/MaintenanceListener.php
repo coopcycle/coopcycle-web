@@ -15,6 +15,9 @@ class MaintenanceListener
     private $tokenStorage;
     private $redis;
     private $templating;
+    private $patterns = [
+        '#^/login#',
+    ];
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -43,6 +46,13 @@ class MaintenanceListener
         $maintenance = $this->redis->get('maintenance');
 
         if ($maintenance && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+            foreach ($this->patterns as $pattern) {
+                if (preg_match($pattern, rawurldecode($request->getPathInfo()))) {
+                    return;
+                }
+            }
+
             $content = $this->templating->render('@App/maintenance.html.twig');
             $event->setResponse(new Response($content, 503));
             $event->stopPropagation();
