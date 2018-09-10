@@ -510,3 +510,5 @@ authentication.not_registered_yet: Not registered yet?
 authentication.create_account: Create your account
 authentication.already_registered: Already registered?
 authentication.sign_in: Sign in
+
+maintenance.text: Sitio web bajo mantenimiento<br>Volvemos pronto

@@ -544,3 +544,5 @@ authentication.not_registered_yet: ¿Todavía no estas registrado?
 authentication.create_account: Crea tu cuenta
 authentication.already_registered: ¿Ya tienes una cuenta?
 authentication.sign_in: Regístrate
+
+maintenance.text: Site under maintenance<br>We will be back soon
