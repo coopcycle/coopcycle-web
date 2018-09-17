@@ -776,6 +776,36 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/users/search", name="admin_users_search")
+     * @Template()
+     */
+    public function searchUsersAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(ApiUser::class);
+
+        $results = $repository->search($request->query->get('q'));
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+
+            $data = array_map(function (ApiUser $user) {
+
+                $text = sprintf('%s (%s)', $user->getEmail(), $user->getUsername());
+
+                return [
+                    'id' => $user->getId(),
+                    'name' => $text,
+                    'email' => $user->getEmail(),
+                    'username' => $user->getUsername(),
+                    'firstName' => $user->getGivenName(),
+                    'lastName' => $user->getFamilyName(),
+                ];
+            }, $results);
+
+            return new JsonResponse($data);
+        }
+    }
+
+    /**
      * @Route("/admin/tasks/{id}", name="admin_task")
      */
     public function taskAction($id, Request $request)
