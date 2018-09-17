@@ -60,24 +60,17 @@ class OrderList extends React.Component {
   renderAcceptedButtons() {
     return (
       <div className="row">
-        <div className="col-sm-4">
+        <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_cancel') }>
             <button type="submit" className="btn btn-block btn-sm btn-danger">
               <i className="fa fa-ban" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
             </button>
           </form>
         </div>
-        <div className="col-sm-4">
+        <div className="col-sm-6">
           <form method="post" action={ this.resolveOrderRoute('order_delay') }>
             <button type="submit" className="btn btn-block btn-sm btn-primary">
               <i className="fa fa-clock-o" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
-            </button>
-          </form>
-        </div>
-        <div className="col-sm-4">
-          <form method="post" action={ this.resolveOrderRoute('order_ready') }>
-            <button type="submit" className="btn btn-block btn-sm btn-success">
-              <i className="fa fa-check" aria-hidden="true"></i>  { i18n.t('ADMIN_DASHBOARD_ORDERS_READY') }
             </button>
           </form>
         </div>
