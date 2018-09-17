@@ -27,6 +27,11 @@ admin_order_new:
     defaults: { _controller: AppBundle:Admin:newOrder }
     methods:  [ GET, POST ]
 
+admin_order_new_address:
+    path:     /admin/orders/new/address
+    defaults: { _controller: AppBundle:Admin:newOrderAddress }
+    methods:  [ GET, POST ]
+
 admin_order_invoice:
     path:     /admin/orders/CPCCL-{number}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }

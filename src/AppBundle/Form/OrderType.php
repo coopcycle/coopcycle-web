@@ -62,6 +62,14 @@ class OrderType extends AbstractType
                     ]);
                 }
 
+                $customer = $order->getCustomer();
+
+                // var_dump(null === $order->getCustomer());
+
+                if (null !== $customer) {
+                    var_dump('YO');
+                }
+
             }
         );
 

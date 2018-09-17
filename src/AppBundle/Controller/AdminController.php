@@ -1042,16 +1042,27 @@ class AdminController extends Controller
 
         $form = $this->createForm(OrderType::class, $order);
 
+        return $this->render('@App/Admin/newOrder.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function newOrderAddressAction(Request $request)
+    {
+        $order = $this->get('sylius.factory.order')->createNew();
+
+        $form = $this->createForm(OrderType::class, $order);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $customer = $form->get('customer')->getData();
+            // $customer = $form->get('customer')->getData();
 
-            var_dump(get_class($customer));
-            var_dump($customer->getUsername());
-            exit;
+            // var_dump(get_class($customer));
+            // var_dump($customer->getUsername());
+            // exit;
         }
 
-        return $this->render('@App/Admin/newOrder.html.twig', [
+        return $this->render('@App/Admin/newOrderAddress.html.twig', [
             'form' => $form->createView(),
         ]);
     }
