@@ -1,0 +1,36 @@
+{% extends "AppBundle::admin.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">Client</div>
+        <div class="panel-body">
+          <div id="user-search"></div>
+          {{ form_widget(form) }}
+          <hr>
+          <button type="submit" class="btn btn-block btn-primary">Continuer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+  new CoopCycle.Search(document.querySelector('#user-search'), {
+    url: "{{ path('admin_users_search', { format: 'json' }) }}",
+    placeholder: "Rechercher un utilisateur…",
+    onSuggestionSelected: function(suggestion) {
+      $('#order_customer').val(suggestion.username);
+    }
+  });
+</script>
+{% endblock %}

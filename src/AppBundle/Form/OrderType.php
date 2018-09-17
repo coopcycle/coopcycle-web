@@ -29,6 +29,10 @@ class OrderType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder
+            ->add('customer', CustomerType::class, [
+                'label' => 'form.order.customer.label'
+            ]);
 
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,

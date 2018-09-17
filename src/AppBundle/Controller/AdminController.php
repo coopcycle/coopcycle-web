@@ -24,11 +24,11 @@ use AppBundle\Entity\Zone;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\EmbedSettingsType;
-use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\MaintenanceType;
+use AppBundle\Form\OrderType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\TaxationType;
@@ -1034,5 +1034,25 @@ class AdminController extends Controller
             'pricing_rule_set' => $pricingRuleSet,
             'embed_settings_form' => $embedSettingsForm->createView(),
         ];
+    }
+
+    public function newOrderAction(Request $request)
+    {
+        $order = $this->get('sylius.factory.order')->createNew();
+
+        $form = $this->createForm(OrderType::class, $order);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $customer = $form->get('customer')->getData();
+
+            var_dump(get_class($customer));
+            var_dump($customer->getUsername());
+            exit;
+        }
+
+        return $this->render('@App/Admin/newOrder.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

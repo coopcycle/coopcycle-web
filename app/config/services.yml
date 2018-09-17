@@ -360,6 +360,14 @@ services:
     arguments: [ '@doctrine' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\CustomerType':
+    arguments: [ '@coopcycle.form.data_transformer.username' ]
+    tags: [ form.type ]
+
+  coopcycle.form.data_transformer.username:
+    class: AppBundle\Form\DataTransformer\UsernameTransformer
+    arguments: [ '@fos_user.user_manager' ]
+
   coopcycle.utils.task_spreadsheet_parser:
     class: AppBundle\Utils\TaskSpreadsheetParser
     arguments:

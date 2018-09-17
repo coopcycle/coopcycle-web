@@ -22,6 +22,11 @@ admin_delivery:
           calculate_price: admin_deliveries_calculate_price
   methods:  [ GET, POST ]
 
+admin_order_new:
+    path:     /admin/orders/new
+    defaults: { _controller: AppBundle:Admin:newOrder }
+    methods:  [ GET, POST ]
+
 admin_order_invoice:
     path:     /admin/orders/CPCCL-{number}.pdf
     defaults: { _controller: AppBundle:Admin:orderInvoice }
