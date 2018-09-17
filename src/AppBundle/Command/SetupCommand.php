@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use FOS\UserBundle\Model\UserInterface;
+use JMose\CommandSchedulerBundle\Entity\ScheduledCommand;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
@@ -19,6 +20,9 @@ class SetupCommand extends ContainerAwareCommand
 
     private $productAttributeRepository;
     private $productAttributeManager;
+
+    private $scheduledCommandRepository;
+    private $scheduledCommandManager;
 
     private $localeRepository;
     private $localeFactory;
@@ -73,6 +77,11 @@ class SetupCommand extends ContainerAwareCommand
         $this->productAttributeRepository = $this->getContainer()->get('sylius.repository.product_attribute');
         $this->productAttributeManager = $this->getContainer()->get('sylius.manager.product_attribute');
 
+        $this->scheduledCommandRepository =
+            $this->getContainer()->get('doctrine')->getRepository(ScheduledCommand::class);
+        $this->scheduledCommandManager =
+            $this->getContainer()->get('doctrine')->getManagerForClass(ScheduledCommand::class);
+
         $this->localeRepository = $this->getContainer()->get('sylius.repository.locale');
         $this->localeFactory = $this->getContainer()->get('sylius.factory.locale');
 
@@ -102,6 +111,9 @@ class SetupCommand extends ContainerAwareCommand
         $output->writeln('<info>Checking Sylius product attributes are present…</info>');
         $this->createAllergensAttributes($output);
         $this->createRestrictedDietsAttributes($output);
+
+        $output->writeln('<info>Checking commands are scheduled…</info>');
+        $this->createScheduledCommands($output);
     }
 
     private function createSyliusLocale($code, OutputInterface $output)
@@ -231,5 +243,25 @@ class SetupCommand extends ContainerAwareCommand
         }
 
         $this->productAttributeManager->flush();
+    }
+
+    private function createScheduledCommands(OutputInterface $output)
+    {
+        $flushTracking = $this->scheduledCommandRepository
+            ->findOneByCommand('coopcycle:tracking:flush');
+
+        if (!$flushTracking) {
+            $flushTracking = new ScheduledCommand();
+            $flushTracking
+                ->setName('Flush tracking')
+                ->setCommand('coopcycle:tracking:flush')
+                ->setCronExpression('*/10 * * * *')
+                ->setPriority(1)
+                ->setExecuteImmediately(false)
+                ->setDisabled(false);
+
+            $this->scheduledCommandManager->persist($flushTracking);
+            $this->scheduledCommandManager->flush();
+        }
     }
 }
