@@ -13,10 +13,12 @@ fi
 php bin/console doctrine:database:create --if-not-exists --env=$SYMFONY_ENV
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=$SYMFONY_ENV
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=$SYMFONY_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=$SYMFONY_ENV
 
 php bin/console doctrine:database:create --if-not-exists --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 
 # Permissions hack because setfacl does not work on Mac and Windows
 chown -R www-data var/cache && chown -R www-data var/logs && chown -R www-data var/sessions

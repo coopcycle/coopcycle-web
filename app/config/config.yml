@@ -103,6 +103,7 @@ doctrine:
                 ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
                 ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
                 ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
+                similarity: AppBundle\Doctrine\Functions\Similarity
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
