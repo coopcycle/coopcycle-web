@@ -78,12 +78,6 @@ class OrderReminderCommand extends ContainerAwareCommand
             $now = new \DateTime();
         }
 
-        // $dryRun = $input->getOption('dry-run');
-        // $produce = $input->getOption('produce');
-        // $consume = $input->getOption('consume');
-
-        // TODO Make sure both options are NOT present
-
         $this->io->text(sprintf('Current time is %s', $now->format('Y-m-d H:i:s')));
 
         $this->io->title('Running in producer mode');
@@ -223,9 +217,6 @@ class OrderReminderCommand extends ContainerAwareCommand
         $qb = $this->restaurantReminderRepository
             ->createQueryBuilder('r')
             ->andWhere('r.state = :state')
-            // ->andWhere('r.scheduledAt <= :now')
-            // ->andWhere('r.expiredAt > :now')
-            // ->setParameter('now', $now)
             ->setParameter('state', 'scheduled');
 
         $reminders = $qb->getQuery()->getResult();
@@ -247,11 +238,17 @@ class OrderReminderCommand extends ContainerAwareCommand
                 continue;
             }
 
-            // TODO If order has been accepted or refused, cancel reminder
+            // Order has been accepted, refused, cancelled…
+            if ($reminder->getOrder()->getState() !== OrderInterface::STATE_NEW) {
+                $this->io->text(sprintf('Reminder #%d is not needed anymore', $reminder->getId()));
+                $reminder->setState('cancelled');
+                continue;
+            }
 
             if ($reminder->getScheduledAt() <= $now) {
                 $this->sendEmail($reminder, $this->io);
                 $this->sendNotification($reminder, $this->io);
+                $reminder->setState('sent');
             }
         }
 
@@ -264,7 +261,8 @@ class OrderReminderCommand extends ContainerAwareCommand
     {
         $owners = $reminder->getRestaurant()->getOwners()->toArray();
         if (count($owners) === 0) {
-            // FIXME
+            $this->io->text(sprintf('Restaurant %s has no owner defined', $reminder->getRestaurant()->getName()));
+            return;
         }
 
         foreach ($owners as $owner) {
@@ -276,23 +274,32 @@ class OrderReminderCommand extends ContainerAwareCommand
                 $this->emailManager->sendTo($message, $owner->getEmail());
             }
         }
-
-        $reminder->setState('sent');
     }
 
     private function sendNotification(RestaurantReminder $reminder)
     {
+        $owners = $reminder->getRestaurant()->getOwners()->toArray();
+        if (count($owners) === 0) {
+            $this->io->text(sprintf('Restaurant %s has no owner defined', $reminder->getRestaurant()->getName()));
+            return;
+        }
+
         $data = [
             'order' => $reminder->getOrder()->getId()
         ];
 
-        if (!$this->dryRun) {
-            $this->remotePushNotificationManager
-                ->send(
-                    sprintf('Order #%d is approaching', $reminder->getOrder()->getId()),
-                    $reminder->getRestaurant()->getOwners(),
-                    $data
-                );
+        foreach ($owners as $owner) {
+
+            $this->io->text(sprintf('Sending push notification to user %s', $owner->getUsername()));
+
+            if (!$this->dryRun) {
+                $this->remotePushNotificationManager
+                    ->send(
+                        sprintf('Order #%d is approaching', $reminder->getOrder()->getId()),
+                        $owner,
+                        $data
+                    );
+            }
         }
     }
 }
