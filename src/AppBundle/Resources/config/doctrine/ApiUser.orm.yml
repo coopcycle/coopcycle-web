@@ -1,6 +1,7 @@
 AppBundle\Entity\ApiUser:
     type: entity
     table: api_user
+    repositoryClass: AppBundle\Entity\ApiUserRepository
     id:
         id:
             type: integer
