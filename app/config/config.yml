@@ -305,3 +305,7 @@ command_bus:
 event_bus:
     event_name_resolver_strategy: named_message
     logging: ~
+
+jmose_command_scheduler:
+    # https://github.com/J-Mose/CommandSchedulerBundle/issues/108
+    monitor_mail_subject: 'cronjob monitoring %%s, %%s'
