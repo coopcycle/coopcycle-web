@@ -487,6 +487,23 @@ form[name="store"] #store_imageFile_file {
 
 .react-autosuggest__container {
   position: relative;
+
+  &:after {
+    @include fa-icon();
+    content: $fa-var-spinner;
+    @extend .fa-pulse;
+    display: block;
+    position: absolute;
+    top: calc(50% - 7px);
+    right: $padding-base-horizontal;
+    display: none;
+  }
+}
+
+.react-autosuggest__container--loading {
+  &:after {
+    display: inline;
+  }
 }
 
 .react-autosuggest__suggestions-container {
@@ -494,6 +511,11 @@ form[name="store"] #store_imageFile_file {
   right: 0;
   position: absolute;
   z-index: 2000!important;
+}
+
+.react-autosuggest__suggestions-list {
+  list-style: none;
+  padding-left: 0;
 }
 
 // ------------------ Address Picker ------------------

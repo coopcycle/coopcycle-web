@@ -6,7 +6,7 @@ import Autosuggest from 'react-autosuggest';
 
 const getSuggestionValue = suggestion => suggestion.name,
       renderSuggestion = suggestion => (<span>{suggestion.name}</span>),
-      theme = {
+      themeDefaults = {
         container:                'react-autosuggest__container',
         containerOpen:            'react-autosuggest__container--open',
         input:                    'react-autosuggest__input',
@@ -30,7 +30,8 @@ export default class extends Component {
 
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      isFetching: false,
     };
   }
 
@@ -45,9 +46,11 @@ export default class extends Component {
   }
 
   onSuggestionsFetchRequested({ value }) {
+    this.setState({ isFetching: true })
     $.getJSON(this.props.baseURL, { q: value }, data => {
       this.setState({
-        suggestions: data
+        suggestions: data,
+        isFetching: false,
       });
     });
   };
@@ -71,7 +74,7 @@ export default class extends Component {
   };
 
   render() {
-    const { value, suggestions } = this.state;
+    const { value, suggestions, isFetching } = this.state;
 
     const inputProps = {
       placeholder: this.props.placeholder,
@@ -79,6 +82,14 @@ export default class extends Component {
       onChange: this.onChange.bind(this),
       className: 'form-control'
     };
+
+    let theme = themeDefaults
+    if (isFetching) {
+      theme = {
+        ...themeDefaults,
+        container: 'react-autosuggest__container react-autosuggest__container--loading',
+      }
+    }
 
     return (
       <Autosuggest
