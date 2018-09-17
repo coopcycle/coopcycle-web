@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f22676463bb76b53c66ab45ee086d0de",
+    "content-hash": "c51dfc447aab19428585080a61b93636",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3849,6 +3849,70 @@
             "time": "2015-09-27T15:35:21+00:00"
         },
         {
+            "name": "jmose/command-scheduler-bundle",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/J-Mose/CommandSchedulerBundle.git",
+                "reference": "481609a9a63ad1955eda353bb56a9b81a08778fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/J-Mose/CommandSchedulerBundle/zipball/481609a9a63ad1955eda353bb56a9b81a08778fe",
+                "reference": "481609a9a63ad1955eda353bb56a9b81a08778fe",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/doctrine-bundle": "^1.6.10",
+                "doctrine/orm": "^2.5.11",
+                "mtdowling/cron-expression": "^1.2",
+                "php": "^5.6|>=7.0.8",
+                "sensio/framework-extra-bundle": "^5.1.0",
+                "symfony/asset": "^3.4|^4.0",
+                "symfony/console": "^3.4|^4.0",
+                "symfony/form": "^3.4|^4.0",
+                "symfony/framework-bundle": "^3.4|^4.0",
+                "symfony/security-bundle": "^3.4|^4.0",
+                "symfony/templating": "^3.4|^4.0",
+                "symfony/translation": "^3.4|^4.0",
+                "symfony/twig-bundle": "^3.4|^4.0",
+                "symfony/validator": "^3.4|^4.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-fixtures-bundle": "^3.0.0",
+                "liip/functional-test-bundle": "^1.9",
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^5.7",
+                "symfony/css-selector": "^3.4|^4.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "JMose\\CommandSchedulerBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Julien Guyon",
+                    "email": "julienguyon@hotmail.com"
+                }
+            ],
+            "description": "This Symfony bundle will allow you to schedule all your commands just like UNIX crontab",
+            "homepage": "https://github.com/J-Mose/CommandSchedulerBundle",
+            "keywords": [
+                "command",
+                "cron",
+                "scheduler",
+                "symfony",
+                "task"
+            ],
+            "time": "2018-02-08T17:11:17+00:00"
+        },
+        {
             "name": "jms/metadata",
             "version": "1.7.0",
             "source": {
@@ -4811,19 +4875,20 @@
         },
         {
             "name": "lexik/jwt-authentication-bundle",
-            "version": "v2.5.4",
+            "version": "v2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
-                "reference": "f1c8c9a33c55eeb6105de5a2aedb9ba44a6efbed"
+                "reference": "dc10bb43a8c9fef24edbc9d6fab8cf40d575a903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/f1c8c9a33c55eeb6105de5a2aedb9ba44a6efbed",
-                "reference": "f1c8c9a33c55eeb6105de5a2aedb9ba44a6efbed",
+                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/dc10bb43a8c9fef24edbc9d6fab8cf40d575a903",
+                "reference": "dc10bb43a8c9fef24edbc9d6fab8cf40d575a903",
                 "shasum": ""
             },
             "require": {
+                "ext-openssl": "*",
                 "lcobucci/jwt": "^3.2",
                 "namshi/jose": "^7.2",
                 "php": "^5.5|^7.0",
@@ -4903,7 +4968,7 @@
                 "rest",
                 "symfony"
             ],
-            "time": "2018-08-02T19:32:29+00:00"
+            "time": "2018-11-01T14:48:31+00:00"
         },
         {
             "name": "m6web/statsd",
@@ -5274,16 +5339,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.23.0",
+            "version": "1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "fd8c787753b3a2ad11bc60c063cff1358a32a3b4"
+                "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fd8c787753b3a2ad11bc60c063cff1358a32a3b4",
-                "reference": "fd8c787753b3a2ad11bc60c063cff1358a32a3b4",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
+                "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
                 "shasum": ""
             },
             "require": {
@@ -5348,7 +5413,51 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2017-06-19T01:22:40+00:00"
+            "time": "2018-11-05T09:00:11+00:00"
+        },
+        {
+            "name": "mtdowling/cron-expression",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mtdowling/cron-expression.git",
+                "reference": "9504fa9ea681b586028adaaa0877db4aecf32bad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/9504fa9ea681b586028adaaa0877db4aecf32bad",
+                "reference": "9504fa9ea681b586028adaaa0877db4aecf32bad",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0|~5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "time": "2017-01-23T04:29:33+00:00"
         },
         {
             "name": "myclabs/php-enum",
@@ -7198,44 +7307,42 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "2.0.3",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "044f6c37484520def283ff17e13af555a02f20be"
+                "reference": "c0154ea26d95c9715899a863a47643a5c2d84f3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/044f6c37484520def283ff17e13af555a02f20be",
-                "reference": "044f6c37484520def283ff17e13af555a02f20be",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/c0154ea26d95c9715899a863a47643a5c2d84f3e",
+                "reference": "c0154ea26d95c9715899a863a47643a5c2d84f3e",
                 "shasum": ""
             },
             "require": {
                 "jean85/pretty-package-versions": "^1.0",
                 "php": "^7.1",
-                "sentry/sentry": "^1.8",
+                "sentry/sentry": "^1.9",
                 "symfony/config": "^3.0||^4.0",
                 "symfony/console": "^3.3||^4.0",
                 "symfony/dependency-injection": "^3.0||^4.0",
                 "symfony/event-dispatcher": "^3.0||^4.0",
                 "symfony/http-kernel": "^3.0||^4.0",
-                "symfony/security-core": "^3.0||^4.0",
-                "symfony/yaml": "^3.0||^4.0"
+                "symfony/security-core": "^3.0||^4.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.8",
-                "phpstan/phpstan": "^0.9.1",
-                "phpstan/phpstan-phpunit": "^0.9.1",
-                "phpunit/phpunit": "^6.5",
+                "phpstan/phpstan": "^0.10",
+                "phpstan/phpstan-phpunit": "^0.10",
+                "phpunit/phpunit": "^7",
                 "scrutinizer/ocular": "^1.4",
                 "symfony/expression-language": "^3.0||^4.0"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "master": "2.0.x-dev",
-                    "releases/0.8.x": "0.8.x-dev",
-                    "releases/1.x": "1.0.x-dev"
+                    "master": "2.1.x-dev",
+                    "releases/1.x": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -7265,7 +7372,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2018-06-01T08:59:16+00:00"
+            "time": "2018-11-05T14:29:39+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -7598,16 +7705,16 @@
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "7d65a7d947ca53cb119cfe3cea02c699069c53fe"
+                "reference": "2b7d1f7b3e26fabd3a91d45b9ff1273872e52aaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/7d65a7d947ca53cb119cfe3cea02c699069c53fe",
-                "reference": "7d65a7d947ca53cb119cfe3cea02c699069c53fe",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/2b7d1f7b3e26fabd3a91d45b9ff1273872e52aaf",
+                "reference": "2b7d1f7b3e26fabd3a91d45b9ff1273872e52aaf",
                 "shasum": ""
             },
             "require": {
@@ -7633,7 +7740,7 @@
                 "symfony/console": "^2.8 || ^3.2 || ^4.0",
                 "symfony/filesystem": "^2.8 || ^3.2 || ^4.0",
                 "symfony/finder": "^2.8 || ^3.2 || ^4.0",
-                "symfony/phpunit-bridge": "^4.0",
+                "symfony/phpunit-bridge": "^4.1",
                 "symfony/yaml": "^2.8 || ^3.2 || ^4.0"
             },
             "suggest": {
@@ -7672,7 +7779,7 @@
                 "seo",
                 "sonata"
             ],
-            "time": "2018-10-09T20:25:27+00:00"
+            "time": "2018-11-04T22:28:01+00:00"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
@@ -9689,16 +9796,16 @@
         },
         {
             "name": "symfony/serializer",
-            "version": "v4.1.6",
+            "version": "v4.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/serializer.git",
-                "reference": "2704442b2b85429b95659fdce1696cb8f009385f"
+                "reference": "93a1967333cdd4f66c4a00f30895d124326f145b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/2704442b2b85429b95659fdce1696cb8f009385f",
-                "reference": "2704442b2b85429b95659fdce1696cb8f009385f",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/93a1967333cdd4f66c4a00f30895d124326f145b",
+                "reference": "93a1967333cdd4f66c4a00f30895d124326f145b",
                 "shasum": ""
             },
             "require": {
@@ -9765,7 +9872,7 @@
             ],
             "description": "Symfony Serializer Component",
             "homepage": "https://symfony.com",
-            "time": "2018-10-02T12:40:59+00:00"
+            "time": "2018-10-28T18:38:52+00:00"
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -9828,16 +9935,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v3.4.17",
+            "version": "v3.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "de239d25e0bb3be451a17b627705a5970c6c59e6"
+                "reference": "ee054aa62e535b7905c5b8e90cb49a1ad65dbfd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/de239d25e0bb3be451a17b627705a5970c6c59e6",
-                "reference": "de239d25e0bb3be451a17b627705a5970c6c59e6",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/ee054aa62e535b7905c5b8e90cb49a1ad65dbfd8",
+                "reference": "ee054aa62e535b7905c5b8e90cb49a1ad65dbfd8",
                 "shasum": ""
             },
             "require": {
@@ -9979,7 +10086,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2018-10-03T12:03:55+00:00"
+            "time": "2018-11-03T10:03:29+00:00"
         },
         {
             "name": "symfony/web-server-bundle",
@@ -10164,16 +10271,16 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "1.8.3",
+            "version": "1.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "37bc4b3264a0e22608a56406d5019b26864b9553"
+                "reference": "944072e9e5ea8a4b550e0fa3338ce89aac8f7998"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/37bc4b3264a0e22608a56406d5019b26864b9553",
-                "reference": "37bc4b3264a0e22608a56406d5019b26864b9553",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/944072e9e5ea8a4b550e0fa3338ce89aac8f7998",
+                "reference": "944072e9e5ea8a4b550e0fa3338ce89aac8f7998",
                 "shasum": ""
             },
             "require": {
@@ -10253,7 +10360,7 @@
                 "file uploads",
                 "upload"
             ],
-            "time": "2018-04-15T14:01:01+00:00"
+            "time": "2018-11-02T16:51:12+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -13056,7 +13163,7 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v3.4.17",
+            "version": "v3.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",

@@ -323,3 +323,7 @@ fos_js_routing:
         - admin_order_refuse
         - admin_order_cancel
         - admin_order_delay
+
+jmose_command_scheduler:
+    # https://github.com/J-Mose/CommandSchedulerBundle/issues/108
+    monitor_mail_subject: 'cronjob monitoring %%s, %%s'
