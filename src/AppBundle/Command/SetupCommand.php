@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use FOS\UserBundle\Model\UserInterface;
+use JMose\CommandSchedulerBundle\Entity\ScheduledCommand;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,9 @@ class SetupCommand extends ContainerAwareCommand
     private $productRepository;
     private $productManager;
     private $productFactory;
+
+    private $scheduledCommandRepository;
+    private $scheduledCommandManager;
 
     private $localeRepository;
     private $localeFactory;
@@ -50,6 +54,11 @@ class SetupCommand extends ContainerAwareCommand
         $this->productFactory = $this->getContainer()->get('sylius.factory.product');
         $this->productManager = $this->getContainer()->get('sylius.manager.product');
 
+        $this->scheduledCommandRepository =
+            $this->getContainer()->get('doctrine')->getRepository(ScheduledCommand::class);
+        $this->scheduledCommandManager =
+            $this->getContainer()->get('doctrine')->getManagerForClass(ScheduledCommand::class);
+
         $this->localeRepository = $this->getContainer()->get('sylius.repository.locale');
         $this->localeFactory = $this->getContainer()->get('sylius.factory.locale');
 
@@ -75,6 +84,9 @@ class SetupCommand extends ContainerAwareCommand
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
         $this->createOnDemandDeliveryProduct($output);
+
+        $output->writeln('<info>Checking commands are scheduled…</info>');
+        $this->createScheduledCommands($output);
     }
 
     private function createSyliusLocale($code, OutputInterface $output)
@@ -142,5 +154,25 @@ class SetupCommand extends ContainerAwareCommand
         }
 
         $this->productManager->flush();
+    }
+
+    private function createScheduledCommands(OutputInterface $output)
+    {
+        $flushTracking = $this->scheduledCommandRepository
+            ->findOneByCommand('coopcycle:tracking:flush');
+
+        if (!$flushTracking) {
+            $flushTracking = new ScheduledCommand();
+            $flushTracking
+                ->setName('Flush tracking')
+                ->setCommand('coopcycle:tracking:flush')
+                ->setCronExpression('*/10 * * * *')
+                ->setPriority(1)
+                ->setExecuteImmediately(false)
+                ->setDisabled(false);
+
+            $this->scheduledCommandManager->persist($flushTracking);
+            $this->scheduledCommandManager->flush();
+        }
     }
 }
