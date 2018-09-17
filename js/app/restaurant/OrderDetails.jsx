@@ -111,11 +111,13 @@ class OrderList extends React.Component {
 
   renderOrderItemAdjustments(item) {
     return (
-      <span className="text-muted">
+      <ul className="list-unstyled">
         { item.adjustments['menu_item_modifier'].map((adjustment, key) =>
-          <small key={ adjustment.id }>{ adjustment.label }</small>
+          <li key={ adjustment.id }>
+            <small className="text-muted">{ adjustment.label }</small>
+          </li>
         ) }
-      </span>
+      </ul>
     )
   }
 
