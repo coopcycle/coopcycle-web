@@ -146,6 +146,11 @@ class OrderReminderCommand extends ContainerAwareCommand
         );
 
         $orders = array_filter($orders, function (OrderInterface $order) use ($now) {
+
+            if (!$order->isFoodtech()) {
+                return false;
+            }
+
             $preparationExpectedAt = $order->getPreparationExpectedAt();
             if (null === $preparationExpectedAt) {
                 return false;
