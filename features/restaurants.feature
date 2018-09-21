@@ -227,3 +227,45 @@ Feature: Manage restaurants
       }
       """
     Then the response status code should be 403
+
+  Scenario: Retrieve restaurant products
+    Given the database is empty
+    And the fixtures file "sylius_locales.yml" is loaded
+    And the fixtures file "products.yml" is loaded
+    And the fixtures file "restaurants.yml" is loaded
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When I send a "GET" request to "/api/restaurants/1/products"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Product",
+        "@id":"/api/restaurants/1/products",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/products')",
+            "@type":"Product",
+            "id":@integer@,
+            "code":@string@,
+            "name":@string@,
+            "enabled":@boolean@
+          },
+          {
+            "@id":"@string@.startsWith('/api/products')",
+            "@type":"Product",
+            "id":@integer@,
+            "code":@string@,
+            "name":@string@,
+            "enabled":@boolean@
+          }
+        ],
+        "hydra:totalItems":2
+      }
+      """

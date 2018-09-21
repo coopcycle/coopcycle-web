@@ -177,6 +177,9 @@ class Restaurant extends FoodEstablishment
 
     private $owners;
 
+    /**
+     * @ApiSubresource
+     */
     private $products;
 
     private $productOptions;
