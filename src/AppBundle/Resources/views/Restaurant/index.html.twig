@@ -68,7 +68,11 @@
                 {% if product.description is not null %}
                   <p class="menu-item-description">{{ product.description }}</p>
                 {%  endif %}
-                <span class="menu-item-price"><button type="button" class="btn btn-warning btn-xs">{% trans %}restaurant.unavailable{% endtrans %}</button></span>
+                <span class="menu-item-price">
+                  <small>
+                    {% trans %}restaurant.unavailable{% endtrans %}
+                  </small>
+                </span>
               </a>
             {% else %}
               <a  class="list-group-item menu-item"
