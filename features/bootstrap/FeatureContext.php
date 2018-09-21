@@ -610,4 +610,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertNotNull($order);
         Assert::assertEquals($state, $order->getState());
     }
+
+    /**
+     * @Then the restaurant with id :id should have :count closing rule
+     * @Then the restaurant with id :id should have :count closing rules
+     */
+    public function theRestaurantWithIdShouldHaveClosingRules($id, $count)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        Assert::assertEquals($count, count($restaurant->getClosingRules()));
+    }
 }
