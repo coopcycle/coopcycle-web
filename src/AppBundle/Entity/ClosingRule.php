@@ -2,8 +2,23 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/**
+ * @ApiResource(iri="https://schema.org/OpeningHoursSpecification",
+ *   shortName="OpeningHoursSpecification",
+ *   collectionOperations={
+ *   },
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *   },
+ * )
+ */
 class ClosingRule
 {
     /**
@@ -14,12 +29,12 @@ class ClosingRule
     private $restaurant;
 
     /**
-     * @Groups({"planning"})
+     * @Groups({"restaurant", "planning"})
      */
     private $startDate;
 
     /**
-     * @Groups({"planning"})
+     * @Groups({"restaurant", "planning"})
      */
     private $endDate;
 
@@ -34,14 +49,6 @@ class ClosingRule
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -107,5 +114,4 @@ class ClosingRule
     {
         $this->reason = $reason;
     }
-
 }

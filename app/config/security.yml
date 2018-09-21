@@ -74,6 +74,14 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        api_opening_hours_specifications:
+            pattern:   ^/api/opening_hours_specifications
+            methods: [ DELETE ]
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         api_me_location:
             pattern:   ^/api/me/location
             stateless: true
@@ -151,6 +159,7 @@ security:
         - { path: ^/api/products, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/restaurants/\d+/orders, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/restaurants/\d+, roles: IS_AUTHENTICATED_FULLY, methods: [ PUT ] }
+        - { path: ^/api/opening_hours_specifications, roles: IS_AUTHENTICATED_FULLY, methods: [ DELETE ] }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }

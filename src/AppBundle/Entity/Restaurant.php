@@ -175,6 +175,9 @@ class Restaurant extends FoodEstablishment
      */
     private $deliveryPerimeterExpression = 'distance < 3000';
 
+    /**
+     * @Groups({"restaurant"})
+     */
     private $closingRules;
 
     private $createdAt;

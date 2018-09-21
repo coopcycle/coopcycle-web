@@ -3,7 +3,9 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Utils\OpeningHoursSpecification;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -33,6 +35,17 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $data['availabilities'] = $object->getAvailabilities();
         $data['minimumCartAmount'] = $object->getMinimumCartAmount();
         $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
+
+        if (isset($data['openingHours'])) {
+            $data['openingHoursSpecification'] = array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
+                return $openingHoursSpecification->jsonSerialize();
+            }, OpeningHoursSpecification::fromOpeningHours($object->getOpeningHours()));
+        }
+
+        if (isset($data['closingRules'])) {
+            $data['specialOpeningHoursSpecification'] = $data['closingRules'];
+            unset($data['closingRules']);
+        }
 
         return $data;
     }
