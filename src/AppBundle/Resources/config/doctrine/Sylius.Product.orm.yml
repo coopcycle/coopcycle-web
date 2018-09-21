@@ -1,3 +1,16 @@
 AppBundle\Entity\Sylius\Product:
     type: entity
     table: sylius_product
+    manyToMany:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            inversedBy: products
+            joinTable:
+                name: restaurant_product
+                joinColumns:
+                    product_id:
+                        referencedColumnName: id
+                        unique: true
+                inverseJoinColumns:
+                    restaurant_id:
+                        referencedColumnName: id

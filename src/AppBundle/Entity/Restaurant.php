@@ -177,6 +177,9 @@ class Restaurant extends FoodEstablishment
 
     private $owners;
 
+    /**
+     * @ApiSubresource
+     */
     private $products;
 
     private $productOptions;
@@ -536,6 +539,8 @@ class Restaurant extends FoodEstablishment
 
     public function addProduct(ProductInterface $product)
     {
+        $product->setRestaurant($this);
+
         if (!$this->products->contains($product)) {
             $this->products->add($product);
         }

@@ -64,3 +64,14 @@ AppBundle\Entity\Sylius\OrderTimeline:
       groups: ['order_timeline']
     dropoffExpectedAt:
       groups: ['order_timeline']
+
+Sylius\Component\Product\Model\Product:
+  attributes:
+    id:
+      groups: ['product']
+    name:
+      groups: ['product']
+    code:
+      groups: ['product']
+    enabled:
+      groups: ['product', 'product_update']

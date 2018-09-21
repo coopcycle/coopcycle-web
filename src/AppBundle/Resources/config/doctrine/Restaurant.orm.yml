@@ -134,18 +134,18 @@ AppBundle\Entity\Restaurant:
             mappedBy: restaurants
         products:
             targetEntity: Sylius\Component\Product\Model\ProductInterface
+            mappedBy: restaurant
             cascade:
                 - persist
             joinTable:
                 name: restaurant_product
-                inverseJoinColumns:
-                    -
-                        name: product_id
-                        referencedColumnName: id
                 joinColumns:
-                    -
-                        name: restaurant_id
+                    restaurant_id:
                         referencedColumnName: id
+                inverseJoinColumns:
+                    product_id:
+                        referencedColumnName: id
+                        unique: true
         productOptions:
             targetEntity: Sylius\Component\Product\Model\ProductOptionInterface
             cascade:

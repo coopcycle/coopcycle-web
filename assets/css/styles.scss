@@ -386,9 +386,10 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   right: 15px;
 }
 
-.menu-item--unavailable {
-  background-color: #f5f5f5;
+a.list-group-item.menu-item--unavailable {
+  color: #ddd;
   cursor: default;
+  padding-right: 15px;
 }
 
 .menu-item--unavailable:after {
