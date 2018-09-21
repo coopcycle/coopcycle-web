@@ -268,6 +268,12 @@ services:
       - "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  coopcycle.api.normalizer.closing_rule:
+    class: AppBundle\Serializer\ClosingRuleNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   coopcycle.normalizer.order.jsonld:
     class: AppBundle\Serializer\JsonLd\OrderNormalizer
     arguments:

@@ -6,7 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use AppBundle\Action\Restaurant\Orders as RestaurantOrders;
+use AppBundle\Action\Restaurant\Close as CloseRestaurant;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Filter\RestaurantFilter;
@@ -47,6 +47,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"restaurant_update"}},
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
+ *     },
+ *     "close"={
+ *       "method"="PUT",
+ *       "path"="/restaurants/{id}/close",
+ *       "controller"=CloseRestaurant::class,
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)",
  *     }
  *   },
  *   subresourceOperations={
@@ -169,6 +175,9 @@ class Restaurant extends FoodEstablishment
      */
     private $deliveryPerimeterExpression = 'distance < 3000';
 
+    /**
+     * @Groups({"restaurant"})
+     */
     private $closingRules;
 
     private $createdAt;
@@ -345,9 +354,9 @@ class Restaurant extends FoodEstablishment
     /**
      * @param mixed $closingRules
      */
-    public function setClosingRules($closingRules)
+    public function addClosingRule(ClosingRule $closingRule)
     {
-        $this->closingRules = $closingRules;
+        $this->closingRules->add($closingRule);
     }
 
     public function hasClosingRuleForNow(\DateTime $now = null) {

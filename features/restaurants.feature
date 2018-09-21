@@ -150,6 +150,15 @@ Feature: Manage restaurants
         ]
       },
       "openingHours":@array@,
+      "openingHoursSpecification":[
+        {
+          "@type":"OpeningHoursSpecification",
+          "opens":"11:30",
+          "closes":"14:30",
+          "dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        }
+      ],
+      "specialOpeningHoursSpecification":[],
       "availabilities":@array@,
       "minimumCartAmount":@integer@,
       "flatDeliveryPrice":@integer@
