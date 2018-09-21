@@ -135,6 +135,7 @@ class AddressPicker extends React.Component {
           styles={ autocompleteStyles }
           onSelect={ this.onAddressSelect }
           onSearch={ this.insertPreferredResults }
+          highlightFirstSuggestion={ true }
           // uncomment this if your debugging the style of the suggested addresses
           // alwaysRenderSuggestion
         />
