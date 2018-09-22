@@ -118,14 +118,14 @@ AppBundle\Entity\Task:
     oneToOne:
         previous:
             targetEntity: AppBundle\Entity\Task
-            cascade: {  }
-            fetch: LAZY
-            mappedBy: null
-            inversedBy: null
             joinColumns:
                 previous_task_id:
                     referencedColumnName: id
-            orphanRemoval: false
+        next:
+            targetEntity: AppBundle\Entity\Task
+            joinColumns:
+                next_task_id:
+                    referencedColumnName: id
     lifecycleCallbacks: {  }
     entityListeners:
         AppBundle\Entity\Listener\TaskListener:

@@ -117,6 +117,8 @@ class Task implements TaggableInterface
 
     private $previous;
 
+    private $next;
+
     private $group;
 
     /**
@@ -273,6 +275,23 @@ class Task implements TaggableInterface
     public function hasPrevious()
     {
         return $this->previous !== null;
+    }
+
+    public function getNext()
+    {
+        return $this->next;
+    }
+
+    public function setNext(Task $next = null)
+    {
+        $this->next = $next;
+
+        return $this;
+    }
+
+    public function hasNext()
+    {
+        return $this->next !== null;
     }
 
     public function isAssigned()
