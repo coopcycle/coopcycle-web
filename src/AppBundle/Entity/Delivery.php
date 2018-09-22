@@ -65,6 +65,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $dropoff = new Task();
         $dropoff->setType(Task::TYPE_DROPOFF);
         $dropoff->setDelivery($this);
+
+        $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
         $this->addTask($pickup);
