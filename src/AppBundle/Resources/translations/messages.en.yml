@@ -428,6 +428,10 @@ form.product.description.label: Description
 form.product.price.label: Price
 form.product.taxCategory.label: Taxes
 form.product.enabled.label: Enabled
+form.product.allergens.label: Allergens
+form.product.allergens.help: Does this product contain the following allergens?
+form.product.restricted_diets.label: Restricted diets
+form.product.restricted_diets.help: Does this product fit for the following diets?
 
 form.product_option.name.label: Name
 form.product_option.strategy.label: Price calculation
@@ -512,3 +516,30 @@ authentication.already_registered: Already registered?
 authentication.sign_in: Sign in
 
 maintenance.text: Sitio web bajo mantenimiento<br>Volvemos pronto
+
+allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
+allergens.CRUSTACEANS: Crustaceans
+allergens.EGGS: Eggs
+allergens.FISH: Fish
+allergens.PEANUTS: Peanuts
+allergens.SOYBEANS: Soybeans
+allergens.MILK: Milk
+allergens.NUTS: Nuts
+allergens.CELERY: Celery
+allergens.MUSTARD: Mustard
+allergens.SESAME_SEEDS: Sesame seeds
+allergens.SULPHUR_DIOXIDE_SULPHITES: Sulphur dioxide
+allergens.LUPIN: Lupin
+allergens.MOLLUSCS: Molluscs
+
+restricted_diets.DIABETIC_DIET: Diabetic
+restricted_diets.GLUTEN_FREE_DIET: Gluten free
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.HINDU_DIET: Hindu
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.LOW_CALORIE_DIET: Low calorie
+restricted_diets.LOW_FAT_DIET: Low fat
+restricted_diets.LOW_LACTOSE_DIET: Low lactose
+restricted_diets.LOW_SALT_DIET: Low salt
+restricted_diets.VEGAN_DIET: Vegan
+restricted_diets.VEGETARIAN_DIET: Vegetarian

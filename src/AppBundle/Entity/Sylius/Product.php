@@ -53,4 +53,24 @@ class Product extends BaseProduct implements ProductInterface
         $this->restaurant->clear();
         $this->restaurant->add($restaurant);
     }
+
+    public function getAllergens()
+    {
+        $attributeValue = $this->getAttributeByCodeAndLocale('ALLERGENS', $this->currentLocale);
+        if (null !== $attributeValue) {
+            return $attributeValue->getValue();
+        }
+
+        return [];
+    }
+
+    public function getRestrictedDiets()
+    {
+        $attributeValue = $this->getAttributeByCodeAndLocale('RESTRICTED_DIETS', $this->currentLocale);
+        if (null !== $attributeValue) {
+            return $attributeValue->getValue();
+        }
+
+        return [];
+    }
 }

@@ -401,7 +401,9 @@ a.list-group-item.menu-item--unavailable {
   width: 80%;
 }
 
-.menu-item .menu-item-description {
+.menu-item .menu-item-description,
+.menu-item .menu-item-allergens,
+.menu-item-restricted-diets {
   display: block;
   font-weight: normal;
 }

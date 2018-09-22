@@ -484,6 +484,11 @@ form.product.description.label: Description
 form.product.price.label: Prix
 form.product.taxCategory.label: Taxes
 form.product.enabled.label: Activé
+form.product.allergens.label: Allergènes
+form.product.allergens.help: Ce produit contient-il les allergènes suivants ?
+form.product.restricted_diets.label: Régimes restreints
+form.product.restricted_diets.help: Ce produit convient-il aux régimes alimentaires suivants ?
+
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Calcul du prix
 form.product_option.price.label: Prix
@@ -602,3 +607,30 @@ authentication.already_registered: Vous avez déjà un compte ?
 authentication.sign_in: Identifiez-vous
 
 maintenance.text: Site en maintenance<br>Nous revenons dans quelques instants
+
+allergens.CEREALS_CONTAINING_GLUTEN: Céréales contenant du gluten
+allergens.CRUSTACEANS: Crustacés
+allergens.EGGS: Oeufs
+allergens.FISH: Poisson
+allergens.PEANUTS: Arachides
+allergens.SOYBEANS: Soja
+allergens.MILK: Lait
+allergens.NUTS: Noix
+allergens.CELERY: Céleri
+allergens.MUSTARD: Moutarde
+allergens.SESAME_SEEDS: Graines de sésame
+allergens.SULPHUR_DIOXIDE_SULPHITES: Dioxyde de soufre
+allergens.LUPIN: Lupins
+allergens.MOLLUSCS: Mollusques
+
+restricted_diets.DIABETIC_DIET: Diabétique
+restricted_diets.GLUTEN_FREE_DIET: Sans gluten
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.HINDU_DIET: Hindou
+restricted_diets.KOSHER_DIET: Casher
+restricted_diets.LOW_CALORIE_DIET: Faible calorie
+restricted_diets.LOW_FAT_DIET: Sans graisses
+restricted_diets.LOW_LACTOSE_DIET: Sans lactose
+restricted_diets.LOW_SALT_DIET: Sans sel
+restricted_diets.VEGAN_DIET: Vegan
+restricted_diets.VEGETARIAN_DIET: Végétarien

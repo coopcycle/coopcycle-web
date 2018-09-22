@@ -467,6 +467,11 @@ form.product.description.label: Descripción
 form.product.price.label: Precio
 form.product.taxCategory.label: Impuestos
 form.product.enabled.label: Activado
+form.product.allergens.label: Alergenos
+form.product.allergens.help: ¿Este producto contiene los siguientes alérgenos?
+form.product.restricted_diets.label: Dietas restringidas
+form.product.restricted_diets.help: ¿Este producto se ajusta a las siguientes dietas?
+
 form.product_option.name.label: Nombre
 form.product_option.strategy.label: Cálculo del precio
 form.product_option.price.label: Precio
@@ -546,3 +551,30 @@ authentication.already_registered: ¿Ya tienes una cuenta?
 authentication.sign_in: Regístrate
 
 maintenance.text: Site under maintenance<br>We will be back soon
+
+allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
+allergens.CRUSTACEANS: Crustáceos
+allergens.EGGS: Huevos
+allergens.FISH: Pescado
+allergens.PEANUTS: Cacahuetes
+allergens.SOYBEANS: Soja
+allergens.MILK: Leche
+allergens.NUTS: Nueces
+allergens.CELERY: Apio
+allergens.MUSTARD: Mostaza
+allergens.SESAME_SEEDS: Semillas de sésamo
+allergens.SULPHUR_DIOXIDE_SULPHITES: Dióxido de azufre
+allergens.LUPIN: Lupine
+allergens.MOLLUSCS: Moluscos
+
+restricted_diets.DIABETIC_DIET: Diabético
+restricted_diets.GLUTEN_FREE_DIET: Sin gluten
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.HINDU_DIET: Hindú
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.LOW_CALORIE_DIET: Bajo en calorías
+restricted_diets.LOW_FAT_DIET: Bajo en grasa
+restricted_diets.LOW_LACTOSE_DIET: Baja lactosa
+restricted_diets.LOW_SALT_DIET: Bajo en sal
+restricted_diets.VEGAN_DIET: Vegano
+restricted_diets.VEGETARIAN_DIET: Vegetariano
