@@ -89,19 +89,6 @@ class TaskSubscriber implements EventSubscriber
         return isset($entityChangeSet['assignedTo']);
     }
 
-    private function sortTasks(&$tasks)
-    {
-        usort($tasks, function (Task $a, Task $b) {
-            if ($a->hasPrevious() && $a->getPrevious() === $b) {
-                return 1;
-            }
-            if ($b->hasPrevious() && $b->getPrevious() === $a) {
-                return -1;
-            }
-            return 0;
-        });
-    }
-
     public function onFlush(OnFlushEventArgs $args)
     {
         $em = $args->getEntityManager();
@@ -127,8 +114,6 @@ class TaskSubscriber implements EventSubscriber
         if (count($tasksToInsert) > 0) {
             $uow->computeChangeSets();
         }
-
-        $taskRepository = $em->getRepository(Task::class);
 
         foreach ($tasksToUpdate as $task) {
 
@@ -157,14 +142,24 @@ class TaskSubscriber implements EventSubscriber
 
                     $taskList = $this->getTaskList($task->getDoneBefore(), $task->getAssignedCourier(), $args);
 
+                    // This will be called when doing $task->assignTo()
+                    // It makes sure linked tasks are assigned as well
                     if (!$taskList->containsTask($task)) {
 
-                        $linked = $taskRepository->findLinked($task);
-                        $tasksToAdd = array_merge([$task], $linked);
+                        $tasksToAdd = [];
+                        if ($task->hasPrevious() || $task->hasNext()) {
+                            if ($task->hasPrevious()) {
+                                $tasksToAdd = [ $task->getPrevious(), $task ];
+                            }
+                            if ($task->hasNext()) {
+                                $tasksToAdd = [ $task, $task->getNext() ];
+                            }
+                        } else {
+                            $tasksToAdd = [ $task ];
+                        }
 
                         $this->debug(sprintf('Adding %d tasks to TaskList', count($tasksToAdd)));
 
-                        $this->sortTasks($tasksToAdd);
                         foreach ($tasksToAdd as $taskToAdd) {
                             $taskList->addTask($taskToAdd);
                         }
@@ -187,9 +182,15 @@ class TaskSubscriber implements EventSubscriber
 
                     $taskList->removeTask($task);
 
-                    foreach ($taskRepository->findLinked($task) as $linkedTask) {
-                        $linkedTask->unassign();
-                        $taskList->removeTask($task);
+                    if ($task->hasPrevious() || $task->hasNext()) {
+                        if ($task->hasPrevious()) {
+                            $task->getPrevious()->unassign();
+                            $taskList->removeTask($task->getPrevious());
+                        }
+                        if ($task->hasNext()) {
+                            $task->getNext()->unassign();
+                            $taskList->removeTask($task->getNext());
+                        }
                     }
 
                     // No need to add an event for linked tasks,

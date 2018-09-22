@@ -97,8 +97,11 @@ class Task extends React.Component {
     ]
 
     let taskAttributes = {}
-    if (task.hasOwnProperty('link')) {
-      taskAttributes = Object.assign(taskAttributes, { 'data-link': task.link })
+    if (task.previous) {
+      taskAttributes = Object.assign(taskAttributes, { 'data-previous': task.previous })
+    }
+    if (task.next) {
+      taskAttributes = Object.assign(taskAttributes, { 'data-next': task.next })
     }
 
     if (selected) {
