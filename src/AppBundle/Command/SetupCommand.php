@@ -3,6 +3,9 @@
 namespace AppBundle\Command;
 
 use FOS\UserBundle\Model\UserInterface;
+use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Attribute\AttributeType\TextAttributeType;
+use Sylius\Component\Attribute\Model\AttributeValueInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +16,9 @@ class SetupCommand extends ContainerAwareCommand
     private $productRepository;
     private $productManager;
     private $productFactory;
+
+    private $productAttributeRepository;
+    private $productAttributeManager;
 
     private $localeRepository;
     private $localeFactory;
@@ -32,6 +38,20 @@ class SetupCommand extends ContainerAwareCommand
         'de' => 'Lieferung auf Anfrage'
     ];
 
+    private $allergenAttributeNames = [
+        'fr' => 'Allergènes',
+        'en' => 'Allergens',
+        'es' => 'Alérgenos',
+        'de' => 'Allergene',
+    ];
+
+    private $restrictedDietsAttributeNames = [
+        'fr' => 'Régimes restreints',
+        'en' => 'Restricted diets',
+        'es' => 'Dietas restringidas',
+        'de' => 'Eingeschränkte Ernährung',
+    ];
+
     private $currencies = [
         'EUR',
         'GBP',
@@ -49,6 +69,9 @@ class SetupCommand extends ContainerAwareCommand
         $this->productRepository = $this->getContainer()->get('sylius.repository.product');
         $this->productFactory = $this->getContainer()->get('sylius.factory.product');
         $this->productManager = $this->getContainer()->get('sylius.manager.product');
+
+        $this->productAttributeRepository = $this->getContainer()->get('sylius.repository.product_attribute');
+        $this->productAttributeManager = $this->getContainer()->get('sylius.manager.product_attribute');
 
         $this->localeRepository = $this->getContainer()->get('sylius.repository.locale');
         $this->localeFactory = $this->getContainer()->get('sylius.factory.locale');
@@ -75,6 +98,10 @@ class SetupCommand extends ContainerAwareCommand
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
         $this->createOnDemandDeliveryProduct($output);
+
+        $output->writeln('<info>Checking Sylius product attributes are present…</info>');
+        $this->createAllergensAttributes($output);
+        $this->createRestrictedDietsAttributes($output);
     }
 
     private function createSyliusLocale($code, OutputInterface $output)
@@ -142,5 +169,67 @@ class SetupCommand extends ContainerAwareCommand
         }
 
         $this->productManager->flush();
+    }
+
+    private function createAllergensAttributes(OutputInterface $output)
+    {
+        $attribute = $this->productAttributeRepository->findOneByCode('ALLERGENS');
+
+        if (null === $attribute) {
+
+            $attribute = new ProductAttribute();
+            $attribute->setCode('ALLERGENS');
+            $attribute->setType(TextAttributeType::TYPE);
+            $attribute->setStorageType(AttributeValueInterface::STORAGE_JSON);
+
+            $this->productAttributeRepository->add($attribute);
+            $output->writeln('Creating attribute « ALLERGENS »');
+
+        } else {
+            $output->writeln('Attribute « ALLERGENS » already exists');
+        }
+
+        $output->writeln('Verifying translations for attribute « ALLERGENS »');
+
+        foreach ($this->locales as $locale) {
+
+            $attribute->setFallbackLocale($locale);
+            $translation = $attribute->getTranslation($locale);
+
+            $translation->setName($this->allergenAttributeNames[$locale]);
+        }
+
+        $this->productAttributeManager->flush();
+    }
+
+    private function createRestrictedDietsAttributes(OutputInterface $output)
+    {
+        $attribute = $this->productAttributeRepository->findOneByCode('RESTRICTED_DIETS');
+
+        if (null === $attribute) {
+
+            $attribute = new ProductAttribute();
+            $attribute->setCode('RESTRICTED_DIETS');
+            $attribute->setType(TextAttributeType::TYPE);
+            $attribute->setStorageType(AttributeValueInterface::STORAGE_JSON);
+
+            $this->productAttributeRepository->add($attribute);
+            $output->writeln('Creating attribute « RESTRICTED_DIETS »');
+
+        } else {
+            $output->writeln('Attribute « RESTRICTED_DIETS » already exists');
+        }
+
+        $output->writeln('Verifying translations for attribute « RESTRICTED_DIETS »');
+
+        foreach ($this->locales as $locale) {
+
+            $attribute->setFallbackLocale($locale);
+            $translation = $attribute->getTranslation($locale);
+
+            $translation->setName($this->restrictedDietsAttributeNames[$locale]);
+        }
+
+        $this->productAttributeManager->flush();
     }
 }

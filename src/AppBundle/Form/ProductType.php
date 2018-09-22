@@ -3,16 +3,23 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Enum\Allergen;
+use AppBundle\Enum\RestrictedDiet;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
+use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\Product;
+use Sylius\Component\Product\Model\ProductAttributeValue;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -20,18 +27,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductType extends AbstractType
 {
     private $variantFactory;
     private $variantResolver;
+    private $productAttributeRepository;
+    private $productAttributeValueFactory;
+    private $localeProvider;
 
     public function __construct(
         ProductVariantFactoryInterface $variantFactory,
-        ProductVariantResolverInterface $variantResolver)
+        ProductVariantResolverInterface $variantResolver,
+        RepositoryInterface $productAttributeRepository,
+        FactoryInterface $productAttributeValueFactory,
+        LocaleProviderInterface $localeProvider,
+        TranslatorInterface $translator)
     {
         $this->variantFactory = $variantFactory;
         $this->variantResolver = $variantResolver;
+        $this->productAttributeRepository = $productAttributeRepository;
+        $this->productAttributeValueFactory = $productAttributeValueFactory;
+        $this->localeProvider = $localeProvider;
+        $this->translator = $translator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -48,6 +67,22 @@ class ProductType extends AbstractType
                 'required' => false,
                 'label' => 'form.product.enabled.label',
             ]);
+
+        $builder->add('allergens', ChoiceType::class, [
+            'choices' => $this->createEnumAttributeChoices(Allergen::values(), 'allergens.%s'),
+            'label' => 'form.product.allergens.label',
+            'expanded' => true,
+            'multiple' => true,
+            'mapped' => false
+        ]);
+
+        $builder->add('restrictedDiets', ChoiceType::class, [
+            'choices' => $this->createEnumAttributeChoices(RestrictedDiet::values(), 'restricted_diets.%s'),
+            'label' => 'form.product.restricted_diets.label',
+            'expanded' => true,
+            'multiple' => true,
+            'mapped' => false
+        ]);
 
         // While price & tax category are defined in ProductVariant,
         // we display the fields at the Product level
@@ -83,6 +118,10 @@ class ProductType extends AbstractType
                 $form->get('price')->setData($variant->getPrice());
                 $form->get('taxCategory')->setData($variant->getTaxCategory());
             }
+
+            $this->postSetDataEnumAttribute($product, 'ALLERGENS', $form->get('allergens'));
+
+            $this->postSetDataEnumAttribute($product, 'RESTRICTED_DIETS', $form->get('restrictedDiets'));
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -116,7 +155,54 @@ class ProductType extends AbstractType
                 $variant->setPrice($price);
                 $variant->setTaxCategory($taxCategory);
             }
+
+            $this->postSubmitEnumAttribute($product, 'ALLERGENS', $form->get('allergens')->getData());
+
+            $this->postSubmitEnumAttribute($product, 'RESTRICTED_DIETS', $form->get('restrictedDiets')->getData());
         });
+    }
+
+    private function createEnumAttributeChoices(array $values, $format)
+    {
+        $choices = [];
+        foreach ($values as $value) {
+            $label = $this->translator->trans(sprintf($format, $value->getKey()));
+            $choices[$value->getKey()] = $label;
+        }
+
+        asort($choices);
+
+        return array_flip($choices);
+    }
+
+    private function postSetDataEnumAttribute(Product $product, $attributeCode, FormInterface $form)
+    {
+        $attributeValue = $product
+            ->getAttributeByCodeAndLocale($attributeCode, $this->localeProvider->getDefaultLocaleCode());
+
+        if (null !== $attributeValue) {
+            $form->setData($attributeValue->getValue());
+        }
+    }
+
+    private function postSubmitEnumAttribute(Product $product, $attributeCode, $data)
+    {
+        $attributeValue = $product
+            ->getAttributeByCodeAndLocale($attributeCode, $this->localeProvider->getDefaultLocaleCode());
+
+        if (null === $attributeValue) {
+            $attribute =
+                $this->productAttributeRepository->findOneBy(['code' => $attributeCode]);
+            $attributeValue =
+                $this->productAttributeValueFactory->createNew();
+
+            $attributeValue->setAttribute($attribute);
+            $attributeValue->setLocaleCode($this->localeProvider->getDefaultLocaleCode());
+        }
+
+        $attributeValue->setValue($data);
+
+        $product->addAttribute($attributeValue);
     }
 
     public function configureOptions(OptionsResolver $resolver)

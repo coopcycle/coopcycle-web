@@ -379,7 +379,13 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\ProductType':
-    arguments: [ '@sylius.factory.product_variant', '@sylius.product_variant_resolver.default' ]
+    arguments:
+      - '@sylius.factory.product_variant'
+      - '@sylius.product_variant_resolver.default'
+      - '@sylius.repository.product_attribute'
+      - '@sylius.factory.product_attribute_value'
+      - '@sylius.locale_provider'
+      - '@translator'
     tags: [ form.type ]
 
   my.jwt_listener:
