@@ -15,13 +15,17 @@ const drake = dragula({
   accepts: (el, target, source, sibling) => target !== source
 })
 .on('drag', function(el, source) {
-  let elements = []
-  if (el.hasAttribute('data-link')) {
+  let elements = [ el ]
+
+  // FIXME
+  // Make it work when more than 2 tasks are linked together
+  if (el.hasAttribute('data-previous') || el.hasAttribute('data-next')) {
     const siblings = Array.from(el.parentNode.childNodes)
-    elements = _.filter(siblings, sibling => sibling.getAttribute('data-link') === el.getAttribute('data-link'))
-  } else {
-    elements = [ el ]
+    const linkedElements = _.filter(siblings, sibling =>
+      sibling.getAttribute('data-task-id') === (el.getAttribute('data-previous') || el.getAttribute('data-next')))
+    elements = elements.concat(linkedElements)
   }
+
   elements.forEach(el => el.classList.add('task__draggable--dragging'))
 })
 .on('cloned', function (clone, original) {
@@ -43,19 +47,29 @@ const drake = dragula({
  */
 
 function onTaskDrop(allTasks, assignTasks, element, target, source) {
+
   const username = $(target).data('username')
   const isTask = element.hasAttribute('data-task-id')
-  const elements = isTask ? [ element ] : Array.from(element.querySelectorAll('[data-task-id]'))
 
-  let tasks = elements.map(el => _.find(allTasks, task => task['@id'] === el.getAttribute('data-task-id')))
+  let tasks = []
 
-  // Make sure linked tasks are assigned too
-  const tasksWithLink = _.filter(tasks, task => task.hasOwnProperty('link'))
-  if (tasksWithLink.length > 0) {
-    const links = tasksWithLink.map(task => task.link)
-    const linkedTasks = _.filter(allTasks, task => task.hasOwnProperty('link') && _.includes(links, task.link))
-    linkedTasks.forEach(task => tasks.push(task))
-    tasks = _.uniqBy(tasks, '@id')
+  if (isTask) { // This is a single task
+
+    const task = _.find(allTasks, task => task['@id'] === element.getAttribute('data-task-id'))
+
+    // FIXME
+    // Make it work when more than 2 tasks are linked together
+    if (task.previous) {
+      tasks = [ _.find(allTasks, t => t['@id'] === task.previous), task ]
+    } else if (task.next) {
+      tasks = [ task, _.find(allTasks, t => t['@id'] === task.next) ]
+    } else {
+      tasks = [ task ]
+    }
+
+  } else { // This is a task group
+    const elements = Array.from(element.querySelectorAll('[data-task-id]'))
+    tasks = elements.map(el => _.find(allTasks, task => task['@id'] === el.getAttribute('data-task-id')))
   }
 
   assignTasks(username, tasks)

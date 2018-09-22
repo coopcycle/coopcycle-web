@@ -157,6 +157,8 @@ class TaskSubscriber implements EventSubscriber
 
                     $taskList = $this->getTaskList($task->getDoneBefore(), $task->getAssignedCourier(), $args);
 
+                    // This will be called when doing $task->assignTo()
+                    // It makes sure linked tasks are assigned as well
                     if (!$taskList->containsTask($task)) {
 
                         $linked = $taskRepository->findLinked($task);

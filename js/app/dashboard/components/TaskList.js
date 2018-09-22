@@ -52,7 +52,7 @@ class TaskList extends React.Component {
 
         const draggedTask = _.find(tasks, task => task['@id'] === el.getAttribute('data-task-id'))
 
-        if (!draggedTask.hasOwnProperty('link')) {
+        if (!draggedTask.previous && !draggedTask.next) {
           return true
         }
 
@@ -71,9 +71,10 @@ class TaskList extends React.Component {
           if (siblingTaskIndex <= previousTaskIndex) {
             return false
           }
-        } else {
-          const nextTask = _.find(tasks, task => task.previous === draggedTask['@id'])
-          const nextTaskIndex = taskOrder.indexOf(nextTask['@id'])
+        }
+
+        if (draggedTask.next) {
+          const nextTaskIndex = taskOrder.indexOf(draggedTask.next)
           if (siblingTaskIndex >= nextTaskIndex) {
             return false
           }
@@ -114,11 +115,12 @@ class TaskList extends React.Component {
   remove(taskToRemove) {
 
     // Check if we need to remove another linked task
-    let tasksToRemove = []
-    if (taskToRemove.hasOwnProperty('link')) {
-      tasksToRemove = _.filter(this.props.tasks, task => task.hasOwnProperty('link') && task.link === taskToRemove.link)
-    } else {
-      tasksToRemove = [ taskToRemove ]
+    // FIXME
+    // Make it work when more than 2 tasks are linked together
+    let tasksToRemove = [ taskToRemove ]
+    if (taskToRemove.previous || taskToRemove.next) {
+      const linkedTasks = _.filter(this.props.tasks, task => task['@id'] === (taskToRemove.previous || taskToRemove.next))
+      tasksToRemove = tasksToRemove.concat(linkedTasks)
     }
 
     this.props.removeTasks(this.props.username, tasksToRemove)

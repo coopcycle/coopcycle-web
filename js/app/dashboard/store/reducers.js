@@ -2,33 +2,11 @@ import { combineReducers } from 'redux'
 import _ from 'lodash'
 import moment from 'moment'
 
-function addLinkProperty(tasks) {
-  let tasksById = _.keyBy(tasks, task => task['@id'])
-
-  const tasksWithPrevious = _.filter(tasks, task => task.previous !== null)
-  _.each(tasksWithPrevious, task => {
-    const previousTask = tasksById[task.previous]
-
-    // previous task may be undefined (example case: two different days)
-    if (previousTask) {
-      const taskArray    = [ previousTask, task ],
-        linkKey      = _.join(_.map(taskArray, task => task.id), ':')
-
-      tasksById[task.previous] = Object.assign(tasksById[task.previous], { link: linkKey })
-      tasksById[task['@id']]   = Object.assign(tasksById[task['@id']], { link: linkKey })
-    }
-  })
-
-  return _.map(tasksById, task => task)
-}
-
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
 // initial data pumped from the template
-const tasksInitial = addLinkProperty(window.AppData.Dashboard.tasks),
-      taskListsInitial = window.AppData.Dashboard.taskLists.map(taskList =>
-        Object.assign(taskList, { items: addLinkProperty(taskList.items) })
-      ),
+const tasksInitial = window.AppData.Dashboard.tasks,
+      taskListsInitial = window.AppData.Dashboard.taskLists,
       unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
 
 unassignedTasksInitial.sort((a, b) => {
@@ -84,7 +62,7 @@ const taskLists = (state = taskListsInitial, action) => {
       taskListIndex = _.findIndex(newTaskLists, taskList => taskList['@id'] === action.taskList['@id'])
 
       newTaskLists.splice(taskListIndex, 1,
-        Object.assign({}, action.taskList, { items: addLinkProperty(action.taskList.items) }))
+        Object.assign({}, action.taskList, { items: action.taskList.items }))
 
       return newTaskLists
 
@@ -195,7 +173,7 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
       }
       if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
         newState = state.slice(0)
-        return addLinkProperty(Array.prototype.concat(newState, [ action.task ]))
+        return Array.prototype.concat(newState, [ action.task ])
       }
     case 'ASSIGN_TASKS':
       newState = state.slice(0)
@@ -253,7 +231,7 @@ const allTasks = (state = tasksInitial, action) => {
       }
 
       newState = state.slice(0)
-      return addLinkProperty(Array.prototype.concat(newState, [ action.task ]))
+      return Array.prototype.concat(newState, [ action.task ])
 
     // case 'UPDATE_TASK':
     //   break;
