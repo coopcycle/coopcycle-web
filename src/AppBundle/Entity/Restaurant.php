@@ -470,6 +470,11 @@ class Restaurant extends FoodEstablishment
         $this->activeMenuTaxon = $taxon;
     }
 
+    public function hasMenu()
+    {
+        return null !== $this->activeMenuTaxon;
+    }
+
     /**
      * @return string
      */

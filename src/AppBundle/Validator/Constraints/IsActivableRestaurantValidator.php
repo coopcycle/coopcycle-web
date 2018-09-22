@@ -46,10 +46,20 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if (is_null($object->getStripeAccount())) {
-            $this->context->buildViolation($constraint->stripeAccountMessage)
-                ->atPath('stripeAccount')
-                ->addViolation();
+        // The validations below only make sense when the restaurant is created
+        if (null !== $object->getId()) {
+
+            if (is_null($object->getStripeAccount())) {
+                $this->context->buildViolation($constraint->stripeAccountMessage)
+                    ->atPath('stripeAccount')
+                    ->addViolation();
+            }
+
+            if (!$object->hasMenu()) {
+                $this->context->buildViolation($constraint->menuMessage)
+                    ->atPath('activeMenuTaxon')
+                    ->addViolation();
+            }
         }
 
         $hasErrors = count($this->context->getViolations()) > 0;

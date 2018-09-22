@@ -4,6 +4,7 @@ restaurant.name.notBlank: Entrez le nom de votre restaurant
 restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être administrateur de la plateforme)
 restaurant.stripeAccount.notSet: Liez le restaurant à un compte Stripe
 restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
+restaurant.menu.notSet: Créez et activez un menu
 
 address.tooFar: Cette addresse est trop éloignée
 address.notSet: Veuillez entrer l'adresse de livraison
