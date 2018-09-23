@@ -27,7 +27,7 @@
       {{ 'restaurants.no_results'|trans|raw }}
     </div>
   {% else %}
-    <div class="row display-flex">
+    <div class="row display-flex restaurant-list">
       {% for restaurant in restaurants %}
       <div class="col-sm-6 col-md-4 display-flex">
 
@@ -62,7 +62,7 @@
 
         <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
           href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
-          <img src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+          <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
           <div class="caption">
             <h4>{{ restaurant.name|truncate(24, false, '…') }}</h4>
             <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
