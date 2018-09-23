@@ -104,7 +104,13 @@ class CartHelper {
           const place = results[0]
 
           // Make sure we have a "precise" street address
-          if (false === _.includes(place['types'], 'street_address')) {
+          // Basically, we make sure we have a street number
+          // Do not use place.types, as this may return a variety of types
+          // @see https://developers.google.com/places/supported_types
+          const hasStreetNumber =
+            Boolean(_.find(place.address_components, component => _.includes(component['types'], 'street_number')))
+
+          if (!hasStreetNumber) {
             reject(NOT_ENOUGH_PRECISION)
             return
           }
