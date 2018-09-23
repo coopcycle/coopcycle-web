@@ -52,7 +52,7 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('AppBundle:Store:form.html.twig', [
+        return $this->render('@App/store/form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -97,7 +97,7 @@ trait StoreTrait
             }
         }
 
-        return $this->render('@App/Store/deliveryForm.html.twig', [
+        return $this->render('@App/store/delivery_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -138,7 +138,7 @@ trait StoreTrait
             return $this->redirectToRoute($routes['success'], ['id' => $store->getId()]);
         }
 
-        return $this->render('@App/Store/apiKeys.html.twig', [
+        return $this->render('@App/store/api_keys.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'token' => $token,

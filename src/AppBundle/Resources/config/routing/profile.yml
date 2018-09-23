@@ -12,8 +12,8 @@ profile_orders:
     path:     /profile/orders
     defaults:
         _controller: AppBundle:Profile:orderList
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Profile:orders.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/profile/orders.html.twig'
         routes:
             restaurant: restaurant
             order_invoice: profile_order_invoice
@@ -24,8 +24,8 @@ profile_restaurant_new:
     path: /profile/restaurants/new
     defaults:
         _controller: AppBundle:Profile:newRestaurant
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:form.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/form.html.twig'
         routes:
             success: profile_restaurant
             restaurants: profile_restaurants
@@ -41,8 +41,8 @@ profile_restaurant:
     path: /profile/restaurants/{id}
     defaults:
         _controller: AppBundle:Profile:restaurant
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:form.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/form.html.twig'
         routes:
             success: profile_restaurant
             restaurants: profile_restaurants
@@ -58,8 +58,8 @@ profile_restaurants:
     path: /profile/restaurants
     defaults:
         _controller: AppBundle:Profile:restaurantList
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Profile:restaurants.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/Profile/restaurants.html.twig'
         routes:
             dashboard: profile_restaurant_dashboard
             menu_taxon: profile_restaurant_menu_taxon
@@ -71,8 +71,8 @@ profile_restaurant_dashboard:
     path: /profile/restaurants/{restaurantId}/dashboard
     defaults:
         _controller: AppBundle:Profile:restaurantDashboard
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:dashboard.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/dashboard.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -90,8 +90,8 @@ profile_restaurant_dashboard_order:
     path: /profile/restaurants/{restaurantId}/dashboard/{orderId}
     defaults:
         _controller: AppBundle:Profile:restaurantDashboardOrder
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:dashboard.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/dashboard.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -144,8 +144,8 @@ profile_restaurant_menu_taxons:
     path: /profile/restaurants/{id}/menus
     defaults:
         _controller: AppBundle:Profile:restaurantMenuTaxons
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:menuTaxons.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/menu_taxons.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -158,8 +158,8 @@ profile_restaurant_new_menu_taxon:
     path: /profile/restaurants/{id}/menus/new
     defaults:
         _controller: AppBundle:Profile:newRestaurantMenuTaxon
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:menuTaxon.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/menu_taxon.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -173,8 +173,8 @@ profile_restaurant_menu_taxon:
     path: /profile/restaurants/{restaurantId}/menus/{menuId}
     defaults:
         _controller: AppBundle:Profile:restaurantMenuTaxon
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:menuTaxon.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/menu_taxon.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -188,7 +188,7 @@ profile_restaurant_menu_taxon_activate:
     path: /profile/restaurants/{restaurantId}/menus/{menuId}/activate
     defaults:
         _controller: AppBundle:Profile:activateRestaurantMenuTaxon
-        layout: AppBundle::profile.html.twig
+        layout: '@App/profile.html.twig'
         routes:
             menu_taxons: profile_restaurant_menu_taxons
     methods: [ POST ]
@@ -197,7 +197,7 @@ profile_delete_restaurant_menu_taxon_child:
     path: /profile/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
     defaults:
         _controller: AppBundle:Profile:deleteRestaurantMenuTaxonChild
-        layout: AppBundle::profile.html.twig
+        layout: '@App/profile.html.twig'
         routes:
             menu_taxon: profile_restaurant_menu_taxon
     methods: [ POST ]
@@ -206,8 +206,8 @@ profile_restaurant_products:
     path: /profile/restaurants/{id}/products
     defaults:
         _controller: AppBundle:Profile:restaurantProducts
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:products.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/products.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -219,8 +219,8 @@ profile_restaurant_product_new:
     path: /profile/restaurants/{id}/products/new
     defaults:
         _controller: AppBundle:Profile:newRestaurantProduct
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:product.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/product.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -230,8 +230,8 @@ profile_restaurant_product:
     path: /profile/restaurants/{restaurantId}/products/{productId}
     defaults:
         _controller: AppBundle:Profile:restaurantProduct
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:product.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/product.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -241,8 +241,8 @@ profile_restaurant_planning:
     path: /profile/restaurants/{id}/planning
     defaults:
         _controller: AppBundle:Profile:restaurantPlanning
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:planning.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/planning.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -252,8 +252,8 @@ profile_restaurant_product_options:
     path: /profile/restaurants/{id}/product-options
     defaults:
         _controller: AppBundle:Profile:restaurantProductOptions
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:productOptions.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/product_options.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -265,8 +265,8 @@ profile_restaurant_product_option_new:
     path: /profile/restaurants/{id}/product-options/new
     defaults:
         _controller: AppBundle:Profile:newRestaurantProductOption
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:productOption.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/product_option.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -277,8 +277,8 @@ profile_restaurant_product_option:
     path: /profile/restaurants/{restaurantId}/product-options/{optionId}
     defaults:
         _controller: AppBundle:Profile:restaurantProductOption
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Restaurant:productOption.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/product_option.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -293,8 +293,8 @@ profile_stores:
     path: /profile/stores
     defaults:
         _controller: AppBundle:Profile:storeList
-        layout: AppBundle::profile.html.twig
-        template: AppBundle:Profile:stores.html.twig
+        layout: '@App/profile.html.twig'
+        template: '@App/Profile/stores.html.twig'
         routes:
             store: profile_store
             store_delivery: profile_store_delivery
@@ -304,7 +304,7 @@ profile_store:
     path: /profile/stores/{id}
     defaults:
         _controller: AppBundle:Profile:store
-        layout: AppBundle::profile.html.twig
+        layout: '@App/profile.html.twig'
         routes:
             stores: profile_stores
             store_delivery: profile_store_delivery
@@ -315,7 +315,7 @@ profile_store_delivery:
     path: /profile/stores/{id}/deliveries/new
     defaults:
         _controller: AppBundle:Profile:newStoreDelivery
-        layout: AppBundle::profile.html.twig
+        layout: '@App/profile.html.twig'
         routes:
             stores: profile_stores
             store: profile_store
@@ -327,7 +327,7 @@ profile_store_api_keys:
     path: /profile/stores/{id}/api-keys
     defaults:
         _controller: AppBundle:Profile:apiKeys
-        layout: AppBundle::profile.html.twig
+        layout: '@App/profile.html.twig'
         routes:
             stores: profile_stores
             success: profile_store_api_keys

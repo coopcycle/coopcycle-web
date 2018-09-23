@@ -46,7 +46,7 @@ class HelpController extends Controller
     }
 
     /**
-     * @Template("@App/Help/index.html.twig")
+     * @Template("@App/help/index.html.twig")
      */
     public function renderMarkdownAction(Request $request)
     {

@@ -1,4 +1,4 @@
-{% extends "AppBundle::base.html.twig" %}
+{% extends "@App/base.html.twig" %}
 
 {% block banner %}
   {% include '@App/_partials/maintenance.html.twig' %}
@@ -15,7 +15,7 @@
   </div>
   {% endif %}
 
-  {% include "AppBundle:Admin:nav.html.twig" %}
+  {% include "@App/admin/nav.html.twig" %}
 
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>

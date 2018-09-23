@@ -1,0 +1,36 @@
+{% extends "@App/admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="{{ path('admin_orders') }}" class="form-inline" name="admin_orders_settings" method="get">
+      <input type="hidden" name="show_canceled" value="{{ show_canceled ? 'on' : 'off' }}">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="show_canceled" {% if show_canceled %}checked="checked"{% endif %}>  {% trans %}adminDashboard.orders.showCanceled{% endtrans %}
+        </label>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% include "@App/admin/pagination.html.twig" %}
+{% include "@App/_partials/order/list.html.twig" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var $settingsForm = $('form[name="admin_orders_settings"]')
+$('#show_canceled').on('change', function(e) {
+  $settingsForm
+    .find('[name="show_canceled"]')
+    .val($(this).is(':checked') ? 'on' : 'off')
+  $settingsForm.submit()
+})
+</script>
+{% endblock %}

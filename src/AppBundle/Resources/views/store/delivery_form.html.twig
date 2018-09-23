@@ -1,0 +1,30 @@
+{% extends '@App/delivery/form.html.twig' %}
+
+{% block breadcrumb %}
+
+  {% set delivery = form.vars.value %}
+
+  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+
+  {% if delivery.id is not null %}
+  <li>#{{ delivery.id }}</li>
+  {% else %}
+  <li>{% trans %}adminDashboard.deliveries.createNew{% endtrans %}</li>
+  {% endif %}
+
+  {% endblock %}
+
+{% block disclaimer %}
+
+  {% if is_granted('ROLE_ADMIN') %}
+    <div class="alert alert-info">
+      {% set trans_params = {
+        '%name%': store.pricingRuleSet.name,
+        '%link%': path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id })
+      } %}
+      {% trans with trans_params %}form.delivery.pricing_rule_set.about{% endtrans %}
+    </div>
+  {% endif %}
+
+{% endblock %}

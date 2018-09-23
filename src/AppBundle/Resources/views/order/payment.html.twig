@@ -1,0 +1,70 @@
+{% extends "@App/base.html.twig" %}
+
+{% block body %}
+<div class="container container--full-height">
+
+  {% include '@App/order/breadcrumb.html.twig' %}
+
+  <div class="order-map__wrapper">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="order-map__column">
+          {% include "@App/_partials/order/restaurant_details.html.twig" %}
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-5 col-md-offset-4">
+        <div class="order-map__column">
+          {% if error is defined %}
+            <div class="alert alert-danger">
+              {{ error }}
+            </div>
+          {% endif %}
+          {{ form_start(form) }}
+
+            {{ form_widget(form.stripeToken) }}
+
+            <h4>{% trans %}order.payment.title{% endtrans %}</h4>
+
+            <div class="form-group">
+              <label class="control-label hidden" for="card-element">
+                {% trans %}order.payment.title{% endtrans %}
+              </label>
+              <div id="card-element">
+                <!-- a Stripe Element will be inserted here. -->
+              </div>
+              <!-- Used to display form errors -->
+              <div id="card-errors" role="alert"></div>
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-block btn-primary btn-payment">
+                <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              </button>
+            </div>
+
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+    <div id="map" class="order-map hidden-xs hidden-sm"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script type="text/javascript">
+  new CoopCycle.DeliveryMap('map', {
+    pickup: {{ order.restaurant.address|latlng|json_encode() }},
+    dropoff: {{ order.shippingAddress|latlng|json_encode() }},
+    fitBoundsOptions: {
+      paddingBottomRight: [ 220, -150 ]
+    }
+  });
+  new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+    publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
+    tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  });
+</script>
+{% endblock %}

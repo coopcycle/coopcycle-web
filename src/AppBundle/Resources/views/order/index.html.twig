@@ -1,0 +1,58 @@
+{% extends "@App/base.html.twig" %}
+
+{% if form is defined %}
+  {% form_theme form with ['@App/form/order.html.twig'] %}
+{% endif %}
+
+{% block body %}
+<div class="container container--full-height">
+
+  {% include '@App/order/breadcrumb.html.twig' %}
+
+  <div class="order-map__wrapper">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="order-map__column">
+          {% include "@App/_partials/order/restaurant_details.html.twig" %}
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-5 col-md-offset-4">
+        <div class="order-map__column">
+          {{ form_start(form) }}
+            <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
+            {{ form_row(form.floor) }}
+            {{ form_row(form.streetAddress) }}
+            <div class="row">
+              <div class="col-md-4">
+                {{ form_row(form.postalCode) }}
+              </div>
+              <div class="col-md-8">
+                {{ form_row(form.addressLocality) }}
+              </div>
+            </div>
+            {{ form_row(form.description) }}
+            <div class="text-center">
+              <button class="btn btn-block btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
+            </div>
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+    <div id="map" class="order-map hidden-xs hidden-sm"></div>
+  </div>
+</div>
+{%  endblock %}
+
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+new CoopCycle.DeliveryMap('map', {
+  pickup: {{ order.restaurant.address|latlng|json_encode() }},
+  dropoff: {{ order.shippingAddress|latlng|json_encode() }},
+  fitBoundsOptions: {
+    paddingBottomRight: [ 220, -150 ]
+  }
+});
+</script>
+{% endblock %}

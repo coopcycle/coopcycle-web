@@ -20,7 +20,7 @@ class EmailPreviewCommand extends ContainerAwareCommand
         $container = $this->getContainer();
         $html = $container->get('templating')
                           ->render(
-                              'AppBundle::Emails/layout.html.twig',
+                              '@App/emails/layout.html.twig',
                               ['raw_content' => 'The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.<br>The lazy fox jump over aso. aso.']);
         echo $html;
     }

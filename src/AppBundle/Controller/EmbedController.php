@@ -95,7 +95,7 @@ class EmbedController extends Controller
         $form = $this->createDeliveryForm();
         $form->handleRequest($request);
 
-        return $this->render('@App/Embed/Delivery/start.html.twig', [
+        return $this->render('@App/embed/delivery/start.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -127,7 +127,7 @@ class EmbedController extends Controller
                 $delivery = $form->getData();
                 $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
 
-                return $this->render('@App/Embed/Delivery/summary.html.twig', [
+                return $this->render('@App/embed/delivery/summary.html.twig', [
                     'price' => $price,
                     'form' => $form->createView(),
                 ]);
@@ -138,7 +138,7 @@ class EmbedController extends Controller
 
         }
 
-        return $this->render('@App/Embed/Delivery/start.html.twig', [
+        return $this->render('@App/embed/delivery/start.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -190,7 +190,7 @@ class EmbedController extends Controller
             return $this->redirectToRoute('public_order', ['number' => $order->getNumber()]);
         }
 
-        return $this->render('@App/Embed/Delivery/summary.html.twig', [
+        return $this->render('@App/embed/delivery/summary.html.twig', [
             'form' => $form->createView(),
         ]);
     }

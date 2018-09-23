@@ -1,0 +1,317 @@
+{% extends "@App/base.html.twig" %}
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
+{% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
+
+{% block body %}
+<div class="container">
+
+  {% if not restaurant.enabled %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="alert alert-danger">
+        {{ "restaurant.disabledWarning" | trans({'%restaurantEditUrl%': restaurant_edit_url}) | raw }}
+        </div>
+      </div>
+    </div>
+  {%  endif %}
+
+  {% if restaurant.hasClosingRuleForNow %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="alert alert-danger">
+        {% trans %}restaurant.temporaryClosedWarning{% endtrans %}
+        </div>
+      </div>
+    </div>
+  {% elseif not restaurant.isOpen %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="alert alert-warning">
+        {% if restaurant.orderingDelayMinutes > 0 %}
+          {% trans with { '%delay%': delay } %}restaurant.closedWarningWithDelay{% endtrans %}
+        {% else %}
+          {% trans %}restaurant.closedWarning{% endtrans %}
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  {%  endif %}
+
+  <div class="page-header restaurant-header">
+    {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
+    {% if restaurant_image is not empty %}
+      <div class="restaurant-image" style="background-image: url({{ vich_uploader_asset(restaurant, 'imageFile') }});">
+      </div>
+    {% endif %}
+    <div class="restaurant-title">
+      <h1>{{ restaurant.name }}</h1>
+      <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+      <div id="opening-hours">
+      </div>
+    </div>
+  </div>
+
+  {% if restaurant.menuTaxon is not null %}
+  <div class="row">
+
+    <div class="col-xs-12 col-sm-8">
+      {% for child in restaurant.menuTaxon.children %}
+        {% if child.products|length > 0 %}
+        <h2>{{ child.name }}</h2>
+        <div class="list-group">
+          {% for product in child.products %}
+            {% set variant = product|sylius_resolve_variant %}
+            {# TODO Skip if no variant is defined #}
+            {% if not product.enabled %}
+              <a class="list-group-item menu-item menu-item--unavailable">
+                <span class="menu-item-content">{{ product.name }}</span>
+                {% if product.description is not null %}
+                  <p class="menu-item-description">{{ product.description }}</p>
+                {%  endif %}
+                <span class="menu-item-price">
+                  <small>
+                    {% trans %}restaurant.unavailable{% endtrans %}
+                  </small>
+                </span>
+              </a>
+            {% else %}
+              <a  class="list-group-item menu-item"
+                  {% if product.simple %}
+                  data-product-code="{{ product.code }}"
+                  href="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                  {% else %}
+                  data-toggle="modal"
+                  data-target="#{{ product.code }}-options"
+                  href="#"
+                  {% endif %}>
+                <span class="menu-item-content">
+                  {{ product.name }}
+                  {% if product.description is not null %}
+                    <small class="menu-item-description">{{ product.description }}</small>
+                  {%  endif %}
+                  {% if product.allergens is not empty %}
+                    {% set allergens = [] %}
+                    {% for allergen in product.allergens %}
+                      {% set allergens = allergens|merge([('allergens.' ~ allergen)|trans]) %}
+                    {% endfor %}
+                    <small class="menu-item-allergens">
+                      <i class="fa fa-warning"></i> <span>{{ allergens|join(', ') }}</span>
+                    </small>
+                  {% endif %}
+                  {% if product.restrictedDiets is not empty %}
+                    {% set restrictedDiets = [] %}
+                    {% for restrictedDiet in product.restrictedDiets %}
+                      {% set restrictedDiets = restrictedDiets|merge([('restricted_diets.' ~ restrictedDiet)|trans]) %}
+                    {% endfor %}
+                    <small class="menu-item-restricted-diets">
+                      <i class="fa fa-check"></i> <span>{{ restrictedDiets|join(', ') }}</span>
+                    </small>
+                  {% endif %}
+                </span>
+                <span class="menu-item-price">{{ variant.price|price_format }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="col-xs-12 col-sm-4">
+        <div id="cart"></div>
+    </div>
+
+    <div class="visible-xs">
+    </div>
+
+  </div>
+
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans %}restaurant.noMenuWarning{% endtrans %}
+    </div>
+  {% endif %}
+
+</div>
+
+{# Modals for modifiers #}
+
+{% if restaurant.menuTaxon is not null %}
+  {% for child in restaurant.menuTaxon.children %}
+    {% for product in child.products %}
+      {% if product.enabled and not product.simple %}
+      <div id="{{ product.code }}-options" class="modal fade">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">{{ product.name }}</h4>
+            </div>
+            <div class="modal-body">
+              <form
+                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                data-product-options>
+                {% for option in product.options %}
+                <h4>
+                  {{ option.name }}
+                  {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}
+                </h4>
+                <div class="list-group" {% if not option.additional %}data-product-option{% endif %}>
+                  {% for option_value in option.values %}
+                    <div class="list-group-item modifier-item">
+                      {% if option.additional %}
+                        <div class="checkbox nomargin">
+                          <label>
+                            <input
+                              name="options[{{ option.code }}][]"
+                              value="{{ option_value.code }}" type="checkbox">
+                            {{ option_value.value }}
+                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                              +{{ option_value.price|price_format }}
+                            {% endif %}
+                          </label>
+                        </div>
+                      {% else %}
+                        <div class="radio nomargin">
+                          <label>
+                            <input
+                              name="options[{{ option.code }}]"
+                              value="{{ option_value.code }}" type="radio">
+                            {{ option_value.value }}
+                            {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                              +{{ option_value.price|price_format }}
+                            {% endif %}
+                          </label>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+
+<div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{ 'cart.modal.content'|trans }}</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cart-warning-cancel" type="button" class="btn btn-default">
+          {{ 'cart.modal.cancel'|trans }}
+        </button>
+        <button id="cart-warning-confirm" type="button" class="btn btn-primary">
+          {{ 'cart.modal.confirm'|trans }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/widgets.js') }}"></script>
+<script>
+
+new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
+  openingHours: {{ restaurant.openingHours|json_encode()|raw }},
+  locale: $('html').attr('lang')
+})
+
+$('[data-product-code]').on('click', function(e) {
+  e.preventDefault();
+  var $target = $(e.currentTarget);
+  window.AppData.CartHelper.addProduct($target.attr('href'), 1);
+})
+
+// Make sure all (non-additional) options have been checked
+$('form[data-product-options] input[type="radio"]').on('click', function(e) {
+
+  var $options = $(this).closest('form').find('[data-product-option]');
+  var checkedOptionsCount = 0;
+  $options.each(function(index, el) {
+    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
+  });
+
+  _paq.push(['trackEvent', 'Checkout', 'selectOption']);
+
+  if ($options.length === checkedOptionsCount) {
+    $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
+  }
+})
+
+$('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'addExtra']);
+})
+
+$('form[data-product-options]').on('submit', function(e) {
+  e.preventDefault();
+  var data = $(this).serializeArray();
+  if (data.length > 0) {
+    window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
+    $(this).closest('.modal').modal('hide');
+    // Uncheck all options
+    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
+  }
+})
+
+$('.modal').on('shown.bs.modal', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'showOptions']);
+  var $form = $(this).find('form[data-product-options]');
+  if ($form.length === 1) {
+    var $options = $form.find('[data-product-option]');
+    var disabled = $options.length > 0;
+    $form.find('button[type="submit"]').attr('disabled', disabled);
+  }
+});
+
+$('.modal').on('hidden.bs.modal', function(e) {
+  _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
+});
+
+function initMap() {
+
+  $('#cart-warning-cancel').on('click', function(e) {
+    {% set cart = cart_provider.getCart() %}
+    window.location.replace("{{ path('restaurant', { id: cart.restaurant.id }) }}")
+    $('#cart-warning-modal').modal('hide');
+  })
+
+  $('#cart-warning-confirm').on('click', function(e) {
+    window.AppData.CartHelper.reset();
+    $('#cart-warning-modal').modal('hide');
+  })
+
+  window.AppData.CartHelper.init(document.querySelector('#cart'), {
+    restaurant: {
+      id: {{ restaurant.id }},
+      availabilities: {{ availabilities|json_encode()|raw }}
+    },
+    cartURL: "{{ path('restaurant_cart', { id: restaurant.id }) }}",
+    removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
+    resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    onCartWarning: function() {
+      $('#cart-warning-modal').modal('show');
+    }
+  });
+}
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+{% endblock %}

@@ -135,7 +135,7 @@ trait DeliveryTrait
             }
         }
 
-        return $this->render('AppBundle:Delivery:form.html.twig', [
+        return $this->render('@App/delivery/form.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),
