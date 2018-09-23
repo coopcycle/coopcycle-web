@@ -358,9 +358,37 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   background-repeat: no-repeat;
 }
 
-.restaurant-list-filter {
-  padding-top: $bs-base-margin / 2;
+.restaurant-list-header {
+  margin-top: -20px;
+  padding-top: $bs-base-margin;
   margin-bottom: $bs-base-margin;
+  background-color: $main-blue-light;
+  background-image: url(../pattern.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+.restaurant-item {
+  position: relative;
+  &--disabled > * {
+    opacity: 0.6;
+  }
+  &--disabled > &__top-left,
+  &--disabled > &__top-right {
+    opacity: 0.9;
+  }
+  &__top-left,
+  &__top-right {
+    position: absolute;
+    top: 12px;
+  }
+  &__top-left {
+    left: 12px;
+  }
+  &__top-right {
+    right: 12px;
+  }
 }
 
 .restaurant-item:hover {

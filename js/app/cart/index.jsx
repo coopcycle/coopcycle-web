@@ -38,8 +38,16 @@ class CartHelper {
     const geohash = localStorage.getItem('search_geohash') || ''
     const availabilities = options.restaurant.availabilities
     const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
-    let deliveryDate = date || localStorage.getItem('search__date') || options.restaurant.availabilities[0]
-    deliveryDate = _.find(availabilities, (date) => moment(deliveryDate).isSame(date)) ? deliveryDate : options.restaurant.availabilities[0]
+
+    const closestDeliveryDate = _.first(availabilities)
+    let deliveryDate = closestDeliveryDate
+
+    // Verify if stored date is not in the past
+    if (date) {
+      if (!moment(date).isBefore(moment(closestDeliveryDate))) {
+        deliveryDate = date
+      }
+    }
 
     this.cartComponentRef = React.createRef()
 
