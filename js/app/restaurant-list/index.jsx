@@ -15,6 +15,9 @@ function onPlaceChange (geohash, address) {
   if (geohash != initialGeohash) {
     localStorage.setItem('search_geohash', geohash);
     localStorage.setItem('search_address', address);
+
+    window._paq.push(['trackEvent', 'RestaurantList', 'searchAddress', address]);
+
     $('#restaurant-search-form').find('input[name=geohash]').val(geohash);
     $('#restaurant-search-form').submit();
   }
