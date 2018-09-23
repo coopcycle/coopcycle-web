@@ -410,6 +410,10 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Restaurant
+    calls:
+      - method: setAuthorizationChecker
+        arguments:
+            - '@security.authorization_checker'
 
   routing_service:
     public: true
