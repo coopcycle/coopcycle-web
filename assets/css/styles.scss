@@ -88,12 +88,6 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 1px solid grey;
 }
 
-.restaurant-header {
-  h1 {
-    display: inline-block;
-  }
-}
-
 .store-opening-hours {
   width: 35%;
 }
@@ -348,19 +342,63 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 }
 
-.restaurant-image {
-  display: inline-block;
-  width: 150px;
-  height: 100px;
-  margin-right: $base-margin-l;
-  background-size: contain;
-  background-position: center bottom;
-  background-repeat: no-repeat;
+.restaurant-header {
+  h1 {
+    display: inline-block;
+  }
+  .restaurant-image {
+    display: inline-block;
+    background-size: contain;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 100px;
+  }
 }
 
-.restaurant-list-filter {
-  padding-top: $bs-base-margin / 2;
+.restaurant-list {
+  h1 {
+    display: inline-block;
+  }
+  /* Use object-fit to make sure images have same ratio */
+  .restaurant-image {
+    width: 400px;
+    height: 300px;
+    object-fit: cover;
+  }
+}
+
+.restaurant-list-header {
+  margin-top: -20px;
+  padding-top: $bs-base-margin;
   margin-bottom: $bs-base-margin;
+  background-color: $main-blue-light;
+  background-image: url(../pattern.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+.restaurant-item {
+  position: relative;
+  &--disabled > * {
+    opacity: 0.6;
+  }
+  &--disabled > &__top-left,
+  &--disabled > &__top-right {
+    opacity: 0.9;
+  }
+  &__top-left,
+  &__top-right {
+    position: absolute;
+    top: 12px;
+  }
+  &__top-left {
+    left: 12px;
+  }
+  &__top-right {
+    right: 12px;
+  }
 }
 
 .restaurant-item:hover {

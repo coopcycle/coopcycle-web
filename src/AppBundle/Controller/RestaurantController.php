@@ -81,8 +81,7 @@ class RestaurantController extends Controller
      */
     public function listAction(Request $request)
     {
-        $manager = $this->getDoctrine()->getManagerForClass('AppBundle\\Entity\\Restaurant');
-        $repository = $manager->getRepository('AppBundle\\Entity\\Restaurant');
+        $repository = $this->get('coopcycle.repository.restaurant');
 
         $finder = new Finder();
         $finder->files()
@@ -119,19 +118,6 @@ class RestaurantController extends Controller
             $matches = $repository->findBy(['enabled' => true], ['name' => 'ASC']);
         }
 
-        if ($request->query->has('datetime')) {
-            $date = new \DateTime($request->query->get('datetime'));
-        } else {
-            $date = new \DateTime();
-        }
-
-        $matches = array_filter(
-            $matches,
-            function ($item) use ($date) {
-                return $item->isOpen($date);
-            }
-        );
-
         $count = count($matches);
 
         $matches = array_slice($matches, $offset, self::ITEMS_PER_PAGE);
@@ -150,7 +136,6 @@ class RestaurantController extends Controller
 
         return array(
             'count' => $count,
-            'searchDate' => $date->format(\DateTime::ATOM),
             'restaurants' => $matches,
             'page' => $page,
             'pages' => $pages,

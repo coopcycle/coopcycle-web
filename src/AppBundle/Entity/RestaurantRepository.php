@@ -5,9 +5,17 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RestaurantRepository extends EntityRepository
 {
+    private $authorizationChecker;
+
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     // TODO : fix this to check that restaurants are really in delivery/radius zone
     private function createNearbyQueryBuilder($latitude, $longitude, $distance = 3500)
     {
@@ -15,10 +23,12 @@ class RestaurantRepository extends EntityRepository
 
         self::addNearbyQueryClause($qb, $latitude, $longitude, $distance);
 
-        $qb->andWhere($qb->expr()->eq(
-            'r.enabled',
-            $qb->expr()->literal(true)
-        ));
+        if (!$this->authorizationChecker || ($this->authorizationChecker && !$this->authorizationChecker->isGranted('ROLE_ADMIN'))) {
+            $qb->andWhere($qb->expr()->eq(
+                'r.enabled',
+                $qb->expr()->literal(true)
+            ));
+        }
 
         return $qb;
     }
@@ -64,7 +74,6 @@ class RestaurantRepository extends EntityRepository
 
     public function findNearby($latitude, $longitude, $distance = 5000, $limit = 10, $offset = 0)
     {
-
         $qb = $this->createNearbyQueryBuilder($latitude, $longitude, $distance);
 
         $qb

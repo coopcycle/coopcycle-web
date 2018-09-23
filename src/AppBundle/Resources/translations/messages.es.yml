@@ -101,8 +101,9 @@ delivery.createNew: Crear nueva entrega
 help.title: Ayuda
 help.home: Inicio
 
-norestaurantfound: No hay ningún restaurante abierto a ésta hora!<br>Prueba un horario
-  distinto.
+restaurants.no_results: No hemos encontrado ningún restaurante que coincida con tu búsqueda ☹<br>prueba con una dirección diferente
+restaurants.visible_by_you_only: Visible solo por ti
+
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo adicional antes del pedido de un usuario. Esta opción no cambia los tiempos considerados para la preparación de la comida (20 minutos) y el reparto (25 minutos).
 localBusiness.form.orderingDelayDays: Día(s)
@@ -543,6 +544,8 @@ basics.edit: Modificar
 basics.delete: Eliminar
 basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
 basics.cancel: Cancelar
+basics.open: Abierto
+basics.tomorrow: Mañana
 
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?

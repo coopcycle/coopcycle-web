@@ -108,7 +108,8 @@ delivery.createNew: Create new delivery
 help.title: Help
 help.home: Home
 
-norestaurantfound: No restaurant open at this time!<br>Try a different delivery time.
+restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try with a different address
+restaurants.visible_by_you_only: Visible by you only
 
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before the customer can order. This setting don't change the times kept for cooking (20 minutes) and cycling (25 minutes).
@@ -508,6 +509,8 @@ basics.add: Add
 basics.edit: Edit
 basics.delete: Delete
 basics.cancel: Cancel
+basics.open: Open
+basics.tomorrow: Tomorrow
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

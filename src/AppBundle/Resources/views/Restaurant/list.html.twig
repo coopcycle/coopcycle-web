@@ -1,25 +1,33 @@
 {% extends "AppBundle::base.html.twig" %}
 
 {% block body %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-11 col-md-offset-1 restaurant-list-filter">
-        {# hidden form filled with javascript #}
-        <form class="form-inline" method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
-          <input type="hidden" name="geohash" value={{ geohash }}>
-          <input type="hidden" name="datetime">
-        </form>
-        <div id="restaurant-list-filter">
+
+<header class="restaurant-list-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div id="address-search">
+          <!-- This will be replaced by React -->
+          <div class="form-group">
+            <input class="form-control" />
+          </div>
         </div>
+      </div>
     </div>
   </div>
+  <form method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
+    <input type="hidden" name="geohash" value={{ geohash }}>
+    <div id="address-search"></div>
+  </form>
+</header>
+<div class="container">
 
   {%  if count == 0 %}
-      <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
-          {{ 'norestaurantfound'|trans|raw }}
-      </div>
+    <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+      {{ 'restaurants.no_results'|trans|raw }}
+    </div>
   {% else %}
-    <div class="row display-flex">
+    <div class="row display-flex restaurant-list">
       {% for restaurant in restaurants %}
       <div class="col-sm-6 col-md-4 display-flex">
 
@@ -50,17 +58,48 @@
 
         {% endif %}
 
-        <a class="thumbnail restaurant-item" href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
-          <img src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+        {% set isOpen = restaurant.isOpen %}
+
+        <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
+          href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
+          <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
           <div class="caption">
-            <h3>{{ restaurant.name|truncate(24, false, '…') }}</h3>
-            <small>{{ restaurant.address.streetAddress }}</small>
-            <p>
-              {% for cuisineName in cuisineNames %}
-              <span class="label label-info">{{ cuisineName }}</span>
-              {% endfor %}
-            </p>
+            <h4>{{ restaurant.name|truncate(24, false, '…') }}</h4>
+            <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
           </div>
+          <div class="restaurant-item__top-right">
+            {% if isOpen %}
+              <span class="btn btn-sm btn-success">
+                <i class="fa fa-check"></i>
+                <span>
+                  {{ 'basics.open'|trans }}
+                </span>
+              </span>
+            {% else %}
+              <span class="btn btn-sm btn-warning">
+                <i class="fa fa-clock-o"></i>
+                <span>
+                  {% set nextOpeningDate = restaurant.nextOpeningDate %}
+                  {# Open later on same day #}
+                  {% if nextOpeningDate|date('Y-m-d') == 'now'|date('Y-m-d') %}
+                    {{ nextOpeningDate|localizeddate('none', 'short') }}
+                  {# Open tomorrow #}
+                  {% elseif nextOpeningDate|date('Y-m-d') == 'tomorrow'|date('Y-m-d') %}
+                    {{ 'basics.tomorrow'|trans }} {{ nextOpeningDate|localizeddate('none', 'short') }}
+                  {% else %}
+                    {{ time_diff(nextOpeningDate) }}
+                  {% endif %}
+                </span>
+              </span>
+            {% endif %}
+          </div>
+          {% if not restaurant.enabled and is_granted('ROLE_ADMIN') %}
+            <div class="restaurant-item__top-left">
+              <span class="btn btn-sm btn-warning">
+                <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }}
+              </span>
+            </div>
+          {% endif %}
         </a>
 
       </div>
@@ -78,7 +117,6 @@
 {% block scripts %}
   <script>
     window.AppData = window.AppData || {};
-    window.AppData.searchDate = "{{ searchDate }}";
     window.AppData.geohash = "{{ geohash }}";
     window.AppData.addresses = [];
     {% for address in  addresses %}
