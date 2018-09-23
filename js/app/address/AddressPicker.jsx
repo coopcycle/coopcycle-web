@@ -1,6 +1,7 @@
 import React from 'react';
 import PlacesAutocomplete, { geocodeByAddress } from 'react-places-autocomplete';
 import PropTypes from 'prop-types';
+import i18n from '../i18n'
 
 const autocompleteOptions = {
   types: ['address'],
@@ -122,7 +123,7 @@ class AddressPicker extends React.Component {
     inputProps.onChange = this.onAddressChange
     inputProps.onBlur = this.onBlur
     inputProps.onKeyUp = this.onAddressKeyUp
-    inputProps.placeholder = this.placeholder
+    inputProps.placeholder = i18n.t('ENTER_YOUR_ADDRESS')
 
     return (
       <div className="autocomplete-wrapper">

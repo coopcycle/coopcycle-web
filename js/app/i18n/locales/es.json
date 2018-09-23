@@ -71,6 +71,7 @@
     "RESTAURANT_LIST_FILTER_ASAP": "Lo antes posible",
     "RESTAURANT_LIST_FILTER_LATER": "Más tarde",
     "CART_TOTAL": "Total",
-    "CART_TOTAL_PRODUCTS": "Total productos"
+    "CART_TOTAL_PRODUCTS": "Total productos",
+    "ENTER_YOUR_ADDRESS": "Ingrese su dirección"
     }
 }
