@@ -23,9 +23,11 @@ function onPlaceChange (geohash, address) {
   }
 }
 
-render(<AddressPicker
-  geohash={ initialGeohash }
-  address={ address }
-  onPlaceChange={ onPlaceChange }
-  preferredResults={ preferredResults } />,
-document.getElementById('address-search'));
+window.initMap = () => {
+  render(<AddressPicker
+    geohash={ initialGeohash }
+    address={ address }
+    onPlaceChange={ onPlaceChange }
+    preferredResults={ preferredResults } />,
+  document.getElementById('address-search'));
+}
