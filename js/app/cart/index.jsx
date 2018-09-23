@@ -147,7 +147,7 @@ class CartHelper {
   }
 
   _onAddressChange(streetAddress) {
-    window._paq.push(['trackEvent', 'Checkout', 'changeAddress']);
+    window._paq.push(['trackEvent', 'Checkout', 'changeAddress', streetAddress]);
     this
       ._geocode(streetAddress)
       .then(address => this.updateCart({ address }))
