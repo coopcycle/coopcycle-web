@@ -28,7 +28,8 @@ class Cart extends React.Component
       address: streetAddress,
       geohash: geohash,
       errors: {},
-      loading: false
+      loading: false,
+      initialized: false,
     }
 
     this.onAddressChange = this.onAddressChange.bind(this)
@@ -92,6 +93,13 @@ class Cart extends React.Component
   }
 
   setCart(cart) {
+
+    const { initialized } = this.state
+
+    if (!initialized) {
+      cart = { ...cart, initialized: true }
+    }
+
     this.setState(cart)
   }
 
@@ -169,11 +177,21 @@ class Cart extends React.Component
 
   renderHeading(warningAlerts, dangerAlerts) {
 
-    const { toggled } = this.state
+    const { toggled, initialized } = this.state
+    const { validateCartURL } = this.props
 
     const headingClasses = ['panel-heading', 'cart-heading']
     if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
       headingClasses.push('cart-heading--warning')
+    }
+
+    if (initialized && warningAlerts.length === 0 && dangerAlerts.length === 0) {
+      headingClasses.push('cart-heading--success')
+    }
+
+    const onButtonClick = e => {
+      window.location.href = validateCartURL
+      e.stopPropagation()
     }
 
     return (
@@ -188,6 +206,9 @@ class Cart extends React.Component
         <span className="cart-heading__right" ref="headingRight">
           <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
         </span>
+        <button onClick={ onButtonClick } className="cart-heading__button">
+          <i className="fa fa-arrow-right "></i>
+        </button>
       </div>
     )
   }
@@ -213,6 +234,8 @@ class Cart extends React.Component
   }
 
   headingTitle(warnings, errors) {
+    const { initialized } = this.state
+
     if (errors.length > 0) {
       return _.first(errors)
     }
@@ -220,7 +243,7 @@ class Cart extends React.Component
       return _.first(warnings)
     }
 
-    return i18n.t('CART_TITLE')
+    return initialized ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
   }
 
   render() {
@@ -250,10 +273,6 @@ class Cart extends React.Component
     } else {
       cartContent = ( <div className="alert alert-warning">{i18n.t("CART_EMPTY")}</div> )
     }
-
-    const itemCount = _.reduce(items, function(memo, item) {
-      return memo + (item.quantity);
-    }, 0)
 
     const warningAlerts = []
     const dangerAlerts = []
