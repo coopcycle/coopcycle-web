@@ -8,6 +8,7 @@
       <div class="col-md-6 col-md-offset-3">
         <div id="address-search">
           <!-- This will be replaced by React -->
+          <!-- Do NOT put the component inside the form -->
           <div class="form-group">
             <input class="form-control" />
           </div>
@@ -15,6 +16,7 @@
       </div>
     </div>
   </div>
+  <!-- Do NOT put the search component inside the form -->
   <form method="GET" id="restaurant-search-form" action="{{ path('restaurants') }}">
     <input type="hidden" name="geohash" value={{ geohash }}>
     <div id="address-search"></div>

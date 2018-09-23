@@ -18,14 +18,19 @@
         <h1 class="banner-title">{%  trans %}index.banner{% endtrans %}</h1>
       </div>
       <div class="col-xs-12 col-md-4 banner-search">
-        <form method="GET" id="address-search-form" action="{{ path('restaurants') }}">
-          <input type="hidden" name="geohash">
-          <div id="address-search">
+        <div id="address-search">
+          <!-- This will be replaced by React -->
+          <div class="form-group">
+            <input class="form-control" />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
+  <!-- Do NOT put the search component inside the form -->
+  <form method="GET" id="address-search-form" action="{{ path('restaurants') }}">
+    <input type="hidden" name="geohash">
+  </form>
 </section>
 
 <section class="homepage-map">
