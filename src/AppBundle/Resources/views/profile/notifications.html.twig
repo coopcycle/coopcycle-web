@@ -1,0 +1,14 @@
+{% extends "@App/profile.html.twig" %}
+
+{% block content %}
+<table class="table">
+  <tbody>
+    {% for notification in notifications %}
+      <tr>
+        <td>{{ notification.message }}</td>
+        <td class="text-right">{{ notification.createdAt|ago }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

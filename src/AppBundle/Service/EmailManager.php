@@ -90,7 +90,7 @@ class EmailManager
     public function createOrderCreatedMessageForCustomer(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
+        $body = $this->templating->render('@App/emails/order/created.html.twig', [
             'order' => $order,
         ]);
 
@@ -103,7 +103,7 @@ class EmailManager
             'owner.order.created.subject',
             ['%order.number%' => $order->getNumber()],
             'emails');
-        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
+        $body = $this->templating->render('@App/emails/order/created.html.twig', [
             'order' => $order,
             'is_owner' => true
         ]);
@@ -114,7 +114,7 @@ class EmailManager
     public function createOrderCreatedMessageForAdmin(OrderInterface $order)
     {
         $subject = $this->translator->trans('admin.order.created.subject', [], 'emails');
-        $body = $this->templating->render('@App/Emails/Order/created.html.twig', [
+        $body = $this->templating->render('@App/emails/order/created.html.twig', [
             'order' => $order,
             'is_admin' => true
         ]);
@@ -125,7 +125,7 @@ class EmailManager
     public function createOrderCancelledMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/Emails/Order/cancelled.html.twig', [
+        $body = $this->templating->render('@App/emails/order/cancelled.html.twig', [
             'order' => $order,
         ]);
 
@@ -135,7 +135,7 @@ class EmailManager
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/Emails/Order/accepted.html.twig', [
+        $body = $this->templating->render('@App/emails/order/accepted.html.twig', [
             'order' => $order,
         ]);
 

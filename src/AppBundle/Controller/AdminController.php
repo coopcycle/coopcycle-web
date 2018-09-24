@@ -78,7 +78,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin", name="admin_index")
-     * @Template("@App/Admin/dashboard.html.twig")
+     * @Template("@App/admin/dashboard.html.twig")
      */
     public function indexAction(Request $request)
     {
@@ -182,7 +182,7 @@ class AdminController extends Controller
             }
         }
 
-        return $this->render('@App/Order/service.html.twig', [
+        return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/admin.html.twig',
             'order' => $order,
             'delivery' => $order->getDelivery(),
@@ -308,7 +308,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
-     * @Template("@App/User/tracking.html.twig")
+     * @Template("@App/user/tracking.html.twig")
      */
     public function userTrackingAction($username, Request $request)
     {
@@ -413,7 +413,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/settings/taxation/new", name="admin_taxation_settings_new")
-     * @Template("@App/Admin/taxationForm.html.twig")
+     * @Template("@App/admin/taxation_form.html.twig")
      */
     public function newTaxationAction(Request $request)
     {
@@ -462,7 +462,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/settings/taxation/{code}", name="admin_taxation_settings_edit")
-     * @Template("@App/Admin/taxationForm.html.twig")
+     * @Template("@App/admin/taxation_form.html.twig")
      */
     public function editTaxationAction($code, Request $request)
     {
@@ -507,14 +507,14 @@ class AdminController extends Controller
             }
         }
 
-        return $this->render('@App/Admin/tags.html.twig', [
+        return $this->render('@App/admin/tags.html.twig', [
             'tags' => $tags
         ]);
     }
 
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
-     * @Template("AppBundle:Admin:pricing.html.twig")
+     * @Template("@App/admin/pricing.html.twig")
      */
     public function pricingRuleSetsAction(Request $request)
     {
@@ -577,7 +577,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries/pricing/new", name="admin_deliveries_pricing_ruleset_new")
-     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     * @Template("@App/admin/pricing_rule_set.html.twig")
      */
     public function newPricingRuleSetAction(Request $request)
     {
@@ -588,7 +588,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/deliveries/pricing/{id}", name="admin_deliveries_pricing_ruleset")
-     * @Template("AppBundle:Admin:pricingRuleSet.html.twig")
+     * @Template("@App/admin/pricing_rule_set.html.twig")
      */
     public function pricingRuleSetAction($id, Request $request)
     {
@@ -789,7 +789,7 @@ class AdminController extends Controller
 
                         $form->addError(new FormError($message));
 
-                        return $this->render('@App/Admin/taskModalContent.html.twig', [
+                        return $this->render('@App/admin/task_modal_content.html.twig', [
                             'form' => $form->createView(),
                             'task' => $task
                         ]);
@@ -819,7 +819,7 @@ class AdminController extends Controller
             return new JsonResponse($taskNormalized);
         }
 
-        return $this->render('@App/Admin/taskModalContent.html.twig', [
+        return $this->render('@App/admin/task_modal_content.html.twig', [
             'form' => $form->createView(),
             'task' => $task
         ]);

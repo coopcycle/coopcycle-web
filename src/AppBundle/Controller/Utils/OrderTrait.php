@@ -47,7 +47,7 @@ trait OrderTrait
 
         $this->accessControl($order);
 
-        $html = $this->renderView('AppBundle:Order:invoice.html.twig', [
+        $html = $this->renderView('@App/order/invoice.html.twig', [
             'order' => $order
         ]);
 

@@ -108,7 +108,7 @@ class PublicController extends Controller
             ->getRepository(Delivery::class)
             ->findOneByOrder($order);
 
-        $html = $this->renderView('@App/Pdf/delivery.html.twig', [
+        $html = $this->renderView('@App/pdf/delivery.html.twig', [
             'order' => $order,
             'delivery' => $delivery,
             'customer' => $order->getCustomer()

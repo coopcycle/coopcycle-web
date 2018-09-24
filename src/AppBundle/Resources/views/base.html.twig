@@ -12,7 +12,7 @@
   </head>
   <body>
     {% block menu %}
-      {% include "AppBundle::menu.html.twig" %}
+      {% include "@App/menu.html.twig" %}
     {% endblock %}
     {% block banner %}
       {% if is_demo %}
@@ -99,12 +99,12 @@
       }
     </script>
 
-    {% include "AppBundle::_partials/mapHelper.html.twig" %}
+    {% include "@App/_partials/map_helper.html.twig" %}
     {% block scripts %}{% endblock %}
 
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}
-    {% include "AppBundle::_partials/piwik.html.twig" %}
+    {% include "@App/_partials/piwik.html.twig" %}
   </body>
 </html>

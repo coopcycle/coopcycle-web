@@ -56,11 +56,8 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/edit", name="profile_edit")
      * @Template()
-     *
-     * @param Request $request
-     * @return array
      */
-    public function editProfile(Request $request) {
+    public function editProfileAction(Request $request) {
 
         $user = $this->getUser();
 
@@ -117,7 +114,7 @@ class ProfileController extends Controller
         }
 
         if ($order->isFoodtech()) {
-            return $this->render('@App/Order/foodtech.html.twig', [
+            return $this->render('@App/order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
@@ -142,7 +139,7 @@ class ProfileController extends Controller
             }
         }
 
-        return $this->render('@App/Order/service.html.twig', [
+        return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
             'delivery' => $order->getDelivery(),
@@ -213,7 +210,7 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/tracking/{date}", name="profile_tracking")
-     * @Template("@App/User/tracking.html.twig")
+     * @Template("@App/user/tracking.html.twig")
      */
     public function trackingAction($date, Request $request)
     {
@@ -317,7 +314,7 @@ class ProfileController extends Controller
 
         $notificationRepository->markAllAsRead($this->getUser());
 
-        return $this->render('@App/Profile/notifications.html.twig', [
+        return $this->render('@App/profile/notifications.html.twig', [
             'notifications' => $notifications
         ]);
     }

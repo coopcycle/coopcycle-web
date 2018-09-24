@@ -1,0 +1,63 @@
+{% extends "@App/base.html.twig" %}
+
+{% block body %}
+
+{# {% set examples = {
+  'Oberkampf': path('restaurants', { geohash: 'u09typ9kp93' }),
+  'Châtelet': path('restaurants', { geohash: 'u09tvqjrnvr' }),
+  'Opéra': path('restaurants', { geohash: 'u09tvpgsem8' }),
+  'République': path('restaurants', { geohash: 'u09wjb108ub' }),
+} %} #}
+
+{% set examples = {} %}
+
+<section class="homepage-search">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-4 col-md-offset-2">
+        <h1 class="banner-title">{%  trans %}index.banner{% endtrans %}</h1>
+      </div>
+      <div class="col-xs-12 col-md-4 banner-search">
+        <div id="address-search">
+          <!-- This will be replaced by React -->
+          <div class="form-group">
+            <input class="form-control" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Do NOT put the search component inside the form -->
+  <form method="GET" id="address-search-form" action="{{ path('restaurants') }}">
+    <input type="hidden" name="geohash">
+  </form>
+</section>
+
+<section class="homepage-map">
+  <div class="container">
+    <p class="text-center">{% trans %}index.map.tip{% endtrans %}</p>
+    <p class="text-center"><i class="fa fa-chevron-down"></i></p>
+    <div class="embed-responsive embed-responsive-16by9">
+      <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.AppData = window.AppData || {};
+    window.AppData.addresses = [];
+    {% for address in  addresses %}
+      window.AppData.addresses.push({
+        'city': "{{ address.addressLocality }}",
+        'postalCode': "{{ address.postalCode }}",
+        'streetAddress': "{{ address.streetAddress }}",
+      });
+    {% endfor %}
+  </script>
+  <script src="{{ asset('js/homepage.js') }}"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+
+{% endblock %}
