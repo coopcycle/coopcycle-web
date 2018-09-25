@@ -59,7 +59,7 @@ profile_restaurants:
     defaults:
         _controller: AppBundle:Profile:restaurantList
         layout: '@App/profile.html.twig'
-        template: '@App/Profile/restaurants.html.twig'
+        template: '@App/profile/restaurants.html.twig'
         routes:
             dashboard: profile_restaurant_dashboard
             menu_taxon: profile_restaurant_menu_taxon
@@ -294,7 +294,7 @@ profile_stores:
     defaults:
         _controller: AppBundle:Profile:storeList
         layout: '@App/profile.html.twig'
-        template: '@App/Profile/stores.html.twig'
+        template: '@App/profile/stores.html.twig'
         routes:
             store: profile_store
             store_delivery: profile_store_delivery
