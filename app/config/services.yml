@@ -410,16 +410,16 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Restaurant
+    calls:
+      - method: setRestaurantFilter
+        arguments:
+            - '@coopcycle.utils.restaurant_filter'
 
   routing_service:
     public: true
     class: AppBundle\Service\Routing\Osrm
     arguments:
       - '@csa_guzzle.client.osrm'
-
-  'AppBundle\Filter\RestaurantFilter':
-    arguments: [ '@doctrine', '@request_stack', '@logger', { distance: "exact", coordinate: "exact" } ]
-    tags: [ 'api_platform.filter' ]
 
   'AppBundle\Filter\OrderDateFilter':
     tags: [ 'api_platform.filter' ]
@@ -637,3 +637,18 @@ services:
       - "@annotation_reader"
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
+
+  'AppBundle\Api\DataProvider\RestaurantCollectionDataProvider':
+      arguments:
+        $managerRegistry: '@doctrine'
+        $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+        $restaurantFilter: '@coopcycle.utils.restaurant_filter'
+      tags:
+        - { name: 'api_platform.collection_data_provider', priority: 2 }
+      autoconfigure: false
+
+  coopcycle.utils.restaurant_filter:
+      class: AppBundle\Utils\RestaurantFilter
+      arguments:
+        - '@routing_service'
+        - '@coopcycle.expression_language'

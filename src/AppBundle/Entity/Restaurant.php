@@ -10,7 +10,6 @@ use AppBundle\Action\Restaurant\Close as CloseRestaurant;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
-use AppBundle\Filter\RestaurantFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
@@ -33,7 +32,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
- *     "filters"={RestaurantFilter::class},
  *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   },

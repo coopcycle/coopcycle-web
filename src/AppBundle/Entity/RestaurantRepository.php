@@ -2,12 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Restaurant;
+use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 class RestaurantRepository extends EntityRepository
 {
+    private $restaurantFilter;
+
+    public function setRestaurantFilter(RestaurantFilter $restaurantFilter)
+    {
+        $this->restaurantFilter = $restaurantFilter;
+    }
+
     // TODO : fix this to check that restaurants are really in delivery/radius zone
     private function createNearbyQueryBuilder($latitude, $longitude, $distance = 3500)
     {
@@ -68,6 +77,16 @@ class RestaurantRepository extends EntityRepository
         $qb->orderBy('distance');
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * We will obsviously have a fairly small amount of restaurants.
+     * So, there is not significant performance downside in loading them all.
+     * Event with 50 restaurants, it takes ~ 500ms to complete.
+     */
+    public function findByLatLng($latitude, $longitude)
+    {
+        return $this->restaurantFilter->matchingLatLng($this->findAll(), $latitude, $longitude);
     }
 
     public function search($q)

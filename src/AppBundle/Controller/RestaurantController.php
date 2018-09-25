@@ -109,7 +109,7 @@ class RestaurantController extends Controller
             // $count = $repository->countNearby($latitude, $longitude, 1500);
             // $matches = $repository->findNearby($latitude, $longitude, 1500, , self::ITEMS_PER_PAGE, $offset);
 
-            $matches = $repository->findNearby($latitude, $longitude, 2200);
+            $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
 
             // FIXME : can't use SQL because we want to filter by date as well :(
