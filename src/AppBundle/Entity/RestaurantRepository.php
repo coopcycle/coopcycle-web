@@ -95,4 +95,34 @@ class RestaurantRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findRandom($maxResults = 3)
+    {
+        // Do not use ORDER BY RAND()
+        // @see https://github.com/doctrine/doctrine2/issues/5479
+        $qb = $this->createQueryBuilder('r');
+
+        $rows = $qb
+            ->select('r.id')
+            ->andWhere($qb->expr()->eq(
+                'r.enabled',
+                $qb->expr()->literal(true)
+            ))
+            ->getQuery()
+            ->getArrayResult();
+
+        shuffle($rows);
+
+        $rows = array_slice($rows, 0, $maxResults);
+
+        $ids = array_map(function ($row) {
+            return $row['id'];
+        }, $rows);
+
+        return $this->createQueryBuilder('r')
+            ->where('r.id IN (:ids)')
+            ->setParameter('ids', array_values($ids))
+            ->getQuery()
+            ->getResult();
+    }
 }

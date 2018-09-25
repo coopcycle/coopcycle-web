@@ -185,6 +185,13 @@ h1, h2, h3, h4, h5, h6 {
   color: #ccc;
 }
 
+.homepage-restaurants {
+  &__title {
+    text-align: center;
+    margin: 20px 0;
+  }
+}
+
 #search small {
   color: #fff;
 }
@@ -365,6 +372,11 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     width: 400px;
     height: 300px;
     object-fit: cover;
+    &--placeholder {
+      object-fit: contain;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+    }
   }
 }
 

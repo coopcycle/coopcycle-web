@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -28,8 +28,13 @@ class IndexController extends Controller
             $addresses = [];
         }
 
+        $restaurants = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->findRandom(3);
+
         return array(
-            'addresses' => $addresses
+            'addresses' => $addresses,
+            'restaurants' => $restaurants,
         );
     }
 }
