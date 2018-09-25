@@ -110,6 +110,8 @@ help.home: Home
 
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try with a different address
 restaurants.visible_by_you_only: Visible by you only
+restaurants.placeholder.title: A bit of patience…
+restaurants.placeholder.text: New restaurants are coming soon!
 
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before the customer can order. This setting don't change the times kept for cooking (20 minutes) and cycling (25 minutes).
@@ -496,6 +498,7 @@ admin.settings.missing_mandatory_settings: |
 
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered at your place
+index.our_restaurants: Our restaurants
 
 notifications.empty: No notifications
 notifications.order.created: New order

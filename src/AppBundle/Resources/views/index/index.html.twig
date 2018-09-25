@@ -15,7 +15,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-md-4 col-md-offset-2">
-        <h1 class="banner-title">{%  trans %}index.banner{% endtrans %}</h1>
+        <h1 class="banner-title">{% trans %}index.banner{% endtrans %}</h1>
       </div>
       <div class="col-xs-12 col-md-4 banner-search">
         <div id="address-search">
@@ -31,6 +31,33 @@
   <form method="GET" id="address-search-form" action="{{ path('restaurants') }}">
     <input type="hidden" name="geohash">
   </form>
+</section>
+
+<section class="homepage-restaurants">
+  <div class="container">
+    <h2 class="homepage-restaurants__title">{% trans %}index.our_restaurants{% endtrans %}</h2>
+    <div class="row display-flex restaurant-list">
+      {% for restaurant in restaurants %}
+        <div class="col-xs-12 col-md-4 display-flex">
+          {% include "@App/_partials/restaurant/list_thumbnail.html.twig" %}
+        </div>
+      {% endfor %}
+      {% if restaurants|length < 3 %}
+        {% set pad = (3 - restaurants|length) %}
+        {% for i in range(0, (pad - 1)) %}
+          <div class="col-xs-12 col-md-4 display-flex">
+            <div class="thumbnail restaurant-item">
+              <img class="restaurant-image restaurant-image--placeholder" src="{{ asset('img/restaurant/placeholder.png') }}">
+              <div class="caption">
+                <h4>{% trans %}restaurants.placeholder.title{% endtrans %}</h4>
+                <p class="text-muted">{% trans %}restaurants.placeholder.text{% endtrans %}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
 </section>
 
 <section class="homepage-map">
