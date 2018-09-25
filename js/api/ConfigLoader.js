@@ -9,11 +9,25 @@ var ConfigLoader = function(filename) {
   this.dirname = path.dirname(filename);
 };
 
+/**
+ * Adds a custom type to support tagged services
+ * @see https://symfony.com/blog/new-in-symfony-3-4-simpler-injection-of-tagged-services
+ * @see https://github.com/nodeca/js-yaml/wiki/Custom-types
+ */
+var TaggedYamlType = new YAML.Type('!tagged', {
+  kind: 'scalar',
+  construct: function (data) {
+    return data;
+  },
+});
+
+var SYMFONY_SCHEMA = YAML.Schema.create([ TaggedYamlType ]);
+
 function loadAndMerge(filename, dirname, parent) {
 
   try {
 
-    var data = YAML.load(fs.readFileSync(filename, 'utf8'));
+    var data = YAML.load(fs.readFileSync(filename, 'utf8'), { schema: SYMFONY_SCHEMA });
 
     var imports = data.imports && Array.isArray(data.imports) ? data.imports : [];
     delete data.imports;
