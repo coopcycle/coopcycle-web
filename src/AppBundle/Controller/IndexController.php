@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class IndexController extends Controller
 {
+    const MAX_RESULTS = 3;
+
     /**
      * @Route("/", name="homepage")
      * @Template
@@ -30,11 +32,12 @@ class IndexController extends Controller
 
         $restaurants = $this->getDoctrine()
             ->getRepository(Restaurant::class)
-            ->findRandom(3);
+            ->findRandom(self::MAX_RESULTS);
 
         return array(
             'addresses' => $addresses,
             'restaurants' => $restaurants,
+            'max_results' => self::MAX_RESULTS,
         );
     }
 }
