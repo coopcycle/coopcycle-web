@@ -14,13 +14,7 @@ Feature: Manage restaurants
       "@id":"/api/restaurants",
       "@type":"hydra:Collection",
       "hydra:member":@array@,
-      "hydra:totalItems":3,
-      "hydra:search":{
-        "@type":"hydra:IriTemplate",
-        "hydra:template":"/api/restaurants{?coordinate,distance}",
-        "hydra:variableRepresentation":"BasicRepresentation",
-        "hydra:mapping":@array@
-      }
+      "hydra:totalItems":3
     }
     """
 
@@ -28,7 +22,7 @@ Feature: Manage restaurants
     Given the database is empty
     And the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
-    And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116&distance=1500"
+    And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:

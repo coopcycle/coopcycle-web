@@ -2,18 +2,19 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Restaurant;
+use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RestaurantRepository extends EntityRepository
 {
-    private $authorizationChecker;
+    private $restaurantFilter;
 
-    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
+    public function setRestaurantFilter(RestaurantFilter $restaurantFilter)
     {
-        $this->authorizationChecker = $authorizationChecker;
+        $this->restaurantFilter = $restaurantFilter;
     }
 
     // TODO : fix this to check that restaurants are really in delivery/radius zone
@@ -22,13 +23,6 @@ class RestaurantRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r');
 
         self::addNearbyQueryClause($qb, $latitude, $longitude, $distance);
-
-        if (!$this->authorizationChecker || ($this->authorizationChecker && !$this->authorizationChecker->isGranted('ROLE_ADMIN'))) {
-            $qb->andWhere($qb->expr()->eq(
-                'r.enabled',
-                $qb->expr()->literal(true)
-            ));
-        }
 
         return $qb;
     }
@@ -85,6 +79,16 @@ class RestaurantRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * We will obsviously have a fairly small amount of restaurants.
+     * So, there is not significant performance downside in loading them all.
+     * Event with 50 restaurants, it takes ~ 500ms to complete.
+     */
+    public function findByLatLng($latitude, $longitude)
+    {
+        return $this->restaurantFilter->matchingLatLng($this->findAll(), $latitude, $longitude);
+    }
+
     public function search($q)
     {
         $qb = $this->createQueryBuilder('r');
@@ -104,10 +108,6 @@ class RestaurantRepository extends EntityRepository
 
         $rows = $qb
             ->select('r.id')
-            ->andWhere($qb->expr()->eq(
-                'r.enabled',
-                $qb->expr()->literal(true)
-            ))
             ->getQuery()
             ->getArrayResult();
 

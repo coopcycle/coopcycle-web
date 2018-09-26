@@ -411,19 +411,15 @@ services:
     arguments:
       - AppBundle\Entity\Restaurant
     calls:
-      - method: setAuthorizationChecker
+      - method: setRestaurantFilter
         arguments:
-            - '@security.authorization_checker'
+            - '@coopcycle.utils.restaurant_filter'
 
   routing_service:
     public: true
     class: AppBundle\Service\Routing\Osrm
     arguments:
       - '@csa_guzzle.client.osrm'
-
-  'AppBundle\Filter\RestaurantFilter':
-    arguments: [ '@doctrine', '@request_stack', '@logger', { distance: "exact", coordinate: "exact" } ]
-    tags: [ 'api_platform.filter' ]
 
   'AppBundle\Filter\OrderDateFilter':
     tags: [ 'api_platform.filter' ]
@@ -632,3 +628,27 @@ services:
       - '@security.token_storage'
       - '@lexik_jwt_authentication.jwt_manager.not_expiring'
       - '@event_dispatcher'
+
+  coopcycle.doctrine.filter.enabled.configurator:
+    class: AppBundle\EventListener\EnabledFilterConfigurator
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@security.authorization_checker"
+      - "@annotation_reader"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: 5 }
+
+  'AppBundle\Api\DataProvider\RestaurantCollectionDataProvider':
+      arguments:
+        $managerRegistry: '@doctrine'
+        $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+        $restaurantFilter: '@coopcycle.utils.restaurant_filter'
+      tags:
+        - { name: 'api_platform.collection_data_provider', priority: 2 }
+      autoconfigure: false
+
+  coopcycle.utils.restaurant_filter:
+      class: AppBundle\Utils\RestaurantFilter
+      arguments:
+        - '@routing_service'
+        - '@coopcycle.expression_language'
