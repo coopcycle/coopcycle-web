@@ -410,10 +410,6 @@ services:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Restaurant
-    calls:
-      - method: setAuthorizationChecker
-        arguments:
-            - '@security.authorization_checker'
 
   routing_service:
     public: true
@@ -632,3 +628,12 @@ services:
       - '@security.token_storage'
       - '@lexik_jwt_authentication.jwt_manager.not_expiring'
       - '@event_dispatcher'
+
+  coopcycle.doctrine.filter.enabled.configurator:
+    class: AppBundle\EventListener\EnabledFilterConfigurator
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@security.authorization_checker"
+      - "@annotation_reader"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: 5 }

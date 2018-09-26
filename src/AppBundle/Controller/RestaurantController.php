@@ -115,7 +115,7 @@ class RestaurantController extends Controller
             // FIXME : can't use SQL because we want to filter by date as well :(
             // $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
 
-            $matches = $repository->findBy(['enabled' => true], ['name' => 'ASC']);
+            $matches = $repository->findBy([], ['name' => 'ASC']);
         }
 
         $count = count($matches);
