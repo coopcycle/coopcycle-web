@@ -6,6 +6,7 @@ use AppBundle\Entity\Restaurant;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,6 +24,10 @@ class RestaurantType extends LocalBusinessType
             ])
             ->add('orderingDelayHours', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayHours',
+                'mapped' => false
+            ])
+            ->add('allowStripeConnect', CheckboxType::class, [
+                'label' => 'restaurant.form.allow_stripe_connect.label',
                 'mapped' => false
             ]);
 
@@ -43,6 +48,10 @@ class RestaurantType extends LocalBusinessType
 
             $form->get('orderingDelayHours')->setData($orderingDelayHours);
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
+
+            if (in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
+                $form->get('allowStripeConnect')->setData(true);
+            }
         });
 
         $builder->addEventListener(
@@ -52,6 +61,15 @@ class RestaurantType extends LocalBusinessType
                 $orderingDelayDays = $event->getForm()->get('orderingDelayDays')->getData();
                 $orderingDelayHours = $event->getForm()->get('orderingDelayHours')->getData();
                 $restaurant->setOrderingDelayMinutes($orderingDelayDays * 60 * 24 + $orderingDelayHours * 60);
+
+                $allowStripeConnect = $event->getForm()->get('allowStripeConnect')->getData();
+                if ($allowStripeConnect) {
+                    $stripeConnectRoles = $restaurant->getStripeConnectRoles();
+                    if (!in_array('ROLE_RESTAURANT', $stripeConnectRoles)) {
+                        $stripeConnectRoles[] = 'ROLE_RESTAURANT';
+                        $restaurant->setStripeConnectRoles($stripeConnectRoles);
+                    }
+                }
             }
         );
 

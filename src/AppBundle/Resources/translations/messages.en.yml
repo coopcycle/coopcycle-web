@@ -139,12 +139,12 @@ restaurant.noMenuWarning: |
   This restaurant has no menu for now
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
+restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe account on its own
 restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant, follow this link
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.contract.title: Contract
-restaurant.stripe_account.title: Stripe Account
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries. You can chose a radius (in km) or a <a target="_blank" href="%zoneHelpUrl%">zone</a>.
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
@@ -387,11 +387,10 @@ form.registration.username.help: |
   A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
 
 form.local_business.stripe_account.title: Stripe account
-form.local_business.stripe_account.help: Connect your Stripe account to receive money on your bank account
+form.local_business.stripe_account.help: Connect a Stripe account to transfer money to another bank account
 form.local_business.stripe_account.connect_button.text: Connect with Stripe
-form.local_business.stripe_account.not_configured: Aún no puedes conectar tu cuenta
-form.local_business.stripe_account.success: Stripe account created successfully.
-form.local_business.stripe_account.admin_warning: No Stripe account created for this restaurant. The Stripe account must be created by the restaurant owner.
+form.local_business.stripe_account.not_configured: You can't connect an account yet
+form.local_business.stripe_account.success: Stripe account connected successfully
 form.local_business.stripe_account.need_stripe_account: |
   You didn't create a Stripe account for this restaurant yet. Stripe is a payment platform which allows us to handle securely card payments and transfers to your bank account.<br>
   To create a Stripe account for this restaurant please <a href="%stripeAuthorizeURL%">click here</a>.

@@ -43,7 +43,7 @@ function renderSwitch($input) {
   $parent.prepend($switch)
 
   const checked = $input.is(':checked'),
-        disabled = !window.AppData.__isActivable
+        disabled = $input.is(':disabled')
 
   if (checked) {
     $parent.prepend($hidden)

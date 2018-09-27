@@ -106,6 +106,9 @@ AppBundle\Entity\Restaurant:
             column: additional_properties
         state:
             type: string
+        stripeConnectRoles:
+            type: json_array
+            column: stripe_connect_roles
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine

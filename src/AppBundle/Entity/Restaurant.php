@@ -213,6 +213,11 @@ class Restaurant extends FoodEstablishment
      */
     private $orders;
 
+    /**
+     * The roles needed to be able to manage Stripe Connect.
+     */
+    private $stripeConnectRoles = ['ROLE_ADMIN'];
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -623,5 +628,17 @@ class Restaurant extends FoodEstablishment
     public function getOrders()
     {
         return $this->orders;
+    }
+
+    public function getStripeConnectRoles()
+    {
+        return $this->stripeConnectRoles;
+    }
+
+    public function setStripeConnectRoles($stripeConnectRoles)
+    {
+        $this->stripeConnectRoles = $stripeConnectRoles;
+
+        return $this;
     }
 }
