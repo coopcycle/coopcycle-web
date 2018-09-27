@@ -88,6 +88,20 @@ class SettingsManager
         return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function canEnableStripeTestmode()
+    {
+        try {
+            $stripeTestPublishableKey = $this->craueConfig->get('stripe_test_publishable_key');
+            $stripeTestSecretKey = $this->craueConfig->get('stripe_test_secret_key');
+            $stripeTestConnectClientId = $this->craueConfig->get('stripe_test_connect_client_id');
+
+            return !empty($stripeTestPublishableKey) && !empty($stripeTestSecretKey) && !empty($stripeTestConnectClientId);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+    }
+
     public function canEnableStripeLivemode()
     {
         try {

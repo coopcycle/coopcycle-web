@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Restaurant;
+use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -11,6 +12,13 @@ use Symfony\Component\Validator\Validation;
 
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
+    private $settingsManager;
+
+    public function __construct(SettingsManager $settingsManager)
+    {
+        $this->settingsManager = $settingsManager;
+    }
+
     public function validate($object, Constraint $constraint)
     {
         $validator = $this->context->getValidator();
@@ -49,9 +57,10 @@ class IsActivableRestaurantValidator extends ConstraintValidator
         // The validations below only make sense when the restaurant is created
         if (null !== $object->getId()) {
 
-            if (is_null($object->getStripeAccount())) {
+            $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+            if (null === $stripeAccount) {
                 $this->context->buildViolation($constraint->stripeAccountMessage)
-                    ->atPath('stripeAccount')
+                    ->atPath('stripeAccounts')
                     ->addViolation();
             }
 

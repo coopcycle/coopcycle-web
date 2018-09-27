@@ -22,6 +22,8 @@ class StripeManager
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
 
+        $livemode = $this->settingsManager->isStripeLivemode();
+
         $stripeToken = $stripePayment->getStripeToken();
 
         if (null === $stripeToken) {
@@ -30,7 +32,7 @@ class StripeManager
         }
 
         $order = $stripePayment->getOrder();
-        $stripeAccount = $order->getRestaurant()->getStripeAccount();
+        $stripeAccount = $order->getRestaurant()->getStripeAccount($livemode);
 
         $stripeParams = [
             'amount' => $stripePayment->getAmount(),

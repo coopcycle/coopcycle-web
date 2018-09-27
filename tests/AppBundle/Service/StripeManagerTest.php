@@ -36,6 +36,10 @@ class StripeManagerTest extends TestCase
         $this->settingsManager = $this->prophesize(SettingsManager::class);
 
         $this->settingsManager
+            ->isStripeLivemode()
+            ->willReturn(false);
+
+        $this->settingsManager
             ->get('stripe_secret_key')
             ->willReturn(self::$stripeApiKey);
 
@@ -64,7 +68,7 @@ class StripeManagerTest extends TestCase
             ->getContract()
             ->willReturn($contract->reveal());
         $restaurant
-            ->getStripeAccount()
+            ->getStripeAccount(false)
             ->willReturn(null);
 
         $order
@@ -111,7 +115,7 @@ class StripeManagerTest extends TestCase
             ->getContract()
             ->willReturn($contract->reveal());
         $restaurant
-            ->getStripeAccount()
+            ->getStripeAccount(false)
             ->willReturn($stripeAccount->reveal());
 
         $order

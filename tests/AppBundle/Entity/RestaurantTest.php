@@ -5,16 +5,19 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validation;
 
-class RestaurantTest extends TestCase
+class RestaurantTest extends KernelTestCase
 {
     private $validator;
 
-    public function setUp()
+    protected function setUp()
     {
-        $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        parent::setUp();
+        self::bootKernel();
+
+        $this->validator = static::$kernel->getContainer()->get('validator');
     }
 
     public function testGetAvailabilities() {

@@ -386,12 +386,12 @@ form.registration.username.help: |
   Your username cannot be longer than 15 characters.
   A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
 
-form.local_business.stripe_account.placeholder: Choose a Stripe account
 form.local_business.stripe_account.title: Stripe account
+form.local_business.stripe_account.help: Connect your Stripe account to receive money on your bank account
+form.local_business.stripe_account.connect_button.text: Connect with Stripe
+form.local_business.stripe_account.not_configured: Aún no puedes conectar tu cuenta
 form.local_business.stripe_account.success: Stripe account created successfully.
 form.local_business.stripe_account.admin_warning: No Stripe account created for this restaurant. The Stripe account must be created by the restaurant owner.
-form.local_business.stripe_account.admin_success: Stripe account created and linked correctly by the restaurant owner.
-form.local_business.stripe_account.save_warning: You need to save this restaurant once before linking it to a Stripe account.
 form.local_business.stripe_account.need_stripe_account: |
   You didn't create a Stripe account for this restaurant yet. Stripe is a payment platform which allows us to handle securely card payments and transfers to your bank account.<br>
   To create a Stripe account for this restaurant please <a href="%stripeAuthorizeURL%">click here</a>.

@@ -163,10 +163,7 @@ class Restaurant extends FoodEstablishment
      */
     private $website;
 
-    /**
-     * @var StripeAccount The StripeAccount of the restaurant.
-     */
-    private $stripeAccount;
+    private $stripeAccounts;
 
     /**
      * @var string
@@ -225,6 +222,7 @@ class Restaurant extends FoodEstablishment
         $this->productOptions = new ArrayCollection();
         $this->taxons = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->stripeAccounts = new ArrayCollection();
     }
 
     /**
@@ -448,16 +446,28 @@ class Restaurant extends FoodEstablishment
         return $this->servesCuisine;
     }
 
-    public function getStripeAccount()
+    public function getStripeAccounts()
     {
-        return $this->stripeAccount;
+        return $this->stripeAccounts;
     }
 
-    public function setStripeAccount(StripeAccount $stripeAccount)
+    public function addStripeAccount(StripeAccount $stripeAccount)
     {
-        $this->stripeAccount = $stripeAccount;
+        $restaurantStripeAccount = new RestaurantStripeAccount();
+        $restaurantStripeAccount->setRestaurant($this);
+        $restaurantStripeAccount->setStripeAccount($stripeAccount);
+        $restaurantStripeAccount->setLivemode($stripeAccount->getLivemode());
 
-        return $this;
+        $this->stripeAccounts->add($restaurantStripeAccount);
+    }
+
+    public function getStripeAccount($livemode)
+    {
+        foreach ($this->getStripeAccounts() as $stripeAccount) {
+            if ($stripeAccount->isLivemode() === $livemode) {
+                return $stripeAccount->getStripeAccount();
+            }
+        }
     }
 
     public function getMenuTaxon()

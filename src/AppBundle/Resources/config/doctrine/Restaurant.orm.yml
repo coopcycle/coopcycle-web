@@ -196,11 +196,6 @@ AppBundle\Entity\Restaurant:
             joinColumns: {  }
             orphanRemoval: false
     manyToOne:
-        stripeAccount:
-            targetEntity: AppBundle\Entity\StripeAccount
-            joinColumns:
-                stripe_account_id:
-                    referencedColumnName: id
         activeMenuTaxon:
             targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
             joinColumns:
@@ -220,5 +215,10 @@ AppBundle\Entity\Restaurant:
         orders:
             targetEntity: Sylius\Component\Order\Model\OrderInterface
             fetch: LAZY
+            mappedBy: restaurant
+        stripeAccounts:
+            targetEntity: AppBundle\Entity\RestaurantStripeAccount
+            cascade:
+                - all
             mappedBy: restaurant
     lifecycleCallbacks: {  }

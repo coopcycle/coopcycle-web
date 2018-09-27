@@ -90,12 +90,13 @@ class StripeController extends Controller
             $this->get('fos_user.user_manager')->updateUser($this->getUser());
 
             if ($request->query->has('state')) {
+
                 $restaurantId = $request->query->get('state');
-                $em = $this->getDoctrine();
-                $restaurant = $em->getRepository(Restaurant::class)->find($restaurantId);
-                $restaurant->setStripeAccount($stripeAccount);
-                $em->getManagerForClass(Restaurant::class)->persist($restaurant);
-                $em->getManagerForClass(Restaurant::class)->flush();
+
+                $restaurant = $this->getDoctrine()->getRepository(Restaurant::class)->find($restaurantId);
+                $restaurant->addStripeAccount($stripeAccount);
+
+                $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
                 return $this->redirectToRoute('profile_restaurant', ['id' => $restaurantId]);
             }
