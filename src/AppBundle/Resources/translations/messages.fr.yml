@@ -129,6 +129,7 @@ restaurant.form.enabled.tooltip: 'Un restaurant désactivé n''est ni visible ni
   n''est pas accessible par les visiteurs.
 
   '
+restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même son compte Stripe
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
   restaurant
 restaurant.form.accessPlanning: Accéder au planning
@@ -138,7 +139,6 @@ restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une <a target="_blank" href="%zoneHelpUrl%">zone</a>.
 restaurant.contract.title: Contrat
-restaurant.stripe_account.title: Compte Stripe
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour
   la livraison
@@ -425,11 +425,10 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
 form.settings.currency_code.label: Devise
 
 form.local_business.stripe_account.title: Compte Stripe
-form.local_business.stripe_account.help: Connectez votre compte Stripe pour recevoir de l'argent sur votre compte bancaire
+form.local_business.stripe_account.help: Connectez un compte Stripe pour transférer de l'argent sur un autre compte bancaire
 form.local_business.stripe_account.connect_button.text: Connexion avec Stripe
-form.local_business.stripe_account.not_configured: Vous ne pouvez pas encore connecter votre compte
-form.local_business.stripe_account.success: Compte Stripe créé avec succès.
-form.local_business.stripe_account.admin_warning: Pour des raisons de sécurité et de confidentialité, le compte Stripe doit être créé par le restaurateur.
+form.local_business.stripe_account.not_configured: Vous ne pouvez pas encore connecter un compte
+form.local_business.stripe_account.success: Compte Stripe connecté avec succès
 form.local_business.stripe_account.need_stripe_account: 'Vous n''avez pas encore créé
   de compte Stripe pour ce restaurant. Stripe est notre prestataire pour les paiements,
   qui nous permet de sécuriser les paiements sur la plateforme et de transférer les

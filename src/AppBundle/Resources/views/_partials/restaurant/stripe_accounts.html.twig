@@ -23,15 +23,9 @@
             <i class="fa fa-check"></i>
           </span>
         {% else %}
-          {% if is_granted('ROLE_RESTAURANT') %}
-            <a href="{{ stripe_oauth_link(restaurant, false) }}" class="stripe-connect">
-              <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
-            </a>
-          {% else %}
-            <span class="text-danger">
-              <i class="fa fa-ban"></i>
-            </span>
-          {% endif %}
+          <a href="{{ stripe_oauth_link(restaurant, false) }}" class="stripe-connect">
+            <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
+          </a>
         {% endif %}
       </td>
     </tr>
@@ -50,7 +44,7 @@
             <i class="fa fa-check"></i>
           </span>
         {% else %}
-          {% if stripe_can_enable_livemode() and is_granted('ROLE_RESTAURANT') %}
+          {% if stripe_can_enable_livemode() %}
             <a href="{{ stripe_oauth_link(restaurant, true) }}" class="stripe-connect">
               <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
             </a>
@@ -63,10 +57,4 @@
       </td>
     </tr>
   </table>
-{% endif %}
-
-{% if is_granted('ROLE_ADMIN') %}
-  <div class="alert alert-warning">
-    {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}
-  </div>
 {% endif %}

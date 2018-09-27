@@ -52,6 +52,8 @@
   </div>
 {% endif  %}
 
+{% set cannot_be_enabled = ('enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys) %}
+
 {{ form_start(form) }}
 
   <div class="row">
@@ -61,7 +63,11 @@
     <div class="col-sm-8">
       {{ form_row(form.name) }}
       <div class="switch-wrapper">
-        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}&nbsp;
+        {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
+        {% if cannot_be_enabled %}
+          {% set enabled_checkbox_attr = enabled_checkbox_attr|merge({ disabled: 'disabled' }) %}
+        {% endif %}
+        {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: enabled_checkbox_attr }) }}
       </div>
       <span class="help-block">
           <i class="fa fa-info-circle"></i>&nbsp;{{ "restaurant.form.enabled.tooltip" | trans | raw }}
@@ -123,8 +129,24 @@
   {% do form.address.setRendered %}
 
   {% if restaurant.id is not null %}
-    <hr>
-    {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
+    {% set show_stripe_connect = false %}
+    {% for role in restaurant.stripeConnectRoles %}
+      {% if is_granted(role) %}
+        {% set show_stripe_connect = true %}
+      {% endif %}
+    {% endfor %}
+    {% if show_stripe_connect %}
+      <hr>
+      {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
+      {% if is_granted('ROLE_ADMIN') %}
+        <div class="alert alert-warning">
+          {{ 'restaurant.form.allow_stripe_connect.label'|trans }}
+          <div class="pull-right">
+            {{ form_widget(form.allowStripeConnect, { attr: { class: 'checkbox switch' }}) }}
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
   {% endif %}
 
   <hr>
@@ -211,7 +233,6 @@
 <script type="text/javascript">
 
   window.AppData = window.AppData || {};
-  window.AppData.__isActivable = {% if 'enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys %}false{% else %}true{% endif %};
   window.AppData.deliveryPerimeterExpression = {{ deliveryPerimeterExpression|raw }};
   window.AppData.zones = {{ zoneNames|raw }};
 

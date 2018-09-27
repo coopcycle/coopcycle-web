@@ -136,6 +136,7 @@ restaurant.form.enabled.tooltip: 'Un restaurante desactivado no és visible en l
   no aparece en los resultados de búsqueda ni es accesible para los visitantes.
 
   '
+restaurant.form.allow_stripe_connect.label: Permitir que el restaurante administre la cuenta Stripe por sí mismo
 restaurant.form.temporaryClosingRule: Si desea cerrar el restaurante temporalmente
   siga el siguiente enlace
 
@@ -147,7 +148,6 @@ restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
 
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
   entrega. Puedes escoger un radio (en km) o una <a target="_blank" href="%zoneHelpUrl%">zona</a>.
-restaurant.stripe_account.title: Cuenta Stripe
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Suma cargada por la plataforma
 restaurant.contract.flatDeliveryPrice.help: Esta suma no se mostrará en el carrito
@@ -410,11 +410,10 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
 
   '
 form.local_business.stripe_account.title: Cuenta Stripe
-form.local_business.stripe_account.help: Conecte tu cuenta Stripe para recibir dinero sobre tu cuenta bancaria
+form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir dinero a otra cuenta bancaria
 form.local_business.stripe_account.connect_button.text: Conéctate con Stripe
-form.local_business.stripe_account.not_configured: You can not connect your account yet
-form.local_business.stripe_account.success: Cuenta Stripe creada con éxito.
-form.local_business.stripe_account.admin_warning: Por razones de seguridad y confidencialidad, la cuenta de Stripe debe ser creada por el propietario del restaurante.
+form.local_business.stripe_account.not_configured: No puedes conectar una cuenta todavía
+form.local_business.stripe_account.success: Cuenta Stripe conectada con éxito
 form.local_business.stripe_account.need_stripe_account: 'Aún no has creado una cuenta
   Stripe para éste restaurante. Stripe és una plataforma de pagos que nos permite
   gestionar de forma segura los pagos con tarjeta de crédito y las transferencia a
