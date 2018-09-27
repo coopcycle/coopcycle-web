@@ -17,12 +17,18 @@ var style = {
 
 export default (form, options) => {
 
+  $('.btn-payment').attr('disabled', true)
+
   const stripe = Stripe(options.publishableKey)
   var elements = stripe.elements()
 
   var card = elements.create('card', { style, hidePostalCode: true })
 
   card.mount('#card-element')
+
+  card.on('ready', function(e) {
+    $('.btn-payment').attr('disabled', false)
+  })
 
   card.addEventListener('change', function(event) {
     var displayError = document.getElementById('card-errors')
