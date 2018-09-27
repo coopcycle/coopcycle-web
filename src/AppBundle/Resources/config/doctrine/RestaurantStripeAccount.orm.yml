@@ -1,0 +1,31 @@
+AppBundle\Entity\RestaurantStripeAccount:
+    type: entity
+    table: restaurant_stripe_account
+    uniqueConstraints:
+        restaurant_stripe_account_unique:
+            columns:
+                - restaurant_id
+                - stripe_account_id
+                - livemode
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        livemode:
+            type: boolean
+            default: false
+
+    manyToOne:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            joinColumns:
+                restaurant_id:
+                    referencedColumnName: id
+        stripeAccount:
+            targetEntity: AppBundle\Entity\StripeAccount
+            joinColumns:
+                stripe_account_id:
+                    referencedColumnName: id

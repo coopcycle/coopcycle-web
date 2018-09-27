@@ -1,0 +1,72 @@
+<h4>
+  {% trans %}form.local_business.stripe_account.title{% endtrans %}
+</h4>
+
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {% trans %}form.local_business.stripe_account.help{% endtrans %}
+</p>
+
+{% if not stripe_can_enable_testmode() and not stripe_can_enable_livemode() %}
+  {# TODO Add message #}
+{% else %}
+  <table class="table">
+    {% set test_stripe_account = restaurant.getStripeAccount(false) %}
+    {% set live_stripe_account = restaurant.getStripeAccount(true) %}
+    <tr>
+      <td>
+        <span class="label label-default">TEST</span>
+      </td>
+      <td></td>
+      <td class="text-right">
+        {% if test_stripe_account is not empty %}
+          <span class="text-success">
+            <i class="fa fa-check"></i>
+          </span>
+        {% else %}
+          {% if is_granted('ROLE_RESTAURANT') %}
+            <a href="{{ stripe_oauth_link(restaurant, false) }}" class="stripe-connect">
+              <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
+            </a>
+          {% else %}
+            <span class="text-danger">
+              <i class="fa fa-ban"></i>
+            </span>
+          {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="label label-success">LIVE</span>
+      </td>
+      <td>
+        {% if not stripe_can_enable_livemode() %}
+          <span class="text-danger">{{ 'form.local_business.stripe_account.not_configured'|trans }}</span>
+        {% endif %}
+      </td>
+      <td class="text-right">
+        {% if live_stripe_account is not empty %}
+          <span class="text-success">
+            <i class="fa fa-check"></i>
+          </span>
+        {% else %}
+          {% if stripe_can_enable_livemode() and is_granted('ROLE_RESTAURANT') %}
+            <a href="{{ stripe_oauth_link(restaurant, true) }}" class="stripe-connect">
+              <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
+            </a>
+          {% else %}
+            <span class="text-danger">
+              <i class="fa fa-ban"></i>
+            </span>
+          {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+{% endif %}
+
+{% if is_granted('ROLE_ADMIN') %}
+  <div class="alert alert-warning">
+    {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}
+  </div>
+{% endif %}

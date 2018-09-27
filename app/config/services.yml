@@ -472,6 +472,16 @@ services:
     tags:
       - { name: twig.runtime }
 
+  coopcycle.twig.runtime.stripe_resolver:
+    class: AppBundle\Twig\StripeResolver
+    arguments:
+      - '@coopcycle.settings_manager'
+      - '@router'
+      - '@security.token_storage'
+    public: false
+    tags:
+      - { name: twig.runtime }
+
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
 
@@ -554,6 +564,11 @@ services:
 
   'AppBundle\Validator\Constraints\OrderValidator':
     arguments: [ '@routing_service', '@coopcycle.expression_language' ]
+    tags:
+      - { name: validator.constraint_validator }
+
+  'AppBundle\Validator\Constraints\IsActivableRestaurantValidator':
+    arguments: [ '@coopcycle.settings_manager' ]
     tags:
       - { name: validator.constraint_validator }
 

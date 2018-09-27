@@ -409,15 +409,12 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
   0-9) con la excepción de los guiones bajos.
 
   '
-form.local_business.stripe_account.placeholder: Selecciona una cuenta Stripe
 form.local_business.stripe_account.title: Cuenta Stripe
+form.local_business.stripe_account.help: Conecte tu cuenta Stripe para recibir dinero sobre tu cuenta bancaria
+form.local_business.stripe_account.connect_button.text: Conéctate con Stripe
+form.local_business.stripe_account.not_configured: You can not connect your account yet
 form.local_business.stripe_account.success: Cuenta Stripe creada con éxito.
-form.local_business.stripe_account.admin_warning: No existe ninguna cuenta Stripe
-  para éste restaurante. La cuenta Stripe debe ser creada por el propietario del restaurante.
-form.local_business.stripe_account.admin_success: La cuenta Stipe ha sido creada y
-  enlazada correctamente por el propietario del restaurante.
-form.local_business.stripe_account.save_warning: Tienes que salvar éste restaurante
-  antes de poderlo enlazar con una cuenta Stripe.
+form.local_business.stripe_account.admin_warning: Por razones de seguridad y confidencialidad, la cuenta de Stripe debe ser creada por el propietario del restaurante.
 form.local_business.stripe_account.need_stripe_account: 'Aún no has creado una cuenta
   Stripe para éste restaurante. Stripe és una plataforma de pagos que nos permite
   gestionar de forma segura los pagos con tarjeta de crédito y las transferencia a

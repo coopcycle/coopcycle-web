@@ -122,32 +122,10 @@
   {# http://stackoverflow.com/questions/10570002/how-to-make-form-rest-not-display-a-field-with-symfony2 #}
   {% do form.address.setRendered %}
 
-  <hr>
-
-  {# Stripe accounts have to be created by restaurant owner itself so we link it to correct account in callback #}
-  <h4>{% trans %}form.local_business.stripe_account.title{% endtrans %}</h4>
-  {% if is_granted('ROLE_ADMIN') and restaurant.stripeAccount is null %}
-    <div class="alert alert-warning">
-      {% trans %}form.local_business.stripe_account.admin_warning{% endtrans %}
-    </div>
-  {% elseif is_granted('ROLE_ADMIN') %}
-    <div class="alert alert-success">
-      {% trans %}form.local_business.stripe_account.admin_success{% endtrans %}
-    </div>
-  {% elseif restaurant.id is null and restaurant.stripeAccount is null %}
-    <div class="alert alert-warning">
-      {% trans %}form.local_business.stripe_account.save_warning{% endtrans %}
-    </div>
-  {% elseif restaurant.stripeAccount is null %}
-    <div class="alert alert-warning">
-      {{ 'form.local_business.stripe_account.need_stripe_account' | trans({'%stripeAuthorizeURL%': stripeAuthorizeURL}) | raw }}
-    </div>
-  {% else %}
-    <div class="alert alert-success">
-      <p>{{ 'form.local_business.stripe_account.link_ok' | trans | raw }}</p>
-    </div>
+  {% if restaurant.id is not null %}
+    <hr>
+    {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
   {% endif %}
-  {#<a class="help-block" href="{{ path('help_admin_payments') }}"><i class="fa fa-info-circle"></i>&nbsp;Cliquez ici pour en savoir plus sur la configuration et la gestion des paiements via Stripe.</a>#}
 
   <hr>
     <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
