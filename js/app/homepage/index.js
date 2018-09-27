@@ -12,9 +12,7 @@ function onPlaceChange (geohash, address) {
     $('#address-search-form').submit();
 }
 
-let preferredAddresses = window.AppData.addresses,
-    preferredResults = preferredAddresses.map(function (item) { return { suggestion: item.streetAddress, preferred: true }}),
-    address = localStorage.getItem('search_address') || '',
+let address = localStorage.getItem('search_address') || '',
     geohash = localStorage.getItem('search_geohash') || '';
 
 window.initMap = () => {
@@ -22,9 +20,7 @@ window.initMap = () => {
     <AddressPicker
       geohash = { geohash }
       address = { address }
-      onPlaceChange = { onPlaceChange }
-      preferredResults = { preferredResults }
-    />,
+      onPlaceChange = { onPlaceChange } />,
     document.getElementById('address-search')
   );
 }

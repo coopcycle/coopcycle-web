@@ -124,16 +124,6 @@ class RestaurantController extends Controller
 
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
-        // pass user addresses to fill AddressPicker
-        $user = $this->getUser();
-
-        if ($user) {
-            $addresses = $user->getAddresses();
-        }
-        else {
-            $addresses = [];
-        }
-
         return array(
             'count' => $count,
             'restaurants' => $matches,
@@ -141,7 +131,6 @@ class RestaurantController extends Controller
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
             'images' => $images,
-            'addresses' => $addresses
         );
     }
 

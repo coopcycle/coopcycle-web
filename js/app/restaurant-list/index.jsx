@@ -2,10 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import AddressPicker from "../address/AddressPicker.jsx";
 
-// suggested addresses for addresspicker
-let preferredAddresses = window.AppData.addresses,
-    preferredResults = preferredAddresses.map(function (item) { return { suggestion: item.streetAddress, preferred: true }});
-
 let initialGeohash = window.AppData.geohash,
     address = localStorage.getItem('search_address')
 
@@ -27,7 +23,6 @@ window.initMap = () => {
   render(<AddressPicker
     geohash={ initialGeohash }
     address={ address }
-    onPlaceChange={ onPlaceChange }
-    preferredResults={ preferredResults } />,
+    onPlaceChange={ onPlaceChange } />,
   document.getElementById('address-search'));
 }
