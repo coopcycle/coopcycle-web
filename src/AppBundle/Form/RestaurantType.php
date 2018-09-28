@@ -28,7 +28,8 @@ class RestaurantType extends LocalBusinessType
             ])
             ->add('allowStripeConnect', CheckboxType::class, [
                 'label' => 'restaurant.form.allow_stripe_connect.label',
-                'mapped' => false
+                'mapped' => false,
+                'required' => false,
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

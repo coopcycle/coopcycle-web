@@ -67,10 +67,6 @@ class StripeController extends Controller
                 $res['error_description']
             );
         } else {
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('form.local_business.stripe_account.success')
-            );
 
             Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
 
@@ -91,17 +87,16 @@ class StripeController extends Controller
 
             if ($request->query->has('state')) {
 
-                $restaurantId = $request->query->get('state');
+                $state = $request->query->get('state');
 
-                $restaurant = $this->getDoctrine()->getRepository(Restaurant::class)->find($restaurantId);
-                $restaurant->addStripeAccount($stripeAccount);
+                $url = base64_decode($state);
 
-                $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+                $this->addFlash('stripe_account', $stripeAccount);
 
-                return $this->redirectToRoute('profile_restaurant', ['id' => $restaurantId]);
+                return $this->redirect($url);
             }
         }
 
-        return $this->redirectToRoute('profile_restaurants');
+        return $this->redirectToRoute('homepage');
     }
 }

@@ -26,6 +26,8 @@ AppBundle\Entity\RestaurantStripeAccount:
                     referencedColumnName: id
         stripeAccount:
             targetEntity: AppBundle\Entity\StripeAccount
+            cascade:
+                - all
             joinColumns:
                 stripe_account_id:
                     referencedColumnName: id
