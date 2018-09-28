@@ -39,7 +39,7 @@ class StripeResolver
         return $this->settingsManager->canEnableStripeLivemode();
     }
 
-    public function getOAuthLink(Restaurant $restaurant)
+    public function getOAuthLink(Restaurant $restaurant, $livemode)
     {
         $redirectUri = $this->router->generate(
             'stripe_connect_standard_account',
@@ -70,11 +70,15 @@ class StripeResolver
         ];
 
         // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
+
+        $clientId = $livemode ?
+            $this->settingsManager->get('stripe_live_connect_client_id') : $this->settingsManager->get('stripe_test_connect_client_id');
+
         $queryString = http_build_query(array_merge(
             $prefillingData,
             [
                 'response_type' => 'code',
-                'client_id' => $this->settingsManager->get('stripe_connect_client_id'),
+                'client_id' => $clientId,
                 'scope' => 'read_write',
                 'redirect_uri' => $redirectUri,
                 'state' => $restaurant->getId(),
