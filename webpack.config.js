@@ -13,8 +13,6 @@ Encore
   .addEntry('js/common', './js/app/common.js')
 
   .addEntry('js/dashboard', './js/app/dashboard/index.jsx')
-  .addEntry('js/homepage', './js/app/homepage/index.js')
-  .addEntry('js/restaurant-list', './js/app/restaurant-list/index.jsx')
   .addEntry('js/cart', './js/app/cart/index.jsx')
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
   .addEntry('js/delivery-list', './js/app/delivery/list.jsx')

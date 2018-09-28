@@ -45,11 +45,26 @@
 {% endblock %}
 
 {% block scripts %}
+  <script src="{{ asset('js/widgets.js') }}"></script>
   <script>
-    window.AppData = window.AppData || {};
-    window.AppData.geohash = "{{ geohash }}";
+  var initialGeohash = "{{ geohash }}";
+  $('#restaurant-search-form').find('input[name=geohash]').val(initialGeohash);
+  function initMap() {
+    new CoopCycle.AddressPicker(document.querySelector('#address-search'), {
+      address: localStorage.getItem('search_address') || '',
+      geohash: initialGeohash,
+      onChange: function(geohash, address) {
+        if (geohash != initialGeohash) {
+          localStorage.setItem('search_geohash', geohash);
+          localStorage.setItem('search_address', address);
+          _paq.push(['trackEvent', 'RestaurantList', 'searchAddress', address]);
+          $('#restaurant-search-form').find('input[name=geohash]').val(geohash);
+          $('#restaurant-search-form').submit();
+        }
+      }
+    });
+  }
   </script>
-  <script src="{{ asset('js/restaurant-list.js') }}"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}
 
