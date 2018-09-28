@@ -8,8 +8,11 @@ import i18n from '../i18n'
 import CartItem from './CartItem.jsx'
 import DatePicker from './DatePicker.jsx'
 import AddressPicker from "../components/AddressPicker.jsx"
+import Modal from 'react-modal';
 
 let timeoutID = null
+
+Modal.setAppElement(document.getElementById('cart'));
 
 class Cart extends React.Component
 {
@@ -30,6 +33,8 @@ class Cart extends React.Component
       errors: {},
       loading: false,
       initialized: false,
+      modalIsOpen: false,
+      modalHeadingText: '',
     }
 
     this.onAddressChange = this.onAddressChange.bind(this)
@@ -104,7 +109,21 @@ class Cart extends React.Component
   }
 
   setErrors(errors) {
-    this.setState({ errors })
+    let newState = { errors }
+
+    if (errors.hasOwnProperty('shippingAddress')) {
+      // We trigger the modal only when the address was not set
+      const { address } = this.state
+      if (!address) {
+        newState = {
+          ...newState,
+          modalIsOpen: true,
+          modalHeadingText: _.first(errors.shippingAddress)
+        }
+      }
+    }
+
+    this.setState(newState)
   }
 
   setLoading(loading) {
@@ -122,7 +141,15 @@ class Cart extends React.Component
   }
 
   onAddressSelect(geohash, address) {
-    this.setState({ address })
+
+    const { modalIsOpen } = this.state
+
+    let newState = { address }
+    if (true === modalIsOpen) {
+      newState = { ...newState, modalIsOpen: false }
+    }
+
+    this.setState(newState)
     this.onAddressChange(geohash, address)
   }
 
@@ -246,9 +273,21 @@ class Cart extends React.Component
     return initialized ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
   }
 
+  openModal() {
+    this.setState({ modalIsOpen: true });
+  }
+
+  afterOpenModal() {
+    setTimeout(() => this.modalAddressPicker.setFocus(), 250);
+  }
+
+  closeModal() {
+    this.setState({ modalIsOpen: false });
+  }
+
   render() {
 
-    let { items, toggled, errors, date, geohash, address, loading } = this.state,
+    let { items, toggled, errors, date, geohash, address, loading, modalIsOpen, modalHeadingText } = this.state,
         cartContent,
         { isMobileCart, availabilities, validateCartURL } = this.props,
         cartTitleKey = isMobileCart ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
@@ -303,20 +342,26 @@ class Cart extends React.Component
       panelClasses.push('cart-wrapper--show')
     }
 
+    const addressPickerProps = {
+      onPlaceChange: this.onAddressSelect,
+      /* https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key */
+      key: address
+    }
+
     return (
       <Sticky enabled={!isMobileCart} top={ 30 }>
         <div className={ panelClasses.join(' ') }>
           { this.renderHeading(warningAlerts, dangerAlerts) }
           <div className="panel-body">
             <div className="cart-wrapper__messages">
-            { this.renderWarningAlerts(warningAlerts) }
-            { this.renderDangerAlerts(dangerAlerts) }
+            { !loading && this.renderWarningAlerts(warningAlerts) }
+            { !loading && this.renderDangerAlerts(dangerAlerts) }
             </div>
             <div className="cart">
               <AddressPicker
                 address={address}
                 geohash={geohash}
-                onPlaceChange={this.onAddressSelect} />
+                { ...addressPickerProps } />
               <hr />
               <DatePicker
                 availabilities={availabilities}
@@ -332,6 +377,20 @@ class Cart extends React.Component
             </div>
           </div>
         </div>
+        <Modal
+          isOpen={ modalIsOpen }
+          onAfterOpen={ this.afterOpenModal.bind(this) }
+          onRequestClose={ this.closeModal.bind(this) }
+          contentLabel={ i18n.t('ENTER_YOUR_ADDRESS') }
+          className="ReactModal__Content--enter-address">
+          <h4 className="text-center">{ modalHeadingText }</h4>
+          <AddressPicker
+            ref={ addressPicker => { this.modalAddressPicker = addressPicker } }
+            autofocus
+            address={ '' }
+            geohash={ '' }
+            { ...addressPickerProps } />
+        </Modal>
       </Sticky>
     );
   }

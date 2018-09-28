@@ -32,6 +32,18 @@ class AddressPicker extends React.Component {
     this.onClear = this.onClear.bind(this);
   }
 
+  componentDidMount() {
+    if (this.props.autofocus) {
+      this.input.focus();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.geohash !== prevState.geohash) {
+      this.props.onPlaceChange(this.state.geohash, this.state.address);
+    }
+  }
+
   onClear () {
     this.setState({address: ''});
   }
@@ -53,6 +65,10 @@ class AddressPicker extends React.Component {
     }
   }
 
+  setFocus() {
+    this.input.focus();
+  }
+
   onAddressSelect (address, placeId) {
     /*
       Controller for address selection (i.e. click on address in the dropdown)
@@ -72,15 +88,6 @@ class AddressPicker extends React.Component {
     );
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
-
-    if (this.state.geohash !== nextState.geohash) { // handle geohash change
-      this.props.onPlaceChange(nextState.geohash, nextState.address);
-    }
-
-    return true;
-  }
-
   render () {
     return (
       <div className="autocomplete-wrapper">
@@ -93,6 +100,7 @@ class AddressPicker extends React.Component {
           {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
             <div className="form-group input-location-wrapper">
               <input
+                ref={ input => { this.input = input } }
                 {...getInputProps({
                   onKeyUp: this.onAddressKeyUp,
                   onBlur: this.onAddressBlur,

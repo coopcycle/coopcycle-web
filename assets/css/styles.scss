@@ -185,7 +185,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-heading {
   position: relative;
 
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     height: $navbar-height;
     text-align: center;
     color: $white !important;
@@ -194,7 +194,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 
   &--warning {
-    @media screen and (max-width: $screen-md-min) {
+    @media (max-width: $screen-xs-max) {
       background-color: $state-warning-bg !important;
       color: $state-warning-text !important;
 
@@ -207,7 +207,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 
   &--success {
-    @media screen and (max-width: $screen-md-min) {
+    @media (max-width: $screen-xs-max) {
       background-color: $state-success-bg !important;
       color: $state-success-text !important;
 
@@ -251,7 +251,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-heading__button {
   display: none;
 
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     position: absolute;
     top: 0;
     right: 0;
@@ -267,7 +267,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-heading__right {
   display: none;
 
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     display: block;
     position: absolute;
     width: $cart-heading-line-height;
@@ -279,26 +279,26 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 .cart-heading__left {
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     left: $panel-heading-padding-horizontal;
   }
 }
 
 .cart-heading__right {
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     right: $panel-heading-padding-horizontal;
   }
 }
 
 .cart-heading--title {
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     display: none;
   }
 }
 
 .cart-heading--title-or-errors {
   display: none;
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     display: inline;
   }
 }
@@ -306,7 +306,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-wrapper {
   height: 100%;
 
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     padding: 0;
     margin-bottom: 0;
     cursor: pointer;
@@ -325,7 +325,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 .cart-wrapper--show {
-  @media screen and (max-width: $screen-md-min) {
+  @media (max-width: $screen-xs-max) {
     transform: translateY(0);
   }
 }
@@ -656,6 +656,37 @@ form[name="store"] #store_imageFile_file {
   img {
     display: inline-block;
     width: 150px;
+  }
+}
+
+.ReactModal__Content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  // min-width: 50%;
+}
+
+.ReactModal__Content--enter-address {
+  overflow: inherit;
+  @media (min-width: $screen-lg-min) {
+    width: 33%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 50%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
   }
 }
 
