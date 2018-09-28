@@ -7,7 +7,7 @@ import i18n from '../i18n'
 
 import CartItem from './CartItem.jsx'
 import DatePicker from './DatePicker.jsx'
-import AddressPicker from "../address/AddressPicker.jsx"
+import AddressPicker from "../components/AddressPicker.jsx"
 
 let timeoutID = null
 

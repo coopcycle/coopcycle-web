@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import AddressPicker from "../address/AddressPicker.jsx";
+import AddressPicker from "../components/AddressPicker.jsx";
 
 function onPlaceChange (geohash, address) {
     localStorage.setItem('search_geohash', geohash);
