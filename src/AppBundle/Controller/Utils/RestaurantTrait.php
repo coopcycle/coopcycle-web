@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
@@ -67,6 +68,24 @@ trait RestaurantTrait
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
         ]);
+
+        // Associate Stripe account with restaurant
+        if ($request->getSession()->getFlashBag()->has('stripe_account')) {
+            $messages = $request->getSession()->getFlashBag()->get('stripe_account');
+            if (!empty($messages)) {
+                foreach ($messages as $stripeAccount) {
+                    if ($stripeAccount instanceof StripeAccount) {
+                        $restaurant->addStripeAccount($stripeAccount);
+                        $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+
+                        $this->addFlash(
+                            'notice',
+                            $this->get('translator')->trans('form.local_business.stripe_account.success')
+                        );
+                    }
+                }
+            }
+        }
 
         $activationErrors = [];
         $formErrors = [];

@@ -4,6 +4,7 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\SettingsManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -13,15 +14,18 @@ class StripeResolver
     private $settingsManager;
     private $router;
     private $tokenStorage;
+    private $requestStack;
 
     public function __construct(
         SettingsManager $settingsManager,
         RouterInterface $router,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        RequestStack $requestStack)
     {
         $this->settingsManager = $settingsManager;
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
+        $this->requestStack = $requestStack;
     }
 
     public function isLivemode()
@@ -74,6 +78,9 @@ class StripeResolver
         $clientId = $livemode ?
             $this->settingsManager->get('stripe_live_connect_client_id') : $this->settingsManager->get('stripe_test_connect_client_id');
 
+        // Encode the current URL as base64
+        $state = base64_encode($this->requestStack->getMasterRequest()->getUri());
+
         $queryString = http_build_query(array_merge(
             $prefillingData,
             [
@@ -81,7 +88,7 @@ class StripeResolver
                 'client_id' => $clientId,
                 'scope' => 'read_write',
                 'redirect_uri' => $redirectUri,
-                'state' => $restaurant->getId(),
+                'state' => $state,
             ]
         ));
 
