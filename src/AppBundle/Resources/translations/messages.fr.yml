@@ -563,6 +563,8 @@ basics.delete: Supprimer
 basics.cancel: Annuler
 basics.open: Ouvert
 basics.tomorrow: Demain
+basics.price: Prix
+basics.tax_category: TVA
 
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison

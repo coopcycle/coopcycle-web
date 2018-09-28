@@ -546,6 +546,8 @@ basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
 basics.cancel: Cancelar
 basics.open: Abierto
 basics.tomorrow: Mañana
+basics.price: Precio
+basics.tax_category: IVA
 
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?

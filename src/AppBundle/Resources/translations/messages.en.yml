@@ -513,6 +513,8 @@ basics.delete: Delete
 basics.cancel: Cancel
 basics.open: Open
 basics.tomorrow: Tomorrow
+basics.price: Price
+basics.tax_category: VAT
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
