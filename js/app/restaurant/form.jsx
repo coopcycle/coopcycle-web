@@ -3,29 +3,6 @@ import { render } from 'react-dom'
 import Switch from 'antd/lib/switch'
 import i18n from '../i18n'
 
-var $deliveryService = $('#restaurant_deliveryService_type')
-$deliveryService.change(function() {
-  // ... retrieve the corresponding form.
-  var $form = $(this).closest('form')
-  // Simulate form data, but only include the selected sport value.
-  var data = {}
-  data[$deliveryService.attr('name')] = $deliveryService.val()
-  // Submit data via AJAX to the form's action path.
-  $.ajax({
-    url : $form.attr('action'),
-    type: $form.attr('method'),
-    data : data,
-    success: function(html) {
-      // Replace current position field ...
-      $('#restaurant_deliveryService_options').replaceWith(
-        // ... with the returned one from the AJAX response.
-        $(html).find('#restaurant_deliveryService_options')
-      );
-    }
-  });
-});
-
-
 function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
