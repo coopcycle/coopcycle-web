@@ -494,6 +494,7 @@ form.product_option.strategy.label: Calcul du prix
 form.product_option.price.label: Prix
 form.product_option.add_value.label: Ajouter une valeur
 form.product_option.values.title: Valeurs
+form.product_option.values.help: Vous devez définir une liste de valeurs pour cette option
 form.product_option_value.value.label: Valeur
 form.product_option_value.price.label: Prix
 form.product_option.additional.label: Cette option est un supplément

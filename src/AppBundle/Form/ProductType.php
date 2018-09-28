@@ -108,6 +108,13 @@ class ProductType extends AbstractType
                 'choices' => $product->getRestaurant()->getProductOptions(),
                 'expanded' => true,
                 'multiple' => true,
+                'choice_attr' => function(ProductOption $productOption, $key, $value) {
+                    // Disable options with no value
+                    if (count($productOption->getValues()) === 0) {
+                        return ['disabled' => true];
+                    }
+                    return [];
+                }
             ]);
 
             if (null !== $product->getId()) {
