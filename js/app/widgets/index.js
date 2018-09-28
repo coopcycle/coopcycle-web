@@ -1,4 +1,5 @@
 import AddressInput from './AddressInput'
+import AddressPicker from './AddressPicker'
 import ColorPicker from './ColorPicker'
 import DatePicker from './DatePicker'
 import DateTimePicker from './DateTimePicker'
@@ -16,6 +17,7 @@ import DeliveryZonePicker from './DeliveryZonePicker'
 window.CoopCycle = window.CoopCycle || {}
 
 window.CoopCycle.AddressInput = AddressInput
+window.CoopCycle.AddressPicker = AddressPicker
 window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.DatePicker = DatePicker
 window.CoopCycle.DateTimePicker = DateTimePicker
