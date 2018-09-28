@@ -27,6 +27,26 @@ How to run a local instance
 
     - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
 
+* Setup Google Maps API
+
+Coopcycle uses Google Maps API for Geocoding. You will need to create a project
+in the Google Cloud Platform Console, and enable the Google Maps API. GCP will
+give you an API token that you will need later.  By default, the Geocoding API
+will not be enabled, so you need to enable it as well (Maps API dashboard >
+APIs > Geocoding > Enable).
+
+* (Linux) Setup permissions
+
+If you are using Linux, you will need to allow the user `www-data` used by the
+php docker container to write files to your local disk. You can do this by running
+the following commands in the directory containing your local clone of the
+repository:
+
+```
+sudo chown -R $(id -u):82 .
+sudo chmod -R g+w .
+```
+
 * Run the install scripts.
 
 ```sh
