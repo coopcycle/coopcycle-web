@@ -25,15 +25,16 @@ How to run a local instance
 
     - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
 
-    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use Coopcycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
+    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use CoopCycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
 
 * Setup Google Maps API
 
-Coopcycle uses Google Maps API for Geocoding. You will need to create a project
-in the Google Cloud Platform Console, and enable the Google Maps API. GCP will
-give you an API token that you will need later.  By default, the Geocoding API
-will not be enabled, so you need to enable it as well (Maps API dashboard >
-APIs > Geocoding > Enable).
+CoopCycle uses the Google Maps API for Geocoding, as well as the Places API.
+You will need to create a project in the Google Cloud Platform Console, and
+enable the Google Maps API. GCP will give you an API token that you will need
+later.  By default, the Geocoding and Places API will not be enabled, so you
+need to enable them as well (`Maps API dashboard > APIs > Geocoding API >
+Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
 
 * (Linux) Setup permissions
 
