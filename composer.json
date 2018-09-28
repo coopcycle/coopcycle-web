@@ -53,7 +53,7 @@
         "csa/guzzle-bundle": "^3.0",
         "myclabs/php-enum": "^1.5",
         "beberlei/DoctrineExtensions": "^1.0",
-        "sentry/sentry-symfony": "^0.8.6",
+        "sentry/sentry-symfony": "^2.0.3",
         "ramsey/uuid-doctrine": "^1.4",
         "ramsey/uuid": "^3.7",
         "misd/phone-number-bundle": "^1.2",

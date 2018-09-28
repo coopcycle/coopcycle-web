@@ -41,7 +41,7 @@ fos_user:
             enabled: true
 
 sentry:
-    dsn: '%sentry_dsn%'
+    dsn: '%sentry_public_dsn%'
 
 services:
     apns_php.logger:
