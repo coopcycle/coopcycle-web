@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{% for url in urls %}
+  <url>
+    <loc>{{ url.loc }}</loc>
+    <changefreq>daily</changefreq>
+    {% for lang, alternate_url in url.alternate_urls %}
+    <xhtml:link rel="alternate" hreflang="{{ lang }}" href="{{ alternate_url }}" />
+    {% endfor %}
+  </url>
+{% endfor %}
+</urlset>
