@@ -147,6 +147,8 @@
         </div>
       {% endif %}
     {% endif %}
+  {% else %}
+    {% do form.allowStripeConnect.setRendered %}
   {% endif %}
 
   <hr>
