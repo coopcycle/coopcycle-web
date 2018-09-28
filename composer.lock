@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d26f7bb3381c5f4f22c973df8908ea88",
+    "content-hash": "749ed580a8a7911cb5a9ed9fa9a6cf0d",
     "packages": [
         {
             "name": "api-platform/core",
@@ -11196,21 +11196,21 @@
         },
         {
             "name": "behatch/contexts",
-            "version": "2.8.1",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behatch/contexts.git",
-                "reference": "2d0db1f4af9807cd0e1b59d445299cd086d43815"
+                "reference": "cbda31e1f83423f267ebb56d0d45e849ecac6dc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behatch/contexts/zipball/2d0db1f4af9807cd0e1b59d445299cd086d43815",
-                "reference": "2d0db1f4af9807cd0e1b59d445299cd086d43815",
+                "url": "https://api.github.com/repos/Behatch/contexts/zipball/cbda31e1f83423f267ebb56d0d45e849ecac6dc2",
+                "reference": "cbda31e1f83423f267ebb56d0d45e849ecac6dc2",
                 "shasum": ""
             },
             "require": {
                 "behat/behat": "^3.0.13",
-                "behat/mink-extension": "^2.0",
+                "behat/mink-extension": "^2.3.1",
                 "justinrainbow/json-schema": "^5.0",
                 "php": ">=5.5",
                 "symfony/dom-crawler": "^2.4|^3.0|^4.0",
@@ -11230,13 +11230,12 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Behatch\\": "src/",
-                    "Sanpi\\Behatch\\": "src/class_aliases/"
+                    "Behatch\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -11250,7 +11249,7 @@
                 "Context",
                 "Symfony2"
             ],
-            "time": "2017-12-05T13:58:49+00:00"
+            "time": "2018-08-13T16:31:50+00:00"
         },
         {
             "name": "coduo/php-matcher",
