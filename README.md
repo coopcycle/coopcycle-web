@@ -43,8 +43,8 @@ the following commands in the directory containing your local clone of the
 repository:
 
 ```
-sudo chown -R $(id -u):82 .
-sudo chmod -R g+w .
+sudo chown -R $(id -u):82 coopcycle-web
+sudo chmod -R g+w coopcycle-web
 ```
 
 * Run the install scripts.
