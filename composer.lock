@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1df6badd56ec2befbc9c7e304209e461",
+    "content-hash": "d26f7bb3381c5f4f22c973df8908ea88",
     "packages": [
         {
             "name": "api-platform/core",
@@ -11254,16 +11254,16 @@
         },
         {
             "name": "coduo/php-matcher",
-            "version": "2.4.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coduo/php-matcher.git",
-                "reference": "8b9d57257a18e57b9785fabe25a6c99441cc5e41"
+                "reference": "f0c89f1d4d7b1f401f1de00720de73b3ce8ef8c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/8b9d57257a18e57b9785fabe25a6c99441cc5e41",
-                "reference": "8b9d57257a18e57b9785fabe25a6c99441cc5e41",
+                "url": "https://api.github.com/repos/coduo/php-matcher/zipball/f0c89f1d4d7b1f401f1de00720de73b3ce8ef8c5",
+                "reference": "f0c89f1d4d7b1f401f1de00720de73b3ce8ef8c5",
                 "shasum": ""
             },
             "require": {
@@ -11271,17 +11271,18 @@
                 "doctrine/lexer": "1.0.*",
                 "ext-filter": "*",
                 "openlss/lib-array2xml": "~0.0.9",
-                "php": ">=5.3.0",
-                "symfony/expression-language": "^2.3|^3.0",
-                "symfony/property-access": "^2.3|^3.0"
+                "php": ">=7.0.0",
+                "symfony/expression-language": "^2.3|^3.0|^4.0",
+                "symfony/property-access": "^2.3|^3.0|^4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8"
+                "friendsofphp/php-cs-fixer": "^2.4",
+                "phpunit/phpunit": "^6.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -11310,7 +11311,7 @@
                 "matcher",
                 "tests"
             ],
-            "time": "2018-02-18T21:49:00+00:00"
+            "time": "2018-04-26T09:24:24+00:00"
         },
         {
             "name": "coduo/php-to-string",
