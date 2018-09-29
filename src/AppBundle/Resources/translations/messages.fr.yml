@@ -227,6 +227,10 @@ profile.givenName: Prénom
 profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte
+
+order.items.products_with_count: Produits (%count%)
+order.total_including_tax: Total TTC
+order.total_tax: TVA
 order.payment.title: Vos informations de paiement
 order.payment.expiration.label: Expiration
 order.payment.month.label: Mois

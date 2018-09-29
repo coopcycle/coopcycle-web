@@ -224,7 +224,9 @@ profile.givenName: Given name
 profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
-
+order.items.products_with_count: Products (%count%)
+order.total_including_tax: Total (tax incl.)
+order.total_tax: Taxes
 order.payment.title: Your payment informations
 order.payment.expiration.label: Expiration
 order.payment.month.label: Month

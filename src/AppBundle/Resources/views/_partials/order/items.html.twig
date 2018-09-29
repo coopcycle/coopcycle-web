@@ -1,6 +1,6 @@
 <table class="table">
   <thead>
-    <th>Produits ({{ order.countItems }})</th>
+    <th>{% trans with { '%count%': order.countItems } %}order.items.products_with_count{% endtrans %}</th>
     <th class="text-right">Total</th>
   </thead>
   <tbody>
@@ -17,13 +17,13 @@
   <tbody>
   <tfoot>
     <tr>
-      <th>Total TTC</th>
+      <th>{% trans %}order.total_including_tax{% endtrans %}</th>
       <td class="text-right">
         {{ order.total|price_format }}
       </td>
     </tr>
     <tr>
-      <th>Dont TVA</th>
+      <th>{% trans %}order.total_tax{% endtrans %}</th>
       <td class="text-right">
         {{ order.taxTotal|price_format }}
       </td>
