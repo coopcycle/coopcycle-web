@@ -401,7 +401,7 @@ class RestaurantController extends Controller
                     'slug' => $this->get('slugify')->slugify($restaurant->getName())
                 ])
             ];
-        }, $this->getDoctrine()->getRepository(Restaurant::class)->findBy(['enabled' => true]));
+        }, $this->getDoctrine()->getRepository(Restaurant::class)->findAll());
 
         return [
             'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
