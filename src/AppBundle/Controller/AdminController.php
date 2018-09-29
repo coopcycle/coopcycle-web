@@ -73,6 +73,7 @@ class AdminController extends Controller
             'product_options' => 'admin_restaurant_product_options',
             'dashboard' => 'admin_restaurant_dashboard',
             'planning' => 'admin_restaurant_planning',
+            'stripe_oauth_redirect' => 'admin_restaurant_stripe_oauth_redirect',
         ];
     }
 

@@ -309,6 +309,13 @@ admin_restaurant_dashboard_order_cancel:
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
+admin_restaurant_stripe_oauth_redirect:
+    path: /admin/restaurants/{id}/stripe-oauth-redirect
+    defaults:
+        _controller: AppBundle:Admin:stripeOAuthRedirect
+        redirect_after: admin_restaurant
+    methods: [ GET ]
+
 admin_orders_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:

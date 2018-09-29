@@ -476,9 +476,6 @@ services:
     class: AppBundle\Twig\StripeResolver
     arguments:
       - '@coopcycle.settings_manager'
-      - '@router'
-      - '@security.token_storage'
-      - '@request_stack'
     public: false
     tags:
       - { name: twig.runtime }
