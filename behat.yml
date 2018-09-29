@@ -4,11 +4,10 @@ default:
   suites:
     default:
       contexts:
-        - FeatureContext: { doctrine: "@doctrine", phoneNumberUtil: "@libphonenumber.phone_number_util" }
+        - FeatureContext: { doctrine: "@doctrine", phoneNumberUtil: "@libphonenumber.phone_number_util", fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine" }
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext
-        - Fidry\AliceBundleExtension\Context\Doctrine\AliceORMContext
   extensions:
     Behat\Symfony2Extension:
       kernel:
@@ -20,5 +19,3 @@ default:
         default:
           symfony2: ~
     Behatch\Extension: ~
-    Fidry\AliceBundleExtension\Extension:
-      fixtures_base_path: ~

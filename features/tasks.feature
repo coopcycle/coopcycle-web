@@ -1,13 +1,12 @@
 Feature: Tasks
 
   Scenario: Retrieve assigned tasks
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -63,13 +62,12 @@ Feature: Tasks
       """
 
   Scenario: Mark task as done
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -103,13 +101,12 @@ Feature: Tasks
       """
 
   Scenario: Mark task as failed with notes
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -161,13 +158,12 @@ Feature: Tasks
       """
 
   Scenario: Previous task must be completed before marking as done
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -189,13 +185,12 @@ Feature: Tasks
       """
 
   Scenario: Previous task must be completed before marking as failed
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -217,7 +212,7 @@ Feature: Tasks
       """
 
   Scenario: Only assigned courier can mark a task as done
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -227,7 +222,6 @@ Feature: Tasks
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "steve" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -239,7 +233,7 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Only assigned courier can mark a task as failed
-    Given the database is empty
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -249,7 +243,6 @@ Feature: Tasks
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "steve" is authenticated
-    And the fixtures file "tasks.yml" is loaded
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -261,8 +254,7 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Cancelled task can't be marked as done
-    Given the database is empty
-    And the fixtures file "tasks.yml" is loaded
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -279,8 +271,7 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Cancelled task can't be marked as failed
-    Given the database is empty
-    And the fixtures file "tasks.yml" is loaded
+    Given the fixtures file "tasks.yml" is loaded
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
