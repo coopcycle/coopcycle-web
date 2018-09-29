@@ -224,6 +224,8 @@ profile.givenName: Given name
 profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
+
+order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.total_including_tax: Total (tax incl.)
 order.total_tax: Taxes

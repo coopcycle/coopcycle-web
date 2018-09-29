@@ -236,6 +236,7 @@ profile.managedStores: Tiendas gestionadas por el usuario
 profile.managedRestaurants: Restaurantes gestionados por el usuario
 profile.accountType: Tipo de cuenta
 
+order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.total_including_tax: Total (IVA incl.)
 order.total_tax: IVA

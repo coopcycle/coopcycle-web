@@ -228,6 +228,7 @@ profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte
 
+order.cart.title: Panier
 order.items.products_with_count: Produits (%count%)
 order.total_including_tax: Total TTC
 order.total_tax: TVA

@@ -499,7 +499,12 @@ a.list-group-item.menu-item--unavailable {
   margin: 10px;
   background-color: $white;
   box-sizing: border-box;
-  padding: 20px;
+
+  h4 {
+    margin: 0;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+  }
 
   table {
     margin-bottom: 0;
@@ -507,7 +512,24 @@ a.list-group-item.menu-item--unavailable {
 
   @media screen and (max-width: $screen-sm-max) {
     margin: 0 0 20px;
-    padding: 10px;
+  }
+}
+
+.order-map__column-heading {
+  display: block;
+  color: $headings-color;
+  &:hover {
+    color: $headings-color;
+    text-decoration: none;
+    background-color: #eee;
+  }
+}
+
+.order-map__column-block {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  &:last-of-type {
+    border-bottom: none;
   }
 }
 
