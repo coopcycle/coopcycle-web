@@ -60,7 +60,7 @@
       </span>
     {% endif %}
   </div>
-  {% if not restaurant.enabled and is_granted('ROLE_ADMIN') %}
+  {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
     <div class="restaurant-item__top-left">
       <span class="btn btn-sm btn-warning">
         <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }}

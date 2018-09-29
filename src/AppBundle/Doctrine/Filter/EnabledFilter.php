@@ -6,6 +6,7 @@ use AppBundle\Annotation\Enabled;
 use Doctrine\ORM\Mapping\ClassMetaData;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * A Doctrine filter that adds "enabled = X" to SQL queries.
@@ -23,8 +24,8 @@ final class EnabledFilter extends SQLFilter
             return '';
         }
 
-        $disabledAware = $this->reader->getClassAnnotation($targetEntity->getReflectionClass(), Enabled::class);
-        if (!$disabledAware) {
+        $enabledAware = $this->reader->getClassAnnotation($targetEntity->getReflectionClass(), Enabled::class);
+        if (!$enabledAware) {
             return '';
         }
 
@@ -32,6 +33,14 @@ final class EnabledFilter extends SQLFilter
             $enabled = $this->getParameter('enabled');
         } catch (\InvalidArgumentException $e) {
             return '';
+        }
+
+        if ($this->hasParameter('restaurants')) {
+            return sprintf('(%s.enabled = %s OR (%s.enabled = %s AND %s.id IN(%s)))',
+                $targetTableAlias, $enabled,
+                $targetTableAlias, $this->getConnection()->quote(false, Type::BOOLEAN),
+                $targetTableAlias, $this->getParameter('restaurants')
+            );
         }
 
         return sprintf('%s.enabled = %s', $targetTableAlias, $enabled);
