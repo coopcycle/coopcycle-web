@@ -11,12 +11,16 @@
 
   <div class="order-map__wrapper">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-xs-12 col-md-4">
         <div class="order-map__column">
-          {% include "@App/_partials/order/restaurant_details.html.twig" %}
+          <div>
+            {% include "@App/_partials/order/restaurant_details.html.twig" %}
+          </div>
+          <hr>
+          {% include '@App/_partials/order/items.html.twig' %}
         </div>
       </div>
-      <div class="col-xs-12 col-md-5 col-md-offset-4">
+      <div class="col-xs-12 col-md-5 col-md-offset-3">
         <div class="order-map__column">
           {{ form_start(form) }}
             <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
@@ -51,7 +55,7 @@ new CoopCycle.DeliveryMap('map', {
   pickup: {{ order.restaurant.address|latlng|json_encode() }},
   dropoff: {{ order.shippingAddress|latlng|json_encode() }},
   fitBoundsOptions: {
-    paddingBottomRight: [ 220, -150 ]
+    paddingBottomRight: [ 220, -350 ]
   }
 });
 </script>

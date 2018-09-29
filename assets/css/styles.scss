@@ -496,12 +496,16 @@ a.list-group-item.menu-item--unavailable {
 }
 
 .order-map__column {
-  margin: 40px 20px 60px;
+  margin: 10px;
   background-color: $white;
   box-sizing: border-box;
   padding: 20px;
 
-  @media screen and (max-width: $screen-md-max) {
+  table {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: $screen-sm-max) {
     margin: 0 0 20px;
     padding: 10px;
   }
