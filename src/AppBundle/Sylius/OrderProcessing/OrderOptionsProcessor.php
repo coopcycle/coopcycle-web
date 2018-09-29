@@ -39,10 +39,10 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                 $amount = 0;
                 switch ($option->getStrategy()) {
                     case ProductOptionInterface::STRATEGY_OPTION:
-                        $amount = $option->getPrice();
+                        $amount = $option->getPrice() * $orderItem->getQuantity();
                         break;
                     case ProductOptionInterface::STRATEGY_OPTION_VALUE:
-                        $amount = $optionValue->getPrice();
+                        $amount = $optionValue->getPrice() * $orderItem->getQuantity();
                         break;
                 }
 
