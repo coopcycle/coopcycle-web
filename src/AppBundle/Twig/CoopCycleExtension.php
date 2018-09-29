@@ -26,7 +26,6 @@ class CoopCycleExtension extends \Twig_Extension
             new \Twig_SimpleFunction('stripe_is_livemode', array(StripeResolver::class, 'isLivemode')),
             new \Twig_SimpleFunction('stripe_can_enable_livemode', array(StripeResolver::class, 'canEnableLivemode')),
             new \Twig_SimpleFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),
-            new \Twig_SimpleFunction('stripe_oauth_link', array(StripeResolver::class, 'getOAuthLink')),
         );
     }
 

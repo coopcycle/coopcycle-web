@@ -19,17 +19,34 @@ class StripeController extends Controller
      */
     public function connectStandardAccountAction(Request $request)
     {
+        $flashBag = $request->getSession()->getFlashBag();
+
+        // Something should have been stored in FlashBag previously
+        if (!$flashBag->has('stripe_connect_livemode')) {
+            return $this->redirectToRoute('homepage');
+        }
+
+        $messages = $flashBag->get('stripe_connect_livemode');
+
+        if (count($messages) !== 1) {
+            $flashBag->clear();
+            return $this->redirectToRoute('homepage');
+        }
+
+        $livemode = filter_var(current($messages), FILTER_VALIDATE_BOOLEAN);
+
+        $settingsManager = $this->get('coopcycle.settings_manager');
+        $secretKey = $livemode ? $settingsManager->get('stripe_live_secret_key') : $settingsManager->get('stripe_test_secret_key');
+
         // curl https://connect.stripe.com/oauth/token \
         // -d client_secret=XXX \
         // -d code=AUTHORIZATION_CODE \
         // -d grant_type=authorization_code
 
-        $settingsManager = $this->get('coopcycle.settings_manager');
-
         $params = array(
             'grant_type' => 'authorization_code',
             'code' => $request->query->get('code'),
-            'client_secret' => $settingsManager->get('stripe_secret_key'),
+            'client_secret' => $secretKey,
         );
 
         $req = curl_init('https://connect.stripe.com/oauth/token');
@@ -68,7 +85,7 @@ class StripeController extends Controller
             );
         } else {
 
-            Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
+            Stripe\Stripe::setApiKey($secretKey);
 
             $account = Stripe\Account::retrieve($res['stripe_user_id']);
 

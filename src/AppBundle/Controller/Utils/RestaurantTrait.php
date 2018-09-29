@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 
@@ -639,5 +640,72 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes));
+    }
+
+    public function stripeOAuthRedirectAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $redirectUri = $this->generateUrl(
+            'stripe_connect_standard_account',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $user = $this->getUser();
+
+        $livemode = $request->query->getBoolean('livemode', false);
+
+        // @see https://stripe.com/docs/connect/oauth-reference
+        $prefillingData = [
+            'stripe_user[email]' => $user->getEmail(),
+            'stripe_user[url]' => $restaurant->getWebsite(),
+            // TODO : set this after https://github.com/coopcycle/coopcycle-web/issues/234 is solved
+            // 'stripe_user[country]' => $restaurant->getAddress()->getCountry(),
+            'stripe_user[phone_number]' => $restaurant->getTelephone(),
+            'stripe_user[business_name]' => $restaurant->getLegalName(),
+            'stripe_user[business_type]' => 'Restaurant',
+            'stripe_user[first_name]' => $user->getGivenName(),
+            'stripe_user[last_name]' => $user->getFamilyName(),
+            'stripe_user[street_address]' => $restaurant->getAddress()->getStreetAddress(),
+            'stripe_user[city]' => $restaurant->getAddress()->getAddressLocality(),
+            'stripe_user[zip]' => $restaurant->getAddress()->getPostalCode(),
+            'stripe_user[physical_product]' => 'Food',
+            'stripe_user[shipping_days]' => 1,
+            'stripe_user[product_category]' => 'Food',
+            'stripe_user[product_description]' => 'Food',
+            'stripe_user[currency]' => 'EUR'
+        ];
+
+        // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
+
+        $key = $livemode ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
+        $clientId = $this->get('coopcycle.settings_manager')->get($key);
+
+        // Store livemode in FlashBag for later
+        $request->getSession()->getFlashBag()->set('stripe_connect_livemode', [ $livemode ? 'yes' : 'no' ]);
+
+        // Encode the current URL as base64
+        // FIXME Use encryption instead of base64
+        $redirectAfterUri = $this->generateUrl(
+            $request->attributes->get('redirect_after'),
+            ['id' => $restaurant->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $state = base64_encode($redirectAfterUri);
+
+        $queryString = http_build_query(array_merge(
+            $prefillingData,
+            [
+                'response_type' => 'code',
+                'client_id' => $clientId,
+                'scope' => 'read_write',
+                'redirect_uri' => $redirectUri,
+                'state' => $state,
+            ]
+        ));
+
+        return $this->redirect('https://connect.stripe.com/oauth/authorize?' . $queryString);
     }
 }

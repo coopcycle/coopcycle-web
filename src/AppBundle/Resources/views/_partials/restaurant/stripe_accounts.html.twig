@@ -23,7 +23,7 @@
             <i class="fa fa-check"></i>
           </span>
         {% else %}
-          <a href="{{ stripe_oauth_link(restaurant, false) }}" class="stripe-connect">
+          <a href="{{ path(stripe_oauth_redirect_route, { id: restaurant.id, livemode: 'no'}) }}" class="stripe-connect">
             <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
           </a>
         {% endif %}
@@ -45,7 +45,7 @@
           </span>
         {% else %}
           {% if stripe_can_enable_livemode() %}
-            <a href="{{ stripe_oauth_link(restaurant, true) }}" class="stripe-connect">
+            <a href="{{ path(stripe_oauth_redirect_route, { id: restaurant.id, livemode: 'yes'}) }}" class="stripe-connect">
               <span>{{ 'form.local_business.stripe_account.connect_button.text'|trans }}</span>
             </a>
           {% else %}

@@ -285,6 +285,13 @@ profile_restaurant_product_option:
             product_options: profile_restaurant_product_options
     methods: [ GET, POST ]
 
+profile_restaurant_stripe_oauth_redirect:
+    path: /profile/restaurants/{id}/stripe-oauth-redirect
+    defaults:
+        _controller: AppBundle:Profile:stripeOAuthRedirect
+        redirect_after: profile_restaurant
+    methods: [ GET ]
+
 profile_deliveries_calculate_price:
     path: /profile/deliveries/calculate-price
     defaults: { _controller: AppBundle:Profile:calculateDeliveryPrice }
