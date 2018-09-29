@@ -20,23 +20,6 @@ profile_orders:
             order: profile_order
     methods:  [ GET ]
 
-profile_restaurant_new:
-    path: /profile/restaurants/new
-    defaults:
-        _controller: AppBundle:Profile:newRestaurant
-        layout: '@App/profile.html.twig'
-        template: '@App/restaurant/form.html.twig'
-        routes:
-            success: profile_restaurant
-            restaurants: profile_restaurants
-            menu_taxons: profile_restaurant_menu_taxons
-            menu_taxon: profile_restaurant_menu_taxon
-            products: profile_restaurant_products
-            product_options: profile_restaurant_product_options
-            dashboard: profile_restaurant_dashboard
-            planning: profile_restaurant_planning
-    methods: [ GET, POST ]
-
 profile_restaurant:
     path: /profile/restaurants/{id}
     defaults:
