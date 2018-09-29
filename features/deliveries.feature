@@ -1,8 +1,7 @@
 Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff
-    Given the database is empty
-    And the fixtures file "stores.yml" is loaded
+    Given the fixtures file "stores.yml" is loaded
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -69,8 +68,7 @@ Feature: Deliveries
       """
 
   Scenario: Create delivery with implicit pickup address
-    Given the database is empty
-    And the fixtures file "stores.yml" is loaded
+    Given the fixtures file "stores.yml" is loaded
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -136,8 +134,7 @@ Feature: Deliveries
       """
 
   Scenario: Create delivery with implicit pickup address & implicit time
-    Given the database is empty
-    And the fixtures file "stores.yml" is loaded
+    Given the fixtures file "stores.yml" is loaded
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |

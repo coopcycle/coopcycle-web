@@ -1,8 +1,7 @@
 Feature: Location tracking
 
   Scenario: Location update
-    Given the database is empty
-    And the user is loaded:
+    Given the user is loaded:
       | email    | bob@coopcycle.org |
       | username | bob               |
       | password | 123456            |

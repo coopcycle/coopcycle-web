@@ -1,8 +1,7 @@
 Feature: Food Tech
 
   Scenario: Restaurant does not belong to user
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -15,10 +14,10 @@ Feature: Food Tech
     Then the response status code should be 403
 
   Scenario: Retrieve restaurant orders
-    Given the database is empty
-    And the current time is "2018-08-27 12:00:00"
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the current time is "2018-08-27 12:00:00"
+    And the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     And the restaurant with id "1" has products:
       | code      |
@@ -69,9 +68,9 @@ Feature: Food Tech
       """
 
   Scenario: Refuse order with reason
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -102,9 +101,9 @@ Feature: Food Tech
     And the last order from "sarah" should be in state "refused"
 
   Scenario: Delay order
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -133,9 +132,9 @@ Feature: Food Tech
     Then the response status code should be 200
 
   Scenario: Not authorized to delay order
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -174,9 +173,9 @@ Feature: Food Tech
       """
 
   Scenario: Accept order
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -203,9 +202,9 @@ Feature: Food Tech
     Then the response status code should be 200
 
   Scenario: Not authorized to accept order
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -242,9 +241,9 @@ Feature: Food Tech
       """
 
   Scenario: Disable product
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -266,9 +265,9 @@ Feature: Food Tech
     Then the response status code should be 200
 
   Scenario: Not authorized to disable product
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -286,9 +285,9 @@ Feature: Food Tech
     Then the response status code should be 403
 
   Scenario: Close restaurant
-    Given the database is empty
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | products.yml    |
+      | restaurants.yml |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |

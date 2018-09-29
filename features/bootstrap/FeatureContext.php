@@ -26,6 +26,8 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
+use libphonenumber\PhoneNumberUtil;
+use Fidry\AliceDataFixtures\LoaderInterface;
 
 /**
  * Defines application features from the specific context.
@@ -60,6 +62,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
     private $tokens;
 
+    private $fixturesLoader;
+
     /**
      * Initializes context.
      *
@@ -70,8 +74,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function __construct(
         ManagerRegistry $doctrine,
         HttpCallResultPool $httpCallResultPool,
-        \libphonenumber\PhoneNumberUtil $phoneNumberUtil
-    )
+        PhoneNumberUtil $phoneNumberUtil,
+        LoaderInterface $fixturesLoader)
     {
         $this->tokens = [];
         $this->doctrine = $doctrine;
@@ -80,6 +84,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->classes = $this->manager->getMetadataFactory()->getAllMetadata();
         $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->fixturesLoader = $fixturesLoader;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -103,12 +108,32 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @AfterScenario
+     * @BeforeScenario
      */
     public function clearData()
     {
-        $purger = new ORMPurger($this->getContainer()->get('doctrine')->getManager());
+        $purger = new ORMPurger($this->doctrine->getManager());
         $purger->purge();
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resetSequences()
+    {
+        $connection = $this->doctrine->getConnection();
+        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        foreach ($rows as $row) {
+            $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
+        }
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function clearAuthentication()
+    {
+        $this->tokens = [];
     }
 
     /**
@@ -119,6 +144,27 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Carbon::setTestNow();
     }
 
+    /**
+     * @Given the fixtures file :filename is loaded
+     */
+    public function theFixturesFileIsLoaded($filename)
+    {
+        $this->fixturesLoader->load([
+            __DIR__.'/../fixtures/ORM/'.$filename
+        ]);
+    }
+
+    /**
+     * @Given the fixtures files are loaded:
+     */
+    public function theFixturesFilesAreLoaded(TableNode $table)
+    {
+        $filenames = array_map(function (array $row) {
+            return __DIR__.'/../fixtures/ORM/'.current($row);
+        }, $table->getRows());
+
+        $this->fixturesLoader->load($filenames);
+    }
 
     /**
      * @Given the redis database is empty
@@ -165,7 +211,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
         $manager = $this->getContainer()->get('fos_user.user_manager');
 
-        $user = $manipulator->create($username, $password, $email, true, false);
+        if (!$user = $manager->findUserByUsername($username)) {
+            $user = $manipulator->create($username, $password, $email, true, false);
+        }
 
         $needsUpdate = false;
 

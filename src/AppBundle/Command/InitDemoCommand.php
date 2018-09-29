@@ -7,9 +7,10 @@ use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use GuzzleHttp\Client;
-use Nelmio\Alice\Fixtures\Loader as FixturesLoader;
 use Sylius\Component\Locale\Model\Locale;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +35,10 @@ class InitDemoCommand extends ContainerAwareCommand
     private $taxonFactory;
     private $phoneNumberUtil;
     private $batchSize = 10;
+    private $excludedTables = [
+        'craue_config_setting',
+        'migration_versions',
+    ];
 
     private static $users = [
         'admin' => [
@@ -54,14 +59,10 @@ class InitDemoCommand extends ContainerAwareCommand
         $this->userManipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
         $this->doctrine = $this->getContainer()->get('doctrine');
 
-        $this->faker = Faker\Factory::create('fr_FR');
-        $this->fixturesLoader = new FixturesLoader('fr_FR');
+        $this->fixturesLoader = $this->getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
 
-        $restaurantProvider = new RestaurantProvider($this->faker);
-
-        $this->faker->addProvider($restaurantProvider);
-
-        $this->fixturesLoader->addProvider($restaurantProvider);
+        $this->faker = $this->getContainer()->get('nelmio_alice.faker.generator');
+        $this->faker->addProvider(new RestaurantProvider($this->faker));
 
         $this->redis = $this->getContainer()->get('snc_redis.default');
 
@@ -72,10 +73,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
         $this->phoneNumberUtil = $this->getContainer()->get('libphonenumber.phone_number_util');
 
-        $this->ormPurger = new ORMPurger($this->getContainer()->get('doctrine')->getManager(), [
-            'craue_config_setting',
-            'migration_versions',
-        ]);
+        $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         $store = new FlockStore();
@@ -89,8 +87,10 @@ class InitDemoCommand extends ContainerAwareCommand
         if ($lock->acquire()) {
 
             $output->writeln('Purging database…');
-
             $this->ormPurger->purge();
+
+            $output->writeln('Resetting sequences…');
+            $this->resetSequences();
 
             $output->writeln('Verifying database config…');
             $this->handleCraueConfig($input, $output);
@@ -130,6 +130,32 @@ class InitDemoCommand extends ContainerAwareCommand
 
             $lock->release();
         }
+    }
+
+    private function resetSequences()
+    {
+        $connection = $this->doctrine->getConnection();
+        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        foreach ($rows as $row) {
+
+            $sequenceName = $row['sequence_name'];
+            $tableName = str_replace('_id_seq', '', $sequenceName);
+
+            if (in_array($tableName, $this->excludedTables)) {
+                continue;
+            }
+
+            try {
+                $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
+            } catch (TableNotFoundException $e) {
+                // We don't care
+            }
+        }
+    }
+
+    private function loadFixtures($filename, array $objects = [])
+    {
+        return $this->fixturesLoader->load([$filename], $parameters = [], $objects, PurgeMode::createNoPurgeMode());
     }
 
     private function createLangs() {
@@ -301,11 +327,10 @@ class InitDemoCommand extends ContainerAwareCommand
         $products = [];
 
         for ($i = 0; $i < 5; $i++) {
-            $appetizer = $this->fixturesLoader->load(__DIR__ . '/Resources/appetizer.yml', [
-                'tax_category' => $taxCategory,
+            $appetizer = $this->loadFixtures(__DIR__ . '/Resources/appetizer.yml', [
+                'taxCategory' => $taxCategory,
             ]);
-            $appetizer['variant']->setTaxCategory($taxCategory);
-            $appetizer['product']->addVariant($appetizer['variant']);
+
             $products[] = $appetizer['product'];
         }
 
@@ -316,13 +341,15 @@ class InitDemoCommand extends ContainerAwareCommand
     {
         $products = [];
 
-        $options = $this->fixturesLoader->load(__DIR__ . '/Resources/product_options.yml');
+        $options = $this->loadFixtures(__DIR__ . '/Resources/product_options.yml');
 
         for ($i = 0; $i < 5; $i++) {
-            $dish = $this->fixturesLoader->load(__DIR__ . '/Resources/dish.yml', [
-                'accompaniments' => $options['accompaniments'],
-                'drinks' => $options['drinks']
-            ]);
+
+            $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml');
+
+            $dish['product']->addOption($options['accompaniments']);
+            $dish['product']->addOption($options['drinks']);
+
             $this->productVariantGenerator->generate($dish['product']);
             foreach ($dish['product']->getVariants() as $variant) {
                 $variant->setPrice($this->faker->numberBetween(499, 999));
@@ -340,11 +367,10 @@ class InitDemoCommand extends ContainerAwareCommand
         $products = [];
 
         for ($i = 0; $i < 5; $i++) {
-            $dessert = $this->fixturesLoader->load(__DIR__ . '/Resources/dessert.yml', [
-                'tax_category' => $taxCategory,
+            $dessert = $this->loadFixtures(__DIR__ . '/Resources/dessert.yml', [
+                'taxCategory' => $taxCategory,
             ]);
-            $dessert['variant']->setTaxCategory($taxCategory);
-            $dessert['product']->addVariant($dessert['variant']);
+
             $products[] = $dessert['product'];
         }
 

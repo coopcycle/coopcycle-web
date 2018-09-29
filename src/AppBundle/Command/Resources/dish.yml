@@ -5,4 +5,3 @@ AppBundle\Entity\Sylius\Product:
     name: <dishName()>
     slug: <uuid()>
     enabled: true
-    options: [ "@accompaniments", "@drinks" ]

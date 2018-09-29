@@ -8,15 +8,18 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Prophecy\Argument;
 
-class DeliveryManagerTest extends BaseTest
+class DeliveryManagerTest extends KernelTestCase
 {
     private $expressionLanguage;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
+
+        self::bootKernel();
 
         $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
     }

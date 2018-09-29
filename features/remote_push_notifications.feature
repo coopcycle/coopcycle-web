@@ -1,8 +1,7 @@
 Feature: Remote push notifications
 
   Scenario: Store iOS token
-    Given the database is empty
-    And the user is loaded:
+    Given the user is loaded:
       | email    | bob@coopcycle.org |
       | username | bob               |
       | password | 123456            |
@@ -19,9 +18,8 @@ Feature: Remote push notifications
     Then the response status code should be 201
     And the response should be in JSON
 
-    Scenario: Store Android token
-    Given the database is empty
-    And the user is loaded:
+  Scenario: Store Android token
+    Given the user is loaded:
       | email    | bob@coopcycle.org |
       | username | bob               |
       | password | 123456            |

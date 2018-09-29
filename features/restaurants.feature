@@ -1,8 +1,7 @@
 Feature: Manage restaurants
 
   Scenario: Retrieve the restaurants list
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
     Then the response status code should be 200
@@ -19,8 +18,7 @@ Feature: Manage restaurants
     """
 
   Scenario: Search restaurants
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116"
     Then the response status code should be 200
@@ -50,10 +48,10 @@ Feature: Manage restaurants
     """
 
   Scenario: Retrieve a restaurant
-    Given the database is empty
-    And the fixtures file "sylius_locales.yml" is loaded
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_locales.yml |
+      | products.yml       |
+      | restaurants.yml    |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -160,24 +158,21 @@ Feature: Manage restaurants
     """
 
   Scenario: Restaurant is deliverable
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.855799,2.359207"
     Then the response status code should be 200
     And the response should be in JSON
 
   Scenario: Restaurant is not deliverable
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.882305,2.365448"
     Then the response status code should be 400
     And the response should be in JSON
 
   Scenario: Change restaurant state
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -196,8 +191,7 @@ Feature: Manage restaurants
     And the response should be in JSON
 
   Scenario: User has not sufficient access rights
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -213,8 +207,7 @@ Feature: Manage restaurants
     Then the response status code should be 403
 
   Scenario: User is not authorized to modify restaurant
-    Given the database is empty
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures file "restaurants.yml" is loaded
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -232,10 +225,10 @@ Feature: Manage restaurants
     Then the response status code should be 403
 
   Scenario: Retrieve restaurant products
-    Given the database is empty
-    And the fixtures file "sylius_locales.yml" is loaded
-    And the fixtures file "products.yml" is loaded
-    And the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_locales.yml |
+      | products.yml       |
+      | restaurants.yml    |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
