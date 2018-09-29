@@ -105,16 +105,8 @@ class RestaurantController extends Controller
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            // FIXME : can't use SQL because we want to filter by date as well :(
-            // $count = $repository->countNearby($latitude, $longitude, 1500);
-            // $matches = $repository->findNearby($latitude, $longitude, 1500, , self::ITEMS_PER_PAGE, $offset);
-
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
-
-            // FIXME : can't use SQL because we want to filter by date as well :(
-            // $count = $repository->createQueryBuilder('r')->select('COUNT(r)')->getQuery()->getSingleScalarResult();
-
             $matches = $repository->findBy([], ['name' => 'ASC']);
         }
 
@@ -143,19 +135,10 @@ class RestaurantController extends Controller
      */
     public function indexAction($id, $slug, Request $request)
     {
-        $user = $this->getUser();
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)->find($id);
 
-        // Preview mode for admin + restaurant owner
-        if (isset($user) && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
-            $restaurant = $this->getDoctrine()
-                ->getRepository('AppBundle:Restaurant')->findOneBy(['id' => $id]);
-        } else {
-            $restaurant = $this->getDoctrine()
-                ->getRepository('AppBundle:Restaurant')->findOneBy(['id' => $id, 'enabled' => true]);
-        }
-
-        if (!$restaurant ||
-            (isset($user) && !$restaurant->isEnabled() && $user->hasRole('ROLE_RESTAURANT') && !$user->ownsRestaurant($restaurant))) {
+        if (!$restaurant) {
             throw new NotFoundHttpException();
         }
 
