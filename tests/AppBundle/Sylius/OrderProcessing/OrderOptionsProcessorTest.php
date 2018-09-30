@@ -20,6 +20,7 @@ class OrderOptionsProcessorTest extends KernelTestCase
 {
     private $adjustmentFactory;
     private $orderOptionsProcessor;
+    private $orderItemQuantityModifier;
 
     public function setUp()
     {
@@ -28,6 +29,7 @@ class OrderOptionsProcessorTest extends KernelTestCase
         self::bootKernel();
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
+        $this->orderItemQuantityModifier = static::$kernel->getContainer()->get('sylius.order_item_quantity_modifier');
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
     }
 
@@ -70,11 +72,13 @@ class OrderOptionsProcessorTest extends KernelTestCase
         return $productVariant->reveal();
     }
 
-    private function createOrderItem($total, ProductVariantInterface $variant)
+    private function createOrderItem($total, ProductVariantInterface $variant, $quantity = 1)
     {
         $orderItem = new OrderItem();
 
         $orderItem->setVariant($variant);
+
+        $this->orderItemQuantityModifier->modify($orderItem, $quantity);
 
         return $orderItem;
     }
@@ -133,6 +137,20 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
         $this->assertEquals(100, $adjustments->get(0)->getAmount());
         $this->assertFalse($adjustments->get(0)->isNeutral());
+
+        $order->clearItems();
+
+        $order->addItem($this->createOrderItem(100, $productVariant, 2));
+
+        $this->orderOptionsProcessor->process($order);
+
+        $adjustments = $order->getAdjustmentsRecursively(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT);
+
+        $this->assertCount(1, $adjustments);
+        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
+        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
+        $this->assertEquals(200, $adjustments->get(0)->getAmount());
+        $this->assertFalse($adjustments->get(0)->isNeutral());
     }
 
     public function testOrderItemWithOptionStrategyOptionValue()
@@ -156,6 +174,26 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
         $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
         $this->assertEquals(100, $adjustments->get(0)->getAmount());
+        $this->assertFalse($adjustments->get(0)->isNeutral());
+
+        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(1)->getType());
+        $this->assertEquals('Bar', $adjustments->get(1)->getLabel());
+        $this->assertEquals(0, $adjustments->get(1)->getAmount());
+        $this->assertFalse($adjustments->get(1)->isNeutral());
+
+        $order->clearItems();
+
+        $order->addItem($this->createOrderItem(100, $productVariant, 2));
+
+        $this->orderOptionsProcessor->process($order);
+
+        $adjustments = $order->getAdjustmentsRecursively(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT);
+
+        $this->assertCount(2, $adjustments);
+
+        $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(0)->getType());
+        $this->assertEquals('Foo', $adjustments->get(0)->getLabel());
+        $this->assertEquals(200, $adjustments->get(0)->getAmount());
         $this->assertFalse($adjustments->get(0)->isNeutral());
 
         $this->assertEquals(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT, $adjustments->get(1)->getType());
