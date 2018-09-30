@@ -27,8 +27,7 @@ class StripeManager
         $stripeToken = $stripePayment->getStripeToken();
 
         if (null === $stripeToken) {
-            // TODO Trigger Exception
-            return;
+            throw new \Exception('No Stripe token provided');
         }
 
         $order = $stripePayment->getOrder();
