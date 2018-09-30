@@ -64,10 +64,12 @@
             {# TODO Skip if no variant is defined #}
             {% if not product.enabled %}
               <a class="list-group-item menu-item menu-item--unavailable">
-                <span class="menu-item-content">{{ product.name }}</span>
-                {% if product.description is not null %}
-                  <p class="menu-item-description">{{ product.description }}</p>
-                {%  endif %}
+                <span class="menu-item-content">
+                  {{ product.name }}
+                  {% if product.description is not null %}
+                    <small class="menu-item-description">{{ product.description }}</small>
+                  {% endif %}
+                </span>
                 <span class="menu-item-price">
                   <small>
                     {% trans %}restaurant.unavailable{% endtrans %}
