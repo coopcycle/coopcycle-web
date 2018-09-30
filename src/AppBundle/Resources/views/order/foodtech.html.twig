@@ -50,4 +50,10 @@ new CoopCycle.OrderTimeline(document.querySelector('#order-timeline'), {
   events: {{ events|json_encode()|raw }}
 });
 </script>
+{% if reset %}
+<script>
+sessionStorage.removeItem('search_address');
+sessionStorage.removeItem('search_geohash');
+</script>
+{% endif %}
 {% endblock %}

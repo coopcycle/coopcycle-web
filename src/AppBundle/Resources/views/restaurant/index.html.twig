@@ -291,7 +291,7 @@ function initMap() {
 
   $('#cart-warning-cancel').on('click', function(e) {
     {% set cart = cart_provider.getCart() %}
-    window.location.replace("{{ path('restaurant', { id: cart.restaurant.id }) }}")
+    window.location.href = "{{ path('restaurant', { id: cart.restaurant.id }) }}";
     $('#cart-warning-modal').modal('hide');
   })
 

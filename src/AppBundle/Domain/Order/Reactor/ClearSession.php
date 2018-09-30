@@ -21,5 +21,6 @@ class ClearSession
     public function __invoke(CheckoutSucceeded $event)
     {
         $this->session->remove($this->sessionKeyName);
+        $this->session->remove('restaurantId');
     }
 }

@@ -115,12 +115,19 @@ class ProfileController extends Controller
         }
 
         if ($order->isFoodtech()) {
+
+            $reset = false;
+            if ($request->query->has('reset')) {
+                $reset = $request->query->getBoolean('reset');
+            }
+
             return $this->render('@App/order/foodtech.html.twig', [
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
                 'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
-                'breadcrumb_path' => 'profile_orders'
+                'breadcrumb_path' => 'profile_orders',
+                'reset' => $reset,
             ]);
         }
 

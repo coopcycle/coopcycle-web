@@ -98,7 +98,10 @@ class OrderController extends Controller
                 ]);
             }
 
-            return $this->redirectToRoute('profile_order', array('id' => $order->getId()));
+            return $this->redirectToRoute('profile_order', [
+                'id' => $order->getId(),
+                'reset' => 'yes'
+            ]);
         }
 
         return $parameters;
