@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\EmailSent;
 use AppBundle\Domain\Order\Event\OrderAccepted;
+use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Event\OrderRefused;
 use AppBundle\Service\EmailManager;
