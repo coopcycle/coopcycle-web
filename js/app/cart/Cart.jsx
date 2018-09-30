@@ -273,11 +273,8 @@ class Cart extends React.Component
     return initialized ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
   }
 
-  openModal() {
-    this.setState({ modalIsOpen: true });
-  }
-
   afterOpenModal() {
+    window._paq.push(['trackEvent', 'Checkout', 'openModal'])
     setTimeout(() => this.modalAddressPicker.setFocus(), 250);
   }
 
