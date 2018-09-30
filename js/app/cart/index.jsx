@@ -224,6 +224,7 @@ class CartHelper {
   }
 
   reset() {
+    this.cartComponentRef.current.setLoading(true)
     $.post(this.options.resetCartURL)
       .then(res => this.handleAjaxResponse(res))
       .fail(e => this.handleAjaxResponse(e.responseJSON))
