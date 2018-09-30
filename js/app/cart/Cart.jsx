@@ -378,6 +378,7 @@ class Cart extends React.Component
           isOpen={ modalIsOpen }
           onAfterOpen={ this.afterOpenModal.bind(this) }
           onRequestClose={ this.closeModal.bind(this) }
+          shouldCloseOnOverlayClick={ false }
           contentLabel={ i18n.t('ENTER_YOUR_ADDRESS') }
           className="ReactModal__Content--enter-address">
           <h4 className="text-center">{ modalHeadingText }</h4>
