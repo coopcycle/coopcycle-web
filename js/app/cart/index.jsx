@@ -35,9 +35,9 @@ class CartHelper {
       total
     } = window.AppData.Cart
 
-    const geohash = localStorage.getItem('search_geohash') || ''
+    const geohash = sessionStorage.getItem('search_geohash') || ''
     const availabilities = options.restaurant.availabilities
-    const streetAddress = shippingAddress ? shippingAddress.streetAddress : (localStorage.getItem('search_address') || '')
+    const streetAddress = shippingAddress ? shippingAddress.streetAddress : (sessionStorage.getItem('search_address') || '')
 
     const closestDeliveryDate = _.first(availabilities)
     let deliveryDate = closestDeliveryDate
