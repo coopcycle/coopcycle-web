@@ -72,12 +72,7 @@ class TaskLists extends React.Component {
         <Modal
           appElement={document.getElementById('dashboard')}
           isOpen={addModalIsOpen}
-          style={{
-            content: {
-              width: '440px'
-            }
-          }}
-        >
+          className="ReactModal__Content--select-courier">
           <div className="modal-header">
             <button type="button" className="close" onClick={this.props.closeAddUserModal} aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 className="modal-title" id="user-modal-label">{this.props.t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING')}</h4>

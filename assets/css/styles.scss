@@ -702,6 +702,10 @@ form[name="store"] #store_imageFile_file {
   // min-width: 50%;
 }
 
+.ReactModal__Content--select-courier {
+  width: 440px;
+}
+
 .ReactModal__Content--enter-address {
   overflow: inherit;
   @media (min-width: $screen-lg-min) {
