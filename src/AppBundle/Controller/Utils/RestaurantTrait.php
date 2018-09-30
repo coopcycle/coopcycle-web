@@ -470,9 +470,15 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        // TODO Use Criteria API for ordering
+        $products = $restaurant->getProducts()->toArray();
+        usort($products, function ($a, $b) {
+            return $a->getName() < $b->getName() ? -1 : 1;
+        });
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'products' => $restaurant->getProducts(),
+            'products' => $products,
             'restaurant' => $restaurant,
         ], $routes));
     }
