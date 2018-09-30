@@ -74,17 +74,7 @@ class TaskLists extends React.Component {
           isOpen={addModalIsOpen}
           style={{
             content: {
-              position: 'absolute',
-              top: '60px',
-              bottom: 'auto',
-              margin: 'auto',
-              width: '440px',
-              border: '1px solid #ccc',
-              background: '#fff',
-              overflow: 'auto',
-              borderRadius: '4px',
-              outline: 'none',
-              padding: '20px'
+              width: '440px'
             }
           }}
         >
