@@ -54,13 +54,22 @@ sudo chmod -R g+w coopcycle-web
 make install
 ```
 
-
+-------
 ### Run the application
 
 * Start the Docker containers
 ```
 docker-compose up
 ```
+
+* Or if needed with an additional UI to help you manage the containers environment
+
+Use the below command to get the [portainer](https://portainer.io/) UI:
+```
+docker-compose -f docker-compose.yml -f docker-compose-portainer.yml up
+```
+open http://localhost:9000 to access portainer
+Setup and confirm the admin password the first time you use it.
 
 * Open the platform in your browser
 ```
@@ -102,7 +111,6 @@ When pulling change from the remote, the database models may have changed. To ap
 ```
 make migrations-migrate
 ```
-
 
 License
 -------
