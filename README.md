@@ -54,8 +54,9 @@ sudo chmod -R g+w coopcycle-web
 make install
 ```
 
--------
+
 ### Run the application
+-------
 
 * Start the Docker containers
 ```
