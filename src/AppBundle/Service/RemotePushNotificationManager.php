@@ -52,6 +52,7 @@ class RemotePushNotificationManager
         }
 
         $payload['notification']['body'] = $message;
+        $payload['notification']['sound'] = 'default';
 
         // This parameter specifies the custom key-value pairs of the message's payload.
         // For example, with data:{"score":"3x1"}:
