@@ -266,11 +266,14 @@ $('form[data-product-options]').on('submit', function(e) {
   var data = $(this).serializeArray();
   if (data.length > 0) {
     window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
-    $(this).closest('.modal').modal('hide');
-    // Uncheck all options
-    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
-    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
+  } else {
+    window.AppData.CartHelper.addProduct($(this).attr('action'), 1);
   }
+
+  $(this).closest('.modal').modal('hide');
+  // Uncheck all options
+  $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+  $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
 })
 
 $('.modal').on('shown.bs.modal', function(e) {
