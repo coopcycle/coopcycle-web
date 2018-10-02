@@ -26,7 +26,7 @@ AppBundle\Entity\Sylius\Order:
                     referencedColumnName: id
                     nullable: true
             cascade:
-                - persist
+                - all
         billingAddress:
             targetEntity: AppBundle\Entity\Address
             joinColumns:
@@ -34,7 +34,7 @@ AppBundle\Entity\Sylius\Order:
                     referencedColumnName: id
                     nullable: true
             cascade:
-                - persist
+                - all
     oneToMany:
         payments:
             targetEntity: AppBundle\Entity\StripePayment
