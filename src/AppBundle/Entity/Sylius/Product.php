@@ -73,4 +73,15 @@ class Product extends BaseProduct implements ProductInterface
 
         return [];
     }
+
+    public function hasNonAdditionalOptions()
+    {
+        foreach ($this->getOptions() as $option) {
+            if (!$option->isAdditional()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -302,7 +302,9 @@ class RestaurantController extends Controller
 
         $variantResolver = $this->get('coopcycle.sylius.product_variant_resolver.lazy');
 
-        if (!$product->hasOptions()) {
+        $hasOptions = $product->hasOptions() && $product->hasNonAdditionalOptions();
+
+        if (!$hasOptions) {
             $productVariant = $variantResolver->getVariant($product);
         } else {
 
