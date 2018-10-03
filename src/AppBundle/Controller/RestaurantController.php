@@ -302,43 +302,45 @@ class RestaurantController extends Controller
 
         $variantResolver = $this->get('coopcycle.sylius.product_variant_resolver.lazy');
 
-        $hasOptions = $product->hasOptions() && $product->hasNonAdditionalOptions();
-
-        if (!$hasOptions) {
+        if (!$product->hasOptions()) {
             $productVariant = $variantResolver->getVariant($product);
         } else {
 
-            $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
-            $options = $request->request->get('options');
+            if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
+                $productVariant = $variantResolver->getVariant($product);
+            } else {
+                $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
+                $options = $request->request->get('options');
 
-            $optionValues = [];
-            foreach ($options as $optionCode => $optionValueCode) {
+                $optionValues = [];
+                foreach ($options as $optionCode => $optionValueCode) {
 
-                $optionValueCodes = [];
-                if (is_array($optionValueCode)) {
-                    $optionValueCodes = $optionValueCode;
-                } else {
-                    $optionValueCodes[] = $optionValueCode;
+                    $optionValueCodes = [];
+                    if (is_array($optionValueCode)) {
+                        $optionValueCodes = $optionValueCode;
+                    } else {
+                        $optionValueCodes[] = $optionValueCode;
+                    }
+
+                    foreach ($optionValueCodes as $optionValueCode) {
+                        $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
+                        $optionValues[] = $optionValue;
+                    }
                 }
 
-                foreach ($optionValueCodes as $optionValueCode) {
-                    $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
-                    $optionValues[] = $optionValue;
+                $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);
+                if (null !== $nonExistingOption) {
+                    $errors = [
+                        'items' => [
+                            sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode())
+                        ]
+                    ];
+
+                    return $this->jsonResponse($cart, $errors);
                 }
+
+                $productVariant = $variantResolver->getVariantForOptionValues($product, $optionValues);
             }
-
-            $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);
-            if (null !== $nonExistingOption) {
-                $errors = [
-                    'items' => [
-                        sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode())
-                    ]
-                ];
-
-                return $this->jsonResponse($cart, $errors);
-            }
-
-            $productVariant = $variantResolver->getVariantForOptionValues($product, $optionValues);
         }
 
         $cartItem->setVariant($productVariant);
