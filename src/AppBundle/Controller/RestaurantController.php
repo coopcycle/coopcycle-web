@@ -253,6 +253,7 @@ class RestaurantController extends Controller
 
         $cart->clearItems();
         $cart->setRestaurant($restaurant);
+        $cart->setShippedAt($restaurant->getNextOpeningDate());
 
         $this->get('sylius.manager.order')->persist($cart);
         $this->get('sylius.manager.order')->flush();
