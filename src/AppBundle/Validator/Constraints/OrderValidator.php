@@ -77,10 +77,12 @@ class OrderValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', OrderInterface::class));
         }
 
+        // WARNING
+        // We use Carbon to be able to mock the date in Behat tests
         $now = Carbon::now();
 
         $order = $object;
-        $isNew = $order->getId() === null;
+        $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
 
         if ($isNew && $order->getShippedAt() < $now) {
             $this->context->buildViolation($constraint->dateHasPassedMessage)

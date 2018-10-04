@@ -7,7 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripePayment;
-use AppBundle\Form\DeliveryAddressType;
+use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\StripePaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -37,20 +37,11 @@ class OrderController extends Controller
             $this->get('sylius.manager.order')->flush();
         }
 
-        // TODO Check if cart is empty
-        $deliveryAddress = $order->getShippingAddress();
-
-        $form = $this->createForm(DeliveryAddressType::class, $deliveryAddress);
+        $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $deliveryAddress = $form->getData();
-            $deliveryAddress->setFirstName($user->getGivenName());
-            $deliveryAddress->setLastName($user->getFamilyName());
-            $deliveryAddress->setTelephone($user->getTelephone());
-            $this->getDoctrine()->getManagerForClass(Address::class)->persist($deliveryAddress);
-            $this->getDoctrine()->getManagerForClass(Address::class)->flush();
+            $this->get('sylius.manager.order')->flush();
 
             return $this->redirectToRoute('order_payment');
         }
@@ -59,7 +50,6 @@ class OrderController extends Controller
             'order' => $order,
             'form' => $form->createView(),
             'restaurant' => $order->getRestaurant(),
-            'deliveryAddress' => $deliveryAddress,
         );
     }
 
