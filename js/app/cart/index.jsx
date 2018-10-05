@@ -14,9 +14,6 @@ let isXsDevice = $('.visible-xs').is(':visible')
 window.CoopCycle = window.CoopCycle || {}
 window._paq = window._paq || []
 
-const NO_RESULTS = 'NO_RESULTS'
-const NOT_ENOUGH_PRECISION = 'NOT_ENOUGH_PRECISION'
-
 class CartHelper {
 
   constructor(options) {
@@ -87,10 +84,11 @@ class CartHelper {
         isMobileCart={ isXsDevice }
         datePickerDateInputName={ this.options.datePickerDateInputName }
         datePickerTimeInputName={ this.options.datePickerTimeInputName }
-        submitButtonName={ this.options.submitButtonName }
         onDateChange={ date => this._onDateChange(date) }
         onAddressChange={ streetAddress => this._onAddressChange(streetAddress) }
-        onRemoveItem={ item => this.removeCartItem(item) } />, el, onRender)
+        onRemoveItem={ item => this.removeCartItem(item) }
+        onClickCartReset={ () => this.reset() }
+        onClickGoBack={ () => this.gotoCartRestaurantURL() } />, el, onRender)
   }
 
   initTop(el, cart) {
@@ -151,19 +149,16 @@ class CartHelper {
 
     this._setLoading(false)
 
-    const { cart, errors } = res
+    const { availabilities, cart, errors } = res
 
-    if (errors.hasOwnProperty('restaurant')) {
-      this.options.onCartWarning()
-    } else {
-      this.cartComponentRef.current.setCart(cart)
-      this.cartComponentRef.current.setErrors(errors)
+    this.cartComponentRef.current.setAvailabilities(availabilities)
+    this.cartComponentRef.current.setCart(cart)
+    this.cartComponentRef.current.setErrors(errors)
 
-      _.each(errors, (value, key) => window._paq.push(['trackEvent', 'Checkout', 'showError', key]))
+    _.each(errors, (value, key) => window._paq.push(['trackEvent', 'Checkout', 'showError', key]))
 
-      const event = new CustomEvent('cart:change', { detail: cart })
-      document.querySelectorAll('[data-cart-listener]').forEach(listener => listener.dispatchEvent(event))
-    }
+    const event = new CustomEvent('cart:change', { detail: cart })
+    document.querySelectorAll('[data-cart-listener]').forEach(listener => listener.dispatchEvent(event))
   }
 
   addProduct(url, quantity) {
@@ -197,6 +192,10 @@ class CartHelper {
     })
     .then(res => this.handleAjaxResponse(res))
     .fail(e => this.handleAjaxResponse(e.responseJSON))
+  }
+
+  gotoCartRestaurantURL() {
+    window.location.href = this.options.cartRestaurantURL
   }
 
   reset() {

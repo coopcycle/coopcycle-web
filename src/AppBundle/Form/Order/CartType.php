@@ -30,8 +30,7 @@ class CartType extends AbstractType
                 'widget' => 'single_text',
                 'with_seconds' => false,
                 'mapped' => false
-            ])
-            ->add('checkout', SubmitType::class);
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
