@@ -76,7 +76,7 @@
     "CART_CHANGE_RESTAURANT_MODAL_LABEL": "Attention",
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1": "Vous avez commencé votre commande dans un autre restaurant",
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Souhaitez-vous commencer une nouvelle commande dans ce restaurant ?",
-    "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Iniciar un nuevo pedido",
-    "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Volver a mi pedido"
+    "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Commencer une nouvelle commande",
+    "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande"
   }
 }
