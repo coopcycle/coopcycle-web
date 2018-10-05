@@ -2,6 +2,7 @@
 
 namespace AppBundle\Validator\Constraints;
 
+use AppBundle\Entity\Address;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
@@ -22,6 +23,20 @@ class OrderValidator extends ConstraintValidator
         $this->expressionLanguage = $expressionLanguage;
     }
 
+    private function isAddressValid(Address $address)
+    {
+        $errors = $this->context->getValidator()->validate($address, [
+            new Assert\Valid(),
+        ]);
+
+        // FIXME This happens in tests!
+        if (null === $errors) {
+            return true;
+        }
+
+        return count($errors) === 0;
+    }
+
     private function validateRestaurant($object, Constraint $constraint)
     {
         $order = $object;
@@ -36,22 +51,9 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        if ($order->getShippingAddress()) {
-            $data = $this->routing->getRawResponse(
-                $restaurant->getAddress()->getGeo(),
-                $order->getShippingAddress()->getGeo()
-            );
+        $shippingAddress = $order->getShippingAddress();
 
-            $distance = $data['routes'][0]['distance'];
-
-            if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
-                $this->context->buildViolation($constraint->addressTooFarMessage)
-                    ->atPath('shippingAddress')
-                    ->addViolation();
-
-                return;
-            }
-        } else {
+        if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->atPath('shippingAddress')
                 ->addViolation();
@@ -59,6 +61,20 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
+        $data = $this->routing->getRawResponse(
+            $restaurant->getAddress()->getGeo(),
+            $shippingAddress->getGeo()
+        );
+
+        $distance = $data['routes'][0]['distance'];
+
+        if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
+            $this->context->buildViolation($constraint->addressTooFarMessage)
+                ->atPath('shippingAddress')
+                ->addViolation();
+
+            return;
+        }
 
         $minimumAmount = $restaurant->getMinimumCartAmount();
         $itemsTotal = $order->getItemsTotal();

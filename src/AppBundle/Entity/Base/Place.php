@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Base;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Utils\GeoUtils;
 
 /**
@@ -15,6 +16,7 @@ abstract class Place extends PostalAddress
     /**
      * @var GeoCoordinates The geo coordinates of the place.
      *
+     * @Assert\NotBlank()
      * @Groups({"place"})
      */
     protected $geo;

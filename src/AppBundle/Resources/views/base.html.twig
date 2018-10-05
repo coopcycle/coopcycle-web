@@ -90,8 +90,7 @@
         restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
       })
       window.AppData.CartHelper = new CoopCycle.Cart({
-        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}",
-        validateCartURL: "{{ path('order') }}"
+        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}"
       });
       var cartTopElement = document.querySelector('#cart-top');
       if(cartTopElement) {

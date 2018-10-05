@@ -1,12 +1,13 @@
 import React from 'react'
-import { render, findDOMNode } from 'react-dom'
-import Cart from './Cart.jsx'
-import CartTop from './CartTop.jsx'
-import i18n from '../i18n'
+import { render } from 'react-dom'
 import moment from 'moment'
 import _ from 'lodash'
 import { geocodeByAddress } from 'react-places-autocomplete'
-import Promise from 'promise'
+
+import Cart from './Cart.jsx'
+import CartTop from './CartTop.jsx'
+import i18n from '../i18n'
+import { placeToAddress } from '../utils/GoogleMaps'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
@@ -37,6 +38,7 @@ class CartHelper {
 
     const geohash = sessionStorage.getItem('search_geohash') || ''
     const availabilities = options.restaurant.availabilities
+
     const streetAddress = shippingAddress ? shippingAddress.streetAddress : (sessionStorage.getItem('search_address') || '')
 
     const closestDeliveryDate = _.first(availabilities)
@@ -52,14 +54,22 @@ class CartHelper {
     this.cartComponentRef = React.createRef()
 
     const onRender = () => {
-      const cart = this.cartComponentRef.current.getCart()
-      if (cart.address) {
-        this
-          ._geocode(cart.address)
-          .then(address => this.updateCart({ address, date: cart.date }))
-          .catch(e => this._handleGeocodeError(e))
+      // There is no shipping address saved in cart
+      if (!shippingAddress && streetAddress) {
+        this._setLoading(true)
+        geocodeByAddress(streetAddress)
+          .then(results => {
+            if (results.length === 1) {
+              const place = results[0]
+              const address = placeToAddress(place)
+              this._onAddressChange(address)
+            }
+          })
+          .finally(() => {
+            this._setLoading(false)
+          })
       } else {
-        this.updateCart({ date: cart.date })
+        this._postCart()
       }
     }
 
@@ -75,7 +85,9 @@ class CartHelper {
         total={ total }
         adjustments={ adjustments }
         isMobileCart={ isXsDevice }
-        validateCartURL={ this.options.validateCartURL }
+        datePickerDateInputName={ this.options.datePickerDateInputName }
+        datePickerTimeInputName={ this.options.datePickerTimeInputName }
+        submitButtonName={ this.options.submitButtonName }
         onDateChange={ date => this._onDateChange(date) }
         onAddressChange={ streetAddress => this._onAddressChange(streetAddress) }
         onRemoveItem={ item => this.removeCartItem(item) } />, el, onRender)
@@ -91,82 +103,53 @@ class CartHelper {
       />, el)
   }
 
-  _geocode(streetAddress) {
-    return new Promise((resolve, reject) => {
-      geocodeByAddress(streetAddress)
-        .then(results => {
-
-          if (results.length === 0) {
-            reject(NO_RESULTS)
-            return
-          }
-
-          const place = results[0]
-
-          // Make sure we have a "precise" street address
-          // Basically, we make sure we have a street number
-          // Do not use place.types, as this may return a variety of types
-          // @see https://developers.google.com/places/supported_types
-          const hasStreetNumber =
-            Boolean(_.find(place.address_components, component => _.includes(component['types'], 'street_number')))
-
-          if (!hasStreetNumber) {
-            reject(NOT_ENOUGH_PRECISION)
-            return
-          }
-
-          // format Google's places format to a clean dict
-          let addressDict = {},
-            lat = place.geometry.location.lat(),
-            lng = place.geometry.location.lng();
-
-          place.address_components.forEach(function (item) {
-            addressDict[item.types[0]] = item.long_name
-          });
-
-          addressDict.streetAddress = addressDict.street_number ? addressDict.street_number + ' ' + addressDict.route : addressDict.route;
-
-          resolve({
-            'latitude': lat,
-            'longitude': lng,
-            'addressCountry': addressDict.country || '',
-            'addressLocality': addressDict.locality || '',
-            'addressRegion': addressDict.administrative_area_level_1 || '',
-            'postalCode': addressDict.postal_code || '',
-            'streetAddress': addressDict.streetAddress || '',
-          })
-
-        })
-        .catch(e => reject(e))
-    })
+  _setLoading(loading) {
+    this.cartComponentRef.current.setLoading(loading)
   }
 
   _onDateChange(date) {
     window._paq.push(['trackEvent', 'Checkout', 'changeDate']);
-    this.updateCart({ date })
   }
 
-  _onAddressChange(streetAddress) {
-    window._paq.push(['trackEvent', 'Checkout', 'changeAddress', streetAddress]);
-    this
-      ._geocode(streetAddress)
-      .then(address => this.updateCart({ address }))
-      .catch(e => this._handleGeocodeError(e))
+  _mapAddressToElements(address) {
+    _.forEach(this.options.addressFormElements, (el, key) => {
+      if (address.hasOwnProperty(key)) {
+        el.value = address[key]
+      }
+    })
   }
 
-  _handleGeocodeError(e) {
-    if (e === NOT_ENOUGH_PRECISION) {
+  _onAddressChange(address) {
+
+    window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress]);
+
+    // If the address is not precise, we do not save it
+    if (!address.isPrecise) {
       this.cartComponentRef.current.setErrors({
         shippingAddress: [
           i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION')
         ]
       })
+    } else {
+      this._mapAddressToElements(address)
+      this._postCart()
     }
+  }
+
+  _postCart() {
+
+    this._setLoading(true)
+
+    const data = $('form[name="cart"]').serializeArray()
+
+    $.post($('form[name="cart"]').attr('action'), data)
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 
   handleAjaxResponse(res) {
 
-    this.cartComponentRef.current.setLoading(false)
+    this._setLoading(false)
 
     const { cart, errors } = res
 
@@ -183,16 +166,9 @@ class CartHelper {
     }
   }
 
-  updateCart(payload) {
-    this.cartComponentRef.current.setLoading(true)
-    $.post(this.options.cartURL, payload)
-      .then(res => this.handleAjaxResponse(res))
-      .fail(e => this.handleAjaxResponse(e.responseJSON))
-  }
-
   addProduct(url, quantity) {
     window._paq.push(['trackEvent', 'Checkout', 'addItem']);
-    this.cartComponentRef.current.setLoading(true)
+    this._setLoading(true)
     $.post(url, {
       quantity: quantity
     })
@@ -202,7 +178,7 @@ class CartHelper {
 
   addProductWithOptions(url, data, quantity) {
     window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions']);
-    this.cartComponentRef.current.setLoading(true)
+    this._setLoading(true)
     data.push({
       name: 'quantity',
       value: quantity
@@ -214,7 +190,7 @@ class CartHelper {
 
   removeCartItem(item) {
     window._paq.push(['trackEvent', 'Checkout', 'removeItem']);
-    this.cartComponentRef.current.setLoading(true)
+    this._setLoading(true)
     $.ajax({
       url: this.options.removeFromCartURL.replace('__CART_ITEM_ID__', item.id),
       type: 'DELETE',
@@ -224,7 +200,7 @@ class CartHelper {
   }
 
   reset() {
-    this.cartComponentRef.current.setLoading(true)
+    this._setLoading(true)
     $.post(this.options.resetCartURL)
       .then(res => this.handleAjaxResponse(res))
       .fail(e => this.handleAjaxResponse(e.responseJSON))

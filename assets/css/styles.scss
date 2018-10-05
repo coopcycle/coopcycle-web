@@ -441,6 +441,17 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   right: 15px;
 }
 
+// TODO Add more precise selector
+form.list-group-item {
+  padding: 0;
+  button.menu-item {
+    padding: 10px 45px 10px 15px;
+    width: 100%;
+    text-align: left;
+    border: none;
+  }
+}
+
 a.list-group-item.menu-item--unavailable {
   color: #ddd;
   cursor: default;

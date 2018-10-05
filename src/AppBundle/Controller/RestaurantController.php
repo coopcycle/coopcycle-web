@@ -2,12 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Form\Order\CartType;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
 use League\Geotools\Coordinate\Coordinate;
@@ -29,31 +28,6 @@ class RestaurantController extends Controller
 {
     const ITEMS_PER_PAGE = 15;
 
-    private function setCartAddress(OrderInterface $cart, Request $request) {
-
-        // TODO Avoid duplicating adresses
-        // If the user is authenticated,
-        // try to match the address with an existing address
-
-        $addressData = $request->request->get('address');
-
-        $address = $cart->getShippingAddress();
-        if (null === $address) {
-            $address = new Address();
-        }
-
-        $address->setAddressLocality($addressData['addressLocality']);
-        $address->setAddressCountry($addressData['addressCountry']);
-        $address->setAddressRegion($addressData['addressRegion']);
-        $address->setPostalCode($addressData['postalCode']);
-        $address->setStreetAddress($addressData['streetAddress']);
-        $address->setGeo(new GeoCoordinates($addressData['latitude'], $addressData['longitude']));
-
-        $cart->setShippingAddress($address);
-
-        return $address;
-    }
-
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
     {
         foreach ($optionValues as $optionValue) {
@@ -73,6 +47,33 @@ class RestaurantController extends Controller
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
+    }
+
+    private function customizeSeoPage(Restaurant $restaurant, Request $request)
+    {
+        $seoPage = $this->get('sonata.seo.page');
+        $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
+        $seoPage
+            ->addMeta('property', 'og:title', $seoPage->getTitle())
+            ->addMeta('property', 'og:description', sprintf('%s, %s %s',
+                $restaurant->getAddress()->getStreetAddress(),
+                $restaurant->getAddress()->getPostalCode(),
+                $restaurant->getAddress()->getAddressLocality()
+            ))
+            // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
+            ->addMeta('property', 'og:type', 'restaurant.restaurant')
+            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
+            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
+            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
+            ->addMeta('property', 'place:location:latitude', $restaurant->getAddress()->getGeo()->getLatitude())
+            ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
+            ;
+
+        $uploaderHelper = $this->get('vich_uploader.templating.helper.uploader_helper');
+        $imagePath = $uploaderHelper->asset($restaurant, 'imageFile');
+        if (null !== $imagePath) {
+            $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
+        }
     }
 
     /**
@@ -149,32 +150,14 @@ class RestaurantController extends Controller
             }
         }
 
-        $seoPage = $this->get('sonata.seo.page');
-        $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
-        $seoPage
-            ->addMeta('property', 'og:title', $seoPage->getTitle())
-            ->addMeta('property', 'og:description', sprintf('%s, %s %s',
-                $restaurant->getAddress()->getStreetAddress(),
-                $restaurant->getAddress()->getPostalCode(),
-                $restaurant->getAddress()->getAddressLocality()
-            ))
-            // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
-            ->addMeta('property', 'og:type', 'restaurant.restaurant')
-            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
-            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
-            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
-            ->addMeta('property', 'place:location:latitude', $restaurant->getAddress()->getGeo()->getLatitude())
-            ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
-            ;
-
-        $uploaderHelper = $this->get('vich_uploader.templating.helper.uploader_helper');
-        $imagePath = $uploaderHelper->asset($restaurant, 'imageFile');
-        if (null !== $imagePath) {
-            $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
-        }
-
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
+
+        $cart = $this->get('sylius.context.cart')->getCart();
+
+        $cartForm = $this->createForm(CartType::class, $cart);
+
+        $this->customizeSeoPage($restaurant, $request);
 
         $delay = null;
         if ($restaurant->getOrderingDelayMinutes() > 0) {
@@ -187,12 +170,13 @@ class RestaurantController extends Controller
         return array(
             'restaurant' => $restaurant,
             'availabilities' => $restaurant->getAvailabilities(),
-            'delay' => $delay
+            'delay' => $delay,
+            'cart_form' => $cartForm->createView(),
         );
     }
 
     /**
-     * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"GET", "POST"})
+     * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"POST"})
      */
     public function cartAction($id, Request $request)
     {
@@ -214,26 +198,43 @@ class RestaurantController extends Controller
             return $this->jsonResponse($cart, $errors);
         }
 
-        if ($request->isMethod('POST')) {
+        $errors = [];
 
-            if ($request->request->has('date')) {
-                $cart->setShippedAt(new \DateTime($request->request->get('date')));
+        $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm->handleRequest($request);
+
+        $cart = $cartForm->getData();
+
+        // We use a named submit button to distinguish AJAX calls & checkout
+        if ($cartForm->getClickedButton()) {
+            if ('checkout' === $cartForm->getClickedButton()->getName() && $cartForm->isValid()) {
+                $this->get('sylius.manager.order')->flush();
+
+                return $this->redirectToRoute('order');
             }
-
-            if ($request->request->has('address')) {
-                $this->setCartAddress($cart, $request);
-            }
-
-            $this->get('sylius.manager.order')->persist($cart);
-            $this->get('sylius.manager.order')->flush();
-
-            // TODO Find a better way to do this
-            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-            $request->getSession()->set($sessionKeyName, $cart->getId());
         }
 
-        $errors = $this->get('validator')->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
+        if (!$cartForm->isValid()) {
+            foreach ($cartForm->getErrors() as $formError) {
+                $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
+                $errors[$propertyPath] = [$formError->getMessage()];
+            }
+        }
+
+        $shippingAddress = $cart->getShippingAddress();
+        if (null !== $shippingAddress) {
+            $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
+            if (!$isShippingAddressValid) {
+                $cart->setShippingAddress(null);
+            }
+        }
+
+        $this->get('sylius.manager.order')->persist($cart);
+        $this->get('sylius.manager.order')->flush();
+
+        // TODO Find a better way to do this
+        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+        $request->getSession()->set($sessionKeyName, $cart->getId());
 
         return $this->jsonResponse($cart, $errors);
     }
