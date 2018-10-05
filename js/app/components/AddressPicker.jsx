@@ -1,7 +1,9 @@
 import React from 'react';
 import PlacesAutocomplete, { geocodeByAddress } from 'react-places-autocomplete';
 import PropTypes from 'prop-types';
+import ngeohash from 'ngeohash'
 import i18n from '../i18n'
+import { placeToAddress } from '../utils/GoogleMaps'
 
 const autocompleteOptions = {
   types: ['address'],
@@ -14,15 +16,14 @@ class AddressPicker extends React.Component {
 
   constructor(props) {
     super(props);
-    this.geohashLib = require('ngeohash');
 
     let { geohash, address } = this.props;
     // we use `initialAddress` to fill the form with a valid address on blur
     // `address` is used to control the input field
     this.state = {
       initialAddress: address,
-      address: address,
-      geohash: geohash
+      value: address,
+      address: {}
     }
 
     this.onAddressSelect = this.onAddressSelect.bind(this);
@@ -39,29 +40,26 @@ class AddressPicker extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.geohash !== prevState.geohash) {
-      this.props.onPlaceChange(this.state.geohash, this.state.address);
+    if (this.state.address !== prevState.address) {
+      this.props.onPlaceChange(this.state.value, this.state.address);
     }
   }
 
-  onClear () {
-    this.setState({address: ''});
+  onClear() {
+    this.setState({ value: '' });
   }
 
-  onAddressChange (value) {
-    /*
-      Controller for the address input text field
-     */
-    this.setState({address: value});
+  onAddressChange(value) {
+    this.setState({ value });
   }
 
   onAddressBlur() {
-    this.setState({address: this.state.initialAddress})
+    this.setState({ value: this.state.initialAddress })
   }
 
   onAddressKeyUp(evt) {
     if (evt.key == 'Enter') {
-      this.props.onPlaceChange(this.state.geohash, this.state.address);
+      this.props.onPlaceChange(this.state.value, this.state.address);
     }
   }
 
@@ -69,20 +67,27 @@ class AddressPicker extends React.Component {
     this.input.focus();
   }
 
-  onAddressSelect (address, placeId) {
-    /*
-      Controller for address selection (i.e. click on address in the dropdown)
-     */
+  onAddressSelect(value, placeId) {
 
-    geocodeByAddress(address).then(
+    this.setState({ value })
+
+    geocodeByAddress(value).then(
       (results) => {
         // should always be the case, assert ?
         if (results.length === 1) {
-          let place = results[0],
+
+          const place = results[0],
             lat = place.geometry.location.lat(),
             lng = place.geometry.location.lng(),
-            geohash = this.geohashLib.encode(lat, lng, 11);
-          this.setState({ geohash, address, initialAddress: address });
+            geohash = ngeohash.encode(lat, lng, 11);
+
+          this.setState({
+            address: {
+              ...placeToAddress(place),
+              geohash,
+            },
+            initialAddress: value
+          });
         }
       }
     );
@@ -92,7 +97,7 @@ class AddressPicker extends React.Component {
     return (
       <div className="autocomplete-wrapper">
         <PlacesAutocomplete
-          value={this.state.address}
+          value={this.state.value}
           onChange={this.onAddressChange}
           onSelect={this.onAddressSelect}
           searchOptions={autocompleteOptions}
@@ -130,7 +135,7 @@ class AddressPicker extends React.Component {
             </div>
           )}
         </PlacesAutocomplete>
-        { this.state.address && (
+        { this.state.value && (
           <button className="autocomplete-clear" onClick={this.onClear}>
             <i className="fa fa-times-circle"></i>
           </button>

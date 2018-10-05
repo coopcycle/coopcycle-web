@@ -53,12 +53,12 @@
     new CoopCycle.AddressPicker(document.querySelector('#address-search'), {
       address: sessionStorage.getItem('search_address') || '',
       geohash: initialGeohash,
-      onChange: function(geohash, address) {
-        if (geohash != initialGeohash) {
-          sessionStorage.setItem('search_geohash', geohash);
-          sessionStorage.setItem('search_address', address);
-          _paq.push(['trackEvent', 'RestaurantList', 'searchAddress', address]);
-          $('#restaurant-search-form').find('input[name=geohash]').val(geohash);
+      onChange: function(value, address) {
+        if (address.geohash !== initialGeohash) {
+          sessionStorage.setItem('search_geohash', address.geohash);
+          sessionStorage.setItem('search_address', value);
+          _paq.push(['trackEvent', 'RestaurantList', 'searchAddress', value]);
+          $('#restaurant-search-form').find('input[name=geohash]').val(address.geohash);
           $('#restaurant-search-form').submit();
         }
       }

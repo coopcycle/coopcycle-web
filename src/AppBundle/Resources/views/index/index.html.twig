@@ -81,11 +81,11 @@
     new CoopCycle.AddressPicker(document.querySelector('#address-search'), {
       address: sessionStorage.getItem('search_address') || '',
       geohash: sessionStorage.getItem('search_geohash') || '',
-      onChange: function(geohash, address) {
-        sessionStorage.setItem('search_geohash', geohash);
-        sessionStorage.setItem('search_address', address);
-        _paq.push(['trackEvent', 'Homepage', 'searchAddress', address]);
-        $('#address-search-form').find('input[name=geohash]').val(geohash);
+      onChange: function(value, address) {
+        sessionStorage.setItem('search_geohash', address.geohash);
+        sessionStorage.setItem('search_address', value);
+        _paq.push(['trackEvent', 'Homepage', 'searchAddress', value]);
+        $('#address-search-form').find('input[name=geohash]').val(address.geohash);
         $('#address-search-form').submit();
       }
     });
