@@ -670,3 +670,7 @@ services:
       arguments:
         - '@routing_service'
         - '@coopcycle.expression_language'
+
+  coopcycle.order_number_assigner:
+    class: AppBundle\Sylius\Order\OrderNumberAssigner
+    decorates: 'sylius.order_number_assigner'
