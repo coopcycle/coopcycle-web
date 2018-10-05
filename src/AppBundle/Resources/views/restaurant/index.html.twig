@@ -2,6 +2,8 @@
 {% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
 
+{% form_theme cart_form '@App/form/cart.html.twig' %}
+
 {% block body %}
 <div class="container">
 
@@ -77,41 +79,28 @@
                 </span>
               </a>
             {% else %}
-              <a  class="list-group-item menu-item"
-                  {% if product.simple %}
-                  data-product-code="{{ product.code }}"
-                  href="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                  {% else %}
-                  data-toggle="modal"
-                  data-target="#{{ product.code }}-options"
-                  href="#"
-                  {% endif %}>
+              {% if product.simple %}
+              <form method="post"
+                class="list-group-item"
+                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}">
+                <button class="menu-item" type="submit">
+                  <span class="menu-item-content">
+                    {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
+                  </span>
+                  <span class="menu-item-price">{{ variant.price|price_format }}</span>
+                </button>
+              </form>
+              {% else %}
+              <button
+                class="list-group-item menu-item"
+                data-toggle="modal"
+                data-target="#{{ product.code }}-options">
                 <span class="menu-item-content">
-                  {{ product.name }}
-                  {% if product.description is not null %}
-                    <small class="menu-item-description">{{ product.description }}</small>
-                  {%  endif %}
-                  {% if product.allergens is not empty %}
-                    {% set allergens = [] %}
-                    {% for allergen in product.allergens %}
-                      {% set allergens = allergens|merge([('allergens.' ~ allergen)|trans]) %}
-                    {% endfor %}
-                    <small class="menu-item-allergens">
-                      <i class="fa fa-warning"></i> <span>{{ allergens|join(', ') }}</span>
-                    </small>
-                  {% endif %}
-                  {% if product.restrictedDiets is not empty %}
-                    {% set restrictedDiets = [] %}
-                    {% for restrictedDiet in product.restrictedDiets %}
-                      {% set restrictedDiets = restrictedDiets|merge([('restricted_diets.' ~ restrictedDiet)|trans]) %}
-                    {% endfor %}
-                    <small class="menu-item-restricted-diets">
-                      <i class="fa fa-check"></i> <span>{{ restrictedDiets|join(', ') }}</span>
-                    </small>
-                  {% endif %}
+                  {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
                 </span>
                 <span class="menu-item-price">{{ variant.price|price_format }}</span>
-              </a>
+              </button>
+              {% endif %}
             {% endif %}
           {% endfor %}
         </div>
@@ -120,7 +109,13 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
+      {{ form_start(cart_form, { action: path('restaurant_cart', { id: restaurant.id }) }) }}
+        {# These inputs are managed with React  #}
+        {% do cart_form.date.setRendered %}
+        {% do cart_form.time.setRendered %}
+        {% do cart_form.checkout.setRendered %}
         <div id="cart"></div>
+      {{ form_end(cart_form) }}
     </div>
 
     <div class="visible-xs">
@@ -235,11 +230,10 @@ new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   locale: $('html').attr('lang')
 })
 
-$('[data-product-code]').on('click', function(e) {
+$('form.list-group-item').on('submit', function(e) {
   e.preventDefault();
-  var $target = $(e.currentTarget);
-  window.AppData.CartHelper.addProduct($target.attr('href'), 1);
-})
+  window.AppData.CartHelper.addProduct($(this).attr('action'), 1);
+});
 
 // Make sure all (non-additional) options have been checked
 $('form[data-product-options] input[type="radio"]').on('click', function(e) {
@@ -308,11 +302,20 @@ function initMap() {
       id: {{ restaurant.id }},
       availabilities: {{ availabilities|json_encode()|raw }}
     },
-    cartURL: "{{ path('restaurant_cart', { id: restaurant.id }) }}",
     removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
     resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    datePickerDateInputName: "{{ cart_form.date.vars.full_name }}",
+    datePickerTimeInputName: "{{ cart_form.time.vars.full_name }}",
+    submitButtonName: "{{ cart_form.checkout.vars.full_name }}",
     onCartWarning: function() {
       $('#cart-warning-modal').modal('show');
+    },
+    addressFormElements: {
+      streetAddress: document.querySelector("#{{ cart_form.shippingAddress.streetAddress.vars.id }}"),
+      postalCode: document.querySelector("#{{ cart_form.shippingAddress.postalCode.vars.id }}"),
+      addressLocality: document.querySelector("#{{ cart_form.shippingAddress.addressLocality.vars.id }}"),
+      latitude: document.querySelector("#{{ cart_form.shippingAddress.latitude.vars.id }}"),
+      longitude: document.querySelector("#{{ cart_form.shippingAddress.longitude.vars.id }}")
     }
   });
 }

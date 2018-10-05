@@ -37,7 +37,6 @@ class Cart extends React.Component
       modalHeadingText: '',
     }
 
-    this.onAddressChange = this.onAddressChange.bind(this)
     this.onAddressSelect = this.onAddressSelect.bind(this)
     this.onHeaderClick = this.onHeaderClick.bind(this)
   }
@@ -127,7 +126,16 @@ class Cart extends React.Component
   }
 
   setLoading(loading) {
-    this.setState({ loading })
+
+    let newState = { loading }
+    if (loading) {
+      newState = {
+        ...newState,
+        errors: {}
+      }
+    }
+
+    this.setState(newState)
   }
 
   onHeaderClick() {
@@ -136,21 +144,17 @@ class Cart extends React.Component
     this.setState({ toggled })
   }
 
-  onAddressChange(geohash, addressString) {
-    this.props.onAddressChange(addressString)
-  }
-
-  onAddressSelect(geohash, address) {
+  onAddressSelect(value, address) {
 
     const { modalIsOpen } = this.state
 
-    let newState = { address }
+    let newState = { address: value }
     if (true === modalIsOpen) {
       newState = { ...newState, modalIsOpen: false }
     }
 
     this.setState(newState)
-    this.onAddressChange(geohash, address)
+    this.props.onAddressChange(address)
   }
 
   renderWarningAlerts(messages) {
@@ -205,7 +209,6 @@ class Cart extends React.Component
   renderHeading(warningAlerts, dangerAlerts) {
 
     const { toggled, initialized } = this.state
-    const { validateCartURL } = this.props
 
     const headingClasses = ['panel-heading', 'cart-heading']
     if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
@@ -214,11 +217,6 @@ class Cart extends React.Component
 
     if (initialized && warningAlerts.length === 0 && dangerAlerts.length === 0) {
       headingClasses.push('cart-heading--success')
-    }
-
-    const onButtonClick = e => {
-      window.location.href = validateCartURL
-      e.stopPropagation()
     }
 
     return (
@@ -233,7 +231,7 @@ class Cart extends React.Component
         <span className="cart-heading__right" ref="headingRight">
           <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
         </span>
-        <button onClick={ onButtonClick } className="cart-heading__button">
+        <button name={ this.props.submitButtonName } type="submit" className="cart-heading__button">
           <i className="fa fa-arrow-right "></i>
         </button>
       </div>
@@ -286,7 +284,7 @@ class Cart extends React.Component
 
     let { items, toggled, errors, date, geohash, address, loading, modalIsOpen, modalHeadingText } = this.state,
         cartContent,
-        { isMobileCart, availabilities, validateCartURL } = this.props,
+        { isMobileCart, availabilities } = this.props,
         cartTitleKey = isMobileCart ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
 
     if (items.length > 0) {
@@ -314,18 +312,13 @@ class Cart extends React.Component
     const dangerAlerts = []
 
     if (errors) {
-      if (errors.total) {
-        errors.total.forEach((message, key) => warningAlerts.push(message))
-      }
-      if (errors.shippingAddress) {
-        errors.shippingAddress.forEach((message, key) => dangerAlerts.push(message))
-      }
-      if (errors.shippedAt) {
-        errors.shippedAt.forEach((message, key) => dangerAlerts.push(message))
-      }
-      if (errors.items) {
-        errors.items.forEach((message, key) => dangerAlerts.push(message))
-      }
+      _.forEach(errors, (messages, key) => {
+        if (key === 'shippingAddress') {
+          messages.forEach((message, key) => dangerAlerts.push(message))
+        } else {
+          messages.forEach((message, key) => warningAlerts.push(message))
+        }
+      })
     }
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
@@ -361,6 +354,8 @@ class Cart extends React.Component
                 { ...addressPickerProps } />
               <hr />
               <DatePicker
+                dateInputName={this.props.datePickerDateInputName}
+                timeInputName={this.props.datePickerTimeInputName}
                 availabilities={availabilities}
                 value={date}
                 onChange={this.props.onDateChange} />
@@ -368,9 +363,9 @@ class Cart extends React.Component
               { cartContent }
               { this.renderTotal() }
               <hr />
-              <a href={validateCartURL} className={btnClasses.join(' ')}>
+              <button name={ this.props.submitButtonName } type="submit" className={btnClasses.join(' ')}>
                 <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
