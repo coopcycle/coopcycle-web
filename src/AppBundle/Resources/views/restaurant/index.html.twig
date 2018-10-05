@@ -109,11 +109,10 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
-      {{ form_start(cart_form, { action: path('restaurant_cart', { id: restaurant.id }) }) }}
+      {{ form_start(cart_form) }}
         {# These inputs are managed with React  #}
         {% do cart_form.date.setRendered %}
         {% do cart_form.time.setRendered %}
-        {% do cart_form.checkout.setRendered %}
         <div id="cart"></div>
       {{ form_end(cart_form) }}
     </div>
@@ -198,27 +197,6 @@
   {% endfor %}
 {% endif %}
 
-<div id="cart-warning-modal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ 'cart.modal.title'|trans }}</h4>
-      </div>
-      <div class="modal-body">
-        <p>{{ 'cart.modal.content'|trans }}</p>
-      </div>
-      <div class="modal-footer">
-        <button id="cart-warning-cancel" type="button" class="btn btn-default">
-          {{ 'cart.modal.cancel'|trans }}
-        </button>
-        <button id="cart-warning-confirm" type="button" class="btn btn-primary">
-          {{ 'cart.modal.confirm'|trans }}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -228,7 +206,7 @@
 new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   openingHours: {{ restaurant.openingHours|json_encode()|raw }},
   locale: $('html').attr('lang')
-})
+});
 
 $('form.list-group-item').on('submit', function(e) {
   e.preventDefault();
@@ -249,11 +227,11 @@ $('form[data-product-options] input[type="radio"]').on('click', function(e) {
   if ($options.length === checkedOptionsCount) {
     $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
   }
-})
+});
 
 $('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
   _paq.push(['trackEvent', 'Checkout', 'addExtra']);
-})
+});
 
 $('form[data-product-options]').on('submit', function(e) {
   e.preventDefault();
@@ -268,7 +246,7 @@ $('form[data-product-options]').on('submit', function(e) {
   // Uncheck all options
   $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
   $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
-})
+});
 
 $('.modal').on('shown.bs.modal', function(e) {
   _paq.push(['trackEvent', 'Checkout', 'showOptions']);
@@ -284,19 +262,9 @@ $('.modal').on('hidden.bs.modal', function(e) {
   _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
 });
 
+{% set cart = cart_provider.getCart() %}
+
 function initMap() {
-
-  $('#cart-warning-cancel').on('click', function(e) {
-    {% set cart = cart_provider.getCart() %}
-    window.location.href = "{{ path('restaurant', { id: cart.restaurant.id }) }}";
-    $('#cart-warning-modal').modal('hide');
-  })
-
-  $('#cart-warning-confirm').on('click', function(e) {
-    window.AppData.CartHelper.reset();
-    $('#cart-warning-modal').modal('hide');
-  })
-
   window.AppData.CartHelper.init(document.querySelector('#cart'), {
     restaurant: {
       id: {{ restaurant.id }},
@@ -304,12 +272,9 @@ function initMap() {
     },
     removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
     resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
+    cartRestaurantURL: "{{ path('restaurant', { id: cart.restaurant.id }) }}",
     datePickerDateInputName: "{{ cart_form.date.vars.full_name }}",
     datePickerTimeInputName: "{{ cart_form.time.vars.full_name }}",
-    submitButtonName: "{{ cart_form.checkout.vars.full_name }}",
-    onCartWarning: function() {
-      $('#cart-warning-modal').modal('show');
-    },
     addressFormElements: {
       streetAddress: document.querySelector("#{{ cart_form.shippingAddress.streetAddress.vars.id }}"),
       postalCode: document.querySelector("#{{ cart_form.shippingAddress.postalCode.vars.id }}"),

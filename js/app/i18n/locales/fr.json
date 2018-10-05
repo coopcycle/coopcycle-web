@@ -72,6 +72,11 @@
     "RESTAURANT_LIST_FILTER_LATER": "Plus tard",
     "CART_TOTAL": "Total",
     "CART_TOTAL_PRODUCTS": "Total produits",
-    "ENTER_YOUR_ADDRESS": "Saisissez votre adresse"
+    "ENTER_YOUR_ADDRESS": "Saisissez votre adresse",
+    "CART_CHANGE_RESTAURANT_MODAL_LABEL": "Attention",
+    "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1": "Vous avez commencé votre commande dans un autre restaurant",
+    "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Souhaitez-vous commencer une nouvelle commande dans ce restaurant ?",
+    "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Commencer une nouvelle commande",
+    "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande"
   }
 }

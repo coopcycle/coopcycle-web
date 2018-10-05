@@ -8,22 +8,16 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
+use AppBundle\Utils\PreparationTimeCalculator;
 use PHPUnit\Framework\TestCase;
 
 class OrderTimelineCalculatorTest extends TestCase
 {
-    private $config;
+    private $preparationTimeCalculator;
 
     public function setUp()
     {
-        $this->config = [
-            'restaurant.state == "rush" and order.itemsTotal < 2000'        => '20 minutes',
-            'restaurant.state == "rush" and order.itemsTotal in 2000..5000' => '30 minutes',
-            'restaurant.state == "rush" and order.itemsTotal > 5000'        => '45 minutes',
-            'order.itemsTotal <= 2000'                                      => '10 minutes',
-            'order.itemsTotal in 2000..5000'                                => '15 minutes',
-            'order.itemsTotal > 5000'                                       => '30 minutes',
-        ];
+        $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
     }
 
     private function createOrder($total, $shippedAt, $state = 'normal')
@@ -63,18 +57,21 @@ class OrderTimelineCalculatorTest extends TestCase
             // state = normal
             [
                 $this->createOrder(1500, '2018-08-25 13:30:00'),
+                '10 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:05:00'),
             ],
             [
                 $this->createOrder(3000, '2018-08-25 13:30:00'),
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:00:00'),
             ],
             [
                 $this->createOrder(6000, '2018-08-25 13:30:00'),
+                '30 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
@@ -82,18 +79,21 @@ class OrderTimelineCalculatorTest extends TestCase
             // state = rush
             [
                 $this->createOrder(1500, '2018-08-25 13:30:00', 'rush'),
+                '20 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:55:00'),
             ],
             [
                 $this->createOrder(3000, '2018-08-25 13:30:00', 'rush'),
+                '30 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
             ],
             [
                 $this->createOrder(6000, '2018-08-25 13:30:00', 'rush'),
+                '45 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:30:00'),
@@ -106,12 +106,12 @@ class OrderTimelineCalculatorTest extends TestCase
      */
     public function testCalculate(
         OrderInterface $order,
+        $preparationTime,
         \DateTime $dropoffExpectedAt,
         \DateTime $pickupExpectedAt,
         \DateTime $preparationExpectedAt)
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
-        $this->calculator = new OrderTimelineCalculator($this->routing->reveal(), $this->config);
 
         $this->routing
             ->getDuration(
@@ -119,6 +119,15 @@ class OrderTimelineCalculatorTest extends TestCase
                 $order->getShippingAddress()->getGeo()
             )
             ->willReturn(15 * 60); // 15 minutes
+
+        $this->preparationTimeCalculator
+            ->calculate($order)
+            ->willReturn($preparationTime);
+
+        $this->calculator = new OrderTimelineCalculator(
+            $this->routing->reveal(),
+            $this->preparationTimeCalculator->reveal()
+        );
 
         $timeline = $this->calculator->calculate($order);
 

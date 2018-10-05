@@ -3,12 +3,13 @@ import { findDOMNode } from 'react-dom'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import Sticky from 'react-stickynode'
-import i18n from '../i18n'
+import Modal from 'react-modal'
+import md5 from 'locutus/php/strings/md5'
 
+import i18n from '../i18n'
 import CartItem from './CartItem.jsx'
 import DatePicker from './DatePicker.jsx'
-import AddressPicker from "../components/AddressPicker.jsx"
-import Modal from 'react-modal';
+import AddressPicker from '../components/AddressPicker.jsx'
 
 let timeoutID = null
 
@@ -19,9 +20,20 @@ class Cart extends React.Component
   constructor(props) {
     super(props);
 
-    let { items, total, itemsTotal, adjustments, deliveryDate, streetAddress, isMobileCart, geohash } = this.props;
+    const {
+      availabilities,
+      items,
+      total,
+      itemsTotal,
+      adjustments,
+      deliveryDate,
+      streetAddress,
+      isMobileCart,
+      geohash
+    } = this.props;
 
     this.state = {
+      availabilities,
       items,
       total,
       itemsTotal,
@@ -33,8 +45,9 @@ class Cart extends React.Component
       errors: {},
       loading: false,
       initialized: false,
-      modalIsOpen: false,
+      addressModalIsOpen: false,
       modalHeadingText: '',
+      restaurantModalIsOpen: false,
     }
 
     this.onAddressSelect = this.onAddressSelect.bind(this)
@@ -90,10 +103,8 @@ class Cart extends React.Component
     toggleClassWithTimeout()
   }
 
-  getCart() {
-    const { address, date } = this.state
-
-    return { address, date }
+  setAvailabilities(availabilities) {
+    this.setState({ availabilities })
   }
 
   setCart(cart) {
@@ -110,13 +121,20 @@ class Cart extends React.Component
   setErrors(errors) {
     let newState = { errors }
 
+    if (errors.hasOwnProperty('restaurant')) {
+      newState = {
+        ...newState,
+        restaurantModalIsOpen: true,
+      }
+    }
+
     if (errors.hasOwnProperty('shippingAddress')) {
       // We trigger the modal only when the address was not set
       const { address } = this.state
       if (!address) {
         newState = {
           ...newState,
-          modalIsOpen: true,
+          addressModalIsOpen: true,
           modalHeadingText: _.first(errors.shippingAddress)
         }
       }
@@ -146,11 +164,11 @@ class Cart extends React.Component
 
   onAddressSelect(value, address) {
 
-    const { modalIsOpen } = this.state
+    const { addressModalIsOpen } = this.state
 
     let newState = { address: value }
-    if (true === modalIsOpen) {
-      newState = { ...newState, modalIsOpen: false }
+    if (true === addressModalIsOpen) {
+      newState = { ...newState, addressModalIsOpen: false }
     }
 
     this.setState(newState)
@@ -231,7 +249,7 @@ class Cart extends React.Component
         <span className="cart-heading__right" ref="headingRight">
           <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
         </span>
-        <button name={ this.props.submitButtonName } type="submit" className="cart-heading__button">
+        <button type="submit" className="cart-heading__button">
           <i className="fa fa-arrow-right "></i>
         </button>
       </div>
@@ -271,22 +289,47 @@ class Cart extends React.Component
     return initialized ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
   }
 
-  afterOpenModal() {
-    window._paq.push(['trackEvent', 'Checkout', 'openModal'])
+  afterOpenAddressModal() {
+    window._paq.push(['trackEvent', 'Checkout', 'openModal', 'enterAddress'])
     setTimeout(() => this.modalAddressPicker.setFocus(), 250);
   }
 
-  closeModal() {
-    this.setState({ modalIsOpen: false });
+  closeAddressModal() {
+    this.setState({ addressModalIsOpen: false });
+  }
+
+  afterOpenRestaurantModal() {
+    window._paq.push(['trackEvent', 'Checkout', 'openModal', 'changeRestaurant'])
+  }
+
+  closeRestaurantModal() {
+    this.setState({ restaurantModalIsOpen: false });
+  }
+
+  onClickCartReset() {
+    this.closeRestaurantModal()
+    this.props.onClickCartReset()
   }
 
   render() {
 
-    let { items, toggled, errors, date, geohash, address, loading, modalIsOpen, modalHeadingText } = this.state,
-        cartContent,
-        { isMobileCart, availabilities } = this.props,
-        cartTitleKey = isMobileCart ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
+    const { isMobileCart } = this.props
 
+    let {
+      availabilities,
+      items,
+      toggled,
+      errors,
+      date,
+      geohash,
+      address,
+      loading,
+      addressModalIsOpen,
+      modalHeadingText,
+      restaurantModalIsOpen,
+    } = this.state
+
+    let cartContent
     if (items.length > 0) {
       let cartItemComponents = items.map((item, key) => {
         return (
@@ -305,13 +348,18 @@ class Cart extends React.Component
         <div className="cart__items">{cartItemComponents}</div>
       )
     } else {
-      cartContent = ( <div className="alert alert-warning">{i18n.t("CART_EMPTY")}</div> )
+      cartContent = (
+        <div className="alert alert-warning">{i18n.t("CART_EMPTY")}</div>
+      )
     }
 
     const warningAlerts = []
     const dangerAlerts = []
 
     if (errors) {
+      // We don't display the error when restaurant has changed
+      errors = _.pickBy(errors, (value, key) => key !== 'restaurant')
+
       _.forEach(errors, (messages, key) => {
         if (key === 'shippingAddress') {
           messages.forEach((message, key) => dangerAlerts.push(message))
@@ -332,10 +380,19 @@ class Cart extends React.Component
       panelClasses.push('cart-wrapper--show')
     }
 
+    /**
+     * In order to reset the value when moving to a different item , we can use the special React attribute called key.
+     * When a key changes, React will create a new component instance rather than update the current one.
+     * @see https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+     */
+
     const addressPickerProps = {
       onPlaceChange: this.onAddressSelect,
-      /* https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key */
       key: address
+    }
+
+    const datePickerProps = {
+      key: md5(availabilities.join('|'))
     }
 
     return (
@@ -358,21 +415,22 @@ class Cart extends React.Component
                 timeInputName={this.props.datePickerTimeInputName}
                 availabilities={availabilities}
                 value={date}
-                onChange={this.props.onDateChange} />
+                onChange={this.props.onDateChange}
+                { ...datePickerProps } />
               <hr />
               { cartContent }
               { this.renderTotal() }
               <hr />
-              <button name={ this.props.submitButtonName } type="submit" className={btnClasses.join(' ')}>
+              <button type="submit" className={btnClasses.join(' ')}>
                 <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
               </button>
             </div>
           </div>
         </div>
         <Modal
-          isOpen={ modalIsOpen }
-          onAfterOpen={ this.afterOpenModal.bind(this) }
-          onRequestClose={ this.closeModal.bind(this) }
+          isOpen={ addressModalIsOpen }
+          onAfterOpen={ this.afterOpenAddressModal.bind(this) }
+          onRequestClose={ this.closeAddressModal.bind(this) }
           shouldCloseOnOverlayClick={ false }
           contentLabel={ i18n.t('ENTER_YOUR_ADDRESS') }
           className="ReactModal__Content--enter-address">
@@ -383,6 +441,29 @@ class Cart extends React.Component
             address={ '' }
             geohash={ '' }
             { ...addressPickerProps } />
+        </Modal>
+        <Modal
+          isOpen={ restaurantModalIsOpen }
+          onAfterOpen={ this.afterOpenRestaurantModal.bind(this) }
+          onRequestClose={ this.closeRestaurantModal.bind(this) }
+          shouldCloseOnOverlayClick={ false }
+          contentLabel={ i18n.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
+          className="ReactModal__Content--restaurant">
+          <div className="text-center">
+            <p>
+              { i18n.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1') }
+              <br />
+              { i18n.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2') }
+            </p>
+          </div>
+          <div className="ReactModal__Restaurant__button">
+            <button type="button" className="btn btn-default" onClick={ () => this.props.onClickGoBack() }>
+              { i18n.t('CART_CHANGE_RESTAURANT_MODAL_BTN_NO') }
+            </button>
+            <button type="button" className="btn btn-primary" onClick={ () => this.onClickCartReset() }>
+              { i18n.t('CART_CHANGE_RESTAURANT_MODAL_BTN_YES') }
+            </button>
+          </div>
         </Modal>
       </Sticky>
     );

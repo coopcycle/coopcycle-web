@@ -7,32 +7,20 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-/**
- * The preparation duration is calculated based on the order total.
- * The $config constructor variable should be an array like this:
- * <pre>
- * [
- *   'total <= 2000'       => '10 minutes',
- *   'total in 2000..5000' => '15 minutes',
- *   'total > 5000'        => '30 minutes',
- * ]
- * </pre>
- */
 class OrderTimelineCalculator
 {
     private $routing;
-    private $config;
-    private $language;
+    private $preparationTimeCalculator;
 
     /**
      * @param array config
      */
-    public function __construct(RoutingInterface $routing, array $config)
+    public function __construct(
+        RoutingInterface $routing,
+        PreparationTimeCalculator $preparationTimeCalculator)
     {
         $this->routing = $routing;
-        $this->config = $config;
-
-        $this->language = new ExpressionLanguage();
+        $this->preparationTimeCalculator = $preparationTimeCalculator;
     }
 
     public function calculate(OrderInterface $order)
@@ -56,28 +44,9 @@ class OrderTimelineCalculator
 
         $timeline->setPickupExpectedAt($pickupExpectedAt);
 
-        $preparation = null;
-        foreach ($this->config as $expression => $value) {
-
-            $restaurantObject = new \stdClass();
-            $restaurantObject->state = $order->getRestaurant()->getState();
-
-            $orderObject = new \stdClass();
-            $orderObject->itemsTotal = $order->getItemsTotal();
-
-            $values = [
-                'restaurant' => $restaurantObject,
-                'order' => $orderObject,
-            ];
-
-            if (true === $this->language->evaluate($expression, $values)) {
-                $preparation = $value;
-                break;
-            }
-        }
-
+        $preparationTime = $this->preparationTimeCalculator->calculate($order);
         $preparationExpectedAt = clone $pickupExpectedAt;
-        $preparationExpectedAt->modify(sprintf('-%s', $preparation));
+        $preparationExpectedAt->modify(sprintf('-%s', $preparationTime));
 
         $timeline->setPreparationExpectedAt($preparationExpectedAt);
 

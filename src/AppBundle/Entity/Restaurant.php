@@ -67,29 +67,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Restaurant extends FoodEstablishment
 {
     /**
-     *  Delay for preparation (in minutes)
-     */
-    const PREPARATION_DELAY = 20;
-
-    /**
-     *  Delay for delivery (in minutes)
-     */
-    const DELIVERY_DELAY = 25;
-
-    /**
-     *  Delay for preparation + delivery (in minutes)
-     */
-    const PREPARATION_AND_DELIVERY_DELAY = self::PREPARATION_DELAY + self::DELIVERY_DELAY;
-
-    /**
-     *
-     * Checkout duration (in minutes)
-     * We need to take into account the time the user will take to complete checkout.
-     *
-     */
-    const CHECKOUT_MAX_DURATION = 5;
-
-    /**
      *  We allow ordering for the next two opened days
      */
     const NUMBER_OF_AVAILABLE_DAYS = 2;
@@ -388,7 +365,9 @@ class Restaurant extends FoodEstablishment
             $now = new \DateTime();
         }
 
-        $now->modify('+'.(self::CHECKOUT_MAX_DURATION + self::PREPARATION_AND_DELIVERY_DELAY + $this->getOrderingDelayMinutes()).' minutes');
+        if ($this->getOrderingDelayMinutes() > 0) {
+            $now->modify(sprintf('+%d minutes', $this->getOrderingDelayMinutes()));
+        }
 
         $nextOpeningDate = $this->getNextOpeningDate($now);
 

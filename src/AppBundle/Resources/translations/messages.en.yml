@@ -458,11 +458,6 @@ product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
 product_option.strategy.option_value: Price according to the choice
 
-cart.modal.title: Warning
-cart.modal.content: You started an order in another restaurant. Are you sure you want to start a new order in this restaurant ?
-cart.modal.confirm: Add
-cart.modal.cancel: Cancel
-
 roles.ROLE_ADMIN: 'Administrator'
 roles.ROLE_COURIER: 'Courier'
 roles.ROLE_RESTAURANT: 'Restaurant'

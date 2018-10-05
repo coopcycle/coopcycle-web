@@ -487,11 +487,6 @@ form.product_option.additional.help: El cliente puede elegir varios valores, sin
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
 product_option.strategy.option_value: Precio según la elección
-cart.modal.title: Atención
-cart.modal.content: Ya has iniciado un pedido en otro restaurante. ¿Seguro que quieres
-  iniciar un pedido nuevo en éste restaurante?
-cart.modal.confirm: Confirmar
-cart.modal.cancel: Cancelar
 
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Mensajero

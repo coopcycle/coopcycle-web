@@ -731,6 +731,27 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
+.ReactModal__Content--restaurant {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
+  }
+  .ReactModal__Restaurant__button {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
 // ------------------ Order Timeline ------------------
 
 .order-timeline {

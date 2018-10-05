@@ -7,6 +7,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
 use League\Geotools\Coordinate\Coordinate;
@@ -45,6 +46,7 @@ class RestaurantController extends Controller
 
         return new JsonResponse([
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
+            'availabilities' => $this->getAvailabilities($cart),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
     }
@@ -74,6 +76,29 @@ class RestaurantController extends Controller
         if (null !== $imagePath) {
             $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
         }
+    }
+
+    private function getAvailabilities(OrderInterface $cart)
+    {
+        $availabilities = $cart->getRestaurant()->getAvailabilities();
+
+        $preparationTime =
+            $this->get('coopcycle.preparation_time_calculator')->calculate($cart);
+
+        $closestDate = new \DateTime(sprintf('+%s', $preparationTime));
+
+        $availabilities = array_filter($availabilities, function ($date) use ($closestDate) {
+            $date = new \DateTime($date);
+
+            if ($date < $closestDate) {
+                return false;
+            }
+
+            return true;
+        });
+
+        // Make sure to return a zero-indexed array
+        return array_values($availabilities);
     }
 
     /**
@@ -157,6 +182,55 @@ class RestaurantController extends Controller
 
         $cartForm = $this->createForm(CartType::class, $cart);
 
+        if ($request->isMethod('POST')) {
+
+            $cartForm->handleRequest($request);
+
+            $cart = $cartForm->getData();
+
+            if (!$request->isXmlHttpRequest() && $cartForm->isValid()) {
+                $this->get('sylius.manager.order')->flush();
+
+                return $this->redirectToRoute('order');
+            }
+
+            if ($cart->getRestaurant() !== $restaurant) {
+                $errors = [
+                    'restaurant' => [
+                        sprintf('Restaurant mismatch')
+                    ]
+                ];
+
+                return $this->jsonResponse($cart, $errors);
+            }
+
+            $errors = [];
+
+            if (!$cartForm->isValid()) {
+                foreach ($cartForm->getErrors() as $formError) {
+                    $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
+                    $errors[$propertyPath] = [$formError->getMessage()];
+                }
+            }
+
+            $shippingAddress = $cart->getShippingAddress();
+            if (null !== $shippingAddress) {
+                $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
+                if (!$isShippingAddressValid) {
+                    $cart->setShippingAddress(null);
+                }
+            }
+
+            $this->get('sylius.manager.order')->persist($cart);
+            $this->get('sylius.manager.order')->flush();
+
+            // TODO Find a better way to do this
+            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+            $request->getSession()->set($sessionKeyName, $cart->getId());
+
+            return $this->jsonResponse($cart, $errors);
+        }
+
         $this->customizeSeoPage($restaurant, $request);
 
         $delay = null;
@@ -169,74 +243,10 @@ class RestaurantController extends Controller
 
         return array(
             'restaurant' => $restaurant,
-            'availabilities' => $restaurant->getAvailabilities(),
+            'availabilities' => $this->getAvailabilities($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
         );
-    }
-
-    /**
-     * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"POST"})
-     */
-    public function cartAction($id, Request $request)
-    {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
-
-        // This will be used by RestaurantCartContext
-        $request->getSession()->set('restaurantId', $id);
-
-        $cart = $this->get('sylius.context.cart')->getCart();
-
-        if ($cart->getRestaurant() !== $restaurant) {
-            $errors = [
-                'restaurant' => [
-                    sprintf('Restaurant mismatch')
-                ]
-            ];
-
-            return $this->jsonResponse($cart, $errors);
-        }
-
-        $errors = [];
-
-        $cartForm = $this->createForm(CartType::class, $cart);
-        $cartForm->handleRequest($request);
-
-        $cart = $cartForm->getData();
-
-        // We use a named submit button to distinguish AJAX calls & checkout
-        if ($cartForm->getClickedButton()) {
-            if ('checkout' === $cartForm->getClickedButton()->getName() && $cartForm->isValid()) {
-                $this->get('sylius.manager.order')->flush();
-
-                return $this->redirectToRoute('order');
-            }
-        }
-
-        if (!$cartForm->isValid()) {
-            foreach ($cartForm->getErrors() as $formError) {
-                $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
-                $errors[$propertyPath] = [$formError->getMessage()];
-            }
-        }
-
-        $shippingAddress = $cart->getShippingAddress();
-        if (null !== $shippingAddress) {
-            $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
-            if (!$isShippingAddressValid) {
-                $cart->setShippingAddress(null);
-            }
-        }
-
-        $this->get('sylius.manager.order')->persist($cart);
-        $this->get('sylius.manager.order')->flush();
-
-        // TODO Find a better way to do this
-        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-        $request->getSession()->set($sessionKeyName, $cart->getId());
-
-        return $this->jsonResponse($cart, $errors);
     }
 
     /**

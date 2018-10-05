@@ -29,6 +29,10 @@ class RestaurantTest extends KernelTestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
+            '2017-10-04T17:30:00+02:00',
+            '2017-10-04T17:45:00+02:00',
+            '2017-10-04T18:00:00+02:00',
+            '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
             '2017-10-04T19:00:00+02:00',
@@ -83,6 +87,10 @@ class RestaurantTest extends KernelTestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
+            '2017-10-06T17:30:00+02:00',
+            '2017-10-06T17:45:00+02:00',
+            '2017-10-06T18:00:00+02:00',
+            '2017-10-06T18:15:00+02:00',
             '2017-10-06T18:30:00+02:00',
             '2017-10-06T18:45:00+02:00',
             '2017-10-06T19:00:00+02:00',
@@ -140,6 +148,9 @@ class RestaurantTest extends KernelTestCase
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
+            '2017-10-04T17:45:00+02:00',
+            '2017-10-04T18:00:00+02:00',
+            '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
             '2017-10-04T19:00:00+02:00',
@@ -231,17 +242,18 @@ class RestaurantTest extends KernelTestCase
 
         $date = new \DateTime('2017-10-04T17:30:26+02:00');
 
-
         $availabilities = $restaurant->getAvailabilities($date);
 
         $this->assertEquals([
-            '2017-10-04T18:30:00+02:00',
+            '2017-10-04T17:45:00+02:00',
+            '2017-10-04T18:00:00+02:00',
+            '2017-10-04T18:15:00+02:00',
             '2017-10-05T17:45:00+02:00',
             '2017-10-05T18:00:00+02:00',
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00'
+            '2017-10-05T19:00:00+02:00',
         ], $availabilities);
     }
 }
