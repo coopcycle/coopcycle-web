@@ -12,7 +12,7 @@ final class Version20181005192815 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
-        $stmt = $this->connection->prepare('SELECT id, number FROM sylius_order');
+        $stmt = $this->connection->prepare('SELECT id, number FROM sylius_order WHERE number IS NOT NULL');
 
         $stmt->execute();
         while ($order = $stmt->fetch()) {
