@@ -206,10 +206,9 @@ services:
     arguments:
       - "@coopcycle.settings_manager"
 
-  coopcycle.order_timeline_calculator:
-    class: AppBundle\Utils\OrderTimelineCalculator
+  coopcycle.preparation_time_calculator:
+    class: AppBundle\Utils\PreparationTimeCalculator
     arguments:
-      - '@routing_service'
       - {
           'restaurant.state == "rush" and order.itemsTotal < 2000':        '20 minutes',
           'restaurant.state == "rush" and order.itemsTotal in 2000..5000': '30 minutes',
@@ -218,6 +217,12 @@ services:
           'order.itemsTotal in 2000..5000':                                '15 minutes',
           'order.itemsTotal > 5000':                                       '30 minutes'
         }
+
+  coopcycle.order_timeline_calculator:
+    class: AppBundle\Utils\OrderTimelineCalculator
+    arguments:
+      - '@routing_service'
+      - '@coopcycle.preparation_time_calculator'
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
