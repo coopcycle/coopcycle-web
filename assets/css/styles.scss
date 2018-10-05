@@ -442,6 +442,12 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 // TODO Add more precise selector
+button.menu-item:focus,
+button.menu-item:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
 form.list-group-item {
   padding: 0;
   button.menu-item {
@@ -449,6 +455,14 @@ form.list-group-item {
     width: 100%;
     text-align: left;
     border: none;
+  }
+  &:hover,
+  &:focus {
+    > button {
+      text-decoration: none;
+      color: $list-group-link-hover-color;
+      background-color: $list-group-hover-bg;
+    }
   }
 }
 
