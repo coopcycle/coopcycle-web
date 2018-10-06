@@ -395,6 +395,8 @@ form.settings.default_tax_category.label: IVA para entregas
 form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Correo del administrador
 form.settings.administrator_email.help: Las notificaciones se enviarán a éste correo
+form.settings.phone_number.label: Número de teléfono
+form.settings.phone_number.help: Este número se mostrará a los clientes
 form.settings.currency_code.label: Moneda
 form.maintenance.enable.label: Activar el mantenimiento
 form.maintenance.disable.label: Desactivar el mantenimiento

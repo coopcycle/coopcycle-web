@@ -5,18 +5,23 @@ namespace AppBundle\Service;
 use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
 
 class SettingsManager
 {
     private $craueConfig;
     private $configEntityName;
+    private $phoneNumberUtil;
+    private $country;
     private $doctrine;
     private $logger;
 
     private $settings = [
         'brand_name',
         'administrator_email',
+        'phone_number',
         'stripe_test_publishable_key',
         'stripe_test_secret_key',
         'stripe_test_connect_client_id',
@@ -40,11 +45,19 @@ class SettingsManager
         'google_api_key',
     ];
 
-    public function __construct(CraueConfig $craueConfig, $configEntityName, ManagerRegistry $doctrine, LoggerInterface $logger)
+    public function __construct(
+        CraueConfig $craueConfig,
+        $configEntityName,
+        ManagerRegistry $doctrine,
+        PhoneNumberUtil $phoneNumberUtil,
+        $country,
+        LoggerInterface $logger)
     {
         $this->craueConfig = $craueConfig;
         $this->configEntityName = $configEntityName;
         $this->doctrine = $doctrine;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->country = $country;
         $this->logger = $logger;
     }
 
@@ -73,7 +86,18 @@ class SettingsManager
         }
 
         try {
-            return $this->craueConfig->get($name);
+
+            $value = $this->craueConfig->get($name);
+
+            switch ($name) {
+                case 'phone_number':
+                    try {
+                        return $this->phoneNumberUtil->parse($value, strtoupper($this->country));
+                    } catch (NumberParseException $e) {}
+            }
+
+            return $value;
+
         } catch (\RuntimeException $e) {}
     }
 
