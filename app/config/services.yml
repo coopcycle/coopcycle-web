@@ -355,7 +355,7 @@ services:
     tags: [ form.type ]
 
   'AppBundle\Form\SettingsType':
-    arguments: [ '@coopcycle.settings_manager' ]
+    arguments: [ '@coopcycle.settings_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\TaskType':
@@ -520,7 +520,13 @@ services:
 
   coopcycle.settings_manager:
     class: AppBundle\Service\SettingsManager
-    arguments: ["@craue_config", "%craue_config.entity_name%", "@doctrine", "@logger"]
+    arguments:
+      - "@craue_config"
+      - "%craue_config.entity_name%"
+      - "@doctrine"
+      - "@libphonenumber.phone_number_util"
+      - "%country_iso%"
+      - "@logger"
 
   coopcycle.email_manager:
     class: AppBundle\Service\EmailManager

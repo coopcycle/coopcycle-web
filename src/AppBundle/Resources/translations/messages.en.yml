@@ -373,6 +373,8 @@ form.settings.default_tax_category.label: VAT rate for deliveries
 form.settings.default_tax_category.help: Specify the VAT rate to use for deliveries
 form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
+form.settings.phone_number.label: Phone number
+form.settings.phone_number.help: This number will be displayed to customers
 form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: 'You are going to enable maintenance mode.<br>Only administrators will have access to the site.'

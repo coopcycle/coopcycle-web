@@ -3,12 +3,18 @@
 namespace AppBundle\Utils;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class Settings
 {
     public $brand_name;
 
     public $administrator_email;
+
+    /**
+     * @AssertPhoneNumber
+     */
+    public $phone_number;
 
     /**
      * @Assert\Regex("/^pk_test_[A-Za-z0-9]+/")

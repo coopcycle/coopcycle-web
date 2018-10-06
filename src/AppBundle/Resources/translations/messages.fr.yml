@@ -409,6 +409,8 @@ form.settings.default_tax_category.help: Définissez le taux de TVA à appliquer
   les livraisons
 form.settings.administrator_email.label: Email de l'administrateur
 form.settings.administrator_email.help: Les notifications seront envoyées à cet email
+form.settings.phone_number.label: Numéro de téléphone
+form.settings.phone_number.help: Ce numéro sera affiché aux clients
 form.maintenance.enable.label: Activer la maintenance
 form.maintenance.disable.label: Désactiver la maintenance
 form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'

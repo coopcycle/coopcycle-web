@@ -4,6 +4,10 @@ namespace AppBundle\Form;
 
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityRepository;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -25,10 +29,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SettingsType extends AbstractType
 {
     private $settingsManager;
+    private $phoneNumberUtil;
+    private $country;
 
-    public function __construct(SettingsManager $settingsManager)
+    public function __construct(
+        SettingsManager $settingsManager,
+        PhoneNumberUtil $phoneNumberUtil,
+        $country)
     {
         $this->settingsManager = $settingsManager;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->country = $country;
     }
 
     private function createPlaceholder($value)
@@ -44,6 +55,12 @@ class SettingsType extends AbstractType
             ])
             ->add('administrator_email', EmailType::class, [
                 'label' => 'form.settings.administrator_email.label'
+            ])
+            ->add('phone_number', PhoneNumberType::class, [
+                'label' => 'form.settings.phone_number.label',
+                'format' => PhoneNumberFormat::NATIONAL,
+                'default_region' => strtoupper($this->country),
+                'required' => false,
             ])
             ->add('stripe_test_publishable_key', PasswordType::class, [
                 'required' => false,
@@ -129,6 +146,17 @@ class SettingsType extends AbstractType
 
         });
 
+        $builder->get('phone_number')->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            try {
+                $phoneNumber = $this->phoneNumberUtil->parse($data, strtoupper($this->country));
+                $event->setData($phoneNumber);
+            } catch (NumberParseException $e) {}
+        });
+
         $builder->get('default_tax_category')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -163,6 +191,9 @@ class SettingsType extends AbstractType
             $data = $event->getData();
             if (null !== $data->default_tax_category) {
                 $data->default_tax_category = $data->default_tax_category->getCode();
+            }
+            if (null !== $data->phone_number) {
+                $data->phone_number = $this->phoneNumberUtil->format($data->phone_number, PhoneNumberFormat::E164);
             }
             $event->setData($data);
         });

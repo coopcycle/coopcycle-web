@@ -5,6 +5,11 @@
 <span class="help-block">{% trans %}form.settings.administrator_email.help{% endtrans %}</span>
 {% endblock %}
 
+{% block _settings_phone_number_widget %}
+{{ block('form_widget') }}
+<span class="help-block">{% trans %}form.settings.phone_number.help{% endtrans %}</span>
+{% endblock %}
+
 {% block password_widget %}
 {% if form.vars.name matches '/^stripe_/' %}
   {% set disabled = is_demo %}
