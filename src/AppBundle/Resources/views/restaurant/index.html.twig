@@ -80,16 +80,18 @@
               </a>
             {% else %}
               {% if product.simple %}
-              <form method="post"
-                class="list-group-item"
-                action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}">
-                <button class="menu-item" type="submit">
-                  <span class="menu-item-content">
-                    {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
-                  </span>
-                  <span class="menu-item-price">{{ variant.price|price_format }}</span>
-                </button>
-              </form>
+              <div class="list-group-item nopadding">
+                <form method="post"
+                  action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
+                  data-product-simple>
+                  <button class="menu-item" type="submit">
+                    <span class="menu-item-content">
+                      {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
+                    </span>
+                    <span class="menu-item-price">{{ variant.price|price_format }}</span>
+                  </button>
+                </form>
+              </div>
               {% else %}
               <button
                 class="list-group-item menu-item"
@@ -208,7 +210,7 @@ new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
   locale: $('html').attr('lang')
 });
 
-$('form.list-group-item').on('submit', function(e) {
+$('form[data-product-simple]').on('submit', function(e) {
   e.preventDefault();
   window.AppData.CartHelper.addProduct($(this).attr('action'), 1);
 });

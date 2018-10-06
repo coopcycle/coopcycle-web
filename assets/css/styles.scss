@@ -448,18 +448,29 @@ button.menu-item:active {
    box-shadow: none;
 }
 
-form.list-group-item {
-  padding: 0;
-  button.menu-item {
+// FIXME This is needed for FireFox
+.list-group-item {
+  > form > button.menu-item {
     padding: 10px 45px 10px 15px;
     width: 100%;
     text-align: left;
     border: none;
+    background-color: $list-group-bg;
+    color: $list-group-link-color;
+  }
+  &:first-child {
+    > form > button {
+      @include border-top-radius($list-group-border-radius);
+    }
+  }
+  &:last-child {
+    > form > button {
+      @include border-bottom-radius($list-group-border-radius);
+    }
   }
   &:hover,
   &:focus {
-    > button {
-      text-decoration: none;
+    > form > button {
       color: $list-group-link-hover-color;
       background-color: $list-group-hover-bg;
     }
