@@ -43,18 +43,21 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $shippingAddress = $object->getShippingAddress();
-        if (null === $shippingAddress) {
-            $data['shippingAddress'] = null;
-        } else {
+
+        if (null !== $shippingAddress && null !== $shippingAddress->getGeo()) {
             $data['shippingAddress'] = [
                 'latlng' => [
                     $shippingAddress->getGeo()->getLatitude(),
                     $shippingAddress->getGeo()->getLongitude(),
                 ],
-                'streetAddress' => join(
-                    ', ',
-                    [$shippingAddress->getStreetAddress(), $shippingAddress->getAddressLocality(), $shippingAddress->getAddressCountry()])
+                'streetAddress' => join(', ', [
+                    $shippingAddress->getStreetAddress(),
+                    $shippingAddress->getAddressLocality(),
+                    $shippingAddress->getAddressCountry()
+                ])
             ];
+        } else {
+            $data['shippingAddress'] = null;
         }
 
         $deliveryAdjustments = array_map(function (BaseAdjustmentInterface $adjustment) {

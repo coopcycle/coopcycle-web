@@ -188,47 +188,55 @@ class RestaurantController extends Controller
 
             $cart = $cartForm->getData();
 
-            if (!$request->isXmlHttpRequest() && $cartForm->isValid()) {
+            if ($request->isXmlHttpRequest()) {
+
+                // Make sure the shipping address is valid
+                // FIXME This is cumbersome, there should be a better way
+                $shippingAddress = $cart->getShippingAddress();
+                if (null !== $shippingAddress) {
+                    $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
+                    if (!$isShippingAddressValid) {
+                        $cart->setShippingAddress(null);
+                    }
+                }
+
+                if ($cart->getRestaurant() !== $restaurant) {
+                    $errors = [
+                        'restaurant' => [
+                            sprintf('Restaurant mismatch')
+                        ]
+                    ];
+
+                    return $this->jsonResponse($cart, $errors);
+                }
+
+                $errors = [];
+
+                if (!$cartForm->isValid()) {
+                    foreach ($cartForm->getErrors() as $formError) {
+                        $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
+                        $errors[$propertyPath] = [$formError->getMessage()];
+                    }
+                }
+
+                $this->get('sylius.manager.order')->persist($cart);
                 $this->get('sylius.manager.order')->flush();
 
-                return $this->redirectToRoute('order');
-            }
-
-            if ($cart->getRestaurant() !== $restaurant) {
-                $errors = [
-                    'restaurant' => [
-                        sprintf('Restaurant mismatch')
-                    ]
-                ];
+                // TODO Find a better way to do this
+                $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+                $request->getSession()->set($sessionKeyName, $cart->getId());
 
                 return $this->jsonResponse($cart, $errors);
-            }
 
-            $errors = [];
+            } else {
 
-            if (!$cartForm->isValid()) {
-                foreach ($cartForm->getErrors() as $formError) {
-                    $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
-                    $errors[$propertyPath] = [$formError->getMessage()];
+                // The cart is valid, and the user clicked on the submit button
+                if ($cartForm->isValid()) {
+                    $this->get('sylius.manager.order')->flush();
+
+                    return $this->redirectToRoute('order');
                 }
             }
-
-            $shippingAddress = $cart->getShippingAddress();
-            if (null !== $shippingAddress) {
-                $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
-                if (!$isShippingAddressValid) {
-                    $cart->setShippingAddress(null);
-                }
-            }
-
-            $this->get('sylius.manager.order')->persist($cart);
-            $this->get('sylius.manager.order')->flush();
-
-            // TODO Find a better way to do this
-            $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-            $request->getSession()->set($sessionKeyName, $cart->getId());
-
-            return $this->jsonResponse($cart, $errors);
         }
 
         $this->customizeSeoPage($restaurant, $request);
