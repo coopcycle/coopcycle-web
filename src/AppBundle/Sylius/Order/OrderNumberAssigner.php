@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Order;
 
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 
 final class OrderNumberAssigner implements OrderNumberAssignerInterface
