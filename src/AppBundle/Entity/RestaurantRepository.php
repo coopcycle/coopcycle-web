@@ -7,6 +7,8 @@ use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Sylius\Component\Order\Model\OrderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class RestaurantRepository extends EntityRepository
 {
@@ -124,5 +126,18 @@ class RestaurantRepository extends EntityRepository
             ->setParameter('ids', array_values($ids))
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByCustomer(UserInterface $customer)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $qb
+            ->join(OrderInterface::class, 'o', Expr\Join::WITH, 'o.restaurant = r.id')
+            ->where('o.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->groupBy('r.id');
+
+        return $qb->getQuery()->getResult();
     }
 }

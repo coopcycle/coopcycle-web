@@ -658,6 +658,7 @@ services:
     arguments:
       - "@doctrine.orm.entity_manager"
       - "@security.token_storage"
+      - "@coopcycle.repository.restaurant"
       - "@annotation_reader"
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
