@@ -508,7 +508,8 @@ a.list-group-item.menu-item--unavailable {
   &:hover {
     background-color: $main-blue-light;
   }
-  .radio {
+  .radio,
+  .checkbox {
     width: 100%;
     label {
       width: 100%;
