@@ -80,17 +80,25 @@ class RestaurantController extends Controller
 
     private function getAvailabilities(OrderInterface $cart)
     {
-        $availabilities = $cart->getRestaurant()->getAvailabilities();
+        $restaurant = $cart->getRestaurant();
+
+        $availabilities = $restaurant->getAvailabilities();
 
         $preparationTime =
             $this->get('coopcycle.preparation_time_calculator')->calculate($cart);
 
-        $closestDate = new \DateTime(sprintf('+%s', $preparationTime));
+        $nextOpeningDate = new \DateTime('now');
+        if (!$restaurant->isOpen()) {
+            $nextOpeningDate = $restaurant->getNextOpeningDate();
+        }
 
-        $availabilities = array_filter($availabilities, function ($date) use ($closestDate) {
+        $closestShippingDate = clone $nextOpeningDate;
+        $closestShippingDate->modify(sprintf('+%s', $preparationTime));
+
+        $availabilities = array_filter($availabilities, function ($date) use ($closestShippingDate) {
             $date = new \DateTime($date);
 
-            if ($date < $closestDate) {
+            if ($date <= $closestShippingDate) {
                 return false;
             }
 
