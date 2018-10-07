@@ -39,7 +39,8 @@ final class EnabledFilter extends SQLFilter
             return sprintf('(%s.enabled = %s OR (%s.enabled = %s AND %s.id IN(%s)))',
                 $targetTableAlias, $enabled,
                 $targetTableAlias, $this->getConnection()->quote(false, Type::BOOLEAN),
-                $targetTableAlias, $this->getParameter('restaurants')
+                // @see https://github.com/doctrine/doctrine2/issues/5811
+                $targetTableAlias, str_replace("'", '', $this->getParameter('restaurants'))
             );
         }
 
