@@ -331,6 +331,8 @@ class InitDemoCommand extends ContainerAwareCommand
                 'taxCategory' => $taxCategory,
             ]);
 
+            $appetizer['variant']->setName($appetizer['product']->getName());
+
             $products[] = $appetizer['product'];
         }
 
@@ -370,6 +372,8 @@ class InitDemoCommand extends ContainerAwareCommand
             $dessert = $this->loadFixtures(__DIR__ . '/Resources/dessert.yml', [
                 'taxCategory' => $taxCategory,
             ]);
+
+            $dessert['variant']->setName($dessert['product']->getName());
 
             $products[] = $dessert['product'];
         }
