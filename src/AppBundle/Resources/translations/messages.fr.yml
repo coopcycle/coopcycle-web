@@ -230,6 +230,7 @@ profile.accountType: Type de compte
 
 order.cart.title: Panier
 order.items.products_with_count: Produits (%count%)
+order.summary.heading: Commande %number% (#%id%)
 order.total_including_tax: Total TTC
 order.total_tax: TVA
 order.payment.title: Vos informations de paiement

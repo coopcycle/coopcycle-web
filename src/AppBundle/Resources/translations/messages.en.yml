@@ -227,6 +227,7 @@ profile.accountType: Account type
 
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
+order.summary.heading: Order %number% (#%id%)
 order.total_including_tax: Total (tax incl.)
 order.total_tax: Taxes
 order.payment.title: Your payment informations

@@ -681,3 +681,8 @@ services:
   coopcycle.order_number_assigner:
     class: AppBundle\Sylius\Order\OrderNumberAssigner
     decorates: 'sylius.order_number_assigner'
+
+  coopcycle.utils.order_text_encoder:
+    class: AppBundle\Utils\OrderTextEncoder
+    arguments:
+      - '@templating'

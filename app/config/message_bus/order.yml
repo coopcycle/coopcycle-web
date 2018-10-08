@@ -102,6 +102,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\CreateTasks
     arguments:
       - '@routing_service'
+      - '@coopcycle.utils.order_text_encoder'
     tags:
         - name: event_subscriber
           subscribes_to: order:accepted

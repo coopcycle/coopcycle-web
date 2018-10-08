@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTextEncoder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -20,9 +21,15 @@ class CreateTasksTest extends TestCase
     public function setUp()
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->orderTextEncoder = $this->prophesize(OrderTextEncoder::class);
+
+        $this->orderTextEncoder
+            ->encode(Argument::type(OrderInterface::class), 'txt')
+            ->willReturn('Order XXX');
 
         $this->createTasks = new CreateTasks(
-            $this->routing->reveal()
+            $this->routing->reveal(),
+            $this->orderTextEncoder->reveal()
         );
     }
 
@@ -91,6 +98,9 @@ class CreateTasksTest extends TestCase
 
                 $this->assertEquals($pickupDoneBefore, $pickup->getDoneBefore());
                 $this->assertEquals($shippedAt, $dropoff->getDoneBefore());
+
+                $this->assertEquals('Order XXX', $pickup->getComments());
+                $this->assertEquals('Order XXX', $dropoff->getComments());
 
                 return true;
             }))
