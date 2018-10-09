@@ -770,7 +770,7 @@ form[name="store"] #store_imageFile_file {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 30px;
+  padding: 20px;
   @media (min-width: $screen-lg-min) {
     width: 50%;
   }
@@ -783,7 +783,11 @@ form[name="store"] #store_imageFile_file {
   }
   .ReactModal__Restaurant__button {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
+    > button {
+      margin-bottom: 15px;
+    }
   }
 }
 
