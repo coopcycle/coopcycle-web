@@ -20,6 +20,6 @@ export const placeToAddress = place => {
     postalCode: addressDict.postal_code || '',
     streetAddress: addressDict.streetAddress || '',
     // street_address indicates a precise street address
-    isPrecise: _.includes(place.types, 'street_address')
+    isPrecise: _.includes(place.types, 'street_address') || _.includes(place.types, 'premise')
   }
 }
