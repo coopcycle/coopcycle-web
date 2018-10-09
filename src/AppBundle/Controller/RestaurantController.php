@@ -209,13 +209,20 @@ class RestaurantController extends Controller
                 }
 
                 if ($cart->getRestaurant() !== $restaurant) {
-                    $errors = [
-                        'restaurant' => [
-                            sprintf('Restaurant mismatch')
-                        ]
-                    ];
+                    // Alert customer only when there is something in the cart
+                    // Customer may be browsing the available restaurants,
+                    // so no need to alert all the time
+                    if ($cart->getItemsTotal() > 0) {
+                        $errors = [
+                            'restaurant' => [
+                                sprintf('Restaurant mismatch')
+                            ]
+                        ];
 
-                    return $this->jsonResponse($cart, $errors);
+                        return $this->jsonResponse($cart, $errors);
+                    } else {
+                        $cart->setRestaurant($restaurant);
+                    }
                 }
 
                 $errors = [];
