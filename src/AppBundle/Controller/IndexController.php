@@ -21,13 +21,17 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
-        $restaurants = $this->getDoctrine()
-            ->getRepository(Restaurant::class)
-            ->findRandom(self::MAX_RESULTS);
+        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
+
+        $restaurants = $restaurantRepository->findRandom(self::MAX_RESULTS);
+        $countAll = $restaurantRepository->countAll();
+
+        $showMore = $countAll > count($restaurants);
 
         return array(
             'restaurants' => $restaurants,
             'max_results' => self::MAX_RESULTS,
+            'show_more' => $showMore,
         );
     }
 }

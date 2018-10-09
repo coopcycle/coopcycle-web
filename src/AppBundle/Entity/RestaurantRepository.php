@@ -140,4 +140,13 @@ class RestaurantRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countAll()
+    {
+        $qb = $this
+            ->createQueryBuilder('r')
+            ->select('COUNT(r)');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

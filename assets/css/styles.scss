@@ -159,6 +159,15 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     margin: 20px 0;
   }
+  &__show-more {
+    font-size: $font-size-large;
+    margin-bottom: 15px;
+    > a {
+      padding: 5px 0;
+      display: block;
+      width: 100%;
+    }
+  }
 }
 
 #search small {

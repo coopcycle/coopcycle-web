@@ -37,6 +37,11 @@
 <section class="homepage-restaurants">
   <div class="container">
     <h2 class="homepage-restaurants__title">{% trans %}index.our_restaurants{% endtrans %}</h2>
+    {% if show_more %}
+    <div class="homepage-restaurants__show-more text-left">
+      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %}</a>
+    </div>
+    {% endif %}
     <div class="row display-flex restaurant-list">
       {% for restaurant in restaurants %}
         <div class="col-xs-12 col-md-4 display-flex">
@@ -58,6 +63,11 @@
         {% endfor %}
       {% endif %}
     </div>
+    {% if show_more %}
+    <div class="homepage-restaurants__show-more text-right">
+      <a href="{{ path('restaurants') }}">{% trans %}index.view_all_restaurants{% endtrans %}</a>
+    </div>
+    {% endif %}
   </div>
 </section>
 {% endif %}
