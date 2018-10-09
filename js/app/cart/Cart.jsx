@@ -249,11 +249,16 @@ class Cart extends React.Component
         <span className="cart-heading__right" ref="headingRight">
           <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
         </span>
-        <button type="submit" className="cart-heading__button">
+        <button type="submit" className="cart-heading__button" onClick={ this.onCartHeadingSubmitClick.bind(this) }>
           <i className="fa fa-arrow-right "></i>
         </button>
       </div>
     )
+  }
+
+  onCartHeadingSubmitClick(e) {
+    // Avoid opening mobile cart when click submit button
+    e.stopPropagation()
   }
 
   renderHeadingLeft(warningAlerts, dangerAlerts) {
