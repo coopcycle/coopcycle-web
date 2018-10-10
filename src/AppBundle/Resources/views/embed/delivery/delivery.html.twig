@@ -61,7 +61,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/widgets.js') }}"></script>
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],

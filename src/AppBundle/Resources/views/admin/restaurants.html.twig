@@ -18,7 +18,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ asset('js/widgets.js') }}"></script>
   <script>
   document.querySelectorAll('.restaurant-opening-hours').forEach(function(el) {
     new CoopCycle.OpeningHoursParser(el, {

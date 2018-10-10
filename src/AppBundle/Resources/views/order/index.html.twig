@@ -58,7 +58,6 @@
 
 
 {% block scripts %}
-<script src="{{ asset('js/widgets.js') }}"></script>
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: {{ order.restaurant.address|latlng|json_encode() }},

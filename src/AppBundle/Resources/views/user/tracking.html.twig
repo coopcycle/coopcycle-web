@@ -24,7 +24,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ asset('js/widgets.js') }}"></script>
   <script>
   window.AppData = window.AppData || {}
   window.AppData.positions = {{ positions|json_encode()|raw }}

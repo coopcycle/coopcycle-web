@@ -45,7 +45,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ asset('js/widgets.js') }}"></script>
   <script>
   var initialGeohash = "{{ geohash }}";
   $('#restaurant-search-form').find('input[name=geohash]').val(initialGeohash);

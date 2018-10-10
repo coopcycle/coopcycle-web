@@ -120,7 +120,6 @@ $('#billing-address').on('shown.bs.collapse', function () {
 });
 $('#delivery_billingAddress_streetAddress').removeAttr('required');
 </script>
-<script src="{{ asset('js/widgets.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

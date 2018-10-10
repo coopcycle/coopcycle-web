@@ -107,7 +107,6 @@
 
 {% block scripts %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-<script src="{{ asset('js/widgets.js') }}"></script>
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ order.delivery.pickup.address.geo.latitude }}, {{ order.delivery.pickup.address.geo.longitude }} ],
