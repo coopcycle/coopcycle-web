@@ -266,7 +266,7 @@ order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Costos CoopCycle
 
 order.list.total: Total
-order.list.createdAt: Creado
+order.list.shippedAt: Hora de entrega
 order.list.cancel: Cancelar
 order.list.type: Tipo
 order.list.customer: Cliente

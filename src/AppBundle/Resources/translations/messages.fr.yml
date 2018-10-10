@@ -264,7 +264,7 @@ payment.state.completed: Terminé
 payment.state.failed: Echec
 payment.state.cancelled: Annulé
 order.list.total: Total
-order.list.createdAt: Créée le
+order.list.shippedAt: Heure de livraison
 order.list.cancel: Annuler
 order.list.type: Type
 order.list.customer: Client

@@ -9,7 +9,7 @@
     <th>{% trans %}order.list.summary{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.total{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.invoice{% endtrans %}</th>
-    <th class="text-right">{% trans %}order.list.createdAt{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.list.shippedAt{% endtrans %}</th>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <th></th>
     {% endif %}
@@ -66,7 +66,7 @@
       </a>
       {% endif %}
     </td>
-    <td class="text-right">{{ order.createdAt|ago }}</td>
+    <td class="text-right">{{ order.shippedAt|localizeddate('short', 'short') }}</td>
     {% if show_buttons and is_granted('ROLE_ADMIN') %}
     <td>
       {% if order|order_can_transition('cancel') %}

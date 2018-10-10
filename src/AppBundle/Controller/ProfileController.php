@@ -99,7 +99,7 @@ class ProfileController extends Controller
         $orders = (clone $qb)
             ->setMaxResults(self::ITEMS_PER_PAGE)
             ->setFirstResult($offset)
-            ->orderBy('o.createdAt', 'DESC')
+            ->orderBy('o.shippedAt', 'DESC')
             ->getQuery()
             ->getResult();
 
