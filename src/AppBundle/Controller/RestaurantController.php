@@ -409,10 +409,12 @@ class RestaurantController extends Controller
         $cart = $this->get('sylius.context.cart')->getCart();
         $cartItem = $this->get('sylius.repository.order_item')->find($cartItemId);
 
-        $this->get('sylius.order_modifier')->removeFromOrder($cart, $cartItem);
+        if ($cartItem) {
+            $this->get('sylius.order_modifier')->removeFromOrder($cart, $cartItem);
 
-        $this->get('sylius.manager.order')->persist($cart);
-        $this->get('sylius.manager.order')->flush();
+            $this->get('sylius.manager.order')->persist($cart);
+            $this->get('sylius.manager.order')->flush();
+        }
 
         $errors = $this->get('validator')->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);
