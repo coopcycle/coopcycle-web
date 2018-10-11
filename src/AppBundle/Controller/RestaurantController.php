@@ -87,18 +87,13 @@ class RestaurantController extends Controller
         $preparationTime =
             $this->get('coopcycle.preparation_time_calculator')->calculate($cart);
 
-        $nextOpeningDate = new \DateTime('now');
-        if (!$restaurant->isOpen()) {
-            $nextOpeningDate = $restaurant->getNextOpeningDate();
-        }
+        $availabilities = array_filter($availabilities, function ($date) use ($preparationTime) {
+            $shippingDate = new \DateTime($date);
 
-        $closestShippingDate = clone $nextOpeningDate;
-        $closestShippingDate->modify(sprintf('+%s', $preparationTime));
+            $preparationDate = clone $shippingDate;
+            $preparationDate->modify(sprintf('-%s', $preparationTime));
 
-        $availabilities = array_filter($availabilities, function ($date) use ($closestShippingDate) {
-            $date = new \DateTime($date);
-
-            if ($date <= $closestShippingDate) {
+            if ($preparationDate <= new \DateTime('now')) {
                 return false;
             }
 
