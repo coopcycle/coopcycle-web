@@ -4,14 +4,28 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Sylius\Order;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 trait OrderTrait
 {
     abstract protected function getOrderList(Request $request);
+
+    private function orderAsJson(Order $order)
+    {
+        $orderNormalized = $this->get('api_platform.serializer')->normalize($order, 'jsonld', [
+            'resource_class' => Order::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['order', 'place']
+        ]);
+
+        return new JsonResponse($orderNormalized, 200);
+    }
 
     public function orderListAction(Request $request)
     {
@@ -56,7 +70,7 @@ trait OrderTrait
         ]);
     }
 
-    public function acceptOrderAction($restaurantId, $orderId, Request $request)
+    public function acceptRestaurantOrderAction($restaurantId, $orderId, Request $request)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
@@ -75,7 +89,26 @@ trait OrderTrait
         ]);
     }
 
-    public function refuseOrderAction($restaurantId, $orderId, Request $request)
+    public function acceptOrderAction($id, Request $request)
+    {
+        $order = $this->get('sylius.repository.order')->find($id);
+
+        $this->accessControl($order->getRestaurant());
+
+        try {
+            $this->get('coopcycle.order_manager')->accept($order);
+            $this->get('sylius.manager.order')->flush();
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
+
+        if ($request->isXmlHttpRequest()) {
+
+            return $this->orderAsJson($order);
+        }
+    }
+
+    public function refuseRestaurantOrder($restaurantId, $orderId, Request $request)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
@@ -94,6 +127,25 @@ trait OrderTrait
         ]);
     }
 
+    public function refuseOrderAction($id, Request $request)
+    {
+        $order = $this->get('sylius.repository.order')->find($id);
+
+        $this->accessControl($order->getRestaurant());
+
+        try {
+            $this->get('coopcycle.order_manager')->refuse($order);
+            $this->get('sylius.manager.order')->flush();
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
+
+        if ($request->isXmlHttpRequest()) {
+
+            return $this->orderAsJson($order);
+        }
+    }
+
     public function readyOrderAction($restaurantId, $orderId, Request $request)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
@@ -109,7 +161,7 @@ trait OrderTrait
         ]);
     }
 
-    public function delayOrderAction($restaurantId, $orderId, Request $request)
+    public function delayRestaurantOrderAction($restaurantId, $orderId, Request $request)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
@@ -124,6 +176,25 @@ trait OrderTrait
         ]);
     }
 
+    public function delayOrderAction($id, Request $request)
+    {
+        $order = $this->get('sylius.repository.order')->find($id);
+
+        $this->accessControl($order->getRestaurant());
+
+        try {
+            $this->get('coopcycle.order_manager')->delay($order);
+            $this->get('sylius.manager.order')->flush();
+        } catch (\Exception $e) {
+            // TODO Add flash message
+        }
+
+        if ($request->isXmlHttpRequest()) {
+
+            return $this->orderAsJson($order);
+        }
+    }
+
     private function cancelOrderById($id)
     {
         $order = $this->get('sylius.repository.order')->find($id);
@@ -131,6 +202,8 @@ trait OrderTrait
 
         $this->get('coopcycle.order_manager')->cancel($order);
         $this->get('sylius.manager.order')->flush();
+
+        return $order;
     }
 
     public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request)
@@ -145,7 +218,12 @@ trait OrderTrait
 
     public function cancelOrderAction($id, Request $request)
     {
-        $this->cancelOrderById($id);
+        $order = $this->cancelOrderById($id);
+
+        if ($request->isXmlHttpRequest()) {
+
+            return $this->orderAsJson($order);
+        }
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'));
     }
