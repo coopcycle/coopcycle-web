@@ -19,6 +19,7 @@ Feature: Orders
       | familyName | Doe               |
     And the user "bob" has delivery address:
       | streetAddress | 1, rue de Rivoli    |
+      | postalCode    | 75004               |
       | geo           | 48.855799, 2.359207 |
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -103,6 +104,7 @@ Feature: Orders
         }
       ],
       "id":@integer@,
+      "number":null,
       "total":@integer@,
       "itemsTotal":@integer@,
       "taxTotal":@integer@,

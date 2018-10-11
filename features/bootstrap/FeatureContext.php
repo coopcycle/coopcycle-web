@@ -320,7 +320,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         list($lat, $lng) = explode(',', $data['geo']);
 
         $address = new Address();
-        $address->setPostalCode(991);
+        $address->setPostalCode(isset($data['streetAddress']) ? $data['streetAddress'] : 75000);
         $address->setAddressLocality('New-York');
         $address->setStreetAddress($data['streetAddress']);
         $address->setGeo(new GeoCoordinates(trim($lat), trim($lng)));
