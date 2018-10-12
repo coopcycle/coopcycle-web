@@ -262,6 +262,13 @@ order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
 order.state.ready: Listo
 
+payment.state.cart: Cesta
+payment.state.new: Nueveo
+payment.state.authorized: Autorizado
+payment.state.completed: Realizado
+payment.state.failed: Fallado
+payment.state.cancelled: Cancelado
+
 order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Costos CoopCycle
 
@@ -338,6 +345,13 @@ form.delivery.duration.label: Duración
 form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
+
+form.order.accept.label: Aceptar
+form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado por correo electrónico.
+form.order.cancel.label: Cancelar
+form.order.fulfill.label: Realizar
+form.order.payment_complete.label: Completar
+
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Selecciona una dirección en el menú desplegable
 form.address.name.label: Nombre

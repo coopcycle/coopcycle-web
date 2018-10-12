@@ -249,6 +249,13 @@ order.state.ready: Ready
 order.state.fulfilled: Delivered
 order.state.cancelled: Cancelled
 
+payment.state.cart: Cart
+payment.state.new: New
+payment.state.authorized: Authorized
+payment.state.completed: Completed
+payment.state.failed: Failed
+payment.state.cancelled: Cancelled
+
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
 
@@ -326,6 +333,12 @@ form.delivery.duration.label: Duration
 form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
+
+form.order.accept.label: Accept
+form.order.accept.help: Once you have accepted the order, the customer will be notified by email.
+form.order.cancel.label: Cancel
+form.order.fulfill.label: Fulfill
+form.order.payment_complete.label: Complete
 
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
