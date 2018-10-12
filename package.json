@@ -81,6 +81,7 @@
     "react-places-autocomplete": "^7.2.0",
     "react-redux": "^5.0.7",
     "react-stickynode": "^1.4.1",
+    "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0"
   }
