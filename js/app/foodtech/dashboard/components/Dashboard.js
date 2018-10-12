@@ -23,10 +23,8 @@ function sortByShippedAt(a, b) {
 class Dashboard extends React.Component {
 
   componentDidMount() {
-    this.props.socket.on('connect', () => {
-      this.props.socket.on('order:created', order => {
-        this.props.orderCreated(order)
-      })
+    this.props.socket.on('order:created', order => {
+      this.props.orderCreated(order)
     })
   }
 
