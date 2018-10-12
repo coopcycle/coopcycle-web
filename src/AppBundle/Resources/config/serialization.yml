@@ -30,6 +30,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'order_create']
     total:
       groups: ['order']
+    number:
+      groups: ['order']
     itemsTotal:
       groups: ['order']
     taxTotal:

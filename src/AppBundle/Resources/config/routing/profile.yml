@@ -91,14 +91,14 @@ profile_restaurant_dashboard_order:
 profile_restaurant_dashboard_order_accept:
     path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/accept
     defaults:
-        _controller: AppBundle:Profile:acceptOrder
+        _controller: AppBundle:Profile:acceptRestaurantOrder
         redirect_route: profile_restaurant_dashboard_order
     methods: [ POST ]
 
 profile_restaurant_dashboard_order_refuse:
     path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/refuse
     defaults:
-        _controller: AppBundle:Profile:refuseOrder
+        _controller: AppBundle:Profile:refuseRestaurantOrder
         redirect_route: profile_restaurant_dashboard_order
     methods: [ POST ]
 
@@ -112,7 +112,7 @@ profile_restaurant_dashboard_order_ready:
 profile_restaurant_dashboard_order_delay:
     path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/delay
     defaults:
-        _controller: AppBundle:Profile:delayOrder
+        _controller: AppBundle:Profile:delayRestaurantOrder
         redirect_route: profile_restaurant_dashboard_order
     methods: [ POST ]
 

@@ -27,6 +27,20 @@ admin_order_invoice:
     defaults: { _controller: AppBundle:Admin:orderInvoice }
     methods:  [ GET ]
 
+admin_foodtech_dashboard:
+    path:     /admin/foodtech/dashboard/{date}
+    requirements:
+      date: '[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__'
+    defaults:
+        _controller: AppBundle:Admin:foodtechDashboard
+        layout: '@App/admin.html.twig'
+        template: '@App/admin/orders.html.twig'
+        routes:
+            restaurant: admin_restaurant
+            order_invoice: admin_order_invoice
+            order: admin_order
+    methods:  [ GET ]
+
 admin_order:
     path:     /admin/orders/{id}
     defaults: { _controller: AppBundle:Admin:order }
@@ -277,12 +291,25 @@ admin_restaurant_dashboard_order:
 admin_restaurant_dashboard_order_accept:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/accept
     defaults:
-        _controller: AppBundle:Admin:acceptOrder
+        _controller: AppBundle:Admin:acceptRestaurantOrder
         redirect_route: admin_restaurant_dashboard_order
+    methods: [ POST ]
+
+admin_order_accept:
+    path: /admin/orders/{id}/accept
+    defaults:
+        _controller: AppBundle:Admin:acceptOrder
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_refuse:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/refuse
+    defaults:
+        _controller: AppBundle:Admin:refuseRestaurantOrder
+        redirect_route: admin_restaurant_dashboard_order
+    methods: [ POST ]
+
+admin_order_refuse:
+    path: /admin/orders/{id}/refuse
     defaults:
         _controller: AppBundle:Admin:refuseOrder
         redirect_route: admin_restaurant_dashboard_order
@@ -298,8 +325,14 @@ admin_restaurant_dashboard_order_ready:
 admin_restaurant_dashboard_order_delay:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/delay
     defaults:
-        _controller: AppBundle:Admin:delayOrder
+        _controller: AppBundle:Admin:delayRestaurantOrder
         redirect_route: admin_restaurant_dashboard_order
+    methods: [ POST ]
+
+admin_order_delay:
+    path: /admin/orders/{id}/delay
+    defaults:
+        _controller: AppBundle:Admin:delayOrder
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_cancel:
@@ -316,7 +349,15 @@ admin_restaurant_stripe_oauth_redirect:
         redirect_after: admin_restaurant
     methods: [ GET ]
 
+# TODO Deprecate
 admin_orders_order_cancel:
+    path: /admin/orders/{id}/cancel
+    defaults:
+        _controller: AppBundle:Admin:cancelOrder
+        redirect_route: admin_orders
+    methods: [ POST ]
+
+admin_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:
         _controller: AppBundle:Admin:cancelOrder

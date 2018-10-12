@@ -106,6 +106,10 @@ const channels = {
   'user:*:notifications:count': {
     toJSON: true,
     psubscribe: true
+  },
+  'order:created': {
+    toJSON: true,
+    psubscribe: false
   }
 }
 

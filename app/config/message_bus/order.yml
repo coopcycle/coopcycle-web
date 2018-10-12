@@ -221,3 +221,5 @@ services:
           subscribes_to: order:picked
         - name: event_subscriber
           subscribes_to: order:dropped
+        - name: event_subscriber
+          subscribes_to: order:fulfilled

@@ -76,6 +76,8 @@
     <script src="{{ asset('js/common.js') }}"></script>
     <script src="/tracking/socket.io/socket.io.js"></script>
     <script src="{{ asset('js/widgets.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
     {% if app.user %}
     <script src="{{ asset('js/notifications.js') }}"></script>

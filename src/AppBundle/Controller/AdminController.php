@@ -21,6 +21,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
@@ -188,6 +189,27 @@ class AdminController extends Controller
             'order' => $order,
             'delivery' => $order->getDelivery(),
             'form' => $form->createView(),
+        ]);
+    }
+
+    public function foodtechDashboardAction($date, Request $request)
+    {
+        $date = new \DateTime($date);
+
+        $orders = $this->get('sylius.repository.order')->findByShippedAt($date);
+
+        $ordersNormalized = $this->get('api_platform.serializer')->normalize($orders, 'jsonld', [
+            'resource_class' => Order::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['order', 'place']
+        ]);
+
+        return $this->render('@App/admin/foodtech_dashboard.html.twig', [
+            'orders' => $orders,
+            'date' => $date,
+            'orders_normalized' => $ordersNormalized,
+            'routes' => $request->attributes->get('routes'),
         ]);
     }
 

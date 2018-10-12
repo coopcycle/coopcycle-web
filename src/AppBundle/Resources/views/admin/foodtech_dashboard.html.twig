@@ -1,0 +1,18 @@
+{% extends "@App/base.html.twig" %}
+
+{% block body %}
+<div id="foodtech-dashboard"></div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset('js/foodtech-dashboard.js') }}"></script>
+<script>
+var orders = {{ orders_normalized|json_encode()|raw }};
+new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {
+  orders: orders['hydra:member'],
+  date: "{{ date|date('Y-m-d') }}"
+});
+</script>
+{% endblock %}

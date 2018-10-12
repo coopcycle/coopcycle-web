@@ -37,6 +37,11 @@ class PublishToRedis
                 sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
                 $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
             );
+
+            $this->redis->publish(
+                'order:created',
+                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order', 'place']])
+            );
         }
     }
 }
