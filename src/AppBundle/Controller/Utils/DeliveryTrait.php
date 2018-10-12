@@ -39,6 +39,7 @@ trait DeliveryTrait
         $order = $orderFactory->createNew();
         $order->setCustomer($user);
         $order->setDelivery($delivery);
+        $order->setShippingAddress($delivery->getDropoff()->getAddress());
 
         $variant = $productVariantFactory->createForDelivery($delivery, $price);
 

@@ -10,6 +10,10 @@ class AddCustomerAddress
     {
         $order = $event->getOrder();
 
+        if (!$order->isFoodtech()) {
+            return;
+        }
+
         $customer = $order->getCustomer();
         $shippingAddress = $order->getShippingAddress();
 
