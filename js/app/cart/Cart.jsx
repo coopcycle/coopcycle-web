@@ -375,9 +375,14 @@ class Cart extends React.Component
     }
 
     var btnClasses = ['btn', 'btn-block', 'btn-primary'];
+    let btnProps = {}
 
     if (items.length === 0 || !address || _.size(errors) > 0 || loading) {
       btnClasses.push('disabled')
+      btnProps = {
+        ...btnProps,
+        disabled: true
+      }
     }
 
     var panelClasses = ['panel', 'panel-default', 'cart-wrapper'];
@@ -426,7 +431,7 @@ class Cart extends React.Component
               { cartContent }
               { this.renderTotal() }
               <hr />
-              <button type="submit" className={btnClasses.join(' ')}>
+              <button type="submit" className={btnClasses.join(' ')} { ...btnProps }>
                 <span>{ loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ i18n.t('CART_WIDGET_BUTTON') }</span>
               </button>
             </div>
