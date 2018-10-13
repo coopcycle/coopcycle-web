@@ -79,8 +79,24 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {% if app.user %}
     <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="{{ asset('js/cart.js') }}"></script>
+
+    {% set cart = cart_provider.getCart() %}
+    <script>
+      window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
+        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
+      });
+      window.AppData.CartHelper = new CoopCycle.Cart({
+        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}"
+      });
+      var cartTopElement = document.querySelector('#cart-top');
+      if (cartTopElement) {
+        window.AppData.CartHelper.initTop(cartTopElement, window.AppData.Cart);
+      }
+    </script>
+
+    {% if app.user %}
     <script>
       new window.CoopCycle.NotificationsListener($('#notifications'), "{{ app.user.username }}", {
         notificationsURL: "{{ path('profile_notifications') }}",
@@ -90,24 +106,9 @@
         elements: {
           count: document.querySelector('#notifications .badge')
         }
-      })
+      });
     </script>
     {% endif %}
-
-    <script src="{{ asset('js/cart.js') }}"></script>
-    {% set cart = cart_provider.getCart() %}
-    <script>
-      window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
-        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
-      })
-      window.AppData.CartHelper = new CoopCycle.Cart({
-        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}"
-      });
-      var cartTopElement = document.querySelector('#cart-top');
-      if(cartTopElement) {
-        window.AppData.CartHelper.initTop(cartTopElement, window.AppData.Cart);
-      }
-    </script>
 
     {% include "@App/_partials/map_helper.html.twig" %}
     {% block scripts %}{% endblock %}
