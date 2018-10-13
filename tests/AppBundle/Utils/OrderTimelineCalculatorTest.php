@@ -2,45 +2,33 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\PreparationTimeCalculator;
+use AppBundle\Utils\ShippingTimeCalculator;
 use PHPUnit\Framework\TestCase;
 
 class OrderTimelineCalculatorTest extends TestCase
 {
     private $preparationTimeCalculator;
+    private $shippingTimeCalculator;
 
     public function setUp()
     {
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
+        $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
     }
 
     private function createOrder($total, $shippedAt, $state = 'normal')
     {
-        $restaurantAddressCoords = new GeoCoordinates();
-        $restaurantAddress = new Address();
-        $restaurantAddress->setGeo($restaurantAddressCoords);
-
-        $shippingAddressCoords = new GeoCoordinates();
-        $shippingAddress = new Address();
-        $shippingAddress->setGeo($shippingAddressCoords);
-
         $restaurant = new Restaurant();
-        $restaurant->setAddress($restaurantAddress);
         $restaurant->setState($state);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);
-        $order
-            ->getShippingAddress()
-            ->willReturn($shippingAddress);
         $order
             ->getItemsTotal()
             ->willReturn($total);
@@ -58,12 +46,14 @@ class OrderTimelineCalculatorTest extends TestCase
             [
                 $this->createOrder(1500, '2018-08-25 13:30:00'),
                 '10 minutes',
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 13:05:00'),
             ],
             [
                 $this->createOrder(3000, '2018-08-25 13:30:00'),
+                '15 minutes',
                 '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
@@ -72,6 +62,7 @@ class OrderTimelineCalculatorTest extends TestCase
             [
                 $this->createOrder(6000, '2018-08-25 13:30:00'),
                 '30 minutes',
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
@@ -80,6 +71,7 @@ class OrderTimelineCalculatorTest extends TestCase
             [
                 $this->createOrder(1500, '2018-08-25 13:30:00', 'rush'),
                 '20 minutes',
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:55:00'),
@@ -87,6 +79,7 @@ class OrderTimelineCalculatorTest extends TestCase
             [
                 $this->createOrder(3000, '2018-08-25 13:30:00', 'rush'),
                 '30 minutes',
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:45:00'),
@@ -94,6 +87,7 @@ class OrderTimelineCalculatorTest extends TestCase
             [
                 $this->createOrder(6000, '2018-08-25 13:30:00', 'rush'),
                 '45 minutes',
+                '15 minutes',
                 new \DateTime('2018-08-25 13:30:00'),
                 new \DateTime('2018-08-25 13:15:00'),
                 new \DateTime('2018-08-25 12:30:00'),
@@ -107,26 +101,22 @@ class OrderTimelineCalculatorTest extends TestCase
     public function testCalculate(
         OrderInterface $order,
         $preparationTime,
+        $shippingTime,
         \DateTime $dropoffExpectedAt,
         \DateTime $pickupExpectedAt,
         \DateTime $preparationExpectedAt)
     {
-        $this->routing = $this->prophesize(RoutingInterface::class);
-
-        $this->routing
-            ->getDuration(
-                $order->getRestaurant()->getAddress()->getGeo(),
-                $order->getShippingAddress()->getGeo()
-            )
-            ->willReturn(15 * 60); // 15 minutes
-
         $this->preparationTimeCalculator
             ->calculate($order)
             ->willReturn($preparationTime);
 
+        $this->shippingTimeCalculator
+            ->calculate($order)
+            ->willReturn($shippingTime);
+
         $this->calculator = new OrderTimelineCalculator(
-            $this->routing->reveal(),
-            $this->preparationTimeCalculator->reveal()
+            $this->preparationTimeCalculator->reveal(),
+            $this->shippingTimeCalculator->reveal()
         );
 
         $timeline = $this->calculator->calculate($order);
