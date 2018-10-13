@@ -31,12 +31,27 @@ class ShippingDateFilter
         $preparationTime = $this->preparationTimeCalculator->calculate($order);
         $shippingTime = $this->shippingTimeCalculator->calculate($order);
 
-        $shippingDateWithPadding = clone $shippingDate;
-        $shippingDateWithPadding->sub(date_interval_create_from_date_string($preparationTime));
-        $shippingDateWithPadding->sub(date_interval_create_from_date_string($shippingTime));
+        if ($order->getRestaurant()->isOpen($now)) {
 
-        if ($shippingDateWithPadding <= $now) {
-            return false;
+            $shippingDateWithPadding = clone $shippingDate;
+            $shippingDateWithPadding->sub(date_interval_create_from_date_string($preparationTime));
+            $shippingDateWithPadding->sub(date_interval_create_from_date_string($shippingTime));
+
+            if ($shippingDateWithPadding <= $now) {
+                return false;
+            }
+
+        } else {
+
+            $nextOpeningDate = $order->getRestaurant()->getNextOpeningDate($now);
+
+            $nextOpeningDateWithPadding = clone $nextOpeningDate;
+            $nextOpeningDateWithPadding->add(date_interval_create_from_date_string($preparationTime));
+            $nextOpeningDateWithPadding->add(date_interval_create_from_date_string($shippingTime));
+
+            if ($nextOpeningDateWithPadding >= $shippingDate) {
+                return false;
+            }
         }
 
         return true;
