@@ -84,20 +84,10 @@ class RestaurantController extends Controller
 
         $availabilities = $restaurant->getAvailabilities();
 
-        $preparationTime =
-            $this->get('coopcycle.preparation_time_calculator')->calculate($cart);
-
-        $availabilities = array_filter($availabilities, function ($date) use ($preparationTime) {
+        $availabilities = array_filter($availabilities, function ($date) use ($cart) {
             $shippingDate = new \DateTime($date);
 
-            $preparationDate = clone $shippingDate;
-            $preparationDate->modify(sprintf('-%s', $preparationTime));
-
-            if ($preparationDate <= new \DateTime('now')) {
-                return false;
-            }
-
-            return true;
+            return $this->get('coopcycle.shipping_date_filter')->accept($cart, $shippingDate);
         });
 
         // Make sure to return a zero-indexed array

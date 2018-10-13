@@ -3,24 +3,23 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Sylius\OrderTimeline;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class OrderTimelineCalculator
 {
-    private $routing;
     private $preparationTimeCalculator;
+    private $shippingTimeCalculator;
 
     /**
-     * @param array config
+     * @param PreparationTimeCalculator $preparationTimeCalculator
+     * @param ShippingTimeCalculator $shippingTimeCalculator
      */
     public function __construct(
-        RoutingInterface $routing,
-        PreparationTimeCalculator $preparationTimeCalculator)
+        PreparationTimeCalculator $preparationTimeCalculator,
+        ShippingTimeCalculator $shippingTimeCalculator)
     {
-        $this->routing = $routing;
         $this->preparationTimeCalculator = $preparationTimeCalculator;
+        $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
     public function calculate(OrderInterface $order)
@@ -31,22 +30,16 @@ class OrderTimelineCalculator
 
         $timeline->setDropoffExpectedAt($dropoffExpectedAt);
 
-        $pickupAddress = $order->getRestaurant()->getAddress();
-        $dropoffAddress = $order->getShippingAddress();
-
-        $duration = $this->routing->getDuration(
-            $pickupAddress->getGeo(),
-            $dropoffAddress->getGeo()
-        );
+        $shippingTime = $this->shippingTimeCalculator->calculate($order);
 
         $pickupExpectedAt = clone $dropoffExpectedAt;
-        $pickupExpectedAt->modify(sprintf('-%d seconds', $duration));
+        $pickupExpectedAt->sub(date_interval_create_from_date_string($shippingTime));
 
         $timeline->setPickupExpectedAt($pickupExpectedAt);
 
         $preparationTime = $this->preparationTimeCalculator->calculate($order);
         $preparationExpectedAt = clone $pickupExpectedAt;
-        $preparationExpectedAt->modify(sprintf('-%s', $preparationTime));
+        $preparationExpectedAt->sub(date_interval_create_from_date_string($preparationTime));
 
         $timeline->setPreparationExpectedAt($preparationExpectedAt);
 

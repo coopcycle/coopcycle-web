@@ -218,11 +218,22 @@ services:
           'order.itemsTotal > 5000':                                       '30 minutes'
         }
 
+  coopcycle.shipping_time_calculator:
+    class: AppBundle\Utils\ShippingTimeCalculator
+    arguments:
+      - '@routing_service'
+
+  coopcycle.shipping_date_filter:
+    class: AppBundle\Utils\ShippingDateFilter
+    arguments:
+      - "@coopcycle.preparation_time_calculator"
+      - "@coopcycle.shipping_time_calculator"
+
   coopcycle.order_timeline_calculator:
     class: AppBundle\Utils\OrderTimelineCalculator
     arguments:
-      - '@routing_service'
       - '@coopcycle.preparation_time_calculator'
+      - '@coopcycle.shipping_time_calculator'
 
   coopcycle.cart_provider:
     class: AppBundle\Service\CartProviderService
