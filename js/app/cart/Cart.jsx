@@ -226,14 +226,14 @@ class Cart extends React.Component
 
   renderHeading(warningAlerts, dangerAlerts) {
 
-    const { toggled, initialized } = this.state
+    const { toggled, initialized, loading } = this.state
 
     const headingClasses = ['panel-heading', 'cart-heading']
     if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
       headingClasses.push('cart-heading--warning')
     }
 
-    if (initialized && warningAlerts.length === 0 && dangerAlerts.length === 0) {
+    if (initialized && !loading && warningAlerts.length === 0 && dangerAlerts.length === 0) {
       headingClasses.push('cart-heading--success')
     }
 
@@ -282,7 +282,7 @@ class Cart extends React.Component
   }
 
   headingTitle(warnings, errors) {
-    const { initialized } = this.state
+    const { initialized, loading } = this.state
 
     if (errors.length > 0) {
       return _.first(errors)
@@ -291,7 +291,7 @@ class Cart extends React.Component
       return _.first(warnings)
     }
 
-    return initialized ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
+    return (initialized && !loading) ? i18n.t('CART_WIDGET_BUTTON') : i18n.t('CART_TITLE')
   }
 
   afterOpenAddressModal() {
