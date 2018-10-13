@@ -51,6 +51,22 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
+        $minimumAmount = $restaurant->getMinimumCartAmount();
+        $itemsTotal = $order->getItemsTotal();
+
+        if ($itemsTotal < $minimumAmount) {
+            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
+                ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
+                ->atPath('total')
+                ->addViolation();
+
+            // Stop here when order is empty
+            // We don't want to show an error on shipping address until at least one item is added
+            if ($itemsTotal === 0) {
+                return;
+            }
+        }
+
         $shippingAddress = $order->getShippingAddress();
 
         if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
@@ -74,16 +90,6 @@ class OrderValidator extends ConstraintValidator
                 ->addViolation();
 
             return;
-        }
-
-        $minimumAmount = $restaurant->getMinimumCartAmount();
-        $itemsTotal = $order->getItemsTotal();
-
-        if ($itemsTotal < $minimumAmount) {
-            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
-                ->setParameter('%minimum_amount%', number_format($minimumAmount / 100, 2))
-                ->atPath('total')
-                ->addViolation();
         }
     }
 
