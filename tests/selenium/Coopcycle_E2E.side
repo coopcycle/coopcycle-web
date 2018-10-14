@@ -1,0 +1,195 @@
+{
+  "id": "8dfb47d2-641c-4105-ba10-73b0d448151b",
+  "version": "1.1",
+  "name": "Coopcycle_E2E",
+  "url": "http://localhost",
+  "tests": [{
+    "id": "4d482520-222a-4e11-91aa-e41fcb7ac449",
+    "name": "register_new_user",
+    "commands": [{
+      "id": "00de556a-ca7f-4738-95e3-233a466355b1",
+      "comment": "",
+      "command": "open",
+      "target": "/fr/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e3e36ee6-d206-4bf6-b1de-bba049cc9d7c",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1920x916",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1a124b12-4636-4fde-bcba-fea2c9c802aa",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Connexion",
+      "targets": [
+        ["linkText=Connexion", "linkText"],
+        ["css=.nav:nth-child(2) > li > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Connexion')]", "xpath:link"],
+        ["xpath=//div[@id='navbar-main']/ul[2]/li[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/login')]", "xpath:href"],
+        ["xpath=//ul[2]/li[2]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a11afa43-b28d-4658-a4b0-ad2d1bf56780",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Create your account",
+      "targets": [
+        ["linkText=Create your account", "linkText"],
+        ["css=div.col-md-6.col-md-offset-3 > p > a", "css"],
+        ["css=p:nth-child(2) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Create your account')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/register/')]", "xpath:href"],
+        ["xpath=//div/p/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "04a36500-9fd6-4af2-aab8-c21cd13f17a9",
+      "comment": "",
+      "command": "click",
+      "target": "id=fos_user_registration_form_email",
+      "targets": [
+        ["id=fos_user_registration_form_email", "id"],
+        ["name=fos_user_registration_form[email]", "name"],
+        ["css=#fos_user_registration_form_email", "css"],
+        ["css=#fos_user_registration_form_email", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_email']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "12ec01ec-6850-41be-865f-fcd22d601b46",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_email",
+      "targets": [
+        ["id=fos_user_registration_form_email", "id"],
+        ["name=fos_user_registration_form[email]", "name"],
+        ["css=#fos_user_registration_form_email", "css"],
+        ["css=#fos_user_registration_form_email", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_email']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "utilisateur1@coopcycle.com"
+    }, {
+      "id": "1061d3f1-e437-4386-a68c-6276ec34e35e",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_username",
+      "targets": [
+        ["id=fos_user_registration_form_username", "id"],
+        ["name=fos_user_registration_form[username]", "name"],
+        ["css=#fos_user_registration_form_username", "css"],
+        ["css=#fos_user_registration_form_username", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_username']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[2]/input", "xpath:idRelative"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "utilisateur1"
+    }, {
+      "id": "c4f96bd9-e5dd-49ae-8ed1-d816edbab128",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_plainPassword_first",
+      "targets": [
+        ["id=fos_user_registration_form_plainPassword_first", "id"],
+        ["name=fos_user_registration_form[plainPassword][first]", "name"],
+        ["css=#fos_user_registration_form_plainPassword_first", "css"],
+        ["css=#fos_user_registration_form_plainPassword_first", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_plainPassword_first']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[3]/input", "xpath:idRelative"],
+        ["xpath=//div[3]/input", "xpath:position"]
+      ],
+      "value": "motdepasseutilisateur1"
+    }, {
+      "id": "82c8be88-7447-47e8-aa89-6b392ce8ba86",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_plainPassword_second",
+      "targets": [
+        ["id=fos_user_registration_form_plainPassword_second", "id"],
+        ["name=fos_user_registration_form[plainPassword][second]", "name"],
+        ["css=#fos_user_registration_form_plainPassword_second", "css"],
+        ["css=#fos_user_registration_form_plainPassword_second", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_plainPassword_second']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[4]/input", "xpath:idRelative"],
+        ["xpath=//div[4]/input", "xpath:position"]
+      ],
+      "value": "motdepasseutilisateur1"
+    }, {
+      "id": "e622dc56-c22c-4845-bf8b-e6d04fb90a5d",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_givenName",
+      "targets": [
+        ["id=fos_user_registration_form_givenName", "id"],
+        ["name=fos_user_registration_form[givenName]", "name"],
+        ["css=#fos_user_registration_form_givenName", "css"],
+        ["css=#fos_user_registration_form_givenName", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_givenName']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[5]/input", "xpath:idRelative"],
+        ["xpath=//div[5]/input", "xpath:position"]
+      ],
+      "value": "utilisateur1"
+    }, {
+      "id": "8cbd5d83-146a-4a0f-a0cc-11cc39afebce",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_familyName",
+      "targets": [
+        ["id=fos_user_registration_form_familyName", "id"],
+        ["name=fos_user_registration_form[familyName]", "name"],
+        ["css=#fos_user_registration_form_familyName", "css"],
+        ["css=#fos_user_registration_form_familyName", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_familyName']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[6]/input", "xpath:idRelative"],
+        ["xpath=//div[6]/input", "xpath:position"]
+      ],
+      "value": "Testeur1"
+    }, {
+      "id": "7bce1e74-a43d-44a3-90f3-68b77462cc66",
+      "comment": "",
+      "command": "type",
+      "target": "id=fos_user_registration_form_telephone",
+      "targets": [
+        ["id=fos_user_registration_form_telephone", "id"],
+        ["name=fos_user_registration_form[telephone]", "name"],
+        ["css=#fos_user_registration_form_telephone", "css"],
+        ["css=#fos_user_registration_form_telephone", "css:finder"],
+        ["xpath=//input[@id='fos_user_registration_form_telephone']", "xpath:attributes"],
+        ["xpath=//div[@id='fos_user_registration_form']/div[7]/input", "xpath:idRelative"],
+        ["xpath=//div[7]/input", "xpath:position"]
+      ],
+      "value": "+33123456789"
+    }, {
+      "id": "30591ff3-f0ef-4108-8296-51f5477200d7",
+      "comment": "",
+      "command": "click",
+      "target": "css=input.btn.btn-primary",
+      "targets": [
+        ["css=input.btn.btn-primary", "css"],
+        ["css=.btn-primary", "css:finder"],
+        ["xpath=//input[@value='Register']", "xpath:attributes"],
+        ["xpath=//form/div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "d42b6651-3754-45f0-b22f-f7806b34ae0d",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["4d482520-222a-4e11-91aa-e41fcb7ac449"]
+  }],
+  "urls": ["http://localhost/"],
+  "plugins": []
+}
