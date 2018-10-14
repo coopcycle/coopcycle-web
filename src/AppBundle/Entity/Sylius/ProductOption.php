@@ -23,6 +23,8 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
      */
     protected $additional = false;
 
+    protected $deletedAt;
+
     /**
      * {@inheritdoc}
      */
