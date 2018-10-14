@@ -505,6 +505,12 @@ trait RestaurantTrait
 
             $product = $form->getData();
 
+            if ($form->getClickedButton()) {
+                if ('delete' === $form->getClickedButton()->getName()) {
+                    $this->get('sylius.manager.product')->remove($product);
+                }
+            }
+
             $this->get('sylius.manager.product')->flush();
 
             return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);

@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\Options;
@@ -66,6 +67,9 @@ class ProductType extends AbstractType
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.product.enabled.label',
+            ])
+            ->add('delete', SubmitType::class, [
+                'label' => 'basics.delete',
             ]);
 
         $builder->add('allergens', ChoiceType::class, [
