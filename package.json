@@ -82,6 +82,7 @@
     "react-redux": "^5.0.7",
     "react-stickynode": "^1.4.1",
     "redux-thunk": "^2.3.0",
-    "sass-loader": "^7.1.0"
+    "sass-loader": "^7.1.0",
+    "selenium-side-runner": "^3.4.2"
   }
 }
