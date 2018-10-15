@@ -70,6 +70,16 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\DelayOrder
 
+  coopcycle.domain.order.handler.refund:
+    class: AppBundle\Domain\Order\Handler\RefundHandler
+    arguments:
+      - '@coopcycle.stripe_manager'
+      - '@sm.factory'
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\Refund
+
   #
   # Event Reactors
   #
