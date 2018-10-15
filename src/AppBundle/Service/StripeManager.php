@@ -100,4 +100,27 @@ class StripeManager
 
         return $charge;
     }
+
+    /**
+     * @return Stripe\Refund
+     */
+    public function refund(StripePayment $stripePayment)
+    {
+        // FIXME
+        // Check if the charge was made in test or live mode
+        // To achieve this, we need to store a "livemode" key in payment details
+
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+
+        $stripeAccount = $stripePayment->getStripeUserId();
+        $stripeOptions = array();
+
+        if (null !== $stripeAccount) {
+            $stripeOptions['stripe_account'] = $stripeAccount;
+        }
+
+        return Stripe\Refund::create([
+            'charge' => $stripePayment->getCharge(),
+        ], $stripeOptions);
+    }
 }
