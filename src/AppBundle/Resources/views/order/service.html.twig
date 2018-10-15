@@ -28,8 +28,6 @@
       <div class="col-md-6">
         {% if form.cancel is defined %}
           {{ form_widget(form.cancel, { attr: { class: 'btn btn-block btn-danger' } }) }}
-        {% else %}
-          <button class="btn btn-block btn-danger" disabled>{{ 'form.order.cancel.label'|trans }}</button>
         {% endif %}
       </div>
       <div class="col-md-6">
@@ -159,8 +157,12 @@
       </td>
       <td class="text-right">
         {% set payment_complete_name = 'payment_' ~ payment.id ~ '_complete' %}
+        {% set payment_refund_name = 'payment_' ~ payment.id ~ '_refund' %}
         {% if form[payment_complete_name] is defined %}
           {{ form_widget(form[payment_complete_name], { attr: { class: 'btn btn-xs btn-success' } }) }}
+        {% endif %}
+        {% if form[payment_refund_name] is defined %}
+          {{ form_widget(form[payment_refund_name], { attr: { class: 'btn btn-xs btn-danger' } }) }}
         {% endif %}
       </td>
     </tr>

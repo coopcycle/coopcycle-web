@@ -76,6 +76,11 @@ class OrderType extends AbstractType
                                 'label' => 'form.order.payment_complete.label'
                             ]);
                         }
+                        if ($stateMachine->can(PaymentTransitions::TRANSITION_REFUND)) {
+                            $form->add(sprintf('payment_%d_refund', $payment->getId()), SubmitType::class, [
+                                'label' => 'form.order.payment_refund.label'
+                            ]);
+                        }
                     }
                 }
             );

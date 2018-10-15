@@ -255,6 +255,7 @@ payment.state.authorized: Authorized
 payment.state.completed: Completed
 payment.state.failed: Failed
 payment.state.cancelled: Cancelled
+payment.state.refunded: Refunded
 
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
@@ -339,6 +340,7 @@ form.order.accept.help: Once you have accepted the order, the customer will be n
 form.order.cancel.label: Cancel
 form.order.fulfill.label: Fulfill
 form.order.payment_complete.label: Complete
+form.order.payment_refund.label: Refund
 
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code

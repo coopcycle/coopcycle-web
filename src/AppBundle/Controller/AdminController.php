@@ -147,13 +147,6 @@ class AdminController extends Controller
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        if ($order->isFoodtech()) {
-            return $this->redirectToRoute('admin_restaurant_dashboard_order', [
-                'restaurantId' => $order->getRestaurant()->getId(),
-                'orderId' => $order->getId()
-            ]);
-        }
-
         $form = $this->createForm(OrderType::class, $order);
 
         $form->handleRequest($request);
@@ -175,6 +168,9 @@ class AdminController extends Controller
                 foreach ($order->getPayments() as $payment) {
                     if (sprintf('payment_%d_complete', $payment->getId()) === $form->getClickedButton()->getName()) {
                         $orderManager->completePayment($payment);
+                    }
+                    if (sprintf('payment_%d_refund', $payment->getId()) === $form->getClickedButton()->getName()) {
+                        $orderManager->refundPayment($payment);
                     }
                 }
 
