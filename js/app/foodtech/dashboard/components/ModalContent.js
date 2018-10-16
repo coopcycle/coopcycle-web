@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
-import { Timeline, Icon } from 'antd'
+import Timeline from 'antd/lib/timeline'
+import Icon from 'antd/lib/icon'
 import _ from 'lodash'
 import moment from 'moment'
 

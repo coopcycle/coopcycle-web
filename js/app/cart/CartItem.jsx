@@ -43,4 +43,4 @@ class CartItem extends React.Component {
 
 }
 
-module.exports = CartItem;
+export default CartItem;

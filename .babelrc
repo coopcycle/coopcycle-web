@@ -1,3 +1,28 @@
 {
-  "presets" : ["es2015", "stage-3", "react"]
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": "> 5%",
+        "uglify": true
+      },
+      "useBuiltIns": true,
+      "debug": true
+    }],
+    "react"
+  ],
+  "plugins": [
+    "transform-object-rest-spread"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "current",
+          }
+        }]
+      ]
+    }
+  }
 }

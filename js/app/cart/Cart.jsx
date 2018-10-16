@@ -490,4 +490,4 @@ Cart.propTypes = {
   isMobileCart: PropTypes.bool.isRequired,
 }
 
-module.exports = Cart
+export default Cart

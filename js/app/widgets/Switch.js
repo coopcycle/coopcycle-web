@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { Switch } from 'antd'
+import Switch from 'antd/lib/switch'
 
 class SwitchWrapper extends Component {
 
