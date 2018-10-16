@@ -70,4 +70,9 @@ class OrderManager
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
         $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
     }
+
+    public function refundPayment(PaymentInterface $payment)
+    {
+        $this->commandBus->handle(new OrderCommand\Refund($payment));
+    }
 }
