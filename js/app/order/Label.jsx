@@ -27,4 +27,4 @@ class Label extends React.Component
   }
 }
 
-module.exports = Label;
+export default Label;

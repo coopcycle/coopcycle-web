@@ -109,4 +109,4 @@ class OrderList extends React.Component
   }
 }
 
-module.exports = OrderList;
+export default OrderList;

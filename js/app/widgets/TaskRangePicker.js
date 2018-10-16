@@ -1,8 +1,11 @@
-import { DatePicker, Form, LocaleProvider } from 'antd'
+import DatePicker from 'antd/lib/date-picker'
+import Form from 'antd/lib/form'
+
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 
+import LocaleProvider from 'antd/lib/locale-provider'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 

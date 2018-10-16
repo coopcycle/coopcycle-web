@@ -9,9 +9,18 @@ Encore
   .addStyleEntry('css/dashboard', './assets/css/dashboard.scss')
   .addStyleEntry('css/styles', './assets/css/main.scss')
 
-  .createSharedEntry('js/vendor', [ 'jquery', 'bootstrap-sass', 'es6-set', 'whatwg-fetch' ])
+  .createSharedEntry('js/vendor', [
+    'bootstrap-sass',
+    'i18next',
+    'jquery',
+    'leaflet',
+    'lodash',
+    'moment',
+    'react',
+    'react-dom',
+    'whatwg-fetch'
+  ])
   .addEntry('js/common', './js/app/common.js')
-
   .addEntry('js/dashboard', './js/app/dashboard/index.jsx')
   .addEntry('js/cart', './js/app/cart/index.jsx')
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
@@ -39,7 +48,6 @@ Encore
     images: 'img/build/[name].[hash:8].[ext]'
   })
 
-  .enableReactPreset()
   .autoProvidejQuery()
 
   .enableVersioning(Encore.isProduction())

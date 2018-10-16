@@ -22,8 +22,8 @@ php:
 env:
   global:
     - STRIPE_MOCK_API_BASE=http://localhost:12111
-  matrix:
     - SYMFONY_ENV=test
+    - NODE_ENV=test
 
 before_install:
   - sudo apt-get update -qq

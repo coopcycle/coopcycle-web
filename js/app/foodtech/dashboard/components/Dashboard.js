@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, LocaleProvider } from 'antd'
+import DatePicker from 'antd/lib/date-picker'
 import moment from 'moment'
 
 import Column from './Column'

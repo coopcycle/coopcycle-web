@@ -1,11 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Calendar, LocaleProvider } from 'antd'
+import Calendar from 'antd/lib/calendar'
 import moment from 'moment'
 import 'moment/locale/fr'
+import LocaleProvider from 'antd/lib/locale-provider'
 import frFR from 'antd/lib/locale-provider/fr_FR'
 import enGB from 'antd/lib/locale-provider/en_GB'
-import { DatePicker } from 'antd'
+import DatePicker from 'antd/lib/date-picker'
 import _ from 'lodash'
 
 const { RangePicker } = DatePicker,
