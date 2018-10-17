@@ -59,7 +59,7 @@ export default class TimeRange {
 
     let days = [];
     _.each(matches, (match) => {
-      const isRange = match.includes('-');
+      const isRange = _.includes(match, '-');
       if (isRange) {
         const [ start, end ] = match.split('-');
         let append = false;

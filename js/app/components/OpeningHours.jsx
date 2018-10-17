@@ -193,7 +193,7 @@ export default class extends React.Component {
           </LocaleProvider>
         </td>
         {_.map(weekdays, (weekday) => (
-          <td key={weekday.key} className={['Sa', 'Su'].includes(weekday.key) ? 'active text-center' : 'text-center'}>
+          <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
             <input type="checkbox"
               onChange={this.onCheckboxChange.bind(this, key, weekday.key)}
               checked={this.isWeekdayChecked(row, weekday.key)}
@@ -258,7 +258,7 @@ export default class extends React.Component {
             <tr>
               <th>Horaire</th>
               {_.map(weekdays, (weekday) => (
-                <th key={weekday.key} className={['Sa', 'Su'].includes(weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
+                <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
               ))}
               <th></th>
             </tr>
