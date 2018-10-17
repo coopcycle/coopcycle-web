@@ -84,7 +84,7 @@
 
     {% set cart = cart_provider.getCart() %}
     <script>
-      window.AppData.Cart = Object.assign({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
+      window.AppData.Cart = $.extend({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
         restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
       });
       window.AppData.CartHelper = new CoopCycle.Cart({
