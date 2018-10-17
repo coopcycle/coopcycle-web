@@ -18,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/polyline": "^0.2.0",
+    "babel-polyfill": "^6.26.0",
     "co": "^4.6.0",
     "coopcycle-js": "git+https://git@github.com/coopcycle/coopcycle-js.git",
     "deepmerge": "^1.5.2",
