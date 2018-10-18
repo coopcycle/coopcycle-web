@@ -14,7 +14,9 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     private $variantResolver;
     private $variantFactory;
 
-    public function __construct(ProductVariantResolverInterface $variantResolver, ProductVariantFactoryInterface $variantFactory)
+    public function __construct(
+        ProductVariantResolverInterface $variantResolver,
+        ProductVariantFactoryInterface $variantFactory)
     {
         $this->variantResolver = $variantResolver;
         $this->variantFactory = $variantFactory;
@@ -33,13 +35,9 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariantForOptionValues(ProductInterface $product, array $optionValues): ?ProductVariantInterface
     {
-        $mandatoryOptionValues = $this->filterOptionValues($optionValues);
-
         foreach ($product->getVariants() as $variant) {
 
-            $variantOptionValues = $variant->getOptionValues()->toArray();
-
-            if (count($this->filterOptionValues($variantOptionValues)) !== count($mandatoryOptionValues)) {
+            if (count($variant->getOptionValues()) !== count($optionValues)) {
                 continue;
             }
 
@@ -65,13 +63,6 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         $variant->setTaxCategory($defaultVariant->getTaxCategory());
 
         return $variant;
-    }
-
-    private function filterOptionValues(array $optionValues)
-    {
-        return array_filter($optionValues, function (ProductOptionValueInterface $optionValue) {
-            return !$optionValue->getOption()->isAdditional();
-        });
     }
 
     private function matchOptions(ProductVariantInterface $variant, array $optionValues)

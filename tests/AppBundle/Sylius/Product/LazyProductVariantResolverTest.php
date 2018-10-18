@@ -28,42 +28,162 @@ class LazyProductVariantResolverTest extends TestCase
         );
     }
 
-    public function testExistingVariant()
+    public function testExistingVariantWithMandatoryOptions()
     {
         $product = new Product();
 
-        $option1 = new ProductOption();
-        $option2 = new ProductOption();
-        $option3 = new ProductOption();
-        $option4 = new ProductOption();
+        $drink = new ProductOption();
+        $accompaniement = new ProductOption();
 
-        $optionValue1 = new ProductOptionValue();
-        $optionValue1->setOption($option1);
+        $soda = new ProductOptionValue();
+        $soda->setOption($drink);
 
-        $optionValue2 = new ProductOptionValue();
-        $optionValue2->setOption($option2);
+        $beer = new ProductOptionValue();
+        $beer->setOption($drink);
 
-        $optionValue3 = new ProductOptionValue();
-        $optionValue3->setOption($option3);
+        $salad = new ProductOptionValue();
+        $salad->setOption($accompaniement);
 
-        $optionValue4 = new ProductOptionValue();
-        $optionValue4->setOption($option4);
+        $fries = new ProductOptionValue();
+        $fries->setOption($accompaniement);
 
-        $variant1 = new ProductVariant();
-        $variant1->addOptionValue($optionValue1);
-        $variant1->addOptionValue($optionValue2);
+        $variantWithSodaAndSalad = new ProductVariant();
+        $variantWithSodaAndSalad->addOptionValue($soda);
+        $variantWithSodaAndSalad->addOptionValue($salad);
 
-        $variant2 = new ProductVariant();
-        $variant2->addOptionValue($optionValue3);
-        $variant2->addOptionValue($optionValue4);
+        $variantWithSodaAndFries = new ProductVariant();
+        $variantWithSodaAndFries->addOptionValue($soda);
+        $variantWithSodaAndFries->addOptionValue($fries);
 
-        $product->addVariant($variant1);
-        $product->addVariant($variant2);
+        $variantWithBeerAndSalad = new ProductVariant();
+        $variantWithBeerAndSalad->addOptionValue($beer);
+        $variantWithBeerAndSalad->addOptionValue($salad);
 
-        $actualVariant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$optionValue1, $optionValue2]);
+        $variantWithBeerAndFries = new ProductVariant();
+        $variantWithBeerAndFries->addOptionValue($beer);
+        $variantWithBeerAndFries->addOptionValue($fries);
 
-        $this->assertSame($variant1, $actualVariant);
+        $product->addVariant($variantWithSodaAndSalad);
+        $product->addVariant($variantWithSodaAndFries);
+        $product->addVariant($variantWithBeerAndSalad);
+        $product->addVariant($variantWithBeerAndFries);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$soda, $salad]);
+
+        $this->assertSame($variantWithSodaAndSalad, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$soda, $fries]);
+
+        $this->assertSame($variantWithSodaAndFries, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$beer, $salad]);
+
+        $this->assertSame($variantWithBeerAndSalad, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$beer, $fries]);
+
+        $this->assertSame($variantWithBeerAndFries, $variant);
+    }
+
+    public function testExistingVariantWithMandatoryAndAdditionalOptions()
+    {
+        $product = new Product();
+
+        $drink = new ProductOption();
+        $sauces = new ProductOption();
+        $sauces->setAdditional(true);
+
+        $soda = new ProductOptionValue();
+        $soda->setOption($drink);
+
+        $ketchup = new ProductOptionValue();
+        $ketchup->setOption($sauces);
+
+        $mustard = new ProductOptionValue();
+        $mustard->setOption($sauces);
+
+        $variantWithDrinksOnly = new ProductVariant();
+        $variantWithDrinksOnly->addOptionValue($soda);
+
+        $variantWithDrinksAndOneSauce = new ProductVariant();
+        $variantWithDrinksAndOneSauce->addOptionValue($soda);
+        $variantWithDrinksAndOneSauce->addOptionValue($ketchup);
+
+        $variantWithDrinksAndTwoSauces = new ProductVariant();
+        $variantWithDrinksAndTwoSauces->addOptionValue($soda);
+        $variantWithDrinksAndTwoSauces->addOptionValue($ketchup);
+        $variantWithDrinksAndTwoSauces->addOptionValue($mustard);
+
+        $product->addVariant($variantWithDrinksAndTwoSauces);
+        $product->addVariant($variantWithDrinksAndOneSauce);
+        $product->addVariant($variantWithDrinksOnly);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$soda]);
+
+        $this->assertSame($variantWithDrinksOnly, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$soda, $ketchup]);
+
+        $this->assertSame($variantWithDrinksAndOneSauce, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$soda, $ketchup, $mustard]);
+
+        $this->assertSame($variantWithDrinksAndTwoSauces, $variant);
+    }
+
+    public function testExistingVariantWithAdditionalOptionsOnly()
+    {
+        $product = new Product();
+
+        $size = new ProductOption();
+        $size->setAdditional(true);
+
+        $sauces = new ProductOption();
+        $sauces->setAdditional(true);
+
+        $kingSize = new ProductOptionValue();
+        $kingSize->setOption($size);
+
+        $ketchup = new ProductOptionValue();
+        $ketchup->setOption($sauces);
+
+        $mustard = new ProductOptionValue();
+        $mustard->setOption($sauces);
+
+        $variantWithNoOptions = new ProductVariant();
+
+        $variantWithKingSize = new ProductVariant();
+        $variantWithKingSize->addOptionValue($kingSize);
+
+        $variantWithKingSizeAndOneSauce = new ProductVariant();
+        $variantWithKingSizeAndOneSauce->addOptionValue($kingSize);
+        $variantWithKingSizeAndOneSauce->addOptionValue($ketchup);
+
+        $product->addVariant($variantWithKingSize);
+        $product->addVariant($variantWithKingSizeAndOneSauce);
+        $product->addVariant($variantWithNoOptions);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$kingSize]);
+
+        $this->assertSame($variantWithKingSize, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, [$kingSize, $ketchup]);
+
+        $this->assertSame($variantWithKingSizeAndOneSauce, $variant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, []);
+
+        $this->assertSame($variantWithNoOptions, $variant);
     }
 
     public function testNonExistingVariantWithMandatoryOptions()
