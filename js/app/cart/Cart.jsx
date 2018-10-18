@@ -451,6 +451,11 @@ class Cart extends React.Component
             address={ '' }
             geohash={ '' }
             { ...addressPickerProps } />
+          <div className="text-center">
+            <span className="help-block">
+              { i18n.t('CART_ADDRESS_MODAL_HELP_TEXT') }
+            </span>
+          </div>
         </Modal>
         <Modal
           isOpen={ restaurantModalIsOpen }

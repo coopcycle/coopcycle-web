@@ -77,6 +77,7 @@
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1": "Vous avez commencé votre commande dans un autre restaurant",
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Souhaitez-vous commencer une nouvelle commande dans ce restaurant ?",
     "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Nouvelle commande",
-    "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande"
+    "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande",
+    "CART_ADDRESS_MODAL_HELP_TEXT": "Veuillez entrer votre adresse avec précision, en présant le numéro et le nom de la rue"
   }
 }
