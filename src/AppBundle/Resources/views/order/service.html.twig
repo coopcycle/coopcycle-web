@@ -84,6 +84,8 @@
   </div>
 </div>
 
+{% if pickup_address is not empty and dropoff_address is not empty %}
+
 <hr>
 
 <h3 id="delivery">Livraison</h3>
@@ -100,14 +102,13 @@
         <h4 class="panel-title"><i class="fa fa-cube"></i>  Retrait</h4>
       </div>
       <div class="panel-body">
-        {{ delivery.pickup.address.streetAddress }}
-        <br>
+        {{ pickup_address.streetAddress }}
+        {#
         {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
-        {% if delivery.pickup.address.description is not empty %}
-        <br>
-        <br>
+        #}
+        {% if pickup_address.description is not empty %}
         <textarea class="form-control" disabled>
-          {{ delivery.pickup.address.description }}
+          {{ pickup_address.description }}
         </textarea>
         {% endif %}
       </div>
@@ -117,20 +118,21 @@
         <h4 class="panel-title"><i class="fa fa-flag"></i>  Dépôt</h4>
       </div>
       <div class="panel-body">
-        {{ delivery.dropoff.address.streetAddress }}
-        <br>
+        {{ dropoff_address.streetAddress }}
+        {#
         {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
-        {% if delivery.dropoff.address.description is not empty %}
-        <br>
-        <br>
+        #}
+        {% if dropoff_address.description is not empty %}
         <textarea class="form-control" disabled>
-          {{ delivery.pickup.address.description }}
+          {{ dropoff_address.description }}
         </textarea>
         {% endif %}
       </div>
     </div>
   </div>
 </div>
+
+{% endif %}
 
 <hr>
 
@@ -175,11 +177,12 @@
 {% endblock %}
 
 {% block scripts %}
+{% if pickup_address is not empty and dropoff_address is not empty %}
 <script>
 new CoopCycle.DeliveryMap('map', {
-  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
-  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ],
-  polyline: "{{ delivery.polyline|e('js') }}"
-})
+  pickup: [ {{ pickup_address.geo.latitude }}, {{ pickup_address.geo.longitude }} ],
+  dropoff: [ {{ dropoff_address.geo.latitude }}, {{ dropoff_address.geo.longitude }} ]
+});
 </script>
+{% endif %}
 {% endblock %}

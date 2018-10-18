@@ -180,10 +180,22 @@ class AdminController extends Controller
             }
         }
 
+        $pickupAddress = null;
+        $dropoffAddress = null;
+
+        if ($order->isFoodtech()) {
+            $pickupAddress = $order->getRestaurant()->getAddress();
+            $dropoffAddress = $order->getShippingAddress();
+        } elseif (null !== $order->getDelivery()) {
+            $pickupAddress = $order->getDelivery()->getPickup()->getAddress();
+            $dropoffAddress = $order->getDelivery()->getDropoff()->getAddress();
+        }
+
         return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/admin.html.twig',
             'order' => $order,
-            'delivery' => $order->getDelivery(),
+            'pickup_address' => $pickupAddress,
+            'dropoff_address' => $dropoffAddress,
             'form' => $form->createView(),
         ]);
     }
