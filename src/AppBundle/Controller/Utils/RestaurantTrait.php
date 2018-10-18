@@ -505,6 +505,12 @@ trait RestaurantTrait
 
             $product = $form->getData();
 
+            if ($form->getClickedButton()) {
+                if ('delete' === $form->getClickedButton()->getName()) {
+                    $this->get('sylius.manager.product')->remove($product);
+                }
+            }
+
             $this->get('sylius.manager.product')->flush();
 
             return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
@@ -587,6 +593,14 @@ trait RestaurantTrait
         if ($form->isSubmitted() && $form->isValid()) {
 
             $productOption = $form->getData();
+
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                $this->get('sylius.manager.product')->remove($productOption);
+                $this->get('sylius.manager.product_option')->flush();
+
+                return $this->redirectToRoute($routes['product_options'], ['id' => $restaurantId]);
+            }
 
             foreach ($productOption->getValues() as $optionValue) {
                 if (null === $optionValue->getCode()) {

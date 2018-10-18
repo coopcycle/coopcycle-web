@@ -41,7 +41,14 @@
   {{ form_widget(form.values) }}
   <hr>
 
-  <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+  <div class="row">
+    <div class="col-sm-3">
+      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+    </div>
+    <div class="col-sm-9">
+      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+    </div>
+  </div>
 
 {{ form_end(form) }}
 {% endblock %}

@@ -39,6 +39,11 @@ services:
         calls:
             - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
+    coopcycle.listener.post_soft_delete:
+        class: AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber
+        tags:
+            - { name: doctrine.event_subscriber }
+
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
         tags:

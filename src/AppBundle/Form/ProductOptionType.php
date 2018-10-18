@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -60,6 +61,9 @@ class ProductOptionType extends AbstractType
             ->add('additional', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.product_option.additional.label',
+            ])
+            ->add('delete', SubmitType::class, [
+                'label' => 'basics.delete',
             ]);
     }
 

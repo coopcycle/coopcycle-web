@@ -30,6 +30,8 @@ class Product extends BaseProduct implements ProductInterface
 {
     protected $restaurant;
 
+    protected $deletedAt;
+
     public function __construct()
     {
         parent::__construct();
