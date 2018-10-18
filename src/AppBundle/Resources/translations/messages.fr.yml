@@ -273,6 +273,7 @@ order.list.customer: Client
 order.list.state: État
 order.list.summary: Résumé
 order.list.summary.restaurant.text: Livraison au restaurant <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Livraison au restaurant %restaurant_name%
 order.list.summary.delivery.text: Livraison %distance%, %vehicle%
 order.list.invoice: Facture
 vehicle.bike: Vélo
