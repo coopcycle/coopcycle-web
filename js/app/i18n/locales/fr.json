@@ -4,7 +4,7 @@
     "CART_WIDGET_BUTTON": "Commander",
     "CART_EMPTY": "Votre panier est vide",
     "OPENING_HOURS_SINGLE": "Ouvert le {{day}} de {{open}} à {{close}}",
-    "OPENING_HOURS_RANGE": "Livraisons possibles du {{fromDay}} au {{toDay}} de {{open}} à {{close}}",
+    "OPENING_HOURS_RANGE": "Ouvert du {{fromDay}} au {{toDay}} de {{open}} à {{close}}",
     "DATEPICKER_TODAY": "[Aujourd'hui]",
     "DATEPICKER_TOMORROW": "[Demain]",
     "DASHBOARD_UNASSIGNED": "Non assignées",
