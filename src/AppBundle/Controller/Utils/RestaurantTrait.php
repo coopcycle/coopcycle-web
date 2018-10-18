@@ -594,6 +594,14 @@ trait RestaurantTrait
 
             $productOption = $form->getData();
 
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                $this->get('sylius.manager.product')->remove($productOption);
+                $this->get('sylius.manager.product_option')->flush();
+
+                return $this->redirectToRoute($routes['product_options'], ['id' => $restaurantId]);
+            }
+
             foreach ($productOption->getValues() as $optionValue) {
                 if (null === $optionValue->getCode()) {
                     $optionValue->setCode(Uuid::uuid4()->toString());
