@@ -244,6 +244,7 @@ sylius_product:
         product:
             classes:
                 model: AppBundle\Entity\Sylius\Product
+                repository: AppBundle\Entity\Sylius\ProductRepository
         product_variant:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
