@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -33,13 +34,15 @@ class UpdateProfileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('username', TextType::class, array('label' => 'profile.username'))
-                ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
-                ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
-                ->add('telephone', PhoneNumberType::class,
-                    array('label' => 'profile.telephone',
-                          'format' => PhoneNumberFormat::NATIONAL,
-                          'default_region' => strtoupper($this->countryIso)));
+        $builder
+            ->add('username', TextType::class, array('label' => 'profile.username'))
+            ->add('familyName', TextType::class, array('label' => 'profile.familyName'))
+            ->add('givenName', TextType::class, array('label' => 'profile.givenName'))
+            ->add('telephone', PhoneNumberType::class, [
+                'label' => 'profile.telephone',
+                'format' => PhoneNumberFormat::NATIONAL,
+                'default_region' => strtoupper($this->countryIso)
+            ]);
 
 
         $isAdmin = false;
@@ -53,13 +56,18 @@ class UpdateProfileType extends AbstractType
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($options, $isAdmin) {
 
+                $form = $event->getForm();
                 $user = $event->getData();
 
                 if ($isAdmin) {
-                    $event->getForm()->add('enabled', CheckboxType::class, [
-                        'label' => 'user.edit.enabled.label',
-                        'required' => false
-                    ]);
+                    $form
+                        ->add('enabled', CheckboxType::class, [
+                            'label' => 'user.edit.enabled.label',
+                            'required' => false
+                        ])
+                        ->add('email', EmailType::class, [
+                            'label' => 'profile.email'
+                        ]);
                 }
 
                 if ($isAdmin && $options['with_roles'] && !empty($options['editable_roles'])) {
