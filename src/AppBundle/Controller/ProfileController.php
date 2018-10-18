@@ -108,6 +108,9 @@ class ProfileController extends Controller
 
     public function orderAction($id, Request $request)
     {
+        // Allow retrieving deleted products anyway
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if ($order->getCustomer() !== $this->getUser()) {
