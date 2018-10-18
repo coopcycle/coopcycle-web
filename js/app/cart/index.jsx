@@ -16,7 +16,7 @@ window._paq = window._paq || []
 
 class CartHelper {
 
-  constructor(options) {
+  constructor(options = {}) {
     this.options = options
   }
 
@@ -94,7 +94,6 @@ class CartHelper {
   initTop(el, cart) {
     render(
       <CartTop
-        restaurantURL={ this.options.restaurantURL }
         restaurant={ cart.restaurant }
         total={ cart.total }
         itemsTotal={ cart.itemsTotal }
@@ -187,7 +186,10 @@ class CartHelper {
     window._paq.push(['trackEvent', 'Checkout', 'removeItem']);
     this._setLoading(true)
     $.ajax({
-      url: this.options.removeFromCartURL.replace('__CART_ITEM_ID__', item.id),
+      url: window.Routing.generate('restaurant_remove_from_cart', {
+        id: this.options.restaurant.id,
+        cartItemId: item.id
+      }),
       type: 'DELETE',
     })
     .then(res => this.handleAjaxResponse(res))

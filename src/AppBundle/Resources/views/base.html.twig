@@ -84,12 +84,8 @@
 
     {% set cart = cart_provider.getCart() %}
     <script>
-      window.AppData.Cart = $.extend({{ cart_provider.normalize(cart)|json_encode()|raw }}, {
-        restaurantURL: "{{ path('restaurant', { 'id': '__RESTAURANT_ID__' }) }}"
-      });
-      window.AppData.CartHelper = new CoopCycle.Cart({
-        restaurantURL: "{{ path('restaurant', { id: '__RESTAURANT_ID__' }) }}"
-      });
+      window.AppData.Cart = {{ cart_provider.normalize(cart)|json_encode()|raw }};
+      window.AppData.CartHelper = new CoopCycle.Cart();
       var cartTopElement = document.querySelector('#cart-top');
       if (cartTopElement) {
         window.AppData.CartHelper.initTop(cartTopElement, window.AppData.Cart);

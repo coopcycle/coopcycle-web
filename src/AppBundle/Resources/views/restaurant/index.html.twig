@@ -271,7 +271,6 @@ function initMap() {
       id: {{ restaurant.id }},
       availabilities: {{ availabilities|json_encode()|raw }}
     },
-    removeFromCartURL: "{{ path('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: '__CART_ITEM_ID__' }) }}",
     resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
     cartRestaurantURL: "{{ path('restaurant', { id: cart.restaurant.id }) }}",
     datePickerDateInputName: "{{ cart_form.date.vars.full_name }}",

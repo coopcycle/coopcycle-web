@@ -27,12 +27,11 @@ class CartTop extends React.Component
 
   render() {
 
-    const { restaurantURL } = this.props
     const { restaurant, total, itemsTotal } = this.state
 
     let anchorURL = '#'
     if (restaurant) {
-      anchorURL = restaurantURL.replace('__RESTAURANT_ID__', restaurant.id)
+      anchorURL = window.Routing.generate('restaurant', { id: restaurant.id })
     }
 
     const amount = itemsTotal > 0 ? total : itemsTotal
