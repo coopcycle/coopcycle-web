@@ -504,6 +504,12 @@ form.product_option_value.value.label: Valor
 form.product_option_value.price.label: Precio
 form.product_option.additional.label: Esta opción es adicional
 form.product_option.additional.help: El cliente puede elegir varios valores, sin tener que elegir al menos uno
+
+form.checkout_address.notes.label: ¿Un comentario?
+form.checkout_address.notes.placeholder: |
+  Ejemplo: sin salsa, sin tomates…
+form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
+
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
 product_option.strategy.option_value: Precio según la elección

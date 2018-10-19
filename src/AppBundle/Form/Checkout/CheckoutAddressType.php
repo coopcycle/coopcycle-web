@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Form\AddressType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +16,11 @@ class CheckoutAddressType extends AbstractType
         $builder
             ->add('shippingAddress', AddressType::class, [
                 'label' => false,
+            ])
+            ->add('notes', TextareaType::class, [
+                'required' => false,
+                'label' => 'form.checkout_address.notes.label',
+                'attr' => ['placeholder' => 'form.checkout_address.notes.placeholder']
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
