@@ -60,9 +60,13 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $orderRepository = $objectManager->getRepository(Order::class);
 
             $carts = $orderRepository->findCartsByRestaurant($entity);
-
             foreach ($carts as $cart) {
                 $unitOfWork->scheduleForDelete($cart);
+            }
+
+            $owners = $entity->getOwners();
+            foreach ($owners as $owner) {
+                $owner->getRestaurants()->removeElement($entity);
             }
 
             $unitOfWork->computeChangeSets();
