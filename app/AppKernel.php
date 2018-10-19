@@ -51,6 +51,8 @@ class AppKernel extends Kernel
             new SimpleBus\SymfonyBridge\SimpleBusCommandBusBundle(),
             new SimpleBus\SymfonyBridge\SimpleBusEventBusBundle(),
             new Nelmio\Alice\Bridge\Symfony\NelmioAliceBundle(),
+            new Fidry\AliceDataFixtures\Bridge\Symfony\FidryAliceDataFixturesBundle(),
+            new Hautelook\AliceBundle\HautelookAliceBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
         ];
 
@@ -60,8 +62,6 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
-            $bundles[] = new Fidry\AliceDataFixtures\Bridge\Symfony\FidryAliceDataFixturesBundle();
-            $bundles[] = new Hautelook\AliceBundle\HautelookAliceBundle();
         } else if (in_array($this->getEnvironment(), ['prod'], true)) {
             $bundles[] = new Sentry\SentryBundle\SentryBundle();
         }
