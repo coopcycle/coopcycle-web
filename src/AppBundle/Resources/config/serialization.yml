@@ -38,6 +38,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     state:
       groups: ['order']
+    notes:
+      groups: ['order']
     createdAt:
       groups: ['order']
     timeline:

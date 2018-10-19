@@ -45,9 +45,15 @@
                   </div>
                 </div>
                 {{ form_row(form.shippingAddress.description) }}
+
+                <hr>
+
+                {{ form_row(form.notes) }}
+
                 <div class="text-center">
                   <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
                 </div>
+
               {{ form_end(form) }}
             </div>
           </div>

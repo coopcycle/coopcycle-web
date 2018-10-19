@@ -109,6 +109,7 @@ Feature: Orders
       "itemsTotal":@integer@,
       "taxTotal":@integer@,
       "state":"cart",
+      "notes": null,
       "createdAt":@string@,
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
