@@ -570,7 +570,7 @@ services:
     arguments:
       - "@coopcycle.settings_manager"
       - "%country_iso%"
-      - "%coopcycle.locale%"
+      - "%kernel.default_locale%"
 
   'AppBundle\Validator\Constraints\CartValidator':
     arguments: [ '@routing_service' ]
@@ -627,7 +627,7 @@ services:
       arguments:
         - '@coopcycle.settings_manager'
         - '%country_iso%'
-        - '%coopcycle.locale%'
+        - '%kernel.default_locale%'
 
   'AppBundle\Security\StoreTokenAuthenticator':
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
