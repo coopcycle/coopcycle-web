@@ -11,6 +11,7 @@ address.notSet: Escribe tu dirección
 
 cart.date.tooSoon: Ésta fecha es demasiado pronto
 cart.address.empty: Por favor selecciona una dirección
+cart.empty: Tu cesta esta vacía
 
 order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%€
 

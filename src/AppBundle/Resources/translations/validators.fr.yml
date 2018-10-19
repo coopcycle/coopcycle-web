@@ -11,6 +11,7 @@ address.notSet: Veuillez entrer l'adresse de livraison
 
 cart.date.tooSoon: Cette date est trop proche
 cart.address.empty: Veuillez sélectionner une adresse
+cart.empty: Votre panier est vide
 
 order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%€
 

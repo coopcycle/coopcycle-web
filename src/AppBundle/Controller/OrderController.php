@@ -27,6 +27,12 @@ class OrderController extends Controller
     public function indexAction(Request $request)
     {
         $order = $this->get('sylius.context.cart')->getCart();
+
+        if (null === $order) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
         $user = $this->getUser();
 
         // At this step, we are pretty sure the customer is logged in
@@ -49,7 +55,6 @@ class OrderController extends Controller
         return array(
             'order' => $order,
             'form' => $form->createView(),
-            'restaurant' => $order->getRestaurant(),
         );
     }
 
@@ -60,6 +65,12 @@ class OrderController extends Controller
     public function paymentAction(Request $request)
     {
         $order = $this->get('sylius.context.cart')->getCart();
+
+        if (null === $order) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
         $orderManager = $this->get('coopcycle.order_manager');
 
         $form = $this->createForm(StripePaymentType::class);

@@ -5,59 +5,67 @@
 {% block body %}
 <div class="container container--full-height">
 
-  {% include '@App/order/breadcrumb.html.twig' %}
+  {% if not order.empty %}
 
-  <div class="order-map__wrapper">
-    <div class="row">
-      <div class="col-xs-12 col-md-6 col-md-offset-6">
-        <div class="order-map__column">
+    {% include '@App/order/breadcrumb.html.twig' %}
 
-          <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#restaurant" aria-expanded="false" aria-controls="restaurant">
-            <h4>{{ order.restaurant.name }} <span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-          </a>
-          <div class="collapse order-map__column-block" id="restaurant">
-            {% include "@App/_partials/order/restaurant_details.html.twig" %}
-          </div>
+    <div class="order-map__wrapper">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 col-md-offset-6">
+          <div class="order-map__column">
 
-          <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#items" aria-expanded="false" aria-controls="items">
-            <h4>{{ 'order.cart.title'|trans }}<span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
-          </a>
-          <div class="collapse order-map__column-block" id="items">
-            {% include '@App/_partials/order/items.html.twig' %}
-          </div>
+            <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#restaurant" aria-expanded="false" aria-controls="restaurant">
+              <h4>{{ order.restaurant.name }} <span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
+            </a>
+            <div class="collapse order-map__column-block" id="restaurant">
+              {% include "@App/_partials/order/restaurant_details.html.twig" %}
+            </div>
 
-          <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
-          <div class="order-map__column-block">
-            {{ form_start(form) }}
+            <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#items" aria-expanded="false" aria-controls="items">
+              <h4>{{ 'order.cart.title'|trans }}<span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
+            </a>
+            <div class="collapse order-map__column-block" id="items">
+              {% include '@App/_partials/order/items.html.twig' %}
+            </div>
 
-              {{ form_errors(form) }}
+            <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
+            <div class="order-map__column-block">
+              {{ form_start(form) }}
 
-              {{ form_row(form.shippingAddress.floor) }}
-              {{ form_row(form.shippingAddress.streetAddress) }}
-              <div class="row">
-                <div class="col-md-4">
-                  {{ form_row(form.shippingAddress.postalCode) }}
+                {{ form_errors(form) }}
+
+                {{ form_row(form.shippingAddress.floor) }}
+                {{ form_row(form.shippingAddress.streetAddress) }}
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ form_row(form.shippingAddress.postalCode) }}
+                  </div>
+                  <div class="col-md-8">
+                    {{ form_row(form.shippingAddress.addressLocality) }}
+                  </div>
                 </div>
-                <div class="col-md-8">
-                  {{ form_row(form.shippingAddress.addressLocality) }}
+                {{ form_row(form.shippingAddress.description) }}
+                <div class="text-center">
+                  <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
                 </div>
-              </div>
-              {{ form_row(form.shippingAddress.description) }}
-              <div class="text-center">
-                <button class="btn btn-block btn-lg btn-primary" type="submit">{% trans %}cart.widget.button{% endtrans %}</button>
-              </div>
-            {{ form_end(form) }}
+              {{ form_end(form) }}
+            </div>
           </div>
         </div>
       </div>
+      <div id="map" class="order-map hidden-xs hidden-sm"></div>
     </div>
-    <div id="map" class="order-map hidden-xs hidden-sm"></div>
-  </div>
-</div>
-{%  endblock %}
 
+  {% else %}
+    <div class="alert alert-warning">
+      {% trans from 'validators' %}cart.empty{% endtrans %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
 
 {% block scripts %}
+{% if not order.empty %}
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: {{ order.restaurant.address|latlng|json_encode() }},
@@ -67,4 +75,5 @@ new CoopCycle.DeliveryMap('map', {
   }
 });
 </script>
+{% endif %}
 {% endblock %}

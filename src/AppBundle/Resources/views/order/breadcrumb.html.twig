@@ -11,7 +11,11 @@
 {% endif %}
 
 <ol class="breadcrumb">
-  <li><a href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify }) }}">{{ restaurant.name }}</a></li>
+  <li>
+    <a href="{{ path('restaurant', {'id': order.restaurant.id, 'slug': order.restaurant.name|slugify }) }}">
+    {{ order.restaurant.name }}
+    </a>
+  </li>
   <li {% if step == 2 %}class="active"{% endif %}>
     {% if order is defined %}<a href="{{ path('order') }}">{% endif %}
     {{ 'checkout.breadcrumb.address'|trans }}
