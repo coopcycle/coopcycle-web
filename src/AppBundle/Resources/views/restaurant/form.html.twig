@@ -220,9 +220,16 @@
     {% endif %}
   {% endif %}
 
-  <div class="row margin-top-l margin-bottom-l">
-    <div class="col-md-6 col-md-offset-3 col-xs-12">
-      <button type="submit" class="btn btn-block btn-primary">{% trans %}restaurant.form.save{% endtrans %}</button>
+  <hr>
+
+  <div class="row">
+    <div class="col-sm-3">
+      {% if form.delete is defined %}
+      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
+      {% endif %}
+    </div>
+    <div class="col-sm-9">
+      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
     </div>
   </div>
 

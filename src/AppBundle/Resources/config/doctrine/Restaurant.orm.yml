@@ -2,6 +2,11 @@ AppBundle\Entity\Restaurant:
     type: entity
     table: restaurant
     repositoryClass: AppBundle\Entity\RestaurantRepository
+    gedmo:
+        soft_deleteable:
+            field_name: deletedAt
+            time_aware: false
+            hard_delete: false
     id:
         id:
             type: integer
@@ -109,6 +114,9 @@ AppBundle\Entity\Restaurant:
         stripeConnectRoles:
             type: json_array
             column: stripe_connect_roles
+        deletedAt:
+            type: datetime
+            nullable: true
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine

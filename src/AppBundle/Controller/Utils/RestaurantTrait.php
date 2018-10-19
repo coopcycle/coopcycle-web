@@ -98,6 +98,14 @@ trait RestaurantTrait
             if ($form->isValid()) {
                 $restaurant = $form->getData();
 
+                if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->remove($restaurant);
+                    $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+
+                    return $this->redirectToRoute($routes['restaurants']);
+                }
+
                 if ($restaurant->getId() === null && !$this->getUser()->hasRole('ROLE_ADMIN')) {
                     $this->getUser()->addRestaurant($restaurant);
                 }

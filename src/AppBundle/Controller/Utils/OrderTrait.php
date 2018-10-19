@@ -31,6 +31,9 @@ trait OrderTrait
     {
         $response = new Response();
 
+        // Allow retrieving deleted entities anyway
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+
         $showCanceled = false;
         if ($request->query->has('show_canceled')) {
             $showCanceled = $request->query->getBoolean('show_canceled');

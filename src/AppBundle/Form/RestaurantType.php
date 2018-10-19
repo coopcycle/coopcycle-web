@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestaurantType extends LocalBusinessType
@@ -33,9 +34,12 @@ class RestaurantType extends LocalBusinessType
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $builder->add('contract', ContractType::class);
+            $builder
+                ->add('contract', ContractType::class)
+                ->add('delete', SubmitType::class, [
+                    'label' => 'basics.delete',
+                ]);
         }
-
 
         $builder->add('deliveryPerimeterExpression', HiddenType::class, ['label' => 'localBusiness.form.deliveryPerimeterExpression',]);
 

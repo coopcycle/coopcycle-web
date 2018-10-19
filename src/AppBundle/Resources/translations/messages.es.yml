@@ -281,6 +281,7 @@ order.list.customer: Cliente
 order.list.state: Estado
 order.list.summary: Resumen
 order.list.summary.restaurant.text: Entrega al restaurante <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Entrega al restaurante %restaurant_name%
 order.list.summary.delivery.text: Entrega %distance%, %vehicle%
 order.list.invoice: Factura
 vehicle.bike: Bicicleta

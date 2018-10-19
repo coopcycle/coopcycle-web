@@ -14,6 +14,7 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -66,6 +67,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Restaurant extends FoodEstablishment
 {
+    use SoftDeleteableEntity;
+
     /**
      *  We allow ordering for the next two opened days
      */
