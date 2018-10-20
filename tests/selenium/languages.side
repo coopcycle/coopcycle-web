@@ -1,0 +1,65 @@
+{
+  "id": "920e301a-eefc-43cb-9894-dd063ec09295",
+  "version": "1.1",
+  "name": "language",
+  "url": "http://localhost",
+  "tests": [{
+    "id": "aa49a7db-68d8-4429-b2e0-87928078ab62",
+    "name": "SwitchToEnglish",
+    "commands": [{
+      "id": "1ff1ea6e-f2fc-4366-9808-33f2c26c35d5",
+      "comment": "",
+      "command": "open",
+      "target": "/fr/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1bddb63d-efa1-46fb-b91d-87bbfa8b13b3",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1920x1016",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "db5797fa-2778-40cb-8670-964d25cf2acc",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Français",
+      "targets": [
+        ["linkText=Français", "linkText"],
+        ["css=a.dropdown-toggle", "css"],
+        ["css=.dropdown-toggle", "css:finder"],
+        ["xpath=//a[contains(text(),'Français')]", "xpath:link"],
+        ["xpath=//div[@id='navbar-main']/ul/li/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '#')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "45ff122c-062d-4309-81fb-3d0e828702d0",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=English",
+      "targets": [
+        ["linkText=English", "linkText"],
+        ["css=ul.dropdown-menu > li > a", "css"],
+        ["css=.dropdown-menu > li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'English')]", "xpath:link"],
+        ["xpath=//div[@id='navbar-main']/ul/li/ul/li/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/en/')]", "xpath:href"],
+        ["xpath=//li/ul/li/a", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "3ad8fe46-26e7-4a6f-ba93-29d12fd696c8",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["aa49a7db-68d8-4429-b2e0-87928078ab62"]
+  }],
+  "urls": ["http://localhost/"],
+  "plugins": []
+}
