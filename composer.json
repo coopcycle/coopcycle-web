@@ -96,7 +96,9 @@
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.1",
         "hautelook/alice-bundle": "^2.3",
-        "nyholm/psr7": "^1.1"
+        "nyholm/psr7": "^1.1",
+        "hwi/oauth-bundle": "^0.6.3",
+        "php-http/httplug-bundle": "^1.11"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

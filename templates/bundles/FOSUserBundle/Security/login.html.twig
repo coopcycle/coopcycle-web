@@ -4,6 +4,11 @@
   {% block fos_user_content %}
   <div class="container">
   {{ include('@FOSUser/Security/login_content.html.twig') }}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google' }) }}" alt="Sign in with Google">Sign in with Google</a>
+      </div>
+    </div>
   </div>
   {% endblock fos_user_content %}
 {% endblock %}

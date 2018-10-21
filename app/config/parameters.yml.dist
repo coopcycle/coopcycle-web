@@ -66,3 +66,6 @@ parameters:
     browserless_base_uri: 'http://browserless:3000'
 
     mjml_server_base_uri: 'http://mjml'
+
+    oauth.google.client_id: ~
+    oauth.google.client_secret: ~

@@ -81,6 +81,16 @@ security:
             form_login:
                 provider:       fos_userbundle
                 success_handler: coopcycle.web_success_handler
+            oauth:
+                resource_owners:
+                    google:             "/login/check-google"
+                login_path:        /login
+                use_forward:       false
+                failure_path:      /login
+                oauth_user_provider:
+                    service: coopcycle.user_provider
+
+
             logout: true
             anonymous: ~
             remember_me:
@@ -90,7 +100,7 @@ security:
             anonymous: ~
 
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }

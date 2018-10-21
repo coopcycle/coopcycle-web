@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: oauth.yml }
     - { resource: services.yml }
     - { resource: message_bus/order.yml }
     - { resource: message_bus/task.yml }
