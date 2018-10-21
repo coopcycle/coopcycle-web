@@ -52,6 +52,9 @@ class AppKernel extends Kernel
             new SimpleBus\SymfonyBridge\SimpleBusEventBusBundle(),
             new Nelmio\Alice\Bridge\Symfony\NelmioAliceBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+            // OAuth support
+            new Http\HttplugBundle\HttplugBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -60,3 +60,6 @@ parameters:
     fcm_server_api_key: ""
     apns_certificate_file: "/dev/null"
     apns_certificate_pass_phrase: ""
+
+    oauth.google.client_id: ~
+    oauth.google.client_secret: ~

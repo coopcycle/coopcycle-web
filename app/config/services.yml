@@ -17,6 +17,10 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
+  coopcycle.user_provider:
+    class: AppBundle\Security\FOSUBUserProvider
+    arguments: ['@fos_user.user_manager', { google: googleId }]
+
   coopcycle.seo.event_listener:
     class: AppBundle\EventListener\SeoListener
     arguments: ['@translator', '@sonata.seo.page.default']

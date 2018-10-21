@@ -85,7 +85,9 @@
         "box/spout": "^2.7",
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^5.1",
-        "friendsofsymfony/jsrouting-bundle": "^2.2"
+        "friendsofsymfony/jsrouting-bundle": "^2.2",
+        "hwi/oauth-bundle": "^0.6.3",
+        "php-http/httplug-bundle": "^1.11"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

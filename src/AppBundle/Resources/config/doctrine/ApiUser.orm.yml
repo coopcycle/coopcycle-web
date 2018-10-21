@@ -19,6 +19,12 @@ AppBundle\Entity\ApiUser:
         telephone:
             type: phone_number
             nullable: true
+        googleId:
+            type: string
+            nullable: true
+        googleAccessToken:
+            type: string
+            nullable: true
     manyToMany:
         restaurants:
             targetEntity: AppBundle\Entity\Restaurant

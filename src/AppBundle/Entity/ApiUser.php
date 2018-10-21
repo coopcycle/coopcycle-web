@@ -25,6 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @UniqueEntity("email")
  * @UniqueEntity("username")
+ * @UniqueEntity("googleId")
  */
 class ApiUser extends BaseUser implements JWTUserInterface
 {
@@ -64,6 +65,16 @@ class ApiUser extends BaseUser implements JWTUserInterface
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;
+
+    /**
+     * @var string
+     */
+    protected $googleId;
+
+    /**
+     * @var string
+     */
+    protected $googleAccessToken;
 
     private $restaurants;
 
@@ -129,6 +140,31 @@ class ApiUser extends BaseUser implements JWTUserInterface
     public function setTelephone($telephone)
     {
         $this->telephone = $telephone;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGoogleId()
+    {
+        return $this->googleId;
+    }
+
+    /**
+     * @param string $googleId
+     */
+    public function setGoogleId($googleId) {
+        $this->googleId = $googleId;
+    }
+
+    public function setGoogleAccessToken($googleAccessToken)
+    {
+        $this->googleAccessToken = $googleAccessToken;
+    }
+
+    public function getGoogleAccessToken()
+    {
+        return $this->googleAccessToken;
     }
 
     public function setRestaurants($restaurants)
