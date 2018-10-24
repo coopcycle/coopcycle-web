@@ -63,6 +63,10 @@ security:
             pattern:   ^/api/docs
             security: false
 
+        api_root:
+            pattern:   ^/api$
+            security: false
+
         api:
             pattern:   ^/api
             stateless: true
