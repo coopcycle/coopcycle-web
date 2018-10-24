@@ -30,106 +30,46 @@ security:
         api_login:
             pattern:  ^/api/login
             stateless: true
-            anonymous: true
+            anonymous: ~
             form_login:
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
 
-        api_orders:
-            pattern:   ^/api/orders
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
         api_deliveries_create:
             pattern:   ^/api/deliveries
             methods: [ POST ]
             stateless: true
+            anonymous: ~
             guard:
                 authenticators:
                     - AppBundle\Security\StoreTokenAuthenticator
-
-        api_deliveries:
-            pattern:   ^/api/deliveries
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_restaurant_orders:
-            pattern:   ^/api/restaurants/\d+/orders
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_restaurant_update:
-            pattern:   ^/api/restaurants/\d+
-            methods: [ PUT ]
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_opening_hours_specifications:
-            pattern:   ^/api/opening_hours_specifications
-            methods: [ DELETE ]
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_me_location:
-            pattern:   ^/api/me/location
-            stateless: true
-            # FIXME Doesn't work
-            # provider: jwt
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_products:
-            pattern:   ^/api/products
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_me:
-            pattern:   ^/api/me
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
-        api_tasks:
-            pattern:   ^/api/tasks
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
 
         api_pricing_calculate_price:
             pattern:   ^/api/pricing/calculate-price
             stateless: true
+            anonymous: ~
             guard:
                 authenticators:
                     - AppBundle\Security\StoreTokenAuthenticator
 
-        token_check:
-            pattern:   ^/api/token/check
-            stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
-            anonymous: true
+            anonymous: ~
+
+        api_docs:
+            pattern:   ^/api/docs
+            security: false
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            anonymous: ~
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
         web:
             pattern:            ^/
@@ -147,21 +87,13 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/token/check, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/deliveries, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/orders, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/tasks, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/pricing, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/products, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/restaurants/\d+/orders, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/restaurants/\d+, roles: IS_AUTHENTICATED_FULLY, methods: [ PUT ] }
-        - { path: ^/api/opening_hours_specifications, roles: IS_AUTHENTICATED_FULLY, methods: [ DELETE ] }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
