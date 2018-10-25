@@ -97,6 +97,7 @@ security:
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
