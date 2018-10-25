@@ -38,7 +38,22 @@ var tokenVerifier = new TokenVerifier(cert, db)
 var wsServer = new WebSocketServer({
     server: server,
     verifyClient: function (info, cb) {
-      tokenVerifier.verify(info, cb)
+      tokenVerifier
+        .verify(info.req.headers)
+        .then((user) => {
+
+          if (!_.includes(user.roles, 'ROLE_COURIER')) {
+            console.log('User has not enough access rights');
+            cb(false, 401, 'Access denied');
+            return;
+          }
+
+          info.req.user = user;
+          cb(true);
+        })
+        .catch(e => {
+          cb(false, 401, 'Access denied');
+        });
     },
 })
 

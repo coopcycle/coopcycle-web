@@ -1,4 +1,3 @@
-var Courier = require('./models/Courier').Courier;
 var jwt = require('jsonwebtoken');
 var _ = require('lodash');
 
@@ -7,42 +6,52 @@ function TokenVerifier(cert, db) {
   this.db = db;
 }
 
-TokenVerifier.prototype.verify = function (info, cb) {
+const AUTHENTICATION_NOT_FOUND = 'AUTHENTICATION_NOT_FOUND';
+const USER_NOT_FOUND = 'USER_NOT_FOUND';
+const TOKEN_NOT_VALID = 'TOKEN_NOT_VALID'
 
-  var token = info.req.headers.authorization;
-  if (!token) {
-    console.log('No JWT found in request');
-    return cb(false, 401, 'Unauthorized');
-  }
+TokenVerifier.prototype.verify = function(headers) {
 
-  token = token.substring('Bearer '.length);
+  return new Promise((resolve, reject) => {
 
-  var self = this;
-  jwt.verify(token, this.cert, function (err, decoded) {
-    if (err) {
-      console.log('Invalid JWT', err.toString());
-      cb(false, 401, 'Access denied');
-    } else {
+    var token = headers.authorization;
+    if (!token) {
+      console.log('No JWT found in request');
+
+      return reject(AUTHENTICATION_NOT_FOUND)
+    }
+
+    token = token.substring('Bearer '.length);
+
+    // var self = this;
+    jwt.verify(token, this.cert, (err, decoded) => {
+      if (err) {
+        console.log('Invalid JWT', err.toString());
+
+        return reject(TOKEN_NOT_VALID)
+      }
+
       console.log('JWT verified successfully', decoded);
+
       // Token is verified, load user from database
-      self.db.User.findOne({where: {username: decoded.username}})
+      this.db.User
+        .findOne({
+          where: { username: decoded.username }
+        })
         .then(function(user) {
 
           if (!user) {
             console.log('User does not exist');
-            return cb(false, 401, 'Access denied');
-          }
-          if (!_.includes(user.roles, 'ROLE_COURIER')) {
-            console.log('User has not enough access rights');
-            return cb(false, 401, 'Access denied');
+
+            return reject(USER_NOT_FOUND)
           }
 
-          info.req.user = user;
-          cb(true);
-
+          resolve(user)
         })
-    }
+
+    });
   });
+
 };
 
 module.exports = TokenVerifier;
