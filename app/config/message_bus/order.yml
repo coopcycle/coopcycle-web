@@ -150,6 +150,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
     arguments:
       - '@coopcycle.remote_push_notification_manager'
+      - '@api_platform.iri_converter'
       - '@serializer'
     tags:
         - name: event_subscriber

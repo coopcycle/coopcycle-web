@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Order\Reactor;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RemotePushNotificationManager;
@@ -10,13 +11,16 @@ use Symfony\Component\Serializer\SerializerInterface;
 class SendRemotePushNotification
 {
     private $remotePushNotificationManager;
+    private $iriConverter;
     private $serializer;
 
     public function __construct(
         RemotePushNotificationManager $remotePushNotificationManager,
+        IriConverterInterface $iriConverter,
         SerializerInterface $serializer)
     {
         $this->remotePushNotificationManager = $remotePushNotificationManager;
+        $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
     }
 
@@ -37,11 +41,13 @@ class SendRemotePushNotification
                         'name' => 'order:created',
                         'data' => [
                             'restaurant' => $restaurantNormalized,
-                            'date' => $order->getShippedAt()->format('Y-m-d')
+                            'date' => $order->getShippedAt()->format('Y-m-d'),
+                            'order' => $this->iriConverter->getIriFromItem($order),
                         ]
                     ]
                 ];
 
+                // TODO Translate notification title
                 $this->remotePushNotificationManager
                     ->send('New order to accept', $owners, $data);
             }
