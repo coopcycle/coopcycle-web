@@ -352,6 +352,10 @@ services:
     arguments: [ '@coopcycle.utils.task_spreadsheet_parser' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\OrdersExportType':
+    arguments: [ '@sylius.repository.order' ]
+    tags: [ form.type ]
+
   coopcycle.utils.task_spreadsheet_parser:
     class: AppBundle\Utils\TaskSpreadsheetParser
     arguments:

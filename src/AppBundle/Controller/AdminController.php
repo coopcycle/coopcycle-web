@@ -57,7 +57,9 @@ class AdminController extends Controller
     use AccessControlTrait;
     use AdminDashboardTrait;
     use DeliveryTrait;
-    use OrderTrait;
+    use OrderTrait {
+        orderListAction as baseOrderListAction;
+    }
     use LocalBusinessTrait;
     use RestaurantTrait;
     use StoreTrait;
@@ -201,6 +203,11 @@ class AdminController extends Controller
             'dropoff_address' => $dropoffAddress,
             'form' => $form->createView(),
         ]);
+    }
+
+    public function orderListAction(Request $request)
+    {
+        return $this->baseOrderListAction($request);
     }
 
     public function foodtechDashboardAction($date, Request $request)

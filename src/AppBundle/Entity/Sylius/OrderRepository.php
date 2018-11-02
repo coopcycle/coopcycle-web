@@ -29,4 +29,18 @@ class OrderRepository extends BaseOrderRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findOrdersByDateRange(\DateTime $start, \DateTime $end)
+    {
+        $qb = $this->createQueryBuilder('o');
+        $qb
+            ->andWhere('o.state != :state_cart')
+            ->andWhere('DATE(o.shippedAt) >= :start')
+            ->andWhere('DATE(o.shippedAt) <= :end')
+            ->setParameter('state_cart', OrderInterface::STATE_CART)
+            ->setParameter('start', $start->format('Y-m-d'))
+            ->setParameter('end', $end->format('Y-m-d'));
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -516,6 +516,9 @@ form.checkout_address.notes.placeholder: |
   Exemple : sans sauce, sans tomates…
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 
+form.orders_export.start.label: Début
+form.orders_export.end.label: Fin
+
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix
 product_option.strategy.option_value: Prix en fonction du choix
@@ -580,6 +583,7 @@ basics.open: Ouvert
 basics.tomorrow: Demain
 basics.price: Prix
 basics.tax_category: TVA
+basics.export: Exporter
 
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison

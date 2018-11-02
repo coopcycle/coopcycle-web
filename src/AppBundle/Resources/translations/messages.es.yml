@@ -510,6 +510,9 @@ form.checkout_address.notes.placeholder: |
   Ejemplo: sin salsa, sin tomates…
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
 
+form.orders_export.start.label: Inicio
+form.orders_export.end.label: Final
+
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
 product_option.strategy.option_value: Precio según la elección
@@ -574,6 +577,7 @@ basics.open: Abierto
 basics.tomorrow: Mañana
 basics.price: Precio
 basics.tax_category: IVA
+basics.export: Exportar
 
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?

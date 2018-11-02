@@ -478,6 +478,9 @@ form.checkout_address.notes.placeholder: |
   Example: without sauce, without tomatoes…
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 
+form.orders_export.start.label: Start
+form.orders_export.end.label: End
+
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
 product_option.strategy.option_value: Price according to the choice
@@ -539,6 +542,7 @@ basics.open: Open
 basics.tomorrow: Tomorrow
 basics.price: Price
 basics.tax_category: VAT
+basics.export: Export
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

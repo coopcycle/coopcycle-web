@@ -1,5 +1,7 @@
 {% extends "@App/admin.html.twig" %}
 
+{% form_theme export_form '@App/form/orders_export.html.twig' %}
+
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
 {% endblock %}
@@ -27,16 +29,61 @@
 
 {% include "@App/admin/pagination.html.twig" %}
 {% include "@App/_partials/order/list.html.twig" %}
+
+<div>
+  <div class="pull-right">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#orders-export">
+      <i class="fa fa-download"></i> {{ 'basics.export'|trans }}
+    </button>
+  </div>
+</div>
+
+<div class="modal fade" id="orders-export" tabindex="-1" role="dialog" aria-labelledby="orders-export-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(export_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="orders-export-label">{{ 'basics.export'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_widget(export_form) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'basics.export'|trans }}</button>
+      </div>
+      {{ form_end(export_form) }}
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
+
 var $settingsForm = $('form[name="admin_orders_settings"]')
 $('#show_canceled').on('change', function(e) {
   $settingsForm
     .find('[name="show_canceled"]')
     .val($(this).is(':checked') ? 'on' : 'off')
   $settingsForm.submit()
-})
+});
+
+new CoopCycle.DatePicker(document.querySelector('#orders_export_start_widget'), {
+  defaultValue: "{{ 'now'|date('Y-m-d') }}",
+  onChange: function(date, dateString) {
+    document.querySelector('#orders_export_start').value = date.format('YYYY-MM-DD');
+  }
+});
+
+new CoopCycle.DatePicker(document.querySelector('#orders_export_end_widget'), {
+  defaultValue: "{{ 'now'|date('Y-m-d') }}",
+  onChange: function(date, dateString) {
+    document.querySelector('#orders_export_end').value = date.format('YYYY-MM-DD');
+  }
+});
+
 </script>
 {% endblock %}

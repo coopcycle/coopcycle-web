@@ -56,7 +56,7 @@ admin_orders:
             restaurant: admin_restaurant
             order_invoice: admin_order_invoice
             order: admin_order
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
 
 admin_restaurant_new:
     path: /admin/restaurants/new
