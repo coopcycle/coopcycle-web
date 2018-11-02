@@ -7,17 +7,30 @@ services:
     container_name: selenium-hub
     ports:
       - "4444:4444"
+
   chrome:
-    image: selenium/node-chrome:3.14.0-francium
+    image: selenium/node-chrome-debug:3.14.0-francium
     depends_on:
       - selenium-hub
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+    ports:
+      # Port is used for VNC only
+      - 5900:5900
+    links:
+      - selenium-hub:hub
+
   firefox:
-    image: selenium/node-firefox:3.14.0-francium
+    image: selenium/node-firefox-debug:3.14.0-francium
     depends_on:
       - selenium-hub
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+
+    ports:
+      # Port is used for VNC only
+      - 5901:5900
+    links:
+      - selenium-hub:hub
