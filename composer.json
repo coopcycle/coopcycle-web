@@ -18,7 +18,7 @@
         "psr-4": { "Tests\\": "tests/" }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "symfony/symfony": "3.4.*",
         "symfony/serializer": "4.*",
         "api-platform/core": "2.3.*",
@@ -75,7 +75,6 @@
         "sylius/taxonomy-bundle": "^1.2",
         "sonata-project/seo-bundle": "^2.5",
         "sylius/currency-bundle": "^1.2",
-        "ocramius/proxy-manager": "2.1.*",
         "geocoder-php/google-maps-provider": "^4.2",
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/message": "^1.6",
