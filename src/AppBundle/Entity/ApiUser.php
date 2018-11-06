@@ -73,12 +73,15 @@ class ApiUser extends BaseUser implements JWTUserInterface
 
     private $stripeAccounts;
 
+    private $organizations;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
+        $this->organizations = new ArrayCollection();
 
         parent::__construct();
     }

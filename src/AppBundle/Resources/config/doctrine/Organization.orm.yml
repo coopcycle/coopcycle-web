@@ -25,3 +25,20 @@ AppBundle\Entity\Organization:
             gedmo:
                 timestampable:
                     on: update
+    manyToMany:
+        users:
+            targetEntity: AppBundle\Entity\ApiUser
+            mappedBy: organizations
+            cascade:
+                - all
+            fetch: LAZY
+            joinTable:
+                name: user_organization
+                joinColumns:
+                    -
+                        name: user_id
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: organization_id
+                        referencedColumnName: id

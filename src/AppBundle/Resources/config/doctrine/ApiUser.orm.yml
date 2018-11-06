@@ -97,3 +97,17 @@ AppBundle\Entity\ApiUser:
                     - name: stripe_account_id
                       referencedColumnName: id
                       onDelete: CASCADE
+        organizations:
+            targetEntity: AppBundle\Entity\Organization
+            inversedBy: users
+            fetch: LAZY
+            joinTable:
+                name: user_organization
+                joinColumns:
+                    -
+                        name: user_id
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: organization_id
+                        referencedColumnName: id

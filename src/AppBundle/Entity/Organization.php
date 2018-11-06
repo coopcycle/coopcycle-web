@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 // use ApiPlatform\Core\Annotation\ApiProperty;
 // use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,6 +30,13 @@ class Organization
      * @Assert\Type(type="string")
      */
     private $slug;
+
+    private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     /**
      * Gets id.
@@ -72,6 +80,18 @@ class Organization
     public function setSlug($slug)
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    public function setUsers($users)
+    {
+        $this->users = $users;
 
         return $this;
     }
