@@ -10,6 +10,9 @@ AppBundle\Entity\Organization:
     fields:
         name:
             type: string
+        slug:
+            type: string
+            unique: true
         createdAt:
             type: datetime
             column: created_at

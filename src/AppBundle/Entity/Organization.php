@@ -24,6 +24,13 @@ class Organization
     private $name;
 
     /**
+     * @var string The name of the item.
+     *
+     * @Assert\Type(type="string")
+     */
+    private $slug;
+
+    /**
      * Gets id.
      *
      * @return int
@@ -55,5 +62,17 @@ class Organization
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }
