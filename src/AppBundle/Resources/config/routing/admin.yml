@@ -431,3 +431,17 @@ admin_tag:
         _controller: AppBundle:Tag:tag
         template: '@App/admin/tag.html.twig'
         redirect_route: admin_tags
+
+admin_organizations:
+    path: /admin/organizations
+    defaults:
+        _controller: AppBundle:Admin:organizationList
+        layout: '@App/admin.html.twig'
+        template: '@App/admin/organizations.html.twig'
+
+admin_organization:
+    path: /admin/organization/{id}
+    defaults:
+        _controller: AppBundle:Admin:organization
+        layout: '@App/admin.html.twig'
+        template: '@App/admin/organization.html.twig'

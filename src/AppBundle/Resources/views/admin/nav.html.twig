@@ -17,9 +17,13 @@
         <li  data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.deliveries{%  endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_deliveries') }}"><i class="fa fa-bicycle"></i>&nbsp;{% trans %}adminDashboard.deliveries.title{% endtrans %}</a>
         </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{%  endtrans %}">
+        {# <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{%  endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_stores') }}"><i class="fa fa-shopping-cart"></i>&nbsp;{% trans %}adminDashboard.stores.title{% endtrans %}</a>
+        </li> #}
+        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{%  endtrans %}">
+          <a class="admin-navbar__link" href="{{ path('admin_organizations') }}"><i class="fa fa-university"></i>&nbsp;{% trans %}adminDashboard.organizations.title{% endtrans %}</a>
         </li>
+
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{%  endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}"><i class="fa fa-cutlery"></i>&nbsp;{% trans %}adminDashboard.restaurants.title{% endtrans %}</a>
         </li>

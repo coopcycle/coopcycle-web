@@ -7,6 +7,7 @@ use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
+use AppBundle\Controller\Utils\OrganizationTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\TaskTrait;
@@ -60,6 +61,7 @@ class AdminController extends Controller
     use OrderTrait {
         orderListAction as baseOrderListAction;
     }
+    use OrganizationTrait;
     use LocalBusinessTrait;
     use RestaurantTrait;
     use StoreTrait;
