@@ -383,6 +383,7 @@ admin_store_new:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
+            store_api_keys: admin_store_api_keys
     methods:  [ GET, POST ]
 
 admin_store:
