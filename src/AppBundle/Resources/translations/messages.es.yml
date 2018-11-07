@@ -550,6 +550,7 @@ stores.manage: Gestionar
 stores.settings: Ajustes
 stores.createNewDelivery: Crear entrega
 stores.list.noStores: Aún no existe ninguna tienda
+stores.users: Usuarios
 zones.help: <a href="%link%">Ayuda sobre las zonas.</a>
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido

@@ -25,6 +25,11 @@
     </div>
     <div class="collapse navbar-collapse" id="store-navbar">
       <div class="nav navbar-nav navbar-right">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
+          <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
+        </a>
+        {% endif %}
         <a href="{{ path(store_api_keys_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-key"></i>  {% trans %}store.api_keys{% endtrans %}
         </a>

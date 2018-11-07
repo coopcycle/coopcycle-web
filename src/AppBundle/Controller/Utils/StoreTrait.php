@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
+use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreTokenType;
 use AppBundle\Form\StoreType;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,37 @@ trait StoreTrait
             'page' => $page,
             'store_route' => $routes['store'],
             'store_delivery_route' => $routes['store_delivery'],
+        ]);
+    }
+
+    public function storeUsersAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+
+        $addUserForm = $this->createForm(AddUserType::class);
+
+        $routes = $request->attributes->get('routes');
+
+        $addUserForm->handleRequest($request);
+        if ($addUserForm->isSubmitted() && $addUserForm->isValid()) {
+
+            $user = $addUserForm->get('user')->getData();
+
+            // FIXME Association should be inversed
+            $user->addStore($store);
+
+            $this->getDoctrine()->getManagerForClass(ApiUser::class)->flush();
+
+            return $this->redirectToRoute('admin_store_users', ['id' => $id]);
+        }
+
+        return $this->render('@App/store/users.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'users' => $store->getOwners(),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'add_user_form' => $addUserForm->createView(),
         ]);
     }
 

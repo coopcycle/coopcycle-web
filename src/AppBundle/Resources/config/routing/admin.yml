@@ -419,6 +419,16 @@ admin_store_api_keys:
             success: admin_store_api_keys
     methods:  [ GET, POST ]
 
+admin_store_users:
+    path: /admin/stores/{id}/users
+    defaults:
+        _controller: AppBundle:Admin:storeUsers
+        layout: '@App/admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+    methods:  [ GET, POST ]
+
 admin_tag_new:
     path: /admin/settings/tags/new
     defaults:

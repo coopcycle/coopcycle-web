@@ -558,6 +558,7 @@ stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
 stores.list.noStores: Pas de magasin pour le moment
+stores.users: Utilisateurs
 zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.

@@ -1,0 +1,52 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>{% trans %}stores.users{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{% if users|length > 0 %}
+  <table class="table">
+    <thead>
+      <th>{{ 'Name'|trans }}</th>
+      <th>{{ 'Firstname'|trans }}</th>
+      <th>{{ 'Lastname'|trans }}</th>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.givenName }}</td>
+        <td>{{ user.familyName }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}stores.list.noUsers{% endtrans %}
+  </div>
+{% endif %}
+
+<div id="user-search"></div>
+{{ form_start(add_user_form) }}
+  {{ form_widget(add_user_form) }}
+{{ form_end(add_user_form) }}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+new CoopCycle.Search(document.querySelector('#user-search'), {
+  url: "{{ path('admin_users_search', { format: 'json'  }) }}",
+  placeholder: "Rechercher un utilisateur…",
+  onSuggestionSelected: function(suggestion) {
+    $('#add_user_user').val(suggestion.id);
+    $('#add_user_user').closest('form').submit();
+  }
+});
+</script>
+{% endblock %}

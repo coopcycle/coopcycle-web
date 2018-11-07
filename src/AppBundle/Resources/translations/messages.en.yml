@@ -510,7 +510,7 @@ stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery
 stores.list.noStores: There are no stores yet
-
+stores.users: Users
 store.api_keys: API keys
 
 zones.help: <a href="%link%">Get help about zones.</a>
