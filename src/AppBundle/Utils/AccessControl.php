@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\UserInterface;
 
@@ -32,5 +33,13 @@ class AccessControl
         $ownsRestaurant = $user->ownsRestaurant($restaurant);
 
         return $isAdmin || $ownsRestaurant;
+    }
+
+    public static function store(UserInterface $user, Store $store)
+    {
+        $isAdmin = $user->hasRole('ROLE_ADMIN');
+        $ownsStore = $user->ownsStore($store);
+
+        return $isAdmin || $ownsStore;
     }
 }

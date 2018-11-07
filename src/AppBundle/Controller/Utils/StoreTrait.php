@@ -35,6 +35,8 @@ trait StoreTrait
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
+        $this->accessControl($store);
+
         $addUserForm = $this->createForm(AddUserType::class);
 
         $routes = $request->attributes->get('routes');
@@ -104,6 +106,8 @@ trait StoreTrait
             ->getRepository(Store::class)
             ->find($id);
 
+        $this->accessControl($store);
+
         $delivery = Delivery::createWithDefaults();
         $delivery->getPickup()->setAddress($store->getAddress());
 
@@ -143,6 +147,8 @@ trait StoreTrait
     public function storeAction($id, Request $request)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+
+        $this->accessControl($store);
 
         return $this->renderStoreForm($store, $request);
     }
