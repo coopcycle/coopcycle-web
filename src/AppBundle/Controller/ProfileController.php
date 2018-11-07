@@ -150,11 +150,16 @@ class ProfileController extends Controller
             }
         }
 
+        $pickupAddress = $order->getDelivery()->getPickup()->getAddress();
+        $dropoffAddress = $order->getDelivery()->getDropoff()->getAddress();
+
         return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
             'delivery' => $order->getDelivery(),
             'form' => $form->createView(),
+            'pickup_address' => $pickupAddress,
+            'dropoff_address' => $dropoffAddress,
         ]);
     }
 
