@@ -34,7 +34,7 @@ abstract class LocalBusiness
      *   @AssertTimeRange,
      * })
      */
-    protected $openingHours;
+    protected $openingHours = [];
 
     /**
      * @var string The telephone number.

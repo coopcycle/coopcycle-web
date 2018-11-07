@@ -20,10 +20,11 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class StoreType extends LocalBusinessType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
+
+        $builder->remove('openingHours');
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder

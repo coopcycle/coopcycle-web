@@ -511,6 +511,7 @@ stores.settings: Settings
 stores.createNewDelivery: Create new delivery
 stores.list.noStores: There are no stores yet
 stores.users: Users
+stores.pricing_rule_set: Pricing
 store.api_keys: API keys
 
 zones.help: <a href="%link%">Get help about zones.</a>
@@ -543,6 +544,7 @@ basics.tomorrow: Tomorrow
 basics.price: Price
 basics.tax_category: VAT
 basics.export: Export
+basics.name: Name
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

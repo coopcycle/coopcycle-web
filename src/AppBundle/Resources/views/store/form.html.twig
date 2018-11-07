@@ -67,14 +67,9 @@
   <hr>
 
   {% if form.pricingRuleSet is defined %}
-
   {{ form_row(form.pricingRuleSet) }}
   <hr>
-
   {% endif %}
-
-  {{ form_row(form.openingHours) }}
-  <hr>
 
   {{ form_row(form.address.streetAddress) }}
   {{ form_row(form.address.postalCode) }}
@@ -97,17 +92,6 @@
 
 {% block scripts %}
 <script>
-var rowsWithErrors = [];
-{% for key, value in form.openingHours %}
-  {% if not value.vars.valid %}
-    rowsWithErrors.push({{ key }});
-  {% endif %}
-{% endfor %}
-
-new CoopCycle.OpeningHoursInput(document.querySelector('#store_openingHours'), {
-  locale: $('html').attr('lang'),
-  rowsWithErrors: rowsWithErrors
-})
 function initMap() {
   new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {
     elements: {
@@ -116,7 +100,7 @@ function initMap() {
       postalCode: document.querySelector('#store_address_postalCode'),
       addressLocality: document.querySelector('#store_address_addressLocality')
     }
-  })
+  });
 }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
