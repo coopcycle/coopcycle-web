@@ -3,7 +3,6 @@
 namespace AppBundle\Action;
 
 use AppBundle\Service\SettingsManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,9 +30,9 @@ class Settings
     /**
      * @Route(
      *     path="/settings",
-     *     name="api_settings"
+     *     name="api_settings",
+     *     methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function settingsAction(Request $request): JsonResponse
     {

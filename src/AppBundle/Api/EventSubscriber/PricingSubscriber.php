@@ -11,7 +11,6 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

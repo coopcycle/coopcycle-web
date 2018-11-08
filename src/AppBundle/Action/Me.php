@@ -10,7 +10,6 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Predis\Client as Redis;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,9 +42,9 @@ class Me
      *   defaults={
      *     "_api_resource_class"=TaskList::class,
      *     "_api_collection_operation_name"="my_tasks_list"
-     *   }
+     *   },
+     *   methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function taskListAction($date)
     {
@@ -68,9 +67,9 @@ class Me
      *   defaults={
      *     "_api_resource_class"=Task::class,
      *     "_api_collection_operation_name"="my_tasks"
-     *   }
+     *   },
+     *   methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function tasksAction($date)
     {
@@ -96,11 +95,12 @@ class Me
 
     /**
      * @Route(path="/me", name="me",
-     *  defaults={
-     *   "_api_resource_class"=ApiUser::class,
-     *   "_api_collection_operation_name"="me",
-     * })
-     * @Method("GET")
+     *   defaults={
+     *     "_api_resource_class"=ApiUser::class,
+     *     "_api_collection_operation_name"="me",
+     *   },
+     *   methods={"GET"}
+     * )
      */
     public function meAction()
     {
@@ -108,8 +108,7 @@ class Me
     }
 
     /**
-     * @Route(path="/me/location", name="me_location")
-     * @Method("POST")
+     * @Route(path="/me/location", name="me_location", methods={"POST"})
      */
     public function locationAction(Request $request)
     {
@@ -166,9 +165,9 @@ class Me
      *   defaults={
      *     "_api_resource_class"=Restaurant::class,
      *     "_api_collection_operation_name"="me_restaurants",
-     *   }
+     *   },
+     *   methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function restaurantsAction(Request $request)
     {

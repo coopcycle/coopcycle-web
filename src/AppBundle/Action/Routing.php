@@ -5,7 +5,6 @@ namespace AppBundle\Action;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,9 +38,9 @@ class Routing
     /**
      * @Route(
      *     path="/routing/route/{coordinates}",
-     *     name="routing_route"
+     *     name="routing_route",
+     *     methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function routeAction($coordinates, Request $request): JsonResponse
     {
@@ -60,9 +59,9 @@ class Routing
     /**
      * @Route(
      *     path="/routing/trip/{coordinates}",
-     *     name="routing_trip"
+     *     name="routing_trip",
+     *     methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function tripAction($coordinates, Request $request): JsonResponse
     {

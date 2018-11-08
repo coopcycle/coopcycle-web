@@ -5,7 +5,6 @@ namespace AppBundle\Action\Task;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskCancelledException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;

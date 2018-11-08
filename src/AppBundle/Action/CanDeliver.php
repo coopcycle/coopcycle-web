@@ -7,7 +7,6 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,9 +30,9 @@ class CanDeliver
     /**
      * @Route(
      *     name="restaurant_can_deliver",
-     *     path="/restaurants/{id}/can-deliver/{latitude},{longitude}"
+     *     path="/restaurants/{id}/can-deliver/{latitude},{longitude}",
+     *     methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function canDeliverAction($id, $latitude, $longitude, Request $request)
     {

@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Restaurant;
 
 use AppBundle\Entity\Restaurant;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,9 +15,9 @@ class Menu
      *   defaults={
      *     "_api_resource_class"=Restaurant::class,
      *     "_api_item_operation_name"="restaurant_menu"
-     *   }
+     *   },
+     *   methods={"GET"}
      * )
-     * @Method("GET")
      */
     public function __invoke(Restaurant $data, Request $request)
     {

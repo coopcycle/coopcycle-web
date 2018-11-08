@@ -10,7 +10,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,9 +57,9 @@ class Register
     /**
      * @Route(
      *     path="/register",
-     *     name="api_register"
+     *     name="api_register",
+     *     methods={"POST"}
      * )
-     * @Method("POST")
      */
     public function registerAction(Request $request)
     {

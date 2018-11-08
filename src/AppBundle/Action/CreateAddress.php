@@ -6,7 +6,6 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +24,9 @@ class CreateAddress
      * @Route(
      *     name="create_address",
      *     path="/me/addresses",
-     *     defaults={"_api_resource_class"=Address::class, "_api_collection_operation_name"="create_address"}
+     *     defaults={"_api_resource_class"=Address::class, "_api_collection_operation_name"="create_address"},
+     *     methods={"POST"}
      * )
-     * @Method("POST")
      */
     public function __invoke($data)
     {
