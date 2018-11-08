@@ -9,11 +9,11 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\StripePaymentType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/order")

@@ -13,7 +13,6 @@ use Carbon\Carbon;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Product\Model\ProductInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,6 +20,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })

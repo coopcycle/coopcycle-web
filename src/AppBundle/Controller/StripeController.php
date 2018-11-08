@@ -5,9 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
