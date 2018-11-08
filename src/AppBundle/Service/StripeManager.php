@@ -104,7 +104,7 @@ class StripeManager
     /**
      * @return Stripe\Refund
      */
-    public function refund(StripePayment $stripePayment)
+    public function refund(StripePayment $stripePayment, $amount = null, $refundApplicationFee = false)
     {
         // FIXME
         // Check if the charge was made in test or live mode
@@ -119,8 +119,19 @@ class StripeManager
             $stripeOptions['stripe_account'] = $stripeAccount;
         }
 
-        return Stripe\Refund::create([
+        $args = [
             'charge' => $stripePayment->getCharge(),
-        ], $stripeOptions);
+        ];
+
+        if (null !== $amount) {
+            $amount = (int) $amount;
+            if ($amount !== $stripePayment->getAmount()) {
+                $args['amount'] = $amount;
+            }
+        }
+
+        $args['refund_application_fee'] = $refundApplicationFee;
+
+        return Stripe\Refund::create($args, $stripeOptions);
     }
 }

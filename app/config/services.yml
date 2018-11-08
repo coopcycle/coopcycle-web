@@ -360,6 +360,10 @@ services:
     arguments: [ '@doctrine' ]
     tags: [ form.type ]
 
+  'AppBundle\Form\PaymentType':
+    arguments: [ '@sm.factory', '@security.authorization_checker' ]
+    tags: [ form.type ]
+
   coopcycle.utils.task_spreadsheet_parser:
     class: AppBundle\Utils\TaskSpreadsheetParser
     arguments:

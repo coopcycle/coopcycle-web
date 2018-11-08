@@ -256,6 +256,7 @@ payment.state.completed: Completed
 payment.state.failed: Failed
 payment.state.cancelled: Cancelled
 payment.state.refunded: Refunded
+payment.state.refunded_partially: Partially Refunded
 
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
@@ -342,6 +343,15 @@ form.order.cancel.label: Cancel
 form.order.fulfill.label: Fulfill
 form.order.payment_complete.label: Complete
 form.order.payment_refund.label: Refund
+
+form.order.refund_modal.title: Refund
+form.payment.refund_amount.label: Amount
+form.payment.refund_amount.help: The amount you specify will be refunded to the customer
+form.payment.refund_application_fee.label: Refund fees
+form.payment.refund_application_fee.help: |
+  If you check this box, the commission charged by the platform to the partner will be refunded proportionally
+  <br>
+  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Learn more</a>
 
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Stripe\Refund;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -202,5 +203,45 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
 
             return $this->details['last_error'];
         }
+    }
+
+    public function addRefund(Refund $refund)
+    {
+        $refunds = [];
+        if (isset($this->details['refunds'])) {
+            $refunds = $this->details['refunds'];
+        }
+
+        $refunds[] = [
+            'id' => $refund->id,
+            'amount' => $refund->amount,
+        ];
+
+        $this->details = array_merge($this->details, ['refunds' => $refunds]);
+    }
+
+    public function getRefunds()
+    {
+        if (isset($this->details['refunds'])) {
+
+            return $this->details['refunds'];
+        }
+
+        return [];
+    }
+
+    public function getRefundTotal()
+    {
+        $total = 0;
+        foreach ($this->getRefunds() as $refund) {
+            $total += $refund['amount'];
+        }
+
+        return $total;
+    }
+
+    public function getRefundAmount()
+    {
+        return $this->getAmount() - $this->getRefundTotal();
     }
 }

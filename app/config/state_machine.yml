@@ -46,6 +46,7 @@ winzou_state_machine:
             cancelled: ~
             void: ~
             refunded: ~
+            refunded_partially: ~
         transitions:
             create:
                 from: [cart]
@@ -66,8 +67,11 @@ winzou_state_machine:
                 from: [cart, new, authorized]
                 to: cancelled
             refund:
-                from: [completed]
+                from: [completed, refunded_partially]
                 to: refunded
+            refund_partially:
+                from: [completed]
+                to: refunded_partially
             void:
                 from: [new, processing]
                 to: void
