@@ -29,6 +29,8 @@ class RefundHandler
     public function __invoke(Refund $command)
     {
         $payment = $command->getPayment();
+        $amount = $command->getAmount();
+        $refundApplicationFee = $command->getRefundApplicationFee();
 
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
@@ -38,8 +40,18 @@ class RefundHandler
 
         try {
 
-            $refund = $this->stripeManager->refund($payment);
-            $stateMachine->apply(PaymentTransitions::TRANSITION_REFUND);
+            // FIXME With several partial refunds, need to check if totally refunded
+            $isPartial = (int) $amount < $payment->getOrder()->getTotal();
+
+            $transition = $isPartial ? 'refund_partially' : PaymentTransitions::TRANSITION_REFUND;
+
+            $refund = $this->stripeManager->refund($payment, $amount, $refundApplicationFee);
+
+            if ($payment->getState() === 'refunded_partially' && $transition !== 'refund_partially') {
+                $stateMachine->apply($transition);
+            }
+
+            $payment->addRefund($refund);
 
             // TODO Record event
 

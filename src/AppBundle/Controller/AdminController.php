@@ -155,6 +155,24 @@ class AdminController extends Controller
         $form = $this->createForm(OrderType::class, $order);
 
         $form->handleRequest($request);
+
+        foreach ($form->get('payments') as $paymentForm) {
+            if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
+                if ($form->getClickedButton() && 'refund' === $form->getClickedButton()->getName()) {
+
+                    $payment = $paymentForm->getData();
+                    $amount = $paymentForm->get('amount')->getData();
+                    $refundApplicationFee = $paymentForm->get('refundApplicationFee')->getData();
+
+                    $orderManager->refundPayment($payment, $amount, $refundApplicationFee);
+
+                    $this->get('sylius.manager.order')->flush();
+
+                    return $this->redirectToRoute('admin_orders');
+                }
+            }
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
 
@@ -168,15 +186,6 @@ class AdminController extends Controller
 
                 if ('cancel' === $form->getClickedButton()->getName()) {
                     $orderManager->cancel($order);
-                }
-
-                foreach ($order->getPayments() as $payment) {
-                    if (sprintf('payment_%d_complete', $payment->getId()) === $form->getClickedButton()->getName()) {
-                        $orderManager->completePayment($payment);
-                    }
-                    if (sprintf('payment_%d_refund', $payment->getId()) === $form->getClickedButton()->getName()) {
-                        $orderManager->refundPayment($payment);
-                    }
                 }
 
                 $this->get('sylius.manager.order')->flush();

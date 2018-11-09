@@ -268,7 +268,8 @@ payment.state.authorized: Autorizado
 payment.state.completed: Realizado
 payment.state.failed: Fallado
 payment.state.cancelled: Cancelado
-payment.state.refunded: Reintegrado
+payment.state.refunded: Reembolsado
+payment.state.refunded_partially: Parcialmente Reembolsado
 
 order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Costos CoopCycle
@@ -354,6 +355,15 @@ form.order.cancel.label: Cancelar
 form.order.fulfill.label: Realizar
 form.order.payment_complete.label: Completar
 form.order.payment_refund.label: Reembolsar
+
+form.order.refund_modal.title: Reembolso
+form.payment.refund_amount.label: Suma
+form.payment.refund_amount.help: El importe que especifique será devuelto al cliente
+form.payment.refund_application_fee.label: Reembolsar los honorarios
+form.payment.refund_application_fee.help: |
+  Si marca esta casilla, la comisión cobrada por la plataforma al socio será reembolsada proporcionalmente
+  <br>
+  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Más información</a>
 
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Selecciona una dirección en el menú desplegable
