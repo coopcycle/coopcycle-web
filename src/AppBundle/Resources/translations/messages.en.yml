@@ -367,6 +367,7 @@ form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule.price.label: Price
 
+form.settings.date_time: Date and time
 form.settings.brand_name.label: Brand name
 form.settings.stripe.title: Stripe Account
 form.settings.stripe.help: '

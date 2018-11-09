@@ -378,6 +378,8 @@ form.address.description.placeholder: 2ª puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
+
+form.settings.date_time: Fecha y hora
 form.settings.brand_name.label: Marca de fábrica
 form.settings.stripe.title: Stripe Account
 form.settings.stripe.help: '

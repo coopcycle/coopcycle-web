@@ -9,6 +9,14 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="alert alert-info">
+  <i class="fa fa-globe"></i>  {% trans %}form.settings.date_time{% endtrans %}
+  <span class="pull-right">
+    <span>{{ 'now'|localizeddate('none', 'short') }} {{ timezone }}</span>
+  </span>
+</div>
+
 {{ form_start(form) }}
   {{ form_row(form.brand_name) }}
   {{ form_row(form.administrator_email) }}

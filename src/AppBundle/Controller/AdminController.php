@@ -979,6 +979,7 @@ class AdminController extends Controller
         }
 
         return [
+            'timezone' => ini_get('date.timezone'),
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),

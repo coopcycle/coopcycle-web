@@ -379,6 +379,7 @@ form.address.company.label: Entreprise
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
+form.settings.date_time: Date et heure
 form.settings.stripe.title: Compte Stripe
 form.settings.stripe.help: '
   Stripe est le service de paiement que nous utilisons pour sécuriser le paiement par carte bleue.
