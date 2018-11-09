@@ -5,9 +5,26 @@
   </thead>
   <tbody>
   {% for item in order.items %}
+    {% set options_adjustments = [] %}
+    {% for adjusment in item.adjustments %}
+      {% if adjusment.type == 'menu_item_modifier' %}
+        {% set options_adjustments = [ adjusment ]|merge(options_adjustments) %}
+      {% endif %}
+    {% endfor %}
     <tr>
       <td>
         {{ item.variant.name }} <span class="text-muted">× {{ item.quantity }}</span>
+        {% if options_adjustments|length > 0 %}
+        <ul class="list-unstyled">
+        {% for adjusment in options_adjustments %}
+          <li>
+            <small class="text-muted">
+              {{ adjusment.label }} {{ adjusment.amount|price_format }}
+            </small>
+          </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
       </td>
       <td class="text-right">
         {{ item.total|price_format }}
