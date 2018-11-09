@@ -7,6 +7,10 @@
  */
 import i18next from 'i18next'
 import { reactI18nextModule } from 'react-i18next'
+
+import moment from 'moment'
+import tz from 'moment-timezone'
+
 import en from './locales/en.json'
 import fr from './locales/fr.json'
 import es from './locales/es.json'
@@ -33,3 +37,5 @@ i18next
   })
 
 export default i18next
+
+export const setTimezone = timezone => moment.tz.setDefault(timezone);

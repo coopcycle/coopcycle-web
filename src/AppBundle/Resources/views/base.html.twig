@@ -84,6 +84,9 @@
 
     {% set cart = cart_provider.getCart() %}
     <script>
+      // Set global timezone used in Moment.js
+      CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
+
       window.AppData.Cart = {{ cart_provider.normalize(cart)|json_encode()|raw }};
       window.AppData.CartHelper = new CoopCycle.Cart();
       var cartTopElement = document.querySelector('#cart-top');

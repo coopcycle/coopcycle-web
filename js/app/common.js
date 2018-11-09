@@ -2,6 +2,8 @@
 const $ = require('jquery')
 global.$ = global.jQuery = $
 
+import { setTimezone } from './i18n'
+
 global.ClipboardJS = require('clipboard')
 
 // polyfill for `startsWith` not implemented in IE11
@@ -24,3 +26,6 @@ Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
     j = (j = i.length) > 3 ? j % 3 : 0;
   return negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "") + symbol;
 };
+
+window.CoopCycle = window.CoopCycle || {}
+window.CoopCycle.setTimezone = setTimezone

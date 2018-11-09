@@ -83,6 +83,8 @@ class SettingsManager
             case 'stripe_connect_client_id':
                 $name = $this->isStripeLivemode() ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
                 break;
+            case 'timezone':
+                return ini_get('date.timezone');
         }
 
         try {
