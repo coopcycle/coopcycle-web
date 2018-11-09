@@ -23,7 +23,7 @@ class OrderItems extends React.Component {
     const { order } = this.props
 
     return (
-      <table className="table table-condensed">
+      <table className="table table-condensed nomargin">
         <tbody>
           { order.items.map((item, key) =>
             <tr key={ key }>

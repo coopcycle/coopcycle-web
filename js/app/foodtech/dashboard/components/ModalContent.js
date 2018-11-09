@@ -109,6 +109,22 @@ class ModalContent extends React.Component {
     }
   }
 
+  renderNotes() {
+
+    const { order } = this.props
+
+    return (
+      <div>
+        <h5>
+          <i className="fa fa-user"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_NOTES') }
+        </h5>
+        <div className="speech-bubble">
+          <i className="fa fa-quote-left"></i>  { order.notes }
+        </div>
+      </div>
+    )
+  }
+
   render() {
 
     const { order } = this.props
@@ -126,6 +142,7 @@ class ModalContent extends React.Component {
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
           <OrderItems order={ order } />
           <OrderTotal order={ order } />
+          { order.notes && this.renderNotes() }
           <h5>Timeline</h5>
           { this.renderTimeline() }
           { this.renderButtons() }
