@@ -1,0 +1,66 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>{% trans %}stores.deliveries{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<p>
+  <span class="pull-right">
+    <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-success">
+      <i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}
+    </a>
+  </span>
+</p>
+
+{% if deliveries|length > 0 %}
+  {% for delivery in deliveries %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="nomargin">
+          <i class="fa fa-bicycle"></i>  
+          <span>{{ 'stores.deliveries.heading'|trans({
+            '%delivery_id%': delivery.id,
+            '%delivery_distance%': delivery.distance|meters_to_kilometers
+          }) }}
+          </span>
+        </h5>
+      </div>
+      <table class="table">
+        <tbody>
+          <tr>
+            <td width="1%">
+              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.pickup } %}
+            </td>
+            <td width="35%">
+              {{ delivery.pickup.address.streetAddress }}
+            </td>
+            <td class="text-right">
+              {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
+            </td>
+          </tr>
+          <tr>
+            <td width="1%">
+              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.dropoff } %}
+            </td>
+            <td width="35%">
+              {{ delivery.dropoff.address.streetAddress }}
+            </td>
+            <td class="text-right">
+              {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}stores.list.noUsers{% endtrans %}
+  </div>
+{% endif %}
+
+{% endblock %}

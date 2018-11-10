@@ -24,6 +24,11 @@
                 </a>
               </li>
               <li>
+                <a href="{{ path(store_deliveries_route, { id: store.id }) }}">
+                  {% trans %}stores.deliveries{% endtrans %}
+                </a>
+              </li>
+              <li>
                 <a href="{{ path(store_delivery_route, { id: store.id }) }}">
                   {% trans %}stores.createNewDelivery{% endtrans %}
                 </a>

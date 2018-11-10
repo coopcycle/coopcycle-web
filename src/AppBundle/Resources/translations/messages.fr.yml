@@ -568,6 +568,9 @@ stores.createNewDelivery: Créer une livraison
 stores.list.noStores: Pas de magasin pour le moment
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
+stores.deliveries: Livraisons
+stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
+
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
 

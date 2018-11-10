@@ -28,6 +28,7 @@ trait StoreTrait
             'page' => $page,
             'store_route' => $routes['store'],
             'store_delivery_route' => $routes['store_delivery'],
+            'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
 
@@ -93,6 +94,7 @@ trait StoreTrait
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_delivery_route' => $routes['store_delivery'],
+            'store_deliveries_route' => $routes['store_deliveries'],
             'store_api_keys_route' => $routes['store_api_keys'],
         ]);
     }
@@ -165,6 +167,8 @@ trait StoreTrait
             ->getRepository(Store::class)
             ->find($id);
 
+        $this->accessControl($store);
+
         $token = $store->getToken();
 
         $routes = $request->attributes->get('routes');
@@ -189,6 +193,26 @@ trait StoreTrait
             'token' => $token,
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
+        ]);
+    }
+
+    public function storeDeliveriesAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('@App/store/deliveries.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'deliveries' => $store->getDeliveries(),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'store_delivery_route' => $routes['store_delivery'],
         ]);
     }
 }

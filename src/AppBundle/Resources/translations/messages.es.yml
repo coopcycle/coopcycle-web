@@ -562,6 +562,9 @@ stores.createNewDelivery: Crear entrega
 stores.list.noStores: Aún no existe ninguna tienda
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
+stores.deliveries: Entregas
+stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
+
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido
   configurados.

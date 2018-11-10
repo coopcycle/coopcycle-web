@@ -523,6 +523,8 @@ stores.list.noStores: There are no stores yet
 stores.users: Users
 stores.pricing_rule_set: Pricing
 store.api_keys: API keys
+stores.deliveries: Deliveries
+stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
 
 meta.title: Delivery platform for worker-owned business
 
