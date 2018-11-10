@@ -37,7 +37,7 @@ AppBundle\Entity\Store:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
         legalName:
             type: string
             nullable: true
