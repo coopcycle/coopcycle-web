@@ -80,7 +80,7 @@
 
 {% block _update_profile_roles_widget %}
 {% spaceless %}
-<div class="alert alert-info">{% trans with { '%link%': path('help_admin_roles') } from 'messages' %}user.edit.roles.help{% endtrans %}</div>
+<div class="alert alert-info">{% trans from 'messages' %}user.edit.roles.help{% endtrans %}</div>
 {{ form_widget(form) }}
 {% endspaceless %}
 {% endblock %}

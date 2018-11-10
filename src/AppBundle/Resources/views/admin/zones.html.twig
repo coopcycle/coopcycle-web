@@ -8,10 +8,6 @@
 
 {% block content %}
 
-  <div class="alert alert-info">
-    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_zones') } %}zones.help{% endtrans %}
-  </div>
-
   {% if upload_form.vars.submitted and upload_form.vars.valid %}
 
     {{ form_start(zone_collection_form) }}

@@ -25,9 +25,6 @@ fos_user:
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
-coopcycle_help:
-    resource: '@AppBundle/Resources/config/routing/help.yml'
-
 coopcycle_admin:
     resource: '@AppBundle/Resources/config/routing/admin.yml'
 

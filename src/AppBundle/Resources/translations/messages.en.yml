@@ -80,7 +80,6 @@ adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
-adminDashboard.pricing.help: <a href="%link%">Get help about pricing.</a>
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how the delivery cost is calculated.
 adminDashboard.pricing.addRule: Add rule
 
@@ -146,7 +145,7 @@ restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
-restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries. You can chose a radius (in km) or a <a target="_blank" href="%zoneHelpUrl%">zone</a>.
+restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries. You can chose a radius (in km) or a zone
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the cart and will not increase the total amount
@@ -502,7 +501,7 @@ roles.ROLE_RESTAURANT: 'Restaurant'
 roles.ROLE_STORE: 'Store'
 roles.ROLE_USER: 'User'
 
-user.edit.roles.help: Configure the permissions of this user <a href="%link%">Learn more</a>
+user.edit.roles.help: Configure the permissions of this user
 user.edit.enabled.help: A deactivated user will be logged out and can't login back on the platform.
 user.profile.familyName: Family name
 user.profile.givenName: Given name
@@ -524,8 +523,6 @@ stores.list.noStores: There are no stores yet
 stores.users: Users
 stores.pricing_rule_set: Pricing
 store.api_keys: API keys
-
-zones.help: <a href="%link%">Get help about zones.</a>
 
 meta.title: Delivery platform for worker-owned business
 

@@ -75,7 +75,6 @@ adminDashboard.pricing.manage: Gestionar
 adminDashboard.pricing.settings: Ajustes
 adminDashboard.pricing.noPricings: Aún no hay tarifas
 adminDashboard.pricing.createNew: Crear nueva tarifa
-adminDashboard.pricing.help: <a href="%link%">Ayuda sobre tarificación.</a>
 adminDashboard.pricing.noRuleFound: No se encuentra ninguna regla de tarificación.
   Éstas definen como se calcula el coste de la entrega.
 adminDashboard.pricing.addRule: Añadir regla
@@ -147,7 +146,7 @@ restaurant.contract.title: Contrato
 restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
 
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
-  entrega. Puedes escoger un radio (en km) o una <a target="_blank" href="%zoneHelpUrl%">zona</a>.
+  entrega. Puedes escoger un radio (en km) o una zona
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Suma cargada por la plataforma
 restaurant.contract.flatDeliveryPrice.help: Esta suma no se mostrará en el carrito
@@ -534,8 +533,7 @@ roles.ROLE_COURIER: Mensajero
 roles.ROLE_RESTAURANT: Restaurante
 roles.ROLE_STORE: Tienda
 roles.ROLE_USER: Usuario
-user.edit.roles.help: Configura los permisos de éste usuario. <a href="%link%">Más
-  información.</a>
+user.edit.roles.help: Configura los permisos de éste usuario
 user.edit.enabled.label: Activado
 user.edit.disabled.label: Desactivado
 user.edit.enabled.help: Un usuario desactivado sera desconectado y no podrá volver
@@ -564,7 +562,6 @@ stores.createNewDelivery: Crear entrega
 stores.list.noStores: Aún no existe ninguna tienda
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
-zones.help: <a href="%link%">Ayuda sobre las zonas.</a>
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido
   configurados.

@@ -7,10 +7,6 @@
 
 {% block content %}
 
-  <div class="alert alert-info">
-    <i class="fa fa-info-circle" aria-hidden="true"></i> {% trans with { '%link%': path('help_admin_pricing') } %}adminDashboard.pricing.help{% endtrans %}
-  </div>
-
   {{ form_start(form) }}
 
     {{ form_row(form.name) }}

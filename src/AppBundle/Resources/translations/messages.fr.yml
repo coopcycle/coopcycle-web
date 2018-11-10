@@ -70,7 +70,6 @@ adminDashboard.pricing.manage: Gérer
 adminDashboard.pricing.settings: Paramètres
 adminDashboard.pricing.noPricings: Pas de tarification pour le moment
 adminDashboard.pricing.createNew: Créer une tarification
-adminDashboard.pricing.help: <a href="%link%">Consulter l'aide sur la tarification.</a>
 adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tarification.
   Les règles définissent comment le prix de la course est calculé.
 adminDashboard.pricing.addRule: Ajouter une règle
@@ -137,7 +136,7 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.save: Enregistrer
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
-  Vous pouvez choisir un rayon (en km) ou une <a target="_blank" href="%zoneHelpUrl%">zone</a>.
+  Vous pouvez choisir un rayon (en km) ou une zone
 restaurant.contract.title: Contrat
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour
@@ -539,8 +538,7 @@ roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Magasin
 roles.ROLE_USER: Utilisateur
 
-user.edit.roles.help: Configurez les autorisations de l'utilisateur <a href="%link%">En
-  savoir plus</a>
+user.edit.roles.help: Configurez les autorisations de l'utilisateur
 user.edit.enabled.label: Activé
 user.edit.disabled.label: Désactivé
 user.edit.enabled.help: Un utilisateur désactivé est déconnecté et ne peut plus se
@@ -570,7 +568,6 @@ stores.createNewDelivery: Créer une livraison
 stores.list.noStores: Pas de magasin pour le moment
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
-zones.help: <a href="%link%">Consulter l'aide sur les zones.</a>
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
 
