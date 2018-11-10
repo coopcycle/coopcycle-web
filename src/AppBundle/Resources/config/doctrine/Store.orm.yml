@@ -82,12 +82,18 @@ AppBundle\Entity\Store:
             joinColumns:
                 pricing_rule_set_id:
                     referencedColumnName: id
-    oneToMany:
-        deliveries:
-            targetEntity: AppBundle\Entity\Delivery
-            fetch: LAZY
-            mappedBy: store
     manyToMany:
         owners:
             targetEntity: AppBundle\Entity\ApiUser
             mappedBy: stores
+        deliveries:
+            targetEntity: AppBundle\Entity\Delivery
+            joinTable:
+                name: store_delivery
+                joinColumns:
+                    store_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    delivery_id:
+                        referencedColumnName: id
+                        unique: true
