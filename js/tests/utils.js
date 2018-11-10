@@ -31,7 +31,7 @@ function TestUtils(config) {
   });
 
   var jwtConfig = config.lexik_jwt_authentication;
-  var privateKey = fs.readFileSync(jwtConfig.private_key_path);
+  var privateKey = fs.readFileSync(jwtConfig.secret_key);
 
   this.cert = {
     key: privateKey,
