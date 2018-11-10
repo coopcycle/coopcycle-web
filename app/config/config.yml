@@ -162,10 +162,10 @@ fos_user:
             type: AppBundle\Form\RegistrationType
 
 lexik_jwt_authentication:
-    private_key_path: "%jwt_private_key_path%"
-    public_key_path:  "%jwt_public_key_path%"
-    pass_phrase:      "%jwt_key_pass_phrase%"
-    token_ttl:        "%jwt_token_ttl%"
+    secret_key:  "%jwt_private_key_path%"
+    public_key:  "%jwt_public_key_path%"
+    pass_phrase: "%jwt_key_pass_phrase%"
+    token_ttl:   "%jwt_token_ttl%"
     token_extractors:
         authorization_header:      # look for a token as Authorization Header
             enabled: true
