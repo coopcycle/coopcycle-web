@@ -130,6 +130,12 @@ trait StoreTrait
                 $this->get('coopcycle.order_manager')->onDemand($order);
                 $this->get('sylius.manager.order')->flush();
 
+                $store->addDelivery($delivery);
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Store::class)
+                    ->flush();
+
                 return $this->redirectToRoute($routes['success']);
             }
         }
