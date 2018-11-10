@@ -250,12 +250,9 @@ class Store extends LocalBusiness
         return $this->deliveries;
     }
 
-    /**
-     * @param ArrayCollection $deliveries
-     */
-    public function setDeliveries(ArrayCollection $deliveries)
+    public function addDelivery(Delivery $delivery)
     {
-        $this->deliveries = $deliveries;
+        $this->deliveries->add($delivery);
     }
 
     public function getToken()
