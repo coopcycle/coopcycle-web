@@ -349,14 +349,6 @@ admin_restaurant_stripe_oauth_redirect:
         redirect_after: admin_restaurant
     methods: [ GET ]
 
-# TODO Deprecate
-admin_orders_order_cancel:
-    path: /admin/orders/{id}/cancel
-    defaults:
-        _controller: AppBundle:Admin:cancelOrder
-        redirect_route: admin_orders
-    methods: [ POST ]
-
 admin_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:

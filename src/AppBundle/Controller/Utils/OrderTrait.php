@@ -77,7 +77,6 @@ trait OrderTrait
             'pages' => $pages,
             'page' => $page,
             'routes' => $request->attributes->get('routes'),
-            'show_buttons' => true,
             'show_canceled' => $showCanceled,
             'export_form' => $exportForm->createView(),
         ], $response);
