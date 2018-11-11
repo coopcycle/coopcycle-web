@@ -635,6 +635,12 @@ services:
           - '@api_platform.security.listener.request.deny_access'
       tags: [ 'kernel.event_subscriber' ]
 
+  'AppBundle\Api\EventSubscriber\DeliverySubscriber':
+      arguments:
+          - '@doctrine'
+          - '@security.token_storage'
+      tags: [ 'kernel.event_subscriber' ]
+
   'AppBundle\Action\Settings':
       arguments:
         - '@coopcycle.settings_manager'
