@@ -101,33 +101,37 @@
   <div class="col-md-5">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4 class="panel-title"><i class="fa fa-cube"></i>  Retrait</h4>
+        <h4 class="panel-title">
+          <span>
+            <i class="fa fa-cube"></i>  {{ 'task.type.PICKUP'|trans }}
+          </span>
+          <span class="pull-right">
+            <i class="fa fa-clock-o"></i>  {{ pickup_at|localizeddate('medium', 'short') }}
+          </span>
+        </h4>
       </div>
       <div class="panel-body">
         {{ pickup_address.streetAddress }}
-        {#
-        {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
-        #}
         {% if pickup_address.description is not empty %}
-        <textarea class="form-control" disabled>
-          {{ pickup_address.description }}
-        </textarea>
+        <textarea class="form-control" disabled>{{ pickup_address.description }}</textarea>
         {% endif %}
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4 class="panel-title"><i class="fa fa-flag"></i>  Dépôt</h4>
+        <h4 class="panel-title">
+          <span>
+            <i class="fa fa-flag"></i>  {{ 'task.type.DROPOFF'|trans }}
+          </span>
+          <span class="pull-right">
+            <i class="fa fa-clock-o"></i>  {{ dropoff_at|localizeddate('medium', 'short') }}
+          </span>
+        </h4>
       </div>
       <div class="panel-body">
         {{ dropoff_address.streetAddress }}
-        {#
-        {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
-        #}
         {% if dropoff_address.description is not empty %}
-        <textarea class="form-control" disabled>
-          {{ dropoff_address.description }}
-        </textarea>
+        <textarea class="form-control" disabled>{{ dropoff_address.description }}</textarea>
         {% endif %}
       </div>
     </div>

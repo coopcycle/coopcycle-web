@@ -153,6 +153,9 @@ class ProfileController extends Controller
         $pickupAddress = $order->getDelivery()->getPickup()->getAddress();
         $dropoffAddress = $order->getDelivery()->getDropoff()->getAddress();
 
+        $pickupAt = $order->getDelivery()->getPickup()->getDoneBefore();
+        $dropoffAt = $order->getDelivery()->getDropoff()->getDoneBefore();
+
         return $this->render('@App/order/service.html.twig', [
             'layout' => '@App/profile.html.twig',
             'order' => $order,
@@ -160,6 +163,8 @@ class ProfileController extends Controller
             'form' => $form->createView(),
             'pickup_address' => $pickupAddress,
             'dropoff_address' => $dropoffAddress,
+            'pickup_at' => $pickupAt,
+            'dropoff_at' => $dropoffAt,
         ]);
     }
 
