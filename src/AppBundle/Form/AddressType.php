@@ -134,7 +134,7 @@ class AddressType extends AbstractType
             }
         };
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, $latLngListener);
+        $builder->addEventListener(FormEvents::SUBMIT, $latLngListener);
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
             $address = $event->getData();
