@@ -3,14 +3,14 @@
 {% block fos_user_content %}
 
   <h2 class="page-header">
-    {% trans from 'messages' %}My account{% endtrans %}
+    {% trans from 'messages' %}profile.myAccount{% endtrans %}
+    <span class="pull-right">
+      <a class="btn btn-sm btn-success" href="{{ path('profile_edit') }}">
+      <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}basics.edit{%  endtrans %}
+    </a>
+    </span>
   </h2>
 
-  <div class="text-right">
-    <a class="btn btn-success" href="{{ path('profile_edit') }}">
-      <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
-    </a>
-  </div>
   {% include "@App/profile/profile.html.twig" %}
 
 {% endblock %}
