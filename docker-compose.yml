@@ -68,7 +68,7 @@ services:
       - stripe_mock
     environment:
       SYMFONY_ENV: 'dev'
-      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx:80","sessions":{"selenium2":{"selenium2":{"wd_host":"http://zalenium:4444/wd/hub"}}}}}}'
+      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80","sessions":{"selenium2":{"selenium2":{"wd_host":"http://zalenium:4444/wd/hub"}}}}}}'
     volumes:
       - 'php_cache:/srv/coopcycle/var/cache'
       - './:/srv/coopcycle:cached'
@@ -82,6 +82,17 @@ services:
       - '80:80'
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
+      - './web:/srv/coopcycle/web:ro'
+
+  nginx_test:
+    image: 'nginx:1.11-alpine'
+    depends_on:
+      - php
+      - nodejs
+    ports:
+      - '9080:80'
+    volumes:
+      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
       - './web:/srv/coopcycle/web:ro'
 
   smtp:
