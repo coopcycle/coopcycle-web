@@ -14,8 +14,13 @@ default:
         env: "test"
         debug: "true"
     Behat\MinkExtension:
-      base_url: "http://example.com/"
+      default_session: "default"
+      javascript_session: "selenium2"
+      browser_name: "chrome"
       sessions:
         default:
           symfony2: ~
+        selenium2:
+          selenium2:
+            browser: "chrome"
     Behatch\Extension: ~
