@@ -23,6 +23,7 @@ env:
     - STRIPE_MOCK_API_BASE=http://localhost:12111
     - SYMFONY_ENV=test
     - NODE_ENV=test
+    - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://127.0.0.1:8080","sessions":{"selenium2":{"selenium2":{"wd_host":"http://localhost:4444/wd/hub"}}}}}}'
 
 before_install:
   - sudo apt-get update -qq
@@ -41,6 +42,10 @@ install:
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:latest osrm-customize /data/paris-france.osrm
   - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:latest osrm-routed --algorithm mld /data/paris-france.osrm
   - docker run -t -d -p 12111:12111 stripemock/stripe-mock
+  # Run Selenium using host networking
+  # https://github.com/elgalu/docker-selenium#dns
+  # https://docs.docker.com/network/host/
+  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium start
 
 before_script:
   - phpenv config-rm xdebug.ini
