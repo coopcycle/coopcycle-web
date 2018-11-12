@@ -376,6 +376,7 @@ admin_store_new:
         routes:
             stores: admin_stores
             store_delivery: admin_store_delivery
+            store_deliveries: admin_store_deliveries
             store_api_keys: admin_store_api_keys
     methods:  [ GET, POST ]
 
