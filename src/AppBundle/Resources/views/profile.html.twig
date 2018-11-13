@@ -32,8 +32,14 @@
             <li><a href="{{ path('profile_tracking', { date: 'now'|date('Y-m-d') }) }}"><i class="fa fa-location-arrow"></i>  {% trans %}profile.myTracking{% endtrans %}</a></li>
           {% endif %}
 
-          {% if is_granted('ROLE_STORE') and is_granted('ROLE_COURIER') %}
-            <li><a href="{{ path('profile_stores') }}"><i class="fa fa-shopping-cart"></i>  {% trans %}profile.myStores{% endtrans %}</a></li>
+          {% if is_granted('ROLE_STORE') %}
+            {% for store in app.user.stores %}
+            <li>
+              <a href="{{ path('profile_store_deliveries', { id: store.id }) }}">
+                <i class="fa fa-bicycle"></i>  {{ store.name }} - {% trans %}stores.deliveries{% endtrans %}
+              </a>
+            </li>
+            {% endfor %}
           {% endif %}
 
           {% if is_granted('ROLE_COURIER') or is_granted('ROLE_RESTAURANT') or is_granted('ROLE_STORE') %}
