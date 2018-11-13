@@ -15,7 +15,7 @@ admin_deliveries_calculate_price:
 admin_delivery:
   path: /admin/deliveries/{id}
   defaults:
-      _controller: AppBundle:Admin:editDelivery
+      _controller: AppBundle:Admin:delivery
       layout: '@App/admin.html.twig'
       routes:
           success: admin_deliveries

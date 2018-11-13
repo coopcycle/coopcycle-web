@@ -435,7 +435,7 @@ class AdminController extends Controller
         return $this->renderDeliveryForm($delivery, $request);
     }
 
-    public function editDeliveryAction($id, Request $request)
+    public function deliveryAction($id, Request $request)
     {
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
