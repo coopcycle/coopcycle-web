@@ -161,7 +161,7 @@ trait StoreTrait
         return $this->renderStoreForm($store, $request);
     }
 
-    public function apiKeysAction($id, Request $request)
+    public function storeApiKeysAction($id, Request $request)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)

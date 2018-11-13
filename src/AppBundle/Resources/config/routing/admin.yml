@@ -418,7 +418,7 @@ admin_store_delivery:
 admin_store_api_keys:
     path: /admin/stores/{id}/api-keys
     defaults:
-        _controller: AppBundle:Admin:apiKeys
+        _controller: AppBundle:Admin:storeApiKeys
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores

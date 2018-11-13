@@ -329,7 +329,7 @@ profile_store_delivery:
 profile_store_api_keys:
     path: /profile/stores/{id}/api-keys
     defaults:
-        _controller: AppBundle:Profile:apiKeys
+        _controller: AppBundle:Profile:storeApiKeys
         layout: '@App/profile.html.twig'
         routes:
             stores: profile_stores
