@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Reactor\UpdateState;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderInterface;
-use Predis\Client as Redis;
 use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -19,7 +18,6 @@ class UpdateStateTest extends KernelTestCase
     private $stateMachineFactory;
     private $orderProcessor;
     private $serializer;
-    private $redis;
     private $eventBus;
 
     private $updateState;
@@ -33,7 +31,6 @@ class UpdateStateTest extends KernelTestCase
         $this->stateMachineFactory = static::$kernel->getContainer()->get('sm.factory');
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
         $this->serializer = $this->prophesize(SerializerInterface::class);
-        $this->redis = $this->prophesize(Redis::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
 
         $this->serializer
@@ -44,7 +41,6 @@ class UpdateStateTest extends KernelTestCase
             $this->stateMachineFactory,
             $this->orderProcessor->reveal(),
             $this->serializer->reveal(),
-            $this->redis->reveal(),
             $this->eventBus->reveal()
         );
         }
@@ -85,10 +81,6 @@ class UpdateStateTest extends KernelTestCase
         $order = new Order();
         $order->setState(OrderInterface::STATE_CART);
 
-        $this->redis
-            ->publish(Argument::type('string'), Argument::type('string'))
-            ->shouldBeCalled();
-
         call_user_func_array($this->updateState, [ new Event\OrderCreated($order) ]);
 
         $this->assertEquals('new', $order->getState());
@@ -98,10 +90,6 @@ class UpdateStateTest extends KernelTestCase
     {
         $order = new Order();
         $order->setState(OrderInterface::STATE_NEW);
-
-        $this->redis
-            ->publish(Argument::type('string'), Argument::type('string'))
-            ->shouldBeCalled();
 
         call_user_func_array($this->updateState, [ new Event\OrderAccepted($order) ]);
 
