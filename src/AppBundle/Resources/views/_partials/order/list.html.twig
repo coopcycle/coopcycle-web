@@ -17,7 +17,7 @@
   <tr>
     <td width="5%">
       <a href="{{ path(routes.order, { id: order.id }) }}">
-        {% if order.foodtech and show_order_number is defined and show_order_number %}
+        {% if order.number is not null %}
         {{ order.number }}
         {% else %}
         #{{ order.id }}

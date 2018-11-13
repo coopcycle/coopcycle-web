@@ -8,7 +8,7 @@
       {%  trans %}profile.orders.empty{%  endtrans %}
     </div>
   {% else %}
-    {% include "@App/_partials/order/list.html.twig" with { show_order_number: true } %}
+    {% include "@App/_partials/order/list.html.twig" %}
   {% endif %}
 {% endblock %}
 
