@@ -111,33 +111,22 @@ trait StoreTrait
 
         $delivery = Delivery::createWithDefaults();
 
-        $form = $this->createDeliveryForm($delivery, [
-            'pricing_rule_set' => $store->getPricingRuleSet(),
-        ]);
+        $form = $this->createDeliveryForm($delivery);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $price = $this->handleDeliveryForm($form, $store->getPricingRuleSet());
+            $delivery = $form->getData();
 
-            if ($form->isValid()) {
+            $store->addDelivery($delivery);
 
-                $delivery = $form->getData();
+            $this->getDoctrine()
+                ->getManagerForClass(Store::class)
+                ->flush();
 
-                $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
+            // TODO Add flash message
 
-                $this->get('sylius.repository.order')->add($order);
-                $this->get('coopcycle.order_manager')->onDemand($order);
-                $this->get('sylius.manager.order')->flush();
-
-                $store->addDelivery($delivery);
-
-                $this->getDoctrine()
-                    ->getManagerForClass(Store::class)
-                    ->flush();
-
-                return $this->redirectToRoute($routes['success']);
-            }
+            return $this->redirectToRoute($routes['success'], ['id' => $id]);
         }
 
         return $this->render('@App/store/delivery_form.html.twig', [
@@ -202,12 +191,23 @@ trait StoreTrait
 
         $this->accessControl($store);
 
+        $query = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->createFindByStoreQuery($store);
+
+        $paginator  = $this->get('knp_paginator');
+        $deliveries = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
+
         $routes = $request->attributes->get('routes');
 
         return $this->render('@App/store/deliveries.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
-            'deliveries' => $store->getDeliveries(),
+            'deliveries' => $deliveries,
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_delivery_route' => $routes['store_delivery'],

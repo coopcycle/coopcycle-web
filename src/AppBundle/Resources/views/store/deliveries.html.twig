@@ -31,32 +31,15 @@
       </div>
       <table class="table">
         <tbody>
-          <tr>
-            <td width="1%">
-              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.pickup } %}
-            </td>
-            <td width="35%">
-              {{ delivery.pickup.address.streetAddress }}
-            </td>
-            <td class="text-right">
-              {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
-            </td>
-          </tr>
-          <tr>
-            <td width="1%">
-              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.dropoff } %}
-            </td>
-            <td width="35%">
-              {{ delivery.dropoff.address.streetAddress }}
-            </td>
-            <td class="text-right">
-              {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
-            </td>
-          </tr>
+          {% include "@App/store/_partials/task_row.html.twig" with { task: delivery.pickup } %}
+          {% include "@App/store/_partials/task_row.html.twig" with { task: delivery.dropoff } %}
         </tbody>
       </table>
     </div>
   {% endfor %}
+  <nav class="text-center">
+    {{ knp_pagination_render(deliveries) }}
+  </nav>
 {% else %}
   <div class="alert alert-info">
   {% trans %}stores.list.noUsers{% endtrans %}

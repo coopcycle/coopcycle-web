@@ -411,7 +411,7 @@ admin_store_delivery:
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_orders
+            success: admin_store_deliveries
             calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
 

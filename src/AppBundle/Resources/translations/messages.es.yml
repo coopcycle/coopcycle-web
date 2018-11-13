@@ -328,10 +328,7 @@ checkout.breadcrumb.payment: Pago
 
 form.geojson_upload.file: Archivo
 form.store_type.pricing_rule_set.label: Tarifa
-form.delivery.pricing_rule_set.about: 'Se aplicará la siguiente tarifa: <a href="%link%"
-  target="_blank">%name%</a>
 
-  '
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
@@ -565,6 +562,7 @@ stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.api_keys: Llaves API
+stores.deliveries.task_unassigned: No asignada
 
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido

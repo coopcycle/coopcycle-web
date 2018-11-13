@@ -13,18 +13,5 @@
   <li>{% trans %}adminDashboard.deliveries.createNew{% endtrans %}</li>
   {% endif %}
 
-  {% endblock %}
-
-{% block disclaimer %}
-
-  {% if is_granted('ROLE_ADMIN') %}
-    <div class="alert alert-info">
-      {% set trans_params = {
-        '%name%': store.pricingRuleSet.name,
-        '%link%': path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id })
-      } %}
-      {% trans with trans_params %}form.delivery.pricing_rule_set.about{% endtrans %}
-    </div>
-  {% endif %}
-
 {% endblock %}
+

@@ -322,7 +322,7 @@ profile_store_delivery:
         routes:
             stores: profile_stores
             store: profile_store
-            success: profile_orders
+            success: profile_store_deliveries
             calculate_price: profile_deliveries_calculate_price
     methods:  [ GET, POST ]
 

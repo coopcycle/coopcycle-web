@@ -56,6 +56,7 @@ trait DeliveryTrait
 
     protected function createDeliveryForm(Delivery $delivery, array $options = [])
     {
+        // TODO Move this to DeliveryType?
         if ($delivery->getId() === null) {
 
             $pickupDoneBefore = new \DateTime('+1 day');
@@ -85,26 +86,6 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    protected function handleDeliveryForm(FormInterface $form, PricingRuleSet $pricingRuleSet = null)
-    {
-        $delivery = $form->getData();
-
-        if (null !== $delivery->getId()) {
-            return;
-        }
-
-        if (!$pricingRuleSet) {
-            $pricingRuleSet = $form->get('pricingRuleSet')->getData();
-        }
-
-        try {
-            return $this->getDeliveryPrice($delivery, $pricingRuleSet);
-        } catch (\Exception $e) {
-            $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
-            $form->addError(new FormError($message));
-        }
-    }
-
     private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])
     {
         $routes = $request->attributes->get('routes');
@@ -119,22 +100,17 @@ trait DeliveryTrait
         $form = $this->createDeliveryForm($delivery, $options);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->handleDeliveryForm($form);
+            $delivery = $form->getData();
 
-            if ($form->isValid()) {
-
-                $delivery = $form->getData();
-
-                if ($isNew) {
-                    $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-                }
-
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-                return $this->redirectToRoute($routes['success']);
+            if ($isNew) {
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             }
+
+            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+
+            return $this->redirectToRoute($routes['success']);
         }
 
         return $this->render('@App/delivery/form.html.twig', [

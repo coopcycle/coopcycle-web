@@ -318,8 +318,7 @@ checkout.breadcrumb.payment: Payment
 
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
-form.delivery.pricing_rule_set.about: |
-  The following pricing will be applied: <a href="%link%" target="_blank">%name%</a>
+
 form.delivery.vehicle.VEHICLE_BIKE: Bike
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
 form.store_type.pricing_rule_set.placeholder: Choose a pricing
@@ -525,6 +524,7 @@ stores.pricing_rule_set: Pricing
 stores.api_keys: API keys
 stores.deliveries: Deliveries
 stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
+stores.deliveries.task_unassigned: Unassigned
 
 meta.title: Delivery platform for worker-owned business
 

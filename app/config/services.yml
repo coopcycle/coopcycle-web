@@ -336,12 +336,12 @@ services:
       - { name: form.type }
 
   'AppBundle\Form\DeliveryType':
-    arguments: [ '@doctrine', '@routing_service', '@translator' ]
+    arguments: [ '@routing_service', '@translator' ]
     tags:
       - { name: form.type }
 
   'AppBundle\Form\DeliveryEmbedType':
-    arguments: [ '@doctrine', '@routing_service', '@translator', '%country_iso%' ]
+    arguments: [ '@routing_service', '@translator', '%country_iso%' ]
     tags: [ form.type ]
 
   'AppBundle\Form\OrderType':

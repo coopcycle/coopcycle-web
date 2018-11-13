@@ -88,6 +88,8 @@ AppBundle\Entity\Store:
             mappedBy: stores
         deliveries:
             targetEntity: AppBundle\Entity\Delivery
+            cascade:
+                - persist
             joinTable:
                 name: store_delivery
                 joinColumns:
