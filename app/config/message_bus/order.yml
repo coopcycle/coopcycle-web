@@ -90,7 +90,6 @@ services:
       - '@sm.factory'
       - '@sylius.order_processing.order_payment_processor'
       - '@serializer'
-      - '@snc_redis.default'
       - '@event_bus'
     tags:
         - name: event_subscriber
