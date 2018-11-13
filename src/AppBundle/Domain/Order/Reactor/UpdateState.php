@@ -54,6 +54,15 @@ class UpdateState
 
         $order = $event->getOrder();
 
+        if ($event instanceof Event\OrderCreated) {
+            foreach ($order->getPayments() as $payment) {
+                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+                if ($stateMachine->can(PaymentTransitions::TRANSITION_CREATE)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_CREATE);
+                }
+            }
+        }
+
         if ($event instanceof Event\OrderFulfilled) {
             $stateMachine = $this->stateMachineFactory->get($event->getPayment(), PaymentTransitions::GRAPH);
             $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
