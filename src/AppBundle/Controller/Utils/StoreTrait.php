@@ -101,7 +101,6 @@ trait StoreTrait
 
     public function newStoreDeliveryAction($id, Request $request)
     {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
         $routes = $request->attributes->get('routes');
 
         $store = $this->getDoctrine()
@@ -111,7 +110,6 @@ trait StoreTrait
         $this->accessControl($store);
 
         $delivery = Delivery::createWithDefaults();
-        $delivery->getPickup()->setAddress($store->getAddress());
 
         $form = $this->createDeliveryForm($delivery, [
             'pricing_rule_set' => $store->getPricingRuleSet(),
