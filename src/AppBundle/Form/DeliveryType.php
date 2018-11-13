@@ -41,11 +41,6 @@ class DeliveryType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $vehicleChoices = [
-            $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
-            $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-        ];
-
         $builder
             ->add('weight', NumberType::class, [
                 'required' => false,
@@ -65,7 +60,16 @@ class DeliveryType extends AbstractType
                     new Assert\Valid()
                 ]
             ])
-            ->add('vehicle', ChoiceType::class, [
+            ;
+
+        if (true === $options['with_vehicle']) {
+
+            $vehicleChoices = [
+                $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
+                $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
+            ];
+
+            $builder->add('vehicle', ChoiceType::class, [
                 'required' => true,
                 'choices'  => $vehicleChoices,
                 'placeholder' => 'form.delivery.vehicle.placeholder',
@@ -73,6 +77,7 @@ class DeliveryType extends AbstractType
                 'multiple' => false,
                 'expanded' => true,
             ]);
+        }
 
         if ($options['pricing_rule_set']) {
 
@@ -189,6 +194,7 @@ class DeliveryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
             'pricing_rule_set' => null,
+            'with_vehicle' => false,
         ));
     }
 }

@@ -17,13 +17,6 @@
 
 {% endblock %}
 
-{% block _delivery_vehicle_widget %}
-<div class="alert alert-info">
-  Nous livrons en vélo cargo les objets de plus de 50x40x20 (cm) ou dont le poids excède 6kg
-</div>
-{{ block('vehicle_widget') }}
-{% endblock %}
-
 {% block _delivery_name_widget %}
 {{ block('form_widget') }}
 <span class="help-block">{% trans %}form.delivery_embed.name.help{% endtrans %}</span>
