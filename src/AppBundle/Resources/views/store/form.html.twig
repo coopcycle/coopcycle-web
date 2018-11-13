@@ -29,12 +29,12 @@
         <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
         </a>
-        {% endif %}
         <a href="{{ path(store_api_keys_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-key"></i>  {% trans %}store.api_keys{% endtrans %}
+          <i class="fa fa-key"></i>  {% trans %}stores.api_keys{% endtrans %}
         </a>
-        <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-bicycle"></i>  {% trans %}delivery.createNew{% endtrans %}
+        {% endif %}
+        <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
+          <i class="fa fa-plus"></i>  {% trans %}delivery.createNew{% endtrans %}
         </a>
       </div>
     </div>

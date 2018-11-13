@@ -564,6 +564,7 @@ stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
+stores.api_keys: Llaves API
 
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido
