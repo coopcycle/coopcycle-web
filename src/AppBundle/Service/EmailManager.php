@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Task;
 use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -71,6 +72,7 @@ class EmailManager
 
     public function send(\Swift_Message $message)
     {
+        // FIXME Filter array instead
         foreach ($message->getTo() as $address => $name) {
             if (preg_match('/@demo.coopcycle.org$/', $address)) {
                 return;
@@ -140,5 +142,17 @@ class EmailManager
         ]);
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createTaskCompletedMessage(Task $task)
+    {
+        $key = $task->isDone() ? 'task.done.subject' : 'task.failed.subject';
+
+        $subject = $this->translator->trans($key, ['%task.id%' => $task->getId()], 'emails');
+        $body = $this->templating->render('@App/emails/task/completed.html.twig', [
+            'task' => $task,
+        ]);
+
+        return $this->createHtmlMessage($subject, $body);
     }
 }

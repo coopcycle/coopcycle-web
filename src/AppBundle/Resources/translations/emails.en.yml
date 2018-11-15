@@ -70,3 +70,17 @@ order.cancelled.body.intro: |
   <br>
   <br>
   We are sorry, but your order has been cancelled.
+
+task.done.subject: "Task #%task.id% completed"
+task.done.body: |
+  Hello,
+  <br>
+  <br>
+  Task #%task.id% has been completed.
+
+task.failed.subject: "Task #%task.id% could not be completed"
+task.failed.body: |
+  Hello,
+  <br>
+  <br>
+  Task #%task.id% could not be completed.

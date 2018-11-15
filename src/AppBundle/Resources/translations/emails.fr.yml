@@ -70,3 +70,17 @@ order.cancelled.body.intro: |
   <br>
   <br>
   Nous sommes désolé, mais votre commande a été annulée.
+
+task.done.subject: "La tâche #%task.id% a été terminée"
+task.done.body: |
+  Bonjour,
+  <br>
+  <br>
+  La tâche #%task.id% a été terminée avec succès.
+
+task.failed.subject: "La tâche #%task.id% n'a pas pu être réalisée"
+task.failed.body: |
+  Bonjour,
+  <br>
+  <br>
+  La tâche #%task.id% n'a pas pu être réalisée.
