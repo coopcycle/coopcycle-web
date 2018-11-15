@@ -1,5 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { translate } from 'react-i18next'
 import moment from 'moment'
 
 moment.locale($('html').attr('lang'))
@@ -120,7 +121,11 @@ class Task extends React.Component {
         {...taskAttributes}
         onClick={this.onClick}>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          #{ task.id } - { addressName } avant { moment(task.doneBefore).format('HH[h]mm') }
+          { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {
+            id: task.id,
+            address: addressName,
+            date: moment(task.doneBefore).format('LT')
+          }) }
           { this.renderTags() }
           &nbsp;
           <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
@@ -135,4 +140,4 @@ class Task extends React.Component {
   }
 }
 
-export default Task
+export default translate()(Task)

@@ -40,6 +40,7 @@
     "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Tareas terminadas",
     "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Tareas canceladas",
     "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Tareas no etiquetadas",
+    "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{address}} antes de {{date}}",
     "USER_EDIT_ENABLED_LABEL": "Activado",
     "USER_EDIT_DISABLED_LABEL": "Desactivado",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Entrega estimada a las {{deliveryTime}}.",
