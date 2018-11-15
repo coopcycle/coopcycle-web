@@ -96,18 +96,11 @@ class DeliveryRepository extends EntityRepository
 
     public function createFindByStoreQuery(Store $store)
     {
-        // @see https://stackoverflow.com/questions/5432404/doctrine-2-dql-how-to-select-inverse-side-of-unidirectional-many-to-many-query
-        // @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/dql-doctrine-query-language.html
-        $query = $this->_em->createQuery(
-            'SELECT d FROM AppBundle\Entity\Delivery d ' .
-            'JOIN AppBundle\Entity\Store s WITH 1 = 1 ' .
-            'JOIN s.deliveries sd ' .
-            'WHERE d.id = sd.id AND s.id = :store ' .
-            'ORDER BY d.createdAt DESC'
-        );
-        $query->setParameter('store', $store);
+        $qb = $this->createQueryBuilder('d');
+        $qb->where('d.store = :store');
+        $qb->setParameter('store', $store);
 
-        return $query;
+        return $qb->getQuery();
     }
 
     public function findByStore(Store $store)

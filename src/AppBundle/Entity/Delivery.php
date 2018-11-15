@@ -54,6 +54,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $vehicle = self::VEHICLE_BIKE;
 
+    private $store;
+
     public function __construct()
     {
         parent::__construct();
@@ -172,5 +174,15 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             return $this::COLORS_LIST[$this->getId() % count($this::COLORS_LIST)];
         }
 
+    }
+
+    public function setStore(Store $store)
+    {
+        $this->store = $store;
+    }
+
+    public function getStore()
+    {
+        return $this->store;
     }
 }
