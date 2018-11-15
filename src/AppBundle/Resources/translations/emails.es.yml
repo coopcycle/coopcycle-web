@@ -70,3 +70,17 @@ order.cancelled.body.intro: |
   <br>
   <br>
   Lo sentimos, pero tu pedido ha sido cancelado.
+
+task.done.subject: "La tarea #%task.id% ha sido completada"
+task.done.body: |
+  Buenos dias,
+  <br>
+  <br>
+  La tarea #%task.id% ha sido completada.
+
+task.failed.subject: "La tarea #%task.id% no se pudo completar"
+task.failed.body: |
+  Buenos dias,
+  <br>
+  <br>
+  La tarea #%task.id% no se pudo completar.

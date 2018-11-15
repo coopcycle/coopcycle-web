@@ -16,3 +16,11 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 order_id:
                     referencedColumnName: id
+    manyToOne:
+        store:
+            targetEntity: AppBundle\Entity\Store
+            inversedBy: deliveries
+            joinColumn:
+                store_id:
+                    referencedColumnName: id
+                    nullable: true

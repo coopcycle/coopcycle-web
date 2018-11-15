@@ -3,15 +3,13 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -25,16 +23,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class DeliveryType extends AbstractType
 {
-    private $doctrine;
     private $routing;
     private $translator;
 
     public function __construct(
-        ManagerRegistry $doctrine,
         RoutingInterface $routing,
         TranslatorInterface $translator)
     {
-        $this->doctrine = $doctrine;
         $this->routing = $routing;
         $this->translator = $translator;
     }
@@ -79,45 +74,6 @@ class DeliveryType extends AbstractType
             ]);
         }
 
-        if ($options['pricing_rule_set']) {
-
-            $transformer = new CallbackTransformer(
-                function ($entity) {
-                    if ($entity instanceof PricingRuleSet) {
-                        return $entity->getId();
-                    }
-                    return '';
-                },
-                function ($id) {
-                    if (!$id) {
-                        return null;
-                    }
-                    return $this->doctrine->getRepository(PricingRuleSet::class)->find($id);
-                }
-            );
-
-            $builder
-                ->add('pricingRuleSet', HiddenType::class, array(
-                    'mapped' => false,
-                ));
-            $builder->get('pricingRuleSet')
-                ->addViewTransformer($transformer);
-
-        } else {
-            $builder
-                ->add('pricingRuleSet', EntityType::class, array(
-                    'mapped' => false,
-                    'required' => true,
-                    'placeholder' => 'form.store_type.pricing_rule_set.placeholder',
-                    'label' => 'form.store_type.pricing_rule_set.label',
-                    'class' => PricingRuleSet::class,
-                    'choice_label' => 'name',
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
-                    }
-                ));
-        }
-
         $builder->get('pickup')->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($options) {
@@ -142,22 +98,24 @@ class DeliveryType extends AbstractType
             }
         );
 
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options) {
+        if ($options['with_store']) {
+            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
                 $form = $event->getForm();
-                $delivery = $form->getData();
+                $delivery = $event->getData();
 
-                if (null !== $delivery->getId()) {
-                    $form->remove('pricingRuleSet');
-                } else if ($options['pricing_rule_set']) {
-                    $form
-                        ->get('pricingRuleSet')
-                        ->setData($options['pricing_rule_set']);
-                }
-            }
-        );
+                $form->add('store', EntityType::class, [
+                    'class' => Store::class,
+                    'query_builder' => function (EntityRepository $repository) {
+                        return $repository->createQueryBuilder('s')
+                            ->orderBy('s.name', 'ASC');
+                    },
+                    'label' => 'form.delivery.store.label',
+                    'choice_label' => 'name',
+                    'required' => false,
+                ]);
+            });
+        }
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
@@ -193,8 +151,8 @@ class DeliveryType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
-            'pricing_rule_set' => null,
             'with_vehicle' => false,
+            'with_store' => true,
         ));
     }
 }

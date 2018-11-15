@@ -27,7 +27,7 @@ trait StoreTrait
             'pages' => $pages,
             'page' => $page,
             'store_route' => $routes['store'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
@@ -93,7 +93,7 @@ trait StoreTrait
             'store' => $store,
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
             'store_api_keys_route' => $routes['store_api_keys'],
         ]);
@@ -101,7 +101,6 @@ trait StoreTrait
 
     public function newStoreDeliveryAction($id, Request $request)
     {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
         $routes = $request->attributes->get('routes');
 
         $store = $this->getDoctrine()
@@ -111,35 +110,26 @@ trait StoreTrait
         $this->accessControl($store);
 
         $delivery = Delivery::createWithDefaults();
-        $delivery->getPickup()->setAddress($store->getAddress());
+        $delivery->setStore($store);
 
-        $form = $this->createDeliveryForm($delivery, [
-            'pricing_rule_set' => $store->getPricingRuleSet(),
-        ]);
+        $form = $this->createDeliveryForm($delivery, ['with_store' => false]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $price = $this->handleDeliveryForm($form, $store->getPricingRuleSet());
+            $delivery = $form->getData();
 
-            if ($form->isValid()) {
+            $this->getDoctrine()
+                ->getManagerForClass(Delivery::class)
+                ->persist($delivery);
 
-                $delivery = $form->getData();
+            $this->getDoctrine()
+                ->getManagerForClass(Delivery::class)
+                ->flush();
 
-                $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
+            // TODO Add flash message
 
-                $this->get('sylius.repository.order')->add($order);
-                $this->get('coopcycle.order_manager')->onDemand($order);
-                $this->get('sylius.manager.order')->flush();
-
-                $store->addDelivery($delivery);
-
-                $this->getDoctrine()
-                    ->getManagerForClass(Store::class)
-                    ->flush();
-
-                return $this->redirectToRoute($routes['success']);
-            }
+            return $this->redirectToRoute($routes['success'], ['id' => $id]);
         }
 
         return $this->render('@App/store/delivery_form.html.twig', [
@@ -204,15 +194,27 @@ trait StoreTrait
 
         $this->accessControl($store);
 
+        $query = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->createFindByStoreQuery($store);
+
+        $paginator  = $this->get('knp_paginator');
+        $deliveries = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
+
         $routes = $request->attributes->get('routes');
 
         return $this->render('@App/store/deliveries.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
-            'deliveries' => $store->getDeliveries(),
+            'deliveries' => $deliveries,
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
+            'delivery_route' => $routes['delivery'],
         ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace AppBundle\Form;
 
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -19,17 +18,19 @@ use Symfony\Component\Translation\TranslatorInterface;
 class DeliveryEmbedType extends DeliveryType
 {
     public function __construct(
-        ManagerRegistry $doctrine,
         RoutingInterface $routing,
-        TranslatorInterface $translator, $countryCode)
+        TranslatorInterface $translator,
+        $countryCode)
     {
-        parent::__construct($doctrine, $routing, $translator);
+        parent::__construct($routing, $translator);
 
         $this->countryCode = $countryCode;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $options = array_merge($options, ['with_store' => false]);
+
         parent::buildForm($builder, $options);
 
         $builder

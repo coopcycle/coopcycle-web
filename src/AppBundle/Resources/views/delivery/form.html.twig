@@ -49,6 +49,9 @@
 
   <div class="row">
     <div class="col-sm-6">
+      {% if form.store is defined %}
+        {{ form_row(form.store) }}
+      {% endif %}
       {% if form.vehicle is defined %}
         {{ form_row(form.vehicle) }}
       {% endif %}
@@ -63,16 +66,7 @@
       <hr>
       <div class="form-horizontal">
 
-        {% block disclaimer %}{% endblock %}
-
         {{ form_errors(form) }}
-        <div id="no-price-warning" class="alert alert-warning" style="display:none;">
-          {% trans from 'validators' %}delivery.price.error.priceCalculation{% endtrans %}
-        </div>
-
-        {% if form.pricingRuleSet is defined %}
-          {{ form_row(form.pricingRuleSet) }}
-        {% endif %}
 
         <div class="form-group">
           <label class="col-sm-2 control-label" for="delivery_distance">
@@ -104,19 +98,6 @@
           </div>
         </div>
 
-        {% if delivery.id is null %}
-        <div class="form-group">
-          <label class="col-sm-2 control-label" for="delivery_price">
-            {% trans %}form.delivery.price.label{% endtrans %}
-          </label>
-          <div class="col-sm-10">
-            <p class="form-control-static">
-              <span id="delivery_price"></span>
-            </p>
-          </div>
-        </div>
-        {% endif %}
-
       </div>
       <hr>
       <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
@@ -131,12 +112,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-  window.AppData = window.AppData || {};
-  window.AppData.DeliveryForm = {
-    calculatePriceURL: "{{ path(calculate_price_route) }}"
-  };
-</script>
 <script src="{{ asset('js/delivery-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>

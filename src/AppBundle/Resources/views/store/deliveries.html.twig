@@ -10,7 +10,7 @@
 
 <p>
   <span class="pull-right">
-    <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-success">
+    <a href="{{ path(store_delivery_new_route, { id: store.id }) }}" class="btn btn-success">
       <i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}
     </a>
   </span>
@@ -18,45 +18,37 @@
 
 {% if deliveries|length > 0 %}
   {% for delivery in deliveries %}
-    <div class="panel panel-default">
+    <div class="panel panel-default panel--delivery">
       <div class="panel-heading">
-        <h5 class="nomargin">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path(delivery_route, { id: delivery.id }) }}">
+        {% endif %}
           <i class="fa fa-bicycle"></i>  
           <span>{{ 'stores.deliveries.heading'|trans({
             '%delivery_id%': delivery.id,
             '%delivery_distance%': delivery.distance|meters_to_kilometers
           }) }}
           </span>
-        </h5>
+          {% if is_granted('ROLE_ADMIN') %}
+          <span class="pull-right">
+            <i class="fa fa-arrow-right"></i>  
+          </span>
+          {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+        </a>
+        {% endif %}
       </div>
       <table class="table">
         <tbody>
-          <tr>
-            <td width="1%">
-              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.pickup } %}
-            </td>
-            <td width="35%">
-              {{ delivery.pickup.address.streetAddress }}
-            </td>
-            <td class="text-right">
-              {{ delivery.pickup.doneBefore|localizeddate('medium', 'short') }}
-            </td>
-          </tr>
-          <tr>
-            <td width="1%">
-              {% include "@App/_partials/task/type_label.html.twig" with { task: delivery.dropoff } %}
-            </td>
-            <td width="35%">
-              {{ delivery.dropoff.address.streetAddress }}
-            </td>
-            <td class="text-right">
-              {{ delivery.dropoff.doneBefore|localizeddate('medium', 'short') }}
-            </td>
-          </tr>
+          {% include "@App/store/_partials/task_row.html.twig" with { task: delivery.pickup } %}
+          {% include "@App/store/_partials/task_row.html.twig" with { task: delivery.dropoff } %}
         </tbody>
       </table>
     </div>
   {% endfor %}
+  <nav class="text-center">
+    {{ knp_pagination_render(deliveries) }}
+  </nav>
 {% else %}
   <div class="alert alert-info">
   {% trans %}stores.list.noUsers{% endtrans %}

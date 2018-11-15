@@ -21,33 +21,6 @@ function enableForm() {
   $('#loader').addClass('hidden')
 }
 
-function calculatePrice(distance, pickup, dropoff) {
-
-  const deliveryParams = {
-    distance,
-    pickup_address: [ pickup.getLatLng().lat, pickup.getLatLng().lng ].join(','),
-    dropoff_address: [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ].join(','),
-    pricing_rule_set: $('#delivery_pricingRuleSet').val(),
-    vehicle: $('#delivery_vehicle').val(),
-    weight: $('#delivery_weight').val()
-  }
-
-  $('#no-price-warning').hide()
-  disableForm()
-
-  $.getJSON(window.AppData.DeliveryForm.calculatePriceURL, deliveryParams)
-    .then(price => {
-      if (isNaN(price)) {
-        $('#no-price-warning').show()
-        $('#delivery_price').text('')
-      } else {
-        $('#delivery_price').text((price / 100).formatMoney(2, window.AppData.currencySymbol))
-      }
-      enableForm()
-    })
-    .catch(e => enableForm())
-}
-
 function refreshRouting() {
 
   // We need to have 2 markers
@@ -72,7 +45,7 @@ function refreshRouting() {
     $('#delivery_distance').text(kms + ' Km');
     $('#delivery_duration').text(minutes + ' min');
 
-    calculatePrice(distance, pickup, dropoff)
+    enableForm()
 
     // return decodePolyline(data.routes[0].geometry);
   })
@@ -188,9 +161,3 @@ window.initMap = function() {
 }
 
 map = MapHelper.init('map');
-
-// Update price when parameters have changed
-if ($('#delivery_pricingRuleSet').is('select')) {
-  $('#delivery_pricingRuleSet').on('change', e => refreshRouting())
-}
-$('#delivery_vehicle').on('change', e => refreshRouting())

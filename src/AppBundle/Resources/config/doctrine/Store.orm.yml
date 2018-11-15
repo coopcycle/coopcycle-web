@@ -86,14 +86,9 @@ AppBundle\Entity\Store:
         owners:
             targetEntity: AppBundle\Entity\ApiUser
             mappedBy: stores
+    oneToMany:
         deliveries:
             targetEntity: AppBundle\Entity\Delivery
-            joinTable:
-                name: store_delivery
-                joinColumns:
-                    store_id:
-                        referencedColumnName: id
-                inverseJoinColumns:
-                    delivery_id:
-                        referencedColumnName: id
-                        unique: true
+            mappedBy: store
+            cascade:
+                - persist

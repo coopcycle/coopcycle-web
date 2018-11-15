@@ -45,6 +45,21 @@
   <div class="col-md-5">
 
     {% if is_granted('ROLE_ADMIN') %}
+
+    {% if not order.foodtech %}
+    <div class="form-group">
+      <label class="control-label">Lien public</label>
+      <div class="input-group">
+        <input id="order-public-url" type="text" class="form-control" value="{{ url('public_order', { number: order.number }) }}">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" data-clipboard-target="#order-public-url" id="copy">
+            <i class="fa fa-copy"></i>
+          </button>
+        </span>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">Client</h4>
@@ -244,12 +259,13 @@
 {% endblock %}
 
 {% block scripts %}
-{% if pickup_address is not empty and dropoff_address is not empty %}
 <script>
+new ClipboardJS('#copy');
+{% if pickup_address is not empty and dropoff_address is not empty %}
 new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ pickup_address.geo.latitude }}, {{ pickup_address.geo.longitude }} ],
   dropoff: [ {{ dropoff_address.geo.latitude }}, {{ dropoff_address.geo.longitude }} ]
 });
-</script>
 {% endif %}
+</script>
 {% endblock %}

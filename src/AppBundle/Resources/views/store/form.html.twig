@@ -33,7 +33,7 @@
           <i class="fa fa-key"></i>  {% trans %}stores.api_keys{% endtrans %}
         </a>
         {% endif %}
-        <a href="{{ path(store_delivery_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
+        <a href="{{ path(store_delivery_new_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
           <i class="fa fa-plus"></i>  {% trans %}delivery.createNew{% endtrans %}
         </a>
       </div>
