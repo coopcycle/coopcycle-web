@@ -211,6 +211,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
+            'delivery_route' => $routes['delivery'],
         ]);
     }
 }

@@ -1094,6 +1094,13 @@ table.task-table {
   }
 }
 
+.panel--delivery {
+  .panel-heading > a {
+    display: block;
+    text-decoration: none;
+  }
+}
+
 #help {
   img {
     display: block;

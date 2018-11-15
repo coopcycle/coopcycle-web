@@ -18,16 +18,25 @@
 
 {% if deliveries|length > 0 %}
   {% for delivery in deliveries %}
-    <div class="panel panel-default">
+    <div class="panel panel-default panel--delivery">
       <div class="panel-heading">
-        <h5 class="nomargin">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path(delivery_route, { id: delivery.id }) }}">
+        {% endif %}
           <i class="fa fa-bicycle"></i>  
           <span>{{ 'stores.deliveries.heading'|trans({
             '%delivery_id%': delivery.id,
             '%delivery_distance%': delivery.distance|meters_to_kilometers
           }) }}
           </span>
-        </h5>
+          {% if is_granted('ROLE_ADMIN') %}
+          <span class="pull-right">
+            <i class="fa fa-arrow-right"></i>  
+          </span>
+          {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+        </a>
+        {% endif %}
       </div>
       <table class="table">
         <tbody>
