@@ -110,18 +110,21 @@ trait StoreTrait
         $this->accessControl($store);
 
         $delivery = Delivery::createWithDefaults();
+        $delivery->setStore($store);
 
-        $form = $this->createDeliveryForm($delivery);
+        $form = $this->createDeliveryForm($delivery, ['with_store' => false]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
 
-            $store->addDelivery($delivery);
+            $this->getDoctrine()
+                ->getManagerForClass(Delivery::class)
+                ->persist($delivery);
 
             $this->getDoctrine()
-                ->getManagerForClass(Store::class)
+                ->getManagerForClass(Delivery::class)
                 ->flush();
 
             // TODO Add flash message

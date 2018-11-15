@@ -29,6 +29,8 @@ class DeliveryEmbedType extends DeliveryType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $options = array_merge($options, ['with_store' => false]);
+
         parent::buildForm($builder, $options);
 
         $builder
