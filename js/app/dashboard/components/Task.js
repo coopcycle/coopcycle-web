@@ -120,7 +120,7 @@ class Task extends React.Component {
         {...taskAttributes}
         onClick={this.onClick}>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          #{/([\d]+)/.exec(task['@id'])[0]} - { addressName } avant { moment(task.doneBefore).format('HH[h]mm') }
+          #{ task.id } - { addressName } avant { moment(task.doneBefore).format('HH[h]mm') }
           { this.renderTags() }
           &nbsp;
           <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
