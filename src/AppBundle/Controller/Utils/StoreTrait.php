@@ -27,7 +27,7 @@ trait StoreTrait
             'pages' => $pages,
             'page' => $page,
             'store_route' => $routes['store'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
@@ -93,7 +93,7 @@ trait StoreTrait
             'store' => $store,
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
             'store_api_keys_route' => $routes['store_api_keys'],
         ]);
@@ -210,7 +210,7 @@ trait StoreTrait
             'deliveries' => $deliveries,
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
-            'store_delivery_route' => $routes['store_delivery'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
         ]);
     }
 }
