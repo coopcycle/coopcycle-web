@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import React from 'react'
+import { render } from 'react-dom'
 import MapHelper from '../../MapHelper'
-import moment from 'moment'
-
-moment.locale($('html').attr('lang'))
+import LeafletPopupContent from './LeafletPopupContent'
 
 const DEFAULT_PICKUP_COLOR = '#337ab7'
 const DEFAULT_DROPOFF_COLOR = '#27AE60'
@@ -85,40 +85,23 @@ export default class MapProxy {
     if (!marker) {
       const color = markerColor || taskColor(task),
         icon = taskIcon(task),
-        coords = [task.address.geo.latitude, task.address.geo.longitude],
-        assignedTo = task.assignedTo ? ' assignée à ' + task.assignedTo : '',
-        doneAfter = moment(task.doneAfter).format('LT'),
-        doneBefore = moment(task.doneBefore).format('LT'),
-        taskId = task['id']
+        coords = [task.address.geo.latitude, task.address.geo.longitude]
 
       marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
-      const popupContent = `
-        <span>
-            Tâche #${taskId} ${ task.address.name ? ' - ' + task.address.name : '' }
-            ${ assignedTo }
-        </span>
-        <a class="task__edit">
-          <i class="fa fa-pencil"></i>
-         </a>
-        <br>
-        <span>${task.address.streetAddress} de ${doneAfter} à ${doneBefore}</span>
-        <br>
-        ${ task.tags.map((item) => '<span style="color:#fff; padding: 2px; background-color:' + item.color + ';">' +item.name + '</span>').join(' ') }
-        <span>${ task.comments ? 'Commentaires : ' + task.comments : '' }</span>
-      `
-
-      let innerContent = $('<div />')
-      innerContent.html(popupContent)
-      innerContent.find('.task__edit').on('click', () => {
-        $('#task-edit-modal')
-          .load(
-            window.AppData.Dashboard.taskModalURL.replace('__TASK_ID__', task.id),
-            () => $('#task-edit-modal').modal({ show: true }))
-      })
+      const el = document.createElement('div') // $('<div />')[0]
+      render(<LeafletPopupContent
+        task={ task }
+        onEditClick={ () => {
+          $('#task-edit-modal')
+            .load(
+              window.AppData.Dashboard.taskModalURL.replace('__TASK_ID__', task.id),
+              () => $('#task-edit-modal').modal({ show: true })
+            )
+        }} />, el)
 
       const popup = L.popup()
-        .setContent(innerContent[0])
+        .setContent(el)
 
       marker.bindPopup(popup)
       this.taskMarkers.set(task['id'], marker)
