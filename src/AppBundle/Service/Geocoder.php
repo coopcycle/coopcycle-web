@@ -5,6 +5,8 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Service\SettingsManager;
+use Geocoder\Geocoder as GeocoderInterface;
+use Geocoder\Location;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
@@ -12,11 +14,16 @@ use Geocoder\Provider\Nominatim\Nominatim as NominatimProvider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\StatefulGeocoder;
 use Http\Adapter\Guzzle6\Client;
+use PredictHQ\AddressFormatter\Formatter as AddressFormatter;
 
 class Geocoder
 {
     private $geocoder;
+    private $addressFormatter;
 
+    /**
+     * FIXME Inject providers through constructor (needs a CompilerPass)
+     */
     public function __construct(SettingsManager $settingsManager, $country, $locale)
     {
         $httpClient = new Client();
@@ -37,6 +44,15 @@ class Geocoder
         }
 
         $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $locale);
+        $this->addressFormatter = new AddressFormatter();
+    }
+
+    /**
+     * Setter injection, used for tests.
+     */
+    public function setGeocoder(GeocoderInterface $geocoder)
+    {
+        $this->geocoder = $geocoder;
     }
 
     /**
@@ -53,11 +69,33 @@ class Geocoder
 
             $address = new Address();
             $address->setGeo(new GeoCoordinates($latitude, $longitude));
-            $address->setStreetAddress(sprintf('%s %s', $result->getStreetNumber(), $result->getStreetName()));
+            $address->setStreetAddress($this->formatAddress($result));
             $address->setAddressLocality($result->getLocality());
             $address->setPostalCode($result->getPostalCode());
 
             return $address;
         }
+    }
+
+    private function formatAddress(Location $location)
+    {
+        $data = [
+            'house_number' => $location->getStreetNumber(),
+            'road' => $location->getStreetName(),
+            'city' => $location->getLocality(),
+            'postcode' => $location->getPostalCode(),
+        ];
+
+        if (null !== $location->getCountry() && null !== $location->getCountry()->getCode()) {
+            $data['country_code'] = $location->getCountry()->getCode();
+        }
+
+        $streetAddress = $this->addressFormatter->formatArray($data);
+
+        // Convert address to single line
+        $lines = preg_split("/\r\n|\n|\r/", $streetAddress);
+        $lines = array_filter($lines);
+
+        return implode(', ', $lines);
     }
 }
