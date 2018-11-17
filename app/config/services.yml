@@ -4,9 +4,10 @@ parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
 
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
