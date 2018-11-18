@@ -13,7 +13,19 @@
 {{ form_start(form) }}
 
   {% if not form.vars.valid %}
-      {{ form_errors(form) }}
+    {{ form_errors(form) }}
+  {% endif %}
+
+  {% if form.confirm is defined %}
+    <div class="alert alert-warning">
+      <p class="text-center">
+        {% trans with { '%link%': path(product_new_route, { id: restaurant.id }) } %}form.product.confirm.help{% endtrans %}
+      </p>
+      <br>
+      <div class="text-center">
+        {{ form_widget(form.confirm, { attr: { class: 'btn-sm btn-success' } }) }}
+      </div>
+    </div>
   {% endif %}
 
   {{ form_row(form.name) }}

@@ -505,6 +505,11 @@ form.product.allergens.label: Allergènes
 form.product.allergens.help: Ce produit contient-il les allergènes suivants ?
 form.product.restricted_diets.label: Régimes restreints
 form.product.restricted_diets.help: Ce produit convient-il aux régimes alimentaires suivants ?
+form.product.confirm.label: Confirmer la modification
+form.product.confirm.help: |
+  Vous avez modifié le nom du produit. S'il s'agit d'une <strong>modification mineure</strong> (faute d'orthographe, majuscule…), cliquez sur « Confirmer la modification ».
+  <br>
+  Dans le cas contraire, vous devez <a href="%link%">créer un nouveau produit</a>, afin de pouvoir distinguer les produits vendus et conserver un historique.
 
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Calcul du prix

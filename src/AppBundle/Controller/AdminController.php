@@ -74,6 +74,7 @@ class AdminController extends Controller
             'menu_taxon' => 'admin_restaurant_menu_taxon',
             'products' => 'admin_restaurant_products',
             'product_options' => 'admin_restaurant_product_options',
+            'product_new' => 'admin_restaurant_product_new',
             'dashboard' => 'admin_restaurant_dashboard',
             'planning' => 'admin_restaurant_planning',
             'stripe_oauth_redirect' => 'admin_restaurant_stripe_oauth_redirect',

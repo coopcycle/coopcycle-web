@@ -17,6 +17,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
@@ -37,6 +38,7 @@ class ProductType extends AbstractType
     private $productAttributeRepository;
     private $productAttributeValueFactory;
     private $localeProvider;
+    private $hasChangedName = false;
 
     public function __construct(
         ProductVariantFactoryInterface $variantFactory,
@@ -133,6 +135,47 @@ class ProductType extends AbstractType
             $this->postSetDataEnumAttribute($product, 'ALLERGENS', $form->get('allergens'));
 
             $this->postSetDataEnumAttribute($product, 'RESTRICTED_DIETS', $form->get('restrictedDiets'));
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $product = $form->getData();
+            $name = $data['name'];
+
+            // Skip new products
+            if (null === $product->getId()) {
+                return;
+            }
+
+            // Skip if name has not changed
+            if ($name === $product->getName()) {
+                return;
+            }
+
+            $form->add('confirm', SubmitType::class, [
+                'label' => 'form.product.confirm.label',
+            ]);
+
+            // With PRE_SUBMIT we can't use isClicked()
+            if (isset($data['confirm'])) {
+                return;
+            }
+
+            // This will add an error to the "name" field
+            $this->hasChangedName = true;
+        });
+
+        $builder->get('name')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            if ($this->hasChangedName) {
+                $event->getForm()->addError(new FormError(
+                    $this->translator->trans('product.name.modified', [], 'validators'),
+                    'product.name.modified',
+                    []
+                ));
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {

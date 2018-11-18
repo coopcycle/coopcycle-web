@@ -26,3 +26,5 @@ delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
 
 time_range.empty: You have not selected any value
 time_range.no_weekday: You did not select a day of the week
+
+product.name.modified: You have changed the product name

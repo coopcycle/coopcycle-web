@@ -501,6 +501,11 @@ form.product.allergens.label: Alergenos
 form.product.allergens.help: ¿Este producto contiene los siguientes alérgenos?
 form.product.restricted_diets.label: Dietas restringidas
 form.product.restricted_diets.help: ¿Este producto se ajusta a las siguientes dietas?
+form.product.confirm.label: Confirmar cambios
+form.product.confirm.help: |
+  Has cambiado el nombre del producto. Si es una <strong>modificación menor</strong> (error de ortografía, mayúscula…), haga clic en « Confirmar cambios ».
+  <br>
+  Si no, debe <a href="%link%">crear un nuevo producto</a>, para que pueda distinguir los productos que vende y mantener un historial.
 
 form.product_option.name.label: Nombre
 form.product_option.strategy.label: Cálculo del precio

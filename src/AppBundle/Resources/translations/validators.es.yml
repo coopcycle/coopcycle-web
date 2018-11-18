@@ -26,3 +26,5 @@ delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior 
 
 time_range.empty: No seleccionó ningún valor
 time_range.no_weekday: No seleccionó un día de la semana
+
+product.name.modified: Has cambiado el nombre del producto
