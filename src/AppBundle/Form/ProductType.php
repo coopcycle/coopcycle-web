@@ -208,6 +208,10 @@ class ProductType extends AbstractType
 
                 $variant->setPrice($price);
                 $variant->setTaxCategory($taxCategory);
+
+                foreach ($product->getVariants() as $variant) {
+                    $variant->setName($product->getName());
+                }
             }
 
             $this->postSubmitEnumAttribute($product, 'ALLERGENS', $form->get('allergens')->getData());
