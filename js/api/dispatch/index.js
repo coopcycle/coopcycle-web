@@ -58,19 +58,19 @@ _.each(channels, (channel) => { sub.prefixedSubscribe(channel) })
 
 
 sub.on('subscribe', (channel, count) => {
-  if (count === channels.length) {
-    sub.on('message', function(channelWithPrefix, message) {
-      const parsedMessage = JSON.parse(message),
-            username = parsedMessage.user.username
-      _.each(channels, (channel) => {
-        if (sub.isChannel(channelWithPrefix, channel) && couriersList[username]) {
-          winston.debug(`Sending message ${message} to ${username}`)
-          parsedMessage.type = channel
-          couriersList[username].send(JSON.stringify(parsedMessage))
-        }
-      })
-    })
-  }
+  // if (count === channels.length) {
+  //   sub.on('message', function(channelWithPrefix, message) {
+  //     const parsedMessage = JSON.parse(message),
+  //           username = parsedMessage.user.username
+  //     _.each(channels, (channel) => {
+  //       if (sub.isChannel(channelWithPrefix, channel) && couriersList[username]) {
+  //         winston.debug(`Sending message ${message} to ${username}`)
+  //         parsedMessage.type = channel
+  //         couriersList[username].send(JSON.stringify(parsedMessage))
+  //       }
+  //     })
+  //   })
+  // }
 })
 
 // WebSocket server
