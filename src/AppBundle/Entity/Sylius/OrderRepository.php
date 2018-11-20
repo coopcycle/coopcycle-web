@@ -24,7 +24,9 @@ class OrderRepository extends BaseOrderRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
-            ->where('DATE(o.shippedAt) = :date')
+            ->andWhere('o.state != :state')
+            ->andWhere('DATE(o.shippedAt) = :date')
+            ->setParameter('state', OrderInterface::STATE_CART)
             ->setParameter('date', $date->format('Y-m-d'));
 
         return $qb->getQuery()->getResult();
