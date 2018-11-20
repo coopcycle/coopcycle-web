@@ -4,6 +4,7 @@ namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -36,6 +37,13 @@ class PostSoftDeleteSubscriber implements EventSubscriber
 
             foreach ($productTaxons as $productTaxon) {
                 $unitOfWork->scheduleForDelete($productTaxon);
+            }
+
+            // FIXME Use OrderItemInterface
+            $cartItems = $objectManager->getRepository(OrderItem::class)->findCartItemsByProduct($entity);
+
+            foreach ($cartItems as $cartItem) {
+                $unitOfWork->scheduleForDelete($cartItem);
             }
 
             $unitOfWork->computeChangeSets();

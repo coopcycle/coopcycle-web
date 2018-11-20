@@ -239,6 +239,7 @@ sylius_order:
         order_item:
             classes:
                 model: AppBundle\Entity\Sylius\OrderItem
+                repository: AppBundle\Entity\Sylius\OrderItemRepository
 
 sylius_product:
     resources:
