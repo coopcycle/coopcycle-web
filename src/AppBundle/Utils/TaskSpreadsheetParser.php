@@ -71,6 +71,12 @@ class TaskSpreadsheetParser
                     $header = $row;
                     continue;
                 }
+
+                // Verify that the row is not completely empty
+                if (0 === count(array_filter($row))) {
+                    continue;
+                }
+
                 $data[] = $row;
             }
         }
@@ -78,6 +84,12 @@ class TaskSpreadsheetParser
         $this->validateHeader($header);
 
         $data = array_map(function ($row) use ($header) {
+
+            // Fix the file structure if some columns are "merged"
+            if (count($row) < count($header)) {
+                $row = array_pad($row, count($header), '');
+            }
+
             return array_combine($header, $row);
         }, $data);
 
