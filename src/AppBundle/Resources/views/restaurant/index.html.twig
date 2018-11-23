@@ -226,7 +226,7 @@ $('form[data-product-options] input[type="radio"]').on('click', function(e) {
   _paq.push(['trackEvent', 'Checkout', 'selectOption']);
 
   if ($options.length === checkedOptionsCount) {
-    $(this).closest('form').find('button[type="submit"]').attr('disabled', false);
+    $(this).closest('form').find('button[type="submit"]').prop('disabled', false);
   }
 });
 
@@ -255,7 +255,7 @@ $('.modal').on('shown.bs.modal', function(e) {
   if ($form.length === 1) {
     var $options = $form.find('[data-product-option]');
     var disabled = $options.length > 0;
-    $form.find('button[type="submit"]').attr('disabled', disabled);
+    $form.find('button[type="submit"]').prop('disabled', disabled);
   }
 });
 
