@@ -1,12 +1,18 @@
 imports:
     - { resource: config_dev.yml }
 
+# Use a parameter to completely overwrite framework.assets.base_urls
+parameters:
+  assets_base_urls: [ "%env(string:ASSETS_BASE_URL)%" ]
+
 framework:
     test: ~
     session:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
+    assets:
+        base_urls: "%assets_base_urls%"
 
 doctrine:
     dbal:

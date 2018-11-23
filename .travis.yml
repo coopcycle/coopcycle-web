@@ -24,6 +24,7 @@ env:
     - SYMFONY_ENV=test
     - NODE_ENV=test
     - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://127.0.0.1:8080","sessions":{"selenium2":{"selenium2":{"wd_host":"http://localhost:4444/wd/hub"}}}}}}'
+    - ASSETS_BASE_URL=http://127.0.0.1:8080
 
 before_install:
   - sudo apt-get update -qq
@@ -65,12 +66,10 @@ before_script:
   - curl -sS https://getcomposer.org/installer | php -- --version=1.7.2
   - php composer.phar install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
-  # - psql -U postgres -d coopcycle_test -f tests/AppBundle/Resources/sql/restaurants.sql > /dev/null
+  - node_modules/.bin/encore dev
   - php bin/console server:start 127.0.0.1:8080
   - cp phpunit.xml.dist phpunit.xml
-  # Install JavaScript stuff
   - pm2 start pm2.config.js --env=test
-  # - node_modules/.bin/webpack -p
 
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'

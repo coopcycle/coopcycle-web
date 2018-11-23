@@ -105,6 +105,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $environment = $scope->getEnvironment();
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
+        $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
+    }
+
+    private function getSession()
+    {
+        return $this->minkContext->getSession();
     }
 
     /**
@@ -668,5 +674,159 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
 
         Assert::assertEquals($count, count($restaurant->getClosingRules()));
+    }
+
+    private function findVisibleProductModal()
+    {
+        $session = $this->getSession();
+
+        $modal = $session->getPage()->waitFor(10, function($page) {
+            // FIXME The .modal selector is too general
+            foreach ($page->findAll('css', '.modal') as $modal) {
+                if ($modal->isVisible()) {
+                    return $modal;
+                }
+            }
+
+            return false;
+        });
+
+        return $modal;
+    }
+
+    /**
+     * @Then the product options modal should appear
+     */
+    public function assertProductOptionsModalVisible()
+    {
+        $modal = $this->findVisibleProductModal();
+
+        Assert::assertTrue($modal->isVisible());
+    }
+
+    /**
+     * @Then the address modal should appear
+     */
+    public function assertAddressModalVisible()
+    {
+        $session = $this->getSession();
+
+        $modal = $session->getPage()->waitFor(10, function($page) {
+
+            return $page->find('css', '.ReactModal__Content--enter-address');
+        });
+
+        Assert::assertNotNull($modal);
+        Assert::assertTrue($modal->isVisible());
+    }
+
+    /**
+     * @Given I check all the mandatory product options
+     */
+    public function checkAllMandatoryProductOptions()
+    {
+        $modal = $this->findVisibleProductModal();
+
+        Assert::assertTrue($modal->isVisible());
+
+        $form = $modal->find('css', 'form');
+
+        $listGroups = $form->findAll('css', '.list-group');
+
+        foreach ($listGroups as $listGroup) {
+            $optionName = $listGroup->find('css', 'input[type="radio"]')->getAttribute('name');
+
+            $optionValues = [];
+            foreach ($listGroup->findAll('css', 'input[type="radio"]') as $radio) {
+                $optionValues[] = $radio->getAttribute('value');
+            }
+
+            $listGroup->selectFieldOption($optionName, current($optionValues));
+        }
+    }
+
+    /**
+     * @Given I submit the product options modal
+     */
+    public function submitProductOptionsModal()
+    {
+        $modal = $this->findVisibleProductModal();
+
+        $modal->find('css', 'form button[type="submit"]')->press();
+    }
+
+    /**
+     * @Then a product should be added to the cart
+     */
+    public function assertProductAddedToCart()
+    {
+        $session = $this->getSession();
+
+        $cart = $session->getPage()->find('css', '#cart');
+
+        $cartItem = $cart->waitFor(10, function($cart) {
+
+            $cartItems = $cart->findAll('css', '.cart__items .cart__item');
+
+            return count($cartItems) > 0 ? current($cartItems) : false;
+        });
+
+        Assert::assertNotNull($cartItem);
+    }
+
+    /**
+     * @Given I click on restaurant :name
+     */
+    public function clickRestaurant($name)
+    {
+        $session = $this->getSession();
+
+        $restaurants = $session->getPage()->findAll('css', '.restaurant-list .restaurant-item');
+
+        foreach ($restaurants as $restaurant) {
+            $restaurantName = $restaurant->find('css', '.caption > h4')->getText();
+
+            if ($restaurantName === $name) {
+                $restaurant->click();
+                return;
+            }
+        }
+
+        throw new \Exception(sprintf('Restaurant with name "%s" was not found in page', $name));
+    }
+
+    /**
+     * @Given I click on menu item :name
+     */
+    public function clickMenuItem($name)
+    {
+        $session = $this->getSession();
+
+        $menuItems = $session->getPage()->findAll('css', '.menu-item');
+
+        foreach ($menuItems as $menuItem) {
+            $menuItemName = $menuItem->find('css', '.menu-item-content')->getText();
+
+            if ($menuItemName === $name) {
+                $menuItem->click();
+                return;
+            }
+        }
+
+        throw new \Exception(sprintf('Menu item with name "%s" was not found in page', $name));
+    }
+
+    /**
+     * @Then the product options modal submit button should not be disabled
+     */
+    public function assertProductOptionsModalSubmitButtonNotDisabled()
+    {
+        $modal = $this->findVisibleProductModal();
+
+        Assert::assertTrue($modal->isVisible());
+
+        $button = $modal->find('css', 'form button[type="submit"]');
+
+        Assert::assertFalse($button->hasAttribute('disabled'));
     }
 }
