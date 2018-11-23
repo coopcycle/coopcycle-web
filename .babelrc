@@ -9,8 +9,7 @@
         ],
         "uglify": true
       },
-      "useBuiltIns": true,
-      "debug": true
+      "useBuiltIns": true
     }],
     "react"
   ],
