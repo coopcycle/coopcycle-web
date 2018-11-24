@@ -84,6 +84,18 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Cheeseburger
     code: CHEESEBURGER_DEFAULT
     price: 1200
+  cheesecake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Cheese Cake
+    code: CHEESECAKE_DEFAULT
+    price: 800
+  carrotcake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Carrot Cake
+    code: CARROTCAKE_DEFAULT
+    price: 600
 
 AppBundle\Entity\Sylius\Product:
   pizza_margherita:
@@ -116,6 +128,20 @@ AppBundle\Entity\Sylius\Product:
     enabled: true
     variants: [ "@cheeseburger_default" ]
     options: [ "@hamburger_accompaniment", "@hamburger_drink" ]
+  cheesecake:
+    code: CHEESECAKE
+    currentLocale: fr
+    name: Cheese Cake
+    slug: cheesecake
+    enabled: true
+    variants: [ "@cheesecake_default" ]
+  carrotcake:
+    code: CARROTCAKE
+    currentLocale: fr
+    name: Carrot Cake
+    slug: carrotcake
+    enabled: true
+    variants: [ "@carrotcake_default" ]
 
 # Menus
 
@@ -128,6 +154,14 @@ AppBundle\Entity\Sylius\Taxon:
     __calls:
       - addProduct: [ "@hamburger" ]
       - addProduct: [ "@cheeseburger" ]
+  crazy_hamburger_section_desserts:
+    code: CRAZY_HAMBURGER_DESSERTS
+    currentLocale: fr
+    slug: crazy-hamburger-desserts
+    name: Desserts
+    __calls:
+      - addProduct: [ "@cheesecake" ]
+      - addProduct: [ "@carrotcake" ]
   crazy_hamburger_menu:
     code: CRAZY_HAMBURGER_ROOT
     currentLocale: fr
@@ -135,6 +169,7 @@ AppBundle\Entity\Sylius\Taxon:
     name: Default
     __calls:
       - addChild: [ "@crazy_hamburger_section_menus" ]
+      - addChild: [ "@crazy_hamburger_section_desserts" ]
   pizza_express_section_pizzas:
     code: PIZZA_EXPRESS_PIZZAS
     currentLocale: fr
