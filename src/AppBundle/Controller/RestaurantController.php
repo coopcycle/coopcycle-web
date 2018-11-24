@@ -402,6 +402,15 @@ class RestaurantController extends Controller
 
         $this->get('sylius.order_modifier')->addToOrder($cart, $cartItem);
 
+        // FIXME
+        // There is a possible race condition in the workflow
+        // When a product is added to the cart before the first AJAX call has finished
+        // Make sure there is a shipping date
+        if (null === $cart->getShippedAt()) {
+            $availabilities = $this->getAvailabilities($cart);
+            $cart->setShippedAt(new \DateTime(current($availabilities)));
+        }
+
         $this->get('sylius.manager.order')->persist($cart);
         $this->get('sylius.manager.order')->flush();
 
