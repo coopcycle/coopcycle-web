@@ -8,7 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
-use AppBundle\Form\StripePaymentType;
+use AppBundle\Form\Checkout\CheckoutPaymentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -73,7 +73,7 @@ class OrderController extends Controller
 
         $orderManager = $this->get('coopcycle.order_manager');
 
-        $form = $this->createForm(StripePaymentType::class);
+        $form = $this->createForm(CheckoutPaymentType::class, $order);
 
         $parameters =  [
             'order' => $order,
@@ -88,7 +88,7 @@ class OrderController extends Controller
             $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
             $this->get('command_bus')->handle(
-                new CheckoutCommand($order, $form->get('stripeToken')->getData())
+                new CheckoutCommand($order, $form->get('stripePayment')->get('stripeToken')->getData())
             );
 
             $this->get('sylius.manager.order')->flush();

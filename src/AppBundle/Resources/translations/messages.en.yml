@@ -229,6 +229,7 @@ order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
 order.total_including_tax: Total (tax incl.)
 order.total_tax: Taxes
+order.shipping_date.title: Your shipping date
 order.payment.title: Your payment informations
 order.payment.expiration.label: Expiration
 order.payment.month.label: Month
@@ -560,6 +561,7 @@ basics.price: Price
 basics.tax_category: VAT
 basics.export: Export
 basics.name: Name
+basics.today: Today
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
