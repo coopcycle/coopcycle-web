@@ -1,0 +1,7 @@
+AppBundle\Entity\Sylius\Order:
+  properties:
+    shippedAt:
+      # - AppBundle\Validator\Constraints\FutureDate: { groups: [ Checkout ] }
+      - AppBundle\Validator\Constraints\ShippingDate: { groups: [ Checkout ] }
+    total:
+      - AppBundle\Validator\Constraints\MinimumAmount: { groups: [ Checkout ] }

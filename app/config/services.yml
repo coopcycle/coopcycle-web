@@ -617,6 +617,12 @@ services:
     tags:
       - { name: validator.constraint_validator }
 
+  'AppBundle\Validator\Constraints\ShippingDateValidator':
+    arguments:
+      - '@coopcycle.shipping_date_filter'
+    tags:
+      - { name: validator.constraint_validator }
+
   'AppBundle\EventListener\TaskCollectionSubscriber':
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
     tags:

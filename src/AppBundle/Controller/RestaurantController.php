@@ -205,7 +205,9 @@ class RestaurantController extends Controller
 
         $cart = $this->get('sylius.context.cart')->getCart();
 
-        $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm = $this->createForm(CartType::class, $cart, [
+            'validation_groups' => 'Checkout'
+        ]);
 
         if ($request->isMethod('POST')) {
 

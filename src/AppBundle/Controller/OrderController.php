@@ -43,9 +43,12 @@ class OrderController extends Controller
             $this->get('sylius.manager.order')->flush();
         }
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $form = $this->createForm(CheckoutAddressType::class, $order, [
+            'validation_groups' => ['Checkout']
+        ]);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->get('sylius.manager.order')->flush();
 

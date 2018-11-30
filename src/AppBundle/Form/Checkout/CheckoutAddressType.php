@@ -49,7 +49,7 @@ class CheckoutAddressType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            $violations = $this->validator->validate($data);
+            $violations = $this->validator->validate($data, null, ['Checkout']);
 
             $hasShippedAt = false;
             $shippedAtErrorMessage = null;
