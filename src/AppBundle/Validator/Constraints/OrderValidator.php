@@ -5,6 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Entity\Address;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Utils\ShippingDateFilter;
 use Carbon\Carbon;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
@@ -14,13 +15,17 @@ use Symfony\Component\Validator\ConstraintValidator;
 class OrderValidator extends ConstraintValidator
 {
     private $routing;
-
     private $expressionLanguage;
+    private $shippingDateFilter;
 
-    public function __construct(RoutingInterface $routing, ExpressionLanguage $expressionLanguage)
+    public function __construct(
+        RoutingInterface $routing,
+        ExpressionLanguage $expressionLanguage,
+        ShippingDateFilter $shippingDateFilter)
     {
         $this->routing = $routing;
         $this->expressionLanguage = $expressionLanguage;
+        $this->shippingDateFilter = $shippingDateFilter;
     }
 
     private function isAddressValid(Address $address)
@@ -106,13 +111,25 @@ class OrderValidator extends ConstraintValidator
         $order = $object;
         $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
 
-        if ($isNew && $order->getShippedAt() < $now) {
-            $this->context->buildViolation($constraint->dateHasPassedMessage)
-                ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
-                ->atPath('shippedAt')
-                ->addViolation();
+        if ($isNew) {
 
-            return;
+            if ($order->getShippedAt() < $now) {
+                $this->context->buildViolation($constraint->shippedAtExpiredMessage)
+                    ->atPath('shippedAt')
+                    ->addViolation();
+
+                return;
+            }
+
+            if (null !== $order->getRestaurant()) {
+                if (false === $this->shippingDateFilter->accept($order, $order->getShippedAt(), $now)) {
+                    $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
+                        ->atPath('shippedAt')
+                        ->addViolation();
+
+                    return;
+                }
+            }
         }
 
         if (null !== $order->getRestaurant()) {

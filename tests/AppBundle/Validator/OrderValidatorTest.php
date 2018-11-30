@@ -8,6 +8,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use AppBundle\Validator\Constraints\OrderValidator;
@@ -18,17 +19,24 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 class OrderValidatorTest extends ConstraintValidatorTestCase
 {
     protected $routing;
+    protected $shippingDateFilter;
 
     public function setUp()
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
 
         parent::setUp();
     }
 
     protected function createValidator()
     {
-        return new OrderValidator($this->routing->reveal(), new ExpressionLanguage());
+        return new OrderValidator(
+            $this->routing->reveal(),
+            new ExpressionLanguage(),
+            $this->shippingDateFilter->reveal(),
+            'en'
+        );
     }
 
     private function prophesizeGetRawResponse(GeoCoordinates $origin, GeoCoordinates $destination, $distance, $duration)
@@ -191,12 +199,17 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $duration = 300
         );
 
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
+        $order = $order->reveal();
 
-        $this->buildViolation($constraint->dateHasPassedMessage)
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(false);
+
+        $constraint = new OrderConstraint();
+        $violations = $this->validator->validate($order, $constraint);
+
+        $this->buildViolation($constraint->shippedAtExpiredMessage)
             ->atPath('property.path.shippedAt')
-            ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
             ->assertRaised();
     }
 
@@ -246,12 +259,77 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
             $duration = 300
         );
 
-        $constraint = new OrderConstraint();
-        $violations = $this->validator->validate($order->reveal(), $constraint);
+        $order = $order->reveal();
 
-        $this->buildViolation($constraint->dateHasPassedMessage)
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(false);
+
+        $constraint = new OrderConstraint();
+        $violations = $this->validator->validate($order, $constraint);
+
+        $this->buildViolation($constraint->shippedAtExpiredMessage)
             ->atPath('property.path.shippedAt')
-            ->setParameter('%date%', $shippedAt->format('Y-m-d H:i:s'))
+            ->assertRaised();
+    }
+
+    public function testShippedAtNotAvailableWithExistingOrderValidation()
+    {
+        $shippedAt = new \DateTime();
+        $shippedAt->modify('+10 minutes');
+
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $shippingAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+        $restaurant
+            ->isOpen($shippedAt)
+            ->willReturn(true);
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress->reveal()
+        );
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getState()
+            ->willReturn(Order::STATE_CART);
+        $order
+            ->getShippedAt()
+            ->willReturn($shippedAt);
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $distance = 2500,
+            $duration = 300
+        );
+
+        $order = $order->reveal();
+
+        $this->shippingDateFilter
+            ->accept($order, $shippedAt, Argument::type(\DateTime::class))
+            ->willReturn(false);
+
+        $constraint = new OrderConstraint();
+        $violations = $this->validator->validate($order, $constraint);
+
+        $this->buildViolation($constraint->shippedAtNotAvailableMessage)
+            ->atPath('property.path.shippedAt')
             ->assertRaised();
     }
 
