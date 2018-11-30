@@ -13,4 +13,7 @@ RUN npm install
 COPY docker/nodejs/start.sh /
 COPY docker/nodejs/run-tests.sh /
 
+RUN chmod +x /start.sh
+RUN chmod +x /run-tests.sh
+
 ENTRYPOINT ["/start.sh"]
