@@ -416,6 +416,16 @@ services:
       - '@translator'
     tags: [ form.type ]
 
+  'AppBundle\Form\Checkout\CheckoutAddressType':
+    arguments:
+      - '@validator'
+    tags: [ form.type ]
+
+  'AppBundle\Form\Checkout\DateTimeType':
+    arguments:
+      - '@coopcycle.shipping_date_filter'
+    tags: [ form.type ]
+
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
@@ -595,7 +605,10 @@ services:
       - { name: validator.constraint_validator }
 
   'AppBundle\Validator\Constraints\OrderValidator':
-    arguments: [ '@routing_service', '@coopcycle.expression_language' ]
+    arguments:
+      - '@routing_service'
+      - '@coopcycle.expression_language'
+      - '@coopcycle.shipping_date_filter'
     tags:
       - { name: validator.constraint_validator }
 
