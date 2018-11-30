@@ -9,15 +9,13 @@ restaurant.menu.notSet: Create and activate a menu
 address.tooFar: This address is too far
 address.notSet: Please enter the delivery address
 
-cart.date.tooSoon: This date is too soon
 cart.address.empty: Please select an address
 cart.empty: Your cart is empty
 
 order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%€
 
-delivery.date.restaurantClosed: Restaurant is closed at %date%
-delivery.date.hasPassed: Date %date% has passed
-delivery.date.tooSoon: Date %date% is too soon
+order.shippedAt.expired: L'horaire de livraison est dépassé
+order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible
 
 delivery.price.error.priceCalculation: The delivery price could not be calculated.
 

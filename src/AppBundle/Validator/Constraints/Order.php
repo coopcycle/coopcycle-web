@@ -13,7 +13,8 @@ class Order extends Constraint
     public $restaurantClosedMessage = 'delivery.date.restaurantClosed';
     public $addressTooFarMessage = 'address.tooFar';
     public $addressNotSetMessage = 'address.notSet';
-    public $dateHasPassedMessage = 'delivery.date.hasPassed';
+    public $shippedAtExpiredMessage = 'order.shippedAt.expired';
+    public $shippedAtNotAvailableMessage = 'order.shippedAt.notAvailable';
 
     public function validatedBy()
     {
