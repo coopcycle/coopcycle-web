@@ -14,3 +14,8 @@ Feature: Checkout
     And I submit the product options modal
     Then a product should be added to the cart
     And the address modal should appear
+    Given I enter address "91 rue de rivoli" in the address modal
+    Then I should see address suggestions in the address modal
+    Given I select the first address suggestion in the address modal
+    Then the address modal should disappear
+    And the cart address picker should contain "91 Rue de Rivoli, Paris, France"

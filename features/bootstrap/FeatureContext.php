@@ -841,4 +841,109 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         Assert::assertFalse($button->hasAttribute('disabled'));
     }
+
+    /**
+     * @Given I enter address :address in the address modal
+     */
+    public function enterAddressInModal($address)
+    {
+        $session = $this->getSession();
+
+        $modal = $session->getPage()->waitFor(10, function($page) {
+
+            return $page->find('css', '.ReactModal__Content--enter-address');
+        });
+
+        Assert::assertNotNull($modal);
+        Assert::assertTrue($modal->isVisible());
+
+        // We can't use setValue for autocomplete because we lose focus
+        // Instead, we use low level method postValue
+        // @see https://github.com/Behat/MinkExtension/issues/257
+
+        $xpath = $this->getSession()->getSelectorsHandler()
+            ->selectorToXpath('css', '.ReactModal__Content--enter-address input[type="text"]');
+
+        $this->getSession()
+            ->getDriver()
+            ->getWebDriverSession()
+            ->element('xpath', $xpath)
+            ->postValue(['value' => [$address]]);
+    }
+
+    /**
+     * @Then I should see address suggestions in the address modal
+     */
+    public function assertAddressSuggestionsInModal()
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .autocomplete-wrapper');
+
+        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
+
+            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+
+            return count($suggestions) > 0 ? $suggestions : false;
+        });
+
+        Assert::assertNotCount(0, $suggestions);
+    }
+
+    /**
+     * @Given I select the first address suggestion in the address modal
+     */
+    public function selectFirstAddressSuggestionInModal()
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .autocomplete-wrapper');
+
+        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
+
+            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+
+            return count($suggestions) > 0 ? $suggestions : false;
+        });
+
+        Assert::assertNotCount(0, $suggestions);
+
+        // FIXME Use :nth-child selector to be more strict
+        $firstSuggestion = current($suggestions);
+
+        $firstSuggestion->click();
+    }
+
+    /**
+     * @Then the address modal should disappear
+     */
+    public function assertAddressModalNotVisible()
+    {
+        $session = $this->getSession();
+
+        $timeout = 5;
+
+        $isHidden = $session->getPage()->waitFor($timeout, function($page) {
+
+            $modal = $page->find('css', '.ReactModal__Content--enter-address');
+
+            return null === $modal;
+        });
+
+        Assert::assertTrue($isHidden, sprintf('Address modal is still visible after %d seconds', $timeout));
+    }
+
+    /**
+     * @Then the cart address picker should contain :value
+     */
+    public function assertCartAddressPickerHasValue($value)
+    {
+        $session = $this->getSession();
+
+        $cart = $session->getPage()->find('css', '#cart');
+        $addressPicker = $cart->find('css', '.autocomplete-wrapper');
+        $addressPickerInput = $addressPicker->find('css', 'input[type="text"]');
+
+        Assert::assertEquals($value, $addressPickerInput->getValue());
+    }
 }
