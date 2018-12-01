@@ -4,7 +4,12 @@ Feature: Checkout
   Scenario: Order something at restaurant
     Given the fixtures files are loaded:
       | restaurants_standalone.yml |
+    And the user is loaded:
+      | email    | bob@demo.coopcycle.org |
+      | username | bob                    |
+      | password | 123456                 |
     And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "administrator_email" has value "admin@demo.coopcycle.org"
     Given I am on "/fr"
     And I click on restaurant "Crazy Hamburger"
     And I click on menu item "Cheeseburger"
@@ -22,3 +27,11 @@ Feature: Checkout
     Given I click on menu item "Cheese Cake"
     Then the product "Cheese Cake" should be added to the cart
     And the cart submit button should not be disabled
+    Given I submit the cart
+    Then I should be on "/login"
+    Given I login with username "bob" and password "123456"
+    Then I should be on "/order/"
+    Given I press "Commander"
+    Then I should be on "/order/payment"
+    Given I enter test credit card details
+    Then the url should match "/profile/orders/\d+"

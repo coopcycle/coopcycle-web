@@ -790,7 +790,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $cart = $session->getPage()->find('css', '#cart');
 
-        $cartItem = $cart->waitFor(15, function($cart) use ($name) {
+        // FIXME For stability, we should check if loading has finished
+
+        $cartItem = $cart->waitFor(30, function($cart) use ($name) {
 
             $cartItems = $cart->findAll('css', '.cart__items .cart__item');
             if (count($cartItems) === 0) {
@@ -1023,10 +1025,54 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $session->switchToIframe($iframe->getAttribute('name'));
 
-        $this->minkContext->fillField('cardnumber', '4242424242424242');
-        $this->minkContext->fillField('exp-date', date('m / y', strtotime('+1 month')));
+        // The Stripe element doesn't work when typing too fast,
+        // then we fill the field "slowly"
+        // @see https://stackoverflow.com/questions/52608566/selenium-send-keys-incorrect-order-in-stripe-credit-card-input
+        // @see https://gist.github.com/nruth/b2500074749e9f56e0b7
+
+        $xpath = $session->getSelectorsHandler()
+            ->selectorToXpath('css', 'input[name="cardnumber"]');
+
+        $pieces = str_split('4242424242424242', 2);
+        foreach ($pieces as $text) {
+            $session
+                ->getDriver()
+                ->getWebDriverSession()
+                ->element('xpath', $xpath)
+                ->postValue(['value' => [$text]]);
+
+            $session->wait(250);
+        }
+
+        $expMonth = date('m', strtotime('+1 month'));
+        $expYear = date('y', strtotime('+1 month'));
+
+        $xpath = $session->getSelectorsHandler()
+            ->selectorToXpath('css', 'input[name="exp-date"]');
+
+        $session
+            ->getDriver()
+            ->getWebDriverSession()
+            ->element('xpath', $xpath)
+            ->postValue(['value' => ["{$expMonth}"]]);
+
+        $session->wait(250);
+
+        $session
+            ->getDriver()
+            ->getWebDriverSession()
+            ->element('xpath', $xpath)
+            ->postValue(['value' => ["{$expYear}"]]);
+
+        $session->wait(250);
+
         $this->minkContext->fillField('cvc', '123');
 
         $session->switchToIframe();
+
+        $session->getPage()->find('css', 'form[name="checkout_payment"] button[type="submit"]')->click();
+
+        // FIXME There should be a better way
+        $session->wait(5000);
     }
 }
