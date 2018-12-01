@@ -163,6 +163,20 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @BeforeScenario @javascript
+     */
+    public function setStripeCredentialsSetting()
+    {
+        // TODO Verify the environment variables exist
+        $stripePublishableKey = getenv('STRIPE_PUBLISHABLE_KEY');
+        $stripeSecretKey = getenv('STRIPE_SECRET_KEY');
+
+        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
+        $settingsManager->set('stripe_test_publishable_key', $stripePublishableKey);
+        $settingsManager->set('stripe_test_secret_key', $stripeSecretKey);
+    }
+
+    /**
      * @Given the fixtures file :filename is loaded
      */
     public function theFixturesFileIsLoaded($filename)
@@ -776,7 +790,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $cart = $session->getPage()->find('css', '#cart');
 
-        $cartItem = $cart->waitFor(10, function($cart) use ($name) {
+        $cartItem = $cart->waitFor(15, function($cart) use ($name) {
 
             $cartItems = $cart->findAll('css', '.cart__items .cart__item');
             if (count($cartItems) === 0) {
@@ -785,7 +799,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             }
 
             foreach ($cartItems as $cartItem) {
-                $cartItemName = $cartItem->find('css', '.cart__item__heading span:first-child')->getText();
+                $cartItemName = $cartItem->find('css', '.cart__item__heading > span:first-of-type')->getText();
                 if ($cartItemName === $name) {
 
                     return $cartItem;
@@ -962,10 +976,57 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function assertCartSubmitButtonNotDisabled()
     {
+        $timeout = 5;
+
+        $isNotDisabled = $this->getSession()->getPage()->waitFor($timeout, function($page) {
+
+            $button = $page->find('css', '#cart .panel-body button[type="submit"]');
+
+            return false === $button->hasAttribute('disabled') && false === $button->hasClass('disabled');
+        });
+
+        Assert::assertTrue($isNotDisabled, sprintf('Submit button is still disabled after %d seconds', $timeout));
+    }
+
+    /**
+     * @Given I submit the cart
+     */
+    public function submitCart()
+    {
         $session = $this->getSession();
 
         $button = $session->getPage()->find('css', '#cart .panel-body button[type="submit"]');
 
-        Assert::assertFalse($button->hasAttribute('disabled'));
+        $button->click();
+    }
+
+    /**
+     * @Given I login with username :username and password :password
+     */
+    public function loginWithUsernameAndPassword($username, $password)
+    {
+        $this->minkContext->fillField('username', $username);
+        $this->minkContext->fillField('password', $password);
+        $this->minkContext->pressButton('_submit');
+    }
+
+    /**
+     * @Given I enter test credit card details
+     */
+    public function enterTestCreditCardDetails()
+    {
+        $session = $this->getSession();
+
+        $iframe = $session->getPage()->find('css', '.StripeElement iframe');
+
+        Assert::assertNotNull($iframe, 'Stripe iframe was not found on page');
+
+        $session->switchToIframe($iframe->getAttribute('name'));
+
+        $this->minkContext->fillField('cardnumber', '4242424242424242');
+        $this->minkContext->fillField('exp-date', date('m / y', strtotime('+1 month')));
+        $this->minkContext->fillField('cvc', '123');
+
+        $session->switchToIframe();
     }
 }
