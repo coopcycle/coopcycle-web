@@ -238,6 +238,8 @@ AppBundle\Entity\Restaurant:
     __calls:
       - addProduct: [ "@hamburger" ]
       - addProduct: [ "@cheeseburger" ]
+      - addProduct: [ "@cheesecake" ]
+      - addProduct: [ "@carrotcake" ]
       - addTaxon: [ "@crazy_hamburger_menu" ]
       - setMenuTaxon: [ "@crazy_hamburger_menu" ]
   pizza_express:
