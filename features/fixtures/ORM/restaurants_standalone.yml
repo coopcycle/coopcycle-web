@@ -232,7 +232,7 @@ AppBundle\Entity\Restaurant:
     name: Crazy Hamburger
     address: "@address_1"
     orderingDelayMinutes: 0
-    openingHours: ['Mo-Sa 09:30-23:30']
+    openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_1"
     __calls:
@@ -246,7 +246,7 @@ AppBundle\Entity\Restaurant:
     name: Pizza Express
     address: "@address_2"
     orderingDelayMinutes: 0
-    openingHours: ['Mo-Sa 09:30-23:30']
+    openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_2"
     __calls:
