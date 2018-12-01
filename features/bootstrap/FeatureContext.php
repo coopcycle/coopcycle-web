@@ -768,19 +768,29 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @Then a product should be added to the cart
+     * @Then the product :name should be added to the cart
      */
-    public function assertProductAddedToCart()
+    public function assertProductAddedToCart($name)
     {
         $session = $this->getSession();
 
         $cart = $session->getPage()->find('css', '#cart');
 
-        $cartItem = $cart->waitFor(10, function($cart) {
+        $cartItem = $cart->waitFor(10, function($cart) use ($name) {
 
             $cartItems = $cart->findAll('css', '.cart__items .cart__item');
+            if (count($cartItems) === 0) {
 
-            return count($cartItems) > 0 ? current($cartItems) : false;
+                return false;
+            }
+
+            foreach ($cartItems as $cartItem) {
+                $cartItemName = $cartItem->find('css', '.cart__item__heading span:first-child')->getText();
+                if ($cartItemName === $name) {
+
+                    return $cartItem;
+                }
+            }
         });
 
         Assert::assertNotNull($cartItem);
@@ -945,5 +955,17 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $addressPickerInput = $addressPicker->find('css', 'input[type="text"]');
 
         Assert::assertEquals($value, $addressPickerInput->getValue());
+    }
+
+    /**
+     * @Then the cart submit button should not be disabled
+     */
+    public function assertCartSubmitButtonNotDisabled()
+    {
+        $session = $this->getSession();
+
+        $button = $session->getPage()->find('css', '#cart .panel-body button[type="submit"]');
+
+        Assert::assertFalse($button->hasAttribute('disabled'));
     }
 }
