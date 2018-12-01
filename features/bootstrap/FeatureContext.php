@@ -151,6 +151,18 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @BeforeScenario @javascript
+     */
+    public function setGoogleApiKeySetting()
+    {
+        // TODO Verify the environment variable exists
+        $googleApiKey = getenv('GOOGLE_API_KEY');
+
+        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
+        $settingsManager->set('google_api_key', $googleApiKey);
+    }
+
+    /**
      * @Given the fixtures file :filename is loaded
      */
     public function theFixturesFileIsLoaded($filename)

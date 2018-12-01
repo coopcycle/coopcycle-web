@@ -41,3 +41,5 @@
 
 # docker-sync stuff
 .docker-sync
+
+.env
