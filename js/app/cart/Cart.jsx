@@ -156,6 +156,13 @@ class Cart extends React.Component
     this.setState(newState)
   }
 
+  isLoading() {
+
+    const { loading } = this.state
+
+    return loading
+  }
+
   onHeaderClick() {
     const toggled = !this.state.toggled
     window._paq.push(['trackEvent', 'Checkout', toggled ? 'openMobileCart' : 'closeMobileCart'])

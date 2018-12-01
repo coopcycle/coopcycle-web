@@ -14,6 +14,8 @@ let isXsDevice = $('.visible-xs').is(':visible')
 window.CoopCycle = window.CoopCycle || {}
 window._paq = window._paq || []
 
+let timeoutID = null
+
 class CartHelper {
 
   constructor(options = {}) {
@@ -104,6 +106,10 @@ class CartHelper {
     this.cartComponentRef.current.setLoading(loading)
   }
 
+  _isLoading() {
+    return this.cartComponentRef.current.isLoading()
+  }
+
   _onDateChange(date) {
     window._paq.push(['trackEvent', 'Checkout', 'changeDate']);
   }
@@ -162,24 +168,51 @@ class CartHelper {
 
   addProduct(url, quantity) {
     window._paq.push(['trackEvent', 'Checkout', 'addItem']);
-    this._setLoading(true)
-    $.post(url, {
-      quantity: quantity
-    })
-    .then(res => this.handleAjaxResponse(res))
-    .fail(e => this.handleAjaxResponse(e.responseJSON))
+
+    const waitFor = () => {
+      if (!this._isLoading()) {
+
+        this._setLoading(true)
+
+        $.post(url, {
+          quantity: quantity
+        })
+        .then(res => this.handleAjaxResponse(res))
+        .fail(e => this.handleAjaxResponse(e.responseJSON))
+
+        clearTimeout(timeoutID)
+      } else {
+        timeoutID = setTimeout(waitFor, 100)
+      }
+    }
+
+    waitFor()
   }
 
   addProductWithOptions(url, data, quantity) {
     window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions']);
-    this._setLoading(true)
-    data.push({
-      name: 'quantity',
-      value: quantity
-    })
-    $.post(url, data)
-      .then(res => this.handleAjaxResponse(res))
-      .fail(e => this.handleAjaxResponse(e.responseJSON))
+
+    const waitFor = () => {
+      if (!this._isLoading()) {
+
+        this._setLoading(true)
+
+        data.push({
+          name: 'quantity',
+          value: quantity
+        })
+
+        $.post(url, data)
+          .then(res => this.handleAjaxResponse(res))
+          .fail(e => this.handleAjaxResponse(e.responseJSON))
+
+        clearTimeout(timeoutID)
+      } else {
+        timeoutID = setTimeout(waitFor, 100)
+      }
+    }
+
+    waitFor()
   }
 
   removeCartItem(item) {
