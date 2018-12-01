@@ -224,6 +224,7 @@ services:
       - '@routing_service'
 
   coopcycle.shipping_date_filter:
+    public: true
     class: AppBundle\Utils\ShippingDateFilter
     arguments:
       - "@coopcycle.preparation_time_calculator"
