@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
-
+import i18n from '../i18n'
 import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
 import LocaleProvider from 'antd/lib/locale-provider'
@@ -256,7 +256,7 @@ export default class extends React.Component {
         <table className="table">
           <thead>
             <tr>
-              <th>Horaire</th>
+              <th>{i18n.t('OPENING_HOURS_TITLE')}</th>
               {_.map(weekdays, (weekday) => (
                 <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
               ))}
@@ -267,7 +267,7 @@ export default class extends React.Component {
             {_.map(this.state.rows, (row, key) => this.renderRow(row, key))}
           </tbody>
         </table>
-        <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>Ajouter</button>
+        <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
       </div>
     );
   }

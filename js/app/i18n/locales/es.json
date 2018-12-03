@@ -5,6 +5,8 @@
     "CART_EMPTY": "Tu cesta está vacía",
     "OPENING_HOURS_SINGLE": "Abierto el {{day}} de {{open}} a {{close}}",
     "OPENING_HOURS_RANGE": "Abierto de {{fromDay}} a {{toDay}}, de {{open}} a {{close}}",
+    "OPENING_HOURS_TITLE": "Horario de apertura",
+    "ADD_BUTON": "Añadir",
     "DATEPICKER_TODAY": "[Hoy]",
     "DATEPICKER_TOMORROW": "[Mañana]",
     "DASHBOARD_UNASSIGNED": "No asignado",
