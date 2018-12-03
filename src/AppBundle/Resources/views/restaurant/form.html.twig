@@ -9,6 +9,9 @@
 
 {% block content %}
 
+<div id="query-builder"></div>
+<button class="btn btn-default" id="get-rules">GET RULES</button>
+
 {% for message in app.flashes('notice') %}
   <div class="alert alert-success">
     {{ message }}
