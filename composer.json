@@ -17,6 +17,9 @@
     "autoload-dev": {
         "psr-4": { "Tests\\": "tests/" }
     },
+    "config": {
+        "process-timeout":0
+    },
     "require": {
         "php": "^7.2",
         "symfony/symfony": "3.4.*",

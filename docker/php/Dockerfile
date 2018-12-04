@@ -62,7 +62,7 @@ RUN chmod +x /usr/local/bin/docker-app-install-composer
 RUN set -xe \
     && apk add --no-cache --virtual .fetch-deps \
         openssl \
-    && docker-app-install-composer \
+    && sh /usr/local/bin/docker-app-install-composer \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
@@ -96,6 +96,7 @@ COPY web web/
 COPY docker/php/start.sh /usr/local/bin/docker-app-start
 
 RUN chmod +x /usr/local/bin/docker-app-start
+RUN chmod +x bin/demo
 
 # Needed to fix permissions error
 USER 82
@@ -104,4 +105,4 @@ RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
 RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
     && composer clear-cache
 
-CMD ["docker-app-start"]
+ENTRYPOINT ["docker-app-start"]
