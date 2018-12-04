@@ -112,6 +112,7 @@ class CartHelper {
 
   _onDateChange(date) {
     window._paq.push(['trackEvent', 'Checkout', 'changeDate']);
+    this._postCart();
   }
 
   _mapAddressToElements(address) {
