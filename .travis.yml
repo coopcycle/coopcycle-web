@@ -53,7 +53,7 @@ install:
   # Run Selenium using host networking
   # https://github.com/elgalu/docker-selenium#dns
   # https://docs.docker.com/network/host/
-  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium start
+  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium:3.141.59c start
 
 before_script:
   - phpenv config-rm xdebug.ini

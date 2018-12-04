@@ -5,6 +5,8 @@
     "CART_EMPTY": "Your cart is empty",
     "OPENING_HOURS_SINGLE": "Open on {{day}} from {{open}} to {{close}}",
     "OPENING_HOURS_RANGE": "Open from {{fromDay}} to {{toDay}}, from {{open}} to {{close}}",
+    "OPENING_HOURS_TITLE": "Opening hours",
+    "ADD_BUTON": "Add",
     "DATEPICKER_TODAY": "[Today]",
     "DATEPICKER_TOMORROW": "[Tomorrow]",
     "DASHBOARD_UNASSIGNED": "Unassigned",
