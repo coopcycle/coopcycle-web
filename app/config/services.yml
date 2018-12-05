@@ -28,6 +28,7 @@ services:
     arguments:
       - '@security.authorization_checker'
       - '@security.token_storage'
+      - '@crawler_detect'
       - '@snc_redis.default'
       - '@templating'
     tags:

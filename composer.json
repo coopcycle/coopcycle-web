@@ -89,7 +89,8 @@
         "simple-bus/symfony-bridge": "^5.1",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
         "jmose/command-scheduler-bundle": "^2.0",
-        "predicthq/address-formatter": "^1.1"
+        "predicthq/address-formatter": "^1.1",
+        "nmure/crawler-detect-bundle": "^1.0.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

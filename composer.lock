@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fec479005c85ab73c0dbf93b21828240",
+    "content-hash": "806eeb072712a14e5d114bc0d7ff9b24",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3699,6 +3699,55 @@
             "time": "2018-05-29T14:19:03+00:00"
         },
         {
+            "name": "jaybizzle/crawler-detect",
+            "version": "v1.2.74",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JayBizzle/Crawler-Detect.git",
+                "reference": "e5fbc685383a4b8f49183b3a646b193491cc14c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/e5fbc685383a4b8f49183b3a646b193491cc14c5",
+                "reference": "e5fbc685383a4b8f49183b3a646b193491cc14c5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8|^5.5|^6.5",
+                "satooshi/php-coveralls": "1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jaybizzle\\CrawlerDetect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mark Beech",
+                    "email": "m@rkbee.ch",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CrawlerDetect is a PHP class for detecting bots/crawlers/spiders via the user agent",
+            "homepage": "https://github.com/JayBizzle/Crawler-Detect/",
+            "keywords": [
+                "crawler",
+                "crawler detect",
+                "crawler detector",
+                "crawlerdetect",
+                "php crawler detect"
+            ],
+            "time": "2018-11-21T20:56:45+00:00"
+        },
+        {
             "name": "jdorn/sql-formatter",
             "version": "v1.2.17",
             "source": {
@@ -5728,6 +5777,53 @@
                 "time"
             ],
             "time": "2018-11-08T13:33:47+00:00"
+        },
+        {
+            "name": "nmure/crawler-detect-bundle",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nicolasmure/CrawlerDetectBundle.git",
+                "reference": "f57e2e33587a7f559e0d7021bad4d7b535727032"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nicolasmure/CrawlerDetectBundle/zipball/f57e2e33587a7f559e0d7021bad4d7b535727032",
+                "reference": "f57e2e33587a7f559e0d7021bad4d7b535727032",
+                "shasum": ""
+            },
+            "require": {
+                "jaybizzle/crawler-detect": "1.*",
+                "php": ">=5.3.0",
+                "symfony/framework-bundle": "~2.5|~3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Nmure\\CrawlerDetectBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas MURE",
+                    "email": "nm2107@hotmail.fr",
+                    "homepage": "https://github.com/nicolasmure"
+                }
+            ],
+            "description": "A Symfony bundle for the Crawler-Detect library (detects bots/crawlers/spiders via the user agent)",
+            "keywords": [
+                "bot",
+                "bundle",
+                "crawler",
+                "detect",
+                "symfony",
+                "user-agent"
+            ],
+            "time": "2016-11-24T23:33:31+00:00"
         },
         {
             "name": "ocramius/package-versions",

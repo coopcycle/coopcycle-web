@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Predis\Client as Redis;
 use Symfony\Bridge\Twig\TwigEngine;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,7 @@ class MaintenanceListener
 {
     private $authorizationChecker;
     private $tokenStorage;
+    private $crawlerDetect;
     private $redis;
     private $templating;
     private $patterns = [
@@ -22,11 +24,13 @@ class MaintenanceListener
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
+        CrawlerDetect $crawlerDetect,
         Redis $redis,
         TwigEngine $templating)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
+        $this->crawlerDetect = $crawlerDetect;
         $this->redis = $redis;
         $this->templating = $templating;
     }
@@ -40,6 +44,11 @@ class MaintenanceListener
         $request = $event->getRequest();
 
         if (null === $token = $this->tokenStorage->getToken()) {
+            return;
+        }
+
+        // Let crawlers browse the website
+        if ($this->crawlerDetect->isCrawler($request->headers->get('User-Agent'))) {
             return;
         }
 
