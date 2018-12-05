@@ -64,13 +64,6 @@ webpackConfig.devServer = {
   }
 }
 
-webpackConfig.plugins.push(new CopyWebpackPlugin([
-  {
-    from: 'node_modules/coopcycle-js/build/coopcycle.js',
-    to: 'js/coopcycle.js'
-  }
-]))
-
 webpackConfig.stats = {
   source: false,
 }

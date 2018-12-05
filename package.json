@@ -20,7 +20,6 @@
     "@mapbox/polyline": "^0.2.0",
     "babel-polyfill": "^6.26.0",
     "co": "^4.6.0",
-    "coopcycle-js": "git+https://git@github.com/coopcycle/coopcycle-js.git",
     "deepmerge": "^1.5.2",
     "form-data": "^2.3.2",
     "i18next": "^11.9.0",
