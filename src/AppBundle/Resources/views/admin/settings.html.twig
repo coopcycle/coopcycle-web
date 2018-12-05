@@ -117,6 +117,7 @@
         <div class="alert alert-danger" data-enable>
           {% trans %}form.maintenance.enable.alert{% endtrans %}
         </div>
+        {{ form_row(maintenance_form.message, { attr: { 'data-enable': 'true' } }) }}
         <div class="alert alert-success" data-disable>
           {% trans %}form.maintenance.disable.alert{% endtrans %}
         </div>

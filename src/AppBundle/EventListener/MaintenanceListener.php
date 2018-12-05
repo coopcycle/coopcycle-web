@@ -44,6 +44,7 @@ class MaintenanceListener
         }
 
         $maintenance = $this->redis->get('maintenance');
+        $maintenanceMessage = $this->redis->get('maintenance_message');
 
         if ($maintenance && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
 
@@ -53,7 +54,9 @@ class MaintenanceListener
                 }
             }
 
-            $content = $this->templating->render('@App/maintenance.html.twig');
+            $content = $this->templating->render('@App/maintenance.html.twig', [
+                'message' => $maintenanceMessage,
+            ]);
             $event->setResponse(new Response($content, 503));
             $event->stopPropagation();
         }

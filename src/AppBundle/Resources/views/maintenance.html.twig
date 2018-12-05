@@ -14,7 +14,11 @@
       <div class="maintenance">
         <i class="fa fa-warning"></i>
         <br />
-        {% trans %}maintenance.text{% endtrans %}
+        {% if message is not empty %}
+          {{ message }}
+        {% else %}
+          {% trans %}maintenance.text{% endtrans %}
+        {% endif %}
       </div>
     </div>
     {% if app.environment == "prod" %}

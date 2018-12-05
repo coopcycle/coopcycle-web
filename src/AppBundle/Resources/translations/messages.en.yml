@@ -406,6 +406,7 @@ form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: 'You are going to enable maintenance mode.<br>Only administrators will have access to the site.'
 form.maintenance.disable.alert: You are going to disable maintenance mode
+form.maintenance.message.label: Message
 form.stripe_livemode.enable.label: Use Stripe in « live » mode
 form.stripe_livemode.enable.alert: In « live » mode, credit cards will be charged.
 form.stripe_livemode.disable.label: Use Stripe in « test » mode

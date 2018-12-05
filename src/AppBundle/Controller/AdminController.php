@@ -958,9 +958,13 @@ class AdminController extends Controller
 
             if ($maintenanceForm->getClickedButton()) {
                 if ('enable' === $maintenanceForm->getClickedButton()->getName()) {
+                    $maintenanceMessage = $maintenanceForm->get('message')->getData();
+
+                    $redis->set('maintenance_message', $maintenanceMessage);
                     $redis->set('maintenance', '1');
                 }
                 if ('disable' === $maintenanceForm->getClickedButton()->getName()) {
+                    $redis->del('maintenance_message');
                     $redis->del('maintenance');
                 }
             }
