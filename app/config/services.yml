@@ -519,6 +519,14 @@ services:
     tags:
       - { name: twig.runtime }
 
+  coopcycle.twig.runtime.banner_resolver:
+    class: AppBundle\Twig\BannerResolver
+    arguments:
+      - '@snc_redis.default'
+    public: false
+    tags:
+      - { name: twig.runtime }
+
   coopcycle.twig.runtime.stripe_resolver:
     class: AppBundle\Twig\StripeResolver
     arguments:

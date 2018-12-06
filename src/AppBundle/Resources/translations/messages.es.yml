@@ -430,6 +430,11 @@ form.maintenance.disable.label: Desactivar el mantenimiento
 form.maintenance.enable.alert: 'Estás a punto de activar el mantenimiento.<br>Solo los administradores tendrán acceso al sitio.'
 form.maintenance.disable.alert: Estás a punto de desactivar el mantenimiento
 form.maintenance.message.label: Mensaje
+form.banner.enable.label: Activar la bandera
+form.banner.disable.label: Desactivar la bandera
+form.banner.enable.alert: Estás a punto de activar la bandera
+form.banner.disable.alert: Estás a punto de desactivar la bandera
+form.banner.message.label: Mensaje mostrado en la bandera
 form.stripe_livemode.enable.label: Utilizar Stripe en modo « live »
 form.stripe_livemode.enable.alert: En modo « live », las tarjetas de crédito serán cargadas.
 form.stripe_livemode.disable.label: Utilizar Stripe en modo « test »

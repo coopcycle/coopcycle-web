@@ -23,6 +23,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
+use AppBundle\Form\BannerType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
@@ -972,6 +973,29 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_settings');
         }
 
+        /* Banner */
+
+        $bannerForm = $this->createForm(BannerType::class);
+
+        $bannerForm->handleRequest($request);
+        if ($bannerForm->isSubmitted() && $bannerForm->isValid()) {
+
+            if ($bannerForm->getClickedButton()) {
+                if ('enable' === $bannerForm->getClickedButton()->getName()) {
+                    $bannerMessage = $bannerForm->get('message')->getData();
+
+                    $redis->set('banner_message', $bannerMessage);
+                    $redis->set('banner', '1');
+                }
+                if ('disable' === $bannerForm->getClickedButton()->getName()) {
+                    $redis->del('banner_message');
+                    $redis->del('banner');
+                }
+            }
+
+            return $this->redirectToRoute('admin_settings');
+        }
+
         /* Settings */
 
         $settings = $settingsManager->asEntity();
@@ -996,6 +1020,8 @@ class AdminController extends Controller
             'form' => $form->createView(),
             'maintenance_form' => $maintenanceForm->createView(),
             'maintenance' => $redis->get('maintenance'),
+            'banner_form' => $bannerForm->createView(),
+            'banner' => $redis->get('banner'),
             'stripe_livemode' => $isStripeLivemode,
             'stripe_livemode_form' => $stripeLivemodeForm->createView(),
             'can_enable_stripe_livemode' => $canEnableStripeLivemode,

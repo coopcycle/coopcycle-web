@@ -23,6 +23,8 @@ class CoopCycleExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFunction('coopcycle_setting', array(SettingResolver::class, 'resolveSetting')),
             new \Twig_SimpleFunction('coopcycle_maintenance', array(MaintenanceResolver::class, 'isEnabled')),
+            new \Twig_SimpleFunction('coopcycle_banner', array(BannerResolver::class, 'isEnabled')),
+            new \Twig_SimpleFunction('coopcycle_banner_message', array(BannerResolver::class, 'getMessage')),
             new \Twig_SimpleFunction('stripe_is_livemode', array(StripeResolver::class, 'isLivemode')),
             new \Twig_SimpleFunction('stripe_can_enable_livemode', array(StripeResolver::class, 'canEnableLivemode')),
             new \Twig_SimpleFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),

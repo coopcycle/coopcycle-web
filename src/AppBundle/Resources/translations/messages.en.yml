@@ -407,6 +407,11 @@ form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: 'You are going to enable maintenance mode.<br>Only administrators will have access to the site.'
 form.maintenance.disable.alert: You are going to disable maintenance mode
 form.maintenance.message.label: Message
+form.banner.enable.label: Enable banner
+form.banner.disable.label: Disable banner
+form.banner.enable.alert: You are going to enable banner
+form.banner.disable.alert: You are going to disable banner
+form.banner.message.label: Message to display in banner
 form.stripe_livemode.enable.label: Use Stripe in « live » mode
 form.stripe_livemode.enable.alert: In « live » mode, credit cards will be charged.
 form.stripe_livemode.disable.label: Use Stripe in « test » mode

@@ -2,6 +2,7 @@
 
 {% form_theme form '@App/form/settings.html.twig' %}
 {% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme banner_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme stripe_livemode_form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
@@ -26,6 +27,13 @@
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
       <div id="maintenance"></div>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <i class="fa fa-warning"></i> {{ 'form.banner.enable.label'|trans }}
+    <div class="pull-right">
+      <div id="banner"></div>
     </div>
   </div>
 
@@ -132,6 +140,38 @@
   </div>
 </div>
 
+<div id="modal-banner" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {{ form_start(banner_form) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" data-enable>{{ 'form.banner.enable.label'|trans }}</h4>
+        <h4 class="modal-title" data-disable>{{ 'form.banner.disable.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" data-enable>
+          {% trans %}form.banner.enable.alert{% endtrans %}
+        </div>
+        <div data-enable="true">
+          {{ form_row(banner_form.message) }}
+        </div>
+        <div class="alert alert-success" data-disable>
+          {% trans %}form.banner.disable.alert{% endtrans %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        {{ form_widget(banner_form.enable, { attr: { class: 'btn-danger', 'data-enable': 'true' } }) }}
+        {{ form_widget(banner_form.disable, { attr: { class: 'btn-success', 'data-disable': 'true' } }) }}
+      </div>
+      {{ form_end(banner_form) }}
+    </div>
+  </div>
+</div>
+
 <div id="modal-stripe-livemode" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -172,10 +212,11 @@
   <script>
 
     var isMaintenanceEnabled = {{ maintenance is not empty ? 'true' : 'false' }};
+    var isBannerEnabled = {{ banner is not empty ? 'true' : 'false' }};
     var isStripeLivemode = {{ stripe_livemode ? 'true' : 'false' }};
     var canEnableStripeLivemode = {{ can_enable_stripe_livemode ? 'true' : 'false' }};
 
-    var maintenanceSwitch, stripeLiveModeSwitch;
+    var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch;
 
     /* Maintenance */
 
@@ -204,6 +245,34 @@
     };
 
     maintenanceSwitch = new CoopCycle.Switch(document.querySelector('#maintenance'), maintenanceSwitchOptions);
+
+    /* Banner */
+
+    $('#modal-banner').on('hidden.bs.modal', function(e) {
+      if (true === isBannerEnabled) {
+        bannerSwitch.check();
+      } else {
+        bannerSwitch.uncheck();
+      }
+    });
+
+    var bannerSwitchOptions = {
+      checked: isBannerEnabled,
+      onChange: function(checked) {
+        if (checked !== isBannerEnabled) {
+          if (checked) {
+            $('#modal-banner').find('[data-disable]').hide();
+            $('#modal-banner').find('[data-enable]').show();
+          } else {
+            $('#modal-banner').find('[data-enable]').hide();
+            $('#modal-banner').find('[data-disable]').show();
+          }
+          $('#modal-banner').modal('show');
+        }
+      }
+    };
+
+    bannerSwitch = new CoopCycle.Switch(document.querySelector('#banner'), bannerSwitchOptions);
 
     /* Stripe Live Mode */
 

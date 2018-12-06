@@ -428,6 +428,11 @@ form.maintenance.disable.label: Désactiver la maintenance
 form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'
 form.maintenance.disable.alert: Vous allez désactiver le mode maintenance
 form.maintenance.message.label: Message
+form.banner.enable.label: Activer la bannière
+form.banner.disable.label: Désactiver la bannière
+form.banner.enable.alert: Vous allez activer la bannière
+form.banner.disable.alert: Vous allez désactiver la bannière
+form.banner.message.label: Message affiché dans la bannière
 form.stripe_livemode.enable.label: Utiliser Stripe en mode « live »
 form.stripe_livemode.enable.alert: En mode « live », les cartes seront débitées.
 form.stripe_livemode.disable.label: Utiliser Stripe en mode « test »
