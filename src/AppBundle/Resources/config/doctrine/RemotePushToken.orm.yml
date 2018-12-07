@@ -23,7 +23,7 @@ AppBundle\Entity\RemotePushToken:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
     manyToOne:
         user:
             targetEntity: AppBundle\Entity\ApiUser

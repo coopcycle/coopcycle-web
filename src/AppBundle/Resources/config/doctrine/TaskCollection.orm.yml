@@ -55,7 +55,7 @@ AppBundle\Entity\TaskCollection:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
     oneToMany:
         items:
             targetEntity: AppBundle\Entity\TaskCollectionItem

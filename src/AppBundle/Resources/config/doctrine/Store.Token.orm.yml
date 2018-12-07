@@ -22,7 +22,7 @@ AppBundle\Entity\Store\Token:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
     oneToOne:
         store:
             targetEntity: AppBundle\Entity\Store

@@ -62,7 +62,7 @@ AppBundle\Entity\Task:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
     manyToOne:
         delivery:
             targetEntity: AppBundle\Entity\Delivery

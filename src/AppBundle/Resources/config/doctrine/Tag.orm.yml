@@ -49,5 +49,5 @@ AppBundle\Entity\Tag:
             column: updated_at
             gedmo:
                 timestampable:
-                    on: create
+                    on: update
     lifecycleCallbacks: {  }
