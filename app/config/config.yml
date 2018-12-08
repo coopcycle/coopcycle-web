@@ -154,6 +154,7 @@ fos_user:
     user_class: AppBundle\Entity\ApiUser
     service:
         mailer: fos_user.mailer.twig_swift
+        user_manager: coopcycle.user_manager
     from_email:
         address:        "%transactional_address%"
         sender_name:    "%transactional_sender_name%"

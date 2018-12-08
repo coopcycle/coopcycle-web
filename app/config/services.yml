@@ -563,6 +563,10 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
+  coopcycle.user_manager:
+    parent: fos_user.user_manager.default
+    class: AppBundle\Security\UserManager
+
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
     arguments:
