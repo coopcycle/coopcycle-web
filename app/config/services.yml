@@ -608,6 +608,12 @@ services:
       - "%fcm_server_api_key%"
       - "@coopcycle.repository.remote_push_token"
 
+  coopcycle.socket_io_manager:
+    class: AppBundle\Service\SocketIoManager
+    arguments:
+      - "@snc_redis.default"
+      - "@fos_user.user_manager"
+
   coopcycle.geocoder:
     class: AppBundle\Service\Geocoder
     arguments:
