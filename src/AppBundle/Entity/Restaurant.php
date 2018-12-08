@@ -12,7 +12,6 @@ use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -342,18 +341,32 @@ class Restaurant extends FoodEstablishment
         $this->closingRules->add($closingRule);
     }
 
-    public function hasClosingRuleForNow(\DateTime $now = null) {
+    /**
+     * @param DateTime $now
+     * @return boolean
+     */
+    public function hasClosingRuleForNow(\DateTime $now = null)
+    {
+        $closingRules = $this->getClosingRules();
+
+        if (count($closingRules) === 0) {
+            return false;
+        }
+
         if (!$now) {
             $now = new \DateTime();
         }
 
-        $criteria = Criteria::create()->where(Criteria::expr()->andX(
-                Criteria::expr()->lte("startDate", $now),
-                Criteria::expr()->gte("endDate", $now)
-            ));
+        // WARNING
+        // This method may be called a *lot* of times (see getAvailabilities)
+        // Thus, we avoid using Criteria, because it would trigger a query every time
+        foreach ($closingRules as $closingRule) {
+            if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+                return true;
+            }
+        }
 
-        return $this->closingRules->matching($criteria)->count() > 0;
-
+        return false;
     }
 
     /**
@@ -362,8 +375,8 @@ class Restaurant extends FoodEstablishment
      * @param \DateTime|null $now
      * @return array
      */
-    public function getAvailabilities(\DateTime $now = null) {
-
+    public function getAvailabilities(\DateTime $now = null)
+    {
         if (!$now) {
             $now = new \DateTime();
         }
