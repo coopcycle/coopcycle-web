@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Service\SocketIoManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Predis\Client as Redis;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,16 +23,20 @@ class Me
 
     protected $doctrine;
     protected $redis;
+    protected $socketIoManager;
+    protected $logger;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         DoctrineRegistry $doctrine,
         Redis $redis,
+        SocketIoManager $socketIoManager,
         LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
         $this->redis = $redis;
+        $this->socketIoManager = $socketIoManager;
         $this->logger = $logger;
     }
 
@@ -149,13 +154,13 @@ class Me
 
         $this->logger->info(sprintf('Last position recorded at %s', $datetime->format('Y-m-d H:i:s')));
 
-        $this->redis->publish('tracking', json_encode([
+        $this->socketIoManager->toAdmins('tracking', [
             'user' => $username,
             'coords' => [
                 'lat' => (float) $lastLocation['latitude'],
                 'lng' => (float) $lastLocation['longitude'],
             ]
-        ]));
+        ]);
 
         return new JsonResponse([]);
     }

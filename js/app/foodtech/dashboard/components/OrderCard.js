@@ -3,18 +3,9 @@ import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 import moment from 'moment'
 
-import { setCurrentOrder, orderEventReceived } from '../redux/actions'
-
-const hostname = window.location.hostname,
-      socket = io('//' + hostname, { path: '/tracking/socket.io' })
+import { setCurrentOrder } from '../redux/actions'
 
 class OrderCard extends React.Component {
-
-  componentDidMount() {
-    socket.on(`order:${this.props.order.id}:events`, event => {
-      this.props.orderEventReceived(this.props.order, event)
-    })
-  }
 
   render() {
 
@@ -46,7 +37,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
-    orderEventReceived: (order, event) => dispatch(orderEventReceived(order, event)),
   }
 }
 

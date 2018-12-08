@@ -8,9 +8,6 @@ import store from './redux/store'
 import { createStoreFromPreloadedState } from './redux/store'
 import Dashboard from './components/Dashboard'
 
-const hostname = window.location.hostname,
-      socket = io('//' + hostname, { path: '/tracking/socket.io' })
-
 window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.FoodtechDashboard = (el, preloadedState) => {
 
@@ -19,7 +16,7 @@ window.CoopCycle.FoodtechDashboard = (el, preloadedState) => {
   render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
-        <Dashboard socket={ socket } />
+        <Dashboard />
       </I18nextProvider>
     </Provider>,
     el

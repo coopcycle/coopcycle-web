@@ -59,15 +59,8 @@ trait AdminDashboardTrait
                 ->send(sprintf('Tasks for %s changed!', $date->format('Y-m-d')), $token, $data);
         }
 
-        $normalizedUser = $this->get('serializer')->normalize($user, 'jsonld', [
-            'resource_class' => ApiUser::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get'
-        ]);
-        $this->get('snc_redis.default')->publish('tasks:changed', json_encode([
-            'tasks' => $normalizedTasks,
-            'user' => $normalizedUser
-        ]));
+        $this->get('coopcycle.socket_io_manager')
+            ->toUser($user, 'tasks:changed', $normalizedTasks);
     }
 
     protected function getResourceFromIri($iri)
@@ -274,6 +267,8 @@ trait AdminDashboardTrait
             ];
         }
 
+        $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
+
         return $this->render('@App/admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
@@ -287,6 +282,7 @@ trait AdminDashboardTrait
             'new_task_form' => $newTaskForm->createView(),
             'task_group_form' => $taskGroupForm->createView(),
             'tags' => $normalizedTags,
+            'jwt' => $jwtManager->create($this->getUser()),
         ]);
     }
 

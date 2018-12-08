@@ -15,14 +15,12 @@ import LeafletMap from './components/LeafletMap'
 import Filters from './components/Filters'
 
 const locale = $('html').attr('lang'),
-      antdLocale = locale === 'fr' ? fr_FR : en_GB,
-      hostname = window.location.hostname,
-      socket = io('//' + hostname, { path: '/tracking/socket.io' })
+      antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 render(
   <Provider store={store}>
     <I18nextProvider i18n={i18n}>
-      <LeafletMap socket={socket} />
+      <LeafletMap />
     </I18nextProvider>
   </Provider>,
   document.querySelector('.dashboard__map-container')
@@ -31,7 +29,7 @@ render(
 render(
   <Provider store={store}>
     <I18nextProvider i18n={i18n}>
-      <DashboardApp socket={socket} />
+      <DashboardApp />
     </I18nextProvider>
   </Provider>,
   document.querySelector('.dashboard__aside')

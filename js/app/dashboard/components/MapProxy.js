@@ -4,6 +4,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
+import CourierPopupContent from './CourierPopupContent'
 
 const DEFAULT_PICKUP_COLOR = '#337ab7'
 const DEFAULT_DROPOFF_COLOR = '#27AE60'
@@ -89,7 +90,7 @@ export default class MapProxy {
 
       marker = MapHelper.createMarker(coords, icon, 'marker', color)
 
-      const el = document.createElement('div') // $('<div />')[0]
+      const el = document.createElement('div')
       render(<LeafletPopupContent
         task={ task }
         onEditClick={ () => {
@@ -167,21 +168,26 @@ export default class MapProxy {
     marker.setOpacity(0.5)
   }
 
-  setGeolocation(username, position) {
+  setGeolocation(username, position, lastSeen) {
     let marker = this.courierMarkers.get(username)
-    if (!marker) {
 
+    const popupContent = document.createElement('div')
+    render(<CourierPopupContent
+      username={ username }
+      lastSeen={ lastSeen } />, popupContent)
+
+    if (!marker) {
       marker = L.marker(position, { icon: createIcon(username) })
       marker.setOpacity(1)
-
-      const popupContent = `<div class="text-center">${username}</div>`
       marker.bindPopup(popupContent, {
-        offset: [3, 70]
+        offset: [3, 70],
+        minWidth: 150,
       })
       this.courierLayerGroup.addLayer(marker)
       this.courierMarkers.set(username, marker)
     } else {
       marker.setLatLng(position).update()
+      marker.setPopupContent(popupContent)
     }
   }
 }

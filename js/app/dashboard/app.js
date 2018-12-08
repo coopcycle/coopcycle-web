@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import dragula from 'dragula'
 import _ from 'lodash'
 
-import { assignTasks, updateTask, addCreatedTask } from './store/actions'
+import { assignTasks, updateTask } from './store/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 
@@ -99,11 +99,6 @@ class DashboardApp extends React.Component {
 
   componentDidMount() {
 
-    this.props.socket.on('task:done', data => this.props.updateTask(data.task))
-    this.props.socket.on('task:failed', data => this.props.updateTask(data.task))
-    this.props.socket.on('task:cancelled', data => this.props.updateTask(data.task))
-    this.props.socket.on('task:created', data => this.props.addCreatedTask(data.task))
-
     const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')
     drake.containers.push(unassignedTasksContainer)
 
@@ -150,7 +145,6 @@ function mapDispatchToProps (dispatch) {
   return {
     assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
     updateTask: (task) => { dispatch(updateTask(task)) },
-    addCreatedTask: (task) => { dispatch(addCreatedTask(task)) }
   }
 }
 

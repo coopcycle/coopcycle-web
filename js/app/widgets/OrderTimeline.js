@@ -4,13 +4,38 @@ import _ from 'lodash'
 
 import OrderTimeline from '../order/Timeline'
 
+const isSameOrder = (order, event) => order.id === event.order.id
+
+function handleEvent(name, event, order, timeline) {
+  if (!isSameOrder(order, event)) {
+
+    return
+  }
+
+  timeline.addEvent({
+    name,
+    createdAt: event.createdAt
+  })
+}
+
 export default (el, options) => {
 
   const timeline = render(<OrderTimeline order={ options.order } events={ options.events } />, el)
 
   if (!_.includes(['cancelled', 'fulfilled', 'refused'], options.order.state)) {
-    const socket = io('//' + window.location.hostname, { path: '/tracking/socket.io' })
-    socket.on(`order:${options.order.id}:events`, event => timeline.addEvent(event))
+
+    const socket = io(`//${window.location.hostname}`, {
+      path: '/tracking/socket.io',
+      extraHeaders: {
+        Authorization: `Bearer ${options.jwt}`
+      }
+    })
+
+    socket.on('order:accepted',  event => handleEvent('order:accepted', event, options.order, timeline))
+    socket.on('order:refused',   event => handleEvent('order:refused', event, options.order, timeline))
+    socket.on('order:cancelled', event => handleEvent('order:cancelled', event, options.order, timeline))
+    socket.on('order:fulfilled', event => handleEvent('order:fulfilled', event, options.order, timeline))
+
   }
 
 }

@@ -563,6 +563,10 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
+  coopcycle.user_manager:
+    parent: fos_user.user_manager.default
+    class: AppBundle\Security\UserManager
+
   coopcycle.task_manager:
     class: AppBundle\Service\TaskManager
     arguments:
@@ -603,6 +607,12 @@ services:
       - "%apns_certificate_pass_phrase%"
       - "%fcm_server_api_key%"
       - "@coopcycle.repository.remote_push_token"
+
+  coopcycle.socket_io_manager:
+    class: AppBundle\Service\SocketIoManager
+    arguments:
+      - "@snc_redis.default"
+      - "@fos_user.user_manager"
 
   coopcycle.geocoder:
     class: AppBundle\Service\Geocoder

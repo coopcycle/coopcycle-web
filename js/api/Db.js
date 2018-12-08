@@ -48,6 +48,10 @@ module.exports = function(sequelize) {
     tableName: 'api_user_address'
   }));
 
+  Db.UserRestaurant = sequelize.define('user_restaurant', {}, _.extend(sequelizeOptions, {
+    tableName: 'api_user_restaurant'
+  }));
+
   Db.Order = sequelize.define('order', {
     status: Sequelize.STRING,
     uuid: Sequelize.STRING,
@@ -87,6 +91,15 @@ module.exports = function(sequelize) {
 
   Db.Restaurant = sequelize.define('restaurant', {
     name: Sequelize.STRING,
+    state: {
+      type: Sequelize.STRING,
+      defaultValue: 'normal'
+    },
+    stripeConnectRoles: {
+      type: Sequelize.JSON,
+      defaultValue: ['ROLE_ADMIN'],
+      field: 'stripe_connect_roles',
+    },
     createdAt: {
       field: 'created_at',
       type: Sequelize.DATE
@@ -176,7 +189,8 @@ module.exports = function(sequelize) {
   Db.Order.belongsTo(Db.User, {as: 'customer', foreignKey : 'customer_id' });
   Db.Order.hasOne(Db.Delivery);
 
-  Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey : 'api_user_id' });
+  Db.User.belongsToMany(Db.Address, { through: Db.UserAddress, foreignKey: 'api_user_id' });
+  Db.User.belongsToMany(Db.Restaurant, { through: Db.UserRestaurant, foreignKey: 'api_user_id' });
   Db.Address.belongsToMany(Db.User, { through: Db.UserAddress });
 
   return Db;

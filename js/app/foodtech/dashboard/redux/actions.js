@@ -1,8 +1,11 @@
 import { createAction } from 'redux-actions'
 
 export const SET_CURRENT_ORDER = 'SET_CURRENT_ORDER'
-export const ORDER_EVENT_RECEIVED = 'ORDER_EVENT_RECEIVED'
 export const ORDER_CREATED = 'ORDER_CREATED'
+export const ORDER_ACCEPTED = 'ORDER_ACCEPTED'
+export const ORDER_REFUSED = 'ORDER_REFUSED'
+export const ORDER_CANCELLED = 'ORDER_CANCELLED'
+export const ORDER_FULFILLED = 'ORDER_FULFILLED'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const ACCEPT_ORDER_REQUEST_SUCCESS = 'ACCEPT_ORDER_REQUEST_SUCCESS'
@@ -15,8 +18,11 @@ export const CANCEL_ORDER_REQUEST_SUCCESS = 'CANCEL_ORDER_REQUEST_SUCCESS'
 export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
 
 export const setCurrentOrder = createAction(SET_CURRENT_ORDER)
-export const orderEventReceived = createAction(ORDER_EVENT_RECEIVED, (order, event) => ({ order, event }))
 export const orderCreated = createAction(ORDER_CREATED)
+export const orderAccepted = createAction(ORDER_ACCEPTED)
+export const orderRefused = createAction(ORDER_REFUSED)
+export const orderCancelled = createAction(ORDER_CANCELLED)
+export const orderFulfilled = createAction(ORDER_FULFILLED)
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const acceptOrderRequestSuccess = createAction(ACCEPT_ORDER_REQUEST_SUCCESS)

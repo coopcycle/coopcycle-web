@@ -231,6 +231,8 @@ class AdminController extends Controller
 
     public function foodtechDashboardAction($date, Request $request)
     {
+        $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
+
         $date = new \DateTime($date);
 
         $orders = $this->get('sylius.repository.order')->findByShippedAt($date);
@@ -247,6 +249,7 @@ class AdminController extends Controller
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
             'routes' => $request->attributes->get('routes'),
+            'jwt' => $jwtManager->create($this->getUser()),
         ]);
     }
 

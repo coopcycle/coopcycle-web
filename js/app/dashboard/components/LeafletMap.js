@@ -11,7 +11,6 @@ class LeafletMap extends Component {
 
     this.map = MapHelper.init('map')
     this.proxy = new MapProxy(this.map)
-    this.onlineTrackingTimeoutMap = new Map()
 
     let { tasks, showFinishedTasks, showCancelledTasks } = this.props
 
@@ -24,23 +23,6 @@ class LeafletMap extends Component {
 
     _.forEach(tasks, task => this.proxy.addTask(task))
     _.forEach(this.props.polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
-
-    const { socket } = this.props
-
-    socket.on('tracking', data => {
-      const { user, coords } = data
-      this.proxy.setGeolocation(user, coords)
-      this.proxy.setOnline(user)
-
-      if (this.onlineTrackingTimeoutMap.has(user)) {
-        clearTimeout(this.onlineTrackingTimeoutMap[user])
-      }
-
-      this.onlineTrackingTimeoutMap[user] = setTimeout(() => { this.proxy.setOffline(user) }, 5 * 60 * 1000)
-
-    })
-    socket.on('online', username => this.proxy.setOnline(username))
-    socket.on('offline', username => this.proxy.setOffline(username))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -52,7 +34,9 @@ class LeafletMap extends Component {
       showUntaggedTasks,
       showFinishedTasks,
       showCancelledTasks,
-      selectedTasks
+      selectedTasks,
+      positions,
+      offline
     } = this.props
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
@@ -110,6 +94,20 @@ class LeafletMap extends Component {
       })
     }
 
+    if (prevProps.positions !== positions) {
+      positions.forEach(position => {
+        const { username, coords, lastSeen } = position
+        this.proxy.setGeolocation(username, coords, lastSeen)
+        this.proxy.setOnline(username)
+      })
+    }
+
+    if (prevProps.offline !== offline) {
+      offline.forEach(username => {
+        this.proxy.setOffline(username)
+      })
+    }
+
   }
 
   render() {
@@ -139,7 +137,9 @@ function mapStateToProps(state, ownProps) {
     selectedTags: state.tagsFilter.selectedTagsList,
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
     showCancelledTasks: state.taskCancelledFilter,
-    selectedTasks: state.selectedTasks
+    selectedTasks: state.selectedTasks,
+    positions: state.positions,
+    offline: state.offline
   }
 }
 
