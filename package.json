@@ -36,6 +36,7 @@
     "pg-hstore": "^2.3.2",
     "promise": "^8.0.2",
     "prop-types": "^15.6.2",
+    "react-timeago": "^4.1.9",
     "redis": "^2.8.0",
     "redux": "^3.7.2",
     "sequelize": "^4.38.1",

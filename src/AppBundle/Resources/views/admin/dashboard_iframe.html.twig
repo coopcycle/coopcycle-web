@@ -191,7 +191,8 @@ window.AppData.Dashboard = {
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
   couriersList: {{ couriers|json_encode()|raw }},
-  tags: {{ tags|json_encode()|raw }}
+  tags: {{ tags|json_encode()|raw }},
+  jwt: "{{ jwt }}"
 }
 </script>
 <script src="{{ asset('js/dashboard.js') }}"></script>

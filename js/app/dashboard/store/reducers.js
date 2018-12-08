@@ -356,6 +356,68 @@ const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, s
   }
 }
 
+const jwt = (state = '', action) => {
+  switch (action.type) {
+    default:
+
+      return state
+  }
+}
+
+const positions = (state = [], action) => {
+  switch (action.type) {
+    case 'SET_GEOLOCATION':
+
+        const marker = {
+          username: action.username,
+          coords: action.coords,
+          lastSeen: moment()
+        }
+
+        const newState = state.slice(0)
+        const index = _.findIndex(newState, position => position.username === action.username)
+        if (-1 !== index) {
+          newState.splice(index, 1, marker)
+        } else {
+          newState.push(marker)
+        }
+
+        return newState
+
+    default:
+
+      return state
+  }
+}
+
+const offline = (state = [], action) => {
+  let index
+
+  switch (action.type) {
+    case 'SET_GEOLOCATION':
+
+        index = _.findIndex(state, username => username === action.username)
+        if (-1 === index) {
+
+          return state
+        }
+
+        return _.filter(state, username => username !== action.username)
+
+    case 'SET_OFFLINE':
+
+        index = _.findIndex(state, username => username === action.username)
+        if (-1 === index) {
+
+          return state.concat([ action.username ])
+        }
+
+    default:
+
+      return state
+  }
+}
+
 export default combineReducers({
   allTasks,
   unassignedTasks,
@@ -367,5 +429,8 @@ export default combineReducers({
   taskFinishedFilter,
   taskCancelledFilter,
   tagsFilter,
-  selectedTasks
+  selectedTasks,
+  jwt,
+  positions,
+  offline
 })

@@ -3,8 +3,11 @@ import moment from 'moment'
 
 import {
   SET_CURRENT_ORDER,
-  ORDER_EVENT_RECEIVED,
   ORDER_CREATED,
+  ORDER_ACCEPTED,
+  ORDER_REFUSED,
+  ORDER_CANCELLED,
+  ORDER_FULFILLED,
   FETCH_REQUEST,
   ACCEPT_ORDER_REQUEST_SUCCESS,
   ACCEPT_ORDER_REQUEST_FAILURE,
@@ -17,7 +20,8 @@ import {
 const initialState = {
   orders: [],
   order: null,
-  date: moment().format('YYYY-MM-DD')
+  date: moment().format('YYYY-MM-DD'),
+  jwt: ''
 }
 
 function replaceOrder(orders, order) {
@@ -47,29 +51,28 @@ const orders = (state = initialState.orders, action) => {
 
       return replaceOrder(state, action.payload)
 
-    case ORDER_EVENT_RECEIVED:
-
-      const { order, event } = action.payload
-
-      switch (event.name) {
-        case 'order:accepted':
-          return replaceOrder(state, Object.assign({}, order, { state: 'accepted' }))
-        case 'order:refused':
-          return replaceOrder(state, Object.assign({}, order, { state: 'refused' }))
-        case 'order:cancelled':
-          return replaceOrder(state, Object.assign({}, order, { state: 'cancelled' }))
-        case 'order:fulfilled':
-          return replaceOrder(state, Object.assign({}, order, { state: 'fulfilled' }))
-      }
-
-      return state
-
     case ORDER_CREATED:
 
       newState = state.slice()
       newState.push(action.payload)
 
       return newState
+
+    case ORDER_ACCEPTED:
+
+      return replaceOrder(state, Object.assign({}, action.payload, { state: 'accepted' }))
+
+    case ORDER_REFUSED:
+
+      return replaceOrder(state, Object.assign({}, action.payload, { state: 'refused' }))
+
+    case ORDER_CANCELLED:
+
+      return replaceOrder(state, Object.assign({}, action.payload, { state: 'cancelled' }))
+
+    case ORDER_FULFILLED:
+
+      return replaceOrder(state, Object.assign({}, action.payload, { state: 'fulfilled' }))
 
     default:
 
@@ -103,8 +106,17 @@ const date = (state = initialState.date, action) => {
   }
 }
 
+const jwt = (state = initialState.jwt, action) => {
+  switch (action.type) {
+    default:
+
+      return state
+  }
+}
+
 export default combineReducers({
   orders,
   order,
   date,
+  jwt,
 })

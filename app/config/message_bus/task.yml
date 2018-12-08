@@ -45,7 +45,7 @@ services:
     class: AppBundle\Domain\Task\Reactor\PublishRedisMessage
     arguments:
       - '@serializer'
-      - '@snc_redis.default'
+      - '@coopcycle.socket_io_manager'
     tags:
         - name: event_subscriber
           subscribes_to: task:created

@@ -3,45 +3,43 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use Predis\Client as Redis;
+use AppBundle\Service\SocketIoManager;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishToRedis
 {
-    private $redis;
     private $serializer;
+    private $socketIoManager;
 
-    public function __construct(Redis $redis, SerializerInterface $serializer)
+    public function __construct(
+        SerializerInterface $serializer,
+        SocketIoManager $socketIoManager)
     {
-        $this->redis = $redis;
         $this->serializer = $serializer;
+        $this->socketIoManager = $socketIoManager;
     }
 
     public function __invoke(Event $event)
     {
+        $message = $this->createMessage($event);
+
+        $this->socketIoManager->toAdmins($event::messageName(), $message);
+
+        $customer = $event->getOrder()->getCustomer();
+        if (null !== $customer) {
+            $this->socketIoManager->toUser($customer, $event::messageName(), $message);
+        }
+    }
+
+    private function createMessage(Event $event)
+    {
         $order = $event->getOrder();
 
-        $channel = sprintf('order:%d:events', $order->getId());
-
-        $message = [
-            'name' => $event::messageName(),
+        return [
+            'order' => $this->serializer->normalize($order, 'jsonld', ['groups' => ['order', 'place']]),
             'data' => $event->toPayload(),
             // FIXME We should retrieve the actual date from EventStore
             'createdAt' => (new \DateTime())->format(\DateTime::ATOM),
         ];
-
-        $this->redis->publish($channel, json_encode($message));
-
-        if ($event instanceof Event\OrderCreated && $order->isFoodtech()) {
-            $this->redis->publish(
-                sprintf('restaurant:%d:orders', $order->getRestaurant()->getId()),
-                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order']])
-            );
-
-            $this->redis->publish(
-                'order:created',
-                $this->serializer->serialize($order, 'jsonld', ['groups' => ['order', 'place']])
-            );
-        }
     }
 }

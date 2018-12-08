@@ -109,6 +109,14 @@ function addTaskList(username) {
   }
 }
 
+function setGeolocation(username, coords) {
+  return { type: 'SET_GEOLOCATION', username, coords }
+}
+
+function setOffline(username) {
+  return { type: 'SET_OFFLINE', username }
+}
+
 export {
   setSelectedTagList,
   updateTask,
@@ -124,5 +132,7 @@ export {
   toggleShowUntaggedTasks,
   toggleShowCancelledTasks,
   addCreatedTask,
-  toggleTask
+  toggleTask,
+  setGeolocation,
+  setOffline
 }
