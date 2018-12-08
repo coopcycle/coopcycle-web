@@ -45,6 +45,8 @@ class SettingsManager
         'google_api_key',
     ];
 
+    private $cache = [];
+
     public function __construct(
         CraueConfig $craueConfig,
         $configEntityName,
@@ -87,6 +89,11 @@ class SettingsManager
                 return ini_get('date.timezone');
         }
 
+        if (isset($this->cache[$name])) {
+
+            return $this->cache[$name];
+        }
+
         try {
 
             $value = $this->craueConfig->get($name);
@@ -94,9 +101,11 @@ class SettingsManager
             switch ($name) {
                 case 'phone_number':
                     try {
-                        return $this->phoneNumberUtil->parse($value, strtoupper($this->country));
+                        $value = $this->phoneNumberUtil->parse($value, strtoupper($this->country));
                     } catch (NumberParseException $e) {}
             }
+
+            $this->cache[$name] = $value;
 
             return $value;
 
@@ -161,6 +170,10 @@ class SettingsManager
             $this->doctrine
                 ->getManagerForClass($className)
                 ->persist($setting);
+        }
+
+        if (isset($this->cache[$name])) {
+            unset($this->cache[$name]);
         }
 
         $setting->setValue($value);
