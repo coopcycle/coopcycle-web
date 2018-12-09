@@ -3,7 +3,6 @@ import {render} from 'react-dom';
 import MapHelper from '../MapHelper'
 
 var _ = require('lodash');
-var TWEEN = require('@tweenjs/tween.js');
 var L = require('leaflet-providers');
 var Polyline = require('@mapbox/polyline');
 require('beautifymarker');

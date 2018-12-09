@@ -1,5 +1,4 @@
 var Encore = require('@symfony/webpack-encore')
-var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 Encore
 
