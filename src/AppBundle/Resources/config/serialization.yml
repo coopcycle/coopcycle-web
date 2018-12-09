@@ -8,6 +8,8 @@ AppBundle\Entity\ApiUser:
       groups: ['user']
     telephone:
       groups: ['order']
+    roles:
+      groups: ['user']
 
 AppBundle\Entity\Sylius\Taxon:
   attributes:

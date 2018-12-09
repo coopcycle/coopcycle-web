@@ -82,6 +82,7 @@ Feature: Authenticate
       "@type": "ApiUser",
       "addresses": [],
       "username": "bob",
-      "email": "bob@coopcycle.org"
+      "email": "bob@coopcycle.org",
+      "roles":["ROLE_USER"]
     }
     """
