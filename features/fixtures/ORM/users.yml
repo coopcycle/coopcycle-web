@@ -1,0 +1,17 @@
+AppBundle\Entity\ApiUser:
+  bob:
+    __factory:
+      '@fos_user.util.user_manipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+  sarah:
+    __factory:
+      '@fos_user.util.user_manipulator::create':
+        - 'sarah'
+        - '123456'
+        - 'sarah@demo.coopcycle.org'
+        - true
+        - false

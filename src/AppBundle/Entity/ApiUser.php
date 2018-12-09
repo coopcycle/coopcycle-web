@@ -2,8 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Api\Filter\UserRoleFilter;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -18,12 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get"={"method"="GET"},
  *   },
  *   collectionOperations={
- *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } }
+ *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } },
+ *     "get"={"access_control"="is_granted('ROLE_ADMIN')"}
  *   },
  *   attributes={
  *     "normalization_context"={ "groups"={"user", "order"} }
  *   }
  * )
+ * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */

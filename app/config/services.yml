@@ -471,6 +471,9 @@ services:
   'AppBundle\Filter\OrderDateFilter':
     tags: [ 'api_platform.filter' ]
 
+  'AppBundle\Api\Filter\UserRoleFilter':
+    tags: [ 'api_platform.filter' ]
+
   twig.extension.text:
     class: Twig_Extensions_Extension_Text
     tags:
