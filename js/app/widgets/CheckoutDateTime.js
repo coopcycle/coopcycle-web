@@ -5,6 +5,11 @@ moment.locale($('html').attr('lang'))
 
 export default (el, options) => {
 
+  if (!el) {
+
+    return
+  }
+
   const choices = JSON.parse(el.getAttribute('data-choices'))
 
   options.dateElement.addEventListener('change', (e) => {
