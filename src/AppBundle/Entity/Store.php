@@ -94,6 +94,10 @@ class Store extends LocalBusiness
 
     private $owners;
 
+    private $prefillPickupAddress = false;
+
+    private $createOrders = false;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -278,5 +282,29 @@ class Store extends LocalBusiness
     public function getOwners()
     {
         return $this->owners;
+    }
+
+    public function getPrefillPickupAddress()
+    {
+        return $this->prefillPickupAddress;
+    }
+
+    public function setPrefillPickupAddress($prefillPickupAddress)
+    {
+        $this->prefillPickupAddress = $prefillPickupAddress;
+
+        return $this;
+    }
+
+    public function getCreateOrders()
+    {
+        return $this->createOrders;
+    }
+
+    public function setCreateOrders($createOrders)
+    {
+        $this->createOrders = $createOrders;
+
+        return $this;
     }
 }

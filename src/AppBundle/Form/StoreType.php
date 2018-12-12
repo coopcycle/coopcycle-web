@@ -35,7 +35,13 @@ class StoreType extends LocalBusinessType
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
                     }
-                ));
+                ))
+                ->add('prefillPickupAddress', CheckboxType::class, [
+                    'label' => 'form.store_type.prefill_pickup_address.label'
+                ])
+                ->add('createOrders', CheckboxType::class, [
+                    'label' => 'form.store_type.create_orders.label'
+                ]);
         }
     }
 

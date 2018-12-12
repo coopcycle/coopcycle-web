@@ -322,6 +322,8 @@ checkout.breadcrumb.payment: Paiement
 
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
+form.store_type.prefill_pickup_address.label: Remplir automatiquement l'adresse de retrait
+form.store_type.create_orders.label: Créer des commandes
 
 form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
