@@ -319,6 +319,8 @@ checkout.breadcrumb.payment: Payment
 
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
+form.store_type.prefill_pickup_address.label: Pre-fill automatically pickup address
+form.store_type.create_orders.label: Create orders
 
 form.delivery.vehicle.VEHICLE_BIKE: Bike
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike

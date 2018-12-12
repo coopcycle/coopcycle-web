@@ -54,6 +54,12 @@ AppBundle\Entity\Store:
             type: json_array
             nullable: true
             column: additional_properties
+        prefillPickupAddress:
+            type: boolean
+            column: prefill_pickup_address
+        createOrders:
+            type: boolean
+            column: create_orders
     oneToOne:
         address:
             targetEntity: AppBundle\Entity\Address
