@@ -8,6 +8,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreTokenType;
 use AppBundle\Form\StoreType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -112,6 +113,10 @@ trait StoreTrait
         $delivery = Delivery::createWithDefaults();
         $delivery->setStore($store);
 
+        if ($store->getPrefillPickupAddress()) {
+            $delivery->getPickup()->setAddress($store->getAddress());
+        }
+
         $form = $this->createDeliveryForm($delivery, ['with_store' => false]);
 
         $form->handleRequest($request);
@@ -119,17 +124,38 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(Delivery::class)
-                ->persist($delivery);
+            if ($store->getCreateOrders()) {
 
-            $this->getDoctrine()
-                ->getManagerForClass(Delivery::class)
-                ->flush();
+                try {
 
-            // TODO Add flash message
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet());
+                    $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
 
-            return $this->redirectToRoute($routes['success'], ['id' => $id]);
+                    $this->get('sylius.repository.order')->add($order);
+                    $this->get('coopcycle.order_manager')->onDemand($order);
+                    $this->get('sylius.manager.order')->flush();
+
+                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
+
+                } catch (\Exception $e) {
+                    $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                    $form->addError(new FormError($message));
+                }
+
+            } else {
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Delivery::class)
+                    ->persist($delivery);
+
+                $this->getDoctrine()
+                    ->getManagerForClass(Delivery::class)
+                    ->flush();
+
+                // TODO Add flash message
+
+                return $this->redirectToRoute($routes['success'], ['id' => $id]);
+            }
         }
 
         return $this->render('@App/store/delivery_form.html.twig', [
