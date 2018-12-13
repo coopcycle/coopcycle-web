@@ -115,4 +115,24 @@
 <script src="{{ asset('js/delivery-form.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
+<script>
+  $.getJSON("{{ path('admin_tags', { format: 'json' }) }}", function(tags) {
+    new CoopCycle.TagsInput(document.querySelector('#delivery_pickup_tagsAsString_widget'), {
+      tags,
+      defaultValue: [],
+      onChange: function(tags) {
+        var slugs = tags.map(function(tag) { return tag.slug; });
+        document.querySelector('#delivery_pickup_tagsAsString').value = slugs.join(' ');
+      }
+    });
+    new CoopCycle.TagsInput(document.querySelector('#delivery_dropoff_tagsAsString_widget'), {
+      tags,
+      defaultValue: [],
+      onChange: function(tags) {
+        var slugs = tags.map(function(tag) { return tag.slug; });
+        document.querySelector('#delivery_dropoff_tagsAsString').value = slugs.join(' ');
+      }
+    });
+  });
+</script>
 {% endblock %}

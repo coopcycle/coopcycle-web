@@ -44,6 +44,15 @@ col-sm-9
   {{ form_row(form.address.postalCode) }}
   {{ form_row(form.address.addressLocality) }}
 
+  <hr>
+
+  {{ form_row(form.address.name) }}
+  {{ form_row(form.address.telephone) }}
+  {{ form_row(form.tagsAsString) }}
+
+
+  {# The fields below are hidden #}
+
   {{ form_widget(form.address.latitude) }}
   {{ form_widget(form.address.longitude) }}
   {{ form_widget(form.type) }}
@@ -111,6 +120,11 @@ col-sm-9
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {% endblock %}
 
+{% block _delivery_pickup_tagsAsString_widget %}
+<div id="{{ form.vars.id ~ '_widget' }}"></div>
+{{ block('hidden_widget') }}
+{% endblock %}
+
 {# Dropoff #}
 
 {% block _delivery_dropoff_row %}
@@ -137,4 +151,9 @@ col-sm-9
 {% block _delivery_dropoff_doneBefore_widget %}
   {{ block('hidden_widget') }}
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
+{% endblock %}
+
+{% block _delivery_dropoff_tagsAsString_widget %}
+<div id="{{ form.vars.id ~ '_widget' }}"></div>
+{{ block('hidden_widget') }}
 {% endblock %}
