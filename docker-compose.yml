@@ -87,6 +87,7 @@ services:
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/srv/coopcycle/web:ro'
+      - './vendor:/srv/coopcycle/vendor:ro'
 
   nginx_test:
     image: 'nginx:1.11-alpine'
@@ -98,6 +99,7 @@ services:
     volumes:
       - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
       - './web:/srv/coopcycle/web:ro'
+      - './vendor:/srv/coopcycle/vendor:ro'
 
   smtp:
     image: namshi/smtp
