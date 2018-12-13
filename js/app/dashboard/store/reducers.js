@@ -418,6 +418,22 @@ const offline = (state = [], action) => {
   }
 }
 
+const isDragging = (state = false, action) => {
+  switch (action.type) {
+    case 'DRAKE_DRAG':
+
+      return true
+
+    case 'DRAKE_DRAGEND':
+
+      return false
+
+    default:
+
+      return state
+  }
+}
+
 export default combineReducers({
   allTasks,
   unassignedTasks,
@@ -432,5 +448,6 @@ export default combineReducers({
   selectedTasks,
   jwt,
   positions,
-  offline
+  offline,
+  isDragging
 })

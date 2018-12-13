@@ -117,6 +117,14 @@ function setOffline(username) {
   return { type: 'SET_OFFLINE', username }
 }
 
+function drakeDrag() {
+  return { type: 'DRAKE_DRAG' }
+}
+
+function drakeDragEnd() {
+  return { type: 'DRAKE_DRAGEND' }
+}
+
 export {
   setSelectedTagList,
   updateTask,
@@ -134,5 +142,7 @@ export {
   addCreatedTask,
   toggleTask,
   setGeolocation,
-  setOffline
+  setOffline,
+  drakeDrag,
+  drakeDragEnd
 }

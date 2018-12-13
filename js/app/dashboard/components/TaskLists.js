@@ -13,7 +13,8 @@ class TaskLists extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedCourier: ''
+      selectedCourier: '',
+      isDragging: false
     }
 
     this.addUser = this.addUser.bind(this)
@@ -26,15 +27,24 @@ class TaskLists extends React.Component {
       $('#accordion').find('.collapse.in').collapse('hide')
     });
 
-    autoScroll([ this.refs.scrollable ],{
+    const self = this
+
+    autoScroll([ this.refs.scrollable ], {
       margin: 20,
       maxSpeed: 5,
-      scrollWhenOutside: true,
-      autoScroll: function(){
-        //Only scroll when the pointer is down, and there is a child being dragged.
-        return true
+      scrollWhenOutside: false,
+      // Can't use an arrow function, because "this" would be wrong
+      autoScroll: function() {
+        // Only scroll when the pointer is down, and there is a child being dragged.
+        return this.down && self.state.isDragging
       }
     })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.isDragging !== prevProps.isDragging) {
+      this.setState({ isDragging: this.props.isDragging })
+    }
   }
 
   addUser() {
@@ -133,7 +143,8 @@ function mapStateToProps (state) {
   return {
     addModalIsOpen: state.addModalIsOpen,
     taskLists: state.taskLists,
-    taskListsLoading: state.taskListsLoading
+    taskListsLoading: state.taskListsLoading,
+    isDragging: state.isDragging,
   }
 }
 

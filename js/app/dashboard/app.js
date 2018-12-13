@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import dragula from 'dragula'
 import _ from 'lodash'
 
-import { assignTasks, updateTask } from './store/actions'
+import { assignTasks, updateTask, drakeDrag, drakeDragEnd } from './store/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 
@@ -13,33 +13,6 @@ const drake = dragula({
   copySortSource: false,
   revertOnSpill: true,
   accepts: (el, target, source, sibling) => target !== source
-})
-.on('drag', function(el, source) {
-  let elements = [ el ]
-
-  // FIXME
-  // Make it work when more than 2 tasks are linked together
-  if (el.hasAttribute('data-previous') || el.hasAttribute('data-next')) {
-    const siblings = Array.from(el.parentNode.childNodes)
-    const linkedElements = _.filter(siblings, sibling =>
-      sibling.getAttribute('data-task-id') === (el.getAttribute('data-previous') || el.getAttribute('data-next')))
-    elements = elements.concat(linkedElements)
-  }
-
-  elements.forEach(el => el.classList.add('task__draggable--dragging'))
-})
-.on('cloned', function (clone, original) {
-  clone.classList.remove('task__draggable--dragging')
-})
-.on('over', function (el, container, source) {
-  if ($(container).hasClass('dropzone')) {
-    $(container).addClass('dropzone--over')
-  }
-})
-.on('out', function (el, container, source) {
-  if ($(container).hasClass('dropzone')) {
-    $(container).removeClass('dropzone--over')
-  }
 })
 
 /**
@@ -80,12 +53,46 @@ function onTaskDrop(allTasks, assignTasks, element, target, source) {
   element.remove()
 }
 
-function configureDragEnd(unassignedTasksContainer) {
+function configureDrag(drakeDrag) {
+  drake
+    .on('drag', function(el, source) {
+      let elements = [ el ]
+
+      // FIXME
+      // Make it work when more than 2 tasks are linked together
+      if (el.hasAttribute('data-previous') || el.hasAttribute('data-next')) {
+        const siblings = Array.from(el.parentNode.childNodes)
+        const linkedElements = _.filter(siblings, sibling =>
+          sibling.getAttribute('data-task-id') === (el.getAttribute('data-previous') || el.getAttribute('data-next')))
+        elements = elements.concat(linkedElements)
+      }
+
+      elements.forEach(el => el.classList.add('task__draggable--dragging'))
+
+      drakeDrag()
+    })
+    .on('cloned', function (clone, original) {
+      clone.classList.remove('task__draggable--dragging')
+    })
+    .on('over', function (el, container, source) {
+      if ($(container).hasClass('dropzone')) {
+        $(container).addClass('dropzone--over')
+      }
+    })
+    .on('out', function (el, container, source) {
+      if ($(container).hasClass('dropzone')) {
+        $(container).removeClass('dropzone--over')
+      }
+    })
+}
+
+function configureDragEnd(unassignedTasksContainer, drakeDragEnd) {
   drake
     .off('dragend')
     .on('dragend', function (el) {
       Array.from(unassignedTasksContainer.querySelectorAll('.task__draggable--dragging'))
         .forEach(el => el.classList.remove('task__draggable--dragging'))
+      drakeDragEnd()
     })
 }
 
@@ -102,7 +109,8 @@ class DashboardApp extends React.Component {
     const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')
     drake.containers.push(unassignedTasksContainer)
 
-    configureDragEnd(unassignedTasksContainer)
+    configureDrag(this.props.drakeDrag)
+    configureDragEnd(unassignedTasksContainer, this.props.drakeDragEnd)
     configureDrop(this.props.allTasks, this.props.assignTasks)
 
     // This event is trigerred when the task modal is submitted successfully
@@ -145,6 +153,8 @@ function mapDispatchToProps (dispatch) {
   return {
     assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
     updateTask: (task) => { dispatch(updateTask(task)) },
+    drakeDrag: () => dispatch(drakeDrag()),
+    drakeDragEnd: () => dispatch(drakeDragEnd()),
   }
 }
 
