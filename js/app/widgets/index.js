@@ -12,6 +12,7 @@ import StripePaymentForm from './StripePaymentForm'
 import Switch from './Switch'
 import RulePicker from './RulePicker'
 import Search from './Search'
+import TagsInput from './TagsInput'
 import Timeline from './Timeline'
 import DeliveryZonePicker from './DeliveryZonePicker'
 
@@ -31,5 +32,6 @@ window.CoopCycle.StripePaymentForm = StripePaymentForm
 window.CoopCycle.Switch = Switch
 window.CoopCycle.RulePicker = RulePicker
 window.CoopCycle.Search = Search
+window.CoopCycle.TagsInput = TagsInput
 window.CoopCycle.Timeline = Timeline
 window.CoopCycle.DeliveryZonePicker = DeliveryZonePicker
