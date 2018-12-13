@@ -727,6 +727,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $modal = $this->findVisibleProductModal();
 
+        Assert::assertNotNull($modal);
         Assert::assertTrue($modal->isVisible());
     }
 
@@ -861,6 +862,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $modal = $this->findVisibleProductModal();
 
+        Assert::assertNotNull($modal);
         Assert::assertTrue($modal->isVisible());
 
         $button = $modal->find('css', 'form button[type="submit"]');
