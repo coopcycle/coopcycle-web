@@ -6,7 +6,7 @@ import dragula from 'react-dragula'
 import { translate } from 'react-i18next'
 import _ from 'lodash'
 import Task from './Task'
-import { removeTasks, modifyTaskList, togglePolyline, toggleTask, drakeDrag, drakeDragEnd } from '../store/actions'
+import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -215,6 +215,7 @@ class TaskList extends React.Component {
                 assigned={ true }
                 onRemove={ task => this.remove(task) }
                 toggleTask={ this.props.toggleTask }
+                selectTask={ this.props.selectTask }
                 selected={ -1 !== this.props.selectedTasks.indexOf(task) }
               />
             ))}
@@ -244,6 +245,7 @@ function mapDispatchToProps(dispatch) {
     modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
     togglePolyline: (username) => { dispatch(togglePolyline(username)) },
     toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) },
+    selectTask: (task) => { dispatch(selectTask(task)) },
     drakeDrag: () => dispatch(drakeDrag()),
     drakeDragEnd: () => dispatch(drakeDragEnd()),
   }

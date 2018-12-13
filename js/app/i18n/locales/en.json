@@ -46,6 +46,8 @@
     "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Task #{{id}}",
     "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Between {{after}} and {{before}}",
     "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assigned to {{username}}",
+    "ADMIN_DASHBOARD_UNASSIGN_TASK": "Unassign task #{{id}}",
+    "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Unassign {{count}} task(s)",
     "USER_EDIT_ENABLED_LABEL": "Enabled",
     "USER_EDIT_DISABLED_LABEL": "Disabled",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",

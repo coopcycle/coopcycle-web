@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { translate } from 'react-i18next'
 import moment from 'moment'
+import { ContextMenuTrigger } from 'react-contextmenu'
 
 moment.locale($('html').attr('lang'))
 
@@ -29,7 +30,7 @@ class Task extends React.Component {
               e.preventDefault()
               this.props.onRemove(task)
             }}
-            data-toggle="tooltip" data-placement="right" title="Désassigner"
+            data-toggle="tooltip" data-placement="right" title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: task.id }) }
           ><i className="fa fa-times"></i></a>
         )
       }
@@ -112,29 +113,41 @@ class Task extends React.Component {
     const customerName =  task.address.firstName ?  [task.address.firstName, task.address.lastName, task.address.streetAddress].join(' ') : null,
       addressName = task.address.name || customerName || task.address.streetAddress
 
-    return (
-      <span
-        style={{display: 'block', borderLeft: '6px solid ' + task.deliveryColor}}
-        key={task['@id']}
-        className={classNames.join(' ')}
-        data-task-id={task['@id']}
-        {...taskAttributes}
-        onClick={this.onClick}>
-          <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {
-            id: task.id,
-            address: addressName,
-            date: moment(task.doneBefore).format('LT')
-          }) }
-          { this.renderTags() }
-          &nbsp;
-          <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
-            <i className="fa fa-pencil"></i>
-          </a>
-          {this.renderLinkedIcon()}
-          {this.renderStatusIcon()}
-      </span>
+    const contextMenuTriggerAttrs = {
+      ...taskAttributes,
+      style: {
+        display: 'block',
+        borderLeft: `6px solid ${task.deliveryColor}`
+      },
+      key: task['@id'],
+      className: classNames.join(' '),
+      'data-task-id': task['@id'],
+      onClick: this.onClick,
+      onContextMenu: (e) => this.props.selectTask(task)
+    }
 
+    // Don't return the task object directly, to avoid stripping the "id" prop
+    const collect = (props) => ({ task: props.task })
+
+    return (
+      <ContextMenuTrigger renderTag="span" id="dashboard"
+        task={ task }
+        collect={ collect }
+        attributes={ contextMenuTriggerAttrs }>
+        <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+        { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {
+          id: task.id,
+          address: addressName,
+          date: moment(task.doneBefore).format('LT')
+        }) }
+        { this.renderTags() }
+        &nbsp;
+        <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
+          <i className="fa fa-pencil"></i>
+        </a>
+        {this.renderLinkedIcon()}
+        {this.renderStatusIcon()}
+      </ContextMenuTrigger>
     )
 
   }

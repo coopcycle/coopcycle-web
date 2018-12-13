@@ -5,7 +5,7 @@ import { translate } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import {highlightTask, setTaskListGroupMode, toggleTask} from '../store/actions'
+import { highlightTask, setTaskListGroupMode, toggleTask, selectTask } from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -105,6 +105,7 @@ class UnassignedTasks extends React.Component {
                   key={ key }
                   task={ task }
                   toggleTask={ this.props.toggleTask }
+                  selectTask={ this.props.selectTask }
                   selected={ -1 !== this.props.selectedTasks.indexOf(task) }
                 />
               )
@@ -130,7 +131,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
   return {
     setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
-    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) }
+    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) },
+    selectTask: (task) => { dispatch(selectTask(task)) }
   }
 }
 

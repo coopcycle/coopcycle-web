@@ -46,6 +46,8 @@
     "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Tâche #{{id}}",
     "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} et {{before}}",
     "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assignée à {{username}}",
+    "ADMIN_DASHBOARD_UNASSIGN_TASK": "Désassigner la tache #{{id}}",
+    "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Désassigner {{count}} tâche(s)",
     "USER_EDIT_ENABLED_LABEL": "Activé",
     "USER_EDIT_DISABLED_LABEL": "Désactivé",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Livraison prévue à {{deliveryTime}}.",

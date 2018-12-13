@@ -7,6 +7,7 @@ import _ from 'lodash'
 import { assignTasks, updateTask, drakeDrag, drakeDragEnd } from './store/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
+import ContextMenu from './components/ContextMenu'
 
 const drake = dragula({
   copy: true,
@@ -138,6 +139,7 @@ class DashboardApp extends React.Component {
             drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
           }
         />
+        <ContextMenu />
       </div>
     )
   }

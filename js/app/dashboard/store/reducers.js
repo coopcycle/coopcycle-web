@@ -299,6 +299,15 @@ const selectedTasks = (state = selectedTasksInitial, action) => {
       newState.push(action.task)
 
       return newState
+
+    case 'SELECT_TASK':
+
+      if (-1 !== state.indexOf(action.task)) {
+
+        return state
+      }
+
+      return [ action.task ]
   }
 
   return state

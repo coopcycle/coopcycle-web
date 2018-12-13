@@ -79,6 +79,10 @@ function toggleTask(task, multiple = false) {
   return { type: 'TOGGLE_TASK', task, multiple }
 }
 
+function selectTask(task) {
+  return { type: 'SELECT_TASK', task }
+}
+
 function setTaskListGroupMode(mode) {
   return { type: 'SET_TASK_LIST_GROUP_MODE', mode }
 }
@@ -141,6 +145,7 @@ export {
   toggleShowCancelledTasks,
   addCreatedTask,
   toggleTask,
+  selectTask,
   setGeolocation,
   setOffline,
   drakeDrag,
