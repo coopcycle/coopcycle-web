@@ -110,6 +110,10 @@ class OrderTimelineCalculatorTest extends TestCase
             ->calculate($order)
             ->willReturn($preparationTime);
 
+        $this->preparationTimeCalculator
+            ->createForRestaurant($order->getRestaurant())
+            ->willReturn($this->preparationTimeCalculator->reveal());
+
         $this->shippingTimeCalculator
             ->calculate($order)
             ->willReturn($shippingTime);

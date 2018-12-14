@@ -85,6 +85,10 @@ class ShippingDateFilterTest extends TestCase
             ->calculate(Argument::type(OrderInterface::class))
             ->willReturn($preparationTime);
 
+        $this->preparationTimeCalculator
+            ->createForRestaurant(Argument::type(Restaurant::class))
+            ->willReturn($this->preparationTimeCalculator->reveal());
+
         $this->shippingTimeCalculator
             ->calculate(Argument::type(OrderInterface::class))
             ->willReturn($shippingTime);
@@ -141,6 +145,10 @@ class ShippingDateFilterTest extends TestCase
         $this->preparationTimeCalculator
             ->calculate(Argument::type(OrderInterface::class))
             ->willReturn($preparationTime);
+
+        $this->preparationTimeCalculator
+            ->createForRestaurant(Argument::type(Restaurant::class))
+            ->willReturn($this->preparationTimeCalculator->reveal());
 
         $this->shippingTimeCalculator
             ->calculate(Argument::type(OrderInterface::class))

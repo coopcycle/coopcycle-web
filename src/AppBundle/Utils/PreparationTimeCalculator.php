@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -58,5 +59,22 @@ class PreparationTimeCalculator
         }
 
         return $preparation;
+    }
+
+    public function createForRestaurant(Restaurant $restaurant)
+    {
+        $preparationTimeRules = $restaurant->getPreparationTimeRules();
+
+        if (count($preparationTimeRules) > 0) {
+            $config = [];
+
+            foreach ($preparationTimeRules as $preparationTimeRule) {
+                $config[$preparationTimeRule->getExpression()] = $preparationTimeRule->getTime();
+            }
+
+            return new self($config);
+        }
+
+        return $this;
     }
 }
