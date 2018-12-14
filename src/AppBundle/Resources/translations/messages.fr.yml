@@ -178,6 +178,7 @@ restaurant.list.planning: Planning
 restaurant.list.settings: Paramètres
 restaurant.list.norestaurant: Pas de restaurant pour le moment
 restaurant.list.createNewRestaurant: Créer un restaurant
+restaurant.list.preparationTime: Préparation
 restaurant.product_options.help: 'Les options permettent de rendre les produits <strong>configurables</strong>
 
   <br>

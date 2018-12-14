@@ -11,6 +11,7 @@ use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
+use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
@@ -735,5 +736,33 @@ trait RestaurantTrait
         ));
 
         return $this->redirect('https://connect.stripe.com/oauth/authorize?' . $queryString);
+    }
+
+    public function preparationTimeAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(PreparationTimeRulesType::class, $restaurant);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $restaurant = $form->getData();
+
+            $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
+            $em->flush();
+
+            return $this->redirectToRoute($routes['success'], ['id' => $id]);
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ], []));
     }
 }

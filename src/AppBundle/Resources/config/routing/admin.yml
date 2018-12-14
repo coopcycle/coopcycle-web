@@ -295,6 +295,18 @@ admin_restaurant_dashboard_order_accept:
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
+admin_restaurant_preparation_time:
+    path: /admin/restaurants/{id}/preparation-time
+    defaults:
+        _controller: AppBundle:Admin:preparationTime
+        layout: '@App/admin.html.twig'
+        template: '@App/restaurant/preparation_time.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+            success: admin_restaurant_preparation_time
+    methods: [ GET, POST ]
+
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:

@@ -1,0 +1,14 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _preparation_time_rules_preparationTimeRules_entry_row %}
+  {% set label = false %}
+  <div class="preparation_time_rules_preparationTimeRule">
+    {{ form_widget(form) }}
+  </div>
+{% endblock %}
+
+{% block _preparation_time_rules_preparationTimeRules_entry_widget %}
+  {{ form_widget(form.expression) }}
+  {{ form_widget(form.time) }}
+  {{ form_widget(form.position) }}
+{% endblock %}
