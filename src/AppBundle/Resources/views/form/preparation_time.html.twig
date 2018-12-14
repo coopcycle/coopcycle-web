@@ -1,0 +1,17 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block _preparation_time_rules_preparationTimeRules_entry_row %}
+  {% set label = false %}
+  <div class="preparation_time_rules_preparationTimeRule">
+    {{ form_widget(form) }}
+  </div>
+{% endblock %}
+
+{% block _preparation_time_rules_preparationTimeRules_entry_widget %}
+  {{ form_row(form.expression) }}
+  {{ form_row(form.time) }}
+  {{ form_widget(form.position) }}
+  <button type="button" class="close" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+{% endblock %}

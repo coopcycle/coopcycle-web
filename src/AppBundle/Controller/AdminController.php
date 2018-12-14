@@ -70,6 +70,7 @@ class AdminController extends Controller
     protected function getRestaurantRoutes()
     {
         return [
+            'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
             'menu_taxons' => 'admin_restaurant_menu_taxons',
             'menu_taxon' => 'admin_restaurant_menu_taxon',
@@ -79,6 +80,7 @@ class AdminController extends Controller
             'dashboard' => 'admin_restaurant_dashboard',
             'planning' => 'admin_restaurant_planning',
             'stripe_oauth_redirect' => 'admin_restaurant_stripe_oauth_redirect',
+            'preparation_time' => 'admin_restaurant_preparation_time'
         ];
     }
 

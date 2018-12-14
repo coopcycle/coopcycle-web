@@ -184,6 +184,8 @@ restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes.
 restaurant.list.createNewRestaurant: Crear restaurante
+restaurant.list.preparationTime: Preparación
+
 restaurant.product_options.help: 'Las opciones hacen que los productos sean <strong>configurables</strong>
 
   <br>
@@ -377,6 +379,11 @@ form.address.description.placeholder: 2ª puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
+
+form.preparation_time_rule.expression.label: Expresión
+form.preparation_time_rule.time.label: Tiempo
+form.preparation_time.defaults_warning: |
+  Este restaurante aún no tiene ningún tiempo de preparación personalizado. Las reglas predeterminadas se han copiado a continuación, puedes cambiarlas.
 
 form.settings.date_time: Fecha y hora
 form.settings.brand_name.label: Marca de fábrica

@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
@@ -11,6 +12,7 @@ use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
+use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
@@ -735,5 +737,63 @@ trait RestaurantTrait
         ));
 
         return $this->redirect('https://connect.stripe.com/oauth/authorize?' . $queryString);
+    }
+
+    public function preparationTimeAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        $hasRules = count($restaurant->getPreparationTimeRules()) > 0;
+        if (!$hasRules) {
+            $config = $this->get('coopcycle.preparation_time_calculator')->getDefaultConfig();
+            foreach ($config as $expression => $time) {
+                $preparationTimeRule = new PreparationTimeRule();
+                $preparationTimeRule->setExpression($expression);
+                $preparationTimeRule->setTime($time);
+
+                $restaurant->addPreparationTimeRule($preparationTimeRule);
+            }
+        }
+
+        $originalPreparationTimeRules = new ArrayCollection();
+        foreach ($restaurant->getPreparationTimeRules() as $preparationTimeRule) {
+            $originalPreparationTimeRules->add($preparationTimeRule);
+        }
+
+        $form = $this->createForm(PreparationTimeRulesType::class, $restaurant);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $restaurant = $form->getData();
+
+            foreach ($originalPreparationTimeRules as $preparationTimeRule) {
+                if (false === $restaurant->getPreparationTimeRules()->contains($preparationTimeRule)) {
+
+                    $restaurant->getPreparationTimeRules()
+                        ->removeElement($preparationTimeRule);
+
+                    $this->getDoctrine()
+                        ->getManagerForClass(PreparationTimeRule::class)
+                        ->remove($preparationTimeRule);
+                }
+            }
+
+            $em = $this->getDoctrine()->getManagerForClass(Restaurant::class);
+            $em->flush();
+
+            return $this->redirectToRoute($routes['success'], ['id' => $id]);
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'show_defaults_warning' => !$hasRules,
+            'form' => $form->createView(),
+        ], []));
     }
 }

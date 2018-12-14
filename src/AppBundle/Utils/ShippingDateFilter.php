@@ -28,7 +28,9 @@ class ShippingDateFilter
             return false;
         }
 
-        $preparationTime = $this->preparationTimeCalculator->calculate($order);
+        $preparationTime = $this->preparationTimeCalculator
+            ->createForRestaurant($order->getRestaurant())
+            ->calculate($order);
         $shippingTime = $this->shippingTimeCalculator->calculate($order);
 
         if ($order->getRestaurant()->isOpen($now)) {
