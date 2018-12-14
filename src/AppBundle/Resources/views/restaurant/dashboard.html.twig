@@ -46,5 +46,5 @@ window.__routes = {
   'user_details':    "{{ path(routes.user_details,    { username: '__USERNAME__' }) }}",
 };
 </script>
-<script src="{{ asset('js/restaurant-panel.js') }}"></script>
+{{ encore_entry_script_tags('js/restaurant-panel') }}
 {% endblock %}

@@ -41,5 +41,5 @@
     window.AppData.restaurantsSearchUrl = "{{ path('admin_restaurants_search', { format: 'json'  }) }}"
     window.AppData.storesSearchUrl = "{{ path('admin_stores_search', { format: 'json'  }) }}"
   </script>
-  <script src="{{ asset('js/user-form.js') }}"></script>
+  {{ encore_entry_script_tags('js/user-form') }}
 {% endblock %}

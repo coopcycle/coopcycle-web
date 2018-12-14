@@ -90,7 +90,7 @@ function getPolyline(origin, destination) {
     .then(route => decodePolyline(route.geometry))
 }
 
-module.exports = {
+export default {
   init: init,
   createMarker: createMarker,
   fitToLayers: fitToLayers,

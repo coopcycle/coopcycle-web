@@ -56,6 +56,7 @@ class AppKernel extends Kernel
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new JMose\CommandSchedulerBundle\JMoseCommandSchedulerBundle(),
             new Nmure\CrawlerDetectBundle\CrawlerDetectBundle(),
+            new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
