@@ -223,6 +223,13 @@ AppBundle\Entity\Restaurant:
             inversedBy: null
             orphanRemoval: false
             orderBy: null
+        preparationTimeRules:
+            targetEntity: AppBundle\Entity\Restaurant\PreparationTimeRule
+            cascade:
+                - all
+            mappedBy: restaurant
+            orderBy:
+                position: ASC
         orders:
             targetEntity: Sylius\Component\Order\Model\OrderInterface
             fetch: LAZY
