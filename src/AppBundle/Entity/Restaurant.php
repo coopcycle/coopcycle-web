@@ -197,6 +197,8 @@ class Restaurant extends FoodEstablishment
      */
     private $stripeConnectRoles = ['ROLE_ADMIN'];
 
+    private $preparationTimeRules;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -207,6 +209,7 @@ class Restaurant extends FoodEstablishment
         $this->taxons = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
+        $this->preparationTimeRules = new ArrayCollection();
     }
 
     /**
@@ -633,6 +636,29 @@ class Restaurant extends FoodEstablishment
     public function setStripeConnectRoles($stripeConnectRoles)
     {
         $this->stripeConnectRoles = $stripeConnectRoles;
+
+        return $this;
+    }
+
+    public function getPreparationTimeRules()
+    {
+        return $this->preparationTimeRules;
+    }
+
+    public function setPreparationTimeRules($preparationTimeRules)
+    {
+        foreach ($preparationTimeRules as $preparationTimeRule) {
+            $this->addPreparationTimeRule($preparationTimeRule);
+        }
+
+        return $this;
+    }
+
+    public function addPreparationTimeRule($preparationTimeRule)
+    {
+        $preparationTimeRule->setRestaurant($this);
+
+        $this->preparationTimeRules->add($preparationTimeRule);
 
         return $this;
     }
