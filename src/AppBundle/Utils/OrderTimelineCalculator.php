@@ -37,7 +37,9 @@ class OrderTimelineCalculator
 
         $timeline->setPickupExpectedAt($pickupExpectedAt);
 
-        $preparationTime = $this->preparationTimeCalculator->calculate($order);
+        $preparationTime = $this->preparationTimeCalculator
+            ->createForRestaurant($order->getRestaurant())
+            ->calculate($order);
         $preparationExpectedAt = clone $pickupExpectedAt;
         $preparationExpectedAt->sub(date_interval_create_from_date_string($preparationTime));
 
