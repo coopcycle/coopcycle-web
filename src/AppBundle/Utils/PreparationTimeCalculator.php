@@ -30,6 +30,11 @@ class PreparationTimeCalculator
         $this->language = new ExpressionLanguage();
     }
 
+    public function getDefaultConfig()
+    {
+        return $this->config;
+    }
+
     public function calculate(OrderInterface $order)
     {
         $preparation = '0 minutes';

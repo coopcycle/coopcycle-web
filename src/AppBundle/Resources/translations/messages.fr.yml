@@ -178,6 +178,7 @@ restaurant.list.planning: Planning
 restaurant.list.settings: Paramètres
 restaurant.list.norestaurant: Pas de restaurant pour le moment
 restaurant.list.createNewRestaurant: Créer un restaurant
+restaurant.list.preparationTime: Préparation
 restaurant.product_options.help: 'Les options permettent de rendre les produits <strong>configurables</strong>
 
   <br>
@@ -378,6 +379,10 @@ form.address.company.label: Entreprise
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
+form.preparation_time_rule.expression.label: Expression
+form.preparation_time_rule.time.label: Temps
+form.preparation_time.defaults_warning: |
+  Ce restaurant n'a pas de temps de préparation personnalisé pour le moment. Les règles par défaut ont été copiées ci-dessous, vous pouvez les modifier.
 form.settings.date_time: Date et heure
 form.settings.stripe.title: Compte Stripe
 form.settings.stripe.help: '
