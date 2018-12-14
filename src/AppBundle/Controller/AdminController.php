@@ -70,6 +70,7 @@ class AdminController extends Controller
     protected function getRestaurantRoutes()
     {
         return [
+            'restaurants' => 'admin_restaurants',
             'restaurant' => 'admin_restaurant',
             'menu_taxons' => 'admin_restaurant_menu_taxons',
             'menu_taxon' => 'admin_restaurant_menu_taxon',
