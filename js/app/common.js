@@ -2,6 +2,10 @@
 const $ = require('jquery')
 global.$ = global.jQuery = $
 
+import '../../assets/css/main.scss'
+
+require('bootstrap-sass');
+
 import { setTimezone } from './i18n'
 
 global.ClipboardJS = require('clipboard')

@@ -67,8 +67,8 @@ window.AppData.Delivery = {
   taskModalURL: "{{ path('admin_task', { id: '__TASK_ID__' }) }}"
 };
 </script>
-<script src="{{ asset('js/task-modal.js') }}"></script>
-<script src="{{ asset('js/delivery-list.js') }}"></script>
+{{ encore_entry_script_tags('js/task-modal') }}
+{{ encore_entry_script_tags('js/delivery-list') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places"
   async defer></script>
 {% endblock %}

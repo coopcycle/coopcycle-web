@@ -295,6 +295,6 @@
     });
   });
 </script>
-<script src="{{ asset('js/restaurant-form.js') }}"></script>
+{{ encore_entry_script_tags('js/restaurant-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

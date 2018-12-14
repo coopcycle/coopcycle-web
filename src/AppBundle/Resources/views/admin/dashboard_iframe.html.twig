@@ -193,7 +193,7 @@ window.AppData.Dashboard = {
   jwt: "{{ jwt }}"
 }
 </script>
-<script src="{{ asset('js/dashboard.js') }}"></script>
+{{ encore_entry_script_tags('js/dashboard') }}
 <script>
   $('#task-upload-form-errors').popover({
     html: true,
@@ -212,7 +212,7 @@ window.AppData.Dashboard = {
     $('#task-modal').modal('show');
   {% endif %}
 </script>
-<script src="{{ asset('js/task-modal.js') }}"></script>
+{{ encore_entry_script_tags('js/task-modal') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

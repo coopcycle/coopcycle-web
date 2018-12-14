@@ -5,7 +5,7 @@
     <title>{% block title %}CoopCycle - {{ 'meta.title'|trans }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Arvo:400,700">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    {{ encore_entry_link_tags('js/common') }}
     <style>
     html, body {
       width: 100%;
@@ -78,14 +78,14 @@
           <div id="map"></div>
         </div>
     </div>
-    <script src="{{ asset('manifest.js') }}"></script>
-    <script src="{{ asset('js/vendor.js') }}"></script>
-    <script src="{{ asset('js/common.js') }}"></script>
+
     <script>
     window.__restaurants = {{ restaurants|raw }};
     </script>
-    {% include "@App/_partials/map_helper.html.twig" %}
-    <script src="{{ asset('js/restaurants-map.js') }}"></script>
+    <script src="{{ path('js_data') }}"></script>
+    {{ encore_entry_script_tags('js/common') }}
+    {{ encore_entry_script_tags('js/widgets') }}
+    {{ encore_entry_script_tags('js/restaurants-map') }}
     {% if app.environment == "dev" %}
     <script src="{{ asset('webpack-dev-server.js') }}"></script>
     {% endif %}

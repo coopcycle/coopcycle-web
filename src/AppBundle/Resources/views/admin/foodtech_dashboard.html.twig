@@ -7,7 +7,7 @@
 {% block footer %}{% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/foodtech-dashboard.js') }}"></script>
+{{ encore_entry_script_tags('js/foodtech-dashboard') }}
 <script>
 var orders = {{ orders_normalized|json_encode()|raw }};
 new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {

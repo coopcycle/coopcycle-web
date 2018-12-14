@@ -335,3 +335,6 @@ jmose_command_scheduler:
 sensio_framework_extra:
     router:
         annotations: false
+
+webpack_encore:
+    output_path: '%kernel.project_dir%/web'

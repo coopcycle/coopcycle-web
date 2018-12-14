@@ -51,7 +51,7 @@
         "stripe/stripe-php": "^4.3",
         "vich/uploader-bundle": "^1.6",
         "doctrine/doctrine-migrations-bundle": "^1.0",
-        "symfony/web-server-bundle": "3.3.*",
+        "symfony/web-server-bundle": "3.4.*",
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^3.0",
         "myclabs/php-enum": "^1.5",
@@ -90,7 +90,8 @@
         "friendsofsymfony/jsrouting-bundle": "^2.2",
         "jmose/command-scheduler-bundle": "^2.0",
         "predicthq/address-formatter": "^1.1",
-        "nmure/crawler-detect-bundle": "^1.0.0"
+        "nmure/crawler-detect-bundle": "^1.0.0",
+        "symfony/webpack-encore-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

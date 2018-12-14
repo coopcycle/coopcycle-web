@@ -112,7 +112,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ asset('js/delivery-form.js') }}"></script>
+{{ encore_entry_script_tags('js/delivery-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 <script>

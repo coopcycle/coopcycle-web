@@ -54,7 +54,7 @@ install:
   # Run Selenium using host networking
   # https://github.com/elgalu/docker-selenium#dns
   # https://docs.docker.com/network/host/
-  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium:3.141.59c start
+  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium start --timeZone "Europe/Paris"
 
 before_script:
   - phpenv config-rm xdebug.ini
@@ -83,4 +83,4 @@ script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
   - phpunit
   - php vendor/bin/behat -f progress
-  - node node_modules/.bin/mocha --require babel-core/register --exit js/tests/
+  - node node_modules/.bin/mocha --require @babel/register --exit js/tests/
