@@ -6,20 +6,8 @@ Encore
   .setPublicPath('/')
 
   .addStyleEntry('css/dashboard', './assets/css/dashboard.scss')
-  .addStyleEntry('css/styles', './assets/css/main.scss')
 
-  .createSharedEntry('js/vendor', [
-    'bootstrap-sass',
-    'i18next',
-    'jquery',
-    'leaflet',
-    'lodash',
-    'moment',
-    'react',
-    'react-dom',
-    'whatwg-fetch'
-  ])
-  .addEntry('js/common', ['babel-polyfill', './js/app/common.js'])
+  .addEntry('js/common', './js/app/common.js')
   .addEntry('js/dashboard', './js/app/dashboard/index.jsx')
   .addEntry('js/cart', './js/app/cart/index.jsx')
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
@@ -37,6 +25,9 @@ Encore
   .addEntry('js/user-form', './js/app/user/form.jsx')
   .addEntry('js/widgets', './js/app/widgets/index.js')
   .addEntry('js/zone-preview', './js/app/zone/preview.jsx')
+
+  .enableSingleRuntimeChunk()
+  .splitEntryChunks()
 
   .enablePostCssLoader()
   .enableSassLoader(function(sassOptions) {}, {

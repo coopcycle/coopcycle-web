@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "browserslist": [
-    "last 2 versions",
-    "ios >= 8"
+    "> 5%",
+    "ie >= 11"
   ],
   "repository": {
     "type": "git",
@@ -17,8 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "@mapbox/polyline": "^0.2.0",
-    "babel-polyfill": "^6.26.0",
     "co": "^4.6.0",
     "deepmerge": "^1.5.2",
     "form-data": "^2.3.3",
@@ -47,11 +47,12 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@symfony/webpack-encore": "^0.20.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "@symfony/webpack-encore": "0.22.*",
     "antd": "^3.11.1",
     "autoprefixer": "^9.4.2",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-react": "^6.16.0",
     "beautifymarker": "1.0.7",
     "bootstrap-sass": "^3.3.7",
     "chai": "^4.2.0",
@@ -69,7 +70,7 @@
     "leaflet-providers": "^1.5.0",
     "mocha": "^5.2.0",
     "node-sass": "^4.9.3",
-    "postcss-loader": "^2.1.6",
+    "postcss-loader": "^3.0.0",
     "react": "^16.4.2",
     "react-autosuggest": "^9.4.2",
     "react-color": "^2.14.1",

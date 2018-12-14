@@ -20,6 +20,7 @@
 # Build with webpack
 /web/bundles/
 /web/css/
+/web/entrypoints.json
 /web/fonts/
 /web/images/*
 !web/images/.gitkeep
@@ -28,6 +29,7 @@
 /web/manifest.json
 /web/manifest.js
 /web/manifest.*.js
+/web/runtime.js
 
 /node_modules/
 .DS_Store
