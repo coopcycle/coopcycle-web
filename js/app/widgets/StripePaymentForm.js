@@ -15,7 +15,7 @@ var style = {
   }
 };
 
-export default (form, options) => {
+export default function(form, options) {
 
   $('.btn-payment').attr('disabled', true)
 

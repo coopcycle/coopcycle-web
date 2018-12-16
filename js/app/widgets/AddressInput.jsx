@@ -12,7 +12,7 @@ const addressTypeToPropertyName = {
   locality: 'addressLocality'
 }
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = options || {
     elements: {}

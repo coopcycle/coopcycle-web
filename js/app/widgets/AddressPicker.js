@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import AddressPicker from '../components/AddressPicker'
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = {
     address: '',

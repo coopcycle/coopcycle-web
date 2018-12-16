@@ -53,7 +53,7 @@ const styles = {
   },
 }
 
-export default (el, options) => {
+export default function(el, options) {
 
   const selectOptions = _.map(options.tags, tagAsOption)
   const selectDefaultValue = _.map(options.defaultValue, tagAsOption)

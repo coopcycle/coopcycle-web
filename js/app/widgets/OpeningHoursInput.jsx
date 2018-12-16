@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import OpeningHours from '../components/OpeningHours.jsx'
 import _ from 'lodash'
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = options || {}
 

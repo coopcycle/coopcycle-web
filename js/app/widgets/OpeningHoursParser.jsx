@@ -14,6 +14,6 @@ class OpeningHoursDisplay extends React.Component {
   }
 }
 
-export default (el, options) => {
+export default function(el, options) {
   render(<OpeningHoursDisplay openingHours={ options.openingHours } locale={ options.locale } />, el)
 }

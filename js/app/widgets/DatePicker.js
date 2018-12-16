@@ -9,7 +9,7 @@ import moment from 'moment'
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = options || {
     defaultValue: moment(),

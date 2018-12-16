@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { DeliveryZonePicker } from "../components/DeliveryZonePicker"
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = options || {
     onExprChange: () => {},

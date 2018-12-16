@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { SketchPicker } from 'react-color';
 
-export default (el, options) => {
+export default function(el, options) {
 
   options = options || {}
 
