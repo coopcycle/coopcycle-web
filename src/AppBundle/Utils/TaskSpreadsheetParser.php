@@ -103,9 +103,19 @@ class TaskSpreadsheetParser
 
             [ $doneAfter, $doneBefore ] = $this->parseTimeWindow($record, $defaultDate);
 
-            if (!$address = $this->geocoder->geocode($record['address'])) {
-                // TODO Translate
-                throw new \Exception(sprintf('Could not geocode address %s', $record['address']));
+            if (isset($record['address'])) {
+                if (!$address = $this->geocoder->geocode($record['address'])) {
+                    // TODO Translate
+                    throw new \Exception(sprintf('Could not geocode address %s', $record['address']));
+                }
+            }
+
+            if (isset($record['latlong'])) {
+                [ $latitude, $longitude ] = array_map('floatval', explode(',', $record['latlong']));
+                if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
+                    // TODO Translate
+                    throw new \Exception(sprintf('Could not reverse geocode %s', $record['latlong']));
+                }
             }
 
             if (isset($record['address.name']) && !empty($record['address.name'])) {
@@ -170,9 +180,15 @@ class TaskSpreadsheetParser
 
     private function validateHeader(array $header)
     {
-        if (!in_array('address', $header)) {
-            // TODO Translate
-            throw new \Exception('You must provide an "address" column');
+        $hasAddress = in_array('address', $header);
+        $hasLatLong = in_array('latlong', $header);
+
+        if (!$hasAddress && !$hasLatLong) {
+            throw new \Exception('You must provide an "address" or a "latlong" column');
+        }
+
+        if ($hasAddress && $hasLatLong) {
+            throw new \Exception('You must provide an "address" or a "latlong" column, not both');
         }
     }
 

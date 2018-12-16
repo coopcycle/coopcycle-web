@@ -77,6 +77,25 @@ class Geocoder
         }
     }
 
+    public function reverse(float $latitude, float $longitude)
+    {
+        $results = $this->geocoder->reverse($latitude, $longitude);
+
+        if (count($results) > 0) {
+            $result = $results->first();
+
+            [ $longitude, $latitude ] = $result->getCoordinates()->toArray();
+
+            $address = new Address();
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+            $address->setStreetAddress($this->formatAddress($result));
+            $address->setAddressLocality($result->getLocality());
+            $address->setPostalCode($result->getPostalCode());
+
+            return $address;
+        }
+    }
+
     private function formatAddress(Location $location)
     {
         $data = [
