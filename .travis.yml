@@ -13,10 +13,21 @@ services:
 
 addons:
   postgresql: '9.4'
+  apt:
+    packages:
+      - nginx
+  hosts:
+    - test.coopcycle.org
 
 language: php
 php:
   - '7.2.11'
+
+cache:
+  apt: true
+  npm: true
+  directories:
+    - $HOME/.composer/cache/files
 
 env:
   global:
@@ -24,8 +35,8 @@ env:
     - STRIPE_MOCK_API_BASE=http://localhost:12111
     - SYMFONY_ENV=test
     - NODE_ENV=test
-    - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://127.0.0.1:8080","sessions":{"selenium2":{"selenium2":{"wd_host":"http://localhost:4444/wd/hub"}}}}}}'
-    - ASSETS_BASE_URL=http://127.0.0.1:8080
+    - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://test.coopcycle.org","sessions":{"selenium2":{"selenium2":{"wd_host":"http://localhost:4444/wd/hub"}}}}}}'
+    - ASSETS_BASE_URL=http://test.coopcycle.org
     # https://docs.travis-ci.com/user/encryption-keys
     # GOOGLE_API_KEY
     - secure: "QQdL4x+Ht2/qUv+qhtyR/9effGz2P6PyJ0+8lGWycu0K5sKmtcUO/6xK7il4/uK5nogm4YcON1Pcmm665NhfCSu1gicNgd0bYR0KIWIYPeWUM9pjC1yzZhh2MOl9p0NWo6ulI1Ex7WTmN8sXc5AuNhpnKuQXR8mZPu5Tg9YTodkglKARdO11Nk1rU4dLefvlmncWHgtZ4DTYINe0jHWLH0RnmLKtKVzwLpeSt/AEplRAl25fh+qp6fw61qoHMLLyUGTJpli+mvEUruAKupc4bERBOaL9uEa+J0X0eOumK5tQLyXPGjibPRjwJWxBq7OHZOWtX4CvbWU6xoF/MM0hp9HRdH6i06tlo68BTR+dBviQWw7s2JLqCWrYtb6ifsmg+FVY4cKTDQG9mEJ6ZEMa8OAIaIltaXj3MyrrbsnkJIbweXn6OfsJBxzeIO8VaNJ++XA5uFD/RH1ClY9je6P635eFU2KSOoj58i3ElNl8Mn1/hwaBUZlfmytwLMmDmjyNr0EpuLohep6+FLv5vksgea0Nj1wI7HUJ0kY8bX6+BkFL1AWVrDJX3ZW38GvAArRWs+HHF7PN35agwSwOhih8SRtn/DpOWBNfG1Q+/PN1Yf6tWsPWc6aGCWNFiWjTOOtrkTTo1RO2uVuYaprsbW9nzMu69wlq82z/0ZxmKenxAYM="
@@ -54,7 +65,18 @@ install:
   # Run Selenium using host networking
   # https://github.com/elgalu/docker-selenium#dns
   # https://docs.docker.com/network/host/
-  - docker run --rm -ti -d --name zalenium --network="host" -p 4444:4444 -e PULL_SELENIUM_IMAGE=true -v /var/run/docker.sock:/var/run/docker.sock --privileged dosel/zalenium start --timeZone "Europe/Paris"
+  - docker pull elgalu/selenium
+  - docker run -d --name=grid --net=host --pid=host --network=host --add-host test.coopcycle.org:127.0.0.1 -p 4444:24444 -p 5900:25900 -e TZ="Europe/Paris" -e SELENIUM_HUB_PORT=4444 -v /dev/shm:/dev/shm --privileged elgalu/selenium
+  # Configure php-fpm
+  # @see https://docs.travis-ci.com/user/languages/php/
+  # @see http://php.net/manual/fr/install.fpm.configuration.php#clear-env
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - sudo sed -i -e 's/;clear_env = no/clear_env = no/g' ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
+  # Configure Nginx
+  - sudo sed -i -e 's/www-data/travis/g' /etc/nginx/nginx.conf
+  - sudo cp .travis/test.coopcycle.org.conf /etc/nginx/sites-available/test.coopcycle.org.conf
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$TRAVIS_BUILD_DIR?g" --in-place /etc/nginx/sites-available/test.coopcycle.org.conf
+  - sudo ln -s /etc/nginx/sites-available/test.coopcycle.org.conf /etc/nginx/sites-enabled/
 
 before_script:
   - phpenv config-rm xdebug.ini
@@ -66,6 +88,7 @@ before_script:
   - psql -U postgres -c 'CREATE DATABASE coopcycle_test;'
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis;'
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis_topology;'
+  - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION pg_trgm;'
   # Install PHP app
   - cp app/config/parameters.yml.travis app/config/parameters.yml
   # - composer install --prefer-dist
@@ -75,9 +98,13 @@ before_script:
   - php composer.phar install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
   - node_modules/.bin/encore dev
-  - php bin/console server:start 127.0.0.1:8080
+  # Start php-fpm
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  - sudo nginx -t
+  - sudo service nginx restart
   - cp phpunit.xml.dist phpunit.xml
   - pm2 start pm2.config.js --env=test
+  - docker exec grid wait_all_done 30s
 
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'

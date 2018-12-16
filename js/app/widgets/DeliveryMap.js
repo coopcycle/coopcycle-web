@@ -6,7 +6,7 @@ const polylineOptions = {
   opacity: 0.7
 }
 
-export default (selector, options) => {
+export default function(selector, options) {
 
   // Do not initialize map on mobile devices
   if (!$(`#${selector}`).is(':visible')) {

@@ -56,7 +56,7 @@
   {% if restaurant.menuTaxon is not null %}
   <div class="row">
 
-    <div class="col-xs-12 col-sm-8">
+    <div class="col-xs-12 col-sm-8" id="menu">
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
@@ -115,7 +115,7 @@
         {# These inputs are managed with React  #}
         {% do cart_form.date.setRendered %}
         {% do cart_form.time.setRendered %}
-        <div id="cart"></div>
+        <div id="cart" data-ready="false"></div>
       {{ form_end(cart_form) }}
     </div>
 
@@ -199,92 +199,22 @@
   {% endfor %}
 {% endif %}
 
+{% set restaurant_json = {
+  id: restaurant.id,
+  availabilities: availabilities,
+  openingHours: restaurant.openingHours
+} %}
+
+{% set cart = cart_provider.getCart() %}
+{% set cart_json = cart_provider.normalize(cart) %}
+
+<div id="js-restaurant-data"
+  data-restaurant="{{ restaurant_json|json_encode|e('html_attr') }}"
+  data-cart="{{ cart_json|json_encode|e('html_attr') }}"></div>
+
 {% endblock %}
 
 {% block scripts %}
-<script>
-
-new CoopCycle.OpeningHoursParser(document.querySelector('#opening-hours'), {
-  openingHours: {{ restaurant.openingHours|json_encode()|raw }},
-  locale: $('html').attr('lang')
-});
-
-$('form[data-product-simple]').on('submit', function(e) {
-  e.preventDefault();
-  window.AppData.CartHelper.addProduct($(this).attr('action'), 1);
-});
-
-// Make sure all (non-additional) options have been checked
-$('form[data-product-options] input[type="radio"]').on('click', function(e) {
-
-  var $options = $(this).closest('form').find('[data-product-option]');
-  var checkedOptionsCount = 0;
-  $options.each(function(index, el) {
-    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
-  });
-
-  _paq.push(['trackEvent', 'Checkout', 'selectOption']);
-
-  if ($options.length === checkedOptionsCount) {
-    $(this).closest('form').find('button[type="submit"]').prop('disabled', false);
-  }
-});
-
-$('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
-  _paq.push(['trackEvent', 'Checkout', 'addExtra']);
-});
-
-$('form[data-product-options]').on('submit', function(e) {
-  e.preventDefault();
-  var data = $(this).serializeArray();
-  if (data.length > 0) {
-    window.AppData.CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
-  } else {
-    window.AppData.CartHelper.addProduct($(this).attr('action'), 1);
-  }
-
-  $(this).closest('.modal').modal('hide');
-  // Uncheck all options
-  $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
-  $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
-});
-
-$('.modal').on('shown.bs.modal', function(e) {
-  _paq.push(['trackEvent', 'Checkout', 'showOptions']);
-  var $form = $(this).find('form[data-product-options]');
-  if ($form.length === 1) {
-    var $options = $form.find('[data-product-option]');
-    var disabled = $options.length > 0;
-    $form.find('button[type="submit"]').prop('disabled', disabled);
-  }
-});
-
-$('.modal').on('hidden.bs.modal', function(e) {
-  _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
-});
-
-{% set cart = cart_provider.getCart() %}
-
-function initMap() {
-  window.AppData.CartHelper.init(document.querySelector('#cart'), {
-    restaurant: {
-      id: {{ restaurant.id }},
-      availabilities: {{ availabilities|json_encode()|raw }}
-    },
-    resetCartURL: "{{ path('restaurant_cart_reset', { id: restaurant.id }) }}",
-    cartRestaurantURL: "{{ path('restaurant', { id: cart.restaurant.id }) }}",
-    datePickerDateInputName: "{{ cart_form.date.vars.full_name }}",
-    datePickerTimeInputName: "{{ cart_form.time.vars.full_name }}",
-    addressFormElements: {
-      streetAddress: document.querySelector("#{{ cart_form.shippingAddress.streetAddress.vars.id }}"),
-      postalCode: document.querySelector("#{{ cart_form.shippingAddress.postalCode.vars.id }}"),
-      addressLocality: document.querySelector("#{{ cart_form.shippingAddress.addressLocality.vars.id }}"),
-      latitude: document.querySelector("#{{ cart_form.shippingAddress.latitude.vars.id }}"),
-      longitude: document.querySelector("#{{ cart_form.shippingAddress.longitude.vars.id }}")
-    }
-  });
-}
-
-</script>
+{{ encore_entry_script_tags('js/restaurant') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

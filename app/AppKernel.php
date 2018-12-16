@@ -37,7 +37,6 @@ class AppKernel extends Kernel
             new Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new AppBundle\AppBundle(),
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
@@ -57,6 +56,7 @@ class AppKernel extends Kernel
             new JMose\CommandSchedulerBundle\JMoseCommandSchedulerBundle(),
             new Nmure\CrawlerDetectBundle\CrawlerDetectBundle(),
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
+            new AppBundle\AppBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

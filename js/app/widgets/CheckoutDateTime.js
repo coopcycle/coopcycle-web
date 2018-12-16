@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 moment.locale($('html').attr('lang'))
 
-export default (el, options) => {
+export default function(el, options) {
 
   if (!el) {
 

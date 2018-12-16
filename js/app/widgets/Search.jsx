@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import Autocomplete from '../components/Autocomplete.jsx'
 
-export default (el, options) => {
+export default function(el, options) {
   render(
     <Autocomplete
       baseURL={ options.url }

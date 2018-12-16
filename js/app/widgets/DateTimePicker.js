@@ -133,7 +133,7 @@ class DateTimePicker extends React.Component {
   }
 }
 
-export default (el, options) => {
+export default function(el, options) {
 
   const defaultProps = {
     getDatePickerContainer: null,

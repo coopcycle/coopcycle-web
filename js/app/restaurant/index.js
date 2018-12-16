@@ -4,10 +4,12 @@ import moment from 'moment'
 import _ from 'lodash'
 import { geocodeByAddress } from 'react-places-autocomplete'
 
-import Cart from './Cart.jsx'
-import CartTop from './CartTop.jsx'
+import Cart from '../cart/Cart.jsx'
+import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n from '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
+
+require('gasparesganga-jquery-loading-overlay')
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
@@ -16,15 +18,14 @@ window._paq = window._paq || []
 
 let timeoutID = null
 
-class CartHelper {
+class CartFacade {
 
   constructor(options = {}) {
     this.options = options
+    this.isInitialized = false
   }
 
-  init(el, options) {
-
-    this.options = Object.assign(this.options, options)
+  render(el, onLoad) {
 
     const {
       adjustments,
@@ -33,10 +34,10 @@ class CartHelper {
       itemsTotal,
       shippingAddress,
       total
-    } = window.AppData.Cart
+    } = this.options.cart
 
     const geohash = sessionStorage.getItem('search_geohash') || ''
-    const availabilities = options.restaurant.availabilities
+    const availabilities = this.options.restaurant.availabilities
 
     const streetAddress = shippingAddress ? shippingAddress.streetAddress : (sessionStorage.getItem('search_address') || '')
 
@@ -70,6 +71,10 @@ class CartHelper {
       } else {
         this._postCart()
       }
+
+      onLoad()
+
+      this.isInitialized = true
     }
 
     render(
@@ -93,21 +98,16 @@ class CartHelper {
         onClickGoBack={ () => this.gotoCartRestaurantURL() } />, el, onRender)
   }
 
-  initTop(el, cart) {
-    render(
-      <CartTop
-        restaurant={ cart.restaurant }
-        total={ cart.total }
-        itemsTotal={ cart.itemsTotal }
-      />, el)
-  }
-
   _setLoading(loading) {
     this.cartComponentRef.current.setLoading(loading)
   }
 
   _isLoading() {
     return this.cartComponentRef.current.isLoading()
+  }
+
+  _isInitialized() {
+    return this.isInitialized
   }
 
   _onDateChange(date) {
@@ -171,7 +171,7 @@ class CartHelper {
     window._paq.push(['trackEvent', 'Checkout', 'addItem']);
 
     const waitFor = () => {
-      if (!this._isLoading()) {
+      if (this._isInitialized() && !this._isLoading()) {
 
         this._setLoading(true)
 
@@ -194,7 +194,7 @@ class CartHelper {
     window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions']);
 
     const waitFor = () => {
-      if (!this._isLoading()) {
+      if (this._isInitialized() && !this._isLoading()) {
 
         this._setLoading(true)
 
@@ -231,15 +231,110 @@ class CartHelper {
   }
 
   gotoCartRestaurantURL() {
-    window.location.href = this.options.cartRestaurantURL
+    window.location.href = window.Routing.generate('restaurant', {
+      id: this.options.cart.restaurant.id
+    })
   }
 
   reset() {
     this._setLoading(true)
-    $.post(this.options.resetCartURL)
+    const resetCartURL = window.Routing.generate('restaurant_cart_reset', { id: this.options.restaurant.id })
+    $.post(resetCartURL)
       .then(res => this.handleAjaxResponse(res))
       .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 }
 
-window.CoopCycle.Cart = CartHelper
+window.initMap = function() {
+
+  let CartHelper
+
+  $('form[data-product-simple]').on('submit', function(e) {
+    e.preventDefault();
+    CartHelper.addProduct($(this).attr('action'), 1);
+  });
+
+  // Make sure all (non-additional) options have been checked
+  $('form[data-product-options] input[type="radio"]').on('change', function(e) {
+
+    var $options = $(this).closest('form').find('[data-product-option]');
+    var checkedOptionsCount = 0;
+    $options.each(function(index, el) {
+      checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
+    });
+
+    _paq.push(['trackEvent', 'Checkout', 'selectOption']);
+
+    if ($options.length === checkedOptionsCount) {
+      $(this).closest('form').find('button[type="submit"]').prop('disabled', false);
+      $(this).closest('form').find('button[type="submit"]').removeAttr('disabled');
+    }
+  });
+
+  $('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
+    _paq.push(['trackEvent', 'Checkout', 'addExtra']);
+  });
+
+  $('form[data-product-options]').on('submit', function(e) {
+    e.preventDefault();
+    var data = $(this).serializeArray();
+    if (data.length > 0) {
+      CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
+    } else {
+      CartHelper.addProduct($(this).attr('action'), 1);
+    }
+
+    $(this).closest('.modal').modal('hide');
+    // Uncheck all options
+    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
+    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
+  });
+
+  $('.modal').on('shown.bs.modal', function(e) {
+    _paq.push(['trackEvent', 'Checkout', 'showOptions']);
+    var $form = $(this).find('form[data-product-options]');
+    if ($form.length === 1) {
+      var $options = $form.find('[data-product-option]');
+      var disabled = $options.length > 0;
+      $form.find('button[type="submit"]').prop('disabled', disabled);
+    }
+  });
+
+  $('.modal').on('hidden.bs.modal', function(e) {
+    _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
+  });
+
+  const restaurantDataElement = document.querySelector('#js-restaurant-data')
+
+  const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
+  const cart = JSON.parse(restaurantDataElement.dataset.cart)
+
+  new OpeningHoursParser(document.querySelector('#opening-hours'), {
+    openingHours: restaurant.openingHours,
+    locale: $('html').attr('lang')
+  })
+
+  CartHelper = new CartFacade({
+    restaurant: restaurant,
+    cart: cart,
+    datePickerDateInputName: "cart[date]",
+    datePickerTimeInputName: "cart[time]",
+    addressFormElements: {
+      streetAddress: document.querySelector("#cart_shippingAddress_streetAddress"),
+      postalCode: document.querySelector("#cart_shippingAddress_postalCode"),
+      addressLocality: document.querySelector("#cart_shippingAddress_addressLocality"),
+      latitude: document.querySelector("#cart_shippingAddress_latitude"),
+      longitude: document.querySelector("#cart_shippingAddress_longitude")
+    }
+  })
+
+  CartHelper.render(document.querySelector('#cart'), function() {
+    document.querySelector('#cart').setAttribute('data-ready', 'true')
+    $('#menu').LoadingOverlay('hide')
+  })
+
+}
+
+$('#menu').LoadingOverlay('show', {
+  image: false,
+})

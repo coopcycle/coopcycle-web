@@ -8,7 +8,7 @@ const defaultOptions = {
   format: 'LT'
 }
 
-export default (ul, options) => {
+export default function(ul, options) {
 
   options = options || defaultOptions
 

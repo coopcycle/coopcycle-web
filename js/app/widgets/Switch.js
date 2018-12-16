@@ -34,7 +34,7 @@ class SwitchWrapper extends Component {
   }
 }
 
-export default (el, options) => {
+export default function(el, options) {
 
   const props = {
     checked: options.checked,

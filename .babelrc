@@ -1,14 +1,7 @@
 {
   "presets": [
     ["@babel/preset-env", {
-      "modules": false,
-      "targets": {
-        "browsers": [
-          "> 5%",
-          "ie >= 11"
-        ],
-        "uglify": true
-      },
+      "targets": "> 5%, ie >= 11",
       "useBuiltIns": "usage"
     }],
     "@babel/preset-react"

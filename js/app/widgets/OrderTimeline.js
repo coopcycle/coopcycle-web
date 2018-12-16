@@ -18,7 +18,7 @@ function handleEvent(name, event, order, timeline) {
   })
 }
 
-export default (el, options) => {
+export default function(el, options) {
 
   const timeline = render(<OrderTimeline order={ options.order } events={ options.events } />, el)
 
