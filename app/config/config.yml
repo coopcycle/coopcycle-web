@@ -320,6 +320,7 @@ fos_js_routing:
     routes_to_expose:
         - restaurant
         - restaurant_remove_from_cart
+        - restaurant_cart_reset
         - admin_foodtech_dashboard
         - admin_order_accept
         - admin_order_refuse

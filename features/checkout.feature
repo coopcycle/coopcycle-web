@@ -12,6 +12,8 @@ Feature: Checkout
     And the setting "administrator_email" has value "admin@demo.coopcycle.org"
     Given I am on "/fr"
     And I click on restaurant "Crazy Hamburger"
+    Then the url should match "/fr/restaurant/[0-9]+-crazy-hamburger"
+    Given I wait for cart to be ready
     And I click on menu item "Cheeseburger"
     Then the product options modal should appear
     Given I check all the mandatory product options

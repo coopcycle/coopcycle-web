@@ -721,6 +721,28 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given I wait for cart to be ready
+     */
+    public function waitCartReady()
+    {
+        $session = $this->getSession();
+
+        $cart = $session->getPage()->find('css', '#cart');
+
+        $isReady = $cart->waitFor(30, function($cart) {
+
+            if ($cart->getAttribute('data-ready') === 'true') {
+
+                return true;
+            }
+
+            return false;
+        });
+
+        Assert::assertTrue($isReady);
+    }
+
+    /**
      * @Then the product options modal should appear
      */
     public function assertProductOptionsModalVisible()
@@ -738,7 +760,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $modal = $session->getPage()->waitFor(10, function($page) {
+        $modal = $session->getPage()->waitFor(30, function($page) {
 
             return $page->find('css', '.ReactModal__Content--enter-address');
         });
@@ -1021,7 +1043,10 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $iframe = $session->getPage()->find('css', '.StripeElement iframe');
+        $iframe = $session->getPage()->waitFor(30, function($page) {
+
+            return $page->find('css', '.StripeElement iframe');
+        });
 
         Assert::assertNotNull($iframe, 'Stripe iframe was not found on page');
 

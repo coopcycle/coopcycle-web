@@ -73,20 +73,19 @@
     {{ encore_entry_script_tags('js/common') }}
     {{ encore_entry_script_tags('js/widgets') }}
     {{ encore_entry_script_tags('js/notifications') }}
-    {{ encore_entry_script_tags('js/cart') }}
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Set global timezone used in Moment.js
+        CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
+      });
+    </script>
 
     {% set cart = cart_provider.getCart() %}
-    <script>
-      // Set global timezone used in Moment.js
-      CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
-
-      window.AppData.Cart = {{ cart_provider.normalize(cart)|json_encode()|raw }};
-      window.AppData.CartHelper = new CoopCycle.Cart();
-      var cartTopElement = document.querySelector('#cart-top');
-      if (cartTopElement) {
-        window.AppData.CartHelper.initTop(cartTopElement, window.AppData.Cart);
-      }
-    </script>
+    <div id="js-cart-data"
+      data-restaurant="{{ cart.restaurant ? cart_provider.normalize(cart).restaurant|json_encode|e('html_attr') }}"
+      data-items-total="{{ cart.itemsTotal|e('html_attr') }}"
+      data-total="{{ cart.total|e('html_attr') }}"></div>
 
     {% if app.user %}
     <script>

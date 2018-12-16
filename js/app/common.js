@@ -1,3 +1,6 @@
+import React from 'react'
+import { render } from 'react-dom'
+
 // @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
 const $ = require('jquery')
 global.$ = global.jQuery = $
@@ -7,6 +10,7 @@ import '../../assets/css/main.scss'
 require('bootstrap-sass');
 
 import { setTimezone } from './i18n'
+import CartTop from './cart/CartTop.jsx'
 
 global.ClipboardJS = require('clipboard')
 
@@ -33,3 +37,23 @@ Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
 
 window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.setTimezone = setTimezone
+
+/* Top cart */
+document.addEventListener('DOMContentLoaded', function() {
+
+  const cartTopElement = document.querySelector('#cart-top');
+  const cartDataElement = document.querySelector('#js-cart-data')
+
+  if (cartTopElement && cartDataElement) {
+
+    const { restaurant, itemsTotal, total } = cartDataElement.dataset
+
+    render(
+      <CartTop
+        restaurant={ JSON.parse(restaurant) }
+        total={ total }
+        itemsTotal={ itemsTotal }
+      />, cartTopElement)
+  }
+
+})
