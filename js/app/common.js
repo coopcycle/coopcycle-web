@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     render(
       <CartTop
-        restaurant={ JSON.parse(restaurant) }
+        restaurant={ restaurant ? JSON.parse(restaurant) : null }
         total={ total }
         itemsTotal={ itemsTotal }
       />, cartTopElement)
