@@ -124,7 +124,7 @@ restaurant.disabledWarning: 'Éste restaurante está desactivado así que los vi
   '
 restaurant.closedWarning: 'Éste restaurante está actualmente cerrado pero puedes hacer un pedido para más tarde.'
 restaurant.closedWarningWithDelay: 'Pide ahora para más tarde. Pedidos minimo %delay% antes.'
-restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado temporalmente pero
+restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado hasta el <strong>%date%</strong> pero
   puedes hacer un pedido para más tarde.
 
   '

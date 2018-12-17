@@ -116,10 +116,7 @@ restaurant.disabledWarning: 'Ce restaurant n''est pas activé et n''est donc pas
   '
 restaurant.closedWarning: 'Ce restaurant est actuellement fermé. Vous pouvez commander pour plus tard !'
 restaurant.closedWarningWithDelay: 'Commandez dès maintenant pour plus tard ! Commande minimum %delay% à l''avance.'
-restaurant.temporaryClosedWarning: 'Ce restaurant est exceptionnellement fermé. Vous
-  pouvez commander pour plus tard!
-
-  '
+restaurant.temporaryClosedWarning: 'Ce restaurant est fermé jusqu''au <strong>%date%</strong>. Vous pouvez commander pour plus tard !'
 restaurant.noMenuWarning: 'Ce restaurant n''a pas de menu pour l''instant
 
   '

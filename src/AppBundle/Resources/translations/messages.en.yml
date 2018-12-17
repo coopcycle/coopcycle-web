@@ -133,7 +133,7 @@ restaurant.closedWarning: |
 restaurant.closedWarningWithDelay: |
   Order now for later. Order at least %delay% in advance.
 restaurant.temporaryClosedWarning: |
-  This restaurant is exceptionally closed. You can still order for later on though!
+  This restaurant is closed until <strong>%date%</strong>. You can still order for later on though!
 restaurant.noMenuWarning: |
   This restaurant has no menu for now
 restaurant.form.enabled.tooltip: |

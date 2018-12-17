@@ -15,29 +15,25 @@
         </div>
       </div>
     </div>
-  {%  endif %}
+  {% endif %}
 
-  {% if restaurant.hasClosingRuleForNow %}
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div class="alert alert-danger">
-        {% trans %}restaurant.temporaryClosedWarning{% endtrans %}
-        </div>
-      </div>
+  {% if not restaurant.isOpen %}
+    {% if restaurant.hasClosingRuleForNow %}
+    <div class="alert alert-danger text-center">
+      {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
+      restaurant.temporaryClosedWarning
+      {% endtrans %}
     </div>
-  {% elseif not restaurant.isOpen %}
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div class="alert alert-warning">
-        {% if restaurant.orderingDelayMinutes > 0 %}
-          {% trans with { '%delay%': delay } %}restaurant.closedWarningWithDelay{% endtrans %}
-        {% else %}
-          {% trans %}restaurant.closedWarning{% endtrans %}
-        {% endif %}
-        </div>
-      </div>
+    {% else %}
+    <div class="alert alert-warning text-center">
+      {% if restaurant.orderingDelayMinutes > 0 %}
+        {% trans with { '%delay%': delay } %}restaurant.closedWarningWithDelay{% endtrans %}
+      {% else %}
+        {% trans %}restaurant.closedWarning{% endtrans %}
+      {% endif %}
     </div>
-  {%  endif %}
+    {% endif %}
+  {% endif %}
 
   <div class="page-header restaurant-header">
     {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
