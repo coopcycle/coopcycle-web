@@ -1,5 +1,5 @@
-import React from 'react';
-import i18n from '../i18n';
+import React from 'react'
+import i18n from '../i18n'
 
 const map = {
   'cart': 'label-default',
@@ -7,11 +7,9 @@ const map = {
   'accepted': 'label-success',
   'ready': 'label-success',
   'refused': 'label-danger'
-};
+}
 
-
-class Label extends React.Component
-{
+class Label extends React.Component {
   render() {
 
     const classes = ['label']
@@ -23,8 +21,8 @@ class Label extends React.Component
 
     return (
       <span className={ classes.join(' ') }>{ i18n.t(this.props.order.state) }</span>
-    );
+    )
   }
 }
 
-export default Label;
+export default Label

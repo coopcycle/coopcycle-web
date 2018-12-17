@@ -24,5 +24,5 @@ if (latLngs.length > 0) {
     L.circleMarker(latLng, circleMarkerOptions).addTo(map)
   })
 
-  map.fitBounds(polyline.getBounds());
+  map.fitBounds(polyline.getBounds())
 }

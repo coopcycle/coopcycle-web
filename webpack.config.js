@@ -43,6 +43,42 @@ Encore
 
   .enableVersioning(Encore.isProduction())
 
+if (!Encore.isProduction()) {
+  Encore
+    .enableEslintLoader((options) => {
+      options.envs = [
+        'browser',
+        'es6',
+        'node',
+      ]
+      options.extends = [
+        'eslint:recommended',
+        'plugin:react/recommended'
+      ]
+      options.parserOptions = {
+        ecmaFeatures: {
+          jsx: true
+        },
+        ecmaVersion: 6
+      }
+      options.rules = {
+        indent: [ 'error', 2 ],
+        semi: [ 'error', 'never' ],
+        'react/jsx-uses-react': 'error',
+        'react/jsx-uses-vars': 'error',
+      }
+      options.plugins = [
+        'react'
+      ]
+      options.globals = [
+        'io',
+        'CoopCycle',
+        'Stripe',
+        'google'
+      ]
+    })
+}
+
 let webpackConfig = Encore.getWebpackConfig()
 
 webpackConfig.devServer = {

@@ -43,7 +43,7 @@ function toggleShowCancelledTasks() {
 }
 
 function setSelectedTagList (tag) {
-    return {type: 'FILTER_TAG_BY_TAGNAME', tag: tag }
+  return {type: 'FILTER_TAG_BY_TAGNAME', tag: tag }
 }
 
 function modifyTaskList(username, tasks) {
@@ -59,15 +59,15 @@ function modifyTaskList(username, tasks) {
     dispatch(modifyTaskListRequest(username, tasks))
 
     return fetch(url, {
-      credentials: "include",
+      credentials: 'include',
       method: 'PUT',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json'
       }
     })
-    .then(res => res.json())
-    .then(taskList => dispatch(modifyTaskListRequestSuccess(taskList)))
+      .then(res => res.json())
+      .then(taskList => dispatch(modifyTaskListRequestSuccess(taskList)))
   }
 }
 
@@ -102,14 +102,14 @@ function addTaskList(username) {
     dispatch(addTaskListRequest(username))
 
     return fetch(url, {
-        credentials: "include",
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      credentials: 'include',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-    .then(res => res.json())
-    .then(taskList => dispatch(addTaskListRequestSuccess(taskList)))
+      .then(res => res.json())
+      .then(taskList => dispatch(addTaskListRequestSuccess(taskList)))
   }
 }
 

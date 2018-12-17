@@ -1,6 +1,6 @@
-var L = require('leaflet');
-var Polyline = require('@mapbox/polyline');
-var BeautifyMarker = require('beautifymarker');
+import L from 'leaflet'
+import Polyline from '@mapbox/polyline'
+require('beautifymarker')
 
 function init(id, center, zoom = 13, zoomControl = true) {
 
@@ -20,9 +20,9 @@ function init(id, center, zoom = 13, zoomControl = true) {
   L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>'
-  }).addTo(map);
+  }).addTo(map)
 
-  return map;
+  return map
 }
 
 function createMarkerIcon(icon, iconShape, color) {
@@ -32,15 +32,15 @@ function createMarkerIcon(icon, iconShape, color) {
     borderColor: color,
     textColor: color,
     backgroundColor: 'transparent'
-  });
+  })
 }
 
 function createMarker(position, icon, iconShape, color) {
   var marker = L.marker(position, {
     icon: createMarkerIcon(icon, iconShape, color)
-  });
+  })
 
-  return marker;
+  return marker
 }
 
 function fitToLayers(map, layers, pad = 0) {
@@ -51,18 +51,18 @@ function fitToLayers(map, layers, pad = 0) {
 }
 
 function decodePolyline(polyline) {
-  var steps = Polyline.decode(polyline);
-  var polylineCoords = [];
+  var steps = Polyline.decode(polyline)
+  var polylineCoords = []
 
   for (var i = 0; i < steps.length; i++) {
     var tempLocation = new L.LatLng(
       steps[i][0],
       steps[i][1]
-    );
-    polylineCoords.push(tempLocation);
+    )
+    polylineCoords.push(tempLocation)
   }
 
-  return polylineCoords;
+  return polylineCoords
 }
 
 function route(coordinates) {
@@ -78,8 +78,8 @@ function route(coordinates) {
 
 function getPolyline(origin, destination) {
 
-  var originLatLng = origin.getLatLng();
-  var destinationLatLng = destination.getLatLng();
+  var originLatLng = origin.getLatLng()
+  var destinationLatLng = destination.getLatLng()
 
   var coordinates = [
     [originLatLng.lat, originLatLng.lng],
@@ -97,4 +97,4 @@ export default {
   decodePolyline: decodePolyline,
   getPolyline: getPolyline,
   route
-};
+}

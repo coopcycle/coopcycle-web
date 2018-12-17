@@ -6,9 +6,6 @@ import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 
-const DEFAULT_PICKUP_COLOR = '#337ab7'
-const DEFAULT_DROPOFF_COLOR = '#27AE60'
-
 const tagsColor = tags => {
   const tag = _.first(tags)
 
@@ -32,20 +29,20 @@ const taskColor = task => {
 const taskIcon = task => {
 
   switch (task.status) {
-    case 'TODO':
-      if (task.type === 'PICKUP') {
-        return 'cube'
-      }
-      if (task.type === 'DROPOFF') {
-        return 'arrow-down'
-      }
-      break
-    case 'DONE':
-      return 'check'
-    case 'FAILED':
-      return 'remove'
-    case 'CANCELLED':
-      return 'ban'
+  case 'TODO':
+    if (task.type === 'PICKUP') {
+      return 'cube'
+    }
+    if (task.type === 'DROPOFF') {
+      return 'arrow-down'
+    }
+    break
+  case 'DONE':
+    return 'check'
+  case 'FAILED':
+    return 'remove'
+  case 'CANCELLED':
+    return 'ban'
   }
 
   return 'question'
@@ -64,7 +61,7 @@ const createIcon = username => {
     iconSize:    [20, 20], // size of the icon
     iconAnchor:  [10, 10], // point of the icon which will correspond to marker's location
     popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
-  });
+  })
 }
 
 export default class MapProxy {
@@ -159,7 +156,6 @@ export default class MapProxy {
   }
 
   setOffline(username) {
-    console.log(`User ${username} is offline`)
     if (!this.courierMarkers.has(username)) {
       return
     }

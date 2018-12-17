@@ -9,9 +9,9 @@ import frBE from 'antd/lib/locale-provider/fr_BE'
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
 import TimeRange from '../utils/TimeRange'
 
-const timeFormat = 'HH:mm';
+const timeFormat = 'HH:mm'
 
-let minutes = [];
+let minutes = []
 for (let i = 0; i <= 60; i++) {
   if (0 !== i % 15) {
     minutes.push(i)
@@ -21,16 +21,16 @@ for (let i = 0; i <= 60; i++) {
 export default class extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       weekdays: TimeRange.weekdaysShort(props.locale),
       rowsWithErrors: props.rowsWithErrors,
       rows: []
-    };
+    }
   }
 
   componentDidMount() {
-    let rows = [ this.createRowData() ];
+    let rows = [ this.createRowData() ]
     if (this.props.value) {
       rows = _.map(this.props.value, (value) => this.parseOpeningHours(value))
     }
@@ -58,13 +58,13 @@ export default class extends React.Component {
       timeString = '00:00'
     }
 
-    const { rows } = this.state;
-    const row = rows[key];
+    const { rows } = this.state
+    const row = rows[key]
 
-    row.start = timeString;
+    row.start = timeString
 
-    rows.splice(key, 1, row);
-    this.setState({ rows });
+    rows.splice(key, 1, row)
+    this.setState({ rows })
 
     this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
@@ -75,41 +75,41 @@ export default class extends React.Component {
       timeString = '00:00'
     }
 
-    const { rows } = this.state;
-    const row = rows[key];
+    const { rows } = this.state
+    const row = rows[key]
 
-    row.end = timeString;
+    row.end = timeString
 
-    rows.splice(key, 1, row);
-    this.setState({ rows });
+    rows.splice(key, 1, row)
+    this.setState({ rows })
 
     this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
   onCheckboxChange(key, weekdayKey, e) {
 
-    const { rows } = this.state;
-    const row = rows[key];
+    const { rows } = this.state
+    const row = rows[key]
 
-    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey);
-    row.weekdays[weekday].checked = e.target.checked;
+    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey)
+    row.weekdays[weekday].checked = e.target.checked
 
-    rows.splice(key, 1, row);
-    this.setState({ rows });
+    rows.splice(key, 1, row)
+    this.setState({ rows })
 
     this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
   }
 
   isWeekdayChecked(row, weekdayKey) {
-    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey);
+    const weekday = _.findIndex(row.weekdays, (wd) => wd.key === weekdayKey)
 
     return row.weekdays[weekday].checked
   }
 
   rowToString(row) {
-    let isPrevChecked = false;
-    let ranges = [];
-    let buffer = [];
+    let isPrevChecked = false
+    let ranges = []
+    let buffer = []
     _.each(row.weekdays, (weekday) => {
       if (weekday.checked) {
         if (buffer.length === 0) {
@@ -122,7 +122,7 @@ export default class extends React.Component {
         }
       }
       isPrevChecked = weekday.checked
-    });
+    })
 
     const days = _.map(ranges, (range) => {
       if (range.length > 1) {
@@ -130,9 +130,9 @@ export default class extends React.Component {
       } else {
         return range[0]
       }
-    }).join(',');
+    }).join(',')
 
-    const hours = [row.start, row.end].join('-');
+    const hours = [row.start, row.end].join('-')
 
     return days + ' ' + hours
   }
@@ -147,17 +147,17 @@ export default class extends React.Component {
     return this.rowsToString(this.state.rows)
   }
 
-  disabledMinutes(h) {
-    return minutes;
+  disabledMinutes() {
+    return minutes
   }
 
   renderRow(row, key) {
 
     const { weekdays } = this.state
-    const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null;
-    const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null;
+    const startValue = row.start ? moment(row.start + ':00', 'HH:mm:ss') : null
+    const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null
 
-    const rowClasses = [];
+    const rowClasses = []
     if (-1 !== this.props.rowsWithErrors.indexOf(key)) {
       rowClasses.push('danger')
     }
@@ -221,18 +221,18 @@ export default class extends React.Component {
   }
 
   addRow(e) {
-    e.preventDefault();
-    const { rows, weekdays } = this.state
-    rows.push(this.createRowData());
-    this.setState({ rows });
+    e.preventDefault()
+    const { rows } = this.state
+    rows.push(this.createRowData())
+    this.setState({ rows })
     this.props.onRowAdd()
   }
 
   removeRow(key, e) {
-    e.preventDefault();
-    let rows = this.state.rows;
-    rows.splice(key, 1);
-    this.setState({ rows });
+    e.preventDefault()
+    let rows = this.state.rows
+    rows.splice(key, 1)
+    this.setState({ rows })
     this.props.onRowRemove(key)
   }
 
@@ -251,7 +251,7 @@ export default class extends React.Component {
     return (
       <div>
         <div>
-        { this.renderAsText() }
+          { this.renderAsText() }
         </div>
         <table className="table">
           <thead>
@@ -269,6 +269,6 @@ export default class extends React.Component {
         </table>
         <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)}>{i18n.t('ADD_BUTON')}</button>
       </div>
-    );
+    )
   }
 }

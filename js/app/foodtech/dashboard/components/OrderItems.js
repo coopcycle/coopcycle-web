@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import _ from 'lodash'
 
 const hasAdjustments = (item) => item.adjustments.hasOwnProperty('menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
 
@@ -9,7 +8,7 @@ class OrderItems extends React.Component {
   renderOrderItemAdjustments(item) {
     return (
       <ul className="list-unstyled">
-        { item.adjustments['menu_item_modifier'].map((adjustment, key) =>
+        { item.adjustments['menu_item_modifier'].map((adjustment) =>
           <li key={ adjustment.id }>
             <small className="text-muted">{ adjustment.label }</small>
           </li>

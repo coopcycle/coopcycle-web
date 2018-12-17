@@ -1,20 +1,20 @@
-import React from 'react';
-import { render } from 'react-dom';
+import React from 'react'
+import { render } from 'react-dom'
 import OrderList from './OrderList.jsx'
 import OrderDetails from './OrderDetails.jsx'
 
-const hostname = window.location.hostname;
-const restaurant = window.__restaurant;
+const hostname = window.location.hostname
+const restaurant = window.__restaurant
 
-let orderList;
-let orderDetails;
+let orderList
+let orderDetails
 
 setTimeout(function() {
 
-  var socket = io('//' + hostname, { path: '/tracking/socket.io' });
+  var socket = io('//' + hostname, { path: '/tracking/socket.io' })
   socket.on(`restaurant:${restaurant.id}:orders`, order => orderList.addOrder(order))
 
-}, 1000);
+}, 1000)
 
 orderList = render(
   <OrderList
@@ -33,7 +33,7 @@ orderList = render(
 
     } } />,
   document.getElementById('order-list')
-);
+)
 
 orderDetails = render(
   <OrderDetails
@@ -52,4 +52,4 @@ orderDetails = render(
 
     } } />,
   document.querySelector('.restaurant-dashboard__details')
-);
+)

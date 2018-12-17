@@ -42,15 +42,15 @@ class OrderList extends React.Component
           <thead>
             <tr>
               <th>#</th>
-              <th>{ i18n.t("ORDER_LIST_STATE") }</th>
-              <th>{ i18n.t("ORDER_LIST_PREPARATION_TIME") }</th>
-              <th>{ i18n.t("ORDER_LIST_PICKUP_TIME") }</th>
+              <th>{ i18n.t('ORDER_LIST_STATE') }</th>
+              <th>{ i18n.t('ORDER_LIST_PREPARATION_TIME') }</th>
+              <th>{ i18n.t('ORDER_LIST_PICKUP_TIME') }</th>
               <th></th>
-              <th className="text-right">{ i18n.t("ORDER_LIST_TOTAL") }</th>
+              <th className="text-right">{ i18n.t('ORDER_LIST_TOTAL') }</th>
             </tr>
           </thead>
           <tbody>
-          { _.map(orders, (order) => this.renderOrderRow(order)) }
+            { _.map(orders, (order) => this.renderOrderRow(order)) }
           </tbody>
         </table>
       </div>
@@ -89,24 +89,24 @@ class OrderList extends React.Component
     const preparationExpectedAt = order => moment(order.preparationExpectedAt).format('YYYY-MM-DD')
     const ordersByDate = _.mapValues(_.groupBy(orders, preparationExpectedAt), orders => {
       orders.sort((a, b) => {
-        const dateA = moment(a.preparationExpectedAt);
-        const dateB = moment(b.preparationExpectedAt);
+        const dateA = moment(a.preparationExpectedAt)
+        const dateB = moment(b.preparationExpectedAt)
         if (dateA === dateB) {
-          return 0;
+          return 0
         }
 
-        return dateA.isAfter(dateB) ? 1 : -1;
-      });
+        return dateA.isAfter(dateB) ? 1 : -1
+      })
 
       return orders
     })
 
     return (
       <div>
-      { _.map(ordersByDate, (orders, date) => this.renderOrders(date, orders)) }
+        { _.map(ordersByDate, (orders, date) => this.renderOrders(date, orders)) }
       </div>
     )
   }
 }
 
-export default OrderList;
+export default OrderList

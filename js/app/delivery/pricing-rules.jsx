@@ -1,15 +1,15 @@
 import dragula from 'dragula'
 
 const ruleSet = $('#rule-set'),
-      warning = $('form[name="pricing_rule_set"] .alert-warning')
+  warning = $('form[name="pricing_rule_set"] .alert-warning')
 
-const drake = dragula([document.querySelector('.delivery-pricing-ruleset')], {
+dragula([document.querySelector('.delivery-pricing-ruleset')], {
   moves: (el, container, handle) => {
     return handle.classList.contains('delivery-pricing-ruleset__rule__handle')
       || handle.parentNode.classList.contains('delivery-pricing-ruleset__rule__handle')
   }
 })
-.on('dragend', () => onListChange())
+  .on('dragend', () => onListChange())
 
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {
@@ -24,14 +24,14 @@ const onListChange = () => {
 }
 
 $('#add-pricing-rule').on('click', function(e) {
-  e.preventDefault();
+  e.preventDefault()
 
   let newRule = ruleSet.attr('data-prototype')
   newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
 
   let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
-      $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
-      $input = $ruleExpression.find('input')
+    $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
+    $input = $ruleExpression.find('input')
 
   function onExpressionChange(newExpression) {
     $input.val(newExpression)

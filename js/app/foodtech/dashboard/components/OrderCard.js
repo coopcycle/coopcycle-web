@@ -30,7 +30,7 @@ class OrderCard extends React.Component {
 
 }
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {}
 }
 

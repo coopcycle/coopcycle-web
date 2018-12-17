@@ -13,12 +13,12 @@ import AddressPicker from '../components/AddressPicker.jsx'
 
 let timeoutID = null
 
-Modal.setAppElement(document.getElementById('cart'));
+Modal.setAppElement(document.getElementById('cart'))
 
 class Cart extends React.Component
 {
   constructor(props) {
-    super(props);
+    super(props)
 
     const {
       availabilities,
@@ -30,7 +30,7 @@ class Cart extends React.Component
       streetAddress,
       isMobileCart,
       geohash
-    } = this.props;
+    } = this.props
 
     this.state = {
       availabilities,
@@ -54,7 +54,7 @@ class Cart extends React.Component
     this.onHeaderClick = this.onHeaderClick.bind(this)
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
 
     const { errors, toggled } = this.state
     const { isMobileCart } = this.props
@@ -184,13 +184,13 @@ class Cart extends React.Component
 
   renderWarningAlerts(messages) {
     return messages.map((message, key) => (
-        <div key={ key } className="alert alert-warning">{ message }</div>
+      <div key={ key } className="alert alert-warning">{ message }</div>
     ))
   }
 
   renderDangerAlerts(messages) {
     return messages.map((message, key) => (
-        <div key={ key } className="alert alert-danger">{ message }</div>
+      <div key={ key } className="alert alert-danger">{ message }</div>
     ))
   }
 
@@ -254,7 +254,7 @@ class Cart extends React.Component
           { this.headingTitle(warningAlerts, dangerAlerts) }
         </span>
         <span className="cart-heading__right" ref="headingRight">
-          <i className={ toggled ? "fa fa-chevron-up" : "fa fa-chevron-down" }></i>
+          <i className={ toggled ? 'fa fa-chevron-up' : 'fa fa-chevron-down' }></i>
         </span>
         <button type="submit" className="cart-heading__button" onClick={ this.onCartHeadingSubmitClick.bind(this) }>
           <i className="fa fa-arrow-right "></i>
@@ -284,8 +284,8 @@ class Cart extends React.Component
     }
 
     return (
-        <i className="fa fa-check"></i>
-      )
+      <i className="fa fa-check"></i>
+    )
   }
 
   headingTitle(warnings, errors) {
@@ -303,11 +303,11 @@ class Cart extends React.Component
 
   afterOpenAddressModal() {
     window._paq.push(['trackEvent', 'Checkout', 'openModal', 'enterAddress'])
-    setTimeout(() => this.modalAddressPicker.setFocus(), 250);
+    setTimeout(() => this.modalAddressPicker.setFocus(), 250)
   }
 
   closeAddressModal() {
-    this.setState({ addressModalIsOpen: false });
+    this.setState({ addressModalIsOpen: false })
   }
 
   afterOpenRestaurantModal() {
@@ -315,7 +315,7 @@ class Cart extends React.Component
   }
 
   closeRestaurantModal() {
-    this.setState({ restaurantModalIsOpen: false });
+    this.setState({ restaurantModalIsOpen: false })
   }
 
   onClickCartReset() {
@@ -361,7 +361,7 @@ class Cart extends React.Component
       )
     } else {
       cartContent = (
-        <div className="alert alert-warning">{i18n.t("CART_EMPTY")}</div>
+        <div className="alert alert-warning">{i18n.t('CART_EMPTY')}</div>
       )
     }
 
@@ -374,14 +374,14 @@ class Cart extends React.Component
 
       _.forEach(errors, (messages, key) => {
         if (key === 'shippingAddress') {
-          messages.forEach((message, key) => dangerAlerts.push(message))
+          messages.forEach((message) => dangerAlerts.push(message))
         } else {
-          messages.forEach((message, key) => warningAlerts.push(message))
+          messages.forEach((message) => warningAlerts.push(message))
         }
       })
     }
 
-    var btnClasses = ['btn', 'btn-block', 'btn-primary'];
+    var btnClasses = ['btn', 'btn-block', 'btn-primary']
     let btnProps = {}
 
     if (items.length === 0 || !address || _.size(errors) > 0 || loading) {
@@ -392,7 +392,7 @@ class Cart extends React.Component
       }
     }
 
-    var panelClasses = ['panel', 'panel-default', 'cart-wrapper'];
+    var panelClasses = ['panel', 'panel-default', 'cart-wrapper']
     if (toggled) {
       panelClasses.push('cart-wrapper--show')
     }
@@ -418,8 +418,8 @@ class Cart extends React.Component
           { this.renderHeading(warningAlerts, dangerAlerts) }
           <div className="panel-body">
             <div className="cart-wrapper__messages">
-            { !loading && this.renderWarningAlerts(warningAlerts) }
-            { !loading && this.renderDangerAlerts(dangerAlerts) }
+              { !loading && this.renderWarningAlerts(warningAlerts) }
+              { !loading && this.renderDangerAlerts(dangerAlerts) }
             </div>
             <div className="cart">
               <AddressPicker
@@ -488,7 +488,7 @@ class Cart extends React.Component
           </div>
         </Modal>
       </Sticky>
-    );
+    )
   }
 }
 

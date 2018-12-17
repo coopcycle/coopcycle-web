@@ -64,7 +64,6 @@ export default function(el, options) {
       isMulti
       options={ selectOptions }
       onChange={ options.onChange }
-      styles={ styles } />
-  , el)
+      styles={ styles } />, el)
 
 }

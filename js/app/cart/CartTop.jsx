@@ -6,7 +6,7 @@ import i18n from '../i18n'
 class CartTop extends React.Component
 {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       total: props.total,
       itemsTotal: props.itemsTotal,
@@ -40,7 +40,7 @@ class CartTop extends React.Component
       <a href={ anchorURL } className="btn btn-default" data-cart-listener>
         { i18n.t('CART_TITLE') } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { (amount / 100).formatMoney(2, window.AppData.currencySymbol) }
       </a>
-    );
+    )
   }
 }
 

@@ -110,9 +110,9 @@ class CartFacade {
     return this.isInitialized
   }
 
-  _onDateChange(date) {
-    window._paq.push(['trackEvent', 'Checkout', 'changeDate']);
-    this._postCart();
+  _onDateChange() {
+    window._paq.push(['trackEvent', 'Checkout', 'changeDate'])
+    this._postCart()
   }
 
   _mapAddressToElements(address) {
@@ -125,7 +125,7 @@ class CartFacade {
 
   _onAddressChange(address) {
 
-    window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress]);
+    window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress])
 
     // If the address is not precise, we do not save it
     if (!address.isPrecise) {
@@ -168,7 +168,7 @@ class CartFacade {
   }
 
   addProduct(url, quantity) {
-    window._paq.push(['trackEvent', 'Checkout', 'addItem']);
+    window._paq.push(['trackEvent', 'Checkout', 'addItem'])
 
     const waitFor = () => {
       if (this._isInitialized() && !this._isLoading()) {
@@ -178,8 +178,8 @@ class CartFacade {
         $.post(url, {
           quantity: quantity
         })
-        .then(res => this.handleAjaxResponse(res))
-        .fail(e => this.handleAjaxResponse(e.responseJSON))
+          .then(res => this.handleAjaxResponse(res))
+          .fail(e => this.handleAjaxResponse(e.responseJSON))
 
         clearTimeout(timeoutID)
       } else {
@@ -191,7 +191,7 @@ class CartFacade {
   }
 
   addProductWithOptions(url, data, quantity) {
-    window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions']);
+    window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions'])
 
     const waitFor = () => {
       if (this._isInitialized() && !this._isLoading()) {
@@ -217,7 +217,7 @@ class CartFacade {
   }
 
   removeCartItem(item) {
-    window._paq.push(['trackEvent', 'Checkout', 'removeItem']);
+    window._paq.push(['trackEvent', 'Checkout', 'removeItem'])
     this._setLoading(true)
     $.ajax({
       url: window.Routing.generate('restaurant_remove_from_cart', {
@@ -226,8 +226,8 @@ class CartFacade {
       }),
       type: 'DELETE',
     })
-    .then(res => this.handleAjaxResponse(res))
-    .fail(e => this.handleAjaxResponse(e.responseJSON))
+      .then(res => this.handleAjaxResponse(res))
+      .fail(e => this.handleAjaxResponse(e.responseJSON))
   }
 
   gotoCartRestaurantURL() {
@@ -250,59 +250,59 @@ window.initMap = function() {
   let CartHelper
 
   $('form[data-product-simple]').on('submit', function(e) {
-    e.preventDefault();
-    CartHelper.addProduct($(this).attr('action'), 1);
-  });
+    e.preventDefault()
+    CartHelper.addProduct($(this).attr('action'), 1)
+  })
 
   // Make sure all (non-additional) options have been checked
-  $('form[data-product-options] input[type="radio"]').on('change', function(e) {
+  $('form[data-product-options] input[type="radio"]').on('change', function() {
 
-    var $options = $(this).closest('form').find('[data-product-option]');
-    var checkedOptionsCount = 0;
+    var $options = $(this).closest('form').find('[data-product-option]')
+    var checkedOptionsCount = 0
     $options.each(function(index, el) {
-      checkedOptionsCount += $(el).find('input[type="radio"]:checked').length;
-    });
+      checkedOptionsCount += $(el).find('input[type="radio"]:checked').length
+    })
 
-    _paq.push(['trackEvent', 'Checkout', 'selectOption']);
+    window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
 
     if ($options.length === checkedOptionsCount) {
-      $(this).closest('form').find('button[type="submit"]').prop('disabled', false);
-      $(this).closest('form').find('button[type="submit"]').removeAttr('disabled');
+      $(this).closest('form').find('button[type="submit"]').prop('disabled', false)
+      $(this).closest('form').find('button[type="submit"]').removeAttr('disabled')
     }
-  });
+  })
 
-  $('form[data-product-options] input[type="checkbox"]').on('click', function(e) {
-    _paq.push(['trackEvent', 'Checkout', 'addExtra']);
-  });
+  $('form[data-product-options] input[type="checkbox"]').on('click', function() {
+    window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
+  })
 
   $('form[data-product-options]').on('submit', function(e) {
-    e.preventDefault();
-    var data = $(this).serializeArray();
+    e.preventDefault()
+    var data = $(this).serializeArray()
     if (data.length > 0) {
-      CartHelper.addProductWithOptions($(this).attr('action'), data, 1);
+      CartHelper.addProductWithOptions($(this).attr('action'), data, 1)
     } else {
-      CartHelper.addProduct($(this).attr('action'), 1);
+      CartHelper.addProduct($(this).attr('action'), 1)
     }
 
-    $(this).closest('.modal').modal('hide');
+    $(this).closest('.modal').modal('hide')
     // Uncheck all options
-    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false);
-    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false);
-  });
+    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false)
+    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false)
+  })
 
-  $('.modal').on('shown.bs.modal', function(e) {
-    _paq.push(['trackEvent', 'Checkout', 'showOptions']);
-    var $form = $(this).find('form[data-product-options]');
+  $('.modal').on('shown.bs.modal', function() {
+    window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
+    var $form = $(this).find('form[data-product-options]')
     if ($form.length === 1) {
-      var $options = $form.find('[data-product-option]');
-      var disabled = $options.length > 0;
-      $form.find('button[type="submit"]').prop('disabled', disabled);
+      var $options = $form.find('[data-product-option]')
+      var disabled = $options.length > 0
+      $form.find('button[type="submit"]').prop('disabled', disabled)
     }
-  });
+  })
 
-  $('.modal').on('hidden.bs.modal', function(e) {
-    _paq.push(['trackEvent', 'Checkout', 'hideOptions']);
-  });
+  $('.modal').on('hidden.bs.modal', function() {
+    window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
+  })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
 
@@ -317,14 +317,14 @@ window.initMap = function() {
   CartHelper = new CartFacade({
     restaurant: restaurant,
     cart: cart,
-    datePickerDateInputName: "cart[date]",
-    datePickerTimeInputName: "cart[time]",
+    datePickerDateInputName: 'cart[date]',
+    datePickerTimeInputName: 'cart[time]',
     addressFormElements: {
-      streetAddress: document.querySelector("#cart_shippingAddress_streetAddress"),
-      postalCode: document.querySelector("#cart_shippingAddress_postalCode"),
-      addressLocality: document.querySelector("#cart_shippingAddress_addressLocality"),
-      latitude: document.querySelector("#cart_shippingAddress_latitude"),
-      longitude: document.querySelector("#cart_shippingAddress_longitude")
+      streetAddress: document.querySelector('#cart_shippingAddress_streetAddress'),
+      postalCode: document.querySelector('#cart_shippingAddress_postalCode'),
+      addressLocality: document.querySelector('#cart_shippingAddress_addressLocality'),
+      latitude: document.querySelector('#cart_shippingAddress_latitude'),
+      longitude: document.querySelector('#cart_shippingAddress_longitude')
     }
   })
 

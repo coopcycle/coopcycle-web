@@ -5,7 +5,7 @@ import { translate } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import { highlightTask, setTaskListGroupMode, toggleTask, selectTask } from '../store/actions'
+import { setTaskListGroupMode, toggleTask, selectTask } from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -85,7 +85,7 @@ class UnassignedTasks extends React.Component {
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span className="pull-right">
             <a href="#" onClick={ e => {
-              e.preventDefault();
+              e.preventDefault()
               $('#task-modal').modal('show')
             }}>
               <i className="fa fa-plus"></i>

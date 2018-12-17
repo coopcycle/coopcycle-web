@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from 'react-dom'
 import moment from 'moment'
 
 moment.locale($('html').attr('lang'))

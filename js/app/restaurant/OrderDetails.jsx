@@ -1,6 +1,6 @@
-import React from 'react';
-import OrderLabel from '../order/Label.jsx';
-import moment from 'moment';
+import React from 'react'
+import OrderLabel from '../order/Label.jsx'
+import moment from 'moment'
 
 import i18n from '../i18n'
 
@@ -13,17 +13,17 @@ const hasAdjustments = (item) => item.adjustments.hasOwnProperty('menu_item_modi
 class OrderList extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       order: props.order
-    };
+    }
   }
 
   resolveOrderRoute(route) {
 
-    const restaurant = this.props.restaurant;
-    const order = this.state.order;
+    const restaurant = this.props.restaurant
+    const order = this.state.order
 
     return this.props.routes[route]
       .replace('__RESTAURANT_ID__', restaurant.id)
@@ -31,7 +31,7 @@ class OrderList extends React.Component {
   }
 
   resolveUserRoute(route) {
-    const customer = this.state.order.customer;
+    const customer = this.state.order.customer
 
     return this.props.routes[route].replace('__USERNAME__', customer.username)
   }
@@ -105,7 +105,7 @@ class OrderList extends React.Component {
   renderOrderItemAdjustments(item) {
     return (
       <ul className="list-unstyled">
-        { item.adjustments['menu_item_modifier'].map((adjustment, key) =>
+        { item.adjustments['menu_item_modifier'].map((adjustment) =>
           <li key={ adjustment.id }>
             <small className="text-muted">{ adjustment.label }</small>
           </li>
@@ -139,7 +139,7 @@ class OrderList extends React.Component {
       return (
         <div className="restaurant-dashboard__details__container restaurant-dashboard__details__container--empty">
           <div>
-          { i18n.t('ADMIN_DASHBOARD_CLICK_FOR_DETAILS') }
+            { i18n.t('ADMIN_DASHBOARD_CLICK_FOR_DETAILS') }
           </div>
         </div>
       )
@@ -157,7 +157,7 @@ class OrderList extends React.Component {
           <p>
             <span className="text-left"><OrderLabel order={ order } /></span>
             <strong className="pull-right text-success">
-                { moment(order.preparationExpectedAt).format('LT') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
+              { moment(order.preparationExpectedAt).format('LT') }  <i className="fa fa-clock-o" aria-hidden="true"></i>
             </strong>
           </p>
           <p className="text-right">
@@ -187,4 +187,4 @@ class OrderList extends React.Component {
   }
 }
 
-export default OrderList;
+export default OrderList

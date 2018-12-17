@@ -8,7 +8,7 @@ class OpeningHoursDisplay extends React.Component {
       <ul className="list-unstyled">
         { this.props.openingHours.map((item, index) => {
           return ( <li key={ index }>{ openingHourIntervalToReadable(item, this.props.locale) }</li> )
-         })}
+        })}
       </ul>
     )
   }

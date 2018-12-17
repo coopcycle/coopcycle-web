@@ -16,7 +16,7 @@ if ($('form[name="zone_collection"]').length === 1) {
       MapHelper.fitToLayers(map, [ layer ])
 
       const $checkbox = $('#' + $hiddenInput.attr('id') + '-checkbox')
-      $checkbox.on('change', function(e) {
+      $checkbox.on('change', function() {
         if ($(this).is(':checked')) {
           $thumbnail.css('opacity', 1)
           $thumbnail.find('input').not('input[type="checkbox"]').removeAttr('disabled')

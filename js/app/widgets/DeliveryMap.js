@@ -30,8 +30,8 @@ export default function(selector, options) {
   } else {
     MapHelper.getPolyline(pickup, dropoff)
       .then(data => {
-        var polyline = new L.Polyline(data, polylineOptions);
-        map.addLayer(polyline);
+        var polyline = new L.Polyline(data, polylineOptions)
+        map.addLayer(polyline)
       })
   }
 

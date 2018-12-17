@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import moment from 'moment'
+import _ from 'lodash'
 
 import {
   SET_CURRENT_ORDER,
@@ -45,72 +46,72 @@ const orders = (state = initialState.orders, action) => {
   // We need to use a unique reducer to achieve this
 
   switch (action.type) {
-    case ACCEPT_ORDER_REQUEST_SUCCESS:
-    case REFUSE_ORDER_REQUEST_SUCCESS:
-    case CANCEL_ORDER_REQUEST_SUCCESS:
+  case ACCEPT_ORDER_REQUEST_SUCCESS:
+  case REFUSE_ORDER_REQUEST_SUCCESS:
+  case CANCEL_ORDER_REQUEST_SUCCESS:
 
-      return replaceOrder(state, action.payload)
+    return replaceOrder(state, action.payload)
 
-    case ORDER_CREATED:
+  case ORDER_CREATED:
 
-      newState = state.slice()
-      newState.push(action.payload)
+    newState = state.slice()
+    newState.push(action.payload)
 
-      return newState
+    return newState
 
-    case ORDER_ACCEPTED:
+  case ORDER_ACCEPTED:
 
-      return replaceOrder(state, Object.assign({}, action.payload, { state: 'accepted' }))
+    return replaceOrder(state, Object.assign({}, action.payload, { state: 'accepted' }))
 
-    case ORDER_REFUSED:
+  case ORDER_REFUSED:
 
-      return replaceOrder(state, Object.assign({}, action.payload, { state: 'refused' }))
+    return replaceOrder(state, Object.assign({}, action.payload, { state: 'refused' }))
 
-    case ORDER_CANCELLED:
+  case ORDER_CANCELLED:
 
-      return replaceOrder(state, Object.assign({}, action.payload, { state: 'cancelled' }))
+    return replaceOrder(state, Object.assign({}, action.payload, { state: 'cancelled' }))
 
-    case ORDER_FULFILLED:
+  case ORDER_FULFILLED:
 
-      return replaceOrder(state, Object.assign({}, action.payload, { state: 'fulfilled' }))
+    return replaceOrder(state, Object.assign({}, action.payload, { state: 'fulfilled' }))
 
-    default:
+  default:
 
-      return state
+    return state
   }
 }
 
 const order = (state = initialState.order, action) => {
   switch (action.type) {
-    case ACCEPT_ORDER_REQUEST_SUCCESS:
-    case REFUSE_ORDER_REQUEST_SUCCESS:
-    case CANCEL_ORDER_REQUEST_SUCCESS:
+  case ACCEPT_ORDER_REQUEST_SUCCESS:
+  case REFUSE_ORDER_REQUEST_SUCCESS:
+  case CANCEL_ORDER_REQUEST_SUCCESS:
 
-      return null
+    return null
 
-    case SET_CURRENT_ORDER:
+  case SET_CURRENT_ORDER:
 
-      return action.payload
+    return action.payload
 
-    default:
+  default:
 
-      return state
+    return state
   }
 }
 
 const date = (state = initialState.date, action) => {
   switch (action.type) {
-    default:
+  default:
 
-      return state
+    return state
   }
 }
 
 const jwt = (state = initialState.jwt, action) => {
   switch (action.type) {
-    default:
+  default:
 
-      return state
+    return state
   }
 }
 

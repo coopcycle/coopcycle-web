@@ -15,7 +15,7 @@ import LeafletMap from './components/LeafletMap'
 import Filters from './components/Filters'
 
 const locale = $('html').attr('lang'),
-      antdLocale = locale === 'fr' ? fr_FR : en_GB
+  antdLocale = locale === 'fr' ? fr_FR : en_GB
 
 render(
   <Provider store={store}>
@@ -47,8 +47,8 @@ render(
   }
 )
 
-$('#dashboard-filters > a').on('click', function (event) {
-  $(this).parent().toggleClass("open")
+$('#dashboard-filters > a').on('click', function () {
+  $(this).parent().toggleClass('open')
 })
 
 // keep the filters dropdown open if click on filters - close if click outside
@@ -66,7 +66,7 @@ render(
     <DatePicker
       format={ 'll' }
       defaultValue={ moment(window.AppData.Dashboard.date) }
-      onChange={(date, dateString) => {
+      onChange={(date) => {
         if (date) {
           const dashboardURL = window.AppData.Dashboard.dashboardURL.replace('__DATE__', date.format('YYYY-MM-DD'))
           window.location.replace(dashboardURL)
