@@ -75,10 +75,8 @@
     {{ encore_entry_script_tags('js/notifications') }}
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Set global timezone used in Moment.js
-        CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
-      });
+      {# Set global timezone used in Moment.js #}
+      CoopCycle.setTimezone("{{ coopcycle_setting('timezone') }}");
     </script>
 
     {% set cart = cart_provider.getCart() %}
