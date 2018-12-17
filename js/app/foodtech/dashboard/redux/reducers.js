@@ -22,7 +22,8 @@ const initialState = {
   orders: [],
   order: null,
   date: moment().format('YYYY-MM-DD'),
-  jwt: ''
+  jwt: '',
+  isFetching: false,
 }
 
 function replaceOrder(orders, order) {
@@ -115,9 +116,29 @@ const jwt = (state = initialState.jwt, action) => {
   }
 }
 
+const isFetching = (state = initialState.isFetching, action) => {
+  switch (action.type) {
+  case FETCH_REQUEST:
+
+    return true
+  case ACCEPT_ORDER_REQUEST_SUCCESS:
+  case ACCEPT_ORDER_REQUEST_FAILURE:
+  case CANCEL_ORDER_REQUEST_SUCCESS:
+  case CANCEL_ORDER_REQUEST_FAILURE:
+  case REFUSE_ORDER_REQUEST_SUCCESS:
+  case REFUSE_ORDER_REQUEST_FAILURE:
+
+    return false
+  default:
+
+    return state
+  }
+}
+
 export default combineReducers({
   orders,
   order,
   date,
   jwt,
+  isFetching,
 })
