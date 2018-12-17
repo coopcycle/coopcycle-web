@@ -372,6 +372,38 @@ class Restaurant extends FoodEstablishment
         return false;
     }
 
+    public function isOpen(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        if ($this->hasClosingRuleForNow($now)) {
+
+            return false;
+        }
+
+        return parent::isOpen($now);
+    }
+
+    public function getNextOpeningDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = new \DateTime();
+        }
+
+        if ($this->hasClosingRuleForNow($now)) {
+            foreach ($this->getClosingRules() as $closingRule) {
+                if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+
+                    return parent::getNextOpeningDate($closingRule->getEndDate());
+                }
+            }
+        }
+
+        return parent::getNextOpeningDate($now);
+    }
+
     /**
      * Return potential delivery times for a restaurant, pickables by the customer.
      *

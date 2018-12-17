@@ -256,4 +256,22 @@ class RestaurantTest extends KernelTestCase
             '2017-10-05T19:00:00+02:00',
         ], $availabilities);
     }
+
+    public function testGetNextOpeningDateWithHolidays() {
+
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2018-12-24T00:00:00+02:00'));
+        $closingRule->setEndDate(new \DateTime('2019-01-01T10:00:00+02:00'));
+
+        $restaurant->getClosingRules()->add($closingRule);
+
+        $now = new \DateTime('2018-12-24T12:00:00+02:00');
+
+        $nextOpeningDate = $restaurant->getNextOpeningDate($now);
+
+        $this->assertEquals(new \DateTime('2019-01-01T10:00:00+02:00'), $nextOpeningDate);
+    }
 }
