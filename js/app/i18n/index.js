@@ -9,7 +9,7 @@ import i18next from 'i18next'
 import { reactI18nextModule } from 'react-i18next'
 
 import moment from 'moment'
-import tz from 'moment-timezone'
+import 'moment-timezone'
 
 import en from './locales/en.json'
 import fr from './locales/fr.json'

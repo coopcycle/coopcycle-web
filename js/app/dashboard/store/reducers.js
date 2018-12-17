@@ -344,7 +344,7 @@ const taskCancelledFilter = (state = false, action) => {
   }
 }
 
-const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action ) => {
+const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action) => {
 
   switch (action.type) {
 
