@@ -43,7 +43,7 @@ export function acceptOrder(order) {
 
     $.post(url)
       .then(res => dispatch(acceptOrderRequestSuccess(res)))
-      .fail(e => dispatch(acceptOrderRequestFailure(res)))
+      .fail(e => dispatch(acceptOrderRequestFailure(e)))
   }
 }
 
@@ -56,7 +56,7 @@ export function refuseOrder(order) {
 
     $.post(url)
       .then(res => dispatch(refuseOrderRequestSuccess(res)))
-      .fail(e => dispatch(refuseOrderRequestFailure(res)))
+      .fail(e => dispatch(refuseOrderRequestFailure(e)))
   }
 }
 
@@ -69,7 +69,7 @@ export function delayOrder(order) {
 
     $.post(url)
       .then(res => dispatch(delayOrderRequestSuccess(res)))
-      .fail(e => dispatch(delayOrderRequestFailure(res)))
+      .fail(e => dispatch(delayOrderRequestFailure(e)))
   }
 }
 
@@ -82,6 +82,6 @@ export function cancelOrder(order) {
 
     $.post(url)
       .then(res => dispatch(cancelOrderRequestSuccess(res)))
-      .fail(e => dispatch(cancelOrderRequestFailure(res)))
+      .fail(e => dispatch(cancelOrderRequestFailure(e)))
   }
 }

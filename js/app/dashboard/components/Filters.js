@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import {
   toggleShowFinishedTasks,
   toggleShowCancelledTasks,
   setSelectedTagList,
   toggleShowUntaggedTasks
-} from "../store/actions"
+} from '../store/actions'
 import { translate } from 'react-i18next'
 
 class Filters extends Component {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { DeliveryZonePicker } from "../components/DeliveryZonePicker"
+import { DeliveryZonePicker } from '../components/DeliveryZonePicker'
 
 export default function(el, options) {
 

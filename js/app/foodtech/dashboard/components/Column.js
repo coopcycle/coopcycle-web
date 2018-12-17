@@ -10,9 +10,9 @@ class Column extends React.Component {
       <div className="panel panel-default FoodtechDashboard__Column">
         <div className="panel-heading text-center">{ this.props.title }</div>
         <div className="panel-body">
-        { this.props.orders.map((order, key) => (
-          <OrderCard key={ key } order={ order } />
-        )) }
+          { this.props.orders.map((order, key) => (
+            <OrderCard key={ key } order={ order } />
+          )) }
         </div>
       </div>
     )

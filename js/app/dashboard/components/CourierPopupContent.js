@@ -9,12 +9,12 @@ const locale = $('html').attr('lang')
 
 let formatter
 switch (locale) {
-  case 'es':
-    formatter = buildFormatter(esStrings)
-    break
-  case 'fr':
-    formatter = buildFormatter(frStrings)
-    break
+case 'es':
+  formatter = buildFormatter(esStrings)
+  break
+case 'fr':
+  formatter = buildFormatter(frStrings)
+  break
 }
 
 export default class extends Component {

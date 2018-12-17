@@ -35,12 +35,12 @@ export class DeliveryZonePicker extends React.Component {
 
     if (type && value && (type !== prevState.type || value !== prevState.value)) {
       switch (type) {
-        case 'zone':
-          onExprChange(`in_zone(dropoff.address, "${value}")`)
-          break
-        case 'distance':
-          onExprChange(`distance < ${value * 1000}`)
-          break
+      case 'zone':
+        onExprChange(`in_zone(dropoff.address, "${value}")`)
+        break
+      case 'distance':
+        onExprChange(`distance < ${value * 1000}`)
+        break
       }
     }
   }
@@ -58,21 +58,21 @@ export class DeliveryZonePicker extends React.Component {
     const {zones} = this.props
 
     switch (type) {
-      case 'zone':
-        return (
-          <select value={value} onChange={this.onChange} className="form-control">
-            <option value="">-</option>
-            {
-              zones.map((item, index) => {
-                return <option key={index} value={item}>{item}</option>
-              })
-            }
-          </select>
-        )
-      case 'distance':
-        return (
-          <input type="number" value={ value } onChange={this.onChange} className="form-control" />
-        )
+    case 'zone':
+      return (
+        <select value={value} onChange={this.onChange} className="form-control">
+          <option value="">-</option>
+          {
+            zones.map((item, index) => {
+              return <option key={index} value={item}>{item}</option>
+            })
+          }
+        </select>
+      )
+    case 'distance':
+      return (
+        <input type="number" value={ value } onChange={this.onChange} className="form-control" />
+      )
     }
   }
 

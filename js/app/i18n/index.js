@@ -38,4 +38,4 @@ i18next
 
 export default i18next
 
-export const setTimezone = timezone => moment.tz.setDefault(timezone);
+export const setTimezone = timezone => moment.tz.setDefault(timezone)

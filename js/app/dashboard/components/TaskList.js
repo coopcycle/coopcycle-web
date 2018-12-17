@@ -1,5 +1,4 @@
 import React from 'react'
-import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import dragula from 'react-dragula'
@@ -37,7 +36,7 @@ class TaskList extends React.Component {
     }
 
     // handler to change the task order within a courier tasklist
-    let drake = dragula([ this.refs.taskList ], {
+    dragula([ this.refs.taskList ], {
       // You can set accepts to a method with the following signature: (el, target, source, sibling).
       // It'll be called to make sure that an element el, that came from container source,
       // can be dropped on container target before a sibling element.
@@ -82,7 +81,7 @@ class TaskList extends React.Component {
 
         return true
       }
-    }).on('drop', (element, target, source) => {
+    }).on('drop', (element, target) => {
 
       const { tasks } = this.props
 
@@ -99,9 +98,9 @@ class TaskList extends React.Component {
 
       this.props.modifyTaskList(this.props.username, newTasks)
 
-    }).on('drag', (el, source) => {
+    }).on('drag', () => {
       this.props.drakeDrag()
-    }).on('dragend', (el) => {
+    }).on('dragend', () => {
       this.props.drakeDragEnd()
     })
 
@@ -179,7 +178,7 @@ class TaskList extends React.Component {
             role="button"
             data-toggle="collapse"
             data-target={ '#' + collabsableId }
-            aria-expanded={ collapsed ? "false" : "true" }
+            aria-expanded={ collapsed ? 'false' : 'true' }
           >
             <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
             <a
@@ -189,7 +188,7 @@ class TaskList extends React.Component {
               &nbsp;&nbsp;
               <span className="badge">{ tasks.length }</span>
               &nbsp;&nbsp;
-              <i className={ collapsed ? "fa fa-caret-down" : "fa fa-caret-up" }></i>
+              <i className={ collapsed ? 'fa fa-caret-down' : 'fa fa-caret-up' }></i>
             </a>
           </h3>
         </div>
@@ -197,7 +196,7 @@ class TaskList extends React.Component {
           { tasks.length > 0 && (
             <div className="panel-body taskList__summary">
               <strong>{ this.props.t('ADMIN_DASHBOARD_DURATION') }</strong>  <span>{ durationFormatted }</span> - <strong>{ this.props.t('ADMIN_DASHBOARD_DISTANCE') }</strong>  <span>{ distanceFormatted }</span>
-              <a role="button" className={ polylineClassNames.join(' ') } onClick={ e => this.props.togglePolyline(username) }>
+              <a role="button" className={ polylineClassNames.join(' ') } onClick={ () => this.props.togglePolyline(username) }>
                 <i className="fa fa-map fa-2x"></i>
               </a>
             </div>

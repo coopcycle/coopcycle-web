@@ -13,14 +13,14 @@ const drake = dragula({
   copy: true,
   copySortSource: false,
   revertOnSpill: true,
-  accepts: (el, target, source, sibling) => target !== source
+  accepts: (el, target, source) => target !== source
 })
 
 /**
  * Code to handle drag and drop from unassigned tasks to assigned
  */
 
-function onTaskDrop(allTasks, assignTasks, element, target, source) {
+function onTaskDrop(allTasks, assignTasks, element, target) {
 
   const username = $(target).data('username')
   const isTask = element.hasAttribute('data-task-id')
@@ -56,7 +56,7 @@ function onTaskDrop(allTasks, assignTasks, element, target, source) {
 
 function configureDrag(drakeDrag) {
   drake
-    .on('drag', function(el, source) {
+    .on('drag', function(el) {
       let elements = [ el ]
 
       // FIXME
@@ -72,15 +72,15 @@ function configureDrag(drakeDrag) {
 
       drakeDrag()
     })
-    .on('cloned', function (clone, original) {
+    .on('cloned', function (clone) {
       clone.classList.remove('task__draggable--dragging')
     })
-    .on('over', function (el, container, source) {
+    .on('over', function (el, container) {
       if ($(container).hasClass('dropzone')) {
         $(container).addClass('dropzone--over')
       }
     })
-    .on('out', function (el, container, source) {
+    .on('out', function (el, container) {
       if ($(container).hasClass('dropzone')) {
         $(container).removeClass('dropzone--over')
       }
@@ -90,7 +90,7 @@ function configureDrag(drakeDrag) {
 function configureDragEnd(unassignedTasksContainer, drakeDragEnd) {
   drake
     .off('dragend')
-    .on('dragend', function (el) {
+    .on('dragend', function () {
       Array.from(unassignedTasksContainer.querySelectorAll('.task__draggable--dragging'))
         .forEach(el => el.classList.remove('task__draggable--dragging'))
       drakeDragEnd()
@@ -122,7 +122,7 @@ class DashboardApp extends React.Component {
 
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.allTasks !== prevProps.allTasks) {
       configureDrop(this.props.allTasks, this.props.assignTasks)
     }

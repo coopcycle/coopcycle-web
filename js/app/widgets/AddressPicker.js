@@ -7,7 +7,7 @@ export default function(el, options) {
   options = {
     address: '',
     geohash: '',
-    onChange: (geohash, address) => {},
+    onChange: () => {},
     ...options
   }
 

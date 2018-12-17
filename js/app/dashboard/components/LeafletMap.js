@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
@@ -25,7 +24,7 @@ class LeafletMap extends Component {
     _.forEach(this.props.polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const {
       polylineEnabled,
       polylines,
@@ -117,7 +116,7 @@ class LeafletMap extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
 
   const { taskLists, unassignedTasks, polylineEnabled } = state
 

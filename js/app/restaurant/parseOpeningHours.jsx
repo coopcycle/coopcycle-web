@@ -11,7 +11,7 @@ function openingHourIntervalToReadable(openingHourInterval, locale) {
   const { days, start, end } = TimeRange.parse(openingHourInterval)
 
   let startDay = _.first(days),
-      endDay = _.last(days)
+    endDay = _.last(days)
 
   // Format time according to locale
 
@@ -25,9 +25,9 @@ function openingHourIntervalToReadable(openingHourInterval, locale) {
   const endFormatted = localeMoment.hour(endHour).minute(endMinute).format('LT')
 
   if (startDay === endDay) {
-    return i18n.t("OPENING_HOURS_SINGLE", {day: TimeRange.weekday(startDay, locale), open: startFormatted, close: endFormatted})
+    return i18n.t('OPENING_HOURS_SINGLE', {day: TimeRange.weekday(startDay, locale), open: startFormatted, close: endFormatted})
   } else {
-    return i18n.t("OPENING_HOURS_RANGE", {fromDay: TimeRange.weekday(startDay, locale), toDay: TimeRange.weekday(endDay, locale), open: startFormatted, close: endFormatted})
+    return i18n.t('OPENING_HOURS_RANGE', {fromDay: TimeRange.weekday(startDay, locale), toDay: TimeRange.weekday(endDay, locale), open: startFormatted, close: endFormatted})
   }
 }
 

@@ -13,7 +13,7 @@ var style = {
     color: '#fa755a',
     iconColor: '#fa755a'
   }
-};
+}
 
 export default function(form, options) {
 
@@ -26,7 +26,7 @@ export default function(form, options) {
 
   card.mount('#card-element')
 
-  card.on('ready', function(e) {
+  card.on('ready', function() {
     $('.btn-payment').attr('disabled', false)
   })
 
@@ -40,7 +40,7 @@ export default function(form, options) {
   })
 
   form.addEventListener('submit', function(event) {
-    event.preventDefault();
+    event.preventDefault()
     $('.btn-payment').addClass('btn-payment__loading')
     $('.btn-payment').attr('disabled', true)
 

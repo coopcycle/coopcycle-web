@@ -66,13 +66,13 @@ class DatePicker extends Component {
       <div className="row" >
         <div className="col-xs-6" >
           <select name={ this.props.dateInputName }
-                  value={ date }
-                  className="form-control"
-                  onChange={ e => this.onChangeDate(e) } >
+            value={ date }
+            className="form-control"
+            onChange={ e => this.onChangeDate(e) }>
             {
               dates.map(date => (
-                <option key={ date } value={ date } >
-                  { moment(date).calendar(null, { sameDay: i18n.t("DATEPICKER_TODAY"),  nextDay: i18n.t("DATEPICKER_TOMORROW"), nextWeek: 'dddd D MMM'}) }
+                <option key={ date } value={ date }>
+                  { moment(date).calendar(null, { sameDay: i18n.t('DATEPICKER_TODAY'),  nextDay: i18n.t('DATEPICKER_TOMORROW'), nextWeek: 'dddd D MMM'}) }
                 </option>
               ))
             }
@@ -80,12 +80,12 @@ class DatePicker extends Component {
         </div>
         <div className="col-xs-6" >
           <select name={ this.props.timeInputName }
-                  value={ time }
-                  className="form-control"
-                  onChange={ e => this.onChangeTime(e) } >
+            value={ time }
+            className="form-control"
+            onChange={ e => this.onChangeTime(e) }>
             {
               times.map(time => (
-                <option key={ time } >
+                <option key={ time }>
                   { time }
                 </option>
               ))
@@ -97,4 +97,4 @@ class DatePicker extends Component {
   }
 }
 
-export default DatePicker;
+export default DatePicker

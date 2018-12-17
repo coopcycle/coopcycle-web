@@ -13,7 +13,7 @@ export default function(el, options) {
 
   options = options || {
     defaultValue: moment(),
-    onChange: (date, dateString) => {}
+    onChange: () => {}
   }
 
   render(

@@ -4,7 +4,6 @@ import { I18nextProvider } from 'react-i18next'
 import { render } from 'react-dom'
 
 import i18n from '../../i18n'
-import store from './redux/store'
 import { createStoreFromPreloadedState } from './redux/store'
 import Dashboard from './components/Dashboard'
 

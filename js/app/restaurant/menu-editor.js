@@ -12,7 +12,7 @@ function resolveProductInput(taxonId, productId) {
     .querySelector(`[data-taxon-id="${taxonId}"]`)
     .querySelector('[data-prototype]')
   return $(formContainer)
-    .find("[name$='[product]']")
+    .find('[name$="[product]"]')
     .filter((index, el) => $(el).val() === productId)
 }
 
@@ -20,10 +20,6 @@ function reorderProducts(taxonId) {
 
   const drakeContainer = document
     .querySelector(`[data-draggable-target][data-taxon-id="${taxonId}"]`)
-
-  const formContainer = childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[data-prototype]')
 
   const productPositions = [].slice.call(drakeContainer.children).map((el, index) => {
     return {
@@ -37,7 +33,7 @@ function reorderProducts(taxonId) {
     if (productInput) {
       $(productInput)
         .closest('div')
-        .find("[name$='[position]']")
+        .find('[name$="[position]"]')
         .val(productPosition.position)
     }
   })
@@ -45,72 +41,69 @@ function reorderProducts(taxonId) {
 }
 
 function removeProduct(taxonId, productId) {
-  const formContainer = childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[data-prototype]')
   const productInput = resolveProductInput(taxonId, productId)
   if (productInput) {
     $(productInput).closest('div').remove()
   }
 }
 
-const drake = dragula(containers)
-.on('drop', (el, target, source, sibling) => {
+dragula(containers)
+  .on('drop', (el, target, source) => {
 
-  // Products have been reordered in the same taxon
-  if (target === source) {
+    // Products have been reordered in the same taxon
+    if (target === source) {
 
-    const taxonId = target.getAttribute('data-taxon-id')
-    reorderProducts(taxonId)
+      const taxonId = target.getAttribute('data-taxon-id')
+      reorderProducts(taxonId)
 
-    return
-  }
-
-  if (target.hasAttribute('data-draggable-target')) {
-
-    const taxonId = target.getAttribute('data-taxon-id')
-    const productId = el.getAttribute('data-product-id')
-
-    const formContainer = childrenContainer
-      .querySelector(`[data-taxon-id="${taxonId}"]`)
-      .querySelector('[data-prototype]')
-
-    const prototype = formContainer.getAttribute('data-prototype')
-
-    const index = $(formContainer).children().length
-    const form = prototype.replace(/__taxonProducts__/g, index)
-
-    const $form = $(form)
-
-    $form
-      .find("[name$='[product]']")
-      .val(productId)
-    $form
-      .find("[name$='[position]']")
-      .val(index + 1)
-
-    $(formContainer).append($form)
-
-    reorderProducts(taxonId)
-
-    // Product was moved from a taxon to another
-    if (source.hasAttribute('data-draggable-target')) {
-
-      const sourceTaxonId = source.getAttribute('data-taxon-id')
-
-      removeProduct(sourceTaxonId, productId)
-      reorderProducts(sourceTaxonId)
+      return
     }
 
-  }
+    if (target.hasAttribute('data-draggable-target')) {
 
-  if (target.hasAttribute('data-draggable-source')) {
+      const taxonId = target.getAttribute('data-taxon-id')
+      const productId = el.getAttribute('data-product-id')
 
-    const taxonId = source.getAttribute('data-taxon-id')
-    const productId = el.getAttribute('data-product-id')
+      const formContainer = childrenContainer
+        .querySelector(`[data-taxon-id="${taxonId}"]`)
+        .querySelector('[data-prototype]')
 
-    removeProduct(taxonId, productId)
-    reorderProducts(taxonId)
-  }
+      const prototype = formContainer.getAttribute('data-prototype')
 
-})
+      const index = $(formContainer).children().length
+      const form = prototype.replace(/__taxonProducts__/g, index)
+
+      const $form = $(form)
+
+      $form
+        .find('[name$="[product]"]')
+        .val(productId)
+      $form
+        .find('[name$="[position]"]')
+        .val(index + 1)
+
+      $(formContainer).append($form)
+
+      reorderProducts(taxonId)
+
+      // Product was moved from a taxon to another
+      if (source.hasAttribute('data-draggable-target')) {
+
+        const sourceTaxonId = source.getAttribute('data-taxon-id')
+
+        removeProduct(sourceTaxonId, productId)
+        reorderProducts(sourceTaxonId)
+      }
+
+    }
+
+    if (target.hasAttribute('data-draggable-source')) {
+
+      const taxonId = source.getAttribute('data-taxon-id')
+      const productId = el.getAttribute('data-product-id')
+
+      removeProduct(taxonId, productId)
+      reorderProducts(taxonId)
+    }
+
+  })

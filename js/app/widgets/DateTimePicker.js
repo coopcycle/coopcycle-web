@@ -13,10 +13,10 @@ import frBE from 'antd/lib/locale-provider/fr_BE'
 
 const today = moment().startOf('day')
 
-const dateFormat = 'DD/MM/YYYY';
-const timeFormat = 'HH:mm';
+const dateFormat = 'DD/MM/YYYY'
+const timeFormat = 'HH:mm'
 
-let minutes = [];
+let minutes = []
 for (let i = 0; i <= 60; i++) {
   if (0 !== i % 15) {
     minutes.push(i)
@@ -26,34 +26,34 @@ for (let i = 0; i <= 60; i++) {
 class DateTimePicker extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       value: this.props.defaultValue,
-    };
+    }
   }
 
   componentDidMount() {
     this.props.onChange(this.state.value)
   }
 
-  onDateChange(date, dateString) {
+  onDateChange(date) {
 
-    let { value } = this.state;
+    let { value } = this.state
 
     if (!value) {
       value = moment()
     }
 
-    value.set('date', date.get('date'));
-    value.set('month', date.get('month'));
-    value.set('year', date.get('year'));
+    value.set('date', date.get('date'))
+    value.set('month', date.get('month'))
+    value.set('year', date.get('year'))
 
     this.setState({ value })
 
     this.props.onChange(value)
   }
 
-  onTimeChange(date, timeString) {
+  onTimeChange(date) {
 
     let { value } = this.state
 
@@ -76,14 +76,14 @@ class DateTimePicker extends React.Component {
     }
   }
 
-  disabledMinutes(h) {
+  disabledMinutes() {
     return minutes
   }
 
   render() {
 
     const formItemProps = this.props.error ? {
-      validateStatus: "error",
+      validateStatus: 'error',
     } : {}
 
     let datePickerProps = {}

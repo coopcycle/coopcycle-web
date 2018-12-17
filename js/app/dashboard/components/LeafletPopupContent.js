@@ -28,16 +28,16 @@ export default class extends Component {
           }) }
         </div>
         { task.assignedTo && (
-        <div>
-          { i18n.t('ADMIN_DASHBOARD_TASK_ASSIGNED_TO', { username: task.assignedTo }) }
-        </div>
+          <div>
+            { i18n.t('ADMIN_DASHBOARD_TASK_ASSIGNED_TO', { username: task.assignedTo }) }
+          </div>
         )}
         <div>
-        { task.tags.map((item) => (
-          <span key={ `${item.slug}-${item.color}` } style={{ color: '#fff', padding: '2px', backgroundColor: item.color }}>
-            { item.name }
-          </span>
-        ))}
+          { task.tags.map((item) => (
+            <span key={ `${item.slug}-${item.color}` } style={{ color: '#fff', padding: '2px', backgroundColor: item.color }}>
+              { item.name }
+            </span>
+          ))}
         </div>
       </div>
     )

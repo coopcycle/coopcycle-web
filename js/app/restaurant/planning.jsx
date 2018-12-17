@@ -10,19 +10,18 @@ import DatePicker from 'antd/lib/date-picker'
 import _ from 'lodash'
 
 const { RangePicker } = DatePicker,
-      // HACK : disable default input style so it fits with Bootstrap's design
-      rangeInputStyle = {
-        'padding': '0',
-        'width': '100%'
-      }
+  // HACK : disable default input style so it fits with Bootstrap's design
+  rangeInputStyle = {
+    'padding': '0',
+    'width': '100%'
+  }
 
 let antdLocale,
-    locale = $('html').attr('lang'),
-    selectedClosingStartDate,
-    selectedClosingEndDate,
-    $closingRuleForm = $('#closing-rules-form'),
-    closingRules = window.AppData.closingRules || [],
-    openingHours = window.AppData.openingHours || []
+  locale = $('html').attr('lang'),
+  selectedClosingStartDate,
+  selectedClosingEndDate,
+  $closingRuleForm = $('#closing-rules-form'),
+  closingRules = window.AppData.closingRules || []
 
 closingRules = _.map(closingRules, function (item) {
   return {
@@ -87,7 +86,7 @@ class ClosingRuleRangePicker extends React.Component {
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
           showTime={{format: 'HH:mm'}}
-          className={"form-control"}
+          className="form-control"
           style={rangeInputStyle}
           onChange={onChange}
         />
@@ -102,10 +101,9 @@ const CalendarWithLocale = () => (
       dateCellRender={dateCellRender}
     />
   </LocaleProvider>
-);
+)
 
-render
-(
+render(
   <CalendarWithLocale />,
   document.getElementById('calendar-planning')
 )

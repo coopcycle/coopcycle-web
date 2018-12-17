@@ -57,12 +57,12 @@ export default class TimeRange {
 
     const matches = text.match(/(Mo|Tu|We|Th|Fr|Sa|Su)+-?(Mo|Tu|We|Th|Fr|Sa|Su)?/gi)
 
-    let days = [];
+    let days = []
     _.each(matches, (match) => {
-      const isRange = _.includes(match, '-');
+      const isRange = _.includes(match, '-')
       if (isRange) {
-        const [ start, end ] = match.split('-');
-        let append = false;
+        const [ start, end ] = match.split('-')
+        let append = false
         _.each(this.weekdaysMinNormalized(), (weekday) => {
           if (weekday === start) {
             append = true
@@ -77,12 +77,12 @@ export default class TimeRange {
       } else {
         days.push(match)
       }
-    });
+    })
 
-    let start = '';
-    let end = '';
+    let start = ''
+    let end = ''
 
-    const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi);
+    const hours = text.match(/([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2})/gi)
     if (hours.length === 1) {
       [ start, end ] = hours[0].split('-')
     }

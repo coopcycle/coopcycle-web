@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from 'react-dom'
 import { translate } from 'react-i18next'
 import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
@@ -59,7 +58,7 @@ class Task extends React.Component {
 
   renderLinkedIcon() {
 
-    const { assigned, task } = this.props
+    const { assigned } = this.props
     const classNames = ['task__icon']
     classNames.push(assigned ? 'task__icon--left' : 'task__icon--right')
 
@@ -70,9 +69,9 @@ class Task extends React.Component {
 
     return (
       <span className="task__tags">
-      { task.tags.map(tag => (
-        <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
-      )) }
+        { task.tags.map(tag => (
+          <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
+        )) }
       </span>
     )
   }
@@ -123,7 +122,7 @@ class Task extends React.Component {
       className: classNames.join(' '),
       'data-task-id': task['@id'],
       onClick: this.onClick,
-      onContextMenu: (e) => this.props.selectTask(task)
+      onContextMenu: () => this.props.selectTask(task)
     }
 
     // Don't return the task object directly, to avoid stripping the "id" prop
@@ -132,7 +131,7 @@ class Task extends React.Component {
     return (
       <ContextMenuTrigger renderTag="span" id="dashboard"
         task={ task }
-        collect={ collect }
+        collect={ collect }
         attributes={ contextMenuTriggerAttrs }>
         <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
         { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {

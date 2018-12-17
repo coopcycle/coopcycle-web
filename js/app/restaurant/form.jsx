@@ -20,7 +20,7 @@ function renderSwitch($input) {
   $parent.prepend($switch)
 
   const checked = $input.is(':checked'),
-        disabled = $input.is(':disabled')
+    disabled = $input.is(':disabled')
 
   if (checked) {
     $parent.prepend($hidden)
@@ -30,19 +30,17 @@ function renderSwitch($input) {
 
   render(
     <Switch defaultChecked={ checked }
-            checkedChildren={ i18n.t('ENABLED') }
-            unCheckedChildren={ i18n.t('DISABLED') }
-            onChange={(checked) => {
-              if (checked) {
-                $parent.append($hidden)
-              } else {
-                $hidden.remove()
-              }
-            }}
-            disabled={disabled}
-        />,
-    $switch.get(0)
-  );
+      checkedChildren={ i18n.t('ENABLED') }
+      unCheckedChildren={ i18n.t('DISABLED') }
+      onChange={(checked) => {
+        if (checked) {
+          $parent.append($hidden)
+        } else {
+          $hidden.remove()
+        }
+      }}
+      disabled={disabled} />, $switch.get(0)
+  )
 
 }
 

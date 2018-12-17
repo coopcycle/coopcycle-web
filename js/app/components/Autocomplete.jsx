@@ -1,48 +1,48 @@
 import React, { Component } from 'react'
-import Autosuggest from 'react-autosuggest';
+import Autosuggest from 'react-autosuggest'
 
 // ------------------ Autosuggest ------------------
 
 
 const getSuggestionValue = suggestion => suggestion.name,
-      renderSuggestion = suggestion => (<span>{suggestion.name}</span>),
-      themeDefaults = {
-        container:                'react-autosuggest__container',
-        containerOpen:            'react-autosuggest__container--open',
-        input:                    'react-autosuggest__input',
-        inputOpen:                'react-autosuggest__input--open',
-        inputFocused:             'react-autosuggest__input--focused',
-        suggestionsContainer:     'react-autosuggest__suggestions-container',
-        suggestionsContainerOpen: 'react-autosuggest__suggestions-container--open',
-        suggestionsList:          'react-autosuggest__suggestions-list',
-        suggestion:               'react-autosuggest__suggestion',
-        suggestionFirst:          'react-autosuggest__suggestion--first',
-        suggestionHighlighted:    'react-autosuggest__suggestion--highlighted',
-        sectionContainer:         'react-autosuggest__section-container',
-        sectionContainerFirst:    'react-autosuggest__section-container--first',
-        sectionTitle:             'react-autosuggest__section-title'
-      }
+  renderSuggestion = suggestion => (<span>{suggestion.name}</span>),
+  themeDefaults = {
+    container:                'react-autosuggest__container',
+    containerOpen:            'react-autosuggest__container--open',
+    input:                    'react-autosuggest__input',
+    inputOpen:                'react-autosuggest__input--open',
+    inputFocused:             'react-autosuggest__input--focused',
+    suggestionsContainer:     'react-autosuggest__suggestions-container',
+    suggestionsContainerOpen: 'react-autosuggest__suggestions-container--open',
+    suggestionsList:          'react-autosuggest__suggestions-list',
+    suggestion:               'react-autosuggest__suggestion',
+    suggestionFirst:          'react-autosuggest__suggestion--first',
+    suggestionHighlighted:    'react-autosuggest__suggestion--highlighted',
+    sectionContainer:         'react-autosuggest__section-container',
+    sectionContainerFirst:    'react-autosuggest__section-container--first',
+    sectionTitle:             'react-autosuggest__section-title'
+  }
 
 export default class extends Component {
 
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       value: '',
       suggestions: [],
       isFetching: false,
-    };
+    }
   }
 
   onChange(event, { newValue }) {
     this.setState({
       value: newValue
-    });
-  };
+    })
+  }
 
   shouldRenderSuggestions(value) {
-    return value.trim().length >= 3;
+    return value.trim().length >= 3
   }
 
   onSuggestionsFetchRequested({ value }) {
@@ -51,11 +51,11 @@ export default class extends Component {
       this.setState({
         suggestions: data,
         isFetching: false,
-      });
-    });
-  };
+      })
+    })
+  }
 
-  onSuggestionSelected(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
+  onSuggestionSelected(event, { suggestion }) {
     const { clearOnSelect } = this.props
     let newState = {
       suggestions: []
@@ -63,25 +63,25 @@ export default class extends Component {
     if (clearOnSelect) {
       newState.value = ''
     }
-    this.props.onSuggestionSelected(suggestion);
-    this.setState(newState);
+    this.props.onSuggestionSelected(suggestion)
+    this.setState(newState)
   }
 
   onSuggestionsClearRequested() {
     this.setState({
       suggestions: []
-    });
-  };
+    })
+  }
 
   render() {
-    const { value, suggestions, isFetching } = this.state;
+    const { value, suggestions, isFetching } = this.state
 
     const inputProps = {
       placeholder: this.props.placeholder,
       value,
       onChange: this.onChange.bind(this),
       className: 'form-control'
-    };
+    }
 
     let theme = themeDefaults
     if (isFetching) {
@@ -103,6 +103,6 @@ export default class extends Component {
         shouldRenderSuggestions={this.shouldRenderSuggestions.bind(this)}
         inputProps={inputProps}
       />
-    );
+    )
   }
 }

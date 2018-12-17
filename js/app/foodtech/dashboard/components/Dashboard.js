@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
+import _ from 'lodash'
 import Modal from 'react-modal'
 import DatePicker from 'antd/lib/date-picker'
 import moment from 'moment'
@@ -36,7 +37,7 @@ class Dashboard extends React.Component {
           <DatePicker
             format={ 'll' }
             defaultValue={ moment(this.props.date) }
-            onChange={(date, dateString) => {
+            onChange={(date) => {
               window.location.href =
                 window.Routing.generate('admin_foodtech_dashboard', { date: date.format('YYYY-MM-DD') })
             }} />
@@ -62,7 +63,7 @@ class Dashboard extends React.Component {
 
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
 
   // Make sure orders are for the current date
   // TODO This should be managed at reducer level

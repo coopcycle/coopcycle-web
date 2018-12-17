@@ -8,9 +8,9 @@ export default class extends React.Component {
 
     return (
       <span className="task__tags">
-      { group.tags.map(tag => (
-        <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
-      )) }
+        { group.tags.map(tag => (
+          <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
+        )) }
       </span>
     )
   }

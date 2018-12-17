@@ -73,14 +73,14 @@ class RulePickerLine extends React.Component {
     }
 
     switch (state.operator) {
-      case '<':
-      case '>':
-        return `${state.type} ${state.operator} ${state.value}`
-      case 'in_zone':
-      case 'out_zone':
-        return `${state.operator}(${state.type}, "${state.value}")`
-      case '==':
-        return `${state.type}  == "${state.value}"`
+    case '<':
+    case '>':
+      return `${state.type} ${state.operator} ${state.value}`
+    case 'in_zone':
+    case 'out_zone':
+      return `${state.operator}(${state.type}, "${state.value}")`
+    case '==':
+      return `${state.type}  == "${state.value}"`
     }
   }
 
@@ -106,9 +106,7 @@ class RulePickerLine extends React.Component {
 
   handleValueChange (ev) {
     const { value } = this.state
-    if (Array.isArray(value)) {
-
-    } else {
+    if (!Array.isArray(value)) {
       this.setState({ value: ev.target.value })
     }
   }
@@ -116,7 +114,7 @@ class RulePickerLine extends React.Component {
   onTypeSelect (ev) {
     ev.preventDefault()
     let type = ev.target.value,
-        operator = typeToOperators[type].length === 1 ? typeToOperators[type][0] : ''
+      operator = typeToOperators[type].length === 1 ? typeToOperators[type][0] : ''
     this.setState({
       type,
       operator,
@@ -144,44 +142,43 @@ class RulePickerLine extends React.Component {
      * Return the displayed input for bound selection
      */
     switch (this.state.operator) {
-      // zone
-      case 'in_zone':
-      case 'out_zone':
-        return (
-          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-              <option value="">-</option>
-              { this.props.rulePicker.props.zones.map((item, index) => {
-                  return (<option value={item} key={index}>{item}</option>)
-                }
-              )}
-          </select>
-        )
-      // vehicle
-      case '==':
-        return (
-          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-            <option value="">-</option>
-            <option value="bike">Vélo</option>
-            <option value="cargo_bike">Vélo Cargo</option>
-          </select>
-        )
-      // weight, distance
-      case 'in':
-        return (
-          <div className="row">
-            <div className="col-md-6">
-              <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number"></input>
-            </div>
-            <div className="col-md-6">
-              <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number"></input>
-            </div>
+    // zone
+    case 'in_zone':
+    case 'out_zone':
+      return (
+        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+          <option value="">-</option>
+          { this.props.rulePicker.props.zones.map((item, index) => {
+            return (<option value={item} key={index}>{item}</option>)
+          })}
+        </select>
+      )
+    // vehicle
+    case '==':
+      return (
+        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+          <option value="">-</option>
+          <option value="bike">Vélo</option>
+          <option value="cargo_bike">Vélo Cargo</option>
+        </select>
+      )
+    // weight, distance
+    case 'in':
+      return (
+        <div className="row">
+          <div className="col-md-6">
+            <input className="form-control input-sm" value={this.state.value[0]} onChange={this.handleFirstBoundChange} type="number"></input>
           </div>
-        )
-      case '<':
-      case '>':
-        return (
-          (<input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>)
-        )
+          <div className="col-md-6">
+            <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number"></input>
+          </div>
+        </div>
+      )
+    case '<':
+    case '>':
+      return (
+        (<input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>)
+      )
     }
   }
 
@@ -205,9 +202,8 @@ class RulePickerLine extends React.Component {
               <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
                 <option value="">-</option>
                 { typeToOperators[this.state.type].map(function(operator, index) {
-                    return (<option key={index} value={operator}>{operator}</option>)
-                  })
-                }
+                  return (<option key={index} value={operator}>{operator}</option>)
+                })}
               </select>
             )
           }

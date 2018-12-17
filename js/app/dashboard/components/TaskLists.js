@@ -25,7 +25,7 @@ class TaskLists extends React.Component {
     // Hide other collapsibles when a collapsible is going to be shown
     $('#accordion').on('show.bs.collapse', '.collapse', () => {
       $('#accordion').find('.collapse.in').collapse('hide')
-    });
+    })
 
     const self = this
 

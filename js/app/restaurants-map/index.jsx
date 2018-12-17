@@ -1,11 +1,8 @@
-import React from 'react';
-import {render} from 'react-dom';
-import MapHelper from '../MapHelper'
+import _ from 'lodash'
+import L from 'leaflet-providers'
+require('beautifymarker')
 
-var _ = require('lodash');
-var L = require('leaflet-providers');
-var Polyline = require('@mapbox/polyline');
-require('beautifymarker');
+import MapHelper from '../MapHelper'
 
 var COLORS = {
   TURQUOISE: '#1ABC9C',
@@ -22,14 +19,7 @@ var COLORS = {
   PUMPKIN: '#D35400',
   ALIZARIN: '#E74C3C',
   POMEGRANATE: '#C0392B',
-};
-
-var infoWindows = [];
-var center = {
-  lat: 48.857498,
-  lng: 2.335402
-};
-var zoom = window.mapZoom || 13;
+}
 
 function createMarkerIcon(icon, iconShape, color) {
   return L.BeautifyIcon.icon({
@@ -38,53 +28,47 @@ function createMarkerIcon(icon, iconShape, color) {
     borderColor: color,
     textColor: color,
     backgroundColor: 'transparent'
-  });
+  })
 }
 
 function createMarker(position, icon, iconShape, color) {
 
   var marker = L.marker([position.lat, position.lng], {
     icon: createMarkerIcon(icon, iconShape, color)
-  });
+  })
 
-  return marker;
-}
-
-function closeAllInfoWindows() {
-  _.each(infoWindows, function(infoWindow) {
-    infoWindow.close();
-  });
+  return marker
 }
 
 const map = MapHelper.init('map')
 
 const markers = window.__restaurants.map(restaurant => {
 
-  const pos = { lat: restaurant.address.geo.latitude, lng: restaurant.address.geo.longitude };
-  var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))];
+  const pos = { lat: restaurant.address.geo.latitude, lng: restaurant.address.geo.longitude }
+  var randomColor = COLORS[_.first(_.shuffle(_.keys(COLORS)))]
 
-  const marker = createMarker(pos, 'cutlery', 'marker', randomColor);
+  const marker = createMarker(pos, 'cutlery', 'marker', randomColor)
 
-  const el = $('<div />');
+  const el = $('<div />')
 
   if (window.parent) {
     el.on('click', '.restaurant-map-link', function(e) {
-    e.preventDefault();
-      window.parent.document.location.replace($(this).attr('href'));
-    });
+      e.preventDefault()
+      window.parent.document.location.replace($(this).attr('href'))
+    })
   }
 
-  el.html(`<a href="${ restaurant.url }" class="restaurant-map-link">${ restaurant.name }</a>`);
+  el.html(`<a href="${ restaurant.url }" class="restaurant-map-link">${ restaurant.name }</a>`)
 
-  marker.bindPopup(el[0]);
+  marker.bindPopup(el[0])
 
-  return marker;
-});
+  return marker
+})
 
 if (markers.length > 0) {
-  const restaurantsLayer = L.layerGroup(markers);
-  restaurantsLayer.addTo(map);
+  const restaurantsLayer = L.layerGroup(markers)
+  restaurantsLayer.addTo(map)
 
-  const group = new L.featureGroup(markers);
-  map.fitBounds(group.getBounds());
+  const group = new L.featureGroup(markers)
+  map.fitBounds(group.getBounds())
 }
