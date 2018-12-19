@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *   shortName="User",
  *   itemOperations={
  *     "get"={"method"="GET"},
  *   },

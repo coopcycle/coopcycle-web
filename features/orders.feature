@@ -51,8 +51,8 @@ Feature: Orders
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
       "customer":{
-        "@id":"@string@.startsWith('/api/api_users')",
-        "@type":"ApiUser",
+        "@id":"@string@.startsWith('/api/users')",
+        "@type":"User",
         "username":"bob",
         "telephone": "+33612345678",
         "givenName":"Bob",

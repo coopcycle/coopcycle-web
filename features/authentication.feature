@@ -77,9 +77,9 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "@context": "/api/contexts/ApiUser",
-      "@id": "/api/api_users/1",
-      "@type": "ApiUser",
+      "@context": "/api/contexts/User",
+      "@id": "/api/users/1",
+      "@type": "User",
       "addresses": [],
       "username": "bob",
       "email": "bob@coopcycle.org",
