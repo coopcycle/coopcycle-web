@@ -80,6 +80,7 @@ install:
 
 before_script:
   - phpenv config-rm xdebug.ini
+  - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   # Configure JSON Web Token
   - mkdir -p var/jwt
   - openssl genrsa -out var/jwt/private.pem 4096
