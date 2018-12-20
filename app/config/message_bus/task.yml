@@ -47,18 +47,18 @@ services:
       - '@serializer'
       - '@coopcycle.socket_io_manager'
     tags:
-        - name: event_subscriber
-          subscribes_to: task:created
-        - name: event_subscriber
-          subscribes_to: task:assigned
-        - name: event_subscriber
-          subscribes_to: task:unassigned
-        - name: event_subscriber
-          subscribes_to: task:done
-        - name: event_subscriber
-          subscribes_to: task:failed
-        - name: event_subscriber
-          subscribes_to: task:cancelled
+      - name: event_subscriber
+        subscribes_to: task:created
+      - name: event_subscriber
+        subscribes_to: task:assigned
+      - name: event_subscriber
+        subscribes_to: task:unassigned
+      - name: event_subscriber
+        subscribes_to: task:done
+      - name: event_subscriber
+        subscribes_to: task:failed
+      - name: event_subscriber
+        subscribes_to: task:cancelled
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
@@ -66,7 +66,17 @@ services:
       - '@coopcycle.email_manager'
       - '@coopcycle.settings_manager'
     tags:
-        - name: event_subscriber
-          subscribes_to: task:done
-        - name: event_subscriber
-          subscribes_to: task:failed
+      - name: event_subscriber
+        subscribes_to: task:done
+      - name: event_subscriber
+        subscribes_to: task:failed
+
+  coopcycle.domain.task.reactor.send_remote_push_notification:
+    class: AppBundle\Domain\Task\Reactor\SendRemotePushNotification
+    arguments:
+      - '@coopcycle.remote_push_notification_manager'
+      - '@api_platform.iri_converter'
+      - '@fos_user.user_manager'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:created

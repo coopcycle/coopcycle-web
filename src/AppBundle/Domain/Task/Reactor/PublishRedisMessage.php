@@ -2,11 +2,13 @@
 
 namespace AppBundle\Domain\Task\Reactor;
 
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Service\SocketIoManager;
 use Predis\Client as Redis;
+
 use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishRedisMessage
@@ -24,13 +26,18 @@ class PublishRedisMessage
 
     public function __invoke(Event $event)
     {
-        $serializedTask = $this->serializer->normalize($event->getTask(), 'jsonld', [
-            'resource_class' => Task::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['task', 'delivery', 'place']
-        ]);
+        try {
+            $serializedTask = $this->serializer->normalize($event->getTask(), 'jsonld', [
+                'resource_class' => Task::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task', 'delivery', 'place']
+            ]);
 
-        $this->socketIoManager->toAdmins($event::messageName(), ['task' => $serializedTask]);
+            $this->socketIoManager->toAdmins($event::messageName(), ['task' => $serializedTask]);
+        } catch (InvalidArgumentException $e) {
+
+        }
+
     }
 }

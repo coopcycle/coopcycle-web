@@ -471,7 +471,18 @@ services:
   'AppBundle\Filter\OrderDateFilter':
     tags: [ 'api_platform.filter' ]
 
+  'AppBundle\Api\Filter\DateFilter':
+    tags: [ 'api_platform.filter' ]
+
   'AppBundle\Api\Filter\UserRoleFilter':
+    tags: [ 'api_platform.filter' ]
+
+  'AppBundle\Api\Filter\TaskFilter':
+    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
+    tags: [ 'api_platform.filter' ]
+
+  'AppBundle\Api\Filter\AssignedFilter':
+    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
   twig.extension.text:

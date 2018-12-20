@@ -115,7 +115,9 @@ class TaskSubscriber implements EventSubscriber
             $uow->computeChangeSets();
         }
 
-        foreach ($tasksToUpdate as $task) {
+        $tasks = array_merge($tasksToInsert, $tasksToUpdate);
+
+        foreach ($tasks as $task) {
 
             if (!$this->assignedToHasChanged($task, $args)) {
                 continue;
