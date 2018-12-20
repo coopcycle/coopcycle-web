@@ -153,7 +153,6 @@ Feature: Deliveries
       """
     Then the response status code should be 201
     And the response should be in JSON
-    Then print last response
     And the JSON should match:
       """
       {

@@ -20,7 +20,7 @@ abstract class TaskCollection
     protected $id;
 
     /**
-     * @Groups({"task_collection", "task"})
+     * @Groups({"task_collection", "task", "delivery", "place"})
      */
     protected $items;
 

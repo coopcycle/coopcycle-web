@@ -2,8 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
+use AppBundle\Action\Task\Unassign as TaskUnassign;
+use AppBundle\Api\Filter\AssignedFilter;
+use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
@@ -20,7 +26,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "normalization_context"={"groups"={"task", "delivery", "place"}}
  *   },
  *   collectionOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')"
+ *     },
+ *     "post"={
+ *       "method"="POST",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "denormalization_context"={"groups"={"task", "place"}},
+ *     },
  *     "my_tasks" = {
  *       "route_name" = "my_tasks",
  *       "swagger_context" = {
@@ -46,9 +60,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/failed",
  *       "controller"=TaskFailed::class,
  *       "access_control"="is_granted('ROLE_COURIER') and object.isAssignedTo(user)"
+ *     },
+ *     "task_assign"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/assign",
+ *       "controller"=TaskAssign::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')"
+ *     },
+ *     "task_unassign"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/unassign",
+ *       "controller"=TaskUnassign::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
  *     }
  *   }
  * )
+ * @ApiFilter(DateFilter::class, properties={"date"}, arguments={"property": "doneBefore"})
+ * @ApiFilter(TaskFilter::class)
+ * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  */
 class Task implements TaggableInterface
 {
@@ -80,7 +109,7 @@ class Task implements TaggableInterface
     private $delivery;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "place"})
      */
     private $address;
 

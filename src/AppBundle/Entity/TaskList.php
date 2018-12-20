@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Api\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -22,15 +24,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *           "type" = "string"
  *         }}
  *       }
+ *     },
+ *     "get"={"method"="GET"},
+ *     "post"={
+ *       "method"="POST",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
  *   },
  *   attributes={
- *     "normalization_context"={"groups"={"task_collection", "task"}}
+ *     "normalization_context"={"groups"={"task_collection", "task", "place"}}
  *   }
  * )
+ * @ApiFilter(DateFilter::class, properties={"date"})
  */
 class TaskList extends TaskCollection implements TaskCollectionInterface
 {

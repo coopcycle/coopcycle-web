@@ -31,7 +31,7 @@ Feature: Tasks
             "doneBefore":"2018-03-02T12:00:00+00:00",
             "comments":"#bob",
             "events":@array@,
-            "updatedAt":"2018-03-06T15:09:38+01:00",
+            "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
@@ -49,7 +49,7 @@ Feature: Tasks
             "doneBefore":"2018-03-02T12:30:00+00:00",
             "comments":"#bob",
             "events":@array@,
-            "updatedAt":"2018-03-06T15:09:38+01:00",
+            "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
@@ -57,7 +57,13 @@ Feature: Tasks
             "tags":@array@
           }
         ],
-        "hydra:totalItems":2
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/me/tasks/2018-03-02{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
       }
       """
 
@@ -91,7 +97,7 @@ Feature: Tasks
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "comments":@string@,
         "events":@array@,
-        "updatedAt":"2018-03-06T15:15:30+01:00",
+        "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"bob",
         "previous":null,
@@ -148,7 +154,7 @@ Feature: Tasks
             "createdAt":@string@
           }
         ],
-        "updatedAt":"2018-03-06T15:15:30+01:00",
+        "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"bob",
         "previous":null,
@@ -286,3 +292,337 @@ Feature: Tasks
       """
     Then the response status code should be 400
     And the response should be in JSON
+
+  Scenario: Create task
+    Given the fixtures file "dispatch.yml" is loaded
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/tasks" with body:
+      """
+      {
+        "type": "DROPOFF",
+        "address": {
+          "streetAddress": "101 Rue de la Paix, 75002 Paris",
+          "geo": {
+            "latitude": 48.870473,
+            "longitude": 2.331933
+          }
+        },
+        "doneAfter": "2018-12-24T23:30:00+01:00",
+        "doneBefore": "2018-12-24T23:59:59+01:00"
+      }
+      """
+    Then the response status code should be 201
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":{
+          "@id":"@string@.startsWith('/api/addresses')",
+          "@type":"http://schema.org/Place",
+          "firstName":null,
+          "lastName":null,
+          "description":null,
+          "floor":null,
+          "geo":{
+            "latitude":48.870473,
+            "longitude":2.331933
+          },
+          "streetAddress":"101 Rue de la Paix, 75002 Paris",
+          "telephone":null,
+          "name":null
+        },
+        "doneAfter":"2018-12-24T23:30:00+01:00",
+        "doneBefore":"2018-12-24T23:59:59+01:00",
+        "comments":null,
+        "events":@array@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "deliveryColor":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
+
+  Scenario: Not authorized to create task
+    Given the fixtures file "dispatch.yml" is loaded
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/tasks" with body:
+      """
+      {
+        "type": "DROPOFF",
+        "address": {
+          "streetAddress": "101 Rue de la Paix, 75002 Paris",
+          "geo": {
+            "latitude": 48.870473,
+            "longitude": 2.331933
+          }
+        },
+        "doneAfter": "2018-12-24T23:30:00+01:00",
+        "doneBefore": "2018-12-24T23:59:59+01:00"
+      }
+      """
+    Then the response status code should be 401
+
+  Scenario: Not enough permissions to create task
+    Given the fixtures file "dispatch.yml" is loaded
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/tasks" with body:
+      """
+      {
+        "type": "DROPOFF",
+        "address": {
+          "streetAddress": "101 Rue de la Paix, 75002 Paris",
+          "geo": {
+            "latitude": 48.870473,
+            "longitude": 2.331933
+          }
+        },
+        "doneAfter": "2018-12-24T23:30:00+01:00",
+        "doneBefore": "2018-12-24T23:59:59+01:00"
+      }
+      """
+    Then the response status code should be 401
+
+  Scenario: Retrieve tasks filtered by date
+    Given the fixtures file "dispatch.yml" is loaded
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2018-12-01"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T10:30:00+01:00",
+            "doneBefore":"2018-12-01T11:00:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":[]
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T11:30:00+01:00",
+            "doneBefore":"2018-12-01T12:00:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":[]
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":{
+          "@id":"/api/tasks?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by date for admin
+    Given the fixtures file "dispatch.yml" is loaded
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2018-12-01"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T10:30:00+01:00",
+            "doneBefore":"2018-12-01T11:00:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "id":2,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T11:30:00+01:00",
+            "doneBefore":"2018-12-01T12:00:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/5",
+            "@type":"Task",
+            "id":5,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T13:00:00+01:00",
+            "doneBefore":"2018-12-01T13:30:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/6",
+            "@type":"Task",
+            "id":6,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":false,
+            "assignedTo":null,
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":@array@
+          }
+        ],
+        "hydra:totalItems":4,
+        "hydra:view":{
+          "@id":"/api/tasks?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve unassigned tasks filtered by date for admin
+    Given the fixtures file "dispatch.yml" is loaded
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2018-12-01&assigned=no"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/tasks/6",
+            "@type":"Task",
+            "id":6,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "comments":null,
+            "events":@array@,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":false,
+            "assignedTo":null,
+            "previous":null,
+            "next":null,
+            "deliveryColor":null,
+            "group":null,
+            "tags":@array@
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:view":{
+          "@id":"\/api\/tasks?date=2018-12-01\u0026assigned=no",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"\/api\/tasks{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
