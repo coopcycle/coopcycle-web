@@ -48,6 +48,9 @@ export const socketIO = ({ dispatch, getState }) => {
     socket.on('task:cancelled', data => dispatch(updateTask(data.task)))
     socket.on('task:created', data => dispatch(addCreatedTask(data.task)))
 
+    socket.on('task:assigned', data => dispatch(updateTask(data.task)))
+    socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
+
     socket.on('tracking', data => dispatch(setGeolocation(data.user, data.coords)))
 
     setTimeout(() => {

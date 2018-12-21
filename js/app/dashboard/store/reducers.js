@@ -21,6 +21,21 @@ _.forEach(taskLists, taskList => {
   polylineEnabledByUser[taskList.username] = false
 })
 
+const replaceOrAddTask = (tasks, task) => {
+
+  const taskIndex = _.findIndex(tasks, t => t['@id'] === task['@id'])
+
+  if (-1 !== taskIndex) {
+
+    const newTasks = tasks.slice(0)
+    newTasks.splice(taskIndex, 1, Object.assign({}, tasks[taskIndex], task))
+
+    return newTasks
+  }
+
+  return tasks.concat([ task ])
+}
+
 const selectedTasksInitial = []
 
 const taskLists = (state = taskListsInitial, action) => {
@@ -29,6 +44,7 @@ const taskLists = (state = taskListsInitial, action) => {
   let taskListIndex
   let taskList
   let taskListItems
+  let targetTaskListIndex
 
   switch (action.type) {
 
@@ -97,63 +113,51 @@ const taskLists = (state = taskListsInitial, action) => {
 
   case 'UPDATE_TASK':
 
-    // Task new due date is different from the one displayed -> reload to hide task
-    if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
-      window.location.reload()
+    if (action.task.isAssigned) {
+      targetTaskListIndex = _.findIndex(state, taskList => taskList.username === action.task.assignedTo)
+
+      if (-1 === targetTaskListIndex) {
+
+        return state
+      }
     }
 
-    // The task may have been assigned through the modal
-    // We need to lookup all the lists as we don't know if it was assigned or not
-    taskListIndex = _.findIndex(newTaskLists, taskList => {
+    taskListIndex = _.findIndex(state, taskList => {
       const taskIds = _.map(taskList.items, task => task['@id'])
       return _.includes(taskIds, action.task['@id'])
     })
 
-    // The task belongs to a list
     if (-1 !== taskListIndex) {
 
-      // If the task is still assigned, replace it
       if (action.task.isAssigned) {
 
-        taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
-        taskList = newTaskLists[taskListIndex]
-        taskListItems = taskList.items.slice(0)
+        if (targetTaskListIndex !== taskListIndex) {
+          newTaskLists.splice(taskListIndex, 1, {
+            ...state[taskListIndex],
+            items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
+          })
+        }
 
-        const taskIndex = _.findIndex(taskList.items, task => action.task['@id'] === task['@id'])
-        taskListItems.splice(taskIndex, 1, action.task)
-        newTaskLists.splice(taskListIndex, 1,
-          Object.assign({}, taskList, { items: taskListItems }))
-
-      // If the task has been unassigned, remove it
+        newTaskLists.splice(targetTaskListIndex, 1, {
+          ...state[targetTaskListIndex],
+          items: replaceOrAddTask(state[targetTaskListIndex].items, action.task)
+        })
       } else {
-
-        taskList = newTaskLists[taskListIndex]
-
-        taskListItems = _.differenceWith(
-          taskList.items,
-          _.intersectionWith(taskList.items, [ action.task ], taskComparator),
-          taskComparator
-        )
-        newTaskLists.splice(taskListIndex, 1,
-          Object.assign({}, taskList, { items: taskListItems }))
+        newTaskLists.splice(taskListIndex, 1, {
+          ...state[taskListIndex],
+          items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
+        })
       }
-
-      return newTaskLists
-
     } else {
-
       if (action.task.isAssigned) {
-
-        // FIXME
-        // The task has been assigned through the modal
-        // Given our architecture, it is simpler to reload the page
-        // because there may be linked tasks that have been assigned
-        // It would be more reliable to rely on data from the server to update the dashboard
-        window.location.reload()
-
+        newTaskLists.splice(targetTaskListIndex, 1, {
+          ...state[targetTaskListIndex],
+          items: replaceOrAddTask(state[targetTaskListIndex].items, action.task)
+        })
       }
-
     }
+
+    return newTaskLists
   }
 
   return state
@@ -191,11 +195,6 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 
   case 'UPDATE_TASK':
 
-    // Task new due date is different from the one displayed -> reload to hide task
-    if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
-      window.location.reload()
-    }
-
     newState = state.slice(0)
 
     let taskIndex = _.findIndex(newState, task => action.task['@id'] === task['@id'])
@@ -203,7 +202,8 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
     if (-1 !== taskIndex) {
 
       // If the task has been assigned, remove it
-      if (action.task.isAssigned) {
+      // If the task new due date is different from the one displayed, remove it
+      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
         newState = _.differenceWith(
           newState,
           _.intersectionWith(newState, [ action.task ], taskComparator),
@@ -216,6 +216,10 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
       }
 
       return newState
+    } else {
+      if (!action.task.isAssigned) {
+        return state.concat([ action.task ])
+      }
     }
   }
 
