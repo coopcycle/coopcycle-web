@@ -121,46 +121,36 @@ export const taskLists = (state = taskListsInitial, action) => {
 
   case 'UPDATE_TASK':
 
-    if (action.task.isAssigned) {
-      targetTaskListIndex = _.findIndex(state, taskList => taskList.username === action.task.assignedTo)
-
-      if (-1 === targetTaskListIndex) {
-
-        return state
-      }
-    }
-
     taskListIndex = _.findIndex(state, taskList => {
       const taskIds = _.map(taskList.items, task => task['@id'])
       return _.includes(taskIds, action.task['@id'])
     })
 
-    if (-1 !== taskListIndex) {
+    if (action.task.isAssigned) {
 
-      if (action.task.isAssigned) {
+      targetTaskListIndex = _.findIndex(state, taskList => taskList.username === action.task.assignedTo)
 
+      if (-1 !== taskListIndex) {
         if (targetTaskListIndex !== taskListIndex) {
           newTaskLists.splice(taskListIndex, 1, {
             ...state[taskListIndex],
             items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
           })
         }
+      }
 
+      if (-1 !== targetTaskListIndex) {
         newTaskLists.splice(targetTaskListIndex, 1, {
           ...state[targetTaskListIndex],
           items: replaceOrAddTask(state[targetTaskListIndex].items, action.task)
         })
-      } else {
+      }
+
+    } else {
+      if (-1 !== taskListIndex) {
         newTaskLists.splice(taskListIndex, 1, {
           ...state[taskListIndex],
           items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
-        })
-      }
-    } else {
-      if (action.task.isAssigned) {
-        newTaskLists.splice(targetTaskListIndex, 1, {
-          ...state[targetTaskListIndex],
-          items: replaceOrAddTask(state[targetTaskListIndex].items, action.task)
         })
       }
     }

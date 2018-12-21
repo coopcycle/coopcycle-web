@@ -121,6 +121,35 @@ describe('taskLists reducer', () => {
       }
     ])
 
+    expect(
+      taskLists([
+        {
+          username: 'bob',
+          items: [{ '@id': 1 }, { '@id': 2 }]
+        },
+        {
+          username: 'sarah',
+          items: []
+        }
+      ], {
+        type: 'UPDATE_TASK',
+        task: {
+          '@id': 1,
+          isAssigned: true,
+          assignedTo: 'steve'
+        }
+      })
+    ).toEqual([
+      {
+        username: 'bob',
+        items: [{ '@id': 2 }]
+      },
+      {
+        username: 'sarah',
+        items: []
+      }
+    ])
+
   })
 
 })
