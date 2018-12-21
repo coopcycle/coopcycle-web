@@ -34,8 +34,12 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket = io(`//${window.location.hostname}`, {
       path: '/tracking/socket.io',
-      extraHeaders: {
-        Authorization: `Bearer ${getState().jwt}`
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            Authorization: `Bearer ${getState().jwt}`
+          }
+        }
       }
     })
 

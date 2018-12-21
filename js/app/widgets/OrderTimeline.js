@@ -26,8 +26,12 @@ export default function(el, options) {
 
     const socket = io(`//${window.location.hostname}`, {
       path: '/tracking/socket.io',
-      extraHeaders: {
-        Authorization: `Bearer ${options.jwt}`
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            Authorization: `Bearer ${options.jwt}`
+          }
+        }
       }
     })
 
