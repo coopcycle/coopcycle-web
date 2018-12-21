@@ -4,10 +4,18 @@ import moment from 'moment'
 
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
+const dateInitial = window.AppData && window.AppData.Dashboard ? window.AppData.Dashboard.date : moment()
+
+let tasksInitial = []
+let taskListsInitial = []
+
 // initial data pumped from the template
-const tasksInitial = window.AppData.Dashboard.tasks,
-  taskListsInitial = window.AppData.Dashboard.taskLists,
-  unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
+if (window.AppData && window.AppData.Dashboard) {
+  tasksInitial = window.AppData.Dashboard.tasks
+  taskListsInitial = window.AppData.Dashboard.taskLists
+}
+
+const unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
 
 unassignedTasksInitial.sort((a, b) => {
   const doneBeforeA = moment(a.doneBefore)
@@ -17,7 +25,7 @@ unassignedTasksInitial.sort((a, b) => {
 })
 
 let polylineEnabledByUser = {}
-_.forEach(taskLists, taskList => {
+_.forEach(taskListsInitial, taskList => {
   polylineEnabledByUser[taskList.username] = false
 })
 
@@ -38,7 +46,7 @@ const replaceOrAddTask = (tasks, task) => {
 
 const selectedTasksInitial = []
 
-const taskLists = (state = taskListsInitial, action) => {
+export const taskLists = (state = taskListsInitial, action) => {
 
   let newTaskLists = state.slice(0)
   let taskListIndex
@@ -90,7 +98,7 @@ const taskLists = (state = taskListsInitial, action) => {
 
   case 'ADD_CREATED_TASK':
 
-    if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
       return newTaskLists
     }
 
@@ -166,13 +174,13 @@ const taskLists = (state = taskListsInitial, action) => {
 /*
   Store for all unassigned tasks
  */
-const unassignedTasks = (state = unassignedTasksInitial, action) => {
+export const unassignedTasks = (state = unassignedTasksInitial, action) => {
   let newState
 
   switch (action.type) {
 
   case 'ADD_CREATED_TASK':
-    if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
       return state
     }
     if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
@@ -203,7 +211,7 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
 
       // If the task has been assigned, remove it
       // If the task new due date is different from the one displayed, remove it
-      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
         newState = _.differenceWith(
           newState,
           _.intersectionWith(newState, [ action.task ], taskComparator),
@@ -226,13 +234,13 @@ const unassignedTasks = (state = unassignedTasksInitial, action) => {
   return state
 }
 
-const allTasks = (state = tasksInitial, action) => {
+export const allTasks = (state = tasksInitial, action) => {
   let newState
 
   switch (action.type) {
 
   case 'ADD_CREATED_TASK':
-    if (!moment(action.task.doneBefore).isSame(window.AppData.Dashboard.date, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
       return state
     }
 
@@ -246,7 +254,7 @@ const allTasks = (state = tasksInitial, action) => {
   return state
 }
 
-const addModalIsOpen = (state = false, action) => {
+export const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case 'OPEN_ADD_USER':
     return true
@@ -257,7 +265,7 @@ const addModalIsOpen = (state = false, action) => {
   }
 }
 
-const taskListsLoading = (state = false, action) => {
+export const taskListsLoading = (state = false, action) => {
   switch(action.type) {
   case 'ADD_TASK_LIST_REQUEST':
   case 'MODIFY_TASK_LIST_REQUEST':
@@ -272,7 +280,7 @@ const taskListsLoading = (state = false, action) => {
   }
 }
 
-const polylineEnabled = (state = polylineEnabledByUser, action) => {
+export const polylineEnabled = (state = polylineEnabledByUser, action) => {
   switch (action.type) {
   case 'TOGGLE_POLYLINE':
     let newState = { ...state }
@@ -285,7 +293,7 @@ const polylineEnabled = (state = polylineEnabledByUser, action) => {
   }
 }
 
-const selectedTasks = (state = selectedTasksInitial, action) => {
+export const selectedTasks = (state = selectedTasksInitial, action) => {
 
   let newState = state.slice(0)
 
@@ -319,7 +327,7 @@ const selectedTasks = (state = selectedTasksInitial, action) => {
   return state
 }
 
-const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
+export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   switch (action.type) {
   case 'SET_TASK_LIST_GROUP_MODE':
     return action.mode
@@ -328,7 +336,7 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-const taskFinishedFilter = (state = true, action) => {
+export const taskFinishedFilter = (state = true, action) => {
   switch (action.type) {
   case 'TOGGLE_SHOW_FINISHED_TASKS':
     let showFinishedTasks = !state
@@ -338,7 +346,7 @@ const taskFinishedFilter = (state = true, action) => {
   }
 }
 
-const taskCancelledFilter = (state = false, action) => {
+export const taskCancelledFilter = (state = false, action) => {
   switch (action.type) {
   case 'TOGGLE_SHOW_CANCELLED_TASKS':
     let showCancelledTasks = !state
@@ -348,7 +356,7 @@ const taskCancelledFilter = (state = false, action) => {
   }
 }
 
-const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action) => {
+export const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action) => {
 
   switch (action.type) {
 
@@ -371,7 +379,7 @@ const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, s
   }
 }
 
-const jwt = (state = '', action) => {
+export const jwt = (state = '', action) => {
   switch (action.type) {
   default:
 
@@ -379,7 +387,7 @@ const jwt = (state = '', action) => {
   }
 }
 
-const positions = (state = [], action) => {
+export const positions = (state = [], action) => {
   switch (action.type) {
   case 'SET_GEOLOCATION':
 
@@ -405,7 +413,7 @@ const positions = (state = [], action) => {
   }
 }
 
-const offline = (state = [], action) => {
+export const offline = (state = [], action) => {
   let index
 
   switch (action.type) {
@@ -434,7 +442,7 @@ const offline = (state = [], action) => {
   }
 }
 
-const isDragging = (state = false, action) => {
+export const isDragging = (state = false, action) => {
   switch (action.type) {
   case 'DRAKE_DRAG':
 

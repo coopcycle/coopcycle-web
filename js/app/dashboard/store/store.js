@@ -1,6 +1,22 @@
-import { createStore, applyMiddleware, compose } from 'redux'
+import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import reducers from './reducers'
+import {
+  allTasks,
+  unassignedTasks,
+  taskLists,
+  taskListsLoading,
+  addModalIsOpen,
+  polylineEnabled,
+  taskListGroupMode,
+  taskFinishedFilter,
+  taskCancelledFilter,
+  tagsFilter,
+  selectedTasks,
+  jwt,
+  positions,
+  offline,
+  isDragging
+} from './reducers'
 import { socketIO } from './middlewares'
 
 const middlewares = [ thunk, socketIO ]
@@ -12,7 +28,23 @@ const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
 let store = createStore(
-  reducers,
+  combineReducers({
+    allTasks,
+    unassignedTasks,
+    taskLists,
+    taskListsLoading,
+    addModalIsOpen,
+    polylineEnabled,
+    taskListGroupMode,
+    taskFinishedFilter,
+    taskCancelledFilter,
+    tagsFilter,
+    selectedTasks,
+    jwt,
+    positions,
+    offline,
+    isDragging
+  }),
   {
     jwt: window.AppData.Dashboard.jwt
   },
