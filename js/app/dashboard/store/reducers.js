@@ -424,7 +424,6 @@ export const offline = (state = [], action) => {
 
       return state.concat([ action.username ])
     }
-    break
 
   default:
 
