@@ -46,7 +46,10 @@ let store = createStore(
     isDragging
   }),
   {
-    jwt: window.AppData.Dashboard.jwt
+    jwt: window.AppData.Dashboard.jwt,
+    unassignedTasks: _.filter(window.AppData.Dashboard.tasks, task => !task.isAssigned),
+    allTasks: window.AppData.Dashboard.tasks,
+    taskLists: window.AppData.Dashboard.taskLists,
   },
   composeEnhancers(applyMiddleware(...middlewares))
 )

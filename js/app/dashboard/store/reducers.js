@@ -6,29 +6,6 @@ const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
 const dateInitial = window.AppData && window.AppData.Dashboard ? window.AppData.Dashboard.date : moment()
 
-let tasksInitial = []
-let taskListsInitial = []
-
-// initial data pumped from the template
-if (window.AppData && window.AppData.Dashboard) {
-  tasksInitial = window.AppData.Dashboard.tasks
-  taskListsInitial = window.AppData.Dashboard.taskLists
-}
-
-const unassignedTasksInitial = _.filter(tasksInitial, task => !task.isAssigned)
-
-unassignedTasksInitial.sort((a, b) => {
-  const doneBeforeA = moment(a.doneBefore)
-  const doneBeforeB = moment(b.doneBefore)
-
-  return doneBeforeA.isBefore(doneBeforeB) ? -1 : 1
-})
-
-let polylineEnabledByUser = {}
-_.forEach(taskListsInitial, taskList => {
-  polylineEnabledByUser[taskList.username] = false
-})
-
 const replaceOrAddTask = (tasks, task) => {
 
   const taskIndex = _.findIndex(tasks, t => t['@id'] === task['@id'])
@@ -44,9 +21,7 @@ const replaceOrAddTask = (tasks, task) => {
   return tasks.concat([ task ])
 }
 
-const selectedTasksInitial = []
-
-export const taskLists = (state = taskListsInitial, action) => {
+export const taskLists = (state = [], action) => {
 
   let newTaskLists = state.slice(0)
   let taskListIndex
@@ -164,7 +139,7 @@ export const taskLists = (state = taskListsInitial, action) => {
 /*
   Store for all unassigned tasks
  */
-export const unassignedTasks = (state = unassignedTasksInitial, action) => {
+export const unassignedTasks = (state = [], action) => {
   let newState
 
   switch (action.type) {
@@ -173,7 +148,7 @@ export const unassignedTasks = (state = unassignedTasksInitial, action) => {
     if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
       return state
     }
-    if (!_.find(unassignedTasksInitial, (task) => { task['id'] === action.task.id })) {
+    if (!_.find(state, (task) => { task['id'] === action.task.id })) {
       newState = state.slice(0)
       return Array.prototype.concat(newState, [ action.task ])
     }
@@ -224,7 +199,7 @@ export const unassignedTasks = (state = unassignedTasksInitial, action) => {
   return state
 }
 
-export const allTasks = (state = tasksInitial, action) => {
+export const allTasks = (state = [], action) => {
   let newState
 
   switch (action.type) {
@@ -270,7 +245,7 @@ export const taskListsLoading = (state = false, action) => {
   }
 }
 
-export const polylineEnabled = (state = polylineEnabledByUser, action) => {
+export const polylineEnabled = (state = {}, action) => {
   switch (action.type) {
   case 'TOGGLE_POLYLINE':
     let newState = { ...state }
@@ -283,7 +258,7 @@ export const polylineEnabled = (state = polylineEnabledByUser, action) => {
   }
 }
 
-export const selectedTasks = (state = selectedTasksInitial, action) => {
+export const selectedTasks = (state = [], action) => {
 
   let newState = state.slice(0)
 
