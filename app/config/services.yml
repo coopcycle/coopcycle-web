@@ -580,6 +580,8 @@ services:
 
   coopcycle.user_manager:
     parent: fos_user.user_manager.default
+    autowire: false
+    autoconfigure: false
     class: AppBundle\Security\UserManager
 
   coopcycle.task_manager:
@@ -704,6 +706,8 @@ services:
 
   'AppBundle\Security\StoreTokenAuthenticator':
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
+    autowire: false
+    autoconfigure: false
     arguments: [ '@doctrine' ]
 
   # The services below are needed to generate tokens that never expire
@@ -712,21 +716,29 @@ services:
   lexik_jwt_authentication.jws_provider.not_expiring:
     public: true
     parent: Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface
+    autowire: false
+    autoconfigure: false
     arguments:
       index_3: ~
 
   lexik_jwt_authentication.encoder.not_expiring:
     parent: lexik_jwt_authentication.encoder
+    autowire: false
+    autoconfigure: false
     arguments:
       index_0: '@lexik_jwt_authentication.jws_provider.not_expiring'
 
   lexik_jwt_authentication.jwt_manager.not_expiring:
     parent: lexik_jwt_authentication.jwt_manager
+    autowire: false
+    autoconfigure: false
     arguments:
       index_0: '@lexik_jwt_authentication.encoder.not_expiring'
 
   lexik_jwt_authentication.jwt_token_authenticator.not_expiring:
     parent: lexik_jwt_authentication.jwt_token_authenticator
+    autowire: false
+    autoconfigure: false
     arguments:
       index_0: '@lexik_jwt_authentication.jwt_manager.not_expiring'
 
