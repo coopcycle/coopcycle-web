@@ -34,7 +34,9 @@ services:
 
   coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
   coopcycle.shipping_time_calculator: '@AppBundle\Utils\ShippingTimeCalculator'
-  coopcycle.shipping_date_filter: '@AppBundle\Utils\ShippingDateFilter'
+  coopcycle.shipping_date_filter:
+    alias: AppBundle\Utils\ShippingDateFilter
+    public: true
   coopcycle.order_timeline_calculator: '@AppBundle\Utils\OrderTimelineCalculator'
   coopcycle.store_token_manager: '@AppBundle\Security\StoreTokenManager'
   coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
@@ -229,7 +231,6 @@ services:
       - '@routing_service'
 
   AppBundle\Utils\ShippingDateFilter:
-    public: true
     arguments:
       - "@coopcycle.preparation_time_calculator"
       - "@coopcycle.shipping_time_calculator"
