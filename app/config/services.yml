@@ -15,23 +15,41 @@ services:
     autowire: true
     autoconfigure: true
 
+  coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
+  coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
+  coopcycle.geocoder: '@AppBundle\Service\Geocoder'
+  coopcycle.task_manager: '@AppBundle\Service\TaskManager'
+  coopcycle.order_manager: '@AppBundle\Service\OrderManager'
+  coopcycle.delivery.manager: '@AppBundle\Service\DeliveryManager'
+  coopcycle.stripe_manager: '@AppBundle\Service\StripeManager'
+  coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
+  coopcycle.shipping_time_calculator: '@AppBundle\Utils\ShippingTimeCalculator'
+  coopcycle.shipping_date_filter: '@AppBundle\Utils\ShippingDateFilter'
+  coopcycle.order_timeline_calculator: '@AppBundle\Utils\OrderTimelineCalculator'
+  coopcycle.tag_manager: '@AppBundle\Service\TagManager'
+  coopcycle.store_token_manager: '@AppBundle\Security\StoreTokenManager'
+  coopcycle.settings_manager: '@AppBundle\Service\SettingsManager'
+  coopcycle.email_manager: '@AppBundle\Service\EmailManager'
+  coopcycle.notification_manager: '@AppBundle\Service\NotificationManager'
+  coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
+  coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
+  coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
+  coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
+
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
 
-  app.locale_listener:
-    class: AppBundle\EventListener\LocaleListener
+  AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
     tags:
       - { name: kernel.event_subscriber }
 
-  coopcycle.seo.event_listener:
-    class: AppBundle\EventListener\SeoListener
+  AppBundle\EventListener\SeoListener:
     arguments: ['@translator', '@sonata.seo.page.default']
     tags:
       - { name: kernel.event_listener, event: kernel.request }
 
-  coopcycle.listener.maintenance:
-    class: AppBundle\EventListener\MaintenanceListener
+  AppBundle\EventListener\MaintenanceListener:
     arguments:
       - '@security.authorization_checker'
       - '@security.token_storage'
@@ -119,8 +137,7 @@ services:
       - "@sylius.factory.product_variant"
     public: true
 
-  sylius.context.cart.restaurant:
-    class: AppBundle\Sylius\Cart\RestaurantCartContext
+  AppBundle\Sylius\Cart\RestaurantCartContext:
     arguments:
       - "@session"
       - "@sylius.repository.order"
@@ -154,50 +171,43 @@ services:
       - null
       - [ "@coopcycle.expression_language.zone.provider" ]
 
-  my.registration_listener:
-    class: AppBundle\EventListener\RegistrationListener
+  AppBundle\EventListener\RegistrationListener:
     arguments: ['@router']
     tags:
       - { name: kernel.event_subscriber }
 
-  coopcycle.web_authentication_listener:
-    class: AppBundle\EventListener\WebAuthenticationListener
+  AppBundle\EventListener\WebAuthenticationListener:
     arguments: ['@sylius.manager.order', '@sylius.context.cart']
     tags:
       - { name: kernel.event_subscriber }
 
-  'AppBundle\EventListener\SyliusIdGeneratorSubscriber':
+  AppBundle\EventListener\SyliusIdGeneratorSubscriber:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
-  'AppBundle\EventListener\TaggableSubscriber':
+  AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
-  coopcycle.tag_manager:
-    class: AppBundle\Service\TagManager
+  AppBundle\Service\TagManager:
     arguments: [ '@doctrine' ]
 
-  coopcycle.order_manager:
+  AppBundle\Service\OrderManager:
     public: true
-    class: AppBundle\Service\OrderManager
     arguments:
       - "@sm.factory"
       - "@command_bus"
 
-  coopcycle.delivery.manager:
-    class: AppBundle\Service\DeliveryManager
+  AppBundle\Service\DeliveryManager:
     arguments:
       - "@coopcycle.expression_language"
 
-  coopcycle.stripe_manager:
-    class: AppBundle\Service\StripeManager
+  AppBundle\Service\StripeManager:
     arguments:
       - "@coopcycle.settings_manager"
 
-  coopcycle.preparation_time_calculator:
-    class: AppBundle\Utils\PreparationTimeCalculator
+  AppBundle\Utils\PreparationTimeCalculator:
     arguments:
       - {
           'restaurant.state == "rush" and order.itemsTotal < 2000':        '20 minutes',
@@ -208,20 +218,17 @@ services:
           'order.itemsTotal > 5000':                                       '30 minutes'
         }
 
-  coopcycle.shipping_time_calculator:
-    class: AppBundle\Utils\ShippingTimeCalculator
+  AppBundle\Utils\ShippingTimeCalculator:
     arguments:
       - '@routing_service'
 
-  coopcycle.shipping_date_filter:
+  AppBundle\Utils\ShippingDateFilter:
     public: true
-    class: AppBundle\Utils\ShippingDateFilter
     arguments:
       - "@coopcycle.preparation_time_calculator"
       - "@coopcycle.shipping_time_calculator"
 
-  coopcycle.order_timeline_calculator:
-    class: AppBundle\Utils\OrderTimelineCalculator
+  AppBundle\Utils\OrderTimelineCalculator:
     arguments:
       - '@coopcycle.preparation_time_calculator'
       - '@coopcycle.shipping_time_calculator'
@@ -232,24 +239,16 @@ services:
       - "@sylius.context.cart"
       - "@serializer"
 
-  task.entity_listener:
-    class: AppBundle\Entity\Listener\TaskListener
+  AppBundle\Entity\Listener\TaskListener:
     arguments:
       - "@event_bus"
       - "@logger"
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  my.jwt_listener:
-    class: AppBundle\EventListener\JwtListener
+  AppBundle\EventListener\JwtListener:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
-
-  my.delivery_repository:
-    class: AppBundle\Entity\DeliveryRepository
-    factory: ['@doctrine.orm.default_entity_manager', getRepository]
-    arguments:
-      - AppBundle\Entity\Delivery
 
   coopcycle.repository.task:
     class: Doctrine\ORM\EntityRepository
@@ -257,8 +256,7 @@ services:
     arguments:
       - AppBundle\Entity\Task
 
-  coopcycle.repository.restaurant:
-    class: AppBundle\Entity\RestaurantRepository
+  AppBundle\Entity\RestaurantRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Restaurant
@@ -273,20 +271,20 @@ services:
     arguments:
       - '@csa_guzzle.client.osrm'
 
-  'AppBundle\Filter\OrderDateFilter':
+  AppBundle\Filter\OrderDateFilter:
     tags: [ 'api_platform.filter' ]
 
-  'AppBundle\Api\Filter\DateFilter':
+  AppBundle\Api\Filter\DateFilter:
     tags: [ 'api_platform.filter' ]
 
-  'AppBundle\Api\Filter\UserRoleFilter':
+  AppBundle\Api\Filter\UserRoleFilter:
     tags: [ 'api_platform.filter' ]
 
-  'AppBundle\Api\Filter\TaskFilter':
+  AppBundle\Api\Filter\TaskFilter:
     arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
-  'AppBundle\Api\Filter\AssignedFilter':
+  AppBundle\Api\Filter\AssignedFilter:
     arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
@@ -301,12 +299,11 @@ services:
           - "%mailjet.secret_key%"
           - "@logger"
 
-  swiftmailer.logger:
-      class: AppBundle\Service\MailLoggerService
-      arguments: ["@logger"]
-      tags:
-        - { name: monolog.logger, channel: mailer }
-        - { name: "swiftmailer.default.plugin" }
+  AppBundle\Service\MailLoggerService:
+    arguments: ["@logger"]
+    tags:
+      - { name: monolog.logger, channel: mailer }
+      - { name: "swiftmailer.default.plugin" }
 
   coopcycle.metrics_helper:
     class: AppBundle\Utils\MetricsHelper
@@ -324,13 +321,11 @@ services:
     autoconfigure: false
     class: AppBundle\Security\UserManager
 
-  coopcycle.task_manager:
-    class: AppBundle\Service\TaskManager
+  AppBundle\Service\TaskManager:
     arguments:
       - "@command_bus"
 
-  coopcycle.settings_manager:
-    class: AppBundle\Service\SettingsManager
+  AppBundle\Service\SettingsManager:
     arguments:
       - "@craue_config"
       - "%craue_config.entity_name%"
@@ -339,8 +334,7 @@ services:
       - "%country_iso%"
       - "@logger"
 
-  coopcycle.email_manager:
-    class: AppBundle\Service\EmailManager
+  AppBundle\Service\EmailManager:
     arguments:
       - "@mailer"
       - "@templating"
@@ -348,16 +342,14 @@ services:
       - "@coopcycle.settings_manager"
       - "%transactional_address%"
 
-  coopcycle.notification_manager:
-    class: AppBundle\Service\NotificationManager
+  AppBundle\Service\NotificationManager:
     arguments:
       - "@doctrine"
       - "@snc_redis.default"
       - "@serializer"
       - "@translator"
 
-  coopcycle.remote_push_notification_manager:
-    class: AppBundle\Service\RemotePushNotificationManager
+  AppBundle\Service\RemotePushNotificationManager:
     arguments:
       - "@csa_guzzle.client.fcm"
       - "@apns_php.push"
@@ -365,63 +357,61 @@ services:
       - "%fcm_server_api_key%"
       - "@coopcycle.repository.remote_push_token"
 
-  coopcycle.socket_io_manager:
-    class: AppBundle\Service\SocketIoManager
+  AppBundle\Service\SocketIoManager:
     arguments:
       - "@snc_redis.default"
       - "@fos_user.user_manager"
 
-  coopcycle.geocoder:
-    class: AppBundle\Service\Geocoder
+  AppBundle\Service\Geocoder:
     arguments:
       - "@coopcycle.settings_manager"
       - "%country_iso%"
       - "%kernel.default_locale%"
 
-  'AppBundle\EventListener\TaskCollectionSubscriber':
+  AppBundle\EventListener\TaskCollectionSubscriber:
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
-  'AppBundle\EventListener\TaskSubscriber':
+  AppBundle\EventListener\TaskSubscriber:
     arguments: [ '@event_bus', '@coopcycle.domain.event_store', '@logger' ]
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
-  'AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber':
-      arguments:
-          - '@security.token_storage'
-          - '@doctrine'
-          - '@logger'
-      tags: [ 'kernel.event_subscriber' ]
+  AppBundle\Api\EventSubscriber\RemotePushTokenSubscriber:
+    arguments:
+        - '@security.token_storage'
+        - '@doctrine'
+        - '@logger'
+    tags: [ 'kernel.event_subscriber' ]
 
-  'AppBundle\Api\EventSubscriber\PricingSubscriber':
-      arguments:
-          - '@coopcycle.delivery.manager'
-          - '@routing_service'
-          - '@coopcycle.geocoder'
-          - '@security.token_storage'
-      tags: [ 'kernel.event_subscriber' ]
+  AppBundle\Api\EventSubscriber\PricingSubscriber:
+    arguments:
+        - '@coopcycle.delivery.manager'
+        - '@routing_service'
+        - '@coopcycle.geocoder'
+        - '@security.token_storage'
+    tags: [ 'kernel.event_subscriber' ]
 
-  'AppBundle\Api\EventSubscriber\RestaurantSubscriber':
-      arguments:
-          - '@api_platform.item_data_provider'
-          - '@api_platform.security.listener.request.deny_access'
-      tags: [ 'kernel.event_subscriber' ]
+  AppBundle\Api\EventSubscriber\RestaurantSubscriber:
+    arguments:
+        - '@api_platform.item_data_provider'
+        - '@api_platform.security.listener.request.deny_access'
+    tags: [ 'kernel.event_subscriber' ]
 
-  'AppBundle\Api\EventSubscriber\DeliverySubscriber':
-      arguments:
-          - '@doctrine'
-          - '@security.token_storage'
-      tags: [ 'kernel.event_subscriber' ]
+  AppBundle\Api\EventSubscriber\DeliverySubscriber:
+    arguments:
+        - '@doctrine'
+        - '@security.token_storage'
+    tags: [ 'kernel.event_subscriber' ]
 
-  'AppBundle\Action\Settings':
-      arguments:
-        - '@coopcycle.settings_manager'
-        - '%country_iso%'
-        - '%kernel.default_locale%'
+  AppBundle\Action\Settings:
+    arguments:
+      - '@coopcycle.settings_manager'
+      - '%country_iso%'
+      - '%kernel.default_locale%'
 
-  'AppBundle\Security\StoreTokenAuthenticator':
+  AppBundle\Security\StoreTokenAuthenticator:
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
     autowire: false
     autoconfigure: false
@@ -459,15 +449,13 @@ services:
     arguments:
       index_0: '@lexik_jwt_authentication.jwt_manager.not_expiring'
 
-  coopcycle.store_token_manager:
-    class: AppBundle\Security\StoreTokenManager
+  AppBundle\Security\StoreTokenManager:
     arguments:
       - '@security.token_storage'
       - '@lexik_jwt_authentication.jwt_manager.not_expiring'
       - '@event_dispatcher'
 
-  coopcycle.doctrine.filter.enabled.configurator:
-    class: AppBundle\EventListener\EnabledFilterConfigurator
+  AppBundle\EventListener\EnabledFilterConfigurator:
     arguments:
       - "@doctrine.orm.entity_manager"
       - "@security.token_storage"
@@ -476,26 +464,23 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
 
-  'AppBundle\Api\DataProvider\RestaurantCollectionDataProvider':
-      arguments:
-        $managerRegistry: '@doctrine'
-        $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-        $restaurantFilter: '@coopcycle.utils.restaurant_filter'
-      tags:
-        - { name: 'api_platform.collection_data_provider', priority: 2 }
-      autoconfigure: false
+  AppBundle\Api\DataProvider\RestaurantCollectionDataProvider:
+    arguments:
+      $managerRegistry: '@doctrine'
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+      $restaurantFilter: '@coopcycle.utils.restaurant_filter'
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+    autoconfigure: false
 
-  coopcycle.utils.restaurant_filter:
-      class: AppBundle\Utils\RestaurantFilter
-      arguments:
-        - '@routing_service'
-        - '@coopcycle.expression_language'
+  AppBundle\Utils\RestaurantFilter:
+    arguments:
+      - '@routing_service'
+      - '@coopcycle.expression_language'
 
-  coopcycle.order_number_assigner:
-    class: AppBundle\Sylius\Order\OrderNumberAssigner
+  AppBundle\Sylius\Order\OrderNumberAssigner:
     decorates: 'sylius.order_number_assigner'
 
-  coopcycle.utils.order_text_encoder:
-    class: AppBundle\Utils\OrderTextEncoder
+  AppBundle\Utils\OrderTextEncoder:
     arguments:
       - '@templating'
