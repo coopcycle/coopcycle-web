@@ -59,6 +59,10 @@ services:
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
   Swift_Events_EventDispatcher: '@swiftmailer.transport.eventdispatcher.mailjet'
+  Predis\Client: '@snc_redis.default'
+  SM\Factory\FactoryInterface: '@sm.factory'
+  Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
+  FOS\UserBundle\Util\UserManipulator: '@fos_user.util.user_manipulator'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
