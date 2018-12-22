@@ -3,8 +3,9 @@
 namespace AppBundle\Twig;
 
 use Predis\Client as Redis;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class BannerResolver
+class BannerResolver implements RuntimeExtensionInterface
 {
     private $redis;
 

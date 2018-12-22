@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a641a36b36c192c629e50b39b3606d4b",
+    "content-hash": "227e0e510f7a890b8fd9a1c490c8e765",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2305,77 +2305,6 @@
                 "push"
             ],
             "time": "2016-02-07T21:17:51+00:00"
-        },
-        {
-            "name": "dunglas/action-bundle",
-            "version": "v0.4.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dunglas/DunglasActionBundle.git",
-                "reference": "7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dunglas/DunglasActionBundle/zipball/7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b",
-                "reference": "7ca43affd9fa38ec01f433bdf9b9fdffb8a6d55b",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.9",
-                "symfony/config": "^2.8 || ^3.0",
-                "symfony/dependency-injection": "^2.8 || ^3.0",
-                "symfony/finder": "^2.8 || ^3.0",
-                "symfony/http-kernel": "^2.8 || ^3.0"
-            },
-            "conflict": {
-                "symfony/framework-bundle": "<2.8.5 || >3.0,<3.0.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.6 || ^5.0",
-                "sensio/framework-extra-bundle": "^3.0.10",
-                "symfony/browser-kit": "^2.8 || ^3.0",
-                "symfony/console": "^2.8 || ^3.0",
-                "symfony/css-selector": "^2.8 || ^3.0",
-                "symfony/expression-language": "^2.8 || ^3.0",
-                "symfony/framework-bundle": "^2.8 || ^3.0",
-                "twig/twig": "^1.28 || ^2.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dunglas\\ActionBundle\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kévin Dunglas",
-                    "email": "dunglas@gmail.com",
-                    "homepage": "https://dunglas.fr"
-                }
-            ],
-            "description": "Symfony controllers, redesigned",
-            "homepage": "https://dunglas.fr/2016/01/dunglasactionbundle-symfony-controllers-redesigned/",
-            "keywords": [
-                "Autowiring",
-                "action",
-                "controllers",
-                "routing",
-                "symfony"
-            ],
-            "abandoned": "symfony/dependency-injection",
-            "time": "2017-05-12T12:56:51+00:00"
         },
         {
             "name": "emcconville/google-map-polyline-encoding-tool",

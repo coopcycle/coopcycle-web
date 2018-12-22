@@ -15,6 +15,18 @@ services:
     autowire: true
     autoconfigure: true
 
+  AppBundle\Action\:
+    resource: '../../src/AppBundle/Action/*'
+
+  AppBundle\Command\:
+    resource: '../../src/AppBundle/Command/*'
+
+  AppBundle\EventSubscriber\:
+    resource: '../../src/AppBundle/EventSubscriber/*'
+
+  AppBundle\Twig\:
+    resource: '../../src/AppBundle/Twig/*'
+
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
   coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
   coopcycle.geocoder: '@AppBundle\Service\Geocoder'

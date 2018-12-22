@@ -4,8 +4,9 @@ namespace AppBundle\Twig;
 
 use Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class PriceFormatResolver
+class PriceFormatResolver implements RuntimeExtensionInterface
 {
     private $currencyContext;
     private $currencyHelper;

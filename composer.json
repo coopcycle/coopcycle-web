@@ -33,7 +33,6 @@
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^5.2.0",
         "incenteev/composer-parameter-handler": "^2.0",
-        "dunglas/action-bundle": "^0.4",
         "nelmio/cors-bundle": "^1.4",
         "phpdocumentor/reflection-docblock": "^3.0",
         "lexik/jwt-authentication-bundle": "^2.0",

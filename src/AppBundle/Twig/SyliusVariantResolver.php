@@ -5,8 +5,9 @@ namespace AppBundle\Twig;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class SyliusVariantResolver
+class SyliusVariantResolver implements RuntimeExtensionInterface
 {
     private $productVariantResolver;
 

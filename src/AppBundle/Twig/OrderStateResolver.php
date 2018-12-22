@@ -5,8 +5,9 @@ namespace AppBundle\Twig;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class OrderStateResolver
+class OrderStateResolver implements RuntimeExtensionInterface
 {
     private $stateMachineFactory;
 

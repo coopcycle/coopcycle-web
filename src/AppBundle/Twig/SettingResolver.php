@@ -3,8 +3,9 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Service\SettingsManager;
+use Twig\Extension\RuntimeExtensionInterface;
 
-class SettingResolver
+class SettingResolver implements RuntimeExtensionInterface
 {
     private $settingsManager;
 
