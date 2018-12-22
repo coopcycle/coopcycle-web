@@ -1,23 +1,8 @@
 import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import {
-  allTasks,
-  unassignedTasks,
-  taskLists,
-  taskListsLoading,
-  addModalIsOpen,
-  polylineEnabled,
-  taskListGroupMode,
-  taskFinishedFilter,
-  taskCancelledFilter,
-  tagsFilter,
-  selectedTasks,
-  jwt,
-  positions,
-  offline,
-  isDragging
-} from './reducers'
+import reducer from './reducers'
 import { socketIO } from './middlewares'
+import moment from 'moment'
 
 const middlewares = [ thunk, socketIO ]
 
@@ -28,28 +13,17 @@ const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
 let store = createStore(
-  combineReducers({
-    allTasks,
-    unassignedTasks,
-    taskLists,
-    taskListsLoading,
-    addModalIsOpen,
-    polylineEnabled,
-    taskListGroupMode,
-    taskFinishedFilter,
-    taskCancelledFilter,
-    tagsFilter,
-    selectedTasks,
-    jwt,
-    positions,
-    offline,
-    isDragging
-  }),
+  reducer,
   {
+    date: moment(window.AppData.Dashboard.date),
     jwt: window.AppData.Dashboard.jwt,
     unassignedTasks: _.filter(window.AppData.Dashboard.tasks, task => !task.isAssigned),
     allTasks: window.AppData.Dashboard.tasks,
     taskLists: window.AppData.Dashboard.taskLists,
+    tagsFilter: {
+      selectedTagsList: window.AppData.Dashboard.tags,
+      showUntaggedTasks: true
+    }
   },
   composeEnhancers(applyMiddleware(...middlewares))
 )

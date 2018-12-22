@@ -4,8 +4,6 @@ import moment from 'moment'
 
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
-const dateInitial = window.AppData && window.AppData.Dashboard ? window.AppData.Dashboard.date : moment()
-
 const replaceOrAddTask = (tasks, task) => {
 
   const taskIndex = _.findIndex(tasks, t => t['@id'] === task['@id'])
@@ -21,7 +19,31 @@ const replaceOrAddTask = (tasks, task) => {
   return tasks.concat([ task ])
 }
 
-export const taskLists = (state = [], action) => {
+const initialState = {
+
+  allTasks: [],
+  unassignedTasks: [],
+  taskLists: [],
+  date: moment(),
+
+  taskListsLoading: false,
+  addModalIsOpen: false,
+  polylineEnabled: {},
+  taskListGroupMode: 'GROUP_MODE_FOLDERS',
+  taskFinishedFilter: true,
+  taskCancelledFilter: false,
+  tagsFilter: {
+    selectedTagsList: [],
+    showUntaggedTasks: true
+  },
+  selectedTasks: [],
+  jwt: '',
+  positions: [],
+  offline: [],
+  isDragging: false
+}
+
+export const taskLists = (state = [], action, date = initialState.date) => {
 
   let newTaskLists = state.slice(0)
   let taskListIndex
@@ -73,7 +95,7 @@ export const taskLists = (state = [], action) => {
 
   case 'ADD_CREATED_TASK':
 
-    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return newTaskLists
     }
 
@@ -139,13 +161,13 @@ export const taskLists = (state = [], action) => {
 /*
   Store for all unassigned tasks
  */
-export const unassignedTasks = (state = [], action) => {
+export const unassignedTasks = (state = [], action, date = initialState.date) => {
   let newState
 
   switch (action.type) {
 
   case 'ADD_CREATED_TASK':
-    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return state
     }
     if (!_.find(state, (task) => { task['id'] === action.task.id })) {
@@ -176,7 +198,7 @@ export const unassignedTasks = (state = [], action) => {
 
       // If the task has been assigned, remove it
       // If the task new due date is different from the one displayed, remove it
-      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
+      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(date, 'day')) {
         newState = _.differenceWith(
           newState,
           _.intersectionWith(newState, [ action.task ], taskComparator),
@@ -199,13 +221,13 @@ export const unassignedTasks = (state = [], action) => {
   return state
 }
 
-export const allTasks = (state = [], action) => {
+export const allTasks = (state = [], action, date = initialState.date) => {
   let newState
 
   switch (action.type) {
 
   case 'ADD_CREATED_TASK':
-    if (!moment(action.task.doneBefore).isSame(dateInitial, 'day')) {
+    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return state
     }
 
@@ -321,7 +343,7 @@ export const taskCancelledFilter = (state = false, action) => {
   }
 }
 
-export const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.tags, showUntaggedTasks: true }, action) => {
+export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: true }, action) => {
 
   switch (action.type) {
 
@@ -344,13 +366,9 @@ export const tagsFilter = (state = { selectedTagsList: window.AppData.Dashboard.
   }
 }
 
-export const jwt = (state = '', action) => {
-  switch (action.type) {
-  default:
+export const jwt = (state = '', action) => state
 
-    return state
-  }
-}
+export const date = (state = moment(), action) => state
 
 export const positions = (state = [], action) => {
   switch (action.type) {
@@ -422,20 +440,50 @@ export const isDragging = (state = false, action) => {
   }
 }
 
-export default combineReducers({
-  allTasks,
-  unassignedTasks,
-  taskLists,
-  taskListsLoading,
-  addModalIsOpen,
-  polylineEnabled,
-  taskListGroupMode,
-  taskFinishedFilter,
-  taskCancelledFilter,
-  tagsFilter,
-  selectedTasks,
-  jwt,
-  positions,
-  offline,
-  isDragging
-})
+export const combinedTasks = (state = initialState, action) => {
+
+  switch (action.type) {
+
+  case 'ADD_CREATED_TASK':
+  case 'UPDATE_TASK':
+
+    return {
+      ...state,
+      unassignedTasks: unassignedTasks(state.unassignedTasks, action, state.date),
+      taskLists: taskLists(state.taskLists, action, state.date),
+      allTasks: allTasks(state.allTasks, action, state.date)
+    }
+  }
+
+  return {
+    ...state,
+    unassignedTasks: unassignedTasks(state.unassignedTasks, action),
+    taskLists: taskLists(state.taskLists, action),
+    allTasks: allTasks(state.allTasks, action)
+  }
+}
+
+export default (state = initialState, action) => {
+
+  const { allTasks, unassignedTasks, taskLists } = combinedTasks(state, action)
+
+  return {
+    ...state,
+    unassignedTasks,
+    taskLists,
+    allTasks,
+    taskListsLoading: taskListsLoading(state.taskListsLoading, action),
+    addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
+    polylineEnabled: polylineEnabled(state.polylineEnabled, action),
+    taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
+    taskFinishedFilter: taskFinishedFilter(state.taskFinishedFilter, action),
+    taskCancelledFilter: taskCancelledFilter(state.taskCancelledFilter, action),
+    tagsFilter: tagsFilter(state.tagsFilter, action),
+    selectedTasks: selectedTasks(state.selectedTasks, action),
+    jwt: jwt(state.jwt, action),
+    date: date(state.date, action),
+    positions: positions(state.positions, action),
+    offline: offline(state.offline, action),
+    isDragging: isDragging(state.isDragging, action)
+  }
+}

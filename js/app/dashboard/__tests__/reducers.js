@@ -1,4 +1,4 @@
-import { unassignedTasks, taskLists } from '../store/reducers'
+import { combinedTasks, unassignedTasks, taskLists } from '../store/reducers'
 
 describe('taskLists reducer', () => {
 
@@ -221,6 +221,43 @@ describe('unassignedTasks reducer', () => {
       { '@id': 2 },
       { '@id': 3, isAssigned: false }
     ])
+
+  })
+
+})
+
+describe('combinedTasks reducer', () => {
+
+  it('should handle UPDATE_TASK', () => {
+
+    expect(
+      combinedTasks({
+        allTasks: [],
+        unassignedTasks: [
+          { '@id': 1, isAssigned: false }
+        ],
+        taskLists: [
+          { username: 'bob', items: [] }
+        ]
+      }, {
+        type: 'UPDATE_TASK',
+        task: {
+          '@id': 1,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }
+      })
+    ).toEqual({
+      allTasks: [],
+      unassignedTasks: [],
+      taskLists: [
+        { username: 'bob', items: [{
+          '@id': 1,
+          isAssigned: true,
+          assignedTo: 'bob'
+        }] }
+      ]
+    })
 
   })
 
