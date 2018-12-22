@@ -1,0 +1,79 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  AppBundle\Serializer\DeliveryNormalizer:
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@coopcycle.geocoder"
+      - "@security.token_storage"
+      - "@routing_service"
+      - "@logger"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\RestaurantNormalizer:
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.api.normalizer.task:
+    class: AppBundle\Serializer\TaskNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@api_platform.iri_converter"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.api.normalizer.task_list:
+    class: AppBundle\Serializer\TaskListNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.cart:
+    class: AppBundle\Serializer\CartNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.api.normalizer.closing_rule:
+    class: AppBundle\Serializer\ClosingRuleNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.order.jsonld:
+    class: AppBundle\Serializer\JsonLd\OrderNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@coopcycle.sylius.factory.order"
+      - "@sylius.repository.product"
+      - "@sylius.repository.product_option_value"
+      - "@sylius.product_variant_resolver.default"
+      - "@sylius.factory.order_item"
+      - "@sylius.order_item_quantity_modifier"
+      - "@sylius.order_modifier"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.order_item.json:
+    class: AppBundle\Serializer\Json\OrderItemNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.notification.json:
+    class: AppBundle\Serializer\Json\NotificationNormalizer
+    arguments:
+      - "@serializer.normalizer.object"
+      - "@router"
+      - "@translator"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  coopcycle.normalizer.restaurant_menu.jsonld:
+    class: AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+      - "@sylius.locale_provider"
+      - "@sylius.product_variant_resolver.default"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

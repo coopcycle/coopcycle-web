@@ -3,6 +3,12 @@
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
 
+imports:
+  - { resource: services/forms.yml }
+  - { resource: services/serializer.yml }
+  - { resource: services/twig.yml }
+  - { resource: services/validators.yml }
+
 services:
 
   _defaults:
@@ -124,24 +130,6 @@ services:
     tags:
       - { name: sylius.context.cart, priority: 32 }
 
-  app.form.api_registration:
-    class: AppBundle\Form\ApiRegistrationType
-    arguments: ['%country_iso%']
-    tags:
-      - { name: form.type, alias: app_user_api_registration }
-
-  app.form.registration:
-    class: AppBundle\Form\RegistrationType
-    arguments: ['%country_iso%', '%is_demo%']
-    tags:
-      - { name: form.type }
-
-  app.form.update_profile:
-    class: AppBundle\Form\UpdateProfileType
-    arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
-    tags:
-      - { name: form.type, alias: app_update_profile }
-
   coopcycle.repository.zone:
     class: Doctrine\ORM\EntityRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -252,190 +240,6 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  my.delivery_normalizer:
-    class: AppBundle\Serializer\DeliveryNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@coopcycle.geocoder"
-      - "@security.token_storage"
-      - "@routing_service"
-      - "@logger"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  app.restaurant_normalizer:
-    class: AppBundle\Serializer\RestaurantNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.api.normalizer.task:
-    class: AppBundle\Serializer\TaskNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@api_platform.iri_converter"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.api.normalizer.task_list:
-    class: AppBundle\Serializer\TaskListNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.normalizer.cart:
-    class: AppBundle\Serializer\CartNormalizer
-    arguments:
-      - "@serializer.normalizer.object"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.api.normalizer.closing_rule:
-    class: AppBundle\Serializer\ClosingRuleNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.normalizer.order.jsonld:
-    class: AppBundle\Serializer\JsonLd\OrderNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@coopcycle.sylius.factory.order"
-      - "@sylius.repository.product"
-      - "@sylius.repository.product_option_value"
-      - "@sylius.product_variant_resolver.default"
-      - "@sylius.factory.order_item"
-      - "@sylius.order_item_quantity_modifier"
-      - "@sylius.order_modifier"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.normalizer.order_item.json:
-    class: AppBundle\Serializer\Json\OrderItemNormalizer
-    arguments:
-      - "@serializer.normalizer.object"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.normalizer.notification.json:
-    class: AppBundle\Serializer\Json\NotificationNormalizer
-    arguments:
-      - "@serializer.normalizer.object"
-      - "@router"
-      - "@translator"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  coopcycle.normalizer.restaurant_menu.jsonld:
-    class: AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@sylius.locale_provider"
-      - "@sylius.product_variant_resolver.default"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
-  'AppBundle\Form\AddressType':
-    arguments: [ '@translator', '%country_iso%' ]
-    tags:
-      - { name: form.type }
-
-  'AppBundle\Form\DeliveryAddressType':
-    arguments: [ '@translator', '%country_iso%' ]
-    tags:
-      - { name: form.type }
-
-  'AppBundle\Form\DeliveryType':
-    arguments: [ '@routing_service', '@translator' ]
-    tags:
-      - { name: form.type }
-
-  'AppBundle\Form\DeliveryEmbedType':
-    arguments: [ '@routing_service', '@translator', '%country_iso%' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\OrderType':
-    arguments: [ '@sm.factory', '@security.authorization_checker' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\TaskUploadType':
-    arguments: [ '@coopcycle.utils.task_spreadsheet_parser' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\OrdersExportType':
-    arguments: [ '@sylius.repository.order' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\AddUserType':
-    arguments: [ '@doctrine' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\PaymentType':
-    arguments: [ '@sm.factory', '@security.authorization_checker' ]
-    tags: [ form.type ]
-
-  coopcycle.utils.task_spreadsheet_parser:
-    class: AppBundle\Utils\TaskSpreadsheetParser
-    arguments:
-      - "@coopcycle.geocoder"
-      - "@coopcycle.tag_manager"
-      - "@slugify"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
-
-  'AppBundle\Form\TaskExportType':
-    arguments: [ '@coopcycle.repository.task' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\SettingsType':
-    arguments: [ '@coopcycle.settings_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\TaskType':
-    arguments: [ '@coopcycle.tag_manager' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\RestaurantType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\StoreType':
-    arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\StoreTokenType':
-    arguments:
-      - '@coopcycle.store_token_manager'
-    tags: [ form.type ]
-
-  'AppBundle\Form\ProductOptionType':
-    arguments: [ '@translator' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\MenuEditor\TaxonProductType':
-    arguments: [ '@sylius.repository.product' ]
-    tags: [ form.type ]
-
-  'AppBundle\Form\ProductType':
-    arguments:
-      - '@sylius.factory.product_variant'
-      - '@sylius.product_variant_resolver.default'
-      - '@sylius.repository.product_attribute'
-      - '@sylius.factory.product_attribute_value'
-      - '@sylius.locale_provider'
-      - '@translator'
-    tags: [ form.type ]
-
-  'AppBundle\Form\Checkout\CheckoutAddressType':
-    arguments:
-      - '@validator'
-      - '@coopcycle.shipping_date_filter'
-    tags: [ form.type ]
-
-  'AppBundle\Form\Checkout\CheckoutPaymentType':
-    arguments:
-      - '@validator'
-      - '@coopcycle.shipping_date_filter'
-    tags: [ form.type ]
-
-  'AppBundle\Form\Checkout\DateTimeType':
-    arguments:
-      - '@translator'
-    tags: [ form.type ]
-
   my.jwt_listener:
     class: AppBundle\EventListener\JwtListener
     tags:
@@ -485,70 +289,6 @@ services:
   'AppBundle\Api\Filter\AssignedFilter':
     arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
-
-  twig.extension.text:
-    class: Twig_Extensions_Extension_Text
-    tags:
-      - { name: twig.extension }
-
-  twig.extension.intl:
-    class: Twig_Extensions_Extension_Intl
-    tags:
-      - { name: twig.extension }
-
-  coopcycle.twig.runtime.order_state_resolver:
-    class: AppBundle\Twig\OrderStateResolver
-    arguments: [ '@sm.factory' ]
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.sylius_variant_resolver:
-    class: AppBundle\Twig\SyliusVariantResolver
-    arguments: [ '@sylius.product_variant_resolver.default' ]
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.setting_resolver:
-    class: AppBundle\Twig\SettingResolver
-    arguments: [ '@coopcycle.settings_manager' ]
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.price_format_resolver:
-    class: AppBundle\Twig\PriceFormatResolver
-    arguments:
-      - '@sylius.context.currency'
-      - '@sylius.templating.helper.currency'
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.maintenance_resolver:
-    class: AppBundle\Twig\MaintenanceResolver
-    arguments:
-      - '@snc_redis.default'
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.banner_resolver:
-    class: AppBundle\Twig\BannerResolver
-    arguments:
-      - '@snc_redis.default'
-    public: false
-    tags:
-      - { name: twig.runtime }
-
-  coopcycle.twig.runtime.stripe_resolver:
-    class: AppBundle\Twig\StripeResolver
-    arguments:
-      - '@coopcycle.settings_manager'
-    public: false
-    tags:
-      - { name: twig.runtime }
 
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
@@ -637,29 +377,6 @@ services:
       - "@coopcycle.settings_manager"
       - "%country_iso%"
       - "%kernel.default_locale%"
-
-  'AppBundle\Validator\Constraints\CartValidator':
-    arguments: [ '@routing_service' ]
-    tags:
-      - { name: validator.constraint_validator }
-
-  'AppBundle\Validator\Constraints\DeliveryValidator':
-    arguments: [ '@routing_service' ]
-    tags:
-      - { name: validator.constraint_validator }
-
-  'AppBundle\Validator\Constraints\OrderValidator':
-    arguments:
-      - '@routing_service'
-      - '@coopcycle.expression_language'
-      - '@coopcycle.shipping_date_filter'
-    tags:
-      - { name: validator.constraint_validator }
-
-  'AppBundle\Validator\Constraints\IsActivableRestaurantValidator':
-    arguments: [ '@coopcycle.settings_manager' ]
-    tags:
-      - { name: validator.constraint_validator }
 
   'AppBundle\EventListener\TaskCollectionSubscriber':
     arguments: [ '@event_dispatcher', '@routing_service', '@logger' ]

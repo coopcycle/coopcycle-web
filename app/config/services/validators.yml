@@ -1,0 +1,28 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  AppBundle\Validator\Constraints\CartValidator:
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\DeliveryValidator:
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\OrderValidator:
+    arguments:
+      - '@routing_service'
+      - '@coopcycle.expression_language'
+      - '@coopcycle.shipping_date_filter'
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\IsActivableRestaurantValidator:
+    arguments: [ '@coopcycle.settings_manager' ]
+    tags:
+      - { name: validator.constraint_validator }
