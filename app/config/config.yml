@@ -46,7 +46,7 @@ twig:
         is_demo: "%is_demo%"
         sentry_public_dsn: "%sentry_public_dsn%"
         country_iso: "%country_iso%"
-        cart_provider: '@coopcycle.cart_provider'
+        cart_provider: '@AppBundle\Service\CartProviderService'
         settings_manager: "@coopcycle.settings_manager"
         piwik_site_id: "%piwik_site_id%"
         piwik_disabled: "%kernel.debug%"

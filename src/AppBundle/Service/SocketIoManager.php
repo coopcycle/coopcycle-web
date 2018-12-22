@@ -3,7 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\ApiUser;
-use FOS\UserBundle\Model\UserManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Predis\Client as Redis;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,7 +14,7 @@ class SocketIoManager
 
     public function __construct(
         Redis $redis,
-        UserManager $userManager)
+        UserManagerInterface $userManager)
     {
         $this->redis = $redis;
         $this->userManager = $userManager;

@@ -8,13 +8,13 @@ use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
-use SimpleBus\Message\Bus\MessageBus;
+use SimpleBus\SymfonyBridge\Bus\CommandBus;
 
 class TaskManager
 {
     private $commandBus;
 
-    public function __construct(MessageBus $commandBus)
+    public function __construct(CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
     }

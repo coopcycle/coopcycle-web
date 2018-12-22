@@ -24,32 +24,39 @@ services:
   AppBundle\EventSubscriber\:
     resource: '../../src/AppBundle/EventSubscriber/*'
 
+  AppBundle\Service\:
+    resource: '../../src/AppBundle/Service/*'
+
   AppBundle\Twig\:
     resource: '../../src/AppBundle/Twig/*'
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
+
+  coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
+  coopcycle.shipping_time_calculator: '@AppBundle\Utils\ShippingTimeCalculator'
+  coopcycle.shipping_date_filter: '@AppBundle\Utils\ShippingDateFilter'
+  coopcycle.order_timeline_calculator: '@AppBundle\Utils\OrderTimelineCalculator'
+  coopcycle.store_token_manager: '@AppBundle\Security\StoreTokenManager'
+  coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
+  coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
+  coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
+
+  coopcycle.tag_manager: '@AppBundle\Service\TagManager'
   coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
   coopcycle.geocoder: '@AppBundle\Service\Geocoder'
   coopcycle.task_manager: '@AppBundle\Service\TaskManager'
   coopcycle.order_manager: '@AppBundle\Service\OrderManager'
   coopcycle.delivery.manager: '@AppBundle\Service\DeliveryManager'
   coopcycle.stripe_manager: '@AppBundle\Service\StripeManager'
-  coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
-  coopcycle.shipping_time_calculator: '@AppBundle\Utils\ShippingTimeCalculator'
-  coopcycle.shipping_date_filter: '@AppBundle\Utils\ShippingDateFilter'
-  coopcycle.order_timeline_calculator: '@AppBundle\Utils\OrderTimelineCalculator'
-  coopcycle.tag_manager: '@AppBundle\Service\TagManager'
-  coopcycle.store_token_manager: '@AppBundle\Security\StoreTokenManager'
   coopcycle.settings_manager: '@AppBundle\Service\SettingsManager'
   coopcycle.email_manager: '@AppBundle\Service\EmailManager'
   coopcycle.notification_manager: '@AppBundle\Service\NotificationManager'
   coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
-  coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
-  coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
-  coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
 
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
+  Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
+  Swift_Events_EventDispatcher: '@swiftmailer.transport.eventdispatcher.mailjet'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
@@ -202,22 +209,9 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
-  AppBundle\Service\TagManager:
-    arguments: [ '@doctrine' ]
-
-  AppBundle\Service\OrderManager:
-    public: true
-    arguments:
-      - "@sm.factory"
-      - "@command_bus"
-
   AppBundle\Service\DeliveryManager:
     arguments:
       - "@coopcycle.expression_language"
-
-  AppBundle\Service\StripeManager:
-    arguments:
-      - "@coopcycle.settings_manager"
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
@@ -244,12 +238,6 @@ services:
     arguments:
       - '@coopcycle.preparation_time_calculator'
       - '@coopcycle.shipping_time_calculator'
-
-  coopcycle.cart_provider:
-    class: AppBundle\Service\CartProviderService
-    arguments:
-      - "@sylius.context.cart"
-      - "@serializer"
 
   AppBundle\Entity\Listener\TaskListener:
     arguments:
@@ -304,12 +292,12 @@ services:
     class: Swift_Events_SimpleEventDispatcher
 
   swiftmailer.mailer.transport.mailjet:
-      class: AppBundle\Service\MailjetTransport
-      arguments:
-          - "@swiftmailer.transport.eventdispatcher.mailjet"
-          - "%mailjet.api_key%"
-          - "%mailjet.secret_key%"
-          - "@logger"
+    class: AppBundle\Service\MailjetTransport
+    arguments:
+        - "@swiftmailer.transport.eventdispatcher.mailjet"
+        - "%mailjet.api_key%"
+        - "%mailjet.secret_key%"
+        - "@logger"
 
   AppBundle\Service\MailLoggerService:
     arguments: ["@logger"]
@@ -333,10 +321,6 @@ services:
     autoconfigure: false
     class: AppBundle\Security\UserManager
 
-  AppBundle\Service\TaskManager:
-    arguments:
-      - "@command_bus"
-
   AppBundle\Service\SettingsManager:
     arguments:
       - "@craue_config"
@@ -354,13 +338,6 @@ services:
       - "@coopcycle.settings_manager"
       - "%transactional_address%"
 
-  AppBundle\Service\NotificationManager:
-    arguments:
-      - "@doctrine"
-      - "@snc_redis.default"
-      - "@serializer"
-      - "@translator"
-
   AppBundle\Service\RemotePushNotificationManager:
     arguments:
       - "@csa_guzzle.client.fcm"
@@ -368,11 +345,6 @@ services:
       - "%apns_certificate_pass_phrase%"
       - "%fcm_server_api_key%"
       - "@coopcycle.repository.remote_push_token"
-
-  AppBundle\Service\SocketIoManager:
-    arguments:
-      - "@snc_redis.default"
-      - "@fos_user.user_manager"
 
   AppBundle\Service\Geocoder:
     arguments:

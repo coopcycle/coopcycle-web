@@ -5,7 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Domain\Order\Command as OrderCommand;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Order\OrderInterface;
-use SimpleBus\Message\Bus\MessageBus;
+use SimpleBus\SymfonyBridge\Bus\CommandBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
@@ -17,7 +17,7 @@ class OrderManager
 
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
-        MessageBus $commandBus)
+        CommandBus $commandBus)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->commandBus = $commandBus;
