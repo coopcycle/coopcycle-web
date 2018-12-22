@@ -42,6 +42,7 @@ services:
   coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
   coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
   coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
+  coopcycle.expression_language: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
 
   coopcycle.tag_manager: '@AppBundle\Service\TagManager'
   coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
@@ -189,9 +190,7 @@ services:
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
     arguments: [ '@coopcycle.repository.zone' ]
 
-  coopcycle.expression_language:
-    public: true
-    class: AppBundle\ExpressionLanguage\ExpressionLanguage
+  AppBundle\ExpressionLanguage\ExpressionLanguage:
     arguments:
       - null
       - [ "@coopcycle.expression_language.zone.provider" ]
