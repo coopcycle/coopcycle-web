@@ -37,3 +37,18 @@ Feature: Checkout
     Then I should be on "/order/payment"
     Given I enter test credit card details
     Then the url should match "/profile/orders/\d+"
+
+  @javascript
+  Scenario: Use search address as default
+    Given the fixtures files are loaded:
+      | restaurants_standalone.yml |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "administrator_email" has value "admin@demo.coopcycle.org"
+    Given I am on "/fr"
+    Given I enter address "91 rue de rivoli" in the homepage search
+    Then I should see address suggestions in the homepage search
+    Given I select the first address suggestion in the homepage search
+    And I wait for url to match "/fr/restaurants"
+    Given I click on restaurant "Crazy Hamburger"
+    Then the url should match "/fr/restaurant/[0-9]+-crazy-hamburger"
+    And the cart address picker should contain "91 Rue de Rivoli, Paris, France"

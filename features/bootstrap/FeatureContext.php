@@ -15,6 +15,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -922,6 +923,25 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given I enter address :address in the homepage search
+     */
+    public function enterAddressInHomepageSearch($address)
+    {
+        // We can't use setValue for autocomplete because we lose focus
+        // Instead, we use low level method postValue
+        // @see https://github.com/Behat/MinkExtension/issues/257
+
+        $xpath = $this->getSession()->getSelectorsHandler()
+            ->selectorToXpath('css', '#address-search input[type="text"]');
+
+        $this->getSession()
+            ->getDriver()
+            ->getWebDriverSession()
+            ->element('xpath', $xpath)
+            ->postValue(['value' => [$address]]);
+    }
+
+    /**
      * @Then I should see address suggestions in the address modal
      */
     public function assertAddressSuggestionsInModal()
@@ -941,6 +961,25 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Then I should see address suggestions in the homepage search
+     */
+    public function assertAddressSuggestionsInHomepageSearch()
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '#address-search .autocomplete-wrapper');
+
+        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
+
+            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+
+            return count($suggestions) > 0 ? $suggestions : false;
+        });
+
+        Assert::assertNotCount(0, $suggestions);
+    }
+
+    /**
      * @Given I select the first address suggestion in the address modal
      */
     public function selectFirstAddressSuggestionInModal()
@@ -948,6 +987,30 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $session = $this->getSession();
 
         $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .autocomplete-wrapper');
+
+        $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
+
+            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+
+            return count($suggestions) > 0 ? $suggestions : false;
+        });
+
+        Assert::assertNotCount(0, $suggestions);
+
+        // FIXME Use :nth-child selector to be more strict
+        $firstSuggestion = current($suggestions);
+
+        $firstSuggestion->click();
+    }
+
+    /**
+     * @Given I select the first address suggestion in the homepage search
+     */
+    public function selectFirstAddressSuggestionInHomepageSearch()
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '#address-search .autocomplete-wrapper');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
@@ -1101,5 +1164,28 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         // FIXME There should be a better way
         $session->wait(5000);
+    }
+
+    /**
+     * @Given I wait for url to match :regex
+     */
+    public function waitForURLToMatch($regex)
+    {
+        $addressMatches = $this->getSession()->getPage()->waitFor(30, function($page) use ($regex) {
+
+            try {
+
+                $this->minkContext->assertSession()->addressMatches(sprintf('#%s#', $regex));
+
+                return true;
+
+            } catch (ExpectationException $e) {
+            } catch (\Exception $e) {
+            }
+
+            return false;
+        });
+
+        Assert::assertTrue($addressMatches);
     }
 }
