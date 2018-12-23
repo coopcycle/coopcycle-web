@@ -44,6 +44,8 @@ function handleAjaxResponse(res, dispatch, success) {
   notifyListeners(res.cart)
 }
 
+const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
+
 export function addItem(itemURL, quantity = 1) {
 
   return dispatch => {
@@ -55,6 +57,28 @@ export function addItem(itemURL, quantity = 1) {
         handleAjaxResponse(res, dispatch, true)
       })
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+  }
+}
+
+export function queueAddItem(itemURL, quantity = 1) {
+
+  return {
+    queue: QUEUE_CART_ITEMS,
+    callback: (next, dispatch, getState) => {
+
+      dispatch(fetchRequest())
+
+      $.post(itemURL, { quantity })
+        .then(res => {
+          window._paq.push(['trackEvent', 'Checkout', 'addItem'])
+          handleAjaxResponse(res, dispatch, true)
+          next()
+        })
+        .fail(e => {
+          handleAjaxResponse(e.responseJSON, dispatch, false)
+          next()
+        })
+    }
   }
 }
 

@@ -7,7 +7,7 @@ import Modal from 'react-modal'
 import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
-import { addItem, addItemWithOptions } from '../cart/redux/actions'
+import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
 
 require('gasparesganga-jquery-loading-overlay')
@@ -22,7 +22,7 @@ window.initMap = function() {
 
   $('form[data-product-simple]').on('submit', function(e) {
     e.preventDefault()
-    store.dispatch(addItem($(this).attr('action'), 1))
+    store.dispatch(queueAddItem($(this).attr('action'), 1))
   })
 
   // Make sure all (non-additional) options have been checked

@@ -92,6 +92,7 @@
     "react-select": "^2.1.2",
     "react-stickynode": "^1.4.1",
     "redux-actions": "^2.6.4",
+    "redux-async-queue": "^1.0.0",
     "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0"
   }
