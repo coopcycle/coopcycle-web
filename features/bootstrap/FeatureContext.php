@@ -152,6 +152,14 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @BeforeScenario @stopSession
+     */
+    public function stopSession()
+    {
+        $this->getSession()->stop();
+    }
+
+    /**
      * @BeforeScenario @javascript
      */
     public function setGoogleApiKeySetting()
@@ -1187,5 +1195,21 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         });
 
         Assert::assertTrue($addressMatches);
+    }
+
+    /**
+     * @Then the restaurant warning modal should appear
+     */
+    public function assertRestaurantWarningModalVisible()
+    {
+        $session = $this->getSession();
+
+        $modal = $session->getPage()->waitFor(30, function($page) {
+
+            return $page->find('css', '.ReactModal__Content--restaurant');
+        });
+
+        Assert::assertNotNull($modal);
+        Assert::assertTrue($modal->isVisible());
     }
 }

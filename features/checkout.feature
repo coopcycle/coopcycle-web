@@ -52,3 +52,23 @@ Feature: Checkout
     Given I click on restaurant "Crazy Hamburger"
     Then the url should match "/fr/restaurant/[0-9]+-crazy-hamburger"
     And the cart address picker should contain "91 Rue de Rivoli, Paris, France"
+
+  @javascript
+  @stopSession
+  Scenario: Show warning when restaurant has changed
+    Given the fixtures files are loaded:
+      | restaurants_standalone.yml |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "administrator_email" has value "admin@demo.coopcycle.org"
+    Given I am on "/fr"
+    And I click on restaurant "Crazy Hamburger"
+    Then the url should match "/fr/restaurant/[0-9]+-crazy-hamburger"
+    Given I wait for cart to be ready
+    And I click on menu item "Cheese Cake"
+    Then the product "Cheese Cake" should be added to the cart
+    Given I am on "/fr"
+    And I click on restaurant "Pizza Express"
+    Then the url should match "/fr/restaurant/[0-9]+-pizza-express"
+    Given I wait for cart to be ready
+    And I click on menu item "Pizza Margherita"
+    Then the restaurant warning modal should appear
