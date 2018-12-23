@@ -176,10 +176,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: $base-margin;
 }
 
-#cart .list-group-item .close {
-  margin-left: 10px;
-}
-
 // $panel-heading-padding is 10px 15px !default;
 // nth() allows to extract individual values
 $panel-heading-padding-vertical: nth($panel-heading-padding, 1);
@@ -341,6 +337,9 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
   &__item {
     @extend .list-group-item;
+    .close {
+      margin-left: 10px;
+    }
     &__heading {
       @include clearfix;
     }
