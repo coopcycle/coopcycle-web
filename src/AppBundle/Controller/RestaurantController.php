@@ -348,6 +348,16 @@ class RestaurantController extends Controller
             return $this->jsonResponse($cart, $errors);
         }
 
+        if ($cart->getRestaurant() !== $product->getRestaurant()) {
+            $errors = [
+                'restaurant' => [
+                    sprintf('Restaurant mismatch')
+                ]
+            ];
+
+            return $this->jsonResponse($cart, $errors);
+        }
+
         $quantity = $request->request->getInt('quantity', 1);
 
         $cartItem = $this->get('sylius.factory.order_item')->createNew();
