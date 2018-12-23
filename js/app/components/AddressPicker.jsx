@@ -83,7 +83,7 @@ class AddressPicker extends React.Component {
 
           this.setState({
             address: {
-              ...placeToAddress(place),
+              ...placeToAddress(place, value),
               geohash,
             },
             initialAddress: value

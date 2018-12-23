@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const placeToAddress = place => {
+export const placeToAddress = (place, value = '') => {
 
   const addressDict = {}
 
@@ -8,8 +8,12 @@ export const placeToAddress = place => {
     addressDict[item.types[0]] = item.long_name
   })
 
-  addressDict.streetAddress = addressDict.street_number ?
-    `${addressDict.street_number} ${addressDict.route}` : addressDict.route
+  if (value) {
+    addressDict.streetAddress = value
+  } else {
+    addressDict.streetAddress = addressDict.street_number ?
+      `${addressDict.street_number} ${addressDict.route}` : addressDict.route
+  }
 
   return {
     latitude: place.geometry.location.lat(),
