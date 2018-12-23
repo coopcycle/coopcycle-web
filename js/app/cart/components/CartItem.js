@@ -31,7 +31,7 @@ class CartItem extends React.Component {
         <div className="cart__item__heading">
           <span>{name}</span>
           <span className="text-muted"> x {this.props.quantity}</span>
-          <button type="button" className="close pull-right" aria-label="Close" onClick={() => this.props.onClickRemove()}>
+          <button type="button" className="close pull-right" aria-label="Close" onClick={(e) => this.props.onClickRemove()}>
             <span aria-hidden="true">×</span>
           </button>
           <span className="pull-right">{ (this.props.total / 100).formatMoney(2, window.AppData.currencySymbol) }</span>
