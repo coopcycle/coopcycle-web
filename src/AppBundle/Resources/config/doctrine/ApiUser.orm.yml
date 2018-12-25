@@ -20,6 +20,10 @@ AppBundle\Entity\ApiUser:
         telephone:
             type: phone_number
             nullable: true
+    oneToMany:
+        remotePushTokens:
+            targetEntity: AppBundle\Entity\RemotePushToken
+            mappedBy: user
     manyToMany:
         restaurants:
             targetEntity: AppBundle\Entity\Restaurant

@@ -27,6 +27,7 @@ AppBundle\Entity\RemotePushToken:
     manyToOne:
         user:
             targetEntity: AppBundle\Entity\ApiUser
+            inversedBy: remotePushTokens
             joinColumns:
                 user_id:
                     referencedColumnName: id

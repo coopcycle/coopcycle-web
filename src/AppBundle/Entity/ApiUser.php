@@ -78,12 +78,15 @@ class ApiUser extends BaseUser implements JWTUserInterface
 
     private $stripeAccounts;
 
+    private $remotePushTokens;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
+        $this->remotePushTokens = new ArrayCollection();
 
         parent::__construct();
     }
@@ -215,7 +218,20 @@ class ApiUser extends BaseUser implements JWTUserInterface
         return $this;
     }
 
-    public function getFullName() {
+    public function getRemotePushTokens()
+    {
+        return $this->remotePushTokens;
+    }
+
+    public function setRemotePushTokens($remotePushTokens)
+    {
+        $this->remotePushTokens = $remotePushTokens;
+
+        return $this;
+    }
+
+    public function getFullName()
+    {
         return join(' ', [$this->givenName, $this->familyName]);
     }
 
