@@ -38,6 +38,10 @@ class LeafletMap extends Component {
       offline
     } = this.props
 
+    if (tasks !== prevProps.tasks) {
+      _.forEach(tasks, task => this.proxy.addTask(task))
+    }
+
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
     _.forEach(polylineEnabled, (enabled, username) => {
       if (enabled) {

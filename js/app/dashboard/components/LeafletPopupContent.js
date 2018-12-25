@@ -4,9 +4,21 @@ import moment from 'moment'
 import i18n from '../../i18n'
 
 export default class extends Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      task: this.props.task
+    }
+  }
+
+  updateTask(task) {
+    this.setState({ task })
+  }
+
   render() {
 
-    const { task } = this.props
+    const { task } = this.state
 
     return (
       <div>

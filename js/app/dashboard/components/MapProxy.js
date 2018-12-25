@@ -71,6 +71,7 @@ export default class MapProxy {
     this.polylineLayerGroups = new Map()
 
     this.taskMarkers = new Map()
+    this.taskPopups = new Map()
 
     this.courierMarkers = new Map()
     this.courierLayerGroup = new L.LayerGroup()
@@ -80,16 +81,23 @@ export default class MapProxy {
   addTask(task, markerColor) {
     let marker = this.taskMarkers.get(task['id'])
 
-    if (!marker) {
-      const color = markerColor || taskColor(task),
-        icon = taskIcon(task),
-        coords = [task.address.geo.latitude, task.address.geo.longitude]
+    const color = markerColor || taskColor(task)
+    const iconName = taskIcon(task)
+    const coords = [task.address.geo.latitude, task.address.geo.longitude]
 
-      marker = MapHelper.createMarker(coords, icon, 'marker', color)
+    let popupComponent = this.taskPopups.get(task['id'])
+
+    if (!marker) {
+
+      marker = MapHelper.createMarker(coords, iconName, 'marker', color)
 
       const el = document.createElement('div')
+
+      popupComponent = React.createRef()
+
       render(<LeafletPopupContent
         task={ task }
+        ref={ popupComponent }
         onEditClick={ () => {
           $('#task-edit-modal')
             .load(
@@ -102,7 +110,17 @@ export default class MapProxy {
         .setContent(el)
 
       marker.bindPopup(popup)
+
       this.taskMarkers.set(task['id'], marker)
+      this.taskPopups.set(task['id'], popupComponent)
+
+    } else {
+
+      let icon = MapHelper.createMarkerIcon(iconName, 'marker', color)
+      marker.setIcon(icon)
+
+      popupComponent.current.updateTask(task)
+
     }
 
     marker.addTo(this.map)
