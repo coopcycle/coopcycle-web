@@ -2,9 +2,9 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Service\RemotePushNotificationManager;
-use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
@@ -31,14 +31,12 @@ class RemotePushNotificationManagerTest extends TestCase
     {
         $this->httpClient = $this->prophesize(HttpClient::class);
         $this->apns = $this->prophesize(\ApnsPHP_Push::class);
-        $this->remotePushTokenRepository = $this->prophesize(EntityRepository::class);
 
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
             $this->httpClient->reveal(),
             $this->apns->reveal(),
             'passphrase',
-            '1234567890',
-            $this->remotePushTokenRepository->reveal()
+            '1234567890'
         );
     }
 
@@ -172,6 +170,51 @@ class RemotePushNotificationManagerTest extends TestCase
         $this->remotePushNotificationManager->send('Hello world!', [
             $remotePushToken1,
             $remotePushToken2
+        ]);
+    }
+
+    public function testSendMultipleWithMissingToken()
+    {
+        $token1 = $this->generateApnsToken();
+        $token2 = $this->generateApnsToken();
+
+        $remotePushToken1 = new RemotePushToken();
+        $remotePushToken1->setToken($token1);
+        $remotePushToken1->setPlatform('android');
+
+        $remotePushToken2 = new RemotePushToken();
+        $remotePushToken2->setToken($token2);
+        $remotePushToken2->setPlatform('android');
+
+        $user1 = new ApiUser();
+        $user1->getRemotePushTokens()->add($remotePushToken1);
+
+        $user2 = new ApiUser();
+        $user2->getRemotePushTokens()->add($remotePushToken2);
+
+        $user3 = new ApiUser();
+
+        $this->httpClient
+            ->send(Argument::that(function (Request $request) use ($token1, $token2) {
+
+                $body = (string) $request->getBody();
+                $payload = json_decode($body, true);
+
+                return 'POST' === $request->getMethod()
+                    && $request->hasHeader('Authorization')
+                    && 'key=1234567890' === $request->getHeaderLine('Authorization')
+                    && isset($payload['registration_ids'])
+                    && count($payload['registration_ids']) === 2
+                    && in_array($token1, $payload['registration_ids'])
+                    && in_array($token2, $payload['registration_ids'])
+                    ;
+            }))
+            ->shouldBeCalled();
+
+        $this->remotePushNotificationManager->send('Hello world!', [
+            $user1,
+            $user2,
+            $user3
         ]);
     }
 }

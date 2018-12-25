@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
-use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\Request;
 
@@ -18,16 +17,13 @@ class RemotePushNotificationManager
         HttpClient $httpClient,
         \ApnsPHP_Push $apns,
         $apnsCertificatePassPhrase,
-        $fcmServerApiKey,
-        EntityRepository $remotePushTokenRepository)
+        $fcmServerApiKey)
     {
         $this->httpClient = $httpClient;
         $this->fcmServerApiKey = $fcmServerApiKey;
 
         $apns->setProviderCertificatePassphrase($apnsCertificatePassPhrase);
         $this->apns = $apns;
-
-        $this->remotePushTokenRepository = $remotePushTokenRepository;
     }
 
     /**
@@ -139,7 +135,9 @@ class RemotePushNotificationManager
                 $tokens[] = $recipient;
             }
             if ($recipient instanceof ApiUser) {
-                $tokens = array_merge($tokens, $this->remotePushTokenRepository->findByUser($recipient));
+                foreach ($recipient->getRemotePushTokens() as $remotePushToken) {
+                    $tokens[] = $remotePushToken;
+                }
             }
         }
 
