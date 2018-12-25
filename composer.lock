@@ -3839,16 +3839,16 @@
         },
         {
             "name": "jmose/command-scheduler-bundle",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/J-Mose/CommandSchedulerBundle.git",
-                "reference": "481609a9a63ad1955eda353bb56a9b81a08778fe"
+                "reference": "c5ce339268263edbd37e3ef816b5dc332ff6be1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/J-Mose/CommandSchedulerBundle/zipball/481609a9a63ad1955eda353bb56a9b81a08778fe",
-                "reference": "481609a9a63ad1955eda353bb56a9b81a08778fe",
+                "url": "https://api.github.com/repos/J-Mose/CommandSchedulerBundle/zipball/c5ce339268263edbd37e3ef816b5dc332ff6be1b",
+                "reference": "c5ce339268263edbd37e3ef816b5dc332ff6be1b",
                 "shasum": ""
             },
             "require": {
@@ -3856,12 +3856,10 @@
                 "doctrine/orm": "^2.5.11",
                 "mtdowling/cron-expression": "^1.2",
                 "php": "^5.6|>=7.0.8",
-                "sensio/framework-extra-bundle": "^5.1.0",
                 "symfony/asset": "^3.4|^4.0",
                 "symfony/console": "^3.4|^4.0",
                 "symfony/form": "^3.4|^4.0",
                 "symfony/framework-bundle": "^3.4|^4.0",
-                "symfony/security-bundle": "^3.4|^4.0",
                 "symfony/templating": "^3.4|^4.0",
                 "symfony/translation": "^3.4|^4.0",
                 "symfony/twig-bundle": "^3.4|^4.0",
@@ -3872,7 +3870,8 @@
                 "liip/functional-test-bundle": "^1.9",
                 "php-coveralls/php-coveralls": "^2.0",
                 "phpunit/phpunit": "^5.7",
-                "symfony/css-selector": "^3.4|^4.0"
+                "symfony/css-selector": "^3.4|^4.0",
+                "symfony/security-bundle": "^3.4|^4.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -3899,7 +3898,7 @@
                 "symfony",
                 "task"
             ],
-            "time": "2018-02-08T17:11:17+00:00"
+            "time": "2018-12-18T16:00:54+00:00"
         },
         {
             "name": "jms/metadata",
