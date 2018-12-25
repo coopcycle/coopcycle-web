@@ -32,6 +32,7 @@ const initialState = {
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
   taskFinishedFilter: true,
   taskCancelledFilter: false,
+  tags: [],
   tagsFilter: {
     selectedTagsList: [],
     showUntaggedTasks: true
@@ -343,6 +344,8 @@ export const taskCancelledFilter = (state = false, action) => {
   }
 }
 
+export const tags = (state = initialState.tags, action) => state
+
 export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: true }, action) => {
 
   switch (action.type) {
@@ -478,6 +481,7 @@ export default (state = initialState, action) => {
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
     taskFinishedFilter: taskFinishedFilter(state.taskFinishedFilter, action),
     taskCancelledFilter: taskCancelledFilter(state.taskCancelledFilter, action),
+    tags: tags(state.tags, action),
     tagsFilter: tagsFilter(state.tagsFilter, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),

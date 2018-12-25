@@ -32,11 +32,11 @@ class Filters extends Component {
   }
 
   render() {
-    const { showFinishedTasks, showCancelledTasks, selectedTags, showUntaggedTasks } = this.props
+    const { tags, showFinishedTasks, showCancelledTasks, selectedTags, showUntaggedTasks } = this.props
 
     let selectedTagsNames = _.map(selectedTags, tag => tag.name)
 
-    let tagsComponents = _.map(window.AppData.Dashboard.tags, (tag) => {
+    let tagsComponents = _.map(tags, (tag) => {
       return (
         <li key={tag.name}>
           <a className="dropdown-item" onClick={(e) => this.onTagClick(e, tag)}>
@@ -75,6 +75,7 @@ class Filters extends Component {
 
 function mapStateToProps (state) {
   return {
+    tags: state.tags,
     showFinishedTasks: state.taskFinishedFilter,
     showCancelledTasks: state.taskCancelledFilter,
     selectedTags: state.tagsFilter.selectedTagsList,

@@ -23,7 +23,8 @@ let store = createStore(
     tagsFilter: {
       selectedTagsList: window.AppData.Dashboard.tags,
       showUntaggedTasks: true
-    }
+    },
+    tags: window.AppData.Dashboard.tags
   },
   composeEnhancers(applyMiddleware(...middlewares))
 )
