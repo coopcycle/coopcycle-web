@@ -54,7 +54,7 @@ const polylineOptions = {
 }
 
 const createIcon = username => {
-  const iconUrl = window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username)
+  const iconUrl = window.Routing.generate('user_avatar', { username })
 
   return L.icon({
     iconUrl: iconUrl,
@@ -101,7 +101,7 @@ export default class MapProxy {
         onEditClick={ () => {
           $('#task-edit-modal')
             .load(
-              window.AppData.Dashboard.taskModalURL.replace('__TASK_ID__', task.id),
+              window.Routing.generate('admin_task', { id: task.id }),
               () => $('#task-edit-modal').modal({ show: true })
             )
         }} />, el)

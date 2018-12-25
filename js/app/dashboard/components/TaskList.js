@@ -170,6 +170,8 @@ class TaskList extends React.Component {
       polylineClassNames.push('taskList__summary-polyline--enabled')
     }
 
+    const avatarURL = window.Routing.generate('user_avatar', { username })
+
     return (
       <div className="panel panel-default nomargin noradius noborder">
         <div className="panel-heading  dashboard__panel__heading">
@@ -180,7 +182,7 @@ class TaskList extends React.Component {
             data-target={ '#' + collabsableId }
             aria-expanded={ collapsed ? 'false' : 'true' }
           >
-            <img src={ window.AppData.Dashboard.avatarURL.replace('__USERNAME__', username) } width="20" height="20" /> 
+            <img src={ avatarURL } width="20" height="20" /> 
             <a
               className="dashboard__panel__heading__link"
             >

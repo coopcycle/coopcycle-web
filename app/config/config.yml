@@ -326,6 +326,8 @@ fos_js_routing:
         - admin_order_refuse
         - admin_order_cancel
         - admin_order_delay
+        - admin_task
+        - user_avatar
 
 # @see https://github.com/sensiolabs/SensioFrameworkExtraBundle/pull/576
 # @see https://github.com/symfony/symfony-standard/pull/1133

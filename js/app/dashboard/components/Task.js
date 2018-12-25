@@ -5,8 +5,6 @@ import { ContextMenuTrigger } from 'react-contextmenu'
 
 moment.locale($('html').attr('lang'))
 
-const taskModalURL = window.AppData.Dashboard.taskModalURL
-
 class Task extends React.Component {
 
   constructor(props) {
@@ -83,7 +81,10 @@ class Task extends React.Component {
     const { task } = this.props
 
     $('#task-edit-modal')
-      .load(taskModalURL.replace('__TASK_ID__', task.id), () => $('#task-edit-modal').modal({ show: true }))
+      .load(
+        window.Routing.generate('admin_task', { id: task.id }),
+        () => $('#task-edit-modal').modal({ show: true })
+      )
   }
 
   render() {
