@@ -23,6 +23,7 @@ export default function(ul, options) {
 
     return {
       createdAt: moment(time.getAttribute('datetime')).format(format),
+      timestamp: moment(time.getAttribute('datetime')).unix(),
       name: item.getAttribute('data-event'),
       notes: notes ? notes.textContent : null,
       color: itemColor(item)
@@ -37,7 +38,7 @@ export default function(ul, options) {
   render(
     <Timeline>
       { events.map(event => (
-        <Timeline.Item key={ event.createdAt + '-' + event.name } color={ event.color }>
+        <Timeline.Item key={ event.timestamp + '-' + event.name } color={ event.color }>
           <p>{ event.createdAt } { event.name }</p>
           { event.notes && (
             <p>{ event.notes }</p>
