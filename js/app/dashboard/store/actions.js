@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 function assignTasks(username, tasks) {
   return {type: 'ASSIGN_TASKS', username, tasks}
 }
@@ -10,8 +12,26 @@ function removeTasks(username, tasks) {
   return {type: 'REMOVE_TASKS', username, tasks}
 }
 
-function updateTask(task) {
+function _updateTask(task) {
   return {type: 'UPDATE_TASK', task}
+}
+
+function updateTask(task) {
+  return function(dispatch, getState) {
+
+    if (task.isAssigned) {
+      const targetTaskList = _.find(getState().taskLists, taskList => taskList.username === task.assignedTo)
+
+      // The target TaskList does not exist (yet), we reload the page
+      if (!targetTaskList) {
+        window.location.reload()
+
+        return
+      }
+    }
+
+    dispatch(_updateTask(task))
+  }
 }
 
 function openAddUserModal() {
