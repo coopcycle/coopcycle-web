@@ -167,12 +167,30 @@ class TaskSubscriber implements EventSubscriber
                         }
                     }
 
+                    if ($wasAssigned && !$wasAssignedToSameUser) {
+
+                        $this->debug(sprintf('Removing task #%d from previous TaskList', $task->getId()));
+
+                        $oldTaskList = $this->getTaskList($task->getDoneBefore(), $oldValue, $args);
+                        $oldTaskList->removeTask($task, false);
+
+                        if ($task->hasPrevious() || $task->hasNext()) {
+                            if ($task->hasPrevious()) {
+                                $oldTaskList->removeTask($task->getPrevious(), false);
+                            }
+                            if ($task->hasNext()) {
+                                $oldTaskList->removeTask($task->getNext(), false);
+                            }
+                        }
+                    }
+
                     // No need to add an event for linked tasks,
                     // It will be handled by the same subscriber
                     $this->eventBus->handle(new TaskAssigned($task, $newValue));
 
                     $uow->computeChangeSets();
                 }
+
             } else {
 
                 // The Task has been unassigned

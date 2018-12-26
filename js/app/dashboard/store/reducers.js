@@ -44,6 +44,69 @@ const initialState = {
   isDragging: false
 }
 
+const rootReducer = (state = initialState, action) => {
+  switch (action.type) {
+  case 'UPDATE_TASK':
+
+    let newUnassignedTasks = state.unassignedTasks.slice(0)
+    let newTaskLists = state.taskLists.slice(0)
+
+    let unassignedTasksIndex = _.findIndex(state.unassignedTasks, task => task['@id'] === action.task['@id'])
+    let taskListsIndex = _.findIndex(state.taskLists, taskList => {
+      return _.includes(_.map(taskList.items, task => task['@id']), action.task['@id'])
+    })
+
+    if (-1 !== unassignedTasksIndex) {
+      if (action.task.isAssigned) {
+        newUnassignedTasks = _.filter(state.unassignedTasks, task => task['@id'] !== action.task['@id'])
+      } else {
+        newUnassignedTasks = replaceOrAddTask(state.unassignedTasks, action.task)
+      }
+    } else {
+      if (!action.task.isAssigned) {
+        newUnassignedTasks = replaceOrAddTask(state.unassignedTasks, action.task)
+      }
+    }
+
+    if (action.task.isAssigned) {
+
+      let targetTaskListsIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.task.assignedTo)
+
+      if (-1 !== taskListsIndex) {
+        if (targetTaskListsIndex !== taskListsIndex) {
+          newTaskLists.splice(taskListsIndex, 1, {
+            ...state.taskLists[taskListsIndex],
+            items: _.filter(state.taskLists[taskListsIndex].items, item => item['@id'] !== action.task['@id'])
+          })
+        }
+      }
+
+      if (-1 !== targetTaskListsIndex) {
+        newTaskLists.splice(targetTaskListsIndex, 1, {
+          ...state.taskLists[targetTaskListsIndex],
+          items: replaceOrAddTask(state.taskLists[targetTaskListsIndex].items, action.task)
+        })
+      }
+
+    } else {
+      if (-1 !== taskListsIndex) {
+        newTaskLists.splice(taskListsIndex, 1, {
+          ...state.taskLists[taskListsIndex],
+          items: _.filter(state.taskLists[taskListsIndex].items, item => item['@id'] !== action.task['@id'])
+        })
+      }
+    }
+
+    return {
+      ...state,
+      unassignedTasks: newUnassignedTasks,
+      taskLists: newTaskLists,
+    }
+  }
+
+  return state
+}
+
 export const taskLists = (state = [], action, date = initialState.date) => {
 
   let newTaskLists = state.slice(0)
@@ -116,44 +179,6 @@ export const taskLists = (state = [], action, date = initialState.date) => {
       }
     }
     break
-
-  case 'UPDATE_TASK':
-
-    taskListIndex = _.findIndex(state, taskList => {
-      const taskIds = _.map(taskList.items, task => task['@id'])
-      return _.includes(taskIds, action.task['@id'])
-    })
-
-    if (action.task.isAssigned) {
-
-      targetTaskListIndex = _.findIndex(state, taskList => taskList.username === action.task.assignedTo)
-
-      if (-1 !== taskListIndex) {
-        if (targetTaskListIndex !== taskListIndex) {
-          newTaskLists.splice(taskListIndex, 1, {
-            ...state[taskListIndex],
-            items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
-          })
-        }
-      }
-
-      if (-1 !== targetTaskListIndex) {
-        newTaskLists.splice(targetTaskListIndex, 1, {
-          ...state[targetTaskListIndex],
-          items: replaceOrAddTask(state[targetTaskListIndex].items, action.task)
-        })
-      }
-
-    } else {
-      if (-1 !== taskListIndex) {
-        newTaskLists.splice(taskListIndex, 1, {
-          ...state[taskListIndex],
-          items: _.filter(state[taskListIndex].items, item => item['@id'] !== action.task['@id'])
-        })
-      }
-    }
-
-    return newTaskLists
   }
 
   return state
@@ -188,35 +213,6 @@ export const unassignedTasks = (state = [], action, date = initialState.date) =>
 
   case 'REMOVE_TASKS':
     return Array.prototype.concat(state, action.tasks)
-
-  case 'UPDATE_TASK':
-
-    newState = state.slice(0)
-
-    let taskIndex = _.findIndex(newState, task => action.task['@id'] === task['@id'])
-
-    if (-1 !== taskIndex) {
-
-      // If the task has been assigned, remove it
-      // If the task new due date is different from the one displayed, remove it
-      if (action.task.isAssigned || !moment(action.task.doneBefore).isSame(date, 'day')) {
-        newState = _.differenceWith(
-          newState,
-          _.intersectionWith(newState, [ action.task ], taskComparator),
-          taskComparator
-        )
-      // If the task is still unassigned, just replace it
-      } else {
-        // let taskIndex = _.findIndex(newState, task => action.task['@id'] === task['@id'])
-        newState.splice(taskIndex, 1, Object.assign({}, action.task))
-      }
-
-      return newState
-    } else {
-      if (!action.task.isAssigned) {
-        return state.concat([ action.task ])
-      }
-    }
   }
 
   return state
@@ -448,13 +444,21 @@ export const combinedTasks = (state = initialState, action) => {
   switch (action.type) {
 
   case 'ADD_CREATED_TASK':
-  case 'UPDATE_TASK':
 
     return {
       ...state,
       unassignedTasks: unassignedTasks(state.unassignedTasks, action, state.date),
       taskLists: taskLists(state.taskLists, action, state.date),
       allTasks: allTasks(state.allTasks, action, state.date)
+    }
+  case 'UPDATE_TASK':
+
+    const { unassignedTasks, taskLists } = rootReducer(state, action)
+
+    return {
+      ...state,
+      unassignedTasks,
+      taskLists,
     }
   }
 

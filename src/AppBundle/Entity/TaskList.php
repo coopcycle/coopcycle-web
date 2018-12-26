@@ -83,9 +83,11 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     /**
      * When a Task is removed, it is unassigned.
      */
-    public function removeTask(Task $task)
+    public function removeTask(Task $task, $unassign = true)
     {
-        $task->unassign();
+        if ($unassign) {
+            $task->unassign();
+        }
 
         return parent::removeTask($task);
     }
