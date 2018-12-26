@@ -19,6 +19,8 @@ const replaceOrAddTask = (tasks, task) => {
   return tasks.concat([ task ])
 }
 
+const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'])
+
 const initialState = {
 
   allTasks: [],
@@ -58,7 +60,7 @@ const rootReducer = (state = initialState, action) => {
 
     if (-1 !== unassignedTasksIndex) {
       if (action.task.isAssigned) {
-        newUnassignedTasks = _.filter(state.unassignedTasks, task => task['@id'] !== action.task['@id'])
+        newUnassignedTasks = removeTask(state.unassignedTasks, action.task)
       } else {
         newUnassignedTasks = replaceOrAddTask(state.unassignedTasks, action.task)
       }
@@ -76,7 +78,7 @@ const rootReducer = (state = initialState, action) => {
         if (targetTaskListsIndex !== taskListsIndex) {
           newTaskLists.splice(taskListsIndex, 1, {
             ...state.taskLists[taskListsIndex],
-            items: _.filter(state.taskLists[taskListsIndex].items, item => item['@id'] !== action.task['@id'])
+            items: removeTask(state.taskLists[taskListsIndex].items, action.task)
           })
         }
       }
@@ -92,7 +94,7 @@ const rootReducer = (state = initialState, action) => {
       if (-1 !== taskListsIndex) {
         newTaskLists.splice(taskListsIndex, 1, {
           ...state.taskLists[taskListsIndex],
-          items: _.filter(state.taskLists[taskListsIndex].items, item => item['@id'] !== action.task['@id'])
+          items: removeTask(state.taskLists[taskListsIndex].items, action.task)
         })
       }
     }
