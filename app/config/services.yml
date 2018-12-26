@@ -30,6 +30,10 @@ services:
   AppBundle\Twig\:
     resource: '../../src/AppBundle/Twig/*'
 
+  AppBundle\Controller\:
+    resource: '../../src/AppBundle/Controller'
+    tags: ['controller.service_arguments']
+
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
   coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
@@ -42,8 +46,9 @@ services:
   coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
   coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
   coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
-  coopcycle.expression_language: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
-
+  coopcycle.expression_language:
+    alias: AppBundle\ExpressionLanguage\ExpressionLanguage
+    public: true
   coopcycle.tag_manager: '@AppBundle\Service\TagManager'
   coopcycle.socket_io_manager: '@AppBundle\Service\SocketIoManager'
   coopcycle.geocoder: '@AppBundle\Service\Geocoder'
