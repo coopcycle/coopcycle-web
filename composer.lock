@@ -7646,40 +7646,42 @@
         },
         {
             "name": "simple-bus/symfony-bridge",
-            "version": "v5.1.2",
+            "version": "v5.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SimpleBus/SymfonyBridge.git",
-                "reference": "31e5d3d5ee66206d04ec7db0a22db107cb7b8ee2"
+                "reference": "0ee8e1f055af80fb619edb7642f25fdb540b40bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SimpleBus/SymfonyBridge/zipball/31e5d3d5ee66206d04ec7db0a22db107cb7b8ee2",
-                "reference": "31e5d3d5ee66206d04ec7db0a22db107cb7b8ee2",
+                "url": "https://api.github.com/repos/SimpleBus/SymfonyBridge/zipball/0ee8e1f055af80fb619edb7642f25fdb540b40bf",
+                "reference": "0ee8e1f055af80fb619edb7642f25fdb540b40bf",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0",
+                "php": "^7.1",
                 "simple-bus/message-bus": "~3.0",
-                "symfony/config": "~2.3 || ~3.0 || ~4.0",
-                "symfony/dependency-injection": "~2.3 || ~3.0 || ~4.0",
-                "symfony/http-kernel": "~2.3 || ~3.0 || ~4.0",
-                "symfony/proxy-manager-bridge": "~2.3 || ~3.0 || ~4.0",
-                "symfony/yaml": "~2.3 || ~3.0 || ~4.0"
+                "symfony/config": "~2.7 || ~3.3 || ~4.0",
+                "symfony/dependency-injection": "~2.7 || ~3.3 || ~4.0",
+                "symfony/http-kernel": "~2.7 || ~3.3 || ~4.0",
+                "symfony/yaml": "~2.7 || ~3.3 || ~4.0"
             },
             "require-dev": {
                 "doctrine/doctrine-bundle": "~1.0",
-                "doctrine/orm": "~2.3",
+                "doctrine/orm": "~2.5",
                 "phpunit/phpunit": "^5.7 || ^6.0",
                 "simple-bus/doctrine-orm-bridge": "~5.0",
-                "symfony/monolog-bridge": "~2.3 || ~3.0 || ~4.0",
-                "symfony/monolog-bundle": "~2.3 || ~3.0 "
+                "symfony/framework-bundle": "~2.7 || ~3.3 || ~4.0",
+                "symfony/monolog-bridge": "~2.7 || ~3.3 || ~4.0",
+                "symfony/monolog-bundle": "~2.3 || ~3.0",
+                "symfony/proxy-manager-bridge": "~2.7 || ~3.3 || ~4.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "For integration with Doctrine ORM",
                 "doctrine/orm": "For integration with Doctrine ORM",
                 "simple-bus/doctrine-orm-bridge": "For integration with Doctrine ORM",
-                "symfony/monolog-bundle": "For logging messages"
+                "symfony/monolog-bundle": "For logging messages",
+                "symfony/proxy-manager-bridge": "For integration with Symfony and Doctrine ORM"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -7710,7 +7712,7 @@
                 "event bus",
                 "symfony"
             ],
-            "time": "2017-12-03T17:58:48+00:00"
+            "time": "2018-12-19T18:16:01+00:00"
         },
         {
             "name": "snc/redis-bundle",
