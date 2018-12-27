@@ -16,7 +16,9 @@ use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Utils\MenuEditor;
+use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ramsey\Uuid\Uuid;
@@ -672,7 +674,7 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function stripeOAuthRedirectAction($id, Request $request)
+    public function stripeOAuthRedirectAction($id, Request $request, SettingsManager $settingsManager)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -711,7 +713,7 @@ trait RestaurantTrait
         // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
 
         $key = $livemode ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
-        $clientId = $this->get('coopcycle.settings_manager')->get($key);
+        $clientId = $settingsManager->get($key);
 
         // Store livemode in FlashBag for later
         $request->getSession()->getFlashBag()->set('stripe_connect_livemode', [ $livemode ? 'yes' : 'no' ]);
@@ -739,7 +741,7 @@ trait RestaurantTrait
         return $this->redirect('https://connect.stripe.com/oauth/authorize?' . $queryString);
     }
 
-    public function preparationTimeAction($id, Request $request)
+    public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -749,7 +751,7 @@ trait RestaurantTrait
 
         $hasRules = count($restaurant->getPreparationTimeRules()) > 0;
         if (!$hasRules) {
-            $config = $this->get('coopcycle.preparation_time_calculator')->getDefaultConfig();
+            $config = $calculator->getDefaultConfig();
             foreach ($config as $expression => $time) {
                 $preparationTimeRule = new PreparationTimeRule();
                 $preparationTimeRule->setExpression($expression);

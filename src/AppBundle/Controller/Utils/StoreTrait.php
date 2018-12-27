@@ -8,6 +8,8 @@ use AppBundle\Entity\Store;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreTokenType;
 use AppBundle\Form\StoreType;
+use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\OrderManager;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,7 +102,7 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryAction($id, Request $request)
+    public function newStoreDeliveryAction($id, Request $request, OrderManager $orderManager, DeliveryManager $deliveryManager)
     {
         $routes = $request->attributes->get('routes');
 
@@ -128,11 +130,11 @@ trait StoreTrait
 
                 try {
 
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet());
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
                     $order = $this->createOrderForDelivery($delivery, $price, $this->getUser());
 
                     $this->get('sylius.repository.order')->add($order);
-                    $this->get('coopcycle.order_manager')->onDemand($order);
+                    $orderManager->onDemand($order);
                     $this->get('sylius.manager.order')->flush();
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);

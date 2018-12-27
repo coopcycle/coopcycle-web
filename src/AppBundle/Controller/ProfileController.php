@@ -18,6 +18,9 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
+use AppBundle\Service\NotificationManager;
+use AppBundle\Service\OrderManager;
+use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -107,7 +110,7 @@ class ProfileController extends Controller
         return [ $orders, $pages, $page ];
     }
 
-    public function orderAction($id, Request $request)
+    public function orderAction($id, Request $request, OrderManager $orderManager)
     {
         // Allow retrieving deleted entities anyway
         $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
@@ -145,7 +148,7 @@ class ProfileController extends Controller
             if ($form->getClickedButton()) {
 
                 if ('cancel' === $form->getClickedButton()->getName()) {
-                    $this->get('coopcycle.order_manager')->cancel($order);
+                    $orderManager->cancel($order);
                 }
 
                 $this->get('sylius.manager.order')->flush();
@@ -277,10 +280,8 @@ class ProfileController extends Controller
      * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
      * @Template()
      */
-    public function completeTaskAction($id, Request $request)
+    public function completeTaskAction($id, Request $request, TaskManager $taskManager)
     {
-        $taskManager = $this->get('coopcycle.task_manager');
-
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
             ->find($id);
@@ -359,7 +360,7 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
      */
-    public function markNotificationsAsReadAction(Request $request)
+    public function markNotificationsAsReadAction(Request $request, NotificationManager $notificationManager)
     {
         $ids = [];
         $content = $request->getContent();
@@ -371,7 +372,7 @@ class ProfileController extends Controller
             ->getRepository(Notification::class)
             ->markAsRead($this->getUser(), $ids);
 
-        $this->get('coopcycle.notification_manager')->publishCount($this->getUser());
+        $notificationManager->publishCount($this->getUser());
 
         return new Response('', 204);
     }

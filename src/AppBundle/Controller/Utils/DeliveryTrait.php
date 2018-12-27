@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\DeliveryType;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -74,10 +75,9 @@ trait DeliveryTrait
         return $this->createForm(DeliveryType::class, $delivery, $options);
     }
 
-    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet)
+    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
-        $price = $this->get('coopcycle.delivery.manager')
-            ->getPrice($delivery, $pricingRuleSet);
+        $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
 
         if (null === $price) {
             throw new \Exception('Price could not be calculated');
@@ -129,10 +129,8 @@ trait DeliveryTrait
         return new GeoCoordinates($latitude, $longitude);
     }
 
-    public function calculateDeliveryPriceAction(Request $request)
+    public function calculateDeliveryPriceAction(Request $request, DeliveryManager $deliveryManager)
     {
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
-
         if (!$request->query->has('pricing_rule_set')) {
             throw new BadRequestHttpException('No pricing provided');
         }

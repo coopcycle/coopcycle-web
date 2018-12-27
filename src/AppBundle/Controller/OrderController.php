@@ -9,6 +9,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
+use AppBundle\Service\OrderManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -62,7 +63,7 @@ class OrderController extends Controller
      * @Route("/payment", name="order_payment")
      * @Template()
      */
-    public function paymentAction(Request $request)
+    public function paymentAction(Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.context.cart')->getCart();
 
@@ -70,8 +71,6 @@ class OrderController extends Controller
 
             return $this->redirectToRoute('homepage');
         }
-
-        $orderManager = $this->get('coopcycle.order_manager');
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 

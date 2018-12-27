@@ -34,8 +34,11 @@ use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
-use AppBundle\Service\DeliveryPricingManager;
+use AppBundle\Service\OrderManager;
+use AppBundle\Service\SettingsManager;
+use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\OrderTransitions;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -143,12 +146,10 @@ class AdminController extends Controller
      * @Route("/admin/orders/{id}", name="admin_order")
      * @Template
      */
-    public function orderAction($id, Request $request)
+    public function orderAction($id, Request $request, OrderManager $orderManager)
     {
         // Allow retrieving deleted entities anyway
         $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
-        $orderManager = $this->get('coopcycle.order_manager');
 
         $order = $this->container->get('sylius.repository.order')->find($id);
 
@@ -480,10 +481,8 @@ class AdminController extends Controller
      * @Route("/admin/settings/taxation/new", name="admin_taxation_settings_new")
      * @Template("@App/admin/taxation_form.html.twig")
      */
-    public function newTaxationAction(Request $request)
+    public function newTaxationAction(Request $request, SlugifyInterface $slugify)
     {
-        $slugify = $this->get('slugify');
-
         $taxRate = new TaxRate();
         $taxRate->setIncludedInPrice(true);
         $taxRate->setCalculator('default');
@@ -832,10 +831,8 @@ class AdminController extends Controller
     /**
      * @Route("/admin/tasks/{id}", name="admin_task")
      */
-    public function taskAction($id, Request $request)
+    public function taskAction($id, Request $request, TaskManager $taskManager)
     {
-        $taskManager = $this->get('coopcycle.task_manager');
-
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
             ->find($id);
@@ -924,9 +921,8 @@ class AdminController extends Controller
      * @Route("/admin/settings", name="admin_settings")
      * @Template()
      */
-    public function settingsAction(Request $request)
+    public function settingsAction(Request $request, SettingsManager $settingsManager)
     {
-        $settingsManager = $this->get('coopcycle.settings_manager');
         $redis = $this->get('snc_redis.default');
 
         /* Stripe live mode */

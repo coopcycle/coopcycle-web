@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,10 +12,10 @@ class AssetsController extends Controller
     /**
      * @Route("/js/data", name="js_data")
      */
-    public function jsDataAction()
+    public function jsDataAction(CurrencyContextInterface $currencyContext)
     {
         return $this->render('@App/_partials/app.js.twig', [
-            'currency_context' => $this->get('sylius.context.currency'),
+            'currency_context' => $currencyContext,
             'country_iso' => $this->getParameter('country_iso'),
         ]);
     }

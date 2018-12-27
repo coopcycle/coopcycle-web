@@ -9,7 +9,10 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use Cocur\Slugify\SlugifyInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
@@ -54,7 +57,7 @@ class EmbedController extends Controller
         return $pricingRuleSet;
     }
 
-    private function findOrCreateUser($email, $telephone)
+    private function findOrCreateUser($email, $telephone, SlugifyInterface $slugify)
     {
         $userManipulator = $this->get('fos_user.util.user_manipulator');
         $userManager = $this->get('fos_user.user_manager');
@@ -63,7 +66,7 @@ class EmbedController extends Controller
         if (!$user) {
 
             [ $localPart, $domain ] = explode('@', $email);
-            $username = $this->get('slugify')->slugify($localPart, ['separator' => '_']);
+            $username = $slugify->slugify($localPart, ['separator' => '_']);
             $password = random_bytes(16);
 
             $user = $userManipulator->create($username, $password, $email, true, false);
@@ -104,13 +107,11 @@ class EmbedController extends Controller
      * @Route("/embed/delivery/summary", name="embed_delivery_summary")
      * @Template
      */
-    public function deliverySummaryAction(Request $request)
+    public function deliverySummaryAction(Request $request, DeliveryManager $deliveryManager)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
         }
-
-        $deliveryManager = $this->get('coopcycle.delivery.manager');
 
         $pricingRuleSet = $this->getPricingRuleSet();
         if (!$pricingRuleSet) {
@@ -125,7 +126,7 @@ class EmbedController extends Controller
             try {
 
                 $delivery = $form->getData();
-                $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
+                $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
 
                 return $this->render('@App/embed/delivery/summary.html.twig', [
                     'price' => $price,
@@ -147,7 +148,11 @@ class EmbedController extends Controller
      * @Route("/embed/delivery/process", name="embed_delivery_process")
      * @Template
      */
-    public function deliveryProcessAction(Request $request)
+    public function deliveryProcessAction(
+        Request $request,
+        SlugifyInterface $slugify,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -168,8 +173,8 @@ class EmbedController extends Controller
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
 
-            $user  = $this->findOrCreateUser($email, $telephone);
-            $price = $this->getDeliveryPrice($delivery, $pricingRuleSet);
+            $user  = $this->findOrCreateUser($email, $telephone, $slugify);
+            $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
             $order = $this->createOrderForDelivery($delivery, $price, $user);
 
             $billingAddress = $form->get('billingAddress')->getData();
@@ -179,7 +184,7 @@ class EmbedController extends Controller
             $order->setNotes($name);
 
             $this->get('sylius.repository.order')->add($order);
-            $this->get('coopcycle.order_manager')->onDemand($order);
+            $orderManager->onDemand($order);
             $this->get('sylius.manager.order')->flush();
 
             $this->addFlash(

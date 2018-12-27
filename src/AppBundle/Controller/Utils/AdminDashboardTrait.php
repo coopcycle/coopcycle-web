@@ -12,6 +12,9 @@ use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Service\RemotePushNotificationManager;
+use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +39,13 @@ trait AdminDashboardTrait
         return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
     }
 
-    protected function notifyTasksChanged(UserInterface $user, \DateTime $date, array $normalizedTasks)
+    protected function notifyTasksChanged(
+        UserInterface $user,
+        \DateTime $date,
+        array $normalizedTasks,
+        RemotePushNotificationManager $remotePushNotificationManager,
+        SocketIoManager $socketIoManager)
     {
-        $remotePushNotificationManager = $this->get('coopcycle.remote_push_notification_manager');
         $remotePushTokenRepository = $this->getDoctrine()->getRepository(RemotePushToken::class);
 
         $tokens = $remotePushTokenRepository->findByUser($user);
@@ -59,7 +66,7 @@ trait AdminDashboardTrait
                 ->send(sprintf('Tasks for %s changed!', $date->format('Y-m-d')), $token, $data);
         }
 
-        $this->get('coopcycle.socket_io_manager')
+        $socketIoManager
             ->toUser($user, 'tasks:changed', $normalizedTasks);
     }
 
@@ -104,10 +111,8 @@ trait AdminDashboardTrait
      * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__"})
      */
-    public function dashboardFullscreenAction($date, Request $request)
+    public function dashboardFullscreenAction($date, Request $request, TaskManager $taskManager)
     {
-        $taskManager = $this->get('coopcycle.task_manager');
-
         $date = new \DateTime($date);
         $dayAfter = clone $date;
         $dayAfter->modify('+1 day');
@@ -306,7 +311,12 @@ trait AdminDashboardTrait
      *   methods={"PUT"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function modifyTaskListAction($date, $username, Request $request)
+    public function modifyTaskListAction(
+        $date,
+        $username,
+        Request $request,
+        RemotePushNotificationManager $remotePushNotificationManager,
+        SocketIoManager $socketIoManager)
     {
         $date = new \DateTime($date);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
@@ -340,7 +350,13 @@ trait AdminDashboardTrait
             'groups' => ['task_collection', 'task', 'delivery', 'place']
         ]);
 
-        $this->notifyTasksChanged($user, $date, $taskListNormalized['items']);
+        $this->notifyTasksChanged(
+            $user,
+            $date,
+            $taskListNormalized['items'],
+            $remotePushNotificationManager,
+            $socketIoManager
+        );
 
         return new JsonResponse($taskListNormalized);
     }

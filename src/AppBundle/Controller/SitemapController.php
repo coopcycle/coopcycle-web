@@ -3,25 +3,23 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Restaurant;
+use Cocur\Slugify\SlugifyInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class SitemapController extends Controller
 {
     /**
      * @Route("/sitemap.xml", name="sitemap")
      */
-    public function indexAction()
+    public function indexAction(SlugifyInterface $slugify)
     {
         $restaurants = $this->getDoctrine()
             ->getRepository(Restaurant::class)
             ->findBy(['enabled' => true]);
-
-        $slugify = $this->get('slugify');
 
         $locales = ['en', 'es', 'de', 'fr'];
         $locale = $this->getParameter('locale');

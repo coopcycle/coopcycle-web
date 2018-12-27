@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\OrdersExportType;
+use AppBundle\Service\OrderManager;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -99,14 +100,14 @@ trait OrderTrait
         ]);
     }
 
-    public function acceptRestaurantOrderAction($restaurantId, $orderId, Request $request)
+    public function acceptRestaurantOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->accept($order);
+            $orderManager->accept($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
@@ -118,14 +119,14 @@ trait OrderTrait
         ]);
     }
 
-    public function acceptOrderAction($id, Request $request)
+    public function acceptOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->accept($order);
+            $orderManager->accept($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
@@ -137,14 +138,14 @@ trait OrderTrait
         }
     }
 
-    public function refuseRestaurantOrder($restaurantId, $orderId, Request $request)
+    public function refuseRestaurantOrder($restaurantId, $orderId, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->refuse($order);
+            $orderManager->refuse($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
@@ -156,14 +157,14 @@ trait OrderTrait
         ]);
     }
 
-    public function refuseOrderAction($id, Request $request)
+    public function refuseOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->refuse($order);
+            $orderManager->refuse($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
@@ -175,13 +176,13 @@ trait OrderTrait
         }
     }
 
-    public function readyOrderAction($restaurantId, $orderId, Request $request)
+    public function readyOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
-        $this->get('coopcycle.order_manager')->ready($order);
+        $orderManager->ready($order);
         $this->get('sylius.manager.order')->flush();
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
@@ -190,13 +191,13 @@ trait OrderTrait
         ]);
     }
 
-    public function delayRestaurantOrderAction($restaurantId, $orderId, Request $request)
+    public function delayRestaurantOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($orderId);
 
         $this->accessControl($order->getRestaurant());
 
-        $this->get('coopcycle.order_manager')->delay($order);
+        $orderManager->delay($order);
         $this->get('sylius.manager.order')->flush();
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
@@ -205,14 +206,14 @@ trait OrderTrait
         ]);
     }
 
-    public function delayOrderAction($id, Request $request)
+    public function delayOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
 
         $this->accessControl($order->getRestaurant());
 
         try {
-            $this->get('coopcycle.order_manager')->delay($order);
+            $orderManager->delay($order);
             $this->get('sylius.manager.order')->flush();
         } catch (\Exception $e) {
             // TODO Add flash message
@@ -224,20 +225,20 @@ trait OrderTrait
         }
     }
 
-    private function cancelOrderById($id)
+    private function cancelOrderById($id, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
         $this->accessControl($order->getRestaurant());
 
-        $this->get('coopcycle.order_manager')->cancel($order);
+        $orderManager->cancel($order);
         $this->get('sylius.manager.order')->flush();
 
         return $order;
     }
 
-    public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request)
+    public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
     {
-        $this->cancelOrderById($orderId);
+        $this->cancelOrderById($orderId, $orderManager);
 
         return $this->redirectToRoute($request->attributes->get('redirect_route'), [
             'restaurantId' => $restaurantId,
@@ -245,9 +246,9 @@ trait OrderTrait
         ]);
     }
 
-    public function cancelOrderAction($id, Request $request)
+    public function cancelOrderAction($id, Request $request, OrderManager $orderManager)
     {
-        $order = $this->cancelOrderById($id);
+        $order = $this->cancelOrderById($id, $orderManager);
 
         if ($request->isXmlHttpRequest()) {
 

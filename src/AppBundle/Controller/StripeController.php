@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
+use AppBundle\Service\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class StripeController extends Controller
     /**
      * @Route("/stripe/connect/standard", name="stripe_connect_standard_account")
      */
-    public function connectStandardAccountAction(Request $request)
+    public function connectStandardAccountAction(Request $request, SettingsManager $settingsManager)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -35,7 +36,6 @@ class StripeController extends Controller
 
         $livemode = filter_var(current($messages), FILTER_VALIDATE_BOOLEAN);
 
-        $settingsManager = $this->get('coopcycle.settings_manager');
         $secretKey = $livemode ? $settingsManager->get('stripe_live_secret_key') : $settingsManager->get('stripe_test_secret_key');
 
         // curl https://connect.stripe.com/oauth/token \

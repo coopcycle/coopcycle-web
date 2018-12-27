@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\StripePaymentType;
+use AppBundle\Service\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Stripe;
@@ -23,9 +24,8 @@ class PublicController extends Controller
      * @Route("/o/{number}", name="public_order")
      * @Template
      */
-    public function orderAction($number, Request $request)
+    public function orderAction($number, Request $request, SettingsManager $settingsManager)
     {
-        $settingsManager = $this->get('coopcycle.settings_manager');
         $stateMachineFactory = $this->get('sm.factory');
 
         Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));

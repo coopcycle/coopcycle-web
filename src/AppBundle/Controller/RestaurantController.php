@@ -6,10 +6,12 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
+use Cocur\Slugify\SlugifyInterface;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Ramsey\Uuid\Uuid;
@@ -98,10 +100,8 @@ class RestaurantController extends Controller
      * @Route("/restaurants", name="restaurants")
      * @Template()
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, RestaurantRepository $repository)
     {
-        $repository = $this->get('coopcycle.repository.restaurant');
-
         $finder = new Finder();
         $finder->files()
             ->in($this->getParameter('kernel.root_dir') . '/../web/img/cuisine')
@@ -184,7 +184,7 @@ class RestaurantController extends Controller
      * )
      * @Template()
      */
-    public function indexAction($id, $slug, Request $request)
+    public function indexAction($id, $slug, Request $request, SlugifyInterface $slugify)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
@@ -194,7 +194,7 @@ class RestaurantController extends Controller
         }
 
         if ($slug) {
-            $expectedSlug = $this->get('slugify')->slugify($restaurant->getName());
+            $expectedSlug = $slugify->slugify($restaurant->getName());
             if ($slug !== $expectedSlug) {
                 return $this->redirectToRoute('restaurant', ['id' => $id, 'slug' => $expectedSlug]);
             }
@@ -462,9 +462,9 @@ class RestaurantController extends Controller
      * @Route("/restaurants/map", name="restaurants_map")
      * @Template()
      */
-    public function mapAction(Request $request)
+    public function mapAction(Request $request, SlugifyInterface $slugify)
     {
-        $restaurants = array_map(function (Restaurant $restaurant) {
+        $restaurants = array_map(function (Restaurant $restaurant) use ($slugify) {
             return [
                 'name' => $restaurant->getName(),
                 'address' => [
@@ -475,7 +475,7 @@ class RestaurantController extends Controller
                 ],
                 'url' => $this->generateUrl('restaurant', [
                     'id' => $restaurant->getId(),
-                    'slug' => $this->get('slugify')->slugify($restaurant->getName())
+                    'slug' => $slugify->slugify($restaurant->getName())
                 ])
             ];
         }, $this->getDoctrine()->getRepository(Restaurant::class)->findAll());
