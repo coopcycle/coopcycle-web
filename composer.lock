@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "79dca77e5222fca7eae65244b600e615",
+    "content-hash": "ab5d5c2e38a6717f8e5158276857d0d1",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3010,29 +3010,29 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.2.1",
+            "version": "v0.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gesdinet/JWTRefreshTokenBundle.git",
-                "reference": "3c925317c2e07ab49b7e68ae38b26ef452952b83"
+                "reference": "604b70c86e557c70105b8850eb44426ab2056a9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gesdinet/JWTRefreshTokenBundle/zipball/3c925317c2e07ab49b7e68ae38b26ef452952b83",
-                "reference": "3c925317c2e07ab49b7e68ae38b26ef452952b83",
+                "url": "https://api.github.com/repos/gesdinet/JWTRefreshTokenBundle/zipball/604b70c86e557c70105b8850eb44426ab2056a9d",
+                "reference": "604b70c86e557c70105b8850eb44426ab2056a9d",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "~1.4",
-                "doctrine/orm": "^2.4.8",
                 "lexik/jwt-authentication-bundle": "^1.1|^2.0@dev",
                 "php": ">=5.3.3",
-                "symfony/framework-bundle": "~2.3|~3.0",
-                "symfony/validator": "~2.3|~3.0"
+                "symfony/framework-bundle": "~3.3|~4.0",
+                "symfony/validator": "~3.3|~4.0"
             },
             "require-dev": {
-                "henrikbjorn/phpspec-code-coverage": "~1.0",
-                "phpspec/phpspec": "~2.0"
+                "doctrine/doctrine-bundle": "~1.4",
+                "doctrine/mongodb-odm-bundle": "^3.4",
+                "doctrine/orm": "^2.4.8",
+                "phpspec/phpspec": "^3.0|^4.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -3059,7 +3059,7 @@
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
-            "time": "2017-07-25T06:28:08+00:00"
+            "time": "2018-12-06T11:02:57+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
