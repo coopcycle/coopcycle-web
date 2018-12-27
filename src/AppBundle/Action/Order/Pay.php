@@ -20,7 +20,7 @@ class Pay
         $this->doctrine = $doctrine;
     }
 
-    public function __invoke(Order $data, Request $request)
+    public function __invoke($data, Request $request)
     {
         $body = [];
         $content = $request->getContent();

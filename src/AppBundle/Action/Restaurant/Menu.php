@@ -2,7 +2,6 @@
 
 namespace AppBundle\Action\Restaurant;
 
-use AppBundle\Entity\Restaurant;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,7 +18,7 @@ class Menu
      *   methods={"GET"}
      * )
      */
-    public function __invoke(Restaurant $data, Request $request)
+    public function __invoke($data, Request $request)
     {
         $restaurant = $data;
 

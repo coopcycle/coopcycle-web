@@ -2,7 +2,6 @@
 
 namespace AppBundle\Action\Task;
 
-use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class Done extends Base
 {
-    public function __invoke(Task $data, Request $request)
+    public function __invoke($data, Request $request)
     {
         $task = $data;
 

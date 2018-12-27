@@ -4,7 +4,6 @@ namespace AppBundle\Action\Task;
 
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Api\Exception\BadRequestHttpException;
-use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +24,7 @@ class Assign extends Base
         $this->userManager = $userManager;
     }
 
-    public function __invoke(Task $data, Request $request)
+    public function __invoke($data, Request $request)
     {
         $task = $data;
 
