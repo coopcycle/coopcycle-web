@@ -213,10 +213,13 @@
 {% block scripts %}
   <script>
 
+  (function() {
+
     var isMaintenanceEnabled = {{ maintenance is not empty ? 'true' : 'false' }};
     var isBannerEnabled = {{ banner is not empty ? 'true' : 'false' }};
     var isStripeLivemode = {{ stripe_livemode ? 'true' : 'false' }};
     var canEnableStripeLivemode = {{ can_enable_stripe_livemode ? 'true' : 'false' }};
+    var isDemo = {{ is_demo ? 'true' : 'false' }};
 
     var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch;
 
@@ -232,6 +235,7 @@
 
     var maintenanceSwitchOptions = {
       checked: isMaintenanceEnabled,
+      disabled: isDemo,
       onChange: function(checked) {
         if (checked !== isMaintenanceEnabled) {
           if (checked) {
@@ -314,6 +318,9 @@
     };
 
     stripeLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#stripe_livemode_switch'), stripeLiveModeSwitchOptions);
+
+
+  })();
 
   </script>
 {% endblock %}
