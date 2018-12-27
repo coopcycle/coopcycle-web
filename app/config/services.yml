@@ -14,6 +14,7 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: false
 
   AppBundle\Action\:
     resource: '../../src/AppBundle/Action/*'
@@ -41,8 +42,12 @@ services:
   coopcycle.shipping_date_filter:
     alias: AppBundle\Utils\ShippingDateFilter
     public: true
-  coopcycle.order_timeline_calculator: '@AppBundle\Utils\OrderTimelineCalculator'
-  coopcycle.store_token_manager: '@AppBundle\Security\StoreTokenManager'
+  coopcycle.order_timeline_calculator:
+    alias: AppBundle\Utils\OrderTimelineCalculator
+    public: true
+  coopcycle.store_token_manager:
+    alias: AppBundle\Security\StoreTokenManager
+    public: true
   coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
   coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
   coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
@@ -56,7 +61,9 @@ services:
   coopcycle.order_manager: '@AppBundle\Service\OrderManager'
   coopcycle.delivery.manager: '@AppBundle\Service\DeliveryManager'
   coopcycle.stripe_manager: '@AppBundle\Service\StripeManager'
-  coopcycle.settings_manager: '@AppBundle\Service\SettingsManager'
+  coopcycle.settings_manager:
+    alias: AppBundle\Service\SettingsManager
+    public: true
   coopcycle.email_manager: '@AppBundle\Service\EmailManager'
   coopcycle.notification_manager: '@AppBundle\Service\NotificationManager'
   coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
@@ -322,6 +329,7 @@ services:
     parent: fos_user.user_manager.default
     autowire: false
     autoconfigure: false
+    public: true
     class: AppBundle\Security\UserManager
 
   AppBundle\Service\SettingsManager:
@@ -401,6 +409,7 @@ services:
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
     autowire: false
     autoconfigure: false
+    public: true
     arguments: [ '@doctrine' ]
 
   # The services below are needed to generate tokens that never expire
@@ -418,6 +427,7 @@ services:
     parent: lexik_jwt_authentication.encoder
     autowire: false
     autoconfigure: false
+    public: true
     arguments:
       index_0: '@lexik_jwt_authentication.jws_provider.not_expiring'
 
@@ -425,6 +435,7 @@ services:
     parent: lexik_jwt_authentication.jwt_manager
     autowire: false
     autoconfigure: false
+    public: true
     arguments:
       index_0: '@lexik_jwt_authentication.encoder.not_expiring'
 
@@ -432,6 +443,7 @@ services:
     parent: lexik_jwt_authentication.jwt_token_authenticator
     autowire: false
     autoconfigure: false
+    public: true
     arguments:
       index_0: '@lexik_jwt_authentication.jwt_manager.not_expiring'
 

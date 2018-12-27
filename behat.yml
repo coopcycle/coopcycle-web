@@ -4,7 +4,13 @@ default:
   suites:
     default:
       contexts:
-        - FeatureContext: { doctrine: "@doctrine", phoneNumberUtil: "@libphonenumber.phone_number_util", fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine" }
+        - FeatureContext:
+            doctrine: "@doctrine"
+            phoneNumberUtil: "@libphonenumber.phone_number_util"
+            fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
+            storeTokenManager: "@coopcycle.store_token_manager"
+            settingsManager: "@coopcycle.settings_manager"
+            orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext

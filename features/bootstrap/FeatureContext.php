@@ -9,7 +9,10 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
+use AppBundle\Security\StoreTokenManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -76,7 +79,10 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         ManagerRegistry $doctrine,
         HttpCallResultPool $httpCallResultPool,
         PhoneNumberUtil $phoneNumberUtil,
-        LoaderInterface $fixturesLoader)
+        LoaderInterface $fixturesLoader,
+        StoreTokenManager $storeTokenManager,
+        SettingsManager $settingsManager,
+        OrderTimelineCalculator $orderTimelineCalculator)
     {
         $this->tokens = [];
         $this->doctrine = $doctrine;
@@ -86,6 +92,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->fixturesLoader = $fixturesLoader;
+        $this->storeTokenManager = $storeTokenManager;
+        $this->settingsManager = $settingsManager;
+        $this->orderTimelineCalculator = $orderTimelineCalculator;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -167,8 +176,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         // TODO Verify the environment variable exists
         $googleApiKey = getenv('GOOGLE_API_KEY');
 
-        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
-        $settingsManager->set('google_api_key', $googleApiKey);
+        $this->settingsManager->set('google_api_key', $googleApiKey);
     }
 
     /**
@@ -180,9 +188,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $stripePublishableKey = getenv('STRIPE_PUBLISHABLE_KEY');
         $stripeSecretKey = getenv('STRIPE_SECRET_KEY');
 
-        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
-        $settingsManager->set('stripe_test_publishable_key', $stripePublishableKey);
-        $settingsManager->set('stripe_test_secret_key', $stripeSecretKey);
+        $this->settingsManager->set('stripe_test_publishable_key', $stripePublishableKey);
+        $this->settingsManager->set('stripe_test_secret_key', $stripeSecretKey);
     }
 
     /**
@@ -493,10 +500,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theSettingHasValue($name, $value)
     {
-        $settingsManager = $this->getContainer()->get('coopcycle.settings_manager');
-
-        $settingsManager->set($name, $value);
-        $settingsManager->flush();
+        $this->settingsManager->set($name, $value);
+        $this->settingsManager->flush();
     }
 
     /**
@@ -561,12 +566,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function theStoreWithNameIsAuthenticatedAs($name, $username)
     {
         $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $storeTokenManager = $this->getContainer()->get('coopcycle.store_token_manager');
 
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
         $user = $userManager->findUserByUsername($username);
 
-        $token = $storeTokenManager->create($store, $user);
+        $token = $this->storeTokenManager->create($store, $user);
 
         $store->setToken($token);
         $this->doctrine->getManagerForClass(Store::class)->flush();
@@ -607,9 +611,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     private function createRandomOrder(Restaurant $restaurant, UserInterface $user, \DateTime $shippedAt = null)
     {
-        $orderTimelineCalculator = $this->getContainer()
-            ->get('coopcycle.order_timeline_calculator');
-
         $order = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
 
@@ -626,7 +627,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $order->setShippingAddress($restaurant->getAddress());
         $order->setBillingAddress($restaurant->getAddress());
 
-        $order->setTimeline($orderTimelineCalculator->calculate($order));
+        $order->setTimeline($this->orderTimelineCalculator->calculate($order));
 
         foreach ($restaurant->getProducts() as $product) {
 
