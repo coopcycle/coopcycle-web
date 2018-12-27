@@ -93,7 +93,6 @@
         "symfony/webpack-encore-bundle": "^1.0"
     },
     "require-dev": {
-        "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0",
         "phpunit/phpunit": "^6.0",
         "behat/behat": "^3.1",
