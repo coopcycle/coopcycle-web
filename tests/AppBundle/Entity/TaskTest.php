@@ -7,37 +7,17 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\TaskEvent;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class TaskTest extends KernelTestCase
+class TaskTest extends TestCase
 {
-    private $doctrine;
-
     private $task;
     private $courier;
 
     protected function setUp()
     {
-        parent::setUp();
-
-        self::bootKernel();
-
-        $this->doctrine = static::$kernel->getContainer()->get('doctrine');
-        $this->dbal = $this->doctrine->getConnection();
-        $this->eventStore = static::$kernel->getContainer()->get('coopcycle.domain.event_store');
-
         $this->task = new Task();
         $this->courier = new ApiUser();
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $purger = new ORMPurger($this->doctrine->getManager());
-        $purger->purge();
     }
 
     public function testSetPrevious()
@@ -103,35 +83,5 @@ class TaskTest extends KernelTestCase
         $this->task->getEvents()->add($event4);
 
         $this->assertSame($this->task->getLastEvent('task:assigned'), $event3);
-    }
-
-    public function testTaskCreatedEvent()
-    {
-        $task = new Task();
-
-        $address = new Address();
-        $address->setGeo(new GeoCoordinates('48.864577', '2.333338'));
-        $address->setStreetAddress('272, rue Saint Honoré');
-        $address->setPostalCode('75001');
-        $address->setAddressLocality('Paris');
-
-        $task->setDoneBefore(new \DateTime('today 13:30:00'));
-        $task->setAddress($address);
-
-        $this->doctrine->getManagerForClass(Task::class)->persist($task);
-        $this->doctrine->getManagerForClass(Task::class)->flush();
-
-        $this->assertNotNull($task->getId());
-
-        $eventName = 'task:created';
-
-        $stmt = $this->dbal->prepare('SELECT * FROM task_event WHERE name = :name');
-        $stmt->bindParam('name', $eventName);
-        $stmt->execute();
-
-        $events = $stmt->fetchAll();
-
-        $this->assertCount(1, $events);
-        $this->assertCount(0, $this->eventStore);
     }
 }
