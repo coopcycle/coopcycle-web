@@ -3636,16 +3636,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.75",
+            "version": "v1.2.76",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "50e06c81bea8a9c443708be496868ccb55bdd396"
+                "reference": "728dd7f210819ccafbf008a6ef7956f4f3c3571c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/50e06c81bea8a9c443708be496868ccb55bdd396",
-                "reference": "50e06c81bea8a9c443708be496868ccb55bdd396",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/728dd7f210819ccafbf008a6ef7956f4f3c3571c",
+                "reference": "728dd7f210819ccafbf008a6ef7956f4f3c3571c",
                 "shasum": ""
             },
             "require": {
@@ -3681,7 +3681,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-12-10T19:38:45+00:00"
+            "time": "2018-12-18T08:52:44+00:00"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -7291,16 +7291,16 @@
         },
         {
             "name": "sensio/distribution-bundle",
-            "version": "v5.0.23",
+            "version": "v5.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-                "reference": "088b116a0e27faa0e1a7384dd4f3f6a9d5a8a3b6"
+                "reference": "59eac70f15f97ee945924948a6f5e2f6f86b7a4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/088b116a0e27faa0e1a7384dd4f3f6a9d5a8a3b6",
-                "reference": "088b116a0e27faa0e1a7384dd4f3f6a9d5a8a3b6",
+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/59eac70f15f97ee945924948a6f5e2f6f86b7a4b",
+                "reference": "59eac70f15f97ee945924948a6f5e2f6f86b7a4b",
                 "shasum": ""
             },
             "require": {
@@ -7339,7 +7339,7 @@
                 "configuration",
                 "distribution"
             ],
-            "time": "2018-10-25T15:26:23+00:00"
+            "time": "2018-12-14T17:36:15+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -10681,16 +10681,16 @@
         },
         {
             "name": "willdurand/geocoder",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/php-common.git",
-                "reference": "5e97b3c3d830fe47474cb331a05b4c63e16217b9"
+                "reference": "aaa17bddb8dc9e4553110db8beb38534b095b61a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/php-common/zipball/5e97b3c3d830fe47474cb331a05b4c63e16217b9",
-                "reference": "5e97b3c3d830fe47474cb331a05b4c63e16217b9",
+                "url": "https://api.github.com/repos/geocoder-php/php-common/zipball/aaa17bddb8dc9e4553110db8beb38534b095b61a",
+                "reference": "aaa17bddb8dc9e4553110db8beb38534b095b61a",
                 "shasum": ""
             },
             "require": {
@@ -10736,7 +10736,7 @@
                 "geocoding",
                 "geoip"
             ],
-            "time": "2018-02-10T13:22:58+00:00"
+            "time": "2018-12-26T12:01:09+00:00"
         },
         {
             "name": "willdurand/hateoas",
