@@ -110,14 +110,12 @@
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
-            "@php bin/console assets:install --symlink --relative web",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+            "@php bin/console assets:install --symlink --relative web"
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@php bin/console cache:clear --no-warmup",
-            "@php bin/console assets:install --symlink --relative web",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+            "@php bin/console assets:install --symlink --relative web"
         ]
     },
     "extra": {
