@@ -62,7 +62,6 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
-            $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
         } else if (in_array($this->getEnvironment(), ['prod'], true)) {
             $bundles[] = new Sentry\SentryBundle\SentryBundle();
         }
