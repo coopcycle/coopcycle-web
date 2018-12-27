@@ -18,6 +18,7 @@ services:
 
   AppBundle\Action\:
     resource: '../../src/AppBundle/Action/*'
+    tags: ['controller.service_arguments']
 
   AppBundle\Command\:
     resource: '../../src/AppBundle/Command/*'
