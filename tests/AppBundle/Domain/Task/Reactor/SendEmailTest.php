@@ -99,7 +99,7 @@ class SendEmailTest extends TestCase
         $task = new Task();
         $task->setDelivery($delivery);
 
-        $message = \Swift_Message::newInstance();
+        $message = new \Swift_Message();
 
         $this->emailManager
             ->createTaskCompletedMessage($task)

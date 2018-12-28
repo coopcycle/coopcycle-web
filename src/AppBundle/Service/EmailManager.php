@@ -48,7 +48,7 @@ class EmailManager
 
     public function createHtmlMessage($subject = null, $body = null)
     {
-        $message = \Swift_Message::newInstance($subject);
+        $message = new \Swift_Message($subject);
 
         if ($body) {
             $message->setBody($body, 'text/html');

@@ -40,7 +40,6 @@ class AppKernel extends Kernel
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
-            new Mailjet\MailjetBundle\MailjetBundle(),
             new M6Web\Bundle\StatsdBundle\M6WebStatsdBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),

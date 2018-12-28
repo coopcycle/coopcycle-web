@@ -132,10 +132,6 @@ swiftmailer:
     encryption: "%mailer_encryption%"
     spool:     { type: memory }
 
-mailjet:
-    api_key:    "%mailjet.api_key%"
-    secret_key: "%mailjet.secret_key%"
-
 # Nelmio CORS
 nelmio_cors:
     defaults:

@@ -72,7 +72,6 @@ services:
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
-  Swift_Events_EventDispatcher: '@swiftmailer.transport.eventdispatcher.mailjet'
   Predis\Client: '@snc_redis.default'
   SM\Factory\FactoryInterface: '@sm.factory'
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
@@ -303,12 +302,14 @@ services:
     class: Swift_Events_SimpleEventDispatcher
 
   swiftmailer.mailer.transport.mailjet:
-    class: AppBundle\Service\MailjetTransport
+    class: Mailjet\MailjetSwiftMailer\SwiftMailer\MailjetTransport
     arguments:
         - "@swiftmailer.transport.eventdispatcher.mailjet"
         - "%mailjet.api_key%"
         - "%mailjet.secret_key%"
-        - "@logger"
+
+  swiftmailer.mailer.default.transport.mailjet: '@swiftmailer.mailer.transport.mailjet'
+  mailjet: '@swiftmailer.mailer.default.transport.mailjet'
 
   AppBundle\Service\MailLoggerService:
     arguments: ["@logger"]
