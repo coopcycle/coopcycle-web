@@ -164,14 +164,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
-     * @BeforeScenario @stopSession
-     */
-    public function stopSession()
-    {
-        $this->getSession()->stop();
-    }
-
-    /**
      * @BeforeScenario @javascript
      */
     public function setGoogleApiKeySetting()

@@ -54,7 +54,6 @@ Feature: Checkout
     And the cart address picker should contain "91 Rue de Rivoli, Paris, France"
 
   @javascript
-  @stopSession
   Scenario: Show warning when restaurant has changed
     Given the fixtures files are loaded:
       | restaurants_standalone.yml |
