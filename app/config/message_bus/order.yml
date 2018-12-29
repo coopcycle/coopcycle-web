@@ -1,5 +1,10 @@
 services:
 
+  _defaults:
+    autowire: false
+    autoconfigure: false
+    public: true
+
   coopcycle.domain.event_store:
     public: false
     class: AppBundle\Domain\EventStore
