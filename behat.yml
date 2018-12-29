@@ -11,6 +11,7 @@ default:
             storeTokenManager: "@coopcycle.store_token_manager"
             settingsManager: "@coopcycle.settings_manager"
             orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
+            userManipulator: "@fos_user.util.user_manipulator"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext

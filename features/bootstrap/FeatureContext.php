@@ -24,6 +24,7 @@ use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
+use FOS\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
@@ -82,7 +83,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         LoaderInterface $fixturesLoader,
         StoreTokenManager $storeTokenManager,
         SettingsManager $settingsManager,
-        OrderTimelineCalculator $orderTimelineCalculator)
+        OrderTimelineCalculator $orderTimelineCalculator,
+        UserManipulator $userManipulator)
     {
         $this->tokens = [];
         $this->doctrine = $doctrine;
@@ -95,6 +97,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->storeTokenManager = $storeTokenManager;
         $this->settingsManager = $settingsManager;
         $this->orderTimelineCalculator = $orderTimelineCalculator;
+        $this->userManipulator = $userManipulator;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -256,11 +259,10 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
     private function createUser($username, $email, $password, array $data = [])
     {
-        $manipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
         $manager = $this->getContainer()->get('fos_user.user_manager');
 
         if (!$user = $manager->findUserByUsername($username)) {
-            $user = $manipulator->create($username, $password, $email, true, false);
+            $user = $this->userManipulator->create($username, $password, $email, true, false);
         }
 
         $needsUpdate = false;
