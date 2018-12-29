@@ -9,7 +9,7 @@ AppBundle\Entity\Base\GeoCoordinates:
 AppBundle\Entity\ApiUser:
   bob:
     __factory:
-      '@fos_user.util.user_manipulator::create':
+      '@FOS\UserBundle\Util\UserManipulator::create':
         - 'bob'
         - '123456'
         - 'bob@demo.coopcycle.org'
@@ -17,7 +17,7 @@ AppBundle\Entity\ApiUser:
         - false
   sarah:
     __factory:
-      '@fos_user.util.user_manipulator::create':
+      '@FOS\UserBundle\Util\UserManipulator::create':
         - 'sarah'
         - '123456'
         - 'sarah@demo.coopcycle.org'
