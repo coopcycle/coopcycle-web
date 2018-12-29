@@ -75,7 +75,9 @@ services:
   Predis\Client: '@snc_redis.default'
   SM\Factory\FactoryInterface: '@sm.factory'
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
-  FOS\UserBundle\Util\UserManipulator: '@fos_user.util.user_manipulator'
+  FOS\UserBundle\Util\UserManipulator:
+    alias: 'fos_user.util.user_manipulator'
+    public: true
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
