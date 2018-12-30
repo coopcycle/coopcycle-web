@@ -458,6 +458,7 @@ services:
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Action\Settings:
+    public: true
     arguments:
       - '@coopcycle.settings_manager'
       - '%country_iso%'
