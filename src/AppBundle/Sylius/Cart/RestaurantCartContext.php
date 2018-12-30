@@ -47,10 +47,21 @@ final class RestaurantCartContext implements CartContextInterface
     public function getCart(): OrderInterface
     {
         if (!$this->session->has('restaurantId')) {
+
             throw new CartNotFoundException('There is no restaurant in session');
         }
 
-        if (!$this->session->has($this->sessionKeyName)) {
+        $cart = null;
+
+        if ($this->session->has($this->sessionKeyName)) {
+            $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
+
+            if (null === $cart) {
+                $this->session->remove($this->sessionKeyName);
+            }
+        }
+
+        if (null === $cart) {
 
             $restaurant = $this->restaurantRepository->find($this->session->get('restaurantId'));
 
@@ -60,15 +71,7 @@ final class RestaurantCartContext implements CartContextInterface
                 throw new CartNotFoundException('Restaurant does not exist');
             }
 
-            return $this->orderFactory->createForRestaurant($restaurant);
-        }
-
-        $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
-
-        if (null === $cart) {
-            $this->session->remove($this->sessionKeyName);
-
-            throw new CartNotFoundException('Unable to find the cart in session');
+            $cart = $this->orderFactory->createForRestaurant($restaurant);
         }
 
         return $cart;
