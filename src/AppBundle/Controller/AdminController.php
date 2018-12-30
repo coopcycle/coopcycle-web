@@ -240,7 +240,7 @@ class AdminController extends Controller
 
         $orders = $this->get('sylius.repository.order')->findByShippedAt($date);
 
-        $ordersNormalized = $this->get('api_platform.serializer')->normalize($orders, 'jsonld', [
+        $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
@@ -901,7 +901,7 @@ class AdminController extends Controller
                 ->getManagerForClass(Task::class)
                 ->flush();
 
-            $taskNormalized = $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
+            $taskNormalized = $this->get('serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',

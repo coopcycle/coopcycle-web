@@ -232,7 +232,7 @@ trait AdminDashboardTrait
             ->findByDate($date);
 
         $allTasksNormalized = array_map(function (Task $task) {
-            return $this->get('api_platform.serializer')->normalize($task, 'jsonld', [
+            return $this->get('serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
@@ -241,7 +241,7 @@ trait AdminDashboardTrait
         }, $allTasks);
 
         $taskListsNormalized = array_map(function (TaskList $taskList) {
-            return $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+            return $this->get('serializer')->normalize($taskList, 'jsonld', [
                 'resource_class' => TaskList::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
@@ -343,7 +343,7 @@ trait AdminDashboardTrait
             ->getManagerForClass(TaskList::class)
             ->flush();
 
-        $taskListNormalized = $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+        $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
@@ -382,7 +382,7 @@ trait AdminDashboardTrait
                 ->flush();
         }
 
-        $taskListNormalized = $this->get('api_platform.serializer')->normalize($taskList, 'jsonld', [
+        $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
