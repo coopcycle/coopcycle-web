@@ -15,6 +15,7 @@ AppBundle\Entity\Sylius\Order:
                     nullable: true
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant
+            inversedBy: orders
             joinColumns:
                 restaurant_id:
                     referencedColumnName: id

@@ -21,6 +21,7 @@ AppBundle\Entity\RestaurantStripeAccount:
     manyToOne:
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant
+            inversedBy: stripeAccounts
             joinColumns:
                 restaurant_id:
                     referencedColumnName: id

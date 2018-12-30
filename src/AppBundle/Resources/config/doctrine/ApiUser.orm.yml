@@ -49,6 +49,7 @@ AppBundle\Entity\ApiUser:
             orderBy: null
         stores:
             targetEntity: AppBundle\Entity\Store
+            inversedBy: owners
             cascade:
                 - all
             fetch: LAZY
