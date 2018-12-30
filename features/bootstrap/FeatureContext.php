@@ -119,6 +119,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
         $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
+
+        // @see https://github.com/minkphp/Mink/commit/acf5fb1ec70b7de4902daf75301356702a26e6da
+        // @see https://github.com/minkphp/Mink/issues/731
+        if (!$this->minkContext->getSession()->isStarted()) {
+            $this->minkContext->getSession()->start();
+        }
     }
 
     private function getSession()

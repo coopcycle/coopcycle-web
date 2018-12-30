@@ -34,6 +34,6 @@ coopcycle_profile:
 redirect_to_locale:
     path: /
     defaults:
-        _controller: FrameworkBundle:Redirect:urlRedirect
+        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
         path: /%locale%
         permanent: false

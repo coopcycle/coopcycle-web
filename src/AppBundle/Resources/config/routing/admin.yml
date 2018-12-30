@@ -1,7 +1,7 @@
 admin_deliveries_new:
   path: /admin/deliveries/new
   defaults:
-      _controller: AppBundle:Admin:newDelivery
+      _controller: AppBundle\Controller\AdminController::newDeliveryAction
       layout: '@App/admin.html.twig'
       routes:
           success: admin_deliveries
@@ -10,12 +10,12 @@ admin_deliveries_new:
 
 admin_deliveries_calculate_price:
     path:     /admin/deliveries/calculate-price
-    defaults: { _controller: AppBundle:Admin:calculateDeliveryPrice }
+    defaults: { _controller: AppBundle\Controller\AdminController::calculateDeliveryPriceAction }
 
 admin_delivery:
   path: /admin/deliveries/{id}
   defaults:
-      _controller: AppBundle:Admin:delivery
+      _controller: AppBundle\Controller\AdminController::deliveryAction
       layout: '@App/admin.html.twig'
       routes:
           success: admin_deliveries
@@ -24,7 +24,7 @@ admin_delivery:
 
 admin_order_invoice:
     path:     /admin/orders/CPCCL-{number}.pdf
-    defaults: { _controller: AppBundle:Admin:orderInvoice }
+    defaults: { _controller: AppBundle\Controller\AdminController::orderInvoiceAction }
     methods:  [ GET ]
 
 admin_foodtech_dashboard:
@@ -32,7 +32,7 @@ admin_foodtech_dashboard:
     requirements:
       date: '[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__'
     defaults:
-        _controller: AppBundle:Admin:foodtechDashboard
+        _controller: AppBundle\Controller\AdminController::foodtechDashboardAction
         layout: '@App/admin.html.twig'
         template: '@App/admin/orders.html.twig'
         routes:
@@ -43,13 +43,13 @@ admin_foodtech_dashboard:
 
 admin_order:
     path:     /admin/orders/{id}
-    defaults: { _controller: AppBundle:Admin:order }
+    defaults: { _controller: AppBundle\Controller\AdminController::orderAction }
     methods:  [ GET, POST ]
 
 admin_orders:
     path:     /admin/orders
     defaults:
-        _controller: AppBundle:Admin:orderList
+        _controller: AppBundle\Controller\AdminController::orderListAction
         layout: '@App/admin.html.twig'
         template: '@App/admin/orders.html.twig'
         routes:
@@ -61,7 +61,7 @@ admin_orders:
 admin_restaurant_new:
     path: /admin/restaurants/new
     defaults:
-        _controller: AppBundle:Admin:newRestaurant
+        _controller: AppBundle\Controller\AdminController::newRestaurantAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/form.html.twig'
         routes:
@@ -78,7 +78,7 @@ admin_restaurant_new:
 admin_restaurant:
     path: /admin/restaurants/{id}
     defaults:
-        _controller: AppBundle:Admin:restaurant
+        _controller: AppBundle\Controller\AdminController::restaurantAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/form.html.twig'
         routes:
@@ -95,7 +95,7 @@ admin_restaurant:
 admin_restaurants:
     path: /admin/restaurants
     defaults:
-        _controller: AppBundle:Admin:restaurantList
+        _controller: AppBundle\Controller\AdminController::restaurantListAction
         layout: '@App/admin.html.twig'
         template: '@App/admin/restaurants.html.twig'
         routes:
@@ -108,7 +108,7 @@ admin_restaurants:
 admin_restaurant_menu_taxons:
     path: /admin/restaurants/{id}/menus
     defaults:
-        _controller: AppBundle:Admin:restaurantMenuTaxons
+        _controller: AppBundle\Controller\AdminController::restaurantMenuTaxonsAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/menu_taxons.html.twig'
         routes:
@@ -122,7 +122,7 @@ admin_restaurant_menu_taxons:
 admin_restaurant_new_menu_taxon:
     path: /admin/restaurants/{id}/menus/new
     defaults:
-        _controller: AppBundle:Admin:newRestaurantMenuTaxon
+        _controller: AppBundle\Controller\AdminController::newRestaurantMenuTaxonAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/menu_taxon.html.twig'
         routes:
@@ -136,7 +136,7 @@ admin_restaurant_new_menu_taxon:
 admin_restaurant_menu_taxon:
     path: /admin/restaurants/{restaurantId}/menus/{menuId}
     defaults:
-        _controller: AppBundle:Admin:restaurantMenuTaxon
+        _controller: AppBundle\Controller\AdminController::restaurantMenuTaxonAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/menu_taxon.html.twig'
         routes:
@@ -151,7 +151,7 @@ admin_restaurant_menu_taxon:
 admin_restaurant_menu_taxon_activate:
     path: /admin/restaurants/{restaurantId}/menus/{menuId}/activate
     defaults:
-        _controller: AppBundle:Admin:activateRestaurantMenuTaxon
+        _controller: AppBundle\Controller\AdminController::activateRestaurantMenuTaxonAction
         layout: '@App/admin.html.twig'
         routes:
             menu_taxons: admin_restaurant_menu_taxons
@@ -160,7 +160,7 @@ admin_restaurant_menu_taxon_activate:
 admin_delete_restaurant_menu_taxon_child:
     path: /admin/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
     defaults:
-        _controller: AppBundle:Admin:deleteRestaurantMenuTaxonChild
+        _controller: AppBundle\Controller\AdminController::deleteRestaurantMenuTaxonChildAction
         layout: '@App/admin.html.twig'
         routes:
             menu_taxon: admin_restaurant_menu_taxon
@@ -169,7 +169,7 @@ admin_delete_restaurant_menu_taxon_child:
 admin_restaurant_products:
     path: /admin/restaurants/{id}/products
     defaults:
-        _controller: AppBundle:Admin:restaurantProducts
+        _controller: AppBundle\Controller\AdminController::restaurantProductsAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/products.html.twig'
         routes:
@@ -182,7 +182,7 @@ admin_restaurant_products:
 admin_restaurant_product_new:
     path: /admin/restaurants/{id}/products/new
     defaults:
-        _controller: AppBundle:Admin:newRestaurantProduct
+        _controller: AppBundle\Controller\AdminController::newRestaurantProductAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/product.html.twig'
         routes:
@@ -193,7 +193,7 @@ admin_restaurant_product_new:
 admin_restaurant_product:
     path: /admin/restaurants/{restaurantId}/products/{productId}
     defaults:
-        _controller: AppBundle:Admin:restaurantProduct
+        _controller: AppBundle\Controller\AdminController::restaurantProductAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/product.html.twig'
         routes:
@@ -204,7 +204,7 @@ admin_restaurant_product:
 admin_restaurant_planning:
     path: /admin/restaurants/{id}/planning
     defaults:
-        _controller: AppBundle:Admin:restaurantPlanning
+        _controller: AppBundle\Controller\AdminController::restaurantPlanningAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/planning.html.twig'
         routes:
@@ -216,7 +216,7 @@ admin_restaurant_planning:
 admin_restaurant_product_options:
     path: /admin/restaurants/{id}/product-options
     defaults:
-        _controller: AppBundle:Admin:restaurantProductOptions
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionsAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/product_options.html.twig'
         routes:
@@ -229,7 +229,7 @@ admin_restaurant_product_options:
 admin_restaurant_product_option_new:
     path: /admin/restaurants/{id}/product-options/new
     defaults:
-        _controller: AppBundle:Admin:newRestaurantProductOption
+        _controller: AppBundle\Controller\AdminController::newRestaurantProductOptionAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/product_option.html.twig'
         routes:
@@ -241,7 +241,7 @@ admin_restaurant_product_option_new:
 admin_restaurant_product_option:
     path: /admin/restaurants/{restaurantId}/product-options/{optionId}
     defaults:
-        _controller: AppBundle:Admin:restaurantProductOption
+        _controller: AppBundle\Controller\AdminController::restaurantProductOptionAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/product_option.html.twig'
         routes:
@@ -253,7 +253,7 @@ admin_restaurant_product_option:
 admin_restaurant_dashboard:
     path: /admin/restaurants/{restaurantId}/dashboard
     defaults:
-        _controller: AppBundle:Admin:restaurantDashboard
+        _controller: AppBundle\Controller\AdminController::restaurantDashboardAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/dashboard.html.twig'
         routes:
@@ -272,7 +272,7 @@ admin_restaurant_dashboard:
 admin_restaurant_dashboard_order:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}
     defaults:
-        _controller: AppBundle:Admin:restaurantDashboardOrder
+        _controller: AppBundle\Controller\AdminController::restaurantDashboardOrderAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/dashboard.html.twig'
         routes:
@@ -291,14 +291,14 @@ admin_restaurant_dashboard_order:
 admin_restaurant_dashboard_order_accept:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/accept
     defaults:
-        _controller: AppBundle:Admin:acceptRestaurantOrder
+        _controller: AppBundle\Controller\AdminController::acceptRestaurantOrderAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_restaurant_preparation_time:
     path: /admin/restaurants/{id}/preparation-time
     defaults:
-        _controller: AppBundle:Admin:preparationTime
+        _controller: AppBundle\Controller\AdminController::preparationTimeAction
         layout: '@App/admin.html.twig'
         template: '@App/restaurant/preparation_time.html.twig'
         routes:
@@ -310,68 +310,68 @@ admin_restaurant_preparation_time:
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:
-        _controller: AppBundle:Admin:acceptOrder
+        _controller: AppBundle\Controller\AdminController::acceptOrderAction
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_refuse:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/refuse
     defaults:
-        _controller: AppBundle:Admin:refuseRestaurantOrder
+        _controller: AppBundle\Controller\AdminController::refuseRestaurantOrderAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_order_refuse:
     path: /admin/orders/{id}/refuse
     defaults:
-        _controller: AppBundle:Admin:refuseOrder
+        _controller: AppBundle\Controller\AdminController::refuseOrderAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_ready:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/ready
     defaults:
-        _controller: AppBundle:Admin:readyOrder
+        _controller: AppBundle\Controller\AdminController::readyOrderAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_delay:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/delay
     defaults:
-        _controller: AppBundle:Admin:delayRestaurantOrder
+        _controller: AppBundle\Controller\AdminController::delayRestaurantOrderAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_order_delay:
     path: /admin/orders/{id}/delay
     defaults:
-        _controller: AppBundle:Admin:delayOrder
+        _controller: AppBundle\Controller\AdminController::delayOrderAction
     methods: [ POST ]
 
 admin_restaurant_dashboard_order_cancel:
     path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/cancel
     defaults:
-        _controller: AppBundle:Admin:cancelOrderFromDashboard
+        _controller: AppBundle\Controller\AdminController::cancelOrderFromDashboardAction
         redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_restaurant_stripe_oauth_redirect:
     path: /admin/restaurants/{id}/stripe-oauth-redirect
     defaults:
-        _controller: AppBundle:Admin:stripeOAuthRedirect
+        _controller: AppBundle\Controller\AdminController::stripeOAuthRedirectAction
         redirect_after: admin_restaurant
     methods: [ GET ]
 
 admin_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:
-        _controller: AppBundle:Admin:cancelOrder
+        _controller: AppBundle\Controller\AdminController::cancelOrderAction
         redirect_route: admin_orders
     methods: [ POST ]
 
 admin_stores:
     path: /admin/stores
     defaults:
-        _controller: AppBundle:Admin:storeList
+        _controller: AppBundle\Controller\AdminController::storeListAction
         layout: '@App/admin.html.twig'
         template: '@App/admin/stores.html.twig'
         routes:
@@ -383,7 +383,7 @@ admin_stores:
 admin_store_new:
     path: /admin/stores/new
     defaults:
-        _controller: AppBundle:Admin:newStore
+        _controller: AppBundle\Controller\AdminController::newStoreAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -395,7 +395,7 @@ admin_store_new:
 admin_store:
     path: /admin/stores/{id}
     defaults:
-        _controller: AppBundle:Admin:store
+        _controller: AppBundle\Controller\AdminController::storeAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -407,7 +407,7 @@ admin_store:
 admin_store_deliveries:
     path: /admin/stores/{id}/deliveries
     defaults:
-        _controller: AppBundle:Admin:storeDeliveries
+        _controller: AppBundle\Controller\AdminController::storeDeliveriesAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -419,7 +419,7 @@ admin_store_deliveries:
 admin_store_delivery_new:
     path: /admin/stores/{id}/deliveries/new
     defaults:
-        _controller: AppBundle:Admin:newStoreDelivery
+        _controller: AppBundle\Controller\AdminController::newStoreDeliveryAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -431,7 +431,7 @@ admin_store_delivery_new:
 admin_store_api_keys:
     path: /admin/stores/{id}/api-keys
     defaults:
-        _controller: AppBundle:Admin:storeApiKeys
+        _controller: AppBundle\Controller\AdminController::storeApiKeysAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -441,7 +441,7 @@ admin_store_api_keys:
 admin_store_users:
     path: /admin/stores/{id}/users
     defaults:
-        _controller: AppBundle:Admin:storeUsers
+        _controller: AppBundle\Controller\AdminController::storeUsersAction
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
@@ -451,13 +451,13 @@ admin_store_users:
 admin_tag_new:
     path: /admin/settings/tags/new
     defaults:
-        _controller: AppBundle:Tag:newTag
+        _controller: AppBundle\Controller\TagController::newTagAction
         template: '@App/admin/tag.html.twig'
         redirect_route: admin_tags
 
 admin_tag:
     path: /admin/settings/tags/{slug}
     defaults:
-        _controller: AppBundle:Tag:tag
+        _controller: AppBundle\Controller\TagController::tagAction
         template: '@App/admin/tag.html.twig'
         redirect_route: admin_tags

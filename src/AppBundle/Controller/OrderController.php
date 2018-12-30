@@ -10,24 +10,36 @@ use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use SimpleBus\Message\Bus\MessageBus;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/order")
  */
-class OrderController extends Controller
+class OrderController extends AbstractController
 {
+    private $orderManager;
+    private $commandBus;
+
+    public function __construct(ObjectManager $orderManager, MessageBus $commandBus)
+    {
+        $this->orderManager = $orderManager;
+        $this->commandBus = $commandBus;
+    }
+
     /**
      * @Route("/", name="order")
      * @Template()
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, CartContextInterface $cartContext)
     {
-        $order = $this->get('sylius.context.cart')->getCart();
+        $order = $cartContext->getCart();
 
         if (null === $order) {
 
@@ -41,14 +53,14 @@ class OrderController extends Controller
         // @see AppBundle\EventListener\WebAuthenticationListener
         if ($user !== $order->getCustomer()) {
             $order->setCustomer($user);
-            $this->get('sylius.manager.order')->flush();
+            $this->orderManager->flush();
         }
 
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->get('sylius.manager.order')->flush();
+            $this->orderManager->flush();
 
             return $this->redirectToRoute('order_payment');
         }
@@ -63,9 +75,9 @@ class OrderController extends Controller
      * @Route("/payment", name="order_payment")
      * @Template()
      */
-    public function paymentAction(Request $request, OrderManager $orderManager)
+    public function paymentAction(Request $request, OrderManager $orderManager, CartContextInterface $cartContext)
     {
-        $order = $this->get('sylius.context.cart')->getCart();
+        $order = $cartContext->getCart();
 
         if (null === $order) {
 
@@ -86,11 +98,11 @@ class OrderController extends Controller
 
             $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-            $this->get('command_bus')->handle(
+            $this->commandBus->handle(
                 new CheckoutCommand($order, $form->get('stripePayment')->get('stripeToken')->getData())
             );
 
-            $this->get('sylius.manager.order')->flush();
+            $this->orderManager->flush();
 
             if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
                 return array_merge($parameters, [
