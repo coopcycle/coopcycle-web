@@ -5,14 +5,24 @@ namespace AppBundle\Command;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
+use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
+use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
+use FOS\UserBundle\Util\UserManipulator;
 use GuzzleHttp\Client;
+use libphonenumber\PhoneNumberUtil;
+use Predis\Client as Redis;
 use Sylius\Component\Locale\Model\Locale;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Sylius\Component\Product\Generator\ProductVariantGeneratorInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -20,7 +30,7 @@ use Symfony\Component\Lock\Factory as LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
-class InitDemoCommand extends ContainerAwareCommand
+class InitDemoCommand extends Command
 {
     private $userManipulator;
     private $doctrine;
@@ -54,24 +64,45 @@ class InitDemoCommand extends ContainerAwareCommand
             ->setDescription('Initialize CoopCycle demo.');
     }
 
+    public function __construct(
+        ManagerRegistry $doctrine,
+        UserManipulator $userManipulator,
+        LoaderInterface $fixturesLoader,
+        Faker\Generator $faker,
+        Redis $redis,
+        Config $craueConfig,
+        string $configEntityName,
+        ProductVariantGeneratorInterface $productVariantGenerator,
+        FactoryInterface $taxonFactory,
+        PhoneNumberUtil $phoneNumberUtil,
+        RepositoryInterface $taxCategoryRepository,
+        FactoryInterface $taxCategoryFactory,
+        ObjectManager $taxCategoryManager,
+        FactoryInterface $taxRateFactory,
+        ObjectManager $taxRateManager)
+    {
+        $this->doctrine = $doctrine;
+        $this->userManipulator = $userManipulator;
+        $this->fixturesLoader = $fixturesLoader;
+        $this->faker = $faker;
+        $this->redis = $redis;
+        $this->craueConfig = $craueConfig;
+        $this->configEntityName = $configEntityName;
+        $this->productVariantGenerator = $productVariantGenerator;
+        $this->taxonFactory = $taxonFactory;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->taxCategoryRepository = $taxCategoryRepository;
+        $this->taxCategoryFactory = $taxCategoryFactory;
+        $this->taxCategoryManager = $taxCategoryManager;
+        $this->taxRateFactory = $taxRateFactory;
+        $this->taxRateManager = $taxRateManager;
+
+        parent::__construct();
+    }
+
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->userManipulator = $this->getContainer()->get('fos_user.util.user_manipulator');
-        $this->doctrine = $this->getContainer()->get('doctrine');
-
-        $this->fixturesLoader = $this->getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
-
-        $this->faker = $this->getContainer()->get('nelmio_alice.faker.generator');
         $this->faker->addProvider(new RestaurantProvider($this->faker));
-
-        $this->redis = $this->getContainer()->get('snc_redis.default');
-
-        $this->craueConfig = $this->getContainer()->get('craue_config');
-
-        $this->productVariantGenerator = $this->getContainer()->get('sylius.generator.product_variant');
-        $this->taxonFactory = $this->getContainer()->get('sylius.factory.taxon');
-
-        $this->phoneNumberUtil = $this->getContainer()->get('libphonenumber.phone_number_util');
 
         $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
@@ -175,7 +206,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
     private function createCraueConfigSetting($name, $value, $section = 'general')
     {
-        $className = $this->getContainer()->getParameter('craue_config.entity_name');
+        $className = $this->configEntityName;
 
         $setting = new $className();
 
@@ -188,7 +219,7 @@ class InitDemoCommand extends ContainerAwareCommand
 
     private function handleCraueConfig(InputInterface $input, OutputInterface $output)
     {
-        $className = $this->getContainer()->getParameter('craue_config.entity_name');
+        $className = $this->configEntityName;
         $em = $this->doctrine->getManagerForClass($className);
 
         try {
@@ -251,25 +282,18 @@ class InitDemoCommand extends ContainerAwareCommand
 
     private function createTaxCategory($taxCategoryName, $taxCategoryCode, $taxRateName, $taxRateCode, $taxRateAmount)
     {
-        $taxCategoryRepository = $this->getContainer()->get('sylius.repository.tax_category');
-
-        if ($taxCategory = $taxCategoryRepository->findOneByCode($taxCategoryCode)) {
+        if ($taxCategory = $this->taxCategoryRepository->findOneByCode($taxCategoryCode)) {
             return $taxCategory;
         }
 
-        $taxCategoryFactory = $this->getContainer()->get('sylius.factory.tax_category');
-        $taxCategoryManager = $this->getContainer()->get('sylius.manager.tax_category');
-        $taxRateFactory = $this->getContainer()->get('sylius.factory.tax_rate');
-        $taxRateManager = $this->getContainer()->get('sylius.manager.tax_rate');
-
-        $taxCategory = $taxCategoryFactory->createNew();
+        $taxCategory = $this->taxCategoryFactory->createNew();
         $taxCategory->setName($taxCategoryName);
         $taxCategory->setCode($taxCategoryCode);
 
-        $taxCategoryManager->persist($taxCategory);
-        $taxCategoryManager->flush();
+        $this->taxCategoryManager->persist($taxCategory);
+        $this->taxCategoryManager->flush();
 
-        $taxRate = $taxRateFactory->createNew();
+        $taxRate = $this->taxRateFactory->createNew();
         $taxRate->setName($taxRateName);
         $taxRate->setCode($taxRateCode);
         $taxRate->setCategory($taxCategory);
@@ -277,8 +301,8 @@ class InitDemoCommand extends ContainerAwareCommand
         $taxRate->setIncludedInPrice(true);
         $taxRate->setCalculator('default');
 
-        $taxRateManager->persist($taxRate);
-        $taxRateManager->flush();
+        $this->taxRateManager->persist($taxRate);
+        $this->taxRateManager->flush();
 
         return $taxCategory;
     }
@@ -535,8 +559,7 @@ class InitDemoCommand extends ContainerAwareCommand
                 $em->clear();
 
                 // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
-                $taxCategoryRepository = $this->getContainer()->get('sylius.repository.tax_category');
-                $foodTaxCategory = $taxCategoryRepository->findOneByCode('tva_conso_immediate');
+                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('tva_conso_immediate');
             }
         }
 

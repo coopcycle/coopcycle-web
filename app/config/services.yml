@@ -79,6 +79,33 @@ services:
     alias: 'fos_user.util.user_manipulator'
     public: true
 
+  AppBundle\Command\SetupCommand:
+    arguments:
+      $productRepository: '@sylius.repository.product'
+      $productFactory: '@sylius.factory.product'
+      $productManager: '@sylius.manager.product'
+      $productAttributeRepository: '@sylius.repository.product_attribute'
+      $productAttributeManager: '@sylius.manager.product_attribute'
+      $localeRepository: '@sylius.repository.locale'
+      $localeFactory: '@sylius.factory.locale'
+      $currencyRepository: '@sylius.repository.currency'
+      $currencyFactory: '@sylius.factory.currency'
+
+  AppBundle\Command\InitDemoCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $faker: '@nelmio_alice.faker.generator'
+      $craueConfig: '@craue_config'
+      $configEntityName: '%craue_config.entity_name%'
+      $productVariantGenerator: '@sylius.generator.product_variant'
+      $taxonFactory: '@sylius.factory.taxon'
+      $phoneNumberUtil: '@libphonenumber.phone_number_util'
+      $taxCategoryRepository: '@sylius.repository.tax_category'
+      $taxCategoryFactory: '@sylius.factory.tax_category'
+      $taxCategoryManager: '@sylius.manager.tax_category'
+      $taxRateFactory: '@sylius.factory.tax_rate'
+      $taxRateManager: '@sylius.manager.tax_rate'
+
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
     tags:

@@ -2,17 +2,24 @@
 
 namespace AppBundle\Command;
 
+use Cocur\Slugify\SlugifyInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserInterface;
 use JMose\CommandSchedulerBundle\Entity\ScheduledCommand;
+use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SetupCommand extends ContainerAwareCommand
+class SetupCommand extends Command
 {
     private $productRepository;
     private $productManager;
@@ -61,34 +68,47 @@ class SetupCommand extends ContainerAwareCommand
         'GBP',
     ];
 
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
+        ProductFactoryInterface $productFactory,
+        ObjectManager $productManager,
+        RepositoryInterface $productAttributeRepository,
+        ObjectManager $productAttributeManager,
+        RepositoryInterface $localeRepository,
+        FactoryInterface $localeFactory,
+        RepositoryInterface $currencyRepository,
+        FactoryInterface $currencyFactory,
+        ManagerRegistry $doctrine,
+        SlugifyInterface $slugify)
+    {
+        $this->productRepository = $productRepository;
+        $this->productFactory = $productFactory;
+        $this->productManager = $productManager;
+
+        $this->productAttributeRepository = $productAttributeRepository;
+        $this->productAttributeManager = $productAttributeManager;
+
+        $this->scheduledCommandRepository =
+            $doctrine->getRepository(ScheduledCommand::class);
+        $this->scheduledCommandManager =
+            $doctrine->getManagerForClass(ScheduledCommand::class);
+
+        $this->localeRepository = $localeRepository;
+        $this->localeFactory = $localeFactory;
+
+        $this->currencyRepository = $currencyRepository;
+        $this->currencyFactory = $currencyFactory;
+
+        $this->slugify = $slugify;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
             ->setName('coopcycle:setup')
             ->setDescription('Setups some basic stuff.');
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->productRepository = $this->getContainer()->get('sylius.repository.product');
-        $this->productFactory = $this->getContainer()->get('sylius.factory.product');
-        $this->productManager = $this->getContainer()->get('sylius.manager.product');
-
-        $this->productAttributeRepository = $this->getContainer()->get('sylius.repository.product_attribute');
-        $this->productAttributeManager = $this->getContainer()->get('sylius.manager.product_attribute');
-
-        $this->scheduledCommandRepository =
-            $this->getContainer()->get('doctrine')->getRepository(ScheduledCommand::class);
-        $this->scheduledCommandManager =
-            $this->getContainer()->get('doctrine')->getManagerForClass(ScheduledCommand::class);
-
-        $this->localeRepository = $this->getContainer()->get('sylius.repository.locale');
-        $this->localeFactory = $this->getContainer()->get('sylius.factory.locale');
-
-        $this->currencyRepository = $this->getContainer()->get('sylius.repository.currency');
-        $this->currencyFactory = $this->getContainer()->get('sylius.factory.currency');
-
-        $this->slugify = $this->getContainer()->get('slugify');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
