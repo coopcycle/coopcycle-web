@@ -81,12 +81,10 @@ security:
                 provider:       fos_userbundle
                 success_handler: coopcycle.web_success_handler
             logout: true
-            logout_on_user_change: true
             anonymous: ~
 
         main:
             anonymous: ~
-            logout_on_user_change: true
 
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
