@@ -3,11 +3,11 @@
 namespace AppBundle\Controller;
 
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AssetsController extends Controller
+class AssetsController extends AbstractController
 {
     /**
      * @Route("/js/data", name="js_data")

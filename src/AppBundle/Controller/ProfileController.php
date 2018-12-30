@@ -22,6 +22,7 @@ use AppBundle\Service\NotificationManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -110,7 +111,7 @@ class ProfileController extends Controller
         return [ $orders, $pages, $page ];
     }
 
-    public function orderAction($id, Request $request, OrderManager $orderManager)
+    public function orderAction($id, Request $request, OrderManager $orderManager, JWTManagerInterface $jwtManager)
     {
         // Allow retrieving deleted entities anyway
         $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
@@ -120,8 +121,6 @@ class ProfileController extends Controller
         if ($order->getCustomer() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
-
-        $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
 
         if ($order->isFoodtech()) {
 

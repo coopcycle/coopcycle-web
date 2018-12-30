@@ -4,13 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Restaurant;
 use Cocur\Slugify\SlugifyInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SitemapController extends Controller
+class SitemapController extends AbstractController
 {
     /**
      * @Route("/sitemap.xml", name="sitemap")

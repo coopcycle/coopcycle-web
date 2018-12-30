@@ -6,7 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\SettingsManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Stripe;
 use Sylius\Component\Payment\PaymentTransitions;
@@ -18,19 +18,27 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/{_locale}/pub", requirements={ "_locale": "%locale_regex%" })
  */
-class PublicController extends Controller
+class PublicController extends AbstractController
 {
+    public function __construct(
+        $stateMachineFactory,
+        $orderRepository,
+        $pdfGenerator)
+    {
+        $this->stateMachineFactory = $stateMachineFactory;
+        $this->orderRepository = $orderRepository;
+        $this->pdfGenerator = $pdfGenerator;
+    }
+
     /**
      * @Route("/o/{number}", name="public_order")
      * @Template
      */
     public function orderAction($number, Request $request, SettingsManager $settingsManager)
     {
-        $stateMachineFactory = $this->get('sm.factory');
-
         Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
 
-        $order = $this->get('sylius.repository.order')->findOneBy([
+        $order = $this->orderRepository->findOneBy([
             'number' => $number
         ]);
 
@@ -39,7 +47,7 @@ class PublicController extends Controller
         }
 
         $stripePayment = $order->getLastPayment();
-        $stateMachine = $stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
         $parameters = [
             'order' => $order,
@@ -96,7 +104,7 @@ class PublicController extends Controller
      */
     public function invoiceAction($number, Request $request)
     {
-        $order = $this->get('sylius.repository.order')->findOneBy([
+        $order = $this->orderRepository->findOneBy([
             'number' => $number
         ]);
 
@@ -114,7 +122,7 @@ class PublicController extends Controller
             'customer' => $order->getCustomer()
         ]);
 
-        return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [
+        return new Response($this->pdfGenerator->getOutputFromHtml($html), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }

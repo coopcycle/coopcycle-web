@@ -3,14 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ApiUser;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Laravolt\Avatar\Avatar;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
     private $avatarBackgrounds = [
         '#f44336',
@@ -34,12 +35,9 @@ class UserController extends Controller
      * @Route("/users/{username}", name="user")
      * @Template()
      */
-    public function indexAction($username)
+    public function indexAction($username, UserManagerInterface $userManager)
     {
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
-
-        $user = $userManager->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
 
         return [
             'user' => $user,

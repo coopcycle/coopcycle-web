@@ -16,6 +16,7 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,7 +112,7 @@ trait AdminDashboardTrait
      * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}|__DATE__"})
      */
-    public function dashboardFullscreenAction($date, Request $request, TaskManager $taskManager)
+    public function dashboardFullscreenAction($date, Request $request, TaskManager $taskManager, JWTManagerInterface $jwtManager)
     {
         $date = new \DateTime($date);
         $dayAfter = clone $date;
@@ -271,8 +272,6 @@ trait AdminDashboardTrait
                 'color' => $tag->getColor(),
             ];
         }
-
-        $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
 
         return $this->render('@App/admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),

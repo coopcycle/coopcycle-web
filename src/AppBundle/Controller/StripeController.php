@@ -5,7 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Service\SettingsManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\UserBundle\Model\UserManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,12 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
  */
-class StripeController extends Controller
+class StripeController extends AbstractController
 {
     /**
      * @Route("/stripe/connect/standard", name="stripe_connect_standard_account")
      */
-    public function connectStandardAccountAction(Request $request, SettingsManager $settingsManager)
+    public function connectStandardAccountAction(
+        Request $request,
+        SettingsManager $settingsManager,
+        UserManagerInterface $userManager)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -100,7 +104,7 @@ class StripeController extends Controller
                 ;
 
             $this->getUser()->addStripeAccount($stripeAccount);
-            $this->get('fos_user.user_manager')->updateUser($this->getUser());
+            $this->userManager->updateUser($this->getUser());
 
             if ($request->query->has('state')) {
 

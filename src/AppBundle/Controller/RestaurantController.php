@@ -9,27 +9,66 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Utils\OrderTimelineCalculator;
+use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sonata\SeoBundle\Seo\SeoPageInterface;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Product\Model\ProductInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
  */
-class RestaurantController extends Controller
+class RestaurantController extends AbstractController
 {
     const ITEMS_PER_PAGE = 15;
+
+    private $orderManager;
+    private $seoPage;
+    private $uploaderHelper;
+
+    public function __construct(
+        ObjectManager $orderManager,
+        SeoPageInterface $seoPage,
+        UploaderHelper $uploaderHelper,
+        ShippingDateFilter $shippingDateFilter,
+        ValidatorInterface $validator,
+        RepositoryInterface $productRepository,
+        RepositoryInterface $orderItemRepository,
+        $orderItemFactory,
+        $productVariantResolver,
+        RepositoryInterface $productOptionValueRepository,
+        $orderItemQuantityModifier,
+        $orderModifier)
+    {
+        $this->orderManager = $orderManager;
+        $this->seoPage = $seoPage;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->shippingDateFilter = $shippingDateFilter;
+        $this->validator = $validator;
+        $this->productRepository = $productRepository;
+        $this->orderItemRepository = $orderItemRepository;
+        $this->orderItemFactory = $orderItemFactory;
+        $this->productVariantResolver = $productVariantResolver;
+        $this->productOptionValueRepository = $productOptionValueRepository;
+        $this->orderItemQuantityModifier = $orderItemQuantityModifier;
+        $this->orderModifier = $orderModifier;
+    }
 
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
     {
@@ -55,10 +94,9 @@ class RestaurantController extends Controller
 
     private function customizeSeoPage(Restaurant $restaurant, Request $request)
     {
-        $seoPage = $this->get('sonata.seo.page');
-        $seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
-        $seoPage
-            ->addMeta('property', 'og:title', $seoPage->getTitle())
+        $this->seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
+        $this->seoPage
+            ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:description', sprintf('%s, %s %s',
                 $restaurant->getAddress()->getStreetAddress(),
                 $restaurant->getAddress()->getPostalCode(),
@@ -73,10 +111,9 @@ class RestaurantController extends Controller
             ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
             ;
 
-        $uploaderHelper = $this->get('vich_uploader.templating.helper.uploader_helper');
-        $imagePath = $uploaderHelper->asset($restaurant, 'imageFile');
+        $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {
-            $seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
+            $this->seoPage->addMeta('property', 'og:image', $request->getUriForPath($imagePath));
         }
     }
 
@@ -89,7 +126,7 @@ class RestaurantController extends Controller
         $availabilities = array_filter($availabilities, function ($date) use ($cart) {
             $shippingDate = new \DateTime($date);
 
-            return $this->get('coopcycle.shipping_date_filter')->accept($cart, $shippingDate);
+            return $this->shippingDateFilter->accept($cart, $shippingDate);
         });
 
         // Make sure to return a zero-indexed array
@@ -184,7 +221,7 @@ class RestaurantController extends Controller
      * )
      * @Template()
      */
-    public function indexAction($id, $slug, Request $request, SlugifyInterface $slugify)
+    public function indexAction($id, $slug, Request $request, SlugifyInterface $slugify, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
@@ -203,7 +240,7 @@ class RestaurantController extends Controller
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
-        $cart = $this->get('sylius.context.cart')->getCart();
+        $cart = $cartContext->getCart();
 
         $cartForm = $this->createForm(CartType::class, $cart);
 
@@ -219,7 +256,7 @@ class RestaurantController extends Controller
                 // FIXME This is cumbersome, there should be a better way
                 $shippingAddress = $cart->getShippingAddress();
                 if (null !== $shippingAddress) {
-                    $isShippingAddressValid = count($this->get('validator')->validate($shippingAddress)) === 0;
+                    $isShippingAddressValid = count($this->validator->validate($shippingAddress)) === 0;
                     if (!$isShippingAddressValid) {
                         $cart->setShippingAddress(null);
                     }
@@ -251,8 +288,8 @@ class RestaurantController extends Controller
                     }
                 }
 
-                $this->get('sylius.manager.order')->persist($cart);
-                $this->get('sylius.manager.order')->flush();
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
 
                 // TODO Find a better way to do this
                 $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
@@ -264,7 +301,7 @@ class RestaurantController extends Controller
 
                 // The cart is valid, and the user clicked on the submit button
                 if ($cartForm->isValid()) {
-                    $this->get('sylius.manager.order')->flush();
+                    $this->orderManager->flush();
 
                     return $this->redirectToRoute('order');
                 }
@@ -292,7 +329,7 @@ class RestaurantController extends Controller
     /**
      * @Route("/restaurant/{id}/cart/reset", name="restaurant_cart_reset", methods={"POST"})
      */
-    public function resetCartAction($id, Request $request)
+    public function resetCartAction($id, Request $request, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
@@ -300,16 +337,16 @@ class RestaurantController extends Controller
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
-        $cart = $this->get('sylius.context.cart')->getCart();
+        $cart = $cartContext->getCart();
 
         $cart->clearItems();
         $cart->setRestaurant($restaurant);
         $cart->setShippedAt($restaurant->getNextOpeningDate());
 
-        $this->get('sylius.manager.order')->persist($cart);
-        $this->get('sylius.manager.order')->flush();
+        $this->orderManager->persist($cart);
+        $this->orderManager->flush();
 
-        $errors = $this->get('validator')->validate($cart);
+        $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);
 
         return $this->jsonResponse($cart, $errors);
@@ -318,15 +355,14 @@ class RestaurantController extends Controller
     /**
      * @Route("/restaurant/{id}/cart/product/{code}", name="restaurant_add_product_to_cart", methods={"POST"})
      */
-    public function addProductToCartAction($id, $code, Request $request)
+    public function addProductToCartAction($id, $code, Request $request, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
-        $product = $this->get('sylius.repository.product')
-            ->findOneByCode($code);
+        $product = $this->productRepository->findOneByCode($code);
 
-        $cart = $this->get('sylius.context.cart')->getCart();
+        $cart = $cartContext->getCart();
 
         if (!$product->isEnabled()) {
             $errors = [
@@ -360,18 +396,15 @@ class RestaurantController extends Controller
 
         $quantity = $request->request->getInt('quantity', 1);
 
-        $cartItem = $this->get('sylius.factory.order_item')->createNew();
-
-        $variantResolver = $this->get('coopcycle.sylius.product_variant_resolver.lazy');
+        $cartItem = $this->orderItemFactory->createNew();
 
         if (!$product->hasOptions()) {
-            $productVariant = $variantResolver->getVariant($product);
+            $productVariant = $this->productVariantResolver->getVariant($product);
         } else {
 
             if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
-                $productVariant = $variantResolver->getVariant($product);
+                $productVariant = $this->productVariantResolver->getVariant($product);
             } else {
-                $productOptionValueRepository = $this->get('sylius.repository.product_option_value');
                 $options = $request->request->get('options');
 
                 $optionValues = [];
@@ -385,7 +418,7 @@ class RestaurantController extends Controller
                     }
 
                     foreach ($optionValueCodes as $optionValueCode) {
-                        $optionValue = $productOptionValueRepository->findOneByCode($optionValueCode);
+                        $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
                         $optionValues[] = $optionValue;
                     }
                 }
@@ -401,16 +434,16 @@ class RestaurantController extends Controller
                     return $this->jsonResponse($cart, $errors);
                 }
 
-                $productVariant = $variantResolver->getVariantForOptionValues($product, $optionValues);
+                $productVariant = $this->productVariantResolver->getVariantForOptionValues($product, $optionValues);
             }
         }
 
         $cartItem->setVariant($productVariant);
         $cartItem->setUnitPrice($productVariant->getPrice());
 
-        $this->get('sylius.order_item_quantity_modifier')->modify($cartItem, $quantity);
+        $this->orderItemQuantityModifier->modify($cartItem, $quantity);
 
-        $this->get('sylius.order_modifier')->addToOrder($cart, $cartItem);
+        $this->orderModifier->addToOrder($cart, $cartItem);
 
         // FIXME
         // There is a possible race condition in the workflow
@@ -421,14 +454,14 @@ class RestaurantController extends Controller
             $cart->setShippedAt(new \DateTime(current($availabilities)));
         }
 
-        $this->get('sylius.manager.order')->persist($cart);
-        $this->get('sylius.manager.order')->flush();
+        $this->orderManager->persist($cart);
+        $this->orderManager->flush();
 
         // TODO Find a better way to do this
         $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
         $request->getSession()->set($sessionKeyName, $cart->getId());
 
-        $errors = $this->get('validator')->validate($cart);
+        $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);
 
         return $this->jsonResponse($cart, $errors);
@@ -437,22 +470,22 @@ class RestaurantController extends Controller
     /**
      * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
-    public function removeFromCartAction($id, $cartItemId, Request $request)
+    public function removeFromCartAction($id, $cartItemId, Request $request, CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
-        $cart = $this->get('sylius.context.cart')->getCart();
-        $cartItem = $this->get('sylius.repository.order_item')->find($cartItemId);
+        $cart = $cartContext->getCart();
+        $cartItem = $this->orderItemRepository->find($cartItemId);
 
         if ($cartItem) {
-            $this->get('sylius.order_modifier')->removeFromOrder($cart, $cartItem);
+            $this->orderModifier->removeFromOrder($cart, $cartItem);
 
-            $this->get('sylius.manager.order')->persist($cart);
-            $this->get('sylius.manager.order')->flush();
+            $this->orderManager->persist($cart);
+            $this->orderManager->flush();
         }
 
-        $errors = $this->get('validator')->validate($cart);
+        $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);
 
         return $this->jsonResponse($cart, $errors);

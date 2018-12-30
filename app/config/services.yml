@@ -78,6 +78,7 @@ services:
   FOS\UserBundle\Util\UserManipulator:
     alias: 'fos_user.util.user_manipulator'
     public: true
+  Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface: '@lexik_jwt_authentication.jwt_manager'
 
   AppBundle\Command\SetupCommand:
     arguments:
@@ -105,6 +106,32 @@ services:
       $taxCategoryManager: '@sylius.manager.tax_category'
       $taxRateFactory: '@sylius.factory.tax_rate'
       $taxRateManager: '@sylius.manager.tax_rate'
+
+  AppBundle\Controller\OrderController:
+    arguments:
+      $orderManager: '@sylius.manager.order'
+      $commandBus: '@command_bus'
+
+  AppBundle\Controller\PublicController:
+    arguments:
+      $stateMachineFactory: '@sm.factory'
+      $orderRepository: '@sylius.repository.order'
+      $pdfGenerator: knp_snappy.pdf
+
+  AppBundle\Controller\RestaurantController:
+    arguments:
+      $orderManager: '@sylius.manager.order'
+      $seoPage: '@sonata.seo.page'
+      $uploaderHelper: '@vich_uploader.templating.helper.uploader_helper'
+      $shippingDateFilter: '@coopcycle.shipping_date_filter'
+      $validator: '@validator'
+      $productRepository: '@sylius.repository.product'
+      $orderItemRepository: '@sylius.repository.order_item'
+      $orderItemFactory: '@sylius.factory.order_item'
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'
+      $productOptionValueRepository: '@sylius.repository.product_option_value'
+      $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
+      $orderModifier: '@sylius.order_modifier'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']

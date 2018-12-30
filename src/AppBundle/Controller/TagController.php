@@ -4,10 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class TagController extends Controller
+class TagController extends AbstractController
 {
     public function newTagAction(Request $request)
     {
