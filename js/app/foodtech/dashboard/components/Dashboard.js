@@ -37,10 +37,7 @@ class Dashboard extends React.Component {
           <DatePicker
             format={ 'll' }
             defaultValue={ moment(this.props.date) }
-            onChange={(date) => {
-              window.location.href =
-                window.Routing.generate('admin_foodtech_dashboard', { date: date.format('YYYY-MM-DD') })
-            }} />
+            onChange={ (date) => this.props.onDateChange(date) } />
         </div>
         <div className="FoodtechDashboard__Columns">
           <Column orders={ this.props.newOrders } title={ this.props.t('RESTAURANT_DASHBOARD_NEW_ORDERS') } />

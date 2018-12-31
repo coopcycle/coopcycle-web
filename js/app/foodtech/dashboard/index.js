@@ -8,14 +8,14 @@ import { createStoreFromPreloadedState } from './redux/store'
 import Dashboard from './components/Dashboard'
 
 window.CoopCycle = window.CoopCycle || {}
-window.CoopCycle.FoodtechDashboard = (el, preloadedState) => {
+window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
 
   const store = createStoreFromPreloadedState(preloadedState)
 
   render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
-        <Dashboard />
+        <Dashboard onDateChange={ options.onDateChange } />
       </I18nextProvider>
     </Provider>,
     el
