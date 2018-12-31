@@ -36,10 +36,10 @@ export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILU
 
 export function acceptOrder(order) {
 
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(fetchRequest())
 
-    const url = window.Routing.generate('admin_order_accept', { id: order.id })
+    const url = window.Routing.generate(getState().acceptOrderRoute, { id: order.id })
 
     $.post(url)
       .then(res => dispatch(acceptOrderRequestSuccess(res)))
@@ -49,10 +49,10 @@ export function acceptOrder(order) {
 
 export function refuseOrder(order) {
 
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(fetchRequest())
 
-    const url = window.Routing.generate('admin_order_refuse', { id: order.id })
+    const url = window.Routing.generate(getState().refuseOrderRoute, { id: order.id })
 
     $.post(url)
       .then(res => dispatch(refuseOrderRequestSuccess(res)))
@@ -62,10 +62,10 @@ export function refuseOrder(order) {
 
 export function delayOrder(order) {
 
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(fetchRequest())
 
-    const url = window.Routing.generate('admin_order_delay', { id: order.id })
+    const url = window.Routing.generate(getState().delayOrderRoute, { id: order.id })
 
     $.post(url)
       .then(res => dispatch(delayOrderRequestSuccess(res)))
@@ -75,10 +75,10 @@ export function delayOrder(order) {
 
 export function cancelOrder(order) {
 
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(fetchRequest())
 
-    const url = window.Routing.generate('admin_order_cancel', { id: order.id })
+    const url = window.Routing.generate(getState().cancelOrderRoute, { id: order.id })
 
     $.post(url)
       .then(res => dispatch(cancelOrderRequestSuccess(res)))

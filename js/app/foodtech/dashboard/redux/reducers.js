@@ -24,6 +24,10 @@ const initialState = {
   date: moment().format('YYYY-MM-DD'),
   jwt: '',
   isFetching: false,
+  acceptOrderRoute: 'admin_order_accept',
+  refuseOrderRoute: 'admin_order_refuse',
+  delayOrderRoute: 'admin_order_delay',
+  cancelOrderRoute: 'admin_order_cancel',
 }
 
 function replaceOrder(orders, order) {
@@ -141,4 +145,8 @@ export default combineReducers({
   date,
   jwt,
   isFetching,
+  acceptOrderRoute: (state = initialState.acceptOrderRoute, action) => state,
+  refuseOrderRoute: (state = initialState.refuseOrderRoute, action) => state,
+  delayOrderRoute: (state = initialState.delayOrderRoute, action) => state,
+  cancelOrderRoute: (state = initialState.cancelOrderRoute, action) => state,
 })
