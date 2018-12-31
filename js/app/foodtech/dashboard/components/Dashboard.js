@@ -43,10 +43,10 @@ class Dashboard extends React.Component {
             }} />
         </div>
         <div className="FoodtechDashboard__Columns">
-          <Column orders={ this.props.newOrders } title={ 'New orders' } />
-          <Column orders={ this.props.acceptedOrders } title={ 'Accepted orders' } />
-          <Column orders={ this.props.fulfilledOrders } title={ 'Fulfilled orders' } />
-          <Column orders={ this.props.cancelledOrders } title={ 'Refused/cancelled orders' } />
+          <Column orders={ this.props.newOrders } title={ this.props.t('RESTAURANT_DASHBOARD_NEW_ORDERS') } />
+          <Column orders={ this.props.acceptedOrders } title={ this.props.t('RESTAURANT_DASHBOARD_ACCEPTED_ORDERS') } />
+          <Column orders={ this.props.fulfilledOrders } title={ this.props.t('RESTAURANT_DASHBOARD_FULFILLED_ORDERS') } />
+          <Column orders={ this.props.cancelledOrders } title={ this.props.t('RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS') } />
         </div>
         <Modal
           isOpen={ this.props.modalIsOpen }
