@@ -11,8 +11,6 @@ import ModalContent from './ModalContent'
 
 import { setCurrentOrder, orderCreated } from '../redux/actions'
 
-Modal.setAppElement(document.getElementById('foodtech-dashboard'))
-
 function sortByShippedAt(a, b) {
   if (moment(a.shippedAt).isSame(moment(b.shippedAt))) {
     return 0

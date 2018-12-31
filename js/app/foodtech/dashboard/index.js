@@ -2,6 +2,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import { render } from 'react-dom'
+import Modal from 'react-modal'
 
 import i18n from '../../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -9,6 +10,8 @@ import Dashboard from './components/Dashboard'
 
 window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
+
+  Modal.setAppElement(el)
 
   const store = createStoreFromPreloadedState(preloadedState)
 
