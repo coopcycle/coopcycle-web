@@ -14,6 +14,30 @@ class RemotePushNotificationManagerTest extends TestCase
 {
     private $remotePushNotificationManager;
 
+    private function assertArrayIsZeroIndexed(array $value)
+    {
+        $this->assertEquals(range(0, count($value) - 1), array_keys($value), 'Failed asserting that an array is zero-indexed');
+    }
+
+    private function assertFcmRequest(Request $request, $multiple = false, array $recipients = [])
+    {
+        $body = (string) $request->getBody();
+        $payload = json_decode($body, true);
+
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertTrue($request->hasHeader('Authorization'));
+        $this->assertEquals('key=1234567890', $request->getHeaderLine('Authorization'));
+
+        if ($multiple) {
+            $this->assertArrayHasKey('registration_ids', $payload);
+            $this->assertArrayIsZeroIndexed($payload['registration_ids']);
+            $this->assertCount(count($recipients), $payload['registration_ids']);
+            $this->assertEquals($recipients, $payload['registration_ids']);
+        } else {
+            $this->assertArrayHasKey('to', $payload);
+        }
+    }
+
     private function generateApnsToken()
     {
         $characters = 'abcdef0123456789';
@@ -153,17 +177,9 @@ class RemotePushNotificationManagerTest extends TestCase
 
         $this->httpClient
             ->send(Argument::that(function (Request $request) use ($token1, $token2) {
+                $this->assertFcmRequest($request, $multiple = true, [ $token1, $token2 ]);
 
-                $body = (string) $request->getBody();
-                $payload = json_decode($body, true);
-
-                return 'POST' === $request->getMethod()
-                    && $request->hasHeader('Authorization')
-                    && 'key=1234567890' === $request->getHeaderLine('Authorization')
-                    && isset($payload['registration_ids'])
-                    && in_array($token1, $payload['registration_ids'])
-                    && in_array($token2, $payload['registration_ids'])
-                    ;
+                return true;
             }))
             ->shouldBeCalled();
 
@@ -196,18 +212,51 @@ class RemotePushNotificationManagerTest extends TestCase
 
         $this->httpClient
             ->send(Argument::that(function (Request $request) use ($token1, $token2) {
+                $this->assertFcmRequest($request, $multiple = true, [ $token1, $token2 ]);
 
-                $body = (string) $request->getBody();
-                $payload = json_decode($body, true);
+                return true;
+            }))
+            ->shouldBeCalled();
 
-                return 'POST' === $request->getMethod()
-                    && $request->hasHeader('Authorization')
-                    && 'key=1234567890' === $request->getHeaderLine('Authorization')
-                    && isset($payload['registration_ids'])
-                    && count($payload['registration_ids']) === 2
-                    && in_array($token1, $payload['registration_ids'])
-                    && in_array($token2, $payload['registration_ids'])
-                    ;
+        $this->remotePushNotificationManager->send('Hello world!', [
+            $user1,
+            $user2,
+            $user3
+        ]);
+    }
+
+    public function testSendMultipleWithMixedTokens()
+    {
+        $token1 = $this->generateApnsToken();
+        $token2 = $this->generateApnsToken();
+        $token3 = $this->generateApnsToken();
+
+        $remotePushToken1 = new RemotePushToken();
+        $remotePushToken1->setToken($token1);
+        $remotePushToken1->setPlatform('ios');
+
+        $remotePushToken2 = new RemotePushToken();
+        $remotePushToken2->setToken($token2);
+        $remotePushToken2->setPlatform('android');
+
+        $remotePushToken3 = new RemotePushToken();
+        $remotePushToken3->setToken($token3);
+        $remotePushToken3->setPlatform('android');
+
+        $user1 = new ApiUser();
+        $user1->getRemotePushTokens()->add($remotePushToken1);
+
+        $user2 = new ApiUser();
+        $user2->getRemotePushTokens()->add($remotePushToken2);
+
+        $user3 = new ApiUser();
+        $user3->getRemotePushTokens()->add($remotePushToken3);
+
+        $this->httpClient
+            ->send(Argument::that(function (Request $request) use ($token1, $token2, $token3) {
+                $this->assertFcmRequest($request, $multiple = true, [ $token2, $token3 ]);
+
+                return true;
             }))
             ->shouldBeCalled();
 

@@ -42,9 +42,12 @@ class RemotePushNotificationManager
         if (count($tokens) === 1) {
             $payload['to'] = current($tokens)->getToken();
         } else {
-            $payload['registration_ids'] = array_map(function (RemotePushToken $token) {
+            $registrationIds = array_map(function (RemotePushToken $token) {
                 return $token->getToken();
             }, $tokens);
+
+            // Make sure to have a zero-indexed array
+            $payload['registration_ids'] = array_values($registrationIds);
         }
 
         $payload['notification']['body'] = $message;
