@@ -100,25 +100,6 @@ trait OrderTrait
         ]);
     }
 
-    public function acceptRestaurantOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
-    {
-        $order = $this->get('sylius.repository.order')->find($orderId);
-
-        $this->accessControl($order->getRestaurant());
-
-        try {
-            $orderManager->accept($order);
-            $this->get('sylius.manager.order')->flush();
-        } catch (\Exception $e) {
-            // TODO Add flash message
-        }
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
-            'restaurantId' => $restaurantId,
-            'orderId' => $orderId
-        ]);
-    }
-
     public function acceptOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
@@ -138,25 +119,6 @@ trait OrderTrait
         }
     }
 
-    public function refuseRestaurantOrder($restaurantId, $orderId, Request $request, OrderManager $orderManager)
-    {
-        $order = $this->get('sylius.repository.order')->find($orderId);
-
-        $this->accessControl($order->getRestaurant());
-
-        try {
-            $orderManager->refuse($order);
-            $this->get('sylius.manager.order')->flush();
-        } catch (\Exception $e) {
-            // TODO Add flash message
-        }
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
-            'restaurantId' => $restaurantId,
-            'orderId' => $orderId
-        ]);
-    }
-
     public function refuseOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->get('sylius.repository.order')->find($id);
@@ -174,36 +136,6 @@ trait OrderTrait
 
             return $this->orderAsJson($order);
         }
-    }
-
-    public function readyOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
-    {
-        $order = $this->get('sylius.repository.order')->find($orderId);
-
-        $this->accessControl($order->getRestaurant());
-
-        $orderManager->ready($order);
-        $this->get('sylius.manager.order')->flush();
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
-            'restaurantId' => $restaurantId,
-            'orderId' => $orderId
-        ]);
-    }
-
-    public function delayRestaurantOrderAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
-    {
-        $order = $this->get('sylius.repository.order')->find($orderId);
-
-        $this->accessControl($order->getRestaurant());
-
-        $orderManager->delay($order);
-        $this->get('sylius.manager.order')->flush();
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
-            'restaurantId' => $restaurantId,
-            'orderId' => $orderId
-        ]);
     }
 
     public function delayOrderAction($id, Request $request, OrderManager $orderManager)
@@ -236,16 +168,6 @@ trait OrderTrait
         return $order;
     }
 
-    public function cancelOrderFromDashboardAction($restaurantId, $orderId, Request $request, OrderManager $orderManager)
-    {
-        $this->cancelOrderById($orderId, $orderManager);
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'), [
-            'restaurantId' => $restaurantId,
-            'orderId' => $orderId
-        ]);
-    }
-
     public function cancelOrderAction($id, Request $request, OrderManager $orderManager)
     {
         $order = $this->cancelOrderById($id, $orderManager);
@@ -254,7 +176,5 @@ trait OrderTrait
 
             return $this->orderAsJson($order);
         }
-
-        return $this->redirectToRoute($request->attributes->get('redirect_route'));
     }
 }

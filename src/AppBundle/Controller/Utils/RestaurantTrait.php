@@ -6,6 +6,7 @@ use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
 use AppBundle\Entity\StripeAccount;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
@@ -21,6 +22,7 @@ use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\Collections\ArrayCollection;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -179,7 +181,10 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request);
     }
 
-    protected function renderRestaurantDashboard(Request $request, Restaurant $restaurant, OrderInterface $order = null)
+    protected function renderRestaurantDashboard(
+        Request $request,
+        JWTManagerInterface $jwtManager,
+        Restaurant $restaurant)
     {
         $this->accessControl($restaurant);
 
@@ -187,7 +192,6 @@ trait RestaurantTrait
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
         }
-        $date->modify('-1 day');
 
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o')
@@ -203,36 +207,46 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        $order = null;
+        if ($request->query->has('order')) {
+            $orderId = $request->query->getInt('order');
+            $order = $this->get('sylius.repository.order')->find($orderId);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'restaurant_json' => $this->get('serializer')->serialize($restaurant, 'jsonld'),
-            'orders' => $orders,
-            'order' => $order,
-            'orders_normalized' => $this->get('serializer')->normalize($orders, null, ['groups' => ['order']]),
-            'order_normalized' => $this->get('serializer')->normalize($order, null, ['groups' => ['order']]),
+            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => Restaurant::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]),
+            'orders_normalized' => $this->get('serializer')->normalize($orders, 'jsonld', [
+                'resource_class' => Order::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['order', 'place']
+            ]),
+            'order_normalized' => $order ? $this->get('serializer')->normalize($order, 'jsonld', [
+                'resource_class' => Order::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['order', 'place']
+            ]) : null,
             'routes' => $routes,
             'date' => $date,
+            'jwt' => $jwtManager->create($this->getUser()),
         ], $routes));
     }
 
-    public function restaurantDashboardAction($restaurantId, Request $request)
+    public function restaurantDashboardAction($restaurantId, Request $request, JWTManagerInterface $jwtManager)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
             ->find($restaurantId);
 
-        return $this->renderRestaurantDashboard($request, $restaurant);
-    }
-
-    public function restaurantDashboardOrderAction($restaurantId, $orderId, Request $request)
-    {
-        $restaurantRepository = $this->getDoctrine()->getRepository(Restaurant::class);
-
-        $restaurant = $restaurantRepository->find($restaurantId);
-        $order = $this->get('sylius.repository.order')->find($orderId);
-
-        return $this->renderRestaurantDashboard($request, $restaurant, $order);
+        return $this->renderRestaurantDashboard($request, $jwtManager, $restaurant);
     }
 
     public function restaurantMenuTaxonsAction($id, Request $request)

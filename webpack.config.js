@@ -18,7 +18,6 @@ Encore
   .addEntry('js/restaurant-form', './js/app/restaurant/form.jsx')
   .addEntry('js/restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
   .addEntry('js/restaurant-planning', './js/app/restaurant/planning.jsx')
-  .addEntry('js/restaurant-panel', './js/app/restaurant/panel.jsx')
   .addEntry('js/restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
   .addEntry('js/restaurants-map', './js/app/restaurants-map/index.jsx')
   .addEntry('js/task-modal', './js/app/task/modal.js')

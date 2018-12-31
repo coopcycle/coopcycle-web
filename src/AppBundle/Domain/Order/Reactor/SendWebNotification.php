@@ -43,10 +43,10 @@ class SendWebNotification
                 $notification = $this->notificationManager
                     ->createForUser($owner, 'notifications.order.created');
 
-                $notification->setRouteName('profile_restaurant_dashboard_order');
+                $notification->setRouteName('profile_restaurant_dashboard');
                 $notification->setRouteParameters([
                     'restaurantId' => $order->getRestaurant()->getId(),
-                    'orderId' => $order->getId()
+                    'order' => $order->getId()
                 ]);
 
                 $this->notificationManager->push($notification);

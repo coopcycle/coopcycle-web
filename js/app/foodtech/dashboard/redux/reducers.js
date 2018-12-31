@@ -23,11 +23,13 @@ const initialState = {
   order: null,
   date: moment().format('YYYY-MM-DD'),
   jwt: '',
+  restaurant: null,
   isFetching: false,
   acceptOrderRoute: 'admin_order_accept',
   refuseOrderRoute: 'admin_order_refuse',
   delayOrderRoute: 'admin_order_delay',
   cancelOrderRoute: 'admin_order_cancel',
+  currentRoute: 'admin_foodtech_dashboard'
 }
 
 function replaceOrder(orders, order) {
@@ -149,4 +151,6 @@ export default combineReducers({
   refuseOrderRoute: (state = initialState.refuseOrderRoute, action) => state,
   delayOrderRoute: (state = initialState.delayOrderRoute, action) => state,
   cancelOrderRoute: (state = initialState.cancelOrderRoute, action) => state,
+  currentRoute: (state = initialState.currentRoute, action) => state,
+  restaurant: (state = initialState.restaurant, action) => state,
 })

@@ -14,7 +14,7 @@
     {% endif %}
   {% elseif is_owner is defined and is_owner %}
     {{ 'owner.order.created.body' | trans({
-      '%order.url%': url('profile_restaurant_dashboard_order', { orderId: order.id, restaurantId: order.restaurant.id }),
+      '%order.url%': url('profile_restaurant_dashboard', { restaurantId: order.restaurant.id, order: order.id }),
       '%restaurant.name%': order.restaurant.name
     }, 'emails') | raw }}
     {% include '@App/emails/order/_partials/items.html.twig' %}

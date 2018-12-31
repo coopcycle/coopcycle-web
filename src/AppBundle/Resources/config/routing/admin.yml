@@ -260,40 +260,12 @@ admin_restaurant_dashboard:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             dashboard: admin_restaurant_dashboard
-            dashboard_order: admin_restaurant_dashboard_order
-            order_accept: admin_restaurant_dashboard_order_accept
-            order_refuse: admin_restaurant_dashboard_order_refuse
-            order_cancel: admin_restaurant_dashboard_order_cancel
-            order_ready: admin_restaurant_dashboard_order_ready
-            order_delay: admin_restaurant_dashboard_order_delay
             user_details: user
+            order_accept: admin_order_accept
+            order_refuse: admin_order_refuse
+            order_cancel: admin_order_cancel
+            order_delay: admin_order_delay
     methods: [ GET ]
-
-admin_restaurant_dashboard_order:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}
-    defaults:
-        _controller: AppBundle\Controller\AdminController::restaurantDashboardOrderAction
-        layout: '@App/admin.html.twig'
-        template: '@App/restaurant/dashboard.html.twig'
-        routes:
-            restaurants: admin_restaurants
-            restaurant: admin_restaurant
-            dashboard: admin_restaurant_dashboard
-            dashboard_order: admin_restaurant_dashboard_order
-            order_accept: admin_restaurant_dashboard_order_accept
-            order_refuse: admin_restaurant_dashboard_order_refuse
-            order_cancel: admin_restaurant_dashboard_order_cancel
-            order_ready: admin_restaurant_dashboard_order_ready
-            order_delay: admin_restaurant_dashboard_order_delay
-            user_details: user
-    methods: [ GET ]
-
-admin_restaurant_dashboard_order_accept:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/accept
-    defaults:
-        _controller: AppBundle\Controller\AdminController::acceptRestaurantOrderAction
-        redirect_route: admin_restaurant_dashboard_order
-    methods: [ POST ]
 
 admin_restaurant_preparation_time:
     path: /admin/restaurants/{id}/preparation-time
@@ -313,45 +285,16 @@ admin_order_accept:
         _controller: AppBundle\Controller\AdminController::acceptOrderAction
     methods: [ POST ]
 
-admin_restaurant_dashboard_order_refuse:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/refuse
-    defaults:
-        _controller: AppBundle\Controller\AdminController::refuseRestaurantOrderAction
-        redirect_route: admin_restaurant_dashboard_order
-    methods: [ POST ]
-
 admin_order_refuse:
     path: /admin/orders/{id}/refuse
     defaults:
         _controller: AppBundle\Controller\AdminController::refuseOrderAction
-        redirect_route: admin_restaurant_dashboard_order
-    methods: [ POST ]
-
-admin_restaurant_dashboard_order_ready:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/ready
-    defaults:
-        _controller: AppBundle\Controller\AdminController::readyOrderAction
-        redirect_route: admin_restaurant_dashboard_order
-    methods: [ POST ]
-
-admin_restaurant_dashboard_order_delay:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/delay
-    defaults:
-        _controller: AppBundle\Controller\AdminController::delayRestaurantOrderAction
-        redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_order_delay:
     path: /admin/orders/{id}/delay
     defaults:
         _controller: AppBundle\Controller\AdminController::delayOrderAction
-    methods: [ POST ]
-
-admin_restaurant_dashboard_order_cancel:
-    path: /admin/restaurants/{restaurantId}/dashboard/{orderId}/cancel
-    defaults:
-        _controller: AppBundle\Controller\AdminController::cancelOrderFromDashboardAction
-        redirect_route: admin_restaurant_dashboard_order
     methods: [ POST ]
 
 admin_restaurant_stripe_oauth_redirect:
@@ -365,7 +308,6 @@ admin_order_cancel:
     path: /admin/orders/{id}/cancel
     defaults:
         _controller: AppBundle\Controller\AdminController::cancelOrderAction
-        redirect_route: admin_orders
     methods: [ POST ]
 
 admin_stores:

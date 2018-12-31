@@ -17,7 +17,6 @@ export const DELAY_ORDER_REQUEST_FAILURE = 'DELAY_ORDER_REQUEST_FAILURE'
 export const CANCEL_ORDER_REQUEST_SUCCESS = 'CANCEL_ORDER_REQUEST_SUCCESS'
 export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
 
-export const setCurrentOrder = createAction(SET_CURRENT_ORDER)
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
 export const orderRefused = createAction(ORDER_REFUSED)
@@ -33,6 +32,40 @@ export const delayOrderRequestSuccess = createAction(DELAY_ORDER_REQUEST_SUCCESS
 export const delayOrderRequestFailure = createAction(DELAY_ORDER_REQUEST_FAILURE)
 export const cancelOrderRequestSuccess = createAction(CANCEL_ORDER_REQUEST_SUCCESS)
 export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILURE)
+
+const _setCurrentOrder = createAction(SET_CURRENT_ORDER)
+
+export function setCurrentOrder(order) {
+
+  return (dispatch, getState) => {
+
+    const { currentRoute, date, restaurant } = getState()
+
+    let routeParams = { date }
+
+    if (restaurant) {
+      routeParams = {
+        ...routeParams,
+        restaurantId: restaurant.id
+      }
+    }
+
+    if (order) {
+      routeParams = {
+        ...routeParams,
+        order: order.id
+      }
+    }
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.Routing.generate(currentRoute, routeParams)
+    )
+
+    dispatch(_setCurrentOrder(order))
+  }
+}
 
 export function acceptOrder(order) {
 

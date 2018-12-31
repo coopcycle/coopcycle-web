@@ -7,44 +7,31 @@
 {% endblock %}
 
 {% block content %}
-
-{% set current_route = app.request.attributes.get('_route') %}
-{% set current_route_params = app.request.attributes.get('_route_params') %}
-
-<div class="restaurant-dashboard">
-
-  <div class="restaurant-dashboard__list">
-    {% set route_params = {
-      restaurantId: restaurant.id,
-      orderId: order ? order.id : null,
-      date: date|date_modify('-1 day')|date('Y-m-d')
-    } %}
-    <a href="{{ path(routes.dashboard, route_params) }}" class="btn btn-block btn-default">
-      {% trans %}adminDashboard.orders.previousOrders{% endtrans %}
-    </a>
-    <hr>
-    <div id="order-list"></div>
-  </div>
-  <aside class="restaurant-dashboard__details"></aside>
-</div>
-
+<div id="restaurant-dashboard"></div>
 {% endblock %}
 
 {% block scripts %}
+{% set current_route = app.request.attributes.get('_route') %}
+{{ encore_entry_script_tags('js/foodtech-dashboard') }}
 <script>
-window.__restaurant = {{ restaurant_json|raw }};
-window.__orders = {{ orders_normalized|json_encode()|raw }};
-window.__order = {{ order_normalized|json_encode()|raw }};
-window.__routes = {
-  'order_accept':    "{{ path(routes.order_accept,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'order_refuse':    "{{ path(routes.order_refuse,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'order_cancel':    "{{ path(routes.order_cancel,    { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'order_ready':     "{{ path(routes.order_ready,     { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'order_delay':     "{{ path(routes.order_delay,     { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'dashboard':       "{{ path(routes.dashboard,       { restaurantId: '__RESTAURANT_ID__' }) }}",
-  'dashboard_order': "{{ path(routes.dashboard_order, { restaurantId: '__RESTAURANT_ID__', orderId: '__ORDER_ID__' }) }}",
-  'user_details':    "{{ path(routes.user_details,    { username: '__USERNAME__' }) }}",
-};
+var orders = {{ orders_normalized|json_encode()|raw }};
+var order = {{ order_normalized|json_encode()|raw }};
+new CoopCycle.FoodtechDashboard(document.querySelector('#restaurant-dashboard'), {
+  orders: orders['hydra:member'],
+  order: order,
+  date: "{{ date|date('Y-m-d') }}",
+  jwt: "{{ jwt }}",
+  restaurant: {{ restaurant_normalized|json_encode()|raw }},
+  acceptOrderRoute: "{{ routes.order_accept }}",
+  refuseOrderRoute: "{{ routes.order_refuse }}",
+  delayOrderRoute: "{{ routes.order_delay }}",
+  cancelOrderRoute: "{{ routes.order_cancel }}",
+  currentRoute: "{{ current_route }}"
+}, {
+  onDateChange: function(date) {
+    window.location.href =
+      window.Routing.generate('{{ current_route }}', { restaurantId: {{ restaurant.id }}, date: date.format('YYYY-MM-DD') })
+  }
+});
 </script>
-{{ encore_entry_script_tags('js/restaurant-panel') }}
 {% endblock %}

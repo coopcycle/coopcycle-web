@@ -60,67 +60,35 @@ profile_restaurant_dashboard:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
             dashboard: profile_restaurant_dashboard
-            dashboard_order: profile_restaurant_dashboard_order
-            order_accept: profile_restaurant_dashboard_order_accept
-            order_refuse: profile_restaurant_dashboard_order_refuse
-            order_cancel: profile_restaurant_dashboard_order_cancel
-            order_ready: profile_restaurant_dashboard_order_ready
-            order_delay: profile_restaurant_dashboard_order_delay
+            order_accept: profile_order_accept
+            order_refuse: profile_order_refuse
+            order_cancel: profile_order_cancel
+            order_delay: profile_order_delay
             user_details: user
     methods: [ GET ]
 
-profile_restaurant_dashboard_order:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}
+profile_order_accept:
+    path: /profile/orders/{id}/accept
     defaults:
-        _controller: AppBundle\Controller\ProfileController::restaurantDashboardOrderAction
-        layout: '@App/profile.html.twig'
-        template: '@App/restaurant/dashboard.html.twig'
-        routes:
-            restaurants: profile_restaurants
-            restaurant: profile_restaurant
-            dashboard: profile_restaurant_dashboard
-            dashboard_order: profile_restaurant_dashboard_order
-            order_accept: profile_restaurant_dashboard_order_accept
-            order_refuse: profile_restaurant_dashboard_order_refuse
-            order_cancel: profile_restaurant_dashboard_order_cancel
-            order_ready: profile_restaurant_dashboard_order_ready
-            order_delay: profile_restaurant_dashboard_order_delay
-            user_details: user
-    methods: [ GET ]
-
-profile_restaurant_dashboard_order_accept:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/accept
-    defaults:
-        _controller: AppBundle\Controller\ProfileController::acceptRestaurantOrderAction
-        redirect_route: profile_restaurant_dashboard_order
+        _controller: AppBundle\Controller\ProfileController::acceptOrderAction
     methods: [ POST ]
 
-profile_restaurant_dashboard_order_refuse:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/refuse
+profile_order_refuse:
+    path: /profile/orders/{id}/refuse
     defaults:
-        _controller: AppBundle\Controller\ProfileController::refuseRestaurantOrderAction
-        redirect_route: profile_restaurant_dashboard_order
+        _controller: AppBundle\Controller\ProfileController::refuseOrderAction
     methods: [ POST ]
 
-profile_restaurant_dashboard_order_ready:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/ready
+profile_order_delay:
+    path: /profile/orders/{id}/delay
     defaults:
-        _controller: AppBundle\Controller\ProfileController::readyOrderAction
-        redirect_route: profile_restaurant_dashboard_order
+        _controller: AppBundle\Controller\ProfileController::delayOrderAction
     methods: [ POST ]
 
-profile_restaurant_dashboard_order_delay:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/delay
+profile_order_cancel:
+    path: /profile/orders/{id}/cancel
     defaults:
-        _controller: AppBundle\Controller\ProfileController::delayRestaurantOrderAction
-        redirect_route: profile_restaurant_dashboard_order
-    methods: [ POST ]
-
-profile_restaurant_dashboard_order_cancel:
-    path: /profile/restaurants/{restaurantId}/dashboard/{orderId}/cancel
-    defaults:
-        _controller: AppBundle\Controller\ProfileController::cancelOrderFromDashboardAction
-        redirect_route: profile_restaurant_dashboard_order
+        _controller: AppBundle\Controller\ProfileController::cancelOrderAction
     methods: [ POST ]
 
 profile_restaurant_menu_taxons:
