@@ -64,7 +64,15 @@ class ModalContent extends React.Component {
   }
 
   renderButtons() {
-    const { order } = this.props
+    const { loading, order } = this.props
+
+    let btnAttrs = {}
+    if (loading) {
+      btnAttrs = {
+        ...btnAttrs,
+        disabled: true
+      }
+    }
 
     if (order.state === 'new') {
       return (
@@ -72,12 +80,20 @@ class ModalContent extends React.Component {
           <hr />
           <div className="row">
             <div className="col-sm-4">
-              <button onClick={ this.refuseOrder.bind(this) } className="btn btn-block btn-danger">
+              <button onClick={ this.refuseOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
+                { loading && (
+                  <span>
+                    <i className="fa fa-spinner fa-spin"></i>  </span>
+                )}
                 <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE') }
               </button>
             </div>
             <div className="col-sm-8">
-              <button onClick={ this.acceptOrder.bind(this) } className="btn btn-block btn-primary">
+              <button onClick={ this.acceptOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
+                { loading && (
+                  <span>
+                    <i className="fa fa-spinner fa-spin"></i>  </span>
+                )}
                 <i className="fa fa-check" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_ACCEPT') }
               </button>
             </div>
@@ -92,12 +108,20 @@ class ModalContent extends React.Component {
           <hr />
           <div className="row">
             <div className="col-sm-4">
-              <button onClick={ this.cancelOrder.bind(this) } className="btn btn-block btn-danger">
+              <button onClick={ this.cancelOrder.bind(this) } className="btn btn-block btn-danger" { ...btnAttrs }>
+                { loading && (
+                  <span>
+                    <i className="fa fa-spinner fa-spin"></i>  </span>
+                )}
                 <i className="fa fa-ban" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_CANCEL') }
               </button>
             </div>
             <div className="col-sm-8">
-              <button onClick={ this.delayOrder.bind(this) } className="btn btn-block btn-primary">
+              <button onClick={ this.delayOrder.bind(this) } className="btn btn-block btn-primary" { ...btnAttrs }>
+                { loading && (
+                  <span>
+                    <i className="fa fa-spinner fa-spin"></i>  </span>
+                )}
                 <i className="fa fa-clock-o" aria-hidden="true"></i>  { this.props.t('ADMIN_DASHBOARD_ORDERS_DELAY') }
               </button>
             </div>
@@ -150,8 +174,11 @@ class ModalContent extends React.Component {
   }
 }
 
-function mapStateToProps() {
-  return {}
+function mapStateToProps(state) {
+
+  return {
+    loading: state.isFetching
+  }
 }
 
 function mapDispatchToProps(dispatch) {
