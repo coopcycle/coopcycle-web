@@ -36,12 +36,13 @@ class RestaurantType extends LocalBusinessType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('contract', ContractType::class)
+                ->add('deliveryPerimeterExpression', HiddenType::class, [
+                    'label' => 'localBusiness.form.deliveryPerimeterExpression'
+                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
         }
-
-        $builder->add('deliveryPerimeterExpression', HiddenType::class, ['label' => 'localBusiness.form.deliveryPerimeterExpression',]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $restaurant = $event->getData();

@@ -152,14 +152,17 @@
   {% endif %}
 
   <hr>
-    <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
-    {{ form_widget(form.deliveryPerimeterExpression) }}
-    <div id="restaurant_deliveryPerimeterExpression__picker">
-    </div>
-    <span class="help-block">
-      <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
-    </span>
+
+  {% if form.deliveryPerimeterExpression is defined %}
+  <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
+  {{ form_widget(form.deliveryPerimeterExpression) }}
+  <div id="restaurant_deliveryPerimeterExpression__picker">
+  </div>
+  <span class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
+  </span>
   <hr>
+  {% endif %}
 
   {% if form.contract is defined or restaurant.id is not null %}
     <h4>{% trans %}restaurant.contract.title{% endtrans %}</h4>
