@@ -138,7 +138,7 @@
     {% if show_stripe_connect %}
       <hr>
       {% include "@App/_partials/restaurant/stripe_accounts.html.twig" %}
-      {% if is_granted('ROLE_ADMIN') %}
+      {% if form.allowStripeConnect is defined %}
         <div class="alert alert-warning">
           {{ 'restaurant.form.allow_stripe_connect.label'|trans }}
           <div class="pull-right">
@@ -148,7 +148,9 @@
       {% endif %}
     {% endif %}
   {% else %}
-    {% do form.allowStripeConnect.setRendered %}
+    {% if form.allowStripeConnect is defined %}
+      {% do form.allowStripeConnect.setRendered %}
+    {% endif %}
   {% endif %}
 
   <hr>

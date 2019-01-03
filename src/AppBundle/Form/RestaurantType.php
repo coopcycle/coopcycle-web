@@ -26,11 +26,6 @@ class RestaurantType extends LocalBusinessType
             ->add('orderingDelayHours', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayHours',
                 'mapped' => false
-            ])
-            ->add('allowStripeConnect', CheckboxType::class, [
-                'label' => 'restaurant.form.allow_stripe_connect.label',
-                'mapped' => false,
-                'required' => false,
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
@@ -39,12 +34,17 @@ class RestaurantType extends LocalBusinessType
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'
                 ])
+                ->add('allowStripeConnect', CheckboxType::class, [
+                    'label' => 'restaurant.form.allow_stripe_connect.label',
+                    'mapped' => false,
+                    'required' => false,
+                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $restaurant = $event->getData();
             $form = $event->getForm();
             $orderingDelayMinutes = $restaurant->getOrderingDelayMinutes();
@@ -55,25 +55,27 @@ class RestaurantType extends LocalBusinessType
             $form->get('orderingDelayHours')->setData($orderingDelayHours);
             $form->get('orderingDelayDays')->setData($orderingDelayDays);
 
-            if (in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
+            if ($form->has('allowStripeConnect') && in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())) {
                 $form->get('allowStripeConnect')->setData(true);
             }
         });
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($options) {
+            function (FormEvent $event) {
                 $restaurant = $event->getForm()->getData();
                 $orderingDelayDays = $event->getForm()->get('orderingDelayDays')->getData();
                 $orderingDelayHours = $event->getForm()->get('orderingDelayHours')->getData();
                 $restaurant->setOrderingDelayMinutes($orderingDelayDays * 60 * 24 + $orderingDelayHours * 60);
 
-                $allowStripeConnect = $event->getForm()->get('allowStripeConnect')->getData();
-                if ($allowStripeConnect) {
-                    $stripeConnectRoles = $restaurant->getStripeConnectRoles();
-                    if (!in_array('ROLE_RESTAURANT', $stripeConnectRoles)) {
-                        $stripeConnectRoles[] = 'ROLE_RESTAURANT';
-                        $restaurant->setStripeConnectRoles($stripeConnectRoles);
+                if ($event->getForm()->has('allowStripeConnect')) {
+                    $allowStripeConnect = $event->getForm()->get('allowStripeConnect')->getData();
+                    if ($allowStripeConnect) {
+                        $stripeConnectRoles = $restaurant->getStripeConnectRoles();
+                        if (!in_array('ROLE_RESTAURANT', $stripeConnectRoles)) {
+                            $stripeConnectRoles[] = 'ROLE_RESTAURANT';
+                            $restaurant->setStripeConnectRoles($stripeConnectRoles);
+                        }
                     }
                 }
             }
