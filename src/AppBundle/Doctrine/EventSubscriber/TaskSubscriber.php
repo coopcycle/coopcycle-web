@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\EventListener;
+namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
