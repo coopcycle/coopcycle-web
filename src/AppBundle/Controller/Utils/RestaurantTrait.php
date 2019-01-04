@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Restaurant\PreparationTimeRule;
@@ -40,6 +41,9 @@ trait RestaurantTrait
 
     abstract protected function getRestaurantRoutes();
 
+    /**
+     * @HideSoftDeleted
+     */
     public function restaurantListAction(Request $request)
     {
         $routes = $request->attributes->get('routes');
@@ -488,6 +492,9 @@ trait RestaurantTrait
         ], $routes));
     }
 
+    /**
+     * @HideSoftDeleted
+     */
     public function restaurantProductsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
@@ -587,6 +594,9 @@ trait RestaurantTrait
         ], $routes));
     }
 
+    /**
+     * @HideSoftDeleted
+     */
     public function restaurantProductOptionsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()

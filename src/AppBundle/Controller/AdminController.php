@@ -149,9 +149,6 @@ class AdminController extends Controller
      */
     public function orderAction($id, Request $request, OrderManager $orderManager)
     {
-        // Allow retrieving deleted entities anyway
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if (!$order) {

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -33,6 +34,7 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
+ * @HideSoftDeleted
  */
 class RestaurantController extends AbstractController
 {

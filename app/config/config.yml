@@ -109,7 +109,7 @@ doctrine:
         filters:
             soft_deleteable:
                 class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
-                enabled: true
+                enabled: false
             enabled_filter:
                 class:   AppBundle\Doctrine\Filter\EnabledFilter
                 enabled: true

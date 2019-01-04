@@ -113,9 +113,6 @@ class ProfileController extends Controller
 
     public function orderAction($id, Request $request, OrderManager $orderManager, JWTManagerInterface $jwtManager)
     {
-        // Allow retrieving deleted entities anyway
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if ($order->getCustomer() !== $this->getUser()) {
