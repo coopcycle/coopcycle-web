@@ -39,32 +39,6 @@ trait AdminDashboardTrait
         return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
     }
 
-    protected function notifyTasksChanged(
-        UserInterface $user,
-        \DateTime $date,
-        RemotePushNotificationManager $remotePushNotificationManager)
-    {
-        $remotePushTokenRepository = $this->getDoctrine()->getRepository(RemotePushToken::class);
-
-        $tokens = $remotePushTokenRepository->findByUser($user);
-
-        // We can't send the whole serialized tasks,
-        // because the JSON payload is limited in size
-        $data = [
-            'event' => [
-                'name' => 'tasks:changed',
-                'data' => [
-                    'date' => $date->format('Y-m-d')
-                ]
-            ]
-        ];
-
-        foreach ($tokens as $token) {
-            $remotePushNotificationManager
-                ->send(sprintf('Tasks for %s changed!', $date->format('Y-m-d')), $token, $data);
-        }
-    }
-
     protected function getResourceFromIri($iri)
     {
         $baseContext = $this->get('router')->getContext();
@@ -304,11 +278,7 @@ trait AdminDashboardTrait
      *   methods={"PUT"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function modifyTaskListAction(
-        $date,
-        $username,
-        Request $request,
-        RemotePushNotificationManager $remotePushNotificationManager)
+    public function modifyTaskListAction($date, $username, Request $request)
     {
         $date = new \DateTime($date);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
@@ -335,20 +305,12 @@ trait AdminDashboardTrait
             ->getManagerForClass(TaskList::class)
             ->flush();
 
-        $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
+        return new JsonResponse($this->get('serializer')->normalize($taskList, 'jsonld', [
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
             'groups' => ['task_collection', 'task', 'delivery', 'place']
-        ]);
-
-        $this->notifyTasksChanged(
-            $user,
-            $date,
-            $remotePushNotificationManager
-        );
-
-        return new JsonResponse($taskListNormalized);
+        ]));
     }
 
     /**

@@ -9,6 +9,7 @@ use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
+use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -19,14 +20,20 @@ use SimpleBus\Message\Bus\MessageBus;
 class TaskSubscriber implements EventSubscriber
 {
     private $eventBus;
-    private $routing;
+    private $eventStore;
+    private $remotePushNotificationManager;
     private $logger;
     private $createdTasks = [];
 
-    public function __construct(MessageBus $eventBus, EventStore $eventStore, LoggerInterface $logger)
+    public function __construct(
+        MessageBus $eventBus,
+        EventStore $eventStore,
+        RemotePushNotificationManager $remotePushNotificationManager,
+        LoggerInterface $logger)
     {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
+        $this->remotePushNotificationManager = $remotePushNotificationManager;
         $this->logger = $logger;
     }
 
@@ -73,18 +80,55 @@ class TaskSubscriber implements EventSubscriber
 
         $provider = new TaskListProvider($em);
 
+        $allMessages = [];
+
         foreach ($tasks as $task) {
 
             $processor = new EntityChangeSetProcessor($provider, $this->logger);
             $processor->process($task, $uow->getEntityChangeSet($task));
 
             $messages = $processor->recordedMessages();
+
             if (count($messages) > 0) {
                 foreach ($messages as $message) {
                     $this->eventBus->handle($message);
                 }
 
                 $uow->computeChangeSets();
+            }
+
+            $allMessages = array_merge($allMessages, $messages);
+        }
+
+        $usersByDate = new \SplObjectStorage();
+        foreach ($allMessages as $message) {
+            if ($message instanceof TaskAssigned || $message instanceof TaskUnassigned) {
+                $date = $task->getDoneBefore();
+                $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
+                $usersByDate[$date] = array_merge($users, [ $message->getUser() ]);
+            }
+        }
+
+        if (count($usersByDate) > 0) {
+
+            foreach ($usersByDate as $date) {
+
+                $users = $usersByDate[$date];
+                $users = array_unique($users);
+
+                $data = [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => [
+                            'date' => $date->format('Y-m-d')
+                        ]
+                    ]
+                ];
+
+                // TODO Translate
+                $message = sprintf('Tasks for %s changed!', $date->format('Y-m-d'));
+
+                $this->remotePushNotificationManager->send($message, $users, $data);
             }
         }
     }
