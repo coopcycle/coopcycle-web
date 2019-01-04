@@ -13,7 +13,6 @@ use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\RemotePushNotificationManager;
-use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -43,9 +42,7 @@ trait AdminDashboardTrait
     protected function notifyTasksChanged(
         UserInterface $user,
         \DateTime $date,
-        array $normalizedTasks,
-        RemotePushNotificationManager $remotePushNotificationManager,
-        SocketIoManager $socketIoManager)
+        RemotePushNotificationManager $remotePushNotificationManager)
     {
         $remotePushTokenRepository = $this->getDoctrine()->getRepository(RemotePushToken::class);
 
@@ -66,9 +63,6 @@ trait AdminDashboardTrait
             $remotePushNotificationManager
                 ->send(sprintf('Tasks for %s changed!', $date->format('Y-m-d')), $token, $data);
         }
-
-        $socketIoManager
-            ->toUser($user, 'tasks:changed', $normalizedTasks);
     }
 
     protected function getResourceFromIri($iri)
@@ -314,8 +308,7 @@ trait AdminDashboardTrait
         $date,
         $username,
         Request $request,
-        RemotePushNotificationManager $remotePushNotificationManager,
-        SocketIoManager $socketIoManager)
+        RemotePushNotificationManager $remotePushNotificationManager)
     {
         $date = new \DateTime($date);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
@@ -352,9 +345,7 @@ trait AdminDashboardTrait
         $this->notifyTasksChanged(
             $user,
             $date,
-            $taskListNormalized['items'],
-            $remotePushNotificationManager,
-            $socketIoManager
+            $remotePushNotificationManager
         );
 
         return new JsonResponse($taskListNormalized);
