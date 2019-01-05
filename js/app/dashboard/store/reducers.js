@@ -109,7 +109,7 @@ const rootReducer = (state = initialState, action) => {
   return state
 }
 
-export const taskLists = (state = [], action, date = initialState.date) => {
+function _taskLists(state = [], action, date = initialState.date) {
 
   let newTaskLists = state.slice(0)
   let taskListIndex
@@ -189,7 +189,7 @@ export const taskLists = (state = [], action, date = initialState.date) => {
 /*
   Store for all unassigned tasks
  */
-export const unassignedTasks = (state = [], action, date = initialState.date) => {
+function _unassignedTasks(state = [], action, date = initialState.date) {
   let newState
 
   switch (action.type) {
@@ -220,7 +220,7 @@ export const unassignedTasks = (state = [], action, date = initialState.date) =>
   return state
 }
 
-export const allTasks = (state = [], action, date = initialState.date) => {
+function _allTasks(state = [], action, date = initialState.date) {
   let newState
 
   switch (action.type) {
@@ -449,9 +449,9 @@ export const combinedTasks = (state = initialState, action) => {
 
     return {
       ...state,
-      unassignedTasks: unassignedTasks(state.unassignedTasks, action, state.date),
-      taskLists: taskLists(state.taskLists, action, state.date),
-      allTasks: allTasks(state.allTasks, action, state.date)
+      unassignedTasks: _unassignedTasks(state.unassignedTasks, action, state.date),
+      taskLists: _taskLists(state.taskLists, action, state.date),
+      allTasks: _allTasks(state.allTasks, action, state.date)
     }
   case 'UPDATE_TASK':
 
@@ -466,9 +466,9 @@ export const combinedTasks = (state = initialState, action) => {
 
   return {
     ...state,
-    unassignedTasks: unassignedTasks(state.unassignedTasks, action),
-    taskLists: taskLists(state.taskLists, action),
-    allTasks: allTasks(state.allTasks, action)
+    unassignedTasks: _unassignedTasks(state.unassignedTasks, action),
+    taskLists: _taskLists(state.taskLists, action),
+    allTasks: _allTasks(state.allTasks, action)
   }
 }
 
