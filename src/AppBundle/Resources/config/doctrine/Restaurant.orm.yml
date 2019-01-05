@@ -26,6 +26,9 @@ AppBundle\Entity\Restaurant:
             unique: false
             nullable: true
             precision: 0
+        description:
+            type: text
+            nullable: true
         enabled:
             type: boolean
             scale: 0

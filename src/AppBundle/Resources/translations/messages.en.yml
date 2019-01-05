@@ -117,6 +117,7 @@ localBusiness.form.orderingDelayMinutes.help: Use this field to add some time be
 localBusiness.form.orderingDelayDays: Day(s)
 localBusiness.form.orderingDelayHours: Hour(s)
 localBusiness.form.name: Name
+localBusiness.form.description: Description
 localBusiness.form.legalName: Legal name
 localBusiness.form.website: Website
 localBusiness.form.telephone: Telephone

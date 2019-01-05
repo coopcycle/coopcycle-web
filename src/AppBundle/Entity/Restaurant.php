@@ -92,6 +92,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $name;
 
+    protected $description;
+
     /**
      * @var string The cuisine of the restaurant.
      *
@@ -244,6 +246,18 @@ class Restaurant extends FoodEstablishment
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     /**

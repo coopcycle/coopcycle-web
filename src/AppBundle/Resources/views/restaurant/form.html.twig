@@ -62,6 +62,7 @@
     </div>
     <div class="col-sm-8">
       {{ form_row(form.name) }}
+      {{ form_row(form.description) }}
       <div class="switch-wrapper">
         {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
         {% if cannot_be_enabled %}
