@@ -65,7 +65,7 @@ class ModalContent extends React.Component {
             <ul className="list-unstyled">
               <li>{ order.shippingAddress.streetAddress }</li>
               { order.shippingAddress.floor && (
-              <li>Étage : { order.shippingAddress.floor }</li>
+                <li>Étage : { order.shippingAddress.floor }</li>
               ) }
             </ul>
           </p>
