@@ -240,7 +240,7 @@ class AdminController extends Controller
             'resource_class' => Order::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['order', 'place']
+            'groups' => ['order', 'address', 'place']
         ]);
 
         return $this->render('@App/admin/foodtech_dashboard.html.twig', [

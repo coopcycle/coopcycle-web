@@ -47,17 +47,33 @@ class ModalContent extends React.Component {
     return (
       <Timeline>
         <Timeline.Item dot={<i className="fa fa-cutlery"></i>}>
-          <span>Préparation à { moment(order.preparationExpectedAt).format('LT') }</span>
+          <div>
+            <strong>Préparation à { moment(order.preparationExpectedAt).format('LT') }</strong>
+          </div>
         </Timeline.Item>
         <Timeline.Item dot={<i className="fa fa-cube"></i>}>
-          <span>Pickup à { moment(order.pickupExpectedAt).format('LT') }</span>
-          <br />
+          <div>
+            <strong>Pickup à { moment(order.pickupExpectedAt).format('LT') }</strong>
+          </div>
           <span>{ order.restaurant.address.streetAddress }</span>
         </Timeline.Item>
         <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
-          <span>Dropoff à { moment(order.shippedAt).format('LT') }</span>
-          <br />
-          <span>{ order.shippingAddress.streetAddress }</span>
+          <div>
+            <strong>Dropoff à { moment(order.shippedAt).format('LT') }</strong>
+          </div>
+          <p>
+            <ul className="list-unstyled">
+              <li>{ order.shippingAddress.streetAddress }</li>
+              { order.shippingAddress.floor && (
+              <li>Étage : { order.shippingAddress.floor }</li>
+              ) }
+            </ul>
+          </p>
+          { order.shippingAddress.description && (
+            <div className="speech-bubble">
+              <i className="fa fa-quote-left"></i>  { order.shippingAddress.description }
+            </div>
+          ) }
         </Timeline.Item>
       </Timeline>
     )

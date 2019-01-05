@@ -36,7 +36,7 @@ class PublishToRedis
         $order = $event->getOrder();
 
         return [
-            'order' => $this->serializer->normalize($order, 'jsonld', ['groups' => ['order', 'place']]),
+            'order' => $this->serializer->normalize($order, 'jsonld', ['groups' => ['order', 'address', 'place']]),
             'data' => $event->toPayload(),
             // FIXME We should retrieve the actual date from EventStore
             'createdAt' => (new \DateTime())->format(\DateTime::ATOM),
