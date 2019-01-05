@@ -91,11 +91,12 @@ class LeafletMap extends Component {
         this.proxy.removeTask(task)
         this.proxy.addTask(task)
       })
-      selectedTasks.forEach(task => {
-        this.proxy.removeTask(task)
-        this.proxy.addTask(task, '#EEB516')
-      })
     }
+
+    selectedTasks.forEach(task => {
+      this.proxy.removeTask(task)
+      this.proxy.addTask(task, '#EEB516')
+    })
 
     if (prevProps.positions !== positions) {
       positions.forEach(position => {
