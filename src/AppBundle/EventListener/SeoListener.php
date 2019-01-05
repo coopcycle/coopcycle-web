@@ -37,7 +37,7 @@ class SeoListener
         $this->seoPage
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:type', 'website')
-            ->addMeta('property', 'og:image', 'https://coopcycle.org//images/homepage-banner.jpg')
+            ->addMeta('property', 'og:image', 'https://coopcycle.org/images/homepage-banner.jpg')
             ->addMeta('property', 'og:url', $request->getUri())
             ;
 
