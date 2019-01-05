@@ -1,7 +1,16 @@
 import _ from 'lodash'
 
 function assignTasks(username, tasks) {
-  return {type: 'ASSIGN_TASKS', username, tasks}
+
+  return function(dispatch, getState) {
+
+    dispatch({ type: 'ASSIGN_TASKS', username, tasks })
+
+    const { taskLists } = getState()
+    const taskList = _.find(taskLists, taskList => taskList.username === username)
+
+    dispatch(modifyTaskList(username, taskList.items.concat(tasks)))
+  }
 }
 
 function addCreatedTask(task) {
@@ -9,7 +18,22 @@ function addCreatedTask(task) {
 }
 
 function removeTasks(username, tasks) {
-  return {type: 'REMOVE_TASKS', username, tasks}
+
+  return function(dispatch, getState) {
+
+    dispatch({ type: 'REMOVE_TASKS', username, tasks })
+
+    const { taskLists } = getState()
+    const taskList = _.find(taskLists, taskList => taskList.username === username)
+
+    const newTasks = _.differenceWith(
+      taskList.items,
+      _.intersectionWith(taskList.items, tasks, (a, b) => a['@id'] === b['@id']),
+      (a, b) => a['@id'] === b['@id']
+    )
+
+    dispatch(modifyTaskList(username, newTasks))
+  }
 }
 
 function _updateTask(task) {

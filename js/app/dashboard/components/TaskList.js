@@ -106,15 +106,6 @@ class TaskList extends React.Component {
 
   }
 
-  componentDidUpdate(prevProps) {
-    let taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
-
-    // use a comparator to avoid infinite loop when refreshing tasks with data from server (because of task event additions)
-    if (prevProps.tasks.length !== this.props.tasks.length || !_.isEqualWith(prevProps.tasks, this.props.tasks, taskComparator)) {
-      this.props.modifyTaskList(this.props.username, this.props.tasks)
-    }
-  }
-
   remove(taskToRemove) {
 
     // Check if we need to remove another linked task
