@@ -65,7 +65,6 @@ const channels = [
   'task:assign',
   'task:done',
   'task:failed',
-  'tasks:changed',
   'tasks:created'
 ]
 
