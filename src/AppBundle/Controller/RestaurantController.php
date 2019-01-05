@@ -97,6 +97,12 @@ class RestaurantController extends AbstractController
     private function customizeSeoPage(Restaurant $restaurant, Request $request)
     {
         $this->seoPage->setTitle(sprintf('%s - CoopCycle', $restaurant->getName()));
+
+        $description = $restaurant->getDescription();
+        if (!empty($description)) {
+            $this->seoPage->addMeta('name', 'description', $restaurant->getDescription());
+        }
+
         $this->seoPage
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:description', sprintf('%s, %s %s',
