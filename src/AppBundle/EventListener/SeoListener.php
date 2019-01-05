@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Service\SettingsManager;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
@@ -10,11 +11,16 @@ use Symfony\Component\Translation\TranslatorInterface;
 class SeoListener
 {
     private $translator;
+    private $settingsManager;
     private $seoPage;
 
-    public function __construct(TranslatorInterface $translator, SeoPageInterface $seoPage)
+    public function __construct(
+        TranslatorInterface $translator,
+        SettingsManager $settingsManager,
+        SeoPageInterface $seoPage)
     {
         $this->translator = $translator;
+        $this->settingsManager = $settingsManager;
         $this->seoPage = $seoPage;
     }
 
@@ -28,7 +34,10 @@ class SeoListener
         $locale = $request->getLocale();
 
         $this->seoPage
-            ->addTitle($this->translator->trans('meta.title'));
+            ->setTitle($this->settingsManager->get('brand_name'));
+
+        $this->seoPage
+            ->addMeta('name', 'description', $this->translator->trans('meta.title'));
 
         $this->seoPage
             ->setLinkCanonical($request->getUri());

@@ -139,7 +139,7 @@ services:
       - { name: kernel.event_subscriber }
 
   AppBundle\EventListener\SeoListener:
-    arguments: ['@translator', '@sonata.seo.page.default']
+    arguments: ['@translator', '@coopcycle.settings_manager', '@sonata.seo.page.default']
     tags:
       - { name: kernel.event_listener, event: kernel.request }
 
