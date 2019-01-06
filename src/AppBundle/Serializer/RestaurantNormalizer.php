@@ -20,7 +20,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data =  $this->normalizer->normalize($object, $format, $context);
+        $data = $this->normalizer->normalize($object, $format, $context);
 
         if (isset($data['taxons'])) {
             foreach ($data['taxons'] as $taxon) {
@@ -32,10 +32,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['taxons']);
         }
 
-        $data['availabilities'] = $object->getAvailabilities();
-        $data['minimumCartAmount'] = $object->getMinimumCartAmount();
-        $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
-
         if (isset($data['openingHours'])) {
             $data['openingHoursSpecification'] = array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
                 return $openingHoursSpecification->jsonSerialize();
@@ -45,6 +41,27 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['closingRules'])) {
             $data['specialOpeningHoursSpecification'] = $data['closingRules'];
             unset($data['closingRules']);
+        }
+
+        if (in_array('restaurant_seo', $context['groups'])) {
+
+            return $this->normalizeForSeo($object, $data);
+        }
+
+        $data['availabilities'] = $object->getAvailabilities();
+        $data['minimumCartAmount'] = $object->getMinimumCartAmount();
+        $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
+
+        return $data;
+    }
+
+    private function normalizeForSeo($object, $data)
+    {
+        if (isset($data['address'])) {
+            $data['address']['@type'] = 'http://schema.org/PostalAddress';
+        }
+        if (isset($data['openingHours'])) {
+            unset($data['openingHours']);
         }
 
         return $data;

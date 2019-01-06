@@ -88,7 +88,7 @@ class Restaurant extends FoodEstablishment
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order"})
+     * @Groups({"restaurant", "order", "restaurant_seo"})
      */
     protected $name;
 
@@ -133,7 +133,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @var Address
      *
-     * @Groups({"restaurant", "order"})
+     * @Groups({"restaurant", "order", "restaurant_seo"})
      */
     private $address;
 

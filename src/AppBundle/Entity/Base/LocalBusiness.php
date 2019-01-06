@@ -29,7 +29,7 @@ abstract class LocalBusiness
      *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
      *
      * @ApiProperty(iri="https://schema.org/openingHours")
-     * @Groups({"restaurant", "store"})
+     * @Groups({"restaurant", "store", "restaurant_seo"})
      * @Assert\All({
      *   @AssertTimeRange,
      * })
