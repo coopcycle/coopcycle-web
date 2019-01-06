@@ -16,6 +16,11 @@ services:
   AppBundle\Serializer\RestaurantNormalizer:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
+      - "@router"
+      - "@sylius.context.currency"
+      - "@coopcycle.price_formatter"
+      - "@slugify"
+      - "%kernel.default_locale%"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   coopcycle.api.normalizer.task:
