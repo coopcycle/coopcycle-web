@@ -4,6 +4,12 @@
 
 {% form_theme cart_form '@App/form/cart.html.twig' %}
 
+{% block structured_data %}
+<script type="application/ld+json">
+{{ structured_data|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
+</script>
+{% endblock %}
+
 {% block body %}
 <div class="container">
 
