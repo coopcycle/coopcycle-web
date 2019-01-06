@@ -318,6 +318,13 @@ class RestaurantController extends AbstractController
 
         $this->customizeSeoPage($restaurant, $request);
 
+        $structuredData = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+            'resource_class' => Restaurant::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['restaurant_seo', 'postal_address']
+        ]);
+
         $delay = null;
         if ($restaurant->getOrderingDelayMinutes() > 0) {
             Carbon::setLocale($request->attributes->get('_locale'));
@@ -328,6 +335,7 @@ class RestaurantController extends AbstractController
 
         return array(
             'restaurant' => $restaurant,
+            'structured_data' => $structuredData,
             'availabilities' => $this->getAvailabilities($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
