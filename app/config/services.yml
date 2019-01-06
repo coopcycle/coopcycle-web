@@ -68,6 +68,7 @@ services:
   coopcycle.email_manager: '@AppBundle\Service\EmailManager'
   coopcycle.notification_manager: '@AppBundle\Service\NotificationManager'
   coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
+  coopcycle.price_formatter: '@AppBundle\Utils\PriceFormatter'
 
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
@@ -541,3 +542,8 @@ services:
   AppBundle\Utils\OrderTextEncoder:
     arguments:
       - '@templating'
+
+  AppBundle\Utils\PriceFormatter:
+    arguments:
+      - '@sylius.context.currency'
+      - '@sylius.templating.helper.currency'
