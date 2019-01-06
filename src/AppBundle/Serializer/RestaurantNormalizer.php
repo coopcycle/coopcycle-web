@@ -63,7 +63,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['closingRules']);
         }
 
-        if (in_array('restaurant_seo', $context['groups'])) {
+        if (isset($context['groups']) && in_array('restaurant_seo', $context['groups'])) {
 
             return $this->normalizeForSeo($object, $data);
         }
