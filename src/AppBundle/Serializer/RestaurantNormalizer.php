@@ -77,6 +77,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     private function normalizeForSeo($object, $data)
     {
+        $data['@context'] = 'http://schema.org';
+
         if (isset($data['address'])) {
             $data['address']['@type'] = 'http://schema.org/PostalAddress';
         }
