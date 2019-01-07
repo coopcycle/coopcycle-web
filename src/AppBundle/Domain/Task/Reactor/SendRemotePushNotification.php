@@ -26,6 +26,7 @@ class SendRemotePushNotification
 
     public function __invoke($event)
     {
+        /*
         if ($event instanceof TaskCreated) {
 
             $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
@@ -51,5 +52,6 @@ class SendRemotePushNotification
 
             }
         }
+        */
     }
 }
