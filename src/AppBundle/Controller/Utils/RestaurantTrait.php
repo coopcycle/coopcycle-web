@@ -512,10 +512,16 @@ trait RestaurantTrait
             return $a->getName() < $b->getName() ? -1 : 1;
         });
 
+        $forms = [];
+        foreach ($products as $product) {
+            $forms[$product->getId()] = $this->createForm(ProductType::class, $product)->createView();
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
+            'forms' => $forms,
         ], $routes));
     }
 

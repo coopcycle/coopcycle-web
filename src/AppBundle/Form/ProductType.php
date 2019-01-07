@@ -142,6 +142,15 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
+            // This is a delete button
+            if (count($data) === 1 && isset($data['delete'])) {
+                $form->remove('name');
+                $form->remove('price');
+                $form->remove('taxCategory');
+
+                return;
+            }
+
             $product = $form->getData();
             $name = $data['name'];
 
@@ -182,6 +191,12 @@ class ProductType extends AbstractType
 
             $form = $event->getForm();
             $product = $event->getData();
+
+            // This is a delete button
+            if (!$form->has('price') && !$form->has('taxCategory')) {
+
+                return;
+            }
 
             $price = $form->get('price')->getData();
             $taxCategory = $form->get('taxCategory')->getData();

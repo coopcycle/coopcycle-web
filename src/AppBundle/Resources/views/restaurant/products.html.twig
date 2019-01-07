@@ -19,6 +19,7 @@
     <th class="text-right">{{ 'basics.tax_category'|trans }}</th>
     <th class="text-right">Options</th>
     <th></th>
+    <th></th>
   </thead>
   <tbody>
     {% for product in products %}
@@ -38,6 +39,15 @@
       <td class="text-right">
         <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
           class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
+      </td>
+      <td class="text-right">
+        {% if forms[product.id] is defined %}
+          {% set product_form = forms[product.id] %}
+          {{ form_start(product_form, { action: path(product_route, { restaurantId: restaurant.id, productId: product.id }) }) }}
+            {{ form_widget(product_form.delete, { attr: { class: 'btn-xs btn-danger' } }) }}
+            {{ form_widget(product_form._token) }}
+          {{ form_end(product_form, { render_rest: false }) }}
+        {% endif %}
       </td>
     </tr>
     {% endfor %}
