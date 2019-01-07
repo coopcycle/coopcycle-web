@@ -361,6 +361,9 @@ trait RestaurantTrait
         ], $routes));
     }
 
+    /**
+     * @HideSoftDeleted
+     */
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request)
     {
         $routes = $request->attributes->get('routes');
