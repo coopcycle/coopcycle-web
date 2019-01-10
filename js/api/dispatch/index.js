@@ -88,9 +88,9 @@ sub.on('subscribe', (channel, count) => {
 })
 
 // WebSocket server
-wsServer.on('connection', function(ws) {
+wsServer.on('connection', function(ws, req) {
 
-    const { user } = ws.upgradeReq
+    const { user } = req
 
     console.log(`User ${user.username} connected`)
 
