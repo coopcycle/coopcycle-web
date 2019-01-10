@@ -48,6 +48,10 @@
       </div>
     {% endif %}
 
+    {% if form.delete is defined %}
+      {% do form.delete.setRendered %}
+    {% endif %}
+
   {{ form_end(form) }}
 
   {% if menu.id is not null %}

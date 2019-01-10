@@ -37,6 +37,9 @@ class MenuTaxonType extends AbstractType
                     ])
                     ->add('addChild', SubmitType::class, [
                         'label' => 'form.menu_taxon.add_child.label'
+                    ])
+                    ->add('delete', SubmitType::class, [
+                        'label' => 'basics.delete',
                     ]);
             }
         });

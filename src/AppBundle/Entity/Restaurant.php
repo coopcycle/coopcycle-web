@@ -642,6 +642,13 @@ class Restaurant extends FoodEstablishment
         $this->taxons->add($taxon);
     }
 
+    public function removeTaxon(TaxonInterface $taxon)
+    {
+        if ($this->getTaxons()->contains($taxon)) {
+            $this->getTaxons()->removeElement($taxon);
+        }
+    }
+
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
     {
         if (null === $language) {

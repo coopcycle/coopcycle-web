@@ -260,13 +260,18 @@ trait RestaurantTrait
             ->find($id);
 
         $routes = $request->attributes->get('routes');
+        $menus = $restaurant->getTaxons();
 
-        $form = $this->createForm(ClosingRuleType::class);
+        $forms = [];
+        foreach ($menus as $menu) {
+            $forms[$menu->getId()] = $this->createForm(MenuTaxonType::class, $menu)->createView();
+        }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'menus' => $restaurant->getTaxons(),
+            'menus' => $menus,
             'restaurant' => $restaurant,
+            'forms' => $forms,
         ], $routes));
     }
 
@@ -382,24 +387,32 @@ trait RestaurantTrait
 
             $menuTaxon = $form->getData();
 
-            if ($form->getClickedButton() && 'addChild' === $form->getClickedButton()->getName()) {
+            if ($form->getClickedButton()) {
 
-                $childName = $form->get('childName')->getData();
+                if ('addChild' === $form->getClickedButton()->getName()) {
+                    $childName = $form->get('childName')->getData();
 
-                $uuid = Uuid::uuid1()->toString();
+                    $uuid = Uuid::uuid1()->toString();
 
-                $childTaxon = $this->get('sylius.factory.taxon')->createNew();
-                $childTaxon->setCode($uuid);
-                $childTaxon->setSlug($uuid);
-                $childTaxon->setName($childName);
+                    $childTaxon = $this->get('sylius.factory.taxon')->createNew();
+                    $childTaxon->setCode($uuid);
+                    $childTaxon->setSlug($uuid);
+                    $childTaxon->setName($childName);
 
-                $menuTaxon->addChild($childTaxon);
-                $this->get('sylius.manager.taxon')->flush();
+                    $menuTaxon->addChild($childTaxon);
+                    $this->get('sylius.manager.taxon')->flush();
 
-                $this->addFlash(
-                    'notice',
-                    $this->get('translator')->trans('global.changesSaved')
-                );
+                    $this->addFlash(
+                        'notice',
+                        $this->get('translator')->trans('global.changesSaved')
+                    );
+                }
+
+                if ('delete' === $form->getClickedButton()->getName()) {
+                    $restaurant->removeTaxon($menuTaxon);
+                    $this->get('sylius.manager.taxon')->remove($menuTaxon);
+                    $this->get('sylius.manager.taxon')->flush();
+                }
 
                 return $this->redirect($request->headers->get('referer'));
             }
