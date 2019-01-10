@@ -59,7 +59,7 @@ describe('Connect to WebSocket', function() {
     });
   });
 
-  it('should return 401 Unauthorized with JWT as customer', function() {
+  it('should authorize connection with JWT as customer', function() {
     return new Promise(function (resolve, reject) {
       var token = utils.createJWT('bill');
       var ws = new WebSocket('http://localhost:8000', {
@@ -67,10 +67,12 @@ describe('Connect to WebSocket', function() {
           Authorization: 'Bearer ' + token
         }
       });
-      ws.onopen = reject;
-      ws.onerror = function(e) {
-        assert.equal('Unexpected server response: 401', e.message);
+      ws.onopen = function() {
+        ws.close();
         resolve();
+      };
+      ws.onerror = function(e) {
+        reject(e.message);
       };
     });
   });

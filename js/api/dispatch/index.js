@@ -29,7 +29,6 @@ var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-server.listen(process.env.PORT || 8000, function() {})
 
 var cert = fs.readFileSync(ROOT_DIR + '/var/jwt/public.pem')
 var TokenVerifier = require('../TokenVerifier')
@@ -41,13 +40,6 @@ var wsServer = new WebSocketServer({
       tokenVerifier
         .verify(info.req.headers)
         .then((user) => {
-
-          if (!_.includes(user.roles, 'ROLE_COURIER')) {
-            console.log('User has not enough access rights');
-            cb(false, 401, 'Access denied');
-            return;
-          }
-
           info.req.user = user;
           cb(true);
         })
@@ -57,85 +49,57 @@ var wsServer = new WebSocketServer({
     },
 })
 
-let isClosing = false,
-    couriersList = {}
+let isClosing = false
+let rooms = {}
 
-const channels = [
-  'task:unassign',
-  'task:assign',
-  'task:done',
-  'task:failed',
-  'tasks:created'
-]
-
-_.each(channels, (channel) => { sub.prefixedSubscribe(channel) })
-
-
-sub.on('subscribe', (channel, count) => {
-  // if (count === channels.length) {
-  //   sub.on('message', function(channelWithPrefix, message) {
-  //     const parsedMessage = JSON.parse(message),
-  //           username = parsedMessage.user.username
-  //     _.each(channels, (channel) => {
-  //       if (sub.isChannel(channelWithPrefix, channel) && couriersList[username]) {
-  //         winston.debug(`Sending message ${message} to ${username}`)
-  //         parsedMessage.type = channel
-  //         couriersList[username].send(JSON.stringify(parsedMessage))
-  //       }
-  //     })
-  //   })
-  // }
+sub.on('psubscribe', (channel, count) => {
+  winston.info(`Subscribed to ${channel} (${count})`)
+  initialize()
 })
 
-// WebSocket server
-wsServer.on('connection', function(ws, req) {
+function initialize() {
+
+  sub.on('pmessage', function(patternWithPrefix, channelWithPrefix, message) {
+
+    winston.debug(`Received pmessage on channel ${channelWithPrefix}`)
+
+    const channel = sub.unprefixedChannel(channelWithPrefix)
+    const pattern = sub.unprefixedChannel(patternWithPrefix)
+    const decoded = JSON.parse(message)
+
+    if (rooms[channel]) {
+      winston.debug(`Emitting "${decoded.name}" to sockets in ${channel}`)
+      _.forEach(rooms[channel], ws => ws.send(message))
+    }
+
+  })
+
+  // WebSocket server
+  wsServer.on('connection', function(ws, req) {
 
     const { user } = req
 
     console.log(`User ${user.username} connected`)
 
-    couriersList[user.username] = ws
+    if (!rooms[`users:${user.username}`]) {
+      rooms[`users:${user.username}`] = []
+    }
 
-    pub.prefixedPublish('online', user.username)
-
-    ws.on('message', function(messageText) {
-
-      if (isClosing) {
-        return
-      }
-
-      const message = JSON.parse(messageText)
-      const { type, data } = message
-
-      if (type === 'position') {
-
-        winston.debug(`Position received from ${user.username}`)
-
-        const { username } = user
-        const { latitude, longitude } = data
-
-        pub.prefixedPublish('tracking', JSON.stringify({
-          user: username,
-          coords: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
-        }))
-
-        redis.rpush(`tracking:${username}`, JSON.stringify({
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
-          timestamp: moment().unix()
-        }))
-
-      }
-
-    })
+    rooms[`users:${user.username}`].push(ws)
 
     ws.on('close', function() {
       console.log(`User ${user.username} disconnected`)
-      pub.prefixedPublish('offline', user.username)
-      delete couriersList[user.username]
+      if (rooms[`users:${user.username}`]) {
+        rooms[`users:${user.username}`] = _.filter(rooms[`users:${user.username}`], socket => socket !== ws)
+      }
     })
 
-})
+  })
+
+  server.listen(process.env.PORT || 8000, function() {})
+}
+
+sub.prefixedPSubscribe('users:*')
 
 // Handle restarts
 process.on('SIGINT', function () {
