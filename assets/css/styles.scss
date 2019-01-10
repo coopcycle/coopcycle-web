@@ -1244,3 +1244,26 @@ div.pac-container {
   }
 
 }
+
+.btn-confirm-delete {
+  display: flex;
+  margin: 0 auto;
+  transition: all 0.4s;
+  .message {
+    // @see https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css
+    max-width: 0;
+    height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.4s;
+  }
+  &.confirm {
+    .fa {
+      margin-right: 4px;
+    }
+    .message {
+      max-width: 500px;
+      height: auto;
+    }
+  }
+}

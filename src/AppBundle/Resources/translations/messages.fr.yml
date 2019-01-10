@@ -614,6 +614,7 @@ basics.tax_category: TVA
 basics.export: Exporter
 basics.name: Nom
 basics.today: Aujourd'hui
+basics.are_you_sure: Êtes-vous sûr‧e ?
 
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison

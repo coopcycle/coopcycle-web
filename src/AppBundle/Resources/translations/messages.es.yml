@@ -613,6 +613,7 @@ basics.tax_category: IVA
 basics.export: Exportar
 basics.name: Nombre
 basics.today: Hoy
+basics.are_you_sure: ¿Estás segur@?
 
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?

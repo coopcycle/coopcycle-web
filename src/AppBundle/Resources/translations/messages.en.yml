@@ -577,6 +577,7 @@ basics.tax_category: VAT
 basics.export: Export
 basics.name: Name
 basics.today: Today
+basics.are_you_sure: Are you sure?
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

@@ -2,6 +2,7 @@ import AddressInput from './AddressInput'
 import AddressPicker from './AddressPicker'
 import CheckoutDateTime from './CheckoutDateTime'
 import ColorPicker from './ColorPicker'
+import ConfirmDelete from './ConfirmDelete'
 import DatePicker from './DatePicker'
 import DateTimePicker from './DateTimePicker'
 import DeliveryMap from './DeliveryMap'
@@ -22,6 +23,7 @@ window.CoopCycle.AddressInput = AddressInput
 window.CoopCycle.AddressPicker = AddressPicker
 window.CoopCycle.CheckoutDateTime = CheckoutDateTime
 window.CoopCycle.ColorPicker = ColorPicker
+window.CoopCycle.ConfirmDelete = ConfirmDelete
 window.CoopCycle.DatePicker = DatePicker
 window.CoopCycle.DateTimePicker = DateTimePicker
 window.CoopCycle.DeliveryMap = DeliveryMap
