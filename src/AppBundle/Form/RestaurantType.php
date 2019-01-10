@@ -19,7 +19,10 @@ class RestaurantType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('description', TextareaType::class, ['label' => 'localBusiness.form.description',])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+                'label' => 'localBusiness.form.description',
+            ])
             ->add('orderingDelayDays', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayDays',
                 'mapped' => false
