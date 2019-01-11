@@ -56,7 +56,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   subresourceOperations={
  *     "orders_get_subresource"={
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
  *     },
  *   },
  * )
