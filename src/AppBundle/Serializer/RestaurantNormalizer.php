@@ -42,19 +42,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if (isset($data['taxons'])) {
-            if ($object->hasMenu()) {
-                foreach ($data['taxons'] as $taxon) {
-                    if ($taxon['identifier'] === $object->getMenuTaxon()->getCode()) {
-                        $data['hasMenu'] = $taxon;
-                        break;
-                    }
-                }
-            }
-
-            unset($data['taxons']);
-        }
-
         if (isset($data['openingHours'])) {
             $data['openingHoursSpecification'] = array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
                 return $openingHoursSpecification->jsonSerialize();
@@ -66,9 +53,15 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['closingRules']);
         }
 
+        // Stop now if this is for SEO
+        // FIXME Stop checking groups manually
         if (isset($context['groups']) && in_array('restaurant_seo', $context['groups'])) {
 
             return $this->normalizeForSeo($object, $data);
+        }
+
+        if (isset($data['@id']) && $object->hasMenu()) {
+            $data['hasMenu'] = $data['@id'] . '/menu';
         }
 
         $data['availabilities'] = $object->getAvailabilities();

@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\Restaurant\Close as CloseRestaurant;
+use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
@@ -41,7 +42,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
- *     "restaurant_menu"={"route_name"="api_restaurant_menu"},
+ *     "restaurant_menu"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/menu",
+ *       "controller"=Menu::class,
+ *     },
  *     "put"={
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"restaurant_update"}},
@@ -171,9 +176,6 @@ class Restaurant extends FoodEstablishment
 
     private $productOptions;
 
-    /**
-     * @Groups({"restaurant"})
-     */
     private $taxons;
 
     private $activeMenuTaxon;

@@ -37,8 +37,7 @@ Feature: Manage restaurants
           "servesCuisine":@array@,
           "enabled":true,
           "address":@...@,
-          "name":"Café Barjot",
-          "hasMenu":@...@
+          "name":"Café Barjot"
         }
       ],
       "hydra:totalItems":1,
@@ -86,61 +85,7 @@ Feature: Manage restaurants
         "name":null,
         "telephone": null
       },
-      "hasMenu":{
-        "@type":"Menu",
-        "identifier":@string@,
-        "hasMenuSection":[
-          {
-            "name":"Pizzas",
-            "hasMenuItem":[
-              {
-                "@type":"MenuItem",
-                "name":"Pizza",
-                "description":null,
-                "identifier":"PIZZA",
-                "offers": {
-                  "@type":"Offer",
-                  "price":@integer@
-                },
-                "menuAddOn":[
-                  {
-                    "@type":"MenuSection",
-                    "name":"Pizza topping",
-                    "identifier":"PIZZA_TOPPING",
-                    "hasMenuItem":[
-                      {
-                        "@type":"MenuItem",
-                        "name":"Extra cheese",
-                        "identifier":"PIZZA_TOPPING_EXTRA_CHEESE"
-                      },
-                      {
-                        "@type":"MenuItem",
-                        "name":"Pepperoni",
-                        "identifier":"PIZZA_TOPPING_PEPPERONI"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name":"Burger",
-            "hasMenuItem":[
-              {
-                "@type":"MenuItem",
-                "name":"Hamburger",
-                "description":null,
-                "identifier":"HAMBURGER",
-                "offers": {
-                  "@type":"Offer",
-                  "price":@integer@
-                }
-              }
-            ]
-          }
-        ]
-      },
+      "hasMenu":"/api/restaurants/1/menu",
       "openingHours":@array@,
       "openingHoursSpecification":[
         {
@@ -154,6 +99,82 @@ Feature: Manage restaurants
       "availabilities":@array@,
       "minimumCartAmount":@integer@,
       "flatDeliveryPrice":@integer@
+    }
+    """
+
+  Scenario: Retrieve a restaurant's menu
+    Given the fixtures files are loaded:
+      | sylius_locales.yml |
+      | products.yml       |
+      | restaurants.yml    |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/menu"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@type":"Menu",
+      "identifier":@string@,
+      "hasMenuSection":[
+        {
+          "name":"Pizzas",
+          "hasMenuItem":[
+            {
+              "@type":"MenuItem",
+              "name":"Pizza",
+              "description":null,
+              "identifier":"PIZZA",
+              "offers": {
+                "@type":"Offer",
+                "price":@integer@
+              },
+              "menuAddOn":[
+                {
+                  "@type":"MenuSection",
+                  "name":"Pizza topping",
+                  "identifier":"PIZZA_TOPPING",
+                  "hasMenuItem":[
+                    {
+                      "@type":"MenuItem",
+                      "name":"Extra cheese",
+                      "identifier":"PIZZA_TOPPING_EXTRA_CHEESE"
+                    },
+                    {
+                      "@type":"MenuItem",
+                      "name":"Pepperoni",
+                      "identifier":"PIZZA_TOPPING_PEPPERONI"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name":"Burger",
+          "hasMenuItem":[
+            {
+              "@type":"MenuItem",
+              "name":"Hamburger",
+              "description":null,
+              "identifier":"HAMBURGER",
+              "offers": {
+                "@type":"Offer",
+                "price":@integer@
+              }
+            }
+          ]
+        }
+      ]
     }
     """
 
