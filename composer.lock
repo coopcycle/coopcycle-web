@@ -716,40 +716,44 @@
         },
         {
             "name": "craue/config-bundle",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craue/CraueConfigBundle.git",
-                "reference": "9b6dffb96dd15183b4255db234284776bffa4dde"
+                "reference": "93008ad2f7abfd15470bba0c4f36e3687b8253d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craue/CraueConfigBundle/zipball/9b6dffb96dd15183b4255db234284776bffa4dde",
-                "reference": "9b6dffb96dd15183b4255db234284776bffa4dde",
+                "url": "https://api.github.com/repos/craue/CraueConfigBundle/zipball/93008ad2f7abfd15470bba0c4f36e3687b8253d5",
+                "reference": "93008ad2f7abfd15470bba0c4f36e3687b8253d5",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "~1.3",
-                "php": "^5.3.9|~7.0",
-                "symfony/framework-bundle": "~2.7|~3.0|~4.0"
+                "doctrine/doctrine-bundle": "^1.5.1",
+                "php": "~7.0",
+                "symfony/framework-bundle": "~3.4|~4.1"
             },
             "require-dev": {
-                "doctrine/doctrine-cache-bundle": "~1.3",
-                "doctrine/orm": "^2.3.1",
-                "phpunit/phpunit": "^4.8.35|~5.7|~6.0",
-                "symfony/phpunit-bridge": "~3.2|~4.0",
-                "symfony/symfony": "~2.7|~3.0|~4.0"
+                "doctrine/doctrine-cache-bundle": "^1.3.5",
+                "doctrine/instantiator": "^1.0.5",
+                "doctrine/orm": "^2.5.14",
+                "phpunit/phpunit": "^6.5.13|^7.5.1",
+                "symfony/phpunit-bridge": "~3.4|~4.1",
+                "symfony/symfony": "~3.4|~4.1"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev"
+                    "dev-master": "2.2.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Craue\\ConfigBundle\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -768,12 +772,11 @@
             "description": "Database-stored settings made available via a service for your Symfony project.",
             "homepage": "https://github.com/craue/CraueConfigBundle",
             "keywords": [
-                "Symfony2",
                 "config",
                 "symfony3",
                 "symfony4"
             ],
-            "time": "2018-01-02T19:53:16+00:00"
+            "time": "2019-01-06T19:29:44+00:00"
         },
         {
             "name": "csa/guzzle-bundle",
@@ -1335,16 +1338,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.9.1",
+            "version": "v2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "ec74d6e300d78fbc896669c3ca57ef9719adc9c6"
+                "reference": "22800bd651c1d8d2a9719e2a3dc46d5108ebfcc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/ec74d6e300d78fbc896669c3ca57ef9719adc9c6",
-                "reference": "ec74d6e300d78fbc896669c3ca57ef9719adc9c6",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/22800bd651c1d8d2a9719e2a3dc46d5108ebfcc9",
+                "reference": "22800bd651c1d8d2a9719e2a3dc46d5108ebfcc9",
                 "shasum": ""
             },
             "require": {
@@ -1413,20 +1416,20 @@
                 "php",
                 "queryobject"
             ],
-            "time": "2018-12-14T04:51:13+00:00"
+            "time": "2018-12-31T03:27:51+00:00"
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "82d2c63cd09acbde2332f55d9aa7b28aefe4983d"
+                "reference": "98551d71f515692c2278073e0d483763ac70b341"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/82d2c63cd09acbde2332f55d9aa7b28aefe4983d",
-                "reference": "82d2c63cd09acbde2332f55d9aa7b28aefe4983d",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/98551d71f515692c2278073e0d483763ac70b341",
+                "reference": "98551d71f515692c2278073e0d483763ac70b341",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1501,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2018-11-30T13:53:17+00:00"
+            "time": "2019-01-07T15:31:08+00:00"
         },
         {
             "name": "doctrine/doctrine-cache-bundle",
@@ -1980,12 +1983,12 @@
             "version": "v2.6.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/doctrine2.git",
+                "url": "https://github.com/doctrine/orm.git",
                 "reference": "434820973cadf2da2d66e7184be370084cc32ca8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/434820973cadf2da2d66e7184be370084cc32ca8",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/434820973cadf2da2d66e7184be370084cc32ca8",
                 "reference": "434820973cadf2da2d66e7184be370084cc32ca8",
                 "shasum": ""
             },
@@ -2780,16 +2783,16 @@
         },
         {
             "name": "geocoder-php/chain-provider",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/chain-provider.git",
-                "reference": "c327807dc455c2fee8c951d8fadbb5a60cfdcd48"
+                "reference": "be9d39b4097d3f926eb8465d051addaf46ead3ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/chain-provider/zipball/c327807dc455c2fee8c951d8fadbb5a60cfdcd48",
-                "reference": "c327807dc455c2fee8c951d8fadbb5a60cfdcd48",
+                "url": "https://api.github.com/repos/geocoder-php/chain-provider/zipball/be9d39b4097d3f926eb8465d051addaf46ead3ae",
+                "reference": "be9d39b4097d3f926eb8465d051addaf46ead3ae",
                 "shasum": ""
             },
             "require": {
@@ -2802,10 +2805,9 @@
             },
             "require-dev": {
                 "nyholm/nsa": "^1.1",
-                "nyholm/psr7": "^0.2.2",
                 "php-http/curl-client": "^1.7",
                 "php-http/message": "^1.0",
-                "phpunit/phpunit": "^6.1"
+                "phpunit/phpunit": "6.3.*"
             },
             "type": "library",
             "extra": {
@@ -2833,7 +2835,7 @@
             ],
             "description": "Geocoder chain adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
-            "time": "2017-08-01T07:23:53+00:00"
+            "time": "2019-01-08T12:13:42+00:00"
         },
         {
             "name": "geocoder-php/common-http",
@@ -3066,16 +3068,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.2",
+            "version": "8.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "a71f260c2efce10ded8af030a20fa13edfb0e9be"
+                "reference": "8c129346bcb057caf7ed243792d5dacc137b4617"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/a71f260c2efce10ded8af030a20fa13edfb0e9be",
-                "reference": "a71f260c2efce10ded8af030a20fa13edfb0e9be",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/8c129346bcb057caf7ed243792d5dacc137b4617",
+                "reference": "8c129346bcb057caf7ed243792d5dacc137b4617",
                 "shasum": ""
             },
             "require": {
@@ -3130,7 +3132,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-12-06T10:42:08+00:00"
+            "time": "2019-01-09T12:30:34+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -3842,16 +3844,16 @@
         },
         {
             "name": "jmose/command-scheduler-bundle",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/J-Mose/CommandSchedulerBundle.git",
-                "reference": "c5ce339268263edbd37e3ef816b5dc332ff6be1b"
+                "reference": "ddd6db973ae941437bfb421d24b3d031b9d2f7df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/J-Mose/CommandSchedulerBundle/zipball/c5ce339268263edbd37e3ef816b5dc332ff6be1b",
-                "reference": "c5ce339268263edbd37e3ef816b5dc332ff6be1b",
+                "url": "https://api.github.com/repos/J-Mose/CommandSchedulerBundle/zipball/ddd6db973ae941437bfb421d24b3d031b9d2f7df",
+                "reference": "ddd6db973ae941437bfb421d24b3d031b9d2f7df",
                 "shasum": ""
             },
             "require": {
@@ -3901,7 +3903,7 @@
                 "symfony",
                 "task"
             ],
-            "time": "2018-12-18T16:00:54+00:00"
+            "time": "2019-01-02T14:55:59+00:00"
         },
         {
             "name": "jms/metadata",
@@ -4282,16 +4284,16 @@
         },
         {
             "name": "knplabs/knp-markdown-bundle",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpMarkdownBundle.git",
-                "reference": "912796833a126df65ce54f81ca174474105665ea"
+                "reference": "c055def2e67fe0d3b3d2e993584f01ff222eff86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpMarkdownBundle/zipball/912796833a126df65ce54f81ca174474105665ea",
-                "reference": "912796833a126df65ce54f81ca174474105665ea",
+                "url": "https://api.github.com/repos/KnpLabs/KnpMarkdownBundle/zipball/c055def2e67fe0d3b3d2e993584f01ff222eff86",
+                "reference": "c055def2e67fe0d3b3d2e993584f01ff222eff86",
                 "shasum": ""
             },
             "require": {
@@ -4341,7 +4343,7 @@
                 "knplabs",
                 "markdown"
             ],
-            "time": "2018-01-23T15:34:53+00:00"
+            "time": "2019-01-03T19:47:10+00:00"
         },
         {
             "name": "knplabs/knp-paginator-bundle",
@@ -7377,16 +7379,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "2.1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "c0154ea26d95c9715899a863a47643a5c2d84f3e"
+                "reference": "b36df3632e944d49d81599410a5c85edff2972a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/c0154ea26d95c9715899a863a47643a5c2d84f3e",
-                "reference": "c0154ea26d95c9715899a863a47643a5c2d84f3e",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/b36df3632e944d49d81599410a5c85edff2972a9",
+                "reference": "b36df3632e944d49d81599410a5c85edff2972a9",
                 "shasum": ""
             },
             "require": {
@@ -7442,7 +7444,7 @@
                 "sentry",
                 "symfony"
             ],
-            "time": "2018-11-05T14:29:39+00:00"
+            "time": "2019-01-05T13:33:24+00:00"
         },
         {
             "name": "simple-bus/message-bus",
