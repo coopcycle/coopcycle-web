@@ -93,22 +93,24 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
                 $defaultVariant = $this->variantResolver->getVariant($product);
 
-                $product->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+                if ($defaultVariant) {
+                    $product->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-                $item = [
-                    '@type' => 'MenuItem',
-                    'name' => $product->getName(),
-                    'description' => $product->getDescription(),
-                    'identifier' => $product->getCode(),
-                    'offers' => [
-                        '@type' => 'Offer',
-                        'price' => $defaultVariant->getPrice(),
-                    ]
-                ];
-                if ($product->hasOptions()) {
-                    $item['menuAddOn'] = $this->normalizeOptions($product->getOptions());
+                    $item = [
+                        '@type' => 'MenuItem',
+                        'name' => $product->getName(),
+                        'description' => $product->getDescription(),
+                        'identifier' => $product->getCode(),
+                        'offers' => [
+                            '@type' => 'Offer',
+                            'price' => $defaultVariant->getPrice(),
+                        ]
+                    ];
+                    if ($product->hasOptions()) {
+                        $item['menuAddOn'] = $this->normalizeOptions($product->getOptions());
+                    }
+                    $section['hasMenuItem'][] = $item;
                 }
-                $section['hasMenuItem'][] = $item;
             }
 
             $data['hasMenuSection'][] = $section;
