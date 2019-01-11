@@ -17,7 +17,7 @@ class GeoCoordinates
     /**
      * @var float The latitude of a location. For example `37.42242`.
      *
-     * @Groups({"place"})
+     * @Groups({"place", "address_create"})
      * @Assert\Type(type="float")
      */
     private $latitude;
@@ -25,7 +25,7 @@ class GeoCoordinates
     /**
      * @var float The longitude of a location. For example `-122.08585`.
      *
-     * @Groups({"place"})
+     * @Groups({"place", "address_create"})
      * @Assert\Type(type="float")
      */
     private $longitude;

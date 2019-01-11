@@ -32,7 +32,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *     "get"={"method"="GET"},
  *     "post"={
  *       "method"="POST",
- *       "denormalization_context"={"groups"={"order_create"}}
+ *       "denormalization_context"={"groups"={"order_create", "address_create"}}
  *     },
  *     "my_orders"={"method"="GET", "route_name"="my_orders"}
  *   },

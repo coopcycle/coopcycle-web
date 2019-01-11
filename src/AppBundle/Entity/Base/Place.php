@@ -17,7 +17,7 @@ abstract class Place extends PostalAddress
      * @var GeoCoordinates The geo coordinates of the place.
      *
      * @Assert\NotBlank()
-     * @Groups({"place"})
+     * @Groups({"place", "address_create"})
      */
     protected $geo;
 
