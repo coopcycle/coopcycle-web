@@ -43,12 +43,15 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (isset($data['taxons'])) {
-            foreach ($data['taxons'] as $taxon) {
-                if ($taxon['identifier'] === $object->getMenuTaxon()->getCode()) {
-                    $data['hasMenu'] = $taxon;
-                    break;
+            if ($object->hasMenu()) {
+                foreach ($data['taxons'] as $taxon) {
+                    if ($taxon['identifier'] === $object->getMenuTaxon()->getCode()) {
+                        $data['hasMenu'] = $taxon;
+                        break;
+                    }
                 }
             }
+
             unset($data['taxons']);
         }
 
