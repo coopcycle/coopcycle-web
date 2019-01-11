@@ -17,6 +17,8 @@ services:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
       - "@router"
+      - "@vich_uploader.templating.helper.uploader_helper"
+      - "@assets.packages"
       - "@sylius.context.currency"
       - "@coopcycle.price_formatter"
       - "@slugify"

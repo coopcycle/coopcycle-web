@@ -10,13 +10,17 @@ use AppBundle\Utils\PriceFormatter;
 use Cocur\Slugify\SlugifyInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $urlGenerator;
+    private $uploaderHelper;
+    private $assets;
     private $currencyContext;
     private $priceFormatter;
     private $slugify;
@@ -25,6 +29,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     public function __construct(
         ItemNormalizer $normalizer,
         UrlGeneratorInterface $urlGenerator,
+        UploaderHelper $uploaderHelper,
+        Packages $assets,
         CurrencyContextInterface $currencyContext,
         PriceFormatter $priceFormatter,
         SlugifyInterface $slugify,
@@ -32,6 +38,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $this->normalizer = $normalizer;
         $this->urlGenerator = $urlGenerator;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->assets = $assets;
         $this->currencyContext = $currencyContext;
         $this->priceFormatter = $priceFormatter;
         $this->slugify = $slugify;
@@ -67,6 +75,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $data['availabilities'] = $object->getAvailabilities();
         $data['minimumCartAmount'] = $object->getMinimumCartAmount();
         $data['flatDeliveryPrice'] = $object->getFlatDeliveryPrice();
+
+        $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
+        if (empty($imagePath)) {
+            $imagePath = 'img/cuisine/default.jpg';
+        }
+        $data['image'] = $this->assets->getUrl($imagePath);
 
         return $data;
     }
