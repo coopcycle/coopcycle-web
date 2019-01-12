@@ -96,6 +96,14 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['openingHours']);
         }
 
+        if ($website = $object->getWebsite()) {
+            $data['sameAs'] = $website;
+        }
+
+        if ($description = $object->getDescription()) {
+            $data['description'] = $description;
+        }
+
         // @see https://developers.google.com/search/docs/data-types/local-business#order-reservation-scenarios
 
         $urlTemplate = $this->urlGenerator->generate('restaurant', [
