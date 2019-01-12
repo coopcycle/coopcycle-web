@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *   attributes={
- *     "denormalization_context"={"groups"={"task"}},
+ *     "denormalization_context"={"groups"={"task", "address_create"}},
  *     "normalization_context"={"groups"={"task", "delivery", "place"}}
  *   },
  *   collectionOperations={
@@ -109,7 +109,7 @@ class Task implements TaggableInterface
     private $delivery;
 
     /**
-     * @Groups({"task", "place"})
+     * @Groups({"task", "place", "address_create"})
      */
     private $address;
 

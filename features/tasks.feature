@@ -305,6 +305,9 @@ Feature: Tasks
         "type": "DROPOFF",
         "address": {
           "streetAddress": "101 Rue de la Paix, 75002 Paris",
+          "postalCode": "75002",
+          "addressLocality": "Paris",
+          "description": "Sonner à l'interphone",
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
@@ -329,7 +332,7 @@ Feature: Tasks
           "@type":"http://schema.org/Place",
           "firstName":null,
           "lastName":null,
-          "description":null,
+          "description": "Sonner à l'interphone",
           "floor":null,
           "geo":{
             "latitude":48.870473,
