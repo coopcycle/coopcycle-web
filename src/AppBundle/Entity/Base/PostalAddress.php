@@ -77,7 +77,7 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
-     * @Groups({"place"})
+     * @Groups({"place", "address_create"})
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;
