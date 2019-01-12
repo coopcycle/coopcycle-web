@@ -561,6 +561,31 @@ index.view_all_restaurants: View all restaurants →
 notifications.empty: No notifications
 notifications.order.created: New order
 
+adminDashboard.statistics: Statistics
+adminDashboard.activity.title: Activity
+
+activity.task.created: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> created task #%aggregate_id%
+activity.task.assigned: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> assigned task #%aggregate_id%
+activity.task.unassigned: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> unassigned task #%aggregate_id%
+activity.task.done: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> completed task #%aggregate_id%
+activity.task.failed: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> could not complete task #%aggregate_id%
+
+activity.order.created: |
+  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> has been created by <strong>%owner%</strong>
+activity.order.accepted: |
+  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> has been accepted
+activity.order.picked: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has picked order <a href="%aggregate_url%">#%aggregate_id%</a>
+activity.order.dropped: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has dropped order <a href="%aggregate_url%">#%aggregate_id%</a>
+activity.order.fulfilled: |
+  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> is fulfilled
+
 pagination.previous: Previous
 pagination.next: Next
 

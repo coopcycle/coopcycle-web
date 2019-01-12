@@ -598,6 +598,32 @@ index.view_all_restaurants: Ver todos los restaurantes →
 
 notifications.empty: Ninguna notificación
 notifications.order.created: Nuevo pedido
+
+adminDashboard.statistics: Estadísticas
+adminDashboard.activity.title: Actividad
+
+activity.task.created: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha creado la tarea #%aggregate_id%
+activity.task.assigned: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha asignado la tarea #%aggregate_id%
+activity.task.unassigned: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha desasignado la tarea #%aggregate_id%
+activity.task.done: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha terminado la tarea #%aggregate_id%
+activity.task.failed: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> no pudo terminar la tarea #%aggregate_id%
+
+activity.order.created: |
+  <i class="fa fa-%icon%"></i>  El pedido <a href="%aggregate_url%">#%aggregate_id%</a> ha sido creado por <strong>%owner%</strong>
+activity.order.accepted: |
+  <i class="fa fa-%icon%"></i>  El pedido <a href="%aggregate_url%">#%aggregate_id%</a> ha sido aceptado
+activity.order.picked: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha recuperado el pedido <a href="%aggregate_url%">#%aggregate_id%</a>
+activity.order.dropped: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha entregado el pedido <a href="%aggregate_url%">#%aggregate_id%</a>
+activity.order.fulfilled: |
+  <i class="fa fa-%icon%"></i>  El pedido <a href="%aggregate_url%">#%aggregate_id%</a> esta terminado
+
 pagination.previous: Anterior
 pagination.next: Siguiente
 basics.save: Guardar

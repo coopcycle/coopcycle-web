@@ -34,6 +34,7 @@ use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Service\ActivityManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
@@ -1080,5 +1081,23 @@ class AdminController extends Controller
             'pricing_rule_set' => $pricingRuleSet,
             'embed_settings_form' => $embedSettingsForm->createView(),
         ];
+    }
+
+    /**
+     * @Route("/admin/activity", name="admin_activity")
+     */
+    public function activityAction(Request $request, ActivityManager $activityManager)
+    {
+        $date = new \DateTime();
+        if ($request->query->has('date')) {
+            $date = new \DateTime($request->query->get('date'));
+        }
+
+        $events = $activityManager->getEventsByDate($date);
+
+        return $this->render('@App/admin/activity.html.twig', [
+            'events' => $events,
+            'date' => $date
+        ]);
     }
 }
