@@ -51,7 +51,9 @@
       <h1>{{ restaurant.name }}</h1>
       {% if restaurant.website is defined and restaurant.website is not empty %}
       <p>
-        <a href="{{ restaurant.website }}" target="_blank">{{ restaurant.website }}</a>
+        <a href="{{ restaurant.website }}" target="_blank">
+          <i class="fa fa-external-link"></i> {{ 'localBusiness.form.website'|trans }}
+        </a>
       </p>
       {% endif %}
       {% if restaurant.description is defined and restaurant.description is not empty %}
