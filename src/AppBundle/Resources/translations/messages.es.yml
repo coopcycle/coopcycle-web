@@ -614,6 +614,8 @@ activity.task.done: |
   <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha terminado la tarea #%aggregate_id%
 activity.task.failed: |
   <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> no pudo terminar la tarea #%aggregate_id%
+activity.task.cancelled: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> ha cancelado la tarea #%aggregate_id%
 
 activity.order.created: |
   <i class="fa fa-%icon%"></i>  El pedido <a href="%aggregate_url%">#%aggregate_id%</a> ha sido creado por <strong>%owner%</strong>

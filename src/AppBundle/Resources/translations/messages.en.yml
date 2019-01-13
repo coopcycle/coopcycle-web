@@ -576,6 +576,8 @@ activity.task.done: |
   <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> completed task #%aggregate_id%
 activity.task.failed: |
   <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> could not complete task #%aggregate_id%
+activity.task.cancelled: |
+  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has cancelled task #%aggregate_id%
 
 activity.order.created: |
   <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> has been created by <strong>%owner%</strong>

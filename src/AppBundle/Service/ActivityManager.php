@@ -103,6 +103,9 @@ class ActivityManager
                 case 'task:failed':
                     $icon = 'warning';
                     break;
+                case 'task:cancelled':
+                    $icon = 'times';
+                    break;
                 case 'order:created':
                     $icon = 'cube';
                     break;
