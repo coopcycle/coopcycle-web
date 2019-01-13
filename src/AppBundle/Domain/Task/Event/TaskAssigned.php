@@ -3,11 +3,12 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class TaskAssigned extends Event implements DomainEvent
+class TaskAssigned extends Event implements DomainEvent, HasIconInterface
 {
     private $user;
 
@@ -33,6 +34,11 @@ class TaskAssigned extends Event implements DomainEvent
     public static function messageName()
     {
         return 'task:assigned';
+    }
+
+    public static function iconName()
+    {
+        return 'plus';
     }
 }
 

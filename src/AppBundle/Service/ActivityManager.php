@@ -2,28 +2,41 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Domain\HasIconInterface;
+use AppBundle\Domain\Order\Event as OrderEvents;
+use AppBundle\Domain\Task\Event as TaskEvents;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ActivityManager
 {
     private $doctrine;
     private $translator;
-    private $urlGenerator;
+
+    private $events = [
+        OrderEvents\OrderCreated::class,
+        OrderEvents\OrderAccepted::class,
+        OrderEvents\OrderPicked::class,
+        OrderEvents\OrderDropped::class,
+        OrderEvents\OrderFulfilled::class,
+        TaskEvents\TaskCreated::class,
+        TaskEvents\TaskAssigned::class,
+        TaskEvents\TaskUnassigned::class,
+        TaskEvents\TaskDone::class,
+        TaskEvents\TaskFailed::class,
+        TaskEvents\TaskCancelled::class,
+    ];
 
     public function __construct(
         ManagerRegistry $doctrine,
-        TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator)
+        TranslatorInterface $translator)
     {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
     }
 
     private function getTaskEvents(\DateTime $date)
@@ -67,9 +80,14 @@ class ActivityManager
         $taskEvents = $this->getTaskEvents($date);
         $orderEvents = $this->getOrderEvents($date);
 
+        $eventsByName = [];
+        foreach ($this->events as $event) {
+            $eventsByName[$event::messageName()] = $event;
+        }
+
         $events = array_merge($taskEvents, $orderEvents);
 
-        $events = array_map(function ($event) {
+        $events = array_map(function ($event) use ($eventsByName) {
 
             $data = [
                 'name' => $event['name'],
@@ -82,56 +100,17 @@ class ActivityManager
                 $data['owner'] = $data['metadata']['username'];
             }
 
-            if (0 === strpos($event['name'], 'order:')) {
-                $data['aggregateUrl'] = $this->urlGenerator->generate('admin_order', [ 'id' => $event['aggregate_id'] ]);
-            }
-
-            $icon = '';
-            switch ($data['name']) {
-                case 'task:created':
-                    $icon = 'plus';
-                    break;
-                case 'task:assigned':
-                    $icon = 'calendar-check-o';
-                    break;
-                case 'task:unassigned':
-                    $icon = 'calendar-times-o';
-                    break;
-                case 'task:done':
-                    $icon = 'check';
-                    break;
-                case 'task:failed':
-                    $icon = 'warning';
-                    break;
-                case 'task:cancelled':
-                    $icon = 'times';
-                    break;
-                case 'order:created':
-                    $icon = 'cube';
-                    break;
-                case 'order:accepted':
-                    $icon = 'thumbs-o-up';
-                    break;
-                case 'order:picked':
-                    $icon = 'bicycle';
-                    break;
-                case 'order:dropped':
-                    $icon = 'flag-checkered';
-                    break;
-                case 'order:fulfilled':
-                    $icon = 'check';
-                    break;
+            if (isset($eventsByName[$event['name']])) {
+                $eventClass = $eventsByName[$event['name']];
+                if (in_array(HasIconInterface::class, class_implements($eventClass))) {
+                    $data['icon'] = $eventClass::iconName();
+                }
             }
 
             $transParams = [
                 '%owner%' => $data['owner'],
                 '%aggregate_id%' => $data['aggregateId'],
-                '%icon%' => $icon
             ];
-
-            if (isset($data['aggregateUrl'])) {
-                $transParams['%aggregate_url%'] = $data['aggregateUrl'];
-            }
 
             $key = 'activity.' . str_replace(':', '.', $data['name']);
             $data['forHumans'] = $this->translator->trans($key, $transParams);

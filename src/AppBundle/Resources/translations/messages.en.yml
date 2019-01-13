@@ -567,28 +567,28 @@ adminDashboard.statistics: Statistics
 adminDashboard.activity.title: Activity
 
 activity.task.created: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> created task #%aggregate_id%
+  @%owner% created task #task/%aggregate_id%
 activity.task.assigned: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> assigned task #%aggregate_id%
+  @%owner% assigned task #task/%aggregate_id%
 activity.task.unassigned: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> unassigned task #%aggregate_id%
+  @%owner% unassigned task #task/%aggregate_id%
 activity.task.done: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> completed task #%aggregate_id%
+  @%owner% completed task #task/%aggregate_id%
 activity.task.failed: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> could not complete task #%aggregate_id%
+  @%owner% could not complete task #task/%aggregate_id%
 activity.task.cancelled: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has cancelled task #%aggregate_id%
+  @%owner% has cancelled task #task/%aggregate_id%
 
 activity.order.created: |
-  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> has been created by <strong>%owner%</strong>
+  Order #order/%aggregate_id% has been created by @%owner%
 activity.order.accepted: |
-  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> has been accepted
+  Order #order/%aggregate_id% has been accepted
 activity.order.picked: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has picked order <a href="%aggregate_url%">#%aggregate_id%</a>
+  @%owner% has picked order #order/%aggregate_id%
 activity.order.dropped: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> has dropped order <a href="%aggregate_url%">#%aggregate_id%</a>
+  @%owner% has dropped order #order/%aggregate_id%
 activity.order.fulfilled: |
-  <i class="fa fa-%icon%"></i>  Order <a href="%aggregate_url%">#%aggregate_id%</a> is fulfilled
+  Order #order/#%aggregate_id% is fulfilled
 
 pagination.previous: Previous
 pagination.next: Next

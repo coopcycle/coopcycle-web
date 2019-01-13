@@ -634,28 +634,28 @@ adminDashboard.statistics: Statistiques
 adminDashboard.activity.title: Activité
 
 activity.task.created: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a créé la tâche #%aggregate_id%
+  @%owner% a créé la tâche #task/%aggregate_id%
 activity.task.assigned: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a assigné la tâche #%aggregate_id%
+  @%owner% a assigné la tâche #task/%aggregate_id%
 activity.task.unassigned: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a désassigné la tâche #%aggregate_id%
+  @%owner% a désassigné la tâche #task/%aggregate_id%
 activity.task.done: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a terminé la tâche #%aggregate_id%
+  @%owner% a terminé la tâche #task/%aggregate_id%
 activity.task.failed: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> n'a pas pu terminer la tâche #%aggregate_id%
+  @%owner% n'a pas pu terminer la tâche #task/%aggregate_id%
 activity.task.cancelled: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a annulé la tâche #%aggregate_id%
+  @%owner% a annulé la tâche #task/%aggregate_id%
 
 activity.order.created: |
-  <i class="fa fa-%icon%"></i>  La commande <a href="%aggregate_url%">#%aggregate_id%</a> a été créée par <strong>%owner%</strong>
+  La commande #order/%aggregate_id% a été créée par @%owner%
 activity.order.accepted: |
-  <i class="fa fa-%icon%"></i>  La commande <a href="%aggregate_url%">#%aggregate_id%</a> a été acceptée
+  La commande #order/%aggregate_id% a été acceptée
 activity.order.picked: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a récupéré la commande <a href="%aggregate_url%">#%aggregate_id%</a>
+  @%owner% a récupéré la commande #order/%aggregate_id%
 activity.order.dropped: |
-  <i class="fa fa-%icon%"></i>  <strong>%owner%</strong> a livré la commande <a href="%aggregate_url%">#%aggregate_id%</a>
+  @%owner% a livré la commande #order/%aggregate_id%
 activity.order.fulfilled: |
-  <i class="fa fa-%icon%"></i>  La commande <a href="%aggregate_url%">#%aggregate_id%</a> est terminée
+  La commande #order/%aggregate_id% est terminée
 
 embed.delivery.summary: 'Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>
   à l''adresse suivante : <strong>%dropoff_address%</strong>

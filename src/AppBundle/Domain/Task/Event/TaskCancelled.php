@@ -3,13 +3,19 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Task\Event;
 
-class TaskCancelled extends Event implements DomainEvent
+class TaskCancelled extends Event implements DomainEvent, HasIconInterface
 {
     public static function messageName()
     {
         return 'task:cancelled';
+    }
+
+    public static function iconName()
+    {
+        return 'times';
     }
 }
 

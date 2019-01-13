@@ -3,12 +3,18 @@
 namespace AppBundle\Domain\Order\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
 
-class OrderPicked extends Event implements DomainEvent
+class OrderPicked extends Event implements DomainEvent, HasIconInterface
 {
     public static function messageName()
     {
         return 'order:picked';
+    }
+
+    public static function iconName()
+    {
+        return 'bicycle';
     }
 }

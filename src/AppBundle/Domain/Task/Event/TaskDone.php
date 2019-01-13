@@ -3,10 +3,11 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 
-class TaskDone extends Event implements DomainEvent
+class TaskDone extends Event implements DomainEvent, HasIconInterface
 {
     private $notes;
 
@@ -32,5 +33,10 @@ class TaskDone extends Event implements DomainEvent
     public static function messageName()
     {
         return 'task:done';
+    }
+
+    public static function iconName()
+    {
+        return 'check';
     }
 }

@@ -3,10 +3,11 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 
-class TaskFailed extends Event implements DomainEvent
+class TaskFailed extends Event implements DomainEvent, HasIconInterface
 {
     private $notes;
 
@@ -32,5 +33,10 @@ class TaskFailed extends Event implements DomainEvent
     public static function messageName()
     {
         return 'task:failed';
+    }
+
+    public static function iconName()
+    {
+        return 'warning';
     }
 }
