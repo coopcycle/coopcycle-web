@@ -86,6 +86,7 @@ adminDashboard.zones.save: Enregistrer
 adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
+adminDashboard.back.title: Revenir au site
 delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil

@@ -92,6 +92,8 @@ adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
 
+adminDashboard.back.title: Volver al sitio
+
 deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor introduzca
   un precio.
 deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a partir

@@ -1,11 +1,15 @@
 {% extends "@App/base.html.twig" %}
 
+{% block menu %}
+  {% include "@App/admin/nav.html.twig" %}
+{% endblock %}
+
 {% block banner %}
   {% include '@App/_partials/maintenance.html.twig' %}
 {% endblock %}
 
 {% block body %}
-<div class="container container--full-height">
+<div class="container-fluid container--full-height">
 
   {% if not settings_manager.fullyConfigured %}
   <div class="alert alert-danger">
@@ -14,8 +18,6 @@
   {% endtrans %}
   </div>
   {% endif %}
-
-  {% include "@App/admin/nav.html.twig" %}
 
   <ol class="breadcrumb">
     <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
