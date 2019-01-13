@@ -3,10 +3,13 @@
 namespace AppBundle\Domain\Task;
 
 use AppBundle\Domain\Event as BaseEvent;
+use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Entity\Task;
-use SimpleBus\Message\Name\NamedMessage;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class Event extends BaseEvent
+abstract class Event extends BaseEvent implements SerializableEventInterface
 {
     protected $task;
 
@@ -18,5 +21,31 @@ abstract class Event extends BaseEvent
     public function getTask(): Task
     {
         return $this->task;
+    }
+
+    public function normalize(SerializerInterface $serializer)
+    {
+        $normalized = $serializer->normalize($this->getTask(), 'jsonld', [
+            'resource_class' => Task::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['task', 'delivery', 'place']
+        ]);
+
+        return [
+            'task' => $normalized
+        ];
+    }
+
+    public function forHumans(TranslatorInterface $translator, UserInterface $user = null)
+    {
+        $params = [
+            '%aggregate_id%' => $this->getTask()->getId(),
+            '%owner%' => $user ? $user->getUsername() : '?',
+        ];
+
+        $key = 'activity.' . str_replace(':', '.', $this::messageName());
+
+        return trim($translator->trans($key, $params));
     }
 }

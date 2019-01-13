@@ -628,7 +628,6 @@ embed.breadcrumb.summary: Résumé
 embed.breadcrumb.confirm: Confirmation
 embed.payment.heading: Payer ma commande
 notifications.empty: Aucune notification
-notifications.order.created: Nouvelle commande
 
 adminDashboard.statistics: Statistiques
 adminDashboard.activity.title: Activité

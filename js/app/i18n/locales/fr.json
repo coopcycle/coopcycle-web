@@ -91,6 +91,7 @@
     "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nouvelles commandes",
     "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Commandes acceptées",
     "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Commandes terminées",
-    "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Commandes annulées / refusées"
+    "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Commandes annulées / refusées",
+    "NOTIFICATIONS_EMPTY": "Pas de notification"
   }
 }

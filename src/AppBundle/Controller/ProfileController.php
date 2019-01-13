@@ -11,14 +11,13 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Notification;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
-use AppBundle\Service\NotificationManager;
+use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
@@ -322,19 +321,24 @@ class ProfileController extends Controller
     }
 
     /**
+     * @Route("/profile/jwt", methods={"GET"}, name="profile_jwt")
+     */
+    public function jwtAction(Request $request)
+    {
+        return new JsonResponse($request->getSession()->get('_jwt'));
+    }
+
+    /**
      * @Route("/profile/notifications", name="profile_notifications")
      */
-    public function notificationsAction(Request $request)
+    public function notificationsAction(Request $request, SocketIoManager $socketIoManager)
     {
-        $notificationRepository = $this->getDoctrine()->getRepository(Notification::class);
-
-        $notifications = $notificationRepository->findByUser($this->getUser());
+        $notifications = $socketIoManager->getLastNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+
             return new JsonResponse($this->get('serializer')->normalize($notifications, 'json'));
         }
-
-        $notificationRepository->markAllAsRead($this->getUser());
 
         return $this->render('@App/profile/notifications.html.twig', [
             'notifications' => $notifications
@@ -344,19 +348,15 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/notifications/unread", name="profile_notifications_unread")
      */
-    public function unreadNotificationsAction(Request $request)
+    public function unreadNotificationsAction(Request $request, SocketIoManager $socketIoManager)
     {
-        $unread = $this->getDoctrine()
-            ->getRepository(Notification::class)
-            ->countUnreadByUser($this->getUser());
-
-        return new JsonResponse((int) $unread);
+        return new JsonResponse((int) $socketIoManager->countNotifications($this->getUser()));
     }
 
     /**
      * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
      */
-    public function markNotificationsAsReadAction(Request $request, NotificationManager $notificationManager)
+    public function markNotificationsAsReadAction(Request $request, SocketIoManager $socketIoManager)
     {
         $ids = [];
         $content = $request->getContent();
@@ -364,11 +364,7 @@ class ProfileController extends Controller
             $ids = json_decode($content, true);
         }
 
-        $this->getDoctrine()
-            ->getRepository(Notification::class)
-            ->markAsRead($this->getUser(), $ids);
-
-        $notificationManager->publishCount($this->getUser());
+        $socketIoManager->markAsRead($this->getUser(), $ids);
 
         return new Response('', 204);
     }

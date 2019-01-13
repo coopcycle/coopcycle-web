@@ -1,10 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { I18nextProvider } from 'react-i18next'
 import NotificationList from './NotificationList'
+import i18n from '../i18n'
 
-window.CoopCycle = window.CoopCycle || {}
-
-window.CoopCycle.NotificationsListener = ($popover, username, options) => {
+function bootstrap($popover, options) {
 
   if ($popover.length === 0) {
     return
@@ -42,10 +42,19 @@ window.CoopCycle.NotificationsListener = ($popover, username, options) => {
     $popover.attr('data-content', template.innerHTML)
   }
 
-  const socket = io('//' + window.location.hostname, { path: '/tracking/socket.io' })
+  const socket = io(`//${window.location.hostname}`, {
+    path: '/tracking/socket.io',
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          Authorization: `Bearer ${options.jwt}`
+        }
+      }
+    }
+  })
 
-  socket.on(`user:${username}:notifications`, notification => component.unshift(notification))
-  socket.on(`user:${username}:notifications:count`, count => options.elements.count.innerHTML = count)
+  socket.on(`notifications`, notification => component.unshift(notification))
+  socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
 
   $.getJSON(options.unreadCountURL)
     .then(count => options.elements.count.innerHTML = count)
@@ -53,11 +62,13 @@ window.CoopCycle.NotificationsListener = ($popover, username, options) => {
   $.getJSON(options.notificationsURL, { format: 'json' })
     .then(notifications => {
       component = render(
-        <NotificationList
-          notifications={ notifications }
-          url={ options.notificationsURL }
-          emptyMessage={ options.emptyMessage }
-          onUpdate={ () => setPopoverContent() } />,
+        <I18nextProvider i18n={ i18n }>
+          <NotificationList
+            notifications={ notifications }
+            url={ options.notificationsURL }
+            emptyMessage={ options.emptyMessage }
+            onUpdate={ () => setPopoverContent() } />
+        </I18nextProvider>,
         template,
         () => {
           setPopoverContent()
@@ -66,3 +77,17 @@ window.CoopCycle.NotificationsListener = ($popover, username, options) => {
       )
     })
 }
+
+$.getJSON(window.Routing.generate('profile_jwt'))
+  .then(jwt => {
+    const options = {
+      notificationsURL: window.Routing.generate('profile_notifications'),
+      unreadCountURL: window.Routing.generate('profile_notifications_unread'),
+      markAsReadURL: window.Routing.generate('profile_notifications_mark_as_read'),
+      jwt: jwt,
+      elements: {
+        count: document.querySelector('#notifications .badge')
+      },
+    }
+    bootstrap($('#notifications'), options)
+  })

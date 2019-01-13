@@ -91,6 +91,7 @@
     "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nuevos pedidos",
     "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Pedidos aceptados",
     "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Pedidos realizados",
-    "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Pedidos cancelados/rechazados"
+    "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Pedidos cancelados/rechazados",
+    "NOTIFICATIONS_EMPTY": "Ninguna notificación"
     }
 }

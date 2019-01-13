@@ -42,7 +42,6 @@ use AppBundle\Sylius\Order\OrderTransitions;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -231,7 +230,7 @@ class AdminController extends Controller
         return $this->baseOrderListAction($request);
     }
 
-    public function foodtechDashboardAction($date, Request $request, JWTManagerInterface $jwtManager)
+    public function foodtechDashboardAction($date, Request $request)
     {
         $date = new \DateTime($date);
 
@@ -249,7 +248,7 @@ class AdminController extends Controller
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
             'routes' => $request->attributes->get('routes'),
-            'jwt' => $jwtManager->create($this->getUser()),
+            'jwt' => $request->getSession()->get('_jwt'),
         ]);
     }
 

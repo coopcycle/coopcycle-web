@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { translate } from 'react-i18next'
 
 moment.locale($('html').attr('lang'))
 
@@ -34,18 +35,18 @@ class NotificationList extends React.Component {
 
     if (notifications.length === 0) {
       return (
-        <div className="alert alert-warning nomargin">{ this.props.emptyMessage }</div>
+        <div className="alert alert-warning nomargin">{ this.props.t('NOTIFICATIONS_EMPTY') }</div>
       )
     }
 
     return (
       <ul className="nav nav-pills nav-stacked">
-        { notifications.map(notification => (
-          <li key={ notification.id }>
-            <a href={ notification.url ? notification.url : '#' }>
+        { notifications.map((notification, key) => (
+          <li key={ `notification-${key}` }>
+            <a>
               { notification.message }
               <br />
-              <small>{ moment(notification.createdAt).fromNow() }</small>
+              <small>{ moment.unix(notification.timestamp).fromNow() }</small>
             </a>
           </li>
         ))}
@@ -54,4 +55,4 @@ class NotificationList extends React.Component {
   }
 }
 
-export default NotificationList
+export default translate()(NotificationList)

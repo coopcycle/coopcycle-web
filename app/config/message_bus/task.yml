@@ -49,7 +49,6 @@ services:
   coopcycle.domain.task.reactor.publish_redis_message:
     class: AppBundle\Domain\Task\Reactor\PublishRedisMessage
     arguments:
-      - '@serializer'
       - '@coopcycle.socket_io_manager'
     tags:
       - name: event_subscriber

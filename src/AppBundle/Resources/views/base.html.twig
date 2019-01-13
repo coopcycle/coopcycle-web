@@ -73,7 +73,6 @@
 
     {{ encore_entry_script_tags('js/common') }}
     {{ encore_entry_script_tags('js/widgets') }}
-    {{ encore_entry_script_tags('js/notifications') }}
 
     <script>
       {# Set global timezone used in Moment.js #}
@@ -87,17 +86,7 @@
       data-total="{{ cart.total|e('html_attr') }}"></div>
 
     {% if app.user %}
-    <script>
-      new window.CoopCycle.NotificationsListener($('#notifications'), "{{ app.user.username }}", {
-        notificationsURL: "{{ path('profile_notifications') }}",
-        unreadCountURL: "{{ path('profile_notifications_unread') }}",
-        markAsReadURL: "{{ path('profile_notifications_mark_as_read') }}",
-        emptyMessage: "{{ 'notifications.empty'|trans }}",
-        elements: {
-          count: document.querySelector('#notifications .badge')
-        }
-      });
-    </script>
+      {{ encore_entry_script_tags('js/notifications') }}
     {% endif %}
 
     {% block scripts %}{% endblock %}

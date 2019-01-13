@@ -160,14 +160,6 @@ services:
         - name: event_subscriber
           subscribes_to: order:created
 
-  coopcycle.domain.order.reactor.send_web_notification:
-    class: AppBundle\Domain\Order\Reactor\SendWebNotification
-    arguments:
-      - '@coopcycle.notification_manager'
-    tags:
-        - name: event_subscriber
-          subscribes_to: order:created
-
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession
     arguments:
@@ -219,7 +211,6 @@ services:
   coopcycle.domain.order.reactor.publish_to_redis:
     class: AppBundle\Domain\Order\Reactor\PublishToRedis
     arguments:
-      - '@serializer'
       - '@coopcycle.socket_io_manager'
     tags:
         - name: event_subscriber
