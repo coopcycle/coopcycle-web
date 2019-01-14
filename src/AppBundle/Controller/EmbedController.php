@@ -13,6 +13,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
+use FOS\UserBundle\Util\UserManipulator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
@@ -57,9 +58,8 @@ class EmbedController extends Controller
         return $pricingRuleSet;
     }
 
-    private function findOrCreateUser($email, $telephone, SlugifyInterface $slugify)
+    private function findOrCreateUser($email, $telephone, SlugifyInterface $slugify, UserManipulator $userManipulator)
     {
-        $userManipulator = $this->get('fos_user.util.user_manipulator');
         $userManager = $this->get('fos_user.user_manager');
 
         $user = $userManager->findUserByEmail($email);
@@ -152,7 +152,8 @@ class EmbedController extends Controller
         Request $request,
         SlugifyInterface $slugify,
         OrderManager $orderManager,
-        DeliveryManager $deliveryManager)
+        DeliveryManager $deliveryManager,
+        UserManipulator $userManipulator)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -173,7 +174,7 @@ class EmbedController extends Controller
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
 
-            $user  = $this->findOrCreateUser($email, $telephone, $slugify);
+            $user  = $this->findOrCreateUser($email, $telephone, $slugify, $userManipulator);
             $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
             $order = $this->createOrderForDelivery($delivery, $price, $user);
 
