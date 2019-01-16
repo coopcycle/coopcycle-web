@@ -104,7 +104,7 @@ class StripeController extends AbstractController
                 ;
 
             $this->getUser()->addStripeAccount($stripeAccount);
-            $this->userManager->updateUser($this->getUser());
+            $userManager->updateUser($this->getUser());
 
             if ($request->query->has('state')) {
 
