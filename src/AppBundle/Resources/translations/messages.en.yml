@@ -582,6 +582,8 @@ activity.order.created: |
   Order #order/%aggregate_id% has been created by @%owner%
 activity.order.accepted: |
   Order #order/%aggregate_id% has been accepted
+activity.order.refused: |
+  Order #order/%aggregate_id% has been refused
 activity.order.picked: |
   @%owner% has picked order #order/%aggregate_id%
 activity.order.dropped: |

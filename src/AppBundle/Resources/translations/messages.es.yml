@@ -620,6 +620,8 @@ activity.order.created: |
   El pedido #order/%aggregate_id% ha sido creado por @%owner%
 activity.order.accepted: |
   El pedido #order/%aggregate_id% ha sido aceptado
+activity.order.refused: |
+  El pedido #order/%aggregate_id% ha sido rechazado
 activity.order.picked: |
   @%owner% ha recuperado el pedido #order/%aggregate_id%
 activity.order.dropped: |

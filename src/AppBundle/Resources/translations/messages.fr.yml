@@ -649,6 +649,8 @@ activity.order.created: |
   La commande #order/%aggregate_id% a été créée par @%owner%
 activity.order.accepted: |
   La commande #order/%aggregate_id% a été acceptée
+activity.order.refused: |
+  La commande #order/%aggregate_id% a été refusée
 activity.order.picked: |
   @%owner% a récupéré la commande #order/%aggregate_id%
 activity.order.dropped: |

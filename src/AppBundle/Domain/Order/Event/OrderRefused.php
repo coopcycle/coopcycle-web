@@ -3,16 +3,22 @@
 namespace AppBundle\Domain\Order\Event;
 
 use AppBundle\Domain\DomainEvent;
+use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderInterface;
 
-class OrderRefused extends Event implements DomainEvent
+class OrderRefused extends Event implements DomainEvent, HasIconInterface
 {
     private $reason;
 
     public static function messageName()
     {
         return 'order:refused';
+    }
+
+    public static function iconName()
+    {
+        return 'times';
     }
 
     public function __construct(OrderInterface $order, $reason = null)

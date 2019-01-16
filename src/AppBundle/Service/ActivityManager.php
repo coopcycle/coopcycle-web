@@ -20,6 +20,7 @@ class ActivityManager
     private $events = [
         OrderEvents\OrderCreated::class,
         OrderEvents\OrderAccepted::class,
+        OrderEvents\OrderRefused::class,
         OrderEvents\OrderPicked::class,
         OrderEvents\OrderDropped::class,
         OrderEvents\OrderFulfilled::class,
