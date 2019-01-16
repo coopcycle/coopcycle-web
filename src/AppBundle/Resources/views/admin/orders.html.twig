@@ -72,14 +72,14 @@ $('#show_canceled').on('change', function(e) {
 });
 
 new CoopCycle.DatePicker(document.querySelector('#orders_export_start_widget'), {
-  defaultValue: "{{ 'now'|date('Y-m-d') }}",
+  defaultValue: document.querySelector('#orders_export_start').value,
   onChange: function(date, dateString) {
     document.querySelector('#orders_export_start').value = date.format('YYYY-MM-DD');
   }
 });
 
 new CoopCycle.DatePicker(document.querySelector('#orders_export_end_widget'), {
-  defaultValue: "{{ 'now'|date('Y-m-d') }}",
+  defaultValue: document.querySelector('#orders_export_end').value,
   onChange: function(date, dateString) {
     document.querySelector('#orders_export_end').value = date.format('YYYY-MM-DD');
   }

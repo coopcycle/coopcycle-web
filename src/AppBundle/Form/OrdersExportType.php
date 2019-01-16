@@ -22,16 +22,20 @@ class OrdersExportType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $firstDayOfThisMonth = new \DateTime('first day of this month');
+
         $builder
             ->add('start', DateType::class, [
                 'label' => 'form.orders_export.start.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'data' => $firstDayOfThisMonth,
             ])
             ->add('end', DateType::class, [
                 'label' => 'form.orders_export.end.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'data' => new \DateTime(),
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
