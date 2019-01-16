@@ -112,7 +112,7 @@ class StripeController extends AbstractController
 
                 $url = base64_decode($state);
 
-                $this->addFlash('stripe_account', $stripeAccount);
+                $this->addFlash('stripe_account', $stripeAccount->getId());
 
                 return $this->redirect($url);
             }

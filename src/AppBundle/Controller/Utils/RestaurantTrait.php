@@ -84,8 +84,11 @@ trait RestaurantTrait
         if ($request->getSession()->getFlashBag()->has('stripe_account')) {
             $messages = $request->getSession()->getFlashBag()->get('stripe_account');
             if (!empty($messages)) {
-                foreach ($messages as $stripeAccount) {
-                    if ($stripeAccount instanceof StripeAccount) {
+                foreach ($messages as $stripeAccountId) {
+                    $stripeAccount = $this->getDoctrine()
+                        ->getRepository(StripeAccount::class)
+                        ->find($stripeAccountId);
+                    if ($stripeAccount) {
                         $restaurant->addStripeAccount($stripeAccount);
                         $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
 
