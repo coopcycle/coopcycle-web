@@ -14,7 +14,8 @@ function bootstrap($popover, options) {
   template.type = 'text/template'
   document.body.appendChild(template)
 
-  let component
+  const notificationsListRef = React.createRef()
+  const getNotificationsList = (ref) => ref.current.getWrappedInstance()
 
   const initPopover = () => {
 
@@ -29,7 +30,9 @@ function bootstrap($popover, options) {
     })
 
     $popover.on('shown.bs.popover', () => {
-      const notifications = component.toArray().map(notification => notification.id)
+      const notifications = getNotificationsList(notificationsListRef)
+        .toArray()
+        .map(notification => notification.id)
       $.ajax(options.markAsReadURL, {
         type: 'POST',
         contentType: 'application/json',
@@ -53,7 +56,7 @@ function bootstrap($popover, options) {
     }
   })
 
-  socket.on(`notifications`, notification => component.unshift(notification))
+  socket.on(`notifications`, notification => getNotificationsList(notificationsListRef).unshift(notification))
   socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
 
   $.getJSON(options.unreadCountURL)
@@ -61,9 +64,10 @@ function bootstrap($popover, options) {
 
   $.getJSON(options.notificationsURL, { format: 'json' })
     .then(notifications => {
-      component = render(
+      render(
         <I18nextProvider i18n={ i18n }>
           <NotificationList
+            ref={ notificationsListRef }
             notifications={ notifications }
             url={ options.notificationsURL }
             emptyMessage={ options.emptyMessage }

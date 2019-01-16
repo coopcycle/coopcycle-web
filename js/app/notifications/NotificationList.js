@@ -55,4 +55,4 @@ class NotificationList extends React.Component {
   }
 }
 
-export default translate()(NotificationList)
+export default translate(['common'], { withRef: true })(NotificationList)
