@@ -31,7 +31,7 @@ abstract class Event extends BaseEvent implements SerializableEventInterface
 
         return [
             'order' => $normalized,
-            'data' => $event->toPayload(),
+            'data' => $this->toPayload(),
             // FIXME We should retrieve the actual date from EventStore
             'createdAt' => (new \DateTime())->format(\DateTime::ATOM),
         ];
