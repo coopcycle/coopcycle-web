@@ -51,17 +51,17 @@ sudo chown -R $(id -u):82 coopcycle-web
 sudo chmod -R g+w coopcycle-web
 ```
 
-* Run the install scripts.
-
-```sh
-make install
-```
-
 ### Run the application
 
 * Start the Docker containers
 ```
 docker-compose up
+```
+
+At this step, the platform should be up & running, but the database is still empty.
+To create the schema & initialize the platform with demo data, run:
+```sh
+make install
 ```
 
 * Or if needed with an additional UI to help you manage the containers environment
