@@ -92,11 +92,7 @@ before_script:
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION pg_trgm;'
   # Install PHP app
   - cp app/config/parameters.yml.travis app/config/parameters.yml
-  # - composer install --prefer-dist
-  # Install Composer 1.7.2
-  # https://github.com/coopcycle/coopcycle-web/issues/492
-  - curl -sS https://getcomposer.org/installer | php -- --version=1.7.2
-  - php composer.phar install --prefer-dist
+  - composer install --prefer-dist
   - php bin/console doctrine:schema:create --env=test
   - node_modules/.bin/encore dev
   # Start php-fpm
