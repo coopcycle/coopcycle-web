@@ -1,12 +1,6 @@
 install:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
 	"$(MAKE)" osrm
-	@printf "\e[0;32mCreating database..\e[0m\n"
-	@docker-compose run --entrypoint php composer install --prefer-dist --no-progress --no-suggest
-	@docker-compose run --entrypoint php php bin/console doctrine:database:create --if-not-exists --env=dev
-	@docker-compose run --entrypoint php php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=dev
-	@docker-compose run --entrypoint php php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=dev
-	@docker-compose run --entrypoint php php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=dev
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose run --entrypoint php php bin/console doctrine:schema:create --env=dev
 	@docker-compose run --entrypoint php bin/demo --env=dev
