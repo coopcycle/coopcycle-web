@@ -4,6 +4,19 @@ set -xe
 # Detect the host IP
 export DOCKER_BRIDGE_IP=$(ip ro | grep default | cut -d' ' -f 3)
 
+if [ ! -d var/jwt ]; then
+    mkdir -p var/jwt
+fi
+
+if [ ! -f var/jwt/private.pem ]; then
+    printf "\e[0;32mGenerating RSA key to encrypt webtokens..\e[0m\n"
+    openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096;
+fi
+
+if [ ! -f var/jwt/public.pem ]; then
+    openssl rsa -pubout -passin pass:coursiers -in var/jwt/private.pem -out var/jwt/public.pem
+fi
+
 if [ "$SYMFONY_ENV" = 'prod' ]; then
     composer install --prefer-dist --no-dev --no-progress --no-suggest --optimize-autoloader --classmap-authoritative
 else
