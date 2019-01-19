@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RemotePushNotificationManager;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -28,20 +29,39 @@ class SendRemotePushNotification
     {
         $order = $event->getOrder();
 
-        if ($event instanceof OrderCreated && $order->isFoodtech()) {
+        if ($order->isFoodtech()) {
 
-            $owners = $order->getRestaurant()->getOwners()->toArray();
+            if ($event instanceof OrderCreated) {
 
-            if (count($owners) > 0) {
+                $owners = $order->getRestaurant()->getOwners()->toArray();
 
-                $restaurantNormalized = $this->normalizeRestaurant($order->getRestaurant());
+                if (count($owners) > 0) {
+
+                    $restaurantNormalized = $this->normalizeRestaurant($order->getRestaurant());
+
+                    $data = [
+                        'event' => [
+                            'name' => 'order:created',
+                            'data' => [
+                                'restaurant' => $restaurantNormalized,
+                                'date' => $order->getShippedAt()->format('Y-m-d'),
+                                'order' => $this->iriConverter->getIriFromItem($order),
+                            ]
+                        ]
+                    ];
+
+                    // TODO Translate notification title
+                    $this->remotePushNotificationManager
+                        ->send('New order to accept', $owners, $data);
+                }
+            }
+
+            if ($event instanceof OrderAccepted) {
 
                 $data = [
                     'event' => [
-                        'name' => 'order:created',
+                        'name' => 'order:accepted',
                         'data' => [
-                            'restaurant' => $restaurantNormalized,
-                            'date' => $order->getShippedAt()->format('Y-m-d'),
                             'order' => $this->iriConverter->getIriFromItem($order),
                         ]
                     ]
@@ -49,9 +69,11 @@ class SendRemotePushNotification
 
                 // TODO Translate notification title
                 $this->remotePushNotificationManager
-                    ->send('New order to accept', $owners, $data);
+                    ->send('Order accepted', $order->getCustomer(), $data);
             }
         }
+
+
     }
 
     private function normalizeRestaurant(Restaurant $restaurant)
