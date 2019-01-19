@@ -24,6 +24,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -38,7 +39,8 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *     "my_orders"={
  *       "method"="GET",
  *       "path"="/me/orders",
- *       "controller"=MyOrders::class
+ *       "controller"=MyOrders::class,
+ *       "normalization_context"={"groups"={"order", "place", "order_events"}}
  *     }
  *   },
  *   itemOperations={
@@ -99,6 +101,9 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $delivery;
 
+    /**
+     * @Groups({"order_events"})
+     */
     protected $events;
 
     protected $timeline;

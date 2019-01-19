@@ -3,14 +3,23 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class OrderEvent
 {
     private $id;
     private $order;
+
+    /**
+     * @Groups({"order_events"})
+     */
     private $type;
     private $data = [];
     private $metadata = [];
+
+    /**
+     * @Groups({"order_events"})
+     */
     private $createdAt;
 
     public function __construct(
