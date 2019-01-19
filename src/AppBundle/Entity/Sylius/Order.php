@@ -11,6 +11,7 @@ use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\MyOrders;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
@@ -34,7 +35,11 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"order_create", "address_create"}}
  *     },
- *     "my_orders"={"method"="GET", "route_name"="my_orders"}
+ *     "my_orders"={
+ *       "method"="GET",
+ *       "path"="/me/orders",
+ *       "controller"=MyOrders::class
+ *     }
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},

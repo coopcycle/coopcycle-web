@@ -45,4 +45,17 @@ class OrderRepository extends BaseOrderRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findByUser($user)
+    {
+        $qb = $this->createQueryBuilder('o');
+        $qb
+            ->andWhere('o.state != :state_cart')
+            ->andWhere('o.customer = :customer')
+            ->setParameter('state_cart', OrderInterface::STATE_CART)
+            ->setParameter('customer', $user)
+            ->addOrderBy('o.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

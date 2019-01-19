@@ -20,21 +20,10 @@ class MyOrders
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @Route(
-     *     name="my_orders",
-     *     path="/me/orders",
-     *     defaults={
-     *         "_api_resource_class"=Order::class,
-     *         "_api_collection_operation_name"="my_orders"
-     *     },
-     *     methods={"GET"}
-     * )
-     */
-    public function __invoke($data)
+    public function __invoke()
     {
         return $this->doctrine
             ->getRepository(Order::class)
-            ->findBy(['customer' => $this->getUser()], ['createdAt' => 'DESC'], 30);
+            ->findByUser($this->getUser());
     }
 }
