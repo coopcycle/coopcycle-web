@@ -71,6 +71,15 @@ order.cancelled.body.intro: |
   <br>
   Lo sentimos, pero tu pedido ha sido cancelado.
 
+order.delayed.subject: Tu pedido %order.number% llegará más tarde
+order.delayed.body: |
+  Buenos dias,
+  <br>
+  <br>
+  Lo sentimos, pero tu pedido llegará %delay% minutos más tarde.
+  <br>
+  Disculpanos por las molestias.
+
 task.done.subject: "La tarea #%task.id% ha sido completada"
 task.done.body: |
   Buenos dias,

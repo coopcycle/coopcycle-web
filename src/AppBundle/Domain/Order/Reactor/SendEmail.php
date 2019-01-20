@@ -7,6 +7,7 @@ use AppBundle\Domain\Order\Event\EmailSent;
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Domain\Order\Event\OrderDelayed;
 use AppBundle\Domain\Order\Event\OrderRefused;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
@@ -40,6 +41,12 @@ class SendEmail
 
         if ($event instanceof OrderRefused || $event instanceof OrderCancelled) {
             $message = $this->emailManager->createOrderCancelledMessage($order);
+            $this->emailManager->sendTo($message, $order->getCustomer()->getEmail());
+            $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
+        }
+
+        if ($event instanceof OrderDelayed) {
+            $message = $this->emailManager->createOrderDelayedMessage($order, $event->getDelay());
             $this->emailManager->sendTo($message, $order->getCustomer()->getEmail());
             $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
         }

@@ -71,6 +71,15 @@ order.cancelled.body.intro: |
   <br>
   Nous sommes désolé, mais votre commande a été annulée.
 
+order.delayed.subject: Votre commande %order.number% a été retardée
+order.delayed.body: |
+  Bonjour,
+  <br>
+  <br>
+  Nous sommes désolé, mais votre commande aura un retard de %delay% minutes.
+  <br>
+  Veuillez nous excuser pour la gêne occasionnée.
+
 task.done.subject: "La tâche #%task.id% a été terminée"
 task.done.body: |
   Bonjour,

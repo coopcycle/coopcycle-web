@@ -155,4 +155,15 @@ class EmailManager
 
         return $this->createHtmlMessage($subject, $body);
     }
+
+    public function createOrderDelayedMessage(OrderInterface $order, $delay = 10)
+    {
+        $subject = $this->translator->trans('order.delayed.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->templating->render('@App/emails/order/delayed.html.twig', [
+            'order' => $order,
+            'delay' => $delay
+        ]);
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
 }

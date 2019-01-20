@@ -1,0 +1,5 @@
+{% extends '@App/emails/layout.html.twig' %}
+
+{% block content %}
+  {{ 'order.delayed.body' | trans({ '%delay%': delay }, 'emails') | raw }}
+{% endblock %}
