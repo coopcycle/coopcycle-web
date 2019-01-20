@@ -16,6 +16,8 @@ import {
   CANCEL_ORDER_REQUEST_FAILURE,
   REFUSE_ORDER_REQUEST_SUCCESS,
   REFUSE_ORDER_REQUEST_FAILURE,
+  DELAY_ORDER_REQUEST_SUCCESS,
+  DELAY_ORDER_REQUEST_FAILURE,
 } from './actions'
 
 const initialState = {
@@ -56,6 +58,7 @@ const orders = (state = initialState.orders, action) => {
   case ACCEPT_ORDER_REQUEST_SUCCESS:
   case REFUSE_ORDER_REQUEST_SUCCESS:
   case CANCEL_ORDER_REQUEST_SUCCESS:
+  case DELAY_ORDER_REQUEST_SUCCESS:
 
     return replaceOrder(state, action.payload)
 
@@ -93,6 +96,7 @@ const order = (state = initialState.order, action) => {
   case ACCEPT_ORDER_REQUEST_SUCCESS:
   case REFUSE_ORDER_REQUEST_SUCCESS:
   case CANCEL_ORDER_REQUEST_SUCCESS:
+  case DELAY_ORDER_REQUEST_SUCCESS:
 
     return null
 
@@ -133,6 +137,8 @@ const isFetching = (state = initialState.isFetching, action) => {
   case CANCEL_ORDER_REQUEST_FAILURE:
   case REFUSE_ORDER_REQUEST_SUCCESS:
   case REFUSE_ORDER_REQUEST_FAILURE:
+  case DELAY_ORDER_REQUEST_SUCCESS:
+  case DELAY_ORDER_REQUEST_FAILURE:
 
     return false
   default:
