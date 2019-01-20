@@ -218,14 +218,10 @@ class ProductType extends AbstractType
                 $product->addVariant($variant);
 
             } else {
-
-                $variant = $this->variantResolver->getVariant($product);
-
-                $variant->setPrice($price);
-                $variant->setTaxCategory($taxCategory);
-
                 foreach ($product->getVariants() as $variant) {
                     $variant->setName($product->getName());
+                    $variant->setPrice($price);
+                    $variant->setTaxCategory($taxCategory);
                 }
             }
 
