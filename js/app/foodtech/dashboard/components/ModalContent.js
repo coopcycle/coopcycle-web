@@ -61,14 +61,12 @@ class ModalContent extends React.Component {
           <div>
             <strong>Dropoff à { moment(order.shippedAt).format('LT') }</strong>
           </div>
-          <p>
-            <ul className="list-unstyled">
-              <li>{ order.shippingAddress.streetAddress }</li>
-              { order.shippingAddress.floor && (
-                <li>Étage : { order.shippingAddress.floor }</li>
-              ) }
-            </ul>
-          </p>
+          <ul className="list-unstyled">
+            <li>{ order.shippingAddress.streetAddress }</li>
+            { order.shippingAddress.floor && (
+              <li>Étage : { order.shippingAddress.floor }</li>
+            ) }
+          </ul>
           { order.shippingAddress.description && (
             <div className="speech-bubble">
               <i className="fa fa-quote-left"></i>  { order.shippingAddress.description }
