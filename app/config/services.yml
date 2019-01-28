@@ -72,6 +72,8 @@ services:
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
+  Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
+  Sylius\Component\Channel\Context\ChannelContextInterface: '@sylius.context.channel.composite'
   Predis\Client: '@snc_redis.default'
   SM\Factory\FactoryInterface: '@sm.factory'
   Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
@@ -224,6 +226,7 @@ services:
     decorates: sylius.factory.order
     arguments:
       - "@coopcycle.sylius.factory.order.inner"
+      - "@sylius.context.channel"
     public: false
 
   coopcycle.sylius.product_variant_resolver.lazy:
@@ -548,3 +551,13 @@ services:
     arguments:
       - '@sylius.context.currency'
       - '@sylius.templating.helper.currency'
+
+  AppBundle\Sylius\Channel\ChannelResolver:
+    tags:
+      - { name: 'sylius.context.channel.request_based.resolver' }
+
+  AppBundle\Sylius\Channel\DefaultChannelContext:
+    arguments:
+      - '@sylius.repository.channel'
+    tags:
+      - { name: 'sylius.context.channel', priority: -64 }

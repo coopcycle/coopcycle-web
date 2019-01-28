@@ -5,7 +5,7 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Sylius\Order\OrderFactory;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
-    private $orderFactory;
+    private $channelContext;
     private $productRepository;
     private $productOptionValueRepository;
     private $variantResolver;
@@ -28,7 +28,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function __construct(
         ItemNormalizer $normalizer,
-        OrderFactory $orderFactory,
+        ChannelContextInterface $channelContext,
         ProductRepositoryInterface $productRepository,
         RepositoryInterface $productOptionValueRepository,
         ProductVariantResolverInterface $variantResolver,
@@ -37,7 +37,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         OrderModifierInterface $orderModifier)
     {
         $this->normalizer = $normalizer;
-        $this->orderFactory = $orderFactory;
+        $this->channelContext = $channelContext;
         $this->productRepository = $productRepository;
         $this->productOptionValueRepository = $productOptionValueRepository;
         $this->variantResolver = $variantResolver;
@@ -91,6 +91,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        $order->setChannel($this->channelContext->getChannel());
 
         if (isset($data['items'])) {
             $orderItems = array_map(function ($item) {

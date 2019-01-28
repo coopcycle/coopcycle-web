@@ -54,7 +54,7 @@ services:
     class: AppBundle\Serializer\JsonLd\OrderNormalizer
     arguments:
       - "@api_platform.jsonld.normalizer.item"
-      - "@coopcycle.sylius.factory.order"
+      - "@sylius.context.channel"
       - "@sylius.repository.product"
       - "@sylius.repository.product_option_value"
       - "@sylius.product_variant_resolver.default"
