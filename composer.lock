@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8a9e070db0cb33efd1a2a2e9525852b",
+    "content-hash": "9ac02721fa6b8a66c633c19e91ed4200",
     "packages": [
         {
             "name": "api-platform/core",
@@ -8166,6 +8166,142 @@
                 "product",
                 "products",
                 "shop"
+            ],
+            "time": "2018-10-03T08:07:33+00:00"
+        },
+        {
+            "name": "sylius/channel",
+            "version": "v1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Channel.git",
+                "reference": "cd1a6e8a302c27fb49d048973392e09bb7c8f20f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Channel/zipball/cd1a6e8a302c27fb49d048973392e09bb7c8f20f",
+                "reference": "cd1a6e8a302c27fb49d048973392e09bb7c8f20f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "sylius/resource": "^1.2",
+                "symfony/form": "^3.4|^4.1.1",
+                "symfony/http-foundation": "^3.4|^4.1.1",
+                "zendframework/zend-stdlib": "^3.1"
+            },
+            "require-dev": {
+                "pamil/prophecy-common": "^0.1",
+                "phpspec/phpspec": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Channel\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "E-Commerce PHP component for managing different sales channels.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "channel",
+                "ecommerce",
+                "multichannel",
+                "multistore",
+                "stores",
+                "sylius"
+            ],
+            "time": "2018-10-03T08:07:33+00:00"
+        },
+        {
+            "name": "sylius/channel-bundle",
+            "version": "v1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusChannelBundle.git",
+                "reference": "3d39793f00f43a5c9d6200a3bc64e4299887540e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/3d39793f00f43a5c9d6200a3bc64e4299887540e",
+                "reference": "3d39793f00f43a5c9d6200a3bc64e4299887540e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "sylius/channel": "^1.2",
+                "sylius/resource-bundle": "^1.2",
+                "symfony/framework-bundle": "^3.4|^4.1.1"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.5",
+                "matthiasnoback/symfony-dependency-injection-test": "^2.0",
+                "phpspec/phpspec": "^4.0",
+                "phpunit/phpunit": "^6.5",
+                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+                "symfony/browser-kit": "^3.4|^4.1.1",
+                "symfony/dependency-injection": "^3.4|^4.1.1",
+                "symfony/form": "^3.4|^4.1.1",
+                "twig/twig": "^2.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Bundle\\ChannelBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Currencies and channel formatting engine bundle for Symfony.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "cash",
+                "channel",
+                "currencies",
+                "currency"
             ],
             "time": "2018-10-03T08:07:33+00:00"
         },
