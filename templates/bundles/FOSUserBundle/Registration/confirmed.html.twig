@@ -15,7 +15,7 @@
           {% trans with { '%username%': user.username } %}registration.confirmed{% endtrans %}
         </p>
         {% set cart = cart_provider.getCart() %}
-        {% if cart is not empty and cart.state == 'cart' %}
+        {% if cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
           <div class="text-center">
             <a href="{{ path('order') }}" class="btn btn-success">
               {{ 'registration.after_confirmation_continue_order'|trans }} <i class="fa fa-arrow-right" aria-hidden="true"></i>

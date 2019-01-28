@@ -10,7 +10,7 @@
         <p class="text-center">
           {% trans with { '%email%': user.email } %}registration.check_email{% endtrans %}
           {% set cart = cart_provider.getCart() %}
-          {% if cart is not empty and cart.state == 'cart' %}
+          {% if cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
           <br>
           {% trans %}registration.before_confirmation_continue_order{% endtrans %}
           {% endif %}
