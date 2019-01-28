@@ -89,6 +89,8 @@ services:
       $productAttributeManager: '@sylius.manager.product_attribute'
       $localeRepository: '@sylius.repository.locale'
       $localeFactory: '@sylius.factory.locale'
+      $channelRepository: '@sylius.repository.channel'
+      $channelFactory: '@sylius.factory.channel'
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
 

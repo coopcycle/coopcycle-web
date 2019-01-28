@@ -12,6 +12,8 @@ use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
+use Sylius\Component\Channel\Factory\ChannelFactoryInterface;
+use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -40,6 +42,11 @@ class SetupCommand extends Command
         'en',
         'es',
         'de'
+    ];
+
+    private $channels = [
+        'web' => 'Web',
+        'app' => 'App'
     ];
 
     private $onDemandDeliveryProductNames = [
@@ -76,6 +83,8 @@ class SetupCommand extends Command
         ObjectManager $productAttributeManager,
         RepositoryInterface $localeRepository,
         FactoryInterface $localeFactory,
+        ChannelRepositoryInterface $channelRepository,
+        ChannelFactoryInterface $channelFactory,
         RepositoryInterface $currencyRepository,
         FactoryInterface $currencyFactory,
         ManagerRegistry $doctrine,
@@ -95,6 +104,9 @@ class SetupCommand extends Command
 
         $this->localeRepository = $localeRepository;
         $this->localeFactory = $localeFactory;
+
+        $this->channelRepository = $channelRepository;
+        $this->channelFactory = $channelFactory;
 
         $this->currencyRepository = $currencyRepository;
         $this->currencyFactory = $currencyFactory;
@@ -118,6 +130,11 @@ class SetupCommand extends Command
         $output->writeln('<info>Checking Sylius locales are present…</info>');
         foreach ($this->locales as $locale) {
             $this->createSyliusLocale($locale, $output);
+        }
+
+        $output->writeln('<info>Checking Sylius channels are present…</info>');
+        foreach ($this->channels as $channelCode => $channelName) {
+            $this->createSyliusChannel($channelCode, $channelName, $output);
         }
 
         $output->writeln('<info>Checking Sylius currencies are present…</info>');
@@ -151,6 +168,23 @@ class SetupCommand extends Command
         $this->localeRepository->add($locale);
 
         $output->writeln(sprintf('Sylius locale "%s" created', $code));
+    }
+
+    private function createSyliusChannel($code, $name, OutputInterface $output)
+    {
+        $channel = $this->channelRepository->findOneByCode($code);
+
+        if (null !== $channel) {
+            $output->writeln(sprintf('Sylius channel "%s" already exists', $code));
+            return;
+        }
+
+        $channel = $this->channelFactory->createNamed($name);
+        $channel->setCode($code);
+
+        $this->channelRepository->add($channel);
+
+        $output->writeln(sprintf('Sylius channel "%s" created', $code));
     }
 
     private function createSyliusCurrency($code, OutputInterface $output)
