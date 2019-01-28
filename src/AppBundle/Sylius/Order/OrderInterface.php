@@ -6,11 +6,12 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use Doctrine\Common\Collections\Collection;
+use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentsSubjectInterface;
 
-interface OrderInterface extends BaseOrderInterface, PaymentsSubjectInterface
+interface OrderInterface extends BaseOrderInterface, PaymentsSubjectInterface, ChannelAwareInterface
 {
     public const STATE_ACCEPTED = 'accepted';
     public const STATE_REFUSED = 'refused';

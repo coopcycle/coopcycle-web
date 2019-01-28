@@ -22,6 +22,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
@@ -102,6 +103,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $events;
 
     protected $timeline;
+
+    protected $channel;
 
     public function __construct()
     {
@@ -322,5 +325,15 @@ class Order extends BaseOrder implements OrderInterface
     public function getEvents(): Collection
     {
         return $this->events;
+    }
+
+    public function getChannel(): ?ChannelInterface
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?ChannelInterface $channel): void
+    {
+        $this->channel = $channel;
     }
 }
