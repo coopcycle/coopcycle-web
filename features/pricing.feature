@@ -1,7 +1,9 @@
 Feature: Pricing
 
   Scenario: Missing mandatory parameter
-    Given the fixtures file "stores.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -23,7 +25,9 @@ Feature: Pricing
       """
 
   Scenario: Get delivery price
-    Given the fixtures file "stores.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |

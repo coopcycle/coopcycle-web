@@ -1,7 +1,9 @@
 Feature: Users
 
   Scenario: Retrieve users filtered by role
-    Given the fixtures file "users.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "sarah" has role "ROLE_COURIER"
     And the user "bob" is authenticated

@@ -1,7 +1,9 @@
 Feature: Food Tech
 
   Scenario: Restaurant does not belong to user
-    Given the fixtures file "restaurants.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | restaurants.yml     |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -16,8 +18,9 @@ Feature: Food Tech
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     And the restaurant with id "1" has products:
       | code      |
@@ -69,8 +72,9 @@ Feature: Food Tech
 
   Scenario: Refuse order with reason
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -102,8 +106,9 @@ Feature: Food Tech
 
   Scenario: Delay order
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -133,8 +138,9 @@ Feature: Food Tech
 
   Scenario: Not authorized to delay order
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -174,8 +180,9 @@ Feature: Food Tech
 
   Scenario: Accept order
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -203,8 +210,9 @@ Feature: Food Tech
 
   Scenario: Not authorized to accept order
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     # FIXME This is needed for email notifications. It should be defined once.
     And the setting "administrator_email" has value "admin@coopcycle.org"
@@ -242,8 +250,9 @@ Feature: Food Tech
 
   Scenario: Disable product
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -266,8 +275,9 @@ Feature: Food Tech
 
   Scenario: Not authorized to disable product
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -286,8 +296,9 @@ Feature: Food Tech
 
   Scenario: Close restaurant
     Given the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |

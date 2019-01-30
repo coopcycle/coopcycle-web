@@ -162,6 +162,14 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @BeforeScenario
+     */
+    public function createChannels()
+    {
+        $this->theFixturesFileIsLoaded('sylius_channels.yml');
+    }
+
+    /**
      * @AfterScenario
      */
     public function unSetCarbon()

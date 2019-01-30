@@ -1,7 +1,9 @@
 Feature: Tasks
 
   Scenario: Retrieve assigned tasks
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -68,7 +70,9 @@ Feature: Tasks
       """
 
   Scenario: Mark task as done
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -107,7 +111,9 @@ Feature: Tasks
       """
 
   Scenario: Mark task as failed with notes
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -164,7 +170,9 @@ Feature: Tasks
       """
 
   Scenario: Previous task must be completed before marking as done
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -191,7 +199,9 @@ Feature: Tasks
       """
 
   Scenario: Previous task must be completed before marking as failed
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -218,7 +228,9 @@ Feature: Tasks
       """
 
   Scenario: Only assigned courier can mark a task as done
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -239,7 +251,9 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Only assigned courier can mark a task as failed
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -260,7 +274,9 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Cancelled task can't be marked as done
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -277,7 +293,9 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Cancelled task can't be marked as failed
-    Given the fixtures file "tasks.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -294,7 +312,9 @@ Feature: Tasks
     And the response should be in JSON
 
   Scenario: Create task
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -358,7 +378,9 @@ Feature: Tasks
       """
 
   Scenario: Not authorized to create task
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And I send a "POST" request to "/api/tasks" with body:
@@ -379,7 +401,9 @@ Feature: Tasks
     Then the response status code should be 401
 
   Scenario: Not enough permissions to create task
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -401,7 +425,9 @@ Feature: Tasks
     Then the response status code should be 401
 
   Scenario: Retrieve tasks filtered by date
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -471,7 +497,9 @@ Feature: Tasks
       """
 
   Scenario: Retrieve tasks filtered by date for admin
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -581,7 +609,9 @@ Feature: Tasks
       """
 
   Scenario: Retrieve unassigned tasks filtered by date for admin
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"

@@ -3,8 +3,9 @@ Feature: Orders
   Scenario: Create order
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -121,8 +122,9 @@ Feature: Orders
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
@@ -243,8 +245,9 @@ Feature: Orders
   Scenario: Refuse order when restaurant is closed
     Given the current time is "2017-09-02 12:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -294,8 +297,9 @@ Feature: Orders
   Scenario: Delivery exceeds max distance
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -393,8 +397,9 @@ Feature: Orders
   Scenario: the delivery is in the past
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:
       | email    | bob@coopcycle.org |
@@ -444,8 +449,9 @@ Feature: Orders
   Scenario: Amount is not sufficient
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | products.yml    |
-      | restaurants.yml |
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
     And the setting "default_tax_category" has value "tva_livraison"
     And the user "bob" is loaded:

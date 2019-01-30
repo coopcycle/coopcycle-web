@@ -3,6 +3,7 @@ Feature: Checkout
   @javascript
   Scenario: Order something at restaurant
     Given the fixtures files are loaded:
+      | sylius_channels.yml        |
       | restaurants_standalone.yml |
     And the user is loaded:
       | email    | bob@demo.coopcycle.org |
@@ -41,6 +42,7 @@ Feature: Checkout
   @javascript
   Scenario: Use search address as default
     Given the fixtures files are loaded:
+      | sylius_channels.yml        |
       | restaurants_standalone.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "administrator_email" has value "admin@demo.coopcycle.org"
@@ -56,6 +58,7 @@ Feature: Checkout
   @javascript
   Scenario: Show warning when restaurant has changed
     Given the fixtures files are loaded:
+      | sylius_channels.yml        |
       | restaurants_standalone.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "administrator_email" has value "admin@demo.coopcycle.org"

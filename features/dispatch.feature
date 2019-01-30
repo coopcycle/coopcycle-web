@@ -1,7 +1,9 @@
 Feature: Dispatch
 
   Scenario: Retrieve task lists
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -55,7 +57,9 @@ Feature: Dispatch
       """
 
   Scenario: Create task list
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -71,7 +75,9 @@ Feature: Dispatch
     Then the response status code should be 201
 
   Scenario: Administrator can assign task
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -123,7 +129,9 @@ Feature: Dispatch
       """
 
   Scenario: Courier can self-assign task
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -173,7 +181,9 @@ Feature: Dispatch
       """
 
   Scenario: Courier can't self-assign task already assigned to someone else
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -196,7 +206,9 @@ Feature: Dispatch
       """
 
   Scenario: Administrator can self-assign task already assigned to someone else
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -209,7 +221,9 @@ Feature: Dispatch
     And the response should be in JSON
 
   Scenario: Courier can unassign task assigned to him/her
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -246,7 +260,9 @@ Feature: Dispatch
       """
 
   Scenario: Courier can't unassign task not assigned to him/her
-    Given the fixtures file "dispatch.yml" is loaded
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
