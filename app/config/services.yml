@@ -469,6 +469,11 @@ services:
       - '%country_iso%'
       - '%kernel.default_locale%'
 
+  AppBundle\Action\Register:
+    public: true
+    arguments:
+      $confirmationEnabled: '%fos_user.registration.confirmation.enabled%'
+
   AppBundle\Security\StoreTokenAuthenticator:
     parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
     autowire: false

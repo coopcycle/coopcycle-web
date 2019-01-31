@@ -33,13 +33,15 @@ class Register
         UserManagerInterface $userManager,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
-        FormFactoryInterface $formFactory)
+        FormFactoryInterface $formFactory,
+        bool $confirmationEnabled)
     {
         $this->userManipulator = $userManipulator;
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
         $this->formFactory = $formFactory;
+        $this->confirmationEnabled = $confirmationEnabled;
     }
 
     /**
@@ -90,8 +92,9 @@ class Register
 
         try {
 
-            // TODO Customize FOSUserBundle manipulator to pass all fields at once
-            $user = $this->userManipulator->create($username, $password, $email, true, false);
+            $enabled = $this->confirmationEnabled ? false : true;
+
+            $user = $this->userManipulator->create($username, $password, $email, $enabled, false);
 
             $user->setTelephone($form->get('telephone')->getData());
             $user->setGivenName($form->get('givenName')->getData());
