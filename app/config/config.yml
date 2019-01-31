@@ -120,6 +120,7 @@ api_platform:
     exception_to_status:
         Symfony\Component\Serializer\Exception\ExceptionInterface: 400
         ApiPlatform\Core\Exception\InvalidArgumentException: 400
+        ApiPlatform\Core\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
 
 # Swiftmailer Configuration

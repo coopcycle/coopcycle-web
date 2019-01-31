@@ -123,9 +123,26 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "username":@array@,
-      "givenName":@array@,
-      "familyName":@array@,
-      "telephone":@array@
+      "type":"https://tools.ietf.org/html/rfc2616#section-10",
+      "title":@string@,
+      "detail":@string@,
+      "violations":[
+        {
+          "propertyPath":"data.username",
+          "message":@string@
+        },
+        {
+          "propertyPath":"data.givenName",
+          "message":@string@
+        },
+        {
+          "propertyPath":"data.familyName",
+          "message":@string@
+        },
+        {
+          "propertyPath":"data.telephone",
+          "message":@string@
+        }
+      ]
     }
     """

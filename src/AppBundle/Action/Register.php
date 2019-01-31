@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action;
 
+use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Form\ApiRegistrationType;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -16,42 +17,29 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class Register
 {
     private $userManipulator;
+    private $userManager;
     private $jwtManager;
     private $dispatcher;
+    private $formFactory;
 
     public function __construct(
         UserManipulator $userManipulator,
         UserManagerInterface $userManager,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
-        FormFactoryInterface $formFactory
-    )
+        FormFactoryInterface $formFactory)
     {
         $this->userManipulator = $userManipulator;
+        $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
         $this->formFactory = $formFactory;
-        $this->userManager = $userManager;
-    }
-
-    public function getFormErrorsArray ($form) {
-        $errors = [];
-
-        foreach ($form->getErrors() as $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        foreach ($form->all() as $child ) {
-            if (!$child->isValid()) {
-                $errors[$child->getName()] = $this->getFormErrorsArray($child);
-            }
-        }
-
-        return $errors;
     }
 
     /**
@@ -88,22 +76,35 @@ class Register
         $form->submit($data);
 
         if (!$form->isValid()) {
-            $errors = $this->getFormErrorsArray($form);
-            return new JsonResponse($errors, 400);
+
+            $violations = new ConstraintViolationList();
+            foreach ($form->getErrors(true) as $error) {
+                $cause = $error->getCause();
+                if ($cause instanceof ConstraintViolationInterface) {
+                    $violations->add($cause);
+                }
+            }
+
+            throw new ValidationException($violations);
         }
 
         try {
+
             // TODO Customize FOSUserBundle manipulator to pass all fields at once
             $user = $this->userManipulator->create($username, $password, $email, true, false);
-            $jwt = $this->jwtManager->create($user);
+
             $user->setTelephone($form->get('telephone')->getData());
             $user->setGivenName($form->get('givenName')->getData());
             $user->setFamilyName($form->get('familyName')->getData());
+
             $this->userManager->updateUser($user);
+
         } catch (\Exception $e) {
             // TODO Send JSON-LD response
             throw new BadRequestHttpException($e);
         }
+
+        $jwt = $this->jwtManager->create($user);
 
         // See Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler
         $response = new JWTAuthenticationSuccessResponse($jwt);
