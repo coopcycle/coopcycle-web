@@ -9,6 +9,8 @@ use AppBundle\Api\Filter\UserRoleFilter;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+use Sylius\Component\Channel\Model\ChannelAwareInterface;
+use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */
-class ApiUser extends BaseUser implements JWTUserInterface
+class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
     protected $id;
 
@@ -79,6 +81,8 @@ class ApiUser extends BaseUser implements JWTUserInterface
     private $stripeAccounts;
 
     private $remotePushTokens;
+
+    protected $channel;
 
     public function __construct()
     {
@@ -233,6 +237,16 @@ class ApiUser extends BaseUser implements JWTUserInterface
     public function getFullName()
     {
         return join(' ', [$this->givenName, $this->familyName]);
+    }
+
+    public function getChannel(): ?ChannelInterface
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?ChannelInterface $channel): void
+    {
+        $this->channel = $channel;
     }
 
     public static function createFromPayload($username, array $payload)

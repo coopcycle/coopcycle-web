@@ -24,6 +24,13 @@ AppBundle\Entity\ApiUser:
         remotePushTokens:
             targetEntity: AppBundle\Entity\RemotePushToken
             mappedBy: user
+    manyToOne:
+        channel:
+            targetEntity: Sylius\Component\Channel\Model\ChannelInterface
+            joinColumns:
+                channel_id:
+                    referencedColumnName: id
+                    nullable: true
     manyToMany:
         restaurants:
             targetEntity: AppBundle\Entity\Restaurant
