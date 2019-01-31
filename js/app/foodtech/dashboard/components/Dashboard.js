@@ -4,12 +4,14 @@ import { translate } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
 import DatePicker from 'antd/lib/date-picker'
+import Slider from 'antd/lib/slider'
+import { Row, Col, } from 'antd/lib/grid'
 import moment from 'moment'
 
 import Column from './Column'
 import ModalContent from './ModalContent'
 
-import { setCurrentOrder, orderCreated } from '../redux/actions'
+import { setCurrentOrder, orderCreated, setPreparationDelay } from '../redux/actions'
 
 function sortByShippedAt(a, b) {
   if (moment(a.shippedAt).isSame(moment(b.shippedAt))) {
@@ -28,14 +30,52 @@ class Dashboard extends React.Component {
     this.props.setCurrentOrder(null)
   }
 
+  _tipFormatter(value) {
+    if (value === 0) {
+
+      return this.props.t('RESTAURANT_DASHBOARD_TIP_NO_DELAY')
+    }
+
+    return this.props.t('RESTAURANT_DASHBOARD_TIP_APPLY_DELAY', { delay: value })
+  }
+
   render() {
+
+    const sliderMarks = {
+      0: this.props.t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
+      15: '15 min',
+      30: '30 min',
+    }
+
     return (
       <div className="FoodtechDashboard">
         <div className="FoodtechDashboard__Navbar">
-          <DatePicker
-            format={ 'll' }
-            defaultValue={ moment(this.props.date) }
-            onChange={ (date) => this.props.onDateChange(date) } />
+          <div>
+            { this.props.showSettings && (
+              <Row type="flex" align="middle">
+                <Col span={ 6 }>
+                  <span>
+                    <i className="fa fa-clock-o"></i> { this.props.t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                  </span>
+                </Col>
+                <Col span={ 18 }>
+                  <Slider
+                    max={ 30 }
+                    defaultValue={ this.props.preparationDelay }
+                    marks={ sliderMarks }
+                    step={ null }
+                    tipFormatter={ this._tipFormatter.bind(this) }
+                    onChange={ delay => this.props.setPreparationDelay(delay) } />
+                </Col>
+              </Row>
+            )}
+          </div>
+          <div>
+            <DatePicker
+              format={ 'll' }
+              defaultValue={ moment(this.props.date) }
+              onChange={ (date) => this.props.onDateChange(date) } />
+          </div>
         </div>
         <div className="FoodtechDashboard__Columns">
           <Column orders={ this.props.newOrders } title={ this.props.t('RESTAURANT_DASHBOARD_NEW_ORDERS') } />
@@ -82,12 +122,15 @@ function mapStateToProps(state) {
     acceptedOrders: acceptedOrders.sort(sortByShippedAt),
     fulfilledOrders: fulfilledOrders.sort(sortByShippedAt),
     cancelledOrders: cancelledOrders.sort(sortByShippedAt),
+    preparationDelay: state.preparationDelay,
+    showSettings: state.showSettings,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
+    setPreparationDelay: delay => dispatch(setPreparationDelay(delay)),
     orderCreated: order => dispatch(orderCreated(order)),
   }
 }

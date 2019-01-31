@@ -1207,8 +1207,13 @@ table.task-table {
   flex-direction: column;
 
   &__Navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 15px;
-    text-align: right;
+    > div:first-child {
+      width: 33.3333%;
+    }
     .ant-calendar-picker {
       margin-right: 0;
     }

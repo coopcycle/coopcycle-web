@@ -41,6 +41,12 @@ admin_foodtech_dashboard:
             order: admin_order
     methods:  [ GET ]
 
+admin_foodtech_settings:
+    path:     /admin/foodtech/settings
+    defaults:
+        _controller: AppBundle\Controller\AdminController::foodtechSettingsAction
+    methods:  [ POST ]
+
 admin_order:
     path:     /admin/orders/{id}
     defaults: { _controller: AppBundle\Controller\AdminController::orderAction }

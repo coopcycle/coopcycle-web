@@ -31,7 +31,9 @@ const initialState = {
   refuseOrderRoute: 'admin_order_refuse',
   delayOrderRoute: 'admin_order_delay',
   cancelOrderRoute: 'admin_order_cancel',
-  currentRoute: 'admin_foodtech_dashboard'
+  currentRoute: 'admin_foodtech_dashboard',
+  preparationDelay: 0,
+  showSettings: true,
 }
 
 function replaceOrder(orders, order) {
@@ -159,4 +161,6 @@ export default combineReducers({
   cancelOrderRoute: (state = initialState.cancelOrderRoute, action) => state,
   currentRoute: (state = initialState.currentRoute, action) => state,
   restaurant: (state = initialState.restaurant, action) => state,
+  preparationDelay: (state = initialState.preparationDelay, action) => state,
+  showSettings: (state = initialState.showSettings, action) => state,
 })

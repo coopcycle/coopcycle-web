@@ -26,7 +26,8 @@ new CoopCycle.FoodtechDashboard(document.querySelector('#restaurant-dashboard'),
   refuseOrderRoute: "{{ routes.order_refuse }}",
   delayOrderRoute: "{{ routes.order_delay }}",
   cancelOrderRoute: "{{ routes.order_cancel }}",
-  currentRoute: "{{ current_route }}"
+  currentRoute: "{{ current_route }}",
+  showSettings: false,
 }, {
   onDateChange: function(date) {
     window.location.href =

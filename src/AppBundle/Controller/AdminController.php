@@ -243,12 +243,35 @@ class AdminController extends Controller
             'groups' => ['order', 'address', 'place']
         ]);
 
+        $redis = $this->get('snc_redis.default');
+        $preparationDelay = $redis->get('foodtech:preparation_delay');
+        if (!$preparationDelay) {
+            $preparationDelay = 0;
+        }
+
         return $this->render('@App/admin/foodtech_dashboard.html.twig', [
             'orders' => $orders,
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
             'routes' => $request->attributes->get('routes'),
             'jwt' => $request->getSession()->get('_jwt'),
+            'preparation_delay' => intval($preparationDelay),
+        ]);
+    }
+
+    public function foodtechSettingsAction(Request $request)
+    {
+        $redis = $this->get('snc_redis.default');
+
+        $preparationDelay = $request->request->get('preparation_delay');
+        if (0 === $preparationDelay) {
+            $redis->del('foodtech:preparation_delay');
+        } else {
+            $redis->set('foodtech:preparation_delay', $preparationDelay);
+        }
+
+        return new JsonResponse([
+            'preparation_delay' => $preparationDelay,
         ]);
     }
 

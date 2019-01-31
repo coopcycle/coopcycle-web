@@ -92,6 +92,10 @@
     "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Accepted orders",
     "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Fulfilled orders",
     "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Cancelled/refused orders",
+    "RESTAURANT_DASHBOARD_DELAY_SETTING": "Delay",
+    "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "None",
+    "RESTAURANT_DASHBOARD_TIP_NO_DELAY": "No delay",
+    "RESTAURANT_DASHBOARD_TIP_APPLY_DELAY": "Apply an additional delay of {{delay}} minutes to all orders",
     "NOTIFICATIONS_EMPTY": "No notifications"
   }
 }

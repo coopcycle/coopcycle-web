@@ -118,3 +118,11 @@ export function cancelOrder(order) {
       .fail(e => dispatch(cancelOrderRequestFailure(e)))
   }
 }
+
+export function setPreparationDelay(delay) {
+
+  return (dispatch, getState) => {
+    const url = window.Routing.generate('admin_foodtech_settings')
+    $.post(url, { 'preparation_delay': delay })
+  }
+}
