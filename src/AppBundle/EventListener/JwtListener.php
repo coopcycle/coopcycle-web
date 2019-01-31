@@ -23,6 +23,7 @@ class JwtListener
         $data['username'] = $user->getUsername();
         $data['email'] = $user->getEmail();
         $data['id'] = $user->getId();
+        $data['enabled'] = $user->isEnabled();
 
         $event->setData($data);
     }

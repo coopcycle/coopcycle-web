@@ -20,7 +20,8 @@ Feature: Authenticate
         "username": "bob",
         "email": "bob@coopcycle.org",
         "id": @integer@,
-        "refresh_token": @string@
+        "refresh_token": @string@,
+        "enabled": true
       }
       """
 
@@ -44,7 +45,8 @@ Feature: Authenticate
       "username": "bob",
       "email": "bob@coopcycle.org",
       "id": @integer@,
-      "refresh_token": @string@
+      "refresh_token": @string@,
+      "enabled": true
     }
     """
 
@@ -108,6 +110,7 @@ Feature: Authenticate
       ],
       "username":"bob",
       "email":"bob@coopcycle.org",
+      "enabled": true,
       "token":@string@,
       "refresh_token":@string@
     }
