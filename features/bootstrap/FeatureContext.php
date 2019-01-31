@@ -268,7 +268,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $manager = $this->getContainer()->get('fos_user.user_manager');
 
         if (!$user = $manager->findUserByUsername($username)) {
-            $user = $this->userManipulator->create($username, $password, $email, true, false);
+            $enabled = isset($data['enabled']) ? filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN) : true;
+            $user = $this->userManipulator->create($username, $password, $email, $enabled, false);
         }
 
         $needsUpdate = false;
@@ -286,6 +287,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         if (isset($data['familyName'])) {
             $user->setFamilyName($data['familyName']);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['confirmationToken'])) {
+            $user->setConfirmationToken($data['confirmationToken']);
             $needsUpdate = true;
         }
 

@@ -149,3 +149,41 @@ Feature: Authenticate
       ]
     }
     """
+
+  Scenario: Confirm registration success
+    Given the user is loaded:
+      | email             | bob@coopcycle.org |
+      | username          | bob               |
+      | password          | 123456            |
+      | enabled           | false             |
+      | confirmationToken | 123456            |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/register/confirm/123456"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "id":@integer@,
+      "roles":[
+        "ROLE_USER"
+      ],
+      "username":"bob",
+      "email":"bob@coopcycle.org",
+      "enabled": true,
+      "token":@string@,
+      "refresh_token":@string@
+    }
+    """
+
+  Scenario: Confirm registration failure
+    Given the user is loaded:
+      | email             | bob@coopcycle.org |
+      | username          | bob               |
+      | password          | 123456            |
+      | enabled           | false             |
+      | confirmationToken | 123456            |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/register/confirm/654321"
+    Then the response status code should be 401
+    And the response should be in JSON
