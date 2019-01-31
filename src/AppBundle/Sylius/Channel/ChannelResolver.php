@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Channel;
 
+use Sylius\Component\Channel\Context\ChannelNotFoundException;
 use Sylius\Component\Channel\Context\RequestBased\RequestResolverInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
@@ -29,6 +30,10 @@ final class ChannelResolver implements RequestResolverInterface
             }
         }
 
-        return $this->channelRepository->findOneByCode('web');
+        if (!$channel = $this->channelRepository->findOneByCode('web')) {
+            throw new ChannelNotFoundException();
+        }
+
+        return $channel;
     }
 }

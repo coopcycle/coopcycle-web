@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Channel;
 
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Channel\Context\ChannelNotFoundException;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 
@@ -17,6 +18,10 @@ final class DefaultChannelContext implements ChannelContextInterface
 
     public function getChannel(): ChannelInterface
     {
-        return $this->channelRepository->findOneByCode('web');
+        if (!$channel = $this->channelRepository->findOneByCode('web')) {
+            throw new ChannelNotFoundException();
+        }
+
+        return $channel;
     }
 }
