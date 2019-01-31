@@ -7,6 +7,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Form\ApiRegistrationType;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
@@ -27,6 +28,8 @@ class Register
     private $jwtManager;
     private $dispatcher;
     private $formFactory;
+    private $tokenGenerator;
+    private $confirmationEnabled;
 
     public function __construct(
         UserManipulator $userManipulator,
@@ -34,6 +37,7 @@ class Register
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
         FormFactoryInterface $formFactory,
+        TokenGeneratorInterface $tokenGenerator,
         bool $confirmationEnabled)
     {
         $this->userManipulator = $userManipulator;
@@ -107,9 +111,16 @@ class Register
             throw new BadRequestHttpException($e);
         }
 
+        // @see FOS\UserBundle\EventListener\EmailConfirmationListener
+        if ($this->confirmationEnabled) {
+            if (null === $user->getConfirmationToken()) {
+                $user->setConfirmationToken($this->tokenGenerator->generateToken());
+            }
+        }
+
         $jwt = $this->jwtManager->create($user);
 
-        // See Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler
+        // @see Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler
         $response = new JWTAuthenticationSuccessResponse($jwt);
         $event    = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
 
