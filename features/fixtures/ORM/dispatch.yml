@@ -1,3 +1,6 @@
+include:
+  - sylius_channels.yml
+
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
     __construct: [ "48.864577", "2.333338" ]

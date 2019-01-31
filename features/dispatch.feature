@@ -2,7 +2,6 @@ Feature: Dispatch
 
   Scenario: Retrieve task lists
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "bob" has role "ROLE_ADMIN"
@@ -58,7 +57,6 @@ Feature: Dispatch
 
   Scenario: Create task list
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "bob" has role "ROLE_ADMIN"
@@ -130,7 +128,6 @@ Feature: Dispatch
 
   Scenario: Courier can self-assign task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
@@ -182,7 +179,6 @@ Feature: Dispatch
 
   Scenario: Courier can't self-assign task already assigned to someone else
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
@@ -222,7 +218,6 @@ Feature: Dispatch
 
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
@@ -261,7 +256,6 @@ Feature: Dispatch
 
   Scenario: Courier can't unassign task not assigned to him/her
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
