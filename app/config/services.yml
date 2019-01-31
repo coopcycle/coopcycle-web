@@ -302,6 +302,7 @@ services:
 
   AppBundle\Utils\ShippingDateFilter:
     arguments:
+      - "@snc_redis.default"
       - "@coopcycle.preparation_time_calculator"
       - "@coopcycle.shipping_time_calculator"
 
