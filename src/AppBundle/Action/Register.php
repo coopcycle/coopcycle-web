@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Form\ApiRegistrationType;
+use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
@@ -29,6 +30,7 @@ class Register
     private $dispatcher;
     private $formFactory;
     private $tokenGenerator;
+    private $mailer;
     private $confirmationEnabled;
 
     public function __construct(
@@ -38,6 +40,7 @@ class Register
         EventDispatcherInterface $dispatcher,
         FormFactoryInterface $formFactory,
         TokenGeneratorInterface $tokenGenerator,
+        MailerInterface $mailer,
         bool $confirmationEnabled)
     {
         $this->userManipulator = $userManipulator;
@@ -46,6 +49,7 @@ class Register
         $this->dispatcher = $dispatcher;
         $this->formFactory = $formFactory;
         $this->tokenGenerator = $tokenGenerator;
+        $this->mailer = $mailer;
         $this->confirmationEnabled = $confirmationEnabled;
     }
 
@@ -117,6 +121,7 @@ class Register
             if (null === $user->getConfirmationToken()) {
                 $user->setConfirmationToken($this->tokenGenerator->generateToken());
             }
+            $this->mailer->sendConfirmationEmailMessage($user);
         }
 
         $jwt = $this->jwtManager->create($user);
