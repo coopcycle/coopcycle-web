@@ -45,6 +45,7 @@ class Register
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
         $this->formFactory = $formFactory;
+        $this->tokenGenerator = $tokenGenerator;
         $this->confirmationEnabled = $confirmationEnabled;
     }
 
