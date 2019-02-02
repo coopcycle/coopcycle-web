@@ -61,6 +61,7 @@ services:
       - "@sylius.factory.order_item"
       - "@sylius.order_item_quantity_modifier"
       - "@sylius.order_modifier"
+      - "@coopcycle.shipping_date_filter"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   coopcycle.normalizer.order_item.json:

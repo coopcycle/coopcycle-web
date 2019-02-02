@@ -5,6 +5,7 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Utils\ShippingDateFilter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -25,6 +26,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $orderItemFactory;
     private $orderItemQuantityModifier;
     private $orderModifier;
+    private $shippingDateFilter;
 
     public function __construct(
         ItemNormalizer $normalizer,
@@ -34,7 +36,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         ProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
-        OrderModifierInterface $orderModifier)
+        OrderModifierInterface $orderModifier,
+        ShippingDateFilter $shippingDateFilter)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -44,6 +47,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
+        $this->shippingDateFilter = $shippingDateFilter;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -91,6 +95,21 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        // When no shipping date is provided, use ASAP
+        if ($order->isFoodtech() && null === $order->getShippedAt()) {
+
+            $availabilities = $order->getRestaurant()->getAvailabilities();
+            $availabilities = array_filter($availabilities, function ($date) use ($order) {
+                $shippingDate = new \DateTime($date);
+
+                return $this->shippingDateFilter->accept($order, $shippingDate);
+            });
+
+            $asap = current(array_values($availabilities));
+
+            $order->setShippedAt(new \DateTime($asap));
+        }
 
         $order->setChannel($this->channelContext->getChannel());
 
