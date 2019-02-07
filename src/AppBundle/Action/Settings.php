@@ -13,6 +13,7 @@ class Settings
     private $settingsManager;
     private $country;
     private $locale;
+    private $piwikSiteId;
 
     private $keys = [
         'stripe_publishable_key',
@@ -20,11 +21,12 @@ class Settings
         'latlng',
     ];
 
-    public function __construct(SettingsManager $settingsManager, $country, $locale)
+    public function __construct(SettingsManager $settingsManager, $country, $locale, $piwikSiteId)
     {
         $this->settingsManager = $settingsManager;
         $this->country = $country;
         $this->locale = $locale;
+        $this->piwikSiteId = $piwikSiteId;
     }
 
     /**
@@ -39,6 +41,7 @@ class Settings
         $data = [
             'country' => $this->country,
             'locale' => $this->locale,
+            'piwik_site_id' => $this->piwikSiteId,
         ];
 
         foreach ($this->keys as $key) {

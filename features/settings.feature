@@ -16,7 +16,8 @@ Feature: Settings
         "locale":"fr",
         "stripe_publishable_key":"pk_1234567890",
         "google_api_key":"abc123456",
-        "latlng":"48.856613,2.352222"
+        "latlng":"48.856613,2.352222",
+        "piwik_site_id": null
       }
       """
 
@@ -31,5 +32,5 @@ Feature: Settings
     And the response should be in JSON
     And the JSON should be equal to:
       """
-      "7100825463ff1b5b3abf1e380eb3fcd1436b8079"
+      "f586b490f853f1f7256b10d98664d851df7d1410"
       """
