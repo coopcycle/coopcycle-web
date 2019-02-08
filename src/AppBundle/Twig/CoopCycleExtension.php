@@ -18,7 +18,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('order_can_transition', array(OrderStateResolver::class, 'orderCanTransitionFilter')),
             new TwigFilter('sylius_resolve_variant', array(SyliusVariantResolver::class, 'resolveVariant')),
             new TwigFilter('latlng', array($this, 'latLng')),
-            new TwigFilter('coopcycle_markup', array(MarkupRuntime::class, 'parse'))
+            new TwigFilter('coopcycle_markup', array(MarkupRuntime::class, 'parse')),
+            new TwigFilter('floatval', 'floatval')
         );
     }
 

@@ -14,8 +14,13 @@ class PriceFormatResolver implements RuntimeExtensionInterface
         $this->priceFormatter = $priceFormatter;
     }
 
-    public function priceFormat($cents)
+    public function priceFormat($cents, $withSymbol = true)
     {
-        return $this->priceFormatter->formatWithSymbol($cents);
+        if ($withSymbol) {
+
+            return $this->priceFormatter->formatWithSymbol($cents);
+        }
+
+        return $this->priceFormatter->format($cents);
     }
 }

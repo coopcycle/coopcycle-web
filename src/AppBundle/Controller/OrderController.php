@@ -110,6 +110,8 @@ class OrderController extends AbstractController
                 ]);
             }
 
+            $this->addFlash('track_goal', true);
+
             return $this->redirectToRoute('profile_order', [
                 'id' => $order->getId(),
                 'reset' => 'yes'
