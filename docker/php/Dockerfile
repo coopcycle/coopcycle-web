@@ -1,8 +1,10 @@
 FROM php:7.2-fpm-alpine
 
+RUN apk update
+
 RUN apk add --no-cache --virtual .persistent-deps \
         git \
-        icu-libs \
+        icu \
         zlib
 
 ENV APCU_VERSION 5.1.8
@@ -10,8 +12,8 @@ ENV APCU_VERSION 5.1.8
 RUN set -xe \
     && apk add --no-cache --virtual .persistent-deps \
         icu-dev \
-        zlib-dev \
         postgresql-dev \
+        zlib-dev \
     && apk add --no-cache \
         xvfb \
         ttf-freefont \
@@ -23,11 +25,10 @@ RUN set -xe \
         freetype-dev \
         libpng-dev \
         libjpeg-turbo-dev \
-    && apk add qt5-qtbase-dev \
-        wkhtmltopdf \
-        --no-cache \
+    && apk add --no-cache \
         --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
         --allow-untrusted \
+        wkhtmltopdf \
     && mv /usr/bin/wkhtmltopdf /usr/bin/wkhtmltopdf-origin \
     && echo $'#!/usr/bin/env sh\n\
 Xvfb :0 -screen 0 1024x768x24 -ac +extension GLX +render -noreset & \n\
@@ -35,7 +36,7 @@ DISPLAY=:0.0 wkhtmltopdf-origin $@ \n\
 killall Xvfb' > /usr/bin/wkhtmltopdf \
     && chmod +x /usr/bin/wkhtmltopdf \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && docker-php-ext-configure pdo_pgsql --with-pgsql \
+    && docker-php-ext-configure pdo_pgsql \
     && docker-php-ext-configure gd \
         --with-gd \
         --with-freetype-dir=/usr/include/ \
