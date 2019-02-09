@@ -4,9 +4,7 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Service\TaskManager;
-use AppBundle\Entity\Task;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class Base
