@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
+use AppBundle\Service\Geocoder;
 use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -15,7 +16,6 @@ use Faker;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use FOS\UserBundle\Util\UserManipulator;
-use GuzzleHttp\Client;
 use libphonenumber\PhoneNumberUtil;
 use Predis\Client as Redis;
 use Sylius\Component\Locale\Model\Locale;
@@ -25,7 +25,6 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Lock\Factory as LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
@@ -79,7 +78,8 @@ class InitDemoCommand extends Command
         FactoryInterface $taxCategoryFactory,
         ObjectManager $taxCategoryManager,
         FactoryInterface $taxRateFactory,
-        ObjectManager $taxRateManager)
+        ObjectManager $taxRateManager,
+        Geocoder $geocoder)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -96,6 +96,7 @@ class InitDemoCommand extends Command
         $this->taxCategoryManager = $taxCategoryManager;
         $this->taxRateFactory = $taxRateFactory;
         $this->taxRateManager = $taxRateManager;
+        $this->geocoder = $geocoder;
 
         parent::__construct();
     }
@@ -236,28 +237,10 @@ class InitDemoCommand extends Command
             $em->persist($brandName);
         }
 
-        try {
-            $this->craueConfig->get('google_api_key');
-        } catch (\RuntimeException $e) {
-            $question = new Question('Please enter a Google API key');
-            $apiKey = $this->getHelper('question')->ask($input, $output, $question);
-            if (!$apiKey) {
-                throw new \Exception('No Google API key provided');
-            }
-
-            $googleApiKey = $this->createCraueConfigSetting('google_api_key', $apiKey);
-            $em->persist($googleApiKey);
-        }
-
         $em->flush();
 
-        $client = new Client([
-            'base_uri' => 'https://maps.googleapis.com',
-            'timeout'  => 2.0,
-        ]);
-
         $apiKey = $this->craueConfig->get('google_api_key');
-        $addressProvider = new AddressProvider($this->faker, $client, $apiKey);
+        $addressProvider = new AddressProvider($this->faker, $this->geocoder);
 
         $this->faker->addProvider($addressProvider);
     }

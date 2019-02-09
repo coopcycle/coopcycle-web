@@ -4,9 +4,9 @@ namespace AppBundle\Faker;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Service\Geocoder;
 use Faker\Generator;
 use Faker\Provider\Base as BaseProvider;
-use GuzzleHttp\Client;
 
 /**
  * @link https://github.com/bobthecow/Faker/blob/master/src/Faker/Geo.php
@@ -26,15 +26,13 @@ class AddressProvider extends BaseProvider
 
     const PRECISION = 6;
 
-    protected $client;
-    protected $apiKey;
+    protected $geocoder;
 
-    public function __construct(Generator $generator, Client $client, $apiKey = null)
+    public function __construct(Generator $generator, Geocoder $geocoder)
     {
         parent::__construct($generator);
 
-        $this->client = $client;
-        $this->apiKey = $apiKey;
+        $this->geocoder = $geocoder;
     }
 
     /**
@@ -206,40 +204,7 @@ class AddressProvider extends BaseProvider
             $latitude = self::latitude([$latMin, $latMax]);
             $longitude = self::longitude([$lngMin, $lngMax]);
 
-            $response = $this->client->request('GET', "/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$this->apiKey}");
-            $data = json_decode((string) $response->getBody(), true);
-
-            if ('OK' === $data['status']) {
-
-                $raw_data = $data['results'][0];
-
-                if (!in_array('street_address', $raw_data['types'])) {
-                    continue;
-                }
-
-                $data = $raw_data['address_components'];
-                $formatted_data = [];
-
-                foreach ($data as $val) {
-                    $formatted_data[$val['types'][0]] = $val['long_name'];
-                }
-
-                if (array_key_exists('street_number', $formatted_data)) {
-                    $streetAddress = $formatted_data['street_number'].' '.$formatted_data['route'];
-                } else if (array_key_exists('route', $formatted_data)) {
-                    $streetAddress = $formatted_data['route'];
-                } else {
-                    $streetAddress = $raw_data['formatted_address'];
-                }
-
-                $address = new Address();
-                $address->setAddressLocality($formatted_data['locality']);
-                $address->setPostalCode($formatted_data['postal_code']);
-                $address->setStreetAddress($streetAddress);
-                $address->setGeo(new GeoCoordinates($latitude, $longitude));
-
-                return $address;
-            }
+            return $this->geocoder->reverse($latitude, $longitude);
         }
 
         throw new \Exception('Could not generate an address');
