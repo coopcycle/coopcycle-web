@@ -58,7 +58,9 @@ sessionStorage.removeItem('search_geohash');
 {% endif %}
 {% if track_goal and goal_id is not empty %}
 <script>
-_paq.push(['trackGoal', {{ goal_id|escape('js') }}, {{ order.total|price_format(false)|floatval|escape('js') }}]);
+setTimeout(function() {
+  _paq.push(['trackGoal', {{ goal_id|escape('js') }}, {{ order.total|price_format(false)|floatval|escape('js') }}]);
+}, 1000);
 </script>
 {% endif %}
 {% endblock %}
