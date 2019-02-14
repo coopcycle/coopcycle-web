@@ -87,6 +87,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof Task;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Task::class;
     }
 }
