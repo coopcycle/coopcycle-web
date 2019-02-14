@@ -115,6 +115,11 @@ AppBundle\Entity\Task:
                 - all
             orderBy:
                 createdAt: DESC
+        images:
+            targetEntity: AppBundle\Entity\TaskImage
+            mappedBy: task
+            cascade:
+                - all
     oneToOne:
         previous:
             targetEntity: AppBundle\Entity\Task

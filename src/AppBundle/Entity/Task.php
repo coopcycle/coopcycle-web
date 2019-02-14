@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
@@ -13,7 +14,6 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *   attributes={
- *     "denormalization_context"={"groups"={"task", "address_create"}},
+ *     "denormalization_context"={"groups"={"task", "address_create", "task_edit"}},
  *     "normalization_context"={"groups"={"task", "delivery", "place"}}
  *   },
  *   collectionOperations={
@@ -49,6 +49,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},
+ *     "put"={
+ *       "method"="PUT",
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "denormalization_context"={"groups"={"task_edit"}}
+ *     },
  *     "task_done"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/done",
@@ -155,9 +160,15 @@ class Task implements TaggableInterface
      */
     private $assignedTo;
 
+    /**
+     * @Groups({"task_edit"})
+     */
+    private $images;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId()
@@ -378,6 +389,29 @@ class Task implements TaggableInterface
     public function setGroup(TaskGroup $group = null)
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    public function setImages($images)
+    {
+        foreach ($images as $image) {
+            $image->setTask($this);
+        }
+
+        $this->images = $images;
+
+        return $this;
+    }
+
+    public function addImage($image)
+    {
+        $this->images->add($images);
 
         return $this;
     }
