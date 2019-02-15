@@ -50,7 +50,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@symfony/webpack-encore": "0.22.*",
+    "@symfony/webpack-encore": "^0.23.0",
     "antd": "^3.13.2",
     "autoprefixer": "^9.4.7",
     "babel-core": "^7.0.0-bridge.0",
