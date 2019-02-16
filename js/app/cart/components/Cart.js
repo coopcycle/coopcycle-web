@@ -7,7 +7,7 @@ import md5 from 'locutus/php/strings/md5'
 
 import AddressModal from './AddressModal'
 import RestaurantModal from './RestaurantModal'
-import AddressPicker from '../../components/AddressPicker'
+import AddressAutosuggest from '../../components/AddressAutosuggest'
 import CartErrors from './CartErrors'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
@@ -57,11 +57,11 @@ class Cart extends Component {
           <div className="panel-body">
             <CartErrors />
             <div className="cart">
-              <AddressPicker
+              <AddressAutosuggest
                 address={ this.props.streetAddress }
                 geohash={ '' }
                 key={ this.props.streetAddress }
-                onPlaceChange={ (value, address) => this.props.changeAddress(address) } />
+                onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
               <hr />
               <DatePicker
                 dateInputName={ this.props.datePickerDateInputName }

@@ -1,5 +1,5 @@
+import AddressAutosuggest from './AddressAutosuggest'
 import AddressInput from './AddressInput'
-import AddressPicker from './AddressPicker'
 import CheckoutDateTime from './CheckoutDateTime'
 import ColorPicker from './ColorPicker'
 import ConfirmDelete from './ConfirmDelete'
@@ -19,8 +19,8 @@ import DeliveryZonePicker from './DeliveryZonePicker'
 
 window.CoopCycle = window.CoopCycle || {}
 
+window.CoopCycle.AddressAutosuggest = AddressAutosuggest
 window.CoopCycle.AddressInput = AddressInput
-window.CoopCycle.AddressPicker = AddressPicker
 window.CoopCycle.CheckoutDateTime = CheckoutDateTime
 window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.ConfirmDelete = ConfirmDelete

@@ -1,0 +1,66 @@
+.address-autosuggest {
+
+  &__container {
+
+    margin-bottom: $form-group-margin-bottom;
+
+    &:before {
+      font-family: 'FontAwesome';
+      content: '\F041';
+      color: white;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+
+      font-size: 22px;
+      text-align: center;
+      width: $input-height-base;
+      line-height: $input-height-base;
+      background-color: $main-blue;
+
+      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: $input-border-radius;
+    }
+  }
+
+  &__input {
+    @extend .form-control;
+    text-indent: $input-height-base;
+    padding-right: $input-height-base;
+  }
+
+  &__clear {
+    position: absolute;
+    border: none;
+    background-color: transparent;
+    right: 0;
+    top: 0;
+    font-size: $font-size-large;
+    cursor: pointer;
+    height: $input-height-base;
+    width: $input-height-base;
+  }
+
+  &__suggestions-container {
+
+    $suggestions-container: &;
+
+    &__footer {
+      display: none;
+      justify-content: flex-end;
+      padding: 4px;
+      img {
+        display: inline-block;
+        width: 150px;
+      }
+    }
+
+    &--open {
+      #{$suggestions-container}__footer {
+        display: flex;
+      }
+    }
+  }
+
+}
