@@ -5,8 +5,7 @@ import Sticky from 'react-stickynode'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import AddressPicker from '../../components/AddressPicker'
-
+import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { changeAddress } from '../redux/actions'
 
 class AddressModal extends Component {
@@ -30,12 +29,11 @@ class AddressModal extends Component {
         contentLabel={ this.props.t('ENTER_YOUR_ADDRESS') }
         className="ReactModal__Content--enter-address">
         <h4 className="text-center">{ this.props.titleText }</h4>
-        <AddressPicker
-          ref={ addressPicker => { this.modalAddressPicker = addressPicker } }
+        <AddressAutosuggest
           autofocus
           address={ '' }
           geohash={ '' }
-          onPlaceChange={ (value, address) => this.props.changeAddress(address) } />
+          onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
       </Modal>
     )
   }

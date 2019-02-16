@@ -49,10 +49,10 @@
   var initialGeohash = "{{ geohash }}";
   $('#restaurant-search-form').find('input[name=geohash]').val(initialGeohash);
   function initMap() {
-    new CoopCycle.AddressPicker(document.querySelector('#address-search'), {
+    new CoopCycle.AddressAutosuggest(document.querySelector('#address-search'), {
       address: sessionStorage.getItem('search_address') || '',
       geohash: initialGeohash,
-      onChange: function(value, address) {
+      onAddressSelected: function(value, address) {
         if (address.geohash !== initialGeohash) {
           sessionStorage.setItem('search_geohash', address.geohash);
           sessionStorage.setItem('search_address', value);

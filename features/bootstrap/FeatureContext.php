@@ -971,11 +971,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .autocomplete-wrapper');
+        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .address-autosuggest__container');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
-            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
 
             return count($suggestions) > 0 ? $suggestions : false;
         });
@@ -990,11 +990,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $addressPicker = $session->getPage()->find('css', '#address-search .autocomplete-wrapper');
+        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
-            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
 
             return count($suggestions) > 0 ? $suggestions : false;
         });
@@ -1009,11 +1009,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .autocomplete-wrapper');
+        $addressPicker = $session->getPage()->find('css', '.ReactModal__Content--enter-address .address-autosuggest__container');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
-            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
 
             return count($suggestions) > 0 ? $suggestions : false;
         });
@@ -1033,11 +1033,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $session = $this->getSession();
 
-        $addressPicker = $session->getPage()->find('css', '#address-search .autocomplete-wrapper');
+        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
-            $suggestions = $addressPicker->findAll('css', '.autocomplete-suggestions-wrapper .location-result');
+            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
 
             return count($suggestions) > 0 ? $suggestions : false;
         });
@@ -1077,7 +1077,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $session = $this->getSession();
 
         $cart = $session->getPage()->find('css', '#cart');
-        $addressPicker = $cart->find('css', '.autocomplete-wrapper');
+        $addressPicker = $cart->find('css', '.address-autosuggest__container');
         $addressPickerInput = $addressPicker->find('css', 'input[type="text"]');
 
         Assert::assertEquals($value, $addressPickerInput->getValue());
