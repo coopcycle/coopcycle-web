@@ -1,3 +1,4 @@
+import AddressAutosuggest from './AddressAutosuggest'
 import AddressInput from './AddressInput'
 import AddressPicker from './AddressPicker'
 import CheckoutDateTime from './CheckoutDateTime'
@@ -19,6 +20,7 @@ import DeliveryZonePicker from './DeliveryZonePicker'
 
 window.CoopCycle = window.CoopCycle || {}
 
+window.CoopCycle.AddressAutosuggest = AddressAutosuggest
 window.CoopCycle.AddressInput = AddressInput
 window.CoopCycle.AddressPicker = AddressPicker
 window.CoopCycle.CheckoutDateTime = CheckoutDateTime
