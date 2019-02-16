@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { geocodeByAddress } from 'react-places-autocomplete'
 
 import i18n from '../../i18n'
 import { placeToAddress } from '../../utils/GoogleMaps'
@@ -132,23 +131,24 @@ export function sync() {
 
 export function geocodeAndSync() {
 
+  const geocoder = new window.google.maps.Geocoder()
+  const geocoderOK = window.google.maps.GeocoderStatus.OK
+
   return (dispatch, getState) => {
 
     const streetAddress = getState().cart.shippingAddress.streetAddress
 
     dispatch(fetchRequest())
 
-    geocodeByAddress(streetAddress)
-      .then(results => {
-        if (results.length === 1) {
-          const place = results[0]
-          const address = placeToAddress(place, streetAddress)
-          dispatch(changeAddress(address))
-        }
-      })
-      .finally(() => {
+    geocoder.geocode({ address: streetAddress }, (results, status) => {
+      if (status === geocoderOK && results.length > 0) {
+        const place = results[0]
+        const address = placeToAddress(place, streetAddress)
+        dispatch(changeAddress(address))
+      } else {
         // TODO Set loading to FALSE
-      })
+      }
+    })
   }
 }
 
