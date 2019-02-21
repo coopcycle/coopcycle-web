@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -13,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class IndexController extends AbstractController
 {
+    use UserTrait;
+
     const MAX_RESULTS = 3;
 
     /**
@@ -32,6 +35,7 @@ class IndexController extends AbstractController
             'restaurants' => $restaurants,
             'max_results' => self::MAX_RESULTS,
             'show_more' => $showMore,
+            'addresses_normalized' => $this->getUserAddresses(),
         );
     }
 }
