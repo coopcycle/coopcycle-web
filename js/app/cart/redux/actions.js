@@ -172,24 +172,45 @@ export function changeAddress(address) {
 
     window._paq.push(['trackEvent', 'Checkout', 'changeAddress', address.streetAddress])
 
+    const {
+      addressFormElements,
+      isNewAddressFormElement,
+      restaurant
+    } = getState()
+
     if (address.isPrecise) {
 
       // Change field value immediately
       dispatch(setStreetAddress(address.streetAddress))
 
-      const addressFormElements = getState().addressFormElements
-
-      _.forEach(addressFormElements, (el, key) => {
-        if (address.hasOwnProperty(key)) {
-          el.value = address[key]
-        }
-      })
-
       dispatch(fetchRequest())
 
-      postForm()
-        .then(res => handleAjaxResponse(res, dispatch, true))
-        .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      if (address.hasOwnProperty('id')) {
+
+        isNewAddressFormElement.value = '0'
+
+        const url =
+          window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
+
+        $.post(url, { address: address.id })
+          .then(res => handleAjaxResponse(res, dispatch, true))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+
+      } else {
+
+        isNewAddressFormElement.value = '1'
+
+        _.forEach(addressFormElements, (el, key) => {
+          if (address.hasOwnProperty(key)) {
+            el.value = address[key]
+          }
+        })
+
+        postForm()
+          .then(res => handleAjaxResponse(res, dispatch, true))
+          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      }
+
     } else {
       dispatch(addError('shippingAddress', [
         i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION')

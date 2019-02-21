@@ -270,6 +270,10 @@ class RestaurantController extends AbstractController
 
                 $this->orderManager->persist($cart);
                 $this->orderManager->flush();
+
+                // TODO Find a better way to do this
+                $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+                $request->getSession()->set($sessionKeyName, $cart->getId());
             }
         }
 
@@ -385,6 +389,36 @@ class RestaurantController extends AbstractController
 
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
+
+        $errors = $this->validator->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+
+        return $this->jsonResponse($cart, $errors);
+    }
+
+    /**
+     * @Route("/restaurant/{id}/cart/address", name="restaurant_cart_address", methods={"POST"})
+     */
+    public function changeAddressAction($id, Request $request, CartContextInterface $cartContext)
+    {
+        $cart = $cartContext->getCart();
+
+        $user = $this->getUser();
+        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
+
+            $addressId = $request->request->get('address');
+
+            $shippingAddress = $this->getDoctrine()
+                ->getRepository(Address::class)
+                ->find($addressId);
+
+            if ($user->getAddresses()->contains($shippingAddress)) {
+                $cart->setShippingAddress($shippingAddress);
+
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
+            }
+        }
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);

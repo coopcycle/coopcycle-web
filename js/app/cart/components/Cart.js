@@ -58,10 +58,11 @@ class Cart extends Component {
             <CartErrors />
             <div className="cart">
               <AddressAutosuggest
+                addresses={ this.props.addresses }
                 address={ this.props.streetAddress }
                 geohash={ '' }
                 key={ this.props.streetAddress }
-                onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+                onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
               <hr />
               <DatePicker
                 dateInputName={ this.props.datePickerDateInputName }
@@ -98,6 +99,7 @@ function mapStateToProps(state) {
     shippingAddress: state.cart.shippingAddress,
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
+    addresses: state.addresses,
   }
 }
 

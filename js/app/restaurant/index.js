@@ -76,9 +76,14 @@ window.initMap = function() {
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
+  const addressesDataElement = document.querySelector('#js-addresses-data')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
+
+  const addresses = JSON.parse(addressesDataElement.dataset.addresses)
+
+  // FIXME Check parse errors
 
   new OpeningHoursParser(document.querySelector('#opening-hours'), {
     openingHours: restaurant.openingHours,
@@ -109,7 +114,9 @@ window.initMap = function() {
       addressLocality: document.querySelector('#cart_shippingAddress_addressLocality'),
       latitude: document.querySelector('#cart_shippingAddress_latitude'),
       longitude: document.querySelector('#cart_shippingAddress_longitude')
-    }
+    },
+    isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
+    addresses
   }
 
   store = createStoreFromPreloadedState(state)

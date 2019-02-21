@@ -30,10 +30,11 @@ class AddressModal extends Component {
         className="ReactModal__Content--enter-address">
         <h4 className="text-center">{ this.props.titleText }</h4>
         <AddressAutosuggest
+          addresses={ this.props.addresses }
           autofocus
           address={ '' }
           geohash={ '' }
-          onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
+          onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
       </Modal>
     )
   }
@@ -45,7 +46,8 @@ function mapStateToProps(state) {
 
   return {
     isOpen: hasError,
-    titleText: hasError ? _.first(state.errors.shippingAddress) : ''
+    titleText: hasError ? _.first(state.errors.shippingAddress) : '',
+    addresses: state.addresses,
   }
 }
 

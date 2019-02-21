@@ -227,6 +227,9 @@
   data-restaurant="{{ restaurant_json|json_encode|e('html_attr') }}"
   data-cart="{{ cart_json|json_encode|e('html_attr') }}"></div>
 
+<div id="js-addresses-data"
+  data-addresses="{{ addresses_normalized|json_encode|e('html_attr') }}"></div>
+
 {% endblock %}
 
 {% block scripts %}
