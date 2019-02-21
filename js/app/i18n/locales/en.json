@@ -82,6 +82,8 @@
     "CART_TOTAL": "Total",
     "CART_TOTAL_PRODUCTS": "Total products",
     "ENTER_YOUR_ADDRESS": "Enter your address",
+    "SAVED_ADDRESSES": "Saved addresses",
+    "ADDRESS_SUGGESTIONS": "Suggestions",
     "CART_CHANGE_RESTAURANT_MODAL_LABEL": "Warning",
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1": "You started an order in another restaurant",
     "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Are you sure you want to start a new order in this restaurant?",

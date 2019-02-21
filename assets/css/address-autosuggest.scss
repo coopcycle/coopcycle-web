@@ -42,6 +42,10 @@
     width: $input-height-base;
   }
 
+  &__section-title {
+    padding: 5px 10px;
+  }
+
   &__suggestions-container {
 
     $suggestions-container: &;

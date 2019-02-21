@@ -70,6 +70,7 @@
     "file-loader": "^1.1.11",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
+    "fuse.js": "^3.4.2",
     "gasparesganga-jquery-loading-overlay": "^2.1.6",
     "jest": "^23.6.0",
     "jquery": "^3.3.1",

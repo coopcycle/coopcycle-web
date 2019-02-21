@@ -23,6 +23,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class Address extends BaseAddress
 {
     /**
+     * @Groups({"address"})
      * @var int
      */
     private $id;
