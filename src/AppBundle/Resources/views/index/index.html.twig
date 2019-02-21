@@ -94,7 +94,7 @@
         sessionStorage.setItem('search_geohash', address.geohash);
         sessionStorage.setItem('search_address', value);
         _paq.push(['trackEvent', 'Homepage', 'searchAddress', value]);
-        $('#address-search-form').find('input[name=geohash]').val(address.geohash);
+        $('#address-search-form').find('input[name="geohash"]').val(address.geohash);
         $('#address-search-form').submit();
       }
     });
