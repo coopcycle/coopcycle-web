@@ -37,6 +37,8 @@ const renderSuggestion = suggestion => (
   </div>
 )
 
+const shouldRenderSuggestions = value => value.trim().length > 3
+
 class AddressAutosuggest extends Component {
 
   constructor(props) {
@@ -185,6 +187,7 @@ class AddressAutosuggest extends Component {
         renderInputComponent={ this.renderInputComponent.bind(this) }
         renderSuggestionsContainer={ this.renderSuggestionsContainer.bind(this) }
         renderSuggestion={ renderSuggestion }
+        shouldRenderSuggestions={ shouldRenderSuggestions }
         inputProps={ inputProps }
       />
     )
