@@ -64,6 +64,7 @@ class AddressAutosuggest extends Component {
 
     this.autocompleteService = new window.google.maps.places.AutocompleteService()
     this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
+    this.autocompleteZeroResults = window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS
 
     this.geocoder = new window.google.maps.Geocoder()
     this.geocoderOK = window.google.maps.GeocoderStatus.OK
@@ -80,17 +81,21 @@ class AddressAutosuggest extends Component {
   }
 
   _autocompleteCallback(predictions, status) {
-    this.setState({
-      suggestions: predictions.map((p, idx) => ({
-        id: p.id,
-        description: p.description,
-        placeId: p.place_id,
-        index: idx,
-        matchedSubstrings: p.matched_substrings,
-        terms: p.terms,
-        types: p.types,
-      })),
-    })
+    if (status === this.autocompleteZeroResults) {
+      this.setState({ suggestions: [] })
+    } else if (status === this.autocompleteOK && Array.isArray(predictions)) {
+      this.setState({
+        suggestions: predictions.map((p, idx) => ({
+          id: p.id,
+          description: p.description,
+          placeId: p.place_id,
+          index: idx,
+          matchedSubstrings: p.matched_substrings,
+          terms: p.terms,
+          types: p.types,
+        })),
+      })
+    }
   }
 
   onSuggestionsFetchRequested({ value }) {
