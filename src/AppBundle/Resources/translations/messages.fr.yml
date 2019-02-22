@@ -509,6 +509,7 @@ form.menu_editor.products.help: 'Pour ajouter des produits dans la liste de droi
   ajoutez-les d''abord au <a href="%products_url%">catalogue</a>
 
   '
+form.menu_editor.taxon_modal.title: 'Modifier une section'
 form.product.name.label: Nom
 form.product.description.label: Description
 form.product.price.label: Prix

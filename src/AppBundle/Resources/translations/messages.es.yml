@@ -509,6 +509,7 @@ form.menu_editor.products.help: 'Para añadir productos en la lista de la derech
   primero tiene que modificar el <a href="%products_url%">catálogo</a>
 
   '
+form.menu_editor.taxon_modal.title: 'Modificar una seccion'
 form.product.name.label: Nombre
 form.product.description.label: Descripción
 form.product.price.label: Precio

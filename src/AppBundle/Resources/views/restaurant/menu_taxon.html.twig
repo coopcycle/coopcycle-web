@@ -67,7 +67,11 @@
         {% for child in menu_editor_form.children %}
           <div class="menuEditor__panel">
             <h4 class="menuEditor__panel__title">
-              {{ child.vars.value.name }}
+              <a href="#"
+                data-toggle="modal"
+                data-target="#editTaxonModal"
+                data-edit-taxon-id="{{ child.vars.value.id }}">{{ child.vars.value.name }}</a>  
+                <i class="fa fa-pencil" aria-hidden="true"></i>
               {% set delete_section_params = {
                 restaurantId: restaurant.id,
                 menuId: menu.id,
@@ -122,6 +126,30 @@
     {{ form_end(menu_editor_form) }}
 
     <form id="delete_section" method="post" action=""></form>
+
+    <div class="modal fade" id="editTaxonModal" tabindex="-1" role="dialog" aria-labelledby="editTaxonModalLabel">
+      <div class="modal-dialog" role="document">
+        <form class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="editTaxonModalLabel">{{ 'form.menu_editor.taxon_modal.title'|trans }}</h4>
+          </div>
+          <div class="modal-body">
+            <input type="hidden">
+            <div class="form-group">
+              <label for="taxon-name" class="control-label">{{ 'basics.name'|trans }}</label>
+              <input type="text" class="form-control" id="taxon-name">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
   {% endif %}
 

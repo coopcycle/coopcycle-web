@@ -40,6 +40,40 @@ function reorderProducts(taxonId) {
 
 }
 
+$('#editTaxonModal form').on('submit', function(e) {
+  e.preventDefault()
+
+  const taxonId = parseInt($(this).find('input[type="hidden"]').val(), 10)
+  const taxonName = $(this).find('input[type="text"]').val()
+
+  $(`[data-edit-taxon-id="${taxonId}"]`).text(taxonName)
+
+  const input = childrenContainer
+    .querySelector(`[data-taxon-id="${taxonId}"]`)
+    .querySelector('input[type="text"]')
+
+  input.value = taxonName
+
+  $('#editTaxonModal').modal('hide')
+})
+
+$('#editTaxonModal').on('show.bs.modal', function (e) {
+
+  const $trigger = $(e.relatedTarget)
+  const $modal = $(this)
+
+  const taxonId = $trigger.data('edit-taxon-id')
+
+  const taxonName =
+    childrenContainer
+      .querySelector(`[data-taxon-id="${taxonId}"]`)
+      .querySelector('input[type="text"]')
+      .value
+
+  $modal.find('.modal-body input[type="hidden"]').val(taxonId)
+  $modal.find('.modal-body input[type="text"]').val(taxonName)
+})
+
 function removeProduct(taxonId, productId) {
   const productInput = resolveProductInput(taxonId, productId)
   if (productInput) {

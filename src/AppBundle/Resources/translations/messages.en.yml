@@ -473,6 +473,7 @@ form.menu_editor.help: |
 
 form.menu_editor.products.help: |
   To add products to the list on the right, add them to the <a href="%products_url%">catalog</a> first
+form.menu_editor.taxon_modal.title: 'Modify a section'
 
 form.product.name.label: Name
 form.product.description.label: Description
