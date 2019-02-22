@@ -42,7 +42,7 @@
     "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Finished tasks",
     "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Cancelled tasks",
     "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Untagged tasks",
-    "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{address}} before {{date}}",
+    "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} before {{date}}",
     "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Task #{{id}}",
     "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Between {{after}} and {{before}}",
     "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assigned to {{username}}",
