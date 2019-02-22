@@ -82,6 +82,29 @@ h1, h2, h3, h4, h5, h6 {
   padding: 40px;
 }
 
+/* Vertically centered modal */
+/* @see https://stackoverflow.com/questions/18422223/bootstrap-3-modal-vertical-position-center */
+/* @see https://codepen.io/dimbslmh/full/mKfCc */
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: $screen-sm-min) {
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
 // ------------------ Admin ------------------
 
 .store-opening-hours {
