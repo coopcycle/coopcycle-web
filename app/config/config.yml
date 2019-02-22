@@ -270,6 +270,7 @@ sylius_taxonomy:
         taxon:
             classes:
                 model: AppBundle\Entity\Sylius\Taxon
+                repository: AppBundle\Entity\Sylius\TaxonRepository
                 # interface: Sylius\Component\Taxonomy\Model\TaxonInterface
 
 sylius_locale:
