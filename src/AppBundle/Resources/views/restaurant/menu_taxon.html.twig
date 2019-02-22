@@ -65,9 +65,9 @@
     <div class="menuEditor">
       <div class="menuEditor__left">
         {% for child in menu_editor_form.children %}
-          <div class="menuEditor__panel">
+          <div class="menuEditor__panel" data-taxon-id="{{ child.vars.value.id }}">
             <h4 class="menuEditor__panel__title">
-              <a href="#"
+              <i class="fa fa-arrows" aria-hidden="true"></i>  <a href="#"
                 data-toggle="modal"
                 data-target="#editTaxonModal"
                 data-edit-taxon-id="{{ child.vars.value.id }}">{{ child.vars.value.name }}</a>  

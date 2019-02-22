@@ -1,8 +1,14 @@
 import dragula from 'dragula'
 
-const containers = [].slice.call(document.querySelectorAll('[data-draggable-target]'))
-const source = document.querySelector('[data-draggable-source]')
+let containers = []
 
+const productContainers = [].slice.call(document.querySelectorAll('[data-draggable-target]'))
+containers = containers.concat(productContainers)
+
+const sectionContainers = [].slice.call(document.querySelectorAll('.menuEditor__left'))
+containers = containers.concat(sectionContainers)
+
+const source = document.querySelector('[data-draggable-source]')
 containers.push(source)
 
 const childrenContainer = document.querySelector('#menu_editor_children')
@@ -36,6 +42,29 @@ function reorderProducts(taxonId) {
         .find('[name$="[position]"]')
         .val(productPosition.position)
     }
+  })
+
+}
+
+function resolveSectionInput(taxonId) {
+
+  return childrenContainer
+    .querySelector(`[data-taxon-id="${taxonId}"]`)
+    .querySelector('[name$="[position]"]')
+}
+
+function reorderSections() {
+
+  const sectionPositions = [].slice.call(document.querySelectorAll('.menuEditor__left .menuEditor__panel')).map((el, index) => {
+    return {
+      section: el.getAttribute('data-taxon-id'),
+      position: index
+    }
+  })
+
+  sectionPositions.forEach(sectionPosition => {
+    const sectionInput = resolveSectionInput(sectionPosition.section)
+    sectionInput.value = sectionPosition.position
   })
 
 }
@@ -81,8 +110,25 @@ function removeProduct(taxonId, productId) {
   }
 }
 
-dragula(containers)
+dragula(containers, {
+  accepts: (el, target, source, sibling) => {
+
+    if (el.classList.contains('menuEditor__panel')) {
+
+      return target === source
+    }
+
+    return true
+  }
+})
   .on('drop', (el, target, source) => {
+
+    // Sections have been reordered
+    if (el.classList.contains('menuEditor__panel')) {
+      reorderSections()
+
+      return
+    }
 
     // Products have been reordered in the same taxon
     if (target === source) {

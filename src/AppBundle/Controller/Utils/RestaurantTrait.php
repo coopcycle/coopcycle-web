@@ -437,12 +437,25 @@ trait RestaurantTrait
             $originalTaxonProducts[$child] = $taxonProducts;
         }
 
+        // This will be used to determine if sections have been reordered
+        $originalSectionPositions = [];
+        foreach ($menuEditor->getChildren() as $child) {
+            $originalSectionPositions[$child->getPosition()] = $child->getId();
+        }
+        ksort($originalSectionPositions);
+        $originalSectionPositions = array_values($originalSectionPositions);
+
         $menuEditorForm->handleRequest($request);
         if ($menuEditorForm->isSubmitted() && $menuEditorForm->isValid()) {
 
             $menuEditor = $menuEditorForm->getData();
 
+            $newSectionPositions = [];
+
             foreach ($menuEditor->getChildren() as $child) {
+
+                $newSectionPositions[$child->getPosition()] = $child->getId();
+
                 foreach ($child->getTaxonProducts() as $taxonProduct) {
 
                     $taxonProduct->setTaxon($child);
@@ -454,6 +467,13 @@ trait RestaurantTrait
                         }
                     }
                 }
+            }
+
+            ksort($newSectionPositions);
+            $newSectionPositions = array_values($newSectionPositions);
+
+            if ($originalSectionPositions !== $newSectionPositions) {
+                $this->get('sylius.repository.taxon')->reorder($menuTaxon, 'position');
             }
 
             $this->get('sylius.manager.taxon')->flush();
