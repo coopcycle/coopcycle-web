@@ -176,18 +176,27 @@ services:
     tags:
       - { name: sylius.context.currency }
 
-  sylius.order_processing.order_fee_processor:
-    class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
-    arguments:
-      - "@sylius.factory.adjustment"
-      - "@translator"
-    tags:
-      - { name: sylius.order_processor, priority: 64 }
+  # IMPORTANT
+  # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
+  # Otherwise, fee calculation may be wrong
+  # We don't tag those sercives directly, but we use OrderOptionsFeeProcessor
 
   sylius.order_processing.order_options_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
     arguments:
       - "@sylius.factory.adjustment"
+
+  sylius.order_processing.order_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
+    arguments:
+      - "@sylius.factory.adjustment"
+      - "@translator"
+
+  sylius.order_processing.order_options_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor
+    arguments:
+      - "@sylius.order_processing.order_options_processor"
+      - "@sylius.order_processing.order_fee_processor"
     tags:
       - { name: sylius.order_processor, priority: 48 }
 
