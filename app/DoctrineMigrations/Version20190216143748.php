@@ -39,6 +39,19 @@ final class Version20190216143748 extends AbstractMigration
                 ]);
             }
 
+            $stmt['tasks'] = $this->connection->executeQuery(
+                'SELECT * FROM task WHERE address_id IN (:address_ids)',
+                [ 'address_ids' => $addressIds ],
+                [ 'address_ids' => Connection::PARAM_INT_ARRAY ]
+            );
+
+            while ($task = $stmt['tasks']->fetch()) {
+                $this->addSql('UPDATE task SET address_id = :address_id WHERE id = :id', [
+                    'address_id' => $addressIdToKeep,
+                    'id' => $task['id'],
+                ]);
+            }
+
             foreach ($addressIdsToRemove as $addressId) {
                 $this->addSql('DELETE FROM api_user_address WHERE address_id = :address_id', [
                     'address_id' => $addressId,
