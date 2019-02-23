@@ -375,16 +375,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $data = $table->getRowsHash();
 
         $userManager = $this->getContainer()->get('fos_user.user_manager');
-        $em = $this->doctrine->getManagerForClass('AppBundle:Address');
+        $em = $this->doctrine->getManagerForClass(Address::class);
 
         $user = $userManager->findUserByUsername($username);
 
         list($lat, $lng) = explode(',', $data['geo']);
 
         $address = new Address();
-        $address->setPostalCode(isset($data['streetAddress']) ? $data['streetAddress'] : 75000);
-        $address->setAddressLocality('New-York');
         $address->setStreetAddress($data['streetAddress']);
+        $address->setPostalCode(isset($data['streetAddress']) ? $data['streetAddress'] : 75000);
+        $address->setAddressLocality(isset($data['addressLocality']) ? $data['addressLocality'] : 'Paris');
         $address->setGeo(new GeoCoordinates(trim($lat), trim($lng)));
 
         $user->addAddress($address);
@@ -1000,6 +1000,117 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         });
 
         Assert::assertNotCount(0, $suggestions);
+    }
+
+    /**
+     * @Then I should see section :title in the homepage search suggestions
+     */
+    public function assertSectionInHomepageSearch($title)
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
+
+        $sectionTitles = $addressPicker->waitFor(10, function($addressPicker) {
+
+            $sectionTitles =
+                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-title');
+
+            return count($sectionTitles) > 0 ? $sectionTitles : false;
+        });
+
+        Assert::assertNotCount(0, $sectionTitles);
+
+        $sectionTitlesAsString = array_map(function ($sectionTitle) {
+
+            return trim($sectionTitle->getText());
+        }, $sectionTitles);
+
+        Assert::assertContains($title, $sectionTitlesAsString);
+    }
+
+    /**
+     * @Then I should see address :address in section :title in the homepage search suggestions
+     */
+    public function assertAddressInSectionInHomepageSearch($address, $title)
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
+
+        $sectionContainer = $addressPicker->waitFor(10, function($addressPicker) use ($title) {
+
+            $sectionContainers =
+                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-container');
+
+            foreach ($sectionContainers as $sectionContainer) {
+                $sectionTitle = $sectionContainer->find('css', '.react-autosuggest__section-title');
+                if (trim($sectionTitle->getText()) === $title) {
+
+                    return $sectionContainer;
+                }
+            }
+
+            return false;
+        });
+
+        Assert::assertNotNull($sectionContainer, sprintf('Section with title "%s" was not found on page', $title));
+
+        $suggestions = $sectionContainer->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
+
+        Assert::assertNotCount(0, $suggestions);
+
+        $suggestionsAsString = array_map(function ($suggestion) {
+
+            return trim($suggestion->getText());
+        }, $suggestions);
+
+        Assert::assertContains($address, $suggestionsAsString);
+    }
+
+    /**
+     * @Given I select address :address in section :title in the homepage search suggestions
+     */
+    public function selectAddressInSectionInHomepageSearch($address, $title)
+    {
+        $session = $this->getSession();
+
+        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
+
+        $sectionContainer = $addressPicker->waitFor(10, function($addressPicker) use ($title) {
+
+            $sectionContainers =
+                $addressPicker->findAll('css', '.react-autosuggest__suggestions-container .react-autosuggest__section-container');
+
+            foreach ($sectionContainers as $sectionContainer) {
+                $sectionTitle = $sectionContainer->find('css', '.react-autosuggest__section-title');
+                if (trim($sectionTitle->getText()) === $title) {
+
+                    return $sectionContainer;
+                }
+            }
+
+            return false;
+        });
+
+        Assert::assertNotNull($sectionContainer, sprintf('Section with title "%s" was not found on page', $title));
+
+        $suggestions = $sectionContainer->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
+
+        Assert::assertNotCount(0, $suggestions);
+
+        $suggestionsAsString = array_map(function ($suggestion) {
+
+            return trim($suggestion->getText());
+        }, $suggestions);
+
+        Assert::assertContains($address, $suggestionsAsString);
+
+        foreach ($suggestions as $suggestion) {
+            if (trim($suggestion->getText()) === $address) {
+                $suggestion->click();
+            }
+        }
     }
 
     /**

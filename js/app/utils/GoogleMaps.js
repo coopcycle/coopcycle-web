@@ -16,6 +16,7 @@ export const placeToAddress = (place, value = '') => {
   }
 
   return {
+    // FIXME Wrap in "geo" key
     latitude: place.geometry.location.lat(),
     longitude: place.geometry.location.lng(),
     addressCountry: addressDict.country || '',

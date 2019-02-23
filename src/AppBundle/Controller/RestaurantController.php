@@ -3,9 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Form\Order\CartType;
@@ -38,6 +40,8 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
  */
 class RestaurantController extends AbstractController
 {
+    use UserTrait;
+
     const ITEMS_PER_PAGE = 15;
 
     private $orderManager;
@@ -219,6 +223,8 @@ class RestaurantController extends AbstractController
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
             'images' => $images,
+            'addresses_normalized' => $this->getUserAddresses(),
+            'address' => $request->query->has('address') ? $request->query->get('address') : null,
         );
     }
 
@@ -249,6 +255,27 @@ class RestaurantController extends AbstractController
         $request->getSession()->set('restaurantId', $id);
 
         $cart = $cartContext->getCart();
+
+        $user = $this->getUser();
+        if ($request->query->has('address') && $user && count($user->getAddresses()) > 0) {
+
+            $addressId = intval(base_convert($request->query->get('address'), 36, 10));
+
+            $shippingAddress = $this->getDoctrine()
+                ->getRepository(Address::class)
+                ->find($addressId);
+
+            if ($user->getAddresses()->contains($shippingAddress)) {
+                $cart->setShippingAddress($shippingAddress);
+
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
+
+                // TODO Find a better way to do this
+                $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+                $request->getSession()->set($sessionKeyName, $cart->getId());
+            }
+        }
 
         $cartForm = $this->createForm(CartType::class, $cart);
 
@@ -339,6 +366,7 @@ class RestaurantController extends AbstractController
             'availabilities' => $this->getAvailabilities($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
+            'addresses_normalized' => $this->getUserAddresses(),
         );
     }
 
@@ -361,6 +389,36 @@ class RestaurantController extends AbstractController
 
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
+
+        $errors = $this->validator->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+
+        return $this->jsonResponse($cart, $errors);
+    }
+
+    /**
+     * @Route("/restaurant/{id}/cart/address", name="restaurant_cart_address", methods={"POST"})
+     */
+    public function changeAddressAction($id, Request $request, CartContextInterface $cartContext)
+    {
+        $cart = $cartContext->getCart();
+
+        $user = $this->getUser();
+        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
+
+            $addressId = $request->request->get('address');
+
+            $shippingAddress = $this->getDoctrine()
+                ->getRepository(Address::class)
+                ->find($addressId);
+
+            if ($user->getAddresses()->contains($shippingAddress)) {
+                $cart->setShippingAddress($shippingAddress);
+
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
+            }
+        }
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeValidationErrors($errors);

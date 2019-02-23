@@ -25,10 +25,19 @@
 
 {% endif %}
 
+{% set restaurant_path_params = {
+  id: restaurant.id,
+  slug: restaurant.name|slugify
+} %}
+
+{% if address is defined and address is not empty %}
+  {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
+{% endif %}
+
 {% set isOpen = restaurant.isOpen %}
 
 <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
-  href="{{ path('restaurant', {'id': restaurant.id, 'slug': restaurant.name|slugify}) }}">
+  href="{{ path('restaurant', restaurant_path_params) }}">
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
   <div class="caption">
     <h4>{{ restaurant.name|truncate(24, false, '…') }}</h4>

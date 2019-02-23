@@ -23,9 +23,11 @@ const initialState = {
   errors: [],
   availabilities: [],
   addressFormElements: {},
+  isNewAddressFormElement: null,
   datePickerDateInputName: 'date',
   datePickerTimeInputName: 'time',
   isMobileCartVisible: false,
+  addresses: [],
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -100,9 +102,13 @@ const restaurant = (state = initialState.restaurant, action = {}) => state
 
 const addressFormElements = (state = initialState.addressFormElements, action = {}) => state
 
+const isNewAddressFormElement = (state = initialState.isNewAddressFormElement, action = {}) => state
+
 const datePickerDateInputName = (state = initialState.datePickerDateInputName, action = {}) => state
 
 const datePickerTimeInputName = (state = initialState.datePickerTimeInputName, action = {}) => state
+
+const addresses = (state = initialState.addresses, action = {}) => state
 
 const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = {}) => {
   switch (action.type) {
@@ -121,7 +127,9 @@ export default combineReducers({
   errors,
   availabilities,
   addressFormElements,
+  isNewAddressFormElement,
   datePickerDateInputName,
   datePickerTimeInputName,
   isMobileCartVisible,
+  addresses,
 })

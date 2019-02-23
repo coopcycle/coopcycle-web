@@ -329,6 +329,7 @@ fos_js_routing:
         - ^restaurant$
         - restaurant_remove_from_cart
         - restaurant_cart_reset
+        - restaurant_cart_address
         - admin_foodtech_dashboard
         - admin_foodtech_settings
         - admin_order_accept

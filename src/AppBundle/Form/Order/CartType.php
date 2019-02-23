@@ -6,6 +6,7 @@ use AppBundle\Form\AddressType;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,14 +31,51 @@ class CartType extends AbstractType
                 'widget' => 'single_text',
                 'with_seconds' => false,
                 'mapped' => false
+            ])
+            ->add('isNewAddress', HiddenType::class, [
+                'mapped' => false,
+                'empty_data' => true
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-
+        $removeAddressFields = function (FormEvent $event) {
             $form = $event->getForm();
 
             $form->get('shippingAddress')->remove('floor');
             $form->get('shippingAddress')->remove('description');
+        };
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, $removeAddressFields);
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+
+            $shippingAddress = $form->get('shippingAddress')->getData();
+
+            if ($shippingAddress && null !== $shippingAddress->getId()) {
+                $form->get('isNewAddress')->setData(false);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($removeAddressFields) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $isNewAddress = isset($data['isNewAddress']) ? (bool) $data['isNewAddress'] : true;
+
+            if (!$isNewAddress) {
+
+                $shippingAddressForm = $form->get('shippingAddress');
+
+                $config = $shippingAddressForm->getConfig();
+                $options = $config->getOptions();
+                $options['mapped'] = false;
+
+                $form->add('shippingAddress', get_class($config->getType()->getInnerType()), $options);
+
+                $removeAddressFields($event);
+            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

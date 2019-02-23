@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\TrackingPosition;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,5 +28,25 @@ trait UserTrait
             'date' => $date,
             'positions' => $positions,
         ];
+    }
+
+    protected function getUserAddresses()
+    {
+        $addresses = [];
+
+        $user = $this->getUser();
+        if ($user) {
+            $addresses = $user->getAddresses()->toArray();
+        }
+
+        return array_map(function ($address) {
+
+            return $this->get('serializer')->normalize($address, 'jsonld', [
+                'resource_class' => Address::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['address', 'place']
+            ]);
+        }, $addresses);
     }
 }
