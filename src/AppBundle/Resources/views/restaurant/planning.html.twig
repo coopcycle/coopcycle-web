@@ -10,11 +10,6 @@
 
 {%  block content %}
   <h1 class="page-header">{% trans %}restaurant.list.planning{%  endtrans %}</h1>
-  {% for message in app.flashes('notice') %}
-    <div class="alert alert-success">
-      {{ message }}
-    </div>
-  {% endfor %}
   <h3 id="closing-rules-form__title">{% trans %}restaurant.closingForm.title{% endtrans %}</h3>
   {{ form_start(form, { attr: { id: 'closing-rules-form' }}) }}
     <div class="row">

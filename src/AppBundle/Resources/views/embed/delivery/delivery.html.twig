@@ -12,11 +12,11 @@
 
   <h3>Livraison #{{ delivery.id }}</h3>
 
-  {% for message in app.flashes('notice') %}
-      <div class="alert alert-success">
-        {{ message|raw }}
-      </div>
-    {% endfor %}
+  {% for message in app.flashes('embed_delivery') %}
+    <div class="alert alert-success">
+      {{ message|raw }}
+    </div>
+  {% endfor %}
 
   {% set rows = [
     {

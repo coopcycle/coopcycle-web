@@ -22,12 +22,6 @@
 
 {% block content %}
 
-{% for message in app.flashes('notice') %}
-  <div class="alert alert-success">
-    {{ message }}
-  </div>
-{% endfor %}
-
 {{ form_start(form) }}
 
   {{ form_row(form.name) }}

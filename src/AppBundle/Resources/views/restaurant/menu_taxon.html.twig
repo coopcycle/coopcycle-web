@@ -13,14 +13,6 @@
 
 {% block content %}
 
-  <div id="menu_editor_messages">
-  {% for message in app.flashes('notice') %}
-    <div class="alert alert-success">
-      {{ message }}
-    </div>
-  {% endfor %}
-  </div>
-
   {% set menu = form.vars.value %}
 
   {{ form_start(form) }}
@@ -166,7 +158,7 @@ $('[data-delete-taxon-id]').on('click', function(e) {
   $('#delete_section').submit();
 })
 setTimeout(function() {
-  $('#menu_editor_messages .alert').fadeOut();
+  $('.flash-messages .alert').fadeOut();
 }, 1000);
 </script>
 {{ encore_entry_script_tags('js/restaurant-menu-editor') }}

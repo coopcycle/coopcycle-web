@@ -15,13 +15,6 @@
 
 {% block body %}
 <div class="container">
-
-  {% for message in app.flashes('notice') %}
-    <div class="alert alert-success">
-      {{ message|raw }}
-    </div>
-  {% endfor %}
-
   <div class="row">
     <div class="col-md-6">
       <section>
@@ -90,8 +83,6 @@
 
     </div>
   </div>
-
-
 </div>
 {% endblock %}
 

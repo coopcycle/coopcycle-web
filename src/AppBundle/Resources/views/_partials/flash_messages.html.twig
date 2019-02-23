@@ -1,0 +1,14 @@
+{% if app.request.hasPreviousSession and (app.session.flashbag.peek('notice')|length > 0 or app.session.flashbag.peek('error')|length > 0) %}
+<div class="flash-messages">
+  {% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+      <div class="text-center">{{ message|raw }}</div>
+    </div>
+  {% endfor %}
+  {% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+      <div class="text-center">{{ message|raw }}</div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}

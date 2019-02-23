@@ -166,6 +166,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.flash-messages {
+  margin-top: -20px;
+  margin-bottom: 20px;
+  .alert {
+    margin-bottom: 0;
+  }
+}
+
 .homepage-search {
   margin-top: -20px;
   padding: 100px 0;

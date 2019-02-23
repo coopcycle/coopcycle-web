@@ -189,7 +189,7 @@ class EmbedController extends Controller
             $this->get('sylius.manager.order')->flush();
 
             $this->addFlash(
-                'notice',
+                'embed_delivery',
                 $this->get('translator')->trans('embed.delivery.confirm_message')
             );
 

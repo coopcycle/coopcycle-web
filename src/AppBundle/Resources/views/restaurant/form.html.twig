@@ -9,12 +9,6 @@
 
 {% block content %}
 
-{% for message in app.flashes('notice') %}
-  <div class="alert alert-success">
-    {{ message }}
-  </div>
-{% endfor %}
-
 {% if formErrors is not empty %}
   <div class="row margin-bottom-md">
     <div class="col-sm-6 col-md-offset-3">
