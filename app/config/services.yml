@@ -578,3 +578,9 @@ services:
       - '@sylius.repository.channel'
     tags:
       - { name: 'sylius.context.channel', priority: -64 }
+
+  AppBundle\EventSubscriber\ApiLogSubscriber:
+    tags:
+      - { name: monolog.logger, channel: api }
+
+  AppBundle\Monolog\Formatter\ApiFormatter: ~
