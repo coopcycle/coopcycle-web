@@ -30,13 +30,11 @@
       restaurant.temporaryClosedWarning
       {% endtrans %}
     </div>
-    {% else %}
+    {% elseif restaurant.orderingDelayMinutes > 0 %}
     <div class="alert alert-warning text-center">
-      {% if restaurant.orderingDelayMinutes > 0 %}
-        {% trans with { '%delay%': delay } %}restaurant.closedWarningWithDelay{% endtrans %}
-      {% else %}
-        {% trans %}restaurant.closedWarning{% endtrans %}
-      {% endif %}
+      {% trans with { '%delay%': delay } %}
+      restaurant.closedWarningWithDelay
+      {% endtrans %}
     </div>
     {% endif %}
   {% endif %}
