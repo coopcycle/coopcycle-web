@@ -20,7 +20,7 @@ parameters:
     jwt_private_key_path: '%kernel.root_dir%/../var/jwt/private.pem'
     jwt_public_key_path: '%kernel.root_dir%/../var/jwt/public.pem'
     jwt_key_pass_phrase: coursiers
-    jwt_token_ttl: 86400
+    jwt_token_ttl: 3600
     transactional_address: test@coopcycle.org
     transactional_sender_name: CoopCycle
     redis_host: redis
