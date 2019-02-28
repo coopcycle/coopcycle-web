@@ -473,6 +473,11 @@ services:
         - '@security.token_storage'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
+    arguments:
+        - '@doctrine'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:

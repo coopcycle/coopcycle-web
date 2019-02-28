@@ -1338,4 +1338,19 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertNotNull($modal);
         Assert::assertTrue($modal->isVisible());
     }
+
+    /**
+     * @Given the product with code :code is soft deleted
+     */
+    public function softDeleteProductWithCode($code)
+    {
+        $product = $this->getContainer()
+            ->get('sylius.repository.product')
+            ->findOneByCode($code);
+
+        $em = $this->getContainer()->get('sylius.manager.product');
+
+        $em->remove($product);
+        $em->flush();
+    }
 }
