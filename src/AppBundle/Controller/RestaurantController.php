@@ -287,6 +287,16 @@ class RestaurantController extends AbstractController
 
             if ($request->isXmlHttpRequest()) {
 
+                $errors = [];
+
+                // Customer may be browsing the available restaurants
+                // Make sure the request targets the same restaurant
+                // If not, we don't persist the cart
+                if (null !== $cart->getId() && $cart->getRestaurant() !== $restaurant) {
+
+                    return $this->jsonResponse($cart, $errors);
+                }
+
                 // Make sure the shipping address is valid
                 // FIXME This is cumbersome, there should be a better way
                 $shippingAddress = $cart->getShippingAddress();
@@ -296,25 +306,6 @@ class RestaurantController extends AbstractController
                         $cart->setShippingAddress(null);
                     }
                 }
-
-                if ($cart->getRestaurant() !== $restaurant) {
-                    // Alert customer only when there is something in the cart
-                    // Customer may be browsing the available restaurants,
-                    // so no need to alert all the time
-                    if ($cart->getItemsTotal() > 0) {
-                        $errors = [
-                            'restaurant' => [
-                                sprintf('Restaurant mismatch')
-                            ]
-                        ];
-
-                        return $this->jsonResponse($cart, $errors);
-                    } else {
-                        $cart->setRestaurant($restaurant);
-                    }
-                }
-
-                $errors = [];
 
                 if (!$cartForm->isValid()) {
                     foreach ($cartForm->getErrors() as $formError) {
