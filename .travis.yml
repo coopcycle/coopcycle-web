@@ -52,7 +52,7 @@ install:
   # Remove error could not access file "$libdir/postgis-2.3": No such file or directory
   - sudo apt-get install -y $(apt-cache search postgis | awk '/^postgresql-9\.[2-5]-postgis-2.3/{printf " "$1}' )
   - sudo service postgresql restart
-  - npm install
+  - npm ci
   - npm install -g pm2
   # Install OSRM
   - mkdir -p var/osrm
