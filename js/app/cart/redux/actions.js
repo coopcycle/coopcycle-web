@@ -7,6 +7,9 @@ export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
 export const FETCH_FAILURE = 'FETCH_FAILURE'
 
+export const SET_LAST_ADD_ITEM_REQUEST = 'SET_LAST_ADD_ITEM_REQUEST'
+export const CLEAR_LAST_ADD_ITEM_REQUEST = 'CLEAR_LAST_ADD_ITEM_REQUEST'
+
 export const SET_STREET_ADDRESS = 'SET_STREET_ADDRESS'
 export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
 export const ADD_ERROR = 'ADD_ERROR'
@@ -18,6 +21,9 @@ export const fetchFailure = createAction(FETCH_FAILURE)
 export const setStreetAddress = createAction(SET_STREET_ADDRESS)
 export const toggleMobileCart = createAction(TOGGLE_MOBILE_CART)
 export const addError = createAction(ADD_ERROR, (key, messages) => ({ key, messages }))
+
+export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
+export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
 
 function postForm() {
 
@@ -36,6 +42,7 @@ function notifyListeners(cart) {
 function handleAjaxResponse(res, dispatch, success) {
   if (success) {
     dispatch(fetchSuccess(res))
+    dispatch(clearLastAddItemRequest())
   } else {
     dispatch(fetchFailure(res))
   }
@@ -48,7 +55,9 @@ const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
 export function addItem(itemURL, quantity = 1) {
 
   return dispatch => {
+
     dispatch(fetchRequest())
+    dispatch(setLastAddItemRequest(itemURL, { quantity }))
 
     return $.post(itemURL, { quantity })
       .then(res => {
@@ -66,6 +75,7 @@ export function queueAddItem(itemURL, quantity = 1) {
     callback: (next, dispatch, getState) => {
 
       dispatch(fetchRequest())
+      dispatch(setLastAddItemRequest(itemURL, { quantity }))
 
       $.post(itemURL, { quantity })
         .then(res => {
@@ -84,9 +94,11 @@ export function queueAddItem(itemURL, quantity = 1) {
 export function addItemWithOptions(itemURL, data, quantity = 1) {
 
   return dispatch => {
-    dispatch(fetchRequest())
 
-    return $.post(itemURL, data, { quantity })
+    dispatch(fetchRequest())
+    dispatch(setLastAddItemRequest(itemURL, data))
+
+    return $.post(itemURL, data, { quantity }) // FIXME Quantity is ignore here
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions'])
         handleAjaxResponse(res, dispatch, true)
@@ -243,6 +255,30 @@ export function resetCart() {
     dispatch(fetchRequest())
 
     $.post(resetCartURL)
+      .then(res => handleAjaxResponse(res, dispatch, true))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+  }
+}
+
+export function retryLastAddItemRequest() {
+
+  return (dispatch, getState) => {
+
+    const lastAddItemRequest = getState().lastAddItemRequest
+
+    // TODO Check the request is not null
+
+    dispatch(fetchRequest())
+
+    let data = lastAddItemRequest.data
+
+    if (Array.isArray(data)) {
+      data.push({ name: '_clear', value: 'yes' })
+    } else {
+      data = { ...data, _clear: 'yes' }
+    }
+
+    $.post(lastAddItemRequest.url, data)
       .then(res => handleAjaxResponse(res, dispatch, true))
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
   }

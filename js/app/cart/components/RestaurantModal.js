@@ -5,7 +5,7 @@ import Sticky from 'react-stickynode'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import { goBackToRestaurant, resetCart } from '../redux/actions'
+import { goBackToRestaurant, retryLastAddItemRequest } from '../redux/actions'
 
 class RestaurantModal extends Component {
 
@@ -38,7 +38,7 @@ class RestaurantModal extends Component {
           <button type="button" className="btn btn-default" onClick={ () => this.props.goBackToRestaurant() }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_NO') }
           </button>
-          <button type="button" className="btn btn-primary" onClick={ () => this.props.resetCart() }>
+          <button type="button" className="btn btn-primary" onClick={ () => this.props.retryLastAddItemRequest() }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_YES') }
           </button>
         </div>
@@ -60,7 +60,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     goBackToRestaurant: () => dispatch(goBackToRestaurant()),
-    resetCart: () => dispatch(resetCart()),
+    retryLastAddItemRequest: () => dispatch(retryLastAddItemRequest()),
   }
 }
 

@@ -449,7 +449,9 @@ class RestaurantController extends AbstractController
             return $this->jsonResponse($cart, $errors);
         }
 
-        if ($cart->getRestaurant() !== $product->getRestaurant()) {
+        $clear = $request->request->getBoolean('_clear', false);
+
+        if ($cart->getRestaurant() !== $product->getRestaurant() && !$clear) {
             $errors = [
                 'restaurant' => [
                     sprintf('Restaurant mismatch')
@@ -457,6 +459,11 @@ class RestaurantController extends AbstractController
             ];
 
             return $this->jsonResponse($cart, $errors);
+        }
+
+        if ($clear) {
+            $cart->clearItems();
+            $cart->setRestaurant($restaurant);
         }
 
         $quantity = $request->request->getInt('quantity', 1);

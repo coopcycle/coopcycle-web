@@ -7,6 +7,8 @@ import {
   SET_STREET_ADDRESS,
   TOGGLE_MOBILE_CART,
   ADD_ERROR,
+  SET_LAST_ADD_ITEM_REQUEST,
+  CLEAR_LAST_ADD_ITEM_REQUEST,
 } from './actions'
 
 const initialState = {
@@ -28,6 +30,7 @@ const initialState = {
   datePickerTimeInputName: 'time',
   isMobileCartVisible: false,
   addresses: [],
+  lastAddItemRequest: null,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -98,6 +101,20 @@ const cart = (state = initialState.cart, action = {}) => {
   }
 }
 
+const lastAddItemRequest = (state = initialState.lastAddItemRequest, action = {}) => {
+  switch (action.type) {
+  case SET_LAST_ADD_ITEM_REQUEST:
+
+    return action.payload
+  case CLEAR_LAST_ADD_ITEM_REQUEST:
+
+    return null
+  default:
+
+    return state
+  }
+}
+
 const restaurant = (state = initialState.restaurant, action = {}) => state
 
 const addressFormElements = (state = initialState.addressFormElements, action = {}) => state
@@ -132,4 +149,5 @@ export default combineReducers({
   datePickerTimeInputName,
   isMobileCartVisible,
   addresses,
+  lastAddItemRequest,
 })
