@@ -25,9 +25,9 @@ php:
 
 cache:
   apt: true
-  npm: true
   directories:
     - $HOME/.composer/cache/files
+    - $HOME/.npm
 
 env:
   global:
