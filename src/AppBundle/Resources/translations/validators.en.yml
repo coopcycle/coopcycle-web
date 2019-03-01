@@ -22,6 +22,8 @@ delivery.price.error.priceCalculation: The delivery price could not be calculate
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
 delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
 
+delivery.date.restaurantClosed: Restaurant is closed on this date
+
 time_range.empty: You have not selected any value
 time_range.no_weekday: You did not select a day of the week
 
