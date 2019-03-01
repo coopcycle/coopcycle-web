@@ -51,14 +51,14 @@ class CartHeading extends React.Component {
 
   render() {
 
-    const { loading, warningAlerts, dangerAlerts } = this.props
+    const { items, loading, warningAlerts, dangerAlerts } = this.props
 
     const headingClasses = ['panel-heading', 'cart-heading']
     if (warningAlerts.length > 0 || dangerAlerts.length > 0) {
       headingClasses.push('cart-heading--warning')
     }
 
-    if (!loading && warningAlerts.length === 0 && dangerAlerts.length === 0) {
+    if (!loading && items.length > 0 && warningAlerts.length === 0 && dangerAlerts.length === 0) {
       headingClasses.push('cart-heading--success')
     }
 
@@ -102,11 +102,17 @@ function mapStateToProps (state) {
     })
   }
 
+  let items = state.cart.items
+  if (state.cart.restaurant.id !== state.restaurant.id) {
+    items = []
+  }
+
   return {
     isMobileCartVisible: state.isMobileCartVisible,
     loading: state.isFetching,
     dangerAlerts,
     warningAlerts,
+    items,
   }
 }
 

@@ -34,8 +34,16 @@ class CartItems extends React.Component {
 }
 
 function mapStateToProps (state) {
+
+  const { cart, restaurant } = state
+
+  let items = cart.items
+  if (cart.restaurant.id !== restaurant.id) {
+    items = []
+  }
+
   return {
-    items: state.cart.items,
+    items,
   }
 }
 

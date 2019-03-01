@@ -12,6 +12,7 @@ import CartErrors from './CartErrors'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
+import CartButton from './CartButton'
 import DatePicker from './DatePicker'
 
 import { changeAddress, changeDate, sync, geocodeAndSync } from '../redux/actions'
@@ -33,21 +34,11 @@ class Cart extends Component {
 
   render() {
 
-    const { items, loading, isMobileCartVisible } = this.props
+    const { items, isMobileCartVisible } = this.props
 
     const panelClasses = ['panel', 'panel-default', 'cart-wrapper']
     if (isMobileCartVisible) {
       panelClasses.push('cart-wrapper--show')
-    }
-
-    const btnClasses = ['btn', 'btn-block', 'btn-primary']
-    let btnProps = {}
-    if (items.length === 0 || loading) {
-      btnClasses.push('disabled')
-      btnProps = {
-        ...btnProps,
-        disabled: true
-      }
     }
 
     return (
@@ -75,9 +66,7 @@ class Cart extends Component {
               <CartItems />
               <hr />
               <CartTotal />
-              <button type="submit" className={ btnClasses.join(' ') } { ...btnProps }>
-                <span>{ this.props.loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ this.props.t('CART_WIDGET_BUTTON') }</span>
-              </button>
+              <CartButton />
             </div>
           </div>
         </div>
@@ -90,9 +79,15 @@ class Cart extends Component {
 
 function mapStateToProps(state) {
 
+  const { cart, restaurant } = state
+
+  let items = cart.items
+  if (cart.restaurant.id !== restaurant.id) {
+    items = []
+  }
+
   return {
-    items: state.cart.items,
-    loading: state.isFetching,
+    items,
     availabilities: state.availabilities,
     datePickerDateInputName: state.datePickerDateInputName,
     datePickerTimeInputName: state.datePickerTimeInputName,

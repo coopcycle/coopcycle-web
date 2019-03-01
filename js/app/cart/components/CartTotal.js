@@ -53,10 +53,23 @@ class CartTotal extends React.Component {
 }
 
 function mapStateToProps (state) {
+
+  const { cart, restaurant } = state
+
+  let itemsTotal = cart.itemsTotal
+  let total = cart.total
+  let adjustments = cart.adjustments
+
+  if (cart.restaurant.id !== restaurant.id) {
+    itemsTotal = 0
+    total = 0
+    adjustments = {}
+  }
+
   return {
-    itemsTotal: state.cart.itemsTotal,
-    total: state.cart.total,
-    adjustments: state.cart.adjustments,
+    itemsTotal,
+    total,
+    adjustments,
   }
 }
 
