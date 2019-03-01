@@ -17,7 +17,7 @@ class LazyProductVariantResolverTest extends TestCase
     private $variantFactory;
     private $defaultVariantResolver;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->defaultVariantResolver = $this->prophesize(ProductVariantResolverInterface::class);
         $this->variantFactory = $this->prophesize(ProductVariantFactoryInterface::class);

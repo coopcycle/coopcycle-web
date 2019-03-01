@@ -14,7 +14,7 @@ class OrderTimelineCalculatorTest extends TestCase
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
         $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);

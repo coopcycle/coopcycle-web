@@ -14,7 +14,7 @@ class ZoneExpressionLanguageProviderTest extends TestCase
     private $language;
     private $zone;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->language = new ExpressionLanguage();
 

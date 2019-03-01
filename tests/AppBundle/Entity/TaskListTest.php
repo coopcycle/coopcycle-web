@@ -8,7 +8,7 @@ use AppBundle\Entity\ApiUser;
 
 class TaskListTest extends TaskCollectionTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $user = new ApiUser();
 

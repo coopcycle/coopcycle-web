@@ -15,7 +15,7 @@ class GeocoderTest extends TestCase
 {
     private $innerGeocoder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $settingsManager = $this->prophesize(SettingsManager::class);
         $this->innerGeocoder = $this->prophesize(GeocoderInterface::class);

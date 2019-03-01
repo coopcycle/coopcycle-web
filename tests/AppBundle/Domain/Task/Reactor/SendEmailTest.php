@@ -19,7 +19,7 @@ class SendEmailTest extends TestCase
 {
     private $sendEmail;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->emailManager = $this->prophesize(EmailManager::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);

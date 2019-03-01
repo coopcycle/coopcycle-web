@@ -13,7 +13,7 @@ class CoursiersBordelaisTest extends TestCase
 {
     private $pricingRules = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->pricingRules = [
             self::createPricingRule('vehicle == "bike" and distance in 0..2000', '7.00'),

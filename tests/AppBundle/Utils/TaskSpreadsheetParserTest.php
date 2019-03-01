@@ -20,7 +20,7 @@ class TaskSpreadsheetParserTest extends TestCase
 
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->tagManager = $this->prophesize(TagManager::class);

@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
     protected $tokenStorage;
     protected $doctrine;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->orderManager = $this->prophesize(OrderManager::class);
         $this->action = $this->createAction($this->orderManager->reveal());

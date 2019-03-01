@@ -29,7 +29,7 @@ class StripeManagerTest extends TestCase
 
     private $stripeManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setUpStripe();
 

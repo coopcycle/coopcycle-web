@@ -38,7 +38,7 @@ trait StripeTrait
         ApiRequestor::setHttpClient(HttpClient\CurlClient::instance());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // Restore original values
         Stripe::$apiBase = $this->origApiBase;

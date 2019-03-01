@@ -25,7 +25,7 @@ class OrderTaxesProcessorTest extends KernelTestCase
     private $orderTaxesProcessor;
     private $taxCategory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

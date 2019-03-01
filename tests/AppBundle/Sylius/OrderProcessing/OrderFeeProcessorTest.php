@@ -18,7 +18,7 @@ class OrderFeeProcessorTest extends KernelTestCase
     private $adjustmentFactory;
     private $orderFeeProcessor;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

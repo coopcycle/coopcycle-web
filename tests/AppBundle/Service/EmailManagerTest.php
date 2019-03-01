@@ -10,7 +10,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class EmailManagerTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->mailer = $this->prophesize(\Swift_Mailer::class);
         $this->twig = $this->prophesize(TwigEngine::class);

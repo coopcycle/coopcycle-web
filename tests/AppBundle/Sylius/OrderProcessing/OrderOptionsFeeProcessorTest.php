@@ -31,7 +31,7 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
     private $compositeProcessor;
     private $optionsFeeProcessor;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

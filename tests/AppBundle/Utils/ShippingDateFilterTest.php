@@ -19,7 +19,7 @@ class ShippingDateFilterTest extends TestCase
 
     private $shippingDateFilter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->restaurant = $this->prophesize(Restaurant::class);
 

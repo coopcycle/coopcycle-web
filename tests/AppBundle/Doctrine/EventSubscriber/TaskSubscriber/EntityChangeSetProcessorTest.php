@@ -13,7 +13,7 @@ class EntityChangeSetProcessorTest extends TestCase
 {
     private $taskListProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->taskListProvider = $this->prophesize(TaskListProvider::class);
     }

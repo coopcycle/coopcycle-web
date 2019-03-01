@@ -51,7 +51,7 @@ class RemotePushNotificationManagerTest extends TestCase
         return $token;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->httpClient = $this->prophesize(HttpClient::class);
         $this->apns = $this->prophesize(\ApnsPHP_Push::class);

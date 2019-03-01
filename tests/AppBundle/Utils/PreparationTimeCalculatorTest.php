@@ -11,7 +11,7 @@ class PreparationTimeCalculatorTest extends TestCase
 {
     private $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = [
             'restaurant.state == "rush" and order.itemsTotal < 2000'        => '20 minutes',

@@ -22,7 +22,7 @@ class OrderOptionsProcessorTest extends KernelTestCase
     private $orderOptionsProcessor;
     private $orderItemQuantityModifier;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

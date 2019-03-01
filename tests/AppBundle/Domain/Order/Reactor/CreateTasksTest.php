@@ -18,7 +18,7 @@ class CreateTasksTest extends TestCase
 {
     private $createTasks;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->orderTextEncoder = $this->prophesize(OrderTextEncoder::class);

@@ -24,7 +24,7 @@ class CheckoutHandlerTest extends TestCase
 
     private $handler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);

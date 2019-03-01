@@ -21,7 +21,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
     protected $routing;
     protected $shippingDateFilter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);

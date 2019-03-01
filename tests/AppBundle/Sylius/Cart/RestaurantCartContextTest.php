@@ -22,7 +22,7 @@ class RestaurantCartContextTest extends TestCase
 
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->session = $this->prophesize(SessionInterface::class);
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
