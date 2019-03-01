@@ -362,32 +362,6 @@ class RestaurantController extends AbstractController
     }
 
     /**
-     * @Route("/restaurant/{id}/cart/reset", name="restaurant_cart_reset", methods={"POST"})
-     */
-    public function resetCartAction($id, Request $request, CartContextInterface $cartContext)
-    {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(Restaurant::class)->find($id);
-
-        // This will be used by RestaurantCartContext
-        $request->getSession()->set('restaurantId', $id);
-
-        $cart = $cartContext->getCart();
-
-        $cart->clearItems();
-        $cart->setRestaurant($restaurant);
-        $cart->setShippedAt($restaurant->getNextOpeningDate());
-
-        $this->orderManager->persist($cart);
-        $this->orderManager->flush();
-
-        $errors = $this->validator->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
-
-        return $this->jsonResponse($cart, $errors);
-    }
-
-    /**
      * @Route("/restaurant/{id}/cart/address", name="restaurant_cart_address", methods={"POST"})
      */
     public function changeAddressAction($id, Request $request, CartContextInterface $cartContext)

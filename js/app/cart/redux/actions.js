@@ -244,22 +244,6 @@ export function goBackToRestaurant() {
   }
 }
 
-export function resetCart() {
-
-  return (dispatch, getState) => {
-
-    const restaurant = getState().restaurant
-
-    const resetCartURL = window.Routing.generate('restaurant_cart_reset', { id: restaurant.id })
-
-    dispatch(fetchRequest())
-
-    $.post(resetCartURL)
-      .then(res => handleAjaxResponse(res, dispatch, true))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
-  }
-}
-
 export function retryLastAddItemRequest() {
 
   return (dispatch, getState) => {
