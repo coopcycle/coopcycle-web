@@ -42,8 +42,7 @@
   <header class="restaurant-header">
     {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
     {% if restaurant_image is not empty %}
-      <div class="restaurant-image" style="background-image: url({{ vich_uploader_asset(restaurant, 'imageFile') }});">
-      </div>
+      <img class="restaurant-image" src="{{ vich_uploader_asset(restaurant, 'imageFile') }}">
     {% endif %}
     <section class="restaurant-header-body">
       <h1>{{ restaurant.name }}</h1>
