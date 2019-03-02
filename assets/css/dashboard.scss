@@ -145,6 +145,10 @@ html, body {
       border: 3px dashed #F1C40F;
       margin-bottom: 0;
 
+      // Override Dropzone.js styles
+      min-height: inherit;
+      padding: inherit;
+
       &--over {
         background-color: lighten(#F39C12, 30%);
         border: 3px dashed #E74C3C;
