@@ -90,7 +90,8 @@
         "nmure/crawler-detect-bundle": "^2.0",
         "symfony/webpack-encore-bundle": "^1.0",
         "sylius/channel-bundle": "1.4.*",
-        "liip/imagine-bundle": "^2.1"
+        "liip/imagine-bundle": "^2.1",
+        "oneup/uploader-bundle": "^2.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

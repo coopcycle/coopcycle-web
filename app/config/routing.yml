@@ -10,6 +10,10 @@ gesdinet_jwt_refresh_token:
     path:     /api/token/refresh
     defaults: { _controller: gesdinet.jwtrefreshtoken:refresh }
 
+oneup_uploader:
+    resource: .
+    type: uploader
+
 app:
     resource: '@AppBundle/Action/'
     type:     'annotation'

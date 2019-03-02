@@ -56,6 +56,7 @@ class AppKernel extends Kernel
             new Nmure\CrawlerDetectBundle\CrawlerDetectBundle(),
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
+            new Oneup\UploaderBundle\OneupUploaderBundle(),
             new AppBundle\AppBundle(),
         ];
 
