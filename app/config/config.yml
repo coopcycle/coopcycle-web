@@ -388,3 +388,14 @@ liip_imagine:
         restaurant_thumbnail:
             filesystem:
                 data_root: '%kernel.project_dir%/web/images/restaurants'
+
+oneup_uploader:
+    mappings:
+        restaurant:
+            frontend: dropzone
+            storage:
+                directory: '%kernel.root_dir%/../web/images/restaurants'
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []

@@ -596,3 +596,15 @@ services:
       - { name: monolog.logger, channel: api }
 
   AppBundle\Monolog\Formatter\ApiFormatter: ~
+
+  AppBundle\EventListener\Upload\RestaurantListener:
+    arguments:
+      - '@doctrine'
+      - '@vich_uploader.property_mapping_factory'
+      - '@vich_uploader.upload_handler'
+      - '@liip_imagine.binary.loader.restaurant_thumbnail'
+      - '@liip_imagine.filter.manager'
+      - '@filesystem'
+      - '@logger'
+    tags:
+      - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }

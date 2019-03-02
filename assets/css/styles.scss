@@ -411,7 +411,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     flex-direction: column;
   }
 
-  .restaurant-image {
+  img.restaurant-image {
     width: 120px;
     height: 120px;
     margin-right: 15px;
@@ -1251,5 +1251,30 @@ div.pac-container {
       max-width: 500px;
       height: auto;
     }
+  }
+}
+
+/* Dropzone */
+
+.dz-image {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.dropzone {
+  &.dropzone--blue {
+
+    border: 3px dashed #0074d9;
+    text-align: center;
+    transition: border-color 0.4s;
+
+    &.dz-drag-hover,
+    &:hover {
+      border-style: dashed;
+      border-color: lighten(#0074d9, 40%);
+    }
+
   }
 }

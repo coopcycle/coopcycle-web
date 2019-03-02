@@ -51,10 +51,10 @@
 {{ form_start(form) }}
 
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       {{ form_row(form.imageFile) }}
     </div>
-    <div class="col-sm-8">
+    <div class="col-sm-9">
       {{ form_row(form.name) }}
       {{ form_row(form.description) }}
       <div class="switch-wrapper">
@@ -234,6 +234,11 @@
   </div>
 
 {{ form_end(form) }}
+
+<div id="restaurant-form-data"
+  data-action-url="{{ oneup_uploader_endpoint('restaurant') }}"
+  data-restaurant-id="{{ restaurant.id }}"
+  data-restaurant-image="{{ vich_uploader_asset(restaurant, 'imageFile') }}"></div>
 
 {% endblock %}
 

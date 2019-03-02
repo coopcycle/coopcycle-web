@@ -98,6 +98,9 @@
     "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "Aucun",
     "RESTAURANT_DASHBOARD_TIP_NO_DELAY": "Aucun retard",
     "RESTAURANT_DASHBOARD_TIP_APPLY_DELAY": "Appliquer un délai supplémentaire de {{delay}} minutes à toutes les commandes",
-    "NOTIFICATIONS_EMPTY": "Pas de notification"
+    "NOTIFICATIONS_EMPTY": "Pas de notification",
+    "CROPPIE_CONFIRM": "Confirmer",
+    "CROPPIE_CANCEL": "Annuler",
+    "DROPZONE_DEFAULT_MESSAGE": "Déposez les fichiers ici"
   }
 }
