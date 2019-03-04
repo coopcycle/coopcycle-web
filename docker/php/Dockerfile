@@ -2,7 +2,7 @@ FROM php:7.2-fpm-alpine
 
 RUN apk update
 
-RUN apk add --no-cache --virtual .persistent-deps \
+RUN apk add --no-cache \
         git \
         icu \
         zlib
@@ -10,7 +10,7 @@ RUN apk add --no-cache --virtual .persistent-deps \
 ENV APCU_VERSION 5.1.8
 
 RUN set -xe \
-    && apk add --no-cache --virtual .persistent-deps \
+    && apk add --no-cache \
         icu-dev \
         postgresql-dev \
         zlib-dev \
