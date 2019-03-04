@@ -26,6 +26,10 @@ RUN set -xe \
         libpng-dev \
         libjpeg-turbo-dev \
     && apk add --no-cache \
+        jpegoptim \
+        optipng \
+        pngquant \
+    && apk add --no-cache \
         --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
         --allow-untrusted \
         wkhtmltopdf \
