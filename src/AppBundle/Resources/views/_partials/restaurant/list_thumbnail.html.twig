@@ -7,6 +7,7 @@
 
 {% if restaurant_image is empty %}
 
+  {#
   {% set cuisineImage = 'default' %}
   {% set cuisineImages = [] %}
   {% for cuisine in restaurant.servesCuisine %}
@@ -22,6 +23,9 @@
   {% endif %}
 
   {% set restaurant_image = asset('img/cuisine/' ~ cuisineImage ~ '.jpg') %}
+  #}
+
+  {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
 
 {% endif %}
 
