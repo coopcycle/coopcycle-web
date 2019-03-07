@@ -112,6 +112,13 @@ services:
       $taxRateFactory: '@sylius.factory.tax_rate'
       $taxRateManager: '@sylius.manager.tax_rate'
 
+  AppBundle\Command\OptimizeImagesCommand:
+    arguments:
+      $restaurantImagesDir: '%kernel.project_dir%/web/images/restaurants'
+      $restaurantImagesLoader: '@liip_imagine.binary.loader.restaurant_thumbnail'
+      $filterManager: '@liip_imagine.filter.manager'
+      $filesystem: '@filesystem'
+
   AppBundle\Controller\OrderController:
     arguments:
       $orderManager: '@sylius.manager.order'

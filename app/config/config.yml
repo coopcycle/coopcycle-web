@@ -357,3 +357,34 @@ sensio_framework_extra:
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web'
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '%kernel.project_dir%/web'
+    filter_sets:
+        cache: ~
+        restaurant_thumbnail:
+            filters:
+                upscale:
+                    min: [ 512, 512 ]
+                thumbnail:
+                    size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+    loaders:
+        default:
+            filesystem:
+                data_root: '%kernel.project_dir%/web'
+        restaurant_thumbnail:
+            filesystem:
+                data_root: '%kernel.project_dir%/web/images/restaurants'
