@@ -55,6 +55,7 @@ class AppKernel extends Kernel
             new JMose\CommandSchedulerBundle\JMoseCommandSchedulerBundle(),
             new Nmure\CrawlerDetectBundle\CrawlerDetectBundle(),
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
             new AppBundle\AppBundle(),
         ];
 
