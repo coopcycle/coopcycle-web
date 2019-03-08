@@ -35,6 +35,10 @@ class TaskImage
 
     /**
      * @Vich\UploadableField(mapping="task_image", fileNameProperty="imageName")
+     * @Assert\File(
+     *   maxSize = "1024k",
+     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
+     * )
      * @var File
      */
     private $file;
