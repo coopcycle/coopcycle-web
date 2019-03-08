@@ -98,6 +98,7 @@
     "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "None",
     "RESTAURANT_DASHBOARD_TIP_NO_DELAY": "No delay",
     "RESTAURANT_DASHBOARD_TIP_APPLY_DELAY": "Apply an additional delay of {{delay}} minutes to all orders",
+    "RESTAURANT_DASHBOARD_ORDER_TITLE": "Order {{number}} (#{{id}})",
     "NOTIFICATIONS_EMPTY": "No notifications",
     "CROPPIE_CONFIRM": "Confirm",
     "CROPPIE_CANCEL": "Cancel",

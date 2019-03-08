@@ -14,7 +14,7 @@ class OrderCard extends React.Component {
     return (
       <div className="panel panel-default FoodtechDashboard__OrderCard" onClick={ () => this.props.setCurrentOrder(order) }>
         <div className="panel-heading">
-          <span>Order { order.number } (#{ order.id })</span>
+          <span>{ this.props.t('RESTAURANT_DASHBOARD_ORDER_TITLE', { number: order.number, id: order.id }) }</span>
           <span className="pull-right"><i className="fa fa-clock-o"></i> { moment(order.shippedAt).format('LT') }</span>
         </div>
         <div className="panel-body">
