@@ -59,11 +59,15 @@
         {% for child in menu_editor_form.children %}
           <div class="menuEditor__panel" data-taxon-id="{{ child.vars.value.id }}">
             <h4 class="menuEditor__panel__title">
-              <i class="fa fa-arrows" aria-hidden="true"></i>  <a href="#"
+              <i class="fa fa-arrows" aria-hidden="true"></i>  
+                <a href="#"
                 data-toggle="modal"
                 data-target="#editTaxonModal"
-                data-edit-taxon-id="{{ child.vars.value.id }}">{{ child.vars.value.name }}</a>  
-                <i class="fa fa-pencil" aria-hidden="true"></i>
+                data-edit-taxon-id="{{ child.vars.value.id }}">{{ child.vars.value.name }}</a> 
+                <a href="#"
+                data-toggle="modal"
+                data-target="#editTaxonModal"
+                data-edit-taxon-id="{{ child.vars.value.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
               {% set delete_section_params = {
                 restaurantId: restaurant.id,
                 menuId: menu.id,
