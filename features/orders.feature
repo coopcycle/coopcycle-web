@@ -55,6 +55,7 @@ Feature: Orders
         "@id":"@string@.startsWith('/api/users')",
         "@type":"User",
         "username":"bob",
+        "email":"bob@coopcycle.org",
         "telephone": "+33612345678",
         "givenName":"Bob",
         "familyName":"Doe"
@@ -178,6 +179,7 @@ Feature: Orders
         "@id":"@string@.startsWith('/api/users')",
         "@type":"User",
         "username":"bob",
+        "email":"bob@coopcycle.org",
         "telephone": "+33612345678",
         "givenName":"Bob",
         "familyName":"Doe"
@@ -300,6 +302,7 @@ Feature: Orders
         "@id":"@string@.startsWith('/api/users')",
         "@type":"User",
         "username":"bob",
+        "email":"bob@coopcycle.org",
         "telephone": "+33612345678",
         "givenName":"Bob",
         "familyName":"Doe"

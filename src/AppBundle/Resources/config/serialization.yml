@@ -3,7 +3,7 @@ AppBundle\Entity\ApiUser:
     username:
       groups: ['user', 'order']
     email:
-      groups: ['user']
+      groups: ['user', 'order']
     addresses:
       groups: ['user']
     telephone:
