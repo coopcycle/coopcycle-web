@@ -1,3 +1,7 @@
+security:
+    login:
+        username: 'Username or email'
+
 registration:
     check_email: |
       An email has been sent to %email%.
