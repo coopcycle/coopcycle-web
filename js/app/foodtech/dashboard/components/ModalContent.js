@@ -161,6 +161,55 @@ class ModalContent extends React.Component {
     )
   }
 
+  renderCustomerDetails(customer) {
+
+    const items = []
+
+    if (customer.givenName && customer.familyName) {
+      items.push({
+        text: `${customer.givenName} ${customer.familyName}`
+      })
+    }
+
+    if (customer.telephone) {
+      items.push({
+        icon: 'phone',
+        text: customer.telephone // TODO Format phone number
+      })
+    }
+
+    if (customer.email) {
+      items.push({
+        icon: 'envelope-o',
+        component: (
+          <a href={ `mailto:${customer.email}` }>
+            <small>{ customer.email }</small>
+          </a>
+        )
+      })
+    }
+
+    return (
+      <ul className="list-unstyled">
+        { items.map((item, key) => {
+
+          return (
+            <li key={ key }>
+              { item.icon && (
+                <span>
+                  <span><i className={ `fa fa-${item.icon}` }></i></span>
+                  <span> </span>
+                </span>
+              ) }
+              { item.text && ( <span><small>{ item.text }</small></span> ) }
+              { item.component && item.component }
+            </li>
+          )
+        }) }
+      </ul>
+    )
+  }
+
   render() {
 
     const { order } = this.props
@@ -174,6 +223,18 @@ class ModalContent extends React.Component {
           </a>
         </div>
         <div className="panel-body">
+          <div className="row">
+            <div className="col-xs-6">
+              <h5>
+                <i className="fa fa-user"></i>  { order.customer.username }
+              </h5>
+            </div>
+            <div className="col-xs-6">
+              <div className="text-right">
+                { this.renderCustomerDetails(order.customer) }
+              </div>
+            </div>
+          </div>
           <h5><i className="fa fa-cutlery"></i>  { order.restaurant.name }</h5>
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
           <OrderItems order={ order } />
