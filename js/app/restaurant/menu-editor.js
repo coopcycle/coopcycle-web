@@ -118,7 +118,12 @@ dragula(containers, {
       return target === source
     }
 
-    return true
+    if (el.classList.contains('menuEditor__product')) {
+
+      return target.classList.contains('menuEditor__panel__body')
+    }
+
+    return false
   }
 })
   .on('drop', (el, target, source) => {
