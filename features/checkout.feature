@@ -55,7 +55,7 @@ Feature: Checkout
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "administrator_email" has value "admin@demo.coopcycle.org"
     Given I am on "/login"
-    And I fill in "Nom d'utilisateur" with "bob"
+    And I fill in "Email ou nom d'utilisateur" with "bob"
     And I fill in "Mot de passe" with "123456"
     And I press "Connexion"
     Then I should be on "/fr/"
