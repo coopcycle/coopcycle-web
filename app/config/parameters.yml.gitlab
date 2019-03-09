@@ -38,3 +38,4 @@ parameters:
     fcm_server_api_key: ''
     apns_certificate_file: ''
     apns_certificate_pass_phrase: ''
+    trikoder_encryption_key: 'RY890EuDb7heQhhI6GOsXC09v1aYCnMwL4M4uhM5Ewk='

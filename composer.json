@@ -91,7 +91,8 @@
         "symfony/webpack-encore-bundle": "^1.0",
         "sylius/channel-bundle": "1.4.*",
         "liip/imagine-bundle": "^2.1",
-        "oneup/uploader-bundle": "^2.1"
+        "oneup/uploader-bundle": "^2.1",
+        "trikoder/oauth2-bundle": "dev-master"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

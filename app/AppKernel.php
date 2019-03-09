@@ -57,6 +57,7 @@ class AppKernel extends Kernel
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
+            new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
             new AppBundle\AppBundle(),
         ];
 

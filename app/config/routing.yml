@@ -35,6 +35,11 @@ coopcycle_admin:
 coopcycle_profile:
     resource: '@AppBundle/Resources/config/routing/profile.yml'
 
+oauth2_token:
+    path: /oauth2/token
+    defaults:
+        _controller: trikoder.oauth2.controller.token_controller:indexAction
+
 redirect_to_locale:
     path: /
     defaults:

@@ -400,3 +400,19 @@ oneup_uploader:
                 image/jpg: []
                 image/jpeg: []
                 image/png: []
+
+trikoder_oauth2:
+    authorization_server:
+        private_key: "%jwt_private_key_path%"
+        private_key_passphrase: "%jwt_key_pass_phrase%"
+        encryption_key: "%trikoder_encryption_key%"
+        access_token_ttl: PT1H
+        refresh_token_ttl: P1M
+    resource_server:
+        public_key: "%jwt_public_key_path%"
+    scopes:
+        - tasks
+        - deliveries
+    persistence:
+        doctrine:
+            entity_manager: default
