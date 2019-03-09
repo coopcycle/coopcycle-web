@@ -1177,7 +1177,7 @@ table.task-table {
     &.panel {
       margin-bottom: 0;
     }
-    .panel-body {
+    & > .panel-body {
       overflow-y: scroll;
     }
   }
