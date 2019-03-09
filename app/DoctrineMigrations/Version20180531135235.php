@@ -22,7 +22,7 @@ class Version20180531135235 extends AbstractMigration implements ContainerAwareI
         $stmt = $this->connection->prepare("SELECT * FROM store where telephone is not null");
         $stmt->execute();
 
-        $phoneNumberUtil = $this->container->get('libphonenumber.phone_number_util');
+        $phoneNumberUtil = $this->container->get('libphonenumber\PhoneNumberUtil');
 
         while ($restaurant = $stmt->fetch()) {
             try {
