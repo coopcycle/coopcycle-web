@@ -543,6 +543,11 @@ form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
 form.orders_export.start.label: Inicio
 form.orders_export.end.label: Final
 
+form.api_app.name.label: Nombre de la aplicación
+form.api_app.store.label: Tienda
+form.api_app.client_id.label: Login
+form.api_app.client_secret.label: Clave secreta
+
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
 product_option.strategy.option_value: Precio según la elección
@@ -653,6 +658,9 @@ authentication.already_registered: ¿Ya tienes una cuenta?
 authentication.sign_in: Regístrate
 
 maintenance.text: Site under maintenance<br>We will be back soon
+
+api_apps.breadcrumb: Clientes API
+api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación para autenticar.
 
 allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
 allergens.CRUSTACEANS: Crustáceos

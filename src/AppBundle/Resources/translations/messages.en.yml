@@ -512,6 +512,11 @@ form.checkout_address.notes.help: Your observation will be forwarded to the rest
 form.orders_export.start.label: Start
 form.orders_export.end.label: End
 
+form.api_app.name.label: App name
+form.api_app.store.label: Store
+form.api_app.client_id.label: Identifier
+form.api_app.client_secret.label: Secret key
+
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
 product_option.strategy.option_value: Price according to the choice
@@ -615,6 +620,9 @@ authentication.already_registered: Already registered?
 authentication.sign_in: Sign in
 
 maintenance.text: Sitio web bajo mantenimiento<br>Volvemos pronto
+
+api_apps.breadcrumb: API clients
+api_apps.created.message: The client has been added. Use the credentials below to authenticate.
 
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans

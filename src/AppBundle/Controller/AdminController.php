@@ -13,6 +13,7 @@ use AppBundle\Controller\Utils\TaskTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
@@ -23,6 +24,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
+use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
@@ -1120,6 +1122,83 @@ class AdminController extends Controller
         return $this->render('@App/admin/activity.html.twig', [
             'events' => $events,
             'date' => $date
+        ]);
+    }
+
+    /**
+     * @Route("/admin/api/apps", name="admin_api_apps")
+     */
+    public function apiAppsAction(Request $request)
+    {
+        $apiApps = $this->getDoctrine()
+            ->getRepository(ApiApp::class)
+            ->findAll();
+
+        return $this->render('@App/admin/api_apps.html.twig', [
+            'api_apps' => $apiApps
+        ]);
+    }
+
+    /**
+     * @Route("/admin/api/apps/new", name="admin_new_api_app")
+     */
+    public function newApiAppAction(Request $request)
+    {
+        $apiApp = new ApiApp();
+
+        $form = $this->createForm(ApiAppType::class, $apiApp);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->persist($apiApp);
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('api_apps.created.message')
+            );
+
+            return $this->redirectToRoute('admin_api_app', [ 'id' => $apiApp->getId() ]);
+        }
+
+        return $this->render('@App/admin/api_app_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/api/apps/{id}", name="admin_api_app")
+     */
+    public function apiAppAction($id, Request $request)
+    {
+        $apiApp = $this->getDoctrine()
+            ->getRepository(ApiApp::class)
+            ->find($id);
+
+        $form = $this->createForm(ApiAppType::class, $apiApp);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_api_apps');
+        }
+
+        return $this->render('@App/admin/api_app_form.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }
