@@ -104,6 +104,8 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             if (null === $token = $this->tokenStorage->getToken()) {
                 // TODO Throw Exception
             }
+            // FIXME Move this to a listener
+            // FIXME getAttribute throws an Exception when attribute is not set
             if (null === $store = $token->getAttribute('store')) {
                 // TODO Throw Exception
             }

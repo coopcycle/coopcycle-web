@@ -3,6 +3,7 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Api\Exception\BadRequestHttpException;
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -11,6 +12,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
+use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +20,9 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
 
 final class PricingSubscriber implements EventSubscriberInterface
 {
@@ -25,17 +30,23 @@ final class PricingSubscriber implements EventSubscriberInterface
     private $routing;
     private $geocoder;
     private $tokenStorage;
+    private $doctrine;
+    private $accessTokenManager;
 
     public function __construct(
         DeliveryManager $deliveryManager,
         RoutingInterface $routing,
         Geocoder $geocoder,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        DoctrineRegistry $doctrine,
+        AccessTokenManagerInterface $accessTokenManager)
     {
         $this->deliveryManager = $deliveryManager;
         $this->routing = $routing;
         $this->geocoder = $geocoder;
         $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
+        $this->accessTokenManager = $accessTokenManager;
     }
 
     public static function getSubscribedEvents()
@@ -54,13 +65,24 @@ final class PricingSubscriber implements EventSubscriberInterface
         }
 
         if (null === $token = $this->tokenStorage->getToken()) {
-            // TODO Throw Exception
-            return;
+            throw new AccessDeniedException();
         }
 
-        if (null === $store = $token->getAttribute('store')) {
-            // TODO Throw Exception
-            return;
+        if ($token instanceof OAuth2Token) {
+
+            $accessToken = $this->accessTokenManager->find($token->getCredentials());
+            $client = $accessToken->getClient();
+
+            $apiApp = $this->doctrine->getRepository(ApiApp::class)
+                ->findOneByOauth2Client($client);
+
+            $store = $apiApp->getStore();
+        } else if ($token->hasAttribute('store')) {
+            $store = $token->getAttribute('store');
+        }
+
+        if (!$store) {
+            throw new BadRequestHttpException('No store found in context');
         }
 
         if (!$request->query->has('dropoffAddress')) {

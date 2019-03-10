@@ -469,6 +469,8 @@ services:
         - '@routing_service'
         - '@coopcycle.geocoder'
         - '@security.token_storage'
+        - '@doctrine'
+        - '@trikoder.oauth2.manager.doctrine.access_token_manager'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\RestaurantSubscriber:
@@ -481,6 +483,7 @@ services:
     arguments:
         - '@doctrine'
         - '@security.token_storage'
+        - '@trikoder.oauth2.manager.doctrine.access_token_manager'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
@@ -611,3 +614,20 @@ services:
       - '@logger'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
+
+  AppBundle\Security\Firewall\TokenBearerListener:
+    arguments:
+      - '@security.token_storage'
+      - '@security.authentication.manager'
+      - '@lexik_jwt_authentication.jwt_token_authenticator'
+      - '@AppBundle\Security\StoreTokenAuthenticator'
+      - '@sensio_framework_extra.psr7.http_message_factory'
+
+  AppBundle\Security\Authentication\Provider\TokenBearerProvider:
+    arguments:
+      $userProvider: ~
+      $resourceServer: '@league.oauth2.server.resource_server'
+      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
+      $jwtTokenAuthenticatorNotExpiring: '@AppBundle\Security\StoreTokenAuthenticator'
+      $providerKey: ~
+    public: false

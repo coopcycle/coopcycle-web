@@ -37,22 +37,30 @@ security:
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
 
+        oauth2_token:
+            pattern: ^/oauth2/token$
+            security: false
+
         api_deliveries_create:
             pattern:   ^/api/deliveries
             methods: [ POST ]
             stateless: true
             anonymous: ~
-            guard:
-                authenticators:
-                    - AppBundle\Security\StoreTokenAuthenticator
+            bearer_token: true
 
         api_pricing_calculate_price:
             pattern:   ^/api/pricing/calculate-price
+            methods: [ GET ]
             stateless: true
             anonymous: ~
-            guard:
-                authenticators:
-                    - AppBundle\Security\StoreTokenAuthenticator
+            bearer_token: true
+
+        api_tasks:
+            pattern:   ^/api/tasks
+            methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
 
         token_refresh:
             pattern:  ^/api/token/refresh

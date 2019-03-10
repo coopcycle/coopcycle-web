@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Store;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -13,18 +14,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
+use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
     private $tokenStorage;
+    private $accessTokenManager;
 
     public function __construct(
         DoctrineRegistry $doctrine,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        AccessTokenManagerInterface $accessTokenManager)
     {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
+        $this->accessTokenManager = $accessTokenManager;
     }
 
     public static function getSubscribedEvents()
@@ -53,6 +59,14 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
                     return;
                 }
+            } else {
+                // TODO Move this to Delivery entity access_control
+                $roles = $token->getRoles();
+                foreach ($roles as $role) {
+                    if ($role->getRole() === 'ROLE_OAUTH2_DELIVERIES') {
+                        return;
+                    }
+                }
             }
         }
 
@@ -68,8 +82,24 @@ final class DeliverySubscriber implements EventSubscriberInterface
         }
 
         if (null !== ($token = $this->tokenStorage->getToken())) {
-            if (null !== ($store = $token->getAttribute('store'))) {
-                $delivery = $event->getControllerResult();
+
+            $delivery = $event->getControllerResult();
+            $store = null;
+
+            if ($token instanceof OAuth2Token) {
+
+                $accessToken = $this->accessTokenManager->find($token->getCredentials());
+                $client = $accessToken->getClient();
+
+                $apiApp = $this->doctrine->getRepository(ApiApp::class)
+                    ->findOneByOauth2Client($client);
+
+                $store = $apiApp->getStore();
+            } else if ($token->hasAttribute('store')) {
+                $store = $token->getAttribute('store');
+            }
+
+            if (null !== $store) {
                 $store->addDelivery($delivery);
                 $this->doctrine->getManagerForClass(Store::class)->flush();
             }

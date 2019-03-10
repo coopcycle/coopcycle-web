@@ -1,5 +1,6 @@
 <?php
 
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Restaurant;
@@ -33,6 +34,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
+use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
+use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
+use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
+use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Response;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 /**
  * Defines application features from the specific context.
@@ -67,6 +76,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
     private $tokens;
 
+    private $oAuthTokens;
+
     private $fixturesLoader;
 
     /**
@@ -84,9 +95,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         StoreTokenManager $storeTokenManager,
         SettingsManager $settingsManager,
         OrderTimelineCalculator $orderTimelineCalculator,
-        UserManipulator $userManipulator)
+        UserManipulator $userManipulator,
+        AuthorizationServer $authorizationServer)
     {
         $this->tokens = [];
+        $this->oAuthTokens = [];
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
@@ -98,6 +111,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->settingsManager = $settingsManager;
         $this->orderTimelineCalculator = $orderTimelineCalculator;
         $this->userManipulator = $userManipulator;
+        $this->authorizationServer = $authorizationServer;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -159,6 +173,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function clearAuthentication()
     {
         $this->tokens = [];
+        $this->oAuthTokens = [];
     }
 
     /**
@@ -447,6 +462,32 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         }
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
+        $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When the OAuth client :clientName sends a :method request to :url
+     */
+    public function theOAuthClientSendsARequestTo($clientName, $method, $url)
+    {
+        if (!isset($this->oAuthTokens[$clientName])) {
+            throw new \RuntimeException("OAuth client {$clientName} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->oAuthTokens[$clientName]);
+        $this->restContext->iSendARequestTo($method, $url);
+    }
+
+    /**
+     * @When the OAuth client :clientName sends a :method request to :url with body:
+     */
+    public function theOAuthClientSendsARequestToWithBody($clientName, $method, $url, PyStringNode $body)
+    {
+        if (!isset($this->oAuthTokens[$clientName])) {
+            throw new \RuntimeException("OAuth client {$clientName} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->oAuthTokens[$clientName]);
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
@@ -1352,5 +1393,65 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $em->remove($product);
         $em->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has an OAuth client named :clientName
+     */
+    public function createOauthClientForStore($storeName, $clientName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $identifier = hash('md5', random_bytes(16));
+        $secret = hash('sha512', random_bytes(32));
+
+        $client = new OAuthClient($identifier, $secret);
+        $client->setActive(true);
+
+        $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
+        $client->setGrants($clientCredentials);
+
+        $tasksScope = new Scope('tasks');
+        $deliveriesScope = new Scope('deliveries');
+        $client->setScopes($tasksScope, $deliveriesScope);
+
+        $apiApp = new ApiApp();
+        $apiApp->setOauth2Client($client);
+        $apiApp->setName($clientName);
+        $apiApp->setStore($store);
+
+        $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
+        $this->doctrine->getManagerForClass(ApiApp::class)->flush();
+    }
+
+    /**
+     * @Given the OAuth client with name :name has an access token
+     */
+    public function createAccessTokenForOauthClient($name)
+    {
+        $apiApp = $this->doctrine->getRepository(ApiApp::class)->findOneByName($name);
+
+        $oAuthClient = $apiApp->getOauth2Client();
+
+        $identifier = $oAuthClient->getIdentifier();
+        $secret = $oAuthClient->getSecret();
+
+        $headers = [
+            'Authorization' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
+        ];
+
+        $body = [
+            'grant_type' => 'client_credentials',
+            'scope' => 'tasks deliveries'
+        ];
+
+        $request = new ServerRequest([], [], null, null, 'php://temp', $headers, [], [], $body);
+        $response = new Response();
+
+        $response = $this->authorizationServer->respondToAccessTokenRequest($request, $response);
+
+        $data = json_decode($response->getBody(), true);
+
+        $this->oAuthTokens[$name] = $data['access_token'];
     }
 }
