@@ -514,6 +514,37 @@ class RestaurantController extends AbstractController
     }
 
     /**
+     * @Route("/restaurant/{id}/cart/items/{itemId}", name="restaurant_modify_cart_item_quantity", methods={"POST"})
+     */
+    public function updateCartItemQuantityAction($id, $itemId, Request $request, CartContextInterface $cartContext)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)->find($id);
+
+        $cart = $cartContext->getCart();
+
+        $cartItem = $this->orderItemRepository->find($itemId);
+
+        if (!$cart->getItems()->contains($cartItem)) {
+            $errors = $this->validator->validate($cart);
+            $errors = ValidationUtils::serializeValidationErrors($errors);
+
+            return $this->jsonResponse($cart, $errors);
+        }
+
+        $quantity = $request->request->getInt('quantity', 1);
+        $this->orderItemQuantityModifier->modify($cartItem, $quantity);
+
+        $this->orderManager->persist($cart);
+        $this->orderManager->flush();
+
+        $errors = $this->validator->validate($cart);
+        $errors = ValidationUtils::serializeValidationErrors($errors);
+
+        return $this->jsonResponse($cart, $errors);
+    }
+
+    /**
      * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
      */
     public function removeFromCartAction($id, $cartItemId, Request $request, CartContextInterface $cartContext)
