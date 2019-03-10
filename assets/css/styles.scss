@@ -224,6 +224,13 @@ $panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
 
 $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
 
+.restaurant-menu-wrapper {
+  // On mobile, add a margin to allow scrolling
+  @media (max-width: $screen-xs-max) {
+    margin-bottom: $navbar-height;
+  }
+}
+
 .cart-heading {
   position: relative;
 

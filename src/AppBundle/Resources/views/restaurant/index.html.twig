@@ -69,6 +69,7 @@
   <div class="row">
 
     <div class="col-xs-12 col-sm-8" id="menu">
+      <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
@@ -120,6 +121,7 @@
         </div>
         {% endif %}
       {% endfor %}
+      </div>
     </div>
 
     <div class="col-xs-12 col-sm-4">
