@@ -98,7 +98,13 @@ export function addItemWithOptions(itemURL, data, quantity = 1) {
     dispatch(fetchRequest())
     dispatch(setLastAddItemRequest(itemURL, data))
 
-    return $.post(itemURL, data, { quantity }) // FIXME Quantity is ignore here
+    if (Array.isArray(data)) {
+      data.push({ name: 'quantity', value: quantity })
+    } else {
+      data = { ...data, quantity }
+    }
+
+    return $.post(itemURL, data)
       .then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItemWithOptions'])
         handleAjaxResponse(res, dispatch, true)
