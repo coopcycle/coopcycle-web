@@ -3,9 +3,18 @@ import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 
 import CartItem from './CartItem'
-import { removeItem } from '../redux/actions'
+import { removeItem, updateItemQuantity } from '../redux/actions'
 
 class CartItems extends React.Component {
+
+  _onChangeQuantity(itemID, quantity) {
+    if (quantity === 0) {
+      this.props.removeItem(itemID)
+      return
+    }
+
+    this.props.updateItemQuantity(itemID, quantity)
+  }
 
   render() {
 
@@ -25,7 +34,7 @@ class CartItems extends React.Component {
             total={ item.total }
             quantity={ item.quantity }
             adjustments={ item.adjustments }
-            onClickRemove={ () => this.props.removeItem(item.id) } />
+            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
         )) }
       </div>
     )
@@ -42,6 +51,10 @@ function mapStateToProps (state) {
     items = []
   }
 
+  // Make sure items are always in the same order
+  // We order them by id asc
+  items.sort((a, b) => a.id - b.id)
+
   return {
     items,
   }
@@ -50,6 +63,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
   return {
     removeItem: itemID => dispatch(removeItem(itemID)),
+    updateItemQuantity: (itemID, quantity) => dispatch(updateItemQuantity(itemID, quantity)),
   }
 }
 

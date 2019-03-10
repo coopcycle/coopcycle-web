@@ -113,6 +113,23 @@ export function addItemWithOptions(itemURL, data, quantity = 1) {
   }
 }
 
+export function updateItemQuantity(itemID, quantity) {
+
+  return (dispatch, getState) => {
+
+    const { restaurant } = getState()
+
+    const url =
+      window.Routing.generate('restaurant_modify_cart_item_quantity', { id: restaurant.id, itemId: itemID })
+
+    dispatch(fetchRequest())
+
+    $.post(url, { quantity })
+      .then(res => handleAjaxResponse(res, dispatch, true))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+  }
+}
+
 export function removeItem(itemID) {
 
   return (dispatch, getState) => {

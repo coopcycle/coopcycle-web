@@ -381,18 +381,30 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 .cart {
   &__items {
-    @extend .list-group;
+    // @extend .list-group;
   }
   &__item {
-    @extend .list-group-item;
-    .close {
-      margin-left: 10px;
-    }
-    &__heading {
-      @include clearfix;
-    }
+    padding: 10px 0;
     &__adjustments {
       @extend .text-muted;
+    }
+    &__content {
+      display: flex;
+      justify-content: space-between;
+      &__left {
+        min-width: 60px;
+        max-width: 60px;
+        .ant-input-number {
+          width: 100%;
+        }
+      }
+      &__body {
+        flex-grow: 1;
+        padding: 0 10px;
+      }
+      &__right {
+        text-align: right;
+      }
     }
   }
 }

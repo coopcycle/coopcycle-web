@@ -848,7 +848,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             }
 
             foreach ($cartItems as $cartItem) {
-                $cartItemName = $cartItem->find('css', '.cart__item__heading > span:first-of-type')->getText();
+                $cartItemName = $cartItem->find('css', '.cart__item__content__body > span:first-of-type')->getText();
                 if ($cartItemName === $name) {
 
                     return $cartItem;
