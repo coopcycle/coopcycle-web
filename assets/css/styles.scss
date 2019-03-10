@@ -1285,3 +1285,17 @@ div.pac-container {
 
   }
 }
+
+.quantity-input-group {
+  display: flex;
+  justify-content: space-between;
+  input[type="number"] {
+    text-align: center;
+    border: none;
+  }
+  &__decrement,
+  &__increment {
+    border: none;
+    background-color: transparent;
+  }
+}

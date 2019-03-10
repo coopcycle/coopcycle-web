@@ -202,6 +202,21 @@
                   {% endfor %}
                 </div>
                 {% endfor %}
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                    <div class="form-group">
+                      <div class="quantity-input-group">
+                        <button class="quantity-input-group__decrement" type="button" data-quantity-decrement>
+                          <i class="fa fa-2x fa-minus-circle"></i>
+                        </button>
+                        <input type="number" min="1" step="1" value="1" data-quantity>
+                        <button class="quantity-input-group__increment" type="button" data-quantity-increment>
+                          <i class="fa fa-2x fa-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <button type="submit" class="btn btn-block btn-primary" disabled>{{ 'basics.add'|trans }}</button>
               </form>
             </div>
