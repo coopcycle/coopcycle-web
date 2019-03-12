@@ -491,6 +491,13 @@ services:
         - '@doctrine'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\TaskSubscriber:
+    arguments:
+        - '@doctrine'
+        - '@security.token_storage'
+        - '@Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:

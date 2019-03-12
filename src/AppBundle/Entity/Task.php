@@ -32,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     "post"={
  *       "method"="POST",
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_OAUTH2_TASKS')",
  *       "denormalization_context"={"groups"={"task", "place"}},
  *     },
  *     "my_tasks" = {
