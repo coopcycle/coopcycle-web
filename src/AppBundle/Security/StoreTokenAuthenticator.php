@@ -61,6 +61,12 @@ class StoreTokenAuthenticator extends JWTTokenAuthenticator
             );
         }
 
+        $payload = $credentials->getPayload();
+
+        if (!isset($payload['store'])) {
+            return false;
+        }
+
         $store = $this->getStore($credentials);
 
         if (!$user->getStores()->contains($store)) {
