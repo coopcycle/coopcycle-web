@@ -74,8 +74,6 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-            remember_me:
-                secret: '%secret%'
 
         web:
             pattern:            ^/
@@ -84,6 +82,8 @@ security:
                 success_handler: coopcycle.web_success_handler
             logout: true
             anonymous: ~
+            remember_me:
+                secret: '%secret%'
 
         main:
             anonymous: ~
