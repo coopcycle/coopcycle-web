@@ -278,7 +278,6 @@ profile_store:
             stores: profile_stores
             store_delivery_new: profile_store_delivery_new
             store_deliveries: profile_store_deliveries
-            store_api_keys: profile_store_api_keys
     methods:  [ GET, POST ]
 
 profile_store_deliveries:
@@ -303,14 +302,4 @@ profile_store_delivery_new:
             store: profile_store
             success: profile_store_deliveries
             calculate_price: profile_deliveries_calculate_price
-    methods:  [ GET, POST ]
-
-profile_store_api_keys:
-    path: /profile/stores/{id}/api-keys
-    defaults:
-        _controller: AppBundle\Controller\ProfileController::storeApiKeysAction
-        layout: '@App/profile.html.twig'
-        routes:
-            stores: profile_stores
-            success: profile_store_api_keys
     methods:  [ GET, POST ]

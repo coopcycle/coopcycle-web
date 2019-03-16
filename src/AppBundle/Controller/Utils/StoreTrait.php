@@ -98,7 +98,6 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
-            'store_api_keys_route' => $routes['store_api_keys'],
         ]);
     }
 
@@ -177,41 +176,6 @@ trait StoreTrait
         $this->accessControl($store);
 
         return $this->renderStoreForm($store, $request);
-    }
-
-    public function storeApiKeysAction($id, Request $request)
-    {
-        $store = $this->getDoctrine()
-            ->getRepository(Store::class)
-            ->find($id);
-
-        $this->accessControl($store);
-
-        $token = $store->getToken();
-
-        $routes = $request->attributes->get('routes');
-
-        $form = $this->createForm(StoreTokenType::class, $store);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $store = $form->getData();
-
-            $this->getDoctrine()
-                ->getManagerForClass(Store::class)
-                ->flush();
-
-            return $this->redirectToRoute($routes['success'], ['id' => $store->getId()]);
-        }
-
-        return $this->render('@App/store/api_keys.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'token' => $token,
-            'form' => $form->createView(),
-            'stores_route' => $routes['stores'],
-        ]);
     }
 
     public function storeDeliveriesAction($id, Request $request)
