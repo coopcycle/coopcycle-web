@@ -11,6 +11,10 @@ class ApiLogSubscriber implements EventSubscriberInterface
 {
     private $logger;
 
+    private $ignoredPaths = [
+        '/api/docs',
+    ];
+
     private $secretPaths = [
         '/api/login_check',
         '/api/register',
@@ -25,6 +29,13 @@ class ApiLogSubscriber implements EventSubscriberInterface
     public function onKernelTerminate(PostResponseEvent $event)
     {
         $request = $event->getRequest();
+
+        foreach ($this->ignoredPaths as $pathInfo) {
+            if ($pathInfo === $request->getPathInfo()) {
+
+                return;
+            }
+        }
 
         // Avoid logging sensitive information
         // FIXME Hide sensitive info in formatter
