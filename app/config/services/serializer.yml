@@ -8,8 +8,6 @@ services:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
       - "@coopcycle.geocoder"
-      - "@security.token_storage"
-      - "@routing_service"
       - "@logger"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 

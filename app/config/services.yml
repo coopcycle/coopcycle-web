@@ -484,6 +484,7 @@ services:
         - '@doctrine'
         - '@security.token_storage'
         - '@trikoder.oauth2.manager.doctrine.access_token_manager'
+        - '@routing_service'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:

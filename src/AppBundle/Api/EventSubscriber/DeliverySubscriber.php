@@ -4,6 +4,7 @@ namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Store;
+use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
@@ -22,23 +23,46 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private $doctrine;
     private $tokenStorage;
     private $accessTokenManager;
+    private $routing;
 
     public function __construct(
         DoctrineRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager)
+        AccessTokenManagerInterface $accessTokenManager,
+        RoutingInterface $routing)
     {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->accessTokenManager = $accessTokenManager;
+        $this->routing = $routing;
     }
 
     public static function getSubscribedEvents()
     {
         return [
             KernelEvents::REQUEST => ['accessControl', EventPriorities::PRE_READ],
-            KernelEvents::VIEW => ['addToStore', EventPriorities::POST_WRITE],
+            KernelEvents::VIEW => [
+                ['setDefaults', EventPriorities::PRE_VALIDATE],
+                ['addToStore', EventPriorities::POST_WRITE],
+            ],
         ];
+    }
+
+    private function getStore($token)
+    {
+        if ($token instanceof OAuth2Token) {
+
+            $accessToken = $this->accessTokenManager->find($token->getCredentials());
+            $client = $accessToken->getClient();
+
+            $apiApp = $this->doctrine->getRepository(ApiApp::class)
+                ->findOneByOauth2Client($client);
+
+            return $apiApp->getStore();
+        } else if ($token->hasAttribute('store')) {
+
+            return $token->getAttribute('store');
+        }
     }
 
     public function accessControl(GetResponseEvent $event)
@@ -73,6 +97,48 @@ final class DeliverySubscriber implements EventSubscriberInterface
         throw new AccessDeniedException();
     }
 
+    public function setDefaults(GetResponseForControllerResultEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        if (null !== ($token = $this->tokenStorage->getToken())) {
+
+            $delivery = $event->getControllerResult();
+            $store = $this->getStore($token);
+
+            if (null !== $store) {
+
+                $pickup = $delivery->getPickup();
+                $dropoff = $delivery->getDropoff();
+
+                // If no pickup address is specified, use the store address
+                if (null === $pickup->getAddress()) {
+                    $pickup->setAddress($store->getAddress());
+                }
+
+                // If no pickup time is specified, calculate it
+                if (null === $pickup->getDoneBefore()) {
+                    if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
+
+                        $duration = $this->routing->getDuration(
+                            $pickup->getAddress()->getGeo(),
+                            $dropoff->getAddress()->getGeo()
+                        );
+
+                        $pickupDoneBefore = clone $dropoff->getDoneBefore();
+                        $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+
+                        $pickup->setDoneBefore($pickupDoneBefore);
+                    }
+                }
+            }
+        }
+    }
+
     public function addToStore(GetResponseForControllerResultEvent $event)
     {
         $request = $event->getRequest();
@@ -84,20 +150,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
         if (null !== ($token = $this->tokenStorage->getToken())) {
 
             $delivery = $event->getControllerResult();
-            $store = null;
-
-            if ($token instanceof OAuth2Token) {
-
-                $accessToken = $this->accessTokenManager->find($token->getCredentials());
-                $client = $accessToken->getClient();
-
-                $apiApp = $this->doctrine->getRepository(ApiApp::class)
-                    ->findOneByOauth2Client($client);
-
-                $store = $apiApp->getStore();
-            } else if ($token->hasAttribute('store')) {
-                $store = $token->getAttribute('store');
-            }
+            $store = $this->getStore($token);
 
             if (null !== $store) {
                 $store->addDelivery($delivery);

@@ -7,10 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\RoutingInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Router;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -18,20 +15,15 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $geocoder;
-    private $tokenStorage;
     private $logger;
 
     public function __construct(
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
-        TokenStorageInterface $tokenStorage,
-        RoutingInterface $routing,
         LoggerInterface $logger)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
-        $this->tokenStorage = $tokenStorage;
-        $this->routing = $routing;
         $this->logger = $logger;
     }
 
@@ -97,35 +89,6 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['pickup'])) {
             $this->denormalizeTask($data['pickup'], $pickup);
-        }
-
-        // If no pickup address is specified, use the store address
-        if (null === $pickup->getAddress()) {
-            if (null === $token = $this->tokenStorage->getToken()) {
-                // TODO Throw Exception
-            }
-            // FIXME Move this to a listener
-            // FIXME getAttribute throws an Exception when attribute is not set
-            if (null === $store = $token->getAttribute('store')) {
-                // TODO Throw Exception
-            }
-            $pickup->setAddress($store->getAddress());
-        }
-
-        // If no pickup time is specified, calculate it
-        if (null === $pickup->getDoneBefore()) {
-            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
-
-                $duration = $this->routing->getDuration(
-                    $pickup->getAddress()->getGeo(),
-                    $dropoff->getAddress()->getGeo()
-                );
-
-                $pickupDoneBefore = clone $dropoff->getDoneBefore();
-                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
-
-                $pickup->setDoneBefore($pickupDoneBefore);
-            }
         }
 
         return $delivery;
