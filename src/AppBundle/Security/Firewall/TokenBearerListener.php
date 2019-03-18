@@ -3,8 +3,6 @@
 namespace AppBundle\Security\Firewall;
 
 use AppBundle\Security\Authentication\Token\BearerToken;
-use AppBundle\Security\StoreTokenAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,21 +18,18 @@ class TokenBearerListener implements ListenerInterface
     protected $tokenStorage;
     protected $authenticationManager;
     protected $jwtTokenAuthenticator;
-    protected $jwtTokenAuthenticatorNotExpiring;
     protected $httpMessageFactory;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         AuthenticationManagerInterface $authenticationManager,
         JWTTokenAuthenticator $jwtTokenAuthenticator,
-        StoreTokenAuthenticator $jwtTokenAuthenticatorNotExpiring,
         HttpMessageFactoryInterface $httpMessageFactory
     )
     {
         $this->tokenStorage = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
-        $this->jwtTokenAuthenticatorNotExpiring = $jwtTokenAuthenticatorNotExpiring;
         $this->httpMessageFactory = $httpMessageFactory;
     }
 
@@ -51,23 +46,6 @@ class TokenBearerListener implements ListenerInterface
 
         try {
             $lexikToken = $this->jwtTokenAuthenticator->getCredentials($request);
-        } catch (InvalidTokenException $e) {
-            // This may happen when handling legacy "store tokens"
-            // which don't have an "exp" claim.
-            // FIXME Remove this when "store tokens" are deprecated
-            try {
-
-                $lexikToken = $this->jwtTokenAuthenticatorNotExpiring->getCredentials($request);
-
-                $payload = $lexikToken->getPayload();
-
-                if (!isset($payload['store'])) {
-                    throw $e;
-                }
-
-            } catch (AuthenticationException $e) {
-                throw $e;
-            }
         } catch (AuthenticationException $e) {
 
             // The token is not valid (invalid signature, expired...)

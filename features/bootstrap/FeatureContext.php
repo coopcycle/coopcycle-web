@@ -10,7 +10,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
-use AppBundle\Security\StoreTokenManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
@@ -92,7 +91,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         HttpCallResultPool $httpCallResultPool,
         PhoneNumberUtil $phoneNumberUtil,
         LoaderInterface $fixturesLoader,
-        StoreTokenManager $storeTokenManager,
         SettingsManager $settingsManager,
         OrderTimelineCalculator $orderTimelineCalculator,
         UserManipulator $userManipulator,
@@ -107,7 +105,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->fixturesLoader = $fixturesLoader;
-        $this->storeTokenManager = $storeTokenManager;
         $this->settingsManager = $settingsManager;
         $this->orderTimelineCalculator = $orderTimelineCalculator;
         $this->userManipulator = $userManipulator;
@@ -613,24 +610,6 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $restaurant->setMenuTaxon($menu);
 
         $this->doctrine->getManagerForClass(Restaurant::class)->flush();
-    }
-
-    /**
-     * @Given the store with name :name is authenticated as :username
-     */
-    public function theStoreWithNameIsAuthenticatedAs($name, $username)
-    {
-        $userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
-        $user = $userManager->findUserByUsername($username);
-
-        $token = $this->storeTokenManager->create($store, $user);
-
-        $store->setToken($token);
-        $this->doctrine->getManagerForClass(Store::class)->flush();
-
-        $this->tokens[$username] = $token;
     }
 
     /**

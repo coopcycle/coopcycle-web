@@ -89,11 +89,6 @@ services:
     arguments: [ '@security.authorization_checker', '@security.token_storage', '%country_iso%' ]
     tags: [ form.type ]
 
-  AppBundle\Form\StoreTokenType:
-    arguments:
-      - '@coopcycle.store_token_manager'
-    tags: [ form.type ]
-
   AppBundle\Form\ProductOptionType:
     arguments: [ '@translator' ]
     tags: [ form.type ]

@@ -46,9 +46,6 @@ services:
   coopcycle.order_timeline_calculator:
     alias: AppBundle\Utils\OrderTimelineCalculator
     public: true
-  coopcycle.store_token_manager:
-    alias: AppBundle\Security\StoreTokenManager
-    public: true
   coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
   coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
   coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
@@ -505,54 +502,6 @@ services:
     arguments:
       $confirmationEnabled: '%fos_user.registration.confirmation.enabled%'
 
-  AppBundle\Security\StoreTokenAuthenticator:
-    parent: lexik_jwt_authentication.jwt_token_authenticator.not_expiring
-    autowire: false
-    autoconfigure: false
-    public: true
-    arguments: [ '@doctrine' ]
-
-  # The services below are needed to generate tokens that never expire
-  # @see https://github.com/lexik/LexikJWTAuthenticationBundle/issues/521
-
-  lexik_jwt_authentication.jws_provider.not_expiring:
-    public: true
-    parent: Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface
-    autowire: false
-    autoconfigure: false
-    arguments:
-      index_3: ~
-
-  lexik_jwt_authentication.encoder.not_expiring:
-    parent: lexik_jwt_authentication.encoder
-    autowire: false
-    autoconfigure: false
-    public: true
-    arguments:
-      index_0: '@lexik_jwt_authentication.jws_provider.not_expiring'
-
-  lexik_jwt_authentication.jwt_manager.not_expiring:
-    parent: lexik_jwt_authentication.jwt_manager
-    autowire: false
-    autoconfigure: false
-    public: true
-    arguments:
-      index_0: '@lexik_jwt_authentication.encoder.not_expiring'
-
-  lexik_jwt_authentication.jwt_token_authenticator.not_expiring:
-    parent: lexik_jwt_authentication.jwt_token_authenticator
-    autowire: false
-    autoconfigure: false
-    public: true
-    arguments:
-      index_0: '@lexik_jwt_authentication.jwt_manager.not_expiring'
-
-  AppBundle\Security\StoreTokenManager:
-    arguments:
-      - '@security.token_storage'
-      - '@lexik_jwt_authentication.jwt_manager.not_expiring'
-      - '@event_dispatcher'
-
   AppBundle\EventListener\EnabledFilterConfigurator:
     arguments:
       - "@doctrine.orm.entity_manager"
@@ -621,7 +570,6 @@ services:
       - '@security.token_storage'
       - '@security.authentication.manager'
       - '@lexik_jwt_authentication.jwt_token_authenticator'
-      - '@AppBundle\Security\StoreTokenAuthenticator'
       - '@sensio_framework_extra.psr7.http_message_factory'
 
   AppBundle\Security\Authentication\Provider\TokenBearerProvider:
@@ -629,6 +577,5 @@ services:
       $userProvider: ~
       $resourceServer: '@league.oauth2.server.resource_server'
       $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
-      $jwtTokenAuthenticatorNotExpiring: '@AppBundle\Security\StoreTokenAuthenticator'
       $providerKey: ~
     public: false

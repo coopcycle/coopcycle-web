@@ -6,7 +6,6 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Form\AddUserType;
-use AppBundle\Form\StoreTokenType;
 use AppBundle\Form\StoreType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;

@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Base\LocalBusiness;
-use AppBundle\Entity\Store\Token as StoreToken;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -92,8 +91,6 @@ class Store extends LocalBusiness
     private $pricingRuleSet;
 
     private $deliveries;
-
-    private $token;
 
     private $owners;
 
@@ -260,26 +257,6 @@ class Store extends LocalBusiness
     public function addDelivery(Delivery $delivery)
     {
         $this->deliveries->add($delivery);
-    }
-
-    public function getToken()
-    {
-        return $this->token;
-    }
-
-    public function setToken($token)
-    {
-        if (!($token instanceof StoreToken)) {
-            $tmp = $token;
-            $token = new StoreToken();
-            $token->setToken($tmp);
-        }
-
-        $token->setStore($this);
-
-        $this->token = $token;
-
-        return $this;
     }
 
     public function getOwners()

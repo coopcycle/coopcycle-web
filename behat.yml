@@ -8,7 +8,6 @@ default:
             doctrine: "@doctrine"
             phoneNumberUtil: "@libphonenumber.phone_number_util"
             fixturesLoader: "@fidry_alice_data_fixtures.loader.doctrine"
-            storeTokenManager: "@coopcycle.store_token_manager"
             settingsManager: "@coopcycle.settings_manager"
             orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
             userManipulator: "@fos_user.util.user_manipulator"

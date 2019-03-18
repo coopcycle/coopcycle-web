@@ -77,8 +77,6 @@ final class PricingSubscriber implements EventSubscriberInterface
                 ->findOneByOauth2Client($client);
 
             $store = $apiApp->getStore();
-        } else if ($token->hasAttribute('store')) {
-            $store = $token->getAttribute('store');
         }
 
         if (!$store) {
