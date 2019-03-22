@@ -98,9 +98,12 @@ class Store extends LocalBusiness
 
     private $createOrders = false;
 
+    private $addresses;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
     }
 
     /**
@@ -284,6 +287,25 @@ class Store extends LocalBusiness
     public function setCreateOrders($createOrders)
     {
         $this->createOrders = $createOrders;
+
+        return $this;
+    }
+
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    public function setAddresses($addresses)
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function addAddress(Address $address)
+    {
+        $this->getAddresses()->add($address);
 
         return $this;
     }

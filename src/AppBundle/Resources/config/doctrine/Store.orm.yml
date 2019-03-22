@@ -87,6 +87,21 @@ AppBundle\Entity\Store:
         owners:
             targetEntity: AppBundle\Entity\ApiUser
             mappedBy: stores
+        addresses:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - persist
+            joinTable:
+                name: store_address
+                joinColumns:
+                    -
+                        name: store_id
+                        referencedColumnName: id
+                        onDelete: CASCADE
+                inverseJoinColumns:
+                    -
+                        name: address_id
+                        referencedColumnName: id
     oneToMany:
         deliveries:
             targetEntity: AppBundle\Entity\Delivery
