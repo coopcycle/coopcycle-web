@@ -500,10 +500,6 @@ form.product_option.additional.help: The customer can choose several values, wit
 form.product_option_value.value.label: Value
 form.product_option_value.price.label: Price
 
-form.store_token.generate.alert: You haven't generated a token yet
-form.store_token.generate.label: Generate
-form.store_token.token.label: Token
-
 form.checkout_address.notes.label: An observation?
 form.checkout_address.notes.placeholder: |
   Example: without sauce, without tomatoes…
