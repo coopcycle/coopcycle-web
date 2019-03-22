@@ -106,8 +106,11 @@ abstract class LocalBusinessType extends AbstractType
 
                 $localBusiness = $event->getForm()->getData();
                 $address = $localBusiness->getAddress();
-                $address->setName($localBusiness->getName());
-                $address->setTelephone($localBusiness->getTelephone());
+
+                if (null !== $address->getId()) {
+                    $address->setName($localBusiness->getName());
+                    $address->setTelephone($localBusiness->getTelephone());
+                }
             }
         );
     }
