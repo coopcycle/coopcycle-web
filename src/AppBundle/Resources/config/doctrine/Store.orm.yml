@@ -67,7 +67,7 @@ AppBundle\Entity\Store:
                 - all
             fetch: LAZY
             joinColumns:
-                address_id:
+                default_address_id:
                     referencedColumnName: id
     manyToOne:
         stripeAccount:
