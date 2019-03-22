@@ -16,9 +16,13 @@ export const placeToAddress = (place, value = '') => {
   }
 
   return {
-    // FIXME Wrap in "geo" key
+    // FIXME Use "geo" key everywhere, and remove
     latitude: place.geometry.location.lat(),
     longitude: place.geometry.location.lng(),
+    geo: {
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng(),
+    },
     addressCountry: addressDict.country || '',
     addressLocality: addressDict.locality || '',
     addressRegion: addressDict.administrative_area_level_1 || '',
