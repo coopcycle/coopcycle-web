@@ -29,7 +29,7 @@ services:
       - { name: form.type, alias: app_update_profile }
 
   AppBundle\Form\AddressType:
-    arguments: [ '@translator', '%country_iso%' ]
+    arguments: [ '@translator', '@doctrine', '%country_iso%' ]
     tags:
       - { name: form.type }
 

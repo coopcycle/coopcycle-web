@@ -6,12 +6,21 @@ use AppBundle\Entity\Address;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class CoopCycleExtension extends AbstractExtension
 {
+    private $serializer;
+
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     public function getFilters()
     {
         return array(
@@ -23,7 +32,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('latlng', array($this, 'latLng')),
             new TwigFilter('coopcycle_markup', array(MarkupRuntime::class, 'parse')),
             new TwigFilter('floatval', 'floatval'),
-            new TwigFilter('sort_options', array($this, 'sortOptions'))
+            new TwigFilter('sort_options', array($this, 'sortOptions')),
+            new TwigFilter('coopcycle_normalize', array($this, 'normalize'))
         );
     }
 
@@ -81,5 +91,30 @@ class CoopCycleExtension extends AbstractExtension
         }
 
         return $options;
+    }
+
+    public function normalize($object)
+    {
+        if ($object instanceof PersistentCollection) {
+
+            $collection = [];
+
+            foreach ($object as $item) {
+                if ($item instanceof Address) {
+                    $normalized = $this->serializer->normalize($item, 'jsonld', [
+                        'resource_class' => Address::class,
+                        'operation_type' => 'item',
+                        'item_operation_name' => 'get',
+                        'groups' => ['address', 'postal_address', 'place']
+                    ]);
+
+                    $collection[] = $normalized;
+                }
+            }
+
+            return $collection;
+        }
+
+        return $object;
     }
 }

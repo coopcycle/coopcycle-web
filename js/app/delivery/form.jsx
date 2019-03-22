@@ -1,4 +1,7 @@
 import MapHelper from '../MapHelper'
+import AddressAutosuggest from '../components/AddressAutosuggest'
+import React from 'react'
+import { render } from 'react-dom'
 import _ from 'lodash'
 
 var map
@@ -83,6 +86,30 @@ function onLocationChange(location, addressType) {
   refreshRouting()
 }
 
+function refreshAddressForm(type, address) {
+
+  document.querySelector(`#delivery_${type}_address_streetAddress`).value = address.streetAddress
+  document.querySelector(`#delivery_${type}_address_postalCode`).value = address.postalCode
+  document.querySelector(`#delivery_${type}_address_addressLocality`).value = address.addressLocality
+  document.querySelector(`#delivery_${type}_address_name`).value = address.name || ''
+  document.querySelector(`#delivery_${type}_address_telephone`).value = address.telephone || ''
+
+  let disabled = false
+
+  if (address.id) {
+    document.querySelector(`#delivery_${type}_address_id`).value = address.id
+    disabled = true
+  } else {
+    document.querySelector(`#delivery_${type}_address_latitude`).value = address.geo.latitude
+    document.querySelector(`#delivery_${type}_address_longitude`).value = address.geo.longitude
+  }
+
+  document.querySelector(`#delivery_${type}_address_postalCode`).disabled = disabled
+  document.querySelector(`#delivery_${type}_address_addressLocality`).disabled = disabled
+  document.querySelector(`#delivery_${type}_address_name`).disabled = disabled
+  document.querySelector(`#delivery_${type}_address_telephone`).disabled = disabled
+}
+
 window.initMap = function() {
 
   const originAddressLatitude  = document.querySelector('#delivery_pickup_address_latitude')
@@ -110,23 +137,24 @@ window.initMap = function() {
     }, 'dropoff')
   }
 
-  new CoopCycle.AddressInput(document.querySelector('#delivery_pickup_address_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#delivery_pickup_address_latitude'),
-      longitude: document.querySelector('#delivery_pickup_address_longitude'),
-      postalCode: document.querySelector('#delivery_pickup_address_postalCode'),
-      addressLocality: document.querySelector('#delivery_pickup_address_addressLocality')
-    },
-    onLocationChange: location => onLocationChange(location, 'pickup'),
-    onAddressChange: address => {
-      $('#delivery_pickup_panel_title').text(address.streetAddress)
-      markAddressChecked('pickup')
-      if (!hasOriginAddress) {
-        setTimeout(() => $('#delivery_pickup_collapse').collapse('hide'), 500)
-        setTimeout(() => $('#delivery_pickup_address_streetAddress').focus(), 500)
-      }
-    }
-  })
+  const pickupAddressWidget =
+    document.querySelector('#delivery_pickup_address_streetAddress_widget')
+
+  const pickupAddressAddresses = JSON.parse(pickupAddressWidget.dataset.addresses)
+
+  render(
+    <AddressAutosuggest
+      address={ document.querySelector('#delivery_pickup_address_streetAddress').value }
+      addresses={ pickupAddressAddresses }
+      geohash={ '' }
+      onAddressSelected={ (value, address, type) => {
+        refreshAddressForm('pickup', address)
+        $('#delivery_pickup_panel_title').text(address.streetAddress)
+        markAddressChecked('pickup')
+        onLocationChange(address.geo, 'pickup')
+      }} />,
+    pickupAddressWidget
+  )
 
   new CoopCycle.DateTimePicker(document.querySelector('#delivery_pickup_doneBefore_widget'), {
     defaultValue: document.querySelector('#delivery_pickup_doneBefore').value,
@@ -135,19 +163,24 @@ window.initMap = function() {
     }
   })
 
-  new CoopCycle.AddressInput(document.querySelector('#delivery_dropoff_address_streetAddress'), {
-    elements: {
-      latitude: document.querySelector('#delivery_dropoff_address_latitude'),
-      longitude: document.querySelector('#delivery_dropoff_address_longitude'),
-      postalCode: document.querySelector('#delivery_dropoff_address_postalCode'),
-      addressLocality: document.querySelector('#delivery_dropoff_address_addressLocality')
-    },
-    onLocationChange: location => onLocationChange(location, 'dropoff'),
-    onAddressChange: address => {
-      $('#delivery_dropoff_panel_title').text(address.streetAddress)
-      markAddressChecked('dropoff')
-    }
-  })
+  const dropoffAddressWidget =
+    document.querySelector('#delivery_dropoff_address_streetAddress_widget')
+
+  const dropoffAddressAddresses = JSON.parse(dropoffAddressWidget.dataset.addresses)
+
+  render(
+    <AddressAutosuggest
+      addresses={ dropoffAddressAddresses }
+      address={ '' }
+      geohash={ '' }
+      onAddressSelected={ (value, address, type) => {
+        refreshAddressForm('dropoff', address)
+        $('#delivery_dropoff_panel_title').text(address.streetAddress)
+        markAddressChecked('dropoff')
+        onLocationChange(address.geo, 'dropoff')
+      } } />,
+    dropoffAddressWidget
+  )
 
   new CoopCycle.DateTimePicker(document.querySelector('#delivery_dropoff_doneBefore_widget'), {
     defaultValue: document.querySelector('#delivery_dropoff_doneBefore').value,

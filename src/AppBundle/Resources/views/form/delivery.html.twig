@@ -55,21 +55,32 @@ col-sm-9
 
   {{ form_widget(form.address.latitude) }}
   {{ form_widget(form.address.longitude) }}
+  {{ form_widget(form.address.id) }}
   {{ form_widget(form.type) }}
   {{ form_widget(form.doneAfter) }}
 
 {% endblock %}
 
 {% block task_address_streetAddress_row %}
-<div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
-  <div class="col-sm-9 col-md-offset-3">
-    <div class="input-group">
-      <div class="input-group-addon"><i class="fa fa-{{ icon }}"></i></div>
-      {{ form_widget(form) }}
+
+  {# FIXME This is BAD to get parent, parent... #}
+  {% set delivery = form.parent.parent.parent.vars.value %}
+  {% set addresses = [] %}
+  {% if delivery.store is not empty %}
+    {% set addresses = delivery.store.addresses %}
+  {% endif %}
+
+  <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
+    <div class="col-sm-9 col-md-offset-3">
+      <div id="{{ form.vars.id ~ '_widget' }}" data-addresses="{{ addresses|coopcycle_normalize|json_encode|e('html_attr') }}"></div>
+      <div class="input-group hidden">
+        <div class="input-group-addon"><i class="fa fa-{{ icon }}"></i></div>
+        {{ form_widget(form) }}
+      </div>
     </div>
+    {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
   </div>
-  {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
-</div>
+
 {% endblock %}
 
 {% block vehicle_widget %}
