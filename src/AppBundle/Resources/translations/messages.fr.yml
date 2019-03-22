@@ -327,6 +327,8 @@ form.store_type.create_orders.label: Créer des commandes
 form.delivery.vehicle.VEHICLE_BIKE: Vélo
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Vélo cargo
 form.store_type.pricing_rule_set.placeholder: Choisissez une tarification
+form.store_type.setAsDefault.label: Définir comme adresse par défaut
+form.store_type.defaultAddress.label: Adresse par défaut
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.pickup.label: Retrait
 form.delivery.dropoff.label: Dépôt
@@ -585,13 +587,13 @@ stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
-stores.list.noStores: Pas de magasin pour le moment
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
 stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
+stores.addresses: Adresses
 
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
@@ -621,6 +623,7 @@ basics.export: Exporter
 basics.name: Nom
 basics.today: Aujourd'hui
 basics.are_you_sure: Êtes-vous sûr‧e ?
+basics.no_entries: Aucun élément pour l'instant
 
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -25,6 +26,7 @@ class StoreType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $builder->remove('openingHours');
+        $builder->remove('address');
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
@@ -37,11 +39,46 @@ class StoreType extends LocalBusinessType
                     }
                 ))
                 ->add('prefillPickupAddress', CheckboxType::class, [
-                    'label' => 'form.store_type.prefill_pickup_address.label'
+                    'label' => 'form.store_type.prefill_pickup_address.label',
+                    'required' => false,
                 ])
                 ->add('createOrders', CheckboxType::class, [
-                    'label' => 'form.store_type.create_orders.label'
+                    'label' => 'form.store_type.create_orders.label',
+                    'required' => false,
                 ]);
+
+            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+                $form = $event->getForm();
+                $store = $event->getData();
+                if (null !== $store && null !== $store->getId()) {
+                    foreach ($store->getAddresses() as $address) {
+                        if ($address !== $store->getAddress()) {
+                            $form->add(sprintf('setAsDefault_%s', $address->getId()), SubmitType::class, [
+                                'label' => 'form.store_type.setAsDefault.label',
+                                'attr' => [ 'data-address' => $address->getId() ]
+                            ]);
+                        }
+                    }
+                }
+            });
+
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+                $form = $event->getForm();
+                $store = $event->getData();
+
+                if ($form->getClickedButton()) {
+                    $options = $form->getClickedButton()->getConfig()->getOptions();
+                    $addressId = $options['attr']['data-address'];
+                    foreach ($store->getAddresses() as $storeAddress) {
+                        // var_dump($storeAddress->getName());
+                        if ($storeAddress->getId() === $addressId) {
+                            $store->setAddress($storeAddress);
+                            break;
+                        }
+                    }
+                    // exit;
+                }
+            });
         }
     }
 

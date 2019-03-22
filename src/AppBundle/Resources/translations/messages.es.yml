@@ -339,6 +339,8 @@ form.store_type.create_orders.label: Crear pedidos
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
+form.store_type.setAsDefault.label: Establecer como dirección predeterminada
+form.store_type.defaultAddress.label: Dirección predeterminada
 form.delivery.vehicle.placeholder: Escoge un vehículo
 form.delivery.pickup.label: Recogida
 form.delivery.dropoff.label: Entrega
@@ -583,13 +585,13 @@ stores.form.save: Guardar
 stores.manage: Gestionar
 stores.settings: Ajustes
 stores.createNewDelivery: Crear entrega
-stores.list.noStores: Aún no existe ninguna tienda
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
+stores.addresses: Direcciones
 
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido
@@ -650,6 +652,7 @@ basics.export: Exportar
 basics.name: Nombre
 basics.today: Hoy
 basics.are_you_sure: ¿Estás segur@?
+basics.no_entries: Ningun elemento por el momento
 
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?

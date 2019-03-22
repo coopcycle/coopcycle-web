@@ -327,6 +327,8 @@ form.store_type.create_orders.label: Create orders
 form.delivery.vehicle.VEHICLE_BIKE: Bike
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
 form.store_type.pricing_rule_set.placeholder: Choose a pricing
+form.store_type.setAsDefault.label: Set as default address
+form.store_type.defaultAddress.label: Default Address
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.delivery.pickup.label: Pickup
 form.delivery.dropoff.label: Dropoff
@@ -541,13 +543,13 @@ stores.form.save: Save
 stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery
-stores.list.noStores: There are no stores yet
 stores.users: Users
 stores.pricing_rule_set: Pricing
 stores.api_keys: API keys
 stores.deliveries: Deliveries
 stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: Unassigned
+stores.addresses: Addresses
 
 meta.title: Delivery platform for worker-owned business
 
@@ -608,6 +610,7 @@ basics.export: Export
 basics.name: Name
 basics.today: Today
 basics.are_you_sure: Are you sure?
+basics.no_entries: No element yet
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

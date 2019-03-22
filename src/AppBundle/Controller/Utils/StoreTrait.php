@@ -2,16 +2,19 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreType;
+use AppBundle\Form\AddressType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 trait StoreTrait
 {
@@ -67,6 +70,104 @@ trait StoreTrait
         ]);
     }
 
+    public function storeAddressesAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+
+        $this->accessControl($store);
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('@App/store/addresses.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+        ]);
+    }
+
+    public function storeAddressAction($storeId, $addressId, Request $request)
+    {
+        $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
+
+        $this->accessControl($store);
+
+        $address = $this->getDoctrine()->getRepository(Address::class)->find($addressId);
+
+        if (!$store->getAddresses()->contains($address)) {
+            throw new AccessDeniedHttpException('Access denied');
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(AddressType::class, $address, [
+            'with_name' => true
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $address = $form->getData();
+
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_store', ['id' => $store->getId()]);
+        }
+
+        return $this->render('@App/store/new_address.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function newStoreAddressAction($id, Request $request)
+    {
+        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+
+        $this->accessControl($store);
+
+        $address = new Address();
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(AddressType::class, $address, [
+            'with_name' => true
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $address = $form->getData();
+
+            $store->addAddress($address);
+
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_store', ['id' => $id]);
+        }
+
+        return $this->render('@App/store/new_address.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'form' => $form->createView(),
+        ]);
+    }
+
     protected function renderStoreForm(Store $store, Request $request)
     {
         $form = $this->createForm(StoreType::class, $store, [
@@ -77,6 +178,7 @@ trait StoreTrait
         if ($form->isSubmitted() && $form->isValid()) {
 
             $store = $form->getData();
+
             $this->getDoctrine()->getManagerForClass(Store::class)->persist($store);
             $this->getDoctrine()->getManagerForClass(Store::class)->flush();
 
@@ -85,7 +187,7 @@ trait StoreTrait
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_stores');
+            return $this->redirectToRoute('admin_store', [ 'id' => $store->getId() ]);
         }
 
         $routes = $request->attributes->get('routes');
