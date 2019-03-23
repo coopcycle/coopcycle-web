@@ -40,6 +40,9 @@ oauth2_token:
     defaults:
         _controller: trikoder.oauth2.controller.token_controller:indexAction
 
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.yaml"
+
 redirect_to_locale:
     path: /
     defaults:
