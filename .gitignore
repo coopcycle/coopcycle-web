@@ -24,6 +24,8 @@
 /web/fonts/
 /web/images/*
 !web/images/.gitkeep
+/web/media/cache/*
+!web/media/cache/.gitkeep
 /web/img/build/
 /web/js/
 /web/manifest.json
