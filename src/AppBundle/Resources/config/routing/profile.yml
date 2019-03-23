@@ -197,6 +197,7 @@ profile_restaurant_planning:
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
+            success: profile_restaurant_planning
     methods: [ GET, POST ]
 
 profile_restaurant_product_options:
