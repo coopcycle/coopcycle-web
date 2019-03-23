@@ -26,7 +26,6 @@ class StoreType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $builder->remove('openingHours');
-        $builder->remove('address');
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
@@ -59,6 +58,9 @@ class StoreType extends LocalBusinessType
                             ]);
                         }
                     }
+
+                    // Remove default address form
+                    $form->remove('address');
                 }
             });
 
@@ -70,13 +72,18 @@ class StoreType extends LocalBusinessType
                     $options = $form->getClickedButton()->getConfig()->getOptions();
                     $addressId = $options['attr']['data-address'];
                     foreach ($store->getAddresses() as $storeAddress) {
-                        // var_dump($storeAddress->getName());
                         if ($storeAddress->getId() === $addressId) {
                             $store->setAddress($storeAddress);
                             break;
                         }
                     }
-                    // exit;
+                } else {
+                    if (null === $store->getId()) {
+                        $defaultAddress = $store->getAddress();
+                        if (!$store->getAddresses()->contains($defaultAddress)) {
+                            $store->addAddress($defaultAddress);
+                        }
+                    }
                 }
             });
         }

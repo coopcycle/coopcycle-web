@@ -79,54 +79,67 @@
     <hr>
   {% endif %}
 
-  <label class="control-label">{{ 'stores.addresses'|trans }}</label>
-
-  {% if store.addresses|length > 0 %}
-    <table class="table">
-      <thead>
-        <th>{{ 'form.address.name.label'|trans }}</th>
-        <th>{{ 'form.address.streetAddress.label'|trans }}</th>
-        {% if is_granted('ROLE_ADMIN') %}
-        <th></th>
-        <th></th>
-        {% endif %}
-      </thead>
-      <tbody>
-      {% for address in store.addresses %}
-        <tr>
-          <td>{{ address.name }}</td>
-          <td>{{ address.streetAddress }}</td>
-          {% if is_granted('ROLE_ADMIN') %}
-          <td class="text-right">
-            {% if address != store.address %}
-              {% set form_name = 'setAsDefault_' ~ address.id %}
-              {% if form[form_name] is defined %}
-                {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
-              {% endif %}
-            {% else %}
-              <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
-            {% endif %}
-          </td>
-          <td class="text-right">
-            <a href="{{ path('admin_store_address', { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
-          </td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <div class="alert alert-info">
-    {% trans %}basics.no_entries{% endtrans %}
-    </div>
+  {% if form.address is defined %}
+    {{ form_row(form.address.streetAddress) }}
+    {{ form_row(form.address.postalCode) }}
+    {{ form_row(form.address.addressLocality) }}
+    {{ form_widget(form.address.longitude) }}
+    {{ form_widget(form.address.latitude) }}
+    {% do form.address.setRendered %}
   {% endif %}
 
-  {% if is_granted('ROLE_ADMIN') and store.id is not empty %}
-    <p class="text-right">
-      <a href="{{ path('admin_store_new_address', { id: store.id }) }}" class="btn btn-success">
-        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-      </a>
-    </p>
+  {% if store.id is not empty %}
+
+    <label class="control-label">{{ 'stores.addresses'|trans }}</label>
+
+    {% if store.addresses|length > 0 %}
+      <table class="table">
+        <thead>
+          <th>{{ 'form.address.name.label'|trans }}</th>
+          <th>{{ 'form.address.streetAddress.label'|trans }}</th>
+          {% if is_granted('ROLE_ADMIN') %}
+          <th></th>
+          <th></th>
+          {% endif %}
+        </thead>
+        <tbody>
+        {% for address in store.addresses %}
+          <tr>
+            <td>{{ address.name }}</td>
+            <td>{{ address.streetAddress }}</td>
+            {% if is_granted('ROLE_ADMIN') %}
+            <td class="text-right">
+              {% if address != store.address %}
+                {% set form_name = 'setAsDefault_' ~ address.id %}
+                {% if form[form_name] is defined %}
+                  {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
+                {% endif %}
+              {% else %}
+                <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <a href="{{ path('admin_store_address', { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
+            </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="alert alert-info">
+      {% trans %}basics.no_entries{% endtrans %}
+      </div>
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+      <p class="text-right">
+        <a href="{{ path('admin_store_new_address', { id: store.id }) }}" class="btn btn-success">
+          <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+        </a>
+      </p>
+    {% endif %}
+
   {% endif %}
 
   <hr>
@@ -135,4 +148,22 @@
 
 {{ form_end(form) }}
 
+{% endblock %}
+
+{% block scripts %}
+{% if form.address is defined %}
+<script>
+function initMap() {
+  new CoopCycle.AddressInput(document.querySelector('#store_address_streetAddress'), {
+    elements: {
+      latitude: document.querySelector('#store_address_latitude'),
+      longitude: document.querySelector('#store_address_longitude'),
+      postalCode: document.querySelector('#store_address_postalCode'),
+      addressLocality: document.querySelector('#store_address_addressLocality')
+    }
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endif %}
 {% endblock %}
