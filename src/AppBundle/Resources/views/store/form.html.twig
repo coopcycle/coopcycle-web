@@ -44,8 +44,6 @@
 
 {{ form_start(form) }}
 
-
-
   <div class="row">
     <div class="col-sm-4">
       {{ form_row(form.imageFile) }}
@@ -123,7 +121,7 @@
     </div>
   {% endif %}
 
-  {% if is_granted('ROLE_ADMIN') %}
+  {% if is_granted('ROLE_ADMIN') and store.id is not empty %}
     <p class="text-right">
       <a href="{{ path('admin_store_new_address', { id: store.id }) }}" class="btn btn-success">
         <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
