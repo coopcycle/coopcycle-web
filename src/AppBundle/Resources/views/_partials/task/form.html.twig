@@ -87,6 +87,19 @@
             </ul>
           </div>
         {% endif %}
+
+        {% if task.images|length > 0 %}
+          <label class="control-label">Images</label>
+          <div class="row">
+          {% for image in task.images %}
+            <div class="col-xs-6 col-md-3">
+              <a href="#" class="thumbnail">
+                <img src="{{ vich_uploader_asset(image, 'file')|imagine_filter('task_image_thumbnail') }}">
+              </a>
+            </div>
+          {% endfor %}
+          </div>
+        {% endif %}
       </div>
     </div>
 

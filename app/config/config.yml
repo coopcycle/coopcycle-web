@@ -382,6 +382,16 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        task_image_thumbnail:
+            filters:
+                thumbnail:
+                    size: [ 128, 128 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
     loaders:
         default:
             filesystem:
