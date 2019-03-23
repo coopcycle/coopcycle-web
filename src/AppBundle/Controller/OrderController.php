@@ -41,7 +41,7 @@ class OrderController extends AbstractController
     {
         $order = $cartContext->getCart();
 
-        if (null === $order) {
+        if (null === $order || null === $order->getRestaurant()) {
 
             return $this->redirectToRoute('homepage');
         }
@@ -79,7 +79,7 @@ class OrderController extends AbstractController
     {
         $order = $cartContext->getCart();
 
-        if (null === $order) {
+        if (null === $order || null === $order->getRestaurant()) {
 
             return $this->redirectToRoute('homepage');
         }
