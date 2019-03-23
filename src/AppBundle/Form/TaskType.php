@@ -52,11 +52,6 @@ class TaskType extends AbstractType
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'Specify any useful details to complete task']
             ])
-            ->add('tagsAsString', TextType::class, [
-                'mapped' => false,
-                'required' => false,
-                'label' => 'Tags'
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'basics.save'
             ]);
@@ -79,6 +74,14 @@ class TaskType extends AbstractType
                     'format' => 'yyyy-MM-dd HH:mm:ss',
                     'required' => true
                 ]);
+        }
+
+        if ($options['with_tags']) {
+            $builder->add('tagsAsString', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Tags'
+            ]);
         }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -144,32 +147,34 @@ class TaskType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        if ($builder->has('tagsAsString')) {
+            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
-            $form = $event->getForm();
-            $task = $event->getData();
+                $form = $event->getForm();
+                $task = $event->getData();
 
-            $tags = array_map(function ($tag) {
-                return $tag->getSlug();
-            }, iterator_to_array($task->getTags()));
+                $tags = array_map(function ($tag) {
+                    return $tag->getSlug();
+                }, iterator_to_array($task->getTags()));
 
-            $form->get('tagsAsString')->setData(implode(' ', $tags));
-            if ($form->has('dateRange')) {
-                $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
-                $form->get('dateRange')->get('before')->setData($task->getDoneBefore());
-            }
-        });
+                $form->get('tagsAsString')->setData(implode(' ', $tags));
+                if ($form->has('dateRange')) {
+                    $form->get('dateRange')->get('after')->setData($task->getDoneAfter());
+                    $form->get('dateRange')->get('before')->setData($task->getDoneBefore());
+                }
+            });
 
-        $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
-            $task = $event->getForm()->getParent()->getData();
+                $task = $event->getForm()->getParent()->getData();
 
-            $tagsAsString = $event->getData();
-            $slugs = explode(' ', $tagsAsString);
-            $tags = $this->tagManager->fromSlugs($slugs);
+                $tagsAsString = $event->getData();
+                $slugs = explode(' ', $tagsAsString);
+                $tags = $this->tagManager->fromSlugs($slugs);
 
-            $task->setTags($tags);
-        });
+                $task->setTags($tags);
+            });
+        }
 
         if ($builder->has('dateRange')) {
             $builder->get('dateRange')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
@@ -189,6 +194,7 @@ class TaskType extends AbstractType
             'data_class' => Task::class,
             'can_edit_type' => true,
             'date_range' => false,
+            'with_tags' => true,
         ));
     }
 }

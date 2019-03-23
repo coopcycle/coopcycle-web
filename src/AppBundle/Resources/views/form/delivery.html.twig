@@ -48,8 +48,9 @@ col-sm-9
 
   {{ form_row(form.address.name) }}
   {{ form_row(form.address.telephone) }}
-  {{ form_row(form.tagsAsString) }}
-
+  {% if form.tagsAsString is defined %}
+    {{ form_row(form.tagsAsString) }}
+  {% endif %}
 
   {# The fields below are hidden #}
 

@@ -115,6 +115,7 @@
 {{ encore_entry_script_tags('js/delivery-form') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
+{% if form.pickup.tagsAsString is defined or form.dropoff.tagsAsString is defined %}
 <script>
   $.getJSON("{{ path('admin_tags', { format: 'json' }) }}", function(tags) {
     new CoopCycle.TagsInput(document.querySelector('#delivery_pickup_tagsAsString_widget'), {
@@ -135,4 +136,5 @@
     });
   });
 </script>
+{% endif %}
 {% endblock %}

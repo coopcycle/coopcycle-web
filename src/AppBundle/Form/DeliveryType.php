@@ -46,14 +46,16 @@ class DeliveryType extends AbstractType
                 'label' => 'form.delivery.pickup.label',
                 'constraints' => [
                     new Assert\Valid()
-                ]
+                ],
+                'with_tags' => $options['with_tags']
             ])
             ->add('dropoff', TaskType::class, [
                 'mapped' => false,
                 'label' => 'form.delivery.dropoff.label',
                 'constraints' => [
                     new Assert\Valid()
-                ]
+                ],
+                'with_tags' => $options['with_tags']
             ])
             ;
 
@@ -153,6 +155,7 @@ class DeliveryType extends AbstractType
             'data_class' => Delivery::class,
             'with_vehicle' => false,
             'with_store' => true,
+            'with_tags' => true,
         ));
     }
 }

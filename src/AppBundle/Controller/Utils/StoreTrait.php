@@ -219,7 +219,10 @@ trait StoreTrait
             $delivery->getPickup()->setAddress($store->getAddress());
         }
 
-        $form = $this->createDeliveryForm($delivery, ['with_store' => false]);
+        $form = $this->createDeliveryForm($delivery, [
+            'with_store' => false,
+            'with_tags' => $this->isGranted('ROLE_ADMIN')
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
