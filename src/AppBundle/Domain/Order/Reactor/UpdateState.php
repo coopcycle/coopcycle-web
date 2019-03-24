@@ -71,7 +71,9 @@ class UpdateState
         if ($event instanceof Event\OrderCancelled) {
             foreach ($order->getPayments() as $payment) {
                 $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-                $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+                if ($stateMachine->can(PaymentTransitions::TRANSITION_CANCEL)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+                }
             }
         }
     }
