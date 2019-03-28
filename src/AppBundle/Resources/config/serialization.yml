@@ -77,6 +77,8 @@ Sylius\Component\Product\Model\Product:
       groups: ['product']
     name:
       groups: ['product']
+    description:
+      groups: ['product']
     code:
       groups: ['product']
     enabled:
