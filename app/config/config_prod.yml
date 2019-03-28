@@ -51,6 +51,21 @@ fos_user:
 sentry:
     dsn: '%sentry_public_dsn%'
 
+# see
+# https://github.com/liip/LiipImagineBundle/issues/1018
+# https://github.com/liip/LiipImagineBundle/issues/1144
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '%kernel.project_dir%/../../shared/web'
+    loaders:
+        default:
+            filesystem:
+                data_root:
+                    - '%kernel.project_dir%/../../shared/web'
+                    - '%kernel.project_dir%/web'
+
 services:
     apns_php.logger:
         class: AppBundle\Utils\ApnsPHPLogger
