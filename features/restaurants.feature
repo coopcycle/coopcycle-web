@@ -290,6 +290,7 @@ Feature: Manage restaurants
             "id":@integer@,
             "code":@string@,
             "name":@string@,
+            "description":null,
             "enabled":@boolean@
           },
           {
@@ -298,6 +299,7 @@ Feature: Manage restaurants
             "id":@integer@,
             "code":@string@,
             "name":@string@,
+            "description":null,
             "enabled":@boolean@
           }
         ],
@@ -334,6 +336,7 @@ Feature: Manage restaurants
             "id":@integer@,
             "code":@string@,
             "name":@string@,
+            "description":null,
             "enabled":@boolean@
           }
         ],
