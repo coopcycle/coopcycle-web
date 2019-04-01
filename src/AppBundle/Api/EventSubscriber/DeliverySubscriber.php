@@ -121,7 +121,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
                 }
 
                 // If no pickup time is specified, calculate it
-                if (null === $pickup->getDoneBefore()) {
+                if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
                     if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
 
                         $duration = $this->routing->getDuration(
