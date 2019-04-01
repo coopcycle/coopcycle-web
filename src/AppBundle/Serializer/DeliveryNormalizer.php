@@ -66,7 +66,9 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     private function denormalizeTask($data, Task $task)
     {
-        if (isset($data['doneBefore'])) {
+        if (isset($data['before'])) {
+            $task->setDoneBefore(new \DateTime($data['before']));
+        } elseif (isset($data['doneBefore'])) {
             $task->setDoneBefore(new \DateTime($data['doneBefore']));
         }
 
