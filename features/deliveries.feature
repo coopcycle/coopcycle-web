@@ -25,6 +25,41 @@ Feature: Deliveries
       """
     Then the response status code should be 403
 
+  Scenario: Missing time window
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "dropoff": {
+          "address": "48, Rue de Rivoli"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[{
+          "propertyPath":"items",
+          "message":@string@
+        }]
+      }
+      """
+
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
