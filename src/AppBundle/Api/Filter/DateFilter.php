@@ -21,9 +21,9 @@ final class DateFilter extends AbstractContextAwareFilter
     {
         parent::__construct($managerRegistry, $requestStack, $logger, $properties);
 
-        // $this->tokenStorage = $tokenStorage;
         $this->property = $property;
     }
+
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         // otherwise filter is applied to order and page as well
@@ -32,7 +32,6 @@ final class DateFilter extends AbstractContextAwareFilter
         }
 
         if (!$this->isPropertyMapped($property, $resourceClass) && $this->property) {
-
             $property = $this->property;
         }
 
