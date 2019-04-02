@@ -23,6 +23,7 @@ use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -516,7 +517,7 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurant/{id}/cart/items/{itemId}", name="restaurant_modify_cart_item_quantity", methods={"POST"})
      */
-    public function updateCartItemQuantityAction($id, $itemId, Request $request, CartContextInterface $cartContext)
+    public function updateCartItemQuantityAction($id, $itemId, Request $request, CartContextInterface $cartContext, OrderProcessorInterface $orderProcessor)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
@@ -534,6 +535,8 @@ class RestaurantController extends AbstractController
 
         $quantity = $request->request->getInt('quantity', 1);
         $this->orderItemQuantityModifier->modify($cartItem, $quantity);
+
+        $orderProcessor->process($cart);
 
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
