@@ -22,6 +22,7 @@ class OrdersExportType extends AbstractType
     private $stripeLiveMode;
     private $stripeOptionsByRestaurant = [];
     private $balanceTransactionsByRestaurant = [];
+    private $refundsByCharge = [];
 
     public function __construct(
         OrderRepositoryInterface $orderRepository,
@@ -64,8 +65,21 @@ class OrdersExportType extends AbstractType
 
             $balanceTransactionsByCharge = [];
             foreach ($result->data as $balanceTransaction) {
-                $balanceTransactionsByCharge[$balanceTransaction->source] =
-                    $balanceTransaction;
+
+                if ($balanceTransaction->type === 'charge') {
+                    $balanceTransactionsByCharge[$balanceTransaction->source] =
+                        $balanceTransaction;
+                } elseif ($balanceTransaction->type === 'refund') {
+
+                    $refund = Stripe\Refund::retrieve($balanceTransaction->source, $stripeOptions);
+                    $charge = Stripe\Charge::retrieve($refund->charge, $stripeOptions);
+                    $applicationFee = Stripe\ApplicationFee::retrieve($charge->application_fee);
+
+                    $this->refundsByCharge[$charge->id] = [
+                        'amount_refunded' => $refund->amount,
+                        'application_fee_amount_refunded' => $applicationFee->amount_refunded
+                    ];
+                }
             }
 
             $this->balanceTransactionsByRestaurant[$restaurant->getId()] =
@@ -86,6 +100,16 @@ class OrdersExportType extends AbstractType
             }
 
         }
+    }
+
+    private function hasRefund(PaymentInterface $payment)
+    {
+        return isset($this->refundsByCharge[$payment->getCharge()]);
+    }
+
+    private function getRefund(PaymentInterface $payment)
+    {
+        return $this->refundsByCharge[$payment->getCharge()];
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -129,6 +153,8 @@ class OrdersExportType extends AbstractType
                 'tax_total',
                 'fee_total',
                 'stripe_fee',
+                'refund_total',
+                'fee_refund_total',
                 'last_payment_state',
             ]);
 
@@ -155,8 +181,12 @@ class OrdersExportType extends AbstractType
 
                 // Retrieve Stripe fees
                 $stripeFee = null;
+                $refund = null;
                 if ($lastPayment->getState() === PaymentInterface::STATE_COMPLETED) {
                     $stripeFee = $this->getStripeFee($restaurant, $lastPayment, $start, $end);
+                    if ($this->hasRefund($lastPayment)) {
+                        $refund = $this->getRefund($lastPayment);
+                    }
                 }
 
                 $records[] = [
@@ -170,9 +200,12 @@ class OrdersExportType extends AbstractType
                     number_format($order->getTaxTotal() / 100, 2),
                     number_format($order->getFeeTotal() / 100, 2),
                     $stripeFee ? number_format($stripeFee / 100, 2) : '',
+                    $refund ? number_format($refund['amount_refunded'] / 100, 2) : '0',
+                    $refund ? number_format($refund['application_fee_amount_refunded'] / 100, 2) : '0',
                     $lastPayment ? $lastPayment->getState() : ''
                 ];
             }
+
             $csv->insertAll($records);
 
             $event->getForm()->setData([
