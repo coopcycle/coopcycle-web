@@ -3,6 +3,7 @@ navbar.login: Connexion
 navbar.myAccount: Mon compte
 base.footer.contactUs: Nous contacter
 base.footer.help: Aide
+base.footer.legal: Mentions légales
 adminDashboard.title: Panel d'administration
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs

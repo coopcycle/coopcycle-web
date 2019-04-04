@@ -4,6 +4,7 @@ navbar.login: Iniciar sesión
 navbar.myAccount: Mi cuenta
 base.footer.contactUs: Contáctanos
 base.footer.help: Ayuda
+base.footer.legal: Notas legales
 adminDashboard.title: Panel de administración
 adminDashboard.configuration: Configuración
 adminDashboard.tooltip.orders: Gestiona pedidos

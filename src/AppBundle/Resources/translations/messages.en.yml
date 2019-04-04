@@ -5,6 +5,7 @@ navbar.myAccount: My Account
 
 base.footer.contactUs: Contact us
 base.footer.help: Help
+base.footer.legal: Legal notice
 
 adminDashboard.title: Admin dashboard
 adminDashboard.configuration: Configuration
