@@ -90,6 +90,7 @@ Feature: Manage restaurants
         "name":null,
         "telephone": null
       },
+      "telephone": null,
       "image":@string@,
       "hasMenu":"/api/restaurants/1/menu",
       "openingHours":@array@,

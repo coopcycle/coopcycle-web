@@ -38,6 +38,7 @@ abstract class LocalBusiness
 
     /**
      * @var string The telephone number.
+     * @Groups({"order", "restaurant"})
      */
     protected $telephone;
 

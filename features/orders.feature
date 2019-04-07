@@ -75,7 +75,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null
-        }
+        },
+        "telephone": null
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -199,7 +200,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null
-        }
+        },
+        "telephone": null
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -322,7 +324,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null
-        }
+        },
+        "telephone": null
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
