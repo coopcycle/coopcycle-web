@@ -162,6 +162,20 @@ class ModalContent extends React.Component {
     )
   }
 
+  renderPhoneNumber(phoneNumberAsText) {
+
+    const phoneNumber =
+      parsePhoneNumberFromString(phoneNumberAsText, this.props.countryCode)
+
+    return (
+      <span>
+        <span><i className="fa fa-phone"></i></span>
+        <span> </span>
+        <span><small>{ phoneNumber ? phoneNumber.formatNational() : phoneNumberAsText }</small></span>
+      </span>
+    )
+  }
+
   renderCustomerDetails(customer) {
 
     const items = []
@@ -173,13 +187,8 @@ class ModalContent extends React.Component {
     }
 
     if (customer.telephone) {
-
-      const phoneNumber =
-        parsePhoneNumberFromString(customer.telephone, this.props.countryCode)
-
       items.push({
-        icon: 'phone',
-        text: phoneNumber ? phoneNumber.formatNational() : customer.telephone
+        component: this.renderPhoneNumber(customer.telephone)
       })
     }
 
@@ -240,7 +249,16 @@ class ModalContent extends React.Component {
               </div>
             </div>
           </div>
-          <h5><i className="fa fa-cutlery"></i>  { order.restaurant.name }</h5>
+          <div>
+            <h4 className="text-center">
+              <i className="fa fa-cutlery"></i>  { order.restaurant.name }
+            </h4>
+            { order.restaurant.telephone && (
+              <div className="text-center text-muted">
+                { this.renderPhoneNumber(order.restaurant.telephone) }
+              </div>
+            ) }
+          </div>
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
           <OrderItems order={ order } />
           <OrderTotal order={ order } />
