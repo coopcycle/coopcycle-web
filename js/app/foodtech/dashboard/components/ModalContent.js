@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 import Timeline from 'antd/lib/timeline'
 import moment from 'moment'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
   setCurrentOrder,
@@ -172,9 +173,13 @@ class ModalContent extends React.Component {
     }
 
     if (customer.telephone) {
+
+      const phoneNumber =
+        parsePhoneNumberFromString(customer.telephone, this.props.countryCode)
+
       items.push({
         icon: 'phone',
-        text: customer.telephone // TODO Format phone number
+        text: phoneNumber ? phoneNumber.formatNational() : customer.telephone
       })
     }
 
@@ -252,6 +257,7 @@ class ModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
+    countryCode: (window.AppData.countryIso || 'fr').toUpperCase(),
     loading: state.isFetching
   }
 }
