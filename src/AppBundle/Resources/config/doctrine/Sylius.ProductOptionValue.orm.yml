@@ -5,3 +5,10 @@ AppBundle\Entity\Sylius\ProductOptionValue:
         price:
             type: integer
             nullable: true
+    manyToOne:
+        taxCategory:
+            targetEntity: Sylius\Component\Taxation\Model\TaxCategoryInterface
+            joinColumns:
+                tax_category_id:
+                    referencedColumnName: id
+                    nullable: true
