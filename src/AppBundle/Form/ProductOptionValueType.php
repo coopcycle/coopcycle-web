@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use Sylius\Bundle\ProductBundle\Form\Type\ProductOptionValueTranslationType;
 use Sylius\Bundle\ResourceBundle\Form\Type\ResourceTranslationsType;
+use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -25,6 +26,9 @@ class ProductOptionValueType extends AbstractType
                 'label' => 'form.product_option_value.price.label',
                 'divisor' => 100,
                 'required' => false,
+            ])
+            ->add('taxCategory', TaxCategoryChoiceType::class, [
+                'label' => 'basics.tax_category'
             ]);
     }
 

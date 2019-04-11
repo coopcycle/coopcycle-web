@@ -3,13 +3,16 @@
 {% block _product_option_values_entry_row %}
   {% set row_id = form.vars.id ~ '_row' %}
   <div class="row" id="{{ row_id }}">
-    <div class="col-sm-5">
+    <div class="col-sm-3">
       {{ form_row(form.translations, { label: false }) }}
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-3">
       {{ form_row(form.price) }}
     </div>
-    <div class="col-sm-2 text-right">
+    <div class="col-sm-3">
+      {{ form_row(form.taxCategory) }}
+    </div>
+    <div class="col-sm-3 text-right">
       <div class="form-group form-group-delete">
         <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-danger">
           <i class="fa fa-trash"></i> {{ 'basics.delete'|trans }}
