@@ -19,6 +19,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
+
 /**
  * @Route("/order")
  */
@@ -37,7 +39,7 @@ class OrderController extends AbstractController
      * @Route("/", name="order")
      * @Template()
      */
-    public function indexAction(Request $request, CartContextInterface $cartContext)
+    public function indexAction(Request $request, CartContextInterface $cartContext, OrderProcessorInterface $orderProcessor)
     {
         $order = $cartContext->getCart();
 
@@ -60,6 +62,18 @@ class OrderController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $order = $form->getData();
+            $orderProcessor->process($order);
+
+            echo '<pre>';
+            var_dump($order->getId());
+            foreach ($order->getAdjustments() as $adjustment) {
+                var_dump($adjustment->getType());
+                # code...
+            }
+            exit;
+
             $this->orderManager->flush();
 
             return $this->redirectToRoute('order_payment');
