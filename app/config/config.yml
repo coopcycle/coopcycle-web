@@ -350,6 +350,7 @@ fos_js_routing:
         - admin_order_cancel
         - admin_order_delay
         - admin_restaurant_dashboard
+        - admin_restaurant_stats
         - ^admin_task$
         - profile_jwt
         - profile_notifications
@@ -360,6 +361,7 @@ fos_js_routing:
         - profile_order_cancel
         - profile_order_delay
         - profile_restaurant_dashboard
+        - profile_restaurant_stats
         - user_avatar
 
 # @see https://github.com/sensiolabs/SensioFrameworkExtraBundle/pull/576

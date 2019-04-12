@@ -190,6 +190,7 @@ restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes.
 restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
+restaurant.list.stats: Estadísticas
 
 restaurant.product_options.help: 'Las opciones hacen que los productos sean <strong>configurables</strong>
 

@@ -47,6 +47,11 @@ interface OrderInterface extends
     public function getFeeTotal(): int;
 
     /**
+     * @return int
+     */
+    public function getRevenue(): int;
+
+    /**
      * @return Restaurant
      */
     public function getRestaurant(): ?Restaurant;

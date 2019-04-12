@@ -88,7 +88,8 @@ class AdminController extends Controller
             'dashboard' => 'admin_restaurant_dashboard',
             'planning' => 'admin_restaurant_planning',
             'stripe_oauth_redirect' => 'admin_restaurant_stripe_oauth_redirect',
-            'preparation_time' => 'admin_restaurant_preparation_time'
+            'preparation_time' => 'admin_restaurant_preparation_time',
+            'stats' => 'admin_restaurant_stats'
         ];
     }
 

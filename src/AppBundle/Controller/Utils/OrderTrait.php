@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 trait OrderTrait
 {
@@ -42,30 +41,6 @@ trait OrderTrait
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
-        $exportForm = $this->createForm(OrdersExportType::class);
-
-        $authorizationChecker = $this->get('security.authorization_checker');
-        if ($authorizationChecker->isGranted('ROLE_ADMIN')) {
-
-            $exportForm->handleRequest($request);
-            if ($exportForm->isSubmitted() && $exportForm->isValid()) {
-                $data = $exportForm->getData();
-
-                $start = $exportForm->get('start')->getData();
-                $end = $exportForm->get('end')->getData();
-
-                $filename = sprintf('orders-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
-
-                $response = new Response($data['csv']);
-                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    $filename
-                ));
-
-                return $response;
-            }
-        }
-
         $routes = $request->attributes->get('routes');
 
         [ $orders, $pages, $page ] = $this->getOrderList($request);
@@ -76,7 +51,6 @@ trait OrderTrait
             'page' => $page,
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
-            'export_form' => $exportForm->createView(),
         ], $response);
     }
 

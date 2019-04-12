@@ -6,6 +6,7 @@ import ConfirmDelete from './ConfirmDelete'
 import DatePicker from './DatePicker'
 import DateTimePicker from './DateTimePicker'
 import DeliveryMap from './DeliveryMap'
+import MonthPicker from './MonthPicker'
 import OpeningHoursInput from './OpeningHoursInput'
 import OpeningHoursParser from './OpeningHoursParser'
 import OrderTimeline from './OrderTimeline'
@@ -27,6 +28,7 @@ window.CoopCycle.ConfirmDelete = ConfirmDelete
 window.CoopCycle.DatePicker = DatePicker
 window.CoopCycle.DateTimePicker = DateTimePicker
 window.CoopCycle.DeliveryMap = DeliveryMap
+window.CoopCycle.MonthPicker = MonthPicker
 window.CoopCycle.OpeningHoursInput = OpeningHoursInput
 window.CoopCycle.OpeningHoursParser = OpeningHoursParser
 window.CoopCycle.OrderTimeline = OrderTimeline

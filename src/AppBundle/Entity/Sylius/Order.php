@@ -231,6 +231,11 @@ class Order extends BaseOrder implements OrderInterface
         return $total;
     }
 
+    public function getRevenue(): int
+    {
+        return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
+    }
+
     /**
      * {@inheritdoc}
      */

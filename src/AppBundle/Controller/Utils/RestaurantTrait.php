@@ -19,9 +19,12 @@ use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
+use AppBundle\Utils\RestaurantStats;
 use AppBundle\Utils\ValidationUtils;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Ramsey\Uuid\Uuid;
@@ -30,6 +33,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
@@ -864,6 +869,74 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'show_defaults_warning' => !$hasRules,
             'form' => $form->createView(),
+        ], []));
+    }
+
+    public function statsAction($id, Request $request, SlugifyInterface $slugify)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $this->accessControl($restaurant);
+
+        $routes = $request->attributes->get('routes');
+
+        $date = new \DateTime();
+
+        if ($request->query->has('month')) {
+            $month = $request->query->get('month');
+            preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches);
+            $year = $matches[1];
+            $month = $matches[2];
+            $date->setDate($year, $month, 1);
+        }
+
+        $start = clone $date;
+        $end = clone $date;
+
+        $start->setDate($date->format('Y'), $date->format('m'), 1);
+        $start->setTime(0, 0, 1);
+
+        $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
+        $end->setTime(23, 59, 59);
+
+        $orders = $this->getDoctrine()->getRepository(Order::class)
+            ->findOrdersByRestaurantAndDateRange(
+                $restaurant,
+                $start,
+                $end
+            );
+
+        $fulfilledOrders = array_filter($orders, function($order) {
+            return $order->getState() === 'fulfilled';
+        });
+
+        $stats = new RestaurantStats($restaurant, $fulfilledOrders, $this->get('sylius.repository.tax_rate'));
+
+        if ($request->isMethod('POST')) {
+
+            $filename = sprintf('%s-%s-%s.csv',
+                $slugify->slugify($restaurant->getName()),
+                $start->format('Y-m-d'),
+                $end->format('Y-m-d')
+            );
+
+            $response = new Response($stats->toCsv());
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $filename
+            ));
+
+            return $response;
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'stats' => $stats,
+            'start' => $start,
+            'end' => $end
         ], []));
     }
 }

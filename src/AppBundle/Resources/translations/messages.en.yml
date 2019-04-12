@@ -182,6 +182,7 @@ restaurant.list.settings: Settings
 restaurant.list.norestaurant: There are no restaurants yet.
 restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
+restaurant.list.stats: Statistics
 
 restaurant.product_options.help: |
   Options all products to be <strong>configurable</strong>

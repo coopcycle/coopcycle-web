@@ -49,6 +49,9 @@
             <a href="{{ path(planning_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
               <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.planning{% endtrans %}
             </a>
+            <a href="{{ path(stats_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+              <i class="fa fa-bar-chart"></i>  {% trans %}restaurant.list.stats{% endtrans %}
+            </a>
 
             {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path(preparation_time_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">

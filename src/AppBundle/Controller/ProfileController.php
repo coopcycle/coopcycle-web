@@ -55,6 +55,7 @@ class ProfileController extends Controller
             'dashboard' => 'profile_restaurant_dashboard',
             'planning' => 'profile_restaurant_planning',
             'stripe_oauth_redirect' => 'profile_restaurant_stripe_oauth_redirect',
+            'stats' => 'profile_restaurant_stats'
         ];
     }
 

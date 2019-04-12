@@ -67,6 +67,17 @@ profile_restaurant_dashboard:
             user_details: user
     methods: [ GET ]
 
+profile_restaurant_stats:
+    path: /profile/restaurants/{id}/stats
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::statsAction
+        layout: '@App/profile.html.twig'
+        template: '@App/restaurant/stats.html.twig'
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+    methods: [ GET, POST ]
+
 profile_order_accept:
     path: /profile/orders/{id}/accept
     defaults:
