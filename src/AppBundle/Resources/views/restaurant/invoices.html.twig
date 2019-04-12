@@ -1,0 +1,107 @@
+{% extends '@App/restaurant/layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.preparationTime{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<h3 class="text-center">Du {{ start|localizeddate('medium', 'none') }} au {{ end|localizeddate('medium', 'none') }}</h3>
+
+{% for order in orders %}
+
+<h4>
+  Order {{ order.number }} (#{{ order.id }})
+  <small class="pull-right">{{ order.shippedAt|localizeddate('short', 'short') }}</small>
+</h4>
+<table class="table table-condensed">
+<thead>
+  <th>Nom</th>
+  <th class="text-right">Taux</th>
+  <th class="text-right">TVA</th>
+  <th class="text-right">HT</th>
+</thead>
+<tbody>
+  {% for item in order.items %}
+    {% set tax_adjustments = item.getAdjustments('tax') %}
+    {% set tax_adjustment = tax_adjustments|first %}
+    <tr>
+      <td>{{ item.variant.name }}</td>
+      <td class="text-right" width="10%">{{ tax_adjustment.originCode|tax_rate_name }}</td>
+      <td class="text-right" width="10%">{{ item.taxTotal|price_format }}</td>
+      <td class="text-right" width="10%">{{ (item.total - item.taxTotal)|price_format }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+<tfoot>
+
+  {% set delivery_adjustments = order.getAdjustments('delivery') %}
+  {% set fee_adjustments = order.getAdjustments('fee') %}
+  {% set stripe_fee_adjustments = order.getAdjustments('stripe_fee') %}
+
+  {% set fee_adjustment = fee_adjustments|first %}
+  {% set delivery_adjustment = delivery_adjustments|first %}
+  {% set stripe_fee_adjustment = stripe_fee_adjustments|first %}
+
+  {# <tr>
+    <th colspan="2">{{ delivery_adjustment.label }}</th>
+    <td class="text-right">
+      {{ delivery_adjustment.amount|price_format }}
+    </td>
+  </tr> #}
+
+  <tr>
+    <th colspan="3">Total HT</th>
+    <td class="text-right">
+      {{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}
+    </td>
+  </tr>
+
+  {% for tax_rate in order|split_items_tax_rates %}
+  <tr>
+    <th colspan="3" class="text-muted">{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
+    <td class="text-right text-muted">
+      {{ tax_rate.amount|price_format }}
+    </td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <th colspan="3">{% trans %}order.total_including_tax{% endtrans %} (produits)</th>
+    <td class="text-right">
+      {{ order.itemsTotal|price_format }}
+    </td>
+  </tr>
+  <tr>
+    <th colspan="3">{% trans %}order.total_including_tax{% endtrans %} (produits + livraison)</th>
+    <td class="text-right">
+      <strong>{{ order.total|price_format }}</strong>
+    </td>
+  </tr>
+
+  <tr>
+    <th colspan="3">{% trans %}order.stripe_fee{% endtrans %}</th>
+    <td class="text-right">
+      {{ (stripe_fee_adjustment.amount * -1)|price_format }}
+    </td>
+  </tr>
+  <tr>
+    <th colspan="3">{% trans %}order.fee{% endtrans %}</th>
+    <td class="text-right">
+      {{ (fee_adjustment.amount * -1)|price_format }}
+    </td>
+  </tr>
+
+  <tr>
+    <th colspan="3">{% trans %}order.net_total_including_tax{% endtrans %}</th>
+    <td class="text-right">
+      <strong>{{ (order.total - (fee_adjustment.amount + stripe_fee_adjustment.amount))|price_format }}</strong>
+    </td>
+  </tr>
+
+</tfoot>
+</table>
+{% endfor %}
+
+{% endblock %}

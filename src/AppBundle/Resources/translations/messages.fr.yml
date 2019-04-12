@@ -236,6 +236,9 @@ order.total_including_tax: Total TTC
 order.items_total: Total produits
 order.total_tax: TVA
 order.total_tax_by_rate: Total %name%
+order.net_total_including_tax: Total TTC (net)
+order.stripe_fee: Frais bancaires
+order.fee: Frais plateforme
 order.shipping_date.title: Votre horaire de livraison
 order.payment.title: Vos informations de paiement
 order.payment.expiration.label: Expiration

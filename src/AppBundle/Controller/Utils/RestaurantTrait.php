@@ -866,4 +866,59 @@ trait RestaurantTrait
             'form' => $form->createView(),
         ], []));
     }
+
+    public function invoicesAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $routes = $request->attributes->get('routes');
+
+        $date = new \DateTime();
+
+        if ($request->query->has('month')) {
+            $month = $request->query->get('month');
+            preg_match('/([0-9]{4})-([0-9]{2})/', $month, $matches);
+            $year = $matches[1];
+            $month = $matches[2];
+            $date->setDate($year, $month, 1);
+        }
+
+        $start = clone $date;
+        $end = clone $date;
+
+        $start->setDate($date->format('Y'), $date->format('m'), 1);
+        $start->setTime(0, 0, 1);
+        $end->setDate($date->format('Y'), $date->format('m'), $date->format('t'));
+        $end->setTime(23, 59, 59);
+
+        $orders = $this->getDoctrine()->getRepository(Order::class)
+            ->findOrdersByRestaurantAndDateRange(
+                $restaurant,
+                $start,
+                $end
+            );
+
+        $fulfilledOrders = array_filter($orders, function($order) {
+            return $order->getState() === 'fulfilled';
+        });
+
+        $total = 0;
+        $itemsTotal = 0;
+        foreach ($fulfilledOrders as $fulfilledOrder) {
+            $total += $fulfilledOrder->getTotal();
+            $itemsTotal += $fulfilledOrder->getItemsTotal();
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'orders' => $fulfilledOrders,
+            'total' => $total,
+            'itemsTotal' => $itemsTotal,
+            'start' => $start,
+            'end' => $end
+        ], []));
+    }
 }
