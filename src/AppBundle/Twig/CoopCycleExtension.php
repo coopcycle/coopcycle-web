@@ -33,7 +33,10 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('coopcycle_markup', array(MarkupRuntime::class, 'parse')),
             new TwigFilter('floatval', 'floatval'),
             new TwigFilter('sort_options', array($this, 'sortOptions')),
-            new TwigFilter('coopcycle_normalize', array($this, 'normalize'))
+            new TwigFilter('coopcycle_normalize', array($this, 'normalize')),
+            new TwigFilter('split_tax_rates', array(TaxRateRuntime::class, 'split')),
+            new TwigFilter('split_items_tax_rates', array(TaxRateRuntime::class, 'splitItems')),
+            new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name'))
         );
     }
 
