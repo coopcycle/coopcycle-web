@@ -24,7 +24,8 @@ class GeoJSONType extends GeographyType
 
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
     {
-        return sprintf('ST_GeographyFromText(ST_AsText(ST_GeomFromGeoJSON(%s)))', $sqlExpr);
+        // We use ST_Force_2D, because GeoJSON may contain z-dimension
+        return sprintf('ST_GeographyFromText(ST_AsText(ST_Force_2D(ST_GeomFromGeoJSON(%s))))', $sqlExpr);
     }
 
     public function convertToPHPValueSQL($sqlExpr, $platform)
