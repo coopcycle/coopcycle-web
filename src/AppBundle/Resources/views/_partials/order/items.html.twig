@@ -33,16 +33,20 @@
   {% endfor %}
   <tbody>
   <tfoot>
+    {% if with_taxes is not defined or (with_taxes is defined and with_taxes == true) %}
+      {% for tax_rate in order|split_tax_rates %}
+      <tr>
+        <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
+        <td class="text-right">
+          {{ tax_rate.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
     <tr>
       <th>{% trans %}order.total_including_tax{% endtrans %}</th>
       <td class="text-right">
         {{ order.total|price_format }}
-      </td>
-    </tr>
-    <tr>
-      <th>{% trans %}order.total_tax{% endtrans %}</th>
-      <td class="text-right">
-        {{ order.taxTotal|price_format }}
       </td>
     </tr>
   </tfoot>

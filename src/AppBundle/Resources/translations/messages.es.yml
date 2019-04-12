@@ -245,6 +245,7 @@ order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
 order.total_including_tax: Total (IVA incl.)
 order.total_tax: IVA
+order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Tu horario de entrega
 order.payment.title: Tu información de pago
 order.payment.expiration.label: Caducidad

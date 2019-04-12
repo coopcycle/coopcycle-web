@@ -232,6 +232,7 @@ order.items.products_with_count: Produits (%count%)
 order.summary.heading: Commande %number% (#%id%)
 order.total_including_tax: Total TTC
 order.total_tax: TVA
+order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Votre horaire de livraison
 order.payment.title: Vos informations de paiement
 order.payment.expiration.label: Expiration

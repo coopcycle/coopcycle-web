@@ -232,6 +232,7 @@ order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
 order.total_including_tax: Total (tax incl.)
 order.total_tax: Taxes
+order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Your shipping date
 order.payment.title: Your payment informations
 order.payment.expiration.label: Expiration
