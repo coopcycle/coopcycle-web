@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 
 class OrderRepository extends BaseOrderRepository
@@ -35,13 +36,38 @@ class OrderRepository extends BaseOrderRepository
     public function findOrdersByDateRange(\DateTime $start, \DateTime $end)
     {
         $qb = $this->createQueryBuilder('o');
+
+        $this->addDateRangeClause($qb, $start, $end);
+
         $qb
             ->andWhere('o.state != :state_cart')
-            ->andWhere('DATE(o.shippedAt) >= :start')
-            ->andWhere('DATE(o.shippedAt) <= :end')
-            ->setParameter('state_cart', OrderInterface::STATE_CART)
-            ->setParameter('start', $start->format('Y-m-d'))
-            ->setParameter('end', $end->format('Y-m-d'));
+            ->setParameter('state_cart', OrderInterface::STATE_CART);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findFulfilledOrdersByDateRange(\DateTime $start, \DateTime $end)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $this->addDateRangeClause($qb, $start, $end);
+
+        $qb
+            ->andWhere('o.state = :state_fulfilled')
+            ->setParameter('state_fulfilled', OrderInterface::STATE_FULFILLED);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findFulfilledOrdersByDate(\DateTime $date)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $this->addDateClause($qb, $date);
+
+        $qb
+            ->andWhere('o.state = :state_fulfilled')
+            ->setParameter('state_fulfilled', OrderInterface::STATE_FULFILLED);
 
         return $qb->getQuery()->getResult();
     }
@@ -57,5 +83,25 @@ class OrderRepository extends BaseOrderRepository
             ->addOrderBy('o.createdAt', 'DESC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function addDateRangeClause(QueryBuilder $qb, \DateTime $start, \DateTime $end)
+    {
+        $qb
+            ->andWhere('DATE(o.shippedAt) >= :start')
+            ->andWhere('DATE(o.shippedAt) <= :end')
+            ->setParameter('start', $start->format('Y-m-d'))
+            ->setParameter('end', $end->format('Y-m-d'));
+
+        return $this;
+    }
+
+    public function addDateClause(QueryBuilder $qb, \DateTime $date)
+    {
+        $qb
+            ->andWhere('DATE(o.shippedAt) = :date')
+            ->setParameter('date', $date->format('Y-m-d'));
+
+        return $this;
     }
 }

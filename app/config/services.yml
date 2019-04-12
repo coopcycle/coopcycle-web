@@ -112,6 +112,12 @@ services:
       $taxRateFactory: '@sylius.factory.tax_rate'
       $taxRateManager: '@sylius.manager.tax_rate'
 
+  AppBundle\Command\ImportStripeFeeCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+      $adjustmentFactory: '@sylius.factory.adjustment'
+
   AppBundle\Command\OptimizeImagesCommand:
     arguments:
       $restaurantImagesDir: '%kernel.project_dir%/web/images/restaurants'
