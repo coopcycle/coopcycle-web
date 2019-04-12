@@ -22,7 +22,8 @@ use Sylius\Component\Product\Model\Product as BaseProduct;
  *     },
  *   },
  *   attributes={
- *     "normalization_context"={"groups"={"product"}}
+ *     "normalization_context"={"groups"={"product"}},
+ *     "pagination_enabled"=false
  *   }
  * )
  */
