@@ -29,6 +29,21 @@ interface OrderInterface extends
     /**
      * @return int
      */
+    public function getItemsTaxTotal(): int;
+
+    /**
+     * @return int
+     */
+    public function getTaxTotalByRate($taxRate): int;
+
+    /**
+     * @return int
+     */
+    public function getItemsTaxTotalByRate($taxRate): int;
+
+    /**
+     * @return int
+     */
     public function getFeeTotal(): int;
 
     /**
