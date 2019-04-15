@@ -6,7 +6,7 @@ restaurant.stripeAccount.notSet: Liez le restaurant à un compte Stripe
 restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
 restaurant.menu.notSet: Créez et activez un menu
 
-address.tooFar: Cette addresse est trop éloignée
+address.tooFar: Cette adresse est trop éloignée
 address.notSet: Veuillez entrer l'adresse de livraison
 
 cart.address.empty: Veuillez sélectionner une adresse
