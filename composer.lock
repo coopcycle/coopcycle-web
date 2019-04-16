@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7c2357739b96ff3f527013fcc436313",
+    "content-hash": "cfdb99bde9ed079cbc6d59a15e3b7184",
     "packages": [
         {
             "name": "api-platform/core",
@@ -9455,6 +9455,143 @@
                 "product",
                 "products",
                 "shop"
+            ],
+            "time": "2019-02-11T11:55:30+00:00"
+        },
+        {
+            "name": "sylius/promotion",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Promotion.git",
+                "reference": "a3b836bf3b78ca8aa8d77c79b5868f220a46355a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Promotion/zipball/a3b836bf3b78ca8aa8d77c79b5868f220a46355a",
+                "reference": "a3b836bf3b78ca8aa8d77c79b5868f220a46355a",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.5",
+                "php": "^7.2",
+                "sylius/registry": "^1.2",
+                "sylius/resource": "^1.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Promotion\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Flexible promotion management for PHP applications.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "ecommerce",
+                "promotion",
+                "shop",
+                "sylius"
+            ],
+            "time": "2019-02-01T13:10:57+00:00"
+        },
+        {
+            "name": "sylius/promotion-bundle",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/SyliusPromotionBundle.git",
+                "reference": "84861e766b16e6f7cdbaac632ee7ae6ae9df165f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/SyliusPromotionBundle/zipball/84861e766b16e6f7cdbaac632ee7ae6ae9df165f",
+                "reference": "84861e766b16e6f7cdbaac632ee7ae6ae9df165f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "stof/doctrine-extensions-bundle": "^1.2",
+                "sylius/money-bundle": "^1.2",
+                "sylius/promotion": "^1.2",
+                "sylius/registry": "^1.2",
+                "sylius/resource-bundle": "^1.2",
+                "symfony/framework-bundle": "^3.4|^4.1.1"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.5",
+                "matthiasnoback/symfony-dependency-injection-test": "^3.0",
+                "phpspec/phpspec": "^5.0",
+                "phpunit/phpunit": "^7.0",
+                "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+                "symfony/browser-kit": "^3.4|^4.1.1",
+                "symfony/dependency-injection": "^3.4|^4.1.1",
+                "symfony/form": "^3.4|^4.1.1",
+                "symfony/validator": "^3.4|^4.1.1"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Bundle\\PromotionBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                },
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                }
+            ],
+            "description": "Manage ecommerce promotions system in your Symfony application.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "coupons",
+                "discounts",
+                "ecommerce",
+                "promotions",
+                "shop",
+                "sylius"
             ],
             "time": "2019-02-11T11:55:30+00:00"
         },

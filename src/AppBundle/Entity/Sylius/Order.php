@@ -25,6 +25,8 @@ use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -106,12 +108,17 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $channel;
 
+    protected $promotionCoupon;
+
+    protected $promotions;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->payments = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->promotions = new ArrayCollection();
     }
 
     /**
@@ -335,5 +342,65 @@ class Order extends BaseOrder implements OrderInterface
     public function setChannel(?ChannelInterface $channel): void
     {
         $this->channel = $channel;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPromotionCoupon(): ?PromotionCouponInterface
+    {
+        return $this->promotionCoupon;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPromotionCoupon(?PromotionCouponInterface $coupon): void
+    {
+        $this->promotionCoupon = $coupon;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPromotionSubjectTotal(): int
+    {
+        return $this->getItemsTotal();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPromotion(PromotionInterface $promotion): bool
+    {
+        return $this->promotions->contains($promotion);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addPromotion(PromotionInterface $promotion): void
+    {
+        if (!$this->hasPromotion($promotion)) {
+            $this->promotions->add($promotion);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removePromotion(PromotionInterface $promotion): void
+    {
+        if ($this->hasPromotion($promotion)) {
+            $this->promotions->removeElement($promotion);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPromotions(): Collection
+    {
+        return $this->promotions;
     }
 }

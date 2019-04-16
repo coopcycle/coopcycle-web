@@ -92,7 +92,8 @@
         "sylius/channel-bundle": "1.4.*",
         "liip/imagine-bundle": "^2.1",
         "oneup/uploader-bundle": "^2.1",
-        "trikoder/oauth2-bundle": "dev-master"
+        "trikoder/oauth2-bundle": "dev-master",
+        "sylius/promotion-bundle": "1.4.*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

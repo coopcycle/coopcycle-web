@@ -42,6 +42,13 @@ AppBundle\Entity\Sylius\Order:
                 channel_id:
                     referencedColumnName: id
                     nullable: true
+        promotionCoupon:
+            targetEntity: Sylius\Component\Promotion\Model\PromotionCouponInterface
+            joinColumns:
+                promotion_coupon_id:
+                    referencedColumnName: id
+            cascade:
+                - persist
     oneToMany:
         payments:
             targetEntity: AppBundle\Entity\StripePayment
@@ -65,3 +72,17 @@ AppBundle\Entity\Sylius\Order:
             mappedBy: order
             cascade:
                 - all
+    manyToMany:
+        promotions:
+            targetEntity: Sylius\Component\Promotion\Model\PromotionInterface
+            joinTable:
+                name: sylius_promotion_order
+                joinColumns:
+                    order_id:
+                        referencedColumnName: id
+                        onDelete: CASCADE
+                inverseJoinColumns:
+                    promotion_id:
+                        referencedColumnName: id
+            cascade:
+                - persist

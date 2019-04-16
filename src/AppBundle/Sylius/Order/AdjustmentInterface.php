@@ -11,4 +11,5 @@ interface AdjustmentInterface extends BaseAdjustmentInterface
     public const MENU_ITEM_MODIFIER_ADJUSTMENT = 'menu_item_modifier';
     public const FEE_ADJUSTMENT = 'fee';
     public const STRIPE_FEE_ADJUSTMENT = 'stripe_fee';
+    public const DELIVERY_PROMOTION_ADJUSTMENT = 'delivery_promotion';
 }

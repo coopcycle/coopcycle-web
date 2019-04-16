@@ -6,6 +6,8 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class OrderRepository extends BaseOrderRepository
 {
@@ -103,5 +105,20 @@ class OrderRepository extends BaseOrderRepository
             ->setParameter('date', $date->format('Y-m-d'));
 
         return $this;
+    }
+
+    public function countByCustomerAndCoupon(UserInterface $customer, PromotionCouponInterface $coupon): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.promotionCoupon = :coupon')
+            ->andWhere('o.state NOT IN (:states)')
+            ->setParameter('customer', $customer)
+            ->setParameter('coupon', $coupon)
+            ->setParameter('states', [OrderInterface::STATE_CART, OrderInterface::STATE_CANCELLED])
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
     }
 }

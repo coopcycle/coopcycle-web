@@ -283,6 +283,15 @@ sylius_locale:
 sylius_currency:
     driver: doctrine/orm
 
+sylius_promotion:
+    resources:
+        promotion_subject:
+            classes:
+                model: AppBundle\Entity\Sylius\Order
+        promotion_coupon:
+            classes:
+                model: AppBundle\Entity\Sylius\PromotionCoupon
+
 knp_snappy:
     pdf:
         enabled:    true
