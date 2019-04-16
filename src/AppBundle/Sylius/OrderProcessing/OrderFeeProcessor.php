@@ -43,6 +43,11 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $customerAmount = $restaurant->getContract()->getCustomerAmount();
         $businessAmount = $restaurant->getContract()->getFlatDeliveryPrice();
 
+        $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
+        foreach ($deliveryPromotionAdjustments as $deliveryPromotionAdjustment) {
+            $businessAmount += $deliveryPromotionAdjustment->getAmount();
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::FEE_ADJUSTMENT,
             $this->translator->trans('order.adjustment_type.platform_fees'),
