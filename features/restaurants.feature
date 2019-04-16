@@ -150,16 +150,26 @@ Feature: Manage restaurants
                   "@type":"MenuSection",
                   "name":"Pizza topping",
                   "identifier":"PIZZA_TOPPING",
+                  "additionalType":"free",
+                  "additional":false,
                   "hasMenuItem":[
                     {
                       "@type":"MenuItem",
                       "name":"Extra cheese",
-                      "identifier":"PIZZA_TOPPING_EXTRA_CHEESE"
+                      "identifier":"PIZZA_TOPPING_EXTRA_CHEESE",
+                      "offers":{
+                        "@type":"Offer",
+                        "price":0
+                      }
                     },
                     {
                       "@type":"MenuItem",
                       "name":"Pepperoni",
-                      "identifier":"PIZZA_TOPPING_PEPPERONI"
+                      "identifier":"PIZZA_TOPPING_PEPPERONI",
+                      "offers":{
+                        "@type":"Offer",
+                        "price":0
+                      }
                     }
                   ]
                 }
