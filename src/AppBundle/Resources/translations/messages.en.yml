@@ -101,6 +101,7 @@ adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
 adminDashboard.zones.send: Send
 
 adminDashboard.back.title: Back to website
+adminDashboard.promotions.title: Promotions
 
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
@@ -517,6 +518,8 @@ form.api_app.store.label: Store
 form.api_app.client_id.label: Identifier
 form.api_app.client_secret.label: Secret key
 
+promotion_coupon.used.label: Number of uses
+
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
 product_option.strategy.option_value: Price according to the choice
@@ -625,6 +628,8 @@ maintenance.text: Sitio web bajo mantenimiento<br>Volvemos pronto
 api_apps.breadcrumb: API clients
 api_apps.created.message: The client has been added. Use the credentials below to authenticate.
 
+promotions.breadcrumb: Promotions
+
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans
 allergens.EGGS: Eggs
@@ -651,3 +656,6 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
+
+sylius.ui.code: Code
+sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit
