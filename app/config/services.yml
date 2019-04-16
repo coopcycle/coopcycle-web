@@ -96,6 +96,8 @@ services:
       $channelFactory: '@sylius.factory.channel'
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
+      $promotionFactory: '@sylius.factory.promotion'
+      $locale: '%kernel.default_locale%'
 
   AppBundle\Command\InitDemoCommand:
     arguments:
