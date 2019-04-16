@@ -192,7 +192,7 @@ services:
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
-  # We don't tag those sercives directly, but we use OrderOptionsFeeProcessor
+  # We don't tag those services directly, but we use OrderOptionsFeeProcessor
 
   sylius.order_processing.order_options_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
@@ -231,6 +231,23 @@ services:
       - "@sylius.context.currency"
     tags:
       - { name: sylius.order_processor, priority: 16 }
+
+  sylius.promotion_action.delivery_percentage:
+    class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: delivery_percentage_discount
+        label: 'Delivery percentage discount'
+        form_type: AppBundle\Form\Sylius\Promotion\Action\PercentageDiscountConfigurationType
+
+  sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
+    class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionCouponPerCustomerUsageLimitEligibilityChecker
+    arguments:
+      - "@sylius.repository.order"
+    tags:
+      - { name: sylius.promotion_coupon_eligibility_checker }
 
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
