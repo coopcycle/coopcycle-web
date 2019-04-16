@@ -32,6 +32,13 @@
     </tr>
   {% endfor %}
   <tbody>
+  {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
+  {% set promotion_adjustments = [] %}
+  {% for adjusment in order.adjustments %}
+    {% if adjusment.type == 'delivery_promotion' %}
+      {% set promotion_adjustments = [ adjusment ]|merge(promotion_adjustments) %}
+    {% endif %}
+  {% endfor %}
   <tfoot>
     {% if with_taxes is not defined or (with_taxes is defined and with_taxes == true) %}
       {% for tax_rate in order|split_tax_rates %}
@@ -39,6 +46,28 @@
         <th>{% trans with { '%name%': tax_rate.name } %}order.total_tax_by_rate{% endtrans %}</th>
         <td class="text-right">
           {{ tax_rate.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    <tr>
+      <th>{% trans %}order.items_total{% endtrans %}</th>
+      <td class="text-right">
+        {{ order.itemsTotal|price_format }}
+      </td>
+    </tr>
+    <tr>
+      <th>{{ delivery_adjustment.label }}</th>
+      <td class="text-right">
+        {{ delivery_adjustment.amount|price_format }}
+      </td>
+    </tr>
+    {% if promotion_adjustments|length > 0 %}
+      {% for adjustment in promotion_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right">
+          {{ adjustment.amount|price_format }}
         </td>
       </tr>
       {% endfor %}

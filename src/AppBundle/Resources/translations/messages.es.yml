@@ -246,6 +246,7 @@ order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
 order.total_including_tax: Total (IVA incl.)
+order.items_total: Total productos
 order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Tu horario de entrega
@@ -545,6 +546,7 @@ form.checkout_address.notes.label: ¿Un comentario?
 form.checkout_address.notes.placeholder: |
   Ejemplo: sin salsa, sin tomates…
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
+form.checkout_address.promotion_coupon.label: Código promocional
 
 form.orders_export.start.label: Inicio
 form.orders_export.end.label: Final
@@ -672,6 +674,7 @@ api_apps.breadcrumb: Clientes API
 api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación para autenticar.
 
 promotions.breadcrumb: Promociones
+promotions.promotion_coupon.success: Tu código promocional %code% ha sido tomado en cuenta
 
 allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
 allergens.CRUSTACEANS: Crustáceos
