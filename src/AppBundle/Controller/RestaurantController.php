@@ -43,7 +43,7 @@ class RestaurantController extends AbstractController
 {
     use UserTrait;
 
-    const ITEMS_PER_PAGE = 15;
+    const ITEMS_PER_PAGE = 21;
 
     private $orderManager;
     private $seoPage;
