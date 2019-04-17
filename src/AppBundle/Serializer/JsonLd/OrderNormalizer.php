@@ -5,12 +5,12 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\ShippingDateFilter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
-use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -33,7 +33,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         ChannelContextInterface $channelContext,
         ProductRepositoryInterface $productRepository,
         RepositoryInterface $productOptionValueRepository,
-        ProductVariantResolverInterface $variantResolver,
+        LazyProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         OrderModifierInterface $orderModifier,
@@ -68,30 +68,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Order;
     }
 
-    private function matchOptions($variant, array $optionValues)
-    {
-        foreach ($optionValues as $optionValue) {
-            if (!$variant->hasOptionValue($optionValue)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function resolveProductVariant($product, array $optionValues)
-    {
-        foreach ($product->getVariants() as $variant) {
-            if (count($variant->getOptionValues()) !== count($optionValues)) {
-                continue;
-            }
-
-            if ($this->matchOptions($variant, $optionValues)) {
-                return $variant;
-            }
-        }
-    }
-
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
@@ -118,13 +94,15 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
                 $product = $this->productRepository->findOneByCode($item['product']);
 
-                if (isset($item['options'])) {
-                    $optionValues = [];
-                    foreach ($item['options'] as $optionValueCode) {
-                        $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                        $optionValues[] = $optionValue;
+                if ($product->hasOptions()) {
+                    if (isset($item['options']) && is_array($item['options'])) {
+                        $optionValues = [];
+                        foreach ($item['options'] as $optionValueCode) {
+                            $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
+                            $optionValues[] = $optionValue;
+                        }
+                        $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
                     }
-                    $productVariant = $this->resolveProductVariant($product, $optionValues);
                 } else {
                     $productVariant = $this->variantResolver->getVariant($product);
                 }

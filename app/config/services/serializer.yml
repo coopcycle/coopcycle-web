@@ -55,7 +55,7 @@ services:
       - "@sylius.context.channel"
       - "@sylius.repository.product"
       - "@sylius.repository.product_option_value"
-      - "@sylius.product_variant_resolver.default"
+      - "@coopcycle.sylius.product_variant_resolver.lazy"
       - "@sylius.factory.order_item"
       - "@sylius.order_item_quantity_modifier"
       - "@sylius.order_modifier"
