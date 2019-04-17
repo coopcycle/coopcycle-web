@@ -112,6 +112,12 @@ services:
       $taxRateFactory: '@sylius.factory.tax_rate'
       $taxRateManager: '@sylius.manager.tax_rate'
 
+  AppBundle\Command\ApplyTaxesCommand:
+    arguments:
+      $orderTaxesProcessor: '@sylius.order_processing.order_taxes_processor'
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+
   AppBundle\Command\ImportStripeFeeCommand:
     arguments:
       $orderRepository: '@sylius.repository.order'

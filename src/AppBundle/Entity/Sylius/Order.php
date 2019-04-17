@@ -27,6 +27,7 @@ use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Sylius\Component\Taxation\Model\TaxRateInterface;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -145,6 +146,65 @@ class Order extends BaseOrder implements OrderInterface
         }
         foreach ($this->items as $item) {
             $taxTotal += $item->getTaxTotal();
+        }
+
+        return $taxTotal;
+    }
+
+    public function getItemsTaxTotal(): int
+    {
+        $taxTotal = 0;
+
+        foreach ($this->items as $item) {
+            $taxTotal += $item->getTaxTotal();
+        }
+
+        return $taxTotal;
+    }
+
+    public function getItemsTaxTotalByRate($taxRate): int
+    {
+        if ($taxRate instanceof TaxRateInterface) {
+            $taxRateCode = $taxRate->getCode();
+        } else {
+            $taxRateCode = $taxRate;
+        }
+
+        $taxTotal = 0;
+
+        foreach ($this->items as $item) {
+            foreach ($item->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $taxAdjustment) {
+                if ($taxAdjustment->getOriginCode() === $taxRateCode) {
+                    $taxTotal += $taxAdjustment->getAmount();
+                }
+            }
+        }
+
+        return $taxTotal;
+    }
+
+    public function getTaxTotalByRate($taxRate): int
+    {
+        if ($taxRate instanceof TaxRateInterface) {
+            $taxRateCode = $taxRate->getCode();
+        } else {
+            $taxRateCode = $taxRate;
+        }
+
+        $taxTotal = 0;
+
+        foreach ($this->items as $item) {
+            foreach ($item->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $taxAdjustment) {
+                if ($taxAdjustment->getOriginCode() === $taxRateCode) {
+                    $taxTotal += $taxAdjustment->getAmount();
+                }
+            }
+        }
+
+        foreach ($this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT) as $taxAdjustment) {
+            if ($taxAdjustment->getOriginCode() === $taxRateCode) {
+                $taxTotal += $taxAdjustment->getAmount();
+            }
         }
 
         return $taxTotal;
