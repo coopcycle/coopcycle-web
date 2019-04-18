@@ -232,7 +232,7 @@ class Task implements TaggableInterface
         return $this->status === self::STATUS_FAILED;
     }
 
-    public function isFinished()
+    public function isCompleted()
     {
         return $this->isDone() || $this->isFailed();
     }

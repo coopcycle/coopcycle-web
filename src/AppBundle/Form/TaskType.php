@@ -115,14 +115,14 @@ class TaskType extends AbstractType
                 if ($task->isAssigned()) {
                     $assignOptions['data'] = $task->getAssignedCourier();
                 }
-                if ($task->isFinished()) {
+                if ($task->isCompleted()) {
                     $assignOptions['disabled'] = true;
                 }
 
                 $form->add('assign', EntityType::class, $assignOptions);
 
                 // We disallow un-doing a task as it will break things here and there
-                if (!$task->isFinished()) {
+                if (!$task->isCompleted()) {
                     $form->add('complete', TaskCompleteType::class, [
                         'data' => $task,
                         'mapped' => false,
