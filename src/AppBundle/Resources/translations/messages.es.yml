@@ -320,6 +320,7 @@ form.task_complete.done.label: Completada
 form.task_complete.fail.label: Informar del problema
 task.type.PICKUP: Recogida
 task.type.DROPOFF: Entrega
+task.previous_task_not_completed_yet: La tarea anterior no ha sido completada
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a a demo de la plataforma
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>.

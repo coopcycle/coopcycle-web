@@ -310,6 +310,7 @@ form.task_complete.done.label: Complete
 form.task_complete.fail.label: Report problem
 task.type.PICKUP: Pickup
 task.type.DROPOFF: Dropoff
+task.previous_task_not_completed_yet: The previous task is not completed yet
 
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank" href="https://coopcycle.org">CoopCycle</a> platform.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i class="fa fa-info-circle"></i>  How to use this demo?</a>
