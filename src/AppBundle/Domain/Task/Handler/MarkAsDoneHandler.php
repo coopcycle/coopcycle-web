@@ -27,7 +27,7 @@ class MarkAsDoneHandler
             throw new TaskCancelledException(sprintf('Task #%d is cancelled', $task->getId()));
         }
 
-        if ($task->hasPrevious() && !$task->getPrevious()->isDone()) {
+        if ($task->hasPrevious() && !$task->getPrevious()->isCompleted()) {
             throw new PreviousTaskNotCompletedException('Previous task must be completed first');
         }
 
