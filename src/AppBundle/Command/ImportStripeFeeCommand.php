@@ -72,11 +72,11 @@ class ImportStripeFeeCommand extends Command
 
         if (is_array($date)) {
             [ $start, $end ] = $date;
-            $this->io->text(sprintf('Retrieving orders fulfilled between %d and %d',
+            $this->io->text(sprintf('Retrieving orders fulfilled between %s and %s',
                 $start->format('Y-m-d'), $end->format('Y-m-d')));
             $orders = $this->orderRepository->findFulfilledOrdersByDateRange($start, $end);
         } else {
-            $this->io->text(sprintf('Retrieving orders fulfilled on %d',
+            $this->io->text(sprintf('Retrieving orders fulfilled on %s',
                 $date->format('Y-m-d')));
             $orders = $this->orderRepository->findFulfilledOrdersByDate($date);
         }
