@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use AppBundle\Form\AddressType;
 use AppBundle\Utils\ShippingDateFilter;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
+use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -14,6 +15,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutAddressType extends AbstractType
@@ -112,5 +114,14 @@ class CheckoutAddressType extends AbstractType
         $options['disabled'] = true;
 
         $form->add($name, get_class($config->getType()->getInnerType()), $options);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault('constraints', [
+            new PromotionSubjectCoupon()
+        ]);
     }
 }
