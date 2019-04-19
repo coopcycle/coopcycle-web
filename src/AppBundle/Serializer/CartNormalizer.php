@@ -64,8 +64,17 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
             ];
         }, $object->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
 
+        $deliveryPromotionAdjustments = array_map(function (BaseAdjustmentInterface $adjustment) {
+            return [
+                'id' => $adjustment->getId(),
+                'label' => $adjustment->getLabel(),
+                'amount' => $adjustment->getAmount(),
+            ];
+        }, $object->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+
         $data['adjustments'] = [
-            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments)
+            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
+            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments)
         ];
 
         $shippedAt = $object->getShippedAt();

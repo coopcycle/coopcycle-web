@@ -128,3 +128,8 @@ services:
     arguments:
       - '@Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface'
     tags: [ form.type ]
+
+  sylius.form.extension.type.promotion_coupon:
+    class: AppBundle\Form\Extension\PromotionCouponTypeExtension
+    tags:
+      - { name: form.type_extension, extended_type: Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType }

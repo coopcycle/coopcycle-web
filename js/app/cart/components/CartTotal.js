@@ -8,12 +8,19 @@ class CartTotal extends React.Component {
 
   renderAdjustments() {
 
-    const { adjustments } = this.props
+    let adjustments = []
+    if (this.props.adjustments.hasOwnProperty('delivery')) {
+      adjustments = adjustments.concat(this.props.adjustments.delivery)
+    }
 
-    if (adjustments.hasOwnProperty('delivery')) {
+    if (this.props.adjustments.hasOwnProperty('delivery_promotion')) {
+      adjustments = adjustments.concat(this.props.adjustments.delivery_promotion)
+    }
+
+    if (adjustments.length > 0) {
       return (
         <div>
-          { adjustments.delivery.map(adjustment =>
+          { adjustments.map(adjustment =>
             <div key={ adjustment.id }>
               <span>{ adjustment.label }</span>
               <strong className="pull-right">{ (adjustment.amount / 100).formatMoney(2, window.AppData.currencySymbol) }</strong>

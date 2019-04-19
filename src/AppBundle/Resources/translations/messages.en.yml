@@ -101,6 +101,7 @@ adminDashboard.zones.uploadGeoJSON: Upload a GeoJSON file
 adminDashboard.zones.send: Send
 
 adminDashboard.back.title: Back to website
+adminDashboard.promotions.title: Promotions
 
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
@@ -231,6 +232,7 @@ order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
 order.total_including_tax: Total (tax incl.)
+order.items_total: Total products
 order.total_tax: Taxes
 order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Your shipping date
@@ -509,6 +511,7 @@ form.checkout_address.notes.label: An observation?
 form.checkout_address.notes.placeholder: |
   Example: without sauce, without tomatoes…
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
+form.checkout_address.promotion_coupon.label: Coupon code
 
 form.orders_export.start.label: Start
 form.orders_export.end.label: End
@@ -517,6 +520,8 @@ form.api_app.name.label: App name
 form.api_app.store.label: Store
 form.api_app.client_id.label: Identifier
 form.api_app.client_secret.label: Secret key
+
+promotion_coupon.used.label: Number of uses
 
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
@@ -626,6 +631,9 @@ maintenance.text: Sitio web bajo mantenimiento<br>Volvemos pronto
 api_apps.breadcrumb: API clients
 api_apps.created.message: The client has been added. Use the credentials below to authenticate.
 
+promotions.breadcrumb: Promotions
+promotions.promotion_coupon.success: Your coupon code %code% has been taken into account
+
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans
 allergens.EGGS: Eggs
@@ -652,3 +660,6 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
+
+sylius.ui.code: Code
+sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit

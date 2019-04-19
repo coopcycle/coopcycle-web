@@ -232,3 +232,13 @@ services:
           subscribes_to: order:dropped
         - name: event_subscriber
           subscribes_to: order:fulfilled
+
+  coopcycle.domain.order.reactor.modify_promotions_usage:
+    class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
+    arguments:
+      - '@coopcycle.socket_io_manager'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:cancelled

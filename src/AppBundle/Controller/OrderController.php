@@ -14,10 +14,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @Route("/order")
@@ -37,7 +39,10 @@ class OrderController extends AbstractController
      * @Route("/", name="order")
      * @Template()
      */
-    public function indexAction(Request $request, CartContextInterface $cartContext)
+    public function indexAction(Request $request,
+        CartContextInterface $cartContext,
+        OrderProcessorInterface $orderProcessor,
+        TranslatorInterface $translator)
     {
         $order = $cartContext->getCart();
 
@@ -56,10 +61,27 @@ class OrderController extends AbstractController
             $this->orderManager->flush();
         }
 
+        $originalPromotionCoupon = $order->getPromotionCoupon();
+
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $order = $form->getData();
+
+            $orderProcessor->process($order);
+
+            $promotionCoupon = $order->getPromotionCoupon();
+
+            // Check if a promotion coupon has been added
+            if (null === $originalPromotionCoupon && null !== $promotionCoupon) {
+                $this->addFlash(
+                    'notice',
+                    $translator->trans('promotions.promotion_coupon.success', ['%code%' => $promotionCoupon->getCode()])
+                );
+            }
+
             $this->orderManager->flush();
 
             return $this->redirectToRoute('order_payment');

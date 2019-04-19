@@ -1,0 +1,27 @@
+{% extends "@App/admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<table class="table task-table">
+  <thead>
+    <th>#</th>
+    <th>{% trans %}basics.name{% endtrans %}</th>
+  </thead>
+  <tbody>
+  {% for promotion in promotions %}
+      <td width="5%">
+        <a href="{{ path('admin_promotion', { id: promotion.id }) }}">
+          #{{ promotion.id }}
+        </a>
+      </td>
+      <td>
+        {{ promotion.name }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

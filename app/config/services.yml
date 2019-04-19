@@ -96,6 +96,8 @@ services:
       $channelFactory: '@sylius.factory.channel'
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
+      $promotionFactory: '@sylius.factory.promotion'
+      $locale: '%kernel.default_locale%'
 
   AppBundle\Command\InitDemoCommand:
     arguments:
@@ -210,6 +212,13 @@ services:
     arguments:
       - "@sylius.factory.adjustment"
       - "@translator"
+
+  sylius.order_processing.order_promotion_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
+    arguments:
+      - "@sylius.promotion_processor"
+    tags:
+      - { name: sylius.order_processor, priority: 64 }
 
   sylius.order_processing.order_options_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor

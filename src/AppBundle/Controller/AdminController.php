@@ -46,9 +46,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Promotion\Model\Promotion;
 use Symfony\Component\Routing\Annotation\Route;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
@@ -1198,6 +1200,80 @@ class AdminController extends Controller
         }
 
         return $this->render('@App/admin/api_app_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/promotions", name="admin_promotions")
+     */
+    public function promotionsAction(Request $request)
+    {
+        $promotions = $this->get('sylius.repository.promotion')->findAll();
+
+        return $this->render('@App/admin/promotions.html.twig', [
+            'promotions' => $promotions,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/promotions/{id}", name="admin_promotion")
+     */
+    public function promotionAction($id, Request $request)
+    {
+        $promotion = $this->get('sylius.repository.promotion')->find($id);
+
+        return $this->render('@App/admin/promotion.html.twig', [
+            'promotion' => $promotion,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/promotions/{id}/coupons/new", name="admin_new_promotion_coupon")
+     */
+    public function newPromotionCouponAction($id, Request $request)
+    {
+        $promotion = $this->get('sylius.repository.promotion')->find($id);
+
+        $promotionCoupon = $this->get('sylius.factory.promotion_coupon')->createForPromotion($promotion);
+
+        $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $promotionCoupon = $form->getData();
+            $promotion->addCoupon($promotionCoupon);
+
+            $this->get('sylius.manager.promotion')->flush();
+
+            return $this->redirectToRoute('admin_promotion', ['id' => $id]);
+        }
+
+        return $this->render('@App/admin/promotion_coupon.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/promotions/{id}/coupons/{code}", name="admin_promotion_coupon")
+     */
+    public function promotionCouponAction($id, $code, Request $request)
+    {
+        $promotionCoupon = $this->get('sylius.repository.promotion_coupon')->findOneByCode($code);
+        $promotion = $this->get('sylius.repository.promotion')->find($id);
+
+        $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->get('sylius.manager.promotion_coupon')->flush();
+
+            return $this->redirectToRoute('admin_promotion', ['id' => $id]);
+        }
+
+        return $this->render('@App/admin/promotion_coupon.html.twig', [
             'form' => $form->createView(),
         ]);
     }

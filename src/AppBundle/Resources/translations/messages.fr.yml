@@ -88,6 +88,8 @@ adminDashboard.zones.delete: Supprimer
 adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
 adminDashboard.back.title: Revenir au site
+adminDashboard.promotions.title: Promotions
+
 delivery.createNew: Créer une livraison
 help.title: Aide
 help.home: Accueil
@@ -231,6 +233,7 @@ order.cart.title: Panier
 order.items.products_with_count: Produits (%count%)
 order.summary.heading: Commande %number% (#%id%)
 order.total_including_tax: Total TTC
+order.items_total: Total produits
 order.total_tax: TVA
 order.total_tax_by_rate: Total %name%
 order.shipping_date.title: Votre horaire de livraison
@@ -543,6 +546,7 @@ form.checkout_address.notes.label: Une remarque ?
 form.checkout_address.notes.placeholder: |
   Exemple : sans sauce, sans tomates…
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
+form.checkout_address.promotion_coupon.label: Code promotionnel
 
 form.orders_export.start.label: Début
 form.orders_export.end.label: Fin
@@ -551,6 +555,8 @@ form.api_app.name.label: Nom de l'application
 form.api_app.store.label: Magasin
 form.api_app.client_id.label: Identifiant
 form.api_app.client_secret.label: Clé secrète
+
+promotion_coupon.used.label: Nombre d'utilisations
 
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix
@@ -707,6 +713,9 @@ maintenance.text: Site en maintenance<br>Nous revenons dans quelques instants
 api_apps.breadcrumb: Clients d'API
 api_apps.created.message: Le client a bien été ajouté. Utilisez les identifiants ci-dessous pour vous authentifier.
 
+promotions.breadcrumb: Promotions
+promotions.promotion_coupon.success: Votre code promotionnel %code% a été pris en compte
+
 allergens.CEREALS_CONTAINING_GLUTEN: Céréales contenant du gluten
 allergens.CRUSTACEANS: Crustacés
 allergens.EGGS: Oeufs
@@ -733,3 +742,6 @@ restricted_diets.LOW_LACTOSE_DIET: Sans lactose
 restricted_diets.LOW_SALT_DIET: Sans sel
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Végétarien
+
+sylius.ui.code: Code
+sylius.form.promotion_coupon.per_customer_usage_limit: Limite d'utilisation par client

@@ -16,6 +16,9 @@ use Sylius\Component\Channel\Factory\ChannelFactoryInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Promotion\Model\Promotion;
+use Sylius\Component\Promotion\Model\PromotionAction;
+use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,6 +40,9 @@ class SetupCommand extends Command
     private $localeFactory;
 
     private $slugify;
+
+    private $locale;
+
     private $locales = [
         'fr',
         'en',
@@ -70,6 +76,13 @@ class SetupCommand extends Command
         'de' => 'Eingeschränkte Ernährung',
     ];
 
+    private $freeDeliveryPromotionNames = [
+        'fr' => 'Livraison offerte',
+        'en' => 'Free delivery',
+        'es' => 'Entrega gratis',
+        'de' => 'Gratisversand',
+    ];
+
     private $currencies = [
         'EUR',
         'GBP',
@@ -87,8 +100,11 @@ class SetupCommand extends Command
         ChannelFactoryInterface $channelFactory,
         RepositoryInterface $currencyRepository,
         FactoryInterface $currencyFactory,
+        PromotionRepositoryInterface $promotionRepository,
+        FactoryInterface $promotionFactory,
         ManagerRegistry $doctrine,
-        SlugifyInterface $slugify)
+        SlugifyInterface $slugify,
+        string $locale)
     {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -111,7 +127,12 @@ class SetupCommand extends Command
         $this->currencyRepository = $currencyRepository;
         $this->currencyFactory = $currencyFactory;
 
+        $this->promotionRepository = $promotionRepository;
+        $this->promotionFactory = $promotionFactory;
+
         $this->slugify = $slugify;
+
+        $this->locale = $locale;
 
         parent::__construct();
     }
@@ -148,6 +169,9 @@ class SetupCommand extends Command
         $output->writeln('<info>Checking Sylius product attributes are present…</info>');
         $this->createAllergensAttributes($output);
         $this->createRestrictedDietsAttributes($output);
+
+        $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
+        $this->createFreeDeliveryPromotion($output);
 
         $output->writeln('<info>Checking commands are scheduled…</info>');
         $this->createScheduledCommands($output);
@@ -297,6 +321,32 @@ class SetupCommand extends Command
         }
 
         $this->productAttributeManager->flush();
+    }
+
+    private function createFreeDeliveryPromotion(OutputInterface $output)
+    {
+        $promotion = $this->promotionRepository->findOneByCode('FREE_DELIVERY');
+
+        if (null === $promotion) {
+
+            $promotion = $this->promotionFactory->createNew();
+            $promotion->setName($this->freeDeliveryPromotionNames[$this->locale]);
+            $promotion->setCouponBased(true);
+            $promotion->setCode('FREE_DELIVERY');
+            $promotion->setPriority(1);
+
+            $promotionAction = new PromotionAction();
+            $promotionAction->setType('delivery_percentage_discount');
+            $promotionAction->setConfiguration(['percentage' => 1.0]);
+
+            $promotion->addAction($promotionAction);
+
+            $this->promotionRepository->add($promotion);
+            $output->writeln('Creating promotion « FREE_DELIVERY »');
+
+        } else {
+            $output->writeln('Promotion « FREE_DELIVERY » already exists');
+        }
     }
 
     private function createScheduledCommands(OutputInterface $output)
