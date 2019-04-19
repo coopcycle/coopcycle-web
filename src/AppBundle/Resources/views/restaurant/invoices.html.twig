@@ -41,9 +41,13 @@
   {% set fee_adjustments = order.getAdjustments('fee') %}
   {% set stripe_fee_adjustments = order.getAdjustments('stripe_fee') %}
 
+  {% set stripe_fee_adjustment = false %}
+  {% if stripe_fee_adjustments|length == 1 %}
+    {% set stripe_fee_adjustment = stripe_fee_adjustments|first %}
+  {% endif %}
+
   {% set fee_adjustment = fee_adjustments|first %}
   {% set delivery_adjustment = delivery_adjustments|first %}
-  {% set stripe_fee_adjustment = stripe_fee_adjustments|first %}
 
   {# <tr>
     <th colspan="2">{{ delivery_adjustment.label }}</th>
@@ -80,12 +84,15 @@
     </td>
   </tr>
 
+  {% if stripe_fee_adjustment %}
   <tr>
     <th colspan="3">{% trans %}order.stripe_fee{% endtrans %}</th>
     <td class="text-right">
       {{ (stripe_fee_adjustment.amount * -1)|price_format }}
     </td>
   </tr>
+  {% endif %}
+
   <tr>
     <th colspan="3">{% trans %}order.fee{% endtrans %}</th>
     <td class="text-right">
@@ -93,12 +100,14 @@
     </td>
   </tr>
 
+  {% if stripe_fee_adjustment %}
   <tr>
     <th colspan="3">{% trans %}order.net_total_including_tax{% endtrans %}</th>
     <td class="text-right">
       <strong>{{ (order.total - (fee_adjustment.amount + stripe_fee_adjustment.amount))|price_format }}</strong>
     </td>
   </tr>
+  {% endif %}
 
 </tfoot>
 </table>
