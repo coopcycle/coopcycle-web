@@ -17,12 +17,14 @@ class PublishToRedis
     public function __invoke(Event $event)
     {
         try {
-            $this->socketIoManager->toAdmins($event);
 
             $customer = $event->getOrder()->getCustomer();
             if (null !== $customer) {
-                $this->socketIoManager->toUser($customer, $event);
+                $this->socketIoManager->toUserAndAdmins($customer, $event);
+            } else {
+                $this->socketIoManager->toAdmins($event);
             }
+
         } catch (\Exception $e) {
 
         }

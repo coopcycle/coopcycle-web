@@ -6,6 +6,10 @@ use FOS\UserBundle\Doctrine\UserManager as BaseUserManager;
 
 class UserManager extends BaseUserManager
 {
+    /**
+     * @param string $role
+     * @return array
+     */
     public function findUsersByRole($role)
     {
         $qb = $this->getRepository()

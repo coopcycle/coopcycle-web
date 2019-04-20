@@ -47,6 +47,20 @@ class SocketIoManager
         }
     }
 
+    public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
+
+        // If the user is also an admin, don't notify twice
+        if (!in_array($user, $users, true)) {
+            $users[] = $user;
+        }
+
+        foreach ($users as $user) {
+            $this->toUser($user, $message, $data);
+        }
+    }
+
     public function toUser(UserInterface $user, $message, array $data = [])
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
