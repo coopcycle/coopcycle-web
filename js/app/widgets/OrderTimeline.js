@@ -37,6 +37,8 @@ export default function(el, options) {
 
     socket.on('order:accepted',  event => handleEvent('order:accepted', event, options.order, timeline))
     socket.on('order:refused',   event => handleEvent('order:refused', event, options.order, timeline))
+    socket.on('order:picked',    event => handleEvent('order:picked', event, options.order, timeline))
+    socket.on('order:dropped',   event => handleEvent('order:dropped', event, options.order, timeline))
     socket.on('order:cancelled', event => handleEvent('order:cancelled', event, options.order, timeline))
     socket.on('order:fulfilled', event => handleEvent('order:fulfilled', event, options.order, timeline))
 
