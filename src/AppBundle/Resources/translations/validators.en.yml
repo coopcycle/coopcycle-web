@@ -14,8 +14,8 @@ cart.empty: Your cart is empty
 
 order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%€
 
-order.shippedAt.expired: L'horaire de livraison est dépassé
-order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible
+order.shippedAt.expired: The delivery date is expired
+order.shippedAt.notAvailable: The delivery date is no longer available
 
 delivery.price.error.priceCalculation: The delivery price could not be calculated.
 
