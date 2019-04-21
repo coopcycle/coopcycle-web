@@ -65,6 +65,9 @@ AppBundle\Entity\TaskCollection:
             mappedBy: parent
             inversedBy: null
             orphanRemoval: true
+            # FIXME This doesn't work
+            # We make sure items are sorted through PHP code
+            # See TaskCollection::getItems()
             orderBy:
                 position: ASC
     lifecycleCallbacks: {  }

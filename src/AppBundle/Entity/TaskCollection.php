@@ -39,7 +39,17 @@ abstract class TaskCollection
      */
     public function getItems()
     {
-        return $this->items;
+        $iterator = $this->items->getIterator();
+
+        $iterator->uasort(function ($a, $b) {
+            if ($a->getPosition() === $b->getPosition()) {
+                return 0;
+            }
+
+            return $a->getPosition() < $b->getPosition() ? -1 : 1;
+        });
+
+        return new ArrayCollection(iterator_to_array($iterator));
     }
 
     public function getMaxPosition() {
@@ -56,7 +66,7 @@ abstract class TaskCollection
         // create the collection item if necessary
         $item = null;
         $created = false;
-        $items = $this->items;
+        $items = $this->getItems();
 
         $item = $items->filter(function ($item) use ($task) {
             return $item->getTask() === $task;
@@ -118,7 +128,7 @@ abstract class TaskCollection
 
     public function getTasks()
     {
-        return $this->items->map(function (TaskCollectionItem $item) {
+        return $this->getItems()->map(function (TaskCollectionItem $item) {
             return $item->getTask();
         })->toArray();
     }
