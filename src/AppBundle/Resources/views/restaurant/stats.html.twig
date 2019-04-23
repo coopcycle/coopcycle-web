@@ -10,6 +10,48 @@
 
 <h3 class="text-center">Du {{ start|localizeddate('medium', 'none') }} au {{ end|localizeddate('medium', 'none') }}</h3>
 
+{% for day, orders in orders_by_day %}
+<div>
+  <h4 class="text-center text-muted">{{ day|localizeddate('medium', 'none') }}</h4>
+  <table class="table table-condensed">
+    <thead>
+      <th>Numéro de commande</th>
+      <th class="text-right">Frais Stripe</th>
+      <th class="text-right">Total</th>
+      {# <th class="text-right">TVA</th>
+      <th class="text-right">HT</th> #}
+    </thead>
+    <tbody>
+      {% set total_aggregate = 0 %}
+      {% set stripe_fee_total_aggregate = 0 %}
+      {% for order in orders %}
+        <tr>
+          <td>{{ order.number }}</td>
+          <td class="text-right" width="10%">{{ order.stripeFeeTotal|price_format }}</td>
+          <td class="text-right" width="10%">{{ order.total|price_format }}</td>
+          {# <td class="text-right" width="10%">{{ item.taxTotal|price_format }}</td> #}
+          {# <td class="text-right" width="10%">{{ (item.total - item.taxTotal)|price_format }}</td> #}
+        </tr>
+        {% set total_aggregate = total_aggregate + order.total %}
+        {% set stripe_fee_total_aggregate = stripe_fee_total_aggregate + order.stripeFeeTotal %}
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <td class="text-right">
+          <strong>{{ stripe_fee_total_aggregate|price_format }}</strong>
+        </td>
+        <td class="text-right">
+          <strong>{{ total_aggregate|price_format }}</strong>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% endfor %}
+
+{#
 {% for order in orders %}
 
 <h4>
@@ -48,13 +90,6 @@
 
   {% set fee_adjustment = fee_adjustments|first %}
   {% set delivery_adjustment = delivery_adjustments|first %}
-
-  {# <tr>
-    <th colspan="2">{{ delivery_adjustment.label }}</th>
-    <td class="text-right">
-      {{ delivery_adjustment.amount|price_format }}
-    </td>
-  </tr> #}
 
   <tr>
     <th colspan="3">Total HT</th>
@@ -112,5 +147,6 @@
 </tfoot>
 </table>
 {% endfor %}
+#}
 
 {% endblock %}

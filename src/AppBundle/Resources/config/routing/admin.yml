@@ -285,16 +285,15 @@ admin_restaurant_preparation_time:
             success: admin_restaurant_preparation_time
     methods: [ GET, POST ]
 
-admin_restaurant_invoices:
-    path: /admin/restaurants/{id}/invoices
+admin_restaurant_stats:
+    path: /admin/restaurants/{id}/stats
     defaults:
-        _controller: AppBundle\Controller\AdminController::invoicesAction
+        _controller: AppBundle\Controller\AdminController::statsAction
         layout: '@App/admin.html.twig'
-        template: '@App/restaurant/invoices.html.twig'
+        template: '@App/restaurant/stats.html.twig'
         routes:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
-            # success: admin_restaurant_preparation_time
     methods: [ GET ]
 
 admin_order_accept:

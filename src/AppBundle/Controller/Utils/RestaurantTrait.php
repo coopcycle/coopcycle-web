@@ -867,7 +867,7 @@ trait RestaurantTrait
         ], []));
     }
 
-    public function invoicesAction($id, Request $request)
+    public function statsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -904,6 +904,15 @@ trait RestaurantTrait
             return $order->getState() === 'fulfilled';
         });
 
+        $ordersByDay = [];
+        foreach ($fulfilledOrders as $fulfilledOrder) {
+            $day = $fulfilledOrder->getShippedAt()->format('Y-m-d');
+            if (!isset($ordersByDay[$day])) {
+                $ordersByDay[$day] = [];
+            }
+            $ordersByDay[$day][] = $fulfilledOrder;
+        }
+
         $total = 0;
         $itemsTotal = 0;
         foreach ($fulfilledOrders as $fulfilledOrder) {
@@ -915,6 +924,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'orders' => $fulfilledOrders,
+            'orders_by_day' => $ordersByDay,
             'total' => $total,
             'itemsTotal' => $itemsTotal,
             'start' => $start,
