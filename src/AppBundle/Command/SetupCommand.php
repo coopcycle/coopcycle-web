@@ -366,6 +366,30 @@ class SetupCommand extends Command
 
             $this->scheduledCommandManager->persist($flushTracking);
             $this->scheduledCommandManager->flush();
+            $output->writeln('Adding scheduled command « coopcycle:tracking:flush »');
+        } else {
+            $output->writeln('Scheduled command « coopcycle:tracking:flush » already exists');
+        }
+
+        $importStripeFee = $this->scheduledCommandRepository
+            ->findOneByCommand('coopcycle:orders:import-stripe-fee');
+
+        if (!$importStripeFee) {
+            $importStripeFee = new ScheduledCommand();
+            $importStripeFee
+                ->setName('Import Stripe fees')
+                ->setCommand('coopcycle:orders:import-stripe-fee')
+                // Every day at 01:00 AM
+                ->setCronExpression('0 1 * * *')
+                ->setPriority(1)
+                ->setExecuteImmediately(false)
+                ->setDisabled(false);
+
+            $this->scheduledCommandManager->persist($importStripeFee);
+            $this->scheduledCommandManager->flush();
+            $output->writeln('Adding scheduled command « coopcycle:orders:import-stripe-fee »');
+        } else {
+            $output->writeln('Scheduled command « coopcycle:orders:import-stripe-fee » already exists');
         }
     }
 }
