@@ -133,6 +133,11 @@ services:
       $filterManager: '@liip_imagine.filter.manager'
       $filesystem: '@filesystem'
 
+  AppBundle\Command\AggregateRestaurantsStatsCommand:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $orderManager: '@sylius.manager.order'
+
   AppBundle\Controller\OrderController:
     arguments:
       $orderManager: '@sylius.manager.order'
