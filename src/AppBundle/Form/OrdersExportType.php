@@ -2,10 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Restaurant;
-use AppBundle\Service\SettingsManager;
 use League\Csv\Writer as CsvWriter;
-use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\AbstractType;
@@ -18,74 +15,10 @@ use Symfony\Component\Form\Extension\Core\Type as FormType;
 class OrdersExportType extends AbstractType
 {
     private $orderRepository;
-    private $settingsManager;
-    private $stripeLiveMode;
-    private $stripeOptionsByRestaurant = [];
-    private $balanceTransactionsByRestaurant = [];
 
-    public function __construct(
-        OrderRepositoryInterface $orderRepository,
-        SettingsManager $settingsManager)
+    public function __construct(OrderRepositoryInterface $orderRepository)
     {
         $this->orderRepository = $orderRepository;
-        $this->settingsManager = $settingsManager;
-        $this->stripeLiveMode = $settingsManager->isStripeLivemode();
-
-        Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
-    }
-
-    private function getStripeFee(Restaurant $restaurant, PaymentInterface $payment, $start, $end)
-    {
-        if (!isset($this->stripeOptionsByRestaurant[$restaurant->getId()])) {
-            $restaurantPaysStripeFee =
-                $restaurant->getContract()->isRestaurantPaysStripeFee();
-
-            $stripeOptions = [];
-            if ($restaurantPaysStripeFee) {
-                $stripeAccount = $restaurant->getStripeAccount($this->stripeLiveMode);
-                $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
-            }
-
-            $this->stripeOptionsByRestaurant[$restaurant->getId()] = $stripeOptions;
-        }
-
-        $stripeOptions = $this->stripeOptionsByRestaurant[$restaurant->getId()];
-
-        // To avoid making lots of API calls, we retrieve all the balance transactions at once
-        if (!isset($this->balanceTransactionsByRestaurant[$restaurant->getId()])) {
-
-            $result = Stripe\BalanceTransaction::all([
-                'limit' => 100, // FIXME There may be more
-                'created' => [
-                    'gte' => $start->getTimestamp(),
-                    'lte' => $end->getTimestamp(),
-                ]
-            ], $stripeOptions);
-
-            $balanceTransactionsByCharge = [];
-            foreach ($result->data as $balanceTransaction) {
-                $balanceTransactionsByCharge[$balanceTransaction->source] =
-                    $balanceTransaction;
-            }
-
-            $this->balanceTransactionsByRestaurant[$restaurant->getId()] =
-                $balanceTransactionsByCharge;
-        }
-
-        $balanceTransactions = $this->balanceTransactionsByRestaurant[$restaurant->getId()];
-
-        if (isset($balanceTransactions[$payment->getCharge()])) {
-
-            $balanceTransaction = $balanceTransactions[$payment->getCharge()];
-
-            foreach ($balanceTransaction->fee_details as $feeDetail) {
-                if ('stripe_fee' === $feeDetail->type) {
-
-                    return $feeDetail->amount;
-                }
-            }
-
-        }
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -156,7 +89,7 @@ class OrdersExportType extends AbstractType
                 // Retrieve Stripe fees
                 $stripeFee = null;
                 if ($lastPayment->getState() === PaymentInterface::STATE_COMPLETED) {
-                    $stripeFee = $this->getStripeFee($restaurant, $lastPayment, $start, $end);
+                    $stripeFee = $order->getStripeFeeTotal();
                 }
 
                 $records[] = [

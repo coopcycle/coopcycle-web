@@ -58,7 +58,6 @@ services:
   AppBundle\Form\OrdersExportType:
     arguments:
       - '@sylius.repository.order'
-      - '@coopcycle.settings_manager'
     tags: [ form.type ]
 
   AppBundle\Form\AddUserType:

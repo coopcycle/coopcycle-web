@@ -221,6 +221,16 @@ class Order extends BaseOrder implements OrderInterface
         return $feeTotal;
     }
 
+    public function getStripeFeeTotal(): int
+    {
+        $total = 0;
+        foreach ($this->getAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT) as $adjustment) {
+            $total += $adjustment->getAmount();
+        }
+
+        return $total;
+    }
+
     /**
      * {@inheritdoc}
      */
