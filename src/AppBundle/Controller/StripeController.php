@@ -93,10 +93,13 @@ class StripeController extends AbstractController
 
             $account = Stripe\Account::retrieve($res['stripe_user_id']);
 
+            // FIXME Why is display_name empty sometimes?
+            $displayName = !empty($account->display_name) ? $account->display_name : 'N/A';
+
             $stripeAccount = new StripeAccount();
             $stripeAccount
                 ->setType($account->type)
-                ->setDisplayName($account->display_name)
+                ->setDisplayName($displayName)
                 ->setPayoutsEnabled($account->payouts_enabled)
                 ->setStripeUserId($res['stripe_user_id'])
                 ->setRefreshToken($res['refresh_token'])
