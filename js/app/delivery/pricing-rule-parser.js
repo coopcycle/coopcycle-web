@@ -46,4 +46,4 @@ const parseToken = token => {
 }
 
 export default expression =>
-  expression.split('and').map(token => token.trim()).map(token => parseToken(token))
+  expression.split(' and ').map(token => token.trim()).map(token => parseToken(token))

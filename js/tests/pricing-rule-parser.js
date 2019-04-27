@@ -25,6 +25,16 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should parse in_zone with zone containing "and"', function() {
+    const expression = 'in_zone(pickup.address, "commander")'
+    const result = parsePricingRule(expression)
+    expect(result).to.deep.equal([{
+      left: 'pickup.address',
+      operator: 'in_zone',
+      right: 'commander'
+    }])
+  })
+
   it('should parse vehicle', function() {
     const expression = 'vehicle == "cargo_bike"'
     const result = parsePricingRule(expression)
