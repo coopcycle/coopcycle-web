@@ -35,7 +35,9 @@
         {{ coupon.perCustomerUsageLimit }}
       </td>
       <td>
-        {{ coupon.expiresAt }}
+        {% if coupon.expiresAt is not empty %}
+          {{ coupon.expiresAt|localizeddate('short', 'short') }}
+        {% endif %}
       </td>
       <td class="text-right">
         {{ coupon.used }}
