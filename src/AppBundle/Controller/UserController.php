@@ -37,7 +37,7 @@ class UserController extends AbstractController
      */
     public function indexAction($username, UserManagerInterface $userManager)
     {
-        $user = $this->userManager->findUserByUsername($username);
+        $user = $userManager->findUserByUsername($username);
 
         return [
             'user' => $user,
