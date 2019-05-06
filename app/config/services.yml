@@ -83,6 +83,11 @@ services:
     alias: 'libphonenumber.phone_number_util'
     public: true
 
+  AppBundle\Routing\FoodtechEnabledAwareLoader:
+    arguments:
+      $isFoodtechEnabled: '%foodtech_enabled%'
+    tags: [routing.loader]
+
   AppBundle\Command\SetupCommand:
     arguments:
       $productRepository: '@sylius.repository.product'

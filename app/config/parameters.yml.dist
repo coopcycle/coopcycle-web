@@ -61,3 +61,5 @@ parameters:
     apns_certificate_file: "/dev/null"
     apns_certificate_pass_phrase: ""
     trikoder_encryption_key: ""
+
+    foodtech_enabled: true

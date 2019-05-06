@@ -1,0 +1,6 @@
+redirect_to_admin:
+  path: /
+  defaults:
+    _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    route: admin_index
+    permanent: false

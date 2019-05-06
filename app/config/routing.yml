@@ -43,9 +43,6 @@ oauth2_token:
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.yaml"
 
-redirect_to_locale:
-    path: /
-    defaults:
-        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-        path: /%locale%
-        permanent: false
+foodtech_enabled_aware:
+    resource: .
+    type: foodtech_enabled_aware
