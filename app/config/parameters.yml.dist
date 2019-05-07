@@ -63,3 +63,5 @@ parameters:
     trikoder_encryption_key: ""
 
     foodtech_enabled: true
+
+    browserless_base_uri: 'http://browserless:3000'

@@ -22,12 +22,10 @@ class PublicController extends AbstractController
 {
     public function __construct(
         $stateMachineFactory,
-        $orderRepository,
-        $pdfGenerator)
+        $orderRepository)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->orderRepository = $orderRepository;
-        $this->pdfGenerator = $pdfGenerator;
     }
 
     /**
@@ -122,7 +120,13 @@ class PublicController extends AbstractController
             'customer' => $order->getCustomer()
         ]);
 
-        return new Response($this->pdfGenerator->getOutputFromHtml($html), 200, [
+        $httpClient = $this->get('csa_guzzle.client.browserless');
+
+        $response = $httpClient->request('POST', '/pdf', ['json' => ['html' => $html]]);
+
+        // TODO Check status
+
+        return new Response((string) $response->getBody(), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }

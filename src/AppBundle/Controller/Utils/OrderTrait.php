@@ -66,7 +66,13 @@ trait OrderTrait
             'order' => $order
         ]);
 
-        return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [
+        $httpClient = $this->get('csa_guzzle.client.browserless');
+
+        $response = $httpClient->request('POST', '/pdf', ['json' => ['html' => $html]]);
+
+        // TODO Check status
+
+        return new Response((string) $response->getBody(), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }

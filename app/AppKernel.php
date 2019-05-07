@@ -41,7 +41,6 @@ class AppKernel extends Kernel
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
-            new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new M6Web\Bundle\StatsdBundle\M6WebStatsdBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),

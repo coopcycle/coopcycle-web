@@ -40,3 +40,4 @@ parameters:
     apns_certificate_pass_phrase: ''
     trikoder_encryption_key: 'RY890EuDb7heQhhI6GOsXC09v1aYCnMwL4M4uhM5Ewk='
     foodtech_enabled: true
+    browserless_base_uri: ''

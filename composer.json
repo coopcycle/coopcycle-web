@@ -59,7 +59,6 @@
         "misd/phone-number-bundle": "^1.2",
         "nesbot/carbon": "^1.22",
         "sylius/taxation-bundle": "1.4.*",
-        "knplabs/knp-snappy-bundle": "^1.5",
         "mailjet/mailjet-swiftmailer": "dev-upgradeToSwiftmailer6",
         "m6web/statsd-bundle": "^2.15.0",
         "knplabs/knp-markdown-bundle": "^1.6",
