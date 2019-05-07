@@ -40,6 +40,16 @@ adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.deliveries.save: Save
 
 adminDashboard.embed.title: External Display
+embed.delivery.title: Delivery creation form
+embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule to apply
+embed.delivery.iframe_code: Use the HTML code below to embed the form on your website
+embed.breadcrumb.start: Informations
+embed.breadcrumb.summary: Summary
+embed.breadcrumb.confirm: Confirmation
+embed.delivery.summary.title: Summary of your order
+embed.delivery.use_form_below: Use the form below to pay your order by credit card
+embed.delivery.paid_at: Payment made on %date%
+embed.payment.heading: Pay my order
 
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categories
@@ -436,6 +446,9 @@ form.stripe_livemode.disable.alert: In « test » mode, credit cards will not be
 form.stripe_livemode.disable_and_enable_maintenance.label: Switch to « test » mode and enable maintenance
 form.stripe_livemode.disable_and_enable_maintenance.alert: 'You are in « live » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.'
 form.settings.currency_code.label: Currency
+form.delivery_embed.name.label: Name
+form.delivery_embed.name.help: Your name or company name
+form.delivery_embed.telephone.label: Phone number
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.
@@ -602,10 +615,22 @@ activity.order.dropped: |
 activity.order.fulfilled: |
   Order #order/#%aggregate_id% is fulfilled
 
+embed.delivery.summary: 'You have requested a race that will be dropped at <strong>%dropoff_date%</strong> at the following address: <strong>%dropoff_address%</strong>
+  <br>
+  We calculated a distance of <strong>%distance% kilometers</strong>.
+  <br>
+  According to our prices, this race will cost you <strong>%total_including_tax% including taxes</strong>.'
+embed.delivery.submit.help: Click to confirm the quote and order the race.
+embed.delivery.confirm_message: 'We have registered your request. Your race is waiting for validation.
+  <br>
+  We will send you an email within a few minutes. You will receive a second mail as soon as the race is confirmed.'
+
 pagination.previous: Previous
 pagination.next: Next
 
 basics.save: Save
+basics.next: Next
+basics.continue: Continue
 basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit
@@ -620,6 +645,7 @@ basics.name: Name
 basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
+basics.created_at: Created at %date%
 
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

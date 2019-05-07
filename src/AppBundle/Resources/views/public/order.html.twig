@@ -25,11 +25,11 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="nomargin">Résumé de votre commande</h4>
+          <h4 class="nomargin">{{ 'embed.delivery.summary.title'|trans }}</h4>
         </div>
         <div class="panel-body">
           <p class="nomargin text-right">
-            <i class="fa fa-clock-o"></i> Créée le {{ order.createdAt|localizeddate('medium', 'short') }}
+            <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|localizeddate('medium', 'short') }) }}
           </p>
           {#
           <p class="nomargin">
@@ -48,7 +48,7 @@
 
       {% if stripe_payment.state == 'completed' %}
         <div class="alert alert-success">
-          <i class="fa fa-check"></i> Paiement effectué le {{ stripe_payment.updatedAt|localizeddate('medium', 'short') }}
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': stripe_payment.updatedAt|localizeddate('medium', 'short') }) }}
         </div>
       {% endif %}
 
@@ -59,7 +59,7 @@
           {{ form_widget(form.stripeToken) }}
 
           <div class="alert alert-info">
-            Utilisez le formulaire ci-dessous pour payer votre commande par carte bancaire
+            {{ 'embed.delivery.use_form_below'|trans }}
           </div>
 
           <div class="form-group">

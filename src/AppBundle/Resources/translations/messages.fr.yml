@@ -636,6 +636,7 @@ basics.name: Nom
 basics.today: Aujourd'hui
 basics.are_you_sure: Êtes-vous sûr‧e ?
 basics.no_entries: Aucun élément pour l'instant
+basics.created_at: Créé le %date%
 
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
@@ -647,6 +648,9 @@ embed.breadcrumb.start: Informations
 embed.breadcrumb.summary: Résumé
 embed.breadcrumb.confirm: Confirmation
 embed.payment.heading: Payer ma commande
+embed.delivery.summary.title: Résumé de votre commande
+embed.delivery.use_form_below: Utilisez le formulaire ci-dessous pour payer votre commande par carte bancaire
+embed.delivery.paid_at: Paiement effectué le %date%
 notifications.empty: Aucune notification
 
 adminDashboard.statistics: Statistiques
