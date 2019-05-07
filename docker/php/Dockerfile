@@ -15,35 +15,18 @@ RUN set -xe \
         postgresql-dev \
         zlib-dev \
     && apk add --no-cache \
-        xvfb \
-        ttf-freefont \
-        fontconfig \
-        dbus \
-        freetype \
         libpng \
         libjpeg-turbo \
-        freetype-dev \
         libpng-dev \
         libjpeg-turbo-dev \
     && apk add --no-cache \
         jpegoptim \
         optipng \
         pngquant \
-    && apk add --no-cache \
-        --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
-        --allow-untrusted \
-        wkhtmltopdf \
-    && mv /usr/bin/wkhtmltopdf /usr/bin/wkhtmltopdf-origin \
-    && echo $'#!/usr/bin/env sh\n\
-Xvfb :0 -screen 0 1024x768x24 -ac +extension GLX +render -noreset & \n\
-DISPLAY=:0.0 wkhtmltopdf-origin $@ \n\
-killall Xvfb' > /usr/bin/wkhtmltopdf \
-    && chmod +x /usr/bin/wkhtmltopdf \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     && docker-php-ext-configure pdo_pgsql \
     && docker-php-ext-configure gd \
         --with-gd \
-        --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install \
