@@ -32,7 +32,7 @@
     </tr>
   {% endfor %}
   <tbody>
-  {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
+  {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
   {% for adjusment in order.adjustments %}
     {% if adjusment.type == 'delivery_promotion' %}
@@ -56,12 +56,15 @@
         {{ order.itemsTotal|price_format }}
       </td>
     </tr>
+    {% if delivery_adjustments|length > 0 %}
+    {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
     <tr>
       <th>{{ delivery_adjustment.label }}</th>
       <td class="text-right">
         {{ delivery_adjustment.amount|price_format }}
       </td>
     </tr>
+    {% endif %}
     {% if promotion_adjustments|length > 0 %}
       {% for adjustment in promotion_adjustments %}
       <tr>
