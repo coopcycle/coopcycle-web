@@ -82,6 +82,15 @@ class DeliveryType extends AbstractType
                 $delivery = $event->getForm()->getParent()->getData();
                 foreach ($delivery->getTasks() as $task) {
                     if ($task->getType() === Task::TYPE_PICKUP) {
+
+                        if (null === $delivery->getId()) {
+                            $before = new \DateTime();
+                            while (($before->format('i') % 15) !== 0) {
+                                $before->modify('+1 minute');
+                            }
+                            $task->setDoneBefore($before);
+                        }
+
                         $event->setData($task);
                     }
                 }
@@ -94,6 +103,13 @@ class DeliveryType extends AbstractType
                 $delivery = $event->getForm()->getParent()->getData();
                 foreach ($delivery->getTasks() as $task) {
                     if ($task->getType() === Task::TYPE_DROPOFF) {
+
+                        if (null === $delivery->getId()) {
+                            $before = clone $delivery->getPickup()->getDoneBefore();
+                            $before->modify('+1 hour');
+                            $task->setDoneBefore($before);
+                        }
+
                         $event->setData($task);
                     }
                 }

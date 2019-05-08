@@ -57,21 +57,6 @@ trait DeliveryTrait
 
     protected function createDeliveryForm(Delivery $delivery, array $options = [])
     {
-        // TODO Move this to DeliveryType?
-        if ($delivery->getId() === null) {
-
-            $pickupDoneBefore = new \DateTime('+1 day');
-            while (($pickupDoneBefore->format('i') % 15) !== 0) {
-                $pickupDoneBefore->modify('+1 minute');
-            }
-
-            $dropoffDoneBefore = clone $pickupDoneBefore;
-            $dropoffDoneBefore->modify('+1 hour');
-
-            $delivery->getPickup()->setDoneBefore($pickupDoneBefore);
-            $delivery->getDropoff()->setDoneBefore($dropoffDoneBefore);
-        }
-
         return $this->createForm(DeliveryType::class, $delivery, $options);
     }
 
