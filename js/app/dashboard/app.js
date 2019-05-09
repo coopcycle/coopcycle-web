@@ -34,9 +34,21 @@ function onTaskDrop(allTasks, assignTasks, element, target) {
     // FIXME
     // Make it work when more than 2 tasks are linked together
     if (task.previous) {
-      tasks = [ _.find(allTasks, t => t['@id'] === task.previous), task ]
+      // If previous task is another day, will be null
+      const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
+      if (previousTask) {
+        tasks = [ previousTask, task ]
+      } else {
+        tasks = [ task ]
+      }
     } else if (task.next) {
-      tasks = [ task, _.find(allTasks, t => t['@id'] === task.next) ]
+      // If next task is another day, will be null
+      const nextTask = _.find(allTasks, t => t['@id'] === task.next)
+      if (nextTask) {
+        tasks = [ task, nextTask ]
+      } else {
+        tasks = [ task ]
+      }
     } else {
       tasks = [ task ]
     }
