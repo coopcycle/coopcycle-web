@@ -468,6 +468,7 @@ services:
     arguments:
       - "@mailer"
       - "@templating"
+      - "@mjml"
       - "@translator"
       - "@coopcycle.settings_manager"
       - "%transactional_address%"

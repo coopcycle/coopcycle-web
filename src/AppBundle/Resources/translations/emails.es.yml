@@ -13,7 +13,8 @@ registration.email.textMessage: |
   ¡Bienvenido!\n\n
   El equipo de CoopCycle
 
-order.quantity: Cantidad
+order.view: Ver el pedido
+
 order.public_url: |
   Para seguir el estado de tu pedido, <a href="%order.public_url%">haga clic aquí</a>.
 order.foodtech.accepted: |
@@ -29,31 +30,22 @@ admin.order.created.subject: Nuevo pedido para confirmar
 admin.order.created.body: |
   Buenos dias,
   <br>
-  <br>
   Se ha creado un nuevo pedido.
-  <br>
-  Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
+
 admin.order_foodtech.created.body: |
   Buenos dias,
   <br>
-  <br>
-  Se ha creado un nuevo pedido para el restaurante %restaurant.name%.
-  <br>
-  Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
+  Se ha creado un nuevo pedido para el restaurante <strong>%restaurant.name%</strong>.
 
 owner.order.created.subject: Nuevo pedido para confirmar
 owner.order.created.body: |
   Buenos dias,
   <br>
-  <br>
-  Se ha creado un nuevo pedido para vuestro restaurante %restaurant.name%.
-  <br>
-  Para verificar los detalles y confirmar el pedido, <a href="%order.url%">haga clic aquí</a>.
+  Se ha creado un nuevo pedido para vuestro restaurante <strong>%restaurant.name%</strong>.
 
 order.created.subject: Confirmación de tu pedido %order.number%
 order.created.body: |
   Buenos dias,
-  <br>
   <br>
   Hemos registrado su pedido.
   <br>
@@ -63,20 +55,17 @@ order.accepted.subject: Tu pedido %order.number% ha sido aceptado
 order.accepted.body.intro: |
   Buenos dias,
   <br>
-  <br>
   Tu pedido esta confirmado.
 
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
 order.cancelled.body.intro: |
   Buenos dias,
   <br>
-  <br>
   Lo sentimos, pero tu pedido ha sido cancelado.
 
 order.delayed.subject: Tu pedido %order.number% llegará más tarde
 order.delayed.body: |
   Buenos dias,
-  <br>
   <br>
   Lo sentimos, pero tu pedido llegará %delay% minutos más tarde.
   <br>
@@ -86,12 +75,10 @@ task.done.subject: "La tarea #%task.id% ha sido completada"
 task.done.body: |
   Buenos dias,
   <br>
-  <br>
   La tarea #%task.id% ha sido completada.
 
 task.failed.subject: "La tarea #%task.id% no se pudo completar"
 task.failed.body: |
   Buenos dias,
-  <br>
   <br>
   La tarea #%task.id% no se pudo completar.

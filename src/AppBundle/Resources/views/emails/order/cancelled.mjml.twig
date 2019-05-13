@@ -1,10 +1,14 @@
-{% extends '@App/emails/layout.html.twig' %}
+{% extends '@App/emails/layout.mjml.twig' %}
 
 {% block content %}
+<mj-column>
+  <mj-text align="left" font-family="Open Sans" line-height="20px">
   {{ 'order.cancelled.body.intro' | trans({}, 'emails') | raw }}
   {% if order.foodtech %}
   <br>
   <br>
   {{ 'order.foodtech.cancelled' | trans({}, 'emails') | raw }}
   {% endif %}
+  </mj-text>
+</mj-column>
 {% endblock %}

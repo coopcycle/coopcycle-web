@@ -13,7 +13,8 @@ registration.email.textMessage: |
   Bienvenue!\n\n
   L'équipe CoopCycle
 
-order.quantity: Quantité
+order.view: Voir la commande
+
 order.public_url: |
   Pour suivre l'état de votre commande, <a href="%order.public_url%">cliquez ici</a>.
 order.foodtech.accepted: |
@@ -29,31 +30,22 @@ admin.order.created.subject: Nouvelle commande à confirmer
 admin.order.created.body: |
   Bonjour,
   <br>
-  <br>
   Une nouvelle commande a été créée.
-  <br>
-  Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
+
 admin.order_foodtech.created.body: |
   Bonjour,
   <br>
-  <br>
-  Une nouvelle commande a été créée pour le restaurant %restaurant.name%.
-  <br>
-  Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
+  Une nouvelle commande a été créée pour le restaurant <strong>%restaurant.name%</strong>.
 
 owner.order.created.subject: Nouvelle commande à confirmer
 owner.order.created.body: |
   Bonjour,
   <br>
-  <br>
-  Une nouvelle commande a été créée pour votre restaurant %restaurant.name%.
-  <br>
-  Pour vérifier les détails, et confirmer la commande, <a href="%order.url%">cliquez ici</a>.
+  Une nouvelle commande a été créée pour votre restaurant <strong>%restaurant.name%</strong>.
 
 order.created.subject: Confirmation de votre commande %order.number%
 order.created.body: |
   Bonjour,
-  <br>
   <br>
   Nous avons bien enregistré votre commande.
   <br>
@@ -63,20 +55,17 @@ order.accepted.subject: Votre commande %order.number% a été acceptée
 order.accepted.body.intro: |
   Bonjour,
   <br>
-  <br>
   Votre commande est confirmée.
 
 order.cancelled.subject: Votre commande %order.number% a été annulée
 order.cancelled.body.intro: |
   Bonjour,
   <br>
-  <br>
   Nous sommes désolé, mais votre commande a été annulée.
 
 order.delayed.subject: Votre commande %order.number% a été retardée
 order.delayed.body: |
   Bonjour,
-  <br>
   <br>
   Nous sommes désolé, mais votre commande aura un retard de %delay% minutes.
   <br>
@@ -86,12 +75,10 @@ task.done.subject: "La tâche #%task.id% a été terminée"
 task.done.body: |
   Bonjour,
   <br>
-  <br>
   La tâche #%task.id% a été terminée avec succès.
 
 task.failed.subject: "La tâche #%task.id% n'a pas pu être réalisée"
 task.failed.body: |
   Bonjour,
-  <br>
   <br>
   La tâche #%task.id% n'a pas pu être réalisée.

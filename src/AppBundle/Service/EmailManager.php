@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
+use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -14,6 +15,7 @@ class EmailManager
 {
     private $mailer;
     private $templating;
+    private $mjml;
     private $translator;
     private $settingsManager;
     private $transactionalAddress;
@@ -21,12 +23,14 @@ class EmailManager
     public function __construct(
         \Swift_Mailer $mailer,
         TwigEngine $templating,
+        RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
         $transactionalAddress)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
+        $this->mjml = $mjml;
         $this->translator = $translator;
         $this->settingsManager = $settingsManager;
         $this->transactionalAddress = $transactionalAddress;
@@ -92,9 +96,9 @@ class EmailManager
     public function createOrderCreatedMessageForCustomer(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/emails/order/created.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
             'order' => $order,
-        ]);
+        ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
@@ -105,10 +109,10 @@ class EmailManager
             'owner.order.created.subject',
             ['%order.number%' => $order->getNumber()],
             'emails');
-        $body = $this->templating->render('@App/emails/order/created.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
             'order' => $order,
             'is_owner' => true
-        ]);
+        ]));
 
         return $this->createHtmlMessage($subject, $body);
     }
@@ -116,10 +120,10 @@ class EmailManager
     public function createOrderCreatedMessageForAdmin(OrderInterface $order)
     {
         $subject = $this->translator->trans('admin.order.created.subject', [], 'emails');
-        $body = $this->templating->render('@App/emails/order/created.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/created.mjml.twig', [
             'order' => $order,
             'is_admin' => true
-        ]);
+        ]));
 
         return $this->createHtmlMessage($subject, $body);
     }
@@ -127,9 +131,9 @@ class EmailManager
     public function createOrderCancelledMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/emails/order/cancelled.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/cancelled.mjml.twig', [
             'order' => $order,
-        ]);
+        ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
@@ -137,9 +141,9 @@ class EmailManager
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/emails/order/accepted.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/accepted.mjml.twig', [
             'order' => $order,
-        ]);
+        ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
@@ -149,9 +153,9 @@ class EmailManager
         $key = $task->isDone() ? 'task.done.subject' : 'task.failed.subject';
 
         $subject = $this->translator->trans($key, ['%task.id%' => $task->getId()], 'emails');
-        $body = $this->templating->render('@App/emails/task/completed.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/task/completed.mjml.twig', [
             'task' => $task,
-        ]);
+        ]));
 
         return $this->createHtmlMessage($subject, $body);
     }
@@ -159,10 +163,10 @@ class EmailManager
     public function createOrderDelayedMessage(OrderInterface $order, $delay = 10)
     {
         $subject = $this->translator->trans('order.delayed.subject', ['%order.number%' => $order->getNumber()], 'emails');
-        $body = $this->templating->render('@App/emails/order/delayed.html.twig', [
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/delayed.mjml.twig', [
             'order' => $order,
             'delay' => $delay
-        ]);
+        ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
