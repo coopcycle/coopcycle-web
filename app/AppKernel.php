@@ -58,6 +58,7 @@ class AppKernel extends Kernel
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
+            new NotFloran\MjmlBundle\MjmlBundle(),
             new AppBundle\AppBundle(),
         ];
 

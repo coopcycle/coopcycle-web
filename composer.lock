@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55c447879217c964fe17ee1b73ad5ebf",
+    "content-hash": "45275d26e1476cdd2125f180603f578f",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5958,6 +5958,58 @@
                 "user-agent"
             ],
             "time": "2017-12-02T20:49:04+00:00"
+        },
+        {
+            "name": "notfloran/mjml-bundle",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/notFloran/mjml-bundle.git",
+                "reference": "0ec2c5f80928220259ac2bb0f0400a0beb45d1b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/0ec2c5f80928220259ac2bb0f0400a0beb45d1b8",
+                "reference": "0ec2c5f80928220259ac2bb0f0400a0beb45d1b8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.0",
+                "symfony/dependency-injection": "^4.0",
+                "symfony/process": "^4.0",
+                "symfony/twig-bundle": "^4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.10",
+                "matthiasnoback/symfony-config-test": "^4.0",
+                "phpstan/phpstan": "^0.9.2",
+                "phpunit/phpunit": "^7.4"
+            },
+            "suggest": {
+                "swiftmailer/swiftmailer": "Plugin to integrate MJML in SwiftMailer"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "NotFloran\\MjmlBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Floran Brutel",
+                    "email": "me@floran.fr"
+                }
+            ],
+            "description": "Symfony bundle for MJML",
+            "keywords": [
+                "email",
+                "mjml"
+            ],
+            "time": "2019-04-11T16:57:34+00:00"
         },
         {
             "name": "ocramius/package-versions",

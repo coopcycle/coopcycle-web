@@ -621,3 +621,7 @@ services:
       $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
       $providerKey: ~
     public: false
+
+  AppBundle\Mjml\MjmlServerRenderer:
+    arguments:
+      $client: '@csa_guzzle.client.mjml_server'
