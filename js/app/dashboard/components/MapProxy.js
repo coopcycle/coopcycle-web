@@ -95,6 +95,11 @@ export default class MapProxy {
 
       popupComponent = React.createRef()
 
+      const cb = () => {
+        this.taskMarkers.set(task['id'], marker)
+        this.taskPopups.set(task['id'], popupComponent)
+      }
+
       render(<LeafletPopupContent
         task={ task }
         ref={ popupComponent }
@@ -104,15 +109,12 @@ export default class MapProxy {
               window.Routing.generate('admin_task', { id: task.id }),
               () => $('#task-edit-modal').modal({ show: true })
             )
-        }} />, el)
+        }} />, el, cb)
 
       const popup = L.popup()
         .setContent(el)
 
       marker.bindPopup(popup)
-
-      this.taskMarkers.set(task['id'], marker)
-      this.taskPopups.set(task['id'], popupComponent)
 
     } else {
 
