@@ -37,6 +37,7 @@ use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
+use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
@@ -1277,5 +1278,53 @@ class AdminController extends Controller
         return $this->render('@App/admin/promotion_coupon.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/orders/{id}/emails", name="admin_order_email_preview")
+     */
+    public function orderEmailPreviewAction($id, Request $request, EmailManager $emailManager)
+    {
+        $order = $this->container->get('sylius.repository.order')->find($id);
+
+        if (!$order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $method = 'createOrderCreatedMessageForCustomer';
+        if ($request->query->has('method')) {
+            $method = $request->query->get('method');
+        }
+
+        $message = call_user_func_array([$emailManager, $method], [$order]);
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/tasks/{id}/emails", name="admin_task_email_preview")
+     */
+    public function taskEmailPreviewAction($id, Request $request, EmailManager $emailManager)
+    {
+        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+
+        if (!$task) {
+            throw $this->createNotFoundException(sprintf('Task #%d does not exist', $id));
+        }
+
+        $method = 'createTaskCompletedMessage';
+        if ($request->query->has('method')) {
+            $method = $request->query->get('method');
+        }
+
+        $message = call_user_func_array([$emailManager, $method], [$task]);
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
     }
 }

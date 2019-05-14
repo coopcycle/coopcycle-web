@@ -246,6 +246,7 @@ order.total_including_tax: Total (tax incl.)
 order.items_total: Total products
 order.total_tax: Taxes
 order.total_tax_by_rate: Total %name%
+order.preparation_expected_at: Preparation expected at %date%
 order.shipping_date.title: Your shipping date
 order.payment.title: Your payment informations
 order.payment.expiration.label: Expiration

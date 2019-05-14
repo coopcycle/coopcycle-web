@@ -242,6 +242,10 @@ csa_guzzle:
             config:
                 base_uri: "%browserless_base_uri%"
                 lazy: true
+        mjml_server:
+            config:
+                base_uri: "%mjml_server_base_uri%"
+                lazy: true
 
 sylius_taxation:
     driver: doctrine/orm
@@ -435,3 +439,8 @@ trikoder_oauth2:
     persistence:
         doctrine:
             entity_manager: default
+
+mjml:
+    renderer: 'service'
+    options:
+        service_id: 'AppBundle\Mjml\MjmlServerRenderer'

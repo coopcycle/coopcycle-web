@@ -62,6 +62,7 @@ install:
   - docker run -t -v $(pwd)/var/osrm:/data osrm/osrm-backend:$OSRM_VERSION osrm-customize /data/paris-france.osrm
   - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:$OSRM_VERSION osrm-routed --algorithm mld /data/paris-france.osrm
   - docker run -t -d -p 12111:12111 stripemock/stripe-mock
+  - docker run -t -d -p 8889:80 adrianrudnik/mjml-server
   # Run Selenium using host networking
   # https://github.com/elgalu/docker-selenium#dns
   # https://docs.docker.com/network/host/

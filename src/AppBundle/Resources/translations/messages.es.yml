@@ -250,6 +250,7 @@ order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
+order.preparation_expected_at: Preparación esperada a las %date%
 order.shipping_date.title: Tu horario de entrega
 order.payment.title: Tu información de pago
 order.payment.expiration.label: Caducidad

@@ -92,7 +92,8 @@
         "liip/imagine-bundle": "^2.1",
         "oneup/uploader-bundle": "^2.1",
         "trikoder/oauth2-bundle": "dev-master",
-        "sylius/promotion-bundle": "1.4.*"
+        "sylius/promotion-bundle": "1.4.*",
+        "notfloran/mjml-bundle": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

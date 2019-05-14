@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
+use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Twig\TwigEngine;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -14,12 +15,14 @@ class EmailManagerTest extends TestCase
     {
         $this->mailer = $this->prophesize(\Swift_Mailer::class);
         $this->twig = $this->prophesize(TwigEngine::class);
+        $this->mjml = $this->prophesize(RendererInterface::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
 
         $this->emailManager = new EmailManager(
             $this->mailer->reveal(),
             $this->twig->reveal(),
+            $this->mjml->reveal(),
             $this->translator->reveal(),
             $this->settingsManager->reveal(),
             'transactional@coopcycle.org'

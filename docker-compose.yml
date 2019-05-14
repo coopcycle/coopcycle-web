@@ -150,6 +150,11 @@ services:
     environment:
       - DEBUG=browserless/chrome*
 
+  mjml:
+    image: adrianrudnik/mjml-server
+    ports:
+      - 8889:80
+
 volumes:
   node_modules:
   pg_data:
