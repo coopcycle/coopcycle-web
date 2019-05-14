@@ -3,7 +3,7 @@
 {% block content %}
 <mj-column>
   {% if is_admin is defined and is_admin %}
-    <mj-text align="left" font-family="Open Sans" line-height="20px">
+    <mj-text align="left" line-height="20px">
     {% if order.foodtech %}
       {{ 'admin.order_foodtech.created.body' | trans({
         '%order.url%': url('admin_order', { id: order.id }),
@@ -19,7 +19,7 @@
     {{ 'order.view' | trans({}, 'emails') }}
     </mj-button>
   {% elseif is_owner is defined and is_owner %}
-    <mj-text align="left" font-family="Open Sans" line-height="20px">
+    <mj-text align="left" line-height="20px">
     {{ 'owner.order.created.body' | trans({
       '%order.url%': url('profile_restaurant_dashboard', { restaurantId: order.restaurant.id, order: order.id }),
       '%restaurant.name%': order.restaurant.name
@@ -27,7 +27,7 @@
     </mj-text>
     <mj-section border-top="1px solid #ecedee" border-bottom="1px solid #ecedee">
       <mj-column>
-        <mj-text align="center" font-family="Open Sans" line-height="20px">
+        <mj-text align="center" line-height="20px">
           {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|localizeddate('none', 'short') }) }}
         </mj-text>
       </mj-column>
@@ -37,7 +37,7 @@
     {{ 'order.view' | trans({}, 'emails') }}
     </mj-button>
   {% else %}
-    <mj-text align="left" font-family="Open Sans" line-height="20px">
+    <mj-text align="left" line-height="20px">
     {{ 'order.created.body' | trans({}, 'emails') | raw }}
     </mj-text>
     {% include '@App/emails/order/_partials/items.mjml.twig' %}
