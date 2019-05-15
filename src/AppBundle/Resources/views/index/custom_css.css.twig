@@ -53,4 +53,14 @@
 	color: {{ primary_color_darken|raw }};
 	{% endif %}
 }
+
+.address-autosuggest__container:before {
+	background-color: {{ primary_color|raw }};
+	{% if primary_color_is_dark %}
+	color: #ffffff;
+	{% endif %}
+	{% if primary_color_is_light %}
+	color: {{ primary_color_darken|raw }};
+	{% endif %}
+}
 {% endif %}
