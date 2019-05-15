@@ -48,4 +48,29 @@ class AssetsController extends AbstractController
             'primary_color_is_light' => $hex->isLight(),
         ], $response);
     }
+
+    /**
+     * @Route("/svg/custom.svg", name="custom_svg")
+     */
+    public function customSvgAction(Request $request, SettingsManager $settingsManager)
+    {
+        $primaryColor = $settingsManager->get('primary_color');
+
+        if (!$primaryColor) {
+            $primaryColor = '#f8f8f8';
+        }
+
+        $hex = new Hex($primaryColor);
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'image/svg+xml');
+
+        return $this->render('@App/index/custom_svg.svg.twig', [
+            'primary_color' => $primaryColor,
+            'primary_color_darken' => $hex->darken(20),
+            'primary_color_lighten' => $hex->lighten(20),
+            'primary_color_is_dark' => $hex->isDark(),
+            'primary_color_is_light' => $hex->isLight(),
+        ], $response);
+    }
 }
