@@ -71,6 +71,10 @@ services:
     arguments: [ '@coopcycle.settings_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
     tags: [ form.type ]
 
+  AppBundle\Form\AppearanceSettingsType:
+    arguments: [ '@coopcycle.settings_manager' ]
+    tags: [ form.type ]
+
   AppBundle\Form\TaskType:
     arguments: [ '@coopcycle.tag_manager' ]
     tags: [ form.type ]

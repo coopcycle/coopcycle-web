@@ -10,6 +10,9 @@
 	{% if primary_color_is_dark %}
 	color: #ffffff;
 	{% endif %}
+	{% if primary_color_is_light %}
+	color: {{ primary_color_darken|raw }};
+	{% endif %}
 }
 
 #topnav .navbar-nav > .open > a,
@@ -18,11 +21,17 @@
 	{% if primary_color_is_dark %}
 	background-color: {{ primary_color_lighten|raw }};
 	{% endif %}
+	{% if primary_color_is_light %}
+	background-color: {{ primary_color_darken|raw }};
+	{% endif %}
 }
 
 #topnav .navbar-toggle .icon-bar {
 	{% if primary_color_is_dark %}
 	background-color: #ffffff;
+	{% endif %}
+	{% if primary_color_is_light %}
+	background-color: {{ primary_color_darken|raw }};
 	{% endif %}
 }
 
@@ -31,6 +40,17 @@
 	{% if primary_color_is_dark %}
 	background-color: {{ primary_color_lighten|raw }};
 	{% endif %}
+	{% if primary_color_is_light %}
+	background-color: {{ primary_color_darken|raw }};
+	{% endif %}
 }
 
+.banner-title {
+	{% if primary_color_is_dark %}
+	color: #ffffff;
+	{% endif %}
+	{% if primary_color_is_light %}
+	color: {{ primary_color_darken|raw }};
+	{% endif %}
+}
 {% endif %}

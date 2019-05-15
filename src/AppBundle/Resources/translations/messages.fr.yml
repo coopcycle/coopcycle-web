@@ -66,6 +66,7 @@ adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
 adminDashboard.settings.title: Paramètres
+adminDashboard.settings_appearance.title: Apparence
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer
 adminDashboard.pricing.settings: Paramètres
@@ -440,6 +441,8 @@ form.settings.administrator_email.label: Email de l'administrateur
 form.settings.administrator_email.help: Les notifications seront envoyées à cet email
 form.settings.phone_number.label: Numéro de téléphone
 form.settings.phone_number.help: Ce numéro sera affiché aux clients
+form.appearance_settings.primary_color.label: Couleur primaire
+form.appearance_settings.primary_color.help: La couleur primaire de votre marque. Cette couleur sera utilisée dans la barre de navigation principale.
 form.maintenance.enable.label: Activer la maintenance
 form.maintenance.disable.label: Désactiver la maintenance
 form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'

@@ -1,0 +1,18 @@
+{% extends "@App/admin.html.twig" %}
+
+{% form_theme form '@App/form/settings.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.settings_appearance.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  {{ form_start(form) }}
+    {{ form_row(form.primary_color) }}
+    <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+  {{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

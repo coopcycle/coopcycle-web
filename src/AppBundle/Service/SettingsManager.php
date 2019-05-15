@@ -151,7 +151,7 @@ class SettingsManager
         }
     }
 
-    public function set($name, $value)
+    public function set($name, $value, $section = 'general')
     {
         $className = $this->configEntityName;
 
@@ -164,7 +164,7 @@ class SettingsManager
         if (!$setting) {
 
             $setting = new $className();
-            $setting->setSection('general');
+            $setting->setSection($section);
             $setting->setName($name);
 
             $this->doctrine

@@ -25,6 +25,7 @@ use AppBundle\Entity\Zone;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
+use AppBundle\Form\AppearanceSettingsType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
@@ -1053,6 +1054,33 @@ class AdminController extends Controller
             'stripe_livemode_form' => $stripeLivemodeForm->createView(),
             'can_enable_stripe_livemode' => $canEnableStripeLivemode,
         ];
+    }
+
+    /**
+     * @Route("/admin/settings/appearance", name="admin_settings_appearance")
+     */
+    public function appearanceSettingsAction(Request $request, SettingsManager $settingsManager)
+    {
+        $settings = [
+            'primary_color' => $settingsManager->get('primary_color'),
+        ];
+
+        $form = $this->createForm(AppearanceSettingsType::class, $settings);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $settings = $form->getData();
+
+            $settingsManager->set('primary_color', $settings['primary_color'], 'appearance');
+            $settingsManager->flush();
+
+            return $this->redirectToRoute('admin_settings_appearance');
+        }
+
+        return $this->render('@App/admin/settings_appearance.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
