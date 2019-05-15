@@ -42,6 +42,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\OrderTransitions;
+use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
@@ -1321,6 +1322,29 @@ class AdminController extends Controller
         }
 
         $message = call_user_func_array([$emailManager, $method], [$task]);
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/emails", name="admin_email_preview")
+     */
+    public function emailsPreviewAction(Request $request, MessageLoggingTwigSwiftMailer $mailer)
+    {
+        $method = 'sendConfirmationEmailMessage';
+        if ($request->query->has('method')) {
+            $method = $request->query->get('method');
+        }
+
+        $this->getUser()->setConfirmationToken('123456');
+
+        call_user_func_array([$mailer, $method], [$this->getUser()]);
+
+        $messages = $mailer->getMessages();
+        $message = current($messages);
 
         $response = new Response();
         $response->setContent($message->getBody());

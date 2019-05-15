@@ -3,15 +3,20 @@ registration.email.subject: |
 # Use rel="notrack" to make sure Mailjet does not rewrite links.
 # This is needed for deep links to work.
 registration.email.message: |
-  Hi %givenName%,<br><br>
-  To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.<br><br>
-  Welcome!<br><br>
-  The CoopCycle team
+  <h2>Welcome to %brand_name%, %username%</h2>
+  You’re receiving this message because you recently signed up for a %brand_name% account.
+  <br>
+  Confirm your email address by clicking the button below.
+registration.email.confirm: Confirm email
+registration.email.disclaimer: This link can only be used once to validate your account
 registration.email.textMessage: |
-  Hi %givenName%,\n\n
-  To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.\n\n
-  Welcome!\n\n
-  The CoopCycle team
+  Welcome to %brand_name%, %username%,\n\n
+  You’re receiving this message because you recently signed up for a %brand_name% account.\n
+  To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message:
+  <h2>Hello %username%</h2>
+  To reset your password, please click the button below.
+resetting.email.reset: Reset password
 
 order.view: View order
 

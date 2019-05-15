@@ -1,0 +1,28 @@
+{% block subject %}
+{%- autoescape false -%}
+{{ 'resetting.email.subject'|trans({ '%username%': user.username }, 'FOSUserBundle') }}
+{%- endautoescape -%}
+{% endblock %}
+
+{% block body_html %}
+	{% mjml %}
+  {% embed '@App/emails/layout.mjml.twig'%}
+    {% block content %}
+      <mj-column>
+        <mj-text align="left" line-height="20px">
+          {{ 'resetting.email.message'|trans({ '%username%': user.username }, 'emails')|raw }}
+        </mj-text>
+        <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ confirmationUrl }}">
+          {{ 'resetting.email.reset'|trans({}, 'emails') }}
+        </mj-button>
+	    </mj-column>
+    {% endblock %}
+  {% endembed %}
+  {% endmjml %}
+{% endblock %}
+
+{% block body_text %}
+{% autoescape false %}
+{{ 'resetting.email.message'|trans({ '%username%': user.username, '%confirmationUrl%': confirmationUrl }, 'FOSUserBundle') }}
+{% endautoescape %}
+{% endblock %}

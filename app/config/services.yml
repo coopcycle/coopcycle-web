@@ -626,3 +626,13 @@ services:
   AppBundle\Mjml\MjmlServerRenderer:
     arguments:
       $client: '@csa_guzzle.client.mjml_server'
+
+  AppBundle\Utils\MessageLoggingMailer: ~
+
+  AppBundle\Utils\MessageLoggingTwigSwiftMailer:
+    autowire: false
+    autoconfigure: false
+    public: true
+    parent: 'fos_user.mailer.twig_swift'
+    arguments:
+      $mailer: '@AppBundle\Utils\MessageLoggingMailer'
