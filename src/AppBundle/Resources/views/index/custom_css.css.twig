@@ -19,4 +19,18 @@
 	background-color: {{ primary_color_lighten|raw }};
 	{% endif %}
 }
+
+#topnav .navbar-toggle .icon-bar {
+	{% if primary_color_is_dark %}
+	background-color: #ffffff;
+	{% endif %}
+}
+
+#topnav .navbar-toggle:hover,
+#topnav .navbar-toggle:focus {
+	{% if primary_color_is_dark %}
+	background-color: {{ primary_color_lighten|raw }};
+	{% endif %}
+}
+
 {% endif %}
