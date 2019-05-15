@@ -4,11 +4,12 @@
 #topnav {
   background-color: {{ primary_color|raw }};
 }
-#topnav .navbar-brand {
-	color: #ffffff;
-}
+
+#topnav .navbar-brand,
 #topnav .navbar-nav > li > a {
+	{% if primary_color_is_dark %}
 	color: #ffffff;
+	{% endif %}
 }
 
 #topnav .navbar-nav > .open > a,
