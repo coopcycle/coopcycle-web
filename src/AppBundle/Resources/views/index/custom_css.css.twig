@@ -1,0 +1,21 @@
+/* Custom styles */
+
+{% if primary_color is defined and primary_color is not empty %}
+#topnav {
+  background-color: {{ primary_color|raw }};
+}
+#topnav .navbar-brand {
+	color: #ffffff;
+}
+#topnav .navbar-nav > li > a {
+	color: #ffffff;
+}
+
+#topnav .navbar-nav > .open > a,
+#topnav .navbar-nav > .open > a:hover,
+#topnav .navbar-nav > .open > a:focus {
+	{% if primary_color_is_dark %}
+	background-color: {{ primary_color_lighten|raw }};
+	{% endif %}
+}
+{% endif %}
