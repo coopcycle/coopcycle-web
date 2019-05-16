@@ -7,6 +7,14 @@ AppBundle\Entity\Sylius\Product:
             time_aware: false
             hard_delete: false
     fields:
+        imageName:
+            type: string
+            scale: 0
+            length: 255
+            unique: false
+            nullable: true
+            precision: 0
+            column: image_name
         deletedAt:
             type: datetime
             nullable: true
