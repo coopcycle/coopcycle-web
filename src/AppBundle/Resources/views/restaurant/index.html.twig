@@ -73,48 +73,37 @@
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
-        <div class="list-group">
+        <div class="restaurant-menu-section">
           {% for product in child.products %}
             {% set variant = product|sylius_resolve_variant %}
+            {% set product_image = vich_uploader_asset(product, 'imageFile') %}
             {# TODO Skip if no variant is defined #}
             {% if not product.enabled %}
-              <a class="list-group-item menu-item menu-item--unavailable">
-                <span class="menu-item-content">
-                  {{ product.name }}
-                  {% if product.description is not null %}
-                    <small class="menu-item-description">{{ product.description }}</small>
-                  {% endif %}
-                </span>
-                <span class="menu-item-price">
-                  <small>
-                    {% trans %}restaurant.unavailable{% endtrans %}
-                  </small>
-                </span>
-              </a>
+              <div class="restaurant-menu-section-item">
+                <a class="menu-item menu-item--unavailable">
+                  {% include '@App/_partials/restaurant/menu_item_inner.html.twig' %}
+                </a>
+              </div>
             {% else %}
               {% if product.simple %}
-              <div class="list-group-item nopadding">
+              <div class="restaurant-menu-section-item">
                 <form method="post"
                   action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
                   data-product-simple>
                   <button class="menu-item" type="submit">
-                    <span class="menu-item-content">
-                      {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
-                    </span>
-                    <span class="menu-item-price">{{ variant.price|price_format }}</span>
+                    {% include '@App/_partials/restaurant/menu_item_inner.html.twig' %}
                   </button>
                 </form>
               </div>
               {% else %}
-              <button
-                class="list-group-item menu-item"
-                data-toggle="modal"
-                data-target="#{{ product.code }}-options">
-                <span class="menu-item-content">
-                  {% include '@App/_partials/restaurant/menu_item_content.html.twig' %}
-                </span>
-                <span class="menu-item-price">{{ variant.price|price_format }}</span>
-              </button>
+              <div class="restaurant-menu-section-item">
+                <button
+                  class="menu-item"
+                  data-toggle="modal"
+                  data-target="#{{ product.code }}-options">
+                  {% include '@App/_partials/restaurant/menu_item_inner.html.twig' %}
+                </button>
+              </div>
               {% endif %}
             {% endif %}
           {% endfor %}
@@ -146,7 +135,7 @@
 
 </div>
 
-{# Modals for modifiers #}
+{# Modals for product options #}
 
 {% if restaurant.menuTaxon is not null %}
   {% for child in restaurant.menuTaxon.children %}
@@ -172,7 +161,7 @@
                 </h4>
                 <div class="list-group" {% if not option.additional %}data-product-option{% endif %}>
                   {% for option_value in option.values %}
-                    <div class="list-group-item modifier-item">
+                    <div class="list-group-item product-option-item">
                       {% if option.additional %}
                         <div class="checkbox nomargin">
                           <label>
