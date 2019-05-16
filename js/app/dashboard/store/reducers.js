@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux'
 import _ from 'lodash'
-import moment from 'moment'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+
+const moment = extendMoment(Moment)
 
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
 
@@ -49,6 +52,21 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
   case 'UPDATE_TASK':
+
+    const dateAsRange = moment.range(
+      moment(state.date).set({ hour:  0, minute:  0, second:  0 }),
+      moment(state.date).set({ hour: 23, minute: 59, second: 59 })
+    )
+
+    const range = moment.range(
+      moment(action.task.doneAfter),
+      moment(action.task.doneBefore)
+    )
+
+    if (!range.overlaps(dateAsRange)) {
+
+      return state
+    }
 
     let newUnassignedTasks = state.unassignedTasks.slice(0)
     let newTaskLists = state.taskLists.slice(0)
