@@ -414,6 +414,22 @@ liip_imagine:
                     strip_all: true
                     max: 80
                     progressive: true
+        product_thumbnail:
+            filters:
+                upscale:
+                    min: [ 256, 256 ]
+                thumbnail:
+                    size: [ 256, 256 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
@@ -421,6 +437,9 @@ liip_imagine:
         restaurant_thumbnail:
             filesystem:
                 data_root: '%kernel.project_dir%/web/images/restaurants'
+        product_thumbnail:
+            filesystem:
+                data_root: '%kernel.project_dir%/web/images/products'
 
 oneup_uploader:
     mappings:
