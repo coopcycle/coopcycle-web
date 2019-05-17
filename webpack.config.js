@@ -14,6 +14,7 @@ Encore
   .addEntry('js/delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
   .addEntry('js/notifications', './js/app/notifications/index.js')
   .addEntry('js/foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
+  .addEntry('js/product-form', './js/app/product/form.js')
   .addEntry('js/restaurant', './js/app/restaurant/index.js')
   .addEntry('js/restaurant-form', './js/app/restaurant/form.jsx')
   .addEntry('js/restaurant-menu-editor', './js/app/restaurant/menu-editor.js')

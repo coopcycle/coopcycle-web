@@ -28,9 +28,18 @@
     </div>
   {% endif %}
 
-  {{ form_row(form.name) }}
-  {{ form_row(form.description) }}
-  {{ form_row(form.enabled) }}
+  <div class="row">
+    <div class="col-sm-3">
+      <div id="product-image-dropzone"></div>
+    </div>
+    <div class="col-sm-9">
+      {{ form_row(form.name) }}
+      {{ form_row(form.description) }}
+      {{ form_row(form.enabled) }}
+    </div>
+  </div>
+
+  <hr>
 
   <div class="row">
     <div class="col-sm-6">
@@ -64,4 +73,14 @@
   </div>
 
 {{ form_end(form) }}
+
+<div id="product-form-data"
+  data-action-url="{{ oneup_uploader_endpoint('product') }}"
+  data-product-id="{{ product.id }}"
+  data-product-image="{{ vich_uploader_asset(product, 'imageFile') }}"></div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('js/product-form') }}
 {% endblock %}

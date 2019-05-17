@@ -596,13 +596,14 @@ services:
 
   AppBundle\Monolog\Formatter\ApiFormatter: ~
 
-  AppBundle\EventListener\Upload\RestaurantListener:
+  AppBundle\EventListener\Upload\UploadListener:
     arguments:
       - '@doctrine'
       - '@vich_uploader.property_mapping_factory'
       - '@vich_uploader.upload_handler'
-      - '@liip_imagine.binary.loader.restaurant_thumbnail'
       - '@liip_imagine.filter.manager'
+      - '@liip_imagine.binary.loader.restaurant_thumbnail'
+      - '@liip_imagine.binary.loader.product_thumbnail'
       - '@filesystem'
       - '@logger'
     tags:

@@ -432,6 +432,14 @@ oneup_uploader:
                 image/jpg: []
                 image/jpeg: []
                 image/png: []
+        product:
+            frontend: dropzone
+            storage:
+                directory: '%kernel.root_dir%/../web/images/products'
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []
 
 trikoder_oauth2:
     authorization_server:

@@ -74,7 +74,8 @@ $(function() {
     dropzone: {
       url: formData.dataset.actionUrl,
       params: {
-        restaurant: formData.dataset.restaurantId
+        type: 'restaurant',
+        id: formData.dataset.restaurantId
       }
     },
     image: formData.dataset.restaurantImage,
