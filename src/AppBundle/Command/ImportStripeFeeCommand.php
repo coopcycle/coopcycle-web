@@ -87,8 +87,15 @@ class ImportStripeFeeCommand extends Command
 
             $this->io->section(sprintf('Importing Stripe fees for order #%d', $order->getId()));
 
-            $lastPayment = $order->getLastPayment('completed');
-            $stripeUserId = $lastPayment->getStripeUserId();
+            $lastCompletedPayment = $order->getLastPayment('completed');
+
+            if (!$lastCompletedPayment) {
+                $lastPayment = $order->getLastPayment();
+                $this->io->text(sprintf('Last payment is in state %s, skipping…', $lastPayment->getState()));
+                continue;
+            }
+
+            $stripeUserId = $lastCompletedPayment->getStripeUserId();
 
             $stripeOptions = [];
             if ($stripeUserId) {
@@ -97,7 +104,7 @@ class ImportStripeFeeCommand extends Command
 
             try {
 
-                $charge = Stripe\Charge::retrieve($lastPayment->getCharge(), $stripeOptions);
+                $charge = Stripe\Charge::retrieve($lastCompletedPayment->getCharge(), $stripeOptions);
                 $balanceTransaction = Stripe\BalanceTransaction::retrieve($charge->balance_transaction, $stripeOptions);
 
                 $stripeFee = 0;
