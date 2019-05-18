@@ -604,6 +604,7 @@ services:
       - '@liip_imagine.filter.manager'
       - '@liip_imagine.binary.loader.restaurant_thumbnail'
       - '@liip_imagine.binary.loader.product_thumbnail'
+      - '@coopcycle.settings_manager'
       - '@filesystem'
       - '@logger'
     tags:

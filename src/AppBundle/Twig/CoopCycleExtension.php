@@ -47,6 +47,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_maintenance', array(MaintenanceResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner', array(BannerResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner_message', array(BannerResolver::class, 'getMessage')),
+            new TwigFunction('coopcycle_logo', array(AppearanceRuntime::class, 'logo')),
             new TwigFunction('stripe_is_livemode', array(StripeResolver::class, 'isLivemode')),
             new TwigFunction('stripe_can_enable_livemode', array(StripeResolver::class, 'canEnableLivemode')),
             new TwigFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),

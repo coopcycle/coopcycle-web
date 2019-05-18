@@ -4,6 +4,7 @@ namespace AppBundle\EventListener\Upload;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Service\SettingsManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Liip\ImagineBundle\Binary\Loader\LoaderInterface;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -22,6 +23,7 @@ final class UploadListener
     private $logger;
     private $restaurantImagesLoader;
     private $productImagesLoader;
+    private $settingsManager;
     private $filterManager;
     private $filesystem;
 
@@ -32,6 +34,7 @@ final class UploadListener
         FilterManager $filterManager,
         LoaderInterface $restaurantImagesLoader,
         LoaderInterface $productImagesLoader,
+        SettingsManager $settingsManager,
         Filesystem $filesystem,
         LoggerInterface $logger)
     {
@@ -41,6 +44,7 @@ final class UploadListener
         $this->filterManager = $filterManager;
         $this->restaurantImagesLoader = $restaurantImagesLoader;
         $this->productImagesLoader = $productImagesLoader;
+        $this->settingsManager = $settingsManager;
         $this->filesystem = $filesystem;
         $this->logger = $logger;
     }
@@ -48,11 +52,18 @@ final class UploadListener
     public function onUpload(PostPersistEvent $event)
     {
         $request = $event->getRequest();
+
+        $type = $request->get('type');
+
+        if ($type === 'logo') {
+
+            return $this->onLogoUpload($event);
+        }
+
         $response = $event->getResponse();
         $file = $event->getFile();
         $config = $event->getConfig();
 
-        $type = $request->get('type');
         $id = $request->get('id');
 
         $objectClass = null;
@@ -99,5 +110,16 @@ final class UploadListener
         } catch (NotLoadableException $e) {
             $this->logger->error('An error occured while post-processing uploaded image');
         }
+    }
+
+    private function onLogoUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $config = $event->getConfig();
+
+        $targetFile = $file->move($config['storage']['directory'], 'logo.png');
+
+        $this->settingsManager->set('custom_logo', 'yes', 'appearance');
+        $this->settingsManager->flush();
     }
 }

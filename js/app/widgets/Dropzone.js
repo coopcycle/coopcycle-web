@@ -8,6 +8,8 @@ export default function(el, options) {
 
   const [ width, height ] = options.size
 
+  const croppieFormat = options.hasOwnProperty('croppie') ? options.croppie.format : 'jpeg'
+
   const $dropzoneContainer = $('<div>')
   $dropzoneContainer.addClass('dropzone')
   $dropzoneContainer.addClass('dropzone--blue')
@@ -111,12 +113,12 @@ export default function(el, options) {
 
         // Get the output file data from Croppie
         croppie.result({
-          type:'blob',
+          type: 'blob',
           size: {
             width: width,
             height: height
           },
-          format: 'jpeg'
+          format: croppieFormat
         }).then(function(blob) {
 
           // Create a new Dropzone file thumbnail
@@ -149,7 +151,8 @@ export default function(el, options) {
           width: width,
           height: height,
           type: 'square'
-        }
+        },
+        enforceBoundary: false
       })
 
       // Tell Croppie to load the file

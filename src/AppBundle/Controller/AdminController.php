@@ -1061,6 +1061,13 @@ class AdminController extends Controller
      */
     public function appearanceSettingsAction(Request $request, SettingsManager $settingsManager)
     {
+        $customLogo = $settingsManager->get('custom_logo');
+
+        $hasCustomLogo = false;
+        if (!empty($customLogo)) {
+            $hasCustomLogo = filter_var($customLogo, FILTER_VALIDATE_BOOLEAN);
+        }
+
         $settings = [
             'primary_color' => $settingsManager->get('primary_color'),
         ];
@@ -1079,6 +1086,7 @@ class AdminController extends Controller
         }
 
         return $this->render('@App/admin/settings_appearance.html.twig', [
+            'has_custom_logo' => $hasCustomLogo,
             'form' => $form->createView(),
         ]);
     }
