@@ -59,6 +59,7 @@ class AppKernel extends Kernel
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
             new NotFloran\MjmlBundle\MjmlBundle(),
+            new Sentry\SentryBundle\SentryBundle(),
             new AppBundle\AppBundle(),
         ];
 
@@ -66,8 +67,6 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
-        } else if (in_array($this->getEnvironment(), ['prod'], true)) {
-            $bundles[] = new Sentry\SentryBundle\SentryBundle();
         }
 
         return $bundles;
