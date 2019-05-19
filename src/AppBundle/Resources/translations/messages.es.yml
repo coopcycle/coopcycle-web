@@ -551,8 +551,8 @@ form.checkout_address.notes.placeholder: |
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
 form.checkout_address.promotion_coupon.label: Código promocional
 
-form.orders_export.start.label: Inicio
-form.orders_export.end.label: Final
+form.task_export.start.label: Inicio
+form.task_export.end.label: Final
 
 form.api_app.name.label: Nombre de la aplicación
 form.api_app.store.label: Tienda

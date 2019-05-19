@@ -26,11 +26,27 @@ class TaskExportType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $firstDayOfThisMonth = new \DateTime('first day of this month');
+
+        $builder
+            ->add('start', DateType::class, [
+                'label' => 'form.task_export.start.label',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+                'data' => $firstDayOfThisMonth,
+            ])
+            ->add('end', DateType::class, [
+                'label' => 'form.task_export.end.label',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+                'data' => new \DateTime(),
+            ]);
+
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
 
             $taskExport = $event->getForm()->getData();
 
-            $assignedTasks = $this->taskRepository->findAssigned($taskExport->date);
+            $assignedTasks = $this->taskRepository->findTasksByDateRange($taskExport->start, $taskExport->end);
 
             $csv = CsvWriter::createFromString('');
             $csv->insertOne([
@@ -43,7 +59,8 @@ class TaskExportType extends AbstractType
                 'comments',
                 'event.DONE.notes',
                 'event.FAILED.notes',
-                'finishedAt'
+                'finishedAt',
+                'courier'
             ]);
 
             $records = [];
@@ -71,7 +88,8 @@ class TaskExportType extends AbstractType
                     $task->getComments(),
                     $task->hasEvent(Event\TaskDone::messageName()) ? $task->getLastEvent(Event\TaskDone::messageName())->getData('notes') : '',
                     $task->hasEvent(Event\TaskFailed::messageName()) ? $task->getLastEvent(Event\TaskFailed::messageName())->getData('notes') : '',
-                    $finishedAt
+                    $finishedAt,
+                    $task->isAssigned() ? $task->getAssignedCourier() : ''
                 ];
             }
             $csv->insertAll($records);

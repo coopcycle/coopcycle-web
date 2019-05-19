@@ -105,7 +105,8 @@ trait AdminDashboardTrait
         ]);
 
         $taskExport = new \stdClass();
-        $taskExport->date = $date;
+        $taskExport->start = new \DateTime('first day of this month');
+        $taskExport->end = new \DateTime();
         $taskExport->csv = '';
 
         $taskExportForm = $this->createForm(TaskExportType::class, $taskExport);

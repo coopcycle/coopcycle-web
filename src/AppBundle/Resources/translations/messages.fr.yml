@@ -553,8 +553,8 @@ form.checkout_address.notes.placeholder: |
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 
-form.orders_export.start.label: Début
-form.orders_export.end.label: Fin
+form.task_export.start.label: Début
+form.task_export.end.label: Fin
 
 form.api_app.name.label: Nom de l'application
 form.api_app.store.label: Magasin
