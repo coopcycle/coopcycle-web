@@ -93,7 +93,8 @@
         "oneup/uploader-bundle": "^2.1",
         "trikoder/oauth2-bundle": "dev-master",
         "sylius/promotion-bundle": "1.5.*",
-        "notfloran/mjml-bundle": "^3.0"
+        "notfloran/mjml-bundle": "^3.0",
+        "martin-georgiev/postgresql-for-doctrine": "^1.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",

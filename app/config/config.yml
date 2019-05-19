@@ -106,6 +106,9 @@ doctrine:
                 ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
                 ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
                 similarity: AppBundle\Doctrine\Functions\Similarity
+                TSRANGE: AppBundle\Doctrine\Functions\TsRange
+                OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
+                CAST: DoctrineExtensions\Query\Mysql\Cast
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
