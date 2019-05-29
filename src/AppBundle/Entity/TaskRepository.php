@@ -35,7 +35,7 @@ class TaskRepository extends EntityRepository
 
         return $this->createQueryBuilder('t')
             ->andWhere('OVERLAPS(TSRANGE(t.doneAfter, t.doneBefore), CAST(:range AS tsrange)) = TRUE')
-            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')))
+            ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')))
             ->getQuery()
             ->getResult();
     }

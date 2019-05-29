@@ -26,27 +26,28 @@ class TaskExportType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $firstDayOfThisMonth = new \DateTime('first day of this month');
-
         $builder
             ->add('start', DateType::class, [
                 'label' => 'form.task_export.start.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
-                'data' => $firstDayOfThisMonth,
             ])
             ->add('end', DateType::class, [
                 'label' => 'form.task_export.end.label',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
-                'data' => new \DateTime(),
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
 
             $taskExport = $event->getForm()->getData();
 
-            $assignedTasks = $this->taskRepository->findTasksByDateRange($taskExport->start, $taskExport->end);
+            $data = $event->getData();
+
+            $tasks = $this->taskRepository->findTasksByDateRange(
+                new \DateTime($data['start']),
+                new \DateTime($data['end'])
+            );
 
             $csv = CsvWriter::createFromString('');
             $csv->insertOne([
@@ -64,7 +65,7 @@ class TaskExportType extends AbstractType
             ]);
 
             $records = [];
-            foreach ($assignedTasks as $task) {
+            foreach ($tasks as $task) {
                 $address = $task->getAddress();
                 $finishedAt = '';
 
