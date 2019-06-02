@@ -6,7 +6,7 @@
 {% set promotion_coupon = form.vars.data %}
 {% set is_new = (promotion_coupon.id is null) %}
 <li><a href="{{ path('admin_promotions') }}">{{ 'promotions.breadcrumb'|trans }}</a></li>
-<li><a href="{{ path('admin_promotion', { id: promotion_coupon.promotion.id }) }}">{{ promotion_coupon.promotion.name }}</a></li>
+<li>{{ promotion_coupon.promotion.name }}</li>
 {% if is_new %}
 <li>{{ 'basics.add'|trans }}</li>
 {% else %}

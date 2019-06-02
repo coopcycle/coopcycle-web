@@ -95,7 +95,7 @@ adminDashboard.zones.send: Enviar
 
 adminDashboard.back.title: Volver al sitio
 
-adminDashboard.promotions.title: Promociones
+adminDashboard.promotions.title: Descuentos
 
 deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor introduzca
   un precio.
@@ -559,6 +559,11 @@ form.api_app.store.label: Tienda
 form.api_app.client_id.label: Login
 form.api_app.client_secret.label: Clave secreta
 
+form.credit_note.user_search.help: El descuento solo será utilizable por este usuario.
+form.credit_note.amount.label: Suma
+form.credit_note.name.label: Nombre
+form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
+
 promotion_coupon.used.label: Número de usos
 
 product_option.strategy.free: Gratis
@@ -676,8 +681,17 @@ maintenance.text: Site under maintenance<br>We will be back soon
 api_apps.breadcrumb: Clientes API
 api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación para autenticar.
 
-promotions.breadcrumb: Promociones
+promotions.breadcrumb: Descuentos
+promotions.breadcrumb.new_credit_note: Nueva nota de credito
+promotions.heading.free_delivery: Entrega gratis
+promotions.heading.free_delivery.help: Crear códigos promocionales para ofrecer entrega
+promotions.heading.credit_note: Notas de credito
+promotions.heading.credit_note.help: Crear notas de credito únicas para los clientes
 promotions.promotion_coupon.success: Tu código promocional %code% ha sido tomado en cuenta
+
+promotions.create_credit_note_coupon: Añadir una nota de credito
+
+ search.users: Buscar un usuario…
 
 allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
 allergens.CRUSTACEANS: Crustáceos

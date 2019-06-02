@@ -261,12 +261,32 @@ services:
         label: 'Delivery percentage discount'
         form_type: AppBundle\Form\Sylius\Promotion\Action\PercentageDiscountConfigurationType
 
+  sylius.promotion_action.fixed_discount:
+    class: AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: order_fixed_discount
+        label: 'Fixed discount'
+        form_type: AppBundle\Form\Sylius\Promotion\Action\FixedDiscountConfigurationType
+
   sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
     class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionCouponPerCustomerUsageLimitEligibilityChecker
     arguments:
       - "@sylius.repository.order"
     tags:
       - { name: sylius.promotion_coupon_eligibility_checker }
+
+  sylius.promotion.promotion_rule_checker.is_customer:
+    class: AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker
+    arguments:
+      - "@security.token_storage"
+    tags:
+        - name: sylius.promotion_rule_checker
+          type: is_customer
+          label: 'Is customer'
+          form_type: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
 
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory

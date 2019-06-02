@@ -35,7 +35,7 @@
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
   {% for adjusment in order.adjustments %}
-    {% if adjusment.type == 'delivery_promotion' %}
+    {% if adjusment.type == 'delivery_promotion' or adjusment.type == 'order_promotion' %}
       {% set promotion_adjustments = [ adjusment ]|merge(promotion_adjustments) %}
     {% endif %}
   {% endfor %}

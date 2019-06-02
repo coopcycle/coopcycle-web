@@ -127,3 +127,8 @@ services:
     class: AppBundle\Form\Extension\PromotionCouponTypeExtension
     tags:
       - { name: form.type_extension, extended_type: Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType }
+
+  sylius.form.type.promotion_rule.premium_customer_configuration:
+    class: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
+    tags:
+        - { name: form.type }
