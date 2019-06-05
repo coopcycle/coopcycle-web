@@ -28,7 +28,7 @@ How to run a local instance
     You will need to [download openssl](http://gnuwin32.sourceforge.net/packages/openssl.htm) to generate certificates.
     The make script suppose that both are found [in your Path environment variable](https://www.computerhope.com/issues/ch000549.htm).
 
-    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. You can use CoopCycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
+    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/engine/installation/). `docker-compose` binary is to be installed independently. Make sure to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**. You can use CoopCycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
 
 * Setup Google Maps API
 
