@@ -66,8 +66,11 @@ install:
   # Run Selenium using host networking
   # https://github.com/elgalu/docker-selenium#dns
   # https://docs.docker.com/network/host/
-  - docker pull elgalu/selenium
-  - docker run -d --name=grid --net=host --pid=host --network=host --add-host test.coopcycle.org:127.0.0.1 -p 4444:24444 -p 5900:25900 -e TZ="Europe/Paris" -e SELENIUM_HUB_PORT=4444 -v /dev/shm:/dev/shm --privileged elgalu/selenium
+  # We use a fixed version to avoid an error on latest Chrome
+  # https://github.com/Behat/Behat/issues/1121
+  # https://github.com/instaclick/php-webdriver/blob/master/lib/WebDriver/AbstractWebDriver.php#L145-L150
+  - docker pull elgalu/selenium:3.141.59-p14
+  - docker run -d --name=grid --net=host --pid=host --network=host --add-host test.coopcycle.org:127.0.0.1 -p 4444:24444 -p 5900:25900 -e TZ="Europe/Paris" -e SELENIUM_HUB_PORT=4444 -v /dev/shm:/dev/shm --privileged elgalu/selenium:3.141.59-p14
   # Configure php-fpm
   # @see https://docs.travis-ci.com/user/languages/php/
   # @see http://php.net/manual/fr/install.fpm.configuration.php#clear-env
