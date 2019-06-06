@@ -17,8 +17,10 @@ RUN set -xe \
     && apk add --no-cache \
         libpng \
         libjpeg-turbo \
+        freetype \
         libpng-dev \
         libjpeg-turbo-dev \
+        freetype-dev \
     && apk add --no-cache \
         jpegoptim \
         optipng \
@@ -27,6 +29,7 @@ RUN set -xe \
     && docker-php-ext-configure pdo_pgsql \
     && docker-php-ext-configure gd \
         --with-gd \
+        --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install \

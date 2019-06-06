@@ -3461,16 +3461,16 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v5.8.17",
+            "version": "v5.8.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
-                "reference": "f25be6bcdb77da215f9c7fd16899c213c8a58beb"
+                "reference": "2eb67998857161904289db33e703e1a925243731"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/cache/zipball/f25be6bcdb77da215f9c7fd16899c213c8a58beb",
-                "reference": "f25be6bcdb77da215f9c7fd16899c213c8a58beb",
+                "url": "https://api.github.com/repos/illuminate/cache/zipball/2eb67998857161904289db33e703e1a925243731",
+                "reference": "2eb67998857161904289db33e703e1a925243731",
                 "shasum": ""
             },
             "require": {
@@ -3506,20 +3506,20 @@
             ],
             "description": "The Illuminate Cache package.",
             "homepage": "https://laravel.com",
-            "time": "2019-04-22T18:38:59+00:00"
+            "time": "2019-05-26T12:37:11+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.8.17",
+            "version": "v5.8.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "acd524087bcebcc0979748e84ccc0876395ae497"
+                "reference": "c4aedc2d440a22a798f8b060a4ee52d3ee8881d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/acd524087bcebcc0979748e84ccc0876395ae497",
-                "reference": "acd524087bcebcc0979748e84ccc0876395ae497",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/c4aedc2d440a22a798f8b060a4ee52d3ee8881d2",
+                "reference": "c4aedc2d440a22a798f8b060a4ee52d3ee8881d2",
                 "shasum": ""
             },
             "require": {
@@ -3550,20 +3550,20 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2019-05-14T10:54:47+00:00"
+            "time": "2019-06-02T04:52:04+00:00"
         },
         {
             "name": "illuminate/support",
-            "version": "v5.8.17",
+            "version": "v5.8.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "128c6aaa1599811a04fd10c2d68e1213e433da3f"
+                "reference": "318bea0200dc61888d55f52b8d5d029434684e31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/128c6aaa1599811a04fd10c2d68e1213e433da3f",
-                "reference": "128c6aaa1599811a04fd10c2d68e1213e433da3f",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/318bea0200dc61888d55f52b8d5d029434684e31",
+                "reference": "318bea0200dc61888d55f52b8d5d029434684e31",
                 "shasum": ""
             },
             "require": {
@@ -3611,7 +3611,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2019-05-14T13:37:34+00:00"
+            "time": "2019-05-31T06:33:24+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -4627,16 +4627,16 @@
         },
         {
             "name": "laravolt/avatar",
-            "version": "2.2.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravolt/avatar.git",
-                "reference": "0bd373ca7f19600b9b78316dffafba9247cdfbc2"
+                "reference": "58470dbbac0704772d87e775ac60dcd1580f022a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravolt/avatar/zipball/0bd373ca7f19600b9b78316dffafba9247cdfbc2",
-                "reference": "0bd373ca7f19600b9b78316dffafba9247cdfbc2",
+                "url": "https://api.github.com/repos/laravolt/avatar/zipball/58470dbbac0704772d87e775ac60dcd1580f022a",
+                "reference": "58470dbbac0704772d87e775ac60dcd1580f022a",
                 "shasum": ""
             },
             "require": {
@@ -4689,7 +4689,7 @@
                 "laravel",
                 "laravolt"
             ],
-            "time": "2019-02-14T01:09:22+00:00"
+            "time": "2019-05-24T23:46:54+00:00"
         },
         {
             "name": "lcobucci/jwt",
