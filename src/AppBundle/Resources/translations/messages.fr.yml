@@ -697,7 +697,7 @@ embed.delivery.summary: 'Vous avez demandé une course qui vous sera déposée l
 
   <br>
 
-  Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax%€ TTC</strong>.
+  Selon nos tarifs, cette course vous coûtera <strong>%total_including_tax% TTC</strong>.
 
   '
 embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
