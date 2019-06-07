@@ -151,21 +151,27 @@ class SettingsManager
         }
     }
 
-    public function set($name, $value)
+    public function set($name, $value, $section = null)
     {
         $className = $this->configEntityName;
 
+        $params = [
+            'name' => $name,
+        ];
+
+        if (!empty($section)) {
+            $params['section'] = $section;
+        }
+
         $setting = $this->doctrine
             ->getRepository($className)
-            ->findOneBy([
-                'name' => $name
-            ]);
+            ->findOneBy($params);
 
         if (!$setting) {
 
             $setting = new $className();
-            $setting->setSection('general');
             $setting->setName($name);
+            $setting->setSection($section);
 
             $this->doctrine
                 ->getManagerForClass($className)
