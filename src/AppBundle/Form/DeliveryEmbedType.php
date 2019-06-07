@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Service\SettingsManager;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -17,19 +18,27 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class DeliveryEmbedType extends DeliveryType
 {
+    private $settingsManager;
+    private $countryCode;
+
     public function __construct(
         RoutingInterface $routing,
+        SettingsManager $settingsManager,
         TranslatorInterface $translator,
         $countryCode)
     {
         parent::__construct($routing, $translator);
 
+        $this->settingsManager = $settingsManager;
         $this->countryCode = $countryCode;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $options = array_merge($options, ['with_store' => false]);
+        $options = array_merge($options, [
+            'with_store' => false,
+            'with_vehicle' => $this->settingsManager->getBoolean('embed.delivery.withVehicle'),
+        ]);
 
         parent::buildForm($builder, $options);
 

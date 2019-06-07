@@ -3,6 +3,10 @@
   {{ form_row(form.pickup) }}
   {{ form_row(form.dropoff) }}
 
+  {% if form.vehicle is defined %}
+    {{ form_row(form.vehicle) }}
+  {% endif %}
+
   {{ form_row(form.name) }}
   {{ form_row(form.email) }}
   {{ form_row(form.telephone) }}

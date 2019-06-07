@@ -566,6 +566,11 @@ form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
 
 form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de vehículo
 
+form.delivery_embed.name.label: Nombre
+form.delivery_embed.name.help: Vuestro nombre o el nombre de la empresa
+form.delivery_embed.telephone.label: Número de teléfono
+form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg.
+
 promotion_coupon.used.label: Número de usos
 
 product_option.strategy.free: Gratis

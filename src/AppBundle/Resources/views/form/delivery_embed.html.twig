@@ -22,6 +22,13 @@
 <span class="help-block">{% trans %}form.delivery_embed.name.help{% endtrans %}</span>
 {% endblock %}
 
+{% block _delivery_vehicle_widget %}
+<div class="alert alert-info">
+  {{ 'form.delivery_embed.vehicle.disclaimer'|trans }}
+</div>
+{{ block('vehicle_widget') }}
+{% endblock %}
+
 {# Pickup #}
 
 {% block _delivery_pickup_row %}

@@ -1069,8 +1069,7 @@ class AdminController extends Controller
         $pricingRuleSet = null;
 
         $pricingRuleSetId = $settingsManager->get('embed.delivery.pricingRuleSet');
-        $withVehicle = $settingsManager->get('embed.delivery.withVehicle');
-        $withVehicle = filter_var($withVehicle, FILTER_VALIDATE_BOOLEAN);
+        $withVehicle = $settingsManager->getBoolean('embed.delivery.withVehicle');
 
         if ($pricingRuleSetId) {
             $pricingRuleSet = $this->getDoctrine()

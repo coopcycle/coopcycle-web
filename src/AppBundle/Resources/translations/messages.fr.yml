@@ -373,6 +373,7 @@ form.payment.refund_application_fee.help: |
 form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
 form.delivery_embed.telephone.label: Numéro de téléphone
+form.delivery_embed.vehicle.disclaimer: Nous livrons en vélo cargo les objets de plus de 50x40x20 (cm) ou dont le poids excède 6kg
 form.address.streetAddress.label: Adresse
 form.address.streetAddress.error.noLatLng: Veuillez sélectionner une adresse dans
   la liste déroulante

@@ -44,7 +44,7 @@ services:
       - { name: form.type }
 
   AppBundle\Form\DeliveryEmbedType:
-    arguments: [ '@routing_service', '@translator', '%country_iso%' ]
+    arguments: [ '@routing_service', '@coopcycle.settings_manager', '@translator', '%country_iso%' ]
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:
