@@ -130,7 +130,7 @@ class Register
         $response = new JWTAuthenticationSuccessResponse($jwt);
         $event    = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
 
-        $this->dispatcher->dispatch(Events::AUTHENTICATION_SUCCESS, $event);
+        $this->dispatcher->dispatch($event, Events::AUTHENTICATION_SUCCESS);
         $response->setData($event->getData());
 
         return $response;

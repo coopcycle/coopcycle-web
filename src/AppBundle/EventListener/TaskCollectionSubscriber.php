@@ -64,7 +64,7 @@ class TaskCollectionSubscriber implements EventSubscriber
 
         if ($entity instanceof TaskCollectionInterface) {
             $this->calculate($entity);
-            $this->dispatcher->dispatch(TaskCollectionChangeEvent::NAME, new TaskCollectionChangeEvent($entity));
+            $this->dispatcher->dispatch(new TaskCollectionChangeEvent($entity), TaskCollectionChangeEvent::NAME);
         }
     }
 
