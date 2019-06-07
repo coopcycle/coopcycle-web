@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Form\TaskExportType;
@@ -15,11 +16,15 @@ use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RequestContext;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
 {
@@ -342,5 +347,35 @@ trait AdminDashboardTrait
         ]);
 
         return new JsonResponse($taskListNormalized);
+    }
+
+    /**
+     * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
+     */
+    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage)
+    {
+        $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
+
+        if (!$image) {
+            throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));
+        }
+
+        $imagePath = $storage->resolvePath($image, 'file');
+
+        $response = new BinaryFileResponse($imagePath);
+
+        $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
+        if ($mimeTypeGuesser->isSupported()) {
+            $response->headers->set('Content-Type', $mimeTypeGuesser->guess($imagePath));
+        } else {
+            $response->headers->set('Content-Type', 'text/plain');
+        }
+
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            basename($imagePath)
+        );
+
+        return $response;
     }
 }
