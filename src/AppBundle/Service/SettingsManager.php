@@ -112,6 +112,11 @@ class SettingsManager
         } catch (\RuntimeException $e) {}
     }
 
+    public function getBoolean($name)
+    {
+        return filter_var($this->get($name), FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function isStripeLivemode()
     {
         $livemode = $this->get('stripe_livemode');
