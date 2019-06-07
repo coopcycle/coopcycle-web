@@ -69,7 +69,7 @@ services:
       - browserless
     environment:
       SYMFONY_ENV: dev
-      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80","sessions":{"selenium2":{"selenium2":{"wd_host":"http://zalenium:4444/wd/hub"}}}}}}'
+      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
       ASSETS_BASE_URL: http://webpack:8080
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
@@ -77,6 +77,8 @@ services:
     volumes:
       - 'php_cache:/srv/coopcycle/var/cache'
       - './:/srv/coopcycle:cached'
+    cap_add:
+      - SYS_ADMIN
 
   nginx:
     image: 'nginx:1.11-alpine'
@@ -130,19 +132,6 @@ services:
     image: stripemock/stripe-mock:latest
     ports:
       - '12111:12111'
-
-  zalenium:
-    image: dosel/zalenium
-    tty: true
-    volumes:
-      - /tmp/videos:/home/seluser/videos
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 4444:4444
-    command: >
-      start --timeZone "Europe/Paris"
-    environment:
-      - PULL_SELENIUM_IMAGE=true
 
   browserless:
     image: browserless/chrome

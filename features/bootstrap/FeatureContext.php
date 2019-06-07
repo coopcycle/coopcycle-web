@@ -41,12 +41,19 @@ use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Panther\ProcessManager\WebServerReadinessProbeTrait;
+use DMore\ChromeDriver\ChromeDriver;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpClient\Exception\TransportException;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareContext
 {
+    use WebServerReadinessProbeTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -121,6 +128,18 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         return $this->kernel->getContainer();
     }
 
+    private function isChromeRunning()
+    {
+        try {
+            $client = HttpClient::create(['timeout' => 15]);
+            $response = $client->request('GET', 'http://127.0.0.1:9222/json');
+
+            return 200 === $response->getStatusCode();
+        } catch (TransportException $e) {}
+
+        return false;
+    }
+
     /**
      * @BeforeScenario
      */
@@ -134,6 +153,34 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         // @see https://github.com/minkphp/Mink/commit/acf5fb1ec70b7de4902daf75301356702a26e6da
         // @see https://github.com/minkphp/Mink/issues/731
         if (!$this->minkContext->getSession()->isStarted()) {
+
+            $driver = $this->minkContext->getSession()->getDriver();
+
+            if ($driver instanceof ChromeDriver) {
+
+                // If Chrome is not running, launch it
+                if (!$this->isChromeRunning()) {
+                    $this->process = new Process([
+                        '/usr/bin/chromium-browser',
+                        '--disable-gpu',
+                        '--headless',
+                        '--remote-debugging-address=0.0.0.0',
+                        '--remote-debugging-port=9222',
+                        '--no-sandbox',
+                        // Fix Blocked a frame with origin "X" from accessing a cross-origin frame
+                        // @see https://www.chromium.org/Home/chromium-security/site-isolation
+                        '--disable-web-security',
+                        '--disable-site-isolation-trials',
+                    ]);
+
+                    if (!$this->process->isRunning()) {
+                        $this->checkPortAvailable('127.0.0.1', 9222);
+                        $this->process->start();
+                        $this->waitUntilReady($this->process, 'http://127.0.0.1:9222/json', false, 15);
+                    }
+                }
+            }
+
             $this->minkContext->getSession()->start();
         }
     }
@@ -951,18 +998,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertNotNull($modal);
         Assert::assertTrue($modal->isVisible());
 
-        // We can't use setValue for autocomplete because we lose focus
-        // Instead, we use low level method postValue
-        // @see https://github.com/Behat/MinkExtension/issues/257
-
-        $xpath = $this->getSession()->getSelectorsHandler()
-            ->selectorToXpath('css', '.ReactModal__Content--enter-address input[type="text"]');
-
-        $this->getSession()
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => [$address]]);
+        $addressPicker = $this->getSession()->getPage()->find('css', '.ReactModal__Content--enter-address input[type="text"]');
+        $addressPicker->setValue($address);
     }
 
     /**
@@ -970,18 +1007,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function enterAddressInHomepageSearch($address)
     {
-        // We can't use setValue for autocomplete because we lose focus
-        // Instead, we use low level method postValue
-        // @see https://github.com/Behat/MinkExtension/issues/257
-
-        $xpath = $this->getSession()->getSelectorsHandler()
-            ->selectorToXpath('css', '#address-search input[type="text"]');
-
-        $this->getSession()
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => [$address]]);
+        $search = $this->getSession()->getPage()->find('css', '#address-search input[type="text"]');
+        $search->setValue($address);
     }
 
     /**
@@ -1219,7 +1246,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function assertCartSubmitButtonNotDisabled()
     {
-        $timeout = 5;
+        $timeout = 15;
 
         $isNotDisabled = $this->getSession()->getPage()->waitFor($timeout, function($page) {
 
@@ -1269,46 +1296,14 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $session->switchToIframe($iframe->getAttribute('name'));
 
-        // The Stripe element doesn't work when typing too fast,
-        // then we fill the field "slowly"
-        // @see https://stackoverflow.com/questions/52608566/selenium-send-keys-incorrect-order-in-stripe-credit-card-input
-        // @see https://gist.github.com/nruth/b2500074749e9f56e0b7
-
-        $xpath = $session->getSelectorsHandler()
-            ->selectorToXpath('css', 'input[name="cardnumber"]');
-
-        $pieces = str_split('4242424242424242', 2);
-        foreach ($pieces as $text) {
-            $session
-                ->getDriver()
-                ->getWebDriverSession()
-                ->element('xpath', $xpath)
-                ->postValue(['value' => [$text]]);
-
-            $session->wait(250);
-        }
+        $cardNumber = $session->getPage()->find('css', 'input[name="cardnumber"]');
+        $cardNumber->setValue('4242424242424242');
 
         $expMonth = date('m', strtotime('+1 month'));
         $expYear = date('y', strtotime('+1 month'));
 
-        $xpath = $session->getSelectorsHandler()
-            ->selectorToXpath('css', 'input[name="exp-date"]');
-
-        $session
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => ["{$expMonth}"]]);
-
-        $session->wait(250);
-
-        $session
-            ->getDriver()
-            ->getWebDriverSession()
-            ->element('xpath', $xpath)
-            ->postValue(['value' => ["{$expYear}"]]);
-
-        $session->wait(250);
+        $expDate = $session->getPage()->find('css', 'input[name="exp-date"]');
+        $expDate->setValue("{$expMonth}{$expYear}");
 
         $this->minkContext->fillField('cvc', '123');
 
