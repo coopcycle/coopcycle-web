@@ -564,6 +564,8 @@ form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
 
+form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de vehículo
+
 promotion_coupon.used.label: Número de usos
 
 product_option.strategy.free: Gratis

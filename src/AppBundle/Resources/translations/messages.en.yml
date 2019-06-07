@@ -541,6 +541,8 @@ form.credit_note.amount.label: Amount
 form.credit_note.name.label: Name
 form.credit_note.name.help: The name of the promotion that will be displayed in the cart
 
+form.embed_settings.with_vehicle.label: Add vehicle choice
+
 promotion_coupon.used.label: Number of uses
 
 product_option.strategy.free: Free

@@ -1064,56 +1064,40 @@ class AdminController extends Controller
      * @Route("/admin/embed", name="admin_embed")
      * @Template()
      */
-    public function embedAction(Request $request)
+    public function embedAction(Request $request, SettingsManager $settingsManager)
     {
         $pricingRuleSet = null;
-        try {
-            $pricingRuleSetId = $this->get('craue_config')->get('embed.delivery.pricingRuleSet');
-            if ($pricingRuleSetId) {
-                $pricingRuleSet = $this->getDoctrine()
-                    ->getRepository(PricingRuleSet::class)
-                    ->find($pricingRuleSetId);
-            }
-        } catch (\RuntimeException $e) {}
 
-        $embedSettingsForm = $this->createForm(EmbedSettingsType::class);
-        $embedSettingsForm->get('pricingRuleSet')->setData($pricingRuleSet);
+        $pricingRuleSetId = $settingsManager->get('embed.delivery.pricingRuleSet');
+        $withVehicle = $settingsManager->get('embed.delivery.withVehicle');
+        $withVehicle = filter_var($withVehicle, FILTER_VALIDATE_BOOLEAN);
 
-        $embedSettingsForm->handleRequest($request);
-        if ($embedSettingsForm->isSubmitted() && $embedSettingsForm->isValid()) {
+        if ($pricingRuleSetId) {
+            $pricingRuleSet = $this->getDoctrine()
+                ->getRepository(PricingRuleSet::class)
+                ->find($pricingRuleSetId);
+        }
 
-            $pricingRuleSet = $embedSettingsForm->get('pricingRuleSet')->getData();
+        $form = $this->createForm(EmbedSettingsType::class);
+        $form->get('pricingRuleSet')->setData($pricingRuleSet);
+        $form->get('withVehicle')->setData($withVehicle);
 
-            $configEntityClass = $this->getParameter('craue_config.entity_name');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            $setting = $this->getDoctrine()
-                ->getRepository($configEntityClass)
-                ->findOneBy([
-                    'section' => 'embed',
-                    'name' => 'embed.delivery.pricingRuleSet'
-                ]);
+            $pricingRuleSet = $form->get('pricingRuleSet')->getData();
+            $withVehicle = $form->get('withVehicle')->getData();
 
-            if (!$setting) {
-                $setting = new $configEntityClass();
-                $setting->setSection('embed');
-                $setting->setName('embed.delivery.pricingRuleSet');
-
-                $this->getDoctrine()
-                    ->getManagerForClass($configEntityClass)
-                    ->persist($setting);
-            }
-
-            $setting->setValue($pricingRuleSet ? $pricingRuleSet->getId() : null);
-
-            $this->getDoctrine()
-                ->getManagerForClass($configEntityClass)->flush();
+            $settingsManager->set('embed.delivery.pricingRuleSet', $pricingRuleSet ? $pricingRuleSet->getId() : null, 'embed');
+            $settingsManager->set('embed.delivery.withVehicle', $withVehicle ? 'yes' : 'no', 'embed');
+            $settingsManager->flush();
 
             return $this->redirect($request->headers->get('referer'));
         }
 
         return [
             'pricing_rule_set' => $pricingRuleSet,
-            'embed_settings_form' => $embedSettingsForm->createView(),
+            'embed_settings_form' => $form->createView(),
         ];
     }
 

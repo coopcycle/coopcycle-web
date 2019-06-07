@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
@@ -28,6 +29,10 @@ class EmbedSettingsType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
                 }
-            ));
+            ))
+            ->add('withVehicle', CheckboxType::class, [
+                'label' => 'form.embed_settings.with_vehicle.label',
+                'required' => false
+            ]);
     }
 }
