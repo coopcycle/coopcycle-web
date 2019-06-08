@@ -1344,7 +1344,21 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             return false === $button->hasAttribute('disabled') && false === $button->hasClass('disabled');
         });
 
-        Assert::assertTrue($isNotDisabled, sprintf('Submit button is still disabled after %d seconds', $timeout));
+        if (!$isNotDisabled) {
+
+            $message = sprintf('Submit button is still disabled after %d seconds.', $timeout);
+
+            $errors = $this->getSession()->getPage()->findAll('css', '#cart .cart-wrapper__messages .alert');
+            if (count($errors) > 0) {
+                $message .= "\n";
+                $message .= "Cart contains the following error messages:";
+                foreach ($errors as $error) {
+                    $message .= '-'.$error->getText()."\n";
+                }
+            }
+
+            Assert::fail($message);
+        }
     }
 
     /**
