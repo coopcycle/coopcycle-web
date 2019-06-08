@@ -18,6 +18,7 @@ addons:
       - nginx
   hosts:
     - test.coopcycle.org
+  chrome: stable
 
 language: php
 php:
@@ -35,7 +36,7 @@ env:
     - STRIPE_MOCK_API_BASE=http://localhost:12111
     - SYMFONY_ENV=test
     - NODE_ENV=test
-    - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://test.coopcycle.org","sessions":{"selenium2":{"selenium2":{"wd_host":"http://localhost:4444/wd/hub"}}}}}}'
+    - BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://test.coopcycle.org"}}}'
     - ASSETS_BASE_URL=http://test.coopcycle.org
     # https://docs.travis-ci.com/user/encryption-keys
     # GOOGLE_API_KEY
@@ -48,6 +49,7 @@ env:
 before_install:
   - sudo apt-get update -qq
   - nvm install 8
+  - google-chrome-stable --headless --disable-gpu --disable-web-security --disable-site-isolation-trials --remote-debugging-port=9222 http://localhost &
 install:
   # Remove error could not access file "$libdir/postgis-2.3": No such file or directory
   - sudo apt-get install -y $(apt-cache search postgis | awk '/^postgresql-9\.[2-5]-postgis-2.3/{printf " "$1}' )
@@ -63,14 +65,6 @@ install:
   - docker run -t -v $(pwd)/var/osrm:/data -d -p 5000:5000 osrm/osrm-backend:$OSRM_VERSION osrm-routed --algorithm mld /data/paris-france.osrm
   - docker run -t -d -p 12111:12111 stripemock/stripe-mock
   - docker run -t -d -p 8889:80 adrianrudnik/mjml-server
-  # Run Selenium using host networking
-  # https://github.com/elgalu/docker-selenium#dns
-  # https://docs.docker.com/network/host/
-  # We use a fixed version to avoid an error on latest Chrome
-  # https://github.com/Behat/Behat/issues/1121
-  # https://github.com/instaclick/php-webdriver/blob/master/lib/WebDriver/AbstractWebDriver.php#L145-L150
-  - docker pull elgalu/selenium:3.141.59-p14
-  - docker run -d --name=grid --net=host --pid=host --network=host --add-host test.coopcycle.org:127.0.0.1 -p 4444:24444 -p 5900:25900 -e TZ="Europe/Paris" -e SELENIUM_HUB_PORT=4444 -v /dev/shm:/dev/shm --privileged elgalu/selenium:3.141.59-p14
   # Configure php-fpm
   # @see https://docs.travis-ci.com/user/languages/php/
   # @see http://php.net/manual/fr/install.fpm.configuration.php#clear-env
@@ -105,7 +99,6 @@ before_script:
   - sudo service nginx restart
   - cp phpunit.xml.dist phpunit.xml
   - pm2 start pm2.config.js --env=test
-  - docker exec grid wait_all_done 30s
 
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
