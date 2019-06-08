@@ -148,11 +148,7 @@ window.initMap = function() {
         <Cart />
       </I18nextProvider>
     </Provider>,
-    document.querySelector('#cart'),
-    () => {
-      document.querySelector('#cart').setAttribute('data-ready', 'true')
-      $('#menu').LoadingOverlay('hide')
-    }
+    document.querySelector('#cart')
   )
 
 }

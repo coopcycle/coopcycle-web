@@ -47,6 +47,12 @@ function handleAjaxResponse(res, dispatch, success) {
     dispatch(fetchFailure(res))
   }
 
+  const ready = JSON.parse(document.querySelector('#cart').dataset.ready)
+  if (!ready) {
+    document.querySelector('#cart').setAttribute('data-ready', 'true')
+    $('#menu').LoadingOverlay('hide')
+  }
+
   notifyListeners(res.cart)
 }
 
