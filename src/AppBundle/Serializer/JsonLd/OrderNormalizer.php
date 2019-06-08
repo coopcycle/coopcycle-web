@@ -72,21 +72,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $order = $this->normalizer->denormalize($data, $class, $format, $context);
 
-        // When no shipping date is provided, use ASAP
-        if ($order->isFoodtech() && null === $order->getShippedAt()) {
-
-            $availabilities = $order->getRestaurant()->getAvailabilities();
-            $availabilities = array_filter($availabilities, function ($date) use ($order) {
-                $shippingDate = new \DateTime($date);
-
-                return $this->shippingDateFilter->accept($order, $shippingDate);
-            });
-
-            $asap = current(array_values($availabilities));
-
-            $order->setShippedAt(new \DateTime($asap));
-        }
-
         $order->setChannel($this->channelContext->getChannel());
 
         if (isset($data['items'])) {
@@ -121,6 +106,25 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             foreach ($orderItems as $orderItem) {
                 $this->orderModifier->addToOrder($order, $orderItem);
             }
+        }
+
+        // When no shipping date is provided, use ASAP
+        // WARNING
+        // Make sure to set a shipping date *AFTER* items have been added
+        // This way, preparation time is calculated as expected
+        if ($order->isFoodtech() && null === $order->getShippedAt()) {
+
+            $availabilities = $order->getRestaurant()->getAvailabilities();
+
+            $availabilities = array_filter($availabilities, function ($date) use ($order) {
+                $shippingDate = new \DateTime($date);
+
+                return $this->shippingDateFilter->accept($order, $shippingDate);
+            });
+
+            $asap = current(array_values($availabilities));
+
+            $order->setShippedAt(new \DateTime($asap));
         }
 
         return $order;
