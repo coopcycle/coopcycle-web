@@ -34,7 +34,7 @@ class SeoListener
         $locale = $request->getLocale();
 
         $this->seoPage
-            ->setTitle($this->settingsManager->get('brand_name'));
+            ->setTitle($this->settingsManager->get('brand_name') ?: 'CoopCycle');
 
         $this->seoPage
             ->addMeta('name', 'description', $this->translator->trans('meta.title'));

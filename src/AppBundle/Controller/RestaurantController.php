@@ -121,8 +121,8 @@ class RestaurantController extends AbstractController
             ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
             ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
             ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
-            ->addMeta('property', 'place:location:latitude', $restaurant->getAddress()->getGeo()->getLatitude())
-            ->addMeta('property', 'place:location:longitude', $restaurant->getAddress()->getGeo()->getLongitude())
+            ->addMeta('property', 'place:location:latitude', (string) $restaurant->getAddress()->getGeo()->getLatitude())
+            ->addMeta('property', 'place:location:longitude', (string) $restaurant->getAddress()->getGeo()->getLongitude())
             ;
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');

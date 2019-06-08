@@ -29,7 +29,7 @@
         "doctrine/doctrine-cache-bundle": "^1.2",
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/monolog-bundle": "^3.3",
-        "sensio/framework-extra-bundle": "^5.2.0",
+        "sensio/framework-extra-bundle": "^5.3.0",
         "incenteev/composer-parameter-handler": "^2.0",
         "nelmio/cors-bundle": "~1.5",
         "phpdocumentor/reflection-docblock": "~4.0",
@@ -82,7 +82,7 @@
         "geocoder-php/nominatim-provider": "^5.0",
         "box/spout": "^2.7",
         "jmikola/geojson": "~1.0",
-        "simple-bus/symfony-bridge": "^5.1",
+        "simple-bus/symfony-bridge": "^5.3",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
         "jmose/command-scheduler-bundle": "^2.0",
         "predicthq/address-formatter": "^1.1",
@@ -95,7 +95,8 @@
         "sylius/promotion-bundle": "1.5.*",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.1",
-        "hautelook/alice-bundle": "^2.3"
+        "hautelook/alice-bundle": "^2.3",
+        "nyholm/psr7": "^1.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",
