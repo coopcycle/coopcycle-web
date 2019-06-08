@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "149dad6467372c7b1c83eedd41847dcd",
+    "content-hash": "b1489ee50467677bf162cb44266eb44f",
     "packages": [
         {
             "name": "api-platform/core",
@@ -9470,16 +9470,16 @@
         },
         {
             "name": "sylius/channel",
-            "version": "v1.4.3",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Channel.git",
-                "reference": "a8cecd84b00415ef13e1928ec6a381071a9a93f1"
+                "reference": "1ba97bcbda9616c8d705fe0957b9d61a8cc41767"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Channel/zipball/a8cecd84b00415ef13e1928ec6a381071a9a93f1",
-                "reference": "a8cecd84b00415ef13e1928ec6a381071a9a93f1",
+                "url": "https://api.github.com/repos/Sylius/Channel/zipball/1ba97bcbda9616c8d705fe0957b9d61a8cc41767",
+                "reference": "1ba97bcbda9616c8d705fe0957b9d61a8cc41767",
                 "shasum": ""
             },
             "require": {
@@ -9496,7 +9496,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -9532,20 +9532,20 @@
                 "stores",
                 "sylius"
             ],
-            "time": "2019-02-01T13:10:57+00:00"
+            "time": "2019-02-08T13:20:09+00:00"
         },
         {
             "name": "sylius/channel-bundle",
-            "version": "dev-master",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusChannelBundle.git",
-                "reference": "644afe91edba8a3c251caf09c4e5a732f273d2dc"
+                "reference": "3ea5109516a6ce96ee10768de58f07e56791f7f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/644afe91edba8a3c251caf09c4e5a732f273d2dc",
-                "reference": "644afe91edba8a3c251caf09c4e5a732f273d2dc",
+                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/3ea5109516a6ce96ee10768de58f07e56791f7f7",
+                "reference": "3ea5109516a6ce96ee10768de58f07e56791f7f7",
                 "shasum": ""
             },
             "require": {
@@ -9602,7 +9602,7 @@
                 "currencies",
                 "currency"
             ],
-            "time": "2019-03-17T18:34:16+00:00"
+            "time": "2019-05-07T10:38:39+00:00"
         },
         {
             "name": "sylius/currency",
@@ -14890,7 +14890,6 @@
         "friendsofsymfony/user-bundle": 20,
         "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,
-        "sylius/channel-bundle": 20,
         "trikoder/oauth2-bundle": 20,
         "behat/symfony2-extension": 20,
         "behat/mink": 20
