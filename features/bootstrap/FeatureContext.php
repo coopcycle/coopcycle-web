@@ -942,6 +942,21 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         }
     }
 
+    private function waitForCartToFinishLoading()
+    {
+        $cart = $this->getSession()->getPage()->find('css', '#cart');
+        $cart->waitFor(30, function($cart) {
+
+            $spinner = $cart->find('css', 'button[type="submit"] .fa-spinner');
+
+            if (!$spinner) {
+                return true;
+            }
+
+            return false;
+        });
+    }
+
     /**
      * @Given I submit the product options modal
      */
@@ -950,6 +965,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $modal = $this->findVisibleProductModal();
 
         $modal->find('css', 'form button[type="submit"]')->press();
+
+        $this->waitForCartToFinishLoading();
     }
 
     /**
@@ -1018,6 +1035,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
             if ($menuItemName === $name) {
                 $menuItem->click();
+
+                $this->waitForCartToFinishLoading();
+
                 return;
             }
         }
@@ -1239,6 +1259,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $firstSuggestion = current($suggestions);
 
         $firstSuggestion->click();
+
+        $this->waitForCartToFinishLoading();
     }
 
     /**
