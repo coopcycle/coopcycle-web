@@ -1077,6 +1077,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $addressPicker = $this->getSession()->getPage()->find('css', '.ReactModal__Content--enter-address input[type="text"]');
         $addressPicker->setValue($address);
+
+        // Let some time for suggestions to finish loading
+        $addressPicker->waitFor(2, function($addressPicker) {
+            return false;
+        });
     }
 
     /**
@@ -1086,6 +1091,11 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         $search = $this->getSession()->getPage()->find('css', '#address-search input[type="text"]');
         $search->setValue($address);
+
+        // Let some time for suggestions to finish loading
+        $search->waitFor(2, function($search) {
+            return false;
+        });
     }
 
     /**
