@@ -15,11 +15,13 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
+use Behat\Testwork\Tester\Result\TestResult;
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -237,6 +239,55 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $redis = $this->getContainer()->get('snc_redis.default');
         $redis->del('datetime:now');
+    }
+
+    /**
+     * Grab the JavaScript errors from the session.
+     *
+     * @see https://gist.github.com/basilfx/49405f8a1642318a6c52
+     * @see https://gist.github.com/fabiang/345ca0444f19b97e370c
+     *
+     * @AfterStep
+     */
+    public function takeJSErrorsAfterFailedStep(AfterStepScope $event)
+    {
+        $code = $event->getTestResult()->getResultCode();
+        if ($code !== TestResult::FAILED) {
+            return;
+        }
+
+        $driver = $this->getSession()->getDriver();
+        if (!$driver instanceof ChromeDriver) {
+            return;
+        }
+
+        try {
+            $errors = $this->getSession()->evaluateScript('return ErrorHandler.get();');
+        } catch (\Exception $e) {
+            return;
+        }
+
+        if (is_array($errors) && count($errors) > 0) {
+
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = sprintf(
+                    'Page "%s". Message "%s", Filename "%s", Line %s',
+                    $this->getSession()->getCurrentUrl(),
+                    is_string($error['message']) ? $error['message'] : json_encode($error['message']),
+                    $error['filename'],
+                    $error['lineno']
+                );
+            }
+
+            printf("JavaScript errors:\n\n" . implode("\n", $messages));
+
+            try {
+                $this->getSession()->evaluateScript('ErrorHandler.clear();');
+            } catch (\Exception $e) {
+                return;
+            }
+        }
     }
 
     /**

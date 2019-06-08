@@ -1,0 +1,47 @@
+(function ($, w, stor) {
+    var E = {
+      storageKey: "error_handler",
+      init: function () {
+        $(w).on("error", E.handle);
+        $(w.document).ajaxError(function(event, xhr, settings, error) {
+          var errors = [];
+          if (null !== stor.getItem(E.storageKey)) {
+            errors = JSON.parse(stor.getItem(E.storageKey));
+          }
+          errors.push({
+            message: xhr.responseJSON,
+            filename: 'N/A',
+            lineno: 'N/A',
+          });
+          stor.setItem(E.storageKey, JSON.stringify(errors));
+        });
+      },
+      handle: function (e) {
+        if (typeof e.originalEvent !== "undefined") {
+          var o = e.originalEvent;
+          var error = {
+            message: o.message,
+            filename: o.filename,
+            lineno: o.lineno,
+          };
+          var errors = [];
+          if (null !== stor.getItem(E.storageKey)) {
+            errors = JSON.parse(stor.getItem(E.storageKey));
+          }
+          errors.push(error);
+          stor.setItem(E.storageKey, JSON.stringify(errors));
+        }
+      },
+      get: function () {
+        if (null !== stor.getItem(E.storageKey)) {
+          return JSON.parse(stor.getItem(E.storageKey));
+        }
+        return [];
+      },
+      clear: function () {
+        stor.setItem(E.storageKey, "[]");
+      }
+  };
+  w.ErrorHandler = E;
+  E.init();
+}($, window, localStorage));
