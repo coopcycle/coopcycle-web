@@ -13,6 +13,7 @@ use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -376,7 +377,7 @@ class Restaurant extends FoodEstablishment
         }
 
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         // WARNING
@@ -394,7 +395,7 @@ class Restaurant extends FoodEstablishment
     public function isOpen(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         if ($this->hasClosingRuleForNow($now)) {
@@ -408,7 +409,7 @@ class Restaurant extends FoodEstablishment
     public function getNextOpeningDate(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         if ($this->hasClosingRuleForNow($now)) {
@@ -432,7 +433,7 @@ class Restaurant extends FoodEstablishment
     public function getAvailabilities(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         if ($this->getOrderingDelayMinutes() > 0) {

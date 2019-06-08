@@ -37,3 +37,10 @@ snc_redis:
 m6_statsd:
     servers: {}
     clients: {}
+
+services:
+    AppBundle\EventListener\CarbonListener:
+        arguments:
+            - '@snc_redis.default'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

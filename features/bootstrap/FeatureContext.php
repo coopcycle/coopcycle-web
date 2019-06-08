@@ -234,6 +234,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function unSetCarbon()
     {
         Carbon::setTestNow();
+
+        $redis = $this->getContainer()->get('snc_redis.default');
+        $redis->del('datetime:now');
     }
 
     /**
@@ -296,9 +299,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     /**
      * @Given the current time is :datetime
      */
-    public function currentTimeIs(string $datetime) {
-        $now = new Carbon($datetime);
-        Carbon::setTestNow($now);
+    public function currentTimeIs(string $datetime)
+    {
+        Carbon::setTestNow(Carbon::parse($datetime));
+
+        $redis = $this->getContainer()->get('snc_redis.default');
+        $redis->set('datetime:now', Carbon::now()->toAtomString());
     }
 
     /**

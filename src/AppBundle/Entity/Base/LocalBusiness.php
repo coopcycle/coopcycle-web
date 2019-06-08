@@ -6,6 +6,7 @@ use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Carbon\Carbon;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -98,7 +99,7 @@ abstract class LocalBusiness
     public function isOpen(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         foreach ($this->openingHours as $openingHour) {
@@ -120,7 +121,7 @@ abstract class LocalBusiness
     public function getNextOpeningDate(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         $dates = [];

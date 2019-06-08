@@ -4,7 +4,6 @@ namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\SettingsManager;
-use Carbon\Carbon;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;

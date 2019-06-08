@@ -15,6 +15,7 @@ use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use League\Geotools\Coordinate\Coordinate;
@@ -349,7 +350,7 @@ class RestaurantController extends AbstractController
             Carbon::setLocale($request->attributes->get('_locale'));
             $delay = Carbon::now()
                 ->addMinutes($restaurant->getOrderingDelayMinutes())
-                ->diffForHumans(null, true);
+                ->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
         return array(

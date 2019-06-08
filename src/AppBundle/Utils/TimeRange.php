@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Exception\TimeRange\EmptyRangeException;
 use AppBundle\Exception\TimeRange\NoWeekdayException;
+use Carbon\Carbon;
 
 class TimeRange
 {
@@ -114,7 +115,7 @@ class TimeRange
     public function isOpen(\DateTime $date = null)
     {
         if (!$date) {
-            $date = new \DateTime();
+            $date = Carbon::now();
         }
 
         if (!$this->checkWeekday($date)) {
@@ -131,7 +132,7 @@ class TimeRange
     public function getNextOpeningDate(\DateTime $now = null)
     {
         if (!$now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         $date = clone $now;

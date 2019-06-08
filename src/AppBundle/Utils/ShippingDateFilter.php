@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Carbon\Carbon;
 use Predis\Client as Redis;
 
 class ShippingDateFilter
@@ -24,7 +25,7 @@ class ShippingDateFilter
     public function accept(OrderInterface $order, \DateTime $shippingDate, \DateTime $now = null)
     {
         if (null === $now) {
-            $now = new \DateTime();
+            $now = Carbon::now();
         }
 
         // Obviously, we can't ship in the past
