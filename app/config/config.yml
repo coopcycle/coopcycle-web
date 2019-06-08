@@ -118,6 +118,8 @@ doctrine:
             enabled_filter:
                 class:   AppBundle\Doctrine\Filter\EnabledFilter
                 enabled: true
+        resolve_target_entities:
+            Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
 
 api_platform:
     mapping:
