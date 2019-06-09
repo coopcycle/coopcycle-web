@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08a2c859c54506c416e36efdd7bd27f8",
+    "content-hash": "9342cb5195652bdd1d7302635e8caf42",
     "packages": [
         {
             "name": "api-platform/core",
@@ -4735,22 +4735,23 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "v2.8.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "f4ece5b347121b9fe13166264f197f90252d4bd2"
+                "reference": "06100a8f3a1e878d3d2d5d06a61c4e648f94aed7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/f4ece5b347121b9fe13166264f197f90252d4bd2",
-                "reference": "f4ece5b347121b9fe13166264f197f90252d4bd2",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/06100a8f3a1e878d3d2d5d06a61c4e648f94aed7",
+                "reference": "06100a8f3a1e878d3d2d5d06a61c4e648f94aed7",
                 "shasum": ""
             },
             "require": {
                 "knplabs/knp-components": "~1.2",
-                "php": ">=5.3.3",
+                "php": ">=5.6.0",
                 "symfony/framework-bundle": "~2.7|~3.0|~4.0",
+                "symfony/translation": "~2.7|~3.0|~4.0",
                 "twig/twig": "~1.12|~2"
             },
             "require-dev": {
@@ -4760,7 +4761,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "autoload": {
@@ -4793,7 +4794,7 @@
                 "paginator",
                 "symfony"
             ],
-            "time": "2018-05-16T12:15:58+00:00"
+            "time": "2019-02-28T13:51:20+00:00"
         },
         {
             "name": "knplabs/knp-time-bundle",
@@ -5488,28 +5489,28 @@
         },
         {
             "name": "m6web/statsd-bundle",
-            "version": "v2.15.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/M6Web/StatsdBundle.git",
-                "reference": "70bc09750d345ff024bdfea912e351c7a3b03a86"
+                "reference": "a4b43ff77280f64500e58cfc3934a1b84765a017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/StatsdBundle/zipball/70bc09750d345ff024bdfea912e351c7a3b03a86",
-                "reference": "70bc09750d345ff024bdfea912e351c7a3b03a86",
+                "url": "https://api.github.com/repos/M6Web/StatsdBundle/zipball/a4b43ff77280f64500e58cfc3934a1b84765a017",
+                "reference": "a4b43ff77280f64500e58cfc3934a1b84765a017",
                 "shasum": ""
             },
             "require": {
                 "m6web/statsd": "^1.3",
-                "php": ">=5.4.0",
-                "symfony/property-access": ">=2.2"
+                "php": "^7.1.3",
+                "symfony/property-access": "^3.4 || ^4.0"
             },
             "require-dev": {
                 "atoum/atoum": "^2.8|^3.0",
                 "m6web/coke": "~1.2",
                 "m6web/symfony2-coding-standard": "~1.2",
-                "symfony/symfony": "~2.3|~3.0"
+                "symfony/symfony": "^3.4 || ^4.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -5528,14 +5529,14 @@
                     "homepage": "http://tech.m6web.fr/"
                 }
             ],
-            "description": "Add statds metrics in your sf2 app. Allow you to bind metrics on any sf2 event.",
+            "description": "Add statds metrics in your symfony app. Allow you to bind metrics on any symfony event.",
             "keywords": [
                 "bundle",
                 "m6web",
                 "statsd",
                 "symfony"
             ],
-            "time": "2018-01-17T20:37:43+00:00"
+            "time": "2018-04-17T11:50:46+00:00"
         },
         {
             "name": "mailjet/mailjet-apiv3-php",
