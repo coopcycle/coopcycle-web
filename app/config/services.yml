@@ -179,6 +179,7 @@ services:
       - '@security.token_storage'
       - '@crawler_detect'
       - '@snc_redis.default'
+      - '@translator'
       - '@templating'
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

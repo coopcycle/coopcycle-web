@@ -359,6 +359,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @Given the maintenance mode is on
+     */
+    public function enableMaintenance()
+    {
+        $redis = $this->getContainer()->get('snc_redis.default');
+        $redis->set('maintenance', '1');
+    }
+
+    /**
      * @Then the JSON should match:
      */
     public function theJsonShouldMatch(PyStringNode $string)
