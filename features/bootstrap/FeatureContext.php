@@ -242,6 +242,15 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     }
 
     /**
+     * @AfterScenario
+     */
+    public function disableMaintenance()
+    {
+        $redis = $this->getContainer()->get('snc_redis.default');
+        $redis->del('maintenance');
+    }
+
+    /**
      * Grab the JavaScript errors from the session.
      *
      * @see https://gist.github.com/basilfx/49405f8a1642318a6c52
