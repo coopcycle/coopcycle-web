@@ -1111,8 +1111,12 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $search->setValue($address);
 
         // Let some time for suggestions to finish loading
-        $search->waitFor(2, function($search) {
-            return false;
+        $addressPicker = $this->getSession()->getPage()->find('css', '#address-search .address-autosuggest__container');
+        $addressPicker->waitFor(30, function($addressPicker) {
+
+            $suggestions = $addressPicker->findAll('css', '.react-autosuggest__suggestions-list .react-autosuggest__suggestion');
+
+            return count($suggestions) > 0 ? $suggestions : false;
         });
     }
 
@@ -1140,9 +1144,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function assertAddressSuggestionsInHomepageSearch()
     {
-        $session = $this->getSession();
-
-        $addressPicker = $session->getPage()->find('css', '#address-search .address-autosuggest__container');
+        $addressPicker = $this->getSession()->getPage()->find('css', '#address-search .address-autosuggest__container');
 
         $suggestions = $addressPicker->waitFor(10, function($addressPicker) {
 
@@ -1151,7 +1153,9 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             return count($suggestions) > 0 ? $suggestions : false;
         });
 
-        Assert::assertNotCount(0, $suggestions);
+        if (false === $suggestions) {
+            Assert::fail('No suggestions found after 10 seconds');
+        }
     }
 
     /**
