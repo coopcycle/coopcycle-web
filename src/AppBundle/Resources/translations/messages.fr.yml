@@ -446,6 +446,7 @@ form.maintenance.disable.label: Désactiver la maintenance
 form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'
 form.maintenance.disable.alert: Vous allez désactiver le mode maintenance
 form.maintenance.message.label: Message
+form.maintenance.message.help: Vous pouvez écrire du texte au format Markdown
 form.banner.enable.label: Activer la bannière
 form.banner.disable.label: Désactiver la bannière
 form.banner.enable.alert: Vous allez activer la bannière

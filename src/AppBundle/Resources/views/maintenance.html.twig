@@ -15,7 +15,7 @@
         <i class="fa fa-warning"></i>
         <br />
         {% if message is not empty %}
-          {{ message }}
+          {{ message|markdown }}
         {% else %}
           {% trans %}maintenance.text{% endtrans %}
         {% endif %}

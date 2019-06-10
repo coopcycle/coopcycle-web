@@ -25,6 +25,7 @@ class MaintenanceType extends AbstractType
             ->add('message', TextareaType::class, [
                 'label' => 'form.maintenance.message.label',
                 'required' => false,
+                'help' => 'form.maintenance.message.help'
             ])
             ->add('enable', SubmitType::class, [
                 'label' => 'form.maintenance.enable.label'
