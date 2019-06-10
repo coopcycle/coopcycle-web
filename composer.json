@@ -80,7 +80,7 @@
         "geo6/geocoder-php-addok-provider": "^1.0",
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/nominatim-provider": "^5.0",
-        "box/spout": "^2.7",
+        "box/spout": "^3.0",
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^5.3",
         "friendsofsymfony/jsrouting-bundle": "^2.2",

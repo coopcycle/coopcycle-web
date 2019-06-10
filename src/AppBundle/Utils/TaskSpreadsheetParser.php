@@ -10,6 +10,7 @@ use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use Cocur\Slugify\SlugifyInterface;
 use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use libphonenumber\NumberParseException;
@@ -68,16 +69,16 @@ class TaskSpreadsheetParser
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
                 if ($rowIndex === 1) {
-                    $header = $row;
+                    $header = $row->toArray();
                     continue;
                 }
 
                 // Verify that the row is not completely empty
-                if (0 === count(array_filter($row))) {
+                if (0 === count(array_filter($row->toArray()))) {
                     continue;
                 }
 
-                $data[] = $row;
+                $data[] = $row->toArray();
             }
         }
 
@@ -164,15 +165,15 @@ class TaskSpreadsheetParser
         $mimeType = mime_content_type($filename);
 
         if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return ReaderFactory::create(Type::CSV);
+            return ReaderEntityFactory::createCSVReader();
         }
 
         if (in_array($mimeType, self::MIME_TYPE_ODS)) {
-            return ReaderFactory::create(Type::ODS);
+            return ReaderEntityFactory::createODSReader();
         }
 
         if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
-            return ReaderFactory::create(Type::XLSX);
+            return ReaderEntityFactory::createXLSXReader();
         }
 
         throw new \Exception('Unsupported file type');
