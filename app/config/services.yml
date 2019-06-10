@@ -553,6 +553,12 @@ services:
         - '@doctrine'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\MaintenanceSubscriber:
+    arguments:
+        - '@snc_redis.default'
+        - '@translator'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:

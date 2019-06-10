@@ -5,7 +5,6 @@ namespace AppBundle\EventListener;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Predis\Client as Redis;
 use Symfony\Bridge\Twig\TwigEngine;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -23,8 +22,6 @@ class MaintenanceListener
     private $patterns = [
         '#^/login#',
     ];
-
-    const APP_USER_AGENT = 'okhttp';
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -55,12 +52,11 @@ class MaintenanceListener
         }
 
         // Let crawlers browse the website
-        if ($this->crawlerDetect->isCrawler($request->headers->get('User-Agent')) && !$this->isAppUserAgent()) {
+        if ($this->crawlerDetect->isCrawler($request->headers->get('User-Agent'))) {
             return;
         }
 
         $maintenance = $this->redis->get('maintenance');
-        $maintenanceMessage = $this->redis->get('maintenance_message');
 
         if ($maintenance && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
 
@@ -70,25 +66,13 @@ class MaintenanceListener
                 }
             }
 
-            if (0 === strpos($request->getPathInfo(), '/api')) {
-                $response = new JsonResponse(['message' => $this->getMessage()], 503);
-            } else {
-                $content = $this->templating->render('@App/maintenance.html.twig', [
-                    'message' => $maintenanceMessage,
-                ]);
-                $response = new Response($content, 503);
-            }
+            $content = $this->templating->render('@App/maintenance.html.twig', [
+                'message' => $this->getMessage(),
+            ]);
 
-            $event->setResponse($response);
+            $event->setResponse(new Response($content, 503));
             $event->stopPropagation();
         }
-    }
-
-    private function isAppUserAgent()
-    {
-        $matches = $this->crawlerDetect->getMatches();
-
-        return $matches && $matches === self::APP_USER_AGENT;
     }
 
     private function getMessage()
