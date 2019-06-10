@@ -1107,8 +1107,17 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function enterAddressInHomepageSearch($address)
     {
-        $search = $this->getSession()->getPage()->find('css', '#address-search input[type="text"]');
-        $search->setValue($address);
+        $addressSearch = $this->getSession()->getPage()->find('css', '#address-search');
+
+        // Make sure address picker has finished rendering
+        $addressSearch->waitFor(30, function($addressSearch) {
+
+            $container = $addressSearch->findAll('css', '.react-autosuggest__container');
+
+            return !empty($container);
+        });
+
+        $addressSearch->find('css', 'input[type="text"]')->setValue($address);
 
         // Let some time for suggestions to finish loading
         $addressPicker = $this->getSession()->getPage()->find('css', '#address-search .address-autosuggest__container');
