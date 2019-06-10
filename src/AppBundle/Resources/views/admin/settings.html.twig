@@ -28,6 +28,11 @@
     <div class="pull-right">
       <div id="maintenance"></div>
     </div>
+    {% if maintenance is not empty %}
+    <div class="pull-right">
+      <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
+    </div>
+    {% endif %}
   </div>
 
   <div class="alert alert-warning">
@@ -224,6 +229,14 @@
     var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch;
 
     /* Maintenance */
+
+    $('#maintenance-edit').on('click', function(e) {
+      e.preventDefault();
+
+      $('#modal-maintenance').find('[data-disable]').hide();
+      $('#modal-maintenance').find('[data-enable]').show();
+      $('#modal-maintenance').modal('show');
+    });
 
     $('#modal-maintenance').on('hidden.bs.modal', function(e) {
       if (true === isMaintenanceEnabled) {

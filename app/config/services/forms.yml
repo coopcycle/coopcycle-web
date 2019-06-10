@@ -123,6 +123,11 @@ services:
       - '@Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface'
     tags: [ form.type ]
 
+  AppBundle\Form\MaintenanceType:
+    arguments:
+      - '@snc_redis.default'
+    tags: [ form.type ]
+
   sylius.form.extension.type.promotion_coupon:
     class: AppBundle\Form\Extension\PromotionCouponTypeExtension
     tags:
