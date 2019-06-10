@@ -725,7 +725,7 @@ authentication.create_account: Créez votre compte
 authentication.already_registered: Vous avez déjà un compte ?
 authentication.sign_in: Identifiez-vous
 
-maintenance.text: Site en maintenance<br>Nous revenons dans quelques instants
+maintenance.text: Site en maintenance - Nous revenons dans quelques instants
 
 api_apps.breadcrumb: Clients d'API
 api_apps.created.message: Le client a bien été ajouté. Utilisez les identifiants ci-dessous pour vous authentifier.
