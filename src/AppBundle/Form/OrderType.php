@@ -51,7 +51,10 @@ class OrderType extends AbstractType
                     }
                     if ($stateMachine->can(OrderTransitions::TRANSITION_FULFILL)) {
                         $form->add('fulfill', SubmitType::class, [
-                            'label' => 'form.order.fulfill.label'
+                            'label' => 'form.order.fulfill.label',
+                            // WARNING
+                            // A foodtech order shouldn't be fulfilled this way
+                            'disabled' => $order->isFoodtech(),
                         ]);
                     }
                 }

@@ -64,6 +64,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends Controller
@@ -196,6 +197,10 @@ class AdminController extends Controller
                 }
 
                 if ('fulfill' === $form->getClickedButton()->getName()) {
+                    if ($order->isFoodtech()) {
+                        throw new BadRequestHttpException(sprintf('Order #%d should not be fulfilled directly', $order->getId()));
+                    }
+
                     $orderManager->fulfill($order);
                 }
 
