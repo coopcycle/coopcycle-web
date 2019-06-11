@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d9d14cc7972bf15f47938abb862bf46",
+    "content-hash": "103833978ddac8a92bdd6ede83f2655c",
     "packages": [
         {
             "name": "api-platform/core",
-            "version": "v2.4.3",
+            "version": "v2.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/api-platform/core.git",
-                "reference": "e0eba21cacef703f09781a3fd523de274f48cd52"
+                "reference": "76a47b73bdeca31bec647bb2f4e018f3dc29a3d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/api-platform/core/zipball/e0eba21cacef703f09781a3fd523de274f48cd52",
-                "reference": "e0eba21cacef703f09781a3fd523de274f48cd52",
+                "url": "https://api.github.com/repos/api-platform/core/zipball/76a47b73bdeca31bec647bb2f4e018f3dc29a3d7",
+                "reference": "76a47b73bdeca31bec647bb2f4e018f3dc29a3d7",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
                 "symfony/http-kernel": "^3.4 || ^4.0",
                 "symfony/property-access": "^3.4 || ^4.0",
                 "symfony/property-info": "^3.4 || ^4.0",
-                "symfony/serializer": "^4.2.6",
+                "symfony/serializer": "^4.1",
                 "symfony/web-link": "^4.1",
                 "willdurand/negotiation": "^2.0.3"
             },
@@ -47,6 +47,8 @@
                 "doctrine/annotations": "^1.2",
                 "doctrine/doctrine-bundle": "^1.8",
                 "doctrine/doctrine-cache-bundle": "^1.3.5",
+                "doctrine/mongodb-odm": "^2.0.0@beta",
+                "doctrine/mongodb-odm-bundle": "^4.0.0@beta",
                 "doctrine/orm": "^2.6.3",
                 "elasticsearch/elasticsearch": "^6.0",
                 "friendsofsymfony/user-bundle": "^2.2@dev",
@@ -54,6 +56,7 @@
                 "jangregor/phpstan-prophecy": "^0.3",
                 "justinrainbow/json-schema": "^5.0",
                 "nelmio/api-doc-bundle": "^2.13.3",
+                "php-mock/php-mock-phpunit": "^2.0",
                 "phpdocumentor/reflection-docblock": "^3.0 || ^4.0",
                 "phpdocumentor/type-resolver": "^0.3 || ^0.4",
                 "phpspec/prophecy": "^1.8",
@@ -84,8 +87,8 @@
                 "symfony/messenger": "^4.2",
                 "symfony/phpunit-bridge": "^3.4.5 || ^4.0.5",
                 "symfony/routing": "^3.4 || ^4.0",
+                "symfony/security": "^3.4 || ^4.0",
                 "symfony/security-bundle": "^3.4 || ^4.0",
-                "symfony/security-core": "^3.4 || ^4.0",
                 "symfony/twig-bundle": "^3.4 || ^4.0",
                 "symfony/validator": "^3.4 || ^4.0",
                 "symfony/web-profiler-bundle": "^4.2",
@@ -143,7 +146,7 @@
                 "rest",
                 "swagger"
             ],
-            "time": "2019-05-16T17:02:13+00:00"
+            "time": "2019-03-28T20:16:27+00:00"
         },
         {
             "name": "beberlei/DoctrineExtensions",
