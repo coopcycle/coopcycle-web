@@ -22,7 +22,8 @@
       '%dropoff_date%': delivery.dropoff.doneBefore|localizeddate('medium', 'short'),
       '%dropoff_address%': dropoff.address.streetAddress,
       '%distance%': (delivery.distance / 1000)|round(2, 'floor'),
-      '%total_including_tax%': price|price_format
+      '%total_including_tax%': price|price_format,
+      '%total_excluding_tax%': price_excluding_tax|price_format
     } %}
       embed.delivery.summary
     {% endtrans %}

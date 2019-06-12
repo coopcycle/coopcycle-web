@@ -11,6 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Util\UserManipulator;
@@ -107,7 +108,7 @@ class EmbedController extends Controller
      * @Route("/embed/delivery/summary", name="embed_delivery_summary")
      * @Template
      */
-    public function deliverySummaryAction(Request $request, DeliveryManager $deliveryManager)
+    public function deliverySummaryAction(Request $request, DeliveryManager $deliveryManager, SettingsManager $settingsManager)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -128,8 +129,15 @@ class EmbedController extends Controller
                 $delivery = $form->getData();
                 $price = $this->getDeliveryPrice($delivery, $pricingRuleSet, $deliveryManager);
 
+                $rate = $this->get('sylius.tax_rate_resolver')->resolve(
+                    $this->get('sylius.factory.product_variant')->createForDelivery($delivery, $price)
+                );
+
+                $priceExcludingTax = (int) round($price / (1 + $rate->getAmount()));
+
                 return $this->render('@App/embed/delivery/summary.html.twig', [
                     'price' => $price,
+                    'price_excluding_tax' => $priceExcludingTax,
                     'form' => $form->createView(),
                 ]);
 
