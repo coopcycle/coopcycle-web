@@ -21,7 +21,7 @@ behat:
 	@docker-compose exec php php vendor/bin/behat
 
 mocha:
-	@docker-compose run -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
+	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 
 migrations-diff:
 	@docker-compose exec php php bin/console doctrine:migrations:diff
