@@ -84,6 +84,7 @@ export default class MapProxy {
     const color = markerColor || taskColor(task)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
+    const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
     let popupComponent = this.taskPopups.get(task['id'])
 
@@ -120,6 +121,10 @@ export default class MapProxy {
 
       let icon = MapHelper.createMarkerIcon(iconName, 'marker', color)
       marker.setIcon(icon)
+
+      if (!marker.getLatLng().equals(latLng)) {
+        marker.setLatLng(latLng).update()
+      }
 
       popupComponent.current.updateTask(task)
 
