@@ -50,7 +50,7 @@
     "@babel/register": "^7.4.4",
     "@symfony/webpack-encore": "^0.23.0",
     "antd": "^3.19.3",
-    "autoprefixer": "^9.5.1",
+    "autoprefixer": "^9.6.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^24.8.0",
