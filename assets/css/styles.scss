@@ -1347,3 +1347,12 @@ div.pac-container {
     background-color: transparent;
   }
 }
+
+form[name="restaurant"] {
+  .help-block.collapsed .fa-minus {
+    display: none;
+  }
+  .help-block:not(.collapsed) .fa-plus {
+    display: none;
+  }
+}
