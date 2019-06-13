@@ -171,8 +171,8 @@
     {{ form_row(form.contract.customerAmount, { help: 'restaurant.contract.customerAmount.help' }) }}
     {{ form_row(form.contract.feeRate, { help: 'restaurant.contract.feeRate.help' }) }}
     <p>
-      <a class="help-block" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
-        <i class="fa fa-plus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
+      <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
+        <i class="fa fa-plus"></i><i class="fa fa-minus"></i> {% trans %}restaurant.contract.showAdvanced{% endtrans %}
       </a>
     </p>
     <div class="collapse" id="{{ form.vars.id }}_advanced">
