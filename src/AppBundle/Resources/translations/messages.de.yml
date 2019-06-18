@@ -12,7 +12,7 @@ adminDashboard.deliveries.title: Lieferungen
 adminDashboard.deliveries.createNew: Neue Lieferung
 adminDashboard.deliveries.courier: Kurier
 adminDashboard.deliveries.address: Adresse
-adminDashboard.deliveries.delivery: Lieferung
+adminDashboard.deliveries.delivery: Lieferadresse
 adminDashboard.deliveries.originAddress: Abholadresse
 adminDashboard.deliveries.deliveryAddress: Lieferadresse
 adminDashboard.deliveries.save: Speichern
@@ -51,13 +51,13 @@ order.list.summary: Zusammenfassung
 vehicle.bike: Fahrrad
 vehicle.cargo_bike: Lastenrad
 form.task.courier.label: Kurier
-task.type.PICKUP: Abholung
+task.type.PICKUP: Abholadresse
 task.type.DROPOFF: Lieferung
 cart.widget.button: Bestellen
 checkout.breadcrumb.address: Adresse
 form.delivery.vehicle.VEHICLE_BIKE: Fahrrad
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Lastenrad
-form.delivery.pickup.label: Abholung
+form.delivery.pickup.label: Abholadresse
 form.delivery.dropoff.label: Lieferung
 form.delivery.weight.label: Gewicht (g)
 form.delivery.pickup.doneBefore.label: Abholzeit
@@ -102,3 +102,7 @@ roles.ROLE_COURIER: Kurier
 roles.ROLE_RESTAURANT: Restaurant
 stores.form.save: Speichern
 basics.name: Name
+form.payment.refund_amount.label: Menge
+embed.delivery.contact_heading: Kontakt
+embed.delivery.specify_billing_address: Geben Sie eine Rechnungsadresse an
+embed.delivery.billing_address: Rechnungsadresse
