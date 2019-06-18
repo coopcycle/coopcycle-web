@@ -51,12 +51,16 @@ admin.order.created.body: 'Hallo,
 
   <br>
 
-  Die neue Bestellung ist eingegangen.'
+  Die neue Bestellung ist eingegangen.
+
+  '
 admin.order_foodtech.created.body: 'Hallo,
 
   <br>
 
-  Eine neue Bestellung für folgendes Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.'
+  Eine neue Bestellung für folgendes Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.
+
+  '
 owner.order.created.subject: Neue Bestellung zu bestätigen
 owner.order.created.body: 'Hallo,
 
