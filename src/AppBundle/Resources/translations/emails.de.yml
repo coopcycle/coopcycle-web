@@ -1,0 +1,102 @@
+registration.email.subject: 'E-Mail bestätigen
+
+  '
+registration.email.message: '<h2>Wilkommen bei %brand_name%, %username%</h2>
+
+  Sie erhalten diese Nachricht, da Sie sich für ein %brand_name% -Konto angemeldet
+  haben.
+
+  <br>
+
+  Bestätigen Sie ihre E-Mail-Adresse durch einen Klick auf den Button.
+
+  '
+registration.email.confirm: E-Mail wiederholen
+registration.email.disclaimer: Dieser Link ist nur zur einmaligen Validierung des
+  Kontos gültig.
+registration.email.textMessage: 'Herzlich willkommen bei %brand_name%, %username%,\n\n
+
+  Sie erhalten diese Nachricht, da Sie sich kürzlich für ein %brand_name%-Konto registriert
+  haben.\n
+
+  Um diese E-Mail-Adresse zu bestätigen einfach auf den folgenden Link klicken: <a
+  href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+
+  '
+resetting.email.message: <h2>Hallo %username%</h2> Um das Passwort zurückzusetzen,
+  bitte auf den Button unten klicken.
+resetting.email.reset: Passwort zurücksetzen
+order.view: Bestellung anschauen
+order.public_url: 'Um Ihre Sendung zu verfolgen, bitte <a href="%order.public_url%">hier
+  klicken</a>.
+
+  '
+order.foodtech.accepted: 'Die Köchin oder der Koch beginnt mit der Zubereitung.
+
+  <br>
+
+  Eine KurierIn macht sich dann auf den Weg!
+
+  '
+order.foodtech.cancelled: 'Das Restaurant konnte die Bestellung %order.number% leider
+  nicht annehmen.
+
+  <br>
+
+  Ihr Konto ist nicht aufgeladen.
+
+  '
+admin.order.created.subject: Neue Bestellung zum bestätigen
+admin.order.created.body: 'Hallo,
+
+  <br>
+
+  Die neue Bestellung ist eingegangen.'
+admin.order_foodtech.created.body: 'Hallo,
+
+  <br>
+
+  Eine neue Bestellung für folgendes Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.'
+owner.order.created.subject: Neue Bestellung zu bestätigen
+owner.order.created.body: 'Hallo,
+
+  <br>
+
+  für Ihr Restaurant wurde eine neue Bestellung aufgenommen: <strong>%restaurant.name%</strong>.
+
+  '
+order.created.subject: Bestätigung Ihrer Bestellung %order.number%
+order.created.body: 'Hallo,
+
+  <br>
+
+  Ihre Bestellung wurde erfasst.
+
+  <br>
+
+  Wir werden die Bestellung schnellstmöglich bearbeiten und kontaktieren Sie, sobald
+  sie bestätigt ist.
+
+  '
+order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen.
+order.accepted.body.intro: 'Hallo,
+
+  <br>
+
+  Ihre Bestellung wurde bestätigt.
+
+  '
+order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert.
+order.cancelled.body.intro: 'Hallo,
+
+  <br>
+
+  Es tut uns leid, aber Ihre Bestellung wurde storniert.
+
+  '
+order.delayed.subject: Ihre Bestellung %order.number% verspätet sich leider.
+order.delayed.body: ''
+task.done.subject: ''
+task.done.body: ''
+task.failed.subject: ''
+task.failed.body: ''
