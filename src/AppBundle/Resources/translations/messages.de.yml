@@ -122,3 +122,16 @@ embed.delivery.submit.help: Klicken Sie hier um die Anfrage zu bestätigen und d
   Fahrt zu buchen.
 pagination.next: Nächste
 basics.next: Nächste
+embed.delivery.summary.title: Zusammenfassung von deine Bestellung
+adminDashboard.orders.invoice.totalExcludingTax: Nettobetrag
+adminDashboard.orders.invoice.productsTotal: Gesamtbetrag
+adminDashboard.orders.invoice.totalIncludingTax: Gesamtbetrag
+adminDashboard.users.edit: Bearbeiten
+order.items.products_with_count: Produkten (%count%)
+order.total_including_tax: Gesamtbetrag
+order.list.total: Total
+form.settings.phone_number.label: Telefonnummer
+form.delivery_embed.telephone.label: Telefonnummer
+form.menu_editor.products_panel.title: Produkten
+basics.edit: Bearbeiten
+basics.created_at: Erstellt am
