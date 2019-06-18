@@ -23,7 +23,7 @@
       {{ form_row(form.vehicle) }}
     {% endif %}
 
-    <h3>Contact</h3>
+    <h3>{{ 'embed.delivery.contact_heading'|trans }}</h3>
 
     {{ form_row(form.name) }}
     {{ form_row(form.email) }}
@@ -31,11 +31,11 @@
 
     <p class="text-center">
         <a role="button" data-toggle="collapse" data-target="#billing-address" aria-expanded="false" aria-controls="billing-address">
-        Spécifier une adresse de facturation
+        {{ 'embed.delivery.specify_billing_address'|trans }}
       </a>
     </p>
     <div class="collapse" id="billing-address">
-      <h3>Adresse de facturation</h3>
+      <h3>{{ 'embed.delivery.billing_address'|trans }}</h3>
       {{ form_widget(form.billingAddress) }}
     </div>
 
