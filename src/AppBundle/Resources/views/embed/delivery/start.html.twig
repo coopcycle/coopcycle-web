@@ -122,6 +122,6 @@ $('#billing-address').on('shown.bs.collapse', function () {
 });
 $('#delivery_billingAddress_streetAddress').removeAttr('required');
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
   async defer></script>
 {% endblock %}
