@@ -1,5 +1,4 @@
 global.changesSaved: Tus cambios han sido guardados.
-
 navbar.login: Iniciar sesión
 navbar.myAccount: Mi cuenta
 base.footer.contactUs: Contáctanos
@@ -23,7 +22,6 @@ adminDashboard.dashboard.deleteTaskGroup: Eliminar grupo de tareas
 adminDashboard.dashboard.displayByGroups: Mostrar por grupo
 adminDashboard.dashboard.displayAll: Mostrar todas
 adminDashboard.dashboard.cancel: Cancelar
-
 adminDashboard.deliveries.title: Entregas
 adminDashboard.deliveries.createNew: Crear nueva entrega
 adminDashboard.deliveries.type: Tipo
@@ -43,10 +41,8 @@ adminDashboard.stores.title: Tiendas
 adminDashboard.stores.createNew: Crear tienda
 adminDashboard.stores.form.uploadImage: Subir una imagen
 adminDashboard.orders.title: Pedidos
-
 adminDashboard.orders.previousOrders: Pedidos anteriores
 adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
-
 adminDashboard.orders.invoice.title: Factura
 adminDashboard.orders.invoice.totalExcludingTax: Total sin impuestos
 adminDashboard.orders.invoice.totalTax: Total impuestos
@@ -55,12 +51,11 @@ adminDashboard.orders.invoice.productsTotal: Total productos
 adminDashboard.orders.invoice.deliveryTotal: Total entrega
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
-
 adminDashboard.task.form.courier: Courier
 adminDashboard.task.form.status: Status
 adminDashboard.task.form.notes: Notes
-adminDashboard.task.form.notes.placeholder: Añade detalles sobre la finalización de la tarea
-
+adminDashboard.task.form.notes.placeholder: Añade detalles sobre la finalización de
+  la tarea
 adminDashboard.users.title: Usuarios
 adminDashboard.users.edit: Editar
 adminDashboard.users.save: Guardar
@@ -69,7 +64,6 @@ adminDashboard.users.editUser: Editar usuario
 adminDashboard.users.edit.addStore: Añadir tienda
 adminDashboard.users.edit.addRestaurant: Añadir restaurante
 adminDashboard.users.createNew: Añadir usuario
-
 adminDashboard.settings.title: Ajustes
 adminDashboard.pricing.title: Tarificación
 adminDashboard.pricing.manage: Gestionar
@@ -92,11 +86,8 @@ adminDashboard.zones.save: Guardar
 adminDashboard.zones.delete: Eliminar
 adminDashboard.zones.uploadGeoJSON: Subir un archivo GeoJSON
 adminDashboard.zones.send: Enviar
-
 adminDashboard.back.title: Volver al sitio
-
 adminDashboard.promotions.title: Descuentos
-
 deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor introduzca
   un precio.
 deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a partir
@@ -104,14 +95,15 @@ deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a par
 delivery.createNew: Crear nueva entrega
 help.title: Ayuda
 help.home: Inicio
-
-restaurants.no_results: No hemos encontrado ningún restaurante que coincida con tu búsqueda ☹<br>prueba con una dirección diferente
+restaurants.no_results: No hemos encontrado ningún restaurante que coincida con tu
+  búsqueda ☹<br>prueba con una dirección diferente
 restaurants.visible_by_you_only: Visible solo por ti
 restaurants.placeholder.title: Un poco de paciencia…
 restaurants.placeholder.text: ¡Nuevos restaurantes llegarán pronto!
-
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
-localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo adicional antes del pedido de un usuario. Esta opción no cambia los tiempos considerados para la preparación de la comida (20 minutos) y el reparto (25 minutos).
+localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo
+  adicional antes del pedido de un usuario. Esta opción no cambia los tiempos considerados
+  para la preparación de la comida (20 minutos) y el reparto (25 minutos).
 localBusiness.form.orderingDelayDays: Día(s)
 localBusiness.form.orderingDelayHours: Hora(s)
 localBusiness.form.name: Nombre
@@ -128,9 +120,10 @@ restaurant.disabledWarning: 'Éste restaurante está desactivado así que los vi
   en el panel de administración</a>.
 
   '
-restaurant.closedWarningWithDelay: 'Pide ahora para más tarde. Pedidos minimo %delay% antes.'
-restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado hasta el <strong>%date%</strong> pero
-  puedes hacer un pedido para más tarde.
+restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
+  antes.
+restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado hasta el <strong>%date%</strong>
+  pero puedes hacer un pedido para más tarde.
 
   '
 restaurant.noMenuWarning: 'Este restaurante no tiene menú por ahora
@@ -140,16 +133,15 @@ restaurant.form.enabled.tooltip: 'Un restaurante desactivado no és visible en l
   no aparece en los resultados de búsqueda ni es accesible para los visitantes.
 
   '
-restaurant.form.allow_stripe_connect.label: Permitir que el restaurante administre la cuenta Stripe por sí mismo
+restaurant.form.allow_stripe_connect.label: Permitir que el restaurante administre
+  la cuenta Stripe por sí mismo
 restaurant.form.temporaryClosingRule: Si desea cerrar el restaurante temporalmente
   siga el siguiente enlace
-
 restaurant.form.accessPlanning: Acceder al calendario
 restaurant.form.createRestaurant: Crear restaurante
 restaurant.form.save: Guardar
 restaurant.contract.title: Contrato
 restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
-
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
   entrega. Puedes escoger un radio (en km) o una zona
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
@@ -162,8 +154,10 @@ restaurant.contract.customerAmount.help: Esta suma se mostrará en el carrito y 
 restaurant.contract.feeRate.label: Porcentaje de comisión
 restaurant.contract.feeRate.help: Este porcentaje será retenido por la plataforma
   en el total de los productos
-restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comisión Stripe, reembolsos y recargos
-restaurant.contract.restaurantPaysStripeFee.help: Escoge que parte será responsable de pagar la comisión de Stripe y gestionar reembolsos y recargos
+restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comisión Stripe,
+  reembolsos y recargos
+restaurant.contract.restaurantPaysStripeFee.help: Escoge que parte será responsable
+  de pagar la comisión de Stripe y gestionar reembolsos y recargos
 restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurante
 restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativa
 restaurant.contract.onlyAdmin: Únicamente un administrador puede editar las condiciones
@@ -172,7 +166,6 @@ restaurant.contract.noContract: No existen condiciones de contrato. Por favor co
   a un administrador.
 restaurant.contract.showAdvanced: Muestra opciones avanzadas
 restaurant.menus.noMenus: No has creado un menú por el momento.
-
 restaurant.menus.activate: Activar
 restaurant.menus.activated: El menú « %menu_name% » ha sido activado. Ahora se mostrará
   en la página del restaurante
@@ -191,7 +184,6 @@ restaurant.list.norestaurant: Aún no existen restaurantes.
 restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
 restaurant.list.stats: Estadísticas
-
 restaurant.product_options.help: 'Las opciones hacen que los productos sean <strong>configurables</strong>
 
   <br>
@@ -201,9 +193,7 @@ restaurant.product_options.help: 'Las opciones hacen que los productos sean <str
 
   <br>
 
-  Para cada opción, puede definir una lista de valores
-  '
-
+  Para cada opción, puede definir una lista de valores '
 restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
@@ -238,11 +228,9 @@ profile.email: Email
 profile.telephone: Teléfono
 profile.familyName: Apellidos
 profile.givenName: Nombre
-
 profile.managedStores: Tiendas gestionadas por el usuario
 profile.managedRestaurants: Restaurantes gestionados por el usuario
 profile.accountType: Tipo de cuenta
-
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
@@ -264,7 +252,6 @@ order.payment.card_number.help: 'Hemos introducido un <a href="https://stripe.co
 
   '
 order.payment.cvc: CVC
-
 order.state.cart: Cesta
 order.state.new: Nuevo
 order.state.refused: Rechazado
@@ -272,7 +259,6 @@ order.state.accepted: Aceptado
 order.state.cancelled: Annulado
 order.state.fulfilled: Entregado
 order.state.ready: Listo
-
 payment.state.cart: Cesta
 payment.state.new: Nueveo
 payment.state.authorized: Autorizado
@@ -281,10 +267,8 @@ payment.state.failed: Fallado
 payment.state.cancelled: Cancelado
 payment.state.refunded: Reembolsado
 payment.state.refunded_partially: Parcialmente Reembolsado
-
 order.adjustment_type.delivery: Entrega
 order.adjustment_type.platform_fees: Costos CoopCycle
-
 order.list.total: Total
 order.list.shippedAt: Hora de entrega
 order.list.cancel: Cancelar
@@ -303,14 +287,14 @@ task.form.timeWindow: Periodo
 task.form.cancel: Cancelar
 task.form.showHistory: Mostrar historial
 task.form.modal.moreOptions: Más opciones
-
 task.form.edit: Editar tarea %id%
 task.form.dateRange: Rango de fechas
 task.form.finish: Finalizar tarea
 task.form.details: Detalles de la tarea
 task.form.finish.DONE.info: La tarea se completó con éxito
 task.form.finish.FAIL.info: La tarea no pudo ser completada
-task.form.finish.info: La tarea ha sido finalizada con el estado %status%. Puedes cambiar la nota que se añadió al completarla.
+task.form.finish.info: La tarea ha sido finalizada con el estado %status%. Puedes
+  cambiar la nota que se añadió al completarla.
 task.status.done: Éxito
 task.status.failed: Fracaso
 task.status.todo: Pendiente
@@ -319,14 +303,14 @@ form.task.status.label: Estado
 form.task_event.notes.placeholder: 'Ejemplo : dirección no encontrada, no hay problema…'
 form.task_event.notes.help: Puedes editar el comentario
 form.task_upload.file: Archivo
-form.task_upload.file.help: |
-  Formatos de archivo admitidos: csv, ods, xlsx
+form.task_upload.file.help: 'Formatos de archivo admitidos: csv, ods, xlsx
+
+  '
 form.task_complete.done.label: Completada
 form.task_complete.fail.label: Informar del problema
 task.type.PICKUP: Recogida
 task.type.DROPOFF: Entrega
 task.previous_task_not_completed_yet: La tarea anterior no ha sido completada
-
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a a demo de la plataforma
   <a target="_blank" href="https://coopcycle.org">CoopCycle</a>.
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
@@ -335,15 +319,13 @@ maintenance.disclaimer: El modo mantenimiento esta activado
 cart.title: Carrito
 cart.widget.title: Tus detalles de entrega
 cart.widget.button: Pedir
-
 checkout.breadcrumb.address: Dirección
 checkout.breadcrumb.payment: Pago
-
 form.geojson_upload.file: Archivo
 form.store_type.pricing_rule_set.label: Tarifa
-form.store_type.prefill_pickup_address.label: Rellenar automáticamente la dirección de recogida
+form.store_type.prefill_pickup_address.label: Rellenar automáticamente la dirección
+  de recogida
 form.store_type.create_orders.label: Crear pedidos
-
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
@@ -361,23 +343,25 @@ form.delivery.duration.label: Duración
 form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
-
 form.order.accept.label: Aceptar
-form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado por correo electrónico.
+form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado
+  por correo electrónico.
 form.order.cancel.label: Cancelar
 form.order.fulfill.label: Realizar
 form.order.payment_complete.label: Completar
 form.order.payment_refund.label: Reembolsar
-
 form.order.refund_modal.title: Reembolso
 form.payment.refund_amount.label: Suma
 form.payment.refund_amount.help: El importe que especifique será devuelto al cliente
 form.payment.refund_application_fee.label: Reembolsar los honorarios
-form.payment.refund_application_fee.help: |
-  Si marca esta casilla, la comisión cobrada por la plataforma al socio será reembolsada proporcionalmente
+form.payment.refund_application_fee.help: 'Si marca esta casilla, la comisión cobrada
+  por la plataforma al socio será reembolsada proporcionalmente
+
   <br>
+
   <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Más información</a>
 
+  '
 form.address.streetAddress.label: Dirección
 form.address.streetAddress.error.noLatLng: Selecciona una dirección en el menú desplegable
 form.address.name.label: Nombre
@@ -387,29 +371,28 @@ form.address.postalCode.label: Código postal
 form.address.floor.label: Piso
 form.address.description.label: Instrucciones
 form.address.description.placeholder: 2ª puerta a la izquierda…
-
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
-
 form.preparation_time_rule.expression.label: Expresión
 form.preparation_time_rule.time.label: Tiempo
-form.preparation_time.defaults_warning: |
-  Este restaurante aún no tiene ningún tiempo de preparación personalizado. Las reglas predeterminadas se han copiado a continuación, puedes cambiarlas.
+form.preparation_time.defaults_warning: 'Este restaurante aún no tiene ningún tiempo
+  de preparación personalizado. Las reglas predeterminadas se han copiado a continuación,
+  puedes cambiarlas.
 
+  '
 form.settings.date_time: Fecha y hora
 form.settings.brand_name.label: Marca de fábrica
 form.settings.stripe.title: Stripe Account
-form.settings.stripe.help: '
-  Stripe is the payment service we use to handle credit cards. To use the e-commerce part of the platform it is necessary
-  to configure this section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
-  (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid by the shop owner.
-'
-form.settings.stripe_testmode.help: '
-  En modo « test », debe usar <a href="https://stripe.com/docs/testing">números de tarjetas de prueba</a> para pagar.
-  <strong>No se intercambiará dinero.</strong>
-'
-form.settings.stripe_enable_livemode.help: 'Para activar el modo « live », primero necesita configurar las credenciales « live ».'
+form.settings.stripe.help: ' Stripe is the payment service we use to handle credit
+  cards. To use the e-commerce part of the platform it is necessary to configure this
+  section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
+  (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid
+  by the shop owner. '
+form.settings.stripe_testmode.help: ' En modo « test », debe usar <a href="https://stripe.com/docs/testing">números
+  de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
+form.settings.stripe_enable_livemode.help: Para activar el modo « live », primero
+  necesita configurar las credenciales « live ».
 form.settings.stripe_publishable_key.label: Clave pública de Stripe
 form.settings.stripe_publishable_key.help: 'Crea una cuenta Stripe para obtener tu
   <a href="https://stripe.com/docs/dashboard#api-keys">clave pública</a>
@@ -423,9 +406,7 @@ form.settings.stripe_secret_key.help: 'Crea una cuenta Stripe para obtener tu <a
 form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
 form.settings.stripe_connect_client_id.help: 'Puedes encontrar tu identificador en
   <a href="https://dashboard.stripe.com/account/applications/settings">la página de
-  parámetros</a>
-'
-
+  parámetros</a> '
 form.settings.google_api_key.label: Clave API de google
 form.settings.google_api_key.help: 'Crea una cuenta Google para obtener tu <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clave
   API</a>
@@ -437,7 +418,6 @@ form.settings.latlng.help: 'Especifica la latitud y longitud por defecto del map
 
   '
 form.settings.default_tax_category.label: IVA para entregas
-
 form.settings.default_tax_category.help: Establezca la tasa de IVA para entregas
 form.settings.administrator_email.label: Correo del administrador
 form.settings.administrator_email.help: Las notificaciones se enviarán a éste correo
@@ -446,7 +426,8 @@ form.settings.phone_number.help: Este número se mostrará a los clientes
 form.settings.currency_code.label: Moneda
 form.maintenance.enable.label: Activar el mantenimiento
 form.maintenance.disable.label: Desactivar el mantenimiento
-form.maintenance.enable.alert: 'Estás a punto de activar el mantenimiento.<br>Solo los administradores tendrán acceso al sitio.'
+form.maintenance.enable.alert: Estás a punto de activar el mantenimiento.<br>Solo
+  los administradores tendrán acceso al sitio.
 form.maintenance.disable.alert: Estás a punto de desactivar el mantenimiento
 form.maintenance.message.label: Mensaje
 form.maintenance.message.help: Puedes formatear texto usando la sintaxis Markdown
@@ -456,11 +437,15 @@ form.banner.enable.alert: Estás a punto de activar la bandera
 form.banner.disable.alert: Estás a punto de desactivar la bandera
 form.banner.message.label: Mensaje mostrado en la bandera
 form.stripe_livemode.enable.label: Utilizar Stripe en modo « live »
-form.stripe_livemode.enable.alert: En modo « live », las tarjetas de crédito serán cargadas.
+form.stripe_livemode.enable.alert: En modo « live », las tarjetas de crédito serán
+  cargadas.
 form.stripe_livemode.disable.label: Utilizar Stripe en modo « test »
-form.stripe_livemode.disable.alert: En modo « test », las tarjetas de crédito no serán cargadas.
-form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « test » y activar el mantenimiento
-form.stripe_livemode.disable_and_enable_maintenance.alert: 'Estás utilizando el modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.'
+form.stripe_livemode.disable.alert: En modo « test », las tarjetas de crédito no serán
+  cargadas.
+form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « test
+  » y activar el mantenimiento
+form.stripe_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo
+  « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
   Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números
@@ -468,7 +453,8 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
 
   '
 form.local_business.stripe_account.title: Cuenta Stripe
-form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir dinero a otra cuenta bancaria
+form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir
+  dinero a otra cuenta bancaria
 form.local_business.stripe_account.connect_button.text: Conéctate con Stripe
 form.local_business.stripe_account.not_configured: No puedes conectar una cuenta todavía
 form.local_business.stripe_account.success: Cuenta Stripe conectada con éxito
@@ -519,7 +505,7 @@ form.menu_editor.products.help: 'Para añadir productos en la lista de la derech
   primero tiene que modificar el <a href="%products_url%">catálogo</a>
 
   '
-form.menu_editor.taxon_modal.title: 'Modificar una seccion'
+form.menu_editor.taxon_modal.title: Modificar una seccion
 form.product.name.label: Nombre
 form.product.description.label: Descripción
 form.product.price.label: Precio
@@ -530,11 +516,16 @@ form.product.allergens.help: ¿Este producto contiene los siguientes alérgenos?
 form.product.restricted_diets.label: Dietas restringidas
 form.product.restricted_diets.help: ¿Este producto se ajusta a las siguientes dietas?
 form.product.confirm.label: Confirmar cambios
-form.product.confirm.help: |
-  Has cambiado el nombre del producto. Si es una <strong>modificación menor</strong> (error de ortografía, mayúscula…), haga clic en « Confirmar cambios ».
-  <br>
-  Si no, debe <a href="%link%">crear un nuevo producto</a>, para que pueda distinguir los productos que vende y mantener un historial.
+form.product.confirm.help: 'Has cambiado el nombre del producto. Si es una <strong>modificación
+  menor</strong> (error de ortografía, mayúscula…), haga clic en « Confirmar cambios
+  ».
 
+  <br>
+
+  Si no, debe <a href="%link%">crear un nuevo producto</a>, para que pueda distinguir
+  los productos que vende y mantener un historial.
+
+  '
 form.product_option.name.label: Nombre
 form.product_option.strategy.label: Cálculo del precio
 form.product_option.price.label: Precio
@@ -544,40 +535,35 @@ form.product_option.values.help: Debes definir una lista de valores para esta op
 form.product_option_value.value.label: Valor
 form.product_option_value.price.label: Precio
 form.product_option.additional.label: Esta opción es adicional
-form.product_option.additional.help: El cliente puede elegir varios valores, sin tener que elegir al menos uno
-
+form.product_option.additional.help: El cliente puede elegir varios valores, sin tener
+  que elegir al menos uno
 form.checkout_address.notes.label: ¿Un comentario?
-form.checkout_address.notes.placeholder: |
-  Ejemplo: sin salsa, sin tomates…
+form.checkout_address.notes.placeholder: 'Ejemplo: sin salsa, sin tomates…
+
+  '
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
 form.checkout_address.promotion_coupon.label: Código promocional
-
 form.task_export.start.label: Inicio
 form.task_export.end.label: Final
-
 form.api_app.name.label: Nombre de la aplicación
 form.api_app.store.label: Tienda
 form.api_app.client_id.label: Login
 form.api_app.client_secret.label: Clave secreta
-
 form.credit_note.user_search.help: El descuento solo será utilizable por este usuario.
 form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
-
-form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de vehículo
-
+form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de
+  vehículo
 form.delivery_embed.name.label: Nombre
 form.delivery_embed.name.help: Vuestro nombre o el nombre de la empresa
 form.delivery_embed.telephone.label: Número de teléfono
-form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg.
-
+form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
+  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg.
 promotion_coupon.used.label: Número de usos
-
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
 product_option.strategy.option_value: Precio según la elección
-
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Mensajero
 roles.ROLE_RESTAURANT: Restaurante
@@ -588,7 +574,6 @@ user.edit.enabled.label: Activado
 user.edit.disabled.label: Desactivado
 user.edit.enabled.help: Un usuario desactivado sera desconectado y no podrá volver
   a iniciar sesión en la plataforma.
-
 user.profile.familyName: Apellidos
 user.profile.givenName: Nombre
 roles.ROLE_ADMIN.help: 'Administrador : Acceso total a todas las opciones
@@ -616,7 +601,6 @@ stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones
-
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: 'Algunos ajustes obligatorios no han sido
   configurados.
@@ -628,38 +612,45 @@ index.map.tip: Usa el mapa para encontrar restaurantes
 index.banner: Platos deliciosos del restaurante a tu casa
 index.our_restaurants: Nuestros restaurantes
 index.view_all_restaurants: Ver todos los restaurantes →
-
 notifications.empty: Ninguna notificación
-
 adminDashboard.statistics: Estadísticas
 adminDashboard.activity.title: Actividad
+activity.task.created: '@%owner% ha creado la tarea #task/%aggregate_id%
 
-activity.task.created: |
-  @%owner% ha creado la tarea #task/%aggregate_id%
-activity.task.assigned: |
-  @%owner% ha asignado la tarea #task/%aggregate_id%
-activity.task.unassigned: |
-  @%owner% ha desasignado la tarea #task/%aggregate_id%
-activity.task.done: |
-  @%owner% ha terminado la tarea #task/%aggregate_id%
-activity.task.failed: |
-  @%owner% no pudo terminar la tarea #task/%aggregate_id%
-activity.task.cancelled: |
-  @%owner% ha cancelado la tarea #task/%aggregate_id%
+  '
+activity.task.assigned: '@%owner% ha asignado la tarea #task/%aggregate_id%
 
-activity.order.created: |
-  El pedido #order/%aggregate_id% ha sido creado por @%owner%
-activity.order.accepted: |
-  El pedido #order/%aggregate_id% ha sido aceptado
-activity.order.refused: |
-  El pedido #order/%aggregate_id% ha sido rechazado
-activity.order.picked: |
-  @%owner% ha recuperado el pedido #order/%aggregate_id%
-activity.order.dropped: |
-  @%owner% ha entregado el pedido #order/%aggregate_id%
-activity.order.fulfilled: |
-  El pedido #order/%aggregate_id% esta terminado
+  '
+activity.task.unassigned: '@%owner% ha desasignado la tarea #task/%aggregate_id%
 
+  '
+activity.task.done: '@%owner% ha terminado la tarea #task/%aggregate_id%
+
+  '
+activity.task.failed: '@%owner% no pudo terminar la tarea #task/%aggregate_id%
+
+  '
+activity.task.cancelled: '@%owner% ha cancelado la tarea #task/%aggregate_id%
+
+  '
+activity.order.created: 'El pedido #order/%aggregate_id% ha sido creado por @%owner%
+
+  '
+activity.order.accepted: 'El pedido #order/%aggregate_id% ha sido aceptado
+
+  '
+activity.order.refused: 'El pedido #order/%aggregate_id% ha sido rechazado
+
+  '
+activity.order.picked: '@%owner% ha recuperado el pedido #order/%aggregate_id%
+
+  '
+activity.order.dropped: '@%owner% ha entregado el pedido #order/%aggregate_id%
+
+  '
+activity.order.fulfilled: 'El pedido #order/%aggregate_id% esta terminado
+
+  '
 pagination.previous: Anterior
 pagination.next: Siguiente
 basics.save: Guardar
@@ -677,30 +668,25 @@ basics.name: Nombre
 basics.today: Hoy
 basics.are_you_sure: ¿Estás segur@?
 basics.no_entries: Ningun elemento por el momento
-
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?
 authentication.create_account: Crea tu cuenta
 authentication.already_registered: ¿Ya tienes una cuenta?
 authentication.sign_in: Regístrate
-
 maintenance.text: Site under maintenance - We will be back soon
-
 api_apps.breadcrumb: Clientes API
-api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación para autenticar.
-
+api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación
+  para autenticar.
 promotions.breadcrumb: Descuentos
 promotions.breadcrumb.new_credit_note: Nueva nota de credito
 promotions.heading.free_delivery: Entrega gratis
 promotions.heading.free_delivery.help: Crear códigos promocionales para ofrecer entrega
 promotions.heading.credit_note: Notas de credito
 promotions.heading.credit_note.help: Crear notas de credito únicas para los clientes
-promotions.promotion_coupon.success: Tu código promocional %code% ha sido tomado en cuenta
-
+promotions.promotion_coupon.success: Tu código promocional %code% ha sido tomado en
+  cuenta
 promotions.create_credit_note_coupon: Añadir una nota de credito
-
 search.users: Buscar un usuario…
-
 allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
 allergens.CRUSTACEANS: Crustáceos
 allergens.EGGS: Huevos
@@ -715,7 +701,6 @@ allergens.SESAME_SEEDS: Semillas de sésamo
 allergens.SULPHUR_DIOXIDE_SULPHITES: Dióxido de azufre
 allergens.LUPIN: Lupine
 allergens.MOLLUSCS: Moluscos
-
 restricted_diets.DIABETIC_DIET: Diabético
 restricted_diets.GLUTEN_FREE_DIET: Sin gluten
 restricted_diets.HALAL_DIET: Halal
@@ -727,6 +712,8 @@ restricted_diets.LOW_LACTOSE_DIET: Baja lactosa
 restricted_diets.LOW_SALT_DIET: Bajo en sal
 restricted_diets.VEGAN_DIET: Vegano
 restricted_diets.VEGETARIAN_DIET: Vegetariano
-
 sylius.ui.code: Codigo
 sylius.form.promotion_coupon.per_customer_usage_limit: Límite de uso por cliente
+embed.delivery.title: Formulario de creación de entrega
+embed.delivery.configure_pricing_rule_set: Primero debes configurar una regla de tarificación
+  para aplicar

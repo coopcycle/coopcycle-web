@@ -2,3 +2,103 @@ global.changesSaved: Ihre Änderungen wurden gespeichert.
 navbar.myAccount: Mein Konto
 base.footer.contactUs: Kontaktiere uns
 base.footer.help: Hilfe
+navbar.login: Einloggen
+adminDashboard.configuration: Einstellungen
+adminDashboard.dashboard.title: Dashboard
+adminDashboard.dashboard.import: Importieren
+adminDashboard.dashboard.export: Exportieren
+adminDashboard.dashboard.filters: Filter
+adminDashboard.deliveries.title: Lieferungen
+adminDashboard.deliveries.createNew: Neue Lieferung
+adminDashboard.deliveries.courier: Kurier
+adminDashboard.deliveries.address: Adresse
+adminDashboard.deliveries.delivery: Lieferung
+adminDashboard.deliveries.originAddress: Abholadresse
+adminDashboard.deliveries.deliveryAddress: Lieferadresse
+adminDashboard.deliveries.save: Speichern
+embed.breadcrumb.summary: Zusammenfassung
+embed.breadcrumb.confirm: Bestätigung
+adminDashboard.menuCategories.save: Speichern
+adminDashboard.stores.form.uploadImage: Bild hochladen
+adminDashboard.orders.title: Bestellungen
+adminDashboard.orders.invoice.title: Rechnung
+adminDashboard.restaurants.title: Restaurants
+adminDashboard.users.save: Speichern
+adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
+adminDashboard.settings.title: Einstellungen
+adminDashboard.pricing.settings: Einstellungen
+adminDashboard.tags.save: Speichern
+adminDashboard.tags.name: Name
+adminDashboard.tags.color: Farbe
+adminDashboard.zones.save: Speichern
+adminDashboard.zones.delete: Löschen
+localBusiness.form.name: Name
+localBusiness.form.website: Website
+restaurant.form.save: Speichern
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.closingForm.reason.label: Grund
+restaurant.list.products: Produkten
+restaurant.list.settings: Einstellungen
+restaurant.form.uploadImage: Bild hochladen
+profile.task.address: Adresse
+profile.edit.save: Speichern
+profile.addresses.save: Speichern
+profile.email: E-Mail
+order.payment.month.label: Monat
+order.state.new: Neu
+payment.state.new: Neu
+order.list.summary: Zusammenfassung
+vehicle.bike: Fahrrad
+vehicle.cargo_bike: Lastenrad
+form.task.courier.label: Kurier
+task.type.PICKUP: Abholung
+task.type.DROPOFF: Lieferung
+cart.widget.button: Bestellen
+checkout.breadcrumb.address: Adresse
+form.delivery.vehicle.VEHICLE_BIKE: Fahrrad
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Lastenrad
+form.delivery.pickup.label: Abholung
+form.delivery.dropoff.label: Lieferung
+form.delivery.weight.label: Gewicht (g)
+form.delivery.pickup.doneBefore.label: Abholzeit
+form.delivery.price.label: Preis
+form.address.addressLocality.label: Stadt
+form.address.postalCode.label: Postleitzahl
+form.address.floor.label: Etage
+form.address.description.label: Anweisungen
+form.address.description.placeholder: 2. Tür links
+form.address.streetAddress.label: Adresse
+form.address.streetAddress.error.noLatLng: 'Bitte wählen Sie eine Adresse aus dem
+  Auswahlfeld:'
+form.address.name.label: Name
+form.address.name.placeholder: Zuhause, Arbeit …
+form.pricing_rule_set.name.label: Name
+form.pricing_rule_set.rules.label: Regeln
+form.pricing_rule.price.label: Preis
+form.preparation_time_rule.expression.label: Ausdruck
+form.preparation_time_rule.time.label: Zeit
+form.preparation_time.defaults_warning: 'Dieses Restaurant hat noch keine kundenspezifische
+  Bearbeitungszeit angegeben. Die Standardregeln wurden unten kopiert und können bearbeitet
+  werden.
+
+  '
+form.settings.date_time: Datum und Zeit
+form.settings.brand_name.label: Markenname
+form.settings.stripe.title: Stripe-Konto
+form.delivery_embed.name.label: Name
+form.menu_item.name.label: Name
+form.menu_item.price.label: Preis
+form.menu_item_modifier.name.label: Name
+form.menu_item_modifier.price.label: Preis
+form.menu_taxon.name.label: Name
+form.product.name.label: Name
+form.product.price.label: Preis
+form.product_option.name.label: Name
+form.product_option.price.label: Preis
+form.product_option_value.price.label: Preis
+form.task_export.end.label: Ende
+form.credit_note.name.label: Name
+roles.ROLE_COURIER: Kurier
+roles.ROLE_RESTAURANT: Restaurant
+stores.form.save: Speichern
+basics.name: Name
