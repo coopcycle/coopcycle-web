@@ -50,6 +50,9 @@ embed.delivery.summary.title: Summary of your order
 embed.delivery.use_form_below: Use the form below to pay your order by credit card
 embed.delivery.paid_at: Payment made on %date%
 embed.payment.heading: Pay my order
+embed.delivery.contact_heading: Contact
+embed.delivery.specify_billing_address: Specify a billing address
+embed.delivery.billing_address: Billing address
 
 adminDashboard.menuCategories.menu: Menu
 adminDashboard.menuCategories.categories: Categories

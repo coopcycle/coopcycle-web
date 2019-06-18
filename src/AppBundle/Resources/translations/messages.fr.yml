@@ -661,6 +661,9 @@ embed.payment.heading: Payer ma commande
 embed.delivery.summary.title: Résumé de votre commande
 embed.delivery.use_form_below: Utilisez le formulaire ci-dessous pour payer votre commande par carte bancaire
 embed.delivery.paid_at: Paiement effectué le %date%
+embed.delivery.contact_heading: Contact
+embed.delivery.specify_billing_address: Spécifier une adresse de facturation
+embed.delivery.billing_address: Adresse de facturation
 notifications.empty: Aucune notification
 
 adminDashboard.statistics: Statistiques
