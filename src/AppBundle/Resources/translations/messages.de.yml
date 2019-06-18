@@ -119,3 +119,5 @@ embed.delivery.summary: 'Sie haben eine Fahrt gebucht, welche am <strong>%dropof
   tax excl.</strong> (%total_including_tax% tax incl.).'
 embed.delivery.submit.help: Klicken Sie hier um die Anfrage zu bestätigen und die
   Fahrt zu buchen.
+pagination.next: Nächste
+basics.next: Nächste
