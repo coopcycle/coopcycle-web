@@ -103,3 +103,6 @@ roles.ROLE_RESTAURANT: Restaurant
 stores.form.save: Speichern
 basics.name: Name
 form.payment.refund_amount.label: Menge
+embed.delivery.contact_heading: Kontakt
+embed.delivery.specify_billing_address: Geben Sie eine Rechnungsadresse an
+embed.delivery.billing_address: Rechnungsadresse
