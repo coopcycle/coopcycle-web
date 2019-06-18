@@ -717,3 +717,6 @@ sylius.form.promotion_coupon.per_customer_usage_limit: Límite de uso por client
 embed.delivery.title: Formulario de creación de entrega
 embed.delivery.configure_pricing_rule_set: Primero debes configurar una regla de tarificación
   para aplicar
+form.address.firstName.label: Nombre
+form.address.lastName.label: Apellido
+form.address.company.label: Empresa
