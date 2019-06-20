@@ -3,6 +3,31 @@ import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
+import {
+  ASSIGN_TASKS,
+  ADD_CREATED_TASK,
+  REMOVE_TASKS,
+  UPDATE_TASK,
+  OPEN_ADD_USER,
+  CLOSE_ADD_USER,
+  MODIFY_TASK_LIST_REQUEST,
+  MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  TOGGLE_SHOW_FINISHED_TASKS,
+  TOGGLE_SHOW_UNTAGGED_TASKS,
+  TOGGLE_SHOW_CANCELLED_TASKS,
+  FILTER_TAG_BY_TAGNAME,
+  TOGGLE_POLYLINE,
+  TOGGLE_TASK,
+  SELECT_TASK,
+  SET_TASK_LIST_GROUP_MODE,
+  ADD_TASK_LIST_REQUEST,
+  ADD_TASK_LIST_REQUEST_SUCCESS,
+  SET_GEOLOCATION,
+  SET_OFFLINE,
+  DRAKE_DRAG,
+  DRAKE_DRAGEND
+} from './actions'
+
 const moment = extendMoment(Moment)
 
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
@@ -51,7 +76,7 @@ const initialState = {
 
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'UPDATE_TASK':
+  case UPDATE_TASK:
 
     const dateAsRange = moment.range(
       moment(state.date).set({ hour:  0, minute:  0, second:  0 }),
@@ -137,7 +162,7 @@ function _taskLists(state = [], action, date = initialState.date) {
 
   switch (action.type) {
 
-  case 'ASSIGN_TASKS':
+  case ASSIGN_TASKS:
 
     taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
     taskList = newTaskLists[taskListIndex]
@@ -147,7 +172,7 @@ function _taskLists(state = [], action, date = initialState.date) {
 
     return newTaskLists
 
-  case 'REMOVE_TASKS':
+  case REMOVE_TASKS:
 
     taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
     taskList = newTaskLists[taskListIndex]
@@ -162,7 +187,7 @@ function _taskLists(state = [], action, date = initialState.date) {
 
     return newTaskLists
 
-  case 'MODIFY_TASK_LIST_REQUEST_SUCCESS':
+  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
 
     taskListIndex = _.findIndex(newTaskLists, taskList => taskList['@id'] === action.taskList['@id'])
 
@@ -171,13 +196,13 @@ function _taskLists(state = [], action, date = initialState.date) {
 
     return newTaskLists
 
-  case 'ADD_TASK_LIST_REQUEST_SUCCESS':
+  case ADD_TASK_LIST_REQUEST_SUCCESS:
 
     newTaskLists.push(action.taskList)
 
     return newTaskLists
 
-  case 'ADD_CREATED_TASK':
+  case ADD_CREATED_TASK:
 
     if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return newTaskLists
@@ -212,7 +237,7 @@ function _unassignedTasks(state = [], action, date = initialState.date) {
 
   switch (action.type) {
 
-  case 'ADD_CREATED_TASK':
+  case ADD_CREATED_TASK:
     if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return state
     }
@@ -222,7 +247,7 @@ function _unassignedTasks(state = [], action, date = initialState.date) {
     }
     break
 
-  case 'ASSIGN_TASKS':
+  case ASSIGN_TASKS:
     newState = state.slice(0)
     newState = _.differenceWith(
       newState,
@@ -231,7 +256,7 @@ function _unassignedTasks(state = [], action, date = initialState.date) {
     )
     return newState
 
-  case 'REMOVE_TASKS':
+  case REMOVE_TASKS:
     return Array.prototype.concat(state, action.tasks)
   }
 
@@ -243,7 +268,7 @@ function _allTasks(state = [], action, date = initialState.date) {
 
   switch (action.type) {
 
-  case 'ADD_CREATED_TASK':
+  case ADD_CREATED_TASK:
     if (!moment(action.task.doneBefore).isSame(date, 'day')) {
       return state
     }
@@ -260,9 +285,9 @@ function _allTasks(state = [], action, date = initialState.date) {
 
 export const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
-  case 'OPEN_ADD_USER':
+  case OPEN_ADD_USER:
     return true
-  case 'CLOSE_ADD_USER':
+  case CLOSE_ADD_USER:
     return false
   default:
     return state
@@ -271,14 +296,12 @@ export const addModalIsOpen = (state = false, action) => {
 
 export const taskListsLoading = (state = false, action) => {
   switch(action.type) {
-  case 'ADD_TASK_LIST_REQUEST':
-  case 'MODIFY_TASK_LIST_REQUEST':
+  case ADD_TASK_LIST_REQUEST:
+  case MODIFY_TASK_LIST_REQUEST:
     return true
-  case 'ADD_TASK_LIST_REQUEST_SUCCESS':
-  case 'MODIFY_TASK_LIST_REQUEST_SUCCESS':
+  case ADD_TASK_LIST_REQUEST_SUCCESS:
+  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
     return false
-  case 'SAVE_USER_TASKS_ERROR':
-    throw(new Error('Unhnadled error case for save'))
   default:
     return state
   }
@@ -286,7 +309,7 @@ export const taskListsLoading = (state = false, action) => {
 
 export const polylineEnabled = (state = {}, action) => {
   switch (action.type) {
-  case 'TOGGLE_POLYLINE':
+  case TOGGLE_POLYLINE:
     let newState = { ...state }
     const { username } = action
     newState[username] = !state[username]
@@ -302,7 +325,7 @@ export const selectedTasks = (state = [], action) => {
   let newState = state.slice(0)
 
   switch (action.type) {
-  case 'TOGGLE_TASK':
+  case TOGGLE_TASK:
 
     if (-1 !== state.indexOf(action.task)) {
       if (!action.multiple) {
@@ -318,7 +341,7 @@ export const selectedTasks = (state = [], action) => {
 
     return newState
 
-  case 'SELECT_TASK':
+  case SELECT_TASK:
 
     if (-1 !== state.indexOf(action.task)) {
 
@@ -333,7 +356,7 @@ export const selectedTasks = (state = [], action) => {
 
 export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   switch (action.type) {
-  case 'SET_TASK_LIST_GROUP_MODE':
+  case SET_TASK_LIST_GROUP_MODE:
     return action.mode
   default:
     return state
@@ -342,7 +365,7 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
 
 export const taskFinishedFilter = (state = true, action) => {
   switch (action.type) {
-  case 'TOGGLE_SHOW_FINISHED_TASKS':
+  case TOGGLE_SHOW_FINISHED_TASKS:
     let showFinishedTasks = !state
     return showFinishedTasks
   default:
@@ -352,7 +375,7 @@ export const taskFinishedFilter = (state = true, action) => {
 
 export const taskCancelledFilter = (state = false, action) => {
   switch (action.type) {
-  case 'TOGGLE_SHOW_CANCELLED_TASKS':
+  case TOGGLE_SHOW_CANCELLED_TASKS:
     let showCancelledTasks = !state
     return showCancelledTasks
   default:
@@ -366,7 +389,7 @@ export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: tr
 
   switch (action.type) {
 
-  case 'FILTER_TAG_BY_TAGNAME':
+  case FILTER_TAG_BY_TAGNAME:
     let selectedTagsList = state.selectedTagsList.slice(0)
 
     if (_.find(selectedTagsList, tag => tag.name === action.tag.name)) {
@@ -377,7 +400,7 @@ export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: tr
       selectedTagsList.push(action.tag)
     }
     return {...state, selectedTagsList}
-  case 'TOGGLE_SHOW_UNTAGGED_TASKS':
+  case TOGGLE_SHOW_UNTAGGED_TASKS:
     let showUntaggedTasks = !state.showUntaggedTasks
     return {...state, showUntaggedTasks}
   default:
@@ -391,7 +414,7 @@ export const date = (state = moment(), action) => state
 
 export const positions = (state = [], action) => {
   switch (action.type) {
-  case 'SET_GEOLOCATION':
+  case SET_GEOLOCATION:
 
     const marker = {
       username: action.username,
@@ -419,7 +442,7 @@ export const offline = (state = [], action) => {
   let index
 
   switch (action.type) {
-  case 'SET_GEOLOCATION':
+  case SET_GEOLOCATION:
 
     index = _.findIndex(state, username => username === action.username)
     if (-1 === index) {
@@ -429,7 +452,7 @@ export const offline = (state = [], action) => {
 
     return _.filter(state, username => username !== action.username)
 
-  case 'SET_OFFLINE':
+  case SET_OFFLINE:
 
     index = _.findIndex(state, username => username === action.username)
     if (-1 === index) {
@@ -445,11 +468,11 @@ export const offline = (state = [], action) => {
 
 export const isDragging = (state = false, action) => {
   switch (action.type) {
-  case 'DRAKE_DRAG':
+  case DRAKE_DRAG:
 
     return true
 
-  case 'DRAKE_DRAGEND':
+  case DRAKE_DRAGEND:
 
     return false
 
@@ -463,7 +486,7 @@ export const combinedTasks = (state = initialState, action) => {
 
   switch (action.type) {
 
-  case 'ADD_CREATED_TASK':
+  case ADD_CREATED_TASK:
 
     return {
       ...state,
@@ -471,7 +494,7 @@ export const combinedTasks = (state = initialState, action) => {
       taskLists: _taskLists(state.taskLists, action, state.date),
       allTasks: _allTasks(state.allTasks, action, state.date)
     }
-  case 'UPDATE_TASK':
+  case UPDATE_TASK:
 
     const { unassignedTasks, taskLists } = rootReducer(state, action)
 
