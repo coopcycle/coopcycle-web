@@ -9,7 +9,7 @@ use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Api\Filter\AssignedFilter;
-use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
@@ -80,7 +80,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   }
  * )
- * @ApiFilter(DateFilter::class, properties={"date"}, arguments={"property": "doneBefore"})
+ * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  */

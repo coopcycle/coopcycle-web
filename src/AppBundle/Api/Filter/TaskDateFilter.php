@@ -2,43 +2,35 @@
 
 namespace AppBundle\Api\Filter;
 
+use AppBundle\Entity\Task;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 use Psr\Log\LoggerInterface;
 
-final class DateFilter extends AbstractContextAwareFilter
+final class TaskDateFilter extends AbstractContextAwareFilter
 {
-    private $property;
-
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        $requestStack = null,
-        LoggerInterface $logger = null,
-        array $properties = null,
-        string $property = null)
-    {
-        parent::__construct($managerRegistry, $requestStack, $logger, $properties);
-
-        $this->property = $property;
-    }
-
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
+        // Only works on Task class
+        if ($resourceClass !== Task::class) {
+            return;
+        }
+
         // otherwise filter is applied to order and page as well
         if (!$this->isPropertyEnabled($property, $resourceClass)) {
             return;
         }
 
-        if (!$this->isPropertyMapped($property, $resourceClass) && $this->property) {
-            $property = $this->property;
-        }
+        $afterParameterName = $queryNameGenerator->generateParameterName('doneAfter');
+        $beforeParameterName = $queryNameGenerator->generateParameterName('doneBefore');
 
-        $parameterName = $queryNameGenerator->generateParameterName($property);
         $queryBuilder
-            ->andWhere(sprintf('DATE(o.%s) = :%s', $property, $parameterName))
-            ->setParameter($parameterName, $value);
+            ->andWhere(sprintf(':%s >= DATE(o.%s)', $afterParameterName, 'doneAfter'))
+            ->andWhere(sprintf(':%s <= DATE(o.%s)', $beforeParameterName, 'doneBefore'))
+            ->setParameter($afterParameterName, $value)
+            ->setParameter($beforeParameterName, $value);
     }
 
     public function getDescription(string $resourceClass): array
