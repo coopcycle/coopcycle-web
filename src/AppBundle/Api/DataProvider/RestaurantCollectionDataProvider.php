@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\RestaurantFilter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -39,21 +40,20 @@ final class RestaurantCollectionDataProvider extends CollectionDataProvider
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return parent::supports($resourceClass, $operationName, $context) && $operationName === 'get';
+        $supports = false;
+        if (Restaurant::class === $resourceClass && $operationName === 'get') {
+            $supports = isset($context['filters']) && isset($context['filters']['coordinate']);
+        }
+
+        return $supports;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
         $collection = parent::getCollection($resourceClass, $operationName, $context);
 
-        if (isset($context['filters'])) {
-            if (isset($context['filters']['coordinate'])) {
-                [ $latitude, $longitude ] = explode(',', $context['filters']['coordinate']);
+        [ $latitude, $longitude ] = explode(',', $context['filters']['coordinate']);
 
-                return $this->restaurantFilter->matchingLatLng($collection, $latitude, $longitude);
-            }
-        }
-
-        return $collection;
+        return $this->restaurantFilter->matchingLatLng($collection, $latitude, $longitude);
     }
 }
