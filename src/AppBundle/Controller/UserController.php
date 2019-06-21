@@ -4,12 +4,15 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ApiUser;
 use FOS\UserBundle\Model\UserManagerInterface;
+use FOS\UserBundle\Mailer\MailerInterface;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 
 class UserController extends AbstractController
 {
@@ -72,5 +75,22 @@ class UserController extends AbstractController
         $response->headers->set('Content-Type', 'image/png');
 
         return $response;
+    }
+
+    /**
+     * @Route("/register/resend-email", name="register_resend_email", methods={"POST"})
+     */
+    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, MailerInterface $mailer, SessionInterface $session)
+    {
+        if ($request->request->has('email')) {
+            $email = $request->request->get('email');
+            $user = $userManager->findUserByEmail($email);
+            if ($user !== null) {
+                $mailer->sendConfirmationEmailMessage($user);
+                $session->set('fos_user_send_confirmation_email/email', $email);
+                return $this->redirectToRoute('fos_user_registration_check_email');
+            } 
+        }
+        return $this->redirectToRoute('fos_user_security_login');   
     }
 }
