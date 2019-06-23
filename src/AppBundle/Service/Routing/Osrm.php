@@ -65,6 +65,8 @@ class Osrm extends Base
      */
     private $client;
 
+    private $cache = [];
+
     /**
      * @param Client $client
      */
@@ -91,11 +93,17 @@ class Osrm extends Base
 
         $coordsAsString = implode(';', $coords);
 
-        $uri = "/{$service}/v1/bicycle/{$coordsAsString}?" . http_build_query($options);
+        $cacheKey = sprintf('%s-%s', $service, $coordsAsString);
 
-        $response = $this->client->request('GET', $uri);
+        if (!isset($this->cache[$cacheKey])) {
+            $uri = "/{$service}/v1/bicycle/{$coordsAsString}?" . http_build_query($options);
+            $response = $this->client->request('GET', $uri);
+            $data = json_decode($response->getBody(), true);
 
-        return json_decode($response->getBody(), true);
+            $this->cache[$cacheKey] = $data;
+        }
+
+        return $this->cache[$cacheKey];
     }
 
     /**
