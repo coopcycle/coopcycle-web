@@ -92,11 +92,15 @@ class Osrm extends Base
         }, $coordinates);
 
         $coordsAsString = implode(';', $coords);
+        $queryString = http_build_query($options);
 
-        $cacheKey = sprintf('%s-%s', $service, $coordsAsString);
+        $cacheKey = sprintf('%s://%s', $service, $coordsAsString);
+        if (!empty($queryString)) {
+            $cacheKey .= '?'.$queryString;
+        }
 
         if (!isset($this->cache[$cacheKey])) {
-            $uri = "/{$service}/v1/bicycle/{$coordsAsString}?" . http_build_query($options);
+            $uri = "/{$service}/v1/bicycle/{$coordsAsString}" . (!empty($queryString) ? ('?'.$queryString) : '');
             $response = $this->client->request('GET', $uri);
             $data = json_decode($response->getBody(), true);
 
