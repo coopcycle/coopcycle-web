@@ -65,7 +65,7 @@ services:
                   - '@apns_php.logger'
 
 # Uncomment to send emails in dev
-#fos_user:
+# fos_user:
 #   registration:
 #       confirmation:
 #           enabled: true

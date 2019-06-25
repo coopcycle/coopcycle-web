@@ -98,6 +98,7 @@ form.product_option.price.label: Preis
 form.product_option_value.price.label: Preis
 form.task_export.end.label: Ende
 form.credit_note.name.label: Name
+form.resend_confirmation_email.submit.label: E-Mail erneut senden
 roles.ROLE_COURIER: Kurier
 roles.ROLE_RESTAURANT: Restaurant
 stores.form.save: Speichern
