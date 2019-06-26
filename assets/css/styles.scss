@@ -305,6 +305,21 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
+/* fix too long list order*/
+.sticky-inner-wrapper {
+ overflow-y: auto; 
+ height: 85%; 
+}
+
+.panel.panel-default {
+  overflow-y: auto;
+  position: relative;
+}
+
+.ReactModal__Content.ReactModal__Content--after-open.ReactModal__Content--foodtech {
+  height: 80%;
+}
+
 .cart-heading {
   position: relative;
 
