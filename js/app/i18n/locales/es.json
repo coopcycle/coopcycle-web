@@ -90,6 +90,7 @@
     "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Nuevo pedido",
     "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Volver a mi pedido",
     "CART_ADDRESS_MODAL_HELP_TEXT": "Por favor ingrese su dirección con precisión, con el número de la calle y el nombre",
+    "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Volver a la lista de restaurantes",
     "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nuevos pedidos",
     "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Pedidos aceptados",
     "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Pedidos realizados",

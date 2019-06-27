@@ -353,6 +353,7 @@ nelmio_alice:
 fos_js_routing:
     routes_to_expose:
         - ^restaurant$
+        - ^restaurants$
         - restaurant_remove_from_cart
         - restaurant_cart_address
         - restaurant_modify_cart_item_quantity

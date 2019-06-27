@@ -8,6 +8,8 @@ import Modal from 'react-modal'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { changeAddress } from '../redux/actions'
 
+const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
+
 class AddressModal extends Component {
 
   afterOpenModal() {
@@ -35,6 +37,13 @@ class AddressModal extends Component {
           address={ '' }
           geohash={ '' }
           onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
+        { this.props.isAddressTooFar && (
+          <div className="text-center">
+            <a className="text-success" href={ window.Routing.generate('restaurants') }>
+              { this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }
+            </a>
+          </div>
+        ) }
       </Modal>
     )
   }
@@ -44,9 +53,22 @@ function mapStateToProps(state) {
 
   const hasError = state.errors.hasOwnProperty('shippingAddress')
 
+  let titleText = ''
+  let isAddressTooFar = false
+  if (hasError) {
+
+    const addressTooFarError = _.find(state.errors.shippingAddress, error => error.code === ADDRESS_TOO_FAR)
+    if (addressTooFarError) {
+      isAddressTooFar = true
+    }
+
+    titleText = _.first(state.errors.shippingAddress).message
+  }
+
   return {
     isOpen: hasError,
-    titleText: hasError ? _.first(state.errors.shippingAddress).message : '',
+    titleText,
+    isAddressTooFar,
     addresses: state.addresses,
   }
 }
