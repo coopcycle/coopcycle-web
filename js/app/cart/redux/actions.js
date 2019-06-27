@@ -12,7 +12,7 @@ export const CLEAR_LAST_ADD_ITEM_REQUEST = 'CLEAR_LAST_ADD_ITEM_REQUEST'
 
 export const SET_STREET_ADDRESS = 'SET_STREET_ADDRESS'
 export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
-export const ADD_ERROR = 'ADD_ERROR'
+export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -20,7 +20,7 @@ export const fetchFailure = createAction(FETCH_FAILURE)
 
 export const setStreetAddress = createAction(SET_STREET_ADDRESS)
 export const toggleMobileCart = createAction(TOGGLE_MOBILE_CART)
-export const addError = createAction(ADD_ERROR, (key, messages) => ({ key, messages }))
+export const replaceErrors = createAction(REPLACE_ERRORS, (propertyPath, errors) => ({ propertyPath, errors }))
 
 export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
@@ -253,8 +253,8 @@ export function changeAddress(address) {
       }
 
     } else {
-      dispatch(addError('shippingAddress', [
-        i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION')
+      dispatch(replaceErrors('shippingAddress', [
+        { message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION') }
       ]))
     }
 

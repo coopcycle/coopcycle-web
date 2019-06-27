@@ -46,7 +46,7 @@ function mapStateToProps(state) {
 
   return {
     isOpen: hasError,
-    titleText: hasError ? _.first(state.errors.shippingAddress) : '',
+    titleText: hasError ? _.first(state.errors.shippingAddress).message : '',
     addresses: state.addresses,
   }
 }

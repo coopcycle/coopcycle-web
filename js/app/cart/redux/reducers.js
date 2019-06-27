@@ -6,7 +6,7 @@ import {
   FETCH_FAILURE,
   SET_STREET_ADDRESS,
   TOGGLE_MOBILE_CART,
-  ADD_ERROR,
+  REPLACE_ERRORS,
   SET_LAST_ADD_ITEM_REQUEST,
   CLEAR_LAST_ADD_ITEM_REQUEST,
 } from './actions'
@@ -55,12 +55,12 @@ const errors = (state = initialState.errors, action = {}) => {
     const { errors } = action.payload
 
     return errors || []
-  case ADD_ERROR:
-    const { key, messages } = action.payload
+  case REPLACE_ERRORS:
+    const { propertyPath } = action.payload
 
     return {
       ...state,
-      [key]: messages
+      [propertyPath]: action.payload.errors
     }
   default:
 

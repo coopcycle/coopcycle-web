@@ -1,20 +1,21 @@
 <?php
 
-
 namespace AppBundle\Utils;
-use Symfony\Component\Validator\ConstraintViolationList;
 
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ValidationUtils
 {
-
     /**
      * Transform a ConstraintViolationList to a JSON-serializable array.
      *
+     * @deprecated
      * @param ConstraintViolationList $errors
      * @return array
      */
-    public static function serializeValidationErrors(ConstraintViolationList $errors)
+    public static function serializeValidationErrors(ConstraintViolationListInterface $errors)
     {
         $validationsArray = [];
 
@@ -25,4 +26,35 @@ class ValidationUtils
         return $validationsArray;
     }
 
+    public static function serializeViolationList(ConstraintViolationListInterface $violations)
+    {
+        $data = [];
+
+        foreach ($violations as $violation) {
+            $data[$violation->getPropertyPath()][] = [
+                'message' => $violation->getMessage(),
+                'code' => $violation->getCode()
+            ];
+        }
+
+        return $data;
+    }
+
+    public static function serializeFormError(FormError $error)
+    {
+        if ($error->getCause() instanceof ConstraintViolationInterface) {
+
+            $violation = $error->getCause();
+
+            return [
+                'message' => $violation->getMessage(),
+                'code' => $violation->getCode()
+            ];
+        }
+
+        return [
+            'message' => $error->getMessage(),
+            'code' => null
+        ];
+    }
 }

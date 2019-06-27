@@ -312,7 +312,7 @@ class RestaurantController extends AbstractController
                 if (!$cartForm->isValid()) {
                     foreach ($cartForm->getErrors() as $formError) {
                         $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
-                        $errors[$propertyPath] = [$formError->getMessage()];
+                        $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
                     }
                 }
 
@@ -388,7 +388,7 @@ class RestaurantController extends AbstractController
         }
 
         $errors = $this->validator->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
+        $errors = ValidationUtils::serializeViolationList($errors);
 
         return $this->jsonResponse($cart, $errors);
     }
@@ -408,7 +408,7 @@ class RestaurantController extends AbstractController
         if (!$product->isEnabled()) {
             $errors = [
                 'items' => [
-                    sprintf('Product %s is not enabled', $product->getCode())
+                    [ 'message' => sprintf('Product %s is not enabled', $product->getCode()) ]
                 ]
             ];
 
@@ -418,7 +418,7 @@ class RestaurantController extends AbstractController
         if (!$restaurant->hasProduct($product)) {
             $errors = [
                 'restaurant' => [
-                    sprintf('Unable to add product %s', $product->getCode())
+                    [ 'message' => sprintf('Unable to add product %s', $product->getCode()) ]
                 ]
             ];
 
@@ -430,7 +430,7 @@ class RestaurantController extends AbstractController
         if ($cart->getRestaurant() !== $product->getRestaurant() && !$clear) {
             $errors = [
                 'restaurant' => [
-                    sprintf('Restaurant mismatch')
+                    [ 'message' => sprintf('Restaurant mismatch') ]
                 ]
             ];
 
@@ -475,7 +475,7 @@ class RestaurantController extends AbstractController
                 if (null !== $nonExistingOption) {
                     $errors = [
                         'items' => [
-                            sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode())
+                            [ 'message' => sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode()) ]
                         ]
                     ];
 
@@ -510,7 +510,7 @@ class RestaurantController extends AbstractController
         $request->getSession()->set($sessionKeyName, $cart->getId());
 
         $errors = $this->validator->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
+        $errors = ValidationUtils::serializeViolationList($errors);
 
         return $this->jsonResponse($cart, $errors);
     }
@@ -529,7 +529,7 @@ class RestaurantController extends AbstractController
 
         if (!$cart->getItems()->contains($cartItem)) {
             $errors = $this->validator->validate($cart);
-            $errors = ValidationUtils::serializeValidationErrors($errors);
+            $errors = ValidationUtils::serializeViolationList($errors);
 
             return $this->jsonResponse($cart, $errors);
         }
@@ -543,7 +543,7 @@ class RestaurantController extends AbstractController
         $this->orderManager->flush();
 
         $errors = $this->validator->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
+        $errors = ValidationUtils::serializeViolationList($errors);
 
         return $this->jsonResponse($cart, $errors);
     }
@@ -567,7 +567,7 @@ class RestaurantController extends AbstractController
         }
 
         $errors = $this->validator->validate($cart);
-        $errors = ValidationUtils::serializeValidationErrors($errors);
+        $errors = ValidationUtils::serializeViolationList($errors);
 
         return $this->jsonResponse($cart, $errors);
     }

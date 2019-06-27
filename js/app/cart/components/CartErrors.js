@@ -19,8 +19,8 @@ class CartErrors extends React.Component {
 function mapStateToProps(state) {
 
   let allMessages = []
-  _.forEach(state.errors, (messages, key) => {
-    allMessages = allMessages.concat(messages)
+  _.forEach(state.errors, (errors, key) => {
+    allMessages = allMessages.concat(errors.map(error => error.message))
   })
 
   return {

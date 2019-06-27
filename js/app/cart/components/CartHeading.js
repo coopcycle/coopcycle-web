@@ -93,11 +93,11 @@ function mapStateToProps (state) {
     // We don't display the error when restaurant has changed
     const errors = _.pickBy(state.errors, (value, key) => key !== 'restaurant')
 
-    _.forEach(errors, (messages, key) => {
+    _.forEach(errors, (errors, key) => {
       if (key === 'shippingAddress') {
-        messages.forEach((message) => dangerAlerts.push(message))
+        errors.forEach(error => dangerAlerts.push(error.message))
       } else {
-        messages.forEach((message) => warningAlerts.push(message))
+        errors.forEach(error => warningAlerts.push(error.message))
       }
     })
   }
