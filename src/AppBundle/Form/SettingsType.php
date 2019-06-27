@@ -54,13 +54,15 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.brand_name.label'
             ])
             ->add('administrator_email', EmailType::class, [
-                'label' => 'form.settings.administrator_email.label'
+                'label' => 'form.settings.administrator_email.label',
+                'help' => 'form.settings.administrator_email.help'
             ])
             ->add('phone_number', PhoneNumberType::class, [
                 'label' => 'form.settings.phone_number.label',
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->country),
                 'required' => false,
+                'help' => 'form.settings.phone_number.help'
             ])
             ->add('stripe_test_publishable_key', PasswordType::class, [
                 'required' => false,
@@ -87,21 +89,23 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.stripe_connect_client_id.label'
             ])
             ->add('google_api_key', TextType::class, [
-                'label' => 'form.settings.google_api_key.label'
+                'label' => 'form.settings.google_api_key.label',
+                'help' => 'form.settings.google_api_key.help',
+                'help_html' => true
             ])
             ->add('latlng', TextType::class, [
-                'label' => 'form.settings.latlng.label'
+                'label' => 'form.settings.latlng.label',
+                'help' => 'form.settings.latlng.help',
+                'help_html' => true
+
             ])
             ->add('default_tax_category', TaxCategoryChoiceType::class, [
-                'label' => 'form.settings.default_tax_category.label'
+                'label' => 'form.settings.default_tax_category.label',
+                'help' => 'form.settings.default_tax_category.help'
             ])
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
             ]);
-            // ->add('administrator_email', EmailType::class, [
-            //     'label' => 'form.settings.administrator_email.label',
-            //     'help' => 'XXXX'
-            // ])
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
