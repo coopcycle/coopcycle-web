@@ -215,6 +215,13 @@ h1, h2, h3, h4, h5, h6 {
 
 #cart {
   margin-top: ($base-margin + 20px);
+  .sticky-outer-wrapper.active {
+    .sticky-inner-wrapper {
+      overflow: auto;
+      max-height: 100%;
+      padding: 20px 0;
+    }
+  }
 }
 
 // $panel-heading-padding is 10px 15px !default;
@@ -303,21 +310,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       }
     }
   }
-}
-
-// fix too long list order
-
-.sticky-outer-wrapper.active {
-  .sticky-inner-wrapper { 
-    overflow: auto;  
-    max-height: 100%;
-    padding: 20px 0;
-  }
-}
-
-
-.ReactModal__Content.ReactModal__Content--after-open.ReactModal__Content--foodtech {
-  height: 80%;
 }
 
 .cart-heading {
@@ -843,6 +835,7 @@ form[name="store"] #store_imageFile_file {
 
 .ReactModal__Content--foodtech {
   width: 440px;
+  height: 80%;
   padding: 0;
   border: none;
   > .panel {
