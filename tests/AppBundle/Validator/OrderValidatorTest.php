@@ -156,6 +156,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->addressTooFarMessage)
             ->atPath('property.path.shippingAddress')
+            ->setCode(OrderConstraint::ADDRESS_TOO_FAR)
             ->assertRaised();
     }
 

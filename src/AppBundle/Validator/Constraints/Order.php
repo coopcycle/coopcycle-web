@@ -9,6 +9,9 @@ use Symfony\Component\Validator\Constraint;
  */
 class Order extends Constraint
 {
+    const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR';
+    const ADDRESS_NOT_SET = 'Order::ADDRESS_NOT_SET';
+
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
     public $restaurantClosedMessage = 'delivery.date.restaurantClosed';
     public $addressTooFarMessage = 'address.tooFar';

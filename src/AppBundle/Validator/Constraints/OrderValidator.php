@@ -77,6 +77,7 @@ class OrderValidator extends ConstraintValidator
         if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->atPath('shippingAddress')
+                ->setCode(Order::ADDRESS_NOT_SET)
                 ->addViolation();
 
             return;
@@ -92,6 +93,7 @@ class OrderValidator extends ConstraintValidator
         if (!$restaurant->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
             $this->context->buildViolation($constraint->addressTooFarMessage)
                 ->atPath('shippingAddress')
+                ->setCode(Order::ADDRESS_TOO_FAR)
                 ->addViolation();
 
             return;
