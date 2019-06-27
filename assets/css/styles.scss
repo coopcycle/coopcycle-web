@@ -796,6 +796,9 @@ form[name="store"] #store_imageFile_file {
 
 .ReactModal__Content--enter-address {
   overflow: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   @media (min-width: $screen-lg-min) {
     width: 33%;
   }
