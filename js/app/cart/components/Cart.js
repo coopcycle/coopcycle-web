@@ -42,7 +42,7 @@ class Cart extends Component {
     }
 
     return (
-      <Sticky enabled={ !isXsDevice } top={ 30 }>
+      <Sticky enabled={ !isXsDevice }>
         <div className={ panelClasses.join(' ') }>
           <CartHeading />
           <div className="panel-body">
