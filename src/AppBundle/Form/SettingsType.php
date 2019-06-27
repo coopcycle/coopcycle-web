@@ -98,6 +98,10 @@ class SettingsType extends AbstractType
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
             ]);
+            // ->add('administrator_email', EmailType::class, [
+            //     'label' => 'form.settings.administrator_email.label',
+            //     'help' => 'XXXX'
+            // ])
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
