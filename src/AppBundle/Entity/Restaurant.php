@@ -11,7 +11,6 @@ use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
-use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
