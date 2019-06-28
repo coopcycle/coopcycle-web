@@ -8,13 +8,11 @@
 {% block _settings_administrator_email_widget %}
 {% set disabled = is_demo %}
 {{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.administrator_email.help{% endtrans %}</span>
 {% endblock %}
 
 {% block _settings_phone_number_widget %}
 {% set disabled = is_demo %}
 {{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.phone_number.help{% endtrans %}</span>
 {% endblock %}
 
 {% block password_widget %}
@@ -38,15 +36,4 @@
 {% block _settings_google_api_key_widget %}
 {% set disabled = is_demo %}
 {{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.google_api_key.help{% endtrans %}</span>
-{% endblock %}
-
-{% block _settings_latlng_widget %}
-{{ block('form_widget') }}
-<span class="help-block">{% trans %}form.settings.latlng.help{% endtrans %}</span>
-{% endblock %}
-
-{% block _settings_default_tax_category_widget %}
-{{ block('choice_widget') }}
-<span class="help-block">{% trans %}form.settings.default_tax_category.help{% endtrans %}</span>
 {% endblock %}

@@ -12,3 +12,10 @@ registration:
     before_confirmation_continue_order: |
       Une fois que vous avez activé votre compte, vous pouvez terminer votre commande.
     after_confirmation_continue_order: Terminez votre commande
+
+form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15 caractères.
+
+  Un nom d''utilisateur peut seulement contenir des caractères alphanumériques (lettres
+  A-Z, chiffres 0-9) à l''exception des underscores.
+
+  '

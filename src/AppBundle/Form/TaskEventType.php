@@ -18,6 +18,7 @@ class TaskEventType extends AbstractType
     {
         $builder
             ->add('notes', TextareaType::class, [
+                'help' => 'form.task_event.notes.help',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [

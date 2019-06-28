@@ -61,6 +61,7 @@ class ProductOptionType extends AbstractType
             ->add('additional', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.product_option.additional.label',
+                'help' => 'form.product_option.additional.help'
             ])
             ->add('delete', SubmitType::class, [
                 'label' => 'basics.delete',

@@ -459,10 +459,6 @@ form.delivery_embed.name.help: Your name or company name
 form.delivery_embed.telephone.label: Phone number
 form.delivery_embed.vehicle.disclaimer: We deliver on cargo bike items of more than 50x40x20 (cm) or whose weight exceeds 6kg
 
-form.registration.username.help: |
-  Your username cannot be longer than 15 characters.
-  A username can only contain alphanumeric characters (letters A-Z, numbers 0-9) with the exception of underscores.
-
 form.local_business.stripe_account.title: Stripe account
 form.local_business.stripe_account.help: Connect a Stripe account to transfer money to another bank account
 form.local_business.stripe_account.connect_button.text: Connect with Stripe

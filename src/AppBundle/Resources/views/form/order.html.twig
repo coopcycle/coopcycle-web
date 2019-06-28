@@ -29,11 +29,6 @@
   {%- endif %}
 {%- endblock radio_widget %}
 
-{% block _checkout_address_notes_widget %}
-  {{ block('textarea_widget') }}
-  <span class="help-block">{% trans %}form.checkout_address.notes.help{% endtrans %}</span>
-{% endblock %}
-
 {% block checkout_shippedAt_row %}
   {% if form.vars.help is defined %}
   <div class="alert alert-info">

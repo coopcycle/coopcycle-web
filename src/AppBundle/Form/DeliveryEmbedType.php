@@ -46,6 +46,7 @@ class DeliveryEmbedType extends DeliveryType
             ->add('name', TextType::class, [
                 'mapped' => false,
                 'label' => 'form.delivery_embed.name.label',
+                'help' => 'form.delivery_embed.name.help'
             ])
             ->add('email', EmailType::class, [
                 'mapped' => false,

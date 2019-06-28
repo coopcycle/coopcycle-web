@@ -40,6 +40,7 @@ class CheckoutAddressType extends AbstractType
             ->add('notes', TextareaType::class, [
                 'required' => false,
                 'label' => 'form.checkout_address.notes.label',
+                'help' => 'form.checkout_address.notes.help',
                 'attr' => ['placeholder' => 'form.checkout_address.notes.placeholder']
             ])
             ->add('promotionCoupon', PromotionCouponToCodeType::class, [

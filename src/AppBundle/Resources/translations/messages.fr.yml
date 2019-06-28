@@ -458,13 +458,7 @@ form.stripe_livemode.disable.label: Utiliser Stripe en mode « test »
 form.stripe_livemode.disable.alert: En mode « test », les cartes ne seront pas débitées.
 form.stripe_livemode.disable_and_enable_maintenance.label: Passer en mode « test » et activer la maintenance
 form.stripe_livemode.disable_and_enable_maintenance.alert: 'Vous êtes actuellement en mode « live ».<br>Si vous souhaitez passer en « test », le mode maintenance sera activé automatiquement.'
-form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15
-  caractères.
 
-  Un nom d''utilisateur peut seulement contenir des caractères alphanumériques (lettres
-  A-Z, chiffres 0-9) à l''exception des underscores.
-
-  '
 form.settings.currency_code.label: Devise
 
 form.local_business.stripe_account.title: Compte Stripe
