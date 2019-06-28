@@ -446,12 +446,7 @@ form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « t
   » y activar el mantenimiento
 form.stripe_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo
   « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
-form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 
-  Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números
-  0-9) con la excepción de los guiones bajos.
-
-  '
 form.local_business.stripe_account.title: Cuenta Stripe
 form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir
   dinero a otra cuenta bancaria

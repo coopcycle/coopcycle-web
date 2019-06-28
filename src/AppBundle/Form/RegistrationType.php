@@ -7,6 +7,8 @@ use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class RegistrationType extends AbstractType
@@ -44,6 +46,19 @@ class RegistrationType extends AbstractType
                 'label' => 'profile.accountType'
             ]);
         }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+
+            $child = $form->get('username');
+            
+            $config = $child->getConfig();
+            $options = $config->getOptions();
+            $options['help'] = 'form.registration.username.help';
+
+            $form->add('username', get_class($config->getType()->getInnerType()), $options);
+        });
     }
 
     public function getParent()
