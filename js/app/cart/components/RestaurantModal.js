@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
-import Sticky from 'react-stickynode'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
@@ -14,7 +13,6 @@ class RestaurantModal extends Component {
   }
 
   closeModal() {
-    // this.setState({ addressModalIsOpen: false })
   }
 
   render() {
