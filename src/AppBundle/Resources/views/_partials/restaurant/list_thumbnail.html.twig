@@ -43,9 +43,13 @@
 <a class="thumbnail restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}"
   href="{{ path('restaurant', restaurant_path_params) }}">
   <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
-  <div class="caption">
+  <div class="caption text-center">
     <h4>{{ restaurant.name|truncate(24, false, '…') }}</h4>
-    <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
+    {% if restaurant.description is not empty %}
+      <p class="text-muted">{{ restaurant.description }}</p>
+    {% else %}
+      <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
+    {% endif %}
   </div>
   <div class="restaurant-item__top-right">
     {% if isOpen %}
