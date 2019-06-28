@@ -25,11 +25,13 @@ class CartType extends AbstractType
             ->add('date', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
+                'required' => false,
                 'mapped' => false
             ])
             ->add('time', TimeType::class, [
                 'widget' => 'single_text',
                 'with_seconds' => false,
+                'required' => false,
                 'mapped' => false
             ])
             ->add('isNewAddress', HiddenType::class, [
@@ -86,7 +88,9 @@ class CartType extends AbstractType
             $date = $form->get('date')->getData();
             $time = $form->get('time')->getData();
 
-            $order->setShippedAt(new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00'))));
+            if ($date && $time) {
+                $order->setShippedAt(new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00'))));
+            }
         });
     }
 

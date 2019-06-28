@@ -16,6 +16,7 @@ order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%€
 
 order.shippedAt.expired: L'horaire de livraison est dépassé
 order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible
+order.shippedAt.notEmpty: L'horaire de livraison ne peut pas être vide
 
 delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être calculé.
 

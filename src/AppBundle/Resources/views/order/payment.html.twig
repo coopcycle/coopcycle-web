@@ -16,6 +16,12 @@
 
             {{ form_start(form) }}
 
+            <div class="row">
+              <div class="col-xs-12">
+                {% include '@App/order/_partials/time.html.twig' %}
+              </div>
+            </div>
+
             <a class="order-map__column-heading" role="button" data-toggle="collapse" href="#restaurant" aria-expanded="false" aria-controls="restaurant">
               <h4>{{ order.restaurant.name }} <span class="pull-right"><i class="fa fa-chevron-down"></i></span></h4>
             </a>

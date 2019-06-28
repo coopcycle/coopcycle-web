@@ -3,7 +3,6 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Form\AddressType;
-use AppBundle\Utils\ShippingDateFilter;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -16,21 +15,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutAddressType extends AbstractType
 {
-    private $validator;
-    private $shippingDateFilter;
-
-    public function __construct(
-        ValidatorInterface $validator,
-        ShippingDateFilter $shippingDateFilter)
-    {
-        $this->validator = $validator;
-        $this->shippingDateFilter = $shippingDateFilter;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -55,41 +42,6 @@ class CheckoutAddressType extends AbstractType
             $this->disableChildForm($form, 'streetAddress');
             $this->disableChildForm($form, 'postalCode');
             $this->disableChildForm($form, 'addressLocality');
-        });
-
-        // This listener may add a field to modify the shipping date,
-        // if the shipping date is now expired
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-            $form = $event->getForm();
-            $data = $event->getData();
-
-            $violations = $this->validator->validate($data);
-
-            $hasShippedAt = false;
-            $shippedAtErrorMessage = null;
-            foreach ($violations as $violation) {
-                if ('shippedAt' === $violation->getPropertyPath()) {
-                    $hasShippedAt = true;
-                    $shippedAtErrorMessage = $violation->getMessage();
-                    break;
-                }
-            }
-
-            if ($hasShippedAt) {
-
-                $availabilities = $data->getRestaurant()->getAvailabilities();
-                $availabilities = array_filter($availabilities, function ($date) use ($data) {
-                    return $this->shippingDateFilter->accept($data, new \DateTime($date));
-                });
-                $availabilities = array_values($availabilities);
-
-                $form->add('shippedAt', DateTimeType::class, [
-                    'label' => false,
-                    'choices' => $availabilities,
-                    'data' => $data->getShippedAt(),
-                    'help_message' => $shippedAtErrorMessage,
-                ]);
-            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {

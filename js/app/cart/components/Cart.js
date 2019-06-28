@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 import Sticky from 'react-stickynode'
 import _ from 'lodash'
-import md5 from 'locutus/php/strings/md5'
 
 import AddressModal from './AddressModal'
+import DateModal from './DateModal'
 import RestaurantModal from './RestaurantModal'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import CartErrors from './CartErrors'
@@ -14,6 +14,7 @@ import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import DatePicker from './DatePicker'
+import Time from './Time'
 
 import { changeAddress, changeDate, sync, geocodeAndSync } from '../redux/actions'
 
@@ -54,17 +55,8 @@ class Cart extends Component {
                 geohash={ '' }
                 key={ this.props.streetAddress }
                 onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
-              <hr />
-              <DatePicker
-                dateInputName={ this.props.datePickerDateInputName }
-                timeInputName={ this.props.datePickerTimeInputName }
-                availabilities={ this.props.availabilities }
-                value={ _.first(this.props.availabilities) }
-                key={ md5(this.props.availabilities.join('|')) }
-                onChange={ (dateString) => this.props.changeDate(dateString) } />
-              <hr />
+              <Time />
               <CartItems />
-              <hr />
               <CartTotal />
               <CartButton />
             </div>
@@ -72,6 +64,7 @@ class Cart extends Component {
         </div>
         <AddressModal />
         <RestaurantModal />
+        <DateModal />
       </Sticky>
     )
   }
@@ -88,9 +81,6 @@ function mapStateToProps(state) {
 
   return {
     items,
-    availabilities: state.availabilities,
-    datePickerDateInputName: state.datePickerDateInputName,
-    datePickerTimeInputName: state.datePickerTimeInputName,
     shippingAddress: state.cart.shippingAddress,
     streetAddress: state.cart.shippingAddress ? state.cart.shippingAddress.streetAddress : '',
     isMobileCartVisible: state.isMobileCartVisible,
@@ -102,7 +92,6 @@ function mapDispatchToProps(dispatch) {
 
   return {
     changeAddress: address => dispatch(changeAddress(address)),
-    changeDate: date => dispatch(changeDate(date)),
     sync: () => dispatch(sync()),
     geocodeAndSync: () => dispatch(geocodeAndSync()),
   }

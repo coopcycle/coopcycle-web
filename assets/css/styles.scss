@@ -436,6 +436,9 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-wrapper {
   height: 100%;
   margin: 0;
+  &__messages {
+    text-align: center;
+  }
   @media (max-width: $screen-xs-max) {
     padding: 0;
     cursor: pointer;
@@ -461,7 +464,12 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 .cart {
   &__items {
-    // @extend .list-group;
+
+    margin: 15px 0;
+    padding: 15px 0;
+    border-top: 1px solid #eeeeee;
+    border-bottom: 1px solid #eeeeee;
+
     max-height: 200px;
     overflow-y: auto;
     @media (max-width: $screen-xs-max) {
@@ -490,6 +498,30 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       &__right {
         text-align: right;
       }
+    }
+  }
+  &__time {
+    display: block;
+    margin: 15px 0;
+    text-align: center;
+    @extend .text-success;
+    &:hover,
+    &:visited,
+    &:focus {
+      text-decoration: none;
+    }
+    &--not-today {
+      @extend .text-danger;
+    }
+    &__text,
+    &__edit {
+      display: block;
+    }
+    &__text {
+      margin-bottom: 5px;
+    }
+    &__edit {
+      font-size: $font-size-small;
     }
   }
 }
@@ -833,6 +865,28 @@ form[name="store"] #store_imageFile_file {
     > button {
       margin-bottom: 15px;
     }
+  }
+}
+
+.ReactModal__Content--date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
+  }
+  .ReactModal__Date__asap {
+    display: block;
+    padding: 15px 0;
+    margin: 15px 0;
   }
 }
 

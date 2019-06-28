@@ -101,21 +101,11 @@ services:
       - '@translator'
     tags: [ form.type ]
 
-  AppBundle\Form\Checkout\CheckoutAddressType:
-    arguments:
-      - '@validator'
-      - '@coopcycle.shipping_date_filter'
-    tags: [ form.type ]
-
   AppBundle\Form\Checkout\CheckoutPaymentType:
     arguments:
-      - '@validator'
       - '@coopcycle.shipping_date_filter'
-    tags: [ form.type ]
-
-  AppBundle\Form\Checkout\DateTimeType:
-    arguments:
-      - '@translator'
+      - '@coopcycle.preparation_time_calculator'
+      - '@coopcycle.shipping_time_calculator'
     tags: [ form.type ]
 
   AppBundle\Form\ApiAppType:

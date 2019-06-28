@@ -13,6 +13,7 @@ export const CLEAR_LAST_ADD_ITEM_REQUEST = 'CLEAR_LAST_ADD_ITEM_REQUEST'
 export const SET_STREET_ADDRESS = 'SET_STREET_ADDRESS'
 export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
 export const REPLACE_ERRORS = 'REPLACE_ERRORS'
+export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -24,11 +25,25 @@ export const replaceErrors = createAction(REPLACE_ERRORS, (propertyPath, errors)
 
 export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
+export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 
 function postForm() {
 
   const $form = $('form[name="cart"]')
   const data = $form.serializeArray()
+
+  return $.post($form.attr('action'), data)
+}
+
+function postFormWithTime() {
+
+  const $form = $('form[name="cart"]')
+  const defaultData = $form.serializeArray()
+
+  const $timeForm = $('form[name="cart_time"]')
+  const timeData = $timeForm.serializeArray()
+
+  const data = defaultData.concat(timeData)
 
   return $.post($form.attr('action'), data)
 }
@@ -201,7 +216,7 @@ export function changeDate(dateString) {
 
     dispatch(fetchRequest())
 
-    postForm()
+    postFormWithTime()
       .then(res => handleAjaxResponse(res, dispatch, true))
       .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
   }
@@ -270,6 +285,24 @@ export function goBackToRestaurant() {
     window.location.href = window.Routing.generate('restaurant', {
       id: restaurant.id
     })
+  }
+}
+
+export function clearDate() {
+
+  return (dispatch, getState) => {
+
+    const { restaurant } = getState()
+
+    const url =
+      window.Routing.generate('restaurant_cart_clear_time', { id: restaurant.id })
+
+    dispatch(fetchRequest())
+
+    $.post(url)
+      .then(res => handleAjaxResponse(res, dispatch, true))
+      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+
   }
 }
 

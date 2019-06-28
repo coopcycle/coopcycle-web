@@ -261,6 +261,7 @@ order.state.cancelled: Annulée
 
 order.adjustment_type.delivery: Livraison
 order.adjustment_type.platform_fees: Frais CoopCycle
+order.delivery_time: Livraison %time%
 
 payment.state.cart: Panier
 payment.state.new: Nouveau

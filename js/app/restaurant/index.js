@@ -101,6 +101,7 @@ window.initMap = function() {
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
+  const times = JSON.parse(restaurantDataElement.dataset.times)
 
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
@@ -137,7 +138,8 @@ window.initMap = function() {
       longitude: document.querySelector('#cart_shippingAddress_longitude')
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
-    addresses
+    addresses,
+    times
   }
 
   store = createStoreFromPreloadedState(state)
