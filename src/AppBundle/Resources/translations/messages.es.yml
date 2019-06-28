@@ -299,6 +299,8 @@ task.status.done: Éxito
 task.status.failed: Fracaso
 task.status.todo: Pendiente
 form.task.courier.label: Mensajero
+form.task.comments.label: Comentarios
+form.task.comments.placeholder: Especifique cualquier detalle útil para completar la tarea
 form.task.status.label: Estado
 form.task_event.notes.placeholder: 'Ejemplo : dirección no encontrada, no hay problema…'
 form.task_event.notes.help: Puedes editar el comentario

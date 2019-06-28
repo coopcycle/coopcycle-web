@@ -49,8 +49,9 @@ class TaskType extends AbstractType
                 'with_name' => true
             ])
             ->add('comments', TextareaType::class, [
+                'label' => 'form.task.comments.label',
                 'required' => false,
-                'attr' => ['rows' => '2', 'placeholder' => 'Specify any useful details to complete task']
+                'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'basics.save'

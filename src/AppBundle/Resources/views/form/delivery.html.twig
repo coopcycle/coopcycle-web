@@ -39,10 +39,10 @@ col-sm-9
   {{ form_row(form.address.streetAddress, { label: false }) }}
   {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
 
-  {{ form_row(form.address.description) }}
-
   {{ form_row(form.address.postalCode) }}
   {{ form_row(form.address.addressLocality) }}
+
+  {{ form_row(form.comments) }}
 
   <hr>
 

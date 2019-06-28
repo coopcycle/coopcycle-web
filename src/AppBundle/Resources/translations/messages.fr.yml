@@ -303,6 +303,8 @@ task.status.done: Succès
 task.status.failed: Échec
 task.status.todo: À faire
 form.task.courier.label: Coursier
+form.task.comments.label: Commentaires
+form.task.comments.placeholder: Précisez tous les détails utiles à l'exécution de la tâche
 form.task.status.label: Status
 form.task_event.notes.placeholder: 'Ex : adresse introuvable, aucun problème…
 
