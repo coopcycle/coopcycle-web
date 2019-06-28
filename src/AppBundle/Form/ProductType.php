@@ -75,8 +75,9 @@ class ProductType extends AbstractType
             ]);
 
         $builder->add('allergens', ChoiceType::class, [
-            'choices' => $this->createEnumAttributeChoices(Allergen::values(), 'allergens.%s'),
             'label' => 'form.product.allergens.label',
+            'help' => 'form.product.allergens.help',
+            'choices' => $this->createEnumAttributeChoices(Allergen::values(), 'allergens.%s'),
             'expanded' => true,
             'multiple' => true,
             'mapped' => false
@@ -85,6 +86,7 @@ class ProductType extends AbstractType
         $builder->add('restrictedDiets', ChoiceType::class, [
             'choices' => $this->createEnumAttributeChoices(RestrictedDiet::values(), 'restricted_diets.%s'),
             'label' => 'form.product.restricted_diets.label',
+            'help' => 'form.product.restricted_diets.help',
             'expanded' => true,
             'multiple' => true,
             'mapped' => false
