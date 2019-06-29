@@ -719,3 +719,6 @@ form.address.firstName.label: Nombre
 form.address.lastName.label: Apellido
 form.address.company.label: Empresa
 social.sign_in_with_facebook: Conéctate con Facebook
+delivery.table.heading.summary: Resumen
+delivery.table.heading.courier: Mensajero
+delivery.table.heading.order: Pedido

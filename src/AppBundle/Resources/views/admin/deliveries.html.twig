@@ -11,41 +11,69 @@
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.deliveries.createNew{% endtrans %}
     </a>
   </p>
-  <table class="table task-table">
+
+  {% if filters|length > 0 %}
+  <div>
+    {% for f in filters %}
+    <a class="btn btn-default" href="{{ path(routes.list, {}) }}">
+      {{ f.label }} <i class="fa fa-times"></i>
+    </a>
+    {% endfor %}
+    <hr>
+  </div>
+  {% endif %}
+
+  <table class="table table-condensed task-table">
     <thead>
-      <th></th>
       <th>#</th>
-      <th>{% trans %}adminDashboard.deliveries.type{% endtrans %}</th>
-      <th>{% trans %}adminDashboard.deliveries.dueDate{% endtrans %}</th>
-      <th>{% trans %}adminDashboard.deliveries.courier{% endtrans %}</th>
-      <th>{% trans %}adminDashboard.deliveries.address{% endtrans %}</th>
+      <th>{{ 'form.delivery.store.label'|trans }}</th>
+      <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+      <th class="text-center">{{ 'delivery.table.heading.courier'|trans }}</th>
+      <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
+      <th></th>
+      <th></th>
     </thead>
     <tbody>
-    {% for task in tasks %}
-      <tr {% if task.cancelled %}class="task--cancelled"{% endif %} {% if task.delivery is not null %}style="border-left-color: {{ task.delivery.color }};"{% endif %}>
-        <td width="1%">
-          {% include "@App/_partials/task/status_icon.html.twig" %}
-        </td>
-        <td width="5%">
-          <a href="#" data-task="{{ task.id }}">
-            #{{ task.id }}
-          </a>
-        </td>
-        <td width="5%">
-          {% include "@App/_partials/task/type_label.html.twig" %}
-        </td>
-        <td width="15%">
-          <i class="fa fa-clock-o"></i> {{ task.doneBefore|localizeddate('short', 'short') }}
+    {% for delivery in deliveries %}
+      <tr>
+        <td>
+          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ delivery.id }}</a>
         </td>
         <td>
-        {% if task.assigned %}
-          <a href="{{ path('admin_user_details', { username: task.assignedCourier.username }) }}" title="{{ task.assignedCourier.username }}">
-            <i class="fa fa-user"></i> {{ task.assignedCourier.username }}
-          </a>
-        {% endif %}
+          {% if delivery.store is not empty %}
+            <a href="{{ path(routes.list, { store: delivery.store.id }) }}">
+              {{ delivery.store.name }}
+            </a>
+          {% endif %}
         </td>
         <td>
-          {{ task.address.streetAddress }}
+          <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
+          <br>
+          <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+          <br>
+          <small>{{ delivery.distance|meters_to_kilometers }}</small>
+        </td>
+        <td class="text-center">
+          {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
+            {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
+              <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
+                <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"> @{{ delivery.pickup.assignedCourier.username }}
+              </a>
+            {% endif %}
+          {% endif %}
+        </td>
+        <td class="text-center">
+          {% if delivery.order is defined and delivery.order is not empty %}
+            <a href="{{ path('admin_order', { id: delivery.order.id }) }}">
+              {{ delivery.order.number }}
+            </a>
+          {% endif %}
+        </td>
+        <td class="text-center" width="10%">
+          <small class="text-muted">{{ delivery.createdAt|ago }}</small>
+        </td>
+        <td class="text-right">
+          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
         </td>
       </tr>
     {% endfor %}
@@ -53,10 +81,8 @@
   </table>
 
   <nav class="text-center">
-    {{ knp_pagination_render(tasks) }}
+    {{ knp_pagination_render(deliveries) }}
   </nav>
-
-  <div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="choose-store-modal-label" id="choose-store-modal">
     <div class="modal-dialog" role="document">
@@ -84,18 +110,8 @@
 
 {% block scripts %}
 <script>
-window.AppData = window.AppData || {};
-window.AppData.Delivery = {
-  taskModalURL: "{{ path('admin_task', { id: '__TASK_ID__' }) }}"
-};
-</script>
-<script>
 $('#stores').on('change', function(e) {
   window.location.href = $(this).val();
 });
 </script>
-{{ encore_entry_script_tags('js/task-modal') }}
-{{ encore_entry_script_tags('js/delivery-list') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places"
-  async defer></script>
 {% endblock %}

@@ -632,6 +632,7 @@ basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.add: Ajouter
+basics.view: Voir
 basics.delete: Supprimer
 basics.cancel: Annuler
 basics.open: Ouvert
@@ -742,6 +743,10 @@ promotions.heading.credit_note.help: Créez des avoirs commerciaux uniques pour 
 promotions.promotion_coupon.success: Votre code promotionnel %code% a été pris en compte
 promotions.add_free_delivery_coupon: Ajouter un code promotionnel « Livraison offerte »
 promotions.create_credit_note_coupon: Créer un avoir commercial
+
+delivery.table.heading.summary: Résumé
+delivery.table.heading.courier: Coursier
+delivery.table.heading.order: Commande
 
 search.users: Rechercher un utilisateur…
 

@@ -686,6 +686,10 @@ promotions.promotion_coupon.success: Your coupon code %code% has been taken into
 promotions.add_free_delivery_coupon: Add a promotion coupon « free delivery »
 promotions.create_credit_note_coupon: Add a credit note
 
+delivery.table.heading.summary: Summary
+delivery.table.heading.courier: Courier
+delivery.table.heading.order: Order
+
 search.users: Search a user…
 
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten

@@ -440,28 +440,38 @@ class AdminController extends Controller
      */
     public function deliveriesAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Task::class);
+        $repository = $this->getDoctrine()->getRepository(Delivery::class);
 
-        // @link https://symfony.com/doc/current/bundles/FOSUserBundle/user_manager.html
-        $userManager = $this->get('fos_user.user_manager');
+        $qb = $repository->createQueryBuilder('d')->orderBy('d.createdAt', 'DESC');
 
-        $couriers = array_filter($userManager->findUsers(), function (UserInterface $user) {
-            return $user->hasRole('ROLE_COURIER');
-        });
+        $filters = [];
 
-        usort($couriers, function (UserInterface $a, UserInterface $b) {
-            return $a->getUsername() < $b->getUsername() ? -1 : 1;
-        });
+        if ($request->query->has('store')) {
+            $store = $this->getDoctrine()
+                ->getRepository(Store::class)
+                ->find($request->query->get('store'));
 
-        $tasks = $this->get('knp_paginator')->paginate(
-            $repository->createQueryBuilder('t')->orderBy('t.doneAfter', 'DESC'),
+            if ($store) {
+                $qb
+                    ->andWhere('d.store = :store')
+                    ->setParameter('store', $store);
+                $filters[] = [
+                    'name' => 'store',
+                    'value' => $store->getId(),
+                    'label' => $store->getName()
+                ];
+            }
+        }
+
+        $deliveries = $this->get('knp_paginator')->paginate(
+            $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE
         );
 
         return [
-            'couriers' => $couriers,
-            'tasks' => $tasks,
+            'deliveries' => $deliveries,
+            'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC'])
         ];
