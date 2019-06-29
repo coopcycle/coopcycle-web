@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\StripePayment;
+use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -65,7 +66,7 @@ trait DeliveryTrait
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
 
         if (null === $price) {
-            throw new \Exception('Price could not be calculated');
+            throw new NoRuleMatchedException();
         }
 
         return (int) ($price);

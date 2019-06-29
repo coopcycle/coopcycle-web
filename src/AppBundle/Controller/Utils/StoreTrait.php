@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
+use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -242,7 +243,7 @@ trait StoreTrait
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
-                } catch (\Exception $e) {
+                } catch (NoRuleMatchedException $e) {
                     $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
                     $form->addError(new FormError($message));
                 }
