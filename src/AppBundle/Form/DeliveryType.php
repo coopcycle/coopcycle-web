@@ -122,6 +122,8 @@ class DeliveryType extends AbstractType
                 $form = $event->getForm();
                 $delivery = $event->getData();
 
+                $isNew = $delivery->getId() === null;
+
                 $form->add('store', EntityType::class, [
                     'class' => Store::class,
                     'query_builder' => function (EntityRepository $repository) {
@@ -131,6 +133,7 @@ class DeliveryType extends AbstractType
                     'label' => 'form.delivery.store.label',
                     'choice_label' => 'name',
                     'required' => false,
+                    'disabled' => !$isNew
                 ]);
             });
         }
