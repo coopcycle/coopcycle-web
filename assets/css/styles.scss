@@ -64,11 +64,20 @@ h1, h2, h3, h4, h5, h6 {
 
   a.footer-link {
     color: $white;
-    margin: 0 $base-margin-s;
   }
 
   @media screen and (max-width: $screen-md-min) {
     display: none;
+  }
+}
+
+.btn-google-play {
+  display: inline-block;
+  width: 180px;
+  margin-right: -12px;
+  & > img {
+    display: inline-block;
+    width: 100%;
   }
 }
 

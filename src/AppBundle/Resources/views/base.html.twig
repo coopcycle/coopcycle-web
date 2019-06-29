@@ -37,41 +37,54 @@
     {% block body %}{% endblock %}
     </div>
     {% block footer %}
-      <footer class="footer text-center">
-        <ul class="list-inline">
-          <li>
-            {% trans %}base.footer.contactUs{% endtrans %}
-          </li>
-          <li>
-            <a class="footer-link" href="mailto:{{ coopcycle_setting('administrator_email') }}">
-              <i class="fa fa-envelope"></i>  {{ coopcycle_setting('administrator_email') }}
-            </a>
-          </li>
-          {% set phone_number = coopcycle_setting('phone_number') %}
-          {% if phone_number is not empty %}
-          <li>
-            <i class="fa fa-phone"></i>  <span>{{ phone_number|phone_number_format('NATIONAL') }}</span>
-          </li>
-          {% endif %}
-          <li>
-            <a class="footer-link" href="https://docs.coopcycle.org" target="_blank">
-              {% trans %}base.footer.help{% endtrans %}
-            </a>
-          </li>
-          <li>
-            <a class="footer-link" href="{{ path('legal') }}">
-              {% trans %}base.footer.legal{% endtrans %}
-            </a>
-          </li>
-          {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
-          {% if 'yes' == restaurant_pledges_enabled %}
-          <li>
-            <a class="footer-link" href="{{ path('restaurants_suggest') }}">
-              {% trans %}base.footer.suggest{% endtrans %}
-            </a>
-          </li>
-          {% endif %}
-        </ul>
+      <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6">
+              <h5>{% trans %}base.footer.contactUs{% endtrans %}</h5>
+              <ul class="list-unstyled">
+                <li>
+                  <a class="footer-link" href="mailto:{{ coopcycle_setting('administrator_email') }}">
+                    <i class="fa fa-envelope"></i>  {{ coopcycle_setting('administrator_email') }}
+                  </a>
+                </li>
+                {% set phone_number = coopcycle_setting('phone_number') %}
+                {% if phone_number is not empty %}
+                <li>
+                  <i class="fa fa-phone"></i>  <span>{{ phone_number|phone_number_format('NATIONAL') }}</span>
+                </li>
+                {% endif %}
+              </ul>
+              <ul class="list-unstyled">
+                <li>
+                  <a class="footer-link" href="https://docs.coopcycle.org" target="_blank">
+                    {% trans %}base.footer.help{% endtrans %}
+                  </a>
+                </li>
+                <li>
+                  <a class="footer-link" href="{{ path('legal') }}">
+                    {% trans %}base.footer.legal{% endtrans %}
+                  </a>
+                </li>
+                {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
+                {% if 'yes' == restaurant_pledges_enabled %}
+                <li>
+                  <a class="footer-link" href="{{ path('restaurants_suggest') }}">
+                    {% trans %}base.footer.suggest{% endtrans %}
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-right">
+                <a class="btn-google-play" href="https://play.google.com/store/apps/details?id=fr.coopcycle">
+                  <img alt="Disponible sur Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/{{ app.request.locale }}_badge_web_generic.png" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </footer>
     {% endblock %}
     {% if app.environment == "prod" %}
