@@ -5,12 +5,7 @@ admin_deliveries_new:
       layout: '@App/admin.html.twig'
       routes:
           success: admin_deliveries
-          calculate_price: admin_deliveries_calculate_price
   methods:  [ GET, POST ]
-
-admin_deliveries_calculate_price:
-    path:     /admin/deliveries/calculate-price
-    defaults: { _controller: AppBundle\Controller\AdminController::calculateDeliveryPriceAction }
 
 admin_delivery:
   path: /admin/deliveries/{id}
@@ -19,7 +14,6 @@ admin_delivery:
       layout: '@App/admin.html.twig'
       routes:
           success: admin_deliveries
-          calculate_price: admin_deliveries_calculate_price
   methods:  [ GET, POST ]
 
 admin_order_invoice:
@@ -382,7 +376,6 @@ admin_store_delivery_new:
             stores: admin_stores
             store: admin_store
             success: admin_store_deliveries
-            calculate_price: admin_deliveries_calculate_price
     methods:  [ GET, POST ]
 
 admin_store_users:

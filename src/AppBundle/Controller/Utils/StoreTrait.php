@@ -270,7 +270,6 @@ trait StoreTrait
             'form' => $form->createView(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
-            'calculate_price_route' => $routes['calculate_price'],
         ]);
     }
 

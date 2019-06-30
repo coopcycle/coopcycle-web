@@ -103,46 +103,7 @@ trait DeliveryTrait
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),
-            'calculate_price_route' => $routes['calculate_price'],
             'order' => $order
         ]);
-    }
-
-    private function createGeoCoordinates($coordsAsString)
-    {
-        [ $latitude, $longitude ] = explode(',', $coordsAsString);
-
-        return new GeoCoordinates($latitude, $longitude);
-    }
-
-    public function calculateDeliveryPriceAction(Request $request, DeliveryManager $deliveryManager)
-    {
-        if (!$request->query->has('pricing_rule_set')) {
-            throw new BadRequestHttpException('No pricing provided');
-        }
-
-        if (empty($request->query->get('pricing_rule_set'))) {
-            throw new BadRequestHttpException('No pricing provided');
-        }
-
-        $delivery = new Delivery();
-        $delivery->setDistance($request->query->get('distance'));
-        $delivery->setVehicle($request->query->get('vehicle', null));
-        $delivery->setWeight($request->query->get('weight', null));
-
-        $pickupAddress = new Address();
-        $pickupAddress->setGeo($this->createGeoCoordinates($request->query->get('pickup_address')));
-
-        $dropoffAddress = new Address();
-        $dropoffAddress->setGeo($this->createGeoCoordinates($request->query->get('dropoff_address')));
-
-        $delivery->getPickup()->setAddress($pickupAddress);
-        $delivery->getDropoff()->setAddress($dropoffAddress);
-
-        $pricingRuleSet = $this->getDoctrine()
-            ->getRepository(PricingRuleSet::class)
-            ->find($request->query->get('pricing_rule_set'));
-
-        return new JsonResponse($deliveryManager->getPrice($delivery, $pricingRuleSet));
     }
 }

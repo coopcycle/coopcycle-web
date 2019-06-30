@@ -262,12 +262,7 @@ profile_delivery:
       layout: '@App/profile.html.twig'
       routes:
           success: profile_deliveries
-          calculate_price: profile_deliveries_calculate_price
   methods:  [ GET, POST ]
-
-profile_deliveries_calculate_price:
-    path: /profile/deliveries/calculate-price
-    defaults: { _controller: AppBundle\Controller\ProfileController::calculateDeliveryPriceAction }
 
 profile_stores:
     path: /profile/stores
@@ -313,5 +308,4 @@ profile_store_delivery_new:
             stores: profile_stores
             store: profile_store
             success: profile_store_deliveries
-            calculate_price: profile_deliveries_calculate_price
     methods:  [ GET, POST ]
