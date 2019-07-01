@@ -1,0 +1,41 @@
+AppBundle\Entity\Restaurant\Pledge:
+    type: entity
+    table: restaurant_pledge
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        state:
+            type: integer
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+    oneToOne:
+        address:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - all
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                address_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    manyToOne:
+        user:
+            targetEntity: AppBundle\Entity\ApiUser
+            inversedBy: Pledge
+            joinColumns:
+                user_id:
+                    referencedColumnName: id
+                    nullable: false
+
