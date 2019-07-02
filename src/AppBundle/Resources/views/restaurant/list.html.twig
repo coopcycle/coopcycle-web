@@ -33,6 +33,23 @@
       </div>
       {% endfor %}
   {% endif %}
+
+<!-- Arnaud Pledge work to be continued... -->
+{% if page == pages %}
+<div class="col-sm-6 col-md-4 display-flex">
+  <div class="thumbnail restaurant-item suggest-item">
+  <img class="restaurant-image" src="{{ asset('img/food.png') }}" alt="Make a suggestion">
+  <div class="caption-suggest">
+    <a href="{{ path('restaurants_suggest') }}">
+    <button type="button" class="btn btn-danger btn-suggest">
+      {% trans %}base.footer.suggest{% endtrans %}
+    </button>
+    </a>
+  </div>
+  </div>
+</div>
+{% endif %}
+
   </div>
   <div class="row">
     <div class="col-xs-12">

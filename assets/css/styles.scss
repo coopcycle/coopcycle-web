@@ -21,6 +21,23 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.btn-suggest {
+  height: 100%;
+  width: 100%;
+  text-decoration: white;
+  cursor: pointer;
+}
+
+.suggest-item:hover {
+  border-color: #337ab7;
+}
+
+.caption-suggest {
+  height: 20%;
+  width: 100%;
+  padding: 9px;
+}
+
 .container--full-height {
   height: 100%;
   display: flex;

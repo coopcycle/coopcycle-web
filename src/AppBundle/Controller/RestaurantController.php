@@ -598,4 +598,12 @@ class RestaurantController extends AbstractController
             'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
         ];
     }
+
+    /**
+     * @Route("/restaurants/suggest", name="restaurants_suggest")
+     */
+    public function suggestRestaurantAction() {
+        echo "IT WORKS";
+        exit;
+    }
 }
