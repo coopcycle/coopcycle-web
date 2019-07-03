@@ -27,6 +27,7 @@ class OrderRepository extends BaseOrderRepository
     {
         $qb = $this->createQueryBuilder('o');
         $qb
+            ->andWhere('o.restaurant IS NOT NULL')
             ->andWhere('o.state != :state')
             ->andWhere('DATE(o.shippedAt) = :date')
             ->setParameter('state', OrderInterface::STATE_CART)
