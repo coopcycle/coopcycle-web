@@ -122,14 +122,8 @@ class AdminController extends Controller
         $qb = $this->get('sylius.repository.order')
             ->createQueryBuilder('o');
         $qb
-            ->add('where', $qb->expr()->orX(
-                $qb->expr()->andX(
-                    $qb->expr()->isNotNull('o.restaurant'),
-                    $qb->expr()->neq('o.state', ':state_cart')
-                ),
-                $qb->expr()->isNull('o.restaurant')
-            ))
-            ->setParameter('state_cart', OrderInterface::STATE_CART);
+            ->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
 
         if (!$showCanceled) {
             $qb
