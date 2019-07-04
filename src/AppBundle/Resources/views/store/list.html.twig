@@ -11,13 +11,19 @@
       <tr>
         <td><a href="{{ path(store_route, { id: store.id }) }}">#{{ store.id }}</a></td>
         <td>{{ store.name }}</td>
-        <td>{{ store.pricingRuleSet is not null ? store.pricingRuleSet.name : '' }}</td>
+        <td>
+          {% if store.pricingRuleSet is not null %}
+            <a href="{{ path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id }) }}">
+              {{ store.pricingRuleSet.name }}
+            </a>
+          {% endif %}
+        </td>
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {% trans %}stores.manage{% endtrans %}   <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-right">
               <li>
                 <a href="{{ path(store_route, { id: store.id }) }}">
                   {% trans %}stores.settings{% endtrans %}
