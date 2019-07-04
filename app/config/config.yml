@@ -357,6 +357,7 @@ fos_js_routing:
         - restaurant_remove_from_cart
         - restaurant_cart_address
         - restaurant_modify_cart_item_quantity
+        - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
         - admin_order_accept
@@ -365,6 +366,8 @@ fos_js_routing:
         - admin_order_delay
         - admin_restaurant_dashboard
         - admin_restaurant_stats
+        - admin_task_list_create
+        - admin_task_list_modify
         - ^admin_task$
         - profile_jwt
         - profile_notifications

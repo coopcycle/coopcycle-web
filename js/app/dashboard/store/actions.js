@@ -114,7 +114,7 @@ function setSelectedTagList (tag) {
 }
 
 function modifyTaskList(username, tasks) {
-  const url = window.AppData.Dashboard.modifyTaskListURL.replace('__USERNAME__', username)
+
   const data = tasks.map((task, index) => {
     return {
       task: task['@id'],
@@ -122,7 +122,15 @@ function modifyTaskList(username, tasks) {
     }
   })
 
-  return function(dispatch) {
+  return function(dispatch, getState) {
+
+    const { date } = getState()
+
+    const url = window.Routing.generate('admin_task_list_modify', {
+      date: date.format('YYYY-MM-DD'),
+      username,
+    })
+
     dispatch(modifyTaskListRequest(username, tasks))
 
     return fetch(url, {
@@ -163,9 +171,16 @@ function addTaskListRequestSuccess(taskList) {
 }
 
 function addTaskList(username) {
-  const url = window.AppData.Dashboard.createTaskListURL.replace('__USERNAME__', username)
 
-  return function(dispatch) {
+  return function(dispatch, getState) {
+
+    const { date } = getState()
+
+    const url = window.Routing.generate('admin_task_list_create', {
+      date: date.format('YYYY-MM-DD'),
+      username
+    })
+
     dispatch(addTaskListRequest(username))
 
     return fetch(url, {

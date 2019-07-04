@@ -31,6 +31,26 @@ class Filters extends Component {
     this.props.toggleShowUntaggedTasks(tag)
   }
 
+  componentDidMount() {
+
+    // We don't rely on Bootstrap to manage the dropdown
+    // i.e we don't add data-toggle="dropdown" to the element
+    // Instead, we manage it "manually"
+    // We do this because the dropdown auto-closes when an item is clicked
+
+    $('#dashboard-filters > a').on('click', function (e) {
+      e.preventDefault()
+      $(this).parent().toggleClass('open')
+    })
+
+    // keep the filters dropdown open if click on filters - close if click outside
+    $('body').on('click', function (e) {
+      if (!$('#dashboard-filters').is(e.target) && $('#dashboard-filters').has(e.target).length === 0) {
+        $('#dashboard-filters').removeClass('open')
+      }
+    })
+  }
+
   render() {
     const { tags, showFinishedTasks, showCancelledTasks, selectedTags, showUntaggedTasks } = this.props
 

@@ -24,6 +24,7 @@ let store = createStore(
       selectedTagsList: window.AppData.Dashboard.tags,
       showUntaggedTasks: true
     },
+    taskUploadFormErrors: window.AppData.Dashboard.taskUploadFormErrors,
     tags: window.AppData.Dashboard.tags
   },
   composeEnhancers(applyMiddleware(...middlewares))

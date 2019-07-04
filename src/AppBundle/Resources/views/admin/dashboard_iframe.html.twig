@@ -18,72 +18,20 @@
   {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
 {% endif %}
 
-<div class="dashboard {% if nav %}dashboard--nav{% endif %}" id="dashboard">
+<div class="dashboard {% if nav %}dashboard--nav{% endif %}">
+  <div class="dashboard__wrapper" id="dashboard">
     <div class="dashboard__map">
-      <div class="dashboard__toolbar-container">
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav" id="dashboard-controls">
-                {# Date Picker #}
-                <li>
-                  <div class="dashboard__date">
-                    <a class="dashboard__date-link"
-                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayBefore|date('Y-m-d') })) }}">
-                      <i class="fa fa-caret-left"></i>
-                    </a>
-                    <div class="dashboard__date-picker" id="date-picker"></div>
-                    <a class="dashboard__date-link"
-                      href="{{ path('admin_dashboard_fullscreen', dashboard_route_params|merge({ date: dayAfter|date('Y-m-d') })) }}">
-                      <i class="fa fa-caret-right"></i>
-                    </a>
-                  </div>
-                </li>
-                <li>
-                  <a href="#" data-toggle="modal" data-target="#export-modal">
-                    <i class="fa fa-download" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.export{% endtrans %}
-                  </a>
-                </li>
-                <li>
-                  <a href="#" data-toggle="modal" data-target="#upload-modal">
-                    <i class="fa fa-upload" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.import{% endtrans %}
-                  </a>
-                </li>
-                {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
-                  {% set task_upload_form_errors %}
-                    {% spaceless %}
-                      <ul class="list-unstyled">
-                        {% for error in task_upload_form.file.vars.errors %}
-                          <li>{{ error.message }}</li>
-                        {% endfor %}
-                      </ul>
-                    {% endspaceless %}
-                  {% endset %}
-                  <li>
-                    <a id="task-upload-form-errors" href="#" data-toggle="popover" data-placement="bottom"
-                       data-content="{{ task_upload_form_errors|e('html_attr') }}">
-                      <span class="text-danger"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {% trans %}adminDashboard.dashboard.importErrors{% endtrans %}</span>
-                    </a>
-                  </li>
-                {% endif %}
-                {# Filters #}
-                <li class="dropdown" id="dashboard-filters">
-                  <a class="admin-navbar__link" href="#" role="button"
-                    aria-haspopup="true" aria-expanded="false">
-                    {% trans %}adminDashboard.dashboard.filters{% endtrans %} <span class="caret"></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </div>
+      <div class="dashboard__toolbar-container"></div>
       <div class="dashboard__map-container"></div>
     </div>
     <aside class="dashboard__aside"></aside>
+  </div>
+  <div class="dashboard__loader">
+    <div id="dashboard__loader" style="margin: 0 auto;"></div>
+  </div>
 </div>
 
-<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="upload-modal-label">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="upload-modal-label" id="upload-modal">
   <div class="modal-dialog" role="document">
     {{ form_start(task_upload_form, { attr: { class: 'modal-content' } }) }}
       <div class="modal-header">
@@ -107,7 +55,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="export-modal" tabindex="-1" role="dialog" aria-labelledby="export-modal-label">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="export-modal-label" id="export-modal">
   <div class="modal-dialog" role="document">
     {{ form_start(task_export_form, { attr: { class: 'modal-content' } }) }}
       <div class="modal-header">
@@ -126,13 +74,13 @@
   </div>
 </div>
 
-<div class="modal fade" id="task-group-modal" tabindex="-1" role="dialog">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="task-group-modal-label" id="task-group-modal">
   <div class="modal-dialog" role="document">
     {{ form_start(task_group_form, { attr: { class: 'modal-content' } }) }}
       {{ form_widget(task_group_form.id) }}
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans %}adminDashboard.dashboard.deleteTaskGroup{% endtrans %}</h4>
+        <h4 class="modal-title" id="task-group-modal-label">{% trans %}adminDashboard.dashboard.deleteTaskGroup{% endtrans %}</h4>
       </div>
       <div class="modal-body">
         <div class="alert alert-danger">
@@ -173,6 +121,13 @@
   {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
 {% endif %}
 
+{% set task_upload_form_errors = [] %}
+{% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
+  {% for error in task_upload_form.file.vars.errors %}
+    {% set task_upload_form_errors = task_upload_form_errors|merge([ { message: error.message } ]) %}
+  {% endfor %}
+{% endif %}
+
 window.AppData = window.AppData || {}
 window.AppData.Dashboard = {
   i18n: {
@@ -181,12 +136,10 @@ window.AppData.Dashboard = {
     'Display': "{% trans %}adminDashboard.dashboard.display{% endtrans %}"
   },
   date: "{{ date|date('Y-m-d') }}",
-  dashboardURL: "{{ path('admin_dashboard_fullscreen', dashboard_route_params)|raw }}",
-  createTaskListURL: "{{ path('admin_task_list_create', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
-  modifyTaskListURL: "{{ path('admin_task_list_modify', { date: date|date('Y-m-d'), username: '__USERNAME__' }) }}",
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
   couriersList: {{ couriers|json_encode()|raw }},
+  taskUploadFormErrors: {{ task_upload_form_errors|json_encode()|raw }},
   tags: {{ tags|json_encode()|raw }},
   jwt: "{{ jwt }}"
 }
@@ -207,10 +160,6 @@ window.AppData.Dashboard = {
     }
   });
 
-  $('#task-upload-form-errors').popover({
-    html: true,
-    container: 'body'
-  })
   $('#task-group-modal').on('show.bs.modal', function (event) {
     var $btn = $(event.relatedTarget);
     $('#task_group_id').val($btn.data('group'));

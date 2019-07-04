@@ -1,77 +1,81 @@
 import React from 'react'
 import { render, findDOMNode } from 'react-dom'
 import { Provider } from 'react-redux'
-import DatePicker from 'antd/lib/date-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
-import en_GB from 'antd/lib/locale-provider/en_GB'
 import moment from 'moment'
+import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 
 import i18n from '../i18n'
 import store from './store/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
+import Navbar from './components/Navbar'
 import Filters from './components/Filters'
 
-const locale = $('html').attr('lang'),
-  antdLocale = locale === 'fr' ? fr_FR : en_GB
+let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
 
-render(
-  <Provider store={store}>
-    <I18nextProvider i18n={i18n}>
-      <LeafletMap />
-    </I18nextProvider>
-  </Provider>,
-  document.querySelector('.dashboard__map-container')
-)
+const mapLoaded = new Promise((resolve, reject) => mapLoadedResolve = resolve)
+const navbarLoaded = new Promise((resolve, reject) => navbarLoadedResolve = resolve)
+const dashboardLoaded = new Promise((resolve, reject) => dashboardLoadedResolve = resolve)
 
-render(
-  <Provider store={store}>
-    <I18nextProvider i18n={i18n}>
-      <DashboardApp />
-    </I18nextProvider>
-  </Provider>,
-  document.querySelector('.dashboard__aside')
-)
+function start() {
 
-render(
-  <Provider store={store}>
-    <I18nextProvider i18n={i18n}>
-      <Filters />
-    </I18nextProvider>
-  </Provider>,
-  document.createElement('div'),
-  function () {
-    document.querySelector('#dashboard-filters').appendChild(findDOMNode(this))
-  }
-)
+  Promise
+    .all([ mapLoaded, navbarLoaded, dashboardLoaded ])
+    .then((values) => {
+      anim.stop()
+      anim.destroy()
+      document.querySelector('.dashboard__loader').remove()
+    })
 
-$('#dashboard-filters > a').on('click', function () {
-  $(this).parent().toggleClass('open')
+  render(
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        <LeafletMap />
+      </I18nextProvider>
+    </Provider>,
+    document.querySelector('.dashboard__map-container'),
+    function () {
+      mapLoadedResolve()
+    }
+  )
+
+  render(
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        <Navbar />
+      </I18nextProvider>
+    </Provider>,
+    document.querySelector('.dashboard__toolbar-container'),
+    function () {
+      navbarLoadedResolve()
+    }
+  )
+
+  render(
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        <DashboardApp />
+      </I18nextProvider>
+    </Provider>,
+    document.querySelector('.dashboard__aside'),
+    function () {
+      dashboardLoadedResolve()
+    }
+  )
+
+  // hide export modal after button click
+  $('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
+}
+
+const anim = lottie.loadAnimation({
+  container: document.querySelector('#dashboard__loader'),
+  renderer: 'svg',
+  loop: true,
+  autoplay: true,
+  path: '/img/loading.json'
 })
 
-// keep the filters dropdown open if click on filters - close if click outside
-$('body').on('click', function (e) {
-  if (!$('#dashboard-filters').is(e.target) && $('#dashboard-filters').has(e.target).length === 0) {
-    $('#dashboard-filters').removeClass('open')
-  }
+anim.addEventListener('DOMLoaded', function() {
+  setTimeout(() => start(), 800)
 })
-
-// hide export modal after button click
-$('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
-
-render(
-  <LocaleProvider locale={antdLocale}>
-    <DatePicker
-      format={ 'll' }
-      defaultValue={ moment(window.AppData.Dashboard.date) }
-      onChange={(date) => {
-        if (date) {
-          const dashboardURL = window.AppData.Dashboard.dashboardURL.replace('__DATE__', date.format('YYYY-MM-DD'))
-          window.location.replace(dashboardURL)
-        }
-      }} />
-  </LocaleProvider>,
-  document.querySelector('#date-picker')
-)

@@ -12,10 +12,6 @@ adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
 adminDashboard.dashboard.title: Tableau de bord
-adminDashboard.dashboard.import: Importer
-adminDashboard.dashboard.export: Exporter
-adminDashboard.dashboard.filters: Filtres
-adminDashboard.dashboard.importErrors: Erreurs d'importation
 adminDashboard.dashboard.importTasks: Importer des tâches
 adminDashboard.dashboard.exportTasks: Exporter des tâches
 adminDashboard.dashboard.deleteTaskGroup: Supprimer un groupe de tâches
