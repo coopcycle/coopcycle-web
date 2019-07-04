@@ -13,11 +13,6 @@
 
 {% block body %}
 
-{% set dashboard_route_params = {} %}
-{% if not nav %}
-  {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
-{% endif %}
-
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}">
   <div class="dashboard__wrapper" id="dashboard">
     <div class="dashboard__map">
@@ -115,11 +110,6 @@
 
 {% block scripts %}
 <script>
-
-{% set dashboard_route_params = { date: '__DATE__' } %}
-{% if not nav %}
-  {% set dashboard_route_params = dashboard_route_params|merge({ nav: 'off' }) %}
-{% endif %}
 
 {% set task_upload_form_errors = [] %}
 {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
