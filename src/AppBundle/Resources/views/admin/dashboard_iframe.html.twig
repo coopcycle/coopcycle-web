@@ -131,7 +131,8 @@ window.AppData.Dashboard = {
   couriersList: {{ couriers|json_encode()|raw }},
   taskUploadFormErrors: {{ task_upload_form_errors|json_encode()|raw }},
   tags: {{ tags|json_encode()|raw }},
-  jwt: "{{ jwt }}"
+  jwt: "{{ jwt }}",
+  nav: "{{ nav ? 'on' : 'off' }}"
 }
 </script>
 {{ encore_entry_script_tags('js/dashboard') }}

@@ -56,7 +56,8 @@ class Navbar extends React.Component {
                         onChange={(date) => {
                           if (date) {
                             window.location.href = window.Routing.generate('admin_dashboard_fullscreen', {
-                              date: date.format('YYYY-MM-DD')
+                              date: date.format('YYYY-MM-DD'),
+                              nav: this.props.nav
                             })
                           }
                         }} />
@@ -106,13 +107,16 @@ function mapStateToProps(state) {
   return {
     date: state.date,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: state.date.subtract(1, 'days').format('YYYY-MM-DD')
+      date: state.date.subtract(1, 'days').format('YYYY-MM-DD'),
+      nav: state.nav
     }),
     next: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: state.date.add(1, 'days').format('YYYY-MM-DD')
+      date: state.date.add(1, 'days').format('YYYY-MM-DD'),
+      nav: state.nav
     }),
     hasUploadErrors: state.taskUploadFormErrors.length > 0,
-    uploadErrors: state.taskUploadFormErrors
+    uploadErrors: state.taskUploadFormErrors,
+    nav: state.nav
   }
 }
 
