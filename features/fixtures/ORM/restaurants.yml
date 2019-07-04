@@ -9,17 +9,17 @@ AppBundle\Entity\Base\GeoCoordinates:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: 'Paris'
-    postalCode: 75001
+    postalCode: '75001'
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
   address_2:
     addressLocality: 'Paris'
-    postalCode: 75012
+    postalCode: '75012'
     streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     geo: "@geo_2"
   address_3:
     addressLocality: 'Paris'
-    postalCode: 75009
+    postalCode: '75009'
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
 

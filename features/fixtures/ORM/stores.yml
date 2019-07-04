@@ -17,7 +17,7 @@ AppBundle\Entity\Delivery\PricingRule:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: 'Paris'
-    postalCode: 75001
+    postalCode: '75001'
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
 

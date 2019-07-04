@@ -30,17 +30,17 @@ AppBundle\Entity\ApiUser:
 AppBundle\Entity\Address:
   address_1:
     addressLocality: Paris
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 272, rue Saint Honoré 75001 Paris 1er
     geo: "@geo_1"
   address_2:
     addressLocality: 'Paris'
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 18, avenue Ledru-Rollin 75012 Paris 12ème
     geo: "@geo_2"
   address_3:
     addressLocality: Paris
-    postalCode: 75010
+    postalCode: '75010'
     streetAddress: 17, rue Milton 75009 Paris 9ème
     geo: "@geo_3"
 
