@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import 'leaflet-polylinedecorator'
 import React from 'react'
 import { render } from 'react-dom'
 import MapHelper from '../../MapHelper'
@@ -156,11 +157,33 @@ export default class MapProxy {
   }
 
   setPolyline(username, polyline) {
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), polylineOptions)
-    const layerGroup = this.getPolylineLayerGroup(username)
 
+    const layerGroup = this.getPolylineLayerGroup(username)
     layerGroup.clearLayers()
+
+    const layer = L.polyline(MapHelper.decodePolyline(polyline), polylineOptions)
+
+    // Add arrows to polyline
+    const decorator = L.polylineDecorator(layer, {
+      patterns: [
+        {
+          offset: '5%',
+          repeat: '12.5%',
+          symbol: L.Symbol.arrowHead({
+            pixelSize: 12,
+            polygon: false,
+            pathOptions: {
+              stroke: true,
+              color: '#3498DB',
+              opacity: 0.7
+            }
+          })
+        }
+      ]
+    })
+
     layerGroup.addLayer(layer)
+    layerGroup.addLayer(decorator)
   }
 
   showPolyline(username) {
