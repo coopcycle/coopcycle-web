@@ -107,11 +107,11 @@ function mapStateToProps(state) {
   return {
     date: state.date,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: state.date.subtract(1, 'days').format('YYYY-MM-DD'),
+      date: moment(state.date).subtract(1, 'days').format('YYYY-MM-DD'),
       nav: state.nav
     }),
     next: window.Routing.generate('admin_dashboard_fullscreen', {
-      date: state.date.add(1, 'days').format('YYYY-MM-DD'),
+      date: moment(state.date).add(1, 'days').format('YYYY-MM-DD'),
       nav: state.nav
     }),
     hasUploadErrors: state.taskUploadFormErrors.length > 0,
