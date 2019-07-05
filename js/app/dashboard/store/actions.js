@@ -23,6 +23,8 @@ export const SET_OFFLINE = 'SET_OFFLINE'
 export const DRAKE_DRAG = 'DRAKE_DRAG'
 export const DRAKE_DRAGEND = 'DRAKE_DRAGEND'
 
+import { createTaskList } from './utils'
+
 function assignTasks(username, tasks) {
 
   return function(dispatch, getState) {
@@ -59,26 +61,8 @@ function removeTasks(username, tasks) {
   }
 }
 
-function _updateTask(task) {
-  return {type: UPDATE_TASK, task}
-}
-
 function updateTask(task) {
-  return function(dispatch, getState) {
-
-    if (task.isAssigned) {
-      const targetTaskList = _.find(getState().taskLists, taskList => taskList.username === task.assignedTo)
-
-      // The target TaskList does not exist (yet), we reload the page
-      if (!targetTaskList) {
-        window.location.reload()
-
-        return
-      }
-    }
-
-    dispatch(_updateTask(task))
-  }
+  return {type: UPDATE_TASK, task}
 }
 
 function openAddUserModal() {

@@ -28,6 +28,8 @@ import {
   DRAKE_DRAGEND
 } from './actions'
 
+import { createTaskList } from './utils'
+
 const moment = extendMoment(Moment)
 
 const taskComparator = (taskA, taskB) => taskA['@id'] === taskB['@id']
@@ -131,6 +133,10 @@ const rootReducer = (state = initialState, action) => {
           ...state.taskLists[targetTaskListsIndex],
           items: replaceOrAddTask(state.taskLists[targetTaskListsIndex].items, action.task)
         })
+      } else {
+        let newTaskList = createTaskList(action.task.assignedTo)
+        newTaskList.items.push(action.task)
+        newTaskLists.push(newTaskList)
       }
 
     } else {
@@ -217,12 +223,15 @@ function _taskLists(state = [], action, date = initialState.date) {
         newTaskLists.splice(taskListIndex, 1,
           Object.assign({}, taskList, { items: taskListItems })
         )
-        return newTaskLists
       } else {
-        // TODO : create a new TaskList object
-        window.location.reload()
+        let newTaskList = createTaskList(action.task.assignedTo)
+        newTaskList.items.push(action.task)
+        newTaskLists.push(newTaskList)
       }
+
+      return newTaskLists
     }
+
     break
   }
 
