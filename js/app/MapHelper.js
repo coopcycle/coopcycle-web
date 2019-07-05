@@ -2,7 +2,11 @@ import L from 'leaflet'
 import Polyline from '@mapbox/polyline'
 require('beautifymarker')
 
-function init(id, center, zoom = 13, zoomControl = true) {
+function init(id, options = {}) {
+
+  let center
+  let zoom = 13
+  let zoomControl = true
 
   if (!center && window.AppData && window.AppData.MapHelper && window.AppData.MapHelper.center) {
     let [ latitude, longitude ] = window.AppData.MapHelper.center.split(',')
@@ -12,6 +16,10 @@ function init(id, center, zoom = 13, zoomControl = true) {
   }
 
   var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+
+  if (options.onLoad) {
+    map.whenReady(options.onLoad)
+  }
 
   if (center && zoom) {
     map.setView(center, zoom)

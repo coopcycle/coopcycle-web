@@ -31,13 +31,10 @@ function start() {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <LeafletMap />
+        <LeafletMap onLoad={ () => mapLoadedResolve() } />
       </I18nextProvider>
     </Provider>,
-    document.querySelector('.dashboard__map-container'),
-    function () {
-      mapLoadedResolve()
-    }
+    document.querySelector('.dashboard__map-container')
   )
 
   render(

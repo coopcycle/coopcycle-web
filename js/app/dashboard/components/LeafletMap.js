@@ -24,7 +24,9 @@ class LeafletMap extends Component {
 
   componentDidMount() {
 
-    this.map = MapHelper.init('map')
+    this.map = MapHelper.init('map', {
+      onLoad: this.props.onLoad
+    })
     this.proxy = new MapProxy(this.map)
 
     this._draw()
