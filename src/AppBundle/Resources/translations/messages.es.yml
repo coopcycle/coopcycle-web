@@ -247,6 +247,7 @@ order.payment.card_number.help: 'Hemos introducido un <a href="https://stripe.co
   ningún cargo en cuenta.
 
   '
+order.delivery_time: Entrega %time%
 order.payment.cvc: CVC
 order.state.cart: Cesta
 order.state.new: Nuevo

@@ -10,6 +10,12 @@ use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\PreparationTimeCalculator;
+use AppBundle\Utils\ShippingDateFilter;
+use AppBundle\Utils\ShippingTimeCalculator;
+use AppBundle\Utils\OrderTimeHelperTrait;
+use Carbon\Carbon;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleBus\Message\Bus\MessageBus;
@@ -26,13 +32,23 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class OrderController extends AbstractController
 {
+    use OrderTimeHelperTrait;
+
     private $orderManager;
     private $commandBus;
 
-    public function __construct(ObjectManager $orderManager, MessageBus $commandBus)
+    public function __construct(
+        ObjectManager $orderManager,
+        MessageBus $commandBus,
+        ShippingDateFilter $shippingDateFilter,
+        PreparationTimeCalculator $preparationTimeCalculator,
+        ShippingTimeCalculator $shippingTimeCalculator)
     {
         $this->orderManager = $orderManager;
         $this->commandBus = $commandBus;
+        $this->shippingDateFilter = $shippingDateFilter;
+        $this->preparationTimeCalculator = $preparationTimeCalculator;
+        $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
     /**
@@ -87,8 +103,11 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
+        $timeInfo = $this->getTimeInfo($order, $this->getAvailabilities($order));
+
         return array(
             'order' => $order,
+            'asap' => $timeInfo['asap'],
             'form' => $form->createView(),
         );
     }
@@ -108,10 +127,13 @@ class OrderController extends AbstractController
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
+        $timeInfo = $this->getTimeInfo($order, $this->getAvailabilities($order));
+
         $parameters =  [
             'order' => $order,
             'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
+            'asap' => $timeInfo['asap'],
             'form' => $form->createView(),
         ];
 

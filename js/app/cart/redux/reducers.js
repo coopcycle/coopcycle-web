@@ -9,6 +9,7 @@ import {
   REPLACE_ERRORS,
   SET_LAST_ADD_ITEM_REQUEST,
   CLEAR_LAST_ADD_ITEM_REQUEST,
+  SET_DATE_MODAL_OPEN,
 } from './actions'
 
 const initialState = {
@@ -19,6 +20,7 @@ const initialState = {
     total: 0,
     adjustments: {},
     shippingAddress: null,
+    shippedAt: null,
   },
   restaurant: null,
   isFetching: false,
@@ -31,6 +33,13 @@ const initialState = {
   isMobileCartVisible: false,
   addresses: [],
   lastAddItemRequest: null,
+  times: {
+    asap: null,
+    fast: false,
+    today: false,
+    diff: ''
+  },
+  isDateModalOpen: false
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -137,6 +146,29 @@ const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = 
   }
 }
 
+const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
+  switch (action.type) {
+  case SET_DATE_MODAL_OPEN:
+
+    return action.payload
+  default:
+
+    return state
+  }
+}
+
+const times = (state = initialState.times, action = {}) => {
+  switch (action.type) {
+  case FETCH_SUCCESS:
+  case FETCH_FAILURE:
+
+    return action.payload.times
+  default:
+
+    return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -150,4 +182,6 @@ export default combineReducers({
   isMobileCartVisible,
   addresses,
   lastAddItemRequest,
+  times,
+  isDateModalOpen,
 })

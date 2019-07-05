@@ -4,6 +4,7 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\Address;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
@@ -36,7 +37,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('coopcycle_normalize', array($this, 'normalize')),
             new TwigFilter('split_tax_rates', array(TaxRateRuntime::class, 'split')),
             new TwigFilter('split_items_tax_rates', array(TaxRateRuntime::class, 'splitItems')),
-            new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name'))
+            new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name')),
+            new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
         );
     }
 
@@ -119,5 +121,14 @@ class CoopCycleExtension extends AbstractExtension
         }
 
         return $object;
+    }
+
+    public function dateCalendar($context, $date)
+    {
+        $locale = $context['app']->getRequest()->getLocale();
+
+        $carbon = Carbon::parse($date);
+
+        return strtolower($carbon->locale($locale)->calendar());
     }
 }

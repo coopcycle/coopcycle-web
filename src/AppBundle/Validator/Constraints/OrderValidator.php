@@ -47,7 +47,7 @@ class OrderValidator extends ConstraintValidator
         $order = $object;
         $restaurant = $order->getRestaurant();
 
-        if (!$restaurant->isOpen($order->getShippedAt())) {
+        if (null !== $order->getShippedAt() && !$restaurant->isOpen($order->getShippedAt())) {
             $this->context->buildViolation($constraint->restaurantClosedMessage)
                 ->setParameter('%date%', $order->getShippedAt()->format('Y-m-d H:i:s'))
                 ->atPath('shippedAt')
@@ -115,22 +115,35 @@ class OrderValidator extends ConstraintValidator
 
         if ($isNew) {
 
-            if ($order->getShippedAt() < $now) {
-                $this->context->buildViolation($constraint->shippedAtExpiredMessage)
-                    ->atPath('shippedAt')
-                    ->addViolation();
-
-                return;
-            }
-
-            if (null !== $order->getRestaurant()) {
-                if (false === $this->shippingDateFilter->accept($order, $order->getShippedAt(), $now)) {
-                    $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
+            if (null !== $order->getShippedAt()) {
+                if ($order->getShippedAt() < $now) {
+                    $this->context->buildViolation($constraint->shippedAtExpiredMessage)
                         ->atPath('shippedAt')
+                        ->setCode(Order::SHIPPED_AT_EXPIRED)
                         ->addViolation();
 
                     return;
                 }
+            }
+
+            if (null !== $order->getShippedAt() && null !== $order->getRestaurant()) {
+                if (false === $this->shippingDateFilter->accept($order, $order->getShippedAt(), $now)) {
+                    $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
+                        ->atPath('shippedAt')
+                        ->setCode(Order::SHIPPED_AT_NOT_AVAILABLE)
+                        ->addViolation();
+
+                    return;
+                }
+            }
+        } else {
+            if (null === $order->getShippedAt()) {
+                $this->context->buildViolation($constraint->shippedAtNotEmptyMessage)
+                    ->atPath('shippedAt')
+                    ->setCode(Order::SHIPPED_AT_NOT_EMPTY)
+                    ->addViolation();
+
+                return;
             }
         }
 

@@ -211,6 +211,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->shippedAtExpiredMessage)
             ->atPath('property.path.shippedAt')
+            ->setCode(OrderConstraint::SHIPPED_AT_EXPIRED)
             ->assertRaised();
     }
 
@@ -271,6 +272,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->shippedAtExpiredMessage)
             ->atPath('property.path.shippedAt')
+            ->setCode(OrderConstraint::SHIPPED_AT_EXPIRED)
             ->assertRaised();
     }
 
@@ -331,6 +333,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->shippedAtNotAvailableMessage)
             ->atPath('property.path.shippedAt')
+            ->setCode(OrderConstraint::SHIPPED_AT_NOT_AVAILABLE)
             ->assertRaised();
     }
 
@@ -429,6 +432,62 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation($constraint->totalIncludingTaxTooLowMessage)
             ->atPath('property.path.total')
             ->setParameter('%minimum_amount%', 20.00)
+            ->assertRaised();
+    }
+
+    public function testOrderWithStateNewCantHaveNullShippingTime()
+    {
+        $shippedAt = new \DateTime();
+        $shippedAt->modify('+1 hour');
+
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddressProphecy($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $shippingAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+        $restaurant
+            ->isOpen($shippedAt)
+            ->willReturn(true);
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress->reveal()
+        );
+
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getState()
+            ->willReturn(Order::STATE_NEW);
+        $order
+            ->getShippedAt()
+            ->willReturn(null);
+
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $maxDistanceExpression = 'distance < 1500',
+            $duration = 300
+        );
+
+        $constraint = new OrderConstraint();
+        $violations = $this->validator->validate($order->reveal(), $constraint);
+
+        $this->buildViolation($constraint->shippedAtNotEmptyMessage)
+            ->atPath('property.path.shippedAt')
+            ->setCode(OrderConstraint::SHIPPED_AT_NOT_EMPTY)
             ->assertRaised();
     }
 

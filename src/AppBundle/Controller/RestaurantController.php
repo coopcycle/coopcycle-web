@@ -11,9 +11,13 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Utils\OrderTimeHelperTrait;
 use AppBundle\Utils\OrderTimelineCalculator;
+use AppBundle\Utils\PreparationTimeCalculator;
+use AppBundle\Utils\ShippingTimeCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ValidationUtils;
+use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Cocur\Slugify\SlugifyInterface;
@@ -43,6 +47,7 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 class RestaurantController extends AbstractController
 {
     use UserTrait;
+    use OrderTimeHelperTrait;
 
     const ITEMS_PER_PAGE = 21;
 
@@ -62,7 +67,9 @@ class RestaurantController extends AbstractController
         $productVariantResolver,
         RepositoryInterface $productOptionValueRepository,
         $orderItemQuantityModifier,
-        $orderModifier)
+        $orderModifier,
+        PreparationTimeCalculator $preparationTimeCalculator,
+        ShippingTimeCalculator $shippingTimeCalculator)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
@@ -76,6 +83,8 @@ class RestaurantController extends AbstractController
         $this->productOptionValueRepository = $productOptionValueRepository;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
+        $this->preparationTimeCalculator = $preparationTimeCalculator;
+        $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
@@ -93,9 +102,12 @@ class RestaurantController extends AbstractController
             'groups' => ['order']
         ];
 
+        $availabilities = $this->getAvailabilities($cart);
+
         return new JsonResponse([
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
-            'availabilities' => $this->getAvailabilities($cart),
+            'availabilities' => $availabilities,
+            'times' => $this->getTimeInfo($cart, $availabilities),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
     }
@@ -131,20 +143,11 @@ class RestaurantController extends AbstractController
         }
     }
 
-    private function getAvailabilities(OrderInterface $cart)
+    private function saveSession(Request $request, OrderInterface $cart)
     {
-        $restaurant = $cart->getRestaurant();
-
-        $availabilities = $restaurant->getAvailabilities();
-
-        $availabilities = array_filter($availabilities, function ($date) use ($cart) {
-            $shippingDate = new \DateTime($date);
-
-            return $this->shippingDateFilter->accept($cart, $shippingDate);
-        });
-
-        // Make sure to return a zero-indexed array
-        return array_values($availabilities);
+        // TODO Find a better way to do this
+        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
+        $request->getSession()->set($sessionKeyName, $cart->getId());
     }
 
     /**
@@ -258,6 +261,15 @@ class RestaurantController extends AbstractController
 
         $cart = $cartContext->getCart();
 
+        $isAnotherRestaurant =
+            null !== $cart->getId() && $cart->getRestaurant() !== $restaurant;
+
+        if ($isAnotherRestaurant) {
+            $cart->clearItems();
+            $cart->setShippedAt(null);
+            $cart->setRestaurant($restaurant);
+        }
+
         $user = $this->getUser();
         if ($request->query->has('address') && $user && count($user->getAddresses()) > 0) {
 
@@ -273,9 +285,22 @@ class RestaurantController extends AbstractController
                 $this->orderManager->persist($cart);
                 $this->orderManager->flush();
 
-                // TODO Find a better way to do this
-                $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-                $request->getSession()->set($sessionKeyName, $cart->getId());
+                $this->saveSession($request, $cart);
+            }
+        }
+
+        $violations = $this->validator->validate($cart);
+        $violationCodes = [
+            OrderConstraint::SHIPPED_AT_EXPIRED,
+            OrderConstraint::SHIPPED_AT_NOT_AVAILABLE
+        ];
+        if (0 !== count($violations->findByCodes($violationCodes))) {
+
+            $cart->setShippedAt(null);
+
+            if (!$isAnotherRestaurant) {
+                $this->orderManager->persist($cart);
+                $this->orderManager->flush();
             }
         }
 
@@ -294,7 +319,7 @@ class RestaurantController extends AbstractController
                 // Customer may be browsing the available restaurants
                 // Make sure the request targets the same restaurant
                 // If not, we don't persist the cart
-                if (null !== $cart->getId() && $cart->getRestaurant() !== $restaurant) {
+                if ($isAnotherRestaurant) {
 
                     return $this->jsonResponse($cart, $errors);
                 }
@@ -319,9 +344,7 @@ class RestaurantController extends AbstractController
                 $this->orderManager->persist($cart);
                 $this->orderManager->flush();
 
-                // TODO Find a better way to do this
-                $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-                $request->getSession()->set($sessionKeyName, $cart->getId());
+                $this->saveSession($request, $cart);
 
                 return $this->jsonResponse($cart, $errors);
 
@@ -353,10 +376,13 @@ class RestaurantController extends AbstractController
                 ->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
+        $availabilities = $this->getAvailabilities($cart);
+
         return array(
             'restaurant' => $restaurant,
             'structured_data' => $structuredData,
-            'availabilities' => $this->getAvailabilities($cart),
+            'availabilities' => $availabilities,
+            'times' => $this->getTimeInfo($cart, $availabilities),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
@@ -439,6 +465,7 @@ class RestaurantController extends AbstractController
 
         if ($clear) {
             $cart->clearItems();
+            $cart->setShippedAt(null);
             $cart->setRestaurant($restaurant);
         }
 
@@ -490,24 +517,35 @@ class RestaurantController extends AbstractController
         $cartItem->setUnitPrice($productVariant->getPrice());
 
         $this->orderItemQuantityModifier->modify($cartItem, $quantity);
-
         $this->orderModifier->addToOrder($cart, $cartItem);
-
-        // FIXME
-        // There is a possible race condition in the workflow
-        // When a product is added to the cart before the first AJAX call has finished
-        // Make sure there is a shipping date
-        if (null === $cart->getShippedAt()) {
-            $availabilities = $this->getAvailabilities($cart);
-            $cart->setShippedAt(new \DateTime(current($availabilities)));
-        }
 
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
 
-        // TODO Find a better way to do this
-        $sessionKeyName = $this->getParameter('sylius_cart_restaurant_session_key_name');
-        $request->getSession()->set($sessionKeyName, $cart->getId());
+        $this->saveSession($request, $cart);
+
+        $errors = $this->validator->validate($cart);
+        $errors = ValidationUtils::serializeViolationList($errors);
+
+        return $this->jsonResponse($cart, $errors);
+    }
+
+    /**
+     * @Route("/restaurant/{id}/cart/clear-time", name="restaurant_cart_clear_time", methods={"POST"})
+     */
+    public function clearCartTimeAction($id, Request $request, CartContextInterface $cartContext)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)->find($id);
+
+        $cart = $cartContext->getCart();
+
+        $cart->setShippedAt(null);
+
+        $this->orderManager->persist($cart);
+        $this->orderManager->flush();
+
+        $this->saveSession($request, $cart);
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
