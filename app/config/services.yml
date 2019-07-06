@@ -670,3 +670,4 @@ services:
       $mailer: '@AppBundle\Utils\MessageLoggingMailer'
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
