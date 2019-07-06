@@ -5,6 +5,7 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Psr\Log\LoggerInterface;
@@ -73,9 +74,31 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         if (isset($data['address'])) {
-            $address = $this->geocoder->geocode($data['address']);
+
+            if (is_string($data['address'])) {
+                $address = $this->geocoder->geocode($data['address']);
+            } elseif (is_array($data['address'])) {
+                $address = $this->denormalizeAddress($data['address']);
+            }
+
             $task->setAddress($address);
         }
+    }
+
+    private function denormalizeAddress($data)
+    {
+        $address = new Address();
+
+        if (isset($data['streetAddress'])) {
+            $address->setStreetAddress($data['streetAddress']);
+        }
+
+        if (isset($data['latLng'])) {
+            [ $latitude, $longitude ] = $data['latLng'];
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+        }
+
+        return $address;
     }
 
     public function denormalize($data, $class, $format = null, array $context = array())
