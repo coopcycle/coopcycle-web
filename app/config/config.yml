@@ -124,7 +124,9 @@ doctrine:
 
 api_platform:
     mapping:
-        paths: ['%kernel.project_dir%/src/AppBundle/Api/Dto']
+        paths:
+            - '%kernel.project_dir%/src/AppBundle/Api/Dto'
+            - '%kernel.project_dir%/src/AppBundle/Api/Resource'
     exception_to_status:
         Symfony\Component\Serializer\Exception\ExceptionInterface: 400
         ApiPlatform\Core\Exception\InvalidArgumentException: 400

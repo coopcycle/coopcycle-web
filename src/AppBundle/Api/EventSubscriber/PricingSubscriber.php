@@ -3,6 +3,7 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Api\Exception\BadRequestHttpException;
+use AppBundle\Api\Resource\Pricing as PricingResource;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
@@ -60,9 +61,29 @@ final class PricingSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('api_calculate_price_requests_get_collection' !== $request->attributes->get('_route')) {
+        $route = $request->attributes->get('_route');
+
+        $routes = [
+            'api_calculate_price_requests_get_collection',
+            'api_pricings_calc_price_collection'
+        ];
+
+        if (!in_array($route, $routes)) {
             return;
         }
+
+        if ('api_calculate_price_requests_get_collection' === $route) {
+            return $this->handleCalculatePriceLegacy($event);
+        }
+
+        if ('api_pricings_calc_price_collection' === $route) {
+            return $this->handleCalculatePrice($event);
+        }
+    }
+
+    private function handleCalculatePriceLegacy(GetResponseForControllerResultEvent $event)
+    {
+        $request = $event->getRequest();
 
         if (null === $token = $this->tokenStorage->getToken()) {
             throw new AccessDeniedException();
@@ -115,5 +136,16 @@ final class PricingSubscriber implements EventSubscriberInterface
         }
 
         $event->setResponse(new JsonResponse($price));
+    }
+
+    private function handleCalculatePrice(GetResponseForControllerResultEvent $event)
+    {
+        $result = $event->getControllerResult();
+
+        if (!$result instanceof PricingResource) {
+            return;
+        }
+
+        $event->setResponse(new JsonResponse($result->price));
     }
 }
