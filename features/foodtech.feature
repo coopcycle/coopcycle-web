@@ -178,7 +178,7 @@ Feature: Food Tech
       }
       """
 
-  Scenario: Accept order
+  Scenario: Accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -202,13 +202,10 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/orders/1/accept" with body:
-      """
-      {}
-      """
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
     Then the response status code should be 200
 
-  Scenario: Not authorized to accept order
+  Scenario: Not authorized to accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -232,10 +229,7 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/orders/1/accept" with body:
-      """
-      {}
-      """
+    When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
     Then the response status code should be 403
     And the JSON should match:
       """

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "api-platform/core",
-            "version": "v2.4.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/api-platform/core.git",
-                "reference": "76a47b73bdeca31bec647bb2f4e018f3dc29a3d7"
+                "reference": "e056f5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/api-platform/core/zipball/76a47b73bdeca31bec647bb2f4e018f3dc29a3d7",
-                "reference": "76a47b73bdeca31bec647bb2f4e018f3dc29a3d7",
+                "url": "https://api.github.com/repos/api-platform/core/zipball/e056f5d",
+                "reference": "e056f5d",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
                 "symfony/http-kernel": "^3.4 || ^4.0",
                 "symfony/property-access": "^3.4 || ^4.0",
                 "symfony/property-info": "^3.4 || ^4.0",
-                "symfony/serializer": "^4.1",
+                "symfony/serializer": "^4.3",
                 "symfony/web-link": "^4.1",
                 "willdurand/negotiation": "^2.0.3"
             },
@@ -45,26 +45,27 @@
                 "behat/symfony2-extension": "^2.1.1",
                 "behatch/contexts": "3.1.0",
                 "doctrine/annotations": "^1.2",
+                "doctrine/data-fixtures": "^1.2.2",
                 "doctrine/doctrine-bundle": "^1.8",
                 "doctrine/doctrine-cache-bundle": "^1.3.5",
-                "doctrine/mongodb-odm": "^2.0.0@beta",
-                "doctrine/mongodb-odm-bundle": "^4.0.0@beta",
+                "doctrine/mongodb-odm": "^2.0@rc",
+                "doctrine/mongodb-odm-bundle": "^4.0@rc",
                 "doctrine/orm": "^2.6.3",
                 "elasticsearch/elasticsearch": "^6.0",
                 "friendsofsymfony/user-bundle": "^2.2@dev",
                 "guzzlehttp/guzzle": "^6.0",
                 "jangregor/phpstan-prophecy": "^0.3",
                 "justinrainbow/json-schema": "^5.0",
-                "nelmio/api-doc-bundle": "^2.13.3",
-                "php-mock/php-mock-phpunit": "^2.0",
+                "nelmio/api-doc-bundle": "^2.13.4",
                 "phpdocumentor/reflection-docblock": "^3.0 || ^4.0",
                 "phpdocumentor/type-resolver": "^0.3 || ^0.4",
                 "phpspec/prophecy": "^1.8",
-                "phpstan/phpstan": "^0.11.3",
-                "phpstan/phpstan-doctrine": "^0.11.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^0.11",
+                "phpstan/phpstan-doctrine": "^0.11",
                 "phpstan/phpstan-phpunit": "^0.11",
-                "phpstan/phpstan-symfony": "^0.11.2",
-                "phpunit/phpunit": "^7.5.2",
+                "phpstan/phpstan-symfony": "^0.11",
+                "phpunit/phpunit": "^7.5.2 || ^8.0.0",
                 "psr/log": "^1.0",
                 "ramsey/uuid": "^3.7",
                 "ramsey/uuid-doctrine": "^1.4",
@@ -82,13 +83,14 @@
                 "symfony/expression-language": "^3.4 || ^4.0",
                 "symfony/finder": "^3.4 || ^4.0",
                 "symfony/form": "^3.4 || ^4.0",
-                "symfony/framework-bundle": "^4.2",
+                "symfony/framework-bundle": "^4.3.2",
+                "symfony/http-client": "^4.3",
                 "symfony/mercure-bundle": "*",
-                "symfony/messenger": "^4.2",
-                "symfony/phpunit-bridge": "^3.4.5 || ^4.0.5",
+                "symfony/messenger": "^4.3",
+                "symfony/phpunit-bridge": "^4.3.1",
                 "symfony/routing": "^3.4 || ^4.0",
-                "symfony/security": "^3.4 || ^4.0",
                 "symfony/security-bundle": "^3.4 || ^4.0",
+                "symfony/security-core": "^4.3",
                 "symfony/twig-bundle": "^3.4 || ^4.0",
                 "symfony/validator": "^3.4 || ^4.0",
                 "symfony/web-profiler-bundle": "^4.2",
@@ -146,7 +148,7 @@
                 "rest",
                 "swagger"
             ],
-            "time": "2019-03-28T20:16:27+00:00"
+            "time": "2019-06-22T10:48:51+00:00"
         },
         {
             "name": "beberlei/DoctrineExtensions",
@@ -11441,30 +11443,30 @@
         },
         {
             "name": "symfony/monolog-bundle",
-            "version": "v3.3.1",
+            "version": "v3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/monolog-bundle.git",
-                "reference": "572e143afc03419a75ab002c80a2fd99299195ff"
+                "reference": "7fbecb371c1c614642c93c6b2cbcdf723ae8809d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/572e143afc03419a75ab002c80a2fd99299195ff",
-                "reference": "572e143afc03419a75ab002c80a2fd99299195ff",
+                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/7fbecb371c1c614642c93c6b2cbcdf723ae8809d",
+                "reference": "7fbecb371c1c614642c93c6b2cbcdf723ae8809d",
                 "shasum": ""
             },
             "require": {
                 "monolog/monolog": "~1.22",
                 "php": ">=5.6",
-                "symfony/config": "~2.7|~3.3|~4.0",
-                "symfony/dependency-injection": "~2.7|~3.4.10|^4.0.10",
-                "symfony/http-kernel": "~2.7|~3.3|~4.0",
-                "symfony/monolog-bridge": "~2.7|~3.3|~4.0"
+                "symfony/config": "~3.4|~4.0",
+                "symfony/dependency-injection": "~3.4.10|^4.0.10",
+                "symfony/http-kernel": "~3.4|~4.0",
+                "symfony/monolog-bridge": "~3.4|~4.0"
             },
             "require-dev": {
-                "symfony/console": "~2.7|~3.3|~4.0",
-                "symfony/phpunit-bridge": "^3.3|^4.0",
-                "symfony/yaml": "~2.7|~3.3|~4.0"
+                "symfony/console": "~3.4|~4.0",
+                "symfony/phpunit-bridge": "^3.4.19|^4.0",
+                "symfony/yaml": "~3.4|~4.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -11500,7 +11502,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2018-11-04T09:58:13+00:00"
+            "time": "2019-06-20T12:18:19+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -14099,16 +14101,16 @@
         },
         {
             "name": "facebook/webdriver",
-            "version": "1.6.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/php-webdriver.git",
-                "reference": "bd8c740097eb9f2fc3735250fc1912bc811a954e"
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/bd8c740097eb9f2fc3735250fc1912bc811a954e",
-                "reference": "bd8c740097eb9f2fc3735250fc1912bc811a954e",
+                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/e43de70f3c7166169d0f14a374505392734160e5",
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5",
                 "shasum": ""
             },
             "require": {
@@ -14155,7 +14157,7 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2018-05-16T17:37:13+00:00"
+            "time": "2019-06-13T08:02:18+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -15157,23 +15159,22 @@
         },
         {
             "name": "symfony/panther",
-            "version": "v0.4.0",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/panther.git",
-                "reference": "7a041cb4fc56e16f11808943633068a8fa3d6a51"
+                "reference": "6581f7bc0498f0328fe955a2894ffc40070d2bcb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/panther/zipball/7a041cb4fc56e16f11808943633068a8fa3d6a51",
-                "reference": "7a041cb4fc56e16f11808943633068a8fa3d6a51",
+                "url": "https://api.github.com/repos/symfony/panther/zipball/6581f7bc0498f0328fe955a2894ffc40070d2bcb",
+                "reference": "6581f7bc0498f0328fe955a2894ffc40070d2bcb",
                 "shasum": ""
             },
             "require": {
                 "facebook/webdriver": "^1.5",
                 "php": ">=7.1",
                 "symfony/browser-kit": "^4.0",
-                "symfony/contracts": "^1.1",
                 "symfony/http-client": "^4.3",
                 "symfony/polyfill-php72": "^1.9",
                 "symfony/process": "^3.4 || ^4.0"
@@ -15224,20 +15225,20 @@
                 "testing",
                 "webdriver"
             ],
-            "time": "2019-06-04T09:44:04+00:00"
+            "time": "2019-06-11T14:14:33+00:00"
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v4.3.1",
+            "version": "v4.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "4c02cf116370da969b88bb607563f614e2450f73"
+                "reference": "573b5c4a36a171b94cf031d8dc6cc568082190f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/4c02cf116370da969b88bb607563f614e2450f73",
-                "reference": "4c02cf116370da969b88bb607563f614e2450f73",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/573b5c4a36a171b94cf031d8dc6cc568082190f1",
+                "reference": "573b5c4a36a171b94cf031d8dc6cc568082190f1",
                 "shasum": ""
             },
             "require": {
@@ -15289,7 +15290,7 @@
             ],
             "description": "Symfony PHPUnit Bridge",
             "homepage": "https://symfony.com",
-            "time": "2019-05-30T08:57:55+00:00"
+            "time": "2019-06-26T12:14:14+00:00"
         },
         {
             "name": "textalk/websocket",
@@ -15374,6 +15375,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "api-platform/core": 20,
         "friendsofsymfony/user-bundle": 20,
         "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,

@@ -57,7 +57,8 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="PUT",
  *       "path"="/orders/{id}/accept",
  *       "controller"=OrderAccept::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())",
+ *       "deserialize"=false
  *     },
  *     "refuse"={
  *       "method"="PUT",
