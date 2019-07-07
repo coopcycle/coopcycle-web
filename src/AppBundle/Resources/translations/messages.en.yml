@@ -17,6 +17,8 @@ adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
 
 adminDashboard.dashboard.title: Dashboard
+adminDashboard.dashboard.import: Import
+adminDashboard.dashboard.export: Export
 adminDashboard.dashboard.importTasks: Import tasks
 adminDashboard.dashboard.exportTasks: Export tasks
 adminDashboard.dashboard.deleteTaskGroup: Delete task group
