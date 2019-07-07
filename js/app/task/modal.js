@@ -1,5 +1,7 @@
 import TaskRangePicker from '../widgets/TaskRangePicker'
 import TagsInput from '../widgets/TagsInput'
+import AddressInput from '../widgets/AddressInput'
+import Timeline from '../widgets/Timeline'
 import _ from 'lodash'
 
 let tags = []
@@ -34,7 +36,7 @@ const initTagSelector = (formName) => {
 window.CoopCycle = window.CoopCycle || {}
 window.CoopCycle.TaskModal = (formName, tagsURL) => {
 
-  new CoopCycle.AddressInput(document.querySelector(`#${formName}_address_streetAddress`), {
+  new AddressInput(document.querySelector(`#${formName}_address_streetAddress`), {
     elements: {
       latitude: document.querySelector(`#${formName}_address_latitude`),
       longitude: document.querySelector(`#${formName}_address_longitude`),
@@ -50,7 +52,7 @@ window.CoopCycle.TaskModal = (formName, tagsURL) => {
 
   const timelineEl = document.querySelector(`form[name="${formName}"] ul[data-render="timeline"]`)
   if (timelineEl) {
-    new CoopCycle.Timeline(timelineEl, {
+    new Timeline(timelineEl, {
       format: 'lll',
       itemColor: item => {
         const eventName = item.getAttribute('data-event')

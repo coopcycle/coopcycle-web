@@ -9,7 +9,6 @@ import OpeningHoursParser from './OpeningHoursParser'
 import OrderTimeline from './OrderTimeline'
 import StripePaymentForm from './StripePaymentForm'
 import Search from './Search'
-import Timeline from './Timeline'
 
 window.CoopCycle = window.CoopCycle || {}
 
@@ -24,4 +23,3 @@ window.CoopCycle.OpeningHoursParser = OpeningHoursParser
 window.CoopCycle.OrderTimeline = OrderTimeline
 window.CoopCycle.StripePaymentForm = StripePaymentForm
 window.CoopCycle.Search = Search
-window.CoopCycle.Timeline = Timeline
