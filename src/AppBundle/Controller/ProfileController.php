@@ -239,9 +239,10 @@ class ProfileController extends Controller
     protected function getDeliveryRoutes()
     {
         return [
-            'list'    => 'profile_tasks',
-            'pick'    => 'profile_delivery_pick',
-            'deliver' => 'profile_delivery_deliver'
+            'list'      => 'profile_tasks',
+            'pick'      => 'profile_delivery_pick',
+            'deliver'   => 'profile_delivery_deliver',
+            'store_new' => 'profile_store_delivery_new'
         ];
     }
 

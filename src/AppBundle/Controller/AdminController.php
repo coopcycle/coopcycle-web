@@ -463,6 +463,7 @@ class AdminController extends Controller
             'couriers' => $couriers,
             'tasks' => $tasks,
             'routes' => $this->getDeliveryRoutes(),
+            'stores' => $this->getDoctrine()->getRepository(Store::class)->findAll()
         ];
     }
 
@@ -485,10 +486,11 @@ class AdminController extends Controller
     protected function getDeliveryRoutes()
     {
         return [
-            'list'     => 'admin_deliveries',
-            'pick'     => 'admin_delivery_pick',
-            'deliver'  => 'admin_delivery_deliver',
-            'view'     => 'admin_delivery'
+            'list'      => 'admin_deliveries',
+            'pick'      => 'admin_delivery_pick',
+            'deliver'   => 'admin_delivery_deliver',
+            'view'      => 'admin_delivery',
+            'store_new' => 'admin_store_delivery_new'
         ];
     }
 

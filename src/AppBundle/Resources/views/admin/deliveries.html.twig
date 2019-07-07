@@ -7,7 +7,7 @@
 {% block content %}
 
   <p class="text-right">
-    <a href="{{ path('admin_deliveries_new') }}" class="btn btn-success">
+    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.deliveries.createNew{% endtrans %}
     </a>
   </p>
@@ -58,6 +58,28 @@
 
   <div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
 
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="choose-store-modal-label" id="choose-store-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="choose-store-modal-label">{% trans %}adminDashboard.deliveries.createNew{% endtrans %}</h4>
+        </div>
+        <div class="modal-body">
+          <select class="form-control" id="stores">
+            <option></option>
+            {% for store in stores %}
+            <option value="{{ path(routes.store_new, { id: store.id }) }}">{{ store.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -66,6 +88,11 @@ window.AppData = window.AppData || {};
 window.AppData.Delivery = {
   taskModalURL: "{{ path('admin_task', { id: '__TASK_ID__' }) }}"
 };
+</script>
+<script>
+$('#stores').on('change', function(e) {
+  window.location.href = $(this).val();
+});
 </script>
 {{ encore_entry_script_tags('js/task-modal') }}
 {{ encore_entry_script_tags('js/delivery-list') }}
