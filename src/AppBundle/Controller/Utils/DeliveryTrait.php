@@ -103,7 +103,8 @@ trait DeliveryTrait
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),
-            'order' => $order
+            'order' => $order,
+            'debug_pricing' => $request->query->getBoolean('debug', false),
         ]);
     }
 }

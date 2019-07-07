@@ -370,6 +370,7 @@ fos_js_routing:
         - admin_order_delay
         - admin_restaurant_dashboard
         - admin_restaurant_stats
+        - admin_tags
         - admin_task_list_create
         - admin_task_list_modify
         - ^admin_task$

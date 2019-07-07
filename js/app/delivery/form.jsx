@@ -1,36 +1,29 @@
 import MapHelper from '../MapHelper'
-import AddressAutosuggest from '../components/AddressAutosuggest'
-import React from 'react'
-import { render } from 'react-dom'
 import _ from 'lodash'
+import moment from 'moment'
+require('gasparesganga-jquery-loading-overlay')
 
-var map
+import DeliveryForm from '../forms/delivery'
+import PricePreview from './PricePreview'
+
+let map
+let jwt
+let form
+let pricePreview
 
 let markers = {
   pickup: null,
   dropoff: null,
 }
 
-function disableForm() {
-  $('#delivery-submit').attr('disabled', true)
-  $('#loader').removeClass('hidden')
-}
-
-function enableForm() {
-  $('#delivery-submit').attr('disabled', false)
-  $('#loader').addClass('hidden')
-}
-
-function refreshRouting() {
+function route() {
 
   // We need to have 2 markers
   if (_.filter(markers).length < 2) return
 
   const { pickup, dropoff } = markers
 
-  disableForm()
-
-  MapHelper.route([
+  return MapHelper.route([
     [ pickup.getLatLng().lat, pickup.getLatLng().lng ],
     [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ]
   ])
@@ -42,14 +35,13 @@ function refreshRouting() {
       var kms = (distance / 1000).toFixed(2)
       var minutes = Math.ceil(duration / 60)
 
-      $('#delivery_distance').text(kms + ' Km')
-      $('#delivery_duration').text(minutes + ' min')
-
-      enableForm()
-
-      // return decodePolyline(data.routes[0].geometry);
+      return {
+        duration,
+        distance,
+        kms,
+        minutes
+      }
     })
-    .catch(() => enableForm())
 }
 
 const markerIcons = {
@@ -81,35 +73,6 @@ function markAddressChecked(addressType) {
   $(checkmark).removeClass('hidden')
 }
 
-function onLocationChange(location, addressType) {
-  createMarker(location, addressType)
-  refreshRouting()
-}
-
-function refreshAddressForm(type, address) {
-
-  document.querySelector(`#delivery_${type}_address_streetAddress`).value = address.streetAddress
-  document.querySelector(`#delivery_${type}_address_postalCode`).value = address.postalCode
-  document.querySelector(`#delivery_${type}_address_addressLocality`).value = address.addressLocality
-  document.querySelector(`#delivery_${type}_address_name`).value = address.name || ''
-  document.querySelector(`#delivery_${type}_address_telephone`).value = address.telephone || ''
-
-  let disabled = false
-
-  if (address.id) {
-    document.querySelector(`#delivery_${type}_address_id`).value = address.id
-    disabled = true
-  } else {
-    document.querySelector(`#delivery_${type}_address_latitude`).value = address.geo.latitude
-    document.querySelector(`#delivery_${type}_address_longitude`).value = address.geo.longitude
-  }
-
-  document.querySelector(`#delivery_${type}_address_postalCode`).disabled = disabled
-  document.querySelector(`#delivery_${type}_address_addressLocality`).disabled = disabled
-  document.querySelector(`#delivery_${type}_address_name`).disabled = disabled
-  document.querySelector(`#delivery_${type}_address_telephone`).disabled = disabled
-}
-
 window.initMap = function() {
 
   const originAddressLatitude  = document.querySelector('#delivery_pickup_address_latitude')
@@ -137,57 +100,68 @@ window.initMap = function() {
     }, 'dropoff')
   }
 
-  const pickupAddressWidget =
-    document.querySelector('#delivery_pickup_address_streetAddress_widget')
+  form = new DeliveryForm('delivery', {
+    onChange: (delivery) => {
 
-  const pickupAddressAddresses = JSON.parse(pickupAddressWidget.dataset.addresses)
+      const { pickup, dropoff } = delivery
 
-  render(
-    <AddressAutosuggest
-      address={ document.querySelector('#delivery_pickup_address_streetAddress').value }
-      addresses={ pickupAddressAddresses }
-      geohash={ '' }
-      onAddressSelected={ (value, address, type) => {
-        refreshAddressForm('pickup', address)
-        $('#delivery_pickup_panel_title').text(address.streetAddress)
+      if (pickup.address.latLng) {
+        createMarker({
+          latitude: pickup.address.latLng[0],
+          longitude: pickup.address.latLng[1]
+        }, 'pickup')
         markAddressChecked('pickup')
-        onLocationChange(address.geo, 'pickup')
-      }} />,
-    pickupAddressWidget
-  )
+      }
+      if (pickup.address.streetAddress) {
+        $('#delivery_pickup_panel_title').text(pickup.address.streetAddress)
+      }
 
-  new CoopCycle.DateTimePicker(document.querySelector('#delivery_pickup_doneBefore_widget'), {
-    defaultValue: document.querySelector('#delivery_pickup_doneBefore').value,
-    onChange: function(date) {
-      document.querySelector('#delivery_pickup_doneBefore').value = date.format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-
-  const dropoffAddressWidget =
-    document.querySelector('#delivery_dropoff_address_streetAddress_widget')
-
-  const dropoffAddressAddresses = JSON.parse(dropoffAddressWidget.dataset.addresses)
-
-  render(
-    <AddressAutosuggest
-      addresses={ dropoffAddressAddresses }
-      address={ '' }
-      geohash={ '' }
-      onAddressSelected={ (value, address, type) => {
-        refreshAddressForm('dropoff', address)
-        $('#delivery_dropoff_panel_title').text(address.streetAddress)
+      if (dropoff.address.latLng) {
+        createMarker({
+          latitude: dropoff.address.latLng[0],
+          longitude: dropoff.address.latLng[1]
+        }, 'dropoff')
         markAddressChecked('dropoff')
-        onLocationChange(address.geo, 'dropoff')
-      } } />,
-    dropoffAddressWidget
-  )
+      }
+      if (dropoff.address.streetAddress) {
+        $('#delivery_dropoff_panel_title').text(dropoff.address.streetAddress)
+      }
 
-  new CoopCycle.DateTimePicker(document.querySelector('#delivery_dropoff_doneBefore_widget'), {
-    defaultValue: document.querySelector('#delivery_dropoff_doneBefore').value,
-    onChange: function(date) {
-      document.querySelector('#delivery_dropoff_doneBefore').value = date.format('YYYY-MM-DD HH:mm:ss')
+      if (pickup.address.latLng && dropoff.address.latLng) {
+
+        form.disable()
+
+        route()
+          .then((infos) => {
+
+            $('#delivery_distance').text(`${infos.kms} Km`)
+            $('#delivery_duration').text(`${infos.minutes} min`)
+
+            if (delivery.store && pricePreview) {
+              pricePreview.update(delivery)
+            }
+          })
+          .finally(() => form.enable())
+      }
     }
   })
+
 }
 
+$.getJSON(window.Routing.generate('profile_jwt'))
+  .then(tok => {
+    $('form[name="delivery"]').LoadingOverlay('hide')
+    jwt = tok
+    let el = document.getElementById('delivery-price')
+    if (el) {
+      pricePreview = new PricePreview(document.getElementById('delivery-price'), {
+        token: tok
+      })
+    }
+  })
+
 map = MapHelper.init('map')
+
+$('form[name="delivery"]').LoadingOverlay('show', {
+  image: false,
+})

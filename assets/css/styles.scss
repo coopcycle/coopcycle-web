@@ -1165,7 +1165,6 @@ table.task-table {
   }
 }
 
-
 .react-autosuggest__suggestions-container--open {
   display: block;
   border: 1px solid #aaa;
@@ -1450,4 +1449,34 @@ form[name="restaurant"] {
 .btn-facebook:active, .btn-facebook:hover {
   background: #263961;
   color: #fff;
+}
+
+.delivery-price {
+
+  position: relative;
+  border: 1.5px solid #ccc;
+  color: #ccc;
+  padding: 10px 40px 10px 20px;
+  margin-bottom: 15px;
+  border-radius: 16px;
+  font-size: $font-size-large;
+
+  &--error {
+    border: 1.5px solid $alert-danger-border;
+    color: $alert-danger-text;
+  }
+  &-error {
+    float: right;
+  }
+  &--loading {
+    &:after {
+      @include fa-icon();
+      content: $fa-var-spinner;
+      @extend .fa-pulse;
+      display: block;
+      position: absolute;
+      top: calc(50% - 10px);
+      right: $padding-base-horizontal;
+    }
+  }
 }
