@@ -97,7 +97,9 @@
       {{ encore_entry_script_tags('js/notifications') }}
     {% endif %}
 
-    {% block scripts %}{% endblock %}
+    {% block scripts_common %}
+      {% block scripts %}{% endblock %}
+    {% endblock %}
 
     {% if app.environment == "dev" %}
       <script src="{{ asset('webpack-dev-server.js') }}"></script>

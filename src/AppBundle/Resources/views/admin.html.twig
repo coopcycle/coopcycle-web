@@ -29,3 +29,8 @@
 
 </div>
 {% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('js/widgets-admin') }}
+  {% block scripts %}{% endblock %}
+{% endblock %}

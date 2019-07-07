@@ -25,6 +25,7 @@ Encore
   .addEntry('js/user-tracking', './js/app/user/tracking.jsx')
   .addEntry('js/user-form', './js/app/user/form.jsx')
   .addEntry('js/widgets', './js/app/widgets/index.js')
+  .addEntry('js/widgets-admin', './js/app/widgets/admin.js')
   .addEntry('js/zone-preview', './js/app/zone/preview.jsx')
 
   .enableSingleRuntimeChunk()
