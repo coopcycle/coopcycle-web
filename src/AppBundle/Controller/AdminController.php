@@ -463,7 +463,7 @@ class AdminController extends Controller
             'couriers' => $couriers,
             'tasks' => $tasks,
             'routes' => $this->getDeliveryRoutes(),
-            'stores' => $this->getDoctrine()->getRepository(Store::class)->findAll()
+            'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC'])
         ];
     }
 
