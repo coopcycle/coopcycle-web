@@ -467,13 +467,6 @@ class AdminController extends Controller
         ];
     }
 
-    public function newDeliveryAction(Request $request)
-    {
-        $delivery = Delivery::createWithDefaults();
-
-        return $this->renderDeliveryForm($delivery, $request);
-    }
-
     public function deliveryAction($id, Request $request)
     {
         $delivery = $this->getDoctrine()
