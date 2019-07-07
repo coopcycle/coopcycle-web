@@ -21,7 +21,9 @@ export default function(el, options) {
       <DatePicker
         format={ 'll' }
         defaultValue={ moment(options.defaultValue) }
-        onChange={ options.onChange } />
+        onChange={ options.onChange }
+        /* This is needed to work with Bootstrap modal */
+        getCalendarContainer={ trigger => trigger.parentNode } />
     </LocaleProvider>, el)
 
 }
