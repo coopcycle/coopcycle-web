@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { InputNumber } from 'antd'
+import InputNumber from 'antd/lib/input-number'
 
 const truncateText = text => {
   if (text.length > 24) {
