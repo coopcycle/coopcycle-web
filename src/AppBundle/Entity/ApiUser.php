@@ -32,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("email")
  * @UniqueEntity("username")
- * @UniqueEntity("googleId")
+ * @UniqueEntity("facebookId")
  */
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
@@ -73,16 +73,6 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
      */
     protected $telephone;
 
-    /**
-     * @var string
-     */
-    protected $googleId;
-
-    /**
-     * @var string
-     */
-    protected $googleAccessToken;
-
     private $restaurants;
 
     private $stores;
@@ -94,6 +84,10 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     private $remotePushTokens;
 
     protected $channel;
+
+    protected $facebookId;
+
+    protected $facebookAccessToken;
 
     public function __construct()
     {
@@ -154,29 +148,24 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->telephone = $telephone;
     }
 
-    /**
-     * @return string
-     */
-    public function getGoogleId()
+    public function setFacebookId($facebookId)
     {
-        return $this->googleId;
+        $this->facebookId = $facebookId;
     }
 
-    /**
-     * @param string $googleId
-     */
-    public function setGoogleId($googleId) {
-        $this->googleId = $googleId;
+    public function getFacebookId()
+    {
+        return $this->facebookId;
     }
 
-    public function setGoogleAccessToken($googleAccessToken)
+    public function setFacebookAccessToken($facebookAccessToken)
     {
-        $this->googleAccessToken = $googleAccessToken;
+        $this->facebookAccessToken = $facebookAccessToken;
     }
 
-    public function getGoogleAccessToken()
+    public function getFacebookAccessToken()
     {
-        return $this->googleAccessToken;
+        return $this->facebookAccessToken;
     }
 
     public function setRestaurants($restaurants)

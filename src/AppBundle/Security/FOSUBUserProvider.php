@@ -32,6 +32,7 @@ class FOSUBUserProvider extends BaseProvider
         $user->$setter_token($response->getAccessToken());
         $this->userManager->updateUser($user);
     }
+
     /**
      * {@inheritdoc}
      */

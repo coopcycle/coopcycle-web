@@ -41,8 +41,8 @@ hwi_oauth_login:
     resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
     prefix:   /login
 
-google_login:
-    path: /login/check-google
+facebook_login:
+    path: /login/check-facebook
 
 coopcycle_admin:
     resource: '@AppBundle/Resources/config/routing/admin.yml'

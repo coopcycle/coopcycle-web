@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "103833978ddac8a92bdd6ede83f2655c",
+    "content-hash": "a4d6fb00a561f798a5ab9f164409a112",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3697,48 +3697,48 @@
         },
         {
             "name": "hwi/oauth-bundle",
-            "version": "0.6.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hwi/HWIOAuthBundle.git",
-                "reference": "0963709b04d8ac0d6d6c0c78787f6f59bd0d9a01"
+                "reference": "9cfe46e1d6d43c9d88a403f55d1481938fbbb527"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/0963709b04d8ac0d6d6c0c78787f6f59bd0d9a01",
-                "reference": "0963709b04d8ac0d6d6c0c78787f6f59bd0d9a01",
+                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/9cfe46e1d6d43c9d88a403f55d1481938fbbb527",
+                "reference": "9cfe46e1d6d43c9d88a403f55d1481938fbbb527",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6|^7.0",
-                "php-http/client-common": "^1.3",
+                "php": "^7.1",
+                "php-http/client-common": "^2.0",
                 "php-http/client-implementation": "^1.0",
                 "php-http/discovery": "^1.0",
-                "php-http/httplug": "^1.0",
+                "php-http/httplug": "^2.0",
                 "php-http/message-factory": "^1.0",
                 "psr/http-message": "^1.0",
-                "symfony/form": "^2.8|^3.0|^4.0",
-                "symfony/framework-bundle": "^2.8|^3.0|^4.0",
-                "symfony/options-resolver": "^2.8|^3.0|^4.0",
-                "symfony/security-bundle": "^2.8|^3.0|^4.0",
-                "symfony/templating": "^2.8|^3.0|^4.0",
-                "symfony/yaml": "^2.8|^3.0|^4.0"
+                "symfony/form": "^3.4|^4.2",
+                "symfony/framework-bundle": "^3.4|^4.2",
+                "symfony/options-resolver": "^3.4|^4.2",
+                "symfony/security-bundle": "^3.4|^4.2",
+                "symfony/templating": "^3.4|^4.2",
+                "symfony/yaml": "^3.4|^4.2"
             },
             "conflict": {
-                "twig/twig": "<1.12"
+                "twig/twig": "<1.34"
             },
             "require-dev": {
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^1.3|^2.0",
-                "php-http/guzzle6-adapter": "^1.1",
+                "friendsofsymfony/user-bundle": "^2.0",
+                "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
-                "phpunit/phpunit": "^5.7",
-                "symfony/phpunit-bridge": "^2.8|^3.0|^4.0",
-                "symfony/property-access": "^2.8|^3.0|^4.0",
-                "symfony/stopwatch": "^2.8|^3.0|^4.0",
-                "symfony/twig-bundle": "^2.8|^3.0|^4.0",
-                "symfony/validator": "^2.8|^3.0|^4.0"
+                "phpunit/phpunit": "^6.5|^7.5",
+                "symfony/phpunit-bridge": "^3.4|^4.2",
+                "symfony/property-access": "^3.4|^4.2",
+                "symfony/stopwatch": "^3.4|^4.2",
+                "symfony/twig-bundle": "^3.4|^4.2",
+                "symfony/validator": "^3.4|^4.2"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -3750,7 +3750,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.6-dev"
+                    "dev-master": "1.0-dev"
                 }
             },
             "autoload": {
@@ -3810,6 +3810,7 @@
                 "fiware",
                 "flickr",
                 "foursquare",
+                "genius",
                 "github",
                 "gitlab",
                 "google",
@@ -3851,7 +3852,7 @@
                 "yandex",
                 "youtube"
             ],
-            "time": "2018-07-31T10:19:28+00:00"
+            "time": "2019-07-07T20:23:26+00:00"
         },
         {
             "name": "illuminate/cache",
@@ -7115,146 +7116,30 @@
             "time": "2019-03-05T19:59:23+00:00"
         },
         {
-            "name": "php-http/cache-plugin",
-            "version": "v1.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-http/cache-plugin.git",
-                "reference": "c573ac6ea9b4e33fad567f875b844229d18000b9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-http/cache-plugin/zipball/c573ac6ea9b4e33fad567f875b844229d18000b9",
-                "reference": "c573ac6ea9b4e33fad567f875b844229d18000b9",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 || ^7.0",
-                "php-http/client-common": "^1.1",
-                "php-http/message-factory": "^1.0",
-                "psr/cache": "^1.0",
-                "symfony/options-resolver": "^2.6 || ^3.0 || ^4.0"
-            },
-            "require-dev": {
-                "henrikbjorn/phpspec-code-coverage": "^1.0",
-                "phpspec/phpspec": "^2.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Http\\Client\\Common\\Plugin\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Márk Sági-Kazár",
-                    "email": "mark.sagikazar@gmail.com"
-                }
-            ],
-            "description": "PSR-6 Cache plugin for HTTPlug",
-            "homepage": "http://httplug.io",
-            "keywords": [
-                "cache",
-                "http",
-                "httplug",
-                "plugin"
-            ],
-            "time": "2017-11-29T20:45:41+00:00"
-        },
-        {
-            "name": "php-http/client-common",
-            "version": "1.8.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-http/client-common.git",
-                "reference": "0b9ce659aa46aee106f8c66597ea0c070fcd9dff"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-http/client-common/zipball/0b9ce659aa46aee106f8c66597ea0c070fcd9dff",
-                "reference": "0b9ce659aa46aee106f8c66597ea0c070fcd9dff",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 || ^7.0",
-                "php-http/httplug": "^1.1",
-                "php-http/message": "^1.6",
-                "php-http/message-factory": "^1.0",
-                "symfony/options-resolver": "^2.6 || ^3.0 || ^4.0"
-            },
-            "require-dev": {
-                "guzzlehttp/psr7": "^1.4",
-                "phpspec/phpspec": "^2.5 || ^3.4 || ^4.2"
-            },
-            "suggest": {
-                "php-http/cache-plugin": "PSR-6 Cache plugin",
-                "php-http/logger-plugin": "PSR-3 Logger plugin",
-                "php-http/stopwatch-plugin": "Symfony Stopwatch plugin"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Http\\Client\\Common\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Márk Sági-Kazár",
-                    "email": "mark.sagikazar@gmail.com"
-                }
-            ],
-            "description": "Common HTTP Client implementations and tools for HTTPlug",
-            "homepage": "http://httplug.io",
-            "keywords": [
-                "client",
-                "common",
-                "http",
-                "httplug"
-            ],
-            "time": "2018-10-09T06:46:29+00:00"
-        },
-        {
             "name": "php-http/discovery",
-            "version": "1.6.1",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "684855f2c2e9d0a61868b8f8d6bd0295c8a4b651"
+                "reference": "e822f86a6983790aa17ab13aa7e69631e86806b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/684855f2c2e9d0a61868b8f8d6bd0295c8a4b651",
-                "reference": "684855f2c2e9d0a61868b8f8d6bd0295c8a4b651",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/e822f86a6983790aa17ab13aa7e69631e86806b6",
+                "reference": "e822f86a6983790aa17ab13aa7e69631e86806b6",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5 || ^7.0"
+                "php": "^7.1"
             },
             "conflict": {
                 "nyholm/psr7": "<1.0"
             },
             "require-dev": {
+                "akeneo/phpspec-skip-example-extension": "^4.0",
                 "php-http/httplug": "^1.0 || ^2.0",
                 "php-http/message-factory": "^1.0",
-                "phpspec/phpspec": "^2.4",
+                "phpspec/phpspec": "^5.1",
                 "puli/composer-plugin": "1.0.0-beta10"
             },
             "suggest": {
@@ -7264,7 +7149,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.7-dev"
                 }
             },
             "autoload": {
@@ -7293,7 +7178,7 @@
                 "message",
                 "psr7"
             ],
-            "time": "2019-02-23T07:42:53+00:00"
+            "time": "2019-06-30T09:04:27+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -7417,64 +7302,63 @@
         },
         {
             "name": "php-http/httplug-bundle",
-            "version": "1.11.0",
+            "version": "1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/HttplugBundle.git",
-                "reference": "9fed9ddee92ee20cc39050749f2fb9b6cec3f83d"
+                "reference": "5044b655fcd3a43243383cd692a6bb6cd18af24f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/HttplugBundle/zipball/9fed9ddee92ee20cc39050749f2fb9b6cec3f83d",
-                "reference": "9fed9ddee92ee20cc39050749f2fb9b6cec3f83d",
+                "url": "https://api.github.com/repos/php-http/HttplugBundle/zipball/5044b655fcd3a43243383cd692a6bb6cd18af24f",
+                "reference": "5044b655fcd3a43243383cd692a6bb6cd18af24f",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5 || ^7.0",
-                "php-http/cache-plugin": "^1.4",
-                "php-http/client-common": "^1.6",
+                "php": "^7.1",
+                "php-http/client-common": "^1.9 || ^2.0",
                 "php-http/client-implementation": "^1.0",
                 "php-http/discovery": "^1.0",
-                "php-http/httplug": "^1.0",
-                "php-http/logger-plugin": "^1.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/logger-plugin": "^1.1",
                 "php-http/message": "^1.4",
                 "php-http/message-factory": "^1.0.2",
-                "php-http/stopwatch-plugin": "^1.0",
+                "php-http/stopwatch-plugin": "^1.2",
                 "psr/http-message": "^1.0",
-                "symfony/config": "^2.8 || ^3.0 || ^4.0",
-                "symfony/dependency-injection": "^2.8.3 || ^3.0.3 || ^4.0",
-                "symfony/event-dispatcher": "^2.8 || ^3.0 || ^4.0",
-                "symfony/http-kernel": "^2.8 || ^3.0 || ^4.0",
-                "symfony/options-resolver": "^2.8 || ^3.0 || ^4.0",
-                "twig/twig": "^1.18 || ^2.0"
+                "symfony/config": "^3.4.20 || ^4.2.1",
+                "symfony/dependency-injection": "^3.4.20 || ^4.2.1",
+                "symfony/event-dispatcher": "^3.4.20 || ^4.2.1",
+                "symfony/http-kernel": "^3.4.20 || ^4.2.1",
+                "symfony/options-resolver": "^3.4.20 || ^4.2.1"
             },
             "conflict": {
+                "php-http/curl-client": "<2.0",
                 "php-http/guzzle6-adapter": "<1.1"
             },
             "require-dev": {
                 "guzzlehttp/psr7": "^1.0",
-                "matthiasnoback/symfony-dependency-injection-test": "^1.1 || ^2.3",
+                "matthiasnoback/symfony-dependency-injection-test": "^3.0",
                 "nyholm/nsa": "^1.1",
-                "php-http/buzz-adapter": "^0.3",
-                "php-http/curl-client": "^1.0",
-                "php-http/guzzle6-adapter": "^1.1.1",
-                "php-http/mock-client": "^1.0",
+                "php-http/cache-plugin": "^1.6",
+                "php-http/guzzle6-adapter": "^1.1.1 || ^2.0.1",
+                "php-http/mock-client": "^1.2",
                 "php-http/promise": "^1.0",
-                "php-http/react-adapter": "^0.2.1",
-                "php-http/socket-client": "^1.0",
                 "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-                "symfony/browser-kit": "^2.8 || ^3.0 || ^4.0",
-                "symfony/cache": "^3.1 || ^4.0",
-                "symfony/dom-crawler": "^2.8 || ^3.0 || ^4.0",
-                "symfony/framework-bundle": "^2.8.1 || ^3.0.1 || ^4.0",
-                "symfony/http-foundation": "^2.8 || ^3.0 || ^4.0",
-                "symfony/phpunit-bridge": "^3.3 || ^4.0",
-                "symfony/stopwatch": "^2.8 || ^3.0 || ^4.0",
-                "symfony/twig-bundle": "^2.8 || ^3.0 || ^4.0",
-                "symfony/web-profiler-bundle": "^2.8 || ^3.0 || ^4.0"
+                "symfony/browser-kit": "^3.4.20 || ^4.2.1",
+                "symfony/cache": "^3.4.20 || ^4.2.1",
+                "symfony/dom-crawler": "^3.4.20 || ^4.2.1",
+                "symfony/framework-bundle": "^3.4.0 || ^4.2",
+                "symfony/http-foundation": "^3.4.20 || ^4.2.1",
+                "symfony/phpunit-bridge": "^3.4 || ^4.2",
+                "symfony/stopwatch": "^3.4.20 || ^4.2.1",
+                "symfony/twig-bundle": "^3.4.20 || ^4.2.1",
+                "symfony/web-profiler-bundle": "^3.4.20 || ^4.2.1",
+                "twig/twig": "^1.36 || ^2.6"
             },
             "suggest": {
-                "php-http/mock-client": "Add this to your require-dev section to mock HTTP responses easily"
+                "php-http/cache-plugin": "To configure clients that cache responses",
+                "php-http/mock-client": "Add this to your require-dev section to mock HTTP responses easily",
+                "twig/twig": "Add this to your require-dev section when using the WebProfilerBundle"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -7484,8 +7368,11 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Http\\HttplugBundle\\": ""
-                }
+                    "Http\\HttplugBundle\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "/Tests/Resources/MyPsr18TestClient.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -7513,25 +7400,25 @@
                 "message",
                 "php-http"
             ],
-            "time": "2018-07-07T09:19:05+00:00"
+            "time": "2019-06-05T12:03:16+00:00"
         },
         {
             "name": "php-http/logger-plugin",
-            "version": "v1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/logger-plugin.git",
-                "reference": "d6c2ac7d542bf9928a0ac7a8a249d02848b824ec"
+                "reference": "c1c6e90717ce350319b7b8bc489f1db35bb523fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/logger-plugin/zipball/d6c2ac7d542bf9928a0ac7a8a249d02848b824ec",
-                "reference": "d6c2ac7d542bf9928a0ac7a8a249d02848b824ec",
+                "url": "https://api.github.com/repos/php-http/logger-plugin/zipball/c1c6e90717ce350319b7b8bc489f1db35bb523fd",
+                "reference": "c1c6e90717ce350319b7b8bc489f1db35bb523fd",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
-                "php-http/client-common": "^1.1",
+                "php": "^5.4 || ^7.0",
+                "php-http/client-common": "^1.9 || ^2.0",
                 "php-http/message": "^1.0",
                 "psr/log": "^1.0"
             },
@@ -7542,7 +7429,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.1-dev"
                 }
             },
             "autoload": {
@@ -7568,7 +7455,7 @@
                 "logger",
                 "plugin"
             ],
-            "time": "2016-05-04T22:43:46+00:00"
+            "time": "2019-01-30T11:48:21+00:00"
         },
         {
             "name": "php-http/message",
@@ -7744,22 +7631,22 @@
         },
         {
             "name": "php-http/stopwatch-plugin",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/stopwatch-plugin.git",
-                "reference": "b9d4ab7a0f4ca1fc17e323e880d1235076e31dbf"
+                "reference": "520419dd18755a1e7b29077e677fbeb16b6629e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/stopwatch-plugin/zipball/b9d4ab7a0f4ca1fc17e323e880d1235076e31dbf",
-                "reference": "b9d4ab7a0f4ca1fc17e323e880d1235076e31dbf",
+                "url": "https://api.github.com/repos/php-http/stopwatch-plugin/zipball/520419dd18755a1e7b29077e677fbeb16b6629e7",
+                "reference": "520419dd18755a1e7b29077e677fbeb16b6629e7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
-                "php-http/client-common": "^1.1",
-                "symfony/stopwatch": "^2.7|^3.0|^4.0"
+                "php": "^5.4 || ^7.0",
+                "php-http/client-common": "^1.9 || ^2.0",
+                "symfony/stopwatch": "^2.7 || ^3.0 || ^4.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "^2.5 || ^3.0 || ^4.0"
@@ -7767,7 +7654,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.2-dev"
                 }
             },
             "autoload": {
@@ -7793,7 +7680,7 @@
                 "plugin",
                 "stopwatch"
             ],
-            "time": "2017-11-29T19:20:03+00:00"
+            "time": "2019-01-30T12:01:37+00:00"
         },
         {
             "name": "phpcollection/phpcollection",
@@ -15491,6 +15378,7 @@
         "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,
         "trikoder/oauth2-bundle": 20,
+        "hwi/oauth-bundle": 20,
         "behat/symfony2-extension": 20,
         "behat/mink": 20
     },

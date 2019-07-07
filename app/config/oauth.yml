@@ -15,19 +15,18 @@ hwi_oauth:
     # This is similar to the behaviour of
     # [using the referring URL for form login](http://symfony.com/doc/2.0/cookbook/security/form_login.html#using-the-referring-url).
     # use_referer: true
-    
+
     fosub:
         username_iterations: 30
         properties:
-            google: googleId
+            facebook: facebookId
 
     # here you will add one (or more) configurations for resource owners
     # and other settings you want to adjust in this bundle, just checkout the list below!
     resource_owners:
-        google:
-            type:                google
-            client_id:           '%oauth.google.client_id%'
-            client_secret:       '%oauth.google.client_secret%'
-            scope:               'email profile'
+        facebook:
+            type:                facebook
+            client_id:           '%oauth.facebook.client_id%'
+            client_secret:       '%oauth.facebook.client_secret%'
 
 
