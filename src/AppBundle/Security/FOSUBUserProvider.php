@@ -56,6 +56,7 @@ class FOSUBUserProvider extends BaseProvider
         $property = $this->getProperty($response);
         $username = $response->getUsername();
 
+        // TODO find by facebook id OR email
         $user = $this->userManager->findUserBy(array($property => $username));
 
         if (null === $user) {
@@ -68,6 +69,8 @@ class FOSUBUserProvider extends BaseProvider
                 // TODO Check if unique
                 $user->setUsername($this->slugify->slugify($response->getNickname(), ['separator' => '_']));
                 $user->setEmail($response->getEmail());
+                // TODO Check if ok to define empty password
+                // i.e check if we can login with empty password
                 $user->setPassword('');
                 $user->setEnabled(true);
             }

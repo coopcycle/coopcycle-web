@@ -6,7 +6,9 @@
   {{ include('@FOSUser/Security/login_content.html.twig') }}
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
-        <a href="{{ path('hwi_oauth_service_redirect', { service: 'facebook' }) }}" alt="Sign in with Facebook">Sign in with Facebook</a>
+        <a href="{{ path('hwi_oauth_service_redirect', { service: 'facebook' }) }}" class="btn btn-facebook" alt="Sign in with Facebook">
+          <i class="fa fa-facebook-official"></i> Sign in with Facebook
+        </a>
       </div>
     </div>
   </div>
