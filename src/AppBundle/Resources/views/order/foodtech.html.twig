@@ -36,6 +36,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('js/delivery-map') }}
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: {{ order.restaurant.address|latlng|json_encode() }},

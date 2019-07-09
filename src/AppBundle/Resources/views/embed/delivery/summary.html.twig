@@ -60,6 +60,7 @@
 {% set pickup = form.pickup.vars.value %}
 {% set dropoff = form.dropoff.vars.value %}
 
+{{ encore_entry_script_tags('js/delivery-map') }}
 <script>
 
 new CoopCycle.DeliveryMap('map', {

@@ -90,6 +90,7 @@
 {% block scripts %}
 {% if not order.empty %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{{ encore_entry_script_tags('js/delivery-map') }}
 <script type="text/javascript">
   new CoopCycle.DeliveryMap('map', {
     pickup: {{ order.restaurant.address|latlng|json_encode() }},

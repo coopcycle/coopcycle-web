@@ -259,6 +259,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('js/delivery-map') }}
 <script>
 new ClipboardJS('#copy');
 {% if pickup_address is not empty and dropoff_address is not empty %}
