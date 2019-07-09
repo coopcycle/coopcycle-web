@@ -1434,6 +1434,16 @@ form[name="restaurant"] {
   border-style: solid;
   border-color: #263961;
 }
+
+.login-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  &__content {
+    min-width: 100%;
+  }
+}
 .btn-facebook:link, .btn-facebook:visited {
   color: #fff;
 }
