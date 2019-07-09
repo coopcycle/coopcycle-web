@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore')
+var webpack = require('webpack')
 
 Encore
 
@@ -27,6 +28,14 @@ Encore
   .addEntry('js/widgets', './js/app/widgets/index.js')
   .addEntry('js/widgets-admin', './js/app/widgets/admin.js')
   .addEntry('js/zone-preview', './js/app/zone/preview.jsx')
+
+  // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
+  // @see https://github.com/moment/moment/issues/2373
+  // @see https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+  .addPlugin(new webpack.ContextReplacementPlugin(
+    /moment[/\\]locale$/,
+    /de|es|fr/
+  ))
 
   .enableSingleRuntimeChunk()
   .splitEntryChunks()
