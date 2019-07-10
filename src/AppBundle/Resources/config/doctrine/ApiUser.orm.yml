@@ -20,6 +20,14 @@ AppBundle\Entity\ApiUser:
         telephone:
             type: phone_number
             nullable: true
+        facebookId:
+            type: string
+            nullable: true
+            column: facebook_id
+        facebookAccessToken:
+            type: string
+            nullable: true
+            column: facebook_access_token
     oneToMany:
         remotePushTokens:
             targetEntity: AppBundle\Entity\RemotePushToken

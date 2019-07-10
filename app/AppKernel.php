@@ -60,6 +60,8 @@ class AppKernel extends Kernel
             new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
             new NotFloran\MjmlBundle\MjmlBundle(),
             new Sentry\SentryBundle\SentryBundle(),
+            new Http\HttplugBundle\HttplugBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new AppBundle\AppBundle(),
         ];
 

@@ -641,6 +641,8 @@ embed.delivery.confirm_message: 'We have registered your request. Your race is w
   <br>
   We will send you an email within a few minutes. You will receive a second mail as soon as the race is confirmed.'
 
+social.sign_in_with_facebook: Sign in with Facebook
+
 pagination.previous: Previous
 pagination.next: Next
 

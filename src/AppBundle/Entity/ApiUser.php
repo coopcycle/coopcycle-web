@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("email")
  * @UniqueEntity("username")
+ * @UniqueEntity("facebookId")
  */
 class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 {
@@ -83,6 +84,10 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     private $remotePushTokens;
 
     protected $channel;
+
+    protected $facebookId;
+
+    protected $facebookAccessToken;
 
     public function __construct()
     {
@@ -141,6 +146,26 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     public function setTelephone($telephone)
     {
         $this->telephone = $telephone;
+    }
+
+    public function setFacebookId($facebookId)
+    {
+        $this->facebookId = $facebookId;
+    }
+
+    public function getFacebookId()
+    {
+        return $this->facebookId;
+    }
+
+    public function setFacebookAccessToken($facebookAccessToken)
+    {
+        $this->facebookAccessToken = $facebookAccessToken;
+    }
+
+    public function getFacebookAccessToken()
+    {
+        return $this->facebookAccessToken;
     }
 
     public function setRestaurants($restaurants)
