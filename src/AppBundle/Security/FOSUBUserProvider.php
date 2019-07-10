@@ -31,18 +31,13 @@ class FOSUBUserProvider extends BaseProvider
         $property = $this->getProperty($response);
         $username = $response->getUsername();
 
-        // TODO find by facebook id OR email
         $user = $this->userManager->findUserBy(array($property => $username));
-
         if (null === $user) {
 
             // Also try to match by email
             $user = $this->userManager->findUserByEmail($response->getEmail());
-
             if (null === $user) {
-                $user = $this->userManager->createUser();
-                // TODO Check if unique
-                $user->setUsername($this->slugify->slugify($response->getNickname(), ['separator' => '_']));
+                $user = $this->createUserFromNickname($response->getNickname());
                 $user->setEmail($response->getEmail());
                 $user->setPassword(base64_encode(random_bytes(32)));
                 $user->setEnabled(true);
@@ -68,6 +63,26 @@ class FOSUBUserProvider extends BaseProvider
 
         $setter = 'set' . ucfirst($serviceName) . 'AccessToken';
         $user->$setter($response->getAccessToken());
+
+        return $user;
+    }
+
+    private function createUserFromNickname($nickname, $index = 0)
+    {
+        $username = $this->slugify->slugify($nickname, ['separator' => '_']);
+
+        if ($index > 0) {
+            $username = sprintf('%s_%d', $username, $index);
+        }
+
+        $user = $this->userManager->findUserByUsername($username);
+        if (null !== $user) {
+
+            return $this->createUserFromNickname($nickname, ++$index);
+        }
+
+        $user = $this->userManager->createUser();
+        $user->setUsername($username);
 
         return $user;
     }
