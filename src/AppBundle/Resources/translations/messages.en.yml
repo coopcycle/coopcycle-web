@@ -117,6 +117,7 @@ adminDashboard.back.title: Back to website
 adminDashboard.promotions.title: Promotions
 
 adminDashboard.pledges.title: Suggestions
+adminDashboard.time_slots.title: Time slots
 
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
@@ -573,6 +574,9 @@ form.credit_note.name.help: The name of the promotion that will be displayed in 
 form.resend_confirmation_email.submit.label: Send email again
 
 form.embed_settings.with_vehicle.label: Add vehicle choice
+
+form.time_slot.name.label: Name
+form.time_slot.choices.label: Choices
 
 promotion_coupon.used.label: Number of uses
 
