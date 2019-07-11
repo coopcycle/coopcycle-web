@@ -46,10 +46,10 @@ function createAddressWidget(name, type, cb) {
           document.querySelector(`#${name}_${type}_address_longitude`).value = address.geo.longitude
         }
 
-        document.querySelector(`#delivery_${type}_address_postalCode`).disabled = disabled
-        document.querySelector(`#delivery_${type}_address_addressLocality`).disabled = disabled
-        document.querySelector(`#delivery_${type}_address_name`).disabled = disabled
-        document.querySelector(`#delivery_${type}_address_telephone`).disabled = disabled
+        document.querySelector(`#${name}_${type}_address_postalCode`).disabled = disabled
+        document.querySelector(`#${name}_${type}_address_addressLocality`).disabled = disabled
+        document.querySelector(`#${name}_${type}_address_name`).disabled = disabled
+        document.querySelector(`#${name}_${type}_address_telephone`).disabled = disabled
 
         cb(type, address)
 
@@ -58,11 +58,11 @@ function createAddressWidget(name, type, cb) {
   )
 }
 
-function createDatePickerWidget(type, cb) {
-  new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-    defaultValue: document.querySelector(`#delivery_${type}_doneBefore`).value,
+function createDatePickerWidget(name, type, cb) {
+  new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+    defaultValue: document.querySelector(`#${name}_${type}_doneBefore`).value,
     onChange: function(date) {
-      document.querySelector(`#delivery_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
+      document.querySelector(`#${name}_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
       cb(type, date)
     }
   })
@@ -88,8 +88,8 @@ function serializeTaskForm(type) {
     before: moment($(`#delivery_${type}_doneBefore`).val(), 'YYYY-MM-DD HH:mm:ss').format()
   }
 
-  const lat = $(`#delivery_${type}_address_latitude`).val()
-  const lng = $(`#delivery_${type}_address_longitude`).val()
+  const lat = $(`#${name}_${type}_address_latitude`).val()
+  const lng = $(`#${name}_${type}_address_longitude`).val()
 
   if (lat && lng) {
 
@@ -148,6 +148,7 @@ export default function(name, options) {
       (type, address) => options.onChange(serializeForm(name))
     )
     createDatePickerWidget(
+      name,
       'pickup',
       (type, date) => options.onChange(serializeForm(name))
     )
@@ -158,14 +159,15 @@ export default function(name, options) {
       (type, address) => options.onChange(serializeForm(name))
     )
     createDatePickerWidget(
+      name,
       'dropoff',
       (type, date) => options.onChange(serializeForm(name))
     )
 
     $(`#${name}_store`).on('change', (e) => options.onChange(serializeForm(name)))
 
-    const pickupTagsEl = document.querySelector('#delivery_pickup_tagsAsString')
-    const dropoffTagsEl = document.querySelector('#delivery_dropoff_tagsAsString')
+    const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
+    const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
 
     if (pickupTagsEl && dropoffTagsEl) {
       $.getJSON(window.Routing.generate('admin_tags', { format: 'json' }), function(tags) {
