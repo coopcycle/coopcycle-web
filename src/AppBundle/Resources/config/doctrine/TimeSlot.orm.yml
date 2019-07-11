@@ -1,0 +1,30 @@
+AppBundle\Entity\TimeSlot:
+    type: entity
+    table: time_slot
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: update
+    oneToMany:
+        choices:
+            targetEntity: AppBundle\Entity\TimeSlot\Choice
+            mappedBy: timeSlot
+            cascade:
+                - all
