@@ -346,6 +346,7 @@ form.delivery.vehicle.VEHICLE_CARGO_BIKE: Cargo bike
 form.store_type.pricing_rule_set.placeholder: Choose a pricing
 form.store_type.setAsDefault.label: Set as default address
 form.store_type.defaultAddress.label: Default Address
+form.store_type.time_slot.label: Time slot
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.delivery.pickup.label: Pickup
 form.delivery.dropoff.label: Dropoff

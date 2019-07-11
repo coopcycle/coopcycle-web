@@ -79,6 +79,10 @@
     <hr>
   {% endif %}
 
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+
   {% if form.address is defined %}
     {{ form_row(form.address.streetAddress) }}
     {{ form_row(form.address.postalCode) }}
