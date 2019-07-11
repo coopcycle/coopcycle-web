@@ -268,6 +268,7 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
         ]);

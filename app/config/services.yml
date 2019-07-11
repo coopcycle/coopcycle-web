@@ -668,3 +668,6 @@ services:
     parent: 'fos_user.mailer.twig_swift'
     arguments:
       $mailer: '@AppBundle\Utils\MessageLoggingMailer'
+
+  AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~

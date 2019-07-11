@@ -77,11 +77,15 @@ function route(coordinates) {
   const markersAsString = coordinates
     .map(coordinate => coordinate[0] + ',' + coordinate[1])
     .join(';')
-  return $.getJSON(window.AppData.MapHelper.routeURL.replace('__COORDINATES__', markersAsString))
-    .then(response => {
-      const { routes } = response
-      return routes[0]
-    })
+
+  return new Promise((resolve, reject) => {
+    $.getJSON(window.AppData.MapHelper.routeURL.replace('__COORDINATES__', markersAsString))
+      .then(response => {
+        const { routes } = response
+        resolve(routes[0])
+      })
+      .catch(e => reject(e))
+  })
 }
 
 function getPolyline(origin, destination) {
