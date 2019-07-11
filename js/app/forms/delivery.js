@@ -79,7 +79,7 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
-function serializeTaskForm(type) {
+function serializeTaskForm(name, type) {
 
   let payload = {
     address: {
@@ -113,8 +113,8 @@ function serializeTaskForm(type) {
 function serializeForm(name) {
 
   let payload = {
-    pickup: serializeTaskForm('pickup'),
-    dropoff: serializeTaskForm('dropoff'),
+    pickup: serializeTaskForm(name, 'pickup'),
+    dropoff: serializeTaskForm(name, 'dropoff'),
   }
 
   const el = document.querySelector(`form[name="${name}"]`)
