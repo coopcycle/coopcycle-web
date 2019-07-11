@@ -101,7 +101,7 @@ window.initMap = function() {
   }
 
   form = new DeliveryForm('delivery', {
-    onChange: (delivery) => {
+    onChange: function(delivery) {
 
       const { pickup, dropoff } = delivery
 
@@ -129,7 +129,7 @@ window.initMap = function() {
 
       if (pickup.address.latLng && dropoff.address.latLng) {
 
-        form.disable()
+        this.disable()
 
         route()
           .then((infos) => {

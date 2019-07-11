@@ -140,31 +140,35 @@ export default function(name, options) {
 
   const el = document.querySelector(`form[name="${name}"]`)
 
+  const form = new DeliveryForm()
+
+  const onChange = options.onChange.bind(form)
+
   if (el) {
 
     createAddressWidget(
       name,
       'pickup',
-      (type, address) => options.onChange(serializeForm(name))
+      (type, address) => onChange(serializeForm(name))
     )
     createDatePickerWidget(
       name,
       'pickup',
-      (type, date) => options.onChange(serializeForm(name))
+      (type, date) => onChange(serializeForm(name))
     )
 
     createAddressWidget(
       name,
       'dropoff',
-      (type, address) => options.onChange(serializeForm(name))
+      (type, address) => onChange(serializeForm(name))
     )
     createDatePickerWidget(
       name,
       'dropoff',
-      (type, date) => options.onChange(serializeForm(name))
+      (type, date) => onChange(serializeForm(name))
     )
 
-    $(`#${name}_store`).on('change', (e) => options.onChange(serializeForm(name)))
+    $(`#${name}_store`).on('change', (e) => onChange(serializeForm(name)))
 
     const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
     const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
@@ -178,5 +182,5 @@ export default function(name, options) {
 
   }
 
-  return new DeliveryForm()
+  return form
 }
