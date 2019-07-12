@@ -39,14 +39,6 @@
   <h3>{{ label|trans }}</h3>
 {% endblock %}
 
-{% block _delivery_pickup_address_postalCode_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_pickup_address_addressLocality_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
 {# Dropoff #}
 
 {% block _delivery_dropoff_row %}
@@ -59,14 +51,6 @@
 
 {% block _delivery_dropoff_label %}
   <h3>{{ label|trans }}</h3>
-{% endblock %}
-
-{% block _delivery_dropoff_address_postalCode_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_dropoff_address_addressLocality_widget %}
-  {{ block('hidden_widget') }}
 {% endblock %}
 
 {% block _delivery_billingAddress_widget %}

@@ -47,13 +47,13 @@ class AddressType extends AbstractType
                     'autocomplete' => uniqid()
                 ]
             ])
-            ->add('addressLocality', TextType::class, [
-                'required' => false,
-                'label' => 'form.address.addressLocality.label'
-            ])
-            ->add('postalCode', TextType::class, [
+            ->add('postalCode', HiddenType::class, [
                 'required' => false,
                 'label' => 'form.address.postalCode.label'
+            ])
+            ->add('addressLocality', HiddenType::class, [
+                'required' => false,
+                'label' => 'form.address.addressLocality.label'
             ])
             ->add('floor', TextType::class, [
                 'required' => false,
