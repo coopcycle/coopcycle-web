@@ -6,6 +6,9 @@ navbar.myAccount: My Account
 base.footer.contactUs: Contact us
 base.footer.help: Help
 base.footer.legal: Legal notice
+base.footer.suggest: Suggest a restaurant
+
+button.suggest.submitted.label: Return to home page
 
 adminDashboard.title: Admin dashboard
 adminDashboard.configuration: Configuration
@@ -438,6 +441,29 @@ form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
 form.settings.phone_number.label: Phone number
 form.settings.phone_number.help: This number will be displayed to customers
+
+form.suggest.name.label: name
+form.suggest.title: Suggest a restaurant
+form.suggest.submit.label: Register
+
+form.suggest.message: |
+  Can't find your favorite restaurant ?
+  <br>
+  Give us his name and address. Then other users can vote to see it appear in the list of restaurants.
+  <br>
+  This will allow us to better identify the restaurants to be approached and provide them the proof of a real demand.
+
+restaurant.suggest.message: |
+  This restaurant is not available for now,
+  <br>
+  To see it on the platform, we need you and your voice to support our future request for collaboration with this brand.
+
+restaurant.suggest.vote: Vote
+pledge.suggested_by: 'Suggested by @%username%'
+restaurant.suggest.has_voted: You have already voted for this restaurant !
+pledge.vote_count_equals_two: '%first_user% and %second_user% have voted for this restaurant.'
+pledge.vote_count_equals_one: '%username% has voted for this restaurant.'
+
 form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: 'You are going to enable maintenance mode.<br>Only administrators will have access to the site.'
@@ -576,6 +602,8 @@ roles.ROLE_RESTAURANT.help: |
   Restaurant owner: manage assigned restaurants, manage orders…
 roles.ROLE_STORE.help: |
   Store owner: manage assigned stores, manage deliveries…
+
+suggest.submitted.title: Thank you for suggesting a restaurant !
 
 stores.form.save: Save
 stores.manage: Manage

@@ -1,0 +1,49 @@
+{% extends "@App/base.html.twig" %}
+
+
+{% form_theme form_pledge 'bootstrap_3_layout.html.twig' %}
+
+{% block body %}
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-6 col-xs-push-3 col-md-4 col-md-push-4">
+            <img src="{{ asset('img/SuggererUnRestaurant.svg') }}">
+        </div>
+      </div>
+      <h1 class="text-center">{% trans %} form.suggest.title {% endtrans %}</h1>
+      <p class="text-center">{% trans %} form.suggest.message {% endtrans %}</p>
+      <hr>
+      <div class="row">
+        <div class="col-xs-12">
+	       {{ form_start(form_pledge) }}
+  	       {{ form_row(form_pledge.name) }}
+           {{ form_row(form_pledge.address.streetAddress) }}
+           {{ form_row(form_pledge.address.latitude) }}
+           {{ form_row(form_pledge.address.longitude) }}
+           {{ form_widget(form_pledge._token) }}
+           <p>
+           <button class="btn btn-success btn-block" type="submit">{% trans %} form.suggest.submit.label {% endtrans %}</button></p>
+	       {{ form_end(form_pledge, {'render_rest': false}) }}
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+
+function initMap() {
+    new CoopCycle.AddressInput(document.querySelector('#pledge_address_streetAddress'), {
+      elements: {
+        latitude: document.querySelector('#pledge_address_latitude'),
+        longitude: document.querySelector('#pledge_address_longitude'),
+        postalCode: document.querySelector('#pledge_address_postalCode'),
+        addressLocality: document.querySelector('#pledge_address_addressLocality')
+      }
+    })
+  }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

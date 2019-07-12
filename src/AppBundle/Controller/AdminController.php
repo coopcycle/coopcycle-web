@@ -16,6 +16,7 @@ use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
@@ -48,6 +49,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserInterface;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -553,7 +555,6 @@ class AdminController extends Controller
 
             return $this->redirectToRoute('admin_taxation_settings');
         }
-
         return [
             'form' => $form->createView()
         ];
@@ -1378,7 +1379,6 @@ class AdminController extends Controller
         if ($request->query->has('method')) {
             $method = $request->query->get('method');
         }
-
         $message = call_user_func_array([$emailManager, $method], [$task]);
 
         $response = new Response();
@@ -1403,6 +1403,60 @@ class AdminController extends Controller
 
         $messages = $mailer->getMessages();
         $message = current($messages);
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/restaurants/pledges", name="admin_restaurants_pledges")
+     */
+    public function restaurantsPledgesListAction(Request $request, ObjectManager $manager)
+    {
+        $pledges = $this->getDoctrine()->getRepository(Pledge::class)->findAll();
+
+        if ($request->isMethod('POST')) {
+            $id = $request->request->get('pledge');
+            $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
+            if ($request->request->has('accept')) {
+                $restaurant = $pledge->accept();
+                $manager->persist($restaurant);
+                $manager->flush();
+
+                return $this->redirectToRoute('admin_restaurant', [
+                    'id' => $restaurant->getId()
+                ]);
+            }
+            if ($request->request->has('reject')) {
+                $pledge->setState('refused');
+                $manager->flush();
+                return $this->redirectToRoute('admin_restaurants_pledges');
+            }
+        }
+
+        return $this->render('@App/admin/restaurant_pledges.html.twig', [
+            'pledges' => $pledges,
+        ]);
+    }
+
+     /**
+     * @Route("/admin/restaurants/pledges/{id}/emails", name="admin_pledge_email_preview")
+     */
+    public function pledgeEmailPreviewAction($id, Request $request, EmailManager $emailManager)
+    {
+        $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
+
+        if (!$pledge) {
+            throw $this->createNotFoundException(sprintf('Pledge #%d does not exist', $id));
+        }
+
+        $method = 'createAdminPledgeConfirmationMessage';
+        if ($request->query->has('method')) {
+            $method = $request->query->get('method');
+        }
+        $message = call_user_func_array([$emailManager, $method], [$pledge]);
 
         $response = new Response();
         $response->setContent($message->getBody());

@@ -1,0 +1,39 @@
+{% extends "@App/admin.html.twig" %}
+
+{% block content %}
+<table class="table">
+	<thead>
+ 		<th>id</th>
+  	<th>user</th>
+		<th>name</th>
+		<th>address</th>
+  	<th>created at</th>
+		<th>state</th>
+  </thead>
+  <tbody>
+    {% for pledge in pledges %}
+      <tr>
+        <td>{{ pledge.id }}</td>
+        <td>{{ pledge.user }}</td>
+        <td>{{ pledge.name }}</td>
+        <td>{{ pledge.address.streetAddress }}</td>
+        <td>{{ pledge.createdAt | localizeddate('short', 'short') }}</td>
+        <td>
+            {% if pledge.state == 'new' %}Nouveau{% endif %}
+            {% if pledge.state == 'accepted' %}Accepté{% endif %}
+            {% if pledge.state == 'refused' %}Refusé{% endif %}
+        </td>
+        <td>
+          {% if pledge.state == 'new' %}
+          <form method="POST">
+            <input type="hidden" name="pledge" value="{{ pledge.id }}">
+            <button class="btn btn-success" type="submit" name="accept" onclick="return confirm('Are you sure to accept ?')">Accepter</button>
+            <button class="btn btn-danger" type="submit" name="reject" onclick="return confirm('Are you sure to refuse ?')">Refuser</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
