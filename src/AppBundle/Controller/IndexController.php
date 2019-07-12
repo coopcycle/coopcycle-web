@@ -7,11 +7,7 @@ use AppBundle\Entity\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
- */
 class IndexController extends AbstractController
 {
     use UserTrait;
@@ -19,7 +15,6 @@ class IndexController extends AbstractController
     const MAX_RESULTS = 3;
 
     /**
-     * @Route("/", name="homepage")
      * @Template
      */
     public function indexAction()
