@@ -28,7 +28,7 @@
       <th>#</th>
       <th>{{ 'form.delivery.store.label'|trans }}</th>
       <th>{{ 'delivery.table.heading.summary'|trans }}</th>
-      <th class="text-center">{{ 'delivery.table.heading.courier'|trans }}</th>
+      <th>{{ 'delivery.table.heading.courier'|trans }}</th>
       <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
       <th></th>
       <th></th>
@@ -53,7 +53,7 @@
           <br>
           <small>{{ delivery.distance|meters_to_kilometers }}</small>
         </td>
-        <td class="text-center">
+        <td>
           {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
             {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
               <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
