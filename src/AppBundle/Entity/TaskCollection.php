@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A TaskCollection is the database representation of a Task\CollectionInterface.
@@ -20,6 +21,7 @@ abstract class TaskCollection
     protected $id;
 
     /**
+     * @Assert\Valid()
      * @Groups({"task_collection", "task", "delivery", "place"})
      */
     protected $items;

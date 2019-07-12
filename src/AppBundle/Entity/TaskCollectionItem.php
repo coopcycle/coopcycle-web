@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A TaskCollectionItem is a task belonging to a TaskCollection.
@@ -14,6 +15,7 @@ class TaskCollectionItem
     private $parent;
 
     /**
+     * @Assert\Valid()
      * @Groups({"task_collection"})
      */
     private $task;

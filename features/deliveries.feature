@@ -53,10 +53,16 @@ Feature: Deliveries
         "@type":"ConstraintViolationList",
         "hydra:title":"An error occurred",
         "hydra:description":@string@,
-        "violations":[{
-          "propertyPath":"items",
-          "message":@string@
-        }]
+        "violations":[
+          {
+            "propertyPath":"items[0].task.doneBefore",
+            "message":@string@
+          },
+          {
+            "propertyPath":"items[1].task.doneBefore",
+            "message":@string@
+          }
+        ]
       }
       """
 
