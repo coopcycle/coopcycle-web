@@ -41,13 +41,11 @@
 
             <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
             <div class="order-map__column-block">
-
               {% if form.telephone is defined %}
                 {{ form_row(form.telephone) }}
               {% endif %}
-
-              {{ form_row(form.shippingAddress.floor) }}
               {{ form_row(form.shippingAddress.streetAddress) }}
+              {{ form_row(form.shippingAddress.floor) }}
               <div class="row">
                 <div class="col-md-4">
                   {{ form_row(form.shippingAddress.postalCode) }}
