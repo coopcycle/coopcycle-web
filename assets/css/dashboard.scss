@@ -71,6 +71,7 @@ html, body {
     display: flex;
     flex-direction: column;
     flex: 1;
+    max-height: 50%;
     > h4 {
       padding: 15px;
       margin: 0;
