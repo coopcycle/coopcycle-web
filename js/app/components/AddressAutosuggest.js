@@ -259,7 +259,8 @@ class AddressAutosuggest extends Component {
     const inputProps = {
       placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
       value,
-      onChange: this.onChange.bind(this)
+      onChange: this.onChange.bind(this),
+      type: "search"
     }
 
     let autosuggestProps = {}
