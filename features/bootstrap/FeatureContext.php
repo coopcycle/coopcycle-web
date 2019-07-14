@@ -1356,7 +1356,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $cart = $session->getPage()->find('css', '#cart');
         $addressPicker = $cart->find('css', '.address-autosuggest__container');
-        $addressPickerInput = $addressPicker->find('css', 'input[type="text"]');
+        $addressPickerInput = $addressPicker->find('css', 'input[type="search"]');
 
         Assert::assertEquals($value, $addressPickerInput->getValue());
     }
