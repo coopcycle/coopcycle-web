@@ -1093,7 +1093,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         Assert::assertNotNull($modal);
         Assert::assertTrue($modal->isVisible());
 
-        $addressPicker = $this->getSession()->getPage()->find('css', '.ReactModal__Content--enter-address input[type="text"]');
+        $addressPicker = $this->getSession()->getPage()->find('css', '.ReactModal__Content--enter-address input[type="search"]');
         $addressPicker->setValue($address);
 
         // Let some time for suggestions to finish loading
@@ -1117,7 +1117,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             return !empty($container);
         });
 
-        $addressSearch->find('css', 'input[type="text"]')->setValue($address);
+        $addressSearch->find('css', 'input[type="search"]')->setValue($address);
 
         // Let some time for suggestions to finish loading
         $addressPicker = $this->getSession()->getPage()->find('css', '#address-search .address-autosuggest__container');
