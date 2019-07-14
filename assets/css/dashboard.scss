@@ -1,3 +1,4 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "vars.scss";
 
 html, body {
@@ -205,14 +206,14 @@ html, body {
   border-left: 6px solid #ffffff;
 
   a {
-    color: rgb(51, 51, 51);
+    color: $text-color;
   }
 
-  &:last-child {
-    border-radius: 0;
-  }
   &--cancelled {
     opacity: 0.5;
+  }
+  &:hover {
+    color: $gray-light;
   }
 }
 
@@ -267,6 +268,11 @@ html, body {
 
 }
 
+.dashboard__task-modal__complete-form {
+  background-color: #fefedd;
+  padding: 20px;
+}
+
 .taskList__summary {
   position: relative;
   &-polyline {
@@ -286,6 +292,19 @@ html, body {
         color: lighten($disabled-color, 15%);
       }
     }
+  }
+}
+
+.ReactModal__Content--task-form,
+.ReactModal__Content--select-courier {
+  min-width: 40%;
+  padding: 0;
+}
+
+.ReactModal__Content--task-form {
+  max-height: 100%;
+  .address-autosuggest__container {
+    margin-bottom: 0;
   }
 }
 

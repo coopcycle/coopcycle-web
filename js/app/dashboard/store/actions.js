@@ -1,4 +1,77 @@
 import _ from 'lodash'
+import axios from 'axios'
+
+function createClient(dispatch) {
+
+  const client = axios.create({
+    baseURL: location.protocol + '//' + location.hostname
+  })
+
+  let subscribers = []
+  let isRefreshingToken = false
+
+  function onTokenFetched(token) {
+    subscribers.forEach(callback => callback(token))
+    subscribers = []
+  }
+
+  function addSubscriber(callback) {
+    subscribers.push(callback)
+  }
+
+  function refreshToken() {
+    return new Promise((resolve, reject) => {
+      $.getJSON(window.Routing.generate('profile_jwt')).then(token => resolve(token))
+    })
+  }
+
+  // @see https://gist.github.com/Godofbrowser/bf118322301af3fc334437c683887c5f
+  // @see https://www.techynovice.com/setting-up-JWT-token-refresh-mechanism-with-axios/
+  client.interceptors.response.use(
+    response => response,
+    error => {
+
+      if (error.response && error.response.status === 401) {
+
+        try {
+
+          const req = error.config
+
+          const retry = new Promise(resolve => {
+            addSubscriber(token => {
+              req.headers['Authorization'] = `Bearer ${token}`
+              resolve(axios(req))
+            })
+          })
+
+          if (!isRefreshingToken) {
+
+            isRefreshingToken = true
+
+            refreshToken()
+              .then(token => {
+                dispatch(tokenRefreshSuccess(token))
+                return token
+              })
+              .then(token => onTokenFetched(token))
+              .catch(e => Promise.reject(e))
+              .finally(() => {
+                isRefreshingToken = false
+              })
+          }
+
+          return retry
+        } catch (e) {
+          return Promise.reject(e)
+        }
+      }
+
+      return Promise.reject(error)
+    }
+  )
+
+  return client
+}
 
 export const ASSIGN_TASKS = 'ASSIGN_TASKS'
 export const ADD_CREATED_TASK = 'ADD_CREATED_TASK'
@@ -22,6 +95,15 @@ export const SET_GEOLOCATION = 'SET_GEOLOCATION'
 export const SET_OFFLINE = 'SET_OFFLINE'
 export const DRAKE_DRAG = 'DRAKE_DRAG'
 export const DRAKE_DRAGEND = 'DRAKE_DRAGEND'
+export const OPEN_NEW_TASK_MODAL = 'OPEN_NEW_TASK_MODAL'
+export const CLOSE_NEW_TASK_MODAL = 'CLOSE_NEW_TASK_MODAL'
+export const SET_CURRENT_TASK = 'SET_CURRENT_TASK'
+export const CREATE_TASK_REQUEST = 'CREATE_TASK_REQUEST'
+export const CREATE_TASK_SUCCESS = 'CREATE_TASK_SUCCESS'
+export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
+export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
+export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
+export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
 
 import { createTaskList } from './utils'
 
@@ -195,6 +277,149 @@ function drakeDragEnd() {
   return { type: DRAKE_DRAGEND }
 }
 
+function openNewTaskModal() {
+  return { type: OPEN_NEW_TASK_MODAL }
+}
+
+function closeNewTaskModal() {
+  return { type: CLOSE_NEW_TASK_MODAL }
+}
+
+function setCurrentTask(task) {
+  return { type: SET_CURRENT_TASK, task }
+}
+
+function createTaskRequest() {
+  return { type: CREATE_TASK_REQUEST }
+}
+
+function createTaskSuccess(task) {
+  return { type: CREATE_TASK_SUCCESS, task }
+}
+
+function createTaskFailure(error) {
+  return { type: CREATE_TASK_FAILURE, error }
+}
+
+function completeTaskFailure(error) {
+  return { type: COMPLETE_TASK_FAILURE, error }
+}
+
+function cancelTaskFailure(error) {
+  return { type: CANCEL_TASK_FAILURE, error }
+}
+
+function tokenRefreshSuccess(token) {
+  return { type: TOKEN_REFRESH_SUCCESS, token }
+}
+
+function createTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const data = {
+      ...task,
+      doneAfter: task.after,
+      doneBefore: task.before,
+      tags: _.map(task.tags, tag => tag.slug)
+    }
+
+    const url = task.hasOwnProperty('@id') ? task['@id'] : '/api/tasks'
+    const method = task.hasOwnProperty('@id') ? 'put' : 'post'
+
+    const payload = _.omit(data, [
+      '@context',
+      '@id',
+      '@type',
+      'events',
+      'deliveryColor',
+      'isAssigned',
+      'id',
+      'status',
+      'updatedAt'
+    ])
+
+    createClient(dispatch).request({
+      method,
+      url,
+      data: payload,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess(response.data))
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(createTaskFailure(error)))
+  }
+}
+
+function completeTask(task, notes = '', success = true) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = task['@id'] + (success ? '/done' : '/failed')
+
+    createClient(dispatch).request({
+      method: 'put',
+      url,
+      data: { notes },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess(response.data))
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(completeTaskFailure(error)))
+  }
+}
+
+function cancelTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = `${task['@id']}/cancel`
+
+    createClient(dispatch).request({
+      method: 'put',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess(response.data))
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
 export {
   setSelectedTagList,
   updateTask,
@@ -215,5 +440,11 @@ export {
   setGeolocation,
   setOffline,
   drakeDrag,
-  drakeDragEnd
+  drakeDragEnd,
+  openNewTaskModal,
+  closeNewTaskModal,
+  setCurrentTask,
+  createTask,
+  completeTask,
+  cancelTask
 }

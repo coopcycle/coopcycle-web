@@ -22,7 +22,6 @@ Encore
   .addEntry('js/restaurant-planning', './js/app/restaurant/planning.jsx')
   .addEntry('js/restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
   .addEntry('js/restaurants-map', './js/app/restaurants-map/index.jsx')
-  .addEntry('js/task-modal', './js/app/task/modal.js')
   .addEntry('js/user-tracking', './js/app/user/tracking.jsx')
   .addEntry('js/user-form', './js/app/user/form.jsx')
   .addEntry('js/widgets', './js/app/widgets/index.js')

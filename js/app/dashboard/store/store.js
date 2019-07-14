@@ -26,7 +26,8 @@ let store = createStore(
     },
     taskUploadFormErrors: window.AppData.Dashboard.taskUploadFormErrors,
     tags: window.AppData.Dashboard.tags,
-    nav: window.AppData.Dashboard.nav
+    nav: window.AppData.Dashboard.nav,
+    couriersList: window.AppData.Dashboard.couriersList,
   },
   composeEnhancers(applyMiddleware(...middlewares))
 )

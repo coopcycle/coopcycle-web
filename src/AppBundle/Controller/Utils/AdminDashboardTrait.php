@@ -103,12 +103,6 @@ trait AdminDashboardTrait
             'date' => $date
         ]);
 
-        $task = $this->createDefaultTask($date);
-
-        $newTaskForm = $this->createForm(TaskType::class, $task, [
-            'date_range' => true
-        ]);
-
         $taskExport = new \stdClass();
         $taskExport->start = new \DateTime('first day of this month');
         $taskExport->end = new \DateTime();
@@ -145,22 +139,6 @@ trait AdminDashboardTrait
 
                 return $this->redirectToDashboard($request);
             }
-        }
-
-        $newTaskForm->handleRequest($request);
-        if ($newTaskForm->isSubmitted() && $newTaskForm->isValid()) {
-
-            $task = $newTaskForm->getData();
-
-            $this->getDoctrine()
-                ->getManagerForClass(Task::class)
-                ->persist($task);
-
-            $this->getDoctrine()
-                ->getManagerForClass(Task::class)
-                ->flush();
-
-            return $this->redirectToDashboard($request);
         }
 
         $taskExportForm->handleRequest($request);
@@ -256,7 +234,6 @@ trait AdminDashboardTrait
             'task_lists' => $taskListsNormalized,
             'task_upload_form' => $taskUploadForm->createView(),
             'task_export_form' => $taskExportForm->createView(),
-            'new_task_form' => $newTaskForm->createView(),
             'task_group_form' => $taskGroupForm->createView(),
             'tags' => $normalizedTags,
             'jwt' => $jwtManager->create($this->getUser()),

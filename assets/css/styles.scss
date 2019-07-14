@@ -826,10 +826,6 @@ form[name="store"] #store_imageFile_file {
   // min-width: 50%;
 }
 
-.ReactModal__Content--select-courier {
-  width: 440px;
-}
-
 .ReactModal__Content--enter-address {
   overflow: inherit;
   display: flex;
@@ -1253,6 +1249,10 @@ table.task-table {
   > label {
     min-width: 50%;
   }
+}
+
+.btn-transparent {
+  background: transparent;
 }
 
 .map-container {

@@ -49,11 +49,6 @@ adminDashboard.orders.invoice.productsTotal: Total productos
 adminDashboard.orders.invoice.deliveryTotal: Total entrega
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
-adminDashboard.task.form.courier: Courier
-adminDashboard.task.form.status: Status
-adminDashboard.task.form.notes: Notes
-adminDashboard.task.form.notes.placeholder: Añade detalles sobre la finalización de
-  la tarea
 adminDashboard.users.title: Usuarios
 adminDashboard.users.edit: Editar
 adminDashboard.users.save: Guardar
@@ -281,19 +276,7 @@ order.list.summary.delivery.text: Entrega %distance%, %vehicle%
 order.list.invoice: Factura
 vehicle.bike: Bicicleta
 vehicle.cargo_bike: Bicicleta cargo
-task.form.create: Crear tarea
-task.form.timeWindow: Periodo
-task.form.cancel: Cancelar
-task.form.showHistory: Mostrar historial
-task.form.modal.moreOptions: Más opciones
-task.form.edit: Editar tarea %id%
 task.form.dateRange: Rango de fechas
-task.form.finish: Finalizar tarea
-task.form.details: Detalles de la tarea
-task.form.finish.DONE.info: La tarea se completó con éxito
-task.form.finish.FAIL.info: La tarea no pudo ser completada
-task.form.finish.info: La tarea ha sido finalizada con el estado %status%. Puedes
-  cambiar la nota que se añadió al completarla.
 task.status.done: Éxito
 task.status.failed: Fracaso
 task.status.todo: Pendiente

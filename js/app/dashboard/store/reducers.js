@@ -25,7 +25,16 @@ import {
   SET_GEOLOCATION,
   SET_OFFLINE,
   DRAKE_DRAG,
-  DRAKE_DRAGEND
+  DRAKE_DRAGEND,
+  OPEN_NEW_TASK_MODAL,
+  CLOSE_NEW_TASK_MODAL,
+  SET_CURRENT_TASK,
+  CREATE_TASK_REQUEST,
+  CREATE_TASK_SUCCESS,
+  CREATE_TASK_FAILURE,
+  COMPLETE_TASK_FAILURE,
+  CANCEL_TASK_FAILURE,
+  TOKEN_REFRESH_SUCCESS
 } from './actions'
 
 import { createTaskList } from './utils'
@@ -73,7 +82,12 @@ const initialState = {
   jwt: '',
   positions: [],
   offline: [],
-  isDragging: false
+  isDragging: false,
+  taskModalIsOpen: false,
+  currentTask: null,
+  isTaskModalLoading: false,
+  couriersList: [],
+  completeTaskErrorMessage: null
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -417,9 +431,21 @@ export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: tr
   }
 }
 
-export const jwt = (state = '', action) => state
+export const jwt = (state = '', action) => {
+  switch (action.type) {
+  case TOKEN_REFRESH_SUCCESS:
+
+    return action.token
+
+  default:
+
+    return state
+  }
+}
 
 export const date = (state = moment(), action) => state
+
+export const couriersList = (state = [], action) => state
 
 export const positions = (state = [], action) => {
   switch (action.type) {
@@ -522,6 +548,78 @@ export const combinedTasks = (state = initialState, action) => {
   }
 }
 
+export const taskModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_NEW_TASK_MODAL:
+    return true
+  case CLOSE_NEW_TASK_MODAL:
+    return false
+  case SET_CURRENT_TASK:
+
+    if (!!action.task) {
+      return true
+    }
+
+    return false
+  default:
+    return state
+  }
+}
+
+export const currentTask = (state = null, action) => {
+  switch(action.type) {
+  case OPEN_NEW_TASK_MODAL:
+    return null
+  case SET_CURRENT_TASK:
+    return action.task
+  default:
+    return state
+  }
+}
+
+export const isTaskModalLoading = (state = false, action) => {
+  switch(action.type) {
+  case CREATE_TASK_REQUEST:
+    return true
+  case CREATE_TASK_SUCCESS:
+  case CREATE_TASK_FAILURE:
+  case COMPLETE_TASK_FAILURE:
+  case CANCEL_TASK_FAILURE:
+    return false
+  default:
+    return state
+  }
+}
+
+export const completeTaskErrorMessage = (state = null, action) => {
+  switch(action.type) {
+  case CREATE_TASK_REQUEST:
+  case CREATE_TASK_SUCCESS:
+    return null
+  case COMPLETE_TASK_FAILURE:
+
+    const { error } = action
+
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty('@type') && error.response.data['@type'] === 'hydra:Error') {
+          return error.response.data['hydra:description']
+        }
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+    } else {
+      // Something happened in setting up the request that triggered an Error
+    }
+  default:
+    return state
+  }
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists } = combinedTasks(state, action)
@@ -544,6 +642,11 @@ export default (state = initialState, action) => {
     date: date(state.date, action),
     positions: positions(state.positions, action),
     offline: offline(state.offline, action),
-    isDragging: isDragging(state.isDragging, action)
+    isDragging: isDragging(state.isDragging, action),
+    taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
+    currentTask: currentTask(state.currentTask, action),
+    isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
+    couriersList: couriersList(state.couriersList, action),
+    completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
   }
 }

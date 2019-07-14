@@ -4,8 +4,10 @@ import Modal from 'react-modal'
 import _ from 'lodash'
 import { translate } from 'react-i18next'
 
-import { addTaskList, closeAddUserModal, openAddUserModal } from '../store/actions'
+import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../store/actions'
+import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
+import TaskModalContent from './TaskModalContent'
 import autoScroll from 'dom-autoscroller'
 
 class TaskLists extends React.Component {
@@ -18,7 +20,6 @@ class TaskLists extends React.Component {
     }
 
     this.addUser = this.addUser.bind(this)
-    this.onCourierSelect = this.onCourierSelect.bind(this)
   }
 
   componentDidMount() {
@@ -52,10 +53,6 @@ class TaskLists extends React.Component {
     this.props.closeAddUserModal()
   }
 
-  onCourierSelect (e) {
-    this.setState({'selectedCourier': e.target.value })
-  }
-
   render() {
 
     const { addModalIsOpen, taskListsLoading, couriersList } = this.props
@@ -66,7 +63,6 @@ class TaskLists extends React.Component {
 
     // filter out couriers that are already in planning
     const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
-
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
@@ -88,27 +84,20 @@ class TaskLists extends React.Component {
             <h4 className="modal-title" id="user-modal-label">{this.props.t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING')}</h4>
           </div>
           <div className="modal-body">
-            <form method="post" className="form-horizontal">
+            <form method="post" >
               <div className="form-group" data-action="dispatch">
-                <label htmlFor="courier" className="col-sm-2 control-label">
+                <label htmlFor="courier" className="control-label">
                   { this.props.t('ADMIN_DASHBOARD_COURIER') }
                 </label>
-                <div className="col-sm-10">
-                  <select name="courier" className="form-control" value={selectedCourier} onChange={(e) => this.onCourierSelect(e)}>
-                    <option></option>
-                    {
-                      availableCouriers.map(function (item, index) {
-                        return (<option value={ item.username } key={ index }>{item.username}</option>)
-                      })
-                    }
-                  </select>
-                </div>
+                <CourierSelect
+                  onChange={ courier => this.setState({ selectedCourier: courier.username }) }
+                  exclude />
               </div>
             </form>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-default" onClick={this.props.closeAddUserModal}>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
-            <button type="submit" className="btn btn-primary" onClick={(e) => this.addUser(e)}>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
+            <button type="button" className="btn btn-default" onClick={ this.props.closeAddUserModal }>{this.props.t('ADMIN_DASHBOARD_CANCEL')}</button>
+            <button type="submit" className="btn btn-primary" onClick={ (e) => this.addUser(e) }>{ this.props.t('ADMIN_DASHBOARD_ADD') }</button>
           </div>
         </Modal>
         <div
@@ -145,6 +134,7 @@ function mapStateToProps (state) {
     taskLists: state.taskLists,
     taskListsLoading: state.taskListsLoading,
     isDragging: state.isDragging,
+    taskModalIsOpen: state.taskModalIsOpen
   }
 }
 
@@ -152,7 +142,10 @@ function mapDispatchToProps (dispatch) {
   return {
     addTaskList: (date, username) => dispatch(addTaskList(date, username)),
     openAddUserModal: () => { dispatch(openAddUserModal()) },
-    closeAddUserModal: () => { dispatch(closeAddUserModal()) }
+    closeAddUserModal: () => { dispatch(closeAddUserModal()) },
+    openNewTaskModal: _ => dispatch(openNewTaskModal()),
+    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
   }
 }
 

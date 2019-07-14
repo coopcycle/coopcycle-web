@@ -1,7 +1,10 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
 import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
+
+import { setCurrentTask } from '../store/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -11,6 +14,8 @@ class Task extends React.Component {
     super(props)
 
     this.onClick = this.onClick.bind(this)
+    this.onDoubleClick = this.onDoubleClick.bind(this)
+    this.prevent = false
   }
 
   renderStatusIcon() {
@@ -25,6 +30,7 @@ class Task extends React.Component {
             className="task__icon task__icon--right"
             onClick={(e) => {
               e.preventDefault()
+              e.stopPropagation()
               this.props.onRemove(task)
             }}
             data-toggle="tooltip" data-placement="right" title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: task.id }) }
@@ -48,10 +54,25 @@ class Task extends React.Component {
     }
   }
 
+  // @see https://css-tricks.com/snippets/javascript/bind-different-events-to-click-and-double-click/
+
   onClick(e) {
     const multiple = (e.ctrlKey || e.metaKey)
-    const { toggleTask, task } = this.props
-    toggleTask(task, multiple)
+    this.timer = setTimeout(() => {
+      if (!this.prevent) {
+        const { toggleTask, task } = this.props
+        toggleTask(task, multiple)
+      }
+      this.prevent = false
+    }, 250)
+  }
+
+  onDoubleClick(e) {
+    clearTimeout(this.timer)
+    this.prevent = true
+
+    const { task } = this.props
+    this.props.setCurrentTask(task)
   }
 
   renderLinkedIcon() {
@@ -72,19 +93,6 @@ class Task extends React.Component {
         )) }
       </span>
     )
-  }
-
-  showTaskModal(e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    const { task } = this.props
-
-    $('#task-edit-modal')
-      .load(
-        window.Routing.generate('admin_task', { id: task.id }),
-        () => $('#task-edit-modal').modal({ show: true })
-      )
   }
 
   render() {
@@ -122,6 +130,7 @@ class Task extends React.Component {
       key: task['@id'],
       className: classNames.join(' '),
       'data-task-id': task['@id'],
+      onDoubleClick: this.onDoubleClick,
       onClick: this.onClick,
       onContextMenu: () => this.props.selectTask(task)
     }
@@ -135,22 +144,30 @@ class Task extends React.Component {
         collect={ collect }
         attributes={ contextMenuTriggerAttrs }>
         <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-        { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {
-          id: task.id,
-          address: addressName,
-          date: moment(task.doneBefore).format('LT')
-        }) }
+        <span>
+          { this.props.t('ADMIN_DASHBOARD_TASK_CAPTION', {
+            id: task.id,
+            address: addressName,
+            date: moment(task.doneBefore).format('LT')
+          }) }
+        </span>
         { this.renderTags() }
-        &nbsp;
-        <a className="task__edit" onClick={ this.showTaskModal.bind(this) }>
-          <i className="fa fa-pencil"></i>
-        </a>
-        {this.renderLinkedIcon()}
-        {this.renderStatusIcon()}
+        { this.renderLinkedIcon() }
+        { this.renderStatusIcon() }
       </ContextMenuTrigger>
     )
 
   }
 }
 
-export default translate()(Task)
+function mapStateToProps (state) {
+  return {}
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(Task))
