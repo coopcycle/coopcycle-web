@@ -83,6 +83,10 @@ before_script:
   - mkdir -p var/jwt
   - openssl genrsa -out var/jwt/private.pem 4096
   - openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
+  # Create directories for images
+  - mkdir -p web/images/products
+  - mkdir -p web/images/restaurants
+  - mkdir -p web/images/tasks
   # Configure PostgreSQL
   - psql -U postgres -c 'CREATE DATABASE coopcycle_test;'
   - psql -U postgres -d coopcycle_test -c 'CREATE EXTENSION postgis;'
