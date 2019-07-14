@@ -58,13 +58,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="PUT",
  *       "path"="/tasks/{id}/done",
  *       "controller"=TaskDone::class,
- *       "access_control"="is_granted('ROLE_COURIER') and object.isAssignedTo(user)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
  *     },
  *     "task_failed"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/failed",
  *       "controller"=TaskFailed::class,
- *       "access_control"="is_granted('ROLE_COURIER') and object.isAssignedTo(user)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
  *     },
  *     "task_assign"={
  *       "method"="PUT",
@@ -114,23 +114,23 @@ class Task implements TaggableInterface
     private $delivery;
 
     /**
-     * @Groups({"task", "place", "address_create"})
+     * @Groups({"task", "task_edit", "place", "address_create"})
      */
     private $address;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "task_edit"})
      */
     private $doneAfter;
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"task"})
+     * @Groups({"task", "task_edit"})
      */
     private $doneBefore;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "task_edit"})
      */
     private $comments;
 

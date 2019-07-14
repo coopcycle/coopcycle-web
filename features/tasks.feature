@@ -364,7 +364,7 @@ Feature: Tasks
         },
         "doneAfter":"2018-12-24T23:30:00+01:00",
         "doneBefore":"2018-12-24T23:59:59+01:00",
-        "comments":null,
+        "comments":"",
         "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
@@ -374,6 +374,76 @@ Feature: Tasks
         "deliveryColor":null,
         "group":null,
         "tags":@array@
+      }
+      """
+
+  Scenario: Create task with after & before
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/tasks" with body:
+      """
+      {
+        "type": "DROPOFF",
+        "address": {
+          "streetAddress": "101 Rue de la Paix, 75002 Paris",
+          "postalCode": "75002",
+          "addressLocality": "Paris",
+          "description": "Sonner à l'interphone",
+          "geo": {
+            "latitude": 48.870473,
+            "longitude": 2.331933
+          }
+        },
+        "comments": "Hello, world",
+        "after": "2018-12-24T23:30:00+01:00",
+        "before": "2018-12-24T23:59:59+01:00",
+        "tags": ["important"]
+      }
+      """
+    Then the response status code should be 201
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":{
+          "@id":"@string@.startsWith('/api/addresses')",
+          "@type":"http://schema.org/Place",
+          "firstName":null,
+          "lastName":null,
+          "description": "Sonner à l'interphone",
+          "floor":null,
+          "geo":{
+            "latitude":48.870473,
+            "longitude":2.331933
+          },
+          "streetAddress":"101 Rue de la Paix, 75002 Paris",
+          "telephone":null,
+          "name":null
+        },
+        "doneAfter":"2018-12-24T23:30:00+01:00",
+        "doneBefore":"2018-12-24T23:59:59+01:00",
+        "comments":"Hello, world",
+        "events":@array@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "deliveryColor":null,
+        "group":null,
+        "tags": [
+          {"name":"Important","slug":"important","color":"#000000"}
+        ]
       }
       """
 

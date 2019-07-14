@@ -5,6 +5,8 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
+use AppBundle\Service\TagManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -13,10 +15,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
     private $normalizer;
     private $iriConverter;
 
-    public function __construct(ItemNormalizer $normalizer, IriConverterInterface $iriConverter)
+    public function __construct(ItemNormalizer $normalizer, IriConverterInterface $iriConverter, TagManager $tagManager, UserManagerInterface $userManager)
     {
         $this->normalizer = $normalizer;
         $this->iriConverter = $iriConverter;
+        $this->tagManager = $tagManager;
+        $this->userManager = $userManager;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -72,6 +76,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             ];
         }
 
+        if (null === $object->getComments()) {
+            $data['comments'] = '';
+        }
+
         return $data;
     }
 
@@ -82,7 +90,29 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        return $this->normalizer->denormalize($data, $class, $format, $context);
+        if (!isset($data['doneAfter']) && isset($data['after'])) {
+            $data['doneAfter'] = $data['after'];
+        }
+
+        if (!isset($data['doneBefore']) && isset($data['before'])) {
+            $data['doneBefore'] = $data['before'];
+        }
+
+        $task = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        if (isset($data['tags'])) {
+            $tags = $this->tagManager->fromSlugs($data['tags']);
+            $task->setTags($tags);
+        }
+
+        if (isset($data['assignedTo'])) {
+            $user = $this->userManager->findUserByUsername($data['assignedTo']);
+            if ($user && $user->hasRole('ROLE_COURIER')) {
+                $task->assignTo($user);
+            }
+        }
+
+        return $task;
     }
 
     public function supportsDenormalization($data, $type, $format = null)

@@ -43,7 +43,7 @@ abstract class PostalAddress
     /**
      * @var string The name of the item.
      *
-     * @Groups({"place"})
+     * @Groups({"place", "task_edit"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/name")
      */
@@ -69,7 +69,7 @@ abstract class PostalAddress
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
      *
-     * @Groups({"place", "postal_address", "address_create"})
+     * @Groups({"place", "postal_address", "address_create", "task_edit"})
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/streetAddress")
@@ -77,7 +77,7 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
-     * @Groups({"place", "address_create"})
+     * @Groups({"place", "address_create", "task_edit"})
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;

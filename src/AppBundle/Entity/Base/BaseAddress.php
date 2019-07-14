@@ -11,7 +11,7 @@ class BaseAddress extends Place
     /**
      * @var string Additional instructions about the place
      *
-     * @Groups({"address", "task", "address_create"})
+     * @Groups({"address", "address_create", "task", "task_edit"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
@@ -20,7 +20,7 @@ class BaseAddress extends Place
     /**
      * @var string Floor
      *
-     * @Groups({"address", "task"})
+     * @Groups({"address", "task", "task", "task_edit"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */

@@ -76,6 +76,11 @@ class TagManager
 
     public function fromSlugs(array $slugs)
     {
+        if (count($slugs) === 0) {
+
+            return $slugs;
+        }
+
         $tagRepository = $this->doctrine->getRepository(Tag::class);
 
         $qb = $tagRepository->createQueryBuilder('tag');
