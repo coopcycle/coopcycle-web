@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Assign as TaskAssign;
+use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
@@ -77,6 +78,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/unassign",
  *       "controller"=TaskUnassign::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *     },
+ *     "task_cancel"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/cancel",
+ *       "controller"=TaskCancel::class,
+ *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  *   }
  * )
