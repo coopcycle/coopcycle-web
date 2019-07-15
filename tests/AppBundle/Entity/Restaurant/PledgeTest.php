@@ -49,12 +49,11 @@ class PledgeTest extends TestCase
     public function testAccept() {
         $pledge = new Pledge();
         $address = new Address();
-
+        $pledge->setState('new');
         $pledge->setName('test');
         $pledge->setAddress($address);
 
         $restaurant = $pledge->accept();
-
         $this->assertEquals('test', $restaurant->getName());
         $this->assertSame($address, $restaurant->getAddress());
         $this->assertSame($pledge, $restaurant->getPledge());

@@ -444,7 +444,7 @@ form.settings.phone_number.help: This number will be displayed to customers
 
 form.suggest.name.label: name
 form.suggest.title: Suggest a restaurant
-form.suggest.submit.label: Register
+form.suggest.submit.label: Save
 
 form.suggest.message: |
   Can't find your favorite restaurant ?

@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\UserInterface;
 use AppBundle\Entity\Restaurant\PledgeVote;
 use AppBundle\Entity\Restaurant;
-
+use Exception;
 
 class Pledge {
 
@@ -188,7 +188,7 @@ class Pledge {
 
     public function addVote(UserInterface $user)
     {
-        if ($this->hasVoted($user) === false) {
+        if (!$this->hasVoted($user)) {
             $vote = new PledgeVote();
             $vote->setUser($user);
             $vote->setPledge($this);
@@ -206,8 +206,12 @@ class Pledge {
         return false;
     }
 
-    public function accept()
+    public function accept(): Restaurant
     {
+        if ($this->getState() !== 'new') {
+            throw new Exception('Unvalid pledge state, it should be set to new');
+        }
+
         $restaurant = new Restaurant();
         $restaurant->setName($this->getName());
         $restaurant->setAddress($this->getAddress());
