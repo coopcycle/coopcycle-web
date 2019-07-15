@@ -93,6 +93,7 @@ admin_restaurants:
             dashboard: admin_restaurant_dashboard
             menu_taxon: admin_restaurant_menu_taxon
             menu_taxons: admin_restaurant_menu_taxons
+            products: admin_restaurant_products
             restaurant: admin_restaurant
     methods: [ GET ]
 
