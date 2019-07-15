@@ -16,7 +16,7 @@
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {% trans %}restaurant.list.manage{% endtrans %}   <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-right">
               {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
               <li>
                 <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
@@ -39,6 +39,12 @@
               <li>
                 <a href="{{ path(restaurant_route, { id: restaurant.id }) }}">
                   {% trans %}restaurant.list.settings{% endtrans %}
+                </a>
+              </li>
+              </li>
+              <li>
+                <a href="{{ path(products_route, { id: restaurant.id }) }}">
+                  {% trans %}restaurant.list.products{% endtrans %}
                 </a>
               </li>
             </ul>

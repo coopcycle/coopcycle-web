@@ -63,6 +63,7 @@ trait RestaurantTrait
             'menu_taxon_route' => $routes['menu_taxon'],
             'menu_taxons_route' => $routes['menu_taxons'],
             'restaurant_route' => $routes['restaurant'],
+            'products_route' => $routes['products']
         ]);
     }
 

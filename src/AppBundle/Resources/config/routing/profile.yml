@@ -48,6 +48,7 @@ profile_restaurants:
             menu_taxon: profile_restaurant_menu_taxon
             menu_taxons: profile_restaurant_menu_taxons
             restaurant: profile_restaurant
+            products: profile_restaurant_products
     methods: [ GET ]
 
 profile_restaurant_dashboard:

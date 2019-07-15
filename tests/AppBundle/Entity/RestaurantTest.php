@@ -108,7 +108,8 @@ class RestaurantTest extends KernelTestCase
             '2017-10-07T12:45:00+02:00',
             '2017-10-07T13:00:00+02:00',
             '2017-10-07T13:15:00+02:00',
-            '2017-10-07T13:30:00+02:00',
+            '2017-10-07T13:30:00+02:00',Error: Class 'Tests\AppBundle\Entity\Restaurant\Exception' not found
+
             '2017-10-07T13:45:00+02:00',
             '2017-10-07T14:00:00+02:00',
             '2017-10-07T14:15:00+02:00',
