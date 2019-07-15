@@ -49,9 +49,9 @@ class PledgeTest extends TestCase
     public function testAccept() {
         $pledge = new Pledge();
         $address = new Address();
-        $pledge->setState('new');
         $pledge->setName('test');
         $pledge->setAddress($address);
+        $pledge->setState('new');
 
         $restaurant = $pledge->accept();
         $this->assertEquals('test', $restaurant->getName());
@@ -60,5 +60,16 @@ class PledgeTest extends TestCase
         $this->assertEquals('pledge', $restaurant->getState());
         $this->assertEquals('accepted', $pledge->getState());
         $this->assertTrue($restaurant->isEnabled());
+    }
+
+    public function testAcceptThrowsException() {
+        $pledge = new Pledge();
+        $address = new Address();
+        $pledge->setState('new');
+        $pledge->setName('test');
+        $pledge->setAddress($address);
+
+        $this->expectException(Pledge::class);
+        $pledge->accept();
     }
 }

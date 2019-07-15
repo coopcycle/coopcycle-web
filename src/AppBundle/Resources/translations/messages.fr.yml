@@ -448,7 +448,6 @@ form.settings.phone_number.label: Numéro de téléphone
 form.settings.phone_number.help: Ce numéro sera affiché aux clients
 
 form.suggest.name.label: Nom du restaurant
-form.suggest.title: Suggérer un restaurant
 
 form.suggest.message: |
   Vous ne trouvez pas votre restaurant préféré ?
