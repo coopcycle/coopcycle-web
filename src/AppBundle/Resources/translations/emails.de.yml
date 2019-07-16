@@ -13,7 +13,7 @@ registration.email.message: '<h2>Wilkommen bei %brand_name%, %username%</h2>
   '
 registration.email.confirm: E-Mail wiederholen
 registration.email.disclaimer: Dieser Link ist nur zur einmaligen Validierung des
-  Kontos gültig.
+  Kontos gültig
 registration.email.textMessage: 'Herzlich willkommen bei %brand_name%, %username%,\n\n
 
   Sie erhalten diese Nachricht, da Sie sich kürzlich für ein %brand_name%-Konto registriert
@@ -82,7 +82,7 @@ order.created.body: 'Hallo,
   sie bestätigt ist.
 
   '
-order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen.
+order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen
 order.accepted.body.intro: 'Hallo,
 
   <br>
@@ -90,7 +90,7 @@ order.accepted.body.intro: 'Hallo,
   Ihre Bestellung wurde bestätigt.
 
   '
-order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert.
+order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert
 order.cancelled.body.intro: 'Hallo,
 
   <br>
@@ -98,9 +98,32 @@ order.cancelled.body.intro: 'Hallo,
   Es tut uns leid, aber Ihre Bestellung wurde storniert.
 
   '
-order.delayed.subject: Ihre Bestellung %order.number% verspätet sich leider.
-order.delayed.body: ''
-task.done.subject: ''
-task.done.body: ''
-task.failed.subject: ''
-task.failed.body: ''
+order.delayed.subject: Ihre Bestellung %order.number% verspätet sich leider
+order.delayed.body: 'Hallo,
+
+  <br>
+
+  Es tut uns sehr leid Ihnen mitteilen zu müssen, dass sich Ihre Lieferung um %delay%
+  Minuten verspäten wird.
+
+  <br>
+
+  Wir entschuldigen uns für eventuelle Unannehmlichkeiten.
+
+  '
+task.done.subject: 'Auftrag #%task.id% erledigt'
+task.done.body: 'Hallo,
+
+  <br>
+
+  der Auftrag #%task.id% wurde abgeschlossen.
+
+  '
+task.failed.subject: 'Auftrag #%task.id% konnte nicht abgeschlossen werden'
+task.failed.body: 'Hallo,
+
+  <br>
+
+  Auftrag #%task.id% konnte leider nicht abgeschlossen werden.
+
+  '
