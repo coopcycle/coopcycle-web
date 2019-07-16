@@ -62,14 +62,16 @@ class PledgeTest extends TestCase
         $this->assertTrue($restaurant->isEnabled());
     }
 
+
+    /**
+     * @expectedException Exception
+     */
     public function testAcceptThrowsException() {
         $pledge = new Pledge();
         $address = new Address();
-        $pledge->setState('new');
+        $pledge->setState('notNew');
         $pledge->setName('test');
         $pledge->setAddress($address);
-
-        $this->expectException(Pledge::class);
         $pledge->accept();
     }
 }
