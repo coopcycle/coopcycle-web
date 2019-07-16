@@ -549,6 +549,7 @@ form.checkout_address.notes.placeholder: |
   Exemple : sans sauce, sans tomates…
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
+form.checkout_address.telephone.label: Téléphone
 
 form.task_export.start.label: Début
 form.task_export.end.label: Fin

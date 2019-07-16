@@ -6,9 +6,10 @@ Feature: Checkout
       | sylius_channels.yml        |
       | restaurants_standalone.yml |
     And the user is loaded:
-      | email    | bob@demo.coopcycle.org |
-      | username | bob                    |
-      | password | 123456                 |
+      | email     | bob@demo.coopcycle.org |
+      | username  | bob                    |
+      | password  | 123456                 |
+      | telephone | +33612345678           |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "administrator_email" has value "admin@demo.coopcycle.org"
     Given I am on "/fr"
@@ -45,9 +46,10 @@ Feature: Checkout
       | sylius_channels.yml        |
       | restaurants_standalone.yml |
     And the user is loaded:
-      | email    | bob@demo.coopcycle.org |
-      | username | bob                    |
-      | password | 123456                 |
+      | email     | bob@demo.coopcycle.org |
+      | username  | bob                    |
+      | password  | 123456                 |
+      | telephone | +33612345678           |
     And the user "bob" has delivery address:
       | streetAddress | 1, Rue de Rivoli, Paris, France |
       | postalCode    | 75004                           |

@@ -39,15 +39,12 @@
         <div class="col-xs-12 col-md-6">
           <div class="order-map__column">
 
-            {% if form.shippedAt is defined %}
-            <h4>{% trans %}order.shipping_date.title{% endtrans %}</h4>
-            <div class="order-map__column-block">
-              {{ form_row(form.shippedAt) }}
-            </div>
-            {% endif %}
-
             <h4>{% trans %}cart.widget.title{% endtrans %}</h4>
             <div class="order-map__column-block">
+
+              {% if form.telephone is defined %}
+                {{ form_row(form.telephone) }}
+              {% endif %}
 
               {{ form_row(form.shippingAddress.floor) }}
               {{ form_row(form.shippingAddress.streetAddress) }}

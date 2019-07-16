@@ -533,6 +533,7 @@ form.checkout_address.notes.placeholder: |
   Example: without sauce, without tomatoes…
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
+form.checkout_address.telephone.label: Phone number
 
 form.task_export.start.label: Start
 form.task_export.end.label: End

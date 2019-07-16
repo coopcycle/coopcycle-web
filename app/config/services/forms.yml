@@ -101,6 +101,11 @@ services:
       - '@translator'
     tags: [ form.type ]
 
+  AppBundle\Form\Checkout\CheckoutAddressType:
+    arguments:
+      $country: '%country_iso%'
+    tags: [ form.type ]
+
   AppBundle\Form\Checkout\CheckoutPaymentType:
     arguments:
       - '@coopcycle.shipping_date_filter'
