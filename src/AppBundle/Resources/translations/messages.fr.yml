@@ -723,6 +723,9 @@ deliveryForm.noPriceFromPricingWarning: 'Le tarif ne peut pas être calculé à 
   du prix. Entrez le manuellement ou éditez le prix. '
 task.form.finish.FAIL.info: La tâche n'a pas pu être effectuée
 
+profile.password: Mot de passe
+profile.password.change: Changez votre mot de passe
+
 authentication.forgot_password: Mot de passe oublié ?
 authentication.not_registered_yet: Pas encore inscrit ?
 authentication.create_account: Créez votre compte
