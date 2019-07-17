@@ -98,8 +98,8 @@ class PricePreview {
           $('#delivery_price_error').text(priceResult.message)
         }
 
+        $container.removeClass('delivery-price--loading')
       })
-      .finally(() => $container.removeClass('delivery-price--loading'))
   }
 }
 

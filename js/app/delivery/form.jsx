@@ -140,8 +140,9 @@ window.initMap = function() {
             if (delivery.store && pricePreview) {
               pricePreview.update(delivery)
             }
+
+            form.enable()
           })
-          .finally(() => form.enable())
       }
     }
   })
