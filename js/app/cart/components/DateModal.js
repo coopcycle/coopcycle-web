@@ -60,7 +60,7 @@ class DateModal extends Component {
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
         className="ReactModal__Content--date">
         <form name="cart_time">
-          <h4 className="text-center">Choisissez un horaire</h4>
+          <h4 className="text-center">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
           <div className="text-center">
             <DatePicker
               dateInputName={ this.props.datePickerDateInputName }
