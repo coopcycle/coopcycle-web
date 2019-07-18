@@ -1,6 +1,6 @@
 <p><strong>{% trans %}profile.username{%  endtrans %}</strong>: {{ user.username }}</p>
 <p><strong>{% trans %}profile.email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
-<p><strong>{% trans %}profile.password{%  endtrans %}</strong>: <a href="change-password" class="btn btn-success">{% trans %}profile.password.change{% endtrans %}</a></p>
+<p><strong>{% trans %}profile.password{%  endtrans %}</strong>: <a href={{ path('fos_user_change_password') }} class="btn btn-success">{% trans %}profile.password.change{% endtrans %}</a></p>
 <p><strong>{% trans %}profile.familyName{%  endtrans %}</strong>: {{ user.familyName }}</p>
 <p><strong>{% trans %}profile.givenName{%  endtrans %}</strong>: {{ user.givenName }}</p>
 <p><strong>{% trans %}profile.telephone{%  endtrans %}</strong>: {% if user.telephone %}{{ user.telephone |phone_number_format('NATIONAL') }}{% endif %}</p>
