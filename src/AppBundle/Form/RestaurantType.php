@@ -35,6 +35,10 @@ class RestaurantType extends LocalBusinessType
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
+                ->add('exclusive', CheckboxType::class, [
+                    'label' => 'adminDashboard.restaurants.exclusive',
+                    'required' => false
+                ])
                 ->add('contract', ContractType::class)
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'
