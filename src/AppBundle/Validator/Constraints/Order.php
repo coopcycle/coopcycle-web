@@ -14,6 +14,7 @@ class Order extends Constraint
     const SHIPPED_AT_EXPIRED = 'Order::SHIPPED_AT_EXPIRED';
     const SHIPPED_AT_NOT_AVAILABLE = 'Order::SHIPPED_AT_NOT_AVAILABLE';
     const SHIPPED_AT_NOT_EMPTY = 'Order::SHIPPED_AT_NOT_EMPTY';
+    const CONTAINS_DISABLED_PRODUCT = 'Order::CONTAINS_DISABLED_PRODUCT';
 
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
     public $restaurantClosedMessage = 'delivery.date.restaurantClosed';
@@ -22,6 +23,7 @@ class Order extends Constraint
     public $shippedAtExpiredMessage = 'order.shippedAt.expired';
     public $shippedAtNotAvailableMessage = 'order.shippedAt.notAvailable';
     public $shippedAtNotEmptyMessage = 'order.shippedAt.notEmpty';
+    public $containsDisabledProductMessage = 'order.items.containsDisabledProduct';
 
     public function validatedBy()
     {

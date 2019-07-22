@@ -474,6 +474,68 @@ Feature: Orders
     }
     """
 
+  Scenario: Cannot create order with disabled product
+    Given the current time is "2017-09-02 11:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+      | SALAD     |
+    And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+      | givenName  | Bob               |
+      | familyName | Doe               |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | postalCode    | 75004               |
+      | geo           | 48.855799, 2.359207 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/orders" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress": "/api/addresses/4",
+        "shippedAt": "2017-09-02 12:30:00",
+        "items": [{
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
+        }, {
+          "product": "SALAD",
+          "quantity": 1
+        }]
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":@string@,
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"items",
+            "message":@string@
+          }
+        ]
+      }
+      """
+
   # Scenario: the delivery is scheduled too soon
   #   Given the database is empty
   #   And the current time is "2017-09-02 12:00:00"
@@ -522,7 +584,7 @@ Feature: Orders
   #   }
   #   """
 
-  Scenario: the delivery is in the past
+  Scenario: Shipping date is in the past
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |

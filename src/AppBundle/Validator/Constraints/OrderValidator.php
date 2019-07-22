@@ -136,6 +136,17 @@ class OrderValidator extends ConstraintValidator
                     return;
                 }
             }
+
+            if ($order->containsDisabledProduct()) {
+                $this->context->buildViolation($constraint->containsDisabledProductMessage)
+                    ->atPath('items')
+                    ->setCode(Order::CONTAINS_DISABLED_PRODUCT)
+                    ->addViolation();
+
+                return;
+            }
+
+
         } else {
             if (null === $order->getShippedAt()) {
                 $this->context->buildViolation($constraint->shippedAtNotEmptyMessage)

@@ -97,4 +97,9 @@ interface OrderInterface extends
      * @return Collection|OrderEvent[]
      */
     public function getEvents(): Collection;
+
+    /**
+     * @return boolean
+     */
+    public function containsDisabledProduct(): bool;
 }

@@ -61,6 +61,12 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Hamburger
     code: HAMBURGER_DEFAULT
     price: 900
+  salad_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Salad
+    code: SALAD_DEFAULT
+    price: 499
 
 AppBundle\Entity\Sylius\Product:
   pizza:
@@ -80,4 +86,8 @@ AppBundle\Entity\Sylius\Product:
     variants: [ "@hamburger_default" ]
   salad:
     code: SALAD
-    enabled: true
+    currentLocale: fr
+    name: Salad
+    slug: salad
+    enabled: false
+    variants: [ "@salad_default" ]

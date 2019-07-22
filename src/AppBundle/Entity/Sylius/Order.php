@@ -19,6 +19,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -478,5 +479,20 @@ class Order extends BaseOrder implements OrderInterface
     public function getPromotions(): Collection
     {
         return $this->promotions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function containsDisabledProduct(): bool
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item instanceof OrderItemInterface && !$item->getVariant()->getProduct()->isEnabled()) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
