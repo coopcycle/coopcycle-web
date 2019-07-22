@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
+import { setCurrentTask } from '../store/actions'
 import { selectTasks, selectFilteredTasks } from '../store/selectors'
 
 class LeafletMap extends Component {
@@ -27,7 +28,9 @@ class LeafletMap extends Component {
     this.map = MapHelper.init('map', {
       onLoad: this.props.onLoad
     })
-    this.proxy = new MapProxy(this.map)
+    this.proxy = new MapProxy(this.map, {
+      onEditClick: this.props.setCurrentTask
+    })
 
     this._draw()
   }
@@ -97,4 +100,10 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(LeafletMap)
+function mapDispatchToProps (dispatch) {
+  return {
+    setCurrentTask: task => dispatch(setCurrentTask(task))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LeafletMap)

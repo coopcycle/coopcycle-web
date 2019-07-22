@@ -12,16 +12,17 @@ import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 import Filters from './components/Filters'
 
-let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve
+let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve, initMapResolve
 
 const mapLoaded = new Promise((resolve, reject) => mapLoadedResolve = resolve)
+const mapInitialized = new Promise((resolve, reject) => initMapResolve = resolve)
 const navbarLoaded = new Promise((resolve, reject) => navbarLoadedResolve = resolve)
 const dashboardLoaded = new Promise((resolve, reject) => dashboardLoadedResolve = resolve)
 
 function start() {
 
   Promise
-    .all([ mapLoaded, navbarLoaded, dashboardLoaded ])
+    .all([ mapLoaded, mapInitialized, navbarLoaded, dashboardLoaded ])
     .then((values) => {
       anim.stop()
       anim.destroy()
@@ -72,6 +73,10 @@ const anim = lottie.loadAnimation({
   autoplay: true,
   path: '/img/loading.json'
 })
+
+window.initMap = function() {
+  initMapResolve()
+}
 
 anim.addEventListener('DOMLoaded', function() {
   setTimeout(() => start(), 800)

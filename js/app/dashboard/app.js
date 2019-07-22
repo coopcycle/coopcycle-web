@@ -3,11 +3,13 @@ import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import dragula from 'dragula'
 import _ from 'lodash'
+import Modal from 'react-modal'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd } from './store/actions'
+import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal } from './store/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
+import TaskModalContent from './components/TaskModalContent'
 
 const drake = dragula({
   copy: true,
@@ -125,13 +127,6 @@ class DashboardApp extends React.Component {
     configureDrag(this.props.drakeDrag)
     configureDragEnd(unassignedTasksContainer, this.props.drakeDragEnd)
     configureDrop(this.props.allTasks, this.props.assignTasks)
-
-    // This event is trigerred when the task modal is submitted successfully
-    $(document).on('task.form.success', '#task-edit-modal', (e) => {
-      const { task } = e
-      this.props.updateTask(task)
-    })
-
   }
 
   componentDidUpdate(prevProps) {
@@ -145,13 +140,23 @@ class DashboardApp extends React.Component {
       <div className="dashboard__aside-container">
         <UnassignedTasks ref="unassignedTasks" />
         <TaskLists
-          couriersList={ window.AppData.Dashboard.couriersList }
+          couriersList={ this.props.couriersList }
           ref="taskLists"
           taskListDidMount={ taskListComponent =>
             drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
           }
         />
         <ContextMenu />
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.taskModalIsOpen }
+          onRequestClose={ () => {
+            this.props.setCurrentTask(null)
+          }}
+          className="ReactModal__Content--task-form"
+          shouldCloseOnOverlayClick={ true }>
+          <TaskModalContent />
+        </Modal>
       </div>
     )
   }
@@ -159,7 +164,9 @@ class DashboardApp extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    allTasks: state.allTasks
+    allTasks: state.allTasks,
+    taskModalIsOpen: state.taskModalIsOpen,
+    couriersList: state.couriersList
   }
 }
 
@@ -169,6 +176,8 @@ function mapDispatchToProps (dispatch) {
     updateTask: (task) => { dispatch(updateTask(task)) },
     drakeDrag: () => dispatch(drakeDrag()),
     drakeDragEnd: () => dispatch(drakeDragEnd()),
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
+    closeNewTaskModal: _ => dispatch(closeNewTaskModal())
   }
 }
 

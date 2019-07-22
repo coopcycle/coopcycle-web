@@ -82,6 +82,7 @@ services:
   libphonenumber\PhoneNumberUtil:
     alias: 'libphonenumber.phone_number_util'
     public: true
+  Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:

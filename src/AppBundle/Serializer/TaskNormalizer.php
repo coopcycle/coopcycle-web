@@ -7,20 +7,30 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use FOS\UserBundle\Model\UserManagerInterface;
+use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $iriConverter;
 
-    public function __construct(ItemNormalizer $normalizer, IriConverterInterface $iriConverter, TagManager $tagManager, UserManagerInterface $userManager)
+    public function __construct(
+        ItemNormalizer $normalizer,
+        IriConverterInterface $iriConverter,
+        TagManager $tagManager,
+        UserManagerInterface $userManager,
+        UploaderHelper $uploaderHelper,
+        FilterService $imagineFilter)
     {
         $this->normalizer = $normalizer;
         $this->iriConverter = $iriConverter;
         $this->tagManager = $tagManager;
         $this->userManager = $userManager;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->imagineFilter = $imagineFilter;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -78,6 +88,17 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (null === $object->getComments()) {
             $data['comments'] = '';
+        }
+
+        if (count($object->getImages()) > 0) {
+            $data['images'] = [];
+            foreach ($object->getImages() as $taskImage) {
+                $imagePath = $this->uploaderHelper->asset($taskImage, 'file');
+                $data['images'][] = [
+                    'id' => $taskImage->getId(),
+                    'thumbnail' => $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail')
+                ];
+            }
         }
 
         return $data;

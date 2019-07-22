@@ -2,10 +2,13 @@ import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { translate } from 'react-i18next'
+import moment from 'moment'
+import Modal from 'react-modal'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import { setTaskListGroupMode, toggleTask, selectTask } from '../store/actions'
+import TaskModalContent from './TaskModalContent'
+import { setTaskListGroupMode, toggleTask, selectTask, openNewTaskModal, closeNewTaskModal } from '../store/actions'
 
 class UnassignedTasks extends React.Component {
 
@@ -79,6 +82,10 @@ class UnassignedTasks extends React.Component {
       standaloneTasks = unassignedTasks
     }
 
+    standaloneTasks.sort((a, b) => {
+      return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
+    })
+
     return (
       <div className="dashboard__panel">
         <h4>
@@ -86,7 +93,7 @@ class UnassignedTasks extends React.Component {
           <span className="pull-right">
             <a href="#" onClick={ e => {
               e.preventDefault()
-              $('#task-modal').modal('show')
+              this.props.openNewTaskModal()
             }}>
               <i className="fa fa-plus"></i>
             </a>
@@ -125,14 +132,17 @@ function mapStateToProps (state) {
     showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
     selectedTasks: state.selectedTasks,
     showCancelledTasks: state.taskCancelledFilter,
+    taskModalIsOpen: state.taskModalIsOpen
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setTaskListGroupMode: (mode) => { dispatch(setTaskListGroupMode(mode)) },
-    toggleTask: (task, multiple) => { dispatch(toggleTask(task, multiple)) },
-    selectTask: (task) => { dispatch(selectTask(task)) }
+    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
+    toggleTask: (task, multiple) => dispatch(toggleTask(task, multiple)),
+    selectTask: (task) => dispatch(selectTask(task)),
+    openNewTaskModal: _ => dispatch(openNewTaskModal()),
+    closeNewTaskModal: _ => dispatch(closeNewTaskModal())
   }
 }
 

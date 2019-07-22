@@ -371,9 +371,9 @@ fos_js_routing:
         - admin_restaurant_dashboard
         - admin_restaurant_stats
         - admin_tags
+        - admin_task_image_download
         - admin_task_list_create
         - admin_task_list_modify
-        - ^admin_task$
         - profile_jwt
         - profile_notifications
         - profile_notifications_unread

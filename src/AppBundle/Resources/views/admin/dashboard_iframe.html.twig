@@ -90,11 +90,6 @@
   </div>
 </div>
 
-<div class="modal fade" id="task-modal" tabindex="-1" role="dialog">
-  {% include "@App/_partials/task/form.html.twig" with { form: new_task_form } %}
-</div>
-<div class="modal fade" id="task-edit-modal" tabindex="-1" role="dialog"></div>
-
 <script id="task-list-group-mode-template" type="text/template">
   <ul class="list-unstyled nomargin">
     <li><a href="#" id="task-list-group-mode--group">{% trans %}adminDashboard.dashboard.displayByGroups{% endtrans %}</a></li>
@@ -109,22 +104,15 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-
 {% set task_upload_form_errors = [] %}
 {% if task_upload_form.vars.submitted and not task_upload_form.vars.valid %}
   {% for error in task_upload_form.file.vars.errors %}
     {% set task_upload_form_errors = task_upload_form_errors|merge([ { message: error.message } ]) %}
   {% endfor %}
 {% endif %}
-
-window.AppData = window.AppData || {}
+<script>
+window.AppData = window.AppData || {};
 window.AppData.Dashboard = {
-  i18n: {
-    'Waiting': "{{ date|localizeddate('medium', 'none') }}",
-    'Cancel': "{% trans %}adminDashboard.dashboard.cancel{% endtrans %}",
-    'Display': "{% trans %}adminDashboard.dashboard.display{% endtrans %}"
-  },
   date: "{{ date|date('Y-m-d') }}",
   tasks: {{ tasks|json_encode()|raw }},
   taskLists: {{ task_lists|json_encode()|raw }},
@@ -133,7 +121,7 @@ window.AppData.Dashboard = {
   tags: {{ tags|json_encode()|raw }},
   jwt: "{{ jwt }}",
   nav: "{{ nav ? 'on' : 'off' }}"
-}
+};
 </script>
 {{ encore_entry_script_tags('js/dashboard') }}
 <script>
@@ -160,15 +148,6 @@ window.AppData.Dashboard = {
     $('#task_group_id').val($btn.data('group'));
   })
 </script>
-<script>
-  function initMap() {
-    new CoopCycle.TaskModal("{{ new_task_form.vars.name }}", "{{ path('admin_tags', { format: 'json' }) }}");
-  }
-  {% if not new_task_form.vars.valid %}
-    $('#task-modal').modal('show');
-  {% endif %}
-</script>
-{{ encore_entry_script_tags('js/task-modal') }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
   async defer></script>
 {% endblock %}

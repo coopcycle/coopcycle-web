@@ -67,7 +67,7 @@ const createIcon = username => {
 
 export default class MapProxy {
 
-  constructor(map) {
+  constructor(map, options) {
     this.map = map
     this.polylineLayerGroups = new Map()
 
@@ -77,6 +77,8 @@ export default class MapProxy {
     this.courierMarkers = new Map()
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
+
+    this.onEditClick = options.onEditClick
   }
 
   addTask(task, markerColor) {
@@ -105,13 +107,7 @@ export default class MapProxy {
       render(<LeafletPopupContent
         task={ task }
         ref={ popupComponent }
-        onEditClick={ () => {
-          $('#task-edit-modal')
-            .load(
-              window.Routing.generate('admin_task', { id: task.id }),
-              () => $('#task-edit-modal').modal({ show: true })
-            )
-        }} />, el, cb)
+        onEditClick={ _ => this.onEditClick(task) } />, el, cb)
 
       const popup = L.popup()
         .setContent(el)

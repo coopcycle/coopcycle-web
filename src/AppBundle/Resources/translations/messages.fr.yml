@@ -287,17 +287,7 @@ order.list.summary.delivery.text: Livraison %distance%, %vehicle%
 order.list.invoice: Facture
 vehicle.bike: Vélo
 vehicle.cargo_bike: Vélo cargo
-task.form.create: Créer une tâche
-task.form.timeWindow: Créneau horaire
-task.form.cancel: Annuler
-task.form.edit: Modifier la tâche %id%
-task.form.showHistory: Voir l'historique
-task.form.modal.moreOptions: Plus d'options
 task.form.dateRange: Créneau pour la réalisation
-task.form.finish: Terminer la tâche
-task.form.details: Détails de la tâche
-task.form.finish.DONE.info: La tâche a été réalisée avec succès
-task.form.finish.FAILED.info: La tâche n'a pas pu être réalisée
 task.status.done: Succès
 task.status.failed: Échec
 task.status.todo: À faire

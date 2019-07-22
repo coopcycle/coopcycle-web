@@ -296,17 +296,7 @@ order.list.invoice: Invoice
 vehicle.bike: Bike
 vehicle.cargo_bike: Cargo bike
 
-task.form.create: Create task
-task.form.timeWindow: Time window
-task.form.cancel: Cancel
-task.form.showHistory: Show history
-task.form.modal.moreOptions: More options
-task.form.edit: Modify task %id%
 task.form.dateRange: Date range
-task.form.finish: Finish task
-task.form.details: Task details
-task.form.finish.DONE.info: The task was successfully completed
-task.form.finish.FAIL.info: The task could not be completed
 
 task.status.done: Success
 task.status.failed: Failure
