@@ -666,6 +666,9 @@ basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
 
+profile.password: Password
+profile.password.change: Change your password
+
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
 authentication.create_account: Create your account
