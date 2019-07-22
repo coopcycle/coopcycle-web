@@ -63,7 +63,7 @@
         "m6web/statsd-bundle": "^3.0",
         "knplabs/knp-markdown-bundle": "^1.6",
         "craue/config-bundle": "~2.0",
-        "knplabs/knp-paginator-bundle": "^3.0",
+        "knplabs/knp-paginator-bundle": "^4.0",
         "league/csv": "^9.1",
         "twig/twig": "^2.0",
         "sylius/order-bundle": "1.5.*",
