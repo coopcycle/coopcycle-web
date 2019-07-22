@@ -122,7 +122,7 @@ Feature: Manage restaurants
     And the restaurant with id "1" has menu:
       | section | product   |
       | Pizzas  | PIZZA     |
-      | Burger  | HAMBURGER |
+      | Burgers | HAMBURGER |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/menu"
     Then the response status code should be 200
@@ -141,6 +141,7 @@ Feature: Manage restaurants
               "name":"Pizza",
               "description":null,
               "identifier":"PIZZA",
+              "enabled":@boolean@,
               "offers": {
                 "@type":"Offer",
                 "price":@integer@
@@ -178,13 +179,14 @@ Feature: Manage restaurants
           ]
         },
         {
-          "name":"Burger",
+          "name":"Burgers",
           "hasMenuItem":[
             {
               "@type":"MenuItem",
               "name":"Hamburger",
               "description":null,
               "identifier":"HAMBURGER",
+              "enabled":@boolean@,
               "offers": {
                 "@type":"Offer",
                 "price":@integer@

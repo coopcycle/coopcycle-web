@@ -121,6 +121,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                         'name' => $product->getName(),
                         'description' => $product->getDescription(),
                         'identifier' => $product->getCode(),
+                        'enabled' => $product->isEnabled(),
                         'offers' => [
                             '@type' => 'Offer',
                             'price' => $defaultVariant->getPrice(),
