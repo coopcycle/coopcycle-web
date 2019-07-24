@@ -1491,17 +1491,11 @@ form[name="restaurant"] {
 }
 
 .exclusive {
-
-  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffec64), color-stop(1, #ffab23));
-  background:-moz-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-  background:-webkit-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-  background:-o-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-  background:-ms-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+  background:linear-gradient(top, #ffec64 5%, #ffab23 100%);
+  background:gradient(top, #ffec64 5%, #ffab23 100%);
+  background:linear-gradient(top, #ffec64 5%, #ffab23 100%);
   background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec64', endColorstr='#ffab23',GradientType=0);
   background-color:#ffec64;
-  -moz-border-radius:6px;
-  -webkit-border-radius:6px;
   border-radius:6px;
   border:1px;
   display:inline-block;
