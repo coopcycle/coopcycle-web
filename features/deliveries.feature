@@ -390,7 +390,7 @@ Feature: Deliveries
               "longitude":2.354766
             },
             "streetAddress":@string@,
-            "telephone": "+33612345678"
+            "telephone": "+33612345678",
             "name":null
           },
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')"

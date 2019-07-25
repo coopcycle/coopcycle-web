@@ -65,7 +65,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Delivery;
     }
 
-    private function denormalizeTask($data, Task $task)
+    private function denormalizeTask($data, Task $task, $format = null)
     {
         if (isset($data['before'])) {
             $task->setDoneBefore(new \DateTime($data['before']));
@@ -75,25 +75,22 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['address'])) {
 
+            $address = null;
             if (is_string($data['address'])) {
                 $address = $this->geocoder->geocode($data['address']);
             } elseif (is_array($data['address'])) {
-                $address = $this->denormalizeAddress($data['address']);
+                $address = $this->denormalizeAddress($data['address'], $format);
             }
 
             $task->setAddress($address);
         }
     }
 
-    private function denormalizeAddress($data)
+    private function denormalizeAddress($data, $format = null)
     {
-        $address = new Address();
+        $address = $this->normalizer->denormalize($data, Address::class, $format);
 
-        if (isset($data['streetAddress'])) {
-            $address->setStreetAddress($data['streetAddress']);
-        }
-
-        if (isset($data['latLng'])) {
+        if (null === $address->getGeo() && isset($data['latLng'])) {
             [ $latitude, $longitude ] = $data['latLng'];
             $address->setGeo(new GeoCoordinates($latitude, $longitude));
         }
@@ -109,11 +106,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $dropoff = $delivery->getDropoff();
 
         if (isset($data['dropoff'])) {
-            $this->denormalizeTask($data['dropoff'], $dropoff);
+            $this->denormalizeTask($data['dropoff'], $dropoff, $format);
         }
 
         if (isset($data['pickup'])) {
-            $this->denormalizeTask($data['pickup'], $pickup);
+            $this->denormalizeTask($data['pickup'], $pickup, $format);
         }
 
         return $delivery;
