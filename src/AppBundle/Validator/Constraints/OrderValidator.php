@@ -11,6 +11,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Validation;
 
 class OrderValidator extends ConstraintValidator
 {
@@ -30,14 +31,11 @@ class OrderValidator extends ConstraintValidator
 
     private function isAddressValid(Address $address)
     {
-        $errors = $this->context->getValidator()->validate($address, [
+        $validator = Validation::createValidator();
+
+        $errors = $validator->validate($address, [
             new Assert\Valid(),
         ]);
-
-        // FIXME This happens in tests!
-        if (null === $errors) {
-            return true;
-        }
 
         return count($errors) === 0;
     }
