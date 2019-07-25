@@ -33,7 +33,8 @@
       </mj-column>
     </mj-section>
     {% include '@App/emails/order/_partials/items.mjml.twig' %}
-    <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('admin_order', { id: order.id }) }}">
+    <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
+      href="{{ url('profile_restaurant_dashboard', { restaurantId: order.restaurant.id, order: order.id }) }}">
     {{ 'order.view' | trans({}, 'emails') }}
     </mj-button>
   {% else %}
