@@ -7,6 +7,9 @@ import frFR from 'antd/lib/locale-provider/fr_FR'
 import enGB from 'antd/lib/locale-provider/en_GB'
 import DatePicker from 'antd/lib/date-picker'
 import _ from 'lodash'
+import axios from 'axios'
+
+const baseURL = location.protocol + '//' + location.hostname
 
 const { RangePicker } = DatePicker,
   // HACK : disable default input style so it fits with Bootstrap's design
@@ -22,11 +25,13 @@ let antdLocale,
   $closingRuleForm = $('#closing-rules-form'),
   closingRules = window.AppData.closingRules || []
 
+let token
+
 closingRules = _.map(closingRules, function (item) {
   return {
+    ...item,
     startDate: moment(item.startDate),
     endDate: moment(item.endDate),
-    reason: item.reason,
   }
 })
 
@@ -57,26 +62,6 @@ function onChange(dates) {
   }
 }
 
-function dateCellRender (date) {
-
-  return (
-    <li>{
-      closingRules.map(function (item, index) {
-        if (item.startDate.isBefore(date, 'day') && item.endDate.isAfter(date, 'day')) {
-          return (<ol key={index} className="calendar-close">Fermé ce jour{item.reason && <span><br/>{item.reason}</span>}</ol>)
-        } else if (item.startDate.isSame(date, 'day') && item.endDate.isSame(date, 'day')) {
-          return (<ol key={index} className="calendar-close">Fermé de {item.startDate.format('HH:mm')} à {item.endDate.format('HH:mm')}{item.reason && <span><br/>{item.reason}</span>}</ol>)
-        } else if (item.startDate.isSame(date, 'day') && item.endDate.isAfter(date, 'day')) {
-          return (<ol key={index} className="calendar-close">Fermé à partir de {item.startDate.format('HH:mm')}{item.reason && <span><br/>{item.reason}</span>}</ol>)
-        } else if (item.startDate.isBefore(date, 'day') && item.endDate.isSame(date, 'day')) {
-          return (<ol key={index} className="calendar-close">Fermé jusqu'à {item.endDate.format('HH:mm')}{item.reason && <span><br/>{item.reason}</span>}</ol>)
-        }
-      })
-    }
-    </li>
-  )
-}
-
 class ClosingRuleRangePicker extends React.Component {
 
   render () {
@@ -94,20 +79,96 @@ class ClosingRuleRangePicker extends React.Component {
   }
 }
 
-const CalendarWithLocale = () => (
-  <LocaleProvider locale={antdLocale}>
-    <Calendar
-      dateCellRender={dateCellRender}
-    />
-  </LocaleProvider>
-)
+class ClosingRulesCalendar extends React.Component {
 
-render(
-  <CalendarWithLocale />,
-  document.getElementById('calendar-planning')
-)
+  constructor (props) {
+    super(props)
+    this.state = {
+      rules: props.rules
+    }
+  }
 
-render(
-  <ClosingRuleRangePicker />,
-  document.getElementById('closing-rules-range-picker')
-)
+  onDeleteClick(closingRule) {
+    if (window.confirm('are you sure ?')) {
+      axios({
+        method: 'DELETE',
+        url: `${baseURL}/api/opening_hours_specifications/${closingRule.id}`,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          this.setState({
+            rules: _.filter(this.state.rules, function(oneClosingRule) {
+              return oneClosingRule.id !== closingRule.id;
+            })
+          })
+        })
+    }
+  }
+
+  dateCellRender (date) {
+
+    return (
+      <li>{
+        this.state.rules.map((item, index) => {
+          if (item.startDate.isBefore(date, 'day') && item.endDate.isAfter(date, 'day')) {
+            return (
+              <ol key={index} className="calendar-close">
+                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <span>Fermé ce jour</span>
+                { item.reason && <span><br/>{item.reason}</span> }
+              </ol>
+            )
+          } else if (item.startDate.isSame(date, 'day') && item.endDate.isSame(date, 'day')) {
+            return (
+              <ol key={index} className="calendar-close">
+                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <span>Fermé de {item.startDate.format('HH:mm')} à {item.endDate.format('HH:mm')}</span>
+                {item.reason && <span><br/>{item.reason}</span>}
+              </ol>
+            )
+          } else if (item.startDate.isSame(date, 'day') && item.endDate.isAfter(date, 'day')) {
+            return (
+              <ol key={index} className="calendar-close">
+                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <span>Fermé à partir de {item.startDate.format('HH:mm')}</span>
+                {item.reason && <span><br/>{item.reason}</span>}
+              </ol>
+            )
+          } else if (item.startDate.isBefore(date, 'day') && item.endDate.isSame(date, 'day')) {
+            return (
+              <ol key={index} className="calendar-close">
+                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <span>Fermé jusqu'à {item.endDate.format('HH:mm')}</span>
+                {item.reason && <span><br/>{item.reason}</span>}
+                </ol>
+            )
+          }
+        })
+      }
+      </li>
+    )
+  }
+
+  render () {
+    return (
+        <LocaleProvider locale={antdLocale}>
+          <Calendar dateCellRender={this.dateCellRender.bind(this)} />
+        </LocaleProvider>
+      )
+  }
+}
+
+$.getJSON(window.Routing.generate('profile_jwt'))
+  .then(tok => {
+    token = tok
+    render(
+      <ClosingRulesCalendar rules={closingRules} />,
+      document.getElementById('calendar-planning')
+    )
+    render(
+      <ClosingRuleRangePicker />,
+      document.getElementById('closing-rules-range-picker')
+    )
+  })
