@@ -21,8 +21,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ClosingRule
 {
+
     /**
      * @var int
+     * @Groups({"restaurant", "planning"})
      */
     private $id;
 
