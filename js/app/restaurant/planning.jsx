@@ -100,7 +100,7 @@ class ClosingRulesCalendar extends React.Component {
         .then(response => {
           this.setState({
             rules: _.filter(this.state.rules, function(oneClosingRule) {
-              return oneClosingRule.id !== closingRule.id;
+              return oneClosingRule.id !== closingRule.id
             })
           })
         })
@@ -142,7 +142,7 @@ class ClosingRulesCalendar extends React.Component {
                 <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
                 <span>Fermé jusqu'à {item.endDate.format('HH:mm')}</span>
                 {item.reason && <span><br/>{item.reason}</span>}
-                </ol>
+              </ol>
             )
           }
         })
@@ -153,10 +153,10 @@ class ClosingRulesCalendar extends React.Component {
 
   render () {
     return (
-        <LocaleProvider locale={antdLocale}>
-          <Calendar dateCellRender={this.dateCellRender.bind(this)} />
-        </LocaleProvider>
-      )
+      <LocaleProvider locale={antdLocale}>
+        <Calendar dateCellRender={this.dateCellRender.bind(this)} />
+      </LocaleProvider>
+    )
   }
 }
 
