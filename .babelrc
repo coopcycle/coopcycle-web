@@ -2,7 +2,8 @@
   "presets": [
     ["@babel/preset-env", {
       "targets": "> 5%, ie >= 11",
-      "useBuiltIns": "usage"
+      "useBuiltIns": "usage",
+      "corejs": 3
     }],
     "@babel/preset-react"
   ],
