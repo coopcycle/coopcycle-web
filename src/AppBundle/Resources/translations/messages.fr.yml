@@ -439,6 +439,7 @@ form.settings.phone_number.label: Numéro de téléphone
 form.settings.phone_number.help: Ce numéro sera affiché aux clients
 
 form.suggest.name.label: Nom du restaurant
+form.suggest.name.help: Veuillez indiquer le nom exact
 
 form.suggest.message: |
   Vous ne trouvez pas votre restaurant préféré ?
@@ -447,15 +448,17 @@ form.suggest.message: |
   <br>
   Cela nous permettra de mieux identifier les restaurants à démarcher et leur apporter la preuve d'une réelle demande.
 
+form.suggest.thank_you_message: Merci de nous avoir suggéré ce restaurant !
+
 restaurant.suggest.message: |
-  Ce restaurant n'est pas disponible pour le moment,
+  Aidez-nous à convaincre %restaurant.name% de travailler avec %brand_name% !
   <br>
   Pour le voir sur la plateforme nous avons besoin de vous et de votre voix afin d'appuyer notre future demande de collaboration avec cette enseigne.
-restaurant.suggest.vote: Voter
+restaurant.suggest.vote: Je vote pour %name%
 restaurant.suggest.has_voted: Vous avez déjà voté pour ce restaurant !
-pledge.vote_count_equals_two: '%first_user% et %second_user% ont voté pour ce restaurant.'
-pledge.vote_count_equals_one: '%username% a voté pour ce restaurant.'
-
+restaurant.suggest.banner_disclaimer: Ce restaurant n'est pas disponible pour le moment. Votez pour %restaurant.name% !
+pledge.vote_count_equals_two: '%first_user% et %second_user% ont voté pour ce restaurant'
+pledge.vote_count_equals_one: '%username% a voté pour ce restaurant'
 pledge.vote_count_human: '%number_of_votes% votes : %usernames% et %rest% autre(s)'
 pledge.suggested_by: 'Suggéré par @%username%'
 pledge.accept: Accepter

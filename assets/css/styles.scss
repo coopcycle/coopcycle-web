@@ -252,6 +252,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     grid-template-columns: repeat(1, 1fr);
   }
 
+
   &-item {
     border: 1px solid $list-group-border;
     & > * {
@@ -1483,4 +1484,8 @@ form[name="restaurant"] {
       right: $padding-base-horizontal;
     }
   }
+}
+
+.restaurant-pledge__image {
+  max-width: 66.6666%;
 }

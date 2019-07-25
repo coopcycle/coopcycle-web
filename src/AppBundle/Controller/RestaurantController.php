@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
@@ -658,7 +659,7 @@ class RestaurantController extends AbstractController
      * @Route("/restaurants/suggest", name="restaurants_suggest")
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function suggestRestaurantAction(Request $request, ObjectManager $manager, EmailManager $emailManager)
+    public function suggestRestaurantAction(Request $request, ObjectManager $manager, EmailManager $emailManager, TranslatorInterface $translator)
     {
         $pledge = new Pledge();
 
@@ -666,25 +667,25 @@ class RestaurantController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+
             $pledge->setState('new');
             $pledge->setUser($this->getUser());
             $manager->persist($pledge);
             $manager->flush();
+
             $emailManager->createAdminPledgeConfirmationMessage($pledge);
-            return $this->redirectToRoute('restaurants_suggest_submitted');
-    }
+
+            $this->addFlash(
+                'pledge',
+                $translator->trans('form.suggest.thank_you_message')
+            );
+
+            return $this->redirectToRoute('restaurants_suggest');
+        }
         return $this->render('@App/restaurant/restaurant_pledge.html.twig', [
         'form_pledge' => $form->createView()
        ]);
-    }
-
-    /**
-     * @Route("/restaurants/suggest-submitted", name="restaurants_suggest_submitted")
-     */
-    public function suggestSubmitted()
-    {
-        return $this->render('@App/restaurant/suggest_submitted.html.twig');
     }
 
     /**

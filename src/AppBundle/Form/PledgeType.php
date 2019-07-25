@@ -16,7 +16,8 @@ class PledgeType extends AbstractType {
 
         $builder
             ->add('name', TextType::class, [
-                'label' => 'form.suggest.name.label'
+                'label' => 'form.suggest.name.label',
+                'help' => 'form.suggest.name.help'
             ])
             ->add('address', AddressType::class, [
                 'label' => false
