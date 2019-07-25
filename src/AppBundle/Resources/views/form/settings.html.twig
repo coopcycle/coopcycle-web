@@ -1,20 +1,5 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
-{% block _settings_brand_name_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-{% endblock %}
-
-{% block _settings_administrator_email_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-{% endblock %}
-
-{% block _settings_phone_number_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
-{% endblock %}
-
 {% block password_widget %}
 {% if form.vars.name matches '/^stripe_/' %}
   {% set disabled = is_demo %}
@@ -31,9 +16,4 @@
 {% else %}
   {{ parent() }}
 {% endif %}
-{% endblock %}
-
-{% block _settings_google_api_key_widget %}
-{% set disabled = is_demo %}
-{{ block('form_widget') }}
 {% endblock %}

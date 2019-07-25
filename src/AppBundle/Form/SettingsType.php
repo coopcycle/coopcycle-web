@@ -32,15 +32,18 @@ class SettingsType extends AbstractType
     private $settingsManager;
     private $phoneNumberUtil;
     private $country;
+    private $isDemo;
 
     public function __construct(
         SettingsManager $settingsManager,
         PhoneNumberUtil $phoneNumberUtil,
-        $country)
+        string $country,
+        bool $isDemo)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
+        $this->isDemo = $isDemo;
     }
 
     private function createPlaceholder($value)
@@ -52,18 +55,21 @@ class SettingsType extends AbstractType
     {
         $builder
             ->add('brand_name', TextType::class, [
-                'label' => 'form.settings.brand_name.label'
+                'label' => 'form.settings.brand_name.label',
+                'disabled' => $this->isDemo
             ])
             ->add('administrator_email', EmailType::class, [
                 'label' => 'form.settings.administrator_email.label',
-                'help' => 'form.settings.administrator_email.help'
+                'help' => 'form.settings.administrator_email.help',
+                'disabled' => $this->isDemo
             ])
             ->add('phone_number', PhoneNumberType::class, [
                 'label' => 'form.settings.phone_number.label',
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->country),
                 'required' => false,
-                'help' => 'form.settings.phone_number.help'
+                'help' => 'form.settings.phone_number.help',
+                'disabled' => $this->isDemo
             ])
             ->add('enable_restaurant_pledges', CheckboxType::class, [
                 'label' => 'form.settings.enable_restaurant_pledges.label',
@@ -96,7 +102,8 @@ class SettingsType extends AbstractType
             ->add('google_api_key', TextType::class, [
                 'label' => 'form.settings.google_api_key.label',
                 'help' => 'form.settings.google_api_key.help',
-                'help_html' => true
+                'help_html' => true,
+                'disabled' => $this->isDemo
             ])
             ->add('latlng', TextType::class, [
                 'label' => 'form.settings.latlng.label',

@@ -68,7 +68,9 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\SettingsType:
-    arguments: [ '@coopcycle.settings_manager', '@libphonenumber.phone_number_util', '%country_iso%' ]
+    arguments:
+      $country: '%country_iso%'
+      $isDemo: '%is_demo%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
