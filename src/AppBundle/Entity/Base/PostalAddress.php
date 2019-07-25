@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Base;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use libphonenumber\PhoneNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -250,12 +251,12 @@ abstract class PostalAddress
         return $this->streetAddress;
     }
 
-    public function getTelephone()
+    public function getTelephone(): ?PhoneNumber
     {
         return $this->telephone;
     }
 
-    public function setTelephone($telephone)
+    public function setTelephone(?PhoneNumber $telephone = null)
     {
         $this->telephone = $telephone;
 

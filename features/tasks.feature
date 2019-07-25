@@ -328,6 +328,7 @@ Feature: Tasks
           "postalCode": "75002",
           "addressLocality": "Paris",
           "description": "Sonner à l'interphone",
+          "telephone": "+33612345678",
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
@@ -359,7 +360,7 @@ Feature: Tasks
             "longitude":2.331933
           },
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
-          "telephone":null,
+          "telephone":"+33612345678",
           "name":null
         },
         "doneAfter":"2018-12-24T23:30:00+01:00",
