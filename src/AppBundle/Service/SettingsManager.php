@@ -33,6 +33,7 @@ class SettingsManager
         'latlng',
         'default_tax_category',
         'currency_code',
+        'enable_restaurant_pledges'
     ];
 
     private $secretSettings = [

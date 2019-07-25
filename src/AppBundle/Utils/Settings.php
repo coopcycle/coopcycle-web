@@ -58,4 +58,9 @@ class Settings
     public $default_tax_category;
 
     public $currency_code;
+
+    /**
+     * @Assert\Choice({"yes", "no"})
+     */
+    public $enable_restaurant_pledges;
 }

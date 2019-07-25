@@ -12,6 +12,7 @@ use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
@@ -64,6 +65,10 @@ class SettingsType extends AbstractType
                 'required' => false,
                 'help' => 'form.settings.phone_number.help'
             ])
+            ->add('enable_restaurant_pledges', CheckboxType::class, [
+                'label' => 'form.settings.enable_restaurant_pledges.label',
+                'required' => false,
+            ])
             ->add('stripe_test_publishable_key', PasswordType::class, [
                 'required' => false,
                 'label' => 'form.settings.stripe_publishable_key.label'
@@ -106,6 +111,17 @@ class SettingsType extends AbstractType
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
             ]);
+
+        $builder->get('enable_restaurant_pledges')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($originalValue) {
+                    return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
+                },
+                function ($submittedValue) {
+                    return $submittedValue ? 'yes' : 'no';
+                }
+            ))
+        ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 

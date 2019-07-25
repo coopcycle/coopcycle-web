@@ -431,6 +431,7 @@ form.settings.administrator_email.label: Administrator email
 form.settings.administrator_email.help: Notifications will be sent to this email
 form.settings.phone_number.label: Phone number
 form.settings.phone_number.help: This number will be displayed to customers
+form.settings.enable_restaurant_pledges.label: Allow customers to suggest restaurants
 
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
