@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
 
+
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
     private $settingsManager;
@@ -20,7 +21,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
 
     public function validate($object, Constraint $constraint)
     {
-        $validator = $this->context->getValidator();
+        $validator = Validation::createValidator();
 
         $nameErrors = $validator->validate($object->getName(), new Assert\NotBlank());
         if (count($nameErrors) > 0) {
@@ -30,6 +31,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
         }
 
         if ($object->getState() !== 'pledge') {
+
             $telephoneErrors = $validator->validate($object->getTelephone(), new Assert\NotBlank());
             if (count($telephoneErrors) > 0) {
                 $this->context->buildViolation($constraint->telephoneMessage)
