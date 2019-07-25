@@ -442,9 +442,9 @@ form.suggest.name.label: Nom du restaurant
 form.suggest.message: |
   Vous ne trouvez pas votre restaurant préféré ?
   <br>
-  Donnez-nous son nom et son adresse. Ensuite les autres utilisateur·rice·s pourront voter afin de le voir apparaître dans la liste des restaurants.
+  Donnez-nous son nom et son adresse. Ensuite les autres utilisateur·ice·s pourront voter afin de le voir apparaître dans la liste des restaurants.
   <br>
-  Cela nous permettra de mieux identifier les restaurants à démarcher et leurs apporter la preuve d'une réelle demande.
+  Cela nous permettra de mieux identifier les restaurants à démarcher et leur apporter la preuve d'une réelle demande.
 
 restaurant.suggest.message: |
   Ce restaurant n'est pas disponible pour le moment,
