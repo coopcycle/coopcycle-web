@@ -1,0 +1,61 @@
+{% extends "@App/base.html.twig" %}
+
+{% block body %}
+    <div class="container" style="text-align:center">
+        <div class="row">
+            <div class="col-xs-4 col-xs-push-4">
+                <img src="{{ asset('img/suggest-restaurant.svg') }}">
+                <h3>{{ restaurant.name }}</h3>
+                <p>{{ restaurant.address.streetAddress }}</p>
+                <p>{{ 'pledge.suggested_by'|trans({'%username%': restaurant.pledge.user.username}) }}</p>
+            </div>
+        </div>
+        <div class="row">
+        	<div class="col-xs-6 col-xs-push-3">
+                <p>{% trans %}restaurant.suggest.message{% endtrans %}</p>
+            </div>
+        </div>
+        <div class="row">
+        	<div class="col-xs-4 col-xs-push-4">
+                {% if has_already_voted %}
+                    {% trans %}restaurant.suggest.has_voted{% endtrans %}
+                {% else %}
+                    <form method="post" action="{{ path('restaurant_vote', { id: restaurant.id }) }}">
+                        <button class="btn btn-success btn-lg btn-block" type="submit"><i class="fa fa-heart" aria-hidden="true"></i> {% trans %}restaurant.suggest.vote{% endtrans %} <i class="fa fa-heart" aria-hidden="true"></i></button>
+                    </form>
+                {% endif %}
+                {% set first_two_votes = restaurant.pledge.votes|slice(0, 2) %}
+                {% set first_two_usernames = first_two_votes|map(vote => '@' ~ vote.user.username) %}
+                {% if number_of_votes > 2 %}
+                <p>
+                    {{ 'pledge.vote_count_human'|trans({
+                        '%number_of_votes%' : number_of_votes,
+                        '%usernames%': first_two_usernames|join(', '),
+                        '%rest%': number_of_votes - 2
+                    }) }}
+                </p>
+                {% else %}
+                <div>
+                    {% if number_of_votes == 2 %}
+                        <p>
+                            {{ 'pledge.vote_count_equals_two'|trans({
+                                '%first_user%': first_two_usernames[0],
+                                '%second_user%': first_two_usernames[1]
+                                })
+                            }}
+                        </p>
+                    {% endif %}
+                    {% if number_of_votes == 1 %}
+                        <p>
+                            {{ 'pledge.vote_count_equals_one'|trans({
+                                '%username%': first_two_usernames|join('')
+                                })
+                            }}
+                        </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

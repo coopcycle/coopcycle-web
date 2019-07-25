@@ -7,9 +7,13 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Form\PledgeType;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
+use AppBundle\Service\EmailManager;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Utils\OrderTimeHelperTrait;
 use AppBundle\Utils\OrderTimelineCalculator;
@@ -256,6 +260,19 @@ class RestaurantController extends AbstractController
             }
         }
 
+        if ($restaurant->getState() === 'pledge') {
+
+            $numberOfVotes = count($restaurant->getPledge()->getVotes());
+
+            $checkVote = $restaurant->getPledge()->hasVoted($this->getUser());
+
+            return $this->render('@App/restaurant/restaurant_pledge_accepted.html.twig', [
+                'restaurant' => $restaurant,
+                'number_of_votes' => $numberOfVotes,
+                'has_already_voted' => $checkVote
+            ]);
+        }
+
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 
@@ -333,7 +350,6 @@ class RestaurantController extends AbstractController
                         $cart->setShippingAddress(null);
                     }
                 }
-
                 if (!$cartForm->isValid()) {
                     foreach ($cartForm->getErrors() as $formError) {
                         $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
@@ -358,7 +374,6 @@ class RestaurantController extends AbstractController
                 }
             }
         }
-
         $this->customizeSeoPage($restaurant, $request);
 
         $structuredData = $this->get('serializer')->normalize($restaurant, 'jsonld', [
@@ -395,7 +410,6 @@ class RestaurantController extends AbstractController
     public function changeAddressAction($id, Request $request, CartContextInterface $cartContext)
     {
         $cart = $cartContext->getCart();
-
         $user = $this->getUser();
         if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
 
@@ -610,6 +624,7 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
+
     /**
      * @Route("/restaurants/map", name="restaurants_map")
      * @Template()
@@ -635,5 +650,55 @@ class RestaurantController extends AbstractController
         return [
             'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
         ];
+    }
+
+    /**
+     * @Route("/restaurants/suggest", name="restaurants_suggest")
+     */
+    public function suggestRestaurantAction(Request $request, ObjectManager $manager, EmailManager $emailManager)
+    {
+        $pledge = new Pledge();
+
+        $form = $this->createForm(PledgeType::class, $pledge);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $pledge->setState('new');
+            $pledge->setUser($this->getUser());
+            $manager->persist($pledge);
+            $manager->flush();
+            $emailManager->createAdminPledgeConfirmationMessage($pledge);
+            return $this->redirectToRoute('restaurants_suggest_submitted');
+    }
+        return $this->render('@App/restaurant/restaurant_pledge.html.twig', [
+        'form_pledge' => $form->createView()
+       ]);
+    }
+
+    /**
+     * @Route("/restaurants/suggest-submitted", name="restaurants_suggest_submitted")
+     */
+    public function suggestSubmitted()
+    {
+        return $this->render('@App/restaurant/suggest_submitted.html.twig');
+    }
+
+    /**
+     * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
+     */
+    public function voteAction($id)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)->find($id);
+
+        $user = $this->getUser();
+
+        if ($restaurant->getPledge() !== null ) {
+            $restaurant->getPledge()->addVote($user);
+            $this->orderManager->flush();
+        }
+
+        return $this->redirectToRoute('restaurant', [ 'id' => $id ]);
     }
 }

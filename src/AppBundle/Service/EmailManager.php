@@ -10,6 +10,7 @@ use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use AppBundle\Entity\Restaurant\Pledge;
 
 class EmailManager
 {
@@ -166,6 +167,26 @@ class EmailManager
         $body = $this->mjml->render($this->templating->render('@App/emails/order/delayed.mjml.twig', [
             'order' => $order,
             'delay' => $delay
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createUserPledgeConfirmationMessage(Pledge $pledge)
+    {
+        $subject = $this->translator->trans('user.pledge.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('@App/emails/pledge/user_pledge.mjml.twig', [
+            'pledge' => $pledge
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createAdminPledgeConfirmationMessage(Pledge $pledge)
+    {
+        $subject = $this->translator->trans('admin.pledge.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('@App/emails/pledge/admin_pledge.mjml.twig', [
+            'pledge' => $pledge
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

@@ -32,13 +32,18 @@
         {% include "@App/_partials/restaurant/list_thumbnail.html.twig" %}
       </div>
       {% endfor %}
-  {% endif %}
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-    {% include "@App/restaurant/pagination.html.twig" %}
     </div>
-  </div>
+    <div class="row">
+      <div class="col-xs-12">
+        {% include "@App/restaurant/pagination.html.twig" %}
+      </div>
+    </div>
+    <div class="text-center">
+      <a href="{{ path('restaurants_suggest') }}">
+        {% trans %}base.footer.suggest{% endtrans %}
+      </a>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}
 

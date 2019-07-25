@@ -123,6 +123,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $orderingDelayMinutes = 0;
 
+    protected $pledge;
+
     /**
      * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
      * @Assert\File(
@@ -719,6 +721,30 @@ class Restaurant extends FoodEstablishment
         $preparationTimeRule->setRestaurant($this);
 
         $this->preparationTimeRules->add($preparationTimeRule);
+
+        return $this;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getPledge()
+    {
+        return $this->pledge;
+    }
+
+    /**
+     * @param mixed $pledge
+     *
+     * @return self
+     */
+    public function setPledge($pledge)
+    {
+        $pledge->setRestaurant($this);
+
+        $this->pledge = $pledge;
 
         return $this;
     }

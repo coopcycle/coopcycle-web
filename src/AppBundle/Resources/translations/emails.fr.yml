@@ -42,6 +42,25 @@ admin.order_foodtech.created.body: |
   <br>
   Une nouvelle commande a été créée pour le restaurant <strong>%restaurant.name%</strong>.
 
+admin.pledge.subject: Une nouvelle suggestion a été envoyée !
+admin.pledge.body: |
+  Bonjour,
+  <br>
+  %username% souhaiterait que %pledge.name% soit sur CoopCycle !
+  <br>
+  Merci,
+  <br>
+  L'Equipe CoopCycle.
+user.pledge.subject: Votre suggestion est désormais sur CoopCycle !
+user.pledge.body: |
+  Bonjour,
+  <br>
+  grâce à vous, %pledge.name% est désormais sur CoopCycle !
+  <br>
+  Merci,
+  <br>
+  L'Equipe CoopCycle.
+
 owner.order.created.subject: Nouvelle commande à confirmer
 owner.order.created.body: |
   Bonjour,

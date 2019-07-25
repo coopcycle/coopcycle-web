@@ -4,6 +4,10 @@ navbar.myAccount: Mon compte
 base.footer.contactUs: Nous contacter
 base.footer.help: Aide
 base.footer.legal: Mentions légales
+base.footer.suggest: Suggérer un restaurant
+
+button.suggest.submitted.label: Revenir à l'accueil
+
 adminDashboard.title: Panel d'administration
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
@@ -432,6 +436,28 @@ form.settings.administrator_email.label: Email de l'administrateur
 form.settings.administrator_email.help: Les notifications seront envoyées à cet email
 form.settings.phone_number.label: Numéro de téléphone
 form.settings.phone_number.help: Ce numéro sera affiché aux clients
+
+form.suggest.name.label: Nom du restaurant
+
+form.suggest.message: |
+  Vous ne trouvez pas votre restaurant préféré ?
+  <br>
+  Donnez-nous son nom et son adresse. Ensuite les autres utilisateur·rice·s pourront voter afin de le voir apparaître dans la liste des restaurants.
+  <br>
+  Cela nous permettra de mieux identifier les restaurants à démarcher et leurs apporter la preuve d'une réelle demande.
+
+restaurant.suggest.message: |
+  Ce restaurant n'est pas disponible pour le moment,
+  <br>
+  Pour le voir sur la plateforme nous avons besoin de vous et de votre voix afin d'appuyer notre future demande de collaboration avec cette enseigne.
+restaurant.suggest.vote: Voter
+restaurant.suggest.has_voted: Vous avez déjà voté pour ce restaurant !
+pledge.vote_count_equals_two: '%first_user% et %second_user% ont voté pour ce restaurant.'
+pledge.vote_count_equals_one: '%username% a voté pour ce restaurant.'
+
+pledge.vote_count_human: '%number_of_votes% votes : %usernames% et %rest% autre(s)'
+pledge.suggested_by: 'Suggéré par @%username%'
+form.suggest.submit.label: Enregistrer
 form.maintenance.enable.label: Activer la maintenance
 form.maintenance.disable.label: Désactiver la maintenance
 form.maintenance.enable.alert: 'Vous allez activer le mode maintenance.<br>Seuls les administrateurs auront accès au site.'
@@ -604,6 +630,8 @@ stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
+
+suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
