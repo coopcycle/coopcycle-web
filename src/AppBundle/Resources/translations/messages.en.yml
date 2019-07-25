@@ -117,6 +117,8 @@ adminDashboard.zones.send: Send
 adminDashboard.back.title: Back to website
 adminDashboard.promotions.title: Promotions
 
+adminDashboard.pledges.title: Suggestions
+
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
 

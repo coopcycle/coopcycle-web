@@ -91,6 +91,7 @@ adminDashboard.zones.uploadGeoJSON: Uploadez un fichier GeoJSON
 adminDashboard.zones.send: Envoyer
 adminDashboard.back.title: Revenir au site
 adminDashboard.promotions.title: Promotions
+adminDashboard.pledges.title: Suggestions
 
 delivery.createNew: Créer une livraison
 help.title: Aide
