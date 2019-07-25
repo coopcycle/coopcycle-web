@@ -361,3 +361,53 @@ html, body {
 .leaflet-container a:hover {
   text-decoration: none;
 }
+
+// @see https://codepen.io/olam/pen/zcqea
+
+$pulse-color: #2ECC40;
+
+.pulse {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #AAAAAA;
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(#AAAAAA, 0.4);
+  &--on {
+    background: $pulse-color;
+    box-shadow: 0 0 0 rgba($pulse-color, 0.4);
+  }
+  &--animate {
+    animation: pulse 2s;
+  }
+  &:hover {
+    animation: none;
+  }
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba($pulse-color, 0.4);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 10px rgba($pulse-color, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba($pulse-color, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba($pulse-color, 0.4);
+    box-shadow: 0 0 0 0 rgba($pulse-color, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba($pulse-color, 0);
+    box-shadow: 0 0 0 10px rgba($pulse-color, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba($pulse-color, 0);
+    box-shadow: 0 0 0 0 rgba($pulse-color, 0);
+  }
+}

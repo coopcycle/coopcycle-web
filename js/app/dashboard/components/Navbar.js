@@ -95,6 +95,9 @@ class Navbar extends React.Component {
                 <Filters />
               </li>
             </ul>
+            <ul className="nav navbar-nav navbar-right">
+              <li><a><span className="pulse" id="pulse"></span></a></li>
+            </ul>
           </div>
         </div>
       </nav>

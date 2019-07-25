@@ -5,6 +5,7 @@ import {
   setOffline
 } from './actions'
 import moment from 'moment'
+import _ from 'lodash'
 
 // If the user has not been seen for 5min, it is considered offline
 const OFFLINE_TIMEOUT = (5 * 60 * 1000)
@@ -27,6 +28,16 @@ function checkLastSeen(dispatch, getState) {
     checkLastSeen(dispatch, getState)
   }, OFFLINE_TIMEOUT_INTERVAL)
 }
+
+const $pulse = $('#pulse')
+
+const pulse = _.debounce(() => {
+  if (!$pulse.hasClass('pulse--on')) {
+    $pulse.addClass('pulse--on')
+  }
+  $pulse.addClass('pulse--animate')
+  setTimeout(() => $pulse.removeClass('pulse--animate'), 2000)
+}, 2000)
 
 export const socketIO = ({ dispatch, getState }) => {
 
@@ -51,7 +62,10 @@ export const socketIO = ({ dispatch, getState }) => {
     socket.on('task:assigned', data => dispatch(updateTask(data.task)))
     socket.on('task:unassigned', data => dispatch(updateTask(data.task)))
 
-    socket.on('tracking', data => dispatch(setGeolocation(data.user, data.coords)))
+    socket.on('tracking', data => {
+      pulse()
+      dispatch(setGeolocation(data.user, data.coords))
+    })
 
     setTimeout(() => {
       checkLastSeen(dispatch, getState)
