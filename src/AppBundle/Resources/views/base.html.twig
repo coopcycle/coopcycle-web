@@ -109,10 +109,6 @@
       {% block scripts %}{% endblock %}
     {% endblock %}
 
-    {% if app.environment == "dev" %}
-      <script src="{{ asset('webpack-dev-server.js') }}"></script>
-    {% endif %}
-
     {% if app.environment == "test" %}
     <script>
     {% include '@App/_partials/error_handler.js.twig' %}

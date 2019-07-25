@@ -70,7 +70,6 @@ services:
     environment:
       SYMFONY_ENV: dev
       BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
-      ASSETS_BASE_URL: http://webpack:8080
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}

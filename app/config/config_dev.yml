@@ -1,9 +1,6 @@
 imports:
     - { resource: config.yml }
 
-parameters:
-  assets_base_urls: [ "http://localhost:8080" ]
-
 framework:
     router:
         resource: "%kernel.root_dir%/config/routing_dev.yml"
@@ -11,8 +8,6 @@ framework:
     profiler: { only_exceptions: false }
     session:
         save_path:   "/tmp"
-    assets:
-        base_urls: "%assets_base_urls%"
 
 web_profiler:
     toolbar: true

@@ -86,9 +86,6 @@
     {{ encore_entry_script_tags('js/common') }}
     {{ encore_entry_script_tags('js/widgets') }}
     {{ encore_entry_script_tags('js/restaurants-map') }}
-    {% if app.environment == "dev" %}
-    <script src="{{ asset('webpack-dev-server.js') }}"></script>
-    {% endif %}
   </body>
 </html>
 

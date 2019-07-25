@@ -28,9 +28,6 @@
       </script>
     {% endif %}
     {{ encore_entry_script_tags('js/common') }}
-    {% if app.environment == "dev" %}
-      <script src="{{ asset('webpack-dev-server.js') }}"></script>
-    {% endif %}
     {% include "@App/_partials/piwik.html.twig" %}
   </body>
 </html>
