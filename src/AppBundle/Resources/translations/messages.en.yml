@@ -454,6 +454,8 @@ pledge.suggested_by: 'Suggested by @%username%'
 restaurant.suggest.has_voted: You have already voted for this restaurant !
 pledge.vote_count_equals_two: '%first_user% and %second_user% have voted for this restaurant.'
 pledge.vote_count_equals_one: '%username% has voted for this restaurant.'
+pledge.accept: Accept
+pledge.reject: Reject
 
 form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance

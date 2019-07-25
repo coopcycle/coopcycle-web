@@ -458,6 +458,8 @@ pledge.vote_count_equals_one: '%username% a voté pour ce restaurant.'
 
 pledge.vote_count_human: '%number_of_votes% votes : %usernames% et %rest% autre(s)'
 pledge.suggested_by: 'Suggéré par @%username%'
+pledge.accept: Accepter
+pledge.reject: Refuser
 form.suggest.submit.label: Enregistrer
 form.maintenance.enable.label: Activer la maintenance
 form.maintenance.disable.label: Désactiver la maintenance
