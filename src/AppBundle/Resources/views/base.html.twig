@@ -64,11 +64,14 @@
               {% trans %}base.footer.legal{% endtrans %}
             </a>
           </li>
+          {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
+          {% if 'yes' == restaurant_pledges_enabled %}
           <li>
             <a class="footer-link" href="{{ path('restaurants_suggest') }}">
               {% trans %}base.footer.suggest{% endtrans %}
             </a>
           </li>
+          {% endif %}
         </ul>
       </footer>
     {% endblock %}

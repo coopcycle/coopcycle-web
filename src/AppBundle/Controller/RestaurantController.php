@@ -14,6 +14,7 @@ use AppBundle\Form\PledgeType;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Utils\OrderTimeHelperTrait;
 use AppBundle\Utils\OrderTimelineCalculator;
@@ -659,8 +660,16 @@ class RestaurantController extends AbstractController
      * @Route("/restaurants/suggest", name="restaurants_suggest")
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function suggestRestaurantAction(Request $request, ObjectManager $manager, EmailManager $emailManager, TranslatorInterface $translator)
+    public function suggestRestaurantAction(Request $request,
+        ObjectManager $manager,
+        EmailManager $emailManager,
+        SettingsManager $settingsManager,
+        TranslatorInterface $translator)
     {
+        if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
+            throw new NotFoundHttpException();
+        }
+
         $pledge = new Pledge();
 
         $form = $this->createForm(PledgeType::class, $pledge);
@@ -683,23 +692,28 @@ class RestaurantController extends AbstractController
 
             return $this->redirectToRoute('restaurants_suggest');
         }
+
         return $this->render('@App/restaurant/restaurant_pledge.html.twig', [
-        'form_pledge' => $form->createView()
-       ]);
+            'form_pledge' => $form->createView()
+        ]);
     }
 
     /**
      * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function voteAction($id)
+    public function voteAction($id, SettingsManager $settingsManager)
     {
+        if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
+            throw new NotFoundHttpException();
+        }
+
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)->find($id);
 
         $user = $this->getUser();
 
-        if ($restaurant->getPledge() !== null ) {
+        if ($restaurant->getPledge() !== null) {
             $restaurant->getPledge()->addVote($user);
             $this->orderManager->flush();
         }

@@ -38,11 +38,14 @@
         {% include "@App/restaurant/pagination.html.twig" %}
       </div>
     </div>
+    {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
+    {% if 'yes' == restaurant_pledges_enabled %}
     <div class="text-center">
       <a href="{{ path('restaurants_suggest') }}">
         {% trans %}base.footer.suggest{% endtrans %}
       </a>
     </div>
+    {% endif %}
   {% endif %}
 </div>
 {% endblock %}
