@@ -105,7 +105,6 @@ security:
         - { path: ^/order, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/../restaurants/suggest, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }

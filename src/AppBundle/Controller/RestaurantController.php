@@ -30,6 +30,7 @@ use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -264,7 +265,8 @@ class RestaurantController extends AbstractController
 
             $numberOfVotes = count($restaurant->getPledge()->getVotes());
 
-            $checkVote = $restaurant->getPledge()->hasVoted($this->getUser());
+            $user = $this->getUser();
+            $checkVote = $user !== null ? $restaurant->getPledge()->hasVoted($this->getUser()) : false;
 
             return $this->render('@App/restaurant/restaurant_pledge_accepted.html.twig', [
                 'restaurant' => $restaurant,
@@ -654,6 +656,7 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurants/suggest", name="restaurants_suggest")
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function suggestRestaurantAction(Request $request, ObjectManager $manager, EmailManager $emailManager)
     {
@@ -686,6 +689,7 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function voteAction($id)
     {
