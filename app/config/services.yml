@@ -676,3 +676,6 @@ services:
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
+
+  AppBundle\Twig\CoopCycleExtension:
+    $secret: '%secret%'

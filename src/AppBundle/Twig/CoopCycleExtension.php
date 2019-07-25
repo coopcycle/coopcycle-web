@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
+use Hashids\Hashids;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -16,10 +17,12 @@ use Twig\TwigFunction;
 class CoopCycleExtension extends AbstractExtension
 {
     private $serializer;
+    private $secret;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, string $secret)
     {
         $this->serializer = $serializer;
+        $this->secret = $secret;
     }
 
     public function getFilters()
@@ -39,6 +42,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('split_items_tax_rates', array(TaxRateRuntime::class, 'splitItems')),
             new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name')),
             new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
+            new TwigFilter('hashid', array($this, 'hashid')),
         );
     }
 
@@ -130,5 +134,16 @@ class CoopCycleExtension extends AbstractExtension
         $carbon = Carbon::parse($date);
 
         return strtolower($carbon->locale($locale)->calendar());
+    }
+
+    public function hashid($object)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        if (is_object($object) && is_callable([$object, 'getId'])) {
+            $id = $object->getId();
+        }
+
+        return $hashids->encode($id);
     }
 }

@@ -162,6 +162,14 @@ class Me
             ]
         ]);
 
+         $this->socketIoManager->toCourier($this->getUser(), 'tracking', [
+            'user' => $username,
+            'coords' => [
+                'lat' => (float) $lastLocation['latitude'],
+                'lng' => (float) $lastLocation['longitude'],
+            ]
+        ]);
+
         return new JsonResponse([]);
     }
 

@@ -95,8 +95,8 @@ adminDashboard.promotions.title: Promotions
 adminDashboard.pledges.title: Suggestions
 
 delivery.createNew: Créer une livraison
-help.title: Aide
-help.home: Accueil
+delivery.tracking_link: Lien de suivi
+delivery.with_id: 'Livraison #%id%'
 
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre recherche ☹<br>Essayez avec une autre adresse
 restaurants.visible_by_you_only: Visible par vous seulement
