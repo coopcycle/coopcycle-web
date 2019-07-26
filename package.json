@@ -41,7 +41,7 @@
     "socket.io": "2.0.3",
     "whatwg-fetch": "^2.0.4",
     "winston": "^2.4.4",
-    "ws": "^5.2.2",
+    "ws": "^7.1.1",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
