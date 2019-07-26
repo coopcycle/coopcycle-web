@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -220,10 +221,12 @@ class SettingsType extends AbstractType
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($builder) {
             $data = $event->getData();
+
             if (null !== $data->default_tax_category) {
                 $data->default_tax_category = $data->default_tax_category->getCode();
             }
-            if (null !== $data->phone_number) {
+
+            if (null !== $data->phone_number && $data->phone_number instanceof PhoneNumber) {
                 $data->phone_number = $this->phoneNumberUtil->format($data->phone_number, PhoneNumberFormat::E164);
             }
             $event->setData($data);
