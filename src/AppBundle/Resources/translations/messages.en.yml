@@ -76,6 +76,7 @@ adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Create a new restaurant
+adminDashboard.restaurants.exclusive: Exclusive
 
 adminDashboard.users.title: Users
 adminDashboard.users.edit: Edit

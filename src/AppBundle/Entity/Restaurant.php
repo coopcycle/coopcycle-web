@@ -185,6 +185,8 @@ class Restaurant extends FoodEstablishment
 
     private $activeMenuTaxon;
 
+    private $exclusive;
+
     /**
      * @Groups({"restaurant", "restaurant_update"})
      */
@@ -745,6 +747,24 @@ class Restaurant extends FoodEstablishment
         $pledge->setRestaurant($this);
 
         $this->pledge = $pledge;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getExclusive()
+    {
+        return $this->exclusive;
+    }
+
+    /**
+     * @param bool $exclusive
+     */
+    public function setExclusive(bool $exclusive)
+    {
+        $this->exclusive = $exclusive;
 
         return $this;
     }

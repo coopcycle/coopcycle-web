@@ -51,6 +51,7 @@ adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
 
+adminDashboard.restaurants.exclusive: Exclusif
 adminDashboard.orders.invoice.title: Facture
 adminDashboard.orders.invoice.totalExcludingTax: Total HT
 adminDashboard.orders.invoice.totalTax: Total TVA

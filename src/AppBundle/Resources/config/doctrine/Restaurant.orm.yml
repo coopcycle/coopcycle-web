@@ -120,6 +120,10 @@ AppBundle\Entity\Restaurant:
         deletedAt:
             type: datetime
             nullable: true
+        exclusive:
+            type: boolean
+            options:
+                default: false
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine
