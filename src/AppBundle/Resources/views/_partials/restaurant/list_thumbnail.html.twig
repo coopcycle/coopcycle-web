@@ -51,14 +51,6 @@
       <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
     {% endif %}
   </div>
-  {% if restaurant.exclusive and restaurant.enabled %}
-  <div class="restaurant-item__top-left">
-    <span class="exclusive">
-      <i class="fa fa-star"></i>
-        {% trans %} adminDashboard.restaurants.exclusive {% endtrans %}
-    </span>
-  </div>
-  {% endif %}
   <div class="restaurant-item__top-right">
     {% if isOpen %}
       <span class="btn btn-sm btn-success">
@@ -85,17 +77,16 @@
       </span>
     {% endif %}
   </div>
-  {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) and not restaurant.exclusive %}
+  {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
     <div class="restaurant-item__top-left">
       <span class="btn btn-sm btn-warning">
         <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }}
       </span>
     </div>
-  {% endif %}
-    {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) and restaurant.exclusive %}
+  {% elseif restaurant.enabled and restaurant.exclusive %}
     <div class="restaurant-item__top-left">
       <span class="btn btn-sm btn-warning">
-        <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }} <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>  {{ 'adminDashboard.restaurants.exclusive'|trans }}
       </span>
     </div>
   {% endif %}
