@@ -185,7 +185,7 @@ class Restaurant extends FoodEstablishment
 
     private $activeMenuTaxon;
 
-    private $exclusive;
+    private $exclusive = false;
 
     /**
      * @Groups({"restaurant", "restaurant_update"})
@@ -754,7 +754,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @return bool
      */
-    public function getExclusive()
+    public function isExclusive(): bool
     {
         return $this->exclusive;
     }
