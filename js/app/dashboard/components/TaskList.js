@@ -16,6 +16,7 @@ class TaskList extends React.Component {
     this.state = {
       collapsed: props.collapsed
     }
+    this.taskListRef = React.createRef()
   }
 
   componentDidMount() {
@@ -36,7 +37,7 @@ class TaskList extends React.Component {
     }
 
     // handler to change the task order within a courier tasklist
-    dragula([ this.refs.taskList ], {
+    dragula([ this.taskListRef.current ], {
       // You can set accepts to a method with the following signature: (el, target, source, sibling).
       // It'll be called to make sure that an element el, that came from container source,
       // can be dropped on container target before a sibling element.
@@ -199,7 +200,7 @@ class TaskList extends React.Component {
               { this.props.t('ADMIN_DASHBOARD_DROP_DELIVERIES') }
             </div>
           </div>
-          <div ref="taskList" className="taskList__tasks list-group nomargin">
+          <div ref={ this.taskListRef } className="taskList__tasks list-group nomargin">
             { tasks.map(task => (
               <Task
                 key={ task['@id'] }

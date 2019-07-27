@@ -20,6 +20,7 @@ class TaskLists extends React.Component {
     }
 
     this.addUser = this.addUser.bind(this)
+    this.scrollableRef = React.createRef()
   }
 
   componentDidMount() {
@@ -30,7 +31,7 @@ class TaskLists extends React.Component {
 
     const self = this
 
-    autoScroll([ this.refs.scrollable ], {
+    autoScroll([ this.scrollableRef.current ], {
       margin: 20,
       maxSpeed: 5,
       scrollWhenOutside: false,
@@ -101,7 +102,7 @@ class TaskLists extends React.Component {
           </div>
         </Modal>
         <div
-          ref="scrollable"
+          ref={ this.scrollableRef }
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -148,4 +149,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(translate()(TaskLists))
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskLists))

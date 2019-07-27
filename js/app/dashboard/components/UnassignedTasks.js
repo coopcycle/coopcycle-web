@@ -146,4 +146,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(UnassignedTasks))
+export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(translate(['common'], { withRef: true })(UnassignedTasks))

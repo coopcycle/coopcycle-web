@@ -119,9 +119,15 @@ function configureDrop(allTasks, assignTasks) {
 
 class DashboardApp extends React.Component {
 
+  constructor(props) {
+    super(props)
+
+    this.unassignedTasksRef = React.createRef()
+  }
+
   componentDidMount() {
 
-    const unassignedTasksContainer = findDOMNode(this.refs.unassignedTasks).querySelector('.list-group')
+    const unassignedTasksContainer = findDOMNode(this.unassignedTasksRef.current.getWrappedInstance()).querySelector('.list-group')
     drake.containers.push(unassignedTasksContainer)
 
     configureDrag(this.props.drakeDrag)
@@ -138,7 +144,7 @@ class DashboardApp extends React.Component {
   render () {
     return (
       <div className="dashboard__aside-container">
-        <UnassignedTasks ref="unassignedTasks" />
+        <UnassignedTasks ref={ this.unassignedTasksRef } />
         <TaskLists
           couriersList={ this.props.couriersList }
           taskListDidMount={ taskListComponent =>
