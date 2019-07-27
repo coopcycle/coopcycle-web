@@ -111,7 +111,6 @@ class TaskLists extends React.Component {
               return (
                 <TaskList
                   key={ taskList['@id'] }
-                  ref={ taskList['@id'] }
                   collapsed={ collapsed }
                   username={ taskList.username }
                   distance={ taskList.distance }

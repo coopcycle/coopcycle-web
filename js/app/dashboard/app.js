@@ -141,7 +141,6 @@ class DashboardApp extends React.Component {
         <UnassignedTasks ref="unassignedTasks" />
         <TaskLists
           couriersList={ this.props.couriersList }
-          ref="taskLists"
           taskListDidMount={ taskListComponent =>
             drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
           }
