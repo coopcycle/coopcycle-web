@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
@@ -78,4 +78,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(AddressModal))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(AddressModal))

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../store/actions'
 import CourierSelect from './CourierSelect'
@@ -149,4 +149,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskLists))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskLists))

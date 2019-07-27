@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 import CartItem from './CartItem'
 
@@ -80,4 +80,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(translate()(CartTotal))
+export default connect(mapStateToProps)(withTranslation()(CartTotal))

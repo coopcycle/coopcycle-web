@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 class CartErrors extends React.Component {
 
@@ -28,5 +28,5 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(translate()(CartErrors))
+export default connect(mapStateToProps)(withTranslation()(CartErrors))
 

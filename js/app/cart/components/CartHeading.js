@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 import { toggleMobileCart } from '../redux/actions'
 
@@ -71,7 +71,7 @@ class CartHeading extends React.Component {
         <span className="cart-heading--title-or-errors">
           { this.headingTitle(warningAlerts, dangerAlerts) }
         </span>
-        <span className="cart-heading__right" ref="headingRight">
+        <span className="cart-heading__right">
           <i className={ this.props.isMobileCartVisible ? 'fa fa-chevron-up' : 'fa fa-chevron-down' }></i>
         </span>
         <button type="submit" className="cart-heading__button" onClick={ this.onCartHeadingSubmitClick.bind(this)  }>
@@ -122,4 +122,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(CartHeading))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CartHeading))

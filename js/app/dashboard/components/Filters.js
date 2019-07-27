@@ -7,7 +7,7 @@ import {
   setSelectedTagList,
   toggleShowUntaggedTasks
 } from '../store/actions'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 class Filters extends Component {
 
@@ -112,4 +112,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(Filters))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Filters))

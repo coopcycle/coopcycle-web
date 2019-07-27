@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
 import _ from 'lodash'
 
@@ -97,4 +97,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(Cart))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Cart))

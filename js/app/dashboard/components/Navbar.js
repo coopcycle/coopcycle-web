@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
 import _ from 'lodash'
@@ -120,4 +120,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(translate()(Navbar))
+export default connect(mapStateToProps)(withTranslation()(Navbar))

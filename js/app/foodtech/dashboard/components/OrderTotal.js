@@ -1,5 +1,5 @@
 import React from 'react'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 class OrderTotal extends React.Component {
   render() {
@@ -23,4 +23,4 @@ class OrderTotal extends React.Component {
   }
 }
 
-export default translate()(OrderTotal)
+export default withTranslation()(OrderTotal)

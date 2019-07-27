@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import moment from 'moment'
 
 import { setCurrentOrder } from '../redux/actions'
@@ -40,4 +40,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(OrderCard))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(OrderCard))

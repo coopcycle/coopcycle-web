@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import LocaleProvider from 'antd/lib/locale-provider'
 import DatePicker from 'antd/lib/date-picker'
 import Form from 'antd/lib/form'
@@ -499,4 +499,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskModalContent))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskModalContent))

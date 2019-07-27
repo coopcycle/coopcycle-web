@@ -1,5 +1,5 @@
 import React from 'react'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 const hasAdjustments = (item) => item.adjustments.hasOwnProperty('menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
 
@@ -41,4 +41,4 @@ class OrderItems extends React.Component {
 
 }
 
-export default translate()(OrderItems)
+export default withTranslation()(OrderItems)

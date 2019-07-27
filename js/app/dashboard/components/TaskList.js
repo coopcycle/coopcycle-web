@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import dragula from 'react-dragula'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Task from './Task'
 import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../store/actions'
@@ -244,4 +244,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(TaskList))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskList))

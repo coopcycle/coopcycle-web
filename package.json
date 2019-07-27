@@ -93,7 +93,7 @@
     "react-contextmenu": "^2.11.0",
     "react-dom": "^16.8.6",
     "react-dragula": "^1.1.17",
-    "react-i18next": "^7.13.0",
+    "react-i18next": "^10.11.4",
     "react-modal": "^3.9.1",
     "react-redux": "^7.1.0",
     "react-select": "^3.0.4",

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import Timeline from 'antd/lib/timeline'
 import moment from 'moment'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -290,4 +290,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(ModalContent))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ModalContent))

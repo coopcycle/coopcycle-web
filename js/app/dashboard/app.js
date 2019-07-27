@@ -127,7 +127,7 @@ class DashboardApp extends React.Component {
 
   componentDidMount() {
 
-    const unassignedTasksContainer = findDOMNode(this.unassignedTasksRef.current.getWrappedInstance()).querySelector('.list-group')
+    const unassignedTasksContainer = findDOMNode(this.unassignedTasksRef.current).querySelector('.list-group')
     drake.containers.push(unassignedTasksContainer)
 
     configureDrag(this.props.drakeDrag)

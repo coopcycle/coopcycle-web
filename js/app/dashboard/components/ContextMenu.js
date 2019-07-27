@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { translate } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { ContextMenu, MenuItem, connectMenu } from 'react-contextmenu'
 
 import { removeTasks } from '../store/actions'
@@ -84,4 +84,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(Menu))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Menu))

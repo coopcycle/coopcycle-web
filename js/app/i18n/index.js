@@ -6,7 +6,7 @@
  * See https://react.i18next.com/components/i18next-instance.html
  */
 import i18next from 'i18next'
-import { reactI18nextModule } from 'react-i18next'
+import { initReactI18next } from 'react-i18next'
 
 import moment from 'moment'
 import 'moment-timezone'
@@ -27,7 +27,7 @@ const languageDetector = {
 
 i18next
   .use(languageDetector)
-  .use(reactI18nextModule)
+  .use(initReactI18next)
   .init({
     fallbackLng: 'en',
     resources: { en, fr, es },
