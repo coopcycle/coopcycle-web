@@ -9,6 +9,9 @@ framework:
 #    serializer:
 #        cache: serializer.mapping.cache.doctrine.apc
 
+parameters:
+    router.request_context.scheme: 'https'
+
 #doctrine:
 #    orm:
 #        metadata_cache_driver: apc

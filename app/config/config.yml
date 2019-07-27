@@ -13,6 +13,7 @@ imports:
 parameters:
     locale: "%coopcycle.locale%"
     locale_regex: fr|en|es|de
+    router.request_context.host: '%host%'
 
 framework:
     #esi:             ~
@@ -262,6 +263,10 @@ csa_guzzle:
         mjml_server:
             config:
                 base_uri: "%mjml_server_base_uri%"
+                lazy: true
+        api:
+            config:
+                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
                 lazy: true
 
 sylius_taxation:

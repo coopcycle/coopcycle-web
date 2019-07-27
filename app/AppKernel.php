@@ -62,6 +62,7 @@ class AppKernel extends Kernel
             new Sentry\SentryBundle\SentryBundle(),
             new Http\HttplugBundle\HttplugBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
+            new M6Web\Bundle\DaemonBundle\M6WebDaemonBundle(),
             new AppBundle\AppBundle(),
         ];
 

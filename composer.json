@@ -98,7 +98,8 @@
         "hautelook/alice-bundle": "^2.3",
         "nyholm/psr7": "^1.1",
         "hwi/oauth-bundle": "dev-master",
-        "php-http/httplug-bundle": "^1.16"
+        "php-http/httplug-bundle": "^1.16",
+        "m6web/daemon-bundle": "^4.1"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.3",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "576b910e3c4cacfdcc5f0c64229441a5",
+    "content-hash": "fd51684ff270704e9da7a7a1b8b46b4d",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5622,6 +5622,52 @@
                 "transformation"
             ],
             "time": "2018-07-10T12:53:54+00:00"
+        },
+        {
+            "name": "m6web/daemon-bundle",
+            "version": "v4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/M6Web/DaemonBundle.git",
+                "reference": "9db55b0a28802f7ef0a3041d222e74803145b194"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/M6Web/DaemonBundle/zipball/9db55b0a28802f7ef0a3041d222e74803145b194",
+                "reference": "9db55b0a28802f7ef0a3041d222e74803145b194",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcntl": "*",
+                "php": ">=7.1",
+                "react/event-loop": "@stable",
+                "symfony/console": "~3.0 || ~4.0",
+                "symfony/framework-bundle": "~3.0 || ~4.0",
+                "symfony/yaml": "~3.0 || ~4.0"
+            },
+            "require-dev": {
+                "atoum/atoum": "^2.8||^3.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Olivier Mansour",
+                    "email": "olivier.mansour@m6.fr"
+                }
+            ],
+            "description": "bundle sf easing creating daemon commands",
+            "time": "2018-06-18T08:15:42+00:00"
         },
         {
             "name": "m6web/statsd",

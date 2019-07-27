@@ -139,6 +139,10 @@ services:
       $filterManager: '@liip_imagine.filter.manager'
       $filesystem: '@filesystem'
 
+  AppBundle\Command\BotCommand:
+    arguments:
+      $apiClient: '@csa_guzzle.client.api'
+
   AppBundle\Controller\OrderController:
     arguments:
       $orderManager: '@sylius.manager.order'
