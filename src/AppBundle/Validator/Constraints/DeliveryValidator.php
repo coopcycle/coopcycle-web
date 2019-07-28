@@ -28,7 +28,8 @@ class DeliveryValidator extends ConstraintValidator
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
-        if ($pickup->getDoneBefore() >= $dropoff->getDoneBefore()) {
+        // TODO Improve this validation, use whole timewindow
+        if ($pickup->getDoneBefore() > $dropoff->getDoneBefore()) {
             $this->context->buildViolation($constraint->pickupAfterDropoffMessage)
                  ->atPath('items')
                  ->addViolation();
