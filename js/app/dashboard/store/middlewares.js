@@ -29,9 +29,8 @@ function checkLastSeen(dispatch, getState) {
   }, OFFLINE_TIMEOUT_INTERVAL)
 }
 
-const $pulse = $('#pulse')
-
 const pulse = _.debounce(() => {
+  const $pulse = $('#pulse')
   if (!$pulse.hasClass('pulse--on')) {
     $pulse.addClass('pulse--on')
   }
