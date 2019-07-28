@@ -37,7 +37,10 @@ col-sm-9
 {% block task_widget %}
 
   {{ form_row(form.address.streetAddress, { label: false }) }}
-  {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+
+  {% if form.doneBefore is defined %}
+    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+  {% endif %}
 
   {{ form_row(form.address.postalCode) }}
   {{ form_row(form.address.addressLocality) }}
@@ -58,7 +61,10 @@ col-sm-9
   {{ form_widget(form.address.longitude) }}
   {{ form_widget(form.address.id) }}
   {{ form_widget(form.type) }}
-  {{ form_widget(form.doneAfter) }}
+
+  {% if form.doneAfter is defined %}
+    {{ form_widget(form.doneAfter) }}
+  {% endif %}
 
 {% endblock %}
 

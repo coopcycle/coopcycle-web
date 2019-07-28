@@ -578,6 +578,8 @@ form.embed_settings.with_vehicle.label: Add vehicle choice
 
 form.time_slot.name.label: Name
 form.time_slot.choices.label: Choices
+form.time_slot_choice.start_time.label: Start time
+form.time_slot_choice.end_time.label: End time
 
 promotion_coupon.used.label: Number of uses
 
@@ -748,6 +750,8 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
+
+time_slot.human_readable: '%day% between %start% and %end%'
 
 resend_confirmation_email.disclaimer: If you have not received the confirmation email, click on the button.
 

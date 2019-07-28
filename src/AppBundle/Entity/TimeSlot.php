@@ -2,8 +2,11 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\TimeSlotChoiceWithDate;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Yasumi\Yasumi;
 
 class TimeSlot
 {
@@ -87,5 +90,63 @@ class TimeSlot
     public function removeChoice($choice)
     {
         $this->choices->removeElement($choice);
+    }
+
+    private function countNumberOfDays(array $items)
+    {
+        $days = [];
+        foreach ($items as $item) {
+            $days[] = $item->getDate()->format('Y-m-d');
+        }
+
+        return count(array_unique($days));
+    }
+
+    public function getChoicesWithDates($country, $choices = 2)
+    {
+        $now = Carbon::now();
+
+        $providers = Yasumi::getProviders();
+        if (isset($providers[strtoupper($country)])) {
+            $providerClass = $providers[strtoupper($country)];
+            $provider = Yasumi::create($providerClass, date('Y'));
+            if ($provider->isWorkingDay($now)) {
+                $nextWorkingDay = clone $now;
+            } else {
+                $nextWorkingDay = Yasumi::nextWorkingDay($providerClass, $now);
+            }
+
+
+        } else {
+            $nextWorkingDay = clone $now;
+        }
+
+        $items = [];
+
+        $numberOfDays = 0;
+        while ($numberOfDays < $choices) {
+
+            foreach ($this->getChoices() as $choice) {
+                [ $start, $end ] = $choice->toDateTime($nextWorkingDay);
+
+                if ($end <= $now) {
+                    continue;
+                }
+
+                $items[] = new TimeSlotChoiceWithDate($choice, clone $nextWorkingDay);
+            }
+
+            if (isset($providers[strtoupper($country)])) {
+                $provider = $providers[strtoupper($country)];
+                $nextWorkingDay = Yasumi::nextWorkingDay($provider, $nextWorkingDay);
+            } else {
+                $nextWorkingDay = clone $nextWorkingDay;
+                $nextWorkingDay->modify('+1 day');
+            }
+
+            $numberOfDays = $this->countNumberOfDays($items);
+        }
+
+        return $items;
     }
 }
