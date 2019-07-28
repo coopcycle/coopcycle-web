@@ -15,7 +15,6 @@ function bootstrap($popover, options) {
   document.body.appendChild(template)
 
   const notificationsListRef = React.createRef()
-  const getNotificationsList = (ref) => ref.current.getWrappedInstance()
 
   const initPopover = () => {
 
@@ -30,7 +29,7 @@ function bootstrap($popover, options) {
     })
 
     $popover.on('shown.bs.popover', () => {
-      const notifications = getNotificationsList(notificationsListRef)
+      const notifications = notificationsListRef.current
         .toArray()
         .map(notification => notification.id)
       $.ajax(options.markAsReadURL, {
@@ -56,7 +55,7 @@ function bootstrap($popover, options) {
     }
   })
 
-  socket.on(`notifications`, notification => getNotificationsList(notificationsListRef).unshift(notification))
+  socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))
   socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
 
   $.getJSON(options.unreadCountURL)
