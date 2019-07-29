@@ -17,7 +17,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
     "@mapbox/polyline": "^1.1.0",
     "co": "^4.6.0",
     "deepmerge": "^1.5.2",
