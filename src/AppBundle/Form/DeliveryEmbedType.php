@@ -19,18 +19,17 @@ use Symfony\Component\Translation\TranslatorInterface;
 class DeliveryEmbedType extends DeliveryType
 {
     private $settingsManager;
-    private $countryCode;
 
     public function __construct(
         RoutingInterface $routing,
-        SettingsManager $settingsManager,
         TranslatorInterface $translator,
-        $countryCode)
+        string $country,
+        string $locale,
+        SettingsManager $settingsManager)
     {
-        parent::__construct($routing, $translator);
+        parent::__construct($routing, $translator, $country, $locale);
 
         $this->settingsManager = $settingsManager;
-        $this->countryCode = $countryCode;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -56,7 +55,7 @@ class DeliveryEmbedType extends DeliveryType
             ->add('telephone', PhoneNumberType::class, [
                 'mapped' => false,
                 'format' => PhoneNumberFormat::NATIONAL,
-                'default_region' => strtoupper($this->countryCode),
+                'default_region' => strtoupper($this->country),
                 'label' => 'form.delivery_embed.telephone.label',
             ])
             ->add('billingAddress', AddressType::class, [

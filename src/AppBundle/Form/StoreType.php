@@ -2,8 +2,9 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Store;
+use AppBundle\Entity\TimeSlot;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -43,6 +44,12 @@ class StoreType extends LocalBusinessType
                 ])
                 ->add('createOrders', CheckboxType::class, [
                     'label' => 'form.store_type.create_orders.label',
+                    'required' => false,
+                ])
+                ->add('timeSlot', EntityType::class, [
+                    'label' => 'form.store_type.time_slot.label',
+                    'class' => TimeSlot::class,
+                    'choice_label' => 'name',
                     'required' => false,
                 ]);
 

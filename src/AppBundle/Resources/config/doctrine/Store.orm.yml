@@ -83,6 +83,14 @@ AppBundle\Entity\Store:
             joinColumns:
                 pricing_rule_set_id:
                     referencedColumnName: id
+        timeSlot:
+            targetEntity: AppBundle\Entity\TimeSlot
+            cascade:
+                - persist
+            fetch: LAZY
+            joinColumns:
+                time_slot_id:
+                    referencedColumnName: id
     manyToMany:
         owners:
             targetEntity: AppBundle\Entity\ApiUser

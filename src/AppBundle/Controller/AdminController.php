@@ -20,6 +20,7 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
@@ -36,6 +37,7 @@ use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
+use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\TaxationType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
@@ -1352,7 +1354,7 @@ class AdminController extends Controller
         ]);
     }
 
-     /**
+    /**
      * @Route("/admin/restaurants/pledges/{id}/emails", name="admin_pledge_email_preview")
      */
     public function pledgeEmailPreviewAction($id, Request $request, EmailManager $emailManager)
@@ -1373,5 +1375,40 @@ class AdminController extends Controller
         $response->setContent($message->getBody());
 
         return $response;
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots", name="admin_time_slots")
+     */
+    public function timeSlotsAction(Request $request)
+    {
+        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
+
+        return $this->render('@App/admin/time_slots.html.twig', [
+            'time_slots' => $timeSlots,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
+     */
+    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    {
+        $timeSlot = new TimeSlot();
+
+        $form = $this->createForm(TimeSlotType::class, $timeSlot);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $objectManager->persist($timeSlot);
+            $objectManager->flush();
+
+            return $this->redirectToRoute('admin_time_slots');
+        }
+
+        return $this->render('@App/admin/time_slot.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

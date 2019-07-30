@@ -39,12 +39,20 @@ services:
       - { name: form.type }
 
   AppBundle\Form\DeliveryType:
-    arguments: [ '@routing_service', '@translator' ]
+    arguments:
+      $routing: '@routing_service'
+      $translator: '@translator'
+      $country: '%country_iso%'
+      $locale: '%kernel.default_locale%'
     tags:
       - { name: form.type }
 
   AppBundle\Form\DeliveryEmbedType:
-    arguments: [ '@routing_service', '@coopcycle.settings_manager', '@translator', '%country_iso%' ]
+    parent: AppBundle\Form\DeliveryType
+    autowire: false
+    autoconfigure: false
+    arguments:
+      $settingsManager: '@coopcycle.settings_manager'
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:

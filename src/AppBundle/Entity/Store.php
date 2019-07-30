@@ -100,6 +100,8 @@ class Store extends LocalBusiness
 
     private $addresses;
 
+    private $timeSlot;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -308,5 +310,17 @@ class Store extends LocalBusiness
         $this->getAddresses()->add($address);
 
         return $this;
+    }
+
+    public function setTimeSlot($timeSlot)
+    {
+        $this->timeSlot = $timeSlot;
+
+        return $this;
+    }
+
+    public function getTimeSlot()
+    {
+        return $this->timeSlot;
     }
 }

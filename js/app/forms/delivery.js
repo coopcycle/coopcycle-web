@@ -59,13 +59,18 @@ function createAddressWidget(name, type, cb) {
 }
 
 function createDatePickerWidget(name, type, cb) {
-  new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
-    defaultValue: document.querySelector(`#${name}_${type}_doneBefore`).value,
-    onChange: function(date) {
-      document.querySelector(`#${name}_${type}_doneBefore`).value = date.format('YYYY-MM-DD HH:mm:ss')
-      cb(type, date)
-    }
-  })
+
+  const el = document.querySelector(`#${name}_${type}_doneBefore`)
+
+  if (el) {
+    new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+      defaultValue: el.value,
+      onChange: function(date) {
+        el.value = date.format('YYYY-MM-DD HH:mm:ss')
+        cb(type, date)
+      }
+    })
+  }
 }
 
 function createTagsWidget(name, type, tags) {

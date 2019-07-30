@@ -352,6 +352,7 @@ form.delivery.price.label: Prix
 form.delivery.to_be_confirmed.warning: Vous devez confirmer la commande
 form.delivery.has_order.info: Cette livraison est liée à une commande
 form.delivery.view_order: Voir la commande
+form.delivery.time_slot.label: Tranche horaire
 form.order.accept.label: Accepter
 form.order.accept.help: Lorsque vous aurez accepté la commande, le client sera notifié
   par email.
@@ -592,6 +593,11 @@ form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
 
 form.resend_confirmation_email.submit.label: Renvoyer l'email
 
+form.time_slot.name.label: Nom
+form.time_slot.choices.label: Plages horaires
+form.time_slot_choice.start_time.label: Date de début
+form.time_slot_choice.end_time.label: Date de fin
+
 promotion_coupon.used.label: Nombre d'utilisations
 
 product_option.strategy.free: Gratuit
@@ -805,6 +811,8 @@ restricted_diets.LOW_LACTOSE_DIET: Sans lactose
 restricted_diets.LOW_SALT_DIET: Sans sel
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Végétarien
+
+time_slot.human_readable: '%day% entre %start% et %end%'
 
 resend_confirmation_email.disclaimer: Vous n'avez pas l'email de confirmation ? Cliquez sur le bouton ci-dessous.
 

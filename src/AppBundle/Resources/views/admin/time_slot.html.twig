@@ -1,0 +1,59 @@
+{% extends "@App/admin.html.twig" %}
+
+{% form_theme form '@App/form/time_slot.html.twig' %}
+
+{% block breadcrumb %}
+  {% set time_slot = form.vars.value %}
+  <li><a href="{{ path('admin_time_slots') }}">{% trans %}adminDashboard.time_slots.title{% endtrans %}</a></li>
+  {% if time_slot.id is not null %}
+  <li>#{{ time_slot.id }}</li>
+  {% else %}
+  <li>{{ 'basics.add'|trans }}</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var $collectionHolder;
+
+var $addTagButton = $('<button type="button" class="btn btn-success"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>');
+var $newLinkLi = $('<div></div>').append($addTagButton);
+
+function addTagForm($collectionHolder, $newLinkLi) {
+    var prototype = $collectionHolder.data('prototype');
+
+    var index = $collectionHolder.data('index');
+
+    var newForm = prototype;
+
+    newForm = newForm.replace(/__name__/g, index);
+
+    $collectionHolder.data('index', index + 1);
+
+    var $newFormLi = $('<div></div>').append(newForm);
+    $newLinkLi.before($newFormLi);
+}
+
+$(document).ready(function() {
+    $collectionHolder = $('#time_slot_choices');
+
+    $collectionHolder.append($newLinkLi);
+
+    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+    $addTagButton.on('click', function(e) {
+        addTagForm($collectionHolder, $newLinkLi);
+    });
+});
+</script>
+{% endblock %}
+

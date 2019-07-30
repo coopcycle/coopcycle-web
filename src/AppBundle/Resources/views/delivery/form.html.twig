@@ -97,11 +97,21 @@
 
         {{ form_errors(form) }}
 
+        {% if form.timeSlot is defined %}
+          <div class="form-group">
+            {{ form_label(form.timeSlot) }}
+            <div class="col-sm-9">
+              {{ form_widget(form.timeSlot) }}
+            </div>
+          </div>
+
+        {% endif %}
+
         <div class="form-group">
-          <label class="col-sm-2 control-label" for="delivery_distance">
+          <label class="col-sm-3 control-label" for="delivery_distance">
             {% trans %}form.delivery.distance.label{% endtrans %}
           </label>
-          <div class="col-sm-10">
+          <div class="col-sm-9">
             <p class="form-control-static">
               <span id="delivery_distance">
                 {% if delivery.distance is not empty %}
@@ -113,10 +123,10 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label" for="delivery_duration">
+          <label class="col-sm-3 control-label" for="delivery_duration">
             {% trans %}form.delivery.duration.label{% endtrans %}
           </label>
-          <div class="col-sm-10">
+          <div class="col-sm-9">
             <p class="form-control-static">
               <span id="delivery_duration">
                 {% if delivery.duration is not empty %}

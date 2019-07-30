@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd51684ff270704e9da7a7a1b8b46b4d",
+    "content-hash": "07561bf53670ab4a68765b7cc94cd0bf",
     "packages": [
         {
             "name": "api-platform/core",
@@ -149,6 +149,59 @@
                 "swagger"
             ],
             "time": "2019-06-22T10:48:51+00:00"
+        },
+        {
+            "name": "azuyalabs/yasumi",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/azuyalabs/yasumi.git",
+                "reference": "5a086db23204e8ec45d874839ad9b1bb783dcbb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/5a086db23204e8ec45d874839ad9b1bb783dcbb8",
+                "reference": "5a086db23204e8ec45d874839ad9b1bb783dcbb8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.14",
+                "fzaninotto/faker": "~1.8",
+                "mikey179/vfsstream": "~1.6",
+                "phpunit/phpunit": "~7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yasumi\\": "src/Yasumi/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sacha Telgenhof",
+                    "email": "me@sachatelgenhof.com"
+                }
+            ],
+            "description": "Yasumi is an easy PHP Library for calculating national holidays.",
+            "keywords": [
+                "Bank",
+                "calculation",
+                "calendar",
+                "celebration",
+                "date",
+                "holiday",
+                "holidays",
+                "national",
+                "time"
+            ],
+            "time": "2019-03-29T03:04:45+00:00"
         },
         {
             "name": "beberlei/assert",

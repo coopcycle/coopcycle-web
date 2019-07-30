@@ -5,7 +5,10 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot\Choice as TimeSlotChoice;
 use AppBundle\Service\RoutingInterface;
+use AppBundle\Utils\TimeSlotChoiceWithDate;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -23,15 +26,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class DeliveryType extends AbstractType
 {
-    private $routing;
-    private $translator;
+    protected $routing;
+    protected $translator;
+    protected $country;
+    protected $locale;
 
     public function __construct(
         RoutingInterface $routing,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        string $country,
+        string $locale)
     {
         $this->routing = $routing;
         $this->translator = $translator;
+        $this->country = $country;
+        $this->locale = $locale;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -137,6 +146,63 @@ class DeliveryType extends AbstractType
                 ]);
             });
         }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $delivery = $event->getData();
+
+            $store = $delivery->getStore();
+
+            if (null !== $store && null !== $store->getTimeSlot()) {
+
+                $timeSlot = $delivery->getStore()->getTimeSlot();
+
+                $choicesWithDates = $timeSlot->getChoicesWithDates($this->country);
+
+                $form->add('timeSlot', ChoiceType::class, [
+                    'choices' => $choicesWithDates,
+                    'choice_label' => function(TimeSlotChoiceWithDate $choiceWithDate) {
+
+                        [ $start, $end ] = $choiceWithDate->getChoice()->toDateTime();
+                        $carbon = Carbon::instance($choiceWithDate->getDate());
+                        $calendar = $carbon->locale($this->locale)->calendar(null, [
+                            'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
+                            'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
+                            'nextWeek' => 'dddd',
+                        ]);
+
+                        return $this->translator->trans('time_slot.human_readable', [
+                            '%day%' => ucfirst(strtolower($calendar)),
+                            '%start%' => $start->format('H:i'),
+                            '%end%' => $end->format('H:i'),
+                        ]);
+                    },
+                    'label' => 'form.delivery.time_slot.label',
+                    'mapped' => false
+                ]);
+
+                $form->get('pickup')->remove('doneAfter');
+                $form->get('pickup')->remove('doneBefore');
+
+                $form->get('dropoff')->remove('doneAfter');
+                $form->get('dropoff')->remove('doneBefore');
+            }
+        });
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $delivery = $event->getData();
+
+            if ($form->has('timeSlot')) {
+                $timeSlot = $form->get('timeSlot')->getData();
+
+                foreach ($delivery->getTasks() as $task) {
+                    $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
+                }
+            }
+        });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
