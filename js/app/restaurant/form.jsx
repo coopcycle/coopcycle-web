@@ -53,14 +53,17 @@ $(function() {
   // Render Switch on page load
   $('form[name="restaurant"]').find('.switch').each((index, el) => renderSwitch($(el)))
 
-  window.CoopCycle.DeliveryZonePicker(
-    $('#restaurant_deliveryPerimeterExpression__picker').get(0),
-    {
-      zones: window.AppData.zones,
-      expression: window.AppData.deliveryPerimeterExpression,
-      onExprChange: (expr) => { $('#restaurant_deliveryPerimeterExpression').val(expr)}
-    }
-  )
+  const zonePickerEl = document.getElementById('restaurant_deliveryPerimeterExpression__picker')
+  if (zonePickerEl) {
+    window.CoopCycle.DeliveryZonePicker(
+      zonePickerEl,
+      {
+        zones: window.AppData.zones,
+        expression: window.AppData.deliveryPerimeterExpression,
+        onExprChange: (expr) => { $('#restaurant_deliveryPerimeterExpression').val(expr)}
+      }
+    )
+  }
 
   $('#restaurant_imageFile_delete').closest('.form-group').remove()
 
