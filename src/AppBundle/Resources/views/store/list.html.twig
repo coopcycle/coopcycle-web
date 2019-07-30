@@ -19,7 +19,7 @@
             <a href="{{ path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id }) }}">
               {{ store.pricingRuleSet.name }}
             </a>
-            {% if store.prefillPickupAddress or store.createOrders %}
+            {% if store.prefillPickupAddress or store.createOrders or store.timeSlot is not empty %}
             <ul class="list-unstyled nomargin">
               {% if store.prefillPickupAddress %}
                 <li>
@@ -29,6 +29,11 @@
               {% if store.createOrders %}
                 <li>
                   <small class="text-muted">{{ 'form.store_type.create_orders.label'|trans }}</small>
+                </li>
+              {% endif %}
+              {% if store.timeSlot is not empty %}
+                <li>
+                  <small class="text-muted">{{ 'form.store_type.time_slot.label'|trans }} {{ store.timeSlot.name }}</small>
                 </li>
               {% endif %}
             </ul>
