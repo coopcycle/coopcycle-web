@@ -73,7 +73,9 @@
       {% if form.siret is defined %}
         {{ form_row(form.siret) }}
       {% endif %}
-      {{ form_row(form.exclusive) }}
+      {% if form.exclusive is defined %}
+        {{ form_row(form.exclusive) }}
+      {% endif %}
     </div>
   </div>
 
