@@ -12,6 +12,8 @@ import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 import Filters from './components/Filters'
 
+import './dashboard.scss'
+
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve, initMapResolve
 
 const mapLoaded = new Promise((resolve, reject) => mapLoadedResolve = resolve)
