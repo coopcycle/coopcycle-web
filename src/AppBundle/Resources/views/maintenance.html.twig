@@ -21,13 +21,6 @@
         {% endif %}
       </div>
     </div>
-    {% if app.environment == "prod" %}
-      <script src="https://cdn.ravenjs.com/3.23.1/raven.min.js" crossorigin="anonymous"></script>
-      <script>
-        Raven.config("{{ sentry_public_dsn }}").install();
-      </script>
-    {% endif %}
-    {{ encore_entry_script_tags('js/common') }}
     {% include "@App/_partials/piwik.html.twig" %}
   </body>
 </html>
