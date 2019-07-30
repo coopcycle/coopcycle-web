@@ -13,6 +13,7 @@ import en_GB from 'antd/lib/locale-provider/en_GB'
 import { Formik } from 'formik'
 import Select from 'react-select'
 import chroma from 'chroma-js'
+import PhoneInput, { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../store/actions'
@@ -193,7 +194,19 @@ class TaskModalContent extends React.Component {
     let errors = {}
 
     if (!values.address.hasOwnProperty('geo')) {
-      errors.address = this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR')
+      errors.address = {
+        ...errors.address,
+        streetAddress: this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR')
+      }
+    }
+
+    if (values.address.hasOwnProperty('telephone')) {
+      if (!isValidPhoneNumber(values.address.telephone)) {
+        errors.address = {
+          ...errors.address,
+          telephone: this.props.t('ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR')
+        }
+      }
     }
 
     return errors
@@ -299,6 +312,9 @@ class TaskModalContent extends React.Component {
         after: this.props.task.doneAfter,
         before: this.props.task.doneBefore,
       }
+      if (initialValues.address.telephone) {
+        initialValues.address.telephone = formatPhoneNumber(initialValues.address.telephone)
+      }
     }
 
     return (
@@ -306,6 +322,8 @@ class TaskModalContent extends React.Component {
         initialValues={ initialValues }
         validate={ this._validate.bind(this) }
         onSubmit={ this._onSubmit.bind(this) }
+        validateOnBlur={ false }
+        validateOnChange={ false }
       >
         {({
           values,
@@ -315,7 +333,9 @@ class TaskModalContent extends React.Component {
           handleBlur,
           handleSubmit,
           isSubmitting,
+          isValidating,
           setFieldValue,
+          setFieldTouched,
           /* and other goodies */
         }) => (
           <LocaleProvider locale={ antdLocale }>
@@ -330,7 +350,7 @@ class TaskModalContent extends React.Component {
                   </Radio.Group>
                 </div>
                 { values.hasOwnProperty('@id') && this.renderTimeline(values) }
-                <div className={ errors.address && touched.address ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
+                <div className={ errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                   <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL') }</label>
                   <AddressAutosuggest
                     autofocus={ !values.hasOwnProperty('@id') }
@@ -348,8 +368,8 @@ class TaskModalContent extends React.Component {
 
                       setFieldValue('address', address)
                     } } />
-                  { errors.address && touched.address && (
-                    <span className="help-block">{ errors.address }</span>
+                  { errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress && (
+                    <span className="help-block">{ errors.address.streetAddress }</span>
                   ) }
                 </div>
                 <a className="help-block" role="button" data-toggle="collapse" href="#address_options" aria-expanded="false">
@@ -364,13 +384,21 @@ class TaskModalContent extends React.Component {
                       onBlur={ handleBlur }
                       value={ values.address.name || '' } />
                   </div>
-                  <div className="form-group form-group-sm">
+                  <div className={ errors.address && touched.address && errors.address.telephone && touched.address.telephone ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                     <label className="control-label" htmlFor="address_telephone">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL') }</label>
-                    <input type="tel" id="address_telephone" name="address.telephone" className="form-control"
+                    <PhoneInput
+                      value={ values.address.telephone || '' }
+                      country={ this.props.country }
+                      showCountrySelect={ false }
+                      inputClassName="form-control"
                       autoComplete="off"
-                      onChange={ handleChange }
-                      onBlur={ handleBlur }
-                      value={ values.address.telephone || '' } />
+                      onChange={ value => {
+                        setFieldValue('address.telephone', value)
+                        setFieldTouched('address.telephone')
+                      }} />
+                    { errors.address && touched.address && errors.address.telephone && touched.address.telephone && (
+                      <span className="help-block">{ errors.address.telephone }</span>
+                    ) }
                   </div>
                   <div className="form-group form-group-sm">
                     <label className="control-label" htmlFor="address_floor">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_FLOOR_LABEL') }</label>
@@ -485,7 +513,8 @@ function mapStateToProps (state) {
     token: state.jwt,
     loading: state.isTaskModalLoading,
     tags: _.map(state.tags, tagAsOption),
-    completeTaskErrorMessage: state.completeTaskErrorMessage
+    completeTaskErrorMessage: state.completeTaskErrorMessage,
+    country: (window.AppData.countryIso || 'fr').toUpperCase()
   }
 }
 

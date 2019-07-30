@@ -12,6 +12,7 @@ import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'
 import Filters from './components/Filters'
 
+import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve, initMapResolve
