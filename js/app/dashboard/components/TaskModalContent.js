@@ -304,7 +304,7 @@ class TaskModalContent extends React.Component {
     return (
       <Formik
         initialValues={ initialValues }
-        validate={ this._validate }
+        validate={ this._validate.bind(this) }
         onSubmit={ this._onSubmit.bind(this) }
       >
         {({
