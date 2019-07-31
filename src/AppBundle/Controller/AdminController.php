@@ -1160,7 +1160,7 @@ class AdminController extends Controller
 
             $this->get('sylius.manager.promotion')->flush();
 
-            return $this->redirectToRoute('admin_promotion', ['id' => $id]);
+            return $this->redirectToRoute('admin_promotions');
         }
 
         return $this->render('@App/admin/promotion_coupon.html.twig', [
