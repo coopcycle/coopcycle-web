@@ -18,6 +18,13 @@ AppBundle\Entity\Sylius\Product:
         deletedAt:
             type: datetime
             nullable: true
+        reusablePackagingEnabled:
+            type: boolean
+            options:
+                default: false
+        reusablePackagingUnit:
+            type: float
+            nullable: true
     manyToMany:
         restaurant:
             targetEntity: AppBundle\Entity\Restaurant

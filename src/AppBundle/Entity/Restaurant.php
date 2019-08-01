@@ -117,6 +117,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $enabled = false;
 
+    protected $depositRefundEnabled = false;
+
     /**
      * @var integer Additional time to delay ordering
      *
@@ -765,6 +767,26 @@ class Restaurant extends FoodEstablishment
     public function setExclusive(bool $exclusive)
     {
         $this->exclusive = $exclusive;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDepositRefundEnabled()
+    {
+        return $this->depositRefundEnabled;
+    }
+
+    /**
+     * @param mixed $depositRefundEnabled
+     *
+     * @return self
+     */
+    public function setDepositRefundEnabled($depositRefundEnabled)
+    {
+        $this->depositRefundEnabled = $depositRefundEnabled;
 
         return $this;
     }

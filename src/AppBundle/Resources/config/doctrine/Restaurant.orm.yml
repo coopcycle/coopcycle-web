@@ -38,6 +38,10 @@ AppBundle\Entity\Restaurant:
             precision: 0
             options:
                 default: false
+        depositRefundEnabled:
+            type: boolean
+            options:
+                default: false
         orderingDelayMinutes:
             type: integer
             unique: false
