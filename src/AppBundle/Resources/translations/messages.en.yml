@@ -154,6 +154,8 @@ restaurant.temporaryClosedWarning: |
   This restaurant is closed until <strong>%date%</strong>. You can still order for later on though!
 restaurant.noMenuWarning: |
   This restaurant has no menu for now
+
+restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
 restaurant.form.enabled.tooltip: |
   When disabled, a restaurant is not visible on the website. It doesn't show in search results and its own page is not accessible by visitors.
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe account on its own

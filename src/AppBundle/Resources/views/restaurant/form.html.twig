@@ -76,6 +76,9 @@
       {% if form.exclusive is defined %}
         {{ form_row(form.exclusive) }}
       {% endif %}
+      {% if form.depositRefundEnabled is defined %}
+        {{ form_row(form.depositRefundEnabled) }}
+      {% endif %}
     </div>
   </div>
 

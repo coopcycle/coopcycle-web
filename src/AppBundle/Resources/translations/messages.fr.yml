@@ -133,6 +133,8 @@ restaurant.form.enabled.tooltip: 'Un restaurant désactivé n''est ni visible ni
   n''est pas accessible par les visiteurs.
 
   '
+
+restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même son compte Stripe
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
   restaurant
