@@ -535,6 +535,8 @@ form.product.allergens.help: Does this product contain the following allergens?
 form.product.restricted_diets.label: Restricted diets
 form.product.restricted_diets.help: Does this product fit for the following diets?
 form.product.confirm.label: Confirm changes
+form.product.reusable_unit.label: 'packaging unit required'
+form.product.reusable_enabled.label: 'activate the recyclable packaging on this product'
 form.product.confirm.help: |
   You have changed the product name. If it is a <strong>minor modification</strong> (misspelled, upper case…), click on « Confirm changes ».
   <br>
