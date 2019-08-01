@@ -554,6 +554,8 @@ form.product.allergens.help: Ce produit contient-il les allergènes suivants ?
 form.product.restricted_diets.label: Régimes restreints
 form.product.restricted_diets.help: Ce produit convient-il aux régimes alimentaires suivants ?
 form.product.confirm.label: Confirmer la modification
+form.product.reusable_unit.label: 'unité de conteneur requise'
+form.product.reusable_enabled.label: 'activer le conteneur recyclable sur ce produit'
 form.product.confirm.help: |
   Vous avez modifié le nom du produit. S'il s'agit d'une <strong>modification mineure</strong> (faute d'orthographe, majuscule…), cliquez sur « Confirmer la modification ».
   <br>

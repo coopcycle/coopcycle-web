@@ -43,6 +43,21 @@
 
   <div class="row">
     <div class="col-sm-6">
+      {{ form_row(form.reusablePackagingEnabled) }}
+      {% if form.reusablePackagingEnabled.vars.data == true %}
+      <div id="reusable-unit-enabled">
+        {{ form_row(form.reusablePackagingUnit, {'attr': {'class': 'form-control input-number'}}) }}
+      </div>
+      {% else %}
+        <div id="reusable-unit-enabled" style="display: none">
+          {{ form_row(form.reusablePackagingUnit, {'attr': {'class': 'form-control input-number'}}) }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
       {{ form_row(form.price) }}
     </div>
     <div class="col-sm-6">
