@@ -153,6 +153,7 @@ restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Strip
   account on its own
 restaurant.form.temporaryClosingRule: If you wish to close temporarily your restaurant,
   follow this link
+restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save

@@ -128,6 +128,7 @@ restaurant.form.noPricingRule: 'Aucune règle de tarification n''a été instaur
   '
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
+restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
   restaurant
 restaurant.form.accessPlanning: Accéder au planning

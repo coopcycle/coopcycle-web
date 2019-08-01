@@ -81,6 +81,9 @@
       {% if form.quotesAllowed is defined %}
         {{ form_row(form.quotesAllowed) }}
       {% endif %}
+      {% if form.depositRefundEnabled is defined %}
+        {{ form_row(form.depositRefundEnabled) }}
+      {% endif %}
     </div>
   </div>
 
