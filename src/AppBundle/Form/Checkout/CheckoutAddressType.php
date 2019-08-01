@@ -79,7 +79,7 @@ class CheckoutAddressType extends AbstractType
 
             $restaurant = $order->getRestaurant();
 
-            if ($restaurant->getDepositRefundEnabled()) {
+            if ($restaurant->isDepositRefundEnabled()) {
                 foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
 
                     if ($restaurant->isDepositRefundOptin() && $order->isEligibleToReusablePackaging()) {

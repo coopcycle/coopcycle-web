@@ -837,7 +837,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @return mixed
      */
-    public function getDepositRefundEnabled()
+    public function isDepositRefundEnabled()
     {
         return $this->depositRefundEnabled;
     }

@@ -19,3 +19,11 @@ $(function() {
     size: [ 256, 256 ]
   })
 })
+
+$('#product_reusablePackagingEnabled').click(function() {
+  if ($(this).is(":checked")) {
+    $('#product_reusablePackagingUnit').closest('.form-group').show()
+  } else {
+    $('#product_reusablePackagingUnit').closest('.form-group').hide()
+  }
+})

@@ -36,6 +36,10 @@
       {{ form_row(form.name) }}
       {{ form_row(form.description) }}
       {{ form_row(form.enabled) }}
+      {% if form.reusablePackagingEnabled is defined and form.reusablePackagingUnit is defined %}
+        {{ form_row(form.reusablePackagingEnabled) }}
+        {{ form_row(form.reusablePackagingUnit) }}
+      {% endif %}
     </div>
   </div>
 

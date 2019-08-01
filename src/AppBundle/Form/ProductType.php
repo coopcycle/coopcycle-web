@@ -27,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -39,7 +40,6 @@ class ProductType extends AbstractType
     private $productAttributeValueFactory;
     private $localeProvider;
     private $hasChangedName = false;
-
     public function __construct(
         ProductVariantFactoryInterface $variantFactory,
         ProductVariantResolverInterface $variantResolver,
@@ -124,6 +124,23 @@ class ProductType extends AbstractType
                     return [];
                 }
             ]);
+
+            if ($product->getRestaurant()->isDepositRefundEnabled()) {
+                $form
+                    ->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => 'form.product.reusable_packaging_enabled.label',
+                    ])
+                    ->add('reusablePackagingUnit', NumberType::class, [
+                        'label' => 'form.product.reusable_packaging_unit.label',
+                        'html5' => true,
+                        'attr'  => array(
+                            'min'  => 0,
+                            'max'  => 3,
+                            'step' => 0.5,
+                        )
+                    ]);
+            }
 
             if (null !== $product->getId()) {
 
