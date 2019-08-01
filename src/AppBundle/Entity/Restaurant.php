@@ -117,7 +117,7 @@ class Restaurant extends FoodEstablishment
      */
     protected $enabled = false;
 
-    protected $depositRefundEnabled;
+    protected $depositRefundEnabled = false;
 
     /**
      * @var integer Additional time to delay ordering
