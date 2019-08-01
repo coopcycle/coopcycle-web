@@ -51,6 +51,10 @@ class Product extends BaseProduct implements ProductInterface
 
     protected $deletedAt;
 
+    protected $reusablePackagingEnabled = false;
+
+    protected $reusablePackagingUnit;
+
     public function __construct()
     {
         parent::__construct();
@@ -146,5 +150,45 @@ class Product extends BaseProduct implements ProductInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReusablePackagingEnabled()
+    {
+        return $this->reusablePackagingEnabled;
+    }
+
+    /**
+     * @param mixed $reusablePackagingEnabled
+     *
+     * @return self
+     */
+    public function setReusablePackagingEnabled($reusablePackagingEnabled)
+    {
+        $this->reusablePackagingEnabled = $reusablePackagingEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReusablePackagingUnit()
+    {
+        return $this->reusablePackagingUnit;
+    }
+
+    /**
+     * @param mixed $reusablePackagingUnit
+     *
+     * @return self
+     */
+    public function setReusablePackagingUnit($reusablePackagingUnit)
+    {
+        $this->reusablePackagingUnit = $reusablePackagingUnit;
+
+        return $this;
     }
 }
