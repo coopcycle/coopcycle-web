@@ -48,6 +48,10 @@ class RestaurantType extends LocalBusinessType
                     'mapped' => false,
                     'required' => false,
                 ])
+                ->add('depositRefundEnabled', CheckboxType::class, [
+                    'label' => 'restaurant.form.deposit_refund_enabled.label',
+                    'required' => false,
+                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
@@ -89,7 +93,6 @@ class RestaurantType extends LocalBusinessType
                 }
             }
         );
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
