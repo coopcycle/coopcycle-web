@@ -185,4 +185,21 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     {
         return $this->store;
     }
+
+    public function isAssigned()
+    {
+        return $this->getPickup()->isAssigned() && $this->getDropoff()->isAssigned();
+    }
+
+    public function isCompleted()
+    {
+        foreach ($this->getTasks() as $task) {
+            if (!$task->isCompleted()) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -123,9 +123,8 @@ deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing. Please enter it manually or edit the pricing.
 
 delivery.createNew: Create new delivery
-
-help.title: Help
-help.home: Home
+delivery.tracking_link: Tracking link
+delivery.with_id: 'Delivery #%id%'
 
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try with a different address
 restaurants.visible_by_you_only: Visible by you only

@@ -100,7 +100,8 @@
         "hwi/oauth-bundle": "dev-master",
         "php-http/httplug-bundle": "^1.16",
         "m6web/daemon-bundle": "^4.1",
-        "azuyalabs/yasumi": "^2.1"
+        "azuyalabs/yasumi": "^2.1",
+        "hashids/hashids": "^4.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.3",

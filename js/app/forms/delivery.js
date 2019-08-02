@@ -1,6 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
+import ClipboardJS from 'clipboard'
 
 import AddressAutosuggest from '../components/AddressAutosuggest'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -184,6 +185,12 @@ export default function(name, options) {
         createTagsWidget(name, 'dropoff', tags)
       })
     }
+
+    new ClipboardJS('#copy', {
+      text: function(trigger) {
+        return document.getElementById('tracking_link').getAttribute('href')
+      }
+    })
 
   }
 

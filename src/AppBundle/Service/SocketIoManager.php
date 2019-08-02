@@ -61,6 +61,17 @@ class SocketIoManager
         }
     }
 
+    public function toCourier(UserInterface $user, $message, array $data = [])
+    {
+        $channel = sprintf('couriers:%s', $user->getUsername());
+        $payload = json_encode([
+            'name' => $message,
+            'data' => $data
+        ]);
+
+        $this->redis->publish($channel, $payload);
+    }
+
     public function toUser(UserInterface $user, $message, array $data = [])
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;

@@ -37,10 +37,13 @@ const io = require('socket.io')(server, { path: '/tracking/socket.io' });
 
 sub.on('psubscribe', (channel, count) => {
   winston.info(`Subscribed to ${channel} (${count})`)
-  initialize()
+  if (count === 2) {
+    initialize()
+  }
 })
 
 sub.prefixedPSubscribe('users:*')
+sub.prefixedPSubscribe('couriers:*')
 
 const authMiddleware = function(socket, next) {
 
@@ -50,7 +53,13 @@ const authMiddleware = function(socket, next) {
 
     tokenVerifier.verify(socket.handshake.headers)
       .then(user => {
-        socket.user = user;
+        if (user instanceof db.User) {
+          socket.user = user;
+        } else {
+          if (user.hasOwnProperty('courier')) {
+            socket.courier = user.courier
+          }
+        }
         next();
       })
       .catch(e => next(new Error('Authentication error')))
@@ -80,11 +89,19 @@ function initialize() {
   io
     .use(authMiddleware)
     .on('connect', function (socket) {
-      socket.join(`users:${socket.user.username}`, (err) => {
-        if (!err) {
-          console.log(`user "${socket.user.username}" joined room "users:${socket.user.username}"`)
-        }
-      })
+      if (socket.user) {
+        socket.join(`users:${socket.user.username}`, (err) => {
+          if (!err) {
+            console.log(`user "${socket.user.username}" joined room "users:${socket.user.username}"`)
+          }
+        })
+      } else {
+        socket.join(`couriers:${socket.courier}`, (err) => {
+          if (!err) {
+            console.log(`user joined room "couriers:${socket.courier}"`)
+          }
+        })
+      }
     })
 
   server.listen(process.env.PORT || 8001);

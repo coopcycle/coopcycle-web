@@ -33,21 +33,28 @@ TokenVerifier.prototype.verify = function(headers) {
 
       console.log('JWT verified successfully', decoded);
 
-      // Token is verified, load user from database
-      this.db.User
-        .findOne({
-          where: { username: decoded.username }
-        })
-        .then(function(user) {
+      // The claim "username" is added by LexikJWTAuthenticationBundle
+      if (decoded.hasOwnProperty('username')) {
+        this.db.User
+          .findOne({
+            where: { username: decoded.username }
+          })
+          .then(function(user) {
 
-          if (!user) {
-            console.log('User does not exist');
+            if (!user) {
+              console.log('User does not exist');
 
-            return reject(USER_NOT_FOUND)
-          }
+              return reject(USER_NOT_FOUND)
+            }
 
-          resolve(user)
-        })
+            resolve(user)
+          })
+          .catch(function (e) {
+            reject(e)
+          })
+      } else if (decoded.hasOwnProperty('msn')) {
+        resolve({ courier: decoded.msn })
+      }
 
     });
   });
