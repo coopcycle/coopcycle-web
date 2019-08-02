@@ -4,7 +4,7 @@ import Modal from 'react-modal'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
-import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../store/actions'
+import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
 import TaskModalContent from './TaskModalContent'

@@ -5,7 +5,7 @@ import dragula from 'react-dragula'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Task from './Task'
-import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../store/actions'
+import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../redux/actions'
 
 moment.locale($('html').attr('lang'))
 

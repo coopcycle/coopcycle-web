@@ -1,4 +1,4 @@
-import { combinedTasks, unassignedTasks, taskLists } from '../store/reducers'
+import { combinedTasks, unassignedTasks, taskLists } from '../redux/reducers'
 
 describe('combinedTasks reducer', () => {
 

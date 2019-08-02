@@ -16,7 +16,7 @@ import chroma from 'chroma-js'
 import PhoneInput, { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../store/actions'
+import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../redux/actions'
 import CourierSelect from './CourierSelect'
 
 const locale = $('html').attr('lang')

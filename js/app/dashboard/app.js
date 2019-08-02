@@ -5,7 +5,7 @@ import dragula from 'dragula'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal } from './store/actions'
+import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'

@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
-import { setCurrentTask } from '../store/actions'
+import { setCurrentTask } from '../redux/actions'
 
 moment.locale($('html').attr('lang'))
 

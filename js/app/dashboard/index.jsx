@@ -6,7 +6,7 @@ import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 
 import i18n from '../i18n'
-import store from './store/store'
+import store from './redux/store'
 import DashboardApp from './app'
 import LeafletMap from './components/LeafletMap'
 import Navbar from './components/Navbar'

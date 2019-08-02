@@ -6,7 +6,7 @@ import {
   toggleShowCancelledTasks,
   setSelectedTagList,
   toggleShowUntaggedTasks
-} from '../store/actions'
+} from '../redux/actions'
 import { withTranslation } from 'react-i18next'
 
 class Filters extends Component {

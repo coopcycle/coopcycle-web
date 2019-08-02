@@ -8,7 +8,7 @@ import Modal from 'react-modal'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import TaskModalContent from './TaskModalContent'
-import { setTaskListGroupMode, toggleTask, selectTask, openNewTaskModal, closeNewTaskModal } from '../store/actions'
+import { setTaskListGroupMode, toggleTask, selectTask, openNewTaskModal, closeNewTaskModal } from '../redux/actions'
 
 class UnassignedTasks extends React.Component {
 

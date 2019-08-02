@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 import { ContextMenu, MenuItem, connectMenu } from 'react-contextmenu'
 
-import { removeTasks } from '../store/actions'
+import { removeTasks } from '../redux/actions'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
