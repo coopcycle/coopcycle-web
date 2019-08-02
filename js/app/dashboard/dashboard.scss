@@ -296,7 +296,8 @@ html, body {
 }
 
 .ReactModal__Content--task-form,
-.ReactModal__Content--select-courier {
+.ReactModal__Content--select-courier,
+.ReactModal__Content--filters {
   min-width: 40%;
   padding: 0;
 }
@@ -305,6 +306,20 @@ html, body {
   max-height: 100%;
   .address-autosuggest__container {
     margin-bottom: 0;
+  }
+}
+
+.ReactModal__Content--filters {
+  padding: 15px;
+  .dashboard {
+    &__modal-filters {
+      &__tabpane {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
   }
 }
 

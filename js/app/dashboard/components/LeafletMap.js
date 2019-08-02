@@ -89,9 +89,11 @@ function mapStateToProps(state) {
     polylines[taskList.username] = taskList.polyline
   })
 
+  const tasks = selectTasks(state)
+
   return {
-    tasks: selectTasks(state),
-    tasksFiltered: selectFilteredTasks(state),
+    tasks,
+    tasksFiltered: selectFilteredTasks({ tasks, filters: state.filters }),
     polylines,
     polylineEnabled,
     selectedTasks: state.selectedTasks,

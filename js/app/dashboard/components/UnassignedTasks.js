@@ -9,6 +9,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import TaskModalContent from './TaskModalContent'
 import { setTaskListGroupMode, toggleTask, selectTask, openNewTaskModal, closeNewTaskModal } from '../redux/actions'
+import { selectFilteredTasks } from '../redux/selectors'
 
 class UnassignedTasks extends React.Component {
 
@@ -47,17 +48,6 @@ class UnassignedTasks extends React.Component {
     const groupsMap = new Map()
     const groups = []
     let standaloneTasks = []
-
-    // Do not show cancelled tasks
-    if (!this.props.showCancelledTasks) {
-      unassignedTasks = _.filter(unassignedTasks, (task) => { return task.status !== 'CANCELLED' })
-    }
-
-    // tag filtering - task should have at least one of the selected tags
-    unassignedTasks = _.filter(unassignedTasks, (task) =>
-      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
-      (task.tags.length === 0 && showUntaggedTasks)
-    )
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
 
@@ -126,12 +116,13 @@ class UnassignedTasks extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    unassignedTasks: state.unassignedTasks,
+    unassignedTasks: selectFilteredTasks({
+      tasks: state.unassignedTasks,
+      filters: state.filters
+    }),
     taskListGroupMode: state.taskListGroupMode,
-    selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
     selectedTasks: state.selectedTasks,
-    showCancelledTasks: state.taskCancelledFilter,
+    showCancelledTasks: state.filters.showCancelledTasks,
     taskModalIsOpen: state.taskModalIsOpen
   }
 }

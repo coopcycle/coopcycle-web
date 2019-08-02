@@ -5,11 +5,12 @@ import dragula from 'dragula'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal } from './redux/actions'
+import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal, closeFiltersModal } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
 import TaskModalContent from './components/TaskModalContent'
+import FiltersModalContent from './components/FiltersModalContent'
 
 const drake = dragula({
   copy: true,
@@ -162,6 +163,14 @@ class DashboardApp extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <TaskModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.filtersModalIsOpen }
+          onRequestClose={ _ => this.props.closeFiltersModal() }
+          className="ReactModal__Content--filters"
+          shouldCloseOnOverlayClick={ true }>
+          <FiltersModalContent />
+        </Modal>
       </div>
     )
   }
@@ -171,7 +180,8 @@ function mapStateToProps(state) {
   return {
     allTasks: state.allTasks,
     taskModalIsOpen: state.taskModalIsOpen,
-    couriersList: state.couriersList
+    couriersList: state.couriersList,
+    filtersModalIsOpen: state.filtersModalIsOpen,
   }
 }
 
@@ -182,7 +192,8 @@ function mapDispatchToProps (dispatch) {
     drakeDrag: () => dispatch(drakeDrag()),
     drakeDragEnd: () => dispatch(drakeDragEnd()),
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal())
+    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
+    closeFiltersModal: _ => dispatch(closeFiltersModal()),
   }
 }
 

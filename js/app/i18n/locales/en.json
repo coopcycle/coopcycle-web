@@ -43,6 +43,11 @@
     "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Finished tasks",
     "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Cancelled tasks",
     "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Untagged tasks",
+    "ADMIN_DASHBOARD_FILTERS_APPLY": "Apply",
+    "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "General",
+    "ADMIN_DASHBOARD_FILTERS_TAB_TAGS": "Tags",
+    "ADMIN_DASHBOARD_FILTERS_SHOW": "Show",
+    "ADMIN_DASHBOARD_FILTERS_HIDE": "Hide",
     "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} before {{date}}",
     "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Task #{{id}}",
     "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Between {{after}} and {{before}}",
@@ -52,6 +57,7 @@
     "ADMIN_DASHBOARD_NAV_IMPORT": "Import",
     "ADMIN_DASHBOARD_NAV_EXPORT": "Export",
     "ADMIN_DASHBOARD_NAV_FILTERS": "Filters",
+    "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Clear",
     "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Import errors",
     "ADMIN_DASHBOARD_TASK_TITLE": "Task #{{id}}",
     "ADMIN_DASHBOARD_TASK_TITLE_NEW": "New task",
@@ -138,6 +144,7 @@
     "NOTIFICATIONS_EMPTY": "No notifications",
     "CROPPIE_CONFIRM": "Confirm",
     "CROPPIE_CANCEL": "Cancel",
-    "DROPZONE_DEFAULT_MESSAGE": "Drop files here"
+    "DROPZONE_DEFAULT_MESSAGE": "Drop files here",
+    "TAGS_SELECT_PLACEHOLDER": "Select tags…"
   }
 }

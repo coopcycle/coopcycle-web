@@ -81,10 +81,6 @@ export const OPEN_ADD_USER = 'OPEN_ADD_USER'
 export const CLOSE_ADD_USER = 'CLOSE_ADD_USER'
 export const MODIFY_TASK_LIST_REQUEST = 'MODIFY_TASK_LIST_REQUEST'
 export const MODIFY_TASK_LIST_REQUEST_SUCCESS = 'MODIFY_TASK_LIST_REQUEST_SUCCESS'
-export const TOGGLE_SHOW_FINISHED_TASKS = 'TOGGLE_SHOW_FINISHED_TASKS'
-export const TOGGLE_SHOW_UNTAGGED_TASKS = 'TOGGLE_SHOW_UNTAGGED_TASKS'
-export const TOGGLE_SHOW_CANCELLED_TASKS = 'TOGGLE_SHOW_CANCELLED_TASKS'
-export const FILTER_TAG_BY_TAGNAME = 'FILTER_TAG_BY_TAGNAME'
 export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
@@ -104,6 +100,11 @@ export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
 export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
 export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
+
+export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
+export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
+export const SET_FILTER_VALUE = 'SET_FILTER_VALUE'
+export const RESET_FILTERS = 'RESET_FILTERS'
 
 import { createTaskList } from './utils'
 
@@ -163,20 +164,12 @@ function modifyTaskListRequestSuccess(taskList) {
   return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
 }
 
-function toggleShowFinishedTasks() {
-  return { type: TOGGLE_SHOW_FINISHED_TASKS }
+function setFilterValue(key, value) {
+  return { type: SET_FILTER_VALUE, key, value }
 }
 
-function toggleShowUntaggedTasks() {
-  return { type: TOGGLE_SHOW_UNTAGGED_TASKS }
-}
-
-function toggleShowCancelledTasks() {
-  return { type: TOGGLE_SHOW_CANCELLED_TASKS }
-}
-
-function setSelectedTagList (tag) {
-  return {type: FILTER_TAG_BY_TAGNAME, tag: tag }
+function resetFilters() {
+  return { type: RESET_FILTERS }
 }
 
 function modifyTaskList(username, tasks) {
@@ -313,6 +306,14 @@ function tokenRefreshSuccess(token) {
   return { type: TOKEN_REFRESH_SUCCESS, token }
 }
 
+function openFiltersModal() {
+  return { type: OPEN_FILTERS_MODAL }
+}
+
+function closeFiltersModal() {
+  return { type: CLOSE_FILTERS_MODAL }
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -421,7 +422,6 @@ function cancelTask(task) {
 }
 
 export {
-  setSelectedTagList,
   updateTask,
   addTaskList,
   modifyTaskList,
@@ -431,9 +431,6 @@ export {
   closeAddUserModal,
   togglePolyline,
   setTaskListGroupMode,
-  toggleShowFinishedTasks,
-  toggleShowUntaggedTasks,
-  toggleShowCancelledTasks,
   addCreatedTask,
   toggleTask,
   selectTask,
@@ -446,5 +443,9 @@ export {
   setCurrentTask,
   createTask,
   completeTask,
-  cancelTask
+  cancelTask,
+  openFiltersModal,
+  closeFiltersModal,
+  setFilterValue,
+  resetFilters,
 }

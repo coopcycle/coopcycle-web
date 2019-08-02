@@ -9,7 +9,7 @@ import LocaleProvider from 'antd/lib/locale-provider'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 
-import Filters from './Filters'
+import { openFiltersModal, resetFilters } from '../redux/actions'
 
 const locale = $('html').attr('lang'),
   antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -33,6 +33,48 @@ class Navbar extends React.Component {
           <li key={ key }>{ error.message }</li>
         )) }
       </ul>
+    )
+  }
+
+  _onFiltersClick(e) {
+    e.preventDefault()
+    this.props.openFiltersModal()
+  }
+
+  _onClearClick(e) {
+    e.preventDefault()
+    this.props.resetFilters()
+  }
+
+  renderFilters() {
+
+    const text = (
+      <span className={ this.props.isDefaultFilters ? '' : 'text-primary' }>
+        <i className="fa fa-sliders" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_FILTERS') }
+      </span>
+    )
+
+    if (!this.props.isDefaultFilters) {
+      return (
+        <strong>
+          { text }
+        </strong>
+      )
+    }
+
+    return text
+  }
+
+  renderReset() {
+
+    return (
+      <li>
+        <a href="#" onClick={ this._onClearClick.bind(this) }>
+          <span className="text-muted">
+            <i className="fa fa-times-circle" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_FILTERS_CLEAR') }
+          </span>
+        </a>
+      </li>
     )
   }
 
@@ -87,13 +129,12 @@ class Navbar extends React.Component {
                   </a>
                 </li>
               )}
-              <li className="dropdown" id="dashboard-filters">
-                <a className="admin-navbar__link" href="#" role="button"
-                  aria-haspopup="true" aria-expanded="false">
-                  { this.props.t('ADMIN_DASHBOARD_NAV_FILTERS') } <span className="caret"></span>
+              <li>
+                <a href="#" onClick={ this._onFiltersClick.bind(this) }>
+                  { this.renderFilters() }
                 </a>
-                <Filters />
               </li>
+              { !this.props.isDefaultFilters && this.renderReset() }
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li><a><span className="pulse" id="pulse"></span></a></li>
@@ -119,8 +160,17 @@ function mapStateToProps(state) {
     }),
     hasUploadErrors: state.taskUploadFormErrors.length > 0,
     uploadErrors: state.taskUploadFormErrors,
-    nav: state.nav
+    nav: state.nav,
+    isDefaultFilters: state.isDefaultFilters
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(Navbar))
+function mapDispatchToProps(dispatch) {
+
+  return {
+    openFiltersModal: _ => dispatch(openFiltersModal()),
+    resetFilters: _ => dispatch(resetFilters())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Navbar))
