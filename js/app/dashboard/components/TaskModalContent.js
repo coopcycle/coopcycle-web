@@ -312,9 +312,6 @@ class TaskModalContent extends React.Component {
         after: this.props.task.doneAfter,
         before: this.props.task.doneBefore,
       }
-      if (initialValues.address.telephone) {
-        initialValues.address.telephone = formatPhoneNumber(initialValues.address.telephone)
-      }
     }
 
     return (
@@ -387,7 +384,7 @@ class TaskModalContent extends React.Component {
                   <div className={ errors.address && touched.address && errors.address.telephone && touched.address.telephone ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                     <label className="control-label" htmlFor="address_telephone">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL') }</label>
                     <PhoneInput
-                      value={ values.address.telephone || '' }
+                      value={ values.address.telephone ? formatPhoneNumber(values.address.telephone) : '' }
                       country={ this.props.country }
                       showCountrySelect={ false }
                       inputClassName="form-control"
