@@ -9,5 +9,5 @@ redirect_to_locale:
   path: /
   defaults:
     _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-    path: /%locale%
+    path: /%locale%/
     permanent: false
