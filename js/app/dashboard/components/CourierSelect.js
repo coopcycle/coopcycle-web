@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withTranslation } from 'react-i18next'
 import Select, { components } from 'react-select'
+
+import Avatar from './Avatar'
 
 const courierAsOption = courier => ({
   ...courier,
@@ -13,23 +16,19 @@ const lookupCourier = (couriers, username) => {
 }
 
 const Option = ({ children, ...props }) => {
-  const iconUrl =
-    window.Routing.generate('user_avatar', { username: props.data.username })
 
   return (
     <components.Option { ...props }>
-      <img src={ iconUrl } width="20" height="20" />  { children }
+      <Avatar username={ props.data.username } />  { children }
     </components.Option>
   )
 }
 
 const SingleValue = ({ children, ...props }) => {
-  const iconUrl =
-    window.Routing.generate('user_avatar', { username: props.data.username })
 
   return (
     <components.SingleValue { ...props }>
-      <img src={ iconUrl } width="20" height="20" />  { children }
+      <Avatar username={ props.data.username } />  { children }
     </components.SingleValue>
   )
 }
@@ -42,10 +41,12 @@ class CourierSelect extends Component {
         defaultValue={ lookupCourier(this.props.couriers, this.props.username) }
         options={ this.props.couriers }
         onChange={ this.props.onChange }
+        placeholder={ this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
         components={{ Option, SingleValue }}
         menuPlacement={ this.props.hasOwnProperty('menuPlacement') ? this.props.menuPlacement : 'auto' }
         isDisabled={ this.props.hasOwnProperty('isDisabled') ? this.props.isDisabled : false }
-        maxMenuHeight={ 160 } />
+        maxMenuHeight={ 160 }
+        isClearable={ this.props.hasOwnProperty('isClearable') ? this.props.isClearable : false } />
     )
   }
 }
@@ -53,6 +54,7 @@ class CourierSelect extends Component {
 function mapStateToProps(state, ownProps) {
 
   let couriers = state.couriersList
+
   if (ownProps.hasOwnProperty('exclude') && ownProps.exclude) {
     const usernames = _.map(state.taskLists, taskList => taskList.username)
     couriers = _.filter(couriers, courier => !_.includes(usernames, courier.username))
@@ -63,4 +65,4 @@ function mapStateToProps(state, ownProps) {
   }
 }
 
-export default connect(mapStateToProps)(CourierSelect)
+export default connect(mapStateToProps)(withTranslation()(CourierSelect))

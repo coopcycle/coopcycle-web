@@ -74,6 +74,7 @@
     "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL": "Comments",
     "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ex: address not found, no problem…",
     "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Show history",
+    "ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER": "Select a courier…",
     "USER_EDIT_ENABLED_LABEL": "Enabled",
     "USER_EDIT_DISABLED_LABEL": "Disabled",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",
