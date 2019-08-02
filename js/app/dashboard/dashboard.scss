@@ -302,6 +302,10 @@ html, body {
   padding: 0;
 }
 
+.ReactModal__Content--filters {
+  min-width: 33.3333%;
+}
+
 .ReactModal__Content--task-form {
   max-height: 100%;
   .address-autosuggest__container {
@@ -318,6 +322,11 @@ html, body {
         display: flex;
         flex-direction: column;
         justify-content: center;
+      }
+      &__courier {
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-between;
       }
     }
   }

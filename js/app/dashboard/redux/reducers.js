@@ -63,7 +63,8 @@ const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
-  tags: []
+  tags: [],
+  hiddenCouriers: []
 }
 
 const initialState = {

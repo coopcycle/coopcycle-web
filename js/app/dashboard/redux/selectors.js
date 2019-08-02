@@ -27,6 +27,7 @@ export const selectFilteredTasks = createSelector(
       showFinishedTasks,
       showCancelledTasks,
       tags,
+      hiddenCouriers,
     } = filters
 
     if (!showFinishedTasks) {
@@ -51,6 +52,23 @@ export const selectFilteredTasks = createSelector(
         })
     }
 
+    if (hiddenCouriers.length > 0) {
+
+      tasksFiltered =
+        filter(tasksFiltered, task => {
+          if (!task.isAssigned) {
+            return false
+          }
+
+          return !includes(hiddenCouriers, task.assignedTo)
+        })
+    }
+
     return tasksFiltered
   }
+)
+
+export const selectBookedUsernames = createSelector(
+  state => state.taskLists,
+  taskLists => taskLists.map(taskList => taskList.username)
 )
