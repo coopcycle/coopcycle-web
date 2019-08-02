@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
@@ -69,6 +70,13 @@ class CheckoutAddressType extends AbstractType
                     'constraints' => [
                         new AssertPhoneNumber()
                     ],
+                ]);
+            }
+
+            if ($order->isEligibleToReusablePackaging()) {
+                $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'form.checkout_address.reusable_packaging_enabled.label',
                 ]);
             }
         });

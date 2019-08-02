@@ -13,4 +13,5 @@ interface AdjustmentInterface extends BaseAdjustmentInterface
     public const STRIPE_FEE_ADJUSTMENT = 'stripe_fee';
     public const DELIVERY_PROMOTION_ADJUSTMENT = 'delivery_promotion';
     public const ORDER_PROMOTION_ADJUSTMENT = 'order_promotion';
+    public const REUSABLE_PACKAGING_ADJUSTMENT = 'reusable_packaging';
 }

@@ -5,18 +5,21 @@
   </thead>
   <tbody>
   {% for item in order.items %}
-    {% set options_adjustments = [] %}
-    {% for adjusment in item.adjustments %}
-      {% if adjusment.type == 'menu_item_modifier' %}
-        {% set options_adjustments = [ adjusment ]|merge(options_adjustments) %}
-      {% endif %}
-    {% endfor %}
+    {% set options_adjustments = item.getAdjustments('menu_item_modifier') %}
+    {% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
     <tr>
       <td>
-        {{ item.variant.name }} <span class="text-muted">× {{ item.quantity }}</span>
-        {% if options_adjustments|length > 0 %}
+        <span class="text-muted">{{ item.quantity }} ×</span> {{ item.variant.name }}
+        {% if options_adjustments|length > 0 or packaging_adjustments|length > 0 %}
         <ul class="list-unstyled">
         {% for adjusment in options_adjustments %}
+          <li>
+            <small class="text-muted">
+              {{ adjusment.label }} {{ adjusment.amount|price_format }}
+            </small>
+          </li>
+        {% endfor %}
+        {% for adjusment in packaging_adjustments %}
           <li>
             <small class="text-muted">
               {{ adjusment.label }} {{ adjusment.amount|price_format }}
@@ -34,6 +37,7 @@
   <tbody>
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
+  {% set packaging_adjustments = order.getAdjustments('reusable_packaging') %}
   {% for adjusment in order.adjustments %}
     {% if adjusment.type == 'delivery_promotion' or adjusment.type == 'order_promotion' %}
       {% set promotion_adjustments = [ adjusment ]|merge(promotion_adjustments) %}
@@ -67,6 +71,16 @@
     {% endif %}
     {% if promotion_adjustments|length > 0 %}
       {% for adjustment in promotion_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right">
+          {{ adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    {% if packaging_adjustments|length > 0 %}
+      {% for adjustment in deposit_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
         <td class="text-right">

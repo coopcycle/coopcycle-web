@@ -261,6 +261,12 @@ services:
     tags:
       - { name: sylius.order_processor, priority: 16 }
 
+  AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: sylius.order_processor, priority: 8 }
+
   sylius.promotion_action.delivery_percentage:
     class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
     arguments:

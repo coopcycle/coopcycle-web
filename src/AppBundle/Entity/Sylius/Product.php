@@ -155,7 +155,7 @@ class Product extends BaseProduct implements ProductInterface
     /**
      * @return mixed
      */
-    public function getReusablePackagingEnabled()
+    public function isReusablePackagingEnabled()
     {
         return $this->reusablePackagingEnabled;
     }

@@ -70,6 +70,7 @@ class OrderController extends AbstractController
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
+        $originalReusablePackagingEnabled = $order->isReusablePackagingEnabled();
 
         $form = $this->createForm(CheckoutAddressType::class, $order);
 
@@ -91,6 +92,10 @@ class OrderController extends AbstractController
             }
 
             $this->objectManager->flush();
+
+            if ($originalReusablePackagingEnabled !== $order->isReusablePackagingEnabled()) {
+                return $this->redirectToRoute('order');
+            }
 
             return $this->redirectToRoute('order_payment');
         }

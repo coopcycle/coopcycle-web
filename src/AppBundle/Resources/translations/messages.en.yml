@@ -285,6 +285,8 @@ payment.state.refunded: Refunded
 payment.state.refunded_partially: Partially Refunded
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
+order.adjustment_type.reusable_packaging: Packaging
+order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
 order.list.cancel: Cancel
@@ -602,6 +604,7 @@ form.checkout_address.notes.placeholder: 'Example: without sauce, without tomato
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
+form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name

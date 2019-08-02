@@ -6,6 +6,10 @@ AppBundle\Entity\Sylius\Order:
             type: datetime
             column: shipped_at
             nullable: true
+        reusablePackagingEnabled:
+            type: boolean
+            options:
+                default: false
     manyToOne:
         customer:
             targetEntity: AppBundle\Entity\ApiUser
