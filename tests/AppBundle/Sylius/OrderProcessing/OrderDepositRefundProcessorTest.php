@@ -38,13 +38,14 @@ class OrderDepositRefundProcessorTest extends TestCase
         return $contract;
     }
 
-    private function createOrderItem($units)
+    private function createOrderItem($units, $enabled)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariant::class);
 
         $product = new Product();
-        $product->setReusablePackagingEnabled(true);
+        $product->setReusablePackagingEnabled($enabled);
+        // $orderItem->setReusablePackagingEnabled($enabled);
         $product->setReusablePackagingUnit($units);
         $variant->getProduct()->willReturn($product);
         $orderItem->getVariant()->willReturn($variant->reveal());
@@ -55,11 +56,10 @@ class OrderDepositRefundProcessorTest extends TestCase
         // $orderItem
         //     ->setOrder(Argument::type(OrderInterface::class))
         //     ->shouldBeCalled();
-
         return $orderItem->reveal();
     }
 
-    public function testOrderDepositRefundDisabledDoesNothing()
+    public function testRestaurantDepositRefundDisabledDoesNothing()
     {
         $order = new Order();
 
@@ -78,22 +78,47 @@ class OrderDepositRefundProcessorTest extends TestCase
         $this->orderDepositRefundProcessor->process($order);
     }
 
+    public function testOrderDoesNotContainReusablePackagingDoesNothing()
+    {
+        $order = new Order();
+        $restaurant = new Restaurant();
+
+        $restaurant->setDepositRefundEnabled(true);
+        $order->setRestaurant($restaurant);
+
+        $order->setReusablePackagingEnabled(false);
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('int'),
+            Argument::type('bool')
+        )->shouldNotBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order);
+    }
+
     public function testOrderDepositRefundEnabledAddAdjustment()
     {
         $restaurant = new Restaurant();
         $restaurant->setDepositRefundEnabled(true);
 
         $order = $this->prophesize(Order::class);
-        $order->getRestaurant()->willReturn($restaurant);
-        $order->removeAdjustments(AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT)->shouldBeCalled();
+        $order
+            ->getReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustments(AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT)
+            ->shouldBeCalled();
 
         $items = new ArrayCollection([
-            $this->createOrderItem($units = 1),
-            $this->createOrderItem($units = 1)
+            $this->createOrderItem($units = 1, $enabled = true),
+            $this->createOrderItem($units = 1, $enabled = true)
         ]);
         $order->getItems()->willReturn($items);
-        // $order->getItems()->getVariant()->getProduct()->getReusablePackagingEnabled()->shouldBeCalled();
-        // $order->getItems()->getVariant()->getProduct()->getReusablePackagingUnit()->shouldBeCalled();
 
         $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
 
@@ -108,6 +133,37 @@ class OrderDepositRefundProcessorTest extends TestCase
 
         $this->orderDepositRefundProcessor->process($order->reveal());
     }
+
+    //     public function testOrderDepositRefundEnabledAddAdjustment()
+    // {
+    //     $restaurant = new Restaurant();
+    //     $restaurant->setDepositRefundEnabled(true);
+
+    //     $order = $this->prophesize(Order::class);
+    //     $order->getRestaurant()->willReturn($restaurant);
+    //     $order->removeAdjustments(AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT)->shouldBeCalled();
+
+    //     $items = new ArrayCollection([
+    //         $this->createOrderItem($units = 1, true),
+    //         $this->createOrderItem($units = 1, true)
+    //     ]);
+    //     $order->getItems()->willReturn($items);
+    //     // $order->getItems()->getVariant()->getProduct()->getReusablePackagingEnabled()->shouldBeCalled();
+    //     // $order->getItems()->getVariant()->getProduct()->getReusablePackagingUnit()->shouldBeCalled();
+
+    //     $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
+
+    //     $this->adjustmentFactory->createWithData(
+    //         AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT,
+    //         Argument::type('string'),
+    //         200,
+    //         Argument::type('bool')
+    //     )->willReturn($adjustment);
+
+    //     $order->addAdjustment($adjustment)->shouldBeCalled();
+
+    //     $this->orderDepositRefundProcessor->process($order->reveal());
+    // }
 
     // public function testOrderWithoutRestaurantFees()
     // {

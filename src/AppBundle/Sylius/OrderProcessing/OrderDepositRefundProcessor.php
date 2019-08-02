@@ -23,19 +23,23 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     {
         $order->removeAdjustments(AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT);
 
-        if(!$order->getRestaurant()->getDepositRefundEnabled()) {
-            // $deposit = new Adjustment();
-            // $discount10Percent->setAmount(-$order->getTotal() / 100 * 10);
-            // $order->addAdjustment($discount10Percent);
+        if (!$order->getRestaurant()->getDepositRefundEnabled()) {
             return;
         }
-        // $refundUnitSum = sum($order->getItems()->getVariant()->getProduct()->getRefundablePackagingUnit())*100;
+
+        if (!$order->getReusablePackagingEnabled()){
+            return;
+        }
+
+
         $totalUnits = 0;
         foreach ($order->getItems() as $item) {
             if ($item->getVariant()->getProduct()->getReusablePackagingEnabled()) {
                 $totalUnits += $item->getVariant()->getProduct()->getReusablePackagingUnit();
             }
         }
+
+
 
         $deliveryAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::ORDER_DEPOSIT_ADJUSTMENT,
