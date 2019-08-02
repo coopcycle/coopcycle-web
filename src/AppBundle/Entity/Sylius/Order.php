@@ -115,6 +115,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $promotions;
 
+    protected $reusablePackagingEnabled = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -494,5 +496,25 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReusablePackagingEnabled()
+    {
+        return $this->reusablePackagingEnabled;
+    }
+
+    /**
+     * @param mixed $reusablePackagingEnabled
+     *
+     * @return self
+     */
+    public function setReusablePackagingEnabled($reusablePackagingEnabled)
+    {
+        $this->reusablePackagingEnabled = $reusablePackagingEnabled;
+
+        return $this;
     }
 }

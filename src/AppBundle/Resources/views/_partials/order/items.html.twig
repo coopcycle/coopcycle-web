@@ -34,6 +34,7 @@
   <tbody>
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}
+  {% set deposit_adjustments = order.getAdjustments('order_deposit') %}
   {% for adjusment in order.adjustments %}
     {% if adjusment.type == 'delivery_promotion' or adjusment.type == 'order_promotion' %}
       {% set promotion_adjustments = [ adjusment ]|merge(promotion_adjustments) %}
@@ -67,6 +68,16 @@
     {% endif %}
     {% if promotion_adjustments|length > 0 %}
       {% for adjustment in promotion_adjustments %}
+      <tr>
+        <th>{{ adjustment.label }}</th>
+        <td class="text-right">
+          {{ adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+    {% if deposit_adjustments|length > 0 %}
+      {% for adjustment in deposit_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
         <td class="text-right">

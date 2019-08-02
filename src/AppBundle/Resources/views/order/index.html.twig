@@ -28,6 +28,12 @@
             <h4>{{ 'order.cart.title'|trans }}</h4>
             <div class="order-map__column-block" id="items">
               {% include '@App/_partials/order/items.html.twig' with { with_taxes: false } %}
+            {{ dump(order.restaurant.depositRefundEnabled) }}
+            {% if order.restaurant.depositRefundEnabled == true %}
+              {{ form_row(form.reusablePackagingEnabled) }}
+            {% else %}
+              {% do form.reusablePackagingEnabled.setRendered() %}
+            {% endif %}
             </div>
 
             <div class="order-map__column-block">
