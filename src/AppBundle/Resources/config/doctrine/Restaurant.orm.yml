@@ -7,6 +7,9 @@ AppBundle\Entity\Restaurant:
             field_name: deletedAt
             time_aware: false
             hard_delete: false
+    indexes:
+        restaurant_enabled_index:
+            columns: [ id, enabled ]
     id:
         id:
             type: integer
