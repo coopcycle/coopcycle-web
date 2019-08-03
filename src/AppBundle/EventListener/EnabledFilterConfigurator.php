@@ -37,9 +37,14 @@ class EnabledFilterConfigurator
         $restaurants = [];
 
         if ($user = $this->getUser()) {
-            $isAdmin = $user->hasRole('ROLE_ADMIN');
-            $isRestaurant = $user->hasRole('ROLE_RESTAURANT');
 
+            // If this is an admin, we don't enable the filter
+            $isAdmin = $user->hasRole('ROLE_ADMIN');
+            if ($isAdmin) {
+                return;
+            }
+
+            $isRestaurant = $user->hasRole('ROLE_RESTAURANT');
             if ($isRestaurant) {
                 $restaurants = [];
                 foreach ($user->getRestaurants() as $restaurant) {
