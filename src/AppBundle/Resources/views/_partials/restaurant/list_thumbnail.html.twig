@@ -1,32 +1,6 @@
 {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
-
-{% set cuisineNames = [] %}
-{% for cuisine in restaurant.servesCuisine %}
-  {% set cuisineNames = cuisineNames|merge([cuisine.name]) %}
-{% endfor %}
-
 {% if restaurant_image is empty %}
-
-  {#
-  {% set cuisineImage = 'default' %}
-  {% set cuisineImages = [] %}
-  {% for cuisine in restaurant.servesCuisine %}
-    {% for image in images %}
-      {% if image == cuisine.name|slugify %}
-        {% set cuisineImages = cuisineImages|merge([image]) %}
-      {% endif %}
-    {% endfor %}
-  {% endfor %}
-
-  {% if cuisineImages|length > 0 %}
-    {% set cuisineImage = random(cuisineImages) %}
-  {% endif %}
-
-  {% set restaurant_image = asset('img/cuisine/' ~ cuisineImage ~ '.jpg') %}
-  #}
-
   {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
-
 {% endif %}
 
 {% set restaurant_path_params = {

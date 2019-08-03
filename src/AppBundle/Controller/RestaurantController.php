@@ -163,16 +163,6 @@ class RestaurantController extends AbstractController
      */
     public function listAction(Request $request, RestaurantRepository $repository)
     {
-        $finder = new Finder();
-        $finder->files()
-            ->in($this->getParameter('kernel.root_dir') . '/../web/img/cuisine')
-            ->name('*.jpg');
-
-        $images = [];
-        foreach ($finder as $file) {
-            $images[] = $file->getBasename('.jpg');
-        }
-
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
@@ -234,7 +224,6 @@ class RestaurantController extends AbstractController
             'page' => $page,
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
-            'images' => $images,
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
         );
