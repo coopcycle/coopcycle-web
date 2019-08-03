@@ -39,6 +39,10 @@ framework:
     fragments:       ~
     http_method_override: true
     assets: ~
+    cache:
+        pools:
+            enabled_filter_configurator.cache:
+                adapter: cache.adapter.filesystem
 
 # Twig Configuration
 twig:
