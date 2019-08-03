@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
-import { setCurrentTask } from '../redux/actions'
+import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 
 moment.locale($('html').attr('lang'))
 
@@ -160,13 +160,17 @@ class Task extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
-  return {}
+function mapStateToProps(state, ownProps) {
+  return {
+    selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
+  }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
+    toggleTask: (task, multiple) => dispatch(toggleTask(task, multiple)),
+    selectTask: (task) => dispatch(selectTask(task)),
   }
 }
 

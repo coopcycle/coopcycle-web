@@ -5,12 +5,13 @@ import dragula from 'dragula'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal, closeFiltersModal } from './redux/actions'
+import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal, closeFiltersModal, toggleSearch, closeSearch } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
 import TaskModalContent from './components/TaskModalContent'
 import FiltersModalContent from './components/FiltersModalContent'
+import SearchPanel from './components/SearchPanel'
 
 const drake = dragula({
   copy: true,
@@ -134,6 +135,19 @@ class DashboardApp extends React.Component {
     configureDrag(this.props.drakeDrag)
     configureDragEnd(unassignedTasksContainer, this.props.drakeDragEnd)
     configureDrop(this.props.allTasks, this.props.assignTasks)
+
+    window.addEventListener('keydown', e => {
+      const isCtrl = (e.ctrlKey || e.metaKey)
+      if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
+        if (!this.props.searchIsOn) {
+          e.preventDefault()
+          this.props.toggleSearch()
+        }
+      }
+      if (e.keyCode === 27) {
+        this.props.closeSearch()
+      }
+    })
   }
 
   componentDidUpdate(prevProps) {
@@ -145,13 +159,15 @@ class DashboardApp extends React.Component {
   render () {
     return (
       <div className="dashboard__aside-container">
-        <UnassignedTasks ref={ this.unassignedTasksRef } />
+        <UnassignedTasks
+          ref={ this.unassignedTasksRef } />
         <TaskLists
           couriersList={ this.props.couriersList }
           taskListDidMount={ taskListComponent =>
             drake.containers.push(findDOMNode(taskListComponent).querySelector('.panel .list-group'))
           }
         />
+        <SearchPanel />
         <ContextMenu />
         <Modal
           appElement={ document.getElementById('dashboard') }
@@ -182,6 +198,7 @@ function mapStateToProps(state) {
     taskModalIsOpen: state.taskModalIsOpen,
     couriersList: state.couriersList,
     filtersModalIsOpen: state.filtersModalIsOpen,
+    searchIsOn: state.searchIsOn
   }
 }
 
@@ -194,6 +211,8 @@ function mapDispatchToProps (dispatch) {
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
     closeFiltersModal: _ => dispatch(closeFiltersModal()),
+    toggleSearch: _ => dispatch(toggleSearch()),
+    closeSearch: _ => dispatch(closeSearch()),
   }
 }
 

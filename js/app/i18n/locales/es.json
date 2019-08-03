@@ -73,6 +73,8 @@
     "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL": "Comentarios",
     "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ejemplo: dirección no encontrada, no hay problema…",
     "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Ver el historial",
+    "ADMIN_DASHBOARD_SEARCH": "Buscar",
+    "úmero": "Número, dirección",
     "USER_EDIT_ENABLED_LABEL": "Activado",
     "USER_EDIT_DISABLED_LABEL": "Desactivado",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Entrega estimada a las {{deliveryTime}}.",

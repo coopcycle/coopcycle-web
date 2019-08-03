@@ -8,7 +8,7 @@ import Modal from 'react-modal'
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import TaskModalContent from './TaskModalContent'
-import { setTaskListGroupMode, toggleTask, selectTask, openNewTaskModal, closeNewTaskModal } from '../redux/actions'
+import { setTaskListGroupMode, selectTask, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 
 class UnassignedTasks extends React.Component {
@@ -76,8 +76,13 @@ class UnassignedTasks extends React.Component {
       return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
     })
 
+    const classNames = ['dashboard__panel']
+    if (this.props.hidden) {
+      classNames.push('hidden')
+    }
+
     return (
-      <div className="dashboard__panel">
+      <div className={ classNames.join(' ') }>
         <h4>
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
           <span className="pull-right">
@@ -87,7 +92,14 @@ class UnassignedTasks extends React.Component {
             }}>
               <i className="fa fa-plus"></i>
             </a>
-            &nbsp;
+            &nbsp;&nbsp;
+            <a href="#" onClick={ e => {
+              e.preventDefault()
+              this.props.toggleSearch()
+            }}>
+              <i className="fa fa-search"></i>
+            </a>
+            &nbsp;&nbsp;
             <a href="#" id="task-list-group-mode" title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
               <i className="fa fa-list"></i>
             </a>
@@ -98,13 +110,7 @@ class UnassignedTasks extends React.Component {
             { groups }
             { _.map(standaloneTasks, (task, key) => {
               return (
-                <Task
-                  key={ key }
-                  task={ task }
-                  toggleTask={ this.props.toggleTask }
-                  selectTask={ this.props.selectTask }
-                  selected={ -1 !== this.props.selectedTasks.indexOf(task) }
-                />
+                <Task key={ key } task={ task } />
               )
             })}
           </div>
@@ -122,7 +128,6 @@ function mapStateToProps (state) {
       date: state.date,
     }),
     taskListGroupMode: state.taskListGroupMode,
-    selectedTasks: state.selectedTasks,
     showCancelledTasks: state.filters.showCancelledTasks,
     taskModalIsOpen: state.taskModalIsOpen
   }
@@ -131,10 +136,9 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
   return {
     setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
-    toggleTask: (task, multiple) => dispatch(toggleTask(task, multiple)),
-    selectTask: (task) => dispatch(selectTask(task)),
     openNewTaskModal: _ => dispatch(openNewTaskModal()),
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal())
+    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
+    toggleSearch: _ => dispatch(toggleSearch())
   }
 }
 

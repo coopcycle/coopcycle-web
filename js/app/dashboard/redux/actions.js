@@ -106,6 +106,10 @@ export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
 export const SET_FILTER_VALUE = 'SET_FILTER_VALUE'
 export const RESET_FILTERS = 'RESET_FILTERS'
 
+export const TOGGLE_SEARCH = 'TOGGLE_SEARCH'
+export const OPEN_SEARCH = 'OPEN_SEARCH'
+export const CLOSE_SEARCH = 'CLOSE_SEARCH'
+
 import { createTaskList } from './utils'
 
 function assignTasks(username, tasks) {
@@ -314,6 +318,18 @@ function closeFiltersModal() {
   return { type: CLOSE_FILTERS_MODAL }
 }
 
+function toggleSearch() {
+  return { type: TOGGLE_SEARCH }
+}
+
+function openSearch() {
+  return { type: OPEN_SEARCH }
+}
+
+function closeSearch() {
+  return { type: CLOSE_SEARCH }
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -448,4 +464,7 @@ export {
   closeFiltersModal,
   setFilterValue,
   resetFilters,
+  toggleSearch,
+  openSearch,
+  closeSearch,
 }

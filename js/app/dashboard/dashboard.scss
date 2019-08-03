@@ -37,6 +37,10 @@ html, body {
     display: flex;
   }
 
+  &__aside-container {
+    position: relative;
+  }
+
   &__map {
     flex-direction: column;
   }
@@ -103,6 +107,26 @@ html, body {
     &__heading__link:hover {
       text-decoration: none;
     }
+
+    &__search {
+      position: absolute;
+      max-height: 100%;
+      height: 100%;
+      z-index: 1;
+      left: 0;
+      right: 0;
+      transform: translateY(100%);
+      transition: transform 0.4s;
+      background-color: #fff;
+      &--on {
+        transform: translateY(0);
+      }
+    }
+
+    &__search-box {
+      padding: 15px;
+    }
+
   }
 
   &__map {

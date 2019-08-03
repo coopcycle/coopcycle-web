@@ -65,8 +65,13 @@ class TaskLists extends React.Component {
     // filter out couriers that are already in planning
     const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
 
+    const classNames = ['dashboard__panel', 'dashboard__panel--assignees']
+    if (this.props.hidden) {
+      classNames.push('hidden')
+    }
+
     return (
-      <div className="dashboard__panel dashboard__panel--assignees">
+      <div className={ classNames.join(' ') }>
         <h4>
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?
