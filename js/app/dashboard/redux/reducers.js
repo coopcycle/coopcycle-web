@@ -621,10 +621,15 @@ export const combinedFilters = (state = initialState, action) => {
     }
   }
 
+  let isDefaultFilters = initialState.isDefaultFilters
+  if (state.hasOwnProperty('filters') && !state.hasOwnProperty('isDefaultFilters')) {
+    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
+  }
+
   return {
     ...state,
     filters: state.hasOwnProperty('filters') ? state.filters : initialState.filters,
-    isDefaultFilters: state.hasOwnProperty('isDefaultFilters') ? state.isDefaultFilters : initialState.isDefaultFilters,
+    isDefaultFilters: state.hasOwnProperty('isDefaultFilters') ? state.isDefaultFilters : isDefaultFilters,
   }
 }
 

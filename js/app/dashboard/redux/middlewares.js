@@ -2,7 +2,9 @@ import {
   addCreatedTask,
   setGeolocation,
   updateTask,
-  setOffline
+  setOffline,
+  SET_FILTER_VALUE,
+  RESET_FILTERS,
 } from './actions'
 import moment from 'moment'
 import _ from 'lodash'
@@ -76,4 +78,26 @@ export const socketIO = ({ dispatch, getState }) => {
 
     return next(action)
   }
+}
+
+function getKey(state) {
+  return state.date.format('YYYY-MM-DD')
+}
+
+export const persistFilters = ({ dispatch, getState }) => (next) => (action) => {
+
+  const result = next(action)
+
+  let state
+  if (action.type === SET_FILTER_VALUE) {
+    state = getState()
+    window.sessionStorage.setItem(`cpccl__dshbd__fltrs__${getKey(state)}`, JSON.stringify(state.filters))
+  }
+
+  if (action.type === RESET_FILTERS) {
+    state = getState()
+    window.sessionStorage.removeItem(`cpccl__dshbd__fltrs__${getKey(state)}`)
+  }
+
+  return result
 }
