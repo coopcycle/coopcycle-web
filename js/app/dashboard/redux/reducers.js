@@ -12,10 +12,6 @@ import {
   CLOSE_ADD_USER,
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
-  TOGGLE_SHOW_FINISHED_TASKS,
-  TOGGLE_SHOW_UNTAGGED_TASKS,
-  TOGGLE_SHOW_CANCELLED_TASKS,
-  FILTER_TAG_BY_TAGNAME,
   TOGGLE_POLYLINE,
   TOGGLE_TASK,
   SELECT_TASK,
@@ -34,7 +30,11 @@ import {
   CREATE_TASK_FAILURE,
   COMPLETE_TASK_FAILURE,
   CANCEL_TASK_FAILURE,
-  TOKEN_REFRESH_SUCCESS
+  TOKEN_REFRESH_SUCCESS,
+  OPEN_FILTERS_MODAL,
+  CLOSE_FILTERS_MODAL,
+  SET_FILTER_VALUE,
+  RESET_FILTERS,
 } from './actions'
 
 import { createTaskList } from './utils'
@@ -60,6 +60,14 @@ const replaceOrAddTask = (tasks, task) => {
 
 const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'])
 
+const defaultFilters = {
+  showFinishedTasks: true,
+  showCancelledTasks: false,
+  tags: [],
+  hiddenCouriers: [],
+  timeRange: [0, 24],
+}
+
 const initialState = {
 
   allTasks: [],
@@ -71,13 +79,11 @@ const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
-  taskFinishedFilter: true,
-  taskCancelledFilter: false,
   tags: [],
-  tagsFilter: {
-    selectedTagsList: [],
-    showUntaggedTasks: true
-  },
+
+  filters: defaultFilters,
+  isDefaultFilters: true,
+
   selectedTasks: [],
   jwt: '',
   positions: [],
@@ -87,7 +93,8 @@ const initialState = {
   currentTask: null,
   isTaskModalLoading: false,
   couriersList: [],
-  completeTaskErrorMessage: null
+  completeTaskErrorMessage: null,
+  filtersModalIsOpen: false
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -386,50 +393,7 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-export const taskFinishedFilter = (state = true, action) => {
-  switch (action.type) {
-  case TOGGLE_SHOW_FINISHED_TASKS:
-    let showFinishedTasks = !state
-    return showFinishedTasks
-  default:
-    return state
-  }
-}
-
-export const taskCancelledFilter = (state = false, action) => {
-  switch (action.type) {
-  case TOGGLE_SHOW_CANCELLED_TASKS:
-    let showCancelledTasks = !state
-    return showCancelledTasks
-  default:
-    return state
-  }
-}
-
 export const tags = (state = initialState.tags, action) => state
-
-export const tagsFilter = (state = { selectedTagsList: [], showUntaggedTasks: true }, action) => {
-
-  switch (action.type) {
-
-  case FILTER_TAG_BY_TAGNAME:
-    let selectedTagsList = state.selectedTagsList.slice(0)
-
-    if (_.find(selectedTagsList, tag => tag.name === action.tag.name)) {
-      // removing the tag from visible list
-      selectedTagsList = _.filter(selectedTagsList, tag => tag.name != action.tag.name)
-    } else {
-      // adding the tag to visible list
-      selectedTagsList.push(action.tag)
-    }
-    return {...state, selectedTagsList}
-  case TOGGLE_SHOW_UNTAGGED_TASKS:
-    let showUntaggedTasks = !state.showUntaggedTasks
-    return {...state, showUntaggedTasks}
-  default:
-    return state
-  }
-}
 
 export const jwt = (state = '', action) => {
   switch (action.type) {
@@ -620,9 +584,59 @@ export const completeTaskErrorMessage = (state = null, action) => {
   }
 }
 
+export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
+  switch (action.type) {
+  case OPEN_FILTERS_MODAL:
+    return true
+  case CLOSE_FILTERS_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const combinedFilters = (state = initialState, action) => {
+
+  switch (action.type) {
+
+  case SET_FILTER_VALUE:
+
+    const newFilters = {
+      ...state.filters,
+      [action.key]: action.value
+    }
+
+    return {
+      ...state,
+      filters: newFilters,
+      isDefaultFilters: _.isEqual(newFilters, defaultFilters)
+    }
+
+  case RESET_FILTERS:
+
+    return {
+      ...state,
+      filters: defaultFilters,
+      isDefaultFilters: true
+    }
+  }
+
+  let isDefaultFilters = initialState.isDefaultFilters
+  if (state.hasOwnProperty('filters') && !state.hasOwnProperty('isDefaultFilters')) {
+    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
+  }
+
+  return {
+    ...state,
+    filters: state.hasOwnProperty('filters') ? state.filters : initialState.filters,
+    isDefaultFilters: state.hasOwnProperty('isDefaultFilters') ? state.isDefaultFilters : isDefaultFilters,
+  }
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists } = combinedTasks(state, action)
+  const { filters, isDefaultFilters } = combinedFilters(state, action)
 
   return {
     ...state,
@@ -633,10 +647,7 @@ export default (state = initialState, action) => {
     addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
     polylineEnabled: polylineEnabled(state.polylineEnabled, action),
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
-    taskFinishedFilter: taskFinishedFilter(state.taskFinishedFilter, action),
-    taskCancelledFilter: taskCancelledFilter(state.taskCancelledFilter, action),
     tags: tags(state.tags, action),
-    tagsFilter: tagsFilter(state.tagsFilter, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),
     date: date(state.date, action),
@@ -648,5 +659,8 @@ export default (state = initialState, action) => {
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
     couriersList: couriersList(state.couriersList, action),
     completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
+    filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),
+    filters,
+    isDefaultFilters,
   }
 }

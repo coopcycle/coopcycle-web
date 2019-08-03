@@ -43,6 +43,13 @@
     "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Tâches terminées",
     "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Tâches annulées",
     "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Tâches non tagguées",
+    "ADMIN_DASHBOARD_FILTERS_APPLY": "Appliquer",
+    "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "Général",
+    "ADMIN_DASHBOARD_FILTERS_TAB_TAGS": "Tags",
+    "ADMIN_DASHBOARD_FILTERS_TAB_COURIERS": "Coursiers",
+    "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Tranche horaire",
+    "ADMIN_DASHBOARD_FILTERS_SHOW": "Afficher",
+    "ADMIN_DASHBOARD_FILTERS_HIDE": "Masquer",
     "ADMIN_DASHBOARD_TASK_CAPTION": "#{{id}} - {{- address}} avant {{date}}",
     "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Tâche #{{id}}",
     "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} et {{before}}",
@@ -51,6 +58,7 @@
     "ADMIN_DASHBOARD_NAV_IMPORT": "Importer",
     "ADMIN_DASHBOARD_NAV_EXPORT": "Exporter",
     "ADMIN_DASHBOARD_NAV_FILTERS": "Filtres",
+    "ADMIN_DASHBOARD_NAV_FILTERS_CLEAR": "Effacer",
     "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Erreurs d'importation",
     "ADMIN_DASHBOARD_TASK_TITLE": "Tâche #{{id}}",
     "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nouvelle tâche",
@@ -137,6 +145,7 @@
     "NOTIFICATIONS_EMPTY": "Pas de notification",
     "CROPPIE_CONFIRM": "Confirmer",
     "CROPPIE_CANCEL": "Annuler",
-    "DROPZONE_DEFAULT_MESSAGE": "Déposez les fichiers ici"
+    "DROPZONE_DEFAULT_MESSAGE": "Déposez les fichiers ici",
+    "TAGS_SELECT_PLACEHOLDER": "Sélectionnez les tags…"
   }
 }

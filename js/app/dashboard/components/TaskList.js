@@ -6,6 +6,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Task from './Task'
 import { removeTasks, modifyTaskList, togglePolyline, toggleTask, selectTask, drakeDrag, drakeDragEnd } from '../redux/actions'
+import { selectFilteredTasks } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -128,9 +129,6 @@ class TaskList extends React.Component {
       distance,
       username,
       polylineEnabled,
-      showFinishedTasks,
-      selectedTags,
-      showUntaggedTasks,
     } = this.props
 
     let { tasks } = this.props
@@ -138,16 +136,6 @@ class TaskList extends React.Component {
     const { collapsed } = this.state
 
     tasks = _.orderBy(tasks, ['position', 'id'])
-
-    if (!showFinishedTasks) {
-      tasks = _.filter(tasks, (task) => { return task.status === 'TODO' })
-    }
-
-    // tag filtering - task should have at least one of the selected tags
-    tasks = _.filter(tasks, (task) =>
-      (task.tags.length > 0 &&_.intersectionBy(task.tags, selectedTags, 'name').length > 0) ||
-      (task.tags.length === 0 && showUntaggedTasks)
-    )
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -222,13 +210,15 @@ class TaskList extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
-    tasks: ownProps.items,
+    tasks: selectFilteredTasks({
+      tasks: ownProps.items,
+      filters: state.filters,
+      date: state.date,
+    }),
     distance: ownProps.distance,
     duration: ownProps.duration,
-    showFinishedTasks: state.taskFinishedFilter,
-    selectedTags: state.tagsFilter.selectedTagsList,
-    showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
-    selectedTasks: state.selectedTasks
+    selectedTasks: state.selectedTasks,
+    filters: state.filters
   }
 }
 

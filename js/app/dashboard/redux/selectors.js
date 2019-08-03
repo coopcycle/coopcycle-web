@@ -1,32 +1,39 @@
 import { createSelector } from 'reselect'
-import { differenceWith, filter, forEach, includes, intersectionBy } from 'lodash'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+import { differenceWith, filter, forEach, includes, intersectionWith, isEqual } from 'lodash'
 
-const getFilters = state => ({
-  showFinishedTasks: state.taskFinishedFilter,
-  showCancelledTasks: state.taskCancelledFilter,
-  showUntaggedTasks: state.tagsFilter.showUntaggedTasks,
-  selectedTags: state.tagsFilter.selectedTagsList,
-})
+const moment = extendMoment(Moment)
 
-export const selectTasks = state => {
-  const tasks = state.unassignedTasks.slice(0)
-  forEach(state.taskLists, taskList => taskList.items.forEach(task => tasks.push(task)))
+function flattenTaskLists(taskLists) {
+  const tasks = []
+  forEach(taskLists, taskList => taskList.items.forEach(task => tasks.push(task)))
 
   return tasks
 }
 
+export const selectTasks = createSelector(
+  state => state.unassignedTasks,
+  state => flattenTaskLists(state.taskLists),
+  (unassignedTasks, assignedTasks) => {
+    return unassignedTasks.slice(0).concat(assignedTasks)
+  }
+)
+
 export const selectFilteredTasks = createSelector(
-  selectTasks,
-  getFilters,
-  (tasks, filters) => {
+  state => state.tasks,
+  state => state.filters,
+  state => state.date,
+  (tasks, filters, date) => {
 
     let tasksFiltered = tasks.slice(0)
 
     const {
       showFinishedTasks,
       showCancelledTasks,
-      showUntaggedTasks,
-      selectedTags,
+      tags,
+      hiddenCouriers,
+      timeRange,
     } = filters
 
     if (!showFinishedTasks) {
@@ -39,22 +46,60 @@ export const selectFilteredTasks = createSelector(
         filter(tasksFiltered, task => 'CANCELLED' !== task.status)
     }
 
-    if (!showUntaggedTasks) {
+    if (tags.length > 0) {
+
       tasksFiltered =
-        filter(tasksFiltered, task => task.tags.length > 0)
+        filter(tasksFiltered, task => {
+          if (task.tags.length === 0) {
+            return false
+          }
+
+          return intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length > 0
+        })
     }
 
-    if (selectedTags.length > 0) {
-
-      const tasksNotTagged =
-        filter(tasksFiltered, task => task.tags.length > 0 && intersectionBy(task.tags, selectedTags, 'name').length === 0)
-      // const tasksTagged =
-      //   filter(tasksFiltered, task => task.tags.length > 0 && intersectionBy(task.tags, selectedTags, 'name').length > 0)
+    if (hiddenCouriers.length > 0) {
 
       tasksFiltered =
-        differenceWith(tasksFiltered, tasksNotTagged, (a, b) => a['@id'] === b['@id'])
+        filter(tasksFiltered, task => {
+          if (!task.isAssigned) {
+            return false
+          }
+
+          return !includes(hiddenCouriers, task.assignedTo)
+        })
+    }
+
+    if (!isEqual(timeRange, [0, 24])) {
+
+      tasksFiltered =
+        filter(tasksFiltered, task => {
+
+          const [ start, end ] = timeRange
+
+          const startHour = start
+          const endHour = end === 24 ? 23 : end
+          const endMinute = end === 24 ? 59 : 0
+
+          const dateAsRange = moment.range(
+            moment(date).set({ hour: startHour, minute: 0 }),
+            moment(date).set({ hour: endHour, minute: endMinute })
+          )
+
+          const range = moment.range(
+            moment(task.doneAfter),
+            moment(task.doneBefore)
+          )
+
+          return range.overlaps(dateAsRange)
+        })
     }
 
     return tasksFiltered
   }
+)
+
+export const selectBookedUsernames = createSelector(
+  state => state.taskLists,
+  taskLists => taskLists.map(taskList => taskList.username)
 )
