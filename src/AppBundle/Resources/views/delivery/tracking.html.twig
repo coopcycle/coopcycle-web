@@ -38,6 +38,9 @@
       </div>
     </div>
 
+    <div id="cpccl_settings"
+      data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>
+
     {% if app.environment == "prod" %}
       <script src="https://browser.sentry-cdn.com/5.5.0/bundle.min.js"
         integrity="sha384-/kLYKYxlMDI1l+lhDHECQrq1Z4fnk/A32MWVF6rRnuE2WiOuAmg3wr3McNOG3Szi" crossorigin="anonymous"></script>

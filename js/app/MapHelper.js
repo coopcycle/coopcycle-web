@@ -2,16 +2,25 @@ import L from 'leaflet'
 import Polyline from '@mapbox/polyline'
 require('beautifymarker')
 
+let settings = {}
+
 function init(id, options = {}) {
 
   let center
   let zoom = 13
   let zoomControl = true
 
-  if (!center && window.AppData && window.AppData.MapHelper && window.AppData.MapHelper.center) {
-    let [ latitude, longitude ] = window.AppData.MapHelper.center.split(',')
-    if (latitude && longitude) {
+  if (settings.center) {
+    center = settings.center
+  } else {
+    const el = document.querySelector('#cpccl_settings')
+    if (el) {
+      let [ latitude, longitude ] = JSON.parse(el.dataset.latlng).split(',')
       center = [ parseFloat(latitude), parseFloat(longitude) ]
+      settings = {
+        ...settings,
+        center
+      }
     }
   }
 
@@ -79,7 +88,7 @@ function route(coordinates) {
     .join(';')
 
   return new Promise((resolve, reject) => {
-    $.getJSON(window.AppData.MapHelper.routeURL.replace('__COORDINATES__', markersAsString))
+    $.getJSON(window.Routing.generate('routing_route', { coordinates: markersAsString }))
       .then(response => {
         const { routes } = response
         resolve(routes[0])

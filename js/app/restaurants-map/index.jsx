@@ -4,6 +4,8 @@ require('beautifymarker')
 
 import MapHelper from '../MapHelper'
 
+import './index.scss'
+
 var COLORS = {
   TURQUOISE: '#1ABC9C',
   GREEN_SEA: '#16A085',
