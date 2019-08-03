@@ -93,7 +93,11 @@ function mapStateToProps(state) {
 
   return {
     tasks,
-    tasksFiltered: selectFilteredTasks({ tasks, filters: state.filters }),
+    tasksFiltered: selectFilteredTasks({
+      tasks,
+      filters: state.filters,
+      date: state.date
+    }),
     polylines,
     polylineEnabled,
     selectedTasks: state.selectedTasks,

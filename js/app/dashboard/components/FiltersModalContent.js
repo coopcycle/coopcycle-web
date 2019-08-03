@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import LocaleProvider from 'antd/lib/locale-provider'
 import Switch from 'antd/lib/switch'
+import Slider from 'antd/lib/slider'
 import Form from 'antd/lib/form'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
@@ -29,6 +30,16 @@ function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, u => u === username)
 }
 
+const timeSteps = {
+  0: '00:00',
+  4: '04:00',
+  8: '08:00',
+  12: '12:00',
+  16: '16:00',
+  20: '20:00',
+  24: '23:59',
+}
+
 class FiltersModalContent extends React.Component {
 
   _onSubmit(values, { setSubmitting }) {
@@ -37,6 +48,7 @@ class FiltersModalContent extends React.Component {
     this.props.setFilterValue('showCancelledTasks', values.showCancelledTasks)
     this.props.setFilterValue('tags', values.tags)
     this.props.setFilterValue('hiddenCouriers', values.hiddenCouriers)
+    this.props.setFilterValue('timeRange', values.timeRange)
 
     this.props.closeFiltersModal()
   }
@@ -47,7 +59,8 @@ class FiltersModalContent extends React.Component {
       showFinishedTasks: this.props.showFinishedTasks,
       showCancelledTasks: this.props.showCancelledTasks,
       tags: this.props.selectedTags,
-      hiddenCouriers: this.props.hiddenCouriers
+      hiddenCouriers: this.props.hiddenCouriers,
+      timeRange: this.props.timeRange,
     }
 
     return (
@@ -85,6 +98,11 @@ class FiltersModalContent extends React.Component {
                 <li role="presentation">
                   <a href="#filters_couriers" aria-controls="filters_couriers" role="tab" data-toggle="tab">
                     { this.props.t('ADMIN_DASHBOARD_FILTERS_TAB_COURIERS') }
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#filters_timerange" aria-controls="filters_timerange" role="tab" data-toggle="tab">
+                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE') }
                   </a>
                 </li>
               </ul>
@@ -140,6 +158,16 @@ class FiltersModalContent extends React.Component {
                     )) }
                   </div>
                 </div>
+                <div role="tabpanel" className="tab-pane" id="filters_timerange">
+                  <div className="dashboard__modal-filters__tabpane">
+                    <Slider range
+                      marks={ timeSteps }
+                      defaultValue={ values.timeRange }
+                      max={ 24 }
+                      step={ null }
+                      onAfterChange={ value => setFieldValue('timeRange', value) } />
+                  </div>
+                </div>
               </div>
               <button type="submit" className="btn btn-block btn-primary">
                 { this.props.t('ADMIN_DASHBOARD_FILTERS_APPLY') }
@@ -161,6 +189,7 @@ function mapStateToProps(state) {
     selectedTags: state.filters.tags,
     couriers: selectBookedUsernames(state),
     hiddenCouriers: state.filters.hiddenCouriers,
+    timeRange: state.filters.timeRange,
   }
 }
 

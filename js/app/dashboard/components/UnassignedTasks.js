@@ -118,7 +118,8 @@ function mapStateToProps (state) {
   return {
     unassignedTasks: selectFilteredTasks({
       tasks: state.unassignedTasks,
-      filters: state.filters
+      filters: state.filters,
+      date: state.date,
     }),
     taskListGroupMode: state.taskListGroupMode,
     selectedTasks: state.selectedTasks,

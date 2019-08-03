@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect'
-import { differenceWith, filter, forEach, includes, intersectionWith } from 'lodash'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+import { differenceWith, filter, forEach, includes, intersectionWith, isEqual } from 'lodash'
+
+const moment = extendMoment(Moment)
 
 function flattenTaskLists(taskLists) {
   const tasks = []
@@ -19,7 +23,8 @@ export const selectTasks = createSelector(
 export const selectFilteredTasks = createSelector(
   state => state.tasks,
   state => state.filters,
-  (tasks, filters) => {
+  state => state.date,
+  (tasks, filters, date) => {
 
     let tasksFiltered = tasks.slice(0)
 
@@ -28,6 +33,7 @@ export const selectFilteredTasks = createSelector(
       showCancelledTasks,
       tags,
       hiddenCouriers,
+      timeRange,
     } = filters
 
     if (!showFinishedTasks) {
@@ -61,6 +67,31 @@ export const selectFilteredTasks = createSelector(
           }
 
           return !includes(hiddenCouriers, task.assignedTo)
+        })
+    }
+
+    if (!isEqual(timeRange, [0, 24])) {
+
+      tasksFiltered =
+        filter(tasksFiltered, task => {
+
+          const [ start, end ] = timeRange
+
+          const startHour = start
+          const endHour = end === 24 ? 23 : end
+          const endMinute = end === 24 ? 59 : 0
+
+          const dateAsRange = moment.range(
+            moment(date).set({ hour: startHour, minute: 0 }),
+            moment(date).set({ hour: endHour, minute: endMinute })
+          )
+
+          const range = moment.range(
+            moment(task.doneAfter),
+            moment(task.doneBefore)
+          )
+
+          return range.overlaps(dateAsRange)
         })
     }
 

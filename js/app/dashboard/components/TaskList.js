@@ -212,7 +212,8 @@ function mapStateToProps(state, ownProps) {
     polylineEnabled: state.polylineEnabled[ownProps.username],
     tasks: selectFilteredTasks({
       tasks: ownProps.items,
-      filters: state.filters
+      filters: state.filters,
+      date: state.date,
     }),
     distance: ownProps.distance,
     duration: ownProps.duration,

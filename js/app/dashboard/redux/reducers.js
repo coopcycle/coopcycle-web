@@ -64,7 +64,8 @@ const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
   tags: [],
-  hiddenCouriers: []
+  hiddenCouriers: [],
+  timeRange: [0, 24],
 }
 
 const initialState = {
