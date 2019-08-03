@@ -7,7 +7,7 @@ import i18n from '../i18n'
 
 const tagAsOption = tag => ({
   ...tag,
-  value: tag.id,
+  value: tag.slug,
   label: tag.name
 })
 
@@ -64,7 +64,8 @@ export default (props) => {
       if (_.isString(tag)) {
         return _.find(tags, t => t.slug === tag)
       }
-      // TODO Manage object
+
+      return _.find(tags, t => t.slug === tag.slug)
     })
   }
   // TODO Manage string
@@ -75,7 +76,6 @@ export default (props) => {
       isMulti
       options={ _.map(tags, tagAsOption) }
       styles={ styles }
-      getOptionValue={ tag => tag.slug }
       placeholder={ i18n.t('TAGS_SELECT_PLACEHOLDER') }
       { ...rest } />
   )

@@ -11,36 +11,16 @@ import Timeline from 'antd/lib/timeline'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 import { Formik } from 'formik'
-import Select from 'react-select'
-import chroma from 'chroma-js'
 import PhoneInput, { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
-import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../redux/actions'
+import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
+
+import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../redux/actions'
 
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
-
-const tagAsOption = tag => ({
-  ...tag,
-  value: tag.id,
-  label: tag.name
-})
-
-const lookupTags = (allTags, tags) => {
-
-  let items = []
-
-  _.forEach(tags, tag => {
-    const match = _.find(allTags, t => t.slug === tag.slug)
-    if (match) {
-      items.push(match)
-    }
-  })
-
-  return items
-}
 
 const itemColor = event => {
   switch (event.name) {
@@ -52,49 +32,6 @@ const itemColor = event => {
   default:
     return 'blue'
   }
-}
-
-const styles = {
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    const color = chroma(data.color)
-
-    return {
-      ...styles,
-      backgroundColor: isDisabled
-        ? null
-        : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
-      color: isDisabled
-        ? '#ccc'
-        : isSelected
-          ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
-          : data.color,
-      cursor: isDisabled ? 'not-allowed' : 'default',
-    }
-  },
-  multiValue: (styles, { data }) => ({
-    ...styles,
-    backgroundColor: data.color,
-  }),
-  multiValueLabel: (styles, { data }) => {
-    const color = chroma(data.color)
-
-    return {
-      ...styles,
-      color: chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
-    }
-  },
-  multiValueRemove: (styles, { data }) => {
-    const color = chroma(data.color)
-
-    return {
-      ...styles,
-      color: chroma.contrast(color, 'white') > 2 ? 'white' : 'black',
-      ':hover': {
-        backgroundColor: color.alpha(0.1).css(),
-        color: chroma.contrast(color, 'white') > 2 ? 'white' : 'black',
-      }
-    }
-  },
 }
 
 class TaskModalContent extends React.Component {
@@ -443,23 +380,19 @@ class TaskModalContent extends React.Component {
                 </div>
                 <div className="form-group form-group-sm">
                   <label className="control-label">Tags</label>
-                  <Select
-                    defaultValue={ lookupTags(this.props.tags, values.tags) }
-                    isMulti
-                    options={ this.props.tags }
+                  <TagsSelect
+                    tags={ this.props.tags }
+                    defaultValue={ values.tags }
                     onChange={ tags => {
                       setFieldValue('tags', tags)
-                    }}
-                    styles={ styles }
-                    getOptionValue={ tag => tag.slug } />
+                      setFieldTouched('tags')
+                    } } />
                 </div>
                 <div className="form-group form-group-sm">
                   <label className="control-label">{ this.props.t('ADMIN_DASHBOARD_COURIER') }</label>
                   <CourierSelect
                     username={ values.assignedTo }
-                    onChange={ courier => {
-                      setFieldValue('assignedTo', courier.username)
-                    }}
+                    onChange={ courier => setFieldValue('assignedTo', courier.username)}
                     isDisabled={ values.isAssigned && (values.status === 'DONE' || values.status === 'FAILED') }
                     menuPlacement="top" />
                 </div>
@@ -509,7 +442,7 @@ function mapStateToProps (state) {
     task: state.currentTask,
     token: state.jwt,
     loading: state.isTaskModalLoading,
-    tags: _.map(state.tags, tagAsOption),
+    tags: state.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
     country: (window.AppData.countryIso || 'fr').toUpperCase()
   }
