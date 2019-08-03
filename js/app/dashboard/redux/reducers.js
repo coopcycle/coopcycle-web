@@ -35,6 +35,9 @@ import {
   CLOSE_FILTERS_MODAL,
   SET_FILTER_VALUE,
   RESET_FILTERS,
+  TOGGLE_SEARCH,
+  OPEN_SEARCH,
+  CLOSE_SEARCH,
 } from './actions'
 
 import { createTaskList } from './utils'
@@ -94,7 +97,8 @@ const initialState = {
   isTaskModalLoading: false,
   couriersList: [],
   completeTaskErrorMessage: null,
-  filtersModalIsOpen: false
+  filtersModalIsOpen: false,
+  searchIsOn: false
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -595,6 +599,22 @@ export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, acti
   }
 }
 
+export const searchIsOn = (state = initialState.searchIsOn, action) => {
+  switch (action.type) {
+  case TOGGLE_SEARCH:
+
+    return !state
+  case OPEN_SEARCH:
+
+    return true
+  case CLOSE_SEARCH:
+
+    return false
+  default:
+    return state
+  }
+}
+
 export const combinedFilters = (state = initialState, action) => {
 
   switch (action.type) {
@@ -662,5 +682,6 @@ export default (state = initialState, action) => {
     filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),
     filters,
     isDefaultFilters,
+    searchIsOn: searchIsOn(state.searchIsOn, action),
   }
 }

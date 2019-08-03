@@ -82,6 +82,8 @@
     "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ex : adresse introuvable, aucun problème…",
     "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Voir l'historique",
     "ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER": "Sélectionnez un coursier…",
+    "ADMIN_DASHBOARD_SEARCH": "Rechercher",
+    "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "Identifiant, adresse…",
     "USER_EDIT_ENABLED_LABEL": "Activé",
     "USER_EDIT_DISABLED_LABEL": "Désactivé",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Livraison prévue à {{deliveryTime}}.",
