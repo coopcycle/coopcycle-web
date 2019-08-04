@@ -48,6 +48,7 @@ use Symfony\Component\Panther\ProcessManager\WebServerReadinessProbeTrait;
 use DMore\ChromeDriver\ChromeDriver;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
+use Predis\Client as Redis;
 
 /**
  * Defines application features from the specific context.
@@ -103,7 +104,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         SettingsManager $settingsManager,
         OrderTimelineCalculator $orderTimelineCalculator,
         UserManipulator $userManipulator,
-        AuthorizationServer $authorizationServer)
+        AuthorizationServer $authorizationServer,
+        Redis $redis)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -118,6 +120,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->orderTimelineCalculator = $orderTimelineCalculator;
         $this->userManipulator = $userManipulator;
         $this->authorizationServer = $authorizationServer;
+        $this->redis = $redis;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -237,8 +240,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         Carbon::setTestNow();
 
-        $redis = $this->getContainer()->get('snc_redis.default');
-        $redis->del('datetime:now');
+        $this->redis->del('datetime:now');
     }
 
     /**
@@ -246,8 +248,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function disableMaintenance()
     {
-        $redis = $this->getContainer()->get('snc_redis.default');
-        $redis->del('maintenance');
+        $this->redis->del('maintenance');
     }
 
     /**
@@ -350,9 +351,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function theRedisDatabaseIsEmpty()
     {
-        $redis = $this->getContainer()->get('snc_redis.default');
-        foreach ($redis->keys('*') as $key) {
-            $redis->del($key);
+        foreach ($this->redis->keys('*') as $key) {
+            $this->redis->del($key);
         }
     }
 
@@ -363,8 +363,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     {
         Carbon::setTestNow(Carbon::parse($datetime));
 
-        $redis = $this->getContainer()->get('snc_redis.default');
-        $redis->set('datetime:now', Carbon::now()->toAtomString());
+        $this->redis->set('datetime:now', Carbon::now()->toAtomString());
     }
 
     /**
@@ -372,8 +371,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
      */
     public function enableMaintenance()
     {
-        $redis = $this->getContainer()->get('snc_redis.default');
-        $redis->set('maintenance', '1');
+        $this->redis->set('maintenance', '1');
     }
 
     /**

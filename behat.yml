@@ -12,6 +12,7 @@ default:
             orderTimelineCalculator: "@coopcycle.order_timeline_calculator"
             userManipulator: "@fos_user.util.user_manipulator"
             authorizationServer: "@league.oauth2.server.authorization_server"
+            redis: "@snc_redis.default"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext

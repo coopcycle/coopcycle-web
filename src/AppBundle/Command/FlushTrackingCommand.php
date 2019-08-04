@@ -4,21 +4,34 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\TrackingPosition;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
+use Predis\Client as Redis;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Factory as LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
 
-class FlushTrackingCommand extends ContainerAwareCommand
+class FlushTrackingCommand extends Command
 {
     private $doctrine;
     private $redis;
     private $userManager;
     private $batchSize = 50;
     private $lockFactory;
+
+    public function __construct(ObjectManager $doctrine, UserManagerInterface $userManager, Redis $redis)
+    {
+        parent::__construct();
+
+        $this->doctrine = $doctrine;
+        $this->userManager = $userManager;
+        $this->redis = $redis;
+    }
 
     protected function configure()
     {
@@ -29,12 +42,6 @@ class FlushTrackingCommand extends ContainerAwareCommand
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->doctrine = $this->getContainer()->get('doctrine');
-        $this->redis = $this->getContainer()->get('snc_redis.default');
-        $this->userManager = $this->getContainer()->get('fos_user.user_manager');
-
-        $this->em = $this->doctrine->getManagerForClass(TrackingPosition::class);
-
         $store = new FlockStore();
         $this->lockFactory = new LockFactory($store);
     }
@@ -87,17 +94,17 @@ class FlushTrackingCommand extends ContainerAwareCommand
             $trackingPosition->setCoordinates(new GeoCoordinates($data['latitude'], $data['longitude']));
             $trackingPosition->setDate($date);
 
-            $this->em->persist($trackingPosition);
+            $this->doctrine->persist($trackingPosition);
 
             if ((++$i % $this->batchSize) === 0) {
-                $this->em->flush();
-                $this->em->clear(TrackingPosition::class);
+                $this->doctrine->flush();
+                $this->doctrine->clear(TrackingPosition::class);
                 $output->writeln('<info>Flushing data…</info>');
             }
         }
 
-        $this->em->flush();
-        $this->em->clear(TrackingPosition::class);
+        $this->doctrine->flush();
+        $this->doctrine->clear(TrackingPosition::class);
 
         $output->writeln(sprintf('<info>Finished flushing data for user %s</info>', $user->getUsername()));
     }

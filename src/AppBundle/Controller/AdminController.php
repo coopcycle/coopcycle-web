@@ -53,6 +53,7 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserInterface;
+use Predis\Client as Redis;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
@@ -245,7 +246,7 @@ class AdminController extends Controller
         return $this->baseOrderListAction($request);
     }
 
-    public function foodtechDashboardAction($date, Request $request)
+    public function foodtechDashboardAction($date, Request $request, Redis $redis)
     {
         $date = new \DateTime($date);
 
@@ -258,7 +259,6 @@ class AdminController extends Controller
             'groups' => ['order', 'address', 'place']
         ]);
 
-        $redis = $this->get('snc_redis.default');
         $preparationDelay = $redis->get('foodtech:preparation_delay');
         if (!$preparationDelay) {
             $preparationDelay = 0;
@@ -274,10 +274,8 @@ class AdminController extends Controller
         ]);
     }
 
-    public function foodtechSettingsAction(Request $request)
+    public function foodtechSettingsAction(Request $request, Redis $redis)
     {
-        $redis = $this->get('snc_redis.default');
-
         $preparationDelay = $request->request->get('preparation_delay');
         if (0 === $preparationDelay) {
             $redis->del('foodtech:preparation_delay');
@@ -870,10 +868,8 @@ class AdminController extends Controller
      * @Route("/admin/settings", name="admin_settings")
      * @Template()
      */
-    public function settingsAction(Request $request, SettingsManager $settingsManager)
+    public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis)
     {
-        $redis = $this->get('snc_redis.default');
-
         /* Stripe live mode */
 
         $isStripeLivemode = $settingsManager->isStripeLivemode();
