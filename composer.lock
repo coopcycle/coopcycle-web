@@ -791,16 +791,16 @@
         },
         {
             "name": "craue/config-bundle",
-            "version": "2.2.1",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craue/CraueConfigBundle.git",
-                "reference": "274e34222ddfa9fc90f4cf26aee4bb82986e93fd"
+                "reference": "7cf7447c7ee47853b3c60e5fc08a1c8f7112bd72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craue/CraueConfigBundle/zipball/274e34222ddfa9fc90f4cf26aee4bb82986e93fd",
-                "reference": "274e34222ddfa9fc90f4cf26aee4bb82986e93fd",
+                "url": "https://api.github.com/repos/craue/CraueConfigBundle/zipball/7cf7447c7ee47853b3c60e5fc08a1c8f7112bd72",
+                "reference": "7cf7447c7ee47853b3c60e5fc08a1c8f7112bd72",
                 "shasum": ""
             },
             "require": {
@@ -820,7 +820,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2.x-dev"
+                    "dev-master": "2.3.x-dev"
                 }
             },
             "autoload": {
@@ -852,7 +852,7 @@
                 "symfony3",
                 "symfony4"
             ],
-            "time": "2019-06-01T07:38:19+00:00"
+            "time": "2019-08-01T15:52:03+00:00"
         },
         {
             "name": "csa/guzzle-bundle",
