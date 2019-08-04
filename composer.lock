@@ -260,23 +260,23 @@
         },
         {
             "name": "beberlei/doctrineextensions",
-            "version": "v1.2.2",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/DoctrineExtensions.git",
-                "reference": "53da6deefe33cff09737bdcc73ac6dbb4423691f"
+                "reference": "a8747a2aef34f602c365cf2efd1abc94c5ae7e0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/53da6deefe33cff09737bdcc73ac6dbb4423691f",
-                "reference": "53da6deefe33cff09737bdcc73ac6dbb4423691f",
+                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/a8747a2aef34f602c365cf2efd1abc94c5ae7e0a",
+                "reference": "a8747a2aef34f602c365cf2efd1abc94c5ae7e0a",
                 "shasum": ""
             },
             "require": {
+                "doctrine/orm": "^2.6",
                 "php": "^7.1"
             },
             "require-dev": {
-                "doctrine/orm": "^2.6",
                 "friendsofphp/php-cs-fixer": "^2.14",
                 "nesbot/carbon": "*",
                 "phpunit/phpunit": "^7.0 || ^8.0",
@@ -310,7 +310,7 @@
                 "doctrine",
                 "orm"
             ],
-            "time": "2019-06-24T06:58:56+00:00"
+            "time": "2019-07-25T15:08:53+00:00"
         },
         {
             "name": "behat/transliterator",
@@ -3335,16 +3335,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.15",
+            "version": "8.10.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "e67ce0839ba448988d109c6c17718472a5d9ccff"
+                "reference": "c62db205bb94fef8bd377c12d3a14e5677895db2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/e67ce0839ba448988d109c6c17718472a5d9ccff",
-                "reference": "e67ce0839ba448988d109c6c17718472a5d9ccff",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c62db205bb94fef8bd377c12d3a14e5677895db2",
+                "reference": "c62db205bb94fef8bd377c12d3a14e5677895db2",
                 "shasum": ""
             },
             "require": {
@@ -3399,7 +3399,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-07-15T14:58:27+00:00"
+            "time": "2019-08-01T13:17:58+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -5280,19 +5280,21 @@
         },
         {
             "name": "league/csv",
-            "version": "9.2.1",
+            "version": "9.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "b574a7d8b28f1528e011d8652fb7d2e83410d4c9"
+                "reference": "d16f85d1f958a765844db4bc7174017edf2dd637"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/b574a7d8b28f1528e011d8652fb7d2e83410d4c9",
-                "reference": "b574a7d8b28f1528e011d8652fb7d2e83410d4c9",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/d16f85d1f958a765844db4bc7174017edf2dd637",
+                "reference": "d16f85d1f958a765844db4bc7174017edf2dd637",
                 "shasum": ""
             },
             "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
                 "ext-mbstring": "*",
                 "php": ">=7.0.10"
             },
@@ -5328,9 +5330,9 @@
             "authors": [
                 {
                     "name": "Ignace Nyamagana Butera",
+                    "role": "Developer",
                     "email": "nyamsprod@gmail.com",
-                    "homepage": "https://github.com/nyamsprod/",
-                    "role": "Developer"
+                    "homepage": "https://github.com/nyamsprod/"
                 }
             ],
             "description": "Csv data manipulation made easy in PHP",
@@ -5343,7 +5345,7 @@
                 "read",
                 "write"
             ],
-            "time": "2019-06-07T06:24:33+00:00"
+            "time": "2019-07-30T14:39:11+00:00"
         },
         {
             "name": "league/event",
@@ -5985,16 +5987,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v1.2",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "b8acbb014b6f09f09db109494a20d487dde4d9f6"
+                "reference": "aecd1f8ae7f345000df5ba330e46fe53e313e874"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/b8acbb014b6f09f09db109494a20d487dde4d9f6",
-                "reference": "b8acbb014b6f09f09db109494a20d487dde4d9f6",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/aecd1f8ae7f345000df5ba330e46fe53e313e874",
+                "reference": "aecd1f8ae7f345000df5ba330e46fe53e313e874",
                 "shasum": ""
             },
             "require": {
@@ -6027,8 +6029,8 @@
             "authors": [
                 {
                     "name": "Martin Georgiev",
-                    "email": "martin.georgiev@gmail.com",
-                    "role": "author"
+                    "role": "author",
+                    "email": "martin.georgiev@gmail.com"
                 }
             ],
             "description": "Adds PostgreSQL 9 and 10 enhancements to Doctrine. Provides support for JSON, JSONB and some array data types. Provides functions, operators and common expressions used when working with JSON data, arrays and features related to text search.",
@@ -6044,7 +6046,7 @@
                 "text search",
                 "tsvector"
             ],
-            "time": "2019-05-29T15:24:50+00:00"
+            "time": "2019-08-04T09:19:43+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -6626,16 +6628,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.21.3",
+            "version": "2.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "58bdbbfab17ccd2ec7347b99e997f18232def4dc"
+                "reference": "1a0e48b5f656065ba3c265b058b25d36c2162a5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/58bdbbfab17ccd2ec7347b99e997f18232def4dc",
-                "reference": "58bdbbfab17ccd2ec7347b99e997f18232def4dc",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/1a0e48b5f656065ba3c265b058b25d36c2162a5e",
+                "reference": "1a0e48b5f656065ba3c265b058b25d36c2162a5e",
                 "shasum": ""
             },
             "require": {
@@ -6646,7 +6648,7 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.14 || ^3.0",
                 "kylekatarnls/multi-tester": "^1.1",
-                "phpmd/phpmd": "^2.6",
+                "phpmd/phpmd": "dev-php-7.1-compatibility",
                 "phpstan/phpstan": "^0.11",
                 "phpunit/phpunit": "^7.5 || ^8.0",
                 "squizlabs/php_codesniffer": "^3.4"
@@ -6689,7 +6691,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2019-07-18T18:47:28+00:00"
+            "time": "2019-07-28T09:02:12+00:00"
         },
         {
             "name": "nmure/crawler-detect-bundle",
