@@ -781,7 +781,7 @@ trait RestaurantTrait
             'stripe_user[shipping_days]' => 1,
             'stripe_user[product_category]' => 'Food',
             'stripe_user[product_description]' => 'Food',
-            'stripe_user[currency]' => 'EUR'
+            'stripe_user[currency]' => 'EUR' // TODO Get configured currency
         ];
 
         // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
