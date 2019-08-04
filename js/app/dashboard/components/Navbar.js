@@ -9,7 +9,7 @@ import LocaleProvider from 'antd/lib/locale-provider'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 
-import { openFiltersModal, resetFilters } from '../redux/actions'
+import { openFiltersModal, resetFilters, openSettings } from '../redux/actions'
 
 const locale = $('html').attr('lang'),
   antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -39,6 +39,11 @@ class Navbar extends React.Component {
   _onFiltersClick(e) {
     e.preventDefault()
     this.props.openFiltersModal()
+  }
+
+  _onSettingsClick(e) {
+    e.preventDefault()
+    this.props.openSettings()
   }
 
   _onClearClick(e) {
@@ -137,6 +142,11 @@ class Navbar extends React.Component {
               { !this.props.isDefaultFilters && this.renderReset() }
             </ul>
             <ul className="nav navbar-nav navbar-right">
+              <li>
+                <a href="#" onClick={ this._onSettingsClick.bind(this) }>
+                  <i className="fa fa-cog" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_SETTINGS') }
+                </a>
+              </li>
               <li><a><span className="pulse" id="pulse"></span></a></li>
             </ul>
           </div>
@@ -169,7 +179,8 @@ function mapDispatchToProps(dispatch) {
 
   return {
     openFiltersModal: _ => dispatch(openFiltersModal()),
-    resetFilters: _ => dispatch(resetFilters())
+    resetFilters: _ => dispatch(resetFilters()),
+    openSettings: _ => dispatch(openSettings())
   }
 }
 

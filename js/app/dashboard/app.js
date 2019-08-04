@@ -5,12 +5,24 @@ import dragula from 'dragula'
 import _ from 'lodash'
 import Modal from 'react-modal'
 
-import { assignTasks, updateTask, drakeDrag, drakeDragEnd, setCurrentTask, closeNewTaskModal, closeFiltersModal, toggleSearch, closeSearch } from './redux/actions'
+import {
+  assignTasks,
+  updateTask,
+  drakeDrag,
+  drakeDragEnd,
+  setCurrentTask,
+  closeNewTaskModal,
+  closeFiltersModal,
+  toggleSearch,
+  closeSearch,
+  openSettings,
+  closeSettings } from './redux/actions'
 import UnassignedTasks from './components/UnassignedTasks'
 import TaskLists from './components/TaskLists'
 import ContextMenu from './components/ContextMenu'
 import TaskModalContent from './components/TaskModalContent'
 import FiltersModalContent from './components/FiltersModalContent'
+import SettingsModalContent from './components/SettingsModalContent'
 import SearchPanel from './components/SearchPanel'
 
 const drake = dragula({
@@ -187,6 +199,14 @@ class DashboardApp extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <FiltersModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.settingsModalIsOpen }
+          onRequestClose={ _ => this.props.closeSettings() }
+          className="ReactModal__Content--settings"
+          shouldCloseOnOverlayClick={ true }>
+          <SettingsModalContent />
+        </Modal>
       </div>
     )
   }
@@ -198,6 +218,7 @@ function mapStateToProps(state) {
     taskModalIsOpen: state.taskModalIsOpen,
     couriersList: state.couriersList,
     filtersModalIsOpen: state.filtersModalIsOpen,
+    settingsModalIsOpen: state.settingsModalIsOpen,
     searchIsOn: state.searchIsOn
   }
 }
@@ -213,6 +234,8 @@ function mapDispatchToProps (dispatch) {
     closeFiltersModal: _ => dispatch(closeFiltersModal()),
     toggleSearch: _ => dispatch(toggleSearch()),
     closeSearch: _ => dispatch(closeSearch()),
+    openSettings: _ => dispatch(openSettings()),
+    closeSettings: _ => dispatch(closeSettings()),
   }
 }
 

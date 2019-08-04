@@ -11,6 +11,7 @@ class LeafletMap extends Component {
   _draw() {
     const {
       polylines,
+      asTheCrowFlies,
       tasks,
       tasksFiltered,
     } = this.props
@@ -21,6 +22,7 @@ class LeafletMap extends Component {
     tasksHidden.forEach(task => this.proxy.hideTask(task))
 
     _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
+    _.forEach(asTheCrowFlies, (polyline, username) => this.proxy.setPolylineAsTheCrowFlies(username, polyline))
   }
 
   componentDidMount() {
@@ -43,6 +45,7 @@ class LeafletMap extends Component {
       selectedTasks,
       positions,
       offline,
+      polylineStyle,
     } = this.props
 
     this._draw()
@@ -51,8 +54,15 @@ class LeafletMap extends Component {
 
     _.forEach(polylineEnabled, (enabled, username) => {
       if (enabled) {
-        this.proxy.showPolyline(username, polylines[username])
+        if (polylineStyle === 'as_the_crow_flies') {
+          this.proxy.hidePolyline(username)
+          this.proxy.showPolylineAsTheCrowFlies(username, polylines[username])
+        } else {
+          this.proxy.hidePolylineAsTheCrowFlies(username)
+          this.proxy.showPolyline(username, polylines[username])
+        }
       } else {
+        this.proxy.hidePolylineAsTheCrowFlies(username)
         this.proxy.hidePolyline(username)
       }
     })
@@ -89,6 +99,12 @@ function mapStateToProps(state) {
     polylines[taskList.username] = taskList.polyline
   })
 
+  let asTheCrowFlies = {}
+  _.forEach(taskLists, taskList => {
+    asTheCrowFlies[taskList.username] =
+      _.map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
+  })
+
   const tasks = selectTasks(state)
 
   return {
@@ -102,7 +118,9 @@ function mapStateToProps(state) {
     polylineEnabled,
     selectedTasks: state.selectedTasks,
     positions: state.positions,
-    offline: state.offline
+    offline: state.offline,
+    polylineStyle: state.polylineStyle,
+    asTheCrowFlies,
   }
 }
 

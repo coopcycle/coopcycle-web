@@ -110,6 +110,10 @@ export const TOGGLE_SEARCH = 'TOGGLE_SEARCH'
 export const OPEN_SEARCH = 'OPEN_SEARCH'
 export const CLOSE_SEARCH = 'CLOSE_SEARCH'
 
+export const OPEN_SETTINGS = 'OPEN_SETTINGS'
+export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
+export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
+
 import { createTaskList } from './utils'
 
 function assignTasks(username, tasks) {
@@ -330,6 +334,18 @@ function closeSearch() {
   return { type: CLOSE_SEARCH }
 }
 
+function openSettings() {
+  return { type: OPEN_SETTINGS }
+}
+
+function closeSettings() {
+  return { type: CLOSE_SETTINGS }
+}
+
+function setPolylineStyle(style) {
+  return {type: SET_POLYLINE_STYLE, style}
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -498,4 +514,7 @@ export {
   toggleSearch,
   openSearch,
   closeSearch,
+  openSettings,
+  closeSettings,
+  setPolylineStyle,
 }

@@ -38,6 +38,9 @@ import {
   TOGGLE_SEARCH,
   OPEN_SEARCH,
   CLOSE_SEARCH,
+  OPEN_SETTINGS,
+  CLOSE_SETTINGS,
+  SET_POLYLINE_STYLE,
 } from './actions'
 
 import { createTaskList } from './utils'
@@ -98,6 +101,8 @@ const initialState = {
   couriersList: [],
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
+  settingsModalIsOpen: false,
+  polylineStyle: 'normal',
   searchIsOn: false
 }
 
@@ -615,6 +620,19 @@ export const searchIsOn = (state = initialState.searchIsOn, action) => {
   }
 }
 
+export const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) => {
+  switch (action.type) {
+  case OPEN_SETTINGS:
+
+    return true
+  case CLOSE_SETTINGS:
+
+    return false
+  default:
+    return state
+  }
+}
+
 export const combinedFilters = (state = initialState, action) => {
 
   switch (action.type) {
@@ -653,6 +671,17 @@ export const combinedFilters = (state = initialState, action) => {
   }
 }
 
+export const polylineStyle = (state = initialState.polylineStyle, action) => {
+  switch (action.type) {
+  case SET_POLYLINE_STYLE:
+
+    return action.style
+  default:
+    return state
+  }
+
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists } = combinedTasks(state, action)
@@ -683,5 +712,7 @@ export default (state = initialState, action) => {
     filters,
     isDefaultFilters,
     searchIsOn: searchIsOn(state.searchIsOn, action),
+    settingsModalIsOpen: settingsModalIsOpen(state.settingsModalIsOpen, action),
+    polylineStyle: polylineStyle(state.polylineStyle, action),
   }
 }

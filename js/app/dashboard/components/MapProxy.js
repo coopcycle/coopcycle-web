@@ -70,6 +70,7 @@ export default class MapProxy {
   constructor(map, options) {
     this.map = map
     this.polylineLayerGroups = new Map()
+    this.polylineAsTheCrowFliesLayerGroups = new Map()
 
     this.taskMarkers = new Map()
     this.taskPopups = new Map()
@@ -152,6 +153,46 @@ export default class MapProxy {
     return layerGroup
   }
 
+  getPolylineAsTheCrowFliesLayerGroup(username) {
+    let layerGroup = this.polylineAsTheCrowFliesLayerGroups.get(username)
+
+    if (!layerGroup) {
+      layerGroup = L.layerGroup()
+      this.polylineAsTheCrowFliesLayerGroups.set(username, layerGroup)
+    }
+
+    return layerGroup
+  }
+
+  setPolylineAsTheCrowFlies(username, polyline) {
+    const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
+    layerGroup.clearLayers()
+
+    const layer = L.polyline(polyline, polylineOptions)
+
+    // Add arrows to polyline
+    const decorator = L.polylineDecorator(layer, {
+      patterns: [
+        {
+          offset: '5%',
+          repeat: '12.5%',
+          symbol: L.Symbol.arrowHead({
+            pixelSize: 12,
+            polygon: false,
+            pathOptions: {
+              stroke: true,
+              color: '#3498DB',
+              opacity: 0.7
+            }
+          })
+        }
+      ]
+    })
+
+    layerGroup.addLayer(layer)
+    layerGroup.addLayer(decorator)
+  }
+
   setPolyline(username, polyline) {
 
     const layerGroup = this.getPolylineLayerGroup(username)
@@ -188,6 +229,14 @@ export default class MapProxy {
 
   hidePolyline(username) {
     this.getPolylineLayerGroup(username).removeFrom(this.map)
+  }
+
+  showPolylineAsTheCrowFlies(username) {
+    this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
+  }
+
+  hidePolylineAsTheCrowFlies(username) {
+    this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
   }
 
   setOnline(username) {
