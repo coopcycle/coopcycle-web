@@ -7062,16 +7062,16 @@
         },
         {
             "name": "pagerfanta/pagerfanta",
-            "version": "v2.1.2",
+            "version": "v2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/whiteoctober/Pagerfanta.git",
-                "reference": "45a85ad426316ae37f2d007022e5b4c95bc3aef4"
+                "reference": "a53ff01d521648d9dbca19b93ac6bc75a59b0972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/whiteoctober/Pagerfanta/zipball/45a85ad426316ae37f2d007022e5b4c95bc3aef4",
-                "reference": "45a85ad426316ae37f2d007022e5b4c95bc3aef4",
+                "url": "https://api.github.com/repos/whiteoctober/Pagerfanta/zipball/a53ff01d521648d9dbca19b93ac6bc75a59b0972",
+                "reference": "a53ff01d521648d9dbca19b93ac6bc75a59b0972",
                 "shasum": ""
             },
             "require": {
@@ -7127,7 +7127,7 @@
                 "paginator",
                 "paging"
             ],
-            "time": "2019-04-02T08:50:39+00:00"
+            "time": "2019-07-17T20:56:16+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -10011,7 +10011,7 @@
         },
         {
             "name": "sylius/attribute",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Attribute.git",
@@ -10050,16 +10050,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Component for handling object attributes in PHP projects.",
@@ -10074,7 +10074,7 @@
         },
         {
             "name": "sylius/attribute-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusAttributeBundle.git",
@@ -10121,16 +10121,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Managing object attributes for Symfony applications.",
@@ -10146,7 +10146,7 @@
         },
         {
             "name": "sylius/channel",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Channel.git",
@@ -10186,16 +10186,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "E-Commerce PHP component for managing different sales channels.",
@@ -10212,16 +10212,16 @@
         },
         {
             "name": "sylius/channel-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusChannelBundle.git",
-                "reference": "3ea5109516a6ce96ee10768de58f07e56791f7f7"
+                "reference": "a17b1a6877fb16010dc0f2891a2c3d66458abe33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/3ea5109516a6ce96ee10768de58f07e56791f7f7",
-                "reference": "3ea5109516a6ce96ee10768de58f07e56791f7f7",
+                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/a17b1a6877fb16010dc0f2891a2c3d66458abe33",
+                "reference": "a17b1a6877fb16010dc0f2891a2c3d66458abe33",
                 "shasum": ""
             },
             "require": {
@@ -10258,16 +10258,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Currencies and channel formatting engine bundle for Symfony.",
@@ -10278,11 +10278,11 @@
                 "currencies",
                 "currency"
             ],
-            "time": "2019-05-07T10:38:39+00:00"
+            "time": "2019-06-20T09:27:36+00:00"
         },
         {
             "name": "sylius/currency",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Currency.git",
@@ -10320,16 +10320,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Currency handling for PHP applications.",
@@ -10344,7 +10344,7 @@
         },
         {
             "name": "sylius/currency-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusCurrencyBundle.git",
@@ -10394,16 +10394,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Currencies processing for Symfony.",
@@ -10418,7 +10418,7 @@
         },
         {
             "name": "sylius/locale",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Locale.git",
@@ -10456,16 +10456,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Locale handling for PHP applications.",
@@ -10481,7 +10481,7 @@
         },
         {
             "name": "sylius/locale-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusLocaleBundle.git",
@@ -10530,16 +10530,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Locales management for Symfony projects.",
@@ -10555,7 +10555,7 @@
         },
         {
             "name": "sylius/money-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
@@ -10606,16 +10606,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Currencies and money formatting engine bundle for Symfony.",
@@ -10630,7 +10630,7 @@
         },
         {
             "name": "sylius/order",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Order.git",
@@ -10668,16 +10668,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Orders management library for PHP.",
@@ -10693,16 +10693,16 @@
         },
         {
             "name": "sylius/order-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusOrderBundle.git",
-                "reference": "c80ea92d48b25ebd4bc7c59d0bdcaddf47c0c07a"
+                "reference": "585fddb00a20dad9161bd232f6a77a58fa1d2920"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/c80ea92d48b25ebd4bc7c59d0bdcaddf47c0c07a",
-                "reference": "c80ea92d48b25ebd4bc7c59d0bdcaddf47c0c07a",
+                "url": "https://api.github.com/repos/Sylius/SyliusOrderBundle/zipball/585fddb00a20dad9161bd232f6a77a58fa1d2920",
+                "reference": "585fddb00a20dad9161bd232f6a77a58fa1d2920",
                 "shasum": ""
             },
             "require": {
@@ -10745,16 +10745,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Sales order management for Symfony applications.",
@@ -10767,11 +10767,11 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2019-04-25T07:08:26+00:00"
+            "time": "2019-05-27T09:24:37+00:00"
         },
         {
             "name": "sylius/payment",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Payment.git",
@@ -10808,16 +10808,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Flexible payments system for PHP e-commerce applications.",
@@ -10833,16 +10833,16 @@
         },
         {
             "name": "sylius/product",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Product.git",
-                "reference": "e99dd1175822b077099b2302be4bd64ee3a307e0"
+                "reference": "e9955d0bdac524a6d172827c2cd283eda45085f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Product/zipball/e99dd1175822b077099b2302be4bd64ee3a307e0",
-                "reference": "e99dd1175822b077099b2302be4bd64ee3a307e0",
+                "url": "https://api.github.com/repos/Sylius/Product/zipball/e9955d0bdac524a6d172827c2cd283eda45085f5",
+                "reference": "e9955d0bdac524a6d172827c2cd283eda45085f5",
                 "shasum": ""
             },
             "require": {
@@ -10876,16 +10876,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Product catalog system with support for product options and variants.",
@@ -10899,20 +10899,20 @@
                 "shop",
                 "variants"
             ],
-            "time": "2019-04-01T10:04:14+00:00"
+            "time": "2019-06-13T11:39:50+00:00"
         },
         {
             "name": "sylius/product-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusProductBundle.git",
-                "reference": "3420d00d6bfb53e2a59a391dd58ff46c10308c0d"
+                "reference": "bff7e70f02c4b5314b700acd9ab5d446c8a20c4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusProductBundle/zipball/3420d00d6bfb53e2a59a391dd58ff46c10308c0d",
-                "reference": "3420d00d6bfb53e2a59a391dd58ff46c10308c0d",
+                "url": "https://api.github.com/repos/Sylius/SyliusProductBundle/zipball/bff7e70f02c4b5314b700acd9ab5d446c8a20c4c",
+                "reference": "bff7e70f02c4b5314b700acd9ab5d446c8a20c4c",
                 "shasum": ""
             },
             "require": {
@@ -10951,16 +10951,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Product catalog for your Symfony applications.",
@@ -10972,11 +10972,11 @@
                 "products",
                 "shop"
             ],
-            "time": "2019-05-06T14:34:41+00:00"
+            "time": "2019-06-13T11:39:50+00:00"
         },
         {
             "name": "sylius/promotion",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Promotion.git",
@@ -11014,16 +11014,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Flexible promotion management for PHP applications.",
@@ -11038,7 +11038,7 @@
         },
         {
             "name": "sylius/promotion-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPromotionBundle.git",
@@ -11087,16 +11087,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Manage ecommerce promotions system in your Symfony application.",
@@ -11279,7 +11279,7 @@
         },
         {
             "name": "sylius/taxation",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxation.git",
@@ -11316,16 +11316,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Flexible taxation system for PHP ecommerce applications.",
@@ -11343,7 +11343,7 @@
         },
         {
             "name": "sylius/taxation-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxationBundle.git",
@@ -11389,16 +11389,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Flexible taxation system for Symfony ecommerce applications.",
@@ -11415,16 +11415,16 @@
         },
         {
             "name": "sylius/taxonomy",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxonomy.git",
-                "reference": "71290fe31f3b4a1bf00a934c79efbb679741fb0b"
+                "reference": "81b4ae0abaa31fba7166c7f977a1e619d6a4316e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Taxonomy/zipball/71290fe31f3b4a1bf00a934c79efbb679741fb0b",
-                "reference": "71290fe31f3b4a1bf00a934c79efbb679741fb0b",
+                "url": "https://api.github.com/repos/Sylius/Taxonomy/zipball/81b4ae0abaa31fba7166c7f977a1e619d6a4316e",
+                "reference": "81b4ae0abaa31fba7166c7f977a1e619d6a4316e",
                 "shasum": ""
             },
             "require": {
@@ -11453,16 +11453,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Taxonomies - categorization of domain models in PHP projects.",
@@ -11474,20 +11474,20 @@
                 "taxon",
                 "taxonomy"
             ],
-            "time": "2019-02-08T13:20:09+00:00"
+            "time": "2019-06-13T11:39:50+00:00"
         },
         {
             "name": "sylius/taxonomy-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxonomyBundle.git",
-                "reference": "cffff280acb7fbca82cbac9da1583bf69215f477"
+                "reference": "40713540235bfb06559bf92fe09106a7f555ad60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusTaxonomyBundle/zipball/cffff280acb7fbca82cbac9da1583bf69215f477",
-                "reference": "cffff280acb7fbca82cbac9da1583bf69215f477",
+                "url": "https://api.github.com/repos/Sylius/SyliusTaxonomyBundle/zipball/40713540235bfb06559bf92fe09106a7f555ad60",
+                "reference": "40713540235bfb06559bf92fe09106a7f555ad60",
                 "shasum": ""
             },
             "require": {
@@ -11526,16 +11526,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Flexible categorization system for Symfony.",
@@ -11549,7 +11549,7 @@
                 "taxonomies",
                 "taxonomy"
             ],
-            "time": "2019-02-11T15:28:39+00:00"
+            "time": "2019-06-13T11:39:50+00:00"
         },
         {
             "name": "symfony/contracts",
