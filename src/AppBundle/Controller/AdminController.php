@@ -1385,13 +1385,8 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
-     */
-    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, ObjectManager $objectManager)
     {
-        $timeSlot = new TimeSlot();
-
         $form = $this->createForm(TimeSlotType::class, $timeSlot);
 
         $form->handleRequest($request);
@@ -1406,5 +1401,29 @@ class AdminController extends Controller
         return $this->render('@App/admin/time_slot.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
+     */
+    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    {
+        $timeSlot = new TimeSlot();
+
+        return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/{id}", name="admin_time_slot")
+     */
+    public function timeSlotAction($id, Request $request, ObjectManager $objectManager)
+    {
+        $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
+
+        if (!$timeSlot) {
+            throw $this->createNotFoundException(sprintf('Time slot #%d does not exist', $id));
+        }
+
+        return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
     }
 }

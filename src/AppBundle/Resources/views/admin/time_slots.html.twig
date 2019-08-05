@@ -22,7 +22,7 @@
   {% for time_slot in time_slots %}
     <tr>
       <td>
-        <a href="#">#{{ time_slot.id }}</a>
+        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">#{{ time_slot.id }}</a>
       </td>
       <td>
         {{ time_slot.name }}

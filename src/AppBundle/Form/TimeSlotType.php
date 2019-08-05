@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\TimeSlot;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +19,13 @@ class TimeSlotType extends AbstractType
             ->add('name', TextType::class, [
             	'label' => 'form.time_slot.name.label'
             ])
+            ->add('interval', ChoiceType::class, [
+                'choices'  => [
+                    '2 days' => '2 days',
+                    '3 days' => '3 days',
+                    '1 week' => '1 week',
+                ],
+            ])
             ->add('choices', CollectionType::class, [
                 'entry_type' => TimeSlotChoiceType::class,
                 'entry_options' => ['label' => false],
@@ -25,7 +33,8 @@ class TimeSlotType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
-		    ]);
+		    ])
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
