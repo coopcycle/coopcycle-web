@@ -31,6 +31,11 @@ class SeoListener
     {
         $request = $event->getRequest();
 
+        // Skip if this is an API request
+        if ($request->attributes->has('_api_resource_class')) {
+            return;
+        }
+
         $locale = $request->getLocale();
 
         $this->seoPage
