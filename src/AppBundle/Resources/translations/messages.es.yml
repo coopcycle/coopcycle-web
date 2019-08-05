@@ -114,10 +114,8 @@ restaurant.disabledWarning: 'Éste restaurante está desactivado así que los vi
   '
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado hasta el <strong>%date%</strong>
-  pero puedes hacer un pedido para más tarde.
-
-  '
+restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
+  pero puedes hacer un pedido para más tarde
 restaurant.noMenuWarning: 'Este restaurante no tiene menú por ahora
 
   '
@@ -172,7 +170,7 @@ restaurant.list.menus: Cartas
 restaurant.list.activeMenu: Carta activada
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
-restaurant.list.norestaurant: Aún no existen restaurantes.
+restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
 restaurant.list.stats: Estadísticas
@@ -185,7 +183,9 @@ restaurant.product_options.help: 'Las opciones hacen que los productos sean <str
 
   <br>
 
-  Para cada opción, puede definir una lista de valores '
+  Para cada opción, puede definir una lista de valores
+
+  '
 restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
@@ -240,9 +240,7 @@ order.payment.card_number.label: Número de tarjeta
 order.payment.total: Pagar %total%
 order.payment.card_number.help: 'Hemos introducido un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">número de tarjeta de prueba</a> stripe. No se efectuará
-  ningún cargo en cuenta.
-
-  '
+  ningún cargo en cuenta. '
 order.delivery_time: Entrega %time%
 order.payment.cvc: CVC
 order.state.cart: Cesta
@@ -281,7 +279,8 @@ task.status.failed: Fracaso
 task.status.todo: Pendiente
 form.task.courier.label: Mensajero
 form.task.comments.label: Comentarios
-form.task.comments.placeholder: Especifique cualquier detalle útil para completar la tarea
+form.task.comments.placeholder: Especifique cualquier detalle útil para completar
+  la tarea
 form.task.status.label: Estado
 form.task_event.notes.placeholder: 'Ejemplo : dirección no encontrada, no hay problema…'
 form.task_event.notes.help: Puedes editar el comentario
@@ -295,7 +294,7 @@ task.type.PICKUP: Recogida
 task.type.DROPOFF: Entrega
 task.previous_task_not_completed_yet: La tarea anterior no ha sido completada
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a la demo de la plataforma
-  <a target="_blank" href="https://coopcycle.org">CoopCycle</a>.
+  <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
   class="fa fa-info-circle"></i>  ¿Cómo usar la demo?</a>
 maintenance.disclaimer: El modo mantenimiento esta activado
@@ -367,12 +366,12 @@ form.preparation_time.defaults_warning: 'Este restaurante aún no tiene ningún 
 form.settings.date_time: Fecha y hora
 form.settings.brand_name.label: Nombre de la Marca
 form.settings.stripe.title: Cuenta Stripe
-form.settings.stripe.help: ' Stripe es el servicio de pago que utilizamos para manejar
+form.settings.stripe.help: 'Stripe es el servicio de pago que utilizamos para manejar
   tarjetas de crédito. Para utilizar la parte de la plataforma de comercio electrónico,
   es necesario configurar esta sección, así como Stripe Connect. Stripe toma una tarifa
   de 0.25cts + 1.4% por pago (precios actualizados)<a href="https://stripe.com/fr/pricing">here</a>),
   a pagar por el dueño de la tienda. '
-form.settings.stripe_testmode.help: ' En modo « test », debe usar <a href="https://stripe.com/docs/testing">números
+form.settings.stripe_testmode.help: 'En modo « test », debe usar <a href="https://stripe.com/docs/testing">números
   de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
 form.settings.stripe_enable_livemode.help: Para activar el modo « live », primero
   necesita configurar las credenciales « live ».
@@ -429,7 +428,6 @@ form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « t
   » y activar el mantenimiento
 form.stripe_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo
   « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
-
 form.local_business.stripe_account.title: Cuenta Stripe
 form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir
   dinero a otra cuenta bancaria
@@ -519,7 +517,7 @@ form.checkout_address.notes.label: ¿Un comentario?
 form.checkout_address.notes.placeholder: 'Ejemplo: sin salsa, sin tomates…
 
   '
-form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
+form.checkout_address.notes.help: Tu comentario será enviado al restaurante
 form.checkout_address.promotion_coupon.label: Código promocional
 form.checkout_address.telephone.label: Teléfono
 form.task_export.start.label: Inicio
@@ -528,7 +526,7 @@ form.api_app.name.label: Nombre de la aplicación
 form.api_app.store.label: Tienda
 form.api_app.client_id.label: Login
 form.api_app.client_secret.label: Clave secreta
-form.credit_note.user_search.help: El descuento solo será utilizable por este usuario.
+form.credit_note.user_search.help: El descuento solo será utilizable por este usuario
 form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
@@ -538,9 +536,8 @@ form.delivery_embed.name.label: Nombre
 form.delivery_embed.name.help: Vuestro nombre o el nombre de la empresa
 form.delivery_embed.telephone.label: Número de teléfono
 form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
-  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg.
-form.resend_confirmation_email.submit.label:
-  Reenviar correo electrónico
+  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg
+form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
