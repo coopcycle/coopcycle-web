@@ -15,6 +15,7 @@ class TimeSlot
     private $id;
     private $name;
     private $choices;
+    private $interval;
 
     public function __construct()
     {
@@ -148,5 +149,25 @@ class TimeSlot
         }
 
         return $items;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInterval()
+    {
+        return $this->interval;
+    }
+
+    /**
+     * @param mixed $name
+     *
+     * @return self
+     */
+    public function setInterval($interval)
+    {
+        $this->interval = $interval;
+
+        return $this;
     }
 }
