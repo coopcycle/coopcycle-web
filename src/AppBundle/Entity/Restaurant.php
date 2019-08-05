@@ -208,6 +208,8 @@ class Restaurant extends FoodEstablishment
 
     private $preparationTimeRules;
 
+    private $nextOpeningDateCache = [];
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -413,16 +415,28 @@ class Restaurant extends FoodEstablishment
             $now = Carbon::now();
         }
 
-        if ($this->hasClosingRuleForNow($now)) {
-            foreach ($this->getClosingRules() as $closingRule) {
-                if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+        if (!isset($this->nextOpeningDateCache[$now->getTimestamp()])) {
 
-                    return parent::getNextOpeningDate($closingRule->getEndDate());
+            $nextOpeningDate = null;
+
+            if ($this->hasClosingRuleForNow($now)) {
+                foreach ($this->getClosingRules() as $closingRule) {
+                    if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+
+                        $nextOpeningDate = parent::getNextOpeningDate($closingRule->getEndDate());
+                        break;
+                    }
                 }
             }
+
+            if (null === $nextOpeningDate) {
+                $nextOpeningDate = parent::getNextOpeningDate($now);
+            }
+
+            $this->nextOpeningDateCache[$now->getTimestamp()] = $nextOpeningDate;
         }
 
-        return parent::getNextOpeningDate($now);
+        return $this->nextOpeningDateCache[$now->getTimestamp()];
     }
 
     public function getNextClosingDate(\DateTime $now = null)
