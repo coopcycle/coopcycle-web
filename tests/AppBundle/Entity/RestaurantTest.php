@@ -25,7 +25,6 @@ class RestaurantTest extends TestCase
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
-            '2017-10-04T19:00:00+02:00',
             '2017-10-05T10:00:00+02:00',
             '2017-10-05T10:15:00+02:00',
             '2017-10-05T10:30:00+02:00',
@@ -62,7 +61,6 @@ class RestaurantTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00'
         ], $availabilities);
 
     }
@@ -83,7 +81,6 @@ class RestaurantTest extends TestCase
             '2017-10-06T18:15:00+02:00',
             '2017-10-06T18:30:00+02:00',
             '2017-10-06T18:45:00+02:00',
-            '2017-10-06T19:00:00+02:00',
             '2017-10-07T10:00:00+02:00',
             '2017-10-07T10:15:00+02:00',
             '2017-10-07T10:30:00+02:00',
@@ -120,7 +117,6 @@ class RestaurantTest extends TestCase
             '2017-10-07T18:15:00+02:00',
             '2017-10-07T18:30:00+02:00',
             '2017-10-07T18:45:00+02:00',
-            '2017-10-07T19:00:00+02:00'
         ], $availabilities);
 
     }
@@ -143,7 +139,6 @@ class RestaurantTest extends TestCase
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
-            '2017-10-04T19:00:00+02:00',
             '2017-10-05T10:00:00+02:00',
             '2017-10-05T10:15:00+02:00',
             '2017-10-05T10:30:00+02:00',
@@ -180,7 +175,6 @@ class RestaurantTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00'
         ], $availabilities);
 
     }
@@ -221,8 +215,35 @@ class RestaurantTest extends TestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00',
         ], $availabilities);
+    }
+
+    public function testGetNextClosingDate()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
+
+        $this->assertEquals(
+            new \DateTime('2019-08-05T19:00:00+02:00'),
+            $restaurant->getNextClosingDate(new \DateTime('2019-08-05T12:00:00+02:00'))
+        );
+    }
+
+    public function testGetNextClosingDateWithClosingRules()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2019-08-05T12:00:00+02:00'));
+        $closingRule->setEndDate(new \DateTime('2019-08-06T12:00:00+02:00'));
+        $closingRule->setRestaurant($restaurant);
+        $restaurant->getClosingRules()->add($closingRule);
+
+        $this->assertEquals(
+            new \DateTime('2019-08-05T12:00:00+02:00'),
+            $restaurant->getNextClosingDate(new \DateTime('2019-08-05T11:00:00+02:00'))
+        );
     }
 
     public function testGetNextOpeningDateWithHolidays() {

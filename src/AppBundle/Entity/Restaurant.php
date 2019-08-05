@@ -429,6 +429,28 @@ class Restaurant extends FoodEstablishment
         return parent::getNextOpeningDate($now);
     }
 
+    public function getNextClosingDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $nextClosingDates = [
+            parent::getNextClosingDate($now)
+        ];
+
+        foreach ($this->getClosingRules() as $closingRule) {
+            if ($closingRule->getEndDate() < $now) {
+                continue;
+            }
+            $nextClosingDates[] = $closingRule->getStartDate();
+        }
+
+        sort($nextClosingDates);
+
+        return array_shift($nextClosingDates);
+    }
+
     /**
      * Return potential delivery times for a restaurant, pickables by the customer.
      *

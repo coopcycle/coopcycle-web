@@ -50,6 +50,8 @@ abstract class LocalBusiness
 
     protected $additionalProperties = [];
 
+    private $timeRanges = [];
+
     public function getLegalName()
     {
         return $this->legalName;
@@ -102,8 +104,7 @@ abstract class LocalBusiness
             $now = Carbon::now();
         }
 
-        foreach ($this->openingHours as $openingHour) {
-            $timeRange = new TimeRange($openingHour);
+        foreach ($this->getTimeRanges() as $timeRange) {
             if ($timeRange->isOpen($now)) {
                 return true;
             }
@@ -126,9 +127,25 @@ abstract class LocalBusiness
 
         $dates = [];
 
-        foreach ($this->openingHours as $openingHour) {
-            $timeRange = new TimeRange($openingHour);
+        foreach ($this->getTimeRanges() as $timeRange) {
             $dates[] = $timeRange->getNextOpeningDate($now);
+        }
+
+        sort($dates);
+
+        return array_shift($dates);
+    }
+
+    public function getNextClosingDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $dates = [];
+
+        foreach ($this->getTimeRanges() as $timeRange) {
+            $dates[] = $timeRange->getNextClosingDate($now);
         }
 
         sort($dates);
@@ -207,5 +224,27 @@ abstract class LocalBusiness
         }
 
         return $this;
+    }
+
+    private function computeTimeRanges(array $openingHours)
+    {
+        if (count($openingHours) === 0) {
+            $this->timeRanges = [];
+            return;
+        }
+
+        foreach ($openingHours as $openingHour) {
+            $this->timeRanges[] = new TimeRange($openingHour);
+        }
+    }
+
+    private function getTimeRanges()
+    {
+        $openingHours = $this->getOpeningHours();
+        if (count($openingHours) !== count($this->timeRanges)) {
+            $this->computeTimeRanges($openingHours);
+        }
+
+        return $this->timeRanges;
     }
 }
