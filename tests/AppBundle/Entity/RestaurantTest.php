@@ -5,21 +5,11 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 
-class RestaurantTest extends KernelTestCase
+class RestaurantTest extends TestCase
 {
-    private $validator;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        self::bootKernel();
-
-        $this->validator = static::$kernel->getContainer()->get('validator');
-    }
-
     public function testGetAvailabilities() {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
@@ -206,28 +196,6 @@ class RestaurantTest extends KernelTestCase
 
         $this->assertEquals([], $availabilities);
 
-    }
-
-    public function testValidationErrors() {
-        $restaurant = new Restaurant();
-
-        $violations = $this->validator->validate($restaurant, null, ['activable']);
-        $errors = ValidationUtils::serializeValidationErrors($violations);
-
-        $this->assertArrayHasKey('name', $errors);
-        $this->assertArrayHasKey('telephone', $errors);
-        $this->assertArrayHasKey('openingHours', $errors);
-        $this->assertArrayHasKey('contract', $errors);
-    }
-
-    public function testCannotEnableRestaurant() {
-        $restaurant = new Restaurant();
-        $restaurant->setEnabled(true);
-
-        $violations = $this->validator->validate($restaurant, null, ['activable']);
-        $errors = ValidationUtils::serializeValidationErrors($violations);
-
-        $this->assertArrayHasKey('enabled', $errors);
     }
 
     public function testClosingRuleFilterAvailabilities() {
