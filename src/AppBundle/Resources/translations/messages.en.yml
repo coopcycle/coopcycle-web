@@ -310,7 +310,6 @@ task.form.finish: Finish task
 task.form.details: Task details
 task.form.finish.DONE.info: The task was successfully completed
 task.form.finish.FAIL.info: The task could not be completed
->>>>>>> Translated using Weblate (English)
 task.status.done: Success
 task.status.failed: Failure
 task.status.todo: To do
@@ -617,11 +616,9 @@ form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
 
-=======
 form.credit_note.name.help: The name of the promotion that will be displayed in the
   cart
 form.embed_settings.with_vehicle.label: Add vehicle choice
->>>>>>> Translated using Weblate (English)
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
@@ -719,7 +716,6 @@ embed.delivery.submit.help: Click to confirm the quote and order the race.
 embed.delivery.confirm_message: We have registered your request. Your race is waiting
   for validation. <br> We will send you an email within a few minutes. You will receive
   a second mail as soon as the race is confirmed.
->>>>>>> Translated using Weblate (English)
 pagination.previous: Previous
 pagination.next: Next
 basics.save: Save
