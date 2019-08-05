@@ -79,8 +79,8 @@ adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
-adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
-  the delivery cost is calculated.
+adminDashboard.pricing.noRuleFound: 'No pricing rule found. Pricing rules define how
+  the delivery cost is calculated.'
 adminDashboard.pricing.addRule: Add rule
 adminDashboard.tags.title: Tags
 adminDashboard.tags.save: Save
@@ -100,8 +100,8 @@ adminDashboard.promotions.title: Promotions
 adminDashboard.pledges.title: Suggestions
 adminDashboard.time_slots.title: Time slots
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
-deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing.
-  Please enter it manually or edit the pricing.
+deliveryForm.noPriceFromPricingWarning: 'No price could be calculated from the pricing.
+  Please enter it manually or edit the pricing.'
 delivery.createNew: Create new delivery
 delivery.tracking_link: Tracking link
 delivery.with_id: 'Delivery #%id%'
@@ -263,11 +263,9 @@ order.payment.card_number.label: Card number
 order.payment.total: Pay %total%
 order.payment.cvc: CVC
 order.delivery_time: Delivery %time%
-order.payment.card_number.help: 'A stripe <a href="https://stripe.com/docs/testing#cards"
-  target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
+order.payment.card_number.help: 'A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
   be debited.
   '
-order.payment.cvc: CVC
 order.state.cart: Cart
 order.state.accepted: Accepted
 order.state.refused: Refused
@@ -298,7 +296,6 @@ order.list.summary.delivery.text: Delivery %distance%, %vehicle%
 order.list.invoice: Invoice
 vehicle.bike: Bike
 vehicle.cargo_bike: Cargo bike
-task.form.dateRange: Date range
 task.form.create: Create task
 task.form.timeWindow: Time window
 task.form.cancel: Cancel
@@ -405,15 +402,15 @@ form.preparation_time.defaults_warning: 'This restaurant does not have any custo
 form.settings.date_time: Date and time
 form.settings.brand_name.label: Brand name
 form.settings.stripe.title: Stripe Account
-form.settings.stripe.help: ' Stripe is the payment service we use to handle credit
+form.settings.stripe.help: 'Stripe is the payment service we use to handle credit
   cards. To use the e-commerce part of the platform it is necessary to configure this
   section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
   (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid
   by the shop owner. '
-form.settings.stripe_testmode.help: ' In « test » mode, you will have to use <a href="https://stripe.com/docs/testing">test
+form.settings.stripe_testmode.help: 'In « test » mode, you will have to use <a href="https://stripe.com/docs/testing">test
   credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
-form.settings.stripe_enable_livemode.help: To enable « live » mode, you need to configure
-  « live » keys first.
+form.settings.stripe_enable_livemode.help: 'To enable « live » mode, you need to configure
+  « live » keys first.'
 form.settings.stripe_publishable_key.label: Stripe publishable key
 form.settings.stripe_publishable_key.help: 'Create a Stripe account to obtain your
   <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
@@ -605,7 +602,8 @@ form.api_app.client_secret.label: Secret key
 form.credit_note.user_search.help: The promotion will only be usable by this user
 form.credit_note.amount.label: Amount
 form.credit_note.name.label: Name
-form.credit_note.name.help: The name of the promotion that will be displayed in the cart
+form.credit_note.name.help: The name of the promotion that will be displayed in the
+  cart
 
 form.resend_confirmation_email.submit.label: Send email again
 
@@ -616,9 +614,6 @@ form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
 
-form.credit_note.name.help: The name of the promotion that will be displayed in the
-  cart
-form.embed_settings.with_vehicle.label: Add vehicle choice
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
