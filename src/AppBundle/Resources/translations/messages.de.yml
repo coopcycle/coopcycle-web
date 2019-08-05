@@ -222,14 +222,10 @@ restaurant.disabledWarning: 'Dieses Restaurant ist nicht aktiv, sodass Besucher 
   Administrator aktivieren</a>.
 
   '
-restaurant.closedWarningWithDelay: 'Bestellen Sie jetzt für später. Bestellen Sie
-  mindestens %delay% im Voraus.
-
-  '
-restaurant.temporaryClosedWarning: 'Dieses Restaurant ist geschlossen bis zum <strong>%date%</strong>.
+restaurant.closedWarningWithDelay: Bestellen Sie jetzt für später. Bestellen Sie mindestens
+  %delay% im Voraus.
+restaurant.temporaryClosedWarning: Dieses Restaurant ist geschlossen bis zum <strong>%date%</strong>.
   Sie können jedoch für später bestellen.
-
-  '
 restaurant.noMenuWarning: 'Dieses Restaurant hat zur Zeit kein Menü
 
   '
@@ -280,7 +276,7 @@ restaurant.list.product_options: Optionen
 restaurant.list.menus: Menüs
 restaurant.list.activeMenu: Aktives Menü
 restaurant.list.planning: Planung
-restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants.
+restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants
 restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
 restaurant.list.preparationTime: Vorbereitung
 restaurant.list.stats: Statistiken
