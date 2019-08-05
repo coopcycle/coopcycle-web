@@ -79,8 +79,8 @@ adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
-adminDashboard.pricing.noRuleFound: 'No pricing rule found. Pricing rules define how
-  the delivery cost is calculated.'
+adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
+  the delivery cost is calculated.
 adminDashboard.pricing.addRule: Add rule
 adminDashboard.tags.title: Tags
 adminDashboard.tags.save: Save
@@ -100,12 +100,11 @@ adminDashboard.promotions.title: Promotions
 adminDashboard.pledges.title: Suggestions
 adminDashboard.time_slots.title: Time slots
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
-deliveryForm.noPriceFromPricingWarning: 'No price could be calculated from the pricing.
-  Please enter it manually or edit the pricing.'
+deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing.
+  Please enter it manually or edit the pricing.
 delivery.createNew: Create new delivery
 delivery.tracking_link: Tracking link
 delivery.with_id: 'Delivery #%id%'
-
 help.title: Help
 help.home: Home
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try
@@ -133,14 +132,10 @@ restaurant.disabledWarning: 'This restaurant is disabled so the site visitors ca
   it in the admin</a>.
 
   '
-restaurant.closedWarningWithDelay: 'Order now for later. Order at least %delay% in
+restaurant.closedWarningWithDelay: Order now for later. Order at least %delay% in
   advance.
-
-  '
-restaurant.temporaryClosedWarning: 'This restaurant is closed until <strong>%date%</strong>.
+restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date%</strong>.
   You can still order for later on though!
-
-  '
 restaurant.noMenuWarning: 'This restaurant has no menu for now
 
   '
@@ -194,7 +189,7 @@ restaurant.list.menus: Menus
 restaurant.list.activeMenu: Active menu
 restaurant.list.planning: Planning
 restaurant.list.settings: Settings
-restaurant.list.norestaurant: There are no restaurants yet.
+restaurant.list.norestaurant: There are no restaurants yet
 restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
 restaurant.list.stats: Statistics
@@ -212,7 +207,7 @@ restaurant.product_options.help: 'Options all products to be <strong>configurabl
   '
 restaurant.product_options.list.values: Values
 restaurant.form.uploadImage: Upload an image
-profile.addresses.breadcrumb: Adresses
+profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: No address saved yet!
 profile.orders.empty: No order yet!
 profile.myDeliveries: My deliveries
@@ -263,9 +258,9 @@ order.payment.card_number.label: Card number
 order.payment.total: Pay %total%
 order.payment.cvc: CVC
 order.delivery_time: Delivery %time%
-order.payment.card_number.help: 'A stripe <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
-  be debited.
-  '
+order.payment.card_number.help: 'A stripe <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">test card number</a> is pre-filled. No account will
+  be debited. '
 order.state.cart: Cart
 order.state.accepted: Accepted
 order.state.refused: Refused
@@ -313,11 +308,8 @@ task.status.todo: To do
 form.task.courier.label: Courier
 form.task.comments.label: Comments
 form.task.comments.placeholder: Specify any useful details to complete task
-
 form.task.status.label: Status
-form.task_event.notes.placeholder: 'Ex: address not found, no problem…
-
-  '
+form.task_event.notes.placeholder: 'Ex: address not found, no problem…'
 form.task_event.notes.help: You can edit the comment
 form.task_upload.file: File
 form.task_upload.file.help: 'Supported file formats: csv, ods, xlsx
@@ -329,7 +321,7 @@ task.type.PICKUP: Pickup
 task.type.DROPOFF: Dropoff
 task.previous_task_not_completed_yet: The previous task is not completed yet
 demo.disclaimer: <i class="fa fa-bullhorn"></i>  Welcome on the demo of the <a target="_blank"
-  href="https://coopcycle.org">CoopCycle</a> platform.
+  href="https://coopcycle.org">CoopCycle</a> platform
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
   class="fa fa-info-circle"></i>  How to use this demo?</a>
 maintenance.disclaimer: Maintenance mode is enabled
@@ -356,7 +348,7 @@ form.delivery.pickup.doneBefore.label: Pickup time
 form.delivery.dropoff.doneBefore.label: Dropoff time
 form.delivery.distance.label: Distance
 form.delivery.duration.label: Duration
-form.delivery.store.label: Magasin
+form.delivery.store.label: Store
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
 form.order.accept.label: Accept
@@ -409,8 +401,8 @@ form.settings.stripe.help: 'Stripe is the payment service we use to handle credi
   by the shop owner. '
 form.settings.stripe_testmode.help: 'In « test » mode, you will have to use <a href="https://stripe.com/docs/testing">test
   credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
-form.settings.stripe_enable_livemode.help: 'To enable « live » mode, you need to configure
-  « live » keys first.'
+form.settings.stripe_enable_livemode.help: To enable « live » mode, you need to configure
+  « live » keys first.
 form.settings.stripe_publishable_key.label: Stripe publishable key
 form.settings.stripe_publishable_key.help: 'Create a Stripe account to obtain your
   <a href="https://stripe.com/docs/dashboard#api-keys">publishable key</a>
@@ -443,33 +435,41 @@ form.settings.administrator_email.help: Notifications will be sent to this email
 form.settings.phone_number.label: Phone number
 form.settings.phone_number.help: This number will be displayed to customers
 form.settings.enable_restaurant_pledges.label: Allow customers to suggest restaurants
-
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now
+form.suggest.message: 'Can''t find your favorite restaurant ?
 
-form.suggest.message: |
-  Can't find your favorite restaurant ?
   <br>
-  Give us his name and address. Then other users can vote to see it appear in the list of restaurants.
+
+  Give us his name and address. Then other users can vote to see it appear in the
+  list of restaurants.
+
   <br>
-  This will allow us to better identify the restaurants to be approached and provide them the proof of a real demand.
+
+  This will allow us to better identify the restaurants to be approached and provide
+  them the proof of a real demand.
+
+  '
 form.suggest.thank_you_message: Thank you for suggesting this restaurant!
+restaurant.suggest.message: 'Help us convince %restaurant.name% to work with %brand_name%!
 
-restaurant.suggest.message: |
-  Help us convince %restaurant.name% to work with %brand_name%!
   <br>
-  To see it on the platform, we need you and your voice to support our future request for collaboration with this brand.
 
+  To see it on the platform, we need you and your voice to support our future request
+  for collaboration with this brand.
+
+  '
 restaurant.suggest.vote: Vote for %name%
-pledge.suggested_by: 'Suggested by @%username%'
+pledge.suggested_by: Suggested by @%username%
 restaurant.suggest.has_voted: You have already voted for this restaurant !
-restaurant.suggest.banner_disclaimer: This restaurant is not available at the moment. Vote for %restaurant.name%!
-pledge.vote_count_equals_two: '%first_user% and %second_user% have voted for this restaurant.'
-pledge.vote_count_equals_one: '%username% has voted for this restaurant.'
+restaurant.suggest.banner_disclaimer: This restaurant is not available at the moment.
+  Vote for %restaurant.name%!
+pledge.vote_count_equals_two: '%first_user% and %second_user% have voted for this
+  restaurant'
+pledge.vote_count_equals_one: '%username% has voted for this restaurant'
 pledge.accept: Accept
 pledge.reject: Reject
-
 form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: You are going to enable maintenance mode.<br>Only administrators
@@ -592,7 +592,6 @@ form.checkout_address.notes.placeholder: 'Example: without sauce, without tomato
 form.checkout_address.notes.help: Your observation will be forwarded to the restaurant
 form.checkout_address.promotion_coupon.label: Coupon code
 form.checkout_address.telephone.label: Phone number
-
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name
@@ -604,16 +603,12 @@ form.credit_note.amount.label: Amount
 form.credit_note.name.label: Name
 form.credit_note.name.help: The name of the promotion that will be displayed in the
   cart
-
 form.resend_confirmation_email.submit.label: Send email again
-
 form.embed_settings.with_vehicle.label: Add vehicle choice
-
 form.time_slot.name.label: Name
 form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
-
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
@@ -731,9 +726,7 @@ basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
-
 profile.password.change: Change your password
-
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
 authentication.create_account: Create your account
@@ -752,11 +745,9 @@ promotions.heading.credit_note.help: Create unique credit notes for customers
 promotions.promotion_coupon.success: Your coupon code %code% has been taken into account
 promotions.add_free_delivery_coupon: Add a promotion coupon « free delivery »
 promotions.create_credit_note_coupon: Add a credit note
-
 delivery.table.heading.summary: Summary
 delivery.table.heading.courier: Courier
 delivery.table.heading.order: Order
-
 search.users: Search a user…
 allergens.CEREALS_CONTAINING_GLUTEN: Cereals containing gluten
 allergens.CRUSTACEANS: Crustaceans
@@ -783,10 +774,8 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
-
 time_slot.human_readable: '%day% between %start% and %end%'
-
-resend_confirmation_email.disclaimer: If you have not received the confirmation email, click on the button.
-
+resend_confirmation_email.disclaimer: If you have not received the confirmation email,
+  click on the button.
 sylius.ui.code: Code
 sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit
