@@ -15,7 +15,7 @@ class TimeSlot
     private $id;
     private $name;
     private $choices;
-    private $interval;
+    private $interval = '2 days';
 
     public function __construct()
     {
@@ -103,9 +103,11 @@ class TimeSlot
         return count(array_unique($days));
     }
 
-    public function getChoicesWithDates($country, $choices = 2)
+    public function getChoicesWithDates($country)
     {
         $now = Carbon::now();
+
+        $choices = $now->diffInDays($now->copy()->add($this->interval));
 
         $providers = Yasumi::getProviders();
         if (isset($providers[strtoupper($country)])) {
