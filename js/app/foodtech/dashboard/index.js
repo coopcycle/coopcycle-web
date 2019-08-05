@@ -13,14 +13,25 @@ window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
 
   Modal.setAppElement(el)
 
-  const store = createStoreFromPreloadedState(preloadedState)
+  // TODO Add loader
 
-  render(
-    <Provider store={ store }>
-      <I18nextProvider i18n={ i18n }>
-        <Dashboard onDateChange={ options.onDateChange } />
-      </I18nextProvider>
-    </Provider>,
-    el
-  )
+  $.getJSON(window.Routing.generate('profile_jwt'))
+    .then(token => {
+
+      const state = {
+        ...preloadedState,
+        jwt: token
+      }
+
+      const store = createStoreFromPreloadedState(state)
+
+      render(
+        <Provider store={ store }>
+          <I18nextProvider i18n={ i18n }>
+            <Dashboard onDateChange={ options.onDateChange } />
+          </I18nextProvider>
+        </Provider>,
+        el
+      )
+    })
 }

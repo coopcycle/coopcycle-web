@@ -21,6 +21,8 @@ use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -339,8 +341,27 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/jwt", methods={"GET"}, name="profile_jwt")
      */
-    public function jwtAction(Request $request)
+    public function jwtAction(Request $request, JWTManagerInterface $jwtManager)
     {
+        $user = $this->getUser();
+
+        if ($request->getSession()->has('_jwt')) {
+
+            $jwt = $request->getSession()->get('_jwt');
+
+            try {
+                $token = new PreAuthenticationJWTUserToken($jwt);
+                $jwtManager->decode($token);
+            } catch (JWTDecodeFailureException $e) {
+                if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {
+                    $request->getSession()->set('_jwt', $jwtManager->create($user));
+                }
+            }
+
+        } else {
+            $request->getSession()->set('_jwt', $jwtManager->create($user));
+        }
+
         return new JsonResponse($request->getSession()->get('_jwt'));
     }
 
