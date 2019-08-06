@@ -117,7 +117,7 @@ trait StoreTrait
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_store', ['id' => $store->getId()]);
+            return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
         }
 
         return $this->render('@App/store/new_address.html.twig', [
@@ -157,7 +157,7 @@ trait StoreTrait
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_store', ['id' => $id]);
+            return $this->redirectToRoute($routes['store'], ['id' => $id]);
         }
 
         return $this->render('@App/store/new_address.html.twig', [
@@ -175,6 +175,8 @@ trait StoreTrait
             'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
         ]);
 
+        $routes = $request->attributes->get('routes');
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -188,10 +190,8 @@ trait StoreTrait
                 $this->get('translator')->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute('admin_store', [ 'id' => $store->getId() ]);
+            return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
         }
-
-        $routes = $request->attributes->get('routes');
 
         return $this->render('@App/store/form.html.twig', [
             'layout' => $request->attributes->get('layout'),
@@ -200,6 +200,8 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
+            'store_address_new_route' => $routes['store_address_new'],
+            'store_address_route' => $routes['store_address'],
         ]);
     }
 

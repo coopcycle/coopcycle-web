@@ -52,48 +52,48 @@ class StoreType extends LocalBusinessType
                     'choice_label' => 'name',
                     'required' => false,
                 ]);
-
-            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-                $form = $event->getForm();
-                $store = $event->getData();
-                if (null !== $store && null !== $store->getId()) {
-                    foreach ($store->getAddresses() as $address) {
-                        if ($address !== $store->getAddress()) {
-                            $form->add(sprintf('setAsDefault_%s', $address->getId()), SubmitType::class, [
-                                'label' => 'form.store_type.setAsDefault.label',
-                                'attr' => [ 'data-address' => $address->getId() ]
-                            ]);
-                        }
-                    }
-
-                    // Remove default address form
-                    $form->remove('address');
-                }
-            });
-
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-                $form = $event->getForm();
-                $store = $event->getData();
-
-                if ($form->getClickedButton()) {
-                    $options = $form->getClickedButton()->getConfig()->getOptions();
-                    $addressId = $options['attr']['data-address'];
-                    foreach ($store->getAddresses() as $storeAddress) {
-                        if ($storeAddress->getId() === $addressId) {
-                            $store->setAddress($storeAddress);
-                            break;
-                        }
-                    }
-                } else {
-                    if (null === $store->getId()) {
-                        $defaultAddress = $store->getAddress();
-                        if (!$store->getAddresses()->contains($defaultAddress)) {
-                            $store->addAddress($defaultAddress);
-                        }
-                    }
-                }
-            });
         }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+            $form = $event->getForm();
+            $store = $event->getData();
+            if (null !== $store && null !== $store->getId()) {
+                foreach ($store->getAddresses() as $address) {
+                    if ($address !== $store->getAddress()) {
+                        $form->add(sprintf('setAsDefault_%s', $address->getId()), SubmitType::class, [
+                            'label' => 'form.store_type.setAsDefault.label',
+                            'attr' => [ 'data-address' => $address->getId() ]
+                        ]);
+                    }
+                }
+
+                // Remove default address form
+                $form->remove('address');
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $store = $event->getData();
+
+            if ($form->getClickedButton()) {
+                $options = $form->getClickedButton()->getConfig()->getOptions();
+                $addressId = $options['attr']['data-address'];
+                foreach ($store->getAddresses() as $storeAddress) {
+                    if ($storeAddress->getId() === $addressId) {
+                        $store->setAddress($storeAddress);
+                        break;
+                    }
+                }
+            } else {
+                if (null === $store->getId()) {
+                    $defaultAddress = $store->getAddress();
+                    if (!$store->getAddresses()->contains($defaultAddress)) {
+                        $store->addAddress($defaultAddress);
+                    }
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

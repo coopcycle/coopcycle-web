@@ -284,8 +284,11 @@ profile_store:
         layout: '@App/profile.html.twig'
         routes:
             stores: profile_stores
+            store: profile_store
             store_delivery_new: profile_store_delivery_new
             store_deliveries: profile_store_deliveries
+            store_address_new: profile_store_address_new
+            store_address: profile_store_address
     methods:  [ GET, POST ]
 
 profile_store_deliveries:
@@ -309,4 +312,24 @@ profile_store_delivery_new:
             stores: profile_stores
             store: profile_store
             success: profile_store_deliveries
+    methods:  [ GET, POST ]
+
+profile_store_address_new:
+    path: /profile/stores/{id}/addresses/new
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::newStoreAddressAction
+        layout: '@App/profile.html.twig'
+        routes:
+            stores: profile_stores
+            store: profile_store
+    methods:  [ GET, POST ]
+
+profile_store_address:
+    path: /profile/stores/{storeId}/addresses/{addressId}
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::storeAddressAction
+        layout: '@App/profile.html.twig'
+        routes:
+            stores: profile_stores
+            store: profile_store
     methods:  [ GET, POST ]
