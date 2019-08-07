@@ -170,6 +170,17 @@ class TaskType extends AbstractType
                 $task->setDoneBefore(new \DateTime($data['before']));
             });
         }
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $task = $event->getData();
+
+            if ($form->has('timeSlot')) {
+                $timeSlot = $form->get('timeSlot')->getData();
+                $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

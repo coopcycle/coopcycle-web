@@ -42,6 +42,10 @@ col-sm-9
     {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
   {% endif %}
 
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+
   {{ form_row(form.address.postalCode) }}
   {{ form_row(form.address.addressLocality) }}
 

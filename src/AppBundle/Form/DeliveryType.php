@@ -159,18 +159,20 @@ class DeliveryType extends AbstractType
                 $timeSlot = $store->getTimeSlot();
                 $choicesWithDates = $timeSlot->getChoicesWithDates($this->country);
 
-                $form->add('timeSlot', ChoiceType::class, [
+                $timeSlotOptions = [
                     'choices' => $choicesWithDates,
                     'choice_label' => [ $this, 'getTimeSlotChoiceLabel' ],
                     'label' => 'form.delivery.time_slot.label',
                     'mapped' => false
-                ]);
+                ];
 
                 $form->get('pickup')->remove('doneAfter');
                 $form->get('pickup')->remove('doneBefore');
+                $form->get('pickup')->add('timeSlot', ChoiceType::class, $timeSlotOptions);
 
                 $form->get('dropoff')->remove('doneAfter');
                 $form->get('dropoff')->remove('doneBefore');
+                $form->get('dropoff')->add('timeSlot', ChoiceType::class, $timeSlotOptions);
             }
 
             if (null !== $store->getPackageSet()) {
@@ -207,14 +209,6 @@ class DeliveryType extends AbstractType
 
             $form = $event->getForm();
             $delivery = $event->getData();
-
-            if ($form->has('timeSlot')) {
-                $timeSlot = $form->get('timeSlot')->getData();
-
-                foreach ($delivery->getTasks() as $task) {
-                    $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
-                }
-            }
 
             if ($form->has('packages')) {
                 $packages = $form->get('packages')->getData();
