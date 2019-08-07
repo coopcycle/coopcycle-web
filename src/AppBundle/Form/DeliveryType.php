@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot\Choice as TimeSlotChoice;
+use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\TimeSlotChoiceWithDate;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -69,15 +71,9 @@ class DeliveryType extends AbstractType
             ;
 
         if (true === $options['with_vehicle']) {
-
-            $vehicleChoices = [
-                $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
-                $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
-            ];
-
             $builder->add('vehicle', ChoiceType::class, [
                 'required' => true,
-                'choices'  => $vehicleChoices,
+                'choices'  => $this->getVehicleChoices(),
                 'placeholder' => 'form.delivery.vehicle.placeholder',
                 'label' => 'form.delivery.vehicle.label',
                 'multiple' => false,
@@ -87,7 +83,7 @@ class DeliveryType extends AbstractType
 
         $builder->get('pickup')->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
+            function (FormEvent $event) {
                 $delivery = $event->getForm()->getParent()->getData();
                 foreach ($delivery->getTasks() as $task) {
                     if ($task->getType() === Task::TYPE_PICKUP) {
@@ -108,7 +104,7 @@ class DeliveryType extends AbstractType
 
         $builder->get('dropoff')->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
+            function (FormEvent $event) {
                 $delivery = $event->getForm()->getParent()->getData();
                 foreach ($delivery->getTasks() as $task) {
                     if ($task->getType() === Task::TYPE_DROPOFF) {
@@ -154,30 +150,18 @@ class DeliveryType extends AbstractType
 
             $store = $delivery->getStore();
 
-            if (null !== $store && null !== $store->getTimeSlot()) {
+            if (null === $store) {
+                return;
+            }
 
-                $timeSlot = $delivery->getStore()->getTimeSlot();
+            if (null !== $store->getTimeSlot()) {
 
+                $timeSlot = $store->getTimeSlot();
                 $choicesWithDates = $timeSlot->getChoicesWithDates($this->country);
 
                 $form->add('timeSlot', ChoiceType::class, [
                     'choices' => $choicesWithDates,
-                    'choice_label' => function(TimeSlotChoiceWithDate $choiceWithDate) {
-
-                        [ $start, $end ] = $choiceWithDate->getChoice()->toDateTime();
-                        $carbon = Carbon::instance($choiceWithDate->getDate());
-                        $calendar = $carbon->locale($this->locale)->calendar(null, [
-                            'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-                            'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-                            'nextWeek' => 'dddd',
-                        ]);
-
-                        return $this->translator->trans('time_slot.human_readable', [
-                            '%day%' => ucfirst(strtolower($calendar)),
-                            '%start%' => $start->format('H:i'),
-                            '%end%' => $end->format('H:i'),
-                        ]);
-                    },
+                    'choice_label' => [ $this, 'getTimeSlotChoiceLabel' ],
                     'label' => 'form.delivery.time_slot.label',
                     'mapped' => false
                 ]);
@@ -187,6 +171,35 @@ class DeliveryType extends AbstractType
 
                 $form->get('dropoff')->remove('doneAfter');
                 $form->get('dropoff')->remove('doneBefore');
+            }
+
+            if (null !== $store->getPackageSet()) {
+
+                $packageSet = $store->getPackageSet();
+
+                $data = [];
+
+                if ($delivery->hasPackages()) {
+                    foreach ($delivery->getPackages() as $deliveryPackage) {
+                        $pwq = new PackageWithQuantity($deliveryPackage->getPackage());
+                        $pwq->setQuantity($deliveryPackage->getQuantity());
+                        $data[] = $pwq;
+                    }
+                }
+
+                $form->add('packages', CollectionType::class, [
+                    'entry_type' => PackageWithQuantityType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'package_set' => $packageSet
+                    ],
+                    'label' => 'form.delivery.packages.label',
+                    'mapped' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                ]);
+
+                $form->get('packages')->setData($data);
             }
         });
 
@@ -200,6 +213,18 @@ class DeliveryType extends AbstractType
 
                 foreach ($delivery->getTasks() as $task) {
                     $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
+                }
+            }
+
+            if ($form->has('packages')) {
+                $packages = $form->get('packages')->getData();
+                foreach ($packages as $packageWithQuantity) {
+                    if ($packageWithQuantity->getQuantity() > 0) {
+                        $delivery->addPackageWithQuantity(
+                            $packageWithQuantity->getPackage(),
+                            $packageWithQuantity->getQuantity()
+                        );
+                    }
                 }
             }
         });
@@ -242,5 +267,33 @@ class DeliveryType extends AbstractType
             'with_store' => true,
             'with_tags' => true,
         ));
+    }
+
+    private function getVehicleChoices()
+    {
+        return [
+            $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
+            $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
+        ];
+    }
+
+    /**
+     * Needs to be public to be used as callable.
+     */
+    public function getTimeSlotChoiceLabel(TimeSlotChoiceWithDate $choiceWithDate)
+    {
+        [ $start, $end ] = $choiceWithDate->getChoice()->toDateTime();
+        $carbon = Carbon::instance($choiceWithDate->getDate());
+        $calendar = $carbon->locale($this->locale)->calendar(null, [
+            'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
+            'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
+            'nextWeek' => 'dddd',
+        ]);
+
+        return $this->translator->trans('time_slot.human_readable', [
+            '%day%' => ucfirst(strtolower($calendar)),
+            '%start%' => $start->format('H:i'),
+            '%end%' => $end->format('H:i'),
+        ]);
     }
 }

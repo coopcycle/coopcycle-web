@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\Delivery\Package as DeliveryPackage;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -56,6 +58,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $store;
 
+    private $packages;
+
     public function __construct()
     {
         parent::__construct();
@@ -73,6 +77,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
         $this->addTask($pickup);
         $this->addTask($dropoff);
+
+        $this->packages = new ArrayCollection();
     }
 
     public function addTask(Task $task, $position = null)
@@ -201,5 +207,55 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         }
 
         return true;
+    }
+
+    public function setPackages($packages)
+    {
+        $this->packages = $packages;
+    }
+
+    public function getPackages()
+    {
+        return $this->packages;
+    }
+
+    public function hasPackages()
+    {
+        return count($this->packages) > 0;
+    }
+
+    public function addPackageWithQuantity(Package $package, $quantity = 1)
+    {
+        if (0 === $quantity) {
+            return;
+        }
+
+        $deliveryPackage = new DeliveryPackage($this);
+        $deliveryPackage->setPackage($package);
+        $deliveryPackage->setQuantity($quantity);
+
+        $this->packages->add($deliveryPackage);
+    }
+
+    public function hasPackage(Package $package)
+    {
+        foreach ($this->packages as $p) {
+            if ($p->getPackage() === $package) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getQuantityForPackage(Package $package)
+    {
+        foreach ($this->packages as $p) {
+            if ($p->getPackage() === $package) {
+                return $p->getQuantity();
+            }
+        }
+
+        return 0;
     }
 }
