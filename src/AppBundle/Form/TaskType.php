@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Form\Type\DateRangeType;
@@ -128,22 +127,6 @@ class TaskType extends AbstractType
                         'data' => $task,
                         'mapped' => false,
                     ]);
-                } else {
-
-                    $lastEvent = null;
-                    if ($task->isDone() && $task->hasEvent(Event\TaskDone::messageName())) {
-                        $lastEvent = $task->getLastEvent(Event\TaskDone::messageName());
-                    }
-                    if ($task->isFailed() && $task->hasEvent(Event\TaskFailed::messageName())) {
-                        $lastEvent = $task->getLastEvent(Event\TaskFailed::messageName());
-                    }
-
-                    if ($lastEvent) {
-                        $form->add('lastEvent', TaskEventType::class, [
-                            'mapped' => false,
-                            'data' => $lastEvent
-                        ]);
-                    }
                 }
             }
         });
