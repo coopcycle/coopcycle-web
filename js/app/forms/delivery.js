@@ -192,6 +192,37 @@ export default function(name, options) {
       }
     })
 
+    const packages = document.querySelector(`#${name}_packages`)
+
+    if (packages) {
+
+      const addPackageBtn = document.querySelector(`#${name}_packages_add`)
+
+      $(`#${name}_packages_add`).click(function(e) {
+
+        var list = $($(this).attr('data-target'))
+
+        var counter = list.data('widget-counter') || list.children().length
+        var newWidget = list.attr('data-prototype')
+
+        newWidget = newWidget.replace(/__name__/g, counter)
+
+        counter++
+        list.data('widget-counter', counter)
+
+        var newElem = $(newWidget)
+        newElem.find('input[type="number"]').val(1)
+        newElem.appendTo(list)
+      })
+
+      $(`#${name}_packages`).on('click', '[data-delete]', function(e) {
+        const $target = $($(this).attr('data-target'))
+        if ($target.length > 0) {
+          $target.remove()
+        }
+      })
+    }
+
   }
 
   return form

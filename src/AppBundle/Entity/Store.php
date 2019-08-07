@@ -102,6 +102,8 @@ class Store extends LocalBusiness
 
     private $timeSlot;
 
+    private $packageSet;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -322,5 +324,17 @@ class Store extends LocalBusiness
     public function getTimeSlot()
     {
         return $this->timeSlot;
+    }
+
+    public function setPackageSet($packageSet)
+    {
+        $this->packageSet = $packageSet;
+
+        return $this;
+    }
+
+    public function getPackageSet()
+    {
+        return $this->packageSet;
     }
 }

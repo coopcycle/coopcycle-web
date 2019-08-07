@@ -89,6 +89,11 @@ AppBundle\Entity\Store:
             joinColumns:
                 time_slot_id:
                     referencedColumnName: id
+        packageSet:
+            targetEntity: AppBundle\Entity\PackageSet
+            joinColumns:
+                package_set_id:
+                    referencedColumnName: id
     manyToMany:
         owners:
             targetEntity: AppBundle\Entity\ApiUser

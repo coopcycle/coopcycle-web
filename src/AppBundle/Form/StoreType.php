@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
 use Doctrine\ORM\EntityRepository;
@@ -37,6 +38,15 @@ class StoreType extends LocalBusinessType
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
                     }
+                ))
+                ->add('packageSet', EntityType::class, array(
+                    'label' => 'form.store_type.package_set.label',
+                    'class' => PackageSet::class,
+                    'choice_label' => 'name',
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('ps')->orderBy('ps.name', 'ASC');
+                    },
+                    'required' => false,
                 ))
                 ->add('prefillPickupAddress', CheckboxType::class, [
                     'label' => 'form.store_type.prefill_pickup_address.label',

@@ -110,7 +110,15 @@
               {{ form_widget(form.timeSlot) }}
             </div>
           </div>
+        {% endif %}
 
+        {% if form.packages is defined %}
+          <div class="form-group">
+            {{ form_label(form.packages) }}
+            <div class="col-sm-9">
+              {{ form_widget(form.packages) }}
+            </div>
+          </div>
         {% endif %}
 
         <div class="form-group">

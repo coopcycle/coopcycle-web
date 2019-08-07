@@ -32,6 +32,7 @@ adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.deliveries.save: Save
 adminDashboard.embed.title: External Display
+adminDashboard.package_sets.title: Packages
 embed.delivery.title: Delivery creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
@@ -339,6 +340,7 @@ form.store_type.pricing_rule_set.placeholder: Choose a pricing
 form.store_type.setAsDefault.label: Set as default address
 form.store_type.defaultAddress.label: Default Address
 form.store_type.time_slot.label: Time slot
+form.store_type.package_set.label: Package set
 form.delivery.vehicle.placeholder: Choose a vehicle type
 form.delivery.pickup.label: Pickup
 form.delivery.dropoff.label: Dropoff
@@ -351,6 +353,8 @@ form.delivery.duration.label: Duration
 form.delivery.store.label: Store
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
+form.delivery.package.label: Package
+form.delivery.packages.label: Packages
 form.order.accept.label: Accept
 form.order.accept.help: Once you have accepted the order, the customer will be notified
   by email.
@@ -610,6 +614,10 @@ form.time_slot.interval.label: Interval
 form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
+form.package_set.name.label: Name
+form.package_set.packages.label: Packages
+form.package.name.label: Name
+form.package.volume_units.label: Volume units
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice

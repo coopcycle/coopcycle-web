@@ -79,8 +79,14 @@
     <hr>
   {% endif %}
 
-  {% if form.timeSlot is defined %}
-    {{ form_row(form.timeSlot) }}
+  {% if form.timeSlot is defined or form.packageSet is defined %}
+    {% if form.timeSlot is defined %}
+      {{ form_row(form.timeSlot) }}
+    {% endif %}
+    {% if form.packageSet is defined %}
+      {{ form_row(form.packageSet) }}
+    {% endif %}
+    <hr>
   {% endif %}
 
   {% if form.address is defined %}
