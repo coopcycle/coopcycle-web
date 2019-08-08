@@ -15,7 +15,20 @@ final class Version20190804101439 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_6196A1F9A393D2FB43625D9F ON sylius_order (state, updated_at)');
+        $stmt = $this->connection->prepare("SELECT indexname FROM pg_indexes WHERE tablename = 'sylius_order'");
+        $stmt->execute();
+
+        $exists = false;
+        while ($index = $stmt->fetch()) {
+            if (strtoupper($index['indexname']) === 'IDX_6196A1F9A393D2FB43625D9F') {
+                $exists = true;
+                break;
+            }
+        }
+
+        if (!$exists) {
+            $this->addSql('CREATE INDEX IDX_6196A1F9A393D2FB43625D9F ON sylius_order (state, updated_at)');
+        }
     }
 
     public function down(Schema $schema) : void
