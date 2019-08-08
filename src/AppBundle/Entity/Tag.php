@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class Tag
 {
     protected $id;
@@ -10,6 +12,9 @@ class Tag
 
     private $slug;
 
+    /**
+    * @Assert\NotBlank()
+    */
     private $color;
 
     private $createdAt;

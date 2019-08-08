@@ -22,6 +22,12 @@
   <td><a href="{{ path('admin_tag', { slug: tag.slug }) }}">#{{ tag.id }}</a></td>
   <td>{{ tag.name }}</td>
   <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.color }}</span></td>
+  <td>
+  	<form method="POST">
+  	<input type="hidden" name="tag" value="{{ tag.id }}">
+  	<button class="btn btn-danger" type="submit" name="delete" onclick="return confirm('Are you sure to delete this tag ? all elements rely to it will not be able to show it or be grouped by it anymore.')">{{ 'basics.delete'|trans }}</button>
+    </form>
+  </td>
 </tr>
 {% endfor %}
 </tbody>

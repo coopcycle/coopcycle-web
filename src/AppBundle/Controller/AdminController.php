@@ -73,6 +73,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Service\TagManager;
 
 class AdminController extends Controller
 {
@@ -590,8 +591,18 @@ class AdminController extends Controller
     /**
      * @Route("/admin/settings/tags", name="admin_tags")
      */
-    public function tagsAction(Request $request)
+    public function tagsAction(Request $request, TagManager $tagManager)
     {
+        if ($request->isMethod('POST') && $request->request->has('delete')){
+            $id = $request->request->get('tag');
+            $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
+            $tagManager->unTagAll($tag);
+            $this->getDoctrine()->getManagerForClass(Tag::class)->remove($tag);
+            $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
+
+            return  $this->redirectToRoute('admin_tags');
+        }
+
         $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
 
         if ($request->query->has('format')) {

@@ -74,6 +74,20 @@ class TagManager
         $taggingEntityManager->remove($tagging);
     }
 
+    public function untagAll(Tag $tag)
+    {
+        $taggingRepository = $this->doctrine->getRepository(Tagging::class);
+        $taggingEntityManager = $this->doctrine->getManagerForClass(Tagging::class);
+
+        $taggings = $taggingRepository->findBy([
+            'tag' => $tag,
+        ]);
+
+        foreach ($taggings as $tagging) {
+            $taggingEntityManager->remove($tagging);
+        }
+    }
+ 
     public function fromSlugs(array $slugs)
     {
         if (count($slugs) === 0) {
