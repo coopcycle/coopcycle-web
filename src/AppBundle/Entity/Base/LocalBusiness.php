@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
  * A particular physical business or branch of an organization. Examples of LocalBusiness include a restaurant, a particular branch of a restaurant chain, a branch of a bank, a medical practice, a club, a bowling alley, etc.
@@ -40,6 +41,7 @@ abstract class LocalBusiness
     /**
      * @var string The telephone number.
      * @Groups({"order", "restaurant"})
+     * @AssertPhoneNumber
      */
     protected $telephone;
 

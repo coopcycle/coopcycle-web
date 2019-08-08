@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class DeliveryEmbedType extends DeliveryType
 {
@@ -57,6 +58,10 @@ class DeliveryEmbedType extends DeliveryType
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->country),
                 'label' => 'form.delivery_embed.telephone.label',
+                'constraints' => [
+                    new AssertPhoneNumber()
+                ],
+
             ])
             ->add('billingAddress', AddressType::class, [
                 'mapped' => false,

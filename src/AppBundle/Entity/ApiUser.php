@@ -14,6 +14,7 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
  * @ApiResource(
@@ -69,6 +70,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     /**
      * @Groups({"order"})
      * @Assert\NotBlank()
+     * @AssertPhoneNumber
      * @ApiProperty(iri="https://schema.org/telephone")
      */
     protected $telephone;
