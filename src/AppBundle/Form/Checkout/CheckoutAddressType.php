@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutAddressType extends AbstractType
 {
@@ -64,7 +65,10 @@ class CheckoutAddressType extends AbstractType
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => $this->country,
                     'label' => 'form.checkout_address.telephone.label',
-                    'mapped' => false
+                    'mapped' => false,
+                    'constraints' => [
+                        new AssertPhoneNumber()
+                    ],
                 ]);
             }
         });

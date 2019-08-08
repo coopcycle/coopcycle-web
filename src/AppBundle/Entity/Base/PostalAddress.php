@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use libphonenumber\PhoneNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
  * The mailing address.
@@ -80,6 +81,8 @@ abstract class PostalAddress
     /**
      * @Groups({"place", "address_create", "task_edit"})
      * @ApiProperty(iri="https://schema.org/telephone")
+     * @Assert\NotBlank()
+     * @AssertPhoneNumber
      */
     protected $telephone;
 

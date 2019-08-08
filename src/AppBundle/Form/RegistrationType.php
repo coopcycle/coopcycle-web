@@ -30,7 +30,7 @@ class RegistrationType extends AbstractType
             ->add('telephone', PhoneNumberType::class, [
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso),
-                'label' => 'profile.telephone'
+                'label' => 'profile.telephone',
             ]);
 
         if ($this->isDemo) {
