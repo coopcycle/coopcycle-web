@@ -357,7 +357,8 @@ function createTask(task) {
       'isAssigned',
       'id',
       'status',
-      'updatedAt'
+      'updatedAt',
+      'images',
     ])
 
     createClient(dispatch).request({
