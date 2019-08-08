@@ -179,6 +179,8 @@ html, body {
     min-width: 275px;
     font-size: 11px;
 
+    overflow: hidden;
+
     &-container {
       display: flex;
       flex: 1;

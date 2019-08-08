@@ -15,7 +15,8 @@ adminDashboard.dashboard.title: Panel
 adminDashboard.dashboard.import: Importar
 adminDashboard.dashboard.export: Exportar
 adminDashboard.dashboard.importTasks: Importar tareas
-adminDashboard.dashboard.exportTasks: Export tareas
+adminDashboard.dashboard.exportTasks: Exportar tareas
+adminDashboard.dashboard.filters: Filtros
 adminDashboard.dashboard.deleteTaskGroup: Eliminar grupo de tareas
 adminDashboard.dashboard.displayByGroups: Mostrar por grupo
 adminDashboard.dashboard.displayAll: Mostrar todas
@@ -113,10 +114,8 @@ restaurant.disabledWarning: 'Éste restaurante está desactivado así que los vi
   '
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: 'Éste restaurante está cerrado hasta el <strong>%date%</strong>
-  pero puedes hacer un pedido para más tarde.
-
-  '
+restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
+  pero puedes hacer un pedido para más tarde
 restaurant.noMenuWarning: 'Este restaurante no tiene menú por ahora
 
   '
@@ -171,7 +170,7 @@ restaurant.list.menus: Cartas
 restaurant.list.activeMenu: Carta activada
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
-restaurant.list.norestaurant: Aún no existen restaurantes.
+restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
 restaurant.list.stats: Estadísticas
@@ -184,7 +183,9 @@ restaurant.product_options.help: 'Las opciones hacen que los productos sean <str
 
   <br>
 
-  Para cada opción, puede definir una lista de valores '
+  Para cada opción, puede definir una lista de valores
+
+  '
 restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Subir una imagen
 restaurant.form.add: Añadir
@@ -239,28 +240,26 @@ order.payment.card_number.label: Número de tarjeta
 order.payment.total: Pagar %total%
 order.payment.card_number.help: 'Hemos introducido un <a href="https://stripe.com/docs/testing#cards"
   target="_blank" tabindex="-1">número de tarjeta de prueba</a> stripe. No se efectuará
-  ningún cargo en cuenta.
-
-  '
+  ningún cargo en cuenta. '
 order.delivery_time: Entrega %time%
 order.payment.cvc: CVC
 order.state.cart: Cesta
 order.state.new: Nuevo
 order.state.refused: Rechazado
 order.state.accepted: Aceptado
-order.state.cancelled: Annulado
+order.state.cancelled: Cancelado
 order.state.fulfilled: Entregado
 order.state.ready: Listo
 payment.state.cart: Cesta
-payment.state.new: Nueveo
+payment.state.new: Nuevo
 payment.state.authorized: Autorizado
 payment.state.completed: Realizado
-payment.state.failed: Fallado
+payment.state.failed: Erróneo
 payment.state.cancelled: Cancelado
 payment.state.refunded: Reembolsado
 payment.state.refunded_partially: Parcialmente Reembolsado
 order.adjustment_type.delivery: Entrega
-order.adjustment_type.platform_fees: Costos CoopCycle
+order.adjustment_type.platform_fees: Comisión CoopCycle
 order.list.total: Total
 order.list.shippedAt: Hora de entrega
 order.list.cancel: Cancelar
@@ -268,8 +267,8 @@ order.list.type: Tipo
 order.list.customer: Cliente
 order.list.state: Estado
 order.list.summary: Resumen
-order.list.summary.restaurant.text: Entrega al restaurante <a href="%restaurant_url%">%restaurant_name%</a>
-order.list.summary.deleted_restaurant.text: Entrega al restaurante %restaurant_name%
+order.list.summary.restaurant.text: Entrega en restaurante <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Entrega en restaurante %restaurant_name%
 order.list.summary.delivery.text: Entrega %distance%, %vehicle%
 order.list.invoice: Factura
 vehicle.bike: Bicicleta
@@ -280,7 +279,8 @@ task.status.failed: Fracaso
 task.status.todo: Pendiente
 form.task.courier.label: Mensajero
 form.task.comments.label: Comentarios
-form.task.comments.placeholder: Especifique cualquier detalle útil para completar la tarea
+form.task.comments.placeholder: Especifique cualquier detalle útil para completar
+  la tarea
 form.task.status.label: Estado
 form.task_event.notes.placeholder: 'Ejemplo : dirección no encontrada, no hay problema…'
 form.task_event.notes.help: Puedes editar el comentario
@@ -293,8 +293,8 @@ form.task_complete.fail.label: Informar del problema
 task.type.PICKUP: Recogida
 task.type.DROPOFF: Entrega
 task.previous_task_not_completed_yet: La tarea anterior no ha sido completada
-demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a a demo de la plataforma
-  <a target="_blank" href="https://coopcycle.org">CoopCycle</a>.
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Bienvenido a la demo de la plataforma
+  <a target="_blank" href="https://coopcycle.org">CoopCycle</a>
 demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
   class="fa fa-info-circle"></i>  ¿Cómo usar la demo?</a>
 maintenance.disclaimer: El modo mantenimiento esta activado
@@ -335,7 +335,7 @@ form.order.payment_refund.label: Reembolsar
 form.order.refund_modal.title: Reembolso
 form.payment.refund_amount.label: Suma
 form.payment.refund_amount.help: El importe que especifique será devuelto al cliente
-form.payment.refund_application_fee.label: Reembolsar los honorarios
+form.payment.refund_application_fee.label: Reembolsar el pago
 form.payment.refund_application_fee.help: 'Si marca esta casilla, la comisión cobrada
   por la plataforma al socio será reembolsada proporcionalmente
 
@@ -364,14 +364,14 @@ form.preparation_time.defaults_warning: 'Este restaurante aún no tiene ningún 
 
   '
 form.settings.date_time: Fecha y hora
-form.settings.brand_name.label: Marca de fábrica
-form.settings.stripe.title: Stripe Account
-form.settings.stripe.help: ' Stripe is the payment service we use to handle credit
-  cards. To use the e-commerce part of the platform it is necessary to configure this
-  section, as well as Stripe Connect. Stripe takes a fee of 0.25cts + 1.4% per payment
-  (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>), to be paid
-  by the shop owner. '
-form.settings.stripe_testmode.help: ' En modo « test », debe usar <a href="https://stripe.com/docs/testing">números
+form.settings.brand_name.label: Nombre de la Marca
+form.settings.stripe.title: Cuenta Stripe
+form.settings.stripe.help: 'Stripe es el servicio de pago que utilizamos para manejar
+  tarjetas de crédito. Para utilizar la parte de la plataforma de comercio electrónico,
+  es necesario configurar esta sección, así como Stripe Connect. Stripe toma una tarifa
+  de 0.25cts + 1.4% por pago (precios actualizados)<a href="https://stripe.com/fr/pricing">here</a>),
+  a pagar por el dueño de la tienda. '
+form.settings.stripe_testmode.help: 'En modo « test », debe usar <a href="https://stripe.com/docs/testing">números
   de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
 form.settings.stripe_enable_livemode.help: Para activar el modo « live », primero
   necesita configurar las credenciales « live ».
@@ -428,7 +428,6 @@ form.stripe_livemode.disable_and_enable_maintenance.label: Utilizar el modo « t
   » y activar el mantenimiento
 form.stripe_livemode.disable_and_enable_maintenance.alert: Estás utilizando el modo
   « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará automáticamente.
-
 form.local_business.stripe_account.title: Cuenta Stripe
 form.local_business.stripe_account.help: Conecte una cuenta Stripe para transferir
   dinero a otra cuenta bancaria
@@ -518,7 +517,7 @@ form.checkout_address.notes.label: ¿Un comentario?
 form.checkout_address.notes.placeholder: 'Ejemplo: sin salsa, sin tomates…
 
   '
-form.checkout_address.notes.help: Tu comentario será enviado al restaurante.
+form.checkout_address.notes.help: Tu comentario será enviado al restaurante
 form.checkout_address.promotion_coupon.label: Código promocional
 form.checkout_address.telephone.label: Teléfono
 form.task_export.start.label: Inicio
@@ -527,7 +526,7 @@ form.api_app.name.label: Nombre de la aplicación
 form.api_app.store.label: Tienda
 form.api_app.client_id.label: Login
 form.api_app.client_secret.label: Clave secreta
-form.credit_note.user_search.help: El descuento solo será utilizable por este usuario.
+form.credit_note.user_search.help: El descuento solo será utilizable por este usuario
 form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
@@ -537,9 +536,8 @@ form.delivery_embed.name.label: Nombre
 form.delivery_embed.name.help: Vuestro nombre o el nombre de la empresa
 form.delivery_embed.telephone.label: Número de teléfono
 form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
-  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg.
-form.resend_confirmation_email.submit.label:
-  Reenviar correo electrónico
+  de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg
+form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección
@@ -654,19 +652,19 @@ authentication.not_registered_yet: ¿Todavía no estas registrado?
 authentication.create_account: Crea tu cuenta
 authentication.already_registered: ¿Ya tienes una cuenta?
 authentication.sign_in: Regístrate
-maintenance.text: Site under maintenance - We will be back soon
+maintenance.text: Sitio en mantenimiento. Volveremos pronto
 api_apps.breadcrumb: Clientes API
 api_apps.created.message: El cliente ha sido añadido. Utilice las credenciales a continuación
   para autenticar.
 promotions.breadcrumb: Descuentos
-promotions.breadcrumb.new_credit_note: Nueva nota de credito
+promotions.breadcrumb.new_credit_note: Nueva nota de crédito
 promotions.heading.free_delivery: Entrega gratis
 promotions.heading.free_delivery.help: Crear códigos promocionales para ofrecer entrega
-promotions.heading.credit_note: Notas de credito
-promotions.heading.credit_note.help: Crear notas de credito únicas para los clientes
+promotions.heading.credit_note: Notas de crédito
+promotions.heading.credit_note.help: Crear notas de crédito únicas para los clientes
 promotions.promotion_coupon.success: Tu código promocional %code% ha sido tomado en
   cuenta
-promotions.create_credit_note_coupon: Añadir una nota de credito
+promotions.create_credit_note_coupon: Añadir una nota de crédito
 search.users: Buscar un usuario…
 allergens.CEREALS_CONTAINING_GLUTEN: Cereales que contienen gluten
 allergens.CRUSTACEANS: Crustáceos
@@ -680,7 +678,7 @@ allergens.CELERY: Apio
 allergens.MUSTARD: Mostaza
 allergens.SESAME_SEEDS: Semillas de sésamo
 allergens.SULPHUR_DIOXIDE_SULPHITES: Dióxido de azufre
-allergens.LUPIN: Lupine
+allergens.LUPIN: Altramuz
 allergens.MOLLUSCS: Moluscos
 restricted_diets.DIABETIC_DIET: Diabético
 restricted_diets.GLUTEN_FREE_DIET: Sin gluten
@@ -693,7 +691,7 @@ restricted_diets.LOW_LACTOSE_DIET: Baja lactosa
 restricted_diets.LOW_SALT_DIET: Bajo en sal
 restricted_diets.VEGAN_DIET: Vegano
 restricted_diets.VEGETARIAN_DIET: Vegetariano
-sylius.ui.code: Codigo
+sylius.ui.code: Código
 sylius.form.promotion_coupon.per_customer_usage_limit: Límite de uso por cliente
 embed.delivery.title: Formulario de creación de entrega
 embed.delivery.configure_pricing_rule_set: Primero debes configurar una regla de tarificación
@@ -705,3 +703,30 @@ social.sign_in_with_facebook: Conéctate con Facebook
 delivery.table.heading.summary: Resumen
 delivery.table.heading.courier: Mensajero
 delivery.table.heading.order: Pedido
+embed.delivery.iframe_code: Utilice el código HTML a continuación para insertar el
+  formulario en su sitio web
+embed.breadcrumb.start: Informaciones
+embed.breadcrumb.summary: Resumen
+embed.breadcrumb.confirm: Confirmación
+embed.delivery.summary.title: Resumen de tu pedido
+embed.delivery.use_form_below: Utiliza el siguiente formulario para pagar tu pedido
+  con tarjeta de crédito
+embed.delivery.paid_at: Pago realizado en %date%
+embed.payment.heading: Pagar mi pedido
+embed.delivery.contact_heading: Contacto
+embed.delivery.specify_billing_address: Especifica una dirección de facturación
+embed.delivery.billing_address: Dirección de Envio
+embed.delivery.summary: "Has solicitado un pedido que será entregado en <strong>%dropoff_date%</strong>\
+  \ \nA la siguiente dirección: <strong>%dropoff_address%</strong> <br> Calculamos\
+  \ una distancia de <strong>%distance% kilometers</strong>. <br> Según nuestros precios,\
+  \ este pedido te costará <strong>%total_excluding_tax% tax excl.</strong> (%total_including_tax%\
+  \ tax incl.)."
+embed.delivery.submit.help: Haz clic para confirmar el pedido y realizar la entrega.
+embed.delivery.confirm_message: Hemos registrado su solicitud. Tu pedido está a la
+  espera de validación. <br> Te enviaremos un correo electrónico en unos minutos.
+  Recibirás un segundo correo cuando se confirme el pedido.
+basics.next: Siguiente
+basics.continue: Continuar
+basics.created_at: Creado el %date%
+promotions.add_free_delivery_coupon: Añadir un cupón de promoción " envío gratuito
+  "

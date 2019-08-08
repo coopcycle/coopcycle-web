@@ -103,14 +103,13 @@
 
         {{ form_errors(form) }}
 
-        {% if form.timeSlot is defined %}
+        {% if form.packages is defined %}
           <div class="form-group">
-            {{ form_label(form.timeSlot) }}
+            {{ form_label(form.packages) }}
             <div class="col-sm-9">
-              {{ form_widget(form.timeSlot) }}
+              {{ form_widget(form.packages) }}
             </div>
           </div>
-
         {% endif %}
 
         <div class="form-group">

@@ -79,8 +79,14 @@
     <hr>
   {% endif %}
 
-  {% if form.timeSlot is defined %}
-    {{ form_row(form.timeSlot) }}
+  {% if form.timeSlot is defined or form.packageSet is defined %}
+    {% if form.timeSlot is defined %}
+      {{ form_row(form.timeSlot) }}
+    {% endif %}
+    {% if form.packageSet is defined %}
+      {{ form_row(form.packageSet) }}
+    {% endif %}
+    <hr>
   {% endif %}
 
   {% if form.address is defined %}
@@ -101,17 +107,14 @@
         <thead>
           <th>{{ 'form.address.name.label'|trans }}</th>
           <th>{{ 'form.address.streetAddress.label'|trans }}</th>
-          {% if is_granted('ROLE_ADMIN') %}
           <th></th>
           <th></th>
-          {% endif %}
         </thead>
         <tbody>
         {% for address in store.addresses %}
           <tr>
             <td>{{ address.name }}</td>
             <td>{{ address.streetAddress }}</td>
-            {% if is_granted('ROLE_ADMIN') %}
             <td class="text-right">
               {% if address != store.address %}
                 {% set form_name = 'setAsDefault_' ~ address.id %}
@@ -123,9 +126,8 @@
               {% endif %}
             </td>
             <td class="text-right">
-              <a href="{{ path('admin_store_address', { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
+              <a href="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}">{{ 'basics.edit'|trans }}</a>
             </td>
-            {% endif %}
           </tr>
         {% endfor %}
         </tbody>
@@ -136,13 +138,11 @@
       </div>
     {% endif %}
 
-    {% if is_granted('ROLE_ADMIN') %}
-      <p class="text-right">
-        <a href="{{ path('admin_store_new_address', { id: store.id }) }}" class="btn btn-success">
-          <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-        </a>
-      </p>
-    {% endif %}
+    <p class="text-right">
+      <a href="{{ path(store_address_new_route, { id: store.id }) }}" class="btn btn-success">
+        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+      </a>
+    </p>
 
   {% endif %}
 

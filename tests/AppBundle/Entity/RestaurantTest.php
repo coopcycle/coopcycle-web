@@ -5,22 +5,13 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\ValidationUtils;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validation;
 
-class RestaurantTest extends KernelTestCase
+class RestaurantTest extends TestCase
 {
-    private $validator;
-
-    protected function setUp()
+    public function testGetAvailabilitiesOnSameDay()
     {
-        parent::setUp();
-        self::bootKernel();
-
-        $this->validator = static::$kernel->getContainer()->get('validator');
-    }
-
-    public function testGetAvailabilities() {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
@@ -35,7 +26,6 @@ class RestaurantTest extends KernelTestCase
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
-            '2017-10-04T19:00:00+02:00',
             '2017-10-05T10:00:00+02:00',
             '2017-10-05T10:15:00+02:00',
             '2017-10-05T10:30:00+02:00',
@@ -72,12 +62,181 @@ class RestaurantTest extends KernelTestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00'
         ], $availabilities);
-
     }
 
-    public function testGetAvailabilitiesWithDelayedOrders() {
+    public function testGetAvailabilitiesOnAnotherDay()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Tu-Sa 10:00-19:00"]);
+
+        $date = new \DateTime('2019-08-04T12:30:00+02:00');
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertEquals([
+            '2019-08-06T10:00:00+02:00',
+            '2019-08-06T10:15:00+02:00',
+            '2019-08-06T10:30:00+02:00',
+            '2019-08-06T10:45:00+02:00',
+            '2019-08-06T11:00:00+02:00',
+            '2019-08-06T11:15:00+02:00',
+            '2019-08-06T11:30:00+02:00',
+            '2019-08-06T11:45:00+02:00',
+            '2019-08-06T12:00:00+02:00',
+            '2019-08-06T12:15:00+02:00',
+            '2019-08-06T12:30:00+02:00',
+            '2019-08-06T12:45:00+02:00',
+            '2019-08-06T13:00:00+02:00',
+            '2019-08-06T13:15:00+02:00',
+            '2019-08-06T13:30:00+02:00',
+            '2019-08-06T13:45:00+02:00',
+            '2019-08-06T14:00:00+02:00',
+            '2019-08-06T14:15:00+02:00',
+            '2019-08-06T14:30:00+02:00',
+            '2019-08-06T14:45:00+02:00',
+            '2019-08-06T15:00:00+02:00',
+            '2019-08-06T15:15:00+02:00',
+            '2019-08-06T15:30:00+02:00',
+            '2019-08-06T15:45:00+02:00',
+            '2019-08-06T16:00:00+02:00',
+            '2019-08-06T16:15:00+02:00',
+            '2019-08-06T16:30:00+02:00',
+            '2019-08-06T16:45:00+02:00',
+            '2019-08-06T17:00:00+02:00',
+            '2019-08-06T17:15:00+02:00',
+            '2019-08-06T17:30:00+02:00',
+            '2019-08-06T17:45:00+02:00',
+            '2019-08-06T18:00:00+02:00',
+            '2019-08-06T18:15:00+02:00',
+            '2019-08-06T18:30:00+02:00',
+            '2019-08-06T18:45:00+02:00',
+            '2019-08-07T10:00:00+02:00',
+            '2019-08-07T10:15:00+02:00',
+            '2019-08-07T10:30:00+02:00',
+            '2019-08-07T10:45:00+02:00',
+            '2019-08-07T11:00:00+02:00',
+            '2019-08-07T11:15:00+02:00',
+            '2019-08-07T11:30:00+02:00',
+            '2019-08-07T11:45:00+02:00',
+            '2019-08-07T12:00:00+02:00',
+            '2019-08-07T12:15:00+02:00',
+            '2019-08-07T12:30:00+02:00',
+            '2019-08-07T12:45:00+02:00',
+            '2019-08-07T13:00:00+02:00',
+            '2019-08-07T13:15:00+02:00',
+            '2019-08-07T13:30:00+02:00',
+            '2019-08-07T13:45:00+02:00',
+            '2019-08-07T14:00:00+02:00',
+            '2019-08-07T14:15:00+02:00',
+            '2019-08-07T14:30:00+02:00',
+            '2019-08-07T14:45:00+02:00',
+            '2019-08-07T15:00:00+02:00',
+            '2019-08-07T15:15:00+02:00',
+            '2019-08-07T15:30:00+02:00',
+            '2019-08-07T15:45:00+02:00',
+            '2019-08-07T16:00:00+02:00',
+            '2019-08-07T16:15:00+02:00',
+            '2019-08-07T16:30:00+02:00',
+            '2019-08-07T16:45:00+02:00',
+            '2019-08-07T17:00:00+02:00',
+            '2019-08-07T17:15:00+02:00',
+            '2019-08-07T17:30:00+02:00',
+            '2019-08-07T17:45:00+02:00',
+            '2019-08-07T18:00:00+02:00',
+            '2019-08-07T18:15:00+02:00',
+            '2019-08-07T18:30:00+02:00',
+            '2019-08-07T18:45:00+02:00',
+        ], $availabilities);
+    }
+
+    public function testGetAvailabilitiesWithUnconsecutiveDays()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Tu 10:00-19:00", "Th-Sa 10:00-19:00"]);
+
+        $date = new \DateTime('2019-08-04T12:30:00+02:00');
+
+        $availabilities = $restaurant->getAvailabilities($date);
+
+        $this->assertEquals([
+            '2019-08-06T10:00:00+02:00',
+            '2019-08-06T10:15:00+02:00',
+            '2019-08-06T10:30:00+02:00',
+            '2019-08-06T10:45:00+02:00',
+            '2019-08-06T11:00:00+02:00',
+            '2019-08-06T11:15:00+02:00',
+            '2019-08-06T11:30:00+02:00',
+            '2019-08-06T11:45:00+02:00',
+            '2019-08-06T12:00:00+02:00',
+            '2019-08-06T12:15:00+02:00',
+            '2019-08-06T12:30:00+02:00',
+            '2019-08-06T12:45:00+02:00',
+            '2019-08-06T13:00:00+02:00',
+            '2019-08-06T13:15:00+02:00',
+            '2019-08-06T13:30:00+02:00',
+            '2019-08-06T13:45:00+02:00',
+            '2019-08-06T14:00:00+02:00',
+            '2019-08-06T14:15:00+02:00',
+            '2019-08-06T14:30:00+02:00',
+            '2019-08-06T14:45:00+02:00',
+            '2019-08-06T15:00:00+02:00',
+            '2019-08-06T15:15:00+02:00',
+            '2019-08-06T15:30:00+02:00',
+            '2019-08-06T15:45:00+02:00',
+            '2019-08-06T16:00:00+02:00',
+            '2019-08-06T16:15:00+02:00',
+            '2019-08-06T16:30:00+02:00',
+            '2019-08-06T16:45:00+02:00',
+            '2019-08-06T17:00:00+02:00',
+            '2019-08-06T17:15:00+02:00',
+            '2019-08-06T17:30:00+02:00',
+            '2019-08-06T17:45:00+02:00',
+            '2019-08-06T18:00:00+02:00',
+            '2019-08-06T18:15:00+02:00',
+            '2019-08-06T18:30:00+02:00',
+            '2019-08-06T18:45:00+02:00',
+            '2019-08-08T10:00:00+02:00',
+            '2019-08-08T10:15:00+02:00',
+            '2019-08-08T10:30:00+02:00',
+            '2019-08-08T10:45:00+02:00',
+            '2019-08-08T11:00:00+02:00',
+            '2019-08-08T11:15:00+02:00',
+            '2019-08-08T11:30:00+02:00',
+            '2019-08-08T11:45:00+02:00',
+            '2019-08-08T12:00:00+02:00',
+            '2019-08-08T12:15:00+02:00',
+            '2019-08-08T12:30:00+02:00',
+            '2019-08-08T12:45:00+02:00',
+            '2019-08-08T13:00:00+02:00',
+            '2019-08-08T13:15:00+02:00',
+            '2019-08-08T13:30:00+02:00',
+            '2019-08-08T13:45:00+02:00',
+            '2019-08-08T14:00:00+02:00',
+            '2019-08-08T14:15:00+02:00',
+            '2019-08-08T14:30:00+02:00',
+            '2019-08-08T14:45:00+02:00',
+            '2019-08-08T15:00:00+02:00',
+            '2019-08-08T15:15:00+02:00',
+            '2019-08-08T15:30:00+02:00',
+            '2019-08-08T15:45:00+02:00',
+            '2019-08-08T16:00:00+02:00',
+            '2019-08-08T16:15:00+02:00',
+            '2019-08-08T16:30:00+02:00',
+            '2019-08-08T16:45:00+02:00',
+            '2019-08-08T17:00:00+02:00',
+            '2019-08-08T17:15:00+02:00',
+            '2019-08-08T17:30:00+02:00',
+            '2019-08-08T17:45:00+02:00',
+            '2019-08-08T18:00:00+02:00',
+            '2019-08-08T18:15:00+02:00',
+            '2019-08-08T18:30:00+02:00',
+            '2019-08-08T18:45:00+02:00',
+        ], $availabilities);
+    }
+
+    public function testGetAvailabilitiesWithDelayedOrders()
+    {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
         $restaurant->setOrderingDelayMinutes(2 * 24 * 60); // should order two days in advance
@@ -93,7 +252,6 @@ class RestaurantTest extends KernelTestCase
             '2017-10-06T18:15:00+02:00',
             '2017-10-06T18:30:00+02:00',
             '2017-10-06T18:45:00+02:00',
-            '2017-10-06T19:00:00+02:00',
             '2017-10-07T10:00:00+02:00',
             '2017-10-07T10:15:00+02:00',
             '2017-10-07T10:30:00+02:00',
@@ -130,15 +288,14 @@ class RestaurantTest extends KernelTestCase
             '2017-10-07T18:15:00+02:00',
             '2017-10-07T18:30:00+02:00',
             '2017-10-07T18:45:00+02:00',
-            '2017-10-07T19:00:00+02:00'
         ], $availabilities);
-
     }
 
     /**
      * Testcase : when the number of seconds is not equal to 0, round properly to next minute
      */
-    public function testGetAvailabilitiesWithSecondRoundings() {
+    public function testGetAvailabilitiesWithSecondRoundings()
+    {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
@@ -153,7 +310,6 @@ class RestaurantTest extends KernelTestCase
             '2017-10-04T18:15:00+02:00',
             '2017-10-04T18:30:00+02:00',
             '2017-10-04T18:45:00+02:00',
-            '2017-10-04T19:00:00+02:00',
             '2017-10-05T10:00:00+02:00',
             '2017-10-05T10:15:00+02:00',
             '2017-10-05T10:30:00+02:00',
@@ -190,12 +346,12 @@ class RestaurantTest extends KernelTestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00'
         ], $availabilities);
 
     }
 
-    public function testGetAvailabilitiesWithNoOpenings() {
+    public function testGetAvailabilitiesWithNoOpenings()
+    {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours([]);
 
@@ -208,29 +364,8 @@ class RestaurantTest extends KernelTestCase
 
     }
 
-    public function testValidationErrors() {
-        $restaurant = new Restaurant();
-
-        $violations = $this->validator->validate($restaurant, null, ['activable']);
-        $errors = ValidationUtils::serializeValidationErrors($violations);
-
-        $this->assertArrayHasKey('name', $errors);
-        $this->assertArrayHasKey('telephone', $errors);
-        $this->assertArrayHasKey('openingHours', $errors);
-        $this->assertArrayHasKey('contract', $errors);
-    }
-
-    public function testCannotEnableRestaurant() {
-        $restaurant = new Restaurant();
-        $restaurant->setEnabled(true);
-
-        $violations = $this->validator->validate($restaurant, null, ['activable']);
-        $errors = ValidationUtils::serializeValidationErrors($violations);
-
-        $this->assertArrayHasKey('enabled', $errors);
-    }
-
-    public function testClosingRuleFilterAvailabilities() {
+    public function testClosingRuleFilterAvailabilities()
+    {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
@@ -253,12 +388,39 @@ class RestaurantTest extends KernelTestCase
             '2017-10-05T18:15:00+02:00',
             '2017-10-05T18:30:00+02:00',
             '2017-10-05T18:45:00+02:00',
-            '2017-10-05T19:00:00+02:00',
         ], $availabilities);
     }
 
-    public function testGetNextOpeningDateWithHolidays() {
+    public function testGetNextClosingDate()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 
+        $this->assertEquals(
+            new \DateTime('2019-08-05T19:00:00+02:00'),
+            $restaurant->getNextClosingDate(new \DateTime('2019-08-05T12:00:00+02:00'))
+        );
+    }
+
+    public function testGetNextClosingDateWithClosingRules()
+    {
+        $restaurant = new Restaurant();
+        $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2019-08-05T12:00:00+02:00'));
+        $closingRule->setEndDate(new \DateTime('2019-08-06T12:00:00+02:00'));
+        $closingRule->setRestaurant($restaurant);
+        $restaurant->getClosingRules()->add($closingRule);
+
+        $this->assertEquals(
+            new \DateTime('2019-08-05T12:00:00+02:00'),
+            $restaurant->getNextClosingDate(new \DateTime('2019-08-05T11:00:00+02:00'))
+        );
+    }
+
+    public function testGetNextOpeningDateWithHolidays()
+    {
         $restaurant = new Restaurant();
         $restaurant->setOpeningHours(["Mo-Sa 10:00-19:00"]);
 

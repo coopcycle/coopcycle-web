@@ -104,7 +104,7 @@ class TimeRange
                 $openDate->modify('-1 day');
             }
 
-            if ($date >= $openDate && $date <= $closeDate) {
+            if ($date >= $openDate && $date < $closeDate) {
                 return true;
             }
         }
@@ -146,6 +146,33 @@ class TimeRange
         }
 
         while (!$this->isOpen($date)) {
+            $date->modify('+15 minutes');
+        }
+
+        return $date;
+    }
+
+    public function getNextClosingDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $date = clone $now;
+
+        // round to next minute
+        $s = 60;
+        $date->setTimestamp($s * ceil($date->getTimestamp() / $s));
+
+        while (($date->format('i') % 15) !== 0) {
+            $date->modify('+1 minute');
+        }
+
+        if (!$this->isOpen($date)) {
+            $date = $this->getNextOpeningDate($date);
+        }
+
+        while ($this->isOpen($date)) {
             $date->modify('+15 minutes');
         }
 

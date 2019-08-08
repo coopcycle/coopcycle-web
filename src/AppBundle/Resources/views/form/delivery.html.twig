@@ -42,6 +42,10 @@ col-sm-9
     {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
   {% endif %}
 
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+
   {{ form_row(form.address.postalCode) }}
   {{ form_row(form.address.addressLocality) }}
 
@@ -174,4 +178,32 @@ col-sm-9
 {% block _delivery_dropoff_tagsAsString_widget %}
 <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_packages_widget %}
+<div id="{{ form.vars.id }}" class="delivery__form__packages">
+  <div id="{{ form.vars.id }}_list"
+    data-prototype="{{ form_widget(form.vars.prototype)|e }}"
+    data-widget-counter="{{ form.children|length }}"
+    class="delivery__form__packages__list">
+    {% for child in form %}
+      {{ form_widget(child) }}
+    {% endfor %}
+  </div>
+  <div class="text-right">
+    <button type="button" class="btn btn-default" id="{{ form.vars.id }}_add"
+      data-target="#{{ form.vars.id }}_list">{{ 'basics.add'|trans }}</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block _delivery_packages_entry_widget %}
+<div class="delivery__form__packages__list-item" id="{{ form.vars.id }}">
+  {{ form_widget(form.quantity, { attr: { class: 'delivery__form__packages__list-item-quantity' } }) }}
+  <span class="delivery__form__packages__list-item-multiply">×</span>
+  {{ form_widget(form.package, { attr: { class: 'delivery__form__packages__list-item-package' } }) }}
+  <button type="button" class="btn btn-default delivery__form__packages__list-item-delete"
+    data-delete
+    data-target="#{{ form.vars.id }}"><i class="fa fa-trash-o"></i></button>
+</div>
 {% endblock %}

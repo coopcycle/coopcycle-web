@@ -16,6 +16,12 @@ AppBundle\Entity\Delivery:
             joinColumns:
                 order_id:
                     referencedColumnName: id
+    oneToMany:
+        packages:
+            targetEntity: AppBundle\Entity\Delivery\Package
+            mappedBy: delivery
+            cascade:
+                - all
     manyToOne:
         store:
             targetEntity: AppBundle\Entity\Store

@@ -60,16 +60,14 @@ AppBundle\Entity\Store:
         createOrders:
             type: boolean
             column: create_orders
-    oneToOne:
+    manyToOne:
         address:
             targetEntity: AppBundle\Entity\Address
             cascade:
                 - all
-            fetch: LAZY
             joinColumns:
                 default_address_id:
                     referencedColumnName: id
-    manyToOne:
         stripeAccount:
             targetEntity: AppBundle\Entity\StripeAccount
             joinColumns:
@@ -90,6 +88,11 @@ AppBundle\Entity\Store:
             fetch: LAZY
             joinColumns:
                 time_slot_id:
+                    referencedColumnName: id
+        packageSet:
+            targetEntity: AppBundle\Entity\PackageSet
+            joinColumns:
+                package_set_id:
                     referencedColumnName: id
     manyToMany:
         owners:

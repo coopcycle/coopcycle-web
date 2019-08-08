@@ -1,6 +1,6 @@
 global.changesSaved: Ihre Änderungen wurden gespeichert.
 navbar.myAccount: Mein Konto
-base.footer.contactUs: Kontaktiere uns
+base.footer.contactUs: Kontaktieren Sie uns
 base.footer.help: Hilfe
 navbar.login: Einloggen
 adminDashboard.configuration: Einstellungen
@@ -66,10 +66,9 @@ form.address.addressLocality.label: Stadt
 form.address.postalCode.label: Postleitzahl
 form.address.floor.label: Etage
 form.address.description.label: Anweisungen
-form.address.description.placeholder: Zweite Tür links
+form.address.description.placeholder: z.B. zweite Tür links …
 form.address.streetAddress.label: Adresse
-form.address.streetAddress.error.noLatLng: 'Bitte wählen Sie eine Adresse aus dem
-  Auswahlfeld:'
+form.address.streetAddress.error.noLatLng: Bitte wählen Sie eine Adresse aus dem Auswahlfeld
 form.address.name.label: Name
 form.address.name.placeholder: Zuhause, Arbeit …
 form.pricing_rule_set.name.label: Name
@@ -122,3 +121,163 @@ embed.delivery.submit.help: Klicken Sie hier um die Anfrage zu bestätigen und d
   Fahrt zu buchen.
 pagination.next: Nächste
 basics.next: Nächste
+embed.delivery.summary.title: Zusammenfassung von deine Bestellung
+adminDashboard.orders.invoice.totalExcludingTax: Nettobetrag
+adminDashboard.orders.invoice.productsTotal: Gesamtbetrag
+adminDashboard.orders.invoice.totalIncludingTax: Gesamtbetrag
+adminDashboard.users.edit: Bearbeiten
+order.items.products_with_count: Produkten (%count%)
+order.total_including_tax: Gesamtbetrag
+order.list.total: Total
+form.settings.phone_number.label: Telefonnummer
+form.delivery_embed.telephone.label: Telefonnummer
+form.menu_editor.products_panel.title: Produkten
+basics.edit: Bearbeiten
+basics.created_at: Erstellt am
+base.footer.legal: Impressum
+adminDashboard.title: Administrator-Übersicht
+adminDashboard.tooltip.orders: Organisiere Restaurant-Bestellungen
+adminDashboard.tooltip.deliveries: Organisiere Lieferungen
+adminDashboard.tooltip.stores: Verwalte Läden
+adminDashboard.tooltip.restaurants: Verwalte Restaurants
+adminDashboard.tooltip.users: Verwalte Benutzerkonten
+adminDashboard.dashboard.importErrors: Importiere Fehler
+adminDashboard.dashboard.importTasks: Importiere Aufträge
+adminDashboard.dashboard.exportTasks: Exportiere Aufträge
+adminDashboard.dashboard.deleteTaskGroup: Lösche Auftragsgruppe
+adminDashboard.dashboard.displayByGroups: Anzeigen nach Gruppen
+adminDashboard.dashboard.displayAll: Alle anzeigen
+adminDashboard.deliveries.type: Art
+adminDashboard.deliveries.dueDate: Fälligkeitsdatum
+adminDashboard.embed.title: Externe Anzeige
+embed.delivery.title: Formular für Auftragserstellung
+embed.delivery.configure_pricing_rule_set: Sie müssen zuerst eine Preisregel konfigurieren,
+  um sie anzuwenden
+embed.delivery.iframe_code: Nutzen Sie den untenstehenden HTML-Code um das Formular
+  in Ihre Website zu integrieren
+embed.delivery.use_form_below: Nutzen Sie das Formular unten, um Ihre Bestellung mit
+  Kreditkarte zu bezahlen
+embed.delivery.paid_at: Zahlung erfolgt am %date%
+embed.payment.heading: Bestellung bezahlen
+adminDashboard.menuCategories.menu: Menü
+adminDashboard.menuCategories.categories: Kategorien
+adminDashboard.menuCategories.addCategory: Kategorie hinzufügen
+adminDashboard.stores.title: Läden
+adminDashboard.stores.createNew: Neuen Laden erstellen
+adminDashboard.orders.previousOrders: Vorherige Bestellung
+adminDashboard.orders.showCanceled: Zeige stornierte Bestellungen
+adminDashboard.orders.invoice.deliveryTotal: Summe Lieferungen
+adminDashboard.orders.invoice.totalTax: Summe Steuern
+adminDashboard.restaurants.createNew: Neues Restaurant erstellen
+adminDashboard.users.title: Benutzer
+adminDashboard.users.roles: Funktion
+adminDashboard.users.editUser: Benutzer bearbeiten
+adminDashboard.users.edit.addStore: Einen Laden hinzufügen
+adminDashboard.users.createNew: Einen Benutzer hinzufügen
+adminDashboard.pricing.title: Preisermittlung
+adminDashboard.pricing.manage: Verwalten
+adminDashboard.pricing.noPricings: Es gibt noch keine Preisermittlungen
+adminDashboard.pricing.createNew: Neue Preisermittlung erstellen
+adminDashboard.pricing.noRuleFound: Keine Regeln zur Preisermittlung gefunden. Die
+  Regeln definieren, wie die Lieferkosten berechnet werden.
+adminDashboard.pricing.addRule: Regel hinzufügen
+adminDashboard.tags.title: Markierung
+adminDashboard.tags.createNew: Neue Markierung erstellen
+adminDashboard.taxation.title: Besteuerung
+adminDashboard.taxation.button: Besteuerung hinzufügen
+adminDashboard.zones.title: Zonen
+adminDashboard.zones.cancel: Abbrechen
+adminDashboard.zones.uploadGeoJSON: Eine GeoJSON-Datei hochladen
+adminDashboard.zones.send: Senden
+adminDashboard.back.title: Zurück zur Website
+adminDashboard.promotions.title: Werbung
+deliveryForm.noPriceWarning: Die Preisermittlung war nicht erfolgreich. Bitte geben
+  Sie einen ein.
+deliveryForm.noPriceFromPricingWarning: Leider konnte mit den Regeln kein Preis ermittelt
+  werden. Bitte geben Sie diesen manuell ein oder bearbeiten Sie ihn.
+delivery.createNew: Neue Lieferung erstellen
+help.title: Hilfe
+help.home: Zuhause
+restaurants.no_results: Wir haben leider kein Restaurant zu deiner Suchanfrage gefunden
+  ☹<br>Versuchen Sie es mit einer anderen Adresse
+restaurants.visible_by_you_only: Nur für Sie sichtbar
+restaurants.placeholder.title: Ein wenig Geduld …
+restaurants.placeholder.text: Neue Restaurants folgen demnächst!
+localBusiness.form.orderingDelayMinutes: Zusätzliche Verzögerung vor der Bestellung
+localBusiness.form.orderingDelayMinutes.help: Nutzen Sie dieses Feld um eine Zeit
+  festzulegen, bevor der Kunde bestellen kann. Diese Einstellung ändert die Kochzeit
+  (20 Minuten) und die Auslieferungszeit (25 Minuten) nicht.
+localBusiness.form.orderingDelayDays: Tag(e)
+localBusiness.form.orderingDelayHours: Stunde(n)
+localBusiness.form.description: Beschreibung
+localBusiness.form.legalName: Firma
+localBusiness.form.telephone: Telefon
+localBusiness.form.openingHours: Öffnungszeiten
+localBusiness.form.deliveryPerimeterExpression: Zone oder maximale Entfernung für
+  die Lieferung
+restaurant.available: Verfügbar
+restaurant.unavailable: Nicht verfügbar
+restaurant.disabledWarning: 'Dieses Restaurant ist nicht aktiv, sodass Besucher die
+  Seite nicht sehen können. Wenn Sie wollen, können Sie <a target="_blank" href="%restaurantEditUrl%">als
+  Administrator aktivieren</a>.
+
+  '
+restaurant.closedWarningWithDelay: Bestellen Sie jetzt für später. Bestellen Sie mindestens
+  %delay% im Voraus.
+restaurant.temporaryClosedWarning: Dieses Restaurant ist geschlossen bis zum <strong>%date%</strong>.
+  Sie können jedoch für später bestellen.
+restaurant.noMenuWarning: 'Dieses Restaurant hat zur Zeit kein Menü
+
+  '
+restaurant.form.enabled.tooltip: 'Wenn deaktiviert, ist eine Restaurant nicht auf
+  der Website sichtbar. Es kann nicht in den Suchergebnissen gelistet werden und die
+  eigene Seite ist für Besucher nicht zugänglich.
+
+  '
+restaurant.form.allow_stripe_connect.label: Dem Restaurant erlauben, das Stripe-Konto
+  lebst zu verwalten
+restaurant.form.temporaryClosingRule: Wenn sie eine temporäre Schließung Ihres Restaurants
+  wünschen, folgen Sie diesem Link
+restaurant.form.accessPlanning: Zugriffsplanung
+restaurant.form.createRestaurant: Restaurant erstellen
+restaurant.contract.title: Vertrag
+restaurant.deliveryPerimeterExpression.title: Lieferradius
+restaurant.deliveryPerimeterExpression.help: Definieren Sie den maximalen Lieferradius.
+  Sie können diesen in Kilometern oder als Zone festlegen
+restaurant.contract.minimumCartAmount.label: Minimaler Gesamtbetrag
+restaurant.contract.flatDeliveryPrice.label: Betrag berechnet von der Plattform
+restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb angezeigt
+  und den Gesamtwert nicht erhöhen
+restaurant.contract.customerAmount.label: Betrag vom Kunden bezahlt
+restaurant.contract.customerAmount.help: Dieser Betrag wird im Warenkorb angezeigt
+  und wird den Gesamtbetrag erhöhen
+restaurant.contract.feeRate.label: Kostenlose Rate
+restaurant.contract.feeRate.help: Dieser Prozentsatz wird seitens der Plattform vom
+  Gesamtbetrag einbehalten
+restaurant.contract.restaurantPaysStripeFee.label: Verantwortlich für die Kosten von
+  Stripe, Rückerstattungen und Rückbuchungen
+restaurant.contract.restaurantPaysStripeFee.help: Bitte auswählen, wer für die Kosten
+  von Stripe und die organisation der Rückerstattungen und Rückbuchungen verantwortlich
+  ist
+restaurant.contract.restaurantPaysStripeFee.cooperative: Genossenschaft
+restaurant.contract.onlyAdmin: Nur Administratoren können die Kontakte bearbeiten.
+restaurant.contract.noContract: Keine Kontakt-Details. Bitte kontaktieren Sie einen
+  Administrator.
+restaurant.contract.showAdvanced: Erweiterte Einstellungen anzeigen
+restaurant.menus.noMenus: Sie haben derzeit noch kein Menü erstellt.
+restaurant.menus.activate: Aktivieren
+restaurant.menus.activated: Das Menü « %menu_name% » wurde aktiviert. Es wird nun
+  auf der Website des Restaurants gezeigt
+restaurant.closingForm.title: Eine temporäre Schließzeit hinzufügen
+restaurant.closingForm.dates.label: Geschlossen von/bis
+restaurant.list.manage: Verwalten
+restaurant.list.orders: Bestellungen
+restaurant.list.product_options: Optionen
+restaurant.list.menus: Menüs
+restaurant.list.activeMenu: Aktives Menü
+restaurant.list.planning: Planung
+restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants
+restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
+restaurant.list.preparationTime: Vorbereitung
+restaurant.list.stats: Statistiken
+adminDashboard.dashboard.cancel: Abbrechen

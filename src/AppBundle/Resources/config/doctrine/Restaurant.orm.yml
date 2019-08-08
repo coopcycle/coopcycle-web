@@ -200,17 +200,6 @@ AppBundle\Entity\Restaurant:
                         name: restaurant_id
                         referencedColumnName: id
     oneToOne:
-        address:
-            targetEntity: AppBundle\Entity\Address
-            cascade:
-                - all
-            fetch: LAZY
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                address_id:
-                    referencedColumnName: id
-            orphanRemoval: false
         contract:
             targetEntity: AppBundle\Entity\Contract
             cascade:
@@ -228,6 +217,11 @@ AppBundle\Entity\Restaurant:
             mappedBy: restaurant
             inversedBy: null
     manyToOne:
+        address:
+            targetEntity: AppBundle\Entity\Address
+            cascade:
+                - all
+            fetch: EAGER
         activeMenuTaxon:
             targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
             joinColumns:

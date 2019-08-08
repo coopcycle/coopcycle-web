@@ -18,6 +18,7 @@ use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
@@ -34,6 +35,7 @@ use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\MaintenanceType;
+use AppBundle\Form\PackageSetType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
@@ -1158,7 +1160,7 @@ class AdminController extends Controller
 
             $this->get('sylius.manager.promotion')->flush();
 
-            return $this->redirectToRoute('admin_promotion', ['id' => $id]);
+            return $this->redirectToRoute('admin_promotions');
         }
 
         return $this->render('@App/admin/promotion_coupon.html.twig', [
@@ -1241,7 +1243,7 @@ class AdminController extends Controller
 
             $this->get('sylius.manager.promotion_coupon')->flush();
 
-            return $this->redirectToRoute('admin_promotion', ['id' => $id]);
+            return $this->redirectToRoute('admin_promotions');
         }
 
         return $this->render('@App/admin/promotion_coupon.html.twig', [
@@ -1385,13 +1387,8 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
-     */
-    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, ObjectManager $objectManager)
     {
-        $timeSlot = new TimeSlot();
-
         $form = $this->createForm(TimeSlotType::class, $timeSlot);
 
         $form->handleRequest($request);
@@ -1406,5 +1403,83 @@ class AdminController extends Controller
         return $this->render('@App/admin/time_slot.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
+     */
+    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    {
+        $timeSlot = new TimeSlot();
+
+        return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/settings/time-slots/{id}", name="admin_time_slot")
+     */
+    public function timeSlotAction($id, Request $request, ObjectManager $objectManager)
+    {
+        $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
+
+        if (!$timeSlot) {
+            throw $this->createNotFoundException(sprintf('Time slot #%d does not exist', $id));
+        }
+
+        return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/settings/packages", name="admin_packages")
+     */
+    public function packageSetsAction(Request $request)
+    {
+        $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+
+        return $this->render('@App/admin/package_sets.html.twig', [
+            'package_sets' => $packageSets,
+        ]);
+    }
+
+    private function renderPackageSetForm(Request $request, PackageSet $packageSet, ObjectManager $objectManager)
+    {
+        $form = $this->createForm(PackageSetType::class, $packageSet);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $objectManager->persist($packageSet);
+            $objectManager->flush();
+
+            return $this->redirectToRoute('admin_packages');
+        }
+
+        return $this->render('@App/admin/package_set.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/settings/packages/new", name="admin_new_package")
+     */
+    public function newPackageSetAction(Request $request, ObjectManager $objectManager)
+    {
+        $packageSet = new PackageSet();
+
+        return $this->renderPackageSetForm($request, $packageSet, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/settings/packages/{id}", name="admin_package")
+     */
+    public function packageSetAction($id, Request $request, ObjectManager $objectManager)
+    {
+        $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
+
+        if (!$packageSet) {
+            throw $this->createNotFoundException(sprintf('Package set #%d does not exist', $id));
+        }
+
+        return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 }

@@ -13,6 +13,7 @@ use AppBundle\Api\Controller\Restaurant\ChangeState;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -72,11 +73,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Restaurant extends FoodEstablishment
 {
     use SoftDeleteableEntity;
-
-    /**
-     *  We allow ordering for the next two opened days
-     */
-    const NUMBER_OF_AVAILABLE_DAYS = 2;
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
@@ -211,6 +207,8 @@ class Restaurant extends FoodEstablishment
     private $stripeConnectRoles = ['ROLE_ADMIN'];
 
     private $preparationTimeRules;
+
+    private $nextOpeningDateCache = [];
 
     public function __construct()
     {
@@ -417,20 +415,55 @@ class Restaurant extends FoodEstablishment
             $now = Carbon::now();
         }
 
-        if ($this->hasClosingRuleForNow($now)) {
-            foreach ($this->getClosingRules() as $closingRule) {
-                if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+        if (!isset($this->nextOpeningDateCache[$now->getTimestamp()])) {
 
-                    return parent::getNextOpeningDate($closingRule->getEndDate());
+            $nextOpeningDate = null;
+
+            if ($this->hasClosingRuleForNow($now)) {
+                foreach ($this->getClosingRules() as $closingRule) {
+                    if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
+
+                        $nextOpeningDate = parent::getNextOpeningDate($closingRule->getEndDate());
+                        break;
+                    }
                 }
             }
+
+            if (null === $nextOpeningDate) {
+                $nextOpeningDate = parent::getNextOpeningDate($now);
+            }
+
+            $this->nextOpeningDateCache[$now->getTimestamp()] = $nextOpeningDate;
         }
 
-        return parent::getNextOpeningDate($now);
+        return $this->nextOpeningDateCache[$now->getTimestamp()];
+    }
+
+    public function getNextClosingDate(\DateTime $now = null)
+    {
+        if (!$now) {
+            $now = Carbon::now();
+        }
+
+        $nextClosingDates = [
+            parent::getNextClosingDate($now)
+        ];
+
+        foreach ($this->getClosingRules() as $closingRule) {
+            if ($closingRule->getEndDate() < $now) {
+                continue;
+            }
+            $nextClosingDates[] = $closingRule->getStartDate();
+        }
+
+        sort($nextClosingDates);
+
+        return array_shift($nextClosingDates);
     }
 
     /**
      * Return potential delivery times for a restaurant, pickables by the customer.
+     * WARNING This function may be called a *LOT* of times, it needs to be *FAST*.
      *
      * @param \DateTime|null $now
      * @return array
@@ -451,37 +484,32 @@ class Restaurant extends FoodEstablishment
             return [];
         }
 
-        $date =  clone $nextOpeningDate;
+        // We return times for the next 2 days
+        // There used to be a constant NUMBER_OF_AVAILABLE_DAYS = 2
+        // As the interface doesn't allow passing a parameter,
+        // we don't care about using a loop
 
-        $availabilities = [$date->format(\DateTime::ATOM)];
+        $availabilities = [];
 
-        $currentDay = $date->format('Ymd');
-        $dayCount = 1;
+        $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
-        while ($dayCount <= self::NUMBER_OF_AVAILABLE_DAYS) {
+        $period = CarbonPeriod::create(
+            $nextOpeningDate, '15 minutes', $nextClosingDate,
+            CarbonPeriod::EXCLUDE_END_DATE
+        );
+        foreach ($period as $date) {
+            $availabilities[] = $date->format(\DateTime::ATOM);
+        }
 
-            $date->modify('+15 minutes');
+        $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
+        $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
-            $nextOpeningDate = $this->getNextOpeningDate($date);
-
-            if (is_null($nextOpeningDate)) {
-                return $availabilities;
-            }
-
-            $nextOpenedDate = clone $nextOpeningDate;
-
-            $day = $nextOpenedDate->format('Ymd');
-
-            if ($day !== $currentDay) {
-                $currentDay = $day;
-                $dayCount++;
-            }
-            else {
-                $date = $nextOpenedDate;
-                if (!$this->hasClosingRuleForNow($date)) {
-                    $availabilities[] = $date->format(\DateTime::ATOM);
-                }
-            }
+        $period = CarbonPeriod::create(
+            $nextOpeningDate, '15 minutes', $nextClosingDate,
+            CarbonPeriod::EXCLUDE_END_DATE
+        );
+        foreach ($period as $date) {
+            $availabilities[] = $date->format(\DateTime::ATOM);
         }
 
         return $availabilities;

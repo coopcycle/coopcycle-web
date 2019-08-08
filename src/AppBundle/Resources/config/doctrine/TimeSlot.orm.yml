@@ -10,6 +10,8 @@ AppBundle\Entity\TimeSlot:
     fields:
         name:
             type: string
+        interval:
+            type: string
         createdAt:
             type: datetime
             column: created_at
