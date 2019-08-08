@@ -81,7 +81,6 @@ abstract class PostalAddress
     /**
      * @Groups({"place", "address_create", "task_edit"})
      * @ApiProperty(iri="https://schema.org/telephone")
-     * @Assert\NotBlank()
      * @AssertPhoneNumber
      */
     protected $telephone;
