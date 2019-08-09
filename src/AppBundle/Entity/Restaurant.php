@@ -123,6 +123,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $enabled = false;
 
+    protected $isCaterer;
+
     protected $depositRefundEnabled = false;
 
     /**

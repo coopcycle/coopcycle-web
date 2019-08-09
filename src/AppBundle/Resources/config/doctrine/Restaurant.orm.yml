@@ -131,6 +131,11 @@ AppBundle\Entity\Restaurant:
             type: boolean
             options:
                 default: false
+        isCaterer:
+            type: boolean
+            options:
+                default: false
+            column: is_caterer
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine
