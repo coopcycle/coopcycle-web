@@ -91,6 +91,8 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     protected $facebookAccessToken;
 
+    protected $quotesAllowed;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -285,5 +287,25 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         }
 
         return $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuotesAllowed()
+    {
+        return $this->quotesAllowed;
+    }
+
+    /**
+     * @param mixed $quotesAllowed
+     *
+     * @return self
+     */
+    public function setQuotesAllowed($quotesAllowed)
+    {
+        $this->quotesAllowed = $quotesAllowed;
+
+        return $this;
     }
 }

@@ -42,6 +42,10 @@ class UpdateProfileType extends AbstractType
                 'label' => 'profile.telephone',
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso)
+            ])
+            ->add('quotesAllowed', CheckboxType::class, [
+                'label' => 'adminDashboard.users.edit.quotes_allowed',
+                'required' => false,
             ]);
 
 
