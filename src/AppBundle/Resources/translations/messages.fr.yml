@@ -690,8 +690,7 @@ basics.today: Aujourd'hui
 basics.are_you_sure: Êtes-vous sûr‧e ?
 basics.no_entries: Aucun élément pour l'instant
 basics.created_at: Créé le %date%
-basics.from: Du
-basics.to: au
+basics.date_range: Du %start% au %end%
 basics.total_including_tax: Total TTC
 basics.stripe_fees: Frais Stripe
 basics.platform_fees: Frais de plateforme
