@@ -13,8 +13,8 @@ class Tag
     private $slug;
 
     /**
-    * @Assert\NotBlank()
-    */
+     * @Assert\NotBlank()
+     */
     private $color;
 
     private $createdAt;

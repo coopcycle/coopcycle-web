@@ -76,6 +76,7 @@ adminDashboard.tags.save: Enregistrer
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Couleur
+adminDashboard.tags.confirm_delete: Êtes-vous sûr de supprimer ce tag ? Tous les éléments s'y rapportant ne pourront plus l'afficher ou être regroupés par ce dernier.
 adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones

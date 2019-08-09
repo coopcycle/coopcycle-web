@@ -596,7 +596,7 @@ class AdminController extends Controller
         if ($request->isMethod('POST') && $request->request->has('delete')){
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
-            $tagManager->unTagAll($tag);
+            $tagManager->untagAll($tag);
             $this->getDoctrine()->getManagerForClass(Tag::class)->remove($tag);
             $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
 
