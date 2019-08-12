@@ -1,431 +1,583 @@
-global.changesSaved: ''
-navbar.login: ''
-navbar.myAccount: ''
-base.footer.contactUs: ''
-base.footer.help: ''
-base.footer.legal: ''
-base.footer.suggest: ''
-adminDashboard.title: ''
-adminDashboard.configuration: ''
-adminDashboard.tooltip.orders: ''
-adminDashboard.tooltip.deliveries: ''
-adminDashboard.tooltip.stores: ''
-adminDashboard.tooltip.restaurants: ''
-adminDashboard.tooltip.users: ''
-adminDashboard.dashboard.title: ''
-adminDashboard.dashboard.import: ''
-adminDashboard.dashboard.export: ''
-adminDashboard.dashboard.importTasks: ''
-adminDashboard.dashboard.exportTasks: ''
-adminDashboard.dashboard.deleteTaskGroup: ''
-adminDashboard.dashboard.displayByGroups: ''
-adminDashboard.dashboard.displayAll: ''
-adminDashboard.dashboard.cancel: ''
-adminDashboard.deliveries.title: ''
-adminDashboard.deliveries.createNew: ''
-adminDashboard.deliveries.type: ''
-adminDashboard.deliveries.dueDate: ''
-adminDashboard.deliveries.courier: ''
-adminDashboard.deliveries.address: ''
-adminDashboard.deliveries.delivery: ''
-adminDashboard.deliveries.originAddress: ''
-adminDashboard.deliveries.deliveryAddress: ''
-adminDashboard.deliveries.save: ''
-adminDashboard.embed.title: ''
-embed.delivery.title: ''
-embed.delivery.configure_pricing_rule_set: ''
-embed.delivery.iframe_code: ''
-embed.breadcrumb.start: ''
-embed.breadcrumb.summary: ''
-embed.breadcrumb.confirm: ''
-embed.delivery.summary.title: ''
-embed.delivery.use_form_below: ''
-embed.delivery.paid_at: ''
-embed.payment.heading: ''
-embed.delivery.contact_heading: ''
-embed.delivery.specify_billing_address: ''
-embed.delivery.billing_address: ''
-adminDashboard.menuCategories.menu: ''
-adminDashboard.menuCategories.categories: ''
-adminDashboard.menuCategories.addCategory: ''
-adminDashboard.menuCategories.save: ''
-adminDashboard.stores.title: ''
-adminDashboard.stores.createNew: ''
-adminDashboard.stores.form.uploadImage: ''
-adminDashboard.orders.title: ''
-adminDashboard.orders.previousOrders: ''
-adminDashboard.orders.showCanceled: ''
-adminDashboard.orders.invoice.title: ''
-adminDashboard.orders.invoice.totalExcludingTax: ''
-adminDashboard.orders.invoice.productsTotal: ''
-adminDashboard.orders.invoice.deliveryTotal: ''
-adminDashboard.orders.invoice.totalTax: ''
-adminDashboard.orders.invoice.totalIncludingTax: ''
-adminDashboard.restaurants.title: ''
-adminDashboard.restaurants.createNew: ''
-adminDashboard.restaurants.exclusive: ''
-adminDashboard.users.title: ''
-adminDashboard.users.edit: ''
-adminDashboard.users.save: ''
-adminDashboard.users.roles: ''
-adminDashboard.users.editUser: ''
-adminDashboard.users.edit.addStore: ''
-adminDashboard.users.edit.addRestaurant: ''
-adminDashboard.users.createNew: ''
-adminDashboard.settings.title: ''
-adminDashboard.pricing.title: ''
-adminDashboard.pricing.manage: ''
-adminDashboard.pricing.settings: ''
-adminDashboard.pricing.noPricings: ''
-adminDashboard.pricing.createNew: ''
-adminDashboard.pricing.noRuleFound: ''
-adminDashboard.pricing.addRule: ''
-adminDashboard.tags.title: ''
-adminDashboard.tags.save: ''
-adminDashboard.tags.createNew: ''
-adminDashboard.tags.name: ''
-adminDashboard.tags.color: ''
-adminDashboard.taxation.title: ''
-adminDashboard.taxation.button: ''
-adminDashboard.zones.title: ''
-adminDashboard.zones.cancel: ''
-adminDashboard.zones.save: ''
-adminDashboard.zones.delete: ''
-adminDashboard.zones.uploadGeoJSON: ''
-adminDashboard.zones.send: ''
-adminDashboard.back.title: ''
-adminDashboard.promotions.title: ''
-adminDashboard.pledges.title: ''
-adminDashboard.time_slots.title: ''
-deliveryForm.noPriceWarning: ''
-deliveryForm.noPriceFromPricingWarning: ''
-delivery.createNew: ''
-delivery.tracking_link: ''
-delivery.with_id: ''
-help.title: ''
-help.home: ''
-restaurants.no_results: ''
-restaurants.visible_by_you_only: ''
-restaurants.placeholder.title: ''
-restaurants.placeholder.text: ''
-localBusiness.form.orderingDelayMinutes: ''
-localBusiness.form.orderingDelayMinutes.help: ''
-localBusiness.form.orderingDelayDays: ''
-localBusiness.form.orderingDelayHours: ''
-localBusiness.form.name: ''
-localBusiness.form.description: ''
-localBusiness.form.legalName: ''
-localBusiness.form.website: ''
-localBusiness.form.telephone: ''
-localBusiness.form.openingHours: ''
-localBusiness.form.deliveryPerimeterExpression: ''
-restaurant.available: ''
-restaurant.unavailable: ''
-restaurant.disabledWarning: ''
-restaurant.closedWarningWithDelay: ''
-restaurant.temporaryClosedWarning: ''
-restaurant.noMenuWarning: ''
-restaurant.form.enabled.tooltip: ''
-restaurant.form.allow_stripe_connect.label: ''
-restaurant.form.temporaryClosingRule: ''
-restaurant.form.accessPlanning: ''
-restaurant.form.createRestaurant: ''
-restaurant.form.save: ''
-restaurant.contract.title: ''
-restaurant.deliveryPerimeterExpression.title: ''
-restaurant.deliveryPerimeterExpression.help: ''
-restaurant.contract.minimumCartAmount.label: ''
-restaurant.contract.flatDeliveryPrice.label: ''
-restaurant.contract.flatDeliveryPrice.help: ''
-restaurant.contract.customerAmount.label: ''
-restaurant.contract.customerAmount.help: ''
-restaurant.contract.feeRate.label: ''
-restaurant.contract.feeRate.help: ''
-restaurant.contract.restaurantPaysStripeFee.label: ''
-restaurant.contract.restaurantPaysStripeFee.help: ''
-restaurant.contract.restaurantPaysStripeFee.restaurant: ''
-restaurant.contract.restaurantPaysStripeFee.cooperative: ''
-restaurant.contract.onlyAdmin: ''
-restaurant.contract.noContract: ''
-restaurant.contract.showAdvanced: ''
-restaurant.menus.noMenus: ''
-restaurant.menus.activate: ''
-restaurant.menus.activated: ''
-restaurant.closingForm.title: ''
-restaurant.closingForm.reason.label: ''
-restaurant.closingForm.dates.label: ''
-restaurant.list.manage: ''
-restaurant.list.orders: ''
-restaurant.list.products: ''
-restaurant.list.product_options: ''
-restaurant.list.menus: ''
-restaurant.list.activeMenu: ''
-restaurant.list.planning: ''
-restaurant.list.settings: ''
-restaurant.list.norestaurant: ''
-restaurant.list.createNewRestaurant: ''
-restaurant.list.preparationTime: ''
-restaurant.list.stats: ''
-restaurant.product_options.help: ''
-restaurant.product_options.list.values: ''
-restaurant.form.uploadImage: ''
-profile.addresses.breadcrumb: ''
-profile.addresses.empty: ''
-profile.orders.empty: ''
-profile.myDeliveries: ''
-profile.myStores: ''
-profile.myRestaurants: ''
-profile.myRestaurants.noRestaurants: ''
-profile.myAccount: ''
-profile.myTracking: ''
-profile.myOrders: ''
-profile.myAddresses: ''
-profile.myPersonalInfo: ''
-profile.payment: ''
-profile.task.cancel: ''
-profile.task.noTasks: ''
-profile.task.dueDate: ''
-profile.task.address: ''
-profile.task.complete: ''
-profile.task.date: ''
-profile.edit.save: ''
-profile.addresses.newAddress: ''
-profile.addresses.save: ''
-profile.addresses.add: ''
-profile.editProfile: ''
-profile.payment.title: ''
-profile.payment.stripeConnected: ''
-profile.username: ''
-profile.email: ''
-profile.telephone: ''
-profile.familyName: ''
-profile.givenName: ''
-profile.managedStores: ''
-profile.managedRestaurants: ''
-profile.accountType: ''
-order.cart.title: ''
-order.items.products_with_count: ''
-order.summary.heading: ''
-order.total_including_tax: ''
-order.items_total: ''
-order.total_tax: ''
-order.total_tax_by_rate: ''
-order.preparation_expected_at: ''
-order.shipping_date.title: ''
-order.payment.title: ''
-order.payment.expiration.label: ''
-order.payment.month.label: ''
-order.payment.year.label: ''
-order.payment.card_number.label: ''
-order.payment.total: ''
-order.payment.cvc: ''
-order.delivery_time: ''
-order.payment.card_number.help: ''
-order.state.cart: ''
-order.state.accepted: ''
-order.state.refused: ''
-order.state.new: ''
-order.state.ready: ''
-order.state.fulfilled: ''
-order.state.cancelled: ''
-payment.state.cart: ''
-payment.state.new: ''
-payment.state.authorized: ''
-payment.state.completed: ''
-payment.state.failed: ''
-payment.state.cancelled: ''
-payment.state.refunded: ''
-payment.state.refunded_partially: ''
-order.adjustment_type.delivery: ''
-order.adjustment_type.platform_fees: ''
-order.list.total: ''
-order.list.shippedAt: ''
-order.list.cancel: ''
-order.list.type: ''
-order.list.customer: ''
-order.list.state: ''
-order.list.summary: ''
-order.list.summary.restaurant.text: ''
-order.list.summary.deleted_restaurant.text: ''
-order.list.summary.delivery.text: ''
-order.list.invoice: ''
-vehicle.bike: ''
-vehicle.cargo_bike: ''
-task.form.create: ''
-task.form.timeWindow: ''
-task.form.cancel: ''
-task.form.showHistory: ''
-task.form.modal.moreOptions: ''
-task.form.edit: ''
-task.form.dateRange: ''
-task.form.finish: ''
-task.form.details: ''
-task.form.finish.DONE.info: ''
-task.form.finish.FAIL.info: ''
-task.status.done: ''
-task.status.failed: ''
-task.status.todo: ''
-form.task.courier.label: ''
-form.task.comments.label: ''
-form.task.comments.placeholder: ''
-form.task.status.label: ''
-form.task_event.notes.placeholder: ''
-form.task_event.notes.help: ''
-form.task_upload.file: ''
-form.task_upload.file.help: ''
-form.task_complete.done.label: ''
-form.task_complete.fail.label: ''
-task.type.PICKUP: ''
-task.type.DROPOFF: ''
-task.previous_task_not_completed_yet: ''
-demo.disclaimer: ''
-demo.disclaimer.subtitle: ''
-maintenance.disclaimer: ''
-cart.widget.title: ''
-cart.widget.button: ''
-checkout.breadcrumb.address: ''
-checkout.breadcrumb.payment: ''
-form.geojson_upload.file: ''
-form.store_type.pricing_rule_set.label: ''
-form.store_type.prefill_pickup_address.label: ''
-form.store_type.create_orders.label: ''
-form.delivery.vehicle.VEHICLE_BIKE: ''
-form.delivery.vehicle.VEHICLE_CARGO_BIKE: ''
-form.store_type.pricing_rule_set.placeholder: ''
-form.store_type.setAsDefault.label: ''
-form.store_type.defaultAddress.label: ''
-form.store_type.time_slot.label: ''
-form.delivery.vehicle.placeholder: ''
-form.delivery.pickup.label: ''
-form.delivery.dropoff.label: ''
-form.delivery.weight.label: ''
-form.delivery.vehicle.label: ''
-form.delivery.pickup.doneBefore.label: ''
-form.delivery.dropoff.doneBefore.label: ''
-form.delivery.distance.label: ''
-form.delivery.duration.label: ''
-form.delivery.store.label: ''
-form.delivery.store.placeholder: ''
-form.delivery.price.label: ''
-form.order.accept.label: ''
-form.order.accept.help: ''
-form.order.cancel.label: ''
-form.order.fulfill.label: ''
-form.order.payment_complete.label: ''
-form.order.payment_refund.label: ''
-form.order.refund_modal.title: ''
-form.payment.refund_amount.label: ''
-form.payment.refund_amount.help: ''
-form.payment.refund_application_fee.label: ''
-form.payment.refund_application_fee.help: ''
-form.address.addressLocality.label: ''
-form.address.postalCode.label: ''
-form.address.floor.label: ''
-form.address.description.label: ''
-form.address.description.placeholder: ''
-form.address.streetAddress.label: ''
-form.address.streetAddress.error.noLatLng: ''
-form.address.name.label: ''
-form.address.name.placeholder: ''
-form.address.firstName.label: ''
-form.address.lastName.label: ''
-form.address.company.label: ''
-form.pricing_rule_set.name.label: ''
-form.pricing_rule_set.rules.label: ''
-form.pricing_rule.price.label: ''
-form.preparation_time_rule.expression.label: ''
-form.preparation_time_rule.time.label: ''
-form.preparation_time.defaults_warning: ''
-form.settings.date_time: ''
-form.settings.brand_name.label: ''
-form.settings.stripe.title: ''
-form.settings.stripe.help: ''
-form.settings.stripe_testmode.help: ''
-form.settings.stripe_enable_livemode.help: ''
-form.settings.stripe_publishable_key.label: ''
-form.settings.stripe_publishable_key.help: ''
-form.settings.stripe_secret_key.label: ''
-form.settings.stripe_secret_key.help: ''
-form.settings.stripe_connect_client_id.label: ''
-form.settings.stripe_connect_client_id.help: ''
-form.settings.google_api_key.label: ''
-form.settings.google_api_key.help: ''
-form.settings.latlng.label: ''
-form.settings.latlng.help: ''
-form.settings.default_tax_category.label: ''
-form.settings.default_tax_category.help: ''
-form.settings.administrator_email.label: ''
-form.settings.administrator_email.help: ''
-form.settings.phone_number.label: ''
-form.settings.phone_number.help: ''
-form.settings.enable_restaurant_pledges.label: ''
-form.suggest.name.label: ''
-form.suggest.name.help: ''
-form.suggest.submit.label: ''
-form.suggest.message: ''
-form.suggest.thank_you_message: ''
-restaurant.suggest.message: ''
-restaurant.suggest.vote: ''
-pledge.suggested_by: ''
-restaurant.suggest.has_voted: ''
-restaurant.suggest.banner_disclaimer: ''
-pledge.vote_count_equals_two: ''
-pledge.vote_count_equals_one: ''
-pledge.accept: ''
-pledge.reject: ''
-form.maintenance.enable.label: ''
-form.maintenance.disable.label: ''
-form.maintenance.enable.alert: ''
-form.maintenance.disable.alert: ''
-form.maintenance.message.label: ''
-form.maintenance.message.help: ''
-form.banner.enable.label: ''
-form.banner.disable.label: ''
-form.banner.enable.alert: ''
-form.banner.disable.alert: ''
-form.banner.message.label: ''
-form.stripe_livemode.enable.label: ''
-form.stripe_livemode.enable.alert: ''
-form.stripe_livemode.disable.label: ''
-form.stripe_livemode.disable.alert: ''
-form.stripe_livemode.disable_and_enable_maintenance.label: ''
-form.stripe_livemode.disable_and_enable_maintenance.alert: ''
-form.settings.currency_code.label: ''
-form.delivery_embed.name.label: ''
-form.delivery_embed.name.help: ''
-form.delivery_embed.telephone.label: ''
-form.delivery_embed.vehicle.disclaimer: ''
-form.registration.username.help: ''
-form.local_business.stripe_account.title: ''
-form.local_business.stripe_account.help: ''
-form.local_business.stripe_account.connect_button.text: ''
-form.local_business.stripe_account.not_configured: ''
-form.local_business.stripe_account.success: ''
-form.local_business.stripe_account.need_stripe_account: ''
-form.local_business.stripe_account.link_ok: ''
-form.menu_item.name.label: ''
-form.menu_item.price.label: ''
-form.menu_item_modifier.name.label: ''
-form.menu_item_modifier.price.label: ''
-form.menu_item_modifier.calculusStrategy.label: ''
-form.menu_taxon.name.label: ''
-form.menu_taxon.add_child.label: ''
-form.menu_taxon.child_name.placeholder: ''
-form.menu_editor.products_panel.title: ''
-form.menu_editor.save.label: ''
-form.menu_editor.help: ''
-form.menu_editor.products.help: ''
-form.menu_editor.taxon_modal.title: ''
-form.product.name.label: ''
-form.product.description.label: ''
-form.product.price.label: ''
-form.product.taxCategory.label: ''
-form.product.enabled.label: ''
-form.product.allergens.label: ''
-form.product.allergens.help: ''
-form.product.restricted_diets.label: ''
-form.product.restricted_diets.help: ''
-form.product.confirm.label: ''
+global.changesSaved: S'han desat els canvis.
+navbar.login: Iniciar sessió
+navbar.myAccount: El meu compte
+base.footer.contactUs: Contacteu-nos
+base.footer.help: Ajuda
+base.footer.legal: Avís legal
+base.footer.suggest: Suggereix un restaurant
+adminDashboard.title: Tauler d’administrador
+adminDashboard.configuration: Configuració
+adminDashboard.tooltip.orders: Gestiona les comandes de restaurants
+adminDashboard.tooltip.deliveries: Gestiona les entregues
+adminDashboard.tooltip.stores: Gestiona les botigues
+adminDashboard.tooltip.restaurants: Gestiona els restaurants
+adminDashboard.tooltip.users: Gestiona els comptes d’usuari
+adminDashboard.dashboard.title: Panell
+adminDashboard.dashboard.import: Importa
+adminDashboard.dashboard.export: Exporta
+adminDashboard.dashboard.importTasks: Tasques d’importació
+adminDashboard.dashboard.exportTasks: Tasques d’exportació
+adminDashboard.dashboard.deleteTaskGroup: Suprimeix el grup de tasques
+adminDashboard.dashboard.displayByGroups: Visualització per grups
+adminDashboard.dashboard.displayAll: Mostra tot
+adminDashboard.dashboard.cancel: Cancel · lar
+adminDashboard.deliveries.title: Entregues
+adminDashboard.deliveries.createNew: Crea una nova entrega
+adminDashboard.deliveries.type: Tipus
+adminDashboard.deliveries.dueDate: Data de venciment
+adminDashboard.deliveries.courier: Repartidor
+adminDashboard.deliveries.address: Adreça
+adminDashboard.deliveries.delivery: Entrega
+adminDashboard.deliveries.originAddress: Adreça de procedència
+adminDashboard.deliveries.deliveryAddress: Adreça d'entrega
+adminDashboard.deliveries.save: Desa
+adminDashboard.embed.title: Pantalla externa
+embed.delivery.title: Formulari de creació de entregues
+embed.delivery.configure_pricing_rule_set: Primer has de configurar una regla de preus
+  per aplicar-la
+embed.delivery.iframe_code: Utilitzeu el codi HTML següent per incorporar el formulari
+  al vostre lloc web
+embed.breadcrumb.start: Informació
+embed.breadcrumb.summary: Resum
+embed.breadcrumb.confirm: Confirmació
+embed.delivery.summary.title: Resum de la vostra comanda
+embed.delivery.use_form_below: Utilitzeu el formulari següent per pagar la vostra
+  comanda amb targeta de crèdit
+embed.delivery.paid_at: Pagament realitzat a %date%
+embed.payment.heading: Paga la meva comanda
+embed.delivery.contact_heading: Contacte
+embed.delivery.specify_billing_address: Especifiqueu una adreça de facturació
+embed.delivery.billing_address: Adreça de facturació
+adminDashboard.menuCategories.menu: Menú
+adminDashboard.menuCategories.categories: Categories
+adminDashboard.menuCategories.addCategory: Afegir categoria
+adminDashboard.menuCategories.save: Desa
+adminDashboard.stores.title: Botigues
+adminDashboard.stores.createNew: Crea una nova botiga
+adminDashboard.stores.form.uploadImage: Carregueu una imatge
+adminDashboard.orders.title: Comandes
+adminDashboard.orders.previousOrders: Comandes anteriors
+adminDashboard.orders.showCanceled: Mostra les comandes cancel·lades
+adminDashboard.orders.invoice.title: Factura
+adminDashboard.orders.invoice.totalExcludingTax: Total sense impostos
+adminDashboard.orders.invoice.productsTotal: Productes totals
+adminDashboard.orders.invoice.deliveryTotal: Entregues total
+adminDashboard.orders.invoice.totalTax: Impost total
+adminDashboard.orders.invoice.totalIncludingTax: Total amb impostos
+adminDashboard.restaurants.title: Restaurants
+adminDashboard.restaurants.createNew: Crea un nou restaurant
+adminDashboard.restaurants.exclusive: Exclusiu
+adminDashboard.users.title: Usuaris
+adminDashboard.users.edit: Edita
+adminDashboard.users.save: Desa
+adminDashboard.users.roles: Funcions
+adminDashboard.users.editUser: Edita l'usuari
+adminDashboard.users.edit.addStore: Afegeix una botiga
+adminDashboard.users.edit.addRestaurant: Afegiu un restaurant
+adminDashboard.users.createNew: Afegir usuari
+adminDashboard.settings.title: Configuració
+adminDashboard.pricing.title: Preu
+adminDashboard.pricing.manage: Gestiona
+adminDashboard.pricing.settings: Configuració
+adminDashboard.pricing.noPricings: Encara no hi ha preus
+adminDashboard.pricing.createNew: Crea un preu nou
+adminDashboard.pricing.noRuleFound: No s'ha trobat cap regla de preus. Les regles
+  de preus defineixen com es calcula el cost de lliurament.
+adminDashboard.pricing.addRule: Afegiu una regla
+adminDashboard.tags.title: Etiquetes
+adminDashboard.tags.save: Desa
+adminDashboard.tags.createNew: Crea una etiqueta nova
+adminDashboard.tags.name: Nom
+adminDashboard.tags.color: Color
+adminDashboard.taxation.title: Impostos
+adminDashboard.taxation.button: Afegir impostos
+adminDashboard.zones.title: Zones
+adminDashboard.zones.cancel: Cancel · lar
+adminDashboard.zones.save: Desa
+adminDashboard.zones.delete: Suprimeix
+adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
+adminDashboard.zones.send: Envia
+adminDashboard.back.title: Tornar al lloc web
+adminDashboard.promotions.title: Promocions
+adminDashboard.pledges.title: Suggeriments
+adminDashboard.time_slots.title: Franges horàries
+deliveryForm.noPriceWarning: No es pot calcular cap preu. Introduïu-lo.
+deliveryForm.noPriceFromPricingWarning: No es pot calcular cap preu a partir dels
+  preus. Introduïu-lo manualment o editeu els preus.
+delivery.createNew: Crea una nova entrega
+delivery.tracking_link: Enllaç de seguiment
+delivery.with_id: 'Lliurament #%id%'
+help.title: Ajuda
+help.home: Inici
+restaurants.no_results: No hem trobat cap restaurant que coincideixi amb la cerca
+  ☹ <br> Proveu amb una adreça diferent
+restaurants.visible_by_you_only: Només és visible per tu
+restaurants.placeholder.title: Una mica de paciència …
+restaurants.placeholder.text: Properament arribaran nous restaurants!
+localBusiness.form.orderingDelayMinutes: Retard addicional abans de fer la comanda
+localBusiness.form.orderingDelayMinutes.help: Utilitzeu aquest camp per afegir una
+  estona abans de la comanda del client. Aquest paràmetre no canvia els temps de cocció
+  (20 minuts) i ciclisme (25 minuts).
+localBusiness.form.orderingDelayDays: Dia/Dies
+localBusiness.form.orderingDelayHours: Hora/Hores
+localBusiness.form.name: Nom
+localBusiness.form.description: Descripció
+localBusiness.form.legalName: Nom legal
+localBusiness.form.website: Lloc web
+localBusiness.form.telephone: Telèfon
+localBusiness.form.openingHours: Horari d'obertura
+localBusiness.form.deliveryPerimeterExpression: Zona o distància màxima de lliurament
+restaurant.available: Disponible
+restaurant.unavailable: No disponible
+restaurant.disabledWarning: 'Aquest restaurant està desactivat de manera que els visitants
+  del lloc no poden veure aquesta pàgina. Si voleu, podeu <a target="_blank" href="%restaurantEditUrl%">
+  activar-lo a l''administrador </a>.
+
+  '
+restaurant.closedWarningWithDelay: Demana ara per més endavant. Comproveu com a mínim
+  un %delay% per adelantat.
+restaurant.temporaryClosedWarning: Aquest restaurant està tancat fins a <strong>%
+  date% </strong>. Encara podreu demanar més endavant!
+restaurant.noMenuWarning: 'Aquest restaurant no té cap menú de moment
+
+  '
+restaurant.form.enabled.tooltip: 'Si està desactivat, un restaurant no és visible
+  al lloc web. No es mostra als resultats de la cerca ni la seva pròpia pàgina no
+  és accessible pels visitants.
+
+  '
+restaurant.form.allow_stripe_connect.label: Permet al restaurant gestionar el compte
+  Stripe pel seu compte
+restaurant.form.temporaryClosingRule: Si voleu tancar temporalment el vostre restaurant,
+  seguiu aquest enllaç
+restaurant.form.accessPlanning: Planificació d’accés
+restaurant.form.createRestaurant: Crear restaurant
+restaurant.form.save: Desa
+restaurant.contract.title: Contracte
+restaurant.deliveryPerimeterExpression.title: Perímetre d’entrega
+restaurant.deliveryPerimeterExpression.help: Definiu el perímetre acceptat per als
+  enviaments. Podeu triar un radi (en km) o una zona
+restaurant.contract.minimumCartAmount.label: Mínim per comanda
+restaurant.contract.flatDeliveryPrice.label: Import carregat per la plataforma
+restaurant.contract.flatDeliveryPrice.help: Aquest import no es mostrarà al carret
+  i no augmentarà l'import total
+restaurant.contract.customerAmount.label: Import pagat pel client
+restaurant.contract.customerAmount.help: Aquest import es mostrarà al carret i augmentarà
+  l'import total
+restaurant.contract.feeRate.label: Taxa
+restaurant.contract.feeRate.help: Aquest percentatge el mantindrà la plataforma sobre
+  el total de productes
+restaurant.contract.restaurantPaysStripeFee.label: És responsable del cost de les
+  taxes de Stripe, devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.help: Trieu qui serà el responsable del
+  cost de les taxes Stripe i la gestió de devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativa
+restaurant.contract.onlyAdmin: Només un administrador pot editar els detalls del contracte.
+restaurant.contract.noContract: Sense dades de contracte. Poseu-vos en contacte amb
+  un administrador.
+restaurant.contract.showAdvanced: Mostra la configuració avançada
+restaurant.menus.noMenus: De moment no heu creat cap menú.
+restaurant.menus.activate: Activa
+restaurant.menus.activated: S'ha activat el menú «% menu_name%». Ara es mostrarà a
+  la pàgina del restaurant
+restaurant.closingForm.title: Afegiu un tancament temporal
+restaurant.closingForm.reason.label: Raó
+restaurant.closingForm.dates.label: Tancar de / a
+restaurant.list.manage: Gestiona
+restaurant.list.orders: Comandes
+restaurant.list.products: Productes
+restaurant.list.product_options: Opcions
+restaurant.list.menus: Menús
+restaurant.list.activeMenu: Menú actiu
+restaurant.list.planning: Planificació
+restaurant.list.settings: Configuració
+restaurant.list.norestaurant: Encara no hi ha restaurants
+restaurant.list.createNewRestaurant: Crea un nou restaurant
+restaurant.list.preparationTime: Preparació
+restaurant.list.stats: Estadístiques
+restaurant.product_options.help: 'Opció que tots els productes siguin <strong> configurables
+  </strong>
+
+  <br>
+
+  Permeten, per exemple, afegir complements o triar els elements d’un menú (acompanyament,
+  beguda…)
+
+  <br>
+
+  Per a cada opció, podeu definir una llista de valors
+
+  '
+restaurant.product_options.list.values: Valors
+restaurant.form.uploadImage: Carregueu una imatge
+profile.addresses.breadcrumb: Adreces
+profile.addresses.empty: Encara no s'ha guardat cap adreça!
+profile.orders.empty: Encara no hi ha cap comanda!
+profile.myDeliveries: Les meves entregues
+profile.myStores: Les meves botigues
+profile.myRestaurants: Els meus restaurants
+profile.myRestaurants.noRestaurants: Encara no tens cap restaurant
+profile.myAccount: El meu compte
+profile.myTracking: El meu seguiment
+profile.myOrders: Les meves ordres
+profile.myAddresses: Les meves adreces
+profile.myPersonalInfo: Les meves dades personals
+profile.payment: Pagament
+profile.task.cancel: Cancel · lar
+profile.task.noTasks: No s’han programat tasques
+profile.task.dueDate: Data de venciment
+profile.task.address: Adreça
+profile.task.complete: Completa
+profile.task.date: Data
+profile.edit.save: Desa
+profile.addresses.newAddress: Nova adreça
+profile.addresses.save: Desa
+profile.addresses.add: Afegiu
+profile.editProfile: Edita el perfil
+profile.payment.title: Pagament
+profile.payment.stripeConnected: El vostre compte Stripe està connectat
+profile.username: Nom d'usuari
+profile.email: Correu electrònic
+profile.telephone: Telèfon
+profile.familyName: Nom de familia
+profile.givenName: Nom donat
+profile.managedStores: Botigues gestionades per l’usuari
+profile.managedRestaurants: Restaurants gestionats per l’usuari
+profile.accountType: Tipus de compte
+order.cart.title: Cistell de compra
+order.items.products_with_count: Productes (%count%)
+order.summary.heading: Comanda %number% (#%id%)
+order.total_including_tax: Total (amb impostos)
+order.items_total: Total de productes
+order.total_tax: Impostos
+order.total_tax_by_rate: Total %name%
+order.preparation_expected_at: Preparació esperada al %date%
+order.shipping_date.title: La vostra data d’enviament
+order.payment.title: Les vostres dades de pagament
+order.payment.expiration.label: Caducitat
+order.payment.month.label: Mes
+order.payment.year.label: Any
+order.payment.card_number.label: Número de targeta
+order.payment.total: Pagament %total%
+order.payment.cvc: CVC
+order.delivery_time: Lliurament %time%
+order.payment.card_number.help: 'A stripe
+
+  <a href="https://stripe.com/docs/testing#cards" target="_blank" tabindex="-1"> número
+  de targeta de prova </a>. No es debatrà cap compte. '
+order.state.cart: Cistell de compra
+order.state.accepted: Acceptat
+order.state.refused: Refusat
+order.state.new: Nou
+order.state.ready: Llest
+order.state.fulfilled: Entregat
+order.state.cancelled: Cancel·lat
+payment.state.cart: Cistell de compra
+payment.state.new: Nou
+payment.state.authorized: Autoritzat
+payment.state.completed: Completat
+payment.state.failed: Fallat
+payment.state.cancelled: Cancel·lat
+payment.state.refunded: Reemborsat
+payment.state.refunded_partially: Parcialment reemborsat
+order.adjustment_type.delivery: Entrega
+order.adjustment_type.platform_fees: Comissions de CoopCycle
+order.list.total: Total
+order.list.shippedAt: Temps d’enviament
+order.list.cancel: Cancel · lar
+order.list.type: Tipus
+order.list.customer: Client
+order.list.state: Estat
+order.list.summary: Resum
+order.list.summary.restaurant.text: Lliurament al restaurant<a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Lliurament al restaurant %restaurant_name%
+order.list.summary.delivery.text: Entrega %distance%, %vehicle%
+order.list.invoice: Factura
+vehicle.bike: Bicicleta
+vehicle.cargo_bike: Bicicleta de càrrega
+task.form.create: Crear tasca
+task.form.timeWindow: Finestra de temps
+task.form.cancel: Cancel · lar
+task.form.showHistory: Mostra l'historial
+task.form.modal.moreOptions: Més opcions
+task.form.edit: Modifica la tasca %id%
+task.form.dateRange: Interval de dates
+task.form.finish: Acabar la tasca
+task.form.details: Detalls de la tasca
+task.form.finish.DONE.info: La tasca s'ha finalitzat amb èxit
+task.form.finish.FAIL.info: La tasca no s'ha pogut completar
+task.status.done: Èxit
+task.status.failed: Fallat
+task.status.todo: Fer
+form.task.courier.label: Repartidor
+form.task.comments.label: Comentaris
+form.task.comments.placeholder: Especifiqueu tots els detalls útils per realitzar
+  la tasca
+form.task.status.label: Estat
+form.task_event.notes.placeholder: 'Ex: adreça no trobada, cap problema …'
+form.task_event.notes.help: Podeu editar el comentari
+form.task_upload.file: Arxiu
+form.task_upload.file.help: 'Formats de fitxers compatibles: csv, ods, xlsx
+
+  '
+form.task_complete.done.label: Completa
+form.task_complete.fail.label: Informe del problema
+task.type.PICKUP: Recollida
+task.type.DROPOFF: Entrega
+task.previous_task_not_completed_yet: La tasca anterior no s'ha completat encara
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Benvingut a la demostració <a target="_blank"
+  href="https://coopcycle.org">CoopCycle</a> plataforma
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Com utilitzar aquesta demostració?</a>
+maintenance.disclaimer: El mode de manteniment està habilitat
+cart.widget.title: Les teves dades d’entrega
+cart.widget.button: Comanda
+checkout.breadcrumb.address: Adreça
+checkout.breadcrumb.payment: Pagament
+form.geojson_upload.file: Arxiu
+form.store_type.pricing_rule_set.label: Preu
+form.store_type.prefill_pickup_address.label: Omple l’adreça de recollida automàtica
+  prèviament
+form.store_type.create_orders.label: Crear comandes
+form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de càrrega
+form.store_type.pricing_rule_set.placeholder: Trieu un preu
+form.store_type.setAsDefault.label: Definiu com a adreça predeterminada
+form.store_type.defaultAddress.label: Adreça predeterminada
+form.store_type.time_slot.label: Franja horària
+form.delivery.vehicle.placeholder: Trieu un tipus de vehicle
+form.delivery.pickup.label: Recollida
+form.delivery.dropoff.label: Entrega
+form.delivery.weight.label: Pes (g)
+form.delivery.vehicle.label: Vehicle
+form.delivery.pickup.doneBefore.label: Temps de recollida
+form.delivery.dropoff.doneBefore.label: Temps d'entrega
+form.delivery.distance.label: Distància
+form.delivery.duration.label: Durada
+form.delivery.store.label: Botiga
+form.delivery.store.placeholder: Cerqueu una botiga …
+form.delivery.price.label: Preu
+form.order.accept.label: Accepta
+form.order.accept.help: Un cop acceptada la comanda, el client serà notificat per
+  correu electrònic.
+form.order.cancel.label: Cancel · lar
+form.order.fulfill.label: Complir
+form.order.payment_complete.label: Completa
+form.order.payment_refund.label: Devolució
+form.order.refund_modal.title: Devolució
+form.payment.refund_amount.label: Import
+form.payment.refund_amount.help: L’import que especifiqueu es retornarà al client
+form.payment.refund_application_fee.label: Comissions de devolució
+form.payment.refund_application_fee.help: 'Si marqueu aquesta casella, la comissió
+  que cobra la plataforma al soci es retornarà proporcionalment
+
+  <br>
+
+  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">Aprèn més</a>
+
+  '
+form.address.addressLocality.label: Ciutat
+form.address.postalCode.label: Codi Postal
+form.address.floor.label: Pis
+form.address.description.label: Instruccions
+form.address.description.placeholder: 2a porta a l'esquerra …
+form.address.streetAddress.label: Adreça
+form.address.streetAddress.error.noLatLng: Seleccioneu una adreça al menú desplegable
+form.address.name.label: Nom
+form.address.name.placeholder: Casa, feina…
+form.address.firstName.label: Nom
+form.address.lastName.label: Cognom
+form.address.company.label: Empresa
+form.pricing_rule_set.name.label: Nom
+form.pricing_rule_set.rules.label: Normes
+form.pricing_rule.price.label: Preu
+form.preparation_time_rule.expression.label: Expressió
+form.preparation_time_rule.time.label: Temps
+form.preparation_time.defaults_warning: 'Aquest restaurant encara no té cap temps
+  de preparació personalitzada. A continuació s’han copiat les regles predeterminades,
+  les podeu canviar.
+
+  '
+form.settings.date_time: Data i hora
+form.settings.brand_name.label: Nom de la marca
+form.settings.stripe.title: Compte de Stripe
+form.settings.stripe.help: 'Stripe és el servei de pagament que utilitzem per gestionar
+  targetes de crèdit. Per utilitzar la part de comerç electrònic de la plataforma
+  és necessari configurar aquesta secció, així com Stripe Connect. Stripe requereix
+  un preu de 0.25cts + 1.4% per pagament (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>),
+  a càrrec del propietari de la botiga '
+form.settings.stripe_testmode.help: 'En el mode «test», haureu d’utilitzar <a href="https://stripe.com/docs/testing">prova
+  de targetes de crèdit</a> números a pagar a la plataforma. <strong>No es bescanviaran
+  diners.</strong> '
+form.settings.stripe_enable_livemode.help: Per activar el mode «en viu», primer heu
+  de configurar les tecles «en viu».
+form.settings.stripe_publishable_key.label: Clau publicable de Stripe
+form.settings.stripe_publishable_key.help: 'Creeu un compte Stripe per obtenir-ne
+  <a href="https://stripe.com/docs/dashboard#api-keys">clau publicable</a>
+
+  '
+form.settings.stripe_secret_key.label: Clau secreta de Stripe
+form.settings.stripe_secret_key.help: 'Creeu un compte Stripe per obtenir-ne <a href="https://stripe.com/docs/dashboard#api-keys">clau
+  publicable</a>
+
+  '
+form.settings.stripe_connect_client_id.label: Stripe Connect identificador
+form.settings.stripe_connect_client_id.help: 'Obteniu l''identificador a la secció
+  <a href="https://dashboard.stripe.com/account/applications/settings">pàgina de paràmetres</a>
+
+  '
+form.settings.google_api_key.label: Clau de l’API de Google
+form.settings.google_api_key.help: 'Creeu un compte de Google per obtenir-ne <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">API
+  key</a>
+
+  '
+form.settings.latlng.label: Coordenades geogràfiques
+form.settings.latlng.help: 'Especifiqueu la latitud i la longitud predeterminades.
+  Podeu continuar <a href="https://www.latlong.net/">latlong.net</a>
+
+  '
+form.settings.default_tax_category.label: Taxa d’IVA per Entregues
+form.settings.default_tax_category.help: Especifiqueu el tipus d’IVA a utilitzar per
+  a Entregues
+form.settings.administrator_email.label: Correu electrònic de l'administrador
+form.settings.administrator_email.help: Les notificacions s’enviaran a aquest correu
+  electrònic
+form.settings.phone_number.label: Número de telèfon
+form.settings.phone_number.help: Aquest número es mostrarà als clients
+form.settings.enable_restaurant_pledges.label: Permet als clients suggerir restaurants
+form.suggest.name.label: Nom
+form.suggest.name.help: Indiqueu el nom exacte perquè el puguem trobar
+form.suggest.submit.label: Suggeriu ara
+form.suggest.message: 'No trobeu el vostre restaurant preferit?
+
+  <br>
+
+  Dona''ns el seu nom i adreça. Aleshores altres usuaris poden votar perque aparegui
+  a la llista de restaurants.
+
+  <br>
+
+  Això ens permetrà identificar millor els restaurants que s’han d’acostar i proporcionar-los
+  la prova d’una demanda real.
+
+  '
+form.suggest.thank_you_message: Gràcies per suggerir aquest restaurant!
+restaurant.suggest.message: 'Ajuda''ns a convèncer a %restaurant.name% per treballar
+  %brand_name%!
+
+  <br>
+
+  Per veure-la a la plataforma, necessitem que vosaltres i la vostra veu recolzeu
+  la nostra futura sol·licitud de col·laboració amb aquesta marca.
+
+  '
+restaurant.suggest.vote: Vota per %name%
+pledge.suggested_by: Suggerida per @%username%
+restaurant.suggest.has_voted: Ja heu votat aquest restaurant!
+restaurant.suggest.banner_disclaimer: Aquest restaurant no està disponible de moment.
+  Vota per %restaurant.name%!
+pledge.vote_count_equals_two: '%first_user% i %second_user% han votat per aquest restaurant'
+pledge.vote_count_equals_one: '%username% ha votat a favor d’aquest restaurant'
+pledge.accept: Accepta
+pledge.reject: Rebutjar
+form.maintenance.enable.label: Habilita el manteniment
+form.maintenance.disable.label: Desactiva el manteniment
+form.maintenance.enable.alert: Activareu el mode de manteniment. <br>Només els administradors
+  tindran accés al lloc.
+form.maintenance.disable.alert: Inhabilitareu el mode de manteniment
+form.maintenance.message.label: Missatge
+form.maintenance.message.help: Podeu formatar el text mitjançant la sintaxi de Markdown
+form.banner.enable.label: Activa el banner
+form.banner.disable.label: Desactiva el banner
+form.banner.enable.alert: Heu d'activar el banner
+form.banner.disable.alert: Heu de desactivar el banner
+form.banner.message.label: Missatge a mostrar en banner
+form.stripe_livemode.enable.label: Utilitzeu Stripe en mode «en viu»
+form.stripe_livemode.enable.alert: En mode «en viu», es carregarà targeta de crèdit.
+form.stripe_livemode.disable.label: Utilitzeu Stripe en mode «test»
+form.stripe_livemode.disable.alert: En el mode «test», no es carregarà cap targeta
+  de crèdit.
+form.stripe_livemode.disable_and_enable_maintenance.label: Canvieu al mode «test»
+  i activeu el manteniment
+form.stripe_livemode.disable_and_enable_maintenance.alert: Et trobes en mode «en viu».
+  <br> Si canvieu al mode «test», el manteniment s’activarà automàticament.
+form.settings.currency_code.label: Moneda
+form.delivery_embed.name.label: Nom
+form.delivery_embed.name.help: El vostre nom o nom de l'empresa
+form.delivery_embed.telephone.label: Número de telèfon
+form.delivery_embed.vehicle.disclaimer: Ens lliuren articles de bici de càrrega de
+  més de 50x40x20 (cm) o el pes dels quals superi els 6kg
+form.registration.username.help: 'El vostre nom d’usuari no pot ser superior a 15
+  caràcters. Un nom d''usuari només pot contenir caràcters alfanumèrics (lletres A-Z,
+  números 0-9) a excepció dels guions baixos.
+
+  '
+form.local_business.stripe_account.title: Compte de Stripe
+form.local_business.stripe_account.help: Connecteu un compte Stripe per transferir
+  diners a un altre compte bancari
+form.local_business.stripe_account.connect_button.text: Connecta amb Stripe
+form.local_business.stripe_account.not_configured: Encara no podeu connectar cap compte
+form.local_business.stripe_account.success: Compte de Stripe connectat correctament
+form.local_business.stripe_account.need_stripe_account: 'Encara no heu creat un compte
+  Stripe per a aquest restaurant. Stripe és una plataforma de pagaments que ens permet
+  gestionar de forma segura els pagaments amb targeta i les transferències al vostre
+  compte bancari.<br>
+
+  Per crear un compte Stripe per a aquest restaurant, si us plau <a href="%stripeAuthorizeURL%">clica
+  aquí</a>.
+
+  '
+form.local_business.stripe_account.link_ok: 'Aquest restaurant està enllaçat a un
+  compte Stripe i pot rebre pagaments de la plataforma.<br>
+
+  Per gestionar el vostre compte Stripe i les transferències al vostre compte, utilitzeu
+  el botó<a href="https://dashboard.stripe.com/" target="_blank">Stripe dashboard</a>.
+
+  '
+form.menu_item.name.label: Nom
+form.menu_item.price.label: Preu
+form.menu_item_modifier.name.label: Nom
+form.menu_item_modifier.price.label: Preu
+form.menu_item_modifier.calculusStrategy.label: Càlcul de preus
+form.menu_taxon.name.label: Nom
+form.menu_taxon.add_child.label: Afegeix una secció
+form.menu_taxon.child_name.placeholder: 'Exemple: plats principals, postres ...
+
+  '
+form.menu_editor.products_panel.title: Productes
+form.menu_editor.save.label: Guardar canvis
+form.menu_editor.help: 'Utilitzeu l''editor següent per escriure els elements del
+  menú
+
+  <br>
+
+  Drag and drop the products into the sections on the left
+
+  <br>
+
+  Si voleu eliminar un producte del menú, deixeu-lo a la secció "Productes" de la
+  dreta
+
+  <br>
+
+  No us oblideu de fer clic al botó «Desa els canvis» a continuació
+
+  '
+form.menu_editor.products.help: "Per afegir productes a la llista de la dreta, afegiu-los\
+  \ a la llista <a href=\"%products_url%\">catalog</a> first\n <a href=\"%products_url%\"\
+  >catàleg</a> first\n"
+form.menu_editor.taxon_modal.title: Modificar una secció
+form.product.name.label: Nom
+form.product.description.label: Descripció
+form.product.price.label: Preu
+form.product.taxCategory.label: Impostos
+form.product.enabled.label: Habilitat
+form.product.allergens.label: Al·lèrgens
+form.product.allergens.help: Aquest producte conté els següents al·lèrgens?
+form.product.restricted_diets.label: Dietes restringides
+form.product.restricted_diets.help: Aquest producte s’adapta a les dietes següents?
+form.product.confirm.label: Confirmeu els canvis
 form.product.confirm.help: ''
 form.product_option.name.label: ''
 form.product_option.strategy.label: ''
@@ -581,4 +733,8 @@ restricted_diets.VEGETARIAN_DIET: ''
 time_slot.human_readable: ''
 resend_confirmation_email.disclaimer: ''
 sylius.ui.code: ''
-sylius.form.promotion_coupon.per_customer_usage_limit: ''
+sylius.form.promotion_coupon.per_customer_usage_limit: Per límit d’ús del client
+adminDashboard.package_sets.title: Paquets
+form.store_type.package_set.label: Conjunt de paquets
+form.delivery.package.label: Paquet
+form.delivery.packages.label: Paquets
