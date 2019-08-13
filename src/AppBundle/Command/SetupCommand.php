@@ -431,5 +431,26 @@ class SetupCommand extends Command
         } else {
             $output->writeln('Scheduled command « coopcycle:orders:import-stripe-fee » already exists');
         }
+
+        $flushApiLogs = $this->scheduledCommandRepository
+            ->findOneByCommand('coopcycle:api:flush-logs');
+
+        if (!$flushApiLogs) {
+            $flushApiLogs = new ScheduledCommand();
+            $flushApiLogs
+                ->setName('Flush API logs')
+                ->setCommand('coopcycle:api:flush-logs')
+                ->setCronExpression('*/15 * * * *')
+                ->setPriority(1)
+                ->setExecuteImmediately(false)
+                ->setDisabled(false);
+
+            $this->scheduledCommandManager->persist($flushApiLogs);
+            $this->scheduledCommandManager->flush();
+
+            $output->writeln('Adding scheduled command « coopcycle:api:flush-logs »');
+        } else {
+            $output->writeln('Scheduled command « coopcycle:api:flush-logs » already exists');
+        }
     }
 }
