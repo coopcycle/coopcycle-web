@@ -17,8 +17,12 @@ class TagType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('color', TextType::class);
+            ->add('name', TextType::class, [
+                'label' => 'adminDashboard.tags.name'
+            ])
+            ->add('color', TextType::class, [
+                'label' => 'adminDashboard.tags.color'
+            ]);
 
         if ($options['with_slug']) {
             $builder->add('slug', TextType::class, [

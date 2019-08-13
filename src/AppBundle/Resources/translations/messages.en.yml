@@ -88,6 +88,7 @@ adminDashboard.tags.save: Save
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
 adminDashboard.tags.color: Color
+adminDashboard.tags.confirm_delete: Are you sure to delete this tag ? all elements rely to it will not be able to show it or be grouped by it anymore.
 adminDashboard.taxation.title: Taxation
 adminDashboard.taxation.button: Add taxation
 adminDashboard.zones.title: Zones
