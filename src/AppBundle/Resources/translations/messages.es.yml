@@ -730,3 +730,7 @@ basics.continue: Continuar
 basics.created_at: Creado el %date%
 promotions.add_free_delivery_coupon: Añadir un cupón de promoción " envío gratuito
   "
+base.footer.suggest: Sugerir un restaurante
+adminDashboard.package_sets.title: Paquetes
+adminDashboard.restaurants.exclusive: Exclusivo
+adminDashboard.pledges.title: Sugerencias
