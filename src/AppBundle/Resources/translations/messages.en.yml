@@ -208,6 +208,11 @@ restaurant.product_options.help: 'Options all products to be <strong>configurabl
   '
 restaurant.product_options.list.values: Values
 restaurant.form.uploadImage: Upload an image
+restaurant.stats.order_number: Order number
+restaurant.stats.delivered_on: Delivered on
+restaurant.stats.total_products_including_all_taxes: Total products including all taxes
+restaurant.stats.total_products_excluding_taxes: Total products excluding taxes
+restaurant.stats.delivery: Delivery
 profile.addresses.breadcrumb: Addresses
 profile.addresses.empty: No address saved yet!
 profile.orders.empty: No order yet!
@@ -735,6 +740,11 @@ basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
+basics.date_range: From %start% to %end%
+basics.total_including_tax: Total including all taxes
+basics.stripe_fees: Stripe fees
+basics.platform_fees: Platform fees
+basics.net_income: Net income
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

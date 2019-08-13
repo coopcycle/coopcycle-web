@@ -196,6 +196,12 @@ restaurant.product_options.help: 'Les options permettent de rendre les produits 
   '
 restaurant.product_options.list.values: Valeurs
 restaurant.form.uploadImage: Uploader une image
+restaurant.stats.order_number: Numéro de commande
+restaurant.stats.delivered_on: Livrée le
+restaurant.stats.total_products_including_all_taxes: Total produits TTC
+restaurant.stats.total_products_excluding_taxes: Total produits hors taxes
+restaurant.stats.delivery: Livraison
+
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment !
 profile.orders.empty: Pas de commande pour le moment !
@@ -684,6 +690,11 @@ basics.today: Aujourd'hui
 basics.are_you_sure: Êtes-vous sûr‧e ?
 basics.no_entries: Aucun élément pour l'instant
 basics.created_at: Créé le %date%
+basics.date_range: Du %start% au %end%
+basics.total_including_tax: Total TTC
+basics.stripe_fees: Frais Stripe
+basics.platform_fees: Frais de plateforme
+basics.net_income: Revenue net
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle

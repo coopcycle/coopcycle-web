@@ -10,7 +10,12 @@
 
 <div class="row">
   <div class="col-xs-6">
-    <h3 class="nomargin">Du {{ start|localizeddate('medium', 'none') }} au {{ end|localizeddate('medium', 'none') }}</h3>
+    <h3 class="nomargin">
+      {% trans with {
+        '%start%': start|localizeddate('medium', 'none'),
+        '%end%': end|localizeddate('medium', 'none'),
+        }%} basics.date_range {% endtrans %}
+      </h3>
   </div>
   <div class="col-xs-6">
     <div class="text-right">
@@ -21,18 +26,18 @@
 
 <table class="table table-condensed">
   <thead>
-    <th>Numéro de commande</th>
-    <th>Livrée le</th>
-    <th class="text-right">Total produits HT</th>
+    <th>{% trans %} restaurant.stats.order_number {% endtrans %}</th>
+    <th>{% trans %} restaurant.stats.delivered_on {% endtrans %}</th>
+    <th class="text-right">{% trans %} restaurant.stats.total_products_excluding_taxes {% endtrans %}</th>
     {% for taxRate in stats.taxRates %}
     <th class="text-right">{{ taxRate.name }}</th>
     {% endfor %}
-    <th class="text-right">Total produits TTC</th>
-    <th class="text-right">Livraison</th>
-    <th class="text-right">Total TTC</th>
-    <th class="text-right">Frais Stripe</th>
-    <th class="text-right">Frais Plateforme</th>
-    <th class="text-right">Revenu net</th>
+    <th class="text-right">{% trans %} restaurant.stats.total_products_including_all_taxes {% endtrans %}</th>
+    <th class="text-right">{% trans %} restaurant.stats.delivery {% endtrans %}</th>
+    <th class="text-right">{% trans %} basics.total_including_tax {% endtrans %}</th>
+    <th class="text-right">{% trans %} basics.stripe_fees {% endtrans %}</th>
+    <th class="text-right">{% trans %} basics.platform_fees {% endtrans %}</th>
+    <th class="text-right">{% trans %} basics.net_income {% endtrans %}</th>
   </thead>
   <tbody>
     {% for order in stats %}
