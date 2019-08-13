@@ -1,0 +1,47 @@
+AppBundle\Entity\ApiLog:
+    type: entity
+    table: api_log
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        method:
+            type: string
+            length: 6
+        requestUri:
+            type: text
+            column: request_uri
+        statusCode:
+            type: integer
+        requestHeaders:
+            type: text
+            column: request_headers
+            nullable: true
+        requestBody:
+            type: text
+            column: request_body
+            nullable: true
+        responseBody:
+            type: text
+            column: response_body
+            nullable: true
+        responseHeaders:
+            type: text
+            column: response_headers
+            nullable: true
+        authenticated:
+            type: boolean
+            options:
+                default: 'f'
+        username:
+            type: string
+            nullable: true
+        roles:
+            type: json_array
+            nullable: true
+        createdAt:
+            type: datetime
+            column: created_at
