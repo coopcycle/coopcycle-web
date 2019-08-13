@@ -694,7 +694,7 @@ basics.date_range: Du %start% au %end%
 basics.total_including_tax: Total TTC
 basics.stripe_fees: Frais Stripe
 basics.platform_fees: Frais de plateforme
-basics.net_income: Revenue net
+basics.net_income: Revenu net
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
