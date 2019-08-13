@@ -266,6 +266,18 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        if ($restaurant->getIsCaterer() === true && $this->getUser()->getQuotesAllowed() === true) {
+
+            $user = $this->getUser();
+            $checkVote = $user !== null ? $restaurant->getPledge()->hasVoted($this->getUser()) : false;
+
+            return $this->render('@App/restaurant/restaurant_pledge_accepted.html.twig', [
+                'restaurant' => $restaurant,
+                'number_of_votes' => $numberOfVotes,
+                'has_already_voted' => $checkVote
+            ]);
+        }
+
         // This will be used by RestaurantCartContext
         $request->getSession()->set('restaurantId', $id);
 

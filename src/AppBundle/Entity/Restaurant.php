@@ -848,4 +848,24 @@ class Restaurant extends FoodEstablishment
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getIsCaterer()
+    {
+        return $this->isCaterer;
+    }
+
+    /**
+     * @param mixed $isCaterer
+     *
+     * @return self
+     */
+    public function setIsCaterer($isCaterer)
+    {
+        $this->isCaterer = $isCaterer;
+
+        return $this;
+    }
 }
