@@ -1,0 +1,42 @@
+{% extends "@App/admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a>{{ 'api_logs.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<table class="table task-table">
+  <thead>
+    <th>{% trans %}admin.api_logs.status_code{% endtrans %}</th>
+    <th>{% trans %}admin.api_logs.request_uri{% endtrans %}</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+  {% for log in logs %}
+    <td width="10%">
+      {{ log.statusCode }}
+    </td>
+    <td width="20%">
+      {{ log.method }} {{ log.requestUri }}
+    </td>
+    <td>
+      {% if log.authenticated and log.username != 'anon.' %}
+        <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20"> @{{ log.username }}
+      {% endif %}
+    </td>
+    <td class="text-right">
+      {{ log.createdAt|localizeddate('short', 'short') }}
+    </td>
+    <td class="text-right">
+      <a href="{{ path('admin_api_log', { hashid: log|hashid }) }}">{{ 'basics.view'|trans }}</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(logs) }}
+</nav>
+{% endblock %}

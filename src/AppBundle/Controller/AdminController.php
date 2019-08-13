@@ -13,6 +13,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiApp;
+use AppBundle\Entity\ApiLog;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant\Pledge;
@@ -56,6 +57,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
+use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
 use Predis\Client as Redis;
 use Ramsey\Uuid\Uuid;
@@ -1533,5 +1535,60 @@ class AdminController extends Controller
         }
 
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
+    }
+
+    /**
+     * @Route("/admin/api/logs", name="admin_api_logs")
+     */
+    public function apiLogsAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(ApiLog::class);
+        $qb = $repository->createQueryBuilder('l')->orderBy('l.createdAt', 'DESC');
+
+        $logs = $this->get('knp_paginator')->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
+
+        return $this->render('@App/admin/api_logs.html.twig', [
+            'logs' => $logs
+        ]);
+    }
+
+    /**
+     * @Route("/admin/api/log/{hashid}", name="admin_api_log")
+     */
+    public function apiLogAction($hashid, Request $request)
+    {
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+
+        $decoded = $hashids->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+
+        $log = $this->getDoctrine()->getRepository(ApiLog::class)->find($id);
+
+        if (null === $log) {
+            throw $this->createNotFoundException(sprintf('Log #%d does not exist', $id));
+        }
+
+        if ($requestBody = $log->getRequestBody()) {
+            $requestBody = json_encode(json_decode($requestBody, true), JSON_PRETTY_PRINT);
+        }
+
+        if ($responseBody = $log->getResponseBody()) {
+            $responseBody = json_encode(json_decode($responseBody, true), JSON_PRETTY_PRINT);
+        }
+
+        return $this->render('@App/admin/api_log.html.twig', [
+            'log' => $log,
+            'request_body' => $requestBody,
+            'response_body' => $responseBody,
+        ]);
     }
 }

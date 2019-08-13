@@ -699,6 +699,9 @@ admin.settings.missing_mandatory_settings: 'Mandatory settings are missing.
   Go to <a href="%settings_url%">settings page</a> to configure them.
 
   '
+admin.api_logs.status_code: Status code
+admin.api_logs.request_uri: Request URI
+api_logs.breadcrumb: API logs
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered at your place
 index.our_restaurants: Our restaurants

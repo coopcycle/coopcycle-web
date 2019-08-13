@@ -1,0 +1,21 @@
+{% extends "@App/admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_api_logs') }}">{{ 'api_logs.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+  <h4>{{ log.method }} {{ log.requestUri }}</h4>
+
+  <h5>Request</h5>
+  <pre>{{ log.requestHeaders|raw }}</pre>
+  {% if request_body is not empty %}
+  <pre>{{ request_body|raw }}</pre>
+  {% endif %}
+
+  <h5>Response</h5>
+  <pre>{{ log.responseHeaders|raw }}</pre>
+  {% if response_body is not empty %}
+  <pre>{{ response_body|raw }}</pre>
+  {% endif %}
+{% endblock %}
