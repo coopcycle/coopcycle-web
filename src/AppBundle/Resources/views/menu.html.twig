@@ -14,10 +14,11 @@
     <div class="collapse navbar-collapse" id="navbar-main">
       {% set default_locale = 'en' %}
       {% set locales = {
+        'ca': 'Català',
+        'de': 'Deutsch',
         'en': 'English',
-        'fr': 'Français',
         'es': 'Español',
-        'de': 'Deutsch'
+        'fr': 'Français',
       } %}
       {% set current_locale = default_locale %}
       {% if locales[app.request.locale] is defined %}

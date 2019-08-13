@@ -12,7 +12,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: "%coopcycle.locale%"
-    locale_regex: fr|en|es|de
+    locale_regex: ca|fr|en|es|de
     router.request_context.host: '%host%'
 
 framework:
