@@ -32,7 +32,7 @@ Encore
   // @see https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
   .addPlugin(new webpack.ContextReplacementPlugin(
     /moment[/\\]locale$/,
-    /de|es|fr/
+    /ca|de|es|fr/
   ))
 
   .enableSingleRuntimeChunk()
