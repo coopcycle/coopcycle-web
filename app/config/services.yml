@@ -649,7 +649,11 @@ services:
     tags:
       - { name: monolog.logger, channel: api }
 
-  AppBundle\Monolog\Formatter\ApiFormatter: ~
+  Monolog\Formatter\JsonFormatter: ~
+
+  Symfony\Bridge\Monolog\Processor\TokenProcessor:
+    tags:
+      - { name: monolog.processor, channel: api }
 
   AppBundle\EventListener\Upload\UploadListener:
     arguments:

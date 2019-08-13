@@ -13,6 +13,23 @@ web_profiler:
     toolbar: true
     intercept_redirects: false
 
+services:
+    AppBundle\Monolog\Processor\RequestResponseProcessor:
+        tags:
+            - { name: monolog.processor, channel: api }
+    apns_php.logger:
+        class: AppBundle\Utils\ApnsPHPLogger
+        arguments: [ '@logger' ]
+    apns_php.push:
+        class: \ApnsPHP_Push
+        arguments:
+            - 1
+            - "%apns_certificate_file%"
+        calls:
+            - method: setLogger
+              arguments:
+                  - '@apns_php.logger'
+
 monolog:
     handlers:
         main:
@@ -25,11 +42,12 @@ monolog:
             type:   console
             channels: ["!event", "!doctrine"]
         api:
-            type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            type: predis
+            redis:
+                host: '%redis_dsn%'
+                key_name: '%database_name%:api:logs'
             level: info
-            formatter: AppBundle\Monolog\Formatter\ApiFormatter
-            max_files: 3
+            formatter: Monolog\Formatter\JsonFormatter
             channels: [api]
         stripe:
             type: rotating_file
@@ -50,20 +68,6 @@ monolog:
         #chromephp:
         #    type:   chromephp
         #    level:  info
-
-services:
-    apns_php.logger:
-        class: AppBundle\Utils\ApnsPHPLogger
-        arguments: [ '@logger' ]
-    apns_php.push:
-        class: \ApnsPHP_Push
-        arguments:
-            - 1
-            - "%apns_certificate_file%"
-        calls:
-            - method: setLogger
-              arguments:
-                  - '@apns_php.logger'
 
 # Uncomment to send emails in dev
 # fos_user:

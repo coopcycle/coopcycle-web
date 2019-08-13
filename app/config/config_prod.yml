@@ -18,6 +18,23 @@ parameters:
 #        result_cache_driver: apc
 #        query_cache_driver: apc
 
+services:
+    AppBundle\Monolog\Processor\RequestResponseProcessor:
+        tags:
+            - { name: monolog.processor, channel: api }
+    apns_php.logger:
+        class: AppBundle\Utils\ApnsPHPLogger
+        arguments: [ '@logger' ]
+    apns_php.push:
+        class: \ApnsPHP_Push
+        arguments:
+            - 0
+            - "%apns_certificate_file%"
+        calls:
+            - method: setLogger
+              arguments:
+                  - '@apns_php.logger'
+
 monolog:
     handlers:
         main:
@@ -31,11 +48,12 @@ monolog:
             max_files: 7
             channels: ["!api", "!stripe"]
         api:
-            type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            type: predis
+            redis:
+                host: '%redis_dsn%'
+                key_name: '%database_name%:api:logs'
             level: info
-            formatter: AppBundle\Monolog\Formatter\ApiFormatter
-            max_files: 7
+            formatter: Monolog\Formatter\JsonFormatter
             channels: [api]
         stripe:
             type: rotating_file
@@ -79,17 +97,3 @@ liip_imagine:
                 data_root:
                     - '%kernel.project_dir%/../../shared/web'
                     - '%kernel.project_dir%/web'
-
-services:
-    apns_php.logger:
-        class: AppBundle\Utils\ApnsPHPLogger
-        arguments: [ '@logger' ]
-    apns_php.push:
-        class: \ApnsPHP_Push
-        arguments:
-            - 0
-            - "%apns_certificate_file%"
-        calls:
-            - method: setLogger
-              arguments:
-                  - '@apns_php.logger'
