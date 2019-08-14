@@ -93,7 +93,6 @@ Feature: Manage restaurants
       "telephone": null,
       "image":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
-      "openingHours":@array@,
       "openingHoursSpecification":[
         {
           "@type":"OpeningHoursSpecification",

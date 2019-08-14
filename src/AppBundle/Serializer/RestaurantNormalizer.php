@@ -46,11 +46,35 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->locale = $locale;
     }
 
+    private function containsGroups(array $context = [], array $groups)
+    {
+        if (!isset($context['groups'])) {
+
+            return false;
+        }
+
+        foreach ($groups as $group) {
+            if (in_array($group, $context['groups'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function shouldAddOpeningHoursSpecification(Restaurant $object, array $context = array())
+    {
+        return isset($context['groups'])
+            && $this->containsGroups($context, ['restaurant', 'store', 'restaurant_seo'])
+            && count($object->getOpeningHours()) > 0;
+    }
+
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        if (isset($data['openingHours'])) {
+        // FIXME Stop checking groups manually
+        if ($this->shouldAddOpeningHoursSpecification($object, $context)) {
             $data['openingHoursSpecification'] = array_map(function (OpeningHoursSpecification $openingHoursSpecification) {
                 return $openingHoursSpecification->jsonSerialize();
             }, OpeningHoursSpecification::fromOpeningHours($object->getOpeningHours()));
@@ -96,9 +120,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['address'])) {
             $data['address']['@type'] = 'http://schema.org/PostalAddress';
-        }
-        if (isset($data['openingHours'])) {
-            unset($data['openingHours']);
         }
 
         if ($website = $object->getWebsite()) {

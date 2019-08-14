@@ -4,7 +4,6 @@ namespace AppBundle\Entity\Base;
 
 use AppBundle\Utils\TimeRange;
 use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,8 +29,6 @@ abstract class LocalBusiness
      *             - Here is an example: `<time itemprop="openingHours" datetime="Tu,Th 16:00-20:00">Tuesdays and Thursdays 4-8pm</time>`.
      *             - If a business is open 7 days a week, then it can be specified as `<time itemprop="openingHours" datetime="Mo-Su">Monday through Sunday, all day</time>`.
      *
-     * @ApiProperty(iri="https://schema.org/openingHours")
-     * @Groups({"restaurant", "store", "restaurant_seo"})
      * @Assert\All({
      *   @AssertTimeRange,
      * })
