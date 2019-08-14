@@ -75,6 +75,7 @@
     "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER": "Précisez tous les détails utiles à l'exécution de la tâche",
     "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Veuillez sélectionner une adresse",
     "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Ce numéro de téléphone n'est pas valide",
+    "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Exemple : {{example}}",
     "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Enregistrer",
     "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Terminer",
     "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Signaler un problème",

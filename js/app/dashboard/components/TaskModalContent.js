@@ -11,7 +11,9 @@ import Timeline from 'antd/lib/timeline'
 import fr_FR from 'antd/lib/locale-provider/fr_FR'
 import en_GB from 'antd/lib/locale-provider/en_GB'
 import { Formik } from 'formik'
-import PhoneInput, { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
+import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
+import { getExampleNumber } from 'libphonenumber-js'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
@@ -303,7 +305,7 @@ class TaskModalContent extends React.Component {
                       setFieldValue('address', address)
                     } } />
                   { errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress && (
-                    <span className="help-block">{ errors.address.streetAddress }</span>
+                    <small className="help-block">{ errors.address.streetAddress }</small>
                   ) }
                 </div>
                 <a className="help-block" role="button" data-toggle="collapse" href="#address_options" aria-expanded="false">
@@ -321,9 +323,10 @@ class TaskModalContent extends React.Component {
                   <div className={ errors.address && touched.address && errors.address.telephone && touched.address.telephone ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                     <label className="control-label" htmlFor="address_telephone">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL') }</label>
                     <PhoneInput
-                      value={ values.address.telephone ? formatPhoneNumber(values.address.telephone) : '' }
+                      value={ values.address.telephone ? values.address.telephone : '' }
                       country={ this.props.country }
                       showCountrySelect={ false }
+                      displayInitialValueAsLocalNumber={ true }
                       inputClassName="form-control"
                       autoComplete="off"
                       onChange={ value => {
@@ -331,8 +334,11 @@ class TaskModalContent extends React.Component {
                         setFieldTouched('address.telephone')
                       }} />
                     { errors.address && touched.address && errors.address.telephone && touched.address.telephone && (
-                      <span className="help-block">{ errors.address.telephone }</span>
+                      <small className="help-block">{ errors.address.telephone }</small>
                     ) }
+                    <small className="help-block">
+                      { this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP', { example: this.props.phoneNumberExample }) }
+                    </small>
                   </div>
                   <div className="form-group form-group-sm">
                     <label className="control-label" htmlFor="address_floor">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_FLOOR_LABEL') }</label>
@@ -438,13 +444,17 @@ class TaskModalContent extends React.Component {
 
 function mapStateToProps (state) {
 
+  const country = (window.AppData.countryIso || 'fr').toUpperCase()
+  const phoneNumber = getExampleNumber(country, phoneNumberExamples)
+
   return {
     task: state.currentTask,
     token: state.jwt,
     loading: state.isTaskModalLoading,
     tags: state.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
-    country: (window.AppData.countryIso || 'fr').toUpperCase()
+    country,
+    phoneNumberExample: phoneNumber.formatNational()
   }
 }
 
