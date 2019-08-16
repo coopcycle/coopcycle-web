@@ -332,8 +332,11 @@ admin_store_new:
         layout: '@App/admin.html.twig'
         routes:
             stores: admin_stores
+            store: admin_store
             store_delivery_new: admin_store_delivery_new
             store_deliveries: admin_store_deliveries
+            store_address_new: admin_store_new_address
+            store_address: admin_store_address
     methods:  [ GET, POST ]
 
 admin_store:
