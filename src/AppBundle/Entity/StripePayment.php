@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Stripe\Refund;
+use Stripe\PaymentIntent;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -243,5 +244,70 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
     public function getRefundAmount()
     {
         return $this->getAmount() - $this->getRefundTotal();
+    }
+
+    public function setPaymentIntent(PaymentIntent $intent)
+    {
+        // Note that if your API version is before 2019-02-11, 'requires_action'
+        // appears as 'requires_source_action'.
+
+        $status = $intent->status;
+        if ($intent->status === 'requires_source_action') {
+            $status = 'requires_action';
+        }
+
+        $this->details = array_merge($this->details, [
+            'payment_intent' => $intent->id,
+            'payment_intent_client_secret' => $intent->client_secret,
+            'payment_intent_status' => $status,
+            'payment_intent_next_action' => $intent->next_action ? $intent->next_action->type : null
+        ]);
+    }
+
+    public function getPaymentIntent()
+    {
+        if (isset($this->details['payment_intent'])) {
+
+            return $this->details['payment_intent'];
+        }
+    }
+
+    public function getPaymentIntentClientSecret()
+    {
+        if (isset($this->details['payment_intent_client_secret'])) {
+
+            return $this->details['payment_intent_client_secret'];
+        }
+    }
+
+    public function getPaymentIntentStatus()
+    {
+        if (isset($this->details['payment_intent_status'])) {
+
+            return $this->details['payment_intent_status'];
+        }
+    }
+
+    public function getPaymentIntentNextAction()
+    {
+        if (isset($this->details['payment_intent_next_action'])) {
+
+            return $this->details['payment_intent_next_action'];
+        }
+    }
+
+    public function setPaymentMethod($value)
+    {
+        $this->details = array_merge($this->details, [
+            'payment_method' => $value,
+        ]);
+    }
+
+    public function getPaymentMethod()
+    {
+        if (isset($this->details['payment_method'])) {
+
+            return $this->details['payment_method'];
+        }
     }
 }
