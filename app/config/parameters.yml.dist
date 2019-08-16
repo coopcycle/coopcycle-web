@@ -59,7 +59,7 @@ parameters:
     fcm_server_api_key: ""
     apns_certificate_file: "/dev/null"
     apns_certificate_pass_phrase: ""
-    trikoder_encryption_key: ""
+    trikoder_encryption_key: "ThisKeyIsNotSoSecretChangeIt"
 
     foodtech_enabled: true
 
