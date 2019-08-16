@@ -51,13 +51,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "put"={
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"restaurant_update"}},
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
  *     },
  *     "close"={
  *       "method"="PUT",
  *       "path"="/restaurants/{id}/close",
  *       "controller"=CloseRestaurant::class,
- *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object)",
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))",
  *     }
  *   },
  *   subresourceOperations={
