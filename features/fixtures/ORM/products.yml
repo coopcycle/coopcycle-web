@@ -67,6 +67,12 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Salad
     code: SALAD_DEFAULT
     price: 499
+  cake_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Cake
+    code: CAKE_DEFAULT
+    price: 699
 
 AppBundle\Entity\Sylius\Product:
   pizza:
@@ -91,3 +97,10 @@ AppBundle\Entity\Sylius\Product:
     slug: salad
     enabled: false
     variants: [ "@salad_default" ]
+  cake:
+    code: CAKE
+    currentLocale: fr
+    name: Cake
+    slug: cake
+    enabled: false
+    variants: [ "@cake_default" ]

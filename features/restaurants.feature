@@ -92,7 +92,7 @@ Feature: Manage restaurants
       },
       "telephone": null,
       "image":@string@,
-      "hasMenu":"/api/restaurants/1/menu",
+      "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHours":@array@,
       "openingHoursSpecification":[
         {
@@ -130,7 +130,10 @@ Feature: Manage restaurants
     And the JSON should match:
     """
     {
-      "@type":"Menu",
+      "@context":"/api/contexts/Menu",
+      "@id":"@string@.startsWith('/api/restaurants/menus')",
+      "@type":"http://schema.org/Menu",
+      "name":@string@,
       "identifier":@string@,
       "hasMenuSection":[
         {
@@ -198,6 +201,53 @@ Feature: Manage restaurants
     }
     """
 
+  Scenario: Retrieve all menus for a restaurant
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burgers | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section  | product |
+      | Desserts | CAKE    |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1/menus"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants",
+      "@type":"hydra:Collection",
+      "hydra:member":[
+        {
+          "@id":"@string@.startsWith('/api/restaurants/menus')",
+          "@type":"http://schema.org/Menu",
+          "name":"Menu",
+          "identifier":@string@,
+          "hasMenuSection":@array@
+        },
+        {
+          "@id":"@string@.startsWith('/api/restaurants/menus')",
+          "@type":"http://schema.org/Menu",
+          "name":"Menu",
+          "identifier":@string@,
+          "hasMenuSection":@array@
+        }
+      ],
+      "hydra:totalItems":2
+    }
+    """
+
   Scenario: Restaurant is deliverable
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -216,10 +266,23 @@ Feature: Manage restaurants
     Then the response status code should be 400
     And the response should be in JSON
 
-  Scenario: Change restaurant state
+  Scenario: Change active menu
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
       | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burgers | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section  | product |
+      | Desserts | CAKE    |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
@@ -231,11 +294,34 @@ Feature: Manage restaurants
     When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
       """
       {
-        "state": "rush"
+        "hasMenu": "/api/restaurants/menus/2"
       }
       """
     Then the response status code should be 200
     And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":"@string@.startsWith('/api/restaurants')",
+        "@type":"http://schema.org/Restaurant",
+        "id":@integer@,
+        "name":@string@,
+        "servesCuisine":@array@,
+        "enabled":true,
+        "address":@...@,
+        "state":"rush",
+        "openingHours":@array@,
+        "telephone":null,
+        "openingHoursSpecification":@array@,
+        "specialOpeningHoursSpecification":@array@,
+        "hasMenu":"/api/restaurants/menus/2",
+        "availabilities":@array@,
+        "minimumCartAmount":@integer@,
+        "flatDeliveryPrice":@integer@,
+        "image":@string@
+      }
+      """
 
   Scenario: User has not sufficient access rights
     Given the fixtures files are loaded:
@@ -274,6 +360,49 @@ Feature: Manage restaurants
       }
       """
     Then the response status code should be 403
+
+  Scenario: Change restaurant state
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | restaurants.yml     |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
+      """
+      {
+        "state": "rush"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":"/api/restaurants/1",
+        "@type":"http://schema.org/Restaurant",
+        "id":1,
+        "name":"Nodaiwa",
+        "servesCuisine":@array@,
+        "enabled":true,
+        "address":@...@,
+        "state":"rush",
+        "openingHours":@array@,
+        "telephone":null,
+        "openingHoursSpecification":@array@,
+        "specialOpeningHoursSpecification":@array@,
+        "availabilities":@array@,
+        "minimumCartAmount":@integer@,
+        "flatDeliveryPrice":@integer@,
+        "image":@string@
+      }
+      """
 
   Scenario: Retrieve restaurant products
     Given the fixtures files are loaded:

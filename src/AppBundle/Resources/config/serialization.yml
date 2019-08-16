@@ -14,7 +14,9 @@ AppBundle\Entity\ApiUser:
 AppBundle\Entity\Sylius\Taxon:
   attributes:
     code:
-      groups: ['restaurant']
+      groups: ['restaurant_menu', 'restaurant_menus']
+    name:
+      groups: ['restaurant_menu', 'restaurant_menus']
 
 Sylius\Component\Order\Model\Order:
   attributes:

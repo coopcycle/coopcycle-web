@@ -8,8 +8,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\Restaurant\Close as CloseRestaurant;
 use AppBundle\Action\Restaurant\Menu;
+use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Controller\Restaurant\ChangeState;
+use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\FoodEstablishment;
 use AppBundle\Validator\Constraints as CustomAssert;
 use Carbon\Carbon;
@@ -34,7 +36,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ApiResource(iri="http://schema.org/Restaurant",
  *   attributes={
- *     "denormalization_context"={"groups"={"order_create"}},
+ *     "denormalization_context"={"groups"={"order_create", "restaurant_update"}},
  *     "normalization_context"={"groups"={"restaurant", "place", "order"}}
  *   },
  *   collectionOperations={
@@ -47,9 +49,17 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="GET",
  *       "path"="/restaurants/{id}/menu",
  *       "controller"=Menu::class,
+ *       "normalization_context"={"groups"={"restaurant_menu"}},
+ *     },
+ *     "restaurant_menus"={
+ *       "method"="GET",
+ *       "path"="/restaurants/{id}/menus",
+ *       "controller"=Menus::class,
+ *       "normalization_context"={"groups"={"restaurant_menus"}},
  *     },
  *     "put"={
  *       "method"="PUT",
+ *       "input"=RestaurantInput::class,
  *       "denormalization_context"={"groups"={"restaurant_update"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
  *     },
@@ -181,6 +191,9 @@ class Restaurant extends FoodEstablishment
 
     private $taxons;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     private $activeMenuTaxon;
 
     private $exclusive = false;
@@ -556,6 +569,11 @@ class Restaurant extends FoodEstablishment
                 return $stripeAccount->getStripeAccount();
             }
         }
+    }
+
+    public function getActiveMenuTaxon()
+    {
+        return $this->activeMenuTaxon;
     }
 
     public function getMenuTaxon()

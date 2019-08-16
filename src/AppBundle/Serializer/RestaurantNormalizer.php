@@ -68,9 +68,10 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             return $this->normalizeForSeo($object, $data);
         }
 
-        if (isset($data['@id']) && $object->hasMenu()) {
-            $data['hasMenu'] = $data['@id'] . '/menu';
+        if (isset($data['activeMenuTaxon'])) {
+            $data['hasMenu'] = $data['activeMenuTaxon'];
         }
+        unset($data['activeMenuTaxon']);
 
         $data['availabilities'] = $object->getAvailabilities();
         $data['minimumCartAmount'] = $object->getMinimumCartAmount();
@@ -153,11 +154,13 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        return $this->normalizer->denormalize($data, $class, $format, $context);
+        $restaurant = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        return $restaurant;
     }
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof Restaurant;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Restaurant::class;
     }
 }

@@ -95,10 +95,12 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data = [
-            '@type' => 'Menu',
-            'identifier' => $object->getCode(),
-        ];
+        $data = $this->normalizer->normalize($object, $format, $context);
+
+        if (isset($data['code'])) {
+            $data['identifier'] = $data['code'];
+            unset($data['code']);
+        }
 
         $object->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
