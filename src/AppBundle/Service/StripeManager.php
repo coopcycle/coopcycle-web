@@ -15,6 +15,116 @@ class StripeManager
         $this->settingsManager = $settingsManager;
     }
 
+    public function configurePayment(StripePayment $stripePayment)
+    {
+        $order = $stripePayment->getOrder();
+
+        $restaurant = $order->getRestaurant();
+        if (null === $restaurant) {
+            return;
+        }
+
+        $livemode = $this->settingsManager->isStripeLivemode();
+        $stripeAccount = $restaurant->getStripeAccount($livemode);
+
+        if (null !== $stripeAccount && $restaurant->getContract()->isRestaurantPaysStripeFee()) {
+            $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+        }
+    }
+
+    private function getStripeOptions(StripePayment $stripePayment)
+    {
+        $options = [];
+
+        $stripeAccount = $stripePayment->getStripeUserId();
+        if (null !== $stripeAccount) {
+            $options['stripe_account'] = $stripeAccount;
+        }
+
+        return $options;
+    }
+
+    private function configureCreateIntentPayload(StripePayment $stripePayment, array $payload)
+    {
+        $order = $stripePayment->getOrder();
+
+        $restaurant = $order->getRestaurant();
+        if (null === $restaurant) {
+
+            return $payload;
+        }
+
+        $attrs = [];
+
+        $stripeAccount = $stripePayment->getStripeUserId();
+        if (null !== $stripeAccount) {
+
+            $restaurantPaysStripeFee = $restaurant->getContract()->isRestaurantPaysStripeFee();
+            $applicationFee = $order->getFeeTotal();
+
+            if ($restaurantPaysStripeFee) {
+                $attrs['application_fee_amount'] = $applicationFee;
+            } else {
+                $attrs['transfer_data'] = array(
+                    'destination' => $stripeAccount,
+                    'amount' => $order->getTotal() - $applicationFee
+                );
+            }
+        }
+
+        return $payload + $attrs;
+    }
+
+    /**
+     * @return Stripe\PaymentIntent
+     */
+    public function createIntent(StripePayment $stripePayment): Stripe\PaymentIntent
+    {
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+
+        $order = $stripePayment->getOrder();
+
+        $payload = [
+            'amount' => $stripePayment->getAmount(),
+            'currency' => strtolower($stripePayment->getCurrencyCode()),
+            'description' => sprintf('Order %s', $order->getNumber()),
+            'payment_method' => $stripePayment->getPaymentMethod(),
+            'confirmation_method' => 'manual',
+            'confirm' => true,
+            // 'statement_descriptor' => '...',
+            // @see https://stripe.com/docs/payments/payment-intents/use-cases#separate-auth-capture
+            'capture_method' => 'manual'
+        ];
+
+        $this->configurePayment($stripePayment);
+
+        $payload = $this->configureCreateIntentPayload($stripePayment, $payload);
+        $stripeOptions = $this->getStripeOptions($stripePayment);
+
+        $intent = Stripe\PaymentIntent::create($payload, $stripeOptions);
+
+        return $intent;
+    }
+
+    /**
+     * @return Stripe\PaymentIntent
+     */
+    public function confirmIntent(StripePayment $stripePayment): Stripe\PaymentIntent
+    {
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+
+        $stripeOptions = $this->getStripeOptions($stripePayment);
+
+        $intent = Stripe\PaymentIntent::retrieve(
+            $stripePayment->getPaymentIntent(),
+            $stripeOptions
+        );
+
+        $intent->confirm();
+
+        return $intent;
+    }
+
     /**
      * @return Stripe\Charge
      */
@@ -77,17 +187,24 @@ class StripeManager
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
 
-        $stripeAccount = $stripePayment->getStripeUserId();
-        $stripeOptions = array();
+        if (null !== $stripePayment->getPaymentIntent()) {
+            // TODO Exception
+            $intent = Stripe\PaymentIntent::retrieve(
+                $stripePayment->getPaymentIntent(),
+                $this->getStripeOptions($stripePayment)
+            );
 
-        // stripe account & needed is set if and only the Stripe charge is a direct charge (restaurant pays stripe fee)
-        if (!is_null($stripeAccount)) {
-            $stripeOptions['stripe_account'] = $stripeAccount;
+            $intent->capture([
+                'amount_to_capture' => $stripePayment->getAmount()
+            ]);
+
+            // TODO Return charge
+            return $intent;
         }
 
         $charge = Stripe\Charge::retrieve(
             $stripePayment->getCharge(),
-            $stripeOptions
+            $this->getStripeOptions($stripePayment)
         );
 
         if ($charge->captured) {

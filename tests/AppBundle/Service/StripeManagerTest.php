@@ -260,4 +260,89 @@ class StripeManagerTest extends TestCase
 
         $this->stripeManager->capture($stripePayment);
     }
+
+    public function testCaptureWithPaymentIntent()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setStripeUserId('acct_123456');
+        $stripePayment->setAmount(3000);
+        $stripePayment->setCurrencyCode('EUR');
+        $paymentIntent = Stripe\PaymentIntent::constructFrom([
+            'id' => 'pi_12345678',
+            'status' => 'requires_source_action',
+            'next_action' => [
+                'type' => 'use_stripe_sdk'
+            ],
+            'client_secret' => ''
+        ]);
+        $stripePayment->setPaymentIntent($paymentIntent);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($this->createRestaurant('acct_123456'));
+        $stripePayment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequestForAccount('GET', '/v1/payment_intents/pi_12345678', 'acct_123456');
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/capture', 'acct_123456', ["amount_to_capture" => 3000]);
+
+        $this->stripeManager->capture($stripePayment);
+    }
+
+    public function testCreateIntent()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setStripeToken('tok_123456');
+        $stripePayment->setAmount(3000);
+        $stripePayment->setCurrencyCode('EUR');
+        $stripePayment->setCharge('ch_123456');
+        $stripePayment->setPaymentMethod('pm_123456');
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->getRestaurant()
+            ->willReturn($this->createRestaurant('acct_123456'));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $stripePayment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents', 'acct_123456', [
+            "amount" => 3000,
+            "currency" => "eur",
+            "description" => "Order ABC",
+            "payment_method" => "pm_123456",
+            "confirmation_method" => "manual",
+            "confirm" => "true",
+            "capture_method" => "manual",
+            "application_fee_amount" => 750
+        ]);
+
+        $this->stripeManager->createIntent($stripePayment);
+    }
+
+    public function testConfirmIntent()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setStripeUserId('acct_123456');
+
+        $paymentIntent = Stripe\PaymentIntent::constructFrom([
+            'id' => 'pi_12345678',
+            'status' => 'requires_source_action',
+            'next_action' => [
+                'type' => 'use_stripe_sdk'
+            ],
+            'client_secret' => ''
+        ]);
+        $stripePayment->setPaymentIntent($paymentIntent);
+
+        $this->shouldSendStripeRequestForAccount('GET',  '/v1/payment_intents/pi_12345678', 'acct_123456');
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/confirm', 'acct_123456');
+
+        $this->stripeManager->confirmIntent($stripePayment);
+    }
 }

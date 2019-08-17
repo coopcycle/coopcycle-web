@@ -119,6 +119,12 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        // Make sure to call StripeManager::configurePayment()
+        // It will resolve the Stripe account that will be used
+        $stripeManager->configurePayment(
+            $order->getLastPayment(PaymentInterface::STATE_CART)
+        );
+
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
         $timeInfo = $this->orderTimeHelper->getTimeInfo(
