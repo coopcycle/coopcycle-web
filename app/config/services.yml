@@ -145,7 +145,7 @@ services:
 
   AppBundle\Controller\OrderController:
     arguments:
-      $orderManager: '@sylius.manager.order'
+      $objectManager: '@sylius.manager.order'
       $commandBus: '@command_bus'
 
   AppBundle\Controller\PublicController:

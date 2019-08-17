@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Domain\Order\Command\Checkout as CheckoutCommand;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
@@ -11,10 +10,7 @@ use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingDateFilter;
-use AppBundle\Utils\ShippingTimeCalculator;
-use AppBundle\Utils\OrderTimeHelperTrait;
+use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -32,23 +28,18 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class OrderController extends AbstractController
 {
-    use OrderTimeHelperTrait;
-
-    private $orderManager;
+    private $objectManager;
     private $commandBus;
+    private $orderTimeHelper;
 
     public function __construct(
-        ObjectManager $orderManager,
+        ObjectManager $objectManager,
         MessageBus $commandBus,
-        ShippingDateFilter $shippingDateFilter,
-        PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator)
+        OrderTimeHelper $orderTimeHelper)
     {
-        $this->orderManager = $orderManager;
+        $this->objectManager = $objectManager;
         $this->commandBus = $commandBus;
-        $this->shippingDateFilter = $shippingDateFilter;
-        $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->orderTimeHelper = $orderTimeHelper;
     }
 
     /**
@@ -74,7 +65,7 @@ class OrderController extends AbstractController
         // @see AppBundle\EventListener\WebAuthenticationListener
         if ($user !== $order->getCustomer()) {
             $order->setCustomer($user);
-            $this->orderManager->flush();
+            $this->objectManager->flush();
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
@@ -98,12 +89,15 @@ class OrderController extends AbstractController
                 );
             }
 
-            $this->orderManager->flush();
+            $this->objectManager->flush();
 
             return $this->redirectToRoute('order_payment');
         }
 
-        $timeInfo = $this->getTimeInfo($order, $this->getAvailabilities($order));
+        $timeInfo = $this->orderTimeHelper->getTimeInfo(
+            $order,
+            $this->orderTimeHelper->getAvailabilities($order)
+        );
 
         return array(
             'order' => $order,
@@ -127,7 +121,10 @@ class OrderController extends AbstractController
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
-        $timeInfo = $this->getTimeInfo($order, $this->getAvailabilities($order));
+        $timeInfo = $this->orderTimeHelper->getTimeInfo(
+            $order,
+            $this->orderTimeHelper->getAvailabilities($order)
+        );
 
         $parameters =  [
             'order' => $order,
@@ -141,11 +138,9 @@ class OrderController extends AbstractController
 
             $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-            $this->commandBus->handle(
-                new CheckoutCommand($order, $form->get('stripePayment')->get('stripeToken')->getData())
-            );
+            $orderManager->checkout($order, $form->get('stripePayment')->get('stripeToken')->getData());
 
-            $this->orderManager->flush();
+            $this->objectManager->flush();
 
             if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
                 return array_merge($parameters, [
