@@ -15,6 +15,7 @@ use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use SM\StateMachine\StateMachineInterface;
+use Stripe;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
@@ -48,7 +49,37 @@ class StripeManagerTest extends TestCase
         );
     }
 
-    public function testAuthorizeCreatesDirectCharge()
+    private function createRestaurant($stripeUserId = null, $paysStripeFee = true)
+    {
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        if ($stripeUserId) {
+            $stripeAccount = $this->prophesize(StripeAccount::class);
+            $stripeAccount
+                ->getStripeUserId()
+                ->willReturn($stripeUserId);
+            $restaurant
+                ->getStripeAccount(false)
+                ->willReturn($stripeAccount->reveal());
+        } else {
+            $restaurant
+                ->getStripeAccount(false)
+                ->willReturn(null);
+        }
+
+        $contract = $this->prophesize(Contract::class);
+        $contract
+            ->isRestaurantPaysStripeFee()
+            ->willReturn($paysStripeFee);
+
+        $restaurant
+            ->getContract()
+            ->willReturn($contract->reveal());
+
+        return $restaurant->reveal();
+    }
+
+    public function testAuthorizeCreatesDirectChargeWithNoConnectAccount()
     {
         $stripePayment = new StripePayment();
         $stripePayment->setAmount(900);
@@ -60,23 +91,14 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->prophesize(Restaurant::class);
         $contract = $this->prophesize(Contract::class);
 
-        $contract
-            ->isRestaurantPaysStripeFee()
-            ->willReturn(true);
-
-        $restaurant
-            ->getContract()
-            ->willReturn($contract->reveal());
-        $restaurant
-            ->getStripeAccount(false)
-            ->willReturn(null);
+        $restaurant = $this->createRestaurant();
 
         $order
             ->getNumber()
             ->willReturn('000001');
         $order
             ->getRestaurant()
-            ->willReturn($restaurant->reveal());
+            ->willReturn($restaurant);
 
         $stripePayment->setOrder($order->reveal());
 
@@ -91,10 +113,10 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->authorize($stripePayment);
     }
 
-    public function testAuthorizeAddsApplicationFee()
+    public function testAuthorizeCreatesDirectChargeWithConnectAccount()
     {
         $stripePayment = new StripePayment();
-        $stripePayment->setAmount(900);
+        $stripePayment->setAmount(3000);
         $stripePayment->setStripeToken('tok_123456');
         $stripePayment->setCurrencyCode('EUR');
 
@@ -103,25 +125,89 @@ class StripeManagerTest extends TestCase
         $restaurant = $this->prophesize(Restaurant::class);
         $contract = $this->prophesize(Contract::class);
 
-        $stripeAccount
-            ->getStripeUserId()
-            ->willReturn('acct_123');
-
-        $contract
-            ->isRestaurantPaysStripeFee()
-            ->willReturn(true);
-
-        $restaurant
-            ->getContract()
-            ->willReturn($contract->reveal());
-        $restaurant
-            ->getStripeAccount(false)
-            ->willReturn($stripeAccount->reveal());
+        $restaurant = $this->createRestaurant('acct_123');
 
         $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
             ->getRestaurant()
-            ->willReturn($restaurant->reveal());
+            ->willReturn($restaurant);
 
+        $stripePayment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/charges', 'acct_123', [
+            'amount' => 3000,
+            'currency' => 'eur',
+            'source' => 'tok_123456',
+            'description' => 'Order 000001',
+            'capture' => 'false',
+            'application_fee' => 750
+        ]);
+
+        $this->stripeManager->authorize($stripePayment);
+    }
+
+    public function testAuthorizeCreatesDirectChargeWithOwnAccount()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setAmount(3000);
+        $stripePayment->setStripeToken('tok_123456');
+        $stripePayment->setCurrencyCode('EUR');
+
+        $stripeAccount = $this->prophesize(StripeAccount::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $restaurant = $this->prophesize(Restaurant::class);
+        $contract = $this->prophesize(Contract::class);
+
+        $restaurant = $this->createRestaurant('acct_123', $paysStripeFee = false);
+
+        $order
+            ->getNumber()
+            ->willReturn('000001');
+        $order
+            ->getTotal()
+            ->willReturn(3000);
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+
+        $stripePayment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/charges', [
+            'amount' => 3000,
+            'currency' => 'eur',
+            'source' => 'tok_123456',
+            'description' => 'Order 000001',
+            'capture' => 'false',
+            'destination' => [
+                'account' => 'acct_123',
+                'amount' => (3000 - 750)
+            ]
+        ]);
+
+        $this->stripeManager->authorize($stripePayment);
+    }
+
+    public function testAuthorizeAddsApplicationFee()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setAmount(900);
+        $stripePayment->setStripeToken('tok_123456');
+        $stripePayment->setCurrencyCode('EUR');
+
+        $restaurant = $this->createRestaurant('acct_123');
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
         $order
             ->getLastPayment(PaymentInterface::STATE_NEW)
             ->willReturn($stripePayment);
@@ -137,7 +223,7 @@ class StripeManagerTest extends TestCase
 
         $stripePayment->setOrder($order->reveal());
 
-        $this->shouldSendStripeRequest('POST', '/v1/charges', [
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/charges', 'acct_123', [
             'amount' => 900,
             'currency' => 'eur',
             'source' => 'tok_123456',
@@ -149,7 +235,7 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->authorize($stripePayment);
     }
 
-    public function testCaptureCapturesCharge()
+    public function testCaptureWithOwnAccount()
     {
         $stripePayment = new StripePayment();
         $stripePayment->setStripeToken('tok_123456');
@@ -158,6 +244,19 @@ class StripeManagerTest extends TestCase
 
         $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
         $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
+
+        $this->stripeManager->capture($stripePayment);
+    }
+
+    public function testCaptureWithConnectAccount()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setStripeUserId('acct_123456');
+        $stripePayment->setCurrencyCode('EUR');
+        $stripePayment->setCharge('ch_123456');
+
+        $this->shouldSendStripeRequestForAccount('GET', '/v1/charges/ch_123456', 'acct_123456');
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/charges/ch_123456/capture', 'acct_123456');
 
         $this->stripeManager->capture($stripePayment);
     }
