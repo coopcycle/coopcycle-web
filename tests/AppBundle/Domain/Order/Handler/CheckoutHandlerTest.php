@@ -13,6 +13,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use PHPUnit\Framework\TestCase;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Prophecy\Argument;
@@ -45,16 +46,17 @@ class CheckoutHandlerTest extends TestCase
         );
     }
 
-    public function testCheckoutSucceeded()
+    public function testCheckoutLegacy()
     {
         $stripePayment = new StripePayment();
         $stripePayment->setState(PaymentInterface::STATE_CART);
 
+        $charge = Stripe\Charge::constructFrom([
+            'id' => 'ch_123456',
+        ]);
+
         $order = new Order();
         $order->addPayment($stripePayment);
-
-        $charge = new \stdClass();
-        $charge->id = 'ch_123456';
 
         $this->stripeManager
             ->authorize($stripePayment)
@@ -64,10 +66,6 @@ class CheckoutHandlerTest extends TestCase
             ->getAsap(Argument::type('array'))
             ->willReturn((new \DateTime())->format(\DateTime::ATOM));
 
-        $this->orderNumberAssigner
-            ->assignNumber($order)
-            ->shouldBeCalled();
-
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
@@ -76,8 +74,43 @@ class CheckoutHandlerTest extends TestCase
 
         call_user_func_array($this->handler, [$command]);
 
-        $this->assertEquals('tok_123456', $stripePayment->getStripeToken());
+        $this->assertNotNull($order->getShippedAt());
         $this->assertEquals('ch_123456', $stripePayment->getCharge());
+    }
+
+    public function testCheckoutWithPaymentIntent()
+    {
+        $stripePayment = new StripePayment();
+        $stripePayment->setState(PaymentInterface::STATE_CART);
+
+        $paymentIntent = Stripe\PaymentIntent::constructFrom([
+            'id' => 'pi_12345678',
+            'status' => 'requires_source_action',
+            'next_action' => [
+                'type' => 'use_stripe_sdk'
+            ],
+            'client_secret' => ''
+        ]);
+        $stripePayment->setPaymentIntent($paymentIntent);
+
+        $order = new Order();
+        $order->addPayment($stripePayment);
+
+        $this->stripeManager
+            ->confirmIntent($stripePayment)
+            ->willReturn($paymentIntent);
+
+        $this->orderTimeHelper
+            ->getAsap(Argument::type('array'))
+            ->willReturn((new \DateTime())->format(\DateTime::ATOM));
+
+        $this->eventRecorder
+            ->record(Argument::type(CheckoutSucceeded::class))
+            ->shouldBeCalled();
+
+        $command = new Checkout($order, 'pi_12345678');
+
+        call_user_func_array($this->handler, [$command]);
 
         $this->assertNotNull($order->getShippedAt());
     }
@@ -87,16 +120,22 @@ class CheckoutHandlerTest extends TestCase
         $stripePayment = new StripePayment();
         $stripePayment->setState(PaymentInterface::STATE_CART);
 
+        $paymentIntent = Stripe\PaymentIntent::constructFrom([
+            'id' => 'pi_12345678',
+            'status' => 'requires_source_action',
+            'next_action' => [
+                'type' => 'use_stripe_sdk'
+            ],
+            'client_secret' => ''
+        ]);
+        $stripePayment->setPaymentIntent($paymentIntent);
+
         $order = new Order();
         $order->addPayment($stripePayment);
 
         $this->stripeManager
-            ->authorize($stripePayment)
+            ->confirmIntent($stripePayment)
             ->willThrow(new \Exception('Lorem ipsum'));
-
-        $this->orderNumberAssigner
-            ->assignNumber($order)
-            ->shouldBeCalled();
 
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))

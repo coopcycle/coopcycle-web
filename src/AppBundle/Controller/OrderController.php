@@ -9,6 +9,7 @@ use AppBundle\Entity\StripePayment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
@@ -110,7 +111,7 @@ class OrderController extends AbstractController
      * @Route("/payment", name="order_payment")
      * @Template()
      */
-    public function paymentAction(Request $request, OrderManager $orderManager, CartContextInterface $cartContext)
+    public function paymentAction(Request $request, OrderManager $orderManager, CartContextInterface $cartContext, StripeManager $stripeManager)
     {
         $order = $cartContext->getCart();
 

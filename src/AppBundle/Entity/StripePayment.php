@@ -310,4 +310,15 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
             return $this->details['payment_method'];
         }
     }
+
+    public function requiresUseStripeSDK()
+    {
+        return $this->getPaymentIntentStatus() === 'requires_action' &&
+            $this->getPaymentIntentNextAction() === 'use_stripe_sdk';
+    }
+
+    public function requiresCapture()
+    {
+        return $this->getPaymentIntentStatus() === 'requires_capture';
+    }
 }

@@ -31,22 +31,29 @@ class CheckoutHandler
     public function __invoke(Checkout $command)
     {
         $order = $command->getOrder();
-
         $stripeToken = $command->getStripeToken();
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         // TODO Check if $stripePayment !== null
 
-        // Assign order number now because it is needed for Stripe
-        $this->orderNumberAssigner->assignNumber($order);
-
-        $stripePayment->setStripeToken($stripeToken);
-
         try {
 
-            $charge = $this->stripeManager->authorize($stripePayment);
-            $stripePayment->setCharge($charge->id);
+            if ($stripePayment->getPaymentIntent() && $stripePayment->requiresUseStripeSDK()) {
+                if ($stripePayment->getPaymentIntent() !== $stripeToken) {
+                    $this->eventRecorder->record(new Event\CheckoutFailed($order, $stripePayment, 'Payment Intent mismatch'));
+                    return;
+                }
+
+                $this->stripeManager->confirmIntent($stripePayment);
+            } else {
+                $this->orderNumberAssigner->assignNumber($order);
+                $stripePayment->setStripeToken($stripeToken);
+
+                $charge = $this->stripeManager->authorize($stripePayment);
+
+                $stripePayment->setCharge($charge->id);
+            }
 
             if (null === $order->getShippedAt()) {
                 $availabilities = $this->orderTimeHelper->getAvailabilities($order);
