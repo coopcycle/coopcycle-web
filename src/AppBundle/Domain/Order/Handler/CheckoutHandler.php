@@ -39,13 +39,15 @@ class CheckoutHandler
 
         try {
 
-            if ($stripePayment->getPaymentIntent() && $stripePayment->requiresUseStripeSDK()) {
+            if ($stripePayment->getPaymentIntent()) {
                 if ($stripePayment->getPaymentIntent() !== $stripeToken) {
                     $this->eventRecorder->record(new Event\CheckoutFailed($order, $stripePayment, 'Payment Intent mismatch'));
                     return;
                 }
 
-                $this->stripeManager->confirmIntent($stripePayment);
+                if ($stripePayment->requiresUseStripeSDK()) {
+                    $this->stripeManager->confirmIntent($stripePayment);
+                }
             } else {
                 $this->orderNumberAssigner->assignNumber($order);
                 $stripePayment->setStripeToken($stripeToken);
