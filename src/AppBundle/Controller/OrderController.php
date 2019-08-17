@@ -134,7 +134,6 @@ class OrderController extends AbstractController
             'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
             'asap' => $timeInfo['asap'],
-            'form' => $form->createView(),
         ];
 
         $form->handleRequest($request);
@@ -150,6 +149,7 @@ class OrderController extends AbstractController
 
             if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
                 return array_merge($parameters, [
+                    'form' => $form->createView(),
                     'error' => $stripePayment->getLastError()
                 ]);
             }
@@ -161,6 +161,8 @@ class OrderController extends AbstractController
                 'reset' => 'yes'
             ]);
         }
+
+        $parameters['form'] = $form->createView();
 
         return $parameters;
     }

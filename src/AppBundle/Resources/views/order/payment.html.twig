@@ -44,6 +44,8 @@
                 </div>
               {% endif %}
 
+              {{ form_errors(form) }}
+
               {{ form_widget(form.stripePayment.stripeToken) }}
 
               <div class="form-group">
