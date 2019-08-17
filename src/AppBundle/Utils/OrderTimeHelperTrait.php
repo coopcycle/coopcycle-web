@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 trait OrderTimeHelperTrait
 {
-	private function getAvailabilities(OrderInterface $cart)
+    public function getAvailabilities(OrderInterface $cart)
     {
         $restaurant = $cart->getRestaurant();
 
@@ -23,7 +23,7 @@ trait OrderTimeHelperTrait
         return array_values($availabilities);
     }
 
-    private function getTimeInfo(OrderInterface $cart, array $availabilities)
+    public function getTimeInfo(OrderInterface $cart, array $availabilities)
     {
         $preparationTime = $this->preparationTimeCalculator
             ->createForRestaurant($cart->getRestaurant())
@@ -61,7 +61,7 @@ trait OrderTimeHelperTrait
         ];
     }
 
-    private function getAsap(array $availabilities)
+    public function getAsap(array $availabilities)
     {
         // TODO Use sort
         return $availabilities[0];

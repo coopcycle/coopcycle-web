@@ -400,6 +400,8 @@ services:
       - '@coopcycle.preparation_time_calculator'
       - '@coopcycle.shipping_time_calculator'
 
+  AppBundle\Utils\OrderTimeHelper: ~
+
   AppBundle\Entity\Listener\TaskListener:
     arguments:
       - "@event_bus"
