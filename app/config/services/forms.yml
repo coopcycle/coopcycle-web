@@ -116,13 +116,6 @@ services:
       $country: '%country_iso%'
     tags: [ form.type ]
 
-  AppBundle\Form\Checkout\CheckoutPaymentType:
-    arguments:
-      - '@coopcycle.shipping_date_filter'
-      - '@coopcycle.preparation_time_calculator'
-      - '@coopcycle.shipping_time_calculator'
-    tags: [ form.type ]
-
   AppBundle\Form\ApiAppType:
     arguments:
       - '@Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface'

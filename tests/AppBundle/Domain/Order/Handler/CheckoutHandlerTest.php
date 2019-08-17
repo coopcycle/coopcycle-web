@@ -10,6 +10,7 @@ use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimeHelper;
 use PHPUnit\Framework\TestCase;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -30,10 +31,17 @@ class CheckoutHandlerTest extends TestCase
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
 
+        $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
+
+        $this->orderTimeHelper
+            ->getAvailabilities(Argument::type(Order::class))
+            ->willReturn([]);
+
         $this->handler = new CheckoutHandler(
             $this->eventRecorder->reveal(),
             $this->orderNumberAssigner->reveal(),
-            $this->stripeManager->reveal()
+            $this->stripeManager->reveal(),
+            $this->orderTimeHelper->reveal()
         );
     }
 
@@ -52,6 +60,10 @@ class CheckoutHandlerTest extends TestCase
             ->authorize($stripePayment)
             ->willReturn($charge);
 
+        $this->orderTimeHelper
+            ->getAsap(Argument::type('array'))
+            ->willReturn((new \DateTime())->format(\DateTime::ATOM));
+
         $this->orderNumberAssigner
             ->assignNumber($order)
             ->shouldBeCalled();
@@ -66,6 +78,8 @@ class CheckoutHandlerTest extends TestCase
 
         $this->assertEquals('tok_123456', $stripePayment->getStripeToken());
         $this->assertEquals('ch_123456', $stripePayment->getCharge());
+
+        $this->assertNotNull($order->getShippedAt());
     }
 
     public function testCheckoutFailed()
@@ -95,5 +109,7 @@ class CheckoutHandlerTest extends TestCase
         $command = new Checkout($order, 'tok_123456');
 
         call_user_func_array($this->handler, [$command]);
+
+        $this->assertNull($order->getShippedAt());
     }
 }

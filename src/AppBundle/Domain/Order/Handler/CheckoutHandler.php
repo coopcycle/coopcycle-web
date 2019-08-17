@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Service\StripeManager;
+use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -18,11 +19,13 @@ class CheckoutHandler
     public function __construct(
         RecordsMessages $eventRecorder,
         OrderNumberAssignerInterface $orderNumberAssigner,
-        StripeManager $stripeManager)
+        StripeManager $stripeManager,
+        OrderTimeHelper $orderTimeHelper)
     {
         $this->eventRecorder = $eventRecorder;
         $this->orderNumberAssigner = $orderNumberAssigner;
         $this->stripeManager = $stripeManager;
+        $this->orderTimeHelper = $orderTimeHelper;
     }
 
     public function __invoke(Checkout $command)
@@ -44,6 +47,14 @@ class CheckoutHandler
 
             $charge = $this->stripeManager->authorize($stripePayment);
             $stripePayment->setCharge($charge->id);
+
+            if (null === $order->getShippedAt()) {
+                $availabilities = $this->orderTimeHelper->getAvailabilities($order);
+                $asap = $this->orderTimeHelper->getAsap($availabilities);
+
+                $order->setShippedAt(new \DateTime($asap));
+            }
+
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $stripePayment));
 
         } catch (\Exception $e) {
