@@ -62,14 +62,31 @@ trait StripeTrait
             ->shouldNotBeCalled();
     }
 
-    protected function shouldSendStripeRequest($method, $path, array $params = [], $headers = null, $hasFile = false)
+    protected function shouldSendStripeRequest($method, $path, array $params = [])
     {
         ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
 
         $absUrl = Stripe::$apiBase . $path;
 
         $this->stripeHttpClient
-            ->request(strtolower($method), $absUrl, Argument::type('array'), $params, $hasFile)
+            ->request(strtolower($method), $absUrl, Argument::type('array'), $params, false)
+            ->shouldBeCalled()
+            ->will(function ($args) {
+                $curlClient = HttpClient\CurlClient::instance();
+                return $curlClient->request($args[0], $args[1], $args[2], $args[3], $args[4]);
+            });
+    }
+
+    protected function shouldSendStripeRequestForAccount($method, $path, $stripeAccount, array $params = [])
+    {
+        ApiRequestor::setHttpClient($this->stripeHttpClient->reveal());
+
+        $absUrl = Stripe::$apiBase . $path;
+
+        $this->stripeHttpClient
+            ->request(strtolower($method), $absUrl, Argument::that(function ($headers) use ($stripeAccount) {
+                return in_array("Stripe-Account: {$stripeAccount}", $headers);
+            }), $params, false)
             ->shouldBeCalled()
             ->will(function ($args) {
                 $curlClient = HttpClient\CurlClient::instance();
