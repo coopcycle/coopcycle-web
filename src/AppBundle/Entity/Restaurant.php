@@ -506,23 +506,33 @@ class Restaurant extends FoodEstablishment
 
         $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
-        $period = CarbonPeriod::create(
-            $nextOpeningDate, '15 minutes', $nextClosingDate,
-            CarbonPeriod::EXCLUDE_END_DATE
-        );
-        foreach ($period as $date) {
-            $availabilities[] = $date->format(\DateTime::ATOM);
-        }
+        if (!$nextClosingDate) { // It is open 24/7
+            $period = CarbonPeriod::create(
+                $nextOpeningDate, '15 minutes', Carbon::instance($now)->add(2, 'days'),
+                CarbonPeriod::EXCLUDE_END_DATE
+            );
+            foreach ($period as $date) {
+                $availabilities[] = $date->format(\DateTime::ATOM);
+            }
+        } else {
+            $period = CarbonPeriod::create(
+                $nextOpeningDate, '15 minutes', $nextClosingDate,
+                CarbonPeriod::EXCLUDE_END_DATE
+            );
+            foreach ($period as $date) {
+                $availabilities[] = $date->format(\DateTime::ATOM);
+            }
 
-        $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
-        $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
+            $nextOpeningDate = $this->getNextOpeningDate($nextClosingDate);
+            $nextClosingDate = $this->getNextClosingDate($nextOpeningDate);
 
-        $period = CarbonPeriod::create(
-            $nextOpeningDate, '15 minutes', $nextClosingDate,
-            CarbonPeriod::EXCLUDE_END_DATE
-        );
-        foreach ($period as $date) {
-            $availabilities[] = $date->format(\DateTime::ATOM);
+            $period = CarbonPeriod::create(
+                $nextOpeningDate, '15 minutes', $nextClosingDate,
+                CarbonPeriod::EXCLUDE_END_DATE
+            );
+            foreach ($period as $date) {
+                $availabilities[] = $date->format(\DateTime::ATOM);
+            }
         }
 
         return $availabilities;

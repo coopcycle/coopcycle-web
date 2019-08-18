@@ -10,6 +10,9 @@ class TimeRange
 {
     private $weekdays = [];
     private $timeRanges = [];
+    private $is247 = false;
+
+    const TIME_RANGE_247 = 'Mo-Su 00:00-23:59';
 
     const DAYS = [
         1 => 'Mo',
@@ -27,6 +30,11 @@ class TimeRange
 
         if (empty($range)) {
             throw new EmptyRangeException('$range must be a non-empty string');
+        }
+
+        if (self::TIME_RANGE_247 === $range) {
+            $this->is247 = true;
+            return;
         }
 
         $parts = preg_split('/[\s,]+/', $range);
@@ -118,6 +126,10 @@ class TimeRange
             $date = Carbon::now();
         }
 
+        if ($this->is247) {
+            return true;
+        }
+
         if (!$this->checkWeekday($date)) {
             return false;
         }
@@ -156,6 +168,10 @@ class TimeRange
     {
         if (!$now) {
             $now = Carbon::now();
+        }
+
+        if ($this->is247) {
+            return null;
         }
 
         $date = clone $now;

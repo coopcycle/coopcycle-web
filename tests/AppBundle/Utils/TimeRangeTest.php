@@ -16,7 +16,6 @@ class TimeRangeTest extends TestCase
         $timeRange = new TimeRange('');
     }
 
-
     public function invalidRangeProvider()
     {
         return [
@@ -36,6 +35,14 @@ class TimeRangeTest extends TestCase
         $this->expectExceptionMessage($message);
 
         $timeRange = new TimeRange($range);
+    }
+
+    public function test247()
+    {
+        $timeRange = new TimeRange('Mo-Su 00:00-23:59');
+
+        $this->assertEquals(new \DateTime('2017-05-16 06:30'), $timeRange->getNextOpeningDate(new \DateTime('2017-05-16 06:30')));
+        $this->assertNull($timeRange->getNextClosingDate(new \DateTime('2017-05-16 06:30')));
     }
 
     public function testIsOpen()
