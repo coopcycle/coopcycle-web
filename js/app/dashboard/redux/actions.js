@@ -438,6 +438,35 @@ function cancelTask(task) {
   }
 }
 
+function duplicateTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = `${task['@id']}/duplicate`
+
+    createClient(dispatch).request({
+      method: 'post',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess(response.data))
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
 export {
   updateTask,
   addTaskList,
@@ -461,6 +490,7 @@ export {
   createTask,
   completeTask,
   cancelTask,
+  duplicateTask,
   openFiltersModal,
   closeFiltersModal,
   setFilterValue,

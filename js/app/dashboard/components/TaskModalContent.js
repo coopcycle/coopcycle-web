@@ -19,7 +19,7 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 
-import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask } from '../redux/actions'
+import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask } from '../redux/actions'
 
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -187,8 +187,17 @@ class TaskModalContent extends React.Component {
     return (
       <div className="modal-footer">
         { (!!task && task.status === 'TODO') && (
-          <button type="button" className="btn pull-left" onClick={ e => this.props.cancelTask(task) }>
+          <button type="button" className="btn pull-left"
+            onClick={ e => this.props.cancelTask(task) }
+            disabled={ this.props.loading }>
             <span className="text-danger">{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
+          </button>
+        )}
+        { (!!task && task.hasOwnProperty('@id')) && (
+          <button type="button" className="btn pull-left"
+            onClick={ e => this.props.duplicateTask(task) }
+            disabled={ this.props.loading }>
+            <span className="text-success">{ this.props.t('ADMIN_DASHBOARD_DUPLICATE_TASK') }</span>
           </button>
         )}
         <button type="submit" className="btn btn-primary" disabled={ this.props.loading }>
@@ -464,7 +473,8 @@ function mapDispatchToProps(dispatch) {
     closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
     createTask: (task) => dispatch(createTask(task)),
     completeTask: (task, notes, success) => dispatch(completeTask(task, notes, success)),
-    cancelTask: (task) => dispatch(cancelTask(task))
+    cancelTask: (task) => dispatch(cancelTask(task)),
+    duplicateTask: (task) => dispatch(duplicateTask(task))
   }
 }
 
