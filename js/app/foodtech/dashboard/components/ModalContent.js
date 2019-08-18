@@ -51,6 +51,9 @@ class ModalContent extends React.Component {
           <div>
             <strong>Préparation à { moment(order.preparationExpectedAt).format('LT') }</strong>
           </div>
+          { order.reusablePackagingEnabled && (
+            <span className="text-warning">{ this.props.t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
+          )}
         </Timeline.Item>
         <Timeline.Item dot={<i className="fa fa-cube"></i>}>
           <div>
