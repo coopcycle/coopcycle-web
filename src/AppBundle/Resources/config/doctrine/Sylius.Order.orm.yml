@@ -10,6 +10,10 @@ AppBundle\Entity\Sylius\Order:
             type: boolean
             options:
                 default: false
+        giveBackUnits:
+            type: integer
+            column: give_back_units
+            nullable: true
     manyToOne:
         customer:
             targetEntity: AppBundle\Entity\ApiUser

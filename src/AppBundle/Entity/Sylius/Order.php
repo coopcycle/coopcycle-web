@@ -240,6 +240,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $receipt;
 
+    protected $giveBackUnits = 0;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -752,5 +754,25 @@ class Order extends BaseOrder implements OrderInterface
 
             return $receipt;
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGiveBackUnits()
+    {
+        return $this->giveBackUnits;
+    }
+
+    /**
+     * @param mixed $reusablePackagingEnabled
+     *
+     * @return self
+     */
+    public function setGiveBackUnits($giveBackUnits)
+    {
+        $this->giveBackUnits = $giveBackUnits;
+
+        return $this;
     }
 }
