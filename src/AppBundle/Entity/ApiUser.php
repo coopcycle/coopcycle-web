@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
+use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -346,5 +347,51 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->reusablePackagingUnits->add($reusablePackagingUnit);
 
         return $this;
+    }
+
+    public function hasReusablePackagingUnitsForRestaurant(Restaurant $restaurant)
+    {
+        foreach ($this->getReusablePackagingUnits() as $reusablePackagingUnit) {
+            if ($reusablePackagingUnit->getStockable()->getRestaurant() === $restaurant) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function countReusablePackagingUnitsForRestaurant(Restaurant $restaurant)
+    {
+        $units = 0;
+
+        foreach ($this->getReusablePackagingUnits() as $reusablePackagingUnit) {
+            if ($reusablePackagingUnit->getStockable()->getRestaurant() === $restaurant) {
+                ++$units;
+            }
+        }
+
+        return $units;
+    }
+
+    public function hasReusablePackagingUnitsForOrder(OrderInterface $order)
+    {
+        $restaurant = $order->getRestaurant();
+
+        if (null !== $restaurant) {
+            return $this->hasReusablePackagingUnitsForRestaurant($restaurant);
+        }
+
+        return false;
+    }
+
+    public function countReusablePackagingUnitsForOrder(OrderInterface $order)
+    {
+        $restaurant = $order->getRestaurant();
+
+        if (null !== $restaurant) {
+            return $this->countReusablePackagingUnitsForRestaurant($restaurant);
+        }
+
+        return 0;
     }
 }

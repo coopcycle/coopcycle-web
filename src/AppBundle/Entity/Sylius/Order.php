@@ -667,6 +667,21 @@ class Order extends BaseOrder implements OrderInterface
         return $this->reusablePackagingEnabled;
     }
 
+    public function countReusablePackagingUnits(): int
+    {
+        $units = 0;
+        foreach ($this->getItems() as $orderItem) {
+            $product = $orderItem->getVariant()->getProduct();
+            if ($product->isReusablePackagingEnabled()) {
+                $units += ceil($product->getReusablePackagingUnit() * $orderItem->getQuantity());
+            }
+        }
+
+        return $units;
+    }
+
+
+
     /**
      * @param mixed $reusablePackagingEnabled
      *
