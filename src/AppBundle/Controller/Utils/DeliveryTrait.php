@@ -107,4 +107,15 @@ trait DeliveryTrait
             'debug_pricing' => $request->query->getBoolean('debug', false),
         ]);
     }
+
+    public function deliveryAction($id, Request $request)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery);
+
+        return $this->renderDeliveryForm($delivery, $request);
+    }
 }

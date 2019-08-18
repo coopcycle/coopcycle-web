@@ -482,15 +482,6 @@ class AdminController extends Controller
         ];
     }
 
-    public function deliveryAction($id, Request $request)
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        return $this->renderDeliveryForm($delivery, $request);
-    }
-
     protected function getDeliveryRoutes()
     {
         return [
