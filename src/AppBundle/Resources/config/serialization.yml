@@ -52,6 +52,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     pickupExpectedAt:
       groups: ['order']
+    reusablePackagingEnabled:
+      groups: ['order']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:

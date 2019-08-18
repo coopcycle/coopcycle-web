@@ -117,7 +117,8 @@ Feature: Orders
       "createdAt":@string@,
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
-      "pickupExpectedAt":null
+      "pickupExpectedAt":null,
+      "reusablePackagingEnabled": false
     }
     """
 
@@ -242,7 +243,8 @@ Feature: Orders
       "createdAt":@string@,
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
-      "pickupExpectedAt":null
+      "pickupExpectedAt":null,
+      "reusablePackagingEnabled": false
     }
     """
 
@@ -366,7 +368,8 @@ Feature: Orders
       "createdAt":@string@,
       "shippedAt":"@string@.isDateTime()",
       "preparationExpectedAt":null,
-      "pickupExpectedAt":null
+      "pickupExpectedAt":null,
+      "reusablePackagingEnabled": false
     }
     """
 
