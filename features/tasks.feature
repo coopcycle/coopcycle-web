@@ -730,3 +730,42 @@ Feature: Tasks
         }
       }
       """
+
+  Scenario: Duplicate task
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/tasks/1/duplicate" with body:
+      """
+      {}
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/7",
+        "@type":"Task",
+        "id":7,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "doneAfter":"2018-12-01T10:30:00+01:00",
+        "doneBefore":"2018-12-01T11:00:00+01:00",
+        "comments":"",
+        "events":@array@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "deliveryColor":null,
+        "group":null,
+        "tags":@array@
+      }
+      """

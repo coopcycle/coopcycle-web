@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\TaskEvent;
@@ -83,5 +84,51 @@ class TaskTest extends TestCase
         $this->task->getEvents()->add($event4);
 
         $this->assertSame($this->task->getLastEvent('task:assigned'), $event3);
+    }
+
+    public function testDuplicate()
+    {
+        $address = new Address();
+
+        $task = new Task();
+        $task->setType('DROPOFF');
+        $task->setAddress($address);
+        $task->setComments('Beware of the dog');
+        $task->setDoneAfter(new \DateTime('2019-08-18 08:00'));
+        $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
+
+        $clone = $task->duplicate();
+
+        $this->assertEquals('DROPOFF', $clone->getType());
+        $this->assertSame($address, $clone->getAddress());
+        $this->assertEquals('Beware of the dog', $clone->getComments());
+        $this->assertEquals(new \DateTime('2019-08-18 08:00'), $clone->getDoneAfter());
+        $this->assertEquals(new \DateTime('2019-08-18 12:00'), $clone->getDoneBefore());
+    }
+
+    public function testDuplicateFailedTask()
+    {
+        $address = new Address();
+
+        $task = new Task();
+        $task->setType('DROPOFF');
+        $task->setStatus('FAILED');
+        $task->setAddress($address);
+        $task->setComments('Beware of the dog');
+        $task->setDoneAfter(new \DateTime('2019-08-18 08:00'));
+        $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
+
+        $clone = $task->duplicate();
+
+        $delivery = new Delivery();
+        $delivery->removeTask($delivery->getDropoff());
+        $delivery->addTask($task);
+
+        $this->assertEquals('DROPOFF', $clone->getType());
+        $this->assertEquals('TODO', $clone->getStatus());
+        $this->assertSame($address, $clone->getAddress());
+        $this->assertEquals('Beware of the dog', $clone->getComments());
+        $this->assertEquals(new \DateTime('2019-08-18 08:00'), $clone->getDoneAfter());
+        $this->assertEquals(new \DateTime('2019-08-18 12:00'), $clone->getDoneBefore());
     }
 }

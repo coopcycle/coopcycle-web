@@ -9,6 +9,7 @@ use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
+use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
@@ -83,6 +84,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="PUT",
  *       "path"="/tasks/{id}/cancel",
  *       "controller"=TaskCancel::class,
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "task_duplicate"={
+ *       "method"="POST",
+ *       "path"="/tasks/{id}/duplicate",
+ *       "controller"=TaskDuplicate::class,
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  *   }
@@ -421,5 +428,19 @@ class Task implements TaggableInterface
         $this->images->add($images);
 
         return $this;
+    }
+
+    public function duplicate()
+    {
+        $task = new self();
+
+        $task->setType($this->getType());
+        $task->setComments($this->getComments());
+        $task->setAddress($this->getAddress());
+        $task->setDoneAfter($this->getDoneAfter());
+        $task->setDoneBefore($this->getDoneBefore());
+        $task->setTags($this->getTags());
+
+        return $task;
     }
 }
