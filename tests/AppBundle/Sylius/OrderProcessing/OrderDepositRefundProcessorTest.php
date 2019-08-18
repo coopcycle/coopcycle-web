@@ -66,6 +66,20 @@ class OrderDepositRefundProcessorTest extends TestCase
         return $orderItem;
     }
 
+    public function testNoRestaurantDoesNothing()
+    {
+        $order = new Order();
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('int'),
+            Argument::type('bool')
+        )->shouldNotBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order);
+    }
+
     public function testRestaurantDepositRefundDisabledDoesNothing()
     {
         $order = new Order();

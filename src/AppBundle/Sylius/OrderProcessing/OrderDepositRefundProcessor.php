@@ -28,7 +28,13 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     {
         $order->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
 
-        if (!$order->getRestaurant()->getDepositRefundEnabled()) {
+        $restaurant = $order->getRestaurant();
+
+        if (null === $restaurant) {
+            return;
+        }
+
+        if (!$restaurant->getDepositRefundEnabled()) {
             return;
         }
 
