@@ -1,0 +1,23 @@
+{% extends "@App/profile.html.twig" %}
+
+{% block content %}
+<h3>{{ 'profile.reusable_packaging'|trans }}</h3>
+
+{% if packagings is empty %}
+<div class="alert alert-warning">
+  {%  trans %}profile.reusable_packaging.empty{%  endtrans %}
+</div>
+{% else %}
+<table class="table">
+  <tbody>
+    {% for packaging in packagings %}
+    <tr>
+      <td>{{ packaging.reusable_packaging.inventoryName }}</td>
+      <td class="text-right">{{ packaging.units }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

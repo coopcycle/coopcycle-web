@@ -515,4 +515,34 @@ class ProfileController extends Controller
 
         return new Response('', 204);
     }
+
+    /**
+     * @Route("/profile/reusable-packaging", name="profile_reusable_packaging")
+     */
+    public function reusablePackagingAction(Request $request, SocketIoManager $socketIoManager)
+    {
+        $units = $this->getUser()->getReusablePackagingUnits();
+
+        $hash = new \SplObjectStorage();
+        foreach ($units as $unit) {
+            $reusablePackaging = $unit->getStockable();
+            if (!isset($hash[$reusablePackaging])) {
+                $hash[$reusablePackaging] = 0;
+            }
+
+            $hash[$reusablePackaging] += 1;
+        }
+
+        $packagings = [];
+        foreach ($hash as $reusablePackaging) {
+            $packagings[] = [
+                'reusable_packaging' => $reusablePackaging,
+                'units' => $hash[$reusablePackaging],
+            ];
+        }
+
+        return $this->render('@App/profile/reusable_packaging.html.twig', [
+            'packagings' => $packagings
+        ]);
+    }
 }
