@@ -80,7 +80,7 @@
       {% endfor %}
     {% endif %}
     {% if packaging_adjustments|length > 0 %}
-      {% for adjustment in deposit_adjustments %}
+      {% for adjustment in packaging_adjustments %}
       <tr>
         <th>{{ adjustment.label }}</th>
         <td class="text-right">
