@@ -1,0 +1,28 @@
+AppBundle\Entity\ReusablePackaging:
+    type: entity
+    table: reusable_packaging
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        price:
+            type: integer
+        onHold:
+            type: integer
+            column: on_hold
+        onHand:
+            type: integer
+            column: on_hand
+        tracked:
+            type: boolean
+    manyToOne:
+        restaurant:
+            targetEntity: AppBundle\Entity\Restaurant
+            joinColumns:
+                restaurant_id:
+                    referencedColumnName: id

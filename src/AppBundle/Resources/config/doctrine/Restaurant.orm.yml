@@ -255,7 +255,11 @@ AppBundle\Entity\Restaurant:
             mappedBy: restaurant
         stripeAccounts:
             targetEntity: AppBundle\Entity\RestaurantStripeAccount
+            mappedBy: restaurant
             cascade:
                 - all
+        reusablePackagings:
+            targetEntity: AppBundle\Entity\ReusablePackaging
             mappedBy: restaurant
-    lifecycleCallbacks: {  }
+            cascade:
+                - all

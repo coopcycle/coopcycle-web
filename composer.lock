@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c18215567e6dc60bda1227dcd168fe5f",
+    "content-hash": "b04d3de1c17c252323eb0f016abe106e",
     "packages": [
         {
             "name": "api-platform/core",
@@ -10440,6 +10440,68 @@
                 "money"
             ],
             "time": "2019-06-25T08:09:35+00:00"
+        },
+        {
+            "name": "sylius/inventory",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sylius/Inventory.git",
+                "reference": "41e4b4ed7f2f6826135161fd35a420eeaa725820"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sylius/Inventory/zipball/41e4b4ed7f2f6826135161fd35a420eeaa725820",
+                "reference": "41e4b4ed7f2f6826135161fd35a420eeaa725820",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "sylius/resource": "^1.2",
+                "webmozart/assert": "^1.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sylius\\Component\\Inventory\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paweł Jędrzejewski",
+                    "homepage": "http://pjedrzejewski.com"
+                },
+                {
+                    "name": "Sylius project",
+                    "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
+                }
+            ],
+            "description": "Flexible inventory management for PHP applications.",
+            "homepage": "http://sylius.com",
+            "keywords": [
+                "ecommerce",
+                "inventory",
+                "shop",
+                "stock",
+                "sylius"
+            ],
+            "time": "2019-05-07T12:44:46+00:00"
         },
         {
             "name": "sylius/locale",
