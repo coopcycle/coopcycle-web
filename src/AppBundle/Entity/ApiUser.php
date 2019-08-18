@@ -101,6 +101,8 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     protected $quotesAllowed = false;
 
+    protected $reusablePackagingUnits;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -108,6 +110,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
         $this->remotePushTokens = new ArrayCollection();
+        $this->reusablePackagingUnits = new ArrayCollection();
 
         parent::__construct();
     }
@@ -322,6 +325,25 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     public function setQuotesAllowed($quotesAllowed)
     {
         $this->quotesAllowed = $quotesAllowed;
+    }
+
+    public function getReusablePackagingUnits()
+    {
+        return $this->reusablePackagingUnits;
+    }
+
+    public function setReusablePackagingUnits($reusablePackagingUnits)
+    {
+        $this->reusablePackagingUnits = $reusablePackagingUnits;
+
+        return $this;
+    }
+
+    public function addReusablePackagingUnit($reusablePackagingUnit)
+    {
+        $reusablePackagingUnit->setUser($this);
+
+        $this->reusablePackagingUnits->add($reusablePackagingUnit);
 
         return $this;
     }

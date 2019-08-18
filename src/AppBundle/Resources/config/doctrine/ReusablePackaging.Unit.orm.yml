@@ -1,0 +1,25 @@
+AppBundle\Entity\ReusablePackaging\Unit:
+    type: entity
+    table: reusable_packaging_unit
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        operation:
+            type: string
+        value:
+            type: integer
+        createdAt:
+            type: datetime
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+    manyToOne:
+        stockable:
+            targetEntity: AppBundle\Entity\ReusablePackaging
+        user:
+            targetEntity: AppBundle\Entity\ApiUser

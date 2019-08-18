@@ -47,6 +47,11 @@ AppBundle\Entity\ApiUser:
             mappedBy: user
             cascade:
                 - persist
+        reusablePackagingUnits:
+            targetEntity: AppBundle\Entity\ReusablePackaging\Unit
+            mappedBy: user
+            cascade:
+                - all
     manyToOne:
         channel:
             targetEntity: Sylius\Component\Channel\Model\ChannelInterface
