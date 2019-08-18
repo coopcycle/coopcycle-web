@@ -20,22 +20,36 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->normalizer = $normalizer;
     }
 
-    public function normalize($object, $format = null, array $context = array())
+    private function normalizeAdjustments(array $adjustments)
     {
-        $data = $this->normalizer->normalize($object, $format, $context);
+        $data = array_map(function (BaseAdjustmentInterface $adjustment) {
 
-        $adjustments = array_map(function (BaseAdjustmentInterface $adjustment) {
             return [
                 'id' => $adjustment->getId(),
                 'label' => $adjustment->getLabel(),
                 'amount' => $adjustment->getAmount(),
             ];
-        }, $object->getAdjustments(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray());
+        }, $adjustments);
+
+        return array_values($data);
+    }
+
+    public function normalize($object, $format = null, array $context = array())
+    {
+        $data = $this->normalizer->normalize($object, $format, $context);
+
+        $optionsAdjustments = $object->getAdjustments(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray();
+        $packagingAdjustments = $object->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray();
 
         $data['name'] = $object->getVariant()->getProduct()->getName();
         $data['adjustments'] = [
-            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT => array_values($adjustments)
+            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT => $this->normalizeAdjustments($optionsAdjustments)
         ];
+
+        if (count($packagingAdjustments) > 0) {
+            $data['adjustments'][AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT]
+                = $this->normalizeAdjustments($packagingAdjustments);
+        }
 
         return $data;
     }
