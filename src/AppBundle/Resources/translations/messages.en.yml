@@ -362,8 +362,12 @@ form.delivery.duration.label: Duration
 form.delivery.store.label: Store
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
+form.delivery.to_be_confirmed.warning: You must confirm the order
+form.delivery.has_order.info: This delivery is linked to an order
 form.delivery.package.label: Package
 form.delivery.packages.label: Packages
+form.delivery.time_slot.label: Time slot
+form.delivery.view_order: View order
 form.order.accept.label: Accept
 form.order.accept.help: Once you have accepted the order, the customer will be notified
   by email.
