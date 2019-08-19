@@ -358,10 +358,14 @@ services:
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
     arguments: [ '@coopcycle.repository.zone' ]
 
+  AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider: ~
+
   AppBundle\ExpressionLanguage\ExpressionLanguage:
     arguments:
-      - null
-      - [ "@coopcycle.expression_language.zone.provider" ]
+      $cache: null
+      $providers:
+        - '@coopcycle.expression_language.zone.provider'
+        - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
 
   AppBundle\EventListener\RegistrationListener:
     arguments: ['@router']

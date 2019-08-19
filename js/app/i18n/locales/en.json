@@ -114,6 +114,7 @@
     "RULE_PICKER_LINE_BIKE_TYPE": "Bike type",
     "RULE_PICKER_LINE_PICKUP_ADDRESS": "Pickup address",
     "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Drop-off address",
+    "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Difference (days)",
     "ORDER_LIST_STATE": "State",
     "ORDER_LIST_PREPARATION_TIME": "Preparation time",
     "ORDER_LIST_PICKUP_TIME": "Pickup time",

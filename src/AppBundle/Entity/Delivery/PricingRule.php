@@ -137,6 +137,8 @@ class PricingRule
         $taskObject = new \stdClass();
         if ($task) {
             $taskObject->address = $task->getAddress();
+            $taskObject->createdAt = $task->getCreatedAt();
+            $taskObject->before = $task->getDoneBefore();
         }
 
         return $taskObject;

@@ -1,4 +1,5 @@
 const zoneRegexp = /(in_zone|out_zone)\(([^,]+), ['|"](.+)['|"]\)/
+const diffDaysRegexp = /diff_days\(pickup\) (<|>|==) ([\d]+)/
 const vehicleRegexp = /(vehicle) == "(cargo_bike|bike)"/
 const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
 const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
@@ -11,6 +12,15 @@ const parseToken = token => {
       left: zoneTest[2],
       operator: zoneTest[1],
       right: zoneTest[3]
+    }
+  }
+
+  const diffDaysTest = diffDaysRegexp.exec(token)
+  if (diffDaysTest) {
+    return {
+      left: 'diff_days(pickup)',
+      operator: diffDaysTest[1],
+      right: diffDaysTest[2]
     }
   }
 

@@ -26,6 +26,7 @@ const typeToOperators = {
   'vehicle': ['=='],
   'pickup.address': ['in_zone', 'out_zone'],
   'dropoff.address': ['in_zone', 'out_zone'],
+  'diff_days(pickup)': ['==', '<', '>', 'in'],
 }
 
 
@@ -70,6 +71,10 @@ class RulePickerLine extends React.Component {
 
     if (state.operator === 'in' && Array.isArray(state.value) && state.value.length === 2) {
       return `${state.type} in ${state.value[0]}..${state.value[1]}`
+    }
+
+    if (state.type === 'diff_days(pickup)') {
+      return `diff_days(pickup) ${state.operator} ${state.value}`
     }
 
     switch (state.operator) {
@@ -137,6 +142,13 @@ class RulePickerLine extends React.Component {
     this.props.rulePicker.deleteLine(this.props.index)
   }
 
+  renderNumberInput() {
+
+    return (
+      <input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>
+    )
+  }
+
   renderBoundPicker () {
     /*
      * Return the displayed input for bound selection
@@ -153,8 +165,12 @@ class RulePickerLine extends React.Component {
           })}
         </select>
       )
-    // vehicle
+    // vehicle, diff_days(pickup)
     case '==':
+      if (this.state.type === 'diff_days(pickup)') {
+        return this.renderNumberInput()
+      }
+
       return (
         <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
           <option value="">-</option>
@@ -162,7 +178,7 @@ class RulePickerLine extends React.Component {
           <option value="cargo_bike">Vélo Cargo</option>
         </select>
       )
-    // weight, distance
+    // weight, distance, diff_days(pickup)
     case 'in':
       return (
         <div className="row">
@@ -176,9 +192,7 @@ class RulePickerLine extends React.Component {
       )
     case '<':
     case '>':
-      return (
-        (<input className="form-control input-sm" value={this.state.value} onChange={this.handleValueChange} type="number"></input>)
-      )
+      return this.renderNumberInput()
     }
   }
 
@@ -194,6 +208,7 @@ class RulePickerLine extends React.Component {
             <option value="vehicle">{ i18n.t('RULE_PICKER_LINE_BIKE_TYPE') }</option>
             <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
             <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
+            <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
           </select>
         </div>
         <div className="col-md-3">
