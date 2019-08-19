@@ -153,9 +153,6 @@ class Task implements TaggableInterface
      */
     private $events;
 
-    /**
-     * @Groups({"task"})
-     */
     private $createdAt;
 
     /**
