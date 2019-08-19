@@ -2,6 +2,7 @@
 
 namespace AppBundle\Serializer;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -21,10 +22,12 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     public function __construct(
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
+        IriConverterInterface $iriConverter,
         LoggerInterface $logger)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
+        $this->iriConverter = $iriConverter;
         $this->logger = $logger;
     }
 
@@ -67,9 +70,34 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     private function denormalizeTask($data, Task $task, $format = null)
     {
-        if (isset($data['before'])) {
+        if (isset($data['timeSlot'])) {
+
+            // TODO Validate time slot
+
+            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches);
+
+            $date = $matches[1];
+            $timeRange = $matches[2];
+
+            [ $start, $end ] = explode('-', $timeRange);
+
+            [ $startHour, $startMinute ] = explode(':', $start);
+            [ $endHour, $endMinute ] = explode(':', $end);
+
+            $after = new \DateTime($date);
+            $after->setTime($startHour, $startMinute);
+
+            $before = new \DateTime($date);
+            $before->setTime($endHour, $endMinute);
+
+            $task->setDoneAfter($after);
+            $task->setDoneBefore($before);
+
+        } elseif (isset($data['before'])) {
+
             $task->setDoneBefore(new \DateTime($data['before']));
         } elseif (isset($data['doneBefore'])) {
+
             $task->setDoneBefore(new \DateTime($data['doneBefore']));
         }
 
@@ -77,7 +105,12 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $address = null;
             if (is_string($data['address'])) {
-                $address = $this->geocoder->geocode($data['address']);
+                $addressIRI = $this->iriConverter->getIriFromResourceClass(Address::class);
+                if (0 === strpos($data['address'], $addressIRI)) {
+                    $address = $this->iriConverter->getItemFromIri($data['address']);
+                } else {
+                    $address = $this->geocoder->geocode($data['address']);
+                }
             } elseif (is_array($data['address'])) {
                 $address = $this->denormalizeAddress($data['address'], $format);
             }

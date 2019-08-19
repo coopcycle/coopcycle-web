@@ -6,9 +6,7 @@ services:
 
   AppBundle\Serializer\DeliveryNormalizer:
     arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@coopcycle.geocoder"
-      - "@logger"
+      $normalizer: '@api_platform.jsonld.normalizer.item'
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\RestaurantNormalizer:
@@ -23,11 +21,9 @@ services:
       - "%kernel.default_locale%"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.api.normalizer.task:
-    class: AppBundle\Serializer\TaskNormalizer
+  AppBundle\Serializer\TaskNormalizer:
     arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@api_platform.iri_converter"
+      $normalizer: '@api_platform.jsonld.normalizer.item'
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   coopcycle.api.normalizer.task_list:

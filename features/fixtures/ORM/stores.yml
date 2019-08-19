@@ -1,6 +1,8 @@
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
     __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
@@ -20,6 +22,24 @@ AppBundle\Entity\Address:
     postalCode: '75001'
     streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
     geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\TimeSlot\Choice:
+  time_slot_choice_1:
+    startTime: '12:00:00'
+    endTime: '14:00:00'
+  time_slot_choice_2:
+    startTime: '14:00:00'
+    endTime: '17:00:00'
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    choices: ['@time_slot_choice_1', '@time_slot_choice_2']
 
 AppBundle\Entity\Store:
   store_1:
@@ -28,3 +48,4 @@ AppBundle\Entity\Store:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
