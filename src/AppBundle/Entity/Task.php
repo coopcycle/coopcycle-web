@@ -443,4 +443,9 @@ class Task implements TaggableInterface
 
         return $task;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 }
