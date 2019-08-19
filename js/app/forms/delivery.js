@@ -37,14 +37,14 @@ function createAddressWidget(name, type, cb) {
         document.querySelector(`#${name}_${type}_address_name`).value = address.name || ''
         document.querySelector(`#${name}_${type}_address_telephone`).value = address.telephone || ''
 
+        document.querySelector(`#${name}_${type}_address_latitude`).value = address.geo.latitude
+        document.querySelector(`#${name}_${type}_address_longitude`).value = address.geo.longitude
+
         let disabled = false
 
         if (address.id) {
           document.querySelector(`#${name}_${type}_address_id`).value = address.id
           disabled = true
-        } else {
-          document.querySelector(`#${name}_${type}_address_latitude`).value = address.geo.latitude
-          document.querySelector(`#${name}_${type}_address_longitude`).value = address.geo.longitude
         }
 
         document.querySelector(`#${name}_${type}_address_postalCode`).disabled = disabled
@@ -59,19 +59,45 @@ function createAddressWidget(name, type, cb) {
   )
 }
 
+function getDatePickerValue(name, type) {
+  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
+  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+
+  if (timeSlotEl) {
+    return $(`#${name}_${type}_timeSlot`).val()
+  }
+
+  return moment($(`#${name}_${type}_doneBefore`).val(), 'YYYY-MM-DD HH:mm:ss').format()
+}
+
+function getDatePickerKey(name, type) {
+  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
+  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+
+  if (timeSlotEl) {
+    return 'timeSlot'
+  }
+
+  return 'before'
+}
+
 function createDatePickerWidget(name, type, cb) {
 
-  const el = document.querySelector(`#${name}_${type}_doneBefore`)
+  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
+  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
-  if (el) {
-    new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
-      defaultValue: el.value,
-      onChange: function(date) {
-        el.value = date.format('YYYY-MM-DD HH:mm:ss')
-        cb(type, date)
-      }
-    })
+  if (timeSlotEl) {
+    timeSlotEl.addEventListener('change', e => cb(type, e.target.value))
+    return
   }
+
+  new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+    defaultValue: datePickerEl.value,
+    onChange: function(date) {
+      datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
+      cb(type, date)
+    }
+  })
 }
 
 function createTagsWidget(name, type, tags) {
@@ -91,7 +117,7 @@ function serializeTaskForm(name, type) {
     address: {
       streetAddress: $(`#delivery_${type}_address_streetAddress`).val(),
     },
-    before: moment($(`#delivery_${type}_doneBefore`).val(), 'YYYY-MM-DD HH:mm:ss').format()
+    [getDatePickerKey(name, type)]: getDatePickerValue(name, type)
   }
 
   const lat = $(`#${name}_${type}_address_latitude`).val()

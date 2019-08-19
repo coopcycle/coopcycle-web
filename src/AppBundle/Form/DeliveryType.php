@@ -162,6 +162,17 @@ class DeliveryType extends AbstractType
                 $timeSlotOptions = [
                     'choices' => $choicesWithDates,
                     'choice_label' => [ $this, 'getTimeSlotChoiceLabel' ],
+                    'choice_value' => function (TimeSlotChoiceWithDate $choiceWithDate = null) {
+                        if (!$choiceWithDate) {
+                            return '';
+                        }
+
+                        return sprintf('%s %s-%s',
+                            $choiceWithDate->getDate()->format('Y-m-d'),
+                            $choiceWithDate->getChoice()->getStartTime(),
+                            $choiceWithDate->getChoice()->getEndTime()
+                        );
+                    },
                     'label' => 'form.delivery.time_slot.label',
                     'mapped' => false
                 ];
