@@ -143,6 +143,12 @@ services:
     arguments:
       $apiClient: '@csa_guzzle.client.api'
 
+  AppBundle\Command\LoadFixturesCommand:
+    arguments:
+      $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+      $projectDir: '%kernel.project_dir%'
+      $environment: '%kernel.environment%'
+
   AppBundle\Controller\OrderController:
     arguments:
       $objectManager: '@sylius.manager.order'
