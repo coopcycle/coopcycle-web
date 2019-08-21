@@ -39,6 +39,26 @@
     {% endif %}
   {% endif %}
 
+    {% if restaurant.isCaterer and not user.quotesAllowed %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="alert alert-danger">
+        {{ "restaurant.isCatererWarningDanger" | trans | raw }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+    {% if restaurant.isCaterer and user.quotesAllowed %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="alert alert-success">
+        {{ "restaurant.isCatererWarningSuccess" | trans | raw }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
   <header class="restaurant-header">
     {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
     {% if restaurant_image is not empty %}
@@ -114,12 +134,14 @@
     </div>
 
     <div class="col-xs-12 col-sm-4">
+      {% if (user.getQuotesAllowed and restaurant.getIsCaterer) or (restaurant.getIsCaterer == false) %}
       {{ form_start(cart_form) }}
         {# These inputs are managed with React  #}
         {% do cart_form.date.setRendered %}
         {% do cart_form.time.setRendered %}
         <div id="cart" data-ready="false"></div>
       {{ form_end(cart_form) }}
+      {% endif %}
     </div>
 
     <div class="visible-xs">

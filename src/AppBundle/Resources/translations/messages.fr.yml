@@ -117,6 +117,9 @@ restaurant.disabledWarning: 'Ce restaurant n''est pas activé et n''est donc pas
   dans l''admin</a>.
 
   '
+restaurant.isCatererWarningDanger: 'Cette page propose uniquement des services de traiteur, vous ne pouvez pas passer de commandes directement mais vous pouvez en revanche établir un devis sous condition d''avoir un compte professionnel. Pour ce faire, <a href="#footer">contactez-nous.</a> <span class="glyphicon glyphicon-remove-sign"></span>'
+restaurant.isCatererWarningSuccess: 'Cette page propose uniquement des services de traiteur, vous ne pouvez pas passer de commandes directement mais vous pouvez en revanche établir un devis car vous avez un compte professionnel. <span class="glyphicon glyphicon-ok-sign"></span>'
+
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
@@ -678,6 +681,7 @@ pagination.next: Suivante
 basics.save: Enregistrer
 basics.next: Suivant
 basics.continue: Continuer
+basics.contact_us: contactez-nous
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.add: Ajouter

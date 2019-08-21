@@ -1,7 +1,6 @@
 {% form_theme form '@App/form/complete_task.html.twig' %}
 
 {% set task = form.vars.data %}
-
 <div class="modal-dialog" role="document">
   {{ form_start(form, { action: path('profile_task_complete', { id: task.id }), attr: { class: 'modal-content' } }) }}
     <div class="modal-header">

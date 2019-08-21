@@ -135,6 +135,8 @@ restaurant.disabledWarning: 'This restaurant is disabled so the site visitors ca
   it in the admin</a>.
 
   '
+restaurant.isCatererWarningDanger: 'This page only offers catering services, you cannot place orders directly, but you can make a quote if you have a professional account. To do this, <a href="#footer">contact us.</a> <span class="glyphicon glyphicon-remove-sign"></span>'
+restaurant.isCatererWarningSuccess: 'This page only offers catering services, you cannot place orders directly but you can make a quote because you have a professional account. <span class="glyphicon glyphicon-ok-sign"></span>'
 restaurant.closedWarningWithDelay: Order now for later. Order at least %delay% in
   advance.
 restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date%</strong>.
@@ -736,6 +738,7 @@ pagination.next: Next
 basics.save: Save
 basics.next: Next
 basics.continue: Continue
+basics.contact_us: contactez-nous
 basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit

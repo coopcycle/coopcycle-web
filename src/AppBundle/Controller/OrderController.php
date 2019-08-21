@@ -97,7 +97,12 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            return $this->redirectToRoute('order_payment');
+            $restaurant = $order->getRestaurant();
+            if ($user->getQuotesAllowed() !== true && $restaurant->getIsCaterer() !== true) {
+                return $this->redirectToRoute('order_payment');
+            } else {
+                return $this->redirectToRoute('caterer');
+            }
         }
 
         $timeInfo = $this->orderTimeHelper->getTimeInfo(
@@ -172,5 +177,13 @@ class OrderController extends AbstractController
         $parameters['form'] = $form->createView();
 
         return $parameters;
+    }
+
+    /**
+     * @Route("/caterer", name="caterer")
+     */
+    public function catererAction(Request $request, OrderManager $orderManager, CartContextInterface $cartContext){
+
+        return $this->render('@App/_partials/order/caterer.html.twig');
     }
 }

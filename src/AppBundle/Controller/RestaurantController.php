@@ -252,21 +252,13 @@ class RestaurantController extends AbstractController
             }
         }
 
+        if($restaurant->getIsCaterer()) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        }
+
         if ($restaurant->getState() === 'pledge') {
 
             $numberOfVotes = count($restaurant->getPledge()->getVotes());
-
-            $user = $this->getUser();
-            $checkVote = $user !== null ? $restaurant->getPledge()->hasVoted($this->getUser()) : false;
-
-            return $this->render('@App/restaurant/restaurant_pledge_accepted.html.twig', [
-                'restaurant' => $restaurant,
-                'number_of_votes' => $numberOfVotes,
-                'has_already_voted' => $checkVote
-            ]);
-        }
-
-        if ($restaurant->getIsCaterer() === true && $this->getUser()->getQuotesAllowed() === true) {
 
             $user = $this->getUser();
             $checkVote = $user !== null ? $restaurant->getPledge()->hasVoted($this->getUser()) : false;
@@ -325,6 +317,7 @@ class RestaurantController extends AbstractController
                 $this->orderManager->flush();
             }
         }
+
 
         $cartForm = $this->createForm(CartType::class, $cart);
 
@@ -406,6 +399,7 @@ class RestaurantController extends AbstractController
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
+            'user' => $user,
         );
     }
 
