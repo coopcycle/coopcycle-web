@@ -44,7 +44,10 @@ function bootstrap($popover, options) {
     $popover.attr('data-content', template.innerHTML)
   }
 
-  const socket = io(`//${window.location.hostname}`, {
+  const hostname = `//${window.location.hostname}`
+                 + (window.location.port ? `:${window.location.port}` : '')
+
+  const socket = io(hostname, {
     path: '/tracking/socket.io',
     transportOptions: {
       polling: {
