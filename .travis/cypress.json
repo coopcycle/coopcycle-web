@@ -1,5 +1,6 @@
 {
     "baseUrl": "http://test.coopcycle.org",
+    "video": false,
     "env": {
         "COMMAND_PREFIX": ""
     }
