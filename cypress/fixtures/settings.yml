@@ -7,4 +7,19 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: google_api_key
     value: '<{GOOGLE_API_KEY}>'
-
+  setting_default_tax_category:
+    section: general
+    name: default_tax_category
+    value: 'tva_livraison'
+  setting_administrator_email:
+    section: general
+    name: administrator_email
+    value: 'dev@coopcycle.org'
+  setting_stripe_test_publishable_key:
+    section: general
+    name: stripe_test_publishable_key
+    value: '<{STRIPE_PUBLISHABLE_KEY}>'
+  setting_stripe_test_secret_key:
+    section: general
+    name: stripe_test_secret_key
+    value: '<{STRIPE_SECRET_KEY}>'

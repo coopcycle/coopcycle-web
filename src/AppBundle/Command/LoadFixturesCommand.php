@@ -62,7 +62,9 @@ class LoadFixturesCommand extends Command
         ];
 
         $this->fixturesLoader->load($files, [
-            'GOOGLE_API_KEY' => getenv('GOOGLE_API_KEY')
+            'GOOGLE_API_KEY' => getenv('GOOGLE_API_KEY'),
+            'STRIPE_PUBLISHABLE_KEY' => getenv('STRIPE_PUBLISHABLE_KEY'),
+            'STRIPE_SECRET_KEY' => getenv('STRIPE_SECRET_KEY')
         ]);
     }
 }
