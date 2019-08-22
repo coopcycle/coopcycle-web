@@ -36,7 +36,7 @@ context('Checkout', () => {
     cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_DRINK]"]')
         .check('HAMBURGER_DRINK_COLA')
 
-    cy.get('#CHEESEBURGER-options button[type="submit"]').click()
+    cy.get('#CHEESEBURGER-options button[type="submit"]').click({ timeout: 5000 })
 
     cy.wait('@postProduct')
 
@@ -45,8 +45,10 @@ context('Checkout', () => {
     cy.get('.ReactModal__Content--enter-address')
         .should('be.visible')
 
+    cy.wait(2000)
+
     cy.get('.ReactModal__Content--enter-address input[type="search"]')
-        .type('91 rue de rivoli', { timeout: 5000 })
+        .type('91 rue de rivoli paris', { timeout: 5000 })
 
     cy.contains('91 Rue de Rivoli, Paris, France').click()
 
