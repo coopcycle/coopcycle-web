@@ -21,15 +21,9 @@ default:
       kernel:
         env: "test"
         debug: "true"
-    DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~
     Behat\MinkExtension:
       default_session: "default"
-      javascript_session: "chrome"
-      browser_name: "chrome"
       sessions:
         default:
           symfony2: ~
-        chrome:
-          chrome:
-            api_url: http://localhost:9222
     Behatch\Extension: ~
