@@ -125,7 +125,7 @@ function assignTasks(username, tasks) {
     const { taskLists } = getState()
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    dispatch(modifyTaskList(username, taskList.items.concat(tasks)))
+    dispatch(modifyTaskList(username, taskList.items))
   }
 }
 
