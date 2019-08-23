@@ -7,7 +7,6 @@ import Modal from 'react-modal'
 
 import {
   assignTasks,
-  updateTask,
   drakeDrag,
   drakeDragEnd,
   setCurrentTask,
@@ -226,7 +225,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
   return {
     assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
-    updateTask: (task) => { dispatch(updateTask(task)) },
     drakeDrag: () => dispatch(drakeDrag()),
     drakeDragEnd: () => dispatch(drakeDragEnd()),
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
