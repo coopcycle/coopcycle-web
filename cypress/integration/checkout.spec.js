@@ -51,7 +51,7 @@ context('Checkout', () => {
       .should('be.visible')
 
     cy.get('.ReactModal__Content--enter-address input[type="search"]')
-      .type('91 rue de rivoli paris', { timeout: 5000 })
+      .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
     cy.get('.ReactModal__Content--enter-address')
       .find('ul[role="listbox"]')
