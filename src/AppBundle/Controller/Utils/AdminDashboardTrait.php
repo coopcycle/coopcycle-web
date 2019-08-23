@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Tag;
@@ -22,7 +23,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\RequestContext;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
@@ -40,35 +40,6 @@ trait AdminDashboardTrait
         }
 
         return $this->redirectToRoute('admin_dashboard_fullscreen', $params);
-    }
-
-    protected function getResourceFromIri($iri)
-    {
-        $baseContext = $this->get('router')->getContext();
-
-        $request = Request::create($iri);
-        $context = (new RequestContext())->fromRequest($request);
-        $context->setMethod('GET');
-        $context->setPathInfo($iri);
-        $context->setScheme($baseContext->getScheme());
-
-        try {
-
-            $this->get('router')->setContext($context);
-            $parameters = $this->get('router')->match($request->getPathInfo());
-
-            // return $this->get('api_platform.item_data_provider')
-            //     ->getItem($parameters['_api_resource_class'], $parameters['id']);
-
-            return $this->getDoctrine()
-                ->getRepository($parameters['_api_resource_class'])
-                ->find($parameters['id']);
-
-        } catch (\Exception $e) {
-
-        } finally {
-            $this->get('router')->setContext($baseContext);
-        }
     }
 
     /**
@@ -259,7 +230,7 @@ trait AdminDashboardTrait
      *   methods={"PUT"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function modifyTaskListAction($date, $username, Request $request)
+    public function modifyTaskListAction($date, $username, Request $request, IriConverterInterface $iriConverter)
     {
         $date = new \DateTime($date);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
@@ -277,7 +248,7 @@ trait AdminDashboardTrait
 
         $tasksToAssign = [];
         foreach ($data as $item) {
-            $tasksToAssign[$item['position']] = $this->getResourceFromIri($item['task']);
+            $tasksToAssign[$item['position']] = $iriConverter->getItemFromIri($item['task']);
         }
 
         $taskList->setTasks($tasksToAssign);
