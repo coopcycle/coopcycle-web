@@ -11,7 +11,6 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
-use AppBundle\Form\TaskType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
 use FOS\UserBundle\Model\UserInterface;

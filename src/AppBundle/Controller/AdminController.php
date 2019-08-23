@@ -9,7 +9,6 @@ use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
-use AppBundle\Controller\Utils\TaskTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
@@ -88,7 +87,6 @@ class AdminController extends Controller
     use LocalBusinessTrait;
     use RestaurantTrait;
     use StoreTrait;
-    use TaskTrait;
     use UserTrait;
 
     protected function getRestaurantRoutes()
