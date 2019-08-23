@@ -2,11 +2,13 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Form\Type\DateRangeType;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -24,10 +26,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
+    private $doctrine;
     private $tagManager;
 
-    public function __construct(TagManager $tagManager)
+    public function __construct(ManagerRegistry $doctrine, TagManager $tagManager)
     {
+        $this->doctrine = $doctrine;
         $this->tagManager = $tagManager;
     }
 
@@ -171,6 +175,19 @@ class TaskType extends AbstractType
             });
         }
 
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+
+            if (isset($data['address'], $data['address']['id']) && !empty($data['address']['id'])) {
+                unset(
+                    $data['address']['streetAddress'],
+                    $data['address']['latitude'],
+                    $data['address']['longitude']
+                );
+                $event->setData($data);
+            }
+        });
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -179,6 +196,14 @@ class TaskType extends AbstractType
             if ($form->has('timeSlot')) {
                 $timeSlot = $form->get('timeSlot')->getData();
                 $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
+            }
+
+            $addressId = $form->get('address')->get('id')->getData();
+            if (!empty($addressId)) {
+                $address = $this->doctrine->getRepository(Address::class)->find($addressId);
+                if ($address) {
+                    $task->setAddress($address);
+                }
             }
         });
     }

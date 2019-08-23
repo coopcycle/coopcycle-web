@@ -154,6 +154,17 @@ class DeliveryType extends AbstractType
                 return;
             }
 
+            if ($store->getPrefillPickupAddress()) {
+                $defaultAddress = $store->getAddress();
+
+                if ($defaultAddress) {
+                    $addressForm = $form->get('pickup')->get('address');
+
+                    $addressForm->get('id')->setData($defaultAddress->getId());
+                    $addressForm->get('streetAddress')->setData($defaultAddress->getStreetAddress());
+                }
+            }
+
             if (null !== $store->getTimeSlot()) {
 
                 $timeSlot = $store->getTimeSlot();

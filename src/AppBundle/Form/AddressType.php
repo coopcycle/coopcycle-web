@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -26,13 +25,11 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
 class AddressType extends AbstractType
 {
     private $translator;
-    private $doctrine;
     private $country;
 
-    public function __construct(TranslatorInterface $translator, ManagerRegistry $doctrine, $country)
+    public function __construct(TranslatorInterface $translator, string $country)
     {
         $this->translator = $translator;
-        $this->doctrine = $doctrine;
         $this->country = $country;
     }
 
@@ -121,16 +118,6 @@ class AddressType extends AbstractType
         $latLngListener = function (FormEvent $event) use ($constraints) {
             $form = $event->getForm();
             $address = $event->getData();
-
-            $id = $form->get('id')->getData();
-
-            if (!empty($id)) {
-                $existingAddress = $this->doctrine->getRepository(Address::class)->find($id);
-                if ($existingAddress) {
-                    $event->setData($existingAddress);
-                    return;
-                }
-            }
 
             $streetAddress = $form->get('streetAddress')->getData();
             if (!empty($streetAddress)) {

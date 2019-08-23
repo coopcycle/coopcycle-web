@@ -29,7 +29,8 @@ services:
       - { name: form.type, alias: app_update_profile }
 
   AppBundle\Form\AddressType:
-    arguments: [ '@translator', '@doctrine', '%country_iso%' ]
+    arguments:
+      $country: '%country_iso%'
     tags:
       - { name: form.type }
 
@@ -82,7 +83,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
-    arguments: [ '@coopcycle.tag_manager' ]
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:

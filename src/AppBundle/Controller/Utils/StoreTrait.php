@@ -218,10 +218,6 @@ trait StoreTrait
         $delivery = Delivery::createWithDefaults();
         $delivery->setStore($store);
 
-        if ($store->getPrefillPickupAddress()) {
-            $delivery->getPickup()->setAddress($store->getAddress());
-        }
-
         $form = $this->createDeliveryForm($delivery, [
             'with_store' => false,
             'with_tags' => $this->isGranted('ROLE_ADMIN')
