@@ -31,6 +31,10 @@ AppBundle\Entity\Sylius\ProductOptionValue:
     code: PIZZA_TOPPING_EXTRA_CHEESE
     currentLocale: fr
     value: Extra cheese
+  gluten_free:
+    code: GLUTEN_FREE
+    currentLocale: fr
+    value: Gluten free
 
 AppBundle\Entity\Sylius\ProductOption:
   pizza_topping:
@@ -39,6 +43,13 @@ AppBundle\Entity\Sylius\ProductOption:
     currentLocale: fr
     name: Pizza topping
     values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+  gluten_intolerance:
+    code: GLUTEN_INTOLERANCE
+    strategy: free
+    currentLocale: fr
+    name: Gluten intolerance
+    additional: true
+    values: [ "@gluten_free" ]
 
 AppBundle\Entity\Sylius\ProductVariant:
   pizza_pepperoni:
@@ -73,6 +84,13 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Cake
     code: CAKE_DEFAULT
     price: 699
+  fish_and_chips_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Fish and Chips
+    code: FISH_AND_CHIPS_DEFAULT
+    price: 699
+    optionValues: [ "@gluten_free" ]
 
 AppBundle\Entity\Sylius\Product:
   pizza:
@@ -104,3 +122,11 @@ AppBundle\Entity\Sylius\Product:
     slug: cake
     enabled: false
     variants: [ "@cake_default" ]
+  fish_and_chips:
+    code: FISH_AND_CHIPS
+    currentLocale: fr
+    name: Fish and Chips
+    slug: fish-and-chips
+    enabled: true
+    options: [ "@gluten_intolerance" ]
+    variants: [ "@fish_and_chips_default" ]

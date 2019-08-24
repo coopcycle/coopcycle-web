@@ -79,8 +79,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
                 $product = $this->productRepository->findOneByCode($item['product']);
 
-                if ($product->hasOptions()) {
-                    if (isset($item['options']) && is_array($item['options'])) {
+                if (!$product->hasOptions()) {
+                    $productVariant = $this->variantResolver->getVariant($product);
+                } else {
+
+                    if (!$product->hasNonAdditionalOptions() && (!isset($item['options']) || empty($item['options']))) {
+                        $productVariant = $this->variantResolver->getVariant($product);
+                    } else {
                         $optionValues = [];
                         foreach ($item['options'] as $optionValueCode) {
                             $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
@@ -88,8 +93,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                         }
                         $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
                     }
-                } else {
-                    $productVariant = $this->variantResolver->getVariant($product);
                 }
 
                 $orderItem = $this->orderItemFactory->createNew();
