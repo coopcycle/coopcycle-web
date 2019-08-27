@@ -599,6 +599,16 @@ services:
     arguments:
       $confirmationEnabled: '%fos_user.registration.confirmation.enabled%'
 
+  AppBundle\Action\ResettingSendEmail:
+    public: true
+    arguments:
+      $retryTtl: '%fos_user.resetting.retry_ttl%'
+
+  AppBundle\Action\ResettingReset:
+    public: true
+    arguments:
+      $tokenTtl: '%fos_user.resetting.token_ttl%'
+
   AppBundle\EventListener\EnabledFilterConfigurator:
     arguments:
       - "@doctrine.orm.entity_manager"

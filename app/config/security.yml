@@ -112,6 +112,7 @@ security:
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
