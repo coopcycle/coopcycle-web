@@ -1,0 +1,157 @@
+registration.email.subject: 'Confirmació per correu electrònic
+
+  '
+registration.email.message: '<h2>Benvingut a %brand_name%, %username%</h2>
+
+  Has rebut aquest missatge perquè t''has registrat recentment a un compte %brand_name%.
+
+  <br>
+
+  Confirma la teva adreça de correu electrònic fent clic al botó següent.
+
+  '
+registration.email.confirm: Confirma el correu electrònic
+registration.email.disclaimer: Aquest enllaç només es pot utilitzar una vegada per
+  validar el vostre compte
+registration.email.textMessage: 'Benvingut a %brand_name%, %username%,\n\n
+
+  Heu rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\n
+
+  Per confirmar el correu electrònic, feu clic a l’enllaç següent: <a href="%confirmationUrl%"
+  rel="notrack">%confirmationUrl%</a>.
+
+  '
+resetting.email.message: <h2>Hola %username%</h2> Per restablir la vostra contrasenya,
+  feu clic al botó següent.
+resetting.email.reset: Restablir la contrasenya
+order.view: Veure comanda
+order.public_url: 'Per fer el seguiment de l’estat de la comanda, <a href="%order.public_url%">clica
+  aquí</a>.
+
+  '
+order.foodtech.accepted: 'El cuiner comença a preparar la teva comanda.
+
+  <br>
+
+  Arriba un Mensakas per portar-lo!
+
+  '
+order.foodtech.cancelled: 'El restaurant no pot preparar la vostra comanda %order.number%.
+
+  <br>
+
+  No s’ha carregat el vostre compte.
+
+  '
+admin.order.created.subject: S'ha de confirmar la nova comanda
+admin.order.created.body: 'Hola,
+
+  <br>
+
+  S''ha creat una nova comanda.
+
+  '
+admin.order_foodtech.created.body: 'Hola,
+
+  <br>
+
+  S''ha creat una nova comanda per al restaurant <strong>%restaurant.name%</strong>.
+
+  '
+admin.pledge.subject: S'ha enviat un nou suggeriment!
+admin.pledge.body: 'Hola,
+
+  <br>
+
+  %username% li agradaria %pledge.name% estar a CoopCycle !
+
+  <br>
+
+  Gràcies!
+
+  <br>
+
+  L’equip de CoopCycle.
+
+  '
+user.pledge.subject: El vostre suggeriment és ara a CoopCycle!
+user.pledge.body: 'Hola,
+
+  <br>
+
+  Gràcies a tu, %pledge.name% ara és a CoopCycle!!
+
+  <br>
+
+  Atentament,
+
+  <br>
+
+  Equip de CoopCycle.
+
+  '
+owner.order.created.subject: Nova comanda per confirmar
+owner.order.created.body: 'Hola,
+
+  <br>
+
+  S''ha efectuat una nova comanda al restaurant <strong>%restaurant.name%</strong>.
+
+  '
+order.created.subject: Confirmació de la comanda %order.number%
+order.created.body: 'Hola,
+
+  <br>
+
+  Hem registrat la vostra comanda.
+
+  <br>
+
+  Comprobarem la vostra comanda tan aviat com sigui possible i ens posarem en contacte
+  amb tu quan es confirmi.
+
+  '
+order.accepted.subject: La teva comanda %order.number% ha estat acceptada
+order.accepted.body.intro: 'Hola,
+
+  <br>
+
+  La vostra comanda està confirmada.
+
+  '
+order.cancelled.subject: La teva comanda %order.number% ha estat cancel·lat
+order.cancelled.body.intro: 'Hola,
+
+  <br>
+
+  Ho sentim, però s''ha cancel·lat la vostra comanda.
+
+  '
+order.delayed.subject: La teva comanda %order.number% s'ha endarrerit
+order.delayed.body: 'Hola,
+
+  <br>
+
+  Ho sentim, però la vostra comanda es retardarà %delay% minuts.
+
+  <br>
+
+  Demanem disculpes per les molèsties.
+
+  '
+task.done.subject: 'Tasca #%task.id% finalitzat'
+task.done.body: 'Hola,
+
+  <br>
+
+  Tasca #%task.id% s’ha completat
+
+  '
+task.failed.subject: 'Tasca #%task.id% no s''ha pogut completar'
+task.failed.body: 'Hola,
+
+  <br>
+
+  Tasca #%task.id% no s''ha pogut completar.
+
+  '

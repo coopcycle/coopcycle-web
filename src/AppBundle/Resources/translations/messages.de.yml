@@ -76,11 +76,9 @@ form.pricing_rule_set.rules.label: Regeln
 form.pricing_rule.price.label: Preis
 form.preparation_time_rule.expression.label: Ausdruck
 form.preparation_time_rule.time.label: Zeit
-form.preparation_time.defaults_warning: 'Dieses Restaurant hat noch keine kundenspezifische
-  Bearbeitungszeit angegeben. Die Standardregeln wurden unten kopiert und können bearbeitet
-  werden.
-
-  '
+form.preparation_time.defaults_warning: "Dieses Restaurant hat noch keine kundenspezifische\
+  \ Bearbeitungszeit angegeben. Die Standardregeln wurden unten kopiert und können\
+  \ bearbeitet werden.\n"
 form.settings.date_time: Datum und Zeit
 form.settings.brand_name.label: Markenname
 form.settings.stripe.title: Stripe-Konto
@@ -217,23 +215,17 @@ localBusiness.form.deliveryPerimeterExpression: Zone oder maximale Entfernung f�
   die Lieferung
 restaurant.available: Verfügbar
 restaurant.unavailable: Nicht verfügbar
-restaurant.disabledWarning: 'Dieses Restaurant ist nicht aktiv, sodass Besucher die
-  Seite nicht sehen können. Wenn Sie wollen, können Sie <a target="_blank" href="%restaurantEditUrl%">als
-  Administrator aktivieren</a>.
-
-  '
+restaurant.disabledWarning: "Dieses Restaurant ist nicht aktiv, sodass Besucher die\
+  \ Seite nicht sehen können. Wenn Sie wollen, können Sie <a target=\"_blank\" href=\"\
+  %restaurantEditUrl%\">als Administrator aktivieren</a>.\n"
 restaurant.closedWarningWithDelay: Bestellen Sie jetzt für später. Bestellen Sie mindestens
   %delay% im Voraus.
-restaurant.temporaryClosedWarning: Dieses Restaurant ist geschlossen bis zum <strong>%date%</strong>.
-  Sie können jedoch für später bestellen.
-restaurant.noMenuWarning: 'Dieses Restaurant hat zur Zeit kein Menü
-
-  '
-restaurant.form.enabled.tooltip: 'Wenn deaktiviert, ist eine Restaurant nicht auf
-  der Website sichtbar. Es kann nicht in den Suchergebnissen gelistet werden und die
-  eigene Seite ist für Besucher nicht zugänglich.
-
-  '
+restaurant.temporaryClosedWarning: Dieses Restaurant ist bis zum <strong>%date%</strong>
+  geschlossen. Sie können jedoch für später bestellen!
+restaurant.noMenuWarning: "Dieses Restaurant hat zur Zeit kein Menü\n"
+restaurant.form.enabled.tooltip: "Wenn deaktiviert, ist eine Restaurant nicht auf\
+  \ der Website sichtbar. Es kann nicht in den Suchergebnissen gelistet werden und\
+  \ die eigene Seite ist für Besucher nicht zugänglich.\n"
 restaurant.form.allow_stripe_connect.label: Dem Restaurant erlauben, das Stripe-Konto
   lebst zu verwalten
 restaurant.form.temporaryClosingRule: Wenn sie eine temporäre Schließung Ihres Restaurants
@@ -281,3 +273,154 @@ restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
 restaurant.list.preparationTime: Vorbereitung
 restaurant.list.stats: Statistiken
 adminDashboard.dashboard.cancel: Abbrechen
+order.list.invoice: Rechnung
+restaurant.product_options.help: "Die Auswahl ermöglicht es Ihnen, die Produkte <strong>individuell\
+  \ anzupassen</strong>\n<br>\nSie ermöglichen es Ihnen beispielsweise, Zusatzartikel\
+  \ hinzuzufügen oder die einzelnen Zutaten eines Menüs (Beilage, Getränk....) auszuwählen.\n\
+  <br>\nFür jede Möglichkeit können Sie eine Liste mit Merkmalen angeben\n"
+restaurant.product_options.list.values: Werte
+profile.addresses.empty: Noch keine Adresse hinterlegt!
+profile.myRestaurants: Meine Restaurants
+profile.myAccount: Mein Benutzerkonto
+profile.myTracking: Mein Tracking
+profile.myOrders: Meine Bestellungen
+profile.myAddresses: Meine Adressen
+profile.myPersonalInfo: Meine persönlichen Daten
+profile.payment: Zahlungsweise
+profile.task.cancel: Abbrechen
+profile.task.noTasks: Keine Aufgabe geplant
+profile.task.dueDate: Abgabetermin
+profile.task.complete: Fertigstellen
+profile.task.date: Datum
+profile.addresses.newAddress: Neue Adresse
+profile.addresses.add: Hinzufügen
+order.payment.card_number.help: 'Eine <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">Testkartennummer</a> ist bereits vorausgefüllt. Es
+  wird kein Konto belastet. '
+order.state.cart: Warenkorb
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Willkommen auf der Demo der <a target="_blank"
+  href="https://coopcycle.org">CoopCycle</a> Platform
+base.footer.suggest: Restaurant vorschlagen
+profile.myRestaurants.noRestaurants: Du hast noch keine Restaurants
+order.total_tax_by_rate: Summe %name%
+order.delivery_time: Lieferung %time%
+form.task.comments.placeholder: Nenne alle wichtigen Details für die Ausführung des
+  Auftrags
+task.previous_task_not_completed_yet: Der vorherige Auftrag ist noch nicht abgeschlossen
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Wie benutze ich diese Demo?</a>
+form.delivery.store.label: Geschäft
+form.delivery.store.placeholder: Geschäft finden…
+adminDashboard.tags.confirm_delete: Sind Sie sicher, dass Sie diesen Tag löschen wollen
+  ? alle damit verknüpften Elemente können ihn nicht mehr anzeigen oder nach ihm gruppieren.
+restaurant.stats.order_number: Bestellnummer
+restaurant.stats.delivered_on: Liefertermin
+restaurant.stats.total_products_including_all_taxes: Gesamtbetrag der Waren einschließlich
+  aller Steuern
+restaurant.stats.total_products_excluding_taxes: Gesamtbetrag der Waren einschließlich
+  aller Steuern
+restaurant.stats.delivery: Lieferung
+profile.addresses.breadcrumb: Adressen
+profile.orders.empty: Noch keine Bestellung!
+profile.myDeliveries: Meine Lieferungen
+profile.myStores: Meine Shops
+profile.editProfile: Profil bearbeiten
+profile.payment.title: Zahlungsweise
+profile.payment.stripeConnected: Dein Stripe-Konto ist verbunden
+profile.telephone: Telefonnummer
+profile.familyName: Nachname
+profile.givenName: Vorname
+profile.managedStores: Vom Benutzer verwaltete Shops
+profile.managedRestaurants: Vom Benutzer verwaltete Restaurants
+profile.accountType: Kontotyp
+order.cart.title: Warenkorb
+order.summary.heading: Auftrag %number% (#%id%)
+order.items_total: Alle Artikel insgesamt
+order.total_tax: Steuern
+order.preparation_expected_at: Erwartete Bereitstellung bis zum %date%
+order.shipping_date.title: Dein Liefertermin
+order.payment.title: Deine Zahlungsinformationen
+order.payment.expiration.label: Gültigkeitsdauer
+order.payment.year.label: Jahr
+order.payment.card_number.label: Kartennummer
+order.payment.total: Auszahlung %total%
+order.payment.cvc: CVC
+order.state.accepted: Akzeptiert
+order.state.refused: Abgelehnt
+order.state.ready: Fertig
+order.state.fulfilled: Geliefert
+order.state.cancelled: Abgebrochen
+payment.state.cart: Warenkorb
+payment.state.authorized: Autorisiert
+payment.state.completed: Erledigt
+payment.state.failed: Gescheitert
+payment.state.cancelled: Abgebrochen
+payment.state.refunded: Erstattete Kosten
+payment.state.refunded_partially: Teilweise rückerstattet
+order.adjustment_type.delivery: Lieferung
+order.adjustment_type.platform_fees: Gebühr für CoopCycle
+order.list.shippedAt: Lieferzeit
+order.list.cancel: Abbrechen
+order.list.type: Typ
+order.list.customer: Kunde
+order.list.state: Staat
+order.list.summary.restaurant.text: Lieferung bei Restaurant  <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Lieferung bei Restaurant %restaurant_name%
+order.list.summary.delivery.text: Lieferung %distance%, %vehicle%
+task.form.create: Auftrag anlegen
+task.form.timeWindow: Zeitfenster
+task.form.cancel: Abbrechen
+task.form.showHistory: Verlauf ansehen
+task.form.modal.moreOptions: Mehr Optionen
+task.form.edit: Auftrag ändern %id%
+task.form.dateRange: Datums-Bereich
+task.form.finish: Führe Auftrag aus
+task.form.details: Auftragsdaten
+task.form.finish.DONE.info: Der Auftrag wurde erfolgreich abgeschlossen
+task.form.finish.FAIL.info: Dieser Auftrag konnte nicht abgeschlossen werden
+task.status.done: Erfolgreich ausgeführt
+task.status.failed: Nicht erfüllt
+task.status.todo: Zu erledigen
+form.task.comments.label: Kommentare
+form.task.status.label: Status
+form.task_event.notes.placeholder: 'Beispiel: Adresse nicht gefunden, kein Problem…'
+form.task_event.notes.help: Du kannst den Kommentar bearbeiten
+form.task_upload.file: Datei
+form.task_upload.file.help: "Unterstützte Formate: csv, ods, xlsx\n"
+form.task_complete.done.label: Erledigt
+form.task_complete.fail.label: Melde ein Problem
+maintenance.disclaimer: Wartungsmodus ist aktiviert
+cart.widget.title: Deine Details zur Lieferung
+checkout.breadcrumb.payment: Zahlungsweise
+form.geojson_upload.file: Datei
+form.store_type.pricing_rule_set.label: Preisermittlung
+form.store_type.prefill_pickup_address.label: Fülle automatisch Abholadresse aus
+form.store_type.create_orders.label: Aufträge erstellen
+form.store_type.pricing_rule_set.placeholder: Preis auswählen
+form.store_type.setAsDefault.label: Als Hauptadresse festlegen
+form.store_type.defaultAddress.label: Hauptadresse
+form.store_type.time_slot.label: Zeitraum
+form.store_type.package_set.label: Paketset
+form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
+form.delivery.vehicle.label: Fahrzeug
+form.delivery.distance.label: Entfernung
+form.delivery.duration.label: Zeitdauer
+form.delivery.package.label: Verpackung
+form.delivery.packages.label: Verpackungen
+form.order.accept.label: Bestätigen
+form.order.accept.help: Sobald Du die Bestellung angenommen hast, wird der Kunde per
+  E-Mail benachrichtigt.
+form.order.cancel.label: Abbrechen
+form.order.fulfill.label: Erledigen
+form.order.payment_complete.label: Fertigstellen
+form.order.payment_refund.label: Rückzahlung
+adminDashboard.package_sets.title: Packstücke
+adminDashboard.restaurants.exclusive: Exklusiv
+adminDashboard.pledges.title: Anregungen
+adminDashboard.time_slots.title: Zeitfenster
+delivery.tracking_link: Sendungsverfolgung
+delivery.with_id: 'Versand #%id%'
+profile.username: Benutzername
+form.order.refund_modal.title: Rückzahlung
+form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
+form.payment.refund_application_fee.label: Gebühren der Rückerstattung
