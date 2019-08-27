@@ -388,7 +388,9 @@ form.settings.stripe_secret_key.help: 'Crea una cuenta Stripe para obtener tu <a
 form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
 form.settings.stripe_connect_client_id.help: 'Puedes encontrar tu identificador en
   <a href="https://dashboard.stripe.com/account/applications/settings">la página de
-  parámetros</a> '
+  parámetros</a>
+
+  '
 form.settings.google_api_key.label: Clave API de google
 form.settings.google_api_key.help: 'Crea una cuenta Google para obtener tu <a href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clave
   API</a>
@@ -735,3 +737,87 @@ base.footer.suggest: Sugerir un restaurante
 adminDashboard.package_sets.title: Paquetes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.pledges.title: Sugerencias
+adminDashboard.tags.confirm_delete: ¿Estás seguro de eliminar esta etiqueta? Todos
+  los elementos relacionados ya no podrán mostrar ni a agrupar.
+adminDashboard.time_slots.title: Franja horaria
+delivery.tracking_link: Enlace de seguimiento
+delivery.with_id: 'Entrega #%id%'
+help.title: Ayuda
+help.home: Casa
+restaurant.stats.order_number: Número de pedido
+restaurant.stats.delivered_on: Entregado en
+restaurant.stats.total_products_including_all_taxes: Productos totales incluyendo
+  todos los impuestos
+restaurant.stats.total_products_excluding_taxes: Total de productos sin impuestos
+restaurant.stats.delivery: Entrega
+task.form.create: Crear tarea
+task.form.timeWindow: Ventana de tiempo
+task.form.cancel: Cancelar
+task.form.showHistory: Mostrar historial
+task.form.modal.moreOptions: Mas opciones
+task.form.edit: Modificar tarea %id%
+task.form.finish: Terminar tarea
+task.form.details: Detalles de la tarea
+task.form.finish.DONE.info: La tarea se completó con éxito
+task.form.finish.FAIL.info: La tarea no se pudo completar
+form.store_type.time_slot.label: Franja horaria
+form.store_type.package_set.label: Paquete conjunto
+form.delivery.package.label: Paquete
+form.delivery.packages.label: Paquetes
+form.settings.enable_restaurant_pledges.label: Permitir a los clientes sugerir restaurantes
+form.suggest.name.label: Nombre
+form.suggest.name.help: Indique el nombre exacto para que podamos encontrarlo
+form.suggest.submit.label: Sugerir ahora
+form.suggest.message: '¿No encuentras tu restaurante favorito?
+
+  <br>
+
+  Danos su nombre y dirección. Luego, otros usuarios pueden votar para verlo aparecer
+  en la lista de restaurantes.
+
+  <br>
+
+  Esto nos permitirá identificar mejor los restaurantes a los que nos dirigiremos
+  y proporcionarles la prueba de una demanda real.
+
+  '
+form.suggest.thank_you_message: ¡Gracias por sugerir este restaurante!
+restaurant.suggest.message: 'Ayúdanos a convencer %restaurant.name% trabajar con %brand_name%!
+
+  <br>
+
+  Para verlo en la plataforma, necesitamos que usted y su voz respalden nuestra futura
+  solicitud de colaboración con esta marca.
+
+  '
+restaurant.suggest.vote: Vota por %name%
+pledge.suggested_by: Sugerido por @%username%
+restaurant.suggest.has_voted: ¡Ya has votado por este restaurante!
+restaurant.suggest.banner_disclaimer: Este restaurante no está disponible en este
+  momento. Vota por %restaurant.name%!
+pledge.vote_count_equals_two: '%first_user% y %second_user% he votado por este restaurante'
+pledge.vote_count_equals_one: '%username% ha votado por este restaurante'
+pledge.accept: Aceptar
+pledge.reject: Rechazar
+form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
+  Un nombre de usuario solo puede contener caracteres alfanuméricos (letras A-Z, números
+  0-9) con la excepción de guiones bajos.
+
+  '
+form.time_slot.name.label: Nombre
+form.time_slot.interval.label: Intervalo
+form.time_slot.choices.label: Opciones
+form.time_slot_choice.start_time.label: Hora de inicio
+form.time_slot_choice.end_time.label: Hora de finalización
+form.package_set.name.label: Nombre
+form.package_set.packages.label: Paquetes
+form.package.name.label: Nombre
+form.package.volume_units.label: Unidades de volumen
+basics.date_range: Desde %start% hasta %end%
+basics.total_including_tax: Total incluyendo todos los impuestos
+basics.stripe_fees: Tarifas de Stripe
+basics.platform_fees: Tarifas de plataforma
+basics.net_income: Ingresos netos
+time_slot.human_readable: '%day% entre %start% y %end%'
+resend_confirmation_email.disclaimer: Si no ha recibido el correo electrónico de confirmación,
+  haga clic en el botón.

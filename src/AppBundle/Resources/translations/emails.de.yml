@@ -1,129 +1,52 @@
-registration.email.subject: 'E-Mail bestätigen
-
-  '
-registration.email.message: '<h2>Wilkommen bei %brand_name%, %username%</h2>
-
-  Sie erhalten diese Nachricht, da Sie sich für ein %brand_name% -Konto angemeldet
-  haben.
-
-  <br>
-
-  Bestätigen Sie ihre E-Mail-Adresse durch einen Klick auf den Button.
-
-  '
+registration.email.subject: "E-Mail bestätigen\n"
+registration.email.message: "<h2>Wilkommen bei %brand_name%, %username%</h2>\nSie\
+  \ erhalten diese Nachricht, da Sie sich für ein %brand_name% -Konto angemeldet haben.\n\
+  <br>\nBestätigen Sie ihre E-Mail-Adresse durch einen Klick auf den Button.\n"
 registration.email.confirm: E-Mail wiederholen
 registration.email.disclaimer: Dieser Link ist nur zur einmaligen Validierung des
   Kontos gültig
-registration.email.textMessage: 'Herzlich willkommen bei %brand_name%, %username%,\n\n
-
-  Sie erhalten diese Nachricht, da Sie sich kürzlich für ein %brand_name%-Konto registriert
-  haben.\n
-
-  Um diese E-Mail-Adresse zu bestätigen einfach auf den folgenden Link klicken: <a
-  href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
-
-  '
+registration.email.textMessage: "Herzlich willkommen bei %brand_name%, %username%,\\\
+  n\\n\nSie erhalten diese Nachricht, da Sie sich kürzlich für ein %brand_name%-Konto\
+  \ registriert haben.\\n\nUm diese E-Mail-Adresse zu bestätigen einfach auf den folgenden\
+  \ Link klicken: <a href=\"%confirmationUrl%\" rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>Hallo %username%</h2> Um das Passwort zurückzusetzen,
   bitte auf den Button unten klicken.
 resetting.email.reset: Passwort zurücksetzen
 order.view: Bestellung anschauen
-order.public_url: 'Um Ihre Sendung zu verfolgen, bitte <a href="%order.public_url%">hier
-  klicken</a>.
-
-  '
-order.foodtech.accepted: 'Die Köchin oder der Koch beginnt mit der Zubereitung.
-
-  <br>
-
-  Eine KurierIn macht sich dann auf den Weg!
-
-  '
-order.foodtech.cancelled: 'Das Restaurant konnte die Bestellung %order.number% leider
-  nicht annehmen.
-
-  <br>
-
-  Ihr Konto ist nicht aufgeladen.
-
-  '
+order.public_url: "Um Ihre Sendung zu verfolgen, bitte <a href=\"%order.public_url%\"\
+  >hier klicken</a>.\n"
+order.foodtech.accepted: "Die Köchin oder der Koch beginnt mit der Zubereitung.\n\
+  <br>\nEine KurierIn macht sich dann auf den Weg!\n"
+order.foodtech.cancelled: "Das Restaurant konnte die Bestellung %order.number% leider\
+  \ nicht annehmen.\n<br>\nIhr Konto ist nicht aufgeladen.\n"
 admin.order.created.subject: Neue Bestellung zum bestätigen
-admin.order.created.body: 'Hallo,
-
-  <br>
-
-  Die neue Bestellung ist eingegangen.
-
-  '
-admin.order_foodtech.created.body: 'Hallo,
-
-  <br>
-
-  Eine neue Bestellung für folgendes Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.
-
-  '
+admin.order.created.body: "Hallo,\n<br>\nDie neue Bestellung ist eingegangen.\n"
+admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für folgendes\
+  \ Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Neue Bestellung zu bestätigen
-owner.order.created.body: 'Hallo,
-
-  <br>
-
-  für Ihr Restaurant wurde eine neue Bestellung aufgenommen: <strong>%restaurant.name%</strong>.
-
-  '
+owner.order.created.body: "Hallo,\n<br>\nfür Ihr Restaurant wurde eine neue Bestellung\
+  \ aufgenommen: <strong>%restaurant.name%</strong>.\n"
 order.created.subject: Bestätigung Ihrer Bestellung %order.number%
-order.created.body: 'Hallo,
-
-  <br>
-
-  Ihre Bestellung wurde erfasst.
-
-  <br>
-
-  Wir werden die Bestellung schnellstmöglich bearbeiten und kontaktieren Sie, sobald
-  sie bestätigt ist.
-
-  '
+order.created.body: "Hallo,\n<br>\nIhre Bestellung wurde erfasst.\n<br>\nWir werden\
+  \ die Bestellung schnellstmöglich bearbeiten und kontaktieren Sie, sobald sie bestätigt\
+  \ ist.\n"
 order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen
-order.accepted.body.intro: 'Hallo,
-
-  <br>
-
-  Ihre Bestellung wurde bestätigt.
-
-  '
+order.accepted.body.intro: "Hallo,\n<br>\nIhre Bestellung wurde bestätigt.\n"
 order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert
-order.cancelled.body.intro: 'Hallo,
-
-  <br>
-
-  Es tut uns leid, aber Ihre Bestellung wurde storniert.
-
-  '
+order.cancelled.body.intro: "Hallo,\n<br>\nEs tut uns leid, aber Ihre Bestellung wurde\
+  \ storniert.\n"
 order.delayed.subject: Ihre Bestellung %order.number% verspätet sich leider
-order.delayed.body: 'Hallo,
-
-  <br>
-
-  Es tut uns sehr leid Ihnen mitteilen zu müssen, dass sich Ihre Lieferung um %delay%
-  Minuten verspäten wird.
-
-  <br>
-
-  Wir entschuldigen uns für eventuelle Unannehmlichkeiten.
-
-  '
+order.delayed.body: "Hallo,\n<br>\nEs tut uns sehr leid Ihnen mitteilen zu müssen,\
+  \ dass sich Ihre Lieferung um %delay% Minuten verspäten wird.\n<br>\nWir entschuldigen\
+  \ uns für eventuelle Unannehmlichkeiten.\n"
 task.done.subject: 'Auftrag #%task.id% erledigt'
-task.done.body: 'Hallo,
-
-  <br>
-
-  der Auftrag #%task.id% wurde abgeschlossen.
-
-  '
+task.done.body: "Hallo,\n<br>\nder Auftrag #%task.id% wurde abgeschlossen.\n"
 task.failed.subject: 'Auftrag #%task.id% konnte nicht abgeschlossen werden'
-task.failed.body: 'Hallo,
-
-  <br>
-
-  Auftrag #%task.id% konnte leider nicht abgeschlossen werden.
-
-  '
+task.failed.body: "Hallo,\n<br>\nAuftrag #%task.id% konnte leider nicht abgeschlossen\
+  \ werden.\n"
+user.pledge.body: "Hallo,\n<br>\ndank dir ist %pledge.name% jetzt auf CoopCycle!\n\
+  <br>\nMit einem Dankeschön,\n<br>\nTeam CoopCycle.\n"
+user.pledge.subject: Dein Vorschlag ist jetzt auf CoopCycle!
+admin.pledge.body: "Hallo,\n<br>\n%username% möchte, dass %pledge.name% auf CoopCycle\
+  \ ist!\n<br>\nIch danke dir,\n<br>\nDas CoopCycle-Team.\n"
+admin.pledge.subject: Ein neuer Vorschlag wurde übermittelt!

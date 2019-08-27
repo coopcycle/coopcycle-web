@@ -1,89 +1,157 @@
-registration.email.subject: |
-  Confirma tu correo electrónico
-# Use rel="notrack" to make sure Mailjet does not rewrite links.
-# This is needed for deep links to work.
-registration.email.message: |
-  <h2>Bienvenido sobre %brand_name%, %username%</h2>
+registration.email.subject: 'Confirma tu correo electrónico
+
+  '
+registration.email.message: '<h2>Bienvenido sobre %brand_name%, %username%</h2>
+
   Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.
+
   <br>
+
   Confirma tu correo electrónico pulsando el botón aquí abajo.
+
+  '
 registration.email.confirm: Confirmar mi correo electrónico
-registration.email.disclaimer: Este enlace sólo puede utilizarse una vez para validar tu cuenta
-registration.email.textMessage: |
-  Bienvenido sobre %brand_name%, %username%,\n\n
+registration.email.disclaimer: Este enlace sólo puede utilizarse una vez para validar
+  tu cuenta
+registration.email.textMessage: 'Bienvenido sobre %brand_name%, %username%,\n\n
+
   Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\n
-  Sigue el siguiente enlace para confirmar tu correo electrónico: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
-resetting.email.message:
-  <h2>¡Hola %username%!</h2>
-  Para restablecer tu contraseña, por favor pulsa el botón aquí abajo.
+
+  Sigue el siguiente enlace para confirmar tu correo electrónico: <a href="%confirmationUrl%"
+  rel="notrack">%confirmationUrl%</a>.
+
+  '
+resetting.email.message: <h2>¡Hola %username%!</h2> Para restablecer tu contraseña,
+  por favor pulsa el botón aquí abajo.
 resetting.email.reset: Restablecer mi contraseña
-
 order.view: Ver el pedido
+order.public_url: 'Para seguir el estado de tu pedido, <a href="%order.public_url%">haga
+  clic aquí</a>.
 
-order.public_url: |
-  Para seguir el estado de tu pedido, <a href="%order.public_url%">haga clic aquí</a>.
-order.foodtech.accepted: |
-  El cocinero comienza a preparar tu pedido.
+  '
+order.foodtech.accepted: 'El cocinero comienza a preparar tu pedido.
+
   <br>
+
   ¡Un mensajero llega para llevártelo!
-order.foodtech.cancelled: |
-  El restaurador no puede preparar tu pedido %order.number%.
+
+  '
+order.foodtech.cancelled: 'El restaurador no puede preparar tu pedido %order.number%.
+
   <br>
+
   Tu cuenta no ha sido cargada.
 
+  '
 admin.order.created.subject: Nuevo pedido para confirmar
-admin.order.created.body: |
-  Buenos dias,
+admin.order.created.body: 'Buenos dias,
+
   <br>
+
   Se ha creado un nuevo pedido.
 
-admin.order_foodtech.created.body: |
-  Buenos dias,
+  '
+admin.order_foodtech.created.body: 'Buenos dias,
+
   <br>
+
   Se ha creado un nuevo pedido para el restaurante <strong>%restaurant.name%</strong>.
 
+  '
 owner.order.created.subject: Nuevo pedido para confirmar
-owner.order.created.body: |
-  Buenos dias,
+owner.order.created.body: 'Buenos dias,
+
   <br>
+
   Se ha creado un nuevo pedido para vuestro restaurante <strong>%restaurant.name%</strong>.
 
+  '
 order.created.subject: Confirmación de tu pedido %order.number%
-order.created.body: |
-  Buenos dias,
-  <br>
-  Hemos registrado su pedido.
-  <br>
-  Comprobamos su pedido lo antes posible y nos pondremos en contacto contigo cuando esta confirmado.
+order.created.body: 'Buenos dias,
 
-order.accepted.subject: Tu pedido %order.number% ha sido aceptado
-order.accepted.body.intro: |
-  Buenos dias,
   <br>
+
+  Hemos registrado su pedido.
+
+  <br>
+
+  Comprobamos su pedido lo antes posible y nos pondremos en contacto contigo cuando
+  esta confirmado.
+
+  '
+order.accepted.subject: Tu pedido %order.number% ha sido aceptado
+order.accepted.body.intro: 'Buenos dias,
+
+  <br>
+
   Tu pedido esta confirmado.
 
+  '
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
-order.cancelled.body.intro: |
-  Buenos dias,
+order.cancelled.body.intro: 'Buenos dias,
+
   <br>
+
   Lo sentimos, pero tu pedido ha sido cancelado.
 
+  '
 order.delayed.subject: Tu pedido %order.number% llegará más tarde
-order.delayed.body: |
-  Buenos dias,
+order.delayed.body: 'Buenos dias,
+
   <br>
+
   Lo sentimos, pero tu pedido llegará %delay% minutos más tarde.
+
   <br>
+
   Disculpanos por las molestias.
 
-task.done.subject: "La tarea #%task.id% ha sido completada"
-task.done.body: |
-  Buenos dias,
+  '
+task.done.subject: 'La tarea #%task.id% ha sido completada'
+task.done.body: 'Buenos dias,
+
   <br>
+
   La tarea #%task.id% ha sido completada.
 
-task.failed.subject: "La tarea #%task.id% no se pudo completar"
-task.failed.body: |
-  Buenos dias,
+  '
+task.failed.subject: 'La tarea #%task.id% no se pudo completar'
+task.failed.body: 'Buenos dias,
+
   <br>
+
   La tarea #%task.id% no se pudo completar.
+
+  '
+admin.pledge.subject: ¡Se ha enviado una nueva sugerencia!
+admin.pledge.body: 'Hola,
+
+  <br>
+
+  %username% le gustaría %pledge.name% estar en CoopCycle !
+
+  <br>
+
+  Gracias,
+
+  <br>
+
+  El equipo de CoopCycle.
+
+  '
+user.pledge.subject: Su sugerencia ahora está en CoopCycle!
+user.pledge.body: 'Hola,
+
+  <br>
+
+  Gracias a ti, %pledge.name% ahora está en CoopCycle !
+
+  <br>
+
+  Con agradecimiento,
+
+  <br>
+
+  Equipo de CoopCycle.
+
+  '
