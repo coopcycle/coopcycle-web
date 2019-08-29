@@ -123,6 +123,8 @@ class Restaurant extends FoodEstablishment
      */
     protected $enabled = false;
 
+    protected $isCaterer = false;
+
     protected $depositRefundEnabled = false;
 
     /**
@@ -843,6 +845,26 @@ class Restaurant extends FoodEstablishment
     public function setDepositRefundEnabled($depositRefundEnabled)
     {
         $this->depositRefundEnabled = $depositRefundEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsCaterer()
+    {
+        return $this->isCaterer;
+    }
+
+    /**
+     * @param mixed $isCaterer
+     *
+     * @return self
+     */
+    public function setIsCaterer($isCaterer)
+    {
+        $this->isCaterer = $isCaterer;
 
         return $this;
     }
