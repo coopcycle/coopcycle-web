@@ -3,16 +3,22 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ApiUser;
+use Doctrine\Common\Persistence\ObjectManager;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Mailer\MailerInterface;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use AppBundle\Entity\Invitation;
+use AppBundle\Form\SetPasswordInvitationType;
 
 class UserController extends AbstractController
 {
@@ -57,7 +63,6 @@ class UserController extends AbstractController
         if (!file_exists($dir)) {
             mkdir($dir, 0755);
         }
-
         $avatar = new Avatar([
             'uppercase' => true,
             'backgrounds' => $this->avatarBackgrounds
@@ -89,8 +94,49 @@ class UserController extends AbstractController
                 $mailer->sendConfirmationEmailMessage($user);
                 $session->set('fos_user_send_confirmation_email/email', $email);
                 return $this->redirectToRoute('fos_user_registration_check_email');
-            } 
+            }
         }
-        return $this->redirectToRoute('fos_user_security_login');   
+        return $this->redirectToRoute('fos_user_security_login');
+    }
+
+    /**
+     * @Route("/invitation/define-password/{code}", name="invitation_define_password")
+     */
+    public function confirmInvitationAction(Request $request, string $code,
+        ObjectManager $objectManager,
+        UserManagerInterface $userManager,
+        EventDispatcherInterface $eventDispatcher)
+    {
+        $repository = $this->getDoctrine()->getRepository(Invitation::class);
+
+        if (null === $invitation = $repository->findOneByCode($code)) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(SetPasswordInvitationType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $invitation->getUser();
+
+            $user->setPassword($form->get('plainPassword')->getData());
+            $user->setEnabled(true);
+
+            $userManager->updateUser($user);
+            $objectManager->remove($invitation);
+
+            $objectManager->flush();
+
+            $response = new RedirectResponse($this->generateUrl('fos_user_registration_confirmed'));
+
+            $eventDispatcher->dispatch(FOSUserEvents::REGISTRATION_CONFIRMED, new FilterUserResponseEvent($user, $request, $response));
+
+            return $response;
+        }
+
+        return $this->render('@App/profile/invitation_define_password.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class RegistrationType extends AbstractType
 {
@@ -31,7 +32,9 @@ class RegistrationType extends AbstractType
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso),
                 'label' => 'profile.telephone',
-            ]);
+            ])
+            ->add('save', SubmitType::class, array('label' => 'basics.save'))
+            ->add('sendInvitation', SubmitType::class, array('label' => 'basics.send_invitation'));
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [
@@ -52,7 +55,7 @@ class RegistrationType extends AbstractType
             $form = $event->getForm();
 
             $child = $form->get('username');
-            
+
             $config = $child->getConfig();
             $options = $config->getOptions();
             $options['help'] = 'form.registration.username.help';
@@ -64,6 +67,5 @@ class RegistrationType extends AbstractType
     public function getParent()
     {
         return 'FOS\UserBundle\Form\Type\RegistrationFormType';
-
     }
 }

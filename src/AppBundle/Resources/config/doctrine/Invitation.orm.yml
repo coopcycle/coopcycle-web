@@ -1,0 +1,15 @@
+AppBundle\Entity\Invitation:
+    type: entity
+    table: invitation
+    id:
+        code:
+            type: string
+            id: true
+            length: 180
+    fields:
+        sentAt:
+            type: datetime
+            nullable: true
+    oneToOne:
+        user:
+            targetEntity: AppBundle\Entity\ApiUser

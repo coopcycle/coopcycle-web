@@ -68,7 +68,6 @@ adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.restaurants.exclusive: Exclusive
 adminDashboard.users.title: Users
 adminDashboard.users.edit: Edit
-adminDashboard.users.save: Save
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
@@ -756,6 +755,8 @@ basics.total_including_tax: Total including all taxes
 basics.stripe_fees: Stripe fees
 basics.platform_fees: Platform fees
 basics.net_income: Net income
+basics.send_invitation: Send an invitation
+basics.send_invitation.confirm: Your invitation has been sent ! You can now edit the settings of the new user.
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
@@ -11,6 +10,7 @@ use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\Invitation ;
 
 class EmailManager
 {
@@ -145,7 +145,6 @@ class EmailManager
         $body = $this->mjml->render($this->templating->render('@App/emails/order/accepted.mjml.twig', [
             'order' => $order,
         ]));
-
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
@@ -187,6 +186,17 @@ class EmailManager
         $subject = $this->translator->trans('admin.pledge.subject', [], 'emails');
         $body = $this->mjml->render($this->templating->render('@App/emails/pledge/admin_pledge.mjml.twig', [
             'pledge' => $pledge
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createInvitationMessage(Invitation $invitation)
+    {
+        $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('@App/emails/admin_send_invitation.mjml.twig', [
+            'user' => $invitation->getUser(),
+            'invitation' => $invitation,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

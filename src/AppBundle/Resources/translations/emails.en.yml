@@ -43,6 +43,18 @@ admin.order_foodtech.created.body: |
   A new order has been created for the restaurant <strong>%restaurant.name%</strong>.
 
 admin.pledge.subject:  A new suggestion has been sent !
+
+admin.send_invitation.subject: Invitation to CoopCycle !
+admin.send_invitation.body: |
+  Hello %username%,
+  <br>
+  This is an invitation to the CoopCycle space, to finalize the creation of your account please click on the following link.
+  <br>
+  Thank you,
+  <br>
+  The CoopCycle Team.
+admin.send_invitation.create_password: Create my password
+
 admin.pledge.body: |
   Hello,
   <br>
@@ -51,6 +63,7 @@ admin.pledge.body: |
   Thank you,
   <br>
   The CoopCycle Team.
+
 user.pledge.subject: Your suggestion is now on CoopCycle !
 user.pledge.body: |
   Hello,

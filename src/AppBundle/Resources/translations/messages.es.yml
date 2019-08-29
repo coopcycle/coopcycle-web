@@ -52,7 +52,6 @@ adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
 adminDashboard.users.title: Usuarios
 adminDashboard.users.edit: Editar
-adminDashboard.users.save: Guardar
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
 adminDashboard.users.edit.addStore: Añadir tienda

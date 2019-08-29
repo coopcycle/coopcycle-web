@@ -14,8 +14,20 @@
   <div class="row">
     <div class="col-md-offset-2 col-md-8">
       {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.users.save{% endtrans %}</button>
+        {{ form_row(form.givenName) }}
+        {{ form_row(form.familyName) }}
+        {{ form_row(form.telephone) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.plainPassword) }}
+        <div class="row">
+          <div class="col-md-6">
+            {{ form_row(form.save, { attr: { class: 'btn btn-block btn-primary' } }) }}
+          </div>
+          <div class="col-md-6">
+            {{ form_row(form.sendInvitation, { attr: { class: 'btn btn-block btn-info' } }) }}
+          </div>
+        </div>
       {{ form_end(form) }}
     </div>
   </div>

@@ -23,7 +23,6 @@ adminDashboard.stores.form.uploadImage: Bild hochladen
 adminDashboard.orders.title: Bestellungen
 adminDashboard.orders.invoice.title: Rechnung
 adminDashboard.restaurants.title: Restaurants
-adminDashboard.users.save: Speichern
 adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
 adminDashboard.settings.title: Einstellungen
 adminDashboard.pricing.settings: Einstellungen
