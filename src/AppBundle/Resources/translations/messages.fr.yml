@@ -56,7 +56,6 @@ adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.edit: Modifier
-adminDashboard.users.save: Enregistrer
 adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
@@ -117,6 +116,9 @@ restaurant.disabledWarning: 'Ce restaurant n''est pas activé et n''est donc pas
   dans l''admin</a>.
 
   '
+restaurant.isCatererWarningDanger: 'Cette page propose uniquement des services de traiteur, vous ne pouvez pas passer de commandes directement mais vous pouvez en revanche établir un devis sous condition d''avoir un compte professionnel. Pour ce faire, <a href="#footer">contactez-nous.</a> <span class="glyphicon glyphicon-remove-sign"></span>'
+restaurant.isCatererWarningSuccess: 'Cette page propose uniquement des services de traiteur, vous ne pouvez pas passer de commandes directement mais vous pouvez en revanche établir un devis car vous avez un compte professionnel. <span class="glyphicon glyphicon-ok-sign"></span>'
+
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
@@ -678,6 +680,7 @@ pagination.next: Suivante
 basics.save: Enregistrer
 basics.next: Suivant
 basics.continue: Continuer
+basics.contact_us: contactez-nous
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.add: Ajouter
@@ -699,6 +702,9 @@ basics.total_including_tax: Total TTC
 basics.stripe_fees: Frais Stripe
 basics.platform_fees: Frais de plateforme
 basics.net_income: Revenu net
+basics.send_invitation: Envoyer une invitation
+basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous pouvez à présent éditer les paramètres du nouvel utilisateur.
+basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations personnelles</a>
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle

@@ -33,6 +33,12 @@ AppBundle\Entity\ApiUser:
             column: quotes_allowed
             options:
                 default: false
+    oneToOne:
+        invitation:
+            targetEntity: AppBundle\Entity\Invitation
+            joinColumns:
+                invitation_code:
+                    referencedColumnName: code
     oneToMany:
         remotePushTokens:
             targetEntity: AppBundle\Entity\RemotePushToken

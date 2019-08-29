@@ -93,6 +93,8 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     protected $quotesAllowed = false;
 
+    protected $invitation;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -307,5 +309,15 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         $this->quotesAllowed = $quotesAllowed;
 
         return $this;
+    }
+
+    public function setInvitation(Invitation $invitation = null)
+    {
+        $this->invitation = $invitation;
+    }
+
+    public function getInvitation()
+    {
+        return $this->invitation;
     }
 }

@@ -1,0 +1,14 @@
+AppBundle\Entity\Invitation:
+    type: entity
+    table: invitation
+    id:
+        code:
+            type: string
+            id: true
+            length: 180
+    fields:
+        email:
+            type: string
+            length: 256
+        sent:
+            type: boolean

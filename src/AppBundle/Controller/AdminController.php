@@ -73,6 +73,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use AppBundle\Service\TagManager;
+use AppBundle\Entity\Invitation;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 
 class AdminController extends Controller
 {
@@ -307,7 +309,7 @@ class AdminController extends Controller
      * @Route("/admin/users/add", name="admin_users_add")
      * @Template
      */
-    public function userAddAction(Request $request)
+    public function userAddAction(Request $request, EmailManager $emailManager, TokenGeneratorInterface $tokenGenerator)
     {
         $form = $this->createForm(RegistrationType::class);
         $form->handleRequest($request);
@@ -317,6 +319,31 @@ class AdminController extends Controller
 
             $this->getDoctrine()->getManagerForClass(ApiUser::class)->persist($user);
             $this->getDoctrine()->getManagerForClass(ApiUser::class)->flush();
+            if ($form->get('sendInvitation')->isClicked()) {
+
+
+                $invitation = new invitation();
+                $invitation->setEmail($form->get('email')->getData());
+                $invitation->setCode($tokenGenerator->generateToken());
+
+                $message = $emailManager->createSendInvitationMessage($user, $invitation, $form);
+
+                $emailManager->sendTo($message, $form->get('email')->getData());
+                $user->setInvitation($invitation);
+                $invitation->send();
+
+                $this->getDoctrine()->getManagerForClass(Invitation::class)->persist($invitation);
+                $this->getDoctrine()->getManagerForClass(Invitation::class)->flush();
+
+                $this->addFlash(
+                    'notice',
+                    $this->get('translator')->trans('basics.send_invitation.confirm')
+                );
+
+                return $this->redirectToRoute('admin_user_edit', array(
+                    'username' => $form->get('username')->getData(),
+                ));
+            }
             return $this->redirectToRoute('admin_users');
         }
 
@@ -1313,6 +1340,19 @@ class AdminController extends Controller
 
         $messages = $mailer->getMessages();
         $message = current($messages);
+
+        $response = new Response();
+        $response->setContent($message->getBody());
+
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/emails/invitation", name="admin_email_invitation_preview")
+     */
+    public function invitationEmailPreviewAction(Request $request, EmailManager $emailManager)
+    {
+        $message = $emailManager->createSendInvitationMessage($this->getUser());
 
         $response = new Response();
         $response->setContent($message->getBody());
