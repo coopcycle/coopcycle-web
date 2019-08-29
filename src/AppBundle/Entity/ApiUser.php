@@ -91,7 +91,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     protected $facebookAccessToken;
 
-    protected $quotesAllowed;
+    protected $quotesAllowed = false;
 
     public function __construct()
     {

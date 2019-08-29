@@ -42,18 +42,21 @@ class UpdateProfileType extends AbstractType
                 'label' => 'profile.telephone',
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso)
-            ])
-            ->add('quotesAllowed', CheckboxType::class, [
-                'label' => 'adminDashboard.users.edit.quotes_allowed',
-                'required' => false,
             ]);
-
 
         $isAdmin = false;
         if ($token = $this->tokenStorage->getToken()) {
             if ($user = $token->getUser()) {
                 $isAdmin = $user->hasRole('ROLE_ADMIN');
             }
+        }
+
+        if($isAdmin) {
+            $builder
+                ->add('quotesAllowed', CheckboxType::class, [
+                'label' => 'adminDashboard.users.edit.quotes_allowed',
+                'required' => false,
+            ]);
         }
 
         $builder->addEventListener(
