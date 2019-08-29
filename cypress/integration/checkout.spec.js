@@ -83,6 +83,8 @@ context('Checkout', () => {
 
     cy.location('pathname').should('eq', '/order/payment')
 
+    cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
+
     const expDate = Cypress.moment().add(6, 'month').format('MMYY')
 
     // @see https://github.com/cypress-io/cypress/issues/136

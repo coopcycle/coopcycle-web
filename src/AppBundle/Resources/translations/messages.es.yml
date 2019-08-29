@@ -541,6 +541,7 @@ form.delivery_embed.telephone.label: Número de teléfono
 form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artículos
   de más de 50x40x20 (cm) o cuyo peso exceda los 6 kg
 form.resend_confirmation_email.submit.label: Reenviar correo electrónico
+form.stripe_payment.cardholder_name.label: Nombre del titular de la tarjeta
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
 product_option.strategy.option: Precio fijo sea cual sea la elección

@@ -48,6 +48,8 @@
 
               {{ form_widget(form.stripePayment.stripeToken) }}
 
+              {{ form_row(form.stripePayment.cardholderName) }}
+
               <div class="form-group">
                 <label class="control-label hidden" for="card-element">
                   {% trans %}order.payment.title{% endtrans %}
@@ -96,7 +98,8 @@
   });
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
-    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken')
+    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
   });
   new CoopCycle.CheckoutDateTime(document.querySelector('#checkout_payment_shippedAt'), {
     dateElement: document.querySelector('#checkout_payment_shippedAt_date'),

@@ -618,6 +618,7 @@ form.time_slot.name.label: Nom
 form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
+form.stripe_payment.cardholder_name.label: Nom du titulaire de la carte
 promotion_coupon.used.label: Nombre d'utilisations
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix

@@ -632,6 +632,7 @@ form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
 form.package.volume_units.label: Volume units
+form.stripe_payment.cardholder_name.label: Cardholder name
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice

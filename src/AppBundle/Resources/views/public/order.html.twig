@@ -1,5 +1,9 @@
 {% extends "@App/base.html.twig" %}
 
+{% if form is defined %}
+  {% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% endif %}
+
 {% block menu %}
 <nav class="navbar navbar-default">
   <div class="container">
@@ -62,6 +66,8 @@
             {{ 'embed.delivery.use_form_below'|trans }}
           </div>
 
+          {{ form_row(form.cardholderName) }}
+
           <div class="form-group">
             <label class="control-label" for="card-element">
               {% trans %}order.payment.title{% endtrans %}
@@ -73,8 +79,8 @@
             <div id="card-errors" role="alert"></div>
           </div>
 
-          <button type="submit" class="btn btn-block btn-lg btn-primary">
-            {% trans with { '%total%': stripe_payment.amount|price_format } %}order.payment.total{% endtrans %}
+          <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+            <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': stripe_payment.amount|price_format } %}order.payment.total{% endtrans %}
           </button>
 
         {{ form_end(form) }}
@@ -108,7 +114,8 @@ new CoopCycle.DeliveryMap('map', {
 {% if stripe_payment.state == 'new' %}
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
   publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
-  tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  tokenElement: document.querySelector('#stripe_payment_stripeToken'),
+  cardholderNameElement: document.querySelector('#stripe_payment_cardholderName')
 })
 {% endif %}
 </script>
