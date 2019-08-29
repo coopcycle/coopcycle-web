@@ -28,6 +28,11 @@ AppBundle\Entity\ApiUser:
             type: string
             nullable: true
             column: facebook_access_token
+        quotesAllowed:
+            type: boolean
+            column: quotes_allowed
+            options:
+                default: false
     oneToMany:
         remotePushTokens:
             targetEntity: AppBundle\Entity\RemotePushToken

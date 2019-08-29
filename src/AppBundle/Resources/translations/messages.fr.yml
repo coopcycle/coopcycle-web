@@ -62,6 +62,7 @@ adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
+adminDashboard.users.edit.quotes_allowed: Autoriser ce client à faire des demandes de devis
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer

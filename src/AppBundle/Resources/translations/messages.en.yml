@@ -74,6 +74,7 @@ adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user
+adminDashboard.users.edit.quotes_allowed: Allow this customer to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
 adminDashboard.pricing.manage: Manage

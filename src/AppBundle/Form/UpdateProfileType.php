@@ -44,12 +44,19 @@ class UpdateProfileType extends AbstractType
                 'default_region' => strtoupper($this->countryIso)
             ]);
 
-
         $isAdmin = false;
         if ($token = $this->tokenStorage->getToken()) {
             if ($user = $token->getUser()) {
                 $isAdmin = $user->hasRole('ROLE_ADMIN');
             }
+        }
+
+        if($isAdmin) {
+            $builder
+                ->add('quotesAllowed', CheckboxType::class, [
+                'label' => 'adminDashboard.users.edit.quotes_allowed',
+                'required' => false,
+            ]);
         }
 
         $builder->addEventListener(
