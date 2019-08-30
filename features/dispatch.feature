@@ -72,6 +72,23 @@ Feature: Dispatch
       """
     Then the response status code should be 201
 
+  Scenario: Create task list already existing
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/task_lists" with body:
+      """
+      {
+        "date": "2018-12-02",
+        "courier": "/api/users/1"
+      }
+      """
+    Then the response status code should be 201
+
   Scenario: Administrator can assign task
     Given the fixtures files are loaded:
       | sylius_channels.yml |

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -14,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @ApiResource(
  *   collectionOperations={
- *      "my_tasks" = {
+ *     "my_tasks" = {
  *       "route_name" = "my_tasks",
  *       "swagger_context" = {
  *         "parameters" = {{
@@ -28,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "get"={"method"="GET"},
  *     "post"={
  *       "method"="POST",
+ *       "controller"=CreateTaskListController::class,
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
