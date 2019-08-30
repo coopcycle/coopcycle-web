@@ -54,6 +54,12 @@ class ImportStripeFeeCommand extends Command
                 'd',
                 InputOption::VALUE_REQUIRED,
                 'Date'
+            )
+            ->addOption(
+                'order',
+                'o',
+                InputOption::VALUE_REQUIRED,
+                'Order'
             );
     }
 
@@ -64,21 +70,41 @@ class ImportStripeFeeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $options = array_filter($input->getOptions());
+
+        if (isset($options['order']) && isset($options['date'])) {
+            $this->io->title('Options "order" & "date" are mutually exclusive');
+
+            return 1;
+        }
+
         $this->io->title('Importing Stripe fees');
 
         $dryRun = $input->getOption('dry-run');
 
-        $date = $this->getDate($input);
+        $orders = [];
 
-        if (is_array($date)) {
-            [ $start, $end ] = $date;
-            $this->io->text(sprintf('Retrieving orders fulfilled between %s and %s',
-                $start->format('Y-m-d'), $end->format('Y-m-d')));
-            $orders = $this->orderRepository->findFulfilledOrdersByDateRange($start, $end);
-        } else {
-            $this->io->text(sprintf('Retrieving orders fulfilled on %s',
-                $date->format('Y-m-d')));
-            $orders = $this->orderRepository->findFulfilledOrdersByDate($date);
+        if (isset($options['order'])) {
+
+            $this->io->text(sprintf('Retrieving order #%d', $options['order']));
+            $orders[] = $this->orderRepository->find($options['order']);
+
+        } elseif (isset($options['date'])) {
+
+            $date = $this->getDate($input);
+
+            if (is_array($date)) {
+                [ $start, $end ] = $date;
+                $this->io->text(sprintf('Retrieving orders fulfilled between %s and %s',
+                    $start->format('Y-m-d'), $end->format('Y-m-d')));
+
+                $orders = $this->orderRepository->findFulfilledOrdersByDateRange($start, $end);
+            } else {
+                $this->io->text(sprintf('Retrieving orders fulfilled on %s',
+                    $date->format('Y-m-d')));
+
+                $orders = $this->orderRepository->findFulfilledOrdersByDate($date);
+            }
         }
 
         $this->io->text(sprintf('Found %d orders to process', count($orders)));
@@ -104,10 +130,26 @@ class ImportStripeFeeCommand extends Command
 
             try {
 
-                $charge = Stripe\Charge::retrieve($lastCompletedPayment->getCharge(), $stripeOptions);
+                $charge = null;
+                $stripeFee = 0;
+
+                $paymentIntent = $lastCompletedPayment->getPaymentIntent();
+                if (null !== $paymentIntent) {
+                    $intent = Stripe\PaymentIntent::retrieve($paymentIntent, $stripeOptions);
+                    if (count($intent->charges->data) === 1) {
+                        $charge = current($intent->charges->data);
+                    }
+                } else {
+                    $charge = Stripe\Charge::retrieve($lastCompletedPayment->getCharge(), $stripeOptions);
+                }
+
+                if (null === $charge) {
+                    $this->io->text('No charge was found');
+                    continue;
+                }
+
                 $balanceTransaction = Stripe\BalanceTransaction::retrieve($charge->balance_transaction, $stripeOptions);
 
-                $stripeFee = 0;
                 foreach ($balanceTransaction->fee_details as $feeDetail) {
                     if ('stripe_fee' === $feeDetail->type) {
                         $stripeFee = $feeDetail->amount;
