@@ -29,6 +29,7 @@ function createAddressWidget(name, type, cb) {
       addresses={ addresses }
       address={ value }
       geohash={ '' }
+      required={ true }
       onAddressSelected={ (value, address) => {
 
         document.querySelector(`#${name}_${type}_address_streetAddress`).value = address.streetAddress

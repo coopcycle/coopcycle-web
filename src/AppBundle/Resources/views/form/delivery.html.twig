@@ -84,14 +84,15 @@ col-sm-9
   <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
     <div class="col-sm-9 col-md-offset-3">
       <div id="{{ form.vars.id ~ '_widget' }}" data-addresses="{{ addresses|coopcycle_normalize|json_encode|e('html_attr') }}"></div>
-      <div class="input-group hidden">
-        <div class="input-group-addon"><i class="fa fa-{{ icon }}"></i></div>
-        {{ form_widget(form) }}
-      </div>
+      {{ form_widget(form) }}
     </div>
     {% if not form.vars.valid %}{{ form_errors(form) }}{% endif %}
   </div>
 
+{% endblock %}
+
+{% block task_address_streetAddress_widget %}
+  {{ block('hidden_widget') }}
 {% endblock %}
 
 {% block vehicle_widget %}
@@ -129,8 +130,11 @@ col-sm-9
 {% endblock %}
 
 {% block _delivery_pickup_address_streetAddress_row %}
-  {% set icon = 'cube' %}
   {{ block('task_address_streetAddress_row') }}
+{% endblock %}
+
+{% block _delivery_pickup_address_streetAddress_widget %}
+  {{ block('task_address_streetAddress_widget') }}
 {% endblock %}
 
 {% block _delivery_pickup_doneAfter_widget %}
@@ -162,8 +166,11 @@ col-sm-9
 {% endblock %}
 
 {% block _delivery_dropoff_address_streetAddress_row %}
-  {% set icon = 'flag' %}
   {{ block('task_address_streetAddress_row') }}
+{% endblock %}
+
+{% block _delivery_dropoff_address_streetAddress_widget %}
+  {{ block('task_address_streetAddress_widget') }}
 {% endblock %}
 
 {% block _delivery_dropoff_doneAfter_widget %}
