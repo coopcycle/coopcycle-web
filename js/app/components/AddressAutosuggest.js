@@ -260,7 +260,8 @@ class AddressAutosuggest extends Component {
       placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
       value,
       onChange: this.onChange.bind(this),
-      type: "search"
+      type: "search",
+      required: this.props.required
     }
 
     let autosuggestProps = {}
@@ -302,6 +303,7 @@ AddressAutosuggest.propTypes = {
   addresses: PropTypes.array.isRequired,
   geohash: PropTypes.string.isRequired,
   onAddressSelected: PropTypes.func.isRequired,
+  required: PropTypes.bool,
 }
 
 export default AddressAutosuggest
