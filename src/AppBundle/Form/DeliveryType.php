@@ -159,9 +159,10 @@ class DeliveryType extends AbstractType
 
                 if ($defaultAddress) {
                     $addressForm = $form->get('pickup')->get('address');
-
                     $addressForm->get('id')->setData($defaultAddress->getId());
                     $addressForm->get('streetAddress')->setData($defaultAddress->getStreetAddress());
+                    $addressForm->get('latitude')->setData($defaultAddress->getGeo()->getLatitude());
+                    $addressForm->get('longitude')->setData($defaultAddress->getGeo()->getLongitude());
                 }
             }
 
