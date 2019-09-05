@@ -68,3 +68,13 @@
   }
 
 }
+
+.has-error {
+  .address-autosuggest {
+    &__container {
+      &:before {
+        background-color: $state-danger-text;
+      }
+    }
+  }
+}
