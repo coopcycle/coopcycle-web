@@ -30,6 +30,8 @@ function createAddressWidget(name, type, cb) {
       address={ value }
       geohash={ '' }
       required={ true }
+      reportValidity={ true }
+      preciseOnly={ true }
       onAddressSelected={ (value, address) => {
 
         document.querySelector(`#${name}_${type}_address_streetAddress`).value = address.streetAddress
