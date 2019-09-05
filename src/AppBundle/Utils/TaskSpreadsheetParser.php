@@ -111,11 +111,26 @@ class TaskSpreadsheetParser
                 }
             }
 
+            else if (isset($record['address'])) {
+                if (!$address = $this->geocoder->geocode($record['address'])) {
+                    // TODO Translate
+                    throw new \Exception(sprintf('Could not geocode address %s', $record['address']));
+                }
+            }
+
             if (isset($record['address.latlng'])) {
                 [ $latitude, $longitude ] = array_map('floatval', explode(',', $record['address.latlng']));
                 if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
                     // TODO Translate
                     throw new \Exception(sprintf('Could not reverse geocode %s', $record['address.latlng']));
+                }
+            }
+
+            else if (isset($record['latlong'])) {
+                [ $latitude, $longitude ] = array_map('floatval', explode(',', $record['latlong']));
+                if (!$address = $this->geocoder->reverse($latitude, $longitude)) {
+                    // TODO Translate
+                    throw new \Exception(sprintf('Could not reverse geocode %s', $record['latlong']));
                 }
             }
 
@@ -181,14 +196,20 @@ class TaskSpreadsheetParser
 
     private function validateHeader(array $header)
     {
-        $hasAddress = in_array('.streetAddress', $header);
-        $hasLatLong = in_array('address.latlng', $header);
+        $hasAddress = in_array('address', $header);
+        $hasStreetAddress = in_array('.streetAddress', $header);
+        $hasLatLong = in_array('latlong', $header);
+        $hasAdressLatLng = in_array('address.latlng', $header);
 
-        if (!$hasAddress && !$hasLatLong) {
-            throw new \Exception('You must provide an ".streetAddress" or a "address.latlng" column');
+        if (!$hasAddress && !$hasLatLong) && (!$hasStreetAddress && !$hasAdressLatLng) {
+            throw new \Exception('You must provide an adress column (with header "adress.streetAddress" or "adress") or a coordinates column (with header "adress.latlng" or "latlong")');
         }
 
-        if ($hasAddress && $hasLatLong) {
+        else if ($hasAddress && $hasLatLong) {
+            throw new \Exception('You must provide an "address" or a "latlong" column, not both');
+        }
+
+        else if ($hasStreetAddress && $hasAdressLatLng) {
             throw new \Exception('You must provide an ".streetAddress" or a "address.latlng" column, not both');
         }
     }
