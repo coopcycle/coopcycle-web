@@ -105,10 +105,22 @@ class AddressAutosuggest extends Component {
     }
   }
 
+  onClear() {
+    this.setState({ value: '' })
+
+    if (this.props.reportValidity) {
+      this.autosuggest.input.setCustomValidity('')
+    }
+  }
+
   onChange(event, { newValue }) {
     this.setState({
       value: newValue
     })
+
+    if (this.props.reportValidity) {
+      this.autosuggest.input.setCustomValidity('')
+    }
   }
 
   _autocompleteCallback(predictions, status) {
@@ -202,6 +214,15 @@ class AddressAutosuggest extends Component {
             geohash,
           }
 
+          // If the component was configured for,
+          // report validity if the address is not precise enough
+          if (this.props.reportValidity && this.props.preciseOnly && !address.isPrecise) {
+            this.autosuggest.input.setCustomValidity(i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'))
+            if (HTMLInputElement.prototype.reportValidity) {
+              this.autosuggest.input.reportValidity()
+            }
+          }
+
           this.props.onAddressSelected(this.state.value, address, suggestion.type)
         }
       })
@@ -230,7 +251,7 @@ class AddressAutosuggest extends Component {
       <div>
         <input { ...inputProps } />
         { this.state.value && (
-          <button className="address-autosuggest__clear" onClick={ () => this.setState({ value: '' }) }>
+          <button className="address-autosuggest__clear" onClick={ () => this.onClear() }>
             <i className="fa fa-times-circle"></i>
           </button>
         )}
@@ -296,6 +317,9 @@ class AddressAutosuggest extends Component {
 
 AddressAutosuggest.defaultProps = {
   addresses: [],
+  required: false,
+  reportValidity: false,
+  preciseOnly: false
 }
 
 AddressAutosuggest.propTypes = {
@@ -304,6 +328,8 @@ AddressAutosuggest.propTypes = {
   geohash: PropTypes.string.isRequired,
   onAddressSelected: PropTypes.func.isRequired,
   required: PropTypes.bool,
+  reportValidity: PropTypes.bool,
+  preciseOnly: PropTypes.bool,
 }
 
 export default AddressAutosuggest

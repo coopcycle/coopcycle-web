@@ -7,7 +7,9 @@ const defaultOptions = {
   addresses: [],
   geohash: '',
   onAddressSelected: (value, address) => {},
-  required: false
+  required: false,
+  preciseOnly: false,
+  reportValidity: false,
 }
 
 export default function(el, options) {
@@ -23,7 +25,9 @@ export default function(el, options) {
       addresses={ overrideOptions.addresses }
       geohash={ overrideOptions.geohash }
       onAddressSelected={ overrideOptions.onAddressSelected }
-      required={ overrideOptions.required } />,
+      required={ overrideOptions.required }
+      preciseOnly={ overrideOptions.preciseOnly }
+      reportValidity={ overrideOptions.reportValidity } />,
     el
   )
 }
