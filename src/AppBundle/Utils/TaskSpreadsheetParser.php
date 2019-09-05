@@ -201,7 +201,7 @@ class TaskSpreadsheetParser
         $hasLatLong = in_array('latlong', $header);
         $hasAdressLatLng = in_array('address.latlng', $header);
 
-        if (!$hasAddress && !$hasLatLong) && (!$hasStreetAddress && !$hasAdressLatLng) {
+        if ((!$hasAddress && !$hasLatLong) && (!$hasStreetAddress && !$hasAdressLatLng)) {
             throw new \Exception('You must provide an adress column (with header "adress.streetAddress" or "adress") or a coordinates column (with header "adress.latlng" or "latlong")');
         }
 
