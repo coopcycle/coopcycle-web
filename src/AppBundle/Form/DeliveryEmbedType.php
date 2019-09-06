@@ -36,7 +36,6 @@ class DeliveryEmbedType extends DeliveryType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $options = array_merge($options, [
-            'with_store' => false,
             'with_vehicle' => $this->settingsManager->getBoolean('embed.delivery.withVehicle'),
         ]);
 

@@ -10,8 +10,6 @@ use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\TimeSlotChoiceWithDate;
 use Carbon\Carbon;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -120,28 +118,6 @@ class DeliveryType extends AbstractType
                 }
             }
         );
-
-        if ($options['with_store']) {
-            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-                $form = $event->getForm();
-                $delivery = $event->getData();
-
-                $isNew = $delivery->getId() === null;
-
-                $form->add('store', EntityType::class, [
-                    'class' => Store::class,
-                    'query_builder' => function (EntityRepository $repository) {
-                        return $repository->createQueryBuilder('s')
-                            ->orderBy('s.name', 'ASC');
-                    },
-                    'label' => 'form.delivery.store.label',
-                    'choice_label' => 'name',
-                    'required' => false,
-                    'disabled' => !$isNew
-                ]);
-            });
-        }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -281,7 +257,6 @@ class DeliveryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
             'with_vehicle' => false,
-            'with_store' => true,
             'with_tags' => true,
         ));
     }

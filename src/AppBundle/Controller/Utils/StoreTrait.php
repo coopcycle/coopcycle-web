@@ -219,7 +219,6 @@ trait StoreTrait
         $delivery->setStore($store);
 
         $form = $this->createDeliveryForm($delivery, [
-            'with_store' => false,
             'with_tags' => $this->isGranted('ROLE_ADMIN')
         ]);
 
