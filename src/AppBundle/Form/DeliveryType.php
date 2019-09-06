@@ -49,24 +49,7 @@ class DeliveryType extends AbstractType
             ->add('weight', NumberType::class, [
                 'required' => false,
                 'label' => 'form.delivery.weight.label'
-            ])
-            ->add('pickup', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.pickup.label',
-                'constraints' => [
-                    new Assert\Valid()
-                ],
-                'with_tags' => $options['with_tags']
-            ])
-            ->add('dropoff', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.dropoff.label',
-                'constraints' => [
-                    new Assert\Valid()
-                ],
-                'with_tags' => $options['with_tags']
-            ])
-            ;
+            ]);
 
         if (true === $options['with_vehicle']) {
             $builder->add('vehicle', ChoiceType::class, [
@@ -79,52 +62,49 @@ class DeliveryType extends AbstractType
             ]);
         }
 
-        $builder->get('pickup')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $delivery = $event->getForm()->getParent()->getData();
-                foreach ($delivery->getTasks() as $task) {
-                    if ($task->getType() === Task::TYPE_PICKUP) {
-
-                        if (null === $delivery->getId()) {
-                            $before = new \DateTime();
-                            while (($before->format('i') % 15) !== 0) {
-                                $before->modify('+1 minute');
-                            }
-                            $task->setDoneBefore($before);
-                        }
-
-                        $event->setData($task);
-                    }
-                }
-            }
-        );
-
-        $builder->get('dropoff')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $delivery = $event->getForm()->getParent()->getData();
-                foreach ($delivery->getTasks() as $task) {
-                    if ($task->getType() === Task::TYPE_DROPOFF) {
-
-                        if (null === $delivery->getId()) {
-                            $before = clone $delivery->getPickup()->getDoneBefore();
-                            $before->modify('+1 hour');
-                            $task->setDoneBefore($before);
-                        }
-
-                        $event->setData($task);
-                    }
-                }
-            }
-        );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $delivery = $event->getData();
 
             $store = $delivery->getStore();
+
+            // When this is a new delivery,
+            // set defaults for pickup/dropoff date
+            if (null === $delivery->getId()) {
+
+                $now = Carbon::now();
+
+                $pickupBefore = clone $now;
+                while (($pickupBefore->format('i') % 15) !== 0) {
+                    $pickupBefore->modify('+1 minute');
+                }
+
+                $dropoffBefore = clone $pickupBefore;
+                $dropoffBefore->modify('+1 hour');
+
+                $delivery->getPickup()->setDoneBefore($pickupBefore);
+                $delivery->getDropoff()->setDoneBefore($dropoffBefore);
+            }
+
+            $form->add('pickup', TaskType::class, [
+                'mapped' => false,
+                'label' => 'form.delivery.pickup.label',
+                'constraints' => [
+                    new Assert\Valid()
+                ],
+                'data' => $delivery->getPickup(),
+                'with_tags' => $options['with_tags'],
+            ]);
+            $form->add('dropoff', TaskType::class, [
+                'mapped' => false,
+                'label' => 'form.delivery.dropoff.label',
+                'constraints' => [
+                    new Assert\Valid()
+                ],
+                'data' => $delivery->getDropoff(),
+                'with_tags' => $options['with_tags'],
+            ]);
 
             if (null === $store) {
                 return;
