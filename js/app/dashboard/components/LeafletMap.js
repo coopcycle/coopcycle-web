@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask } from '../redux/actions'
+import { setCurrentTask, assignTasks } from '../redux/actions'
 import { selectTasks, selectFilteredTasks } from '../redux/selectors'
 
 class LeafletMap extends Component {
@@ -31,7 +31,52 @@ class LeafletMap extends Component {
       onLoad: this.props.onLoad
     })
     this.proxy = new MapProxy(this.map, {
-      onEditClick: this.props.setCurrentTask
+      onEditClick: this.props.setCurrentTask,
+      onTaskMouseDown: task => {
+        if (task.isAssigned) {
+          this.proxy.disableDragging()
+          this.fromTask = task
+        }
+      },
+      onTaskMouseOver: task => {
+        if (task.isAssigned) {
+          this.proxy.enableConnect(task)
+        }
+        if (this.fromTask && task !== this.fromTask && !task.isAssigned) {
+          this.toTask = task
+          this.proxy.enableConnect(task, true)
+        }
+      },
+      onTaskMouseOut: (task) => {
+        this.toTask = null
+        this.proxy.disableConnect(task)
+      },
+      onMouseMove: (e) => {
+        if (this.fromTask) {
+          const targetLatLng = !!this.toTask ? this.proxy.toLatLng(this.toTask) : e.latlng
+          this.proxy.setDrawPolyline(this.proxy.toLatLng(this.fromTask), targetLatLng, !!this.toTask)
+          this.proxy.enableConnect(this.fromTask, !!this.toTask)
+        }
+      },
+      onMouseUp: (e) => {
+
+        if (!!this.fromTask && !!this.toTask) {
+          this.props.assignTasks(this.fromTask.assignedTo, [ this.toTask ])
+        }
+
+        if (!!this.fromTask) {
+          this.proxy.disableConnect(this.fromTask)
+        }
+        if (!!this.toTask) {
+          this.proxy.disableConnect(this.toTask)
+        }
+
+        this.fromTask = null
+        this.toTask = null
+
+        this.proxy.clearDrawPolyline()
+        this.proxy.enableDragging()
+      }
     })
 
     this._draw()
@@ -126,7 +171,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    setCurrentTask: task => dispatch(setCurrentTask(task))
+    setCurrentTask: task => dispatch(setCurrentTask(task)),
+    assignTasks: (username, tasks) => dispatch(assignTasks(username, tasks)),
   }
 }
 

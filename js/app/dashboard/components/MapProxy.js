@@ -74,15 +74,31 @@ export default class MapProxy {
 
     this.taskMarkers = new Map()
     this.taskPopups = new Map()
+    this.taskConnectCircles = new Map()
 
     this.courierMarkers = new Map()
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
 
+    this.drawPolylineLayerGroup = new L.LayerGroup()
+    this.drawPolylineLayerGroup.addTo(this.map)
+
     this.onEditClick = options.onEditClick
+
+    this.onTaskMouseDown = options.onTaskMouseDown
+    this.onTaskMouseOver = options.onTaskMouseOver
+    this.onTaskMouseOut = options.onTaskMouseOut
+
+    this.map.on('mousemove', e => {
+      options.onMouseMove(e)
+    })
+    this.map.on('mouseup', e => {
+      options.onMouseUp(e)
+    })
   }
 
   addTask(task, markerColor) {
+
     let marker = this.taskMarkers.get(task['id'])
 
     const color = markerColor || taskColor(task)
@@ -128,7 +144,47 @@ export default class MapProxy {
 
     }
 
+    marker.off('mouseover').on('mouseover', e => this.onTaskMouseOver(task))
+    marker.off('mouseout').on('mouseout', e => this.onTaskMouseOut(task))
+    marker.off('mousedown').on('mousedown', e => {
+      // Make sure the element is not dragged
+      // @see https://javascript.info/mouse-drag-and-drop
+      e.originalEvent.target.ondragstart = () => false
+      this.onTaskMouseDown(task)
+    })
+
     marker.addTo(this.map)
+  }
+
+  enableConnect(task, active = false) {
+    let circle = this.taskConnectCircles.get(task['id'])
+    if (!circle) {
+      circle = L.circle(this.toLatLng(task), { radius: 40, opacity: 1.0, fillOpacity: 1.0 })
+      this.taskConnectCircles.set(task['id'], circle)
+    }
+    if (active) {
+      circle.setStyle({
+        color: '#2ECC40',
+        fillColor: '#2ECC40'
+      })
+    } else {
+      circle.setStyle({
+        color: '#3388ff',
+        fillColor: '#3388ff'
+      })
+    }
+    if (this.map.hasLayer(circle)) {
+      return
+    }
+    circle.addTo(this.map)
+    circle.bringToFront()
+  }
+
+  disableConnect(task) {
+    let circle = this.taskConnectCircles.get(task['id'])
+    if (circle && this.map.hasLayer(circle)) {
+      circle.removeFrom(this.map)
+    }
   }
 
   hideTask(task) {
@@ -278,5 +334,36 @@ export default class MapProxy {
       marker.setLatLng(position).update()
       marker.setPopupContent(popupContent)
     }
+  }
+
+  enableDragging() {
+    this.map.dragging.enable()
+  }
+
+  disableDragging() {
+    this.map.dragging.disable()
+  }
+
+  setDrawPolyline(origin, dest, active = false) {
+
+    let opts = active ? { ...polylineOptions, color: '#2ECC40' } : { ...polylineOptions }
+
+    const layer = L.polyline([ origin, dest ], opts)
+    this.drawPolylineLayerGroup.clearLayers()
+    this.drawPolylineLayerGroup.addLayer(layer)
+  }
+
+  clearDrawPolyline(origin, dest) {
+    const layer = L.polyline([], polylineOptions)
+    this.drawPolylineLayerGroup.clearLayers()
+    this.drawPolylineLayerGroup.addLayer(layer)
+  }
+
+  toLatLng(task) {
+
+    return [
+      task.address.geo.latitude,
+      task.address.geo.longitude
+    ]
   }
 }

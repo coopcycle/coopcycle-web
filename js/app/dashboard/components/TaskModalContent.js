@@ -165,6 +165,7 @@ class TaskModalContent extends React.Component {
       }
     }
 
+    // FIXME The name is bad. It creates or updates a task
     this.props.createTask(values)
   }
 
