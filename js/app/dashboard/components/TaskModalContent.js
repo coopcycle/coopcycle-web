@@ -229,7 +229,7 @@ class TaskModalContent extends React.Component {
           <Timeline>
             { events.map(event => (
               <Timeline.Item key={ event.createdAt + '-' + event.name } color={ itemColor(event) }>
-                <p>{ moment(event.createdAt).format('LT') } { event.name }</p>
+                <p>{ moment(event.createdAt).format('lll') } { event.name }</p>
                 { event.data.notes && (
                   <p>{ event.data.notes }</p>
                 ) }
