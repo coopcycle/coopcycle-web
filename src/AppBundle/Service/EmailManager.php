@@ -79,7 +79,7 @@ class EmailManager
     {
         // FIXME Filter array instead
         foreach ($message->getTo() as $address => $name) {
-            if (preg_match('/@demo.coopcycle.org$/', $address)) {
+            if (1 === preg_match('/demo\.coopcycle\.org$/', $address)) {
                 return;
             }
         }

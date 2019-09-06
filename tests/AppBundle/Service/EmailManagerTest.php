@@ -74,6 +74,15 @@ class EmailManagerTest extends TestCase
 
         $message->setTo('joe@demo.coopcycle.org', 'Joe');
         $this->emailManager->send($message);
+    }
+
+    public function testMessageIsSentToNonDemoUser()
+    {
+        $this->settingsManager
+            ->get('brand_name')
+            ->willReturn('Acme');
+
+        $message = $this->emailManager->createHtmlMessage();
 
         $this->mailer->send($message)->shouldBeCalled();
 
