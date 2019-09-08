@@ -1,0 +1,27 @@
+{% block coopcycle_address_book_widget %}
+  <div id="{{ form.vars.id }}">
+    {{ form_widget(form.existingAddress) }}
+
+    {% set is_new_address = form.isNewAddress.vars.data %}
+
+    {{ form_widget(form.newAddress.streetAddress) }}
+    <div id="{{ form.vars.id ~ '_more_options' }}" {% if not is_new_address %}class="hidden"{% endif %}>
+      {% set collapse = form.vars.id ~ '_collapse' %}
+      <p class="text-center">
+        <a role="button" data-toggle="collapse" data-target="#{{ collapse }}" aria-expanded="false" aria-controls="{{ collapse }}">
+          {{ 'task.form.modal.moreOptions'|trans }}
+        </a>
+      </p>
+      <div class="collapse" id="{{ collapse }}">
+        {{ form_row(form.newAddress.name) }}
+        {{ form_row(form.newAddress.telephone) }}
+      </div>
+    </div>
+    {{ form_widget(form.newAddress.postalCode, { attr: { 'data-address-prop': 'postalCode' } }) }}
+    {{ form_widget(form.newAddress.addressLocality, { attr: { 'data-address-prop': 'addressLocality' } }) }}
+    {{ form_widget(form.newAddress.latitude, { attr: { 'data-address-prop': 'latitude' } }) }}
+    {{ form_widget(form.newAddress.longitude, { attr: { 'data-address-prop': 'longitude' } }) }}
+
+    {{ form_widget(form.isNewAddress) }}
+  </div>
+{% endblock %}
