@@ -315,6 +315,7 @@ task.form.finish.FAIL.info: The task could not be completed
 task.status.done: Success
 task.status.failed: Failure
 task.status.todo: To do
+form.task.address.label: Address
 form.task.courier.label: Courier
 form.task.comments.label: Comments
 form.task.comments.placeholder: Specify any useful details to complete task

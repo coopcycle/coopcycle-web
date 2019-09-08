@@ -68,9 +68,7 @@ class AddressType extends AbstractType
             ->add('longitude', HiddenType::class, [
                 'mapped' => false,
             ])
-            ->add('id', HiddenType::class, [
-                'mapped' => false,
-            ]);
+            ;
 
         if (true === $options['extended']) {
             $builder

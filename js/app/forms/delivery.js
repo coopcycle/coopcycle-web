@@ -2,8 +2,9 @@ import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
+import { createStore } from 'redux'
 
-import AddressAutosuggest from '../components/AddressAutosuggest'
+import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
 
@@ -18,48 +19,26 @@ class DeliveryForm {
   }
 }
 
+let store
+
 function createAddressWidget(name, type, cb) {
 
-  const widget = document.querySelector(`#${name}_${type}_address_streetAddress_widget`)
-  const addresses = JSON.parse(widget.dataset.addresses)
-  const value = document.querySelector(`#${name}_${type}_address_streetAddress`).value
-
-  render(
-    <AddressAutosuggest
-      addresses={ addresses }
-      address={ value }
-      geohash={ '' }
-      required={ true }
-      reportValidity={ true }
-      preciseOnly={ true }
-      onAddressSelected={ (value, address) => {
-
-        document.querySelector(`#${name}_${type}_address_streetAddress`).value = address.streetAddress
-        document.querySelector(`#${name}_${type}_address_postalCode`).value = address.postalCode
-        document.querySelector(`#${name}_${type}_address_addressLocality`).value = address.addressLocality
-        document.querySelector(`#${name}_${type}_address_name`).value = address.name || ''
-        document.querySelector(`#${name}_${type}_address_telephone`).value = address.telephone || ''
-
-        document.querySelector(`#${name}_${type}_address_latitude`).value = address.geo.latitude
-        document.querySelector(`#${name}_${type}_address_longitude`).value = address.geo.longitude
-
-        let disabled = false
-
-        if (address.id) {
-          document.querySelector(`#${name}_${type}_address_id`).value = address.id
-          disabled = true
-        }
-
-        document.querySelector(`#${name}_${type}_address_postalCode`).disabled = disabled
-        document.querySelector(`#${name}_${type}_address_addressLocality`).disabled = disabled
-        document.querySelector(`#${name}_${type}_address_name`).disabled = disabled
-        document.querySelector(`#${name}_${type}_address_telephone`).disabled = disabled
-
-        cb(type, address)
-
-      } } />,
-    widget
-  )
+  new AddressBook(document.querySelector(`#${name}_${type}_address`), {
+    existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
+    newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
+    isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
+    moreOptionsContainer: document.querySelector(`#${name}_${type}_address_more_options`),
+    onReady: address => {
+      cb(address)
+    },
+    onChange: address => {
+      store.dispatch({
+        type: 'SET_ADDRESS',
+        taskType: type,
+        address
+      })
+    }
+  })
 }
 
 function getDatePickerValue(name, type) {
@@ -74,9 +53,7 @@ function getDatePickerValue(name, type) {
 }
 
 function getDatePickerKey(name, type) {
-  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
-
   if (timeSlotEl) {
     return 'timeSlot'
   }
@@ -84,13 +61,19 @@ function getDatePickerKey(name, type) {
   return 'before'
 }
 
-function createDatePickerWidget(name, type, cb) {
+function createDatePickerWidget(name, type) {
 
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
   if (timeSlotEl) {
-    timeSlotEl.addEventListener('change', e => cb(type, e.target.value))
+    timeSlotEl.addEventListener('change', e => {
+      store.dispatch({
+        type: 'SET_TIME_SLOT',
+        taskType: type,
+        value: e.target.value
+      })
+    })
     return
   }
 
@@ -98,7 +81,11 @@ function createDatePickerWidget(name, type, cb) {
     defaultValue: datePickerEl.value,
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
-      cb(type, date)
+      store.dispatch({
+        type: 'SET_BEFORE',
+        taskType: type,
+        value: date.format()
+      })
     }
   })
 }
@@ -114,61 +101,35 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
-function serializeTaskForm(name, type) {
-
-  let payload = {
-    address: {
-      streetAddress: $(`#delivery_${type}_address_streetAddress`).val(),
-    },
-    [getDatePickerKey(name, type)]: getDatePickerValue(name, type)
-  }
-
-  const lat = $(`#${name}_${type}_address_latitude`).val()
-  const lng = $(`#${name}_${type}_address_longitude`).val()
-
-  if (lat && lng) {
-
-    const address = {
-      ...payload.address,
-      latLng: [
-        parseFloat(lat),
-        parseFloat(lng)
-      ]
+function reducer(state = {}, action) {
+  switch (action.type) {
+  case 'SET_ADDRESS':
+    return {
+      ...state,
+      [ action.taskType ]: {
+        ...state[action.taskType],
+        address: action.address
+      }
     }
-
-    payload = {
-      ...payload,
-      address
+  case 'SET_TIME_SLOT':
+    return {
+      ...state,
+      [ action.taskType ]: {
+        ...state[action.taskType],
+        timeSlot: action.value
+      }
     }
-  }
-
-  return payload
-}
-
-function serializeForm(name) {
-
-  let payload = {
-    pickup: serializeTaskForm(name, 'pickup'),
-    dropoff: serializeTaskForm(name, 'dropoff'),
-  }
-
-  const el = document.querySelector(`form[name="${name}"]`)
-
-  let storeId
-  if (el.dataset.store) {
-    storeId = el.dataset.store
-  } else {
-    storeId = $('#delivery_store').val()
-  }
-
-  if (storeId) {
-    payload = {
-      ...payload,
-      store: `/api/stores/${storeId}`,
+  case 'SET_BEFORE':
+    return {
+      ...state,
+      [ action.taskType ]: {
+        ...state[action.taskType],
+        before: action.value
+      }
     }
+  default:
+    return state
   }
-
-  return payload
 }
 
 export default function(name, options) {
@@ -178,32 +139,37 @@ export default function(name, options) {
   const form = new DeliveryForm()
 
   const onChange = options.onChange.bind(form)
+  const onReady = options.onReady.bind(form)
 
   if (el) {
 
-    createAddressWidget(
-      name,
-      'pickup',
-      (type, address) => onChange(serializeForm(name))
-    )
-    createDatePickerWidget(
-      name,
-      'pickup',
-      (type, date) => onChange(serializeForm(name))
-    )
+    // Intialize Redux store
+    let storeId
+    if (el.dataset.store) {
+      storeId = el.dataset.store
+    }
+    let preloadedState = {
+      store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
+      pickup: {
+        address: null,
+        [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
+      },
+      dropoff: {
+        address: null,
+        [ getDatePickerKey(name, 'dropoff') ]: getDatePickerValue(name, 'dropoff')
+      }
+    }
 
-    createAddressWidget(
-      name,
-      'dropoff',
-      (type, address) => onChange(serializeForm(name))
-    )
-    createDatePickerWidget(
-      name,
-      'dropoff',
-      (type, date) => onChange(serializeForm(name))
-    )
+    createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
+    createDatePickerWidget(name, 'pickup')
 
-    $(`#${name}_store`).on('change', (e) => onChange(serializeForm(name)))
+    createAddressWidget(name, 'dropoff')
+    createDatePickerWidget(name, 'dropoff')
+
+    store = createStore(reducer, preloadedState)
+
+    onReady(preloadedState)
+    const unsubscribe = store.subscribe(() => onChange(store.getState()))
 
     const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
     const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)

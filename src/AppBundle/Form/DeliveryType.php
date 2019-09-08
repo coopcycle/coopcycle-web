@@ -95,6 +95,7 @@ class DeliveryType extends AbstractType
                 ],
                 'data' => $delivery->getPickup(),
                 'with_tags' => $options['with_tags'],
+                'with_addresses' => null !== $store ? $store->getAddresses() : []
             ]);
             $form->add('dropoff', TaskType::class, [
                 'mapped' => false,
@@ -104,22 +105,11 @@ class DeliveryType extends AbstractType
                 ],
                 'data' => $delivery->getDropoff(),
                 'with_tags' => $options['with_tags'],
+                'with_addresses' => null !== $store ? $store->getAddresses() : []
             ]);
 
             if (null === $store) {
                 return;
-            }
-
-            if ($store->getPrefillPickupAddress()) {
-                $defaultAddress = $store->getAddress();
-
-                if ($defaultAddress) {
-                    $addressForm = $form->get('pickup')->get('address');
-                    $addressForm->get('id')->setData($defaultAddress->getId());
-                    $addressForm->get('streetAddress')->setData($defaultAddress->getStreetAddress());
-                    $addressForm->get('latitude')->setData($defaultAddress->getGeo()->getLatitude());
-                    $addressForm->get('longitude')->setData($defaultAddress->getGeo()->getLongitude());
-                }
             }
 
             if (null !== $store->getTimeSlot()) {

@@ -215,8 +215,7 @@ trait StoreTrait
 
         $this->accessControl($store);
 
-        $delivery = Delivery::createWithDefaults();
-        $delivery->setStore($store);
+        $delivery = $store->createDelivery();
 
         $form = $this->createDeliveryForm($delivery, [
             'with_tags' => $this->isGranted('ROLE_ADMIN')

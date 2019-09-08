@@ -6,7 +6,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -21,12 +20,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
-    private $doctrine;
     private $tagManager;
 
-    public function __construct(ManagerRegistry $doctrine, TagManager $tagManager)
+    public function __construct(TagManager $tagManager)
     {
-        $this->doctrine = $doctrine;
         $this->tagManager = $tagManager;
     }
 
@@ -42,9 +39,9 @@ class TaskType extends AbstractType
                 'multiple' => false,
                 'disabled' => !$options['can_edit_type']
             ])
-            ->add('address', AddressType::class, [
-                'with_telephone' => true,
-                'with_name' => true
+            ->add('address', AddressBookType::class, [
+                'label' => 'form.task.address.label',
+                'with_addresses' => $options['with_addresses']
             ])
             ->add('comments', TextareaType::class, [
                 'label' => 'form.task.comments.label',
@@ -95,19 +92,6 @@ class TaskType extends AbstractType
             });
         }
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
-
-            if (isset($data['address'], $data['address']['id']) && !empty($data['address']['id'])) {
-                unset(
-                    $data['address']['streetAddress'],
-                    $data['address']['latitude'],
-                    $data['address']['longitude']
-                );
-                $event->setData($data);
-            }
-        });
-
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -116,14 +100,6 @@ class TaskType extends AbstractType
             if ($form->has('timeSlot')) {
                 $timeSlot = $form->get('timeSlot')->getData();
                 $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
-            }
-
-            $addressId = $form->get('address')->get('id')->getData();
-            if (!empty($addressId)) {
-                $address = $this->doctrine->getRepository(Address::class)->find($addressId);
-                if ($address) {
-                    $task->setAddress($address);
-                }
             }
         });
     }
@@ -134,6 +110,7 @@ class TaskType extends AbstractType
             'data_class' => Task::class,
             'can_edit_type' => true,
             'with_tags' => true,
+            'with_addresses' => [],
         ));
     }
 }

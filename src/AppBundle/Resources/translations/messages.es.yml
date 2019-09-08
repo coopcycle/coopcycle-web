@@ -276,6 +276,7 @@ task.form.dateRange: Rango de fechas
 task.status.done: Éxito
 task.status.failed: Fracaso
 task.status.todo: Pendiente
+form.task.address.label: Dirección
 form.task.courier.label: Mensajero
 form.task.comments.label: Comentarios
 form.task.comments.placeholder: Especifique cualquier detalle útil para completar

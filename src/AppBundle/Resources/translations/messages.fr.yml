@@ -294,6 +294,7 @@ task.form.dateRange: Créneau pour la réalisation
 task.status.done: Succès
 task.status.failed: Échec
 task.status.todo: À faire
+form.task.address.label: Adresse
 form.task.courier.label: Coursier
 form.task.comments.label: Commentaires
 form.task.comments.placeholder: Précisez tous les détails utiles à l'exécution de

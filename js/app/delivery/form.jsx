@@ -73,61 +73,59 @@ function markAddressChecked(addressType) {
   $(checkmark).removeClass('hidden')
 }
 
+function serializeAddress(address) {
+  if (address.hasOwnProperty('@id')) {
+    return address['@id']
+  }
+
+  return {
+    streetAddress: address.streetAddress,
+    latLng: [
+      address.geo.latitude,
+      address.geo.longitude
+    ]
+  }
+}
+
 window.initMap = function() {
 
-  const originAddressLatitude  = document.querySelector('#delivery_pickup_address_latitude')
-  const originAddressLongitude = document.querySelector('#delivery_pickup_address_longitude')
-
-  const deliveryAddressLatitude  = document.querySelector('#delivery_dropoff_address_latitude')
-  const deliveryAddressLongitude = document.querySelector('#delivery_dropoff_address_longitude')
-
-  const hasOriginAddress = originAddressLatitude.value && originAddressLongitude.value
-  const hasDeliveryAddress = deliveryAddressLongitude.value && deliveryAddressLatitude.value
-
-  if (hasOriginAddress) {
-    markAddressChecked('pickup')
-    createMarker({
-      latitude: originAddressLatitude.value,
-      longitude: originAddressLongitude.value
-    }, 'pickup')
-  }
-
-  if (hasDeliveryAddress) {
-    markAddressChecked('dropoff')
-    createMarker({
-      latitude: deliveryAddressLatitude.value,
-      longitude: deliveryAddressLongitude.value
-    }, 'dropoff')
-  }
-
   form = new DeliveryForm('delivery', {
-    onChange: function(delivery) {
-
-      const { pickup, dropoff } = delivery
-
-      if (pickup.address.latLng) {
+    onReady: function(delivery) {
+      if (delivery.pickup.address) {
         createMarker({
-          latitude: pickup.address.latLng[0],
-          longitude: pickup.address.latLng[1]
+          latitude: delivery.pickup.address.geo.latitude,
+          longitude: delivery.pickup.address.geo.longitude
         }, 'pickup')
         markAddressChecked('pickup')
       }
-      if (pickup.address.streetAddress) {
-        $('#delivery_pickup_panel_title').text(pickup.address.streetAddress)
-      }
-
-      if (dropoff.address.latLng) {
+      if (delivery.dropoff.address) {
         createMarker({
-          latitude: dropoff.address.latLng[0],
-          longitude: dropoff.address.latLng[1]
+          latitude: delivery.dropoff.address.geo.latitude,
+          longitude: delivery.dropoff.address.geo.longitude
         }, 'dropoff')
         markAddressChecked('dropoff')
       }
-      if (dropoff.address.streetAddress) {
-        $('#delivery_dropoff_panel_title').text(dropoff.address.streetAddress)
+    },
+    onChange: function(delivery) {
+
+      if (delivery.pickup.address) {
+        createMarker({
+          latitude: delivery.pickup.address.geo.latitude,
+          longitude: delivery.pickup.address.geo.longitude
+        }, 'pickup')
+        markAddressChecked('pickup')
+        $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
+      }
+      if (delivery.dropoff.address) {
+        createMarker({
+          latitude: delivery.dropoff.address.geo.latitude,
+          longitude: delivery.dropoff.address.geo.longitude
+        }, 'dropoff')
+        markAddressChecked('dropoff')
+        $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
       }
 
-      if (pickup.address.latLng && dropoff.address.latLng) {
+      if (delivery.pickup.address && delivery.dropoff.address) {
 
         this.disable()
 
@@ -138,7 +136,20 @@ window.initMap = function() {
             $('#delivery_duration').text(`${infos.minutes} min`)
 
             if (delivery.store && pricePreview) {
-              pricePreview.update(delivery)
+
+              const deliveryAsPayload = {
+                ...delivery,
+                pickup: {
+                  ...delivery.pickup,
+                  address: serializeAddress(delivery.pickup.address)
+                },
+                dropoff: {
+                  ...delivery.dropoff,
+                  address: serializeAddress(delivery.dropoff.address)
+                }
+              }
+
+              pricePreview.update(deliveryAsPayload)
             }
 
             form.enable()
