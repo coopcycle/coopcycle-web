@@ -46,10 +46,6 @@ class DateTimePicker extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.props.onChange(this.state.value)
-  }
-
   onDateChange(date) {
 
     let { value } = this.state
