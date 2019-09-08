@@ -139,6 +139,10 @@ class Task implements TaggableInterface
 
     /**
      * @Assert\NotBlank()
+     * @Assert\Expression(
+     *     "this.getDoneAfter() == null or this.getDoneAfter() <= this.getDoneBefore()",
+     *     message="task.before.mustBeGreaterThanAfter"
+     * )
      * @Groups({"task", "task_edit"})
      */
     private $doneBefore;
@@ -270,7 +274,7 @@ class Task implements TaggableInterface
         return $this->doneAfter;
     }
 
-    public function setDoneAfter(\DateTime $doneAfter = null)
+    public function setDoneAfter(?\DateTime $doneAfter)
     {
         $this->doneAfter = $doneAfter;
 
@@ -282,7 +286,7 @@ class Task implements TaggableInterface
         return $this->doneBefore;
     }
 
-    public function setDoneBefore(\DateTime $doneBefore = null)
+    public function setDoneBefore(?\DateTime $doneBefore)
     {
         $this->doneBefore = $doneBefore;
 

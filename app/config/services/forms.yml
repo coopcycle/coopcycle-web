@@ -61,7 +61,9 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskUploadType:
-    arguments: [ '@coopcycle.utils.task_spreadsheet_parser' ]
+    arguments:
+      - '@coopcycle.utils.task_spreadsheet_parser'
+      - '@validator'
     tags: [ form.type ]
 
   AppBundle\Form\AddUserType:

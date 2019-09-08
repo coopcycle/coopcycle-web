@@ -9,6 +9,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\TaskEvent;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Constraints\ValidValidator;
+use Symfony\Component\Validator\ValidatorBuilder;
 
 class TaskTest extends TestCase
 {
@@ -130,5 +132,34 @@ class TaskTest extends TestCase
         $this->assertEquals('Beware of the dog', $clone->getComments());
         $this->assertEquals(new \DateTime('2019-08-18 08:00'), $clone->getDoneAfter());
         $this->assertEquals(new \DateTime('2019-08-18 12:00'), $clone->getDoneBefore());
+    }
+
+    public function testValidation()
+    {
+        $task = new Task();
+        $task->setDoneAfter(new \DateTime('2019-08-18 12:00'));
+        $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
+
+        $validatorBuilder = new ValidatorBuilder();
+        $validator = $validatorBuilder->enableAnnotationMapping()->getValidator();
+
+        $violations = $validator->validate($task);
+
+        $this->assertCount(1, $violations);
+        $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
+
+        $task = new Task();
+        $task->setDoneAfter(null);
+        $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
+
+        $violations = $validator->validate($task);
+        $this->assertCount(0, $violations);
+
+        $task = new Task();
+        $task->setDoneAfter(new \DateTime('2019-08-18 08:00'));
+        $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
+
+        $violations = $validator->validate($task);
+        $this->assertCount(0, $violations);
     }
 }

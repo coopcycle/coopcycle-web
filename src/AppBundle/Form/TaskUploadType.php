@@ -11,14 +11,19 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type as FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TaskUploadType extends AbstractType
 {
     private $spreadsheetParser;
+    private $validator;
 
-    public function __construct(TaskSpreadsheetParser $spreadsheetParser)
+    public function __construct(
+        TaskSpreadsheetParser $spreadsheetParser,
+        ValidatorInterface $validator)
     {
         $this->spreadsheetParser = $spreadsheetParser;
+        $this->validator = $validator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -36,6 +41,14 @@ class TaskUploadType extends AbstractType
 
             try {
                 $tasks = $this->spreadsheetParser->parse($file->getPathname(), $options['date']);
+
+                foreach ($tasks as $task) {
+                    $violations = $this->validator->validate($task);
+                    if (count($violations) > 0) {
+                        throw new \Exception($violations->get(0)->getMessage());
+                    }
+                }
+
             } catch (\Exception $e) {
                 $event->getForm()->addError(new FormError($e->getMessage()));
                 return;
