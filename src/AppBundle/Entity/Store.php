@@ -337,4 +337,19 @@ class Store extends LocalBusiness
     {
         return $this->packageSet;
     }
+
+    public function createDelivery()
+    {
+        $delivery = Delivery::createWithDefaults();
+        $delivery->setStore($this);
+
+        if ($this->getPrefillPickupAddress()) {
+            $defaultAddress = $this->getAddress();
+            if ($defaultAddress) {
+                $delivery->getPickup()->setAddress($defaultAddress);
+            }
+        }
+
+        return $delivery;
+    }
 }
