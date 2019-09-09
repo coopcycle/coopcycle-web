@@ -45,13 +45,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $order;
 
-    /**
-     * @var string
-     *
-     * @Groups({"delivery", "order"})
-     */
-    private $status;
-
     private $weight;
 
     private $vehicle = self::VEHICLE_BIKE;
