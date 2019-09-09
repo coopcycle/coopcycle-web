@@ -85,7 +85,8 @@ Feature: Deliveries
         },
         "dropoff": {
           "address": "48, Rue de Rivoli",
-          "doneBefore": "tomorrow 13:30"
+          "doneBefore": "tomorrow 13:30",
+          "comments": "Beware of the dog\nShe bites"
         }
       }
       """
@@ -128,7 +129,8 @@ Feature: Deliveries
             "telephone": null,
             "name":null
           },
-          "doneBefore":"@string@.isDateTime()"
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites"
         },
         "color":@string@
       }

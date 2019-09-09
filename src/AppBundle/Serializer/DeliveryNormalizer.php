@@ -40,11 +40,18 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             'groups' => ['place']
         ]);
 
-        return [
+        $data = [
             'id' => $task->getId(),
             'address' => $address,
             'doneBefore' => $task->getDoneBefore()->format(\DateTime::ATOM),
+            'comments' => $task->getComments()
         ];
+
+        if (empty($data['comments'])) {
+            unset($data['comments']);
+        }
+
+        return $data;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -116,6 +123,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             $task->setAddress($address);
+        }
+
+        if (isset($data['comments'])) {
+            $task->setComments($data['comments']);
         }
     }
 
