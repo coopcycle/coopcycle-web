@@ -2,7 +2,7 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Service\SettingsManager;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -25,7 +25,7 @@ class ImportStripeFeeCommand extends Command
         RepositoryInterface $orderRepository,
         ObjectManager $orderManager,
         FactoryInterface $adjustmentFactory,
-        SettingsManager $settingsManager)
+        StripeManager $stripeManager)
     {
         $this->orderRepository = $orderRepository;
         $this->orderManager = $orderManager;
@@ -33,7 +33,7 @@ class ImportStripeFeeCommand extends Command
 
         $this->stripeLiveMode = $settingsManager->isStripeLivemode();
 
-        Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
+        $stripeManager->configure();
 
         parent::__construct();
     }

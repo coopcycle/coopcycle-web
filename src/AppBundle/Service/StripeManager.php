@@ -10,9 +10,17 @@ class StripeManager
 {
     private $settingsManager;
 
+    const STRIPE_API_VERSION = '2019-09-09';
+
     public function __construct(SettingsManager $settingsManager)
     {
         $this->settingsManager = $settingsManager;
+    }
+
+    public function configure()
+    {
+        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        Stripe\Stripe::setApiVersion(self::STRIPE_API_VERSION);
     }
 
     public function configurePayment(StripePayment $stripePayment)
@@ -80,7 +88,7 @@ class StripeManager
      */
     public function createIntent(StripePayment $stripePayment): Stripe\PaymentIntent
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $this->configure();
 
         $order = $stripePayment->getOrder();
 
@@ -111,7 +119,7 @@ class StripeManager
      */
     public function confirmIntent(StripePayment $stripePayment): Stripe\PaymentIntent
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $this->configure();
 
         $stripeOptions = $this->getStripeOptions($stripePayment);
 
@@ -130,7 +138,7 @@ class StripeManager
      */
     public function authorize(StripePayment $stripePayment)
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $this->configure();
 
         $stripeToken = $stripePayment->getStripeToken();
 
@@ -188,7 +196,7 @@ class StripeManager
      */
     public function capture(StripePayment $stripePayment)
     {
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $this->configure();
 
         if (null !== $stripePayment->getPaymentIntent()) {
             // TODO Exception
@@ -230,7 +238,7 @@ class StripeManager
         // Check if the charge was made in test or live mode
         // To achieve this, we need to store a "livemode" key in payment details
 
-        Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
+        $this->configure();
 
         $stripeAccount = $stripePayment->getStripeUserId();
         $stripeOptions = array();

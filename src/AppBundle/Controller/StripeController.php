@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\StripeManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
@@ -22,6 +23,7 @@ class StripeController extends AbstractController
     public function connectStandardAccountAction(
         Request $request,
         SettingsManager $settingsManager,
+        StripeManager $stripeManager,
         UserManagerInterface $userManager)
     {
         $flashBag = $request->getSession()->getFlashBag();
@@ -89,7 +91,7 @@ class StripeController extends AbstractController
             );
         } else {
 
-            Stripe\Stripe::setApiKey($secretKey);
+            $stripeManager->configure();
 
             $account = Stripe\Account::retrieve($res['stripe_user_id']);
 
