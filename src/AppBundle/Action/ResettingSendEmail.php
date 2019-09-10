@@ -6,9 +6,10 @@ use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ResettingSendEmail
 {
@@ -52,7 +53,7 @@ class ResettingSendEmail
 
         if (!$user) {
             // for security reasons don't disclose to the client that the user does not exist
-            return new JsonResponse(null,202);
+            return new JsonResponse(null, Response::HTTP_ACCEPTED);
         }
 
         if (null !== $user && !$user->isPasswordRequestNonExpired($this->retryTtl)) {
@@ -65,6 +66,6 @@ class ResettingSendEmail
             $this->userManager->updateUser($user);
         }
 
-        return new JsonResponse(null,202);
+        return new JsonResponse(null, Response::HTTP_ACCEPTED);
     }
 }

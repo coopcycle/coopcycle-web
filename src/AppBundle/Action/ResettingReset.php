@@ -9,11 +9,13 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -24,6 +26,7 @@ class ResettingReset
     private $formFactory;
     private $jwtManager;
     private $dispatcher;
+    private $logger;
 
     /**
      * @var int
@@ -35,12 +38,14 @@ class ResettingReset
         FormFactoryInterface $formFactory,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
+        LoggerInterface $logger,
         int $tokenTtl)
     {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
+        $this->logger = $logger;
         $this->tokenTtl = $tokenTtl;
     }
 
@@ -64,7 +69,10 @@ class ResettingReset
 
         // @see FOSUserEvents::RESETTING_RESET_INITIALIZE
         if (!$user->isPasswordRequestNonExpired($this->tokenTtl)) {
-            throw new BadRequestHttpException("token expired");
+            $data = [
+                'message' => 'token expired',
+            ];
+            return new JsonResponse($data, Response::HTTP_BAD_REQUEST);
         }
 
         $data = [
@@ -86,7 +94,6 @@ class ResettingReset
                     $violations->add($cause);
                 }
             }
-
             throw new ValidationException($violations);
         }
 
@@ -104,7 +111,7 @@ class ResettingReset
 
         // @see Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler
         $response = new JWTAuthenticationSuccessResponse($jwt);
-        $event    = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
+        $event = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
 
         $this->dispatcher->dispatch($event, Events::AUTHENTICATION_SUCCESS);
         $response->setData($event->getData());
