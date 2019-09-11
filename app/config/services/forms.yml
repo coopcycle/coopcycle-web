@@ -19,7 +19,9 @@ services:
       - { name: form.type, alias: app_user_api_registration }
 
   AppBundle\Form\RegistrationType:
-    arguments: ['%country_iso%', '%is_demo%']
+    arguments:
+      $countryIso: '%country_iso%'
+      $isDemo: '%is_demo%'
     tags:
       - { name: form.type }
 

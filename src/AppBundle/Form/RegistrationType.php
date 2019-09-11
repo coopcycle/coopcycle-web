@@ -11,14 +11,18 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+// use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RegistrationType extends AbstractType
 {
+    private $authorizationChecker;
     private $countryIso;
     private $isDemo;
 
-    public function __construct($countryIso, $isDemo)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, string $countryIso, bool $isDemo = false)
     {
+        $this->authorizationChecker = $authorizationChecker;
         $this->countryIso = strtoupper($countryIso);
         $this->isDemo = $isDemo;
     }
@@ -32,9 +36,13 @@ class RegistrationType extends AbstractType
                 'format' => PhoneNumberFormat::NATIONAL,
                 'default_region' => strtoupper($this->countryIso),
                 'label' => 'profile.telephone',
-            ])
-            ->add('save', SubmitType::class, array('label' => 'basics.save'))
-            ->add('sendInvitation', SubmitType::class, array('label' => 'basics.send_invitation'));
+            ]);
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder
+                ->add('save', SubmitType::class, array('label' => 'basics.save'))
+                ->add('sendInvitation', SubmitType::class, array('label' => 'basics.send_invitation'));
+        }
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [
