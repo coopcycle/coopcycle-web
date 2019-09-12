@@ -62,11 +62,7 @@ function handleAjaxResponse(res, dispatch, success) {
     dispatch(fetchFailure(res))
   }
 
-  const ready = JSON.parse(document.querySelector('#cart').dataset.ready)
-  if (!ready) {
-    document.querySelector('#cart').setAttribute('data-ready', 'true')
-    $('#menu').LoadingOverlay('hide')
-  }
+  $('#menu').LoadingOverlay('hide')
 
   notifyListeners(res.cart)
 }
@@ -197,6 +193,9 @@ export function geocodeAndSync() {
     dispatch(fetchRequest())
 
     geocoder.geocode({ address: streetAddress }, (results, status) => {
+
+      $('#menu').LoadingOverlay('hide')
+
       if (status === geocoderOK && results.length > 0) {
         const place = results[0]
         const address = placeToAddress(place, streetAddress)
