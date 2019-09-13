@@ -44,4 +44,44 @@ context('Delivery', () => {
     cy.get('#delivery_duration').invoke('text').should('match', /[0-9]+ min/)
 
   })
+
+  it('create delivery via form', () => {
+
+    cy.visit('/fr/embed/delivery/start')
+
+    cy.get('#delivery_pickup_address_streetAddress')
+      .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
+
+    // @see https://github.com/cypress-io/cypress/issues/1847
+    cy.get('.pac-container .pac-item')
+      .contains('91 Rue de Rivoli')
+      .trigger('mouseover')
+      .click()
+
+    cy.get('#delivery_pickup_address_latitude')
+      .invoke('val')
+      .should('match', /[0-9\.]+/)
+
+    cy.get('#delivery_dropoff_address_streetAddress')
+      .type('120 rue st maur paris', { timeout: 5000, delay: 30 })
+
+    // @see https://github.com/cypress-io/cypress/issues/1847
+    cy.get('.pac-container .pac-item')
+      .contains('120 Rue Saint-Maur')
+      .trigger('mouseover')
+      .click()
+
+    cy.get('#delivery_dropoff_address_latitude')
+      .invoke('val')
+      .should('match', /[0-9\.]+/)
+
+    cy.get('form[name="delivery"]').submit()
+
+    cy.location('pathname').should('eq', '/fr/embed/delivery/summary')
+
+    cy.get('form[name="delivery"] .alert-info')
+      .invoke('text')
+      .should('match', /Vous avez demandé une course qui vous sera déposée le/)
+
+  })
 })

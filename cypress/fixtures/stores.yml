@@ -1,6 +1,7 @@
 include:
   - settings.yml
   - sylius_channels.yml
+  - sylius_taxation.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
@@ -65,3 +66,11 @@ AppBundle\Entity\ApiUser:
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
+
+AppBundle\Entity\Sylius\Product:
+  on_demand_delivery:
+    code: CPCCL-ODDLVR
+    currentLocale: fr
+    name: Livraison à la demande
+    slug: livraison-a-la-demande
+    enabled: true
