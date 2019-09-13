@@ -161,4 +161,49 @@ context('Checkout', () => {
     cy.get('.cart .address-autosuggest__container input[type="search"]')
       .should('have.value', '1, Rue de Rivoli, Paris, France')
   })
+
+  it('homepage search with vague address', () => {
+
+    cy.server()
+    cy.route('POST', '/fr/restaurant/*-crazy-hamburger').as('postRestaurant')
+
+    cy.visit('/fr/')
+
+    cy.get('#address-search input[type="search"]')
+      .type('rue de rivoli paris', { timeout: 5000, delay: 30 })
+
+    cy.get('#address-search')
+      .find('ul[role="listbox"]')
+      .contains('Rue de Rivoli, Paris, France')
+      .click()
+
+    cy.location('pathname').should('match', /\/fr\/restaurants/)
+
+    cy.contains('Crazy Hamburger').click()
+
+    cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
+
+    cy.get('.cart .address-autosuggest__container input[type="search"]')
+      .should('have.value', 'Rue de Rivoli, Paris, France')
+
+    cy.get('.ReactModal__Content--enter-address')
+      .should('be.visible')
+
+    cy.get('.ReactModal__Content--enter-address')
+      .invoke('text')
+      .should('match', /Cette adresse n'est pas assez précise/)
+
+    cy.get('.ReactModal__Content--enter-address input[type="search"]')
+      .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
+
+    cy.get('.ReactModal__Content--enter-address')
+      .find('ul[role="listbox"]')
+      .contains('91 Rue de Rivoli, Paris, France')
+      .click()
+
+    cy.wait('@postRestaurant')
+
+    cy.get('.cart .address-autosuggest__container input[type="search"]')
+      .should('have.value', '91 Rue de Rivoli, Paris, France')
+  })
 })
