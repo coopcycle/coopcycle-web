@@ -54,7 +54,7 @@ context('Checkout', () => {
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
     cy.get('.ReactModal__Content--enter-address')
-      .find('ul[role="listbox"]')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('91 Rue de Rivoli, Paris, France')
       .click()
 
@@ -173,7 +173,7 @@ context('Checkout', () => {
       .type('rue de rivoli paris', { timeout: 5000, delay: 30 })
 
     cy.get('#address-search')
-      .find('ul[role="listbox"]')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('Rue de Rivoli, Paris, France')
       .click()
 
@@ -197,7 +197,7 @@ context('Checkout', () => {
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
     cy.get('.ReactModal__Content--enter-address')
-      .find('ul[role="listbox"]')
+      .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('91 Rue de Rivoli, Paris, France')
       .click()
 
