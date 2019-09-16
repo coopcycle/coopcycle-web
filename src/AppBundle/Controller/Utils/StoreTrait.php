@@ -295,7 +295,7 @@ trait StoreTrait
         $deliveries = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
-            5
+            6
         );
 
         $routes = $request->attributes->get('routes');
@@ -304,10 +304,9 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
+            'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
-            'store_delivery_new_route' => $routes['store_delivery_new'],
-            'delivery_route' => $routes['delivery'],
         ]);
     }
 }

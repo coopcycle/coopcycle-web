@@ -361,8 +361,6 @@ admin_store_deliveries:
         routes:
             stores: admin_stores
             store: admin_store
-            store_delivery_new: admin_store_delivery_new
-            delivery: admin_delivery
     methods:  [ GET ]
 
 admin_store_delivery_new:

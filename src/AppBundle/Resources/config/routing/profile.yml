@@ -299,8 +299,6 @@ profile_store_deliveries:
         routes:
             stores: profile_stores
             store: profile_store
-            store_delivery_new: profile_store_delivery_new
-            delivery: profile_delivery
     methods:  [ GET ]
 
 profile_store_delivery_new:

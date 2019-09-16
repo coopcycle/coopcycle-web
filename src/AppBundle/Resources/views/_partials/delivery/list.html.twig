@@ -1,0 +1,70 @@
+{% if deliveries|length > 0 %}
+<table class="table table-condensed">
+  <thead>
+    <th>#</th>
+    {% if with_store is defined and with_store %}
+    <th>{{ 'form.delivery.store.label'|trans }}</th>
+    {% endif %}
+    <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+    <th>{{ 'delivery.table.heading.courier'|trans }}</th>
+    {% if with_order is defined and with_order %}
+    <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
+    {% endif %}
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+  {% for delivery in deliveries %}
+    <tr>
+      <td>
+        <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
+      </td>
+      {% if with_store is defined and with_store %}
+      <td>
+        {% if delivery.store is not empty %}
+          <a href="{{ path(routes.list, { store: delivery.store.id }) }}">
+            {{ delivery.store.name }}
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+      <td>
+        <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
+        <br>
+        <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+        <br>
+        <small>{{ delivery.distance|meters_to_kilometers }}</small>
+      </td>
+      <td>
+        {% if delivery.pickup.isAssigned() and delivery.dropoff.isAssigned() %}
+          {% if delivery.pickup.assignedCourier == delivery.dropoff.assignedCourier %}
+            <a href="{{ path('admin_user_details', { username: delivery.pickup.assignedCourier.username }) }}">
+              <img src="{{ path('user_avatar', { username: delivery.pickup.assignedCourier.username }) }}" width="20" height="20"> @{{ delivery.pickup.assignedCourier.username }}
+            </a>
+          {% endif %}
+        {% endif %}
+      </td>
+      {% if with_order is defined and with_order %}
+      <td class="text-center">
+        {% if delivery.order is defined and delivery.order is not empty %}
+          <a href="{{ path('admin_order', { id: delivery.order.id }) }}">
+            {{ delivery.order.number }}
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+      <td class="text-center" width="10%">
+        <small class="text-muted">{{ delivery.createdAt|ago }}</small>
+      </td>
+      <td class="text-right">
+        <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
