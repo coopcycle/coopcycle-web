@@ -45,28 +45,7 @@ function onTaskDrop(allTasks, assignTasks, element, target) {
   if (isTask) { // This is a single task
 
     const task = _.find(allTasks, task => task['@id'] === element.getAttribute('data-task-id'))
-
-    // FIXME
-    // Make it work when more than 2 tasks are linked together
-    if (task.previous) {
-      // If previous task is another day, will be null
-      const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
-      if (previousTask) {
-        tasks = [ previousTask, task ]
-      } else {
-        tasks = [ task ]
-      }
-    } else if (task.next) {
-      // If next task is another day, will be null
-      const nextTask = _.find(allTasks, t => t['@id'] === task.next)
-      if (nextTask) {
-        tasks = [ task, nextTask ]
-      } else {
-        tasks = [ task ]
-      }
-    } else {
-      tasks = [ task ]
-    }
+    tasks = [ task ]
 
   } else { // This is a task group
     const elements = Array.from(element.querySelectorAll('[data-task-id]'))
@@ -224,9 +203,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    assignTasks: (username, tasks) => { dispatch(assignTasks(username, tasks)) },
-    drakeDrag: () => dispatch(drakeDrag()),
-    drakeDragEnd: () => dispatch(drakeDragEnd()),
+    assignTasks: (username, tasks) => dispatch(assignTasks(username, tasks)),
+    drakeDrag: _ => dispatch(drakeDrag()),
+    drakeDragEnd: _ => dispatch(drakeDragEnd()),
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
     closeFiltersModal: _ => dispatch(closeFiltersModal()),

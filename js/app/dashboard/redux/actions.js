@@ -120,7 +120,32 @@ function assignTasks(username, tasks) {
 
   return function(dispatch, getState) {
 
-    dispatch({ type: ASSIGN_TASKS, username, tasks })
+    const { allTasks } = getState()
+
+    const newTasks = []
+    tasks.forEach(task => {
+      // FIXME
+      // Make it work when more than 2 tasks are linked together
+      if (task.previous) {
+        // If previous task is another day, will be null
+        const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
+        if (previousTask) {
+          newTasks.push(previousTask)
+        }
+        newTasks.push(task)
+      } else if (task.next) {
+        // If next task is another day, will be null
+        const nextTask = _.find(allTasks, t => t['@id'] === task.next)
+        newTasks.push(task)
+        if (nextTask) {
+          newTasks.push(nextTask)
+        }
+      } else {
+        newTasks.push(task)
+      }
+    })
+
+    dispatch({ type: ASSIGN_TASKS, username, tasks: newTasks })
 
     const { taskLists } = getState()
     const taskList = _.find(taskLists, taskList => taskList.username === username)
