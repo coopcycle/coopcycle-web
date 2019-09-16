@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DeliveryEmbedType extends DeliveryType
 {
@@ -24,11 +25,12 @@ class DeliveryEmbedType extends DeliveryType
     public function __construct(
         RoutingInterface $routing,
         TranslatorInterface $translator,
+        AuthorizationCheckerInterface $authorizationChecker,
         string $country,
         string $locale,
         SettingsManager $settingsManager)
     {
-        parent::__construct($routing, $translator, $country, $locale);
+        parent::__construct($routing, $translator, $authorizationChecker, $country, $locale);
 
         $this->settingsManager = $settingsManager;
     }

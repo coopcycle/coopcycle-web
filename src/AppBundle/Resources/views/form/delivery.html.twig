@@ -48,9 +48,8 @@ col-sm-9
 
   {{ form_row(form.comments) }}
 
-  <hr>
-
   {% if form.tagsAsString is defined %}
+    <hr>
     {{ form_row(form.tagsAsString) }}
   {% endif %}
 

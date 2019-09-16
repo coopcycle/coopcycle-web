@@ -23,22 +23,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DeliveryType extends AbstractType
 {
     protected $routing;
     protected $translator;
+    protected $authorizationChecker;
     protected $country;
     protected $locale;
 
     public function __construct(
         RoutingInterface $routing,
         TranslatorInterface $translator,
+        AuthorizationCheckerInterface $authorizationChecker,
         string $country,
         string $locale)
     {
         $this->routing = $routing;
         $this->translator = $translator;
+        $this->authorizationChecker = $authorizationChecker;
         $this->country = $country;
         $this->locale = $locale;
     }
@@ -227,7 +231,7 @@ class DeliveryType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
             'with_vehicle' => false,
-            'with_tags' => true,
+            'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
         ));
     }
 
