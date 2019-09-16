@@ -163,7 +163,7 @@ export default function(name, options) {
     createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
     createDatePickerWidget(name, 'pickup')
 
-    createAddressWidget(name, 'dropoff')
+    createAddressWidget(name, 'dropoff', address => preloadedState.dropoff.address = address)
     createDatePickerWidget(name, 'dropoff')
 
     store = createStore(reducer, preloadedState)
