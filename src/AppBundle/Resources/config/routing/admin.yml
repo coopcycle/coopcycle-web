@@ -276,7 +276,6 @@ admin_restaurant_stats:
     defaults:
         _controller: AppBundle\Controller\AdminController::statsAction
         layout: '@App/admin.html.twig'
-        template: '@App/restaurant/stats.html.twig'
         routes:
             restaurants: admin_restaurants
             restaurant: admin_restaurant

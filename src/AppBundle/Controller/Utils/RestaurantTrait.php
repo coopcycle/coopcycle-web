@@ -932,7 +932,7 @@ trait RestaurantTrait
             return $response;
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render('@App/restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'stats' => $stats,

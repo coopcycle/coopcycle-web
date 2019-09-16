@@ -11,6 +11,7 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
@@ -21,8 +22,10 @@ use AppBundle\Service\SocketIoManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
+use Doctrine\Common\Collections\Collection;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -48,6 +51,7 @@ class ProfileController extends Controller
     protected function getRestaurantRoutes()
     {
         return [
+            'restaurants' => 'profile_restaurants',
             'restaurant' => 'profile_restaurant',
             'menu_taxons' => 'profile_restaurant_menu_taxons',
             'menu_taxon' => 'profile_restaurant_menu_taxon',
@@ -57,8 +61,62 @@ class ProfileController extends Controller
             'dashboard' => 'profile_restaurant_dashboard',
             'planning' => 'profile_restaurant_planning',
             'stripe_oauth_redirect' => 'profile_restaurant_stripe_oauth_redirect',
+            // 'preparation_time' => '',
             'stats' => 'profile_restaurant_stats'
         ];
+    }
+
+    private function handleSwitchRequest(Request $request, Collection $items, $queryKey, $sessionKey)
+    {
+        if ($request->query->has($queryKey)) {
+            foreach ($items as $item) {
+                if ($item->getId() === $request->query->getInt($queryKey)) {
+                    $request->getSession()->set($sessionKey, $item->getId());
+
+                    return $this->redirectToRoute('fos_user_profile_show');
+                }
+            }
+
+            throw $this->createAccessDeniedException();
+        }
+    }
+
+    public function indexAction(Request $request, SlugifyInterface $slugify)
+    {
+        $user = $this->getUser();
+
+        if ($user->hasRole('ROLE_STORE') && $request->attributes->has('_store')) {
+
+            if ($response = $this->handleSwitchRequest($request, $user->getStores(), 'store', '_store')) {
+
+                return $response;
+            }
+
+            $store = $request->attributes->get('_store');
+
+            return $this->storeDeliveriesAction($store->getId(), $request);
+        }
+
+        if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {
+
+            if ($response = $this->handleSwitchRequest($request, $user->getRestaurants(), 'restaurant', '_restaurant')) {
+
+                return $response;
+            }
+
+            $restaurant = $request->attributes->get('_restaurant');
+
+            return $this->statsAction($restaurant->getId(), $request, $slugify);
+        }
+
+        if ($user->hasRole('ROLE_COURIER')) {
+
+            return $this->tasksAction($request);
+        }
+
+        return $this->render('@App/profile/index.html.twig', array(
+            'user' => $user,
+        ));
     }
 
     /**
@@ -262,7 +320,6 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile/tasks", name="profile_tasks")
-     * @Template
      */
     public function tasksAction(Request $request)
     {
@@ -283,10 +340,10 @@ class ProfileController extends Controller
             $tasks = $taskList->getTasks();
         }
 
-        return [
+        return $this->render('@App/profile/tasks.html.twig', [
             'date' => $date,
             'tasks' => $tasks,
-        ];
+        ]);
     }
 
     /**

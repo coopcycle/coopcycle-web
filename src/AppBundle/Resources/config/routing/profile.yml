@@ -40,15 +40,9 @@ profile_restaurant:
 profile_restaurants:
     path: /profile/restaurants
     defaults:
-        _controller: AppBundle\Controller\ProfileController::restaurantListAction
-        layout: '@App/profile.html.twig'
-        template: '@App/profile/restaurants.html.twig'
-        routes:
-            dashboard: profile_restaurant_dashboard
-            menu_taxon: profile_restaurant_menu_taxon
-            menu_taxons: profile_restaurant_menu_taxons
-            restaurant: profile_restaurant
-            products: profile_restaurant_products
+        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+        path: /profile/
+        permanent: false
     methods: [ GET ]
 
 profile_restaurant_dashboard:
@@ -73,7 +67,6 @@ profile_restaurant_stats:
     defaults:
         _controller: AppBundle\Controller\ProfileController::statsAction
         layout: '@App/profile.html.twig'
-        template: '@App/restaurant/stats.html.twig'
         routes:
             restaurants: profile_restaurants
             restaurant: profile_restaurant
@@ -268,13 +261,9 @@ profile_delivery:
 profile_stores:
     path: /profile/stores
     defaults:
-        _controller: AppBundle\Controller\ProfileController::storeListAction
-        layout: '@App/profile.html.twig'
-        template: '@App/profile/stores.html.twig'
-        routes:
-            store: profile_store
-            store_delivery_new: profile_store_delivery_new
-            store_deliveries: profile_store_deliveries
+        _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+        path: /profile/
+        permanent: false
     methods:  [ GET ]
 
 profile_store:
