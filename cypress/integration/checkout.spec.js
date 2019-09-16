@@ -25,9 +25,9 @@ context('Checkout', () => {
 
     cy.contains('Crazy Hamburger').click()
 
-    cy.wait('@postRestaurant')
-
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
+
+    cy.wait('@postRestaurant')
 
     cy.contains('Cheeseburger').click()
 
