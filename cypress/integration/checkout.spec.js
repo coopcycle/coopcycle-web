@@ -40,8 +40,12 @@ context('Checkout', () => {
     cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_DRINK]"]')
       .check('HAMBURGER_DRINK_COLA')
 
-    // FIXME We need to use force = true, because the button has disabled=""
-    cy.get('#CHEESEBURGER-options button[type="submit"]').click({ timeout: 5000, force: true })
+    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_ACCOMPANIMENT]"]').should('be.checked')
+    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_DRINK]"]').should('be.checked')
+
+    cy.get('#CHEESEBURGER-options button[type="submit"]')
+      .should('not.be.disabled')
+      .click()
 
     cy.wait('@postProduct')
 
