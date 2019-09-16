@@ -53,7 +53,6 @@ window.initMap = function() {
     window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
 
     if ($options.length === checkedOptionsCount) {
-      $(this).closest('form').find('button[type="submit"]').prop('disabled', false)
       $(this).closest('form').find('button[type="submit"]').removeAttr('disabled')
     }
   })
