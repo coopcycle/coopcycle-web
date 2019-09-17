@@ -18,8 +18,8 @@ order.public_url: "Um Ihre Sendung zu verfolgen, bitte <a href=\"%order.public_u
 order.foodtech.accepted: "Die Köchin oder der Koch beginnt mit der Zubereitung.\n\
   <br>\nEine KurierIn macht sich dann auf den Weg!\n"
 order.foodtech.cancelled: "Das Restaurant konnte die Bestellung %order.number% leider\
-  \ nicht annehmen.\n<br>\nIhr Konto ist nicht aufgeladen.\n"
-admin.order.created.subject: Neue Bestellung zum bestätigen
+  \ nicht annehmen.\n<br>\nIhr Konto wurde nicht belastet.\n"
+admin.order.created.subject: Neue Bestellung zum Bestätigen
 admin.order.created.body: "Hallo,\n<br>\nDie neue Bestellung ist eingegangen.\n"
 admin.order_foodtech.created.body: "Hallo,\n<br>\nEine neue Bestellung für folgendes\
   \ Restaurant ist eingegangen: <strong>%restaurant.name%</strong>.\n"
@@ -33,10 +33,10 @@ order.created.body: "Hallo,\n<br>\nIhre Bestellung wurde erfasst.\n<br>\nWir wer
 order.accepted.subject: Ihre Bestellung %order.number% wurde angenommen
 order.accepted.body.intro: "Hallo,\n<br>\nIhre Bestellung wurde bestätigt.\n"
 order.cancelled.subject: Ihre Bestellung %order.number% wurde storniert
-order.cancelled.body.intro: "Hallo,\n<br>\nEs tut uns leid, aber Ihre Bestellung wurde\
+order.cancelled.body.intro: "Hallo,\n<br>\nEs tut uns Leid, aber Ihre Bestellung wurde\
   \ storniert.\n"
 order.delayed.subject: Ihre Bestellung %order.number% verspätet sich leider
-order.delayed.body: "Hallo,\n<br>\nEs tut uns sehr leid Ihnen mitteilen zu müssen,\
+order.delayed.body: "Hallo,\n<br>\nEs tut uns sehr Leid Ihnen mitteilen zu müssen,\
   \ dass sich Ihre Lieferung um %delay% Minuten verspäten wird.\n<br>\nWir entschuldigen\
   \ uns für eventuelle Unannehmlichkeiten.\n"
 task.done.subject: 'Auftrag #%task.id% erledigt'
@@ -45,8 +45,13 @@ task.failed.subject: 'Auftrag #%task.id% konnte nicht abgeschlossen werden'
 task.failed.body: "Hallo,\n<br>\nAuftrag #%task.id% konnte leider nicht abgeschlossen\
   \ werden.\n"
 user.pledge.body: "Hallo,\n<br>\ndank dir ist %pledge.name% jetzt auf CoopCycle!\n\
-  <br>\nMit einem Dankeschön,\n<br>\nTeam CoopCycle.\n"
+  <br>\nVielen Dank,\n<br>\nTeam CoopCycle.\n"
 user.pledge.subject: Dein Vorschlag ist jetzt auf CoopCycle!
 admin.pledge.body: "Hallo,\n<br>\n%username% möchte, dass %pledge.name% auf CoopCycle\
-  \ ist!\n<br>\nIch danke dir,\n<br>\nDas CoopCycle-Team.\n"
+  \ ist!\n<br>\nVielen Dank,\n<br>\nDas CoopCycle-Team.\n"
 admin.pledge.subject: Ein neuer Vorschlag wurde übermittelt!
+admin.send_invitation.create_password: Passwort erstellen
+admin.send_invitation.body: "Hallo %username%,\n<br>\ndies ist eine Einladung zu CoopCycle,\
+  \ um die Erstellung Deines Accounts zu vervollständigen, klicke bitte auf den folgenden\
+  \ Link.\n<br>\nVielen Dank,\n<br>\nDas CoopCycle Team.\n"
+admin.send_invitation.subject: Einladung zu CoopCycle!
