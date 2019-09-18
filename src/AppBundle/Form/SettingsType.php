@@ -78,27 +78,45 @@ class SettingsType extends AbstractType
             ])
             ->add('stripe_test_publishable_key', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_publishable_key.label'
+                'label' => 'form.settings.stripe_publishable_key.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('stripe_test_secret_key', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_secret_key.label'
+                'label' => 'form.settings.stripe_secret_key.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('stripe_test_connect_client_id', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_connect_client_id.label'
+                'label' => 'form.settings.stripe_connect_client_id.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('stripe_live_publishable_key', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_publishable_key.label'
+                'label' => 'form.settings.stripe_publishable_key.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('stripe_live_secret_key', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_secret_key.label'
+                'label' => 'form.settings.stripe_secret_key.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('stripe_live_connect_client_id', PasswordType::class, [
                 'required' => false,
-                'label' => 'form.settings.stripe_connect_client_id.label'
+                'label' => 'form.settings.stripe_connect_client_id.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
             ])
             ->add('google_api_key', TextType::class, [
                 'label' => 'form.settings.google_api_key.label',
@@ -145,7 +163,8 @@ class SettingsType extends AbstractType
                     $options['empty_data'] = $value;
                     $options['required'] = false;
                     $options['attr'] = [
-                        'placeholder' => $this->createPlaceholder($value)
+                        'placeholder' => $this->createPlaceholder($value),
+                        'autocomplete' => 'new-password'
                     ];
 
                     $form->add($name, PasswordType::class, $options);
