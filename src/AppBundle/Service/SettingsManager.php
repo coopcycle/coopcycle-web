@@ -18,22 +18,13 @@ class SettingsManager
     private $doctrine;
     private $logger;
 
-    private $settings = [
+    private $mandatorySettings = [
         'brand_name',
         'administrator_email',
-        'phone_number',
-        'stripe_test_publishable_key',
-        'stripe_test_secret_key',
-        'stripe_test_connect_client_id',
-        'stripe_live_publishable_key',
-        'stripe_live_secret_key',
-        'stripe_live_connect_client_id',
-        'stripe_livemode',
         'google_api_key',
         'latlng',
         'default_tax_category',
         'currency_code',
-        'enable_restaurant_pledges'
     ];
 
     private $secretSettings = [
@@ -62,11 +53,6 @@ class SettingsManager
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
         $this->logger = $logger;
-    }
-
-    public function getSettings()
-    {
-        return $this->settings;
     }
 
     public function isSecret($name)
@@ -177,7 +163,7 @@ class SettingsManager
 
             $setting = new $className();
             $setting->setName($name);
-            $setting->setSection($section);
+            $setting->setSection($section ?? 'general');
 
             $this->doctrine
                 ->getManagerForClass($className)
@@ -198,9 +184,12 @@ class SettingsManager
 
     public function isFullyConfigured()
     {
-        foreach ($this->settings as $name) {
+        foreach ($this->mandatorySettings as $name) {
             try {
-                $this->craueConfig->get($name);
+                $value = $this->craueConfig->get($name);
+                if (null === $value) {
+                    return false;
+                }
             } catch (\RuntimeException $e) {
                 return false;
             }
@@ -213,7 +202,9 @@ class SettingsManager
     {
         $settings = new Settings();
 
-        foreach ($this->settings as $name) {
+        $keys = array_keys(get_object_vars($settings));
+
+        foreach ($keys as $name) {
             try {
                 $value = $this->craueConfig->get($name);
                 $settings->$name = $value;

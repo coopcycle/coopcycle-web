@@ -201,7 +201,6 @@ class SettingsType extends AbstractType
                     break;
                 }
             }
-
         });
 
         $builder->get('currency_code')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -216,7 +215,6 @@ class SettingsType extends AbstractType
                     break;
                 }
             }
-
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($builder) {
@@ -225,7 +223,9 @@ class SettingsType extends AbstractType
             if (null !== $data->default_tax_category) {
                 $data->default_tax_category = $data->default_tax_category->getCode();
             }
-
+            if (null !== $data->currency_code) {
+                $data->currency_code = $data->currency_code->getCode();
+            }
             if (null !== $data->phone_number && $data->phone_number instanceof PhoneNumber) {
                 $data->phone_number = $this->phoneNumberUtil->format($data->phone_number, PhoneNumberFormat::E164);
             }

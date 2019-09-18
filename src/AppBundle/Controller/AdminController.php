@@ -993,6 +993,11 @@ class AdminController extends Controller
 
             $settingsManager->flush();
 
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
             return $this->redirectToRoute('admin_settings');
         }
 
