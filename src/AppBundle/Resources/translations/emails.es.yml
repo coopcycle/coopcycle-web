@@ -1,157 +1,54 @@
-registration.email.subject: 'Confirma tu correo electrónico
-
-  '
-registration.email.message: '<h2>Bienvenido sobre %brand_name%, %username%</h2>
-
-  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.
-
-  <br>
-
-  Confirma tu correo electrónico pulsando el botón aquí abajo.
-
-  '
+registration.email.subject: "Confirma tu correo electrónico\n"
+registration.email.message: "<h2>Bienvenido sobre %brand_name%, %username%</h2>\n\
+  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\n\
+  <br>\nConfirma tu correo electrónico pulsando el botón aquí abajo.\n"
 registration.email.confirm: Confirmar mi correo electrónico
 registration.email.disclaimer: Este enlace sólo puede utilizarse una vez para validar
   tu cuenta
-registration.email.textMessage: 'Bienvenido sobre %brand_name%, %username%,\n\n
-
-  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\n
-
-  Sigue el siguiente enlace para confirmar tu correo electrónico: <a href="%confirmationUrl%"
-  rel="notrack">%confirmationUrl%</a>.
-
-  '
+registration.email.textMessage: "Bienvenido sobre %brand_name%, %username%,\\n\\n\n\
+  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\\\
+  n\nSigue el siguiente enlace para confirmar tu correo electrónico: <a href=\"%confirmationUrl%\"\
+  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>¡Hola %username%!</h2> Para restablecer tu contraseña,
   por favor pulsa el botón aquí abajo.
 resetting.email.reset: Restablecer mi contraseña
 order.view: Ver el pedido
-order.public_url: 'Para seguir el estado de tu pedido, <a href="%order.public_url%">haga
-  clic aquí</a>.
-
-  '
-order.foodtech.accepted: 'El cocinero comienza a preparar tu pedido.
-
-  <br>
-
-  ¡Un mensajero llega para llevártelo!
-
-  '
-order.foodtech.cancelled: 'El restaurador no puede preparar tu pedido %order.number%.
-
-  <br>
-
-  Tu cuenta no ha sido cargada.
-
-  '
+order.public_url: "Para seguir el estado de tu pedido, <a href=\"%order.public_url%\"\
+  >haga clic aquí</a>.\n"
+order.foodtech.accepted: "El cocinero comienza a preparar tu pedido.\n<br>\n¡Un mensajero\
+  \ llega para llevártelo!\n"
+order.foodtech.cancelled: "El restaurador no puede preparar tu pedido %order.number%.\n\
+  <br>\nTu cuenta no ha sido cargada.\n"
 admin.order.created.subject: Nuevo pedido para confirmar
-admin.order.created.body: 'Buenos dias,
-
-  <br>
-
-  Se ha creado un nuevo pedido.
-
-  '
-admin.order_foodtech.created.body: 'Buenos dias,
-
-  <br>
-
-  Se ha creado un nuevo pedido para el restaurante <strong>%restaurant.name%</strong>.
-
-  '
+admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
+admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido\
+  \ para el restaurante <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Nuevo pedido para confirmar
-owner.order.created.body: 'Buenos dias,
-
-  <br>
-
-  Se ha creado un nuevo pedido para vuestro restaurante <strong>%restaurant.name%</strong>.
-
-  '
+owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para vuestro\
+  \ restaurante <strong>%restaurant.name%</strong>.\n"
 order.created.subject: Confirmación de tu pedido %order.number%
-order.created.body: 'Buenos dias,
-
-  <br>
-
-  Hemos registrado su pedido.
-
-  <br>
-
-  Comprobamos su pedido lo antes posible y nos pondremos en contacto contigo cuando
-  esta confirmado.
-
-  '
+order.created.body: "Buenos dias,\n<br>\nHemos registrado su pedido.\n<br>\nComprobamos\
+  \ su pedido lo antes posible y nos pondremos en contacto contigo cuando esta confirmado.\n"
 order.accepted.subject: Tu pedido %order.number% ha sido aceptado
-order.accepted.body.intro: 'Buenos dias,
-
-  <br>
-
-  Tu pedido esta confirmado.
-
-  '
+order.accepted.body.intro: "Buenos dias,\n<br>\nTu pedido esta confirmado.\n"
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
-order.cancelled.body.intro: 'Buenos dias,
-
-  <br>
-
-  Lo sentimos, pero tu pedido ha sido cancelado.
-
-  '
+order.cancelled.body.intro: "Buenos dias,\n<br>\nLo sentimos, pero tu pedido ha sido\
+  \ cancelado.\n"
 order.delayed.subject: Tu pedido %order.number% llegará más tarde
-order.delayed.body: 'Buenos dias,
-
-  <br>
-
-  Lo sentimos, pero tu pedido llegará %delay% minutos más tarde.
-
-  <br>
-
-  Disculpanos por las molestias.
-
-  '
+order.delayed.body: "Buenos dias,\n<br>\nLo sentimos, pero tu pedido llegará %delay%\
+  \ minutos más tarde.\n<br>\nDisculpanos por las molestias.\n"
 task.done.subject: 'La tarea #%task.id% ha sido completada'
-task.done.body: 'Buenos dias,
-
-  <br>
-
-  La tarea #%task.id% ha sido completada.
-
-  '
+task.done.body: "Buenos dias,\n<br>\nLa tarea #%task.id% ha sido completada.\n"
 task.failed.subject: 'La tarea #%task.id% no se pudo completar'
-task.failed.body: 'Buenos dias,
-
-  <br>
-
-  La tarea #%task.id% no se pudo completar.
-
-  '
+task.failed.body: "Buenos dias,\n<br>\nLa tarea #%task.id% no se pudo completar.\n"
 admin.pledge.subject: ¡Se ha enviado una nueva sugerencia!
-admin.pledge.body: 'Hola,
-
-  <br>
-
-  %username% le gustaría %pledge.name% estar en CoopCycle !
-
-  <br>
-
-  Gracias,
-
-  <br>
-
-  El equipo de CoopCycle.
-
-  '
+admin.pledge.body: "Hola,\n<br>\n%username% le gustaría %pledge.name% estar en CoopCycle\
+  \ !\n<br>\nGracias,\n<br>\nEl equipo de CoopCycle.\n"
 user.pledge.subject: Su sugerencia ahora está en CoopCycle!
-user.pledge.body: 'Hola,
-
-  <br>
-
-  Gracias a ti, %pledge.name% ahora está en CoopCycle !
-
-  <br>
-
-  Con agradecimiento,
-
-  <br>
-
-  Equipo de CoopCycle.
-
-  '
+user.pledge.body: "Hola,\n<br>\nGracias a ti, %pledge.name% ahora está en CoopCycle\
+  \ !\n<br>\nCon agradecimiento,\n<br>\nEquipo de CoopCycle.\n"
+admin.send_invitation.create_password: Crear my contraseña
+admin.send_invitation.body: "Hola %username%,\n<br>\nEste correo es una invitación\
+  \ a tu espacio CoopCycle, para terminar la creación de su cuenta, por favor haga\
+  \ un clic en el siguiente enlace.\n<br>\nGracias,\n<br>\nEl equipo de CoopCycle.\n"
+admin.send_invitation.subject: ¡ Invitación a CoopCycle !
