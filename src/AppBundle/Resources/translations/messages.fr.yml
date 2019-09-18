@@ -61,7 +61,8 @@ adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
-adminDashboard.users.edit.quotes_allowed: Autoriser ce client à faire des demandes de devis
+adminDashboard.users.edit.quotes_allowed: Autoriser ce client à faire des demandes
+  de devis
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer
@@ -76,7 +77,8 @@ adminDashboard.tags.save: Enregistrer
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom
 adminDashboard.tags.color: Couleur
-adminDashboard.tags.confirm_delete: Êtes-vous sûr de supprimer ce tag ? Tous les éléments s'y rapportant ne pourront plus l'afficher ou être regroupés par ce dernier.
+adminDashboard.tags.confirm_delete: Êtes-vous sûr de supprimer ce tag ? Tous les éléments
+  s'y rapportant ne pourront plus l'afficher ou être regroupés par ce dernier.
 adminDashboard.taxation.title: Taxes
 adminDashboard.taxation.button: Ajouter une taxe
 adminDashboard.zones.title: Zones
@@ -111,23 +113,17 @@ localBusiness.form.openingHours: Heures d'ouvertures
 localBusiness.form.deliveryPerimeterExpression: Zone distance max de livraison
 restaurant.available: Disponible
 restaurant.unavailable: Indisponible
-restaurant.disabledWarning: 'Ce restaurant n''est pas activé et n''est donc pas visible
-  des visiteurs du site. Si vous le désirez vous pouvez <a target="_blank" href="%restaurantEditUrl%">l''activer
-  dans l''admin</a>.
-
-  '
+restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas visible\
+  \ des visiteurs du site. Si vous le désirez vous pouvez <a target=\"_blank\" href=\"\
+  %restaurantEditUrl%\">l'activer dans l'admin</a>.\n"
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
   Vous pouvez commander pour plus tard !
-restaurant.noMenuWarning: 'Ce restaurant n''a pas de menu pour l''instant
-
-  '
-restaurant.form.enabled.tooltip: 'Un restaurant désactivé n''est ni visible ni référencé
-  sur le site. Il n''apparaît pas dans les résultats de recherche. Sa page dédiée
-  n''est pas accessible par les visiteurs.
-
-  '
+restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
+restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
+  \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
+  \ n'est pas accessible par les visiteurs.\n"
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
@@ -183,18 +179,10 @@ restaurant.list.norestaurant: Pas de restaurant pour le moment
 restaurant.list.createNewRestaurant: Créer un restaurant
 restaurant.list.preparationTime: Préparation
 restaurant.list.stats: Statistiques
-restaurant.product_options.help: 'Les options permettent de rendre les produits <strong>configurables</strong>
-
-  <br>
-
-  Ils permettent par exemple d''ajouter des suppléments, ou de choisir les éléments
-  d''un menu (accompagnement, boisson…)
-
-  <br>
-
-  Pour chaque option, vous pouvez définir une liste de valeurs
-
-  '
+restaurant.product_options.help: "Les options permettent de rendre les produits <strong>configurables</strong>\n\
+  <br>\nIls permettent par exemple d'ajouter des suppléments, ou de choisir les éléments\
+  \ d'un menu (accompagnement, boisson…)\n<br>\nPour chaque option, vous pouvez définir\
+  \ une liste de valeurs\n"
 restaurant.product_options.list.values: Valeurs
 restaurant.form.uploadImage: Uploader une image
 restaurant.stats.order_number: Numéro de commande
@@ -202,7 +190,6 @@ restaurant.stats.delivered_on: Livrée le
 restaurant.stats.total_products_including_all_taxes: Total produits TTC
 restaurant.stats.total_products_excluding_taxes: Total produits hors taxes
 restaurant.stats.delivery: Livraison
-
 profile.addresses.breadcrumb: Adresses
 profile.addresses.empty: Pas d'adresse sauvegardée pour le moment !
 profile.orders.empty: Pas de commande pour le moment !
@@ -302,9 +289,7 @@ form.task.status.label: Status
 form.task_event.notes.placeholder: 'Ex : adresse introuvable, aucun problème…'
 form.task_event.notes.help: Vous pouvez modifier le commentaire
 form.task_upload.file: Fichier
-form.task_upload.file.help: 'Formats de fichiers supportés : csv, ods, xlsx
-
-  '
+form.task_upload.file.help: "Formats de fichiers supportés : csv, ods, xlsx\n"
 form.task_complete.done.label: Terminer
 form.task_complete.fail.label: Signaler un problème
 task.type.PICKUP: Retrait
@@ -359,15 +344,10 @@ form.order.refund_modal.title: Remboursement
 form.payment.refund_amount.label: Montant
 form.payment.refund_amount.help: Le montant que vous indiquez sera remboursé au client
 form.payment.refund_application_fee.label: Rembourser les frais
-form.payment.refund_application_fee.help: 'Si vous cochez cette case, la commission
-  prélevée par la plateforme au partenaire sera remboursés au pro-rata
-
-  <br>
-
-  <a href="https://stripe.com/docs/connect/direct-charges#issuing-refunds">En savoir
-  plus</a>
-
-  '
+form.payment.refund_application_fee.help: "Si vous cochez cette case, la commission\
+  \ prélevée par la plateforme au partenaire sera remboursés au pro-rata\n<br>\n<a\
+  \ href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">En savoir\
+  \ plus</a>\n"
 form.delivery_embed.name.label: Nom
 form.delivery_embed.name.help: Votre nom ou le nom de l'entreprise
 form.delivery_embed.telephone.label: Numéro de téléphone
@@ -391,11 +371,9 @@ form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
 form.preparation_time_rule.expression.label: Expression
 form.preparation_time_rule.time.label: Temps
-form.preparation_time.defaults_warning: 'Ce restaurant n''a pas de temps de préparation
-  personnalisé pour le moment. Les règles par défaut ont été copiées ci-dessous, vous
-  pouvez les modifier.
-
-  '
+form.preparation_time.defaults_warning: "Ce restaurant n'a pas de temps de préparation\
+  \ personnalisé pour le moment. Les règles par défaut ont été copiées ci-dessous,\
+  \ vous pouvez les modifier.\n"
 form.settings.date_time: Date et heure
 form.settings.stripe.title: Compte Stripe
 form.settings.stripe.help: 'Stripe est le service de paiement que nous utilisons pour
@@ -403,39 +381,29 @@ form.settings.stripe.help: 'Stripe est le service de paiement que nous utilisons
   plateforme, il est nécessaire de configurer cette section, ainsi que Stripe Connect.
   Stripe prend une commission de 0.25cts + 1.4% par paiement (indicatif, tarifs actualisés
   <a href="https://stripe.com/fr/pricing">ici</a>) à la charge du commerçant. '
-form.settings.stripe_testmode.help: 'En mode « test », vous devez utiliser des <a
-  href="https://stripe.com/docs/testing">cartes de test</a> pour faire des achats.
-  <strong>Personne n''est débité, aucun argent échangé.</strong> '
+form.settings.stripe_testmode.help: "En mode « test », vous devez utiliser des <a\
+  \ href=\"https://stripe.com/docs/testing\">cartes de test</a> pour faire des achats.\
+  \ <strong>Personne n'est débité, aucun argent échangé.</strong> "
 form.settings.stripe_enable_livemode.help: Pour activer le mode « live », vous devez
   configurer les identifiants « live ».
 form.settings.brand_name.label: Nom de la marque
 form.settings.stripe_publishable_key.label: Clé publique Stripe
-form.settings.stripe_publishable_key.help: 'Créez un compte Stripe pour récupérer
-  votre <a href="https://stripe.com/docs/dashboard#api-keys">clé publique</a>
-
-  '
+form.settings.stripe_publishable_key.help: "Créez un compte Stripe pour récupérer\
+  \ votre <a href=\"https://stripe.com/docs/dashboard#api-keys\">clé publique</a>\n"
 form.settings.stripe_secret_key.label: Clé secrète Stripe
-form.settings.stripe_secret_key.help: 'Créez un compte Stripe pour récupérer votre
-  <a href="https://stripe.com/docs/dashboard#api-keys">clé secrète</a>
-
-  '
+form.settings.stripe_secret_key.help: "Créez un compte Stripe pour récupérer votre\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clé secrète</a>\n"
 form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
-form.settings.stripe_connect_client_id.help: 'Récupérez l''identifiant Stripe Connect
-  sur la <a href="https://dashboard.stripe.com/account/applications/settings">page
-  des paramètres</a>
-
-  '
+form.settings.stripe_connect_client_id.help: "Récupérez l'identifiant Stripe Connect\
+  \ sur la <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+  >page des paramètres</a>\n"
 form.settings.google_api_key.label: Clé d'API Google
-form.settings.google_api_key.help: 'Créez un compte Google pour récupérer votre <a
-  href="https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr">clé
-  d''API</a>
-
-  '
+form.settings.google_api_key.help: "Créez un compte Google pour récupérer votre <a\
+  \ href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=Fr\"\
+  >clé d'API</a>\n"
 form.settings.latlng.label: Coordonnées géographiques
-form.settings.latlng.help: 'Spécifiez la latitude et la longitude par défaut. Vous
-  pouvez l''obtenir sur <a href="https://www.latlong.net/">latlong.net</a>
-
-  '
+form.settings.latlng.help: "Spécifiez la latitude et la longitude par défaut. Vous\
+  \ pouvez l'obtenir sur <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.default_tax_category.label: Taux de TVA livraison
 form.settings.default_tax_category.help: Définissez le taux de TVA à appliquer pour
   les livraisons
@@ -447,29 +415,16 @@ form.settings.enable_restaurant_pledges.label: Autoriser les clients à suggére
   restaurants
 form.suggest.name.label: Nom du restaurant
 form.suggest.name.help: Veuillez indiquer le nom exact
-form.suggest.message: 'Vous ne trouvez pas votre restaurant préféré ?
-
-  <br>
-
-  Donnez-nous son nom et son adresse. Ensuite les autres utilisateur·ice·s pourront
-  voter afin de le voir apparaître dans la liste des restaurants.
-
-  <br>
-
-  Cela nous permettra de mieux identifier les restaurants à démarcher et leur apporter
-  la preuve d''une réelle demande.
-
-  '
+form.suggest.message: "Vous ne trouvez pas votre restaurant préféré ?\n<br>\nDonnez-nous\
+  \ son nom et son adresse. Ensuite les autres utilisateur·ice·s pourront voter afin\
+  \ de le voir apparaître dans la liste des restaurants.\n<br>\nCela nous permettra\
+  \ de mieux identifier les restaurants à démarcher et leur apporter la preuve d'une\
+  \ réelle demande.\n"
 form.suggest.thank_you_message: Merci de nous avoir suggéré ce restaurant !
-restaurant.suggest.message: 'Aidez-nous à convaincre %restaurant.name% de travailler
-  avec %brand_name% !
-
-  <br>
-
-  Pour le voir sur la plateforme nous avons besoin de vous et de votre voix afin d''appuyer
-  notre future demande de collaboration avec cette enseigne.
-
-  '
+restaurant.suggest.message: "Aidez-nous à convaincre %restaurant.name% de travailler\
+  \ avec %brand_name% !\n<br>\nPour le voir sur la plateforme nous avons besoin de\
+  \ vous et de votre voix afin d'appuyer notre future demande de collaboration avec\
+  \ cette enseigne.\n"
 restaurant.suggest.vote: Je vote pour %name%
 restaurant.suggest.has_voted: Vous avez déjà voté pour ce restaurant !
 restaurant.suggest.banner_disclaimer: Ce restaurant n'est pas disponible pour le moment.
@@ -510,22 +465,15 @@ form.local_business.stripe_account.connect_button.text: Connexion avec Stripe
 form.local_business.stripe_account.not_configured: Vous ne pouvez pas encore connecter
   un compte
 form.local_business.stripe_account.success: Compte Stripe connecté avec succès
-form.local_business.stripe_account.need_stripe_account: 'Vous n''avez pas encore créé
-  de compte Stripe pour ce restaurant. Stripe est notre prestataire pour les paiements,
-  qui nous permet de sécuriser les paiements sur la plateforme et de transférer les
-  fonds vers votre compte bancaire.<br>
-
-  Pour créer un compte Stripe pour ce restaurant <a href="%stripeAuthorizeURL%">cliquez
-  ici</a>.
-
-  '
-form.local_business.stripe_account.link_ok: 'Ce restaurant est lié à un compte Stripe
-  et peut donc recevoir des paiements depuis la plateforme.<br>
-
-  Pour accéder au compte Stripe lié, <a href="https://dashboard.stripe.com/" target="_blank">rendez
-  vous sur votre dashboard Stripe</a>.
-
-  '
+form.local_business.stripe_account.need_stripe_account: "Vous n'avez pas encore créé\
+  \ de compte Stripe pour ce restaurant. Stripe est notre prestataire pour les paiements,\
+  \ qui nous permet de sécuriser les paiements sur la plateforme et de transférer\
+  \ les fonds vers votre compte bancaire.<br>\nPour créer un compte Stripe pour ce\
+  \ restaurant <a href=\"%stripeAuthorizeURL%\">cliquez ici</a>.\n"
+form.local_business.stripe_account.link_ok: "Ce restaurant est lié à un compte Stripe\
+  \ et peut donc recevoir des paiements depuis la plateforme.<br>\nPour accéder au\
+  \ compte Stripe lié, <a href=\"https://dashboard.stripe.com/\" target=\"_blank\"\
+  >rendez vous sur votre dashboard Stripe</a>.\n"
 form.menu_item.name.label: Nom
 form.menu_item.price.label: Prix
 form.menu_item_modifier.name.label: Nom du groupe
@@ -533,33 +481,16 @@ form.menu_item_modifier.price.label: Prix
 form.menu_item_modifier.calculusStrategy.label: Coût du supplément
 form.menu_taxon.name.label: Nom
 form.menu_taxon.add_child.label: Ajouter une section
-form.menu_taxon.child_name.placeholder: 'Exemple : plats, desserts…
-
-  '
+form.menu_taxon.child_name.placeholder: "Exemple : plats, desserts…\n"
 form.menu_editor.products_panel.title: Produits
 form.menu_editor.save.label: Enregistrer les modifications
-form.menu_editor.help: 'Utilisez l''éditeur ci-dessous pour composer les élements
-  du menu
-
-  <br>
-
-  Glissez-déposez les produits dans les sections sur la gauche pour les rendre disponibles
-  à la vente
-
-  <br>
-
-  Si vous souhaitez retirer un produit de la vente, déposez-le dans la section « Produits
-  » à droite
-
-  <br>
-
-  N''oubliez pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous
-
-  '
-form.menu_editor.products.help: 'Pour ajouter des produits dans la liste de droite,
-  ajoutez-les d''abord au <a href="%products_url%">catalogue</a>
-
-  '
+form.menu_editor.help: "Utilisez l'éditeur ci-dessous pour composer les élements du\
+  \ menu\n<br>\nGlissez-déposez les produits dans les sections sur la gauche pour\
+  \ les rendre disponibles à la vente\n<br>\nSi vous souhaitez retirer un produit\
+  \ de la vente, déposez-le dans la section « Produits » à droite\n<br>\nN'oubliez\
+  \ pas de cliquer sur le bouton « Enregistrer les modifications » ci-dessous\n"
+form.menu_editor.products.help: "Pour ajouter des produits dans la liste de droite,\
+  \ ajoutez-les d'abord au <a href=\"%products_url%\">catalogue</a>\n"
 form.menu_editor.taxon_modal.title: Modifier une section
 form.product.name.label: Nom
 form.product.description.label: Description
@@ -572,16 +503,11 @@ form.product.restricted_diets.label: Régimes restreints
 form.product.restricted_diets.help: Ce produit convient-il aux régimes alimentaires
   suivants ?
 form.product.confirm.label: Confirmer la modification
-form.product.confirm.help: 'Vous avez modifié le nom du produit. S''il s''agit d''une
-  <strong>modification mineure</strong> (faute d''orthographe, majuscule…), cliquez
-  sur « Confirmer la modification ».
-
-  <br>
-
-  Dans le cas contraire, vous devez <a href="%link%">créer un nouveau produit</a>,
-  afin de pouvoir distinguer les produits vendus et conserver un historique.
-
-  '
+form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'une\
+  \ <strong>modification mineure</strong> (faute d'orthographe, majuscule…), cliquez\
+  \ sur « Confirmer la modification ».\n<br>\nDans le cas contraire, vous devez <a\
+  \ href=\"%link%\">créer un nouveau produit</a>, afin de pouvoir distinguer les produits\
+  \ vendus et conserver un historique.\n"
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Calcul du prix
 form.product_option.price.label: Prix
@@ -595,9 +521,7 @@ form.product_option.additional.label: Cette option est un supplément
 form.product_option.additional.help: Le client pourra choisir plusieurs valeurs, sans
   être obligé d'en choisir au moins une
 form.checkout_address.notes.label: Une remarque ?
-form.checkout_address.notes.placeholder: 'Exemple : sans sauce, sans tomates…
-
-  '
+form.checkout_address.notes.placeholder: "Exemple : sans sauce, sans tomates…\n"
 form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
@@ -635,21 +559,13 @@ user.edit.enabled.help: Un utilisateur désactivé est déconnecté et ne peut p
   connecter à la plateforme.
 user.profile.familyName: Nom
 user.profile.givenName: Prénom
-roles.ROLE_ADMIN.help: 'Administrateur : Accès total à toutes les fonctions
-
-  '
-roles.ROLE_COURIER.help: 'Coursier : visualiser les courses à faire, changer l''état
-  des courses qui lui sont assignées…
-
-  '
-roles.ROLE_RESTAURANT.help: 'Restaurant : gérer les restaurants qui lui sont assignés,
-  gérer les commandes…
-
-  '
-roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, créer
-  des courses…
-
-  '
+roles.ROLE_ADMIN.help: "Administrateur : Accès total à toutes les fonctions\n"
+roles.ROLE_COURIER.help: "Coursier : visualiser les courses à faire, changer l'état\
+  \ des courses qui lui sont assignées…\n"
+roles.ROLE_RESTAURANT.help: "Restaurant : gérer les restaurants qui lui sont assignés,\
+  \ gérer les commandes…\n"
+roles.ROLE_STORE.help: "Magasin : gérer les magasins qui lui sont assignés, créer\
+  \ des courses…\n"
 stores.form.save: Enregistrer
 stores.manage: Gérer
 stores.settings: Paramètres
@@ -663,11 +579,8 @@ stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
-admin.settings.missing_mandatory_settings: 'Des paramètres obligatoires sont manquants.
-
-  Allez à la <a href="%settings_url%">page des paramètres</a> pour les configurer.
-
-  '
+admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
+  Allez à la <a href=\"%settings_url%\">page des paramètres</a> pour les configurer.\n"
 index.map.tip: Utilisez la carte ci-dessous pour trouver des restaurants
 index.banner: De bons plats livrés à domicile
 index.our_restaurants: Nos restaurants
@@ -699,8 +612,11 @@ basics.stripe_fees: Frais Stripe
 basics.platform_fees: Frais de plateforme
 basics.net_income: Revenu net
 basics.send_invitation: Envoyer une invitation
-basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous pouvez à présent éditer les paramètres du nouvel utilisateur.
-basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations personnelles</a>
+basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous pouvez
+  à présent éditer les paramètres du nouvel utilisateur.
+basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
+  bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
+  personnelles</a>
 adminDashboard.embed.title: Intégration
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
@@ -721,62 +637,28 @@ embed.delivery.billing_address: Adresse de facturation
 notifications.empty: Aucune notification
 adminDashboard.statistics: Statistiques
 adminDashboard.activity.title: Activité
-activity.task.created: '@%owner% a créé la tâche #task/%aggregate_id%
-
-  '
-activity.task.assigned: '@%owner% a assigné la tâche #task/%aggregate_id%
-
-  '
-activity.task.unassigned: '@%owner% a désassigné la tâche #task/%aggregate_id%
-
-  '
-activity.task.done: '@%owner% a terminé la tâche #task/%aggregate_id%
-
-  '
-activity.task.failed: '@%owner% n''a pas pu terminer la tâche #task/%aggregate_id%
-
-  '
-activity.task.cancelled: '@%owner% a annulé la tâche #task/%aggregate_id%
-
-  '
-activity.order.created: 'La commande #order/%aggregate_id% a été créée par @%owner%
-
-  '
-activity.order.accepted: 'La commande #order/%aggregate_id% a été acceptée
-
-  '
-activity.order.refused: 'La commande #order/%aggregate_id% a été refusée
-
-  '
-activity.order.picked: '@%owner% a récupéré la commande #order/%aggregate_id%
-
-  '
-activity.order.dropped: '@%owner% a livré la commande #order/%aggregate_id%
-
-  '
-activity.order.fulfilled: 'La commande #order/%aggregate_id% est terminée
-
-  '
+activity.task.created: "@%owner% a créé la tâche #task/%aggregate_id%\n"
+activity.task.assigned: "@%owner% a assigné la tâche #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% a désassigné la tâche #task/%aggregate_id%\n"
+activity.task.done: "@%owner% a terminé la tâche #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% n'a pas pu terminer la tâche #task/%aggregate_id%\n"
+activity.task.cancelled: "@%owner% a annulé la tâche #task/%aggregate_id%\n"
+activity.order.created: "La commande #order/%aggregate_id% a été créée par @%owner%\n"
+activity.order.accepted: "La commande #order/%aggregate_id% a été acceptée\n"
+activity.order.refused: "La commande #order/%aggregate_id% a été refusée\n"
+activity.order.picked: "@%owner% a récupéré la commande #order/%aggregate_id%\n"
+activity.order.dropped: "@%owner% a livré la commande #order/%aggregate_id%\n"
+activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 social.sign_in_with_facebook: Se connecter avec Facebook
-embed.delivery.summary: 'Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>
-  à l''adresse suivante : <strong>%dropoff_address%</strong>
-
-  <br>
-
-  Nous avons calculé une distance de <strong>%distance% kilomètres</strong>.
-
-  <br>
-
-  Selon nos tarifs, cette course vous coûtera <strong>%total_excluding_tax% HT</strong>
-  (%total_including_tax% TTC).'
+embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
+  \ à l'adresse suivante : <strong>%dropoff_address%</strong>\n<br>\nNous avons calculé\
+  \ une distance de <strong>%distance% kilomètres</strong>.\n<br>\nSelon nos tarifs,\
+  \ cette course vous coûtera <strong>%total_excluding_tax% HT</strong> (%total_including_tax%\
+  \ TTC)."
 embed.delivery.submit.help: Cliquez pour confirmer le devis et commander la course.
-embed.delivery.confirm_message: 'Nous avons bien enregistré votre demande. Votre course
-  est en attente de validation.
-
-  <br>
-
-  Nous allons vous envoyer un email d''ici quelques minutes. Vous recevrez un second
-  mail dès que la course est confirmée.'
+embed.delivery.confirm_message: "Nous avons bien enregistré votre demande. Votre course\
+  \ est en attente de validation.\n<br>\nNous allons vous envoyer un email d'ici quelques\
+  \ minutes. Vous recevrez un second mail dès que la course est confirmée."
 deliveryForm.noPriceWarning: Le tarif ne peut être calculé. Veuillez intégrer un nouveau
   prix.
 deliveryForm.noPriceFromPricingWarning: Le tarif ne peut pas être calculé à partir
@@ -851,8 +733,19 @@ task.form.edit: Modifier la tâche %id%
 task.form.finish: Terminer la tâche
 task.form.details: Détails
 task.form.finish.DONE.info: La tâche a été terminée avec succès
-form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15
-  caractères. Un nom d''utilisateur ne peut contenir que des caractères alphanumériques
-  (lettres A-Z, chiffres 0-9) à l''exception du tiret bas (_)
-
-  '
+form.registration.username.help: "Votre nom d'utilisateur ne peut pas dépasser 15\
+  \ caractères. Un nom d'utilisateur ne peut contenir que des caractères alphanumériques\
+  \ (lettres A-Z, chiffres 0-9) à l'exception du tiret bas (_)\n"
+order.adjustment_type.reusable_packaging: Emballage
+form.store_type.package_set.label: Ensemble d'emballages
+adminDashboard.package_sets.title: Emballages
+form.package.volume_units.label: Unité de volume
+form.package.name.label: Nom
+form.package_set.packages.label: Emballages
+form.package_set.name.label: Nom
+form.time_slot.interval.label: Intervalle
+form.delivery.packages.label: Emballages
+form.delivery.package.label: Emballage
+order_item.adjustment_type.reusable_packaging: '%quantity% × emballage(s)'
+order.reusable_packaging.alert: Cette commande doit être conditionnée dans des emballages
+  réutilisables
