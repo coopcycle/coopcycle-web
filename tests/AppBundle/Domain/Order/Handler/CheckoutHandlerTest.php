@@ -25,6 +25,7 @@ class CheckoutHandlerTest extends TestCase
     private $stripeManager;
 
     private $handler;
+    private $asap;
 
     public function setUp(): void
     {
@@ -34,9 +35,15 @@ class CheckoutHandlerTest extends TestCase
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
 
+        $this->asap = (new \DateTime())->format(\DateTime::ATOM);
+
         $this->orderTimeHelper
-            ->getAvailabilities(Argument::type(Order::class))
+            ->getAvailabilities(Argument::type(OrderInterface::class))
             ->willReturn([]);
+
+        $this->orderTimeHelper
+            ->getAsap(Argument::type('array'))
+            ->willReturn($this->asap);
 
         $this->handler = new CheckoutHandler(
             $this->eventRecorder->reveal(),
@@ -62,10 +69,6 @@ class CheckoutHandlerTest extends TestCase
             ->authorize($stripePayment)
             ->willReturn($charge);
 
-        $this->orderTimeHelper
-            ->getAsap(Argument::type('array'))
-            ->willReturn((new \DateTime())->format(\DateTime::ATOM));
-
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
@@ -75,6 +78,7 @@ class CheckoutHandlerTest extends TestCase
         call_user_func_array($this->handler, [$command]);
 
         $this->assertNotNull($order->getShippedAt());
+        $this->assertEquals(new \DateTime($this->asap), $order->getShippedAt());
         $this->assertEquals('ch_123456', $stripePayment->getCharge());
     }
 
@@ -100,10 +104,6 @@ class CheckoutHandlerTest extends TestCase
             ->confirmIntent($stripePayment)
             ->willReturn($paymentIntent);
 
-        $this->orderTimeHelper
-            ->getAsap(Argument::type('array'))
-            ->willReturn((new \DateTime())->format(\DateTime::ATOM));
-
         $this->eventRecorder
             ->record(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
@@ -113,6 +113,7 @@ class CheckoutHandlerTest extends TestCase
         call_user_func_array($this->handler, [$command]);
 
         $this->assertNotNull($order->getShippedAt());
+        $this->assertEquals(new \DateTime($this->asap), $order->getShippedAt());
     }
 
     public function testCheckoutFailed()
@@ -150,5 +151,44 @@ class CheckoutHandlerTest extends TestCase
         call_user_func_array($this->handler, [$command]);
 
         $this->assertNull($order->getShippedAt());
+    }
+
+    public function testCheckoutWithFreeOrder()
+    {
+        $order = $this->prophesize(Order::class);
+
+        $order
+            ->getLastPayment(PaymentInterface::STATE_CART)
+            ->willReturn(null);
+        $order
+            ->isEmpty()
+            ->willReturn(false);
+        $order
+            ->getItemsTotal()
+            ->willReturn(1000);
+        $order
+            ->getTotal()
+            ->willReturn(0);
+        $order
+            ->getShippedAt()
+            ->willReturn(null);
+
+        $this->stripeManager
+            ->confirmIntent(Argument::type(StripePayment::class))
+            ->shouldNotBeCalled();
+        $this->stripeManager
+            ->authorize(Argument::type(StripePayment::class))
+            ->shouldNotBeCalled();
+
+        $order
+            ->setShippedAt(new \DateTime($this->asap))
+            ->shouldBeCalled();
+        $this->eventRecorder
+            ->record(Argument::type(CheckoutSucceeded::class))
+            ->shouldBeCalled();
+
+        $command = new Checkout($order->reveal());
+
+        call_user_func_array($this->handler, [$command]);
     }
 }

@@ -26,11 +26,14 @@ class CapturePayment
         $order = $event->getOrder();
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+        $isFreeOrder = null === $stripePayment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
-        if (null === $stripePayment) {
-            // TODO Handle error
+        if ($isFreeOrder) {
+            $this->eventBus->handle(new OrderFulfilled($order));
             return;
         }
+
+        // TODO Handle error if payment is NULL
 
         try {
 

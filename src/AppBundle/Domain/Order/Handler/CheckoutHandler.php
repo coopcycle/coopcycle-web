@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -28,12 +29,31 @@ class CheckoutHandler
         $this->orderTimeHelper = $orderTimeHelper;
     }
 
+    private function setShippingDate(OrderInterface $order)
+    {
+        if (null === $order->getShippedAt()) {
+            $availabilities = $this->orderTimeHelper->getAvailabilities($order);
+            $asap = $this->orderTimeHelper->getAsap($availabilities);
+
+            $order->setShippedAt(new \DateTime($asap));
+        }
+    }
+
     public function __invoke(Checkout $command)
     {
         $order = $command->getOrder();
         $stripeToken = $command->getStripeToken();
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $isFreeOrder = null === $stripePayment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+
+        if ($isFreeOrder) {
+            $this->orderNumberAssigner->assignNumber($order);
+            $this->setShippingDate($order);
+            $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
+
+            return;
+        }
 
         // TODO Check if $stripePayment !== null
 
@@ -57,12 +77,7 @@ class CheckoutHandler
                 $stripePayment->setCharge($charge->id);
             }
 
-            if (null === $order->getShippedAt()) {
-                $availabilities = $this->orderTimeHelper->getAvailabilities($order);
-                $asap = $this->orderTimeHelper->getAsap($availabilities);
-
-                $order->setShippedAt(new \DateTime($asap));
-            }
+            $this->setShippingDate($order);
 
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $stripePayment));
 

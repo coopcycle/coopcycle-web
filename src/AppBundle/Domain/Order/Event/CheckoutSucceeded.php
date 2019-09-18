@@ -16,7 +16,7 @@ class CheckoutSucceeded extends Event implements DomainEvent
         return 'order:checkout_succeeded';
     }
 
-    public function __construct(OrderInterface $order, StripePayment $payment)
+    public function __construct(OrderInterface $order, ?StripePayment $payment = null)
     {
         parent::__construct($order);
 

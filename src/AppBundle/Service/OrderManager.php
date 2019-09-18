@@ -38,7 +38,7 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\CreatePaymentIntent($order, $paymentMethodId));
     }
 
-    public function checkout(OrderInterface $order, $stripeToken)
+    public function checkout(OrderInterface $order, $stripeToken = null)
     {
         $this->commandBus->handle(new OrderCommand\Checkout($order, $stripeToken));
     }

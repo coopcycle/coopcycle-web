@@ -17,7 +17,7 @@ class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
         return 'order:fulfilled';
     }
 
-    public function __construct(OrderInterface $order, StripePayment $payment)
+    public function __construct(OrderInterface $order, ?StripePayment $payment = null)
     {
         parent::__construct($order);
 

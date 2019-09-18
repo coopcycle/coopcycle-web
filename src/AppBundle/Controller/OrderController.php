@@ -48,6 +48,7 @@ class OrderController extends AbstractController
      * @Template()
      */
     public function indexAction(Request $request,
+        OrderManager $orderManager,
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator)
@@ -91,10 +92,25 @@ class OrderController extends AbstractController
                 );
             }
 
+            $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+
+            if ($isFreeOrder) {
+                $orderManager->checkout($order);
+            }
+
             $this->objectManager->flush();
 
             if ($originalReusablePackagingEnabled !== $order->isReusablePackagingEnabled()) {
                 return $this->redirectToRoute('order');
+            }
+
+            if ($isFreeOrder) {
+                 $this->addFlash('track_goal', true);
+
+                return $this->redirectToRoute('profile_order', [
+                    'id' => $order->getId(),
+                    'reset' => 'yes'
+                ]);
             }
 
             return $this->redirectToRoute('order_payment');
@@ -116,7 +132,10 @@ class OrderController extends AbstractController
      * @Route("/payment", name="order_payment")
      * @Template()
      */
-    public function paymentAction(Request $request, OrderManager $orderManager, CartContextInterface $cartContext, StripeManager $stripeManager)
+    public function paymentAction(Request $request,
+        OrderManager $orderManager,
+        CartContextInterface $cartContext,
+        StripeManager $stripeManager)
     {
         $order = $cartContext->getCart();
 
