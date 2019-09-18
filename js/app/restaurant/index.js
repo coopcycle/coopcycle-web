@@ -14,8 +14,6 @@ require('gasparesganga-jquery-loading-overlay')
 
 window._paq = window._paq || []
 
-Modal.setAppElement(document.getElementById('cart'))
-
 let store
 
 window.initMap = function() {
@@ -143,13 +141,17 @@ window.initMap = function() {
 
   store = createStoreFromPreloadedState(state)
 
+  const container = document.getElementById('cart')
+
+  Modal.setAppElement(container)
+
   render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <Cart />
       </I18nextProvider>
     </Provider>,
-    document.querySelector('#cart')
+    container
   )
 
 }
