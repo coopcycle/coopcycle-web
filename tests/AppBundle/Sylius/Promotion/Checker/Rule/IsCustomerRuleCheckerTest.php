@@ -3,12 +3,6 @@
 namespace Tests\AppBundle\Sylius\Promotion\Checker\Rule;
 
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
-// use AppBundle\Entity\Sylius\Product;
-// use AppBundle\Entity\Sylius\ProductOption;
-// use AppBundle\Entity\Sylius\ProductOptionValue;
-// use AppBundle\Entity\Sylius\ProductVariant;
-// use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
-// use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
