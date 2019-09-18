@@ -22,6 +22,10 @@ class IsCustomerRuleChecker implements RuleCheckerInterface
      */
     public function isEligible(PromotionSubjectInterface $subject, array $configuration): bool
     {
+        if (!isset($configuration['username']) || empty($configuration['username'])) {
+            return true;
+        }
+
     	if (null === $token = $this->tokenStorage->getToken()) {
             return false;
         }
