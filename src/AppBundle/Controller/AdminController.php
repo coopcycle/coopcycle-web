@@ -28,6 +28,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
+use AppBundle\Form\CreateUserType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
@@ -314,7 +315,7 @@ class AdminController extends Controller
         TokenGeneratorInterface $tokenGenerator,
         ObjectManager $objectManager)
     {
-        $form = $this->createForm(RegistrationType::class);
+        $form = $this->createForm(CreateUserType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
