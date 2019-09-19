@@ -719,4 +719,4 @@ form.delivery.to_be_confirmed.warning: Uste debe confirmar la orden
 order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Esta orden debe estar empacada en un paquete reutilizable
-adminDashboard.users.edit.quotes_allowed: Permitir a este cliente solicitar una citar
+form.user.quotes_allowed.label: Permitir a este cliente solicitar una cita

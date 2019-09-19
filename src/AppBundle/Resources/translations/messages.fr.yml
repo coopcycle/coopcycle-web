@@ -61,8 +61,6 @@ adminDashboard.users.editUser: Modifier l'utilisateur
 adminDashboard.users.edit.addStore: Ajouter un magasin
 adminDashboard.users.edit.addRestaurant: Ajouter un restaurant
 adminDashboard.users.createNew: Ajouter un utilisateur
-adminDashboard.users.edit.quotes_allowed: Autoriser ce client à faire des demandes
-  de devis
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer
@@ -546,6 +544,7 @@ form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.stripe_payment.cardholder_name.label: Nom du titulaire de la carte
+form.user.quotes_allowed.label: Autoriser cet utilisateur à faire des demandes de devis
 promotion_coupon.used.label: Nombre d'utilisations
 product_option.strategy.free: Gratuit
 product_option.strategy.option: Prix fixe quelque soit le choix

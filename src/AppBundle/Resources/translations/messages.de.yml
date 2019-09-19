@@ -471,4 +471,4 @@ order_item.adjustment_type.reusable_packaging: '%quantity% × Verpackung(en)'
 order.adjustment_type.reusable_packaging: Verpackung
 order.reusable_packaging.alert: Diese Bestellung muss in einem wiederverwendbaren
   Behälter verpackt werden
-adminDashboard.users.edit.quotes_allowed: Erlaube diesem Kunden, ein Angebot anzufordern
+form.user.quotes_allowed.label: Erlaube diesem Kunden, ein Angebot anzufordern
