@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type as FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class TaskExportType extends AbstractType
 {
@@ -61,11 +62,16 @@ class TaskExportType extends AbstractType
                 'event.DONE.notes',
                 'event.FAILED.notes',
                 'finishedAt',
-                'courier'
+                'courier',
+                'tags'
             ]);
 
             $records = [];
             foreach ($tasks as $task) {
+                $tags = [];
+                foreach ($task->getTags() as $tag) {
+                    $tags[] = $tag->getSlug();
+                }
                 $address = $task->getAddress();
                 $finishedAt = '';
 
@@ -90,7 +96,8 @@ class TaskExportType extends AbstractType
                     $task->hasEvent(Event\TaskDone::messageName()) ? $task->getLastEvent(Event\TaskDone::messageName())->getData('notes') : '',
                     $task->hasEvent(Event\TaskFailed::messageName()) ? $task->getLastEvent(Event\TaskFailed::messageName())->getData('notes') : '',
                     $finishedAt,
-                    $task->isAssigned() ? $task->getAssignedCourier() : ''
+                    $task->isAssigned() ? $task->getAssignedCourier() : '',
+                    implode(',', $tags)
                 ];
             }
             $csv->insertAll($records);
