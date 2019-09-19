@@ -11,18 +11,14 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-// use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RegistrationType extends AbstractType
 {
-    private $authorizationChecker;
     private $countryIso;
     private $isDemo;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, string $countryIso, bool $isDemo = false)
+    public function __construct(string $countryIso, bool $isDemo = false)
     {
-        $this->authorizationChecker = $authorizationChecker;
         $this->countryIso = strtoupper($countryIso);
         $this->isDemo = $isDemo;
     }
@@ -37,12 +33,6 @@ class RegistrationType extends AbstractType
                 'default_region' => strtoupper($this->countryIso),
                 'label' => 'profile.telephone',
             ]);
-
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $builder
-                ->add('save', SubmitType::class, array('label' => 'basics.save'))
-                ->add('sendInvitation', SubmitType::class, array('label' => 'basics.send_invitation'));
-        }
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [
@@ -59,15 +49,11 @@ class RegistrationType extends AbstractType
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
             $form = $event->getForm();
-
             $child = $form->get('username');
-
             $config = $child->getConfig();
             $options = $config->getOptions();
             $options['help'] = 'form.registration.username.help';
-
             $form->add('username', get_class($config->getType()->getInnerType()), $options);
         });
     }
