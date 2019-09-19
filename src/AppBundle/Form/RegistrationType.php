@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Form;
+
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -15,11 +16,13 @@ class RegistrationType extends AbstractType
 {
     private $countryIso;
     private $isDemo;
+
     public function __construct(string $countryIso, bool $isDemo = false)
     {
         $this->countryIso = strtoupper($countryIso);
         $this->isDemo = $isDemo;
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -54,6 +57,7 @@ class RegistrationType extends AbstractType
             $form->add('username', get_class($config->getType()->getInnerType()), $options);
         });
     }
+
     public function getParent()
     {
         return 'FOS\UserBundle\Form\Type\RegistrationFormType';
