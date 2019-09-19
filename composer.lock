@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee4e2c3393b394f87271b87694823023",
+    "content-hash": "c18215567e6dc60bda1227dcd168fe5f",
     "packages": [
         {
             "name": "api-platform/core",
@@ -6809,16 +6809,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.1.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "701fe7ea8c12c07b985b156d589134d328160cf7"
+                "reference": "55ff6b76573f5b242554c9775792bd59fb52e11c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/701fe7ea8c12c07b985b156d589134d328160cf7",
-                "reference": "701fe7ea8c12c07b985b156d589134d328160cf7",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/55ff6b76573f5b242554c9775792bd59fb52e11c",
+                "reference": "55ff6b76573f5b242554c9775792bd59fb52e11c",
                 "shasum": ""
             },
             "require": {
@@ -6867,7 +6867,7 @@
                 "psr-17",
                 "psr-7"
             ],
-            "time": "2019-02-16T17:20:43+00:00"
+            "time": "2019-09-05T13:24:16+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -12668,16 +12668,16 @@
         },
         {
             "name": "trikoder/oauth2-bundle",
-            "version": "dev-master",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/trikoder/oauth2-bundle.git",
-                "reference": "fc1f8556c180ba961bd6f2c973d36ff7439cbf34"
+                "reference": "72e9465a408c9fa5d25b0f124d96e9c55afb58b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/trikoder/oauth2-bundle/zipball/fc1f8556c180ba961bd6f2c973d36ff7439cbf34",
-                "reference": "fc1f8556c180ba961bd6f2c973d36ff7439cbf34",
+                "url": "https://api.github.com/repos/trikoder/oauth2-bundle/zipball/72e9465a408c9fa5d25b0f124d96e9c55afb58b3",
+                "reference": "72e9465a408c9fa5d25b0f124d96e9c55afb58b3",
                 "shasum": ""
             },
             "require": {
@@ -12696,9 +12696,9 @@
                 "ext-xdebug": "*",
                 "friendsofphp/php-cs-fixer": "^2.15",
                 "nyholm/psr7": "^1.1",
-                "phpunit/phpunit": "^8.1",
+                "phpunit/phpunit": "~8.2.0",
                 "symfony/browser-kit": "^3.4|^4.2",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
+                "symfony/phpunit-bridge": "^3.4|^4.3",
                 "zendframework/zend-diactoros": "^2.1"
             },
             "suggest": {
@@ -12707,6 +12707,11 @@
                 "nyholm/psr7": "For a super lightweight PSR-7/17 implementation"
             },
             "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Trikoder\\Bundle\\OAuth2Bundle\\": ""
@@ -12730,7 +12735,7 @@
             "keywords": [
                 "oauth2"
             ],
-            "time": "2019-07-27T08:33:53+00:00"
+            "time": "2019-08-13T09:14:17+00:00"
         },
         {
             "name": "twig/extensions",
@@ -15333,7 +15338,6 @@
         "friendsofsymfony/user-bundle": 20,
         "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,
-        "trikoder/oauth2-bundle": 20,
         "hwi/oauth-bundle": 20,
         "behat/symfony2-extension": 20,
         "behat/mink": 20
