@@ -36,7 +36,7 @@ class RestaurantType extends LocalBusinessType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('exclusive', CheckboxType::class, [
-                    'label' => 'adminDashboard.restaurants.exclusive',
+                    'label' => 'restaurant.form.exclusive.label',
                     'required' => false
                 ])
                 ->add('contract', ContractType::class)
@@ -47,6 +47,10 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.allow_stripe_connect.label',
                     'mapped' => false,
                     'required' => false,
+                ])
+                ->add('caterer', CheckboxType::class, [
+                    'label' => 'restaurant.form.caterer.label',
+                    'required' => false
                 ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',

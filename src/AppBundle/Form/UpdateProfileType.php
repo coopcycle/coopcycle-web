@@ -51,10 +51,10 @@ class UpdateProfileType extends AbstractType
             }
         }
 
-        if($isAdmin) {
+        if ($isAdmin) {
             $builder
                 ->add('quotesAllowed', CheckboxType::class, [
-                'label' => 'adminDashboard.users.edit.quotes_allowed',
+                'label' => 'form.user.quotes_allowed.label',
                 'required' => false,
             ]);
         }

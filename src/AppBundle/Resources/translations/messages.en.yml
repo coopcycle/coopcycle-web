@@ -73,7 +73,7 @@ adminDashboard.users.editUser: Edit user
 adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user
-adminDashboard.users.edit.quotes_allowed: Allow this customer to request a quote
+form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
 adminDashboard.pricing.manage: Manage
@@ -141,6 +141,8 @@ restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date
 restaurant.noMenuWarning: 'This restaurant has no menu for now
 
   '
+restaurant.quotes_only_warning.authenticated: This restaurant only accepts orders on quotation. To create quotes, you must be a referenced customer. <a href="%contact_us%">Contact us</a> for more information.
+restaurant.quotes_only_warning.not_authenticated: This restaurant only accepts orders on quotation. If you are a referenced customer, <a href="%login%">login</a> to create a quote.
 restaurant.form.noPricingRule: 'No pricing rules have been implemented, <a href="%editPricingRule%">click here to create one</a>.'
 restaurant.form.enabled.tooltip: 'When disabled, a restaurant is not visible on the
   website. It doesn''t show in search results and its own page is not accessible by
@@ -154,6 +156,8 @@ restaurant.form.temporaryClosingRule: If you wish to close temporarily your rest
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.save: Save
+restaurant.form.exclusive.label: This restaurant is exclusive
+restaurant.form.caterer.label: "This restaurant only accepts orders on quotation (ex: catering)"
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.

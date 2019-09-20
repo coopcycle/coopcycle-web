@@ -30,56 +30,60 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($object->getState() !== 'pledge') {
+        if ($object->getState() === 'pledge') {
+            return;
+        }
 
-            $telephoneErrors = $validator->validate($object->getTelephone(), new Assert\NotBlank());
-            if (count($telephoneErrors) > 0) {
-                $this->context->buildViolation($constraint->telephoneMessage)
-                    ->atPath('telephone')
+        $telephoneErrors = $validator->validate($object->getTelephone(), new Assert\NotBlank());
+        if (count($telephoneErrors) > 0) {
+            $this->context->buildViolation($constraint->telephoneMessage)
+                ->atPath('telephone')
+                ->addViolation();
+        }
+
+        $openingHoursErrors = $validator->validate($object->getOpeningHours(), new Assert\NotBlank());
+        if (count($openingHoursErrors) > 0) {
+            $this->context->buildViolation($constraint->openingHoursMessage)
+                ->atPath('openingHours')
+                ->addViolation();
+        }
+
+        $contractErrors = $validator->validate($object->getContract(), [
+            new Assert\NotBlank(),
+            new Assert\Valid(),
+        ]);
+        if (count($contractErrors) > 0) {
+            $this->context->buildViolation($constraint->contractMessage)
+                ->atPath('contract')
+                ->addViolation();
+        }
+
+        // The validations below only make sense when the restaurant is created
+        if (null !== $object->getId()) {
+
+            if (!$object->hasMenu()) {
+                $this->context->buildViolation($constraint->menuMessage)
+                    ->atPath('activeMenuTaxon')
                     ->addViolation();
             }
 
-            $openingHoursErrors = $validator->validate($object->getOpeningHours(), new Assert\NotBlank());
-            if (count($openingHoursErrors) > 0) {
-                $this->context->buildViolation($constraint->openingHoursMessage)
-                    ->atPath('openingHours')
-                    ->addViolation();
-            }
-
-            $contractErrors = $validator->validate($object->getContract(), [
-                new Assert\NotBlank(),
-                new Assert\Valid(),
-            ]);
-            if (count($contractErrors) > 0) {
-                $this->context->buildViolation($constraint->contractMessage)
-                    ->atPath('contract')
-                    ->addViolation();
-            }
-
-            // The validations below only make sense when the restaurant is created
-            if (null !== $object->getId()) {
-
+            // Restaurants with caterer = true don't need a Stripe account
+            if (!$object->isCaterer()) {
                 $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
                 if (null === $stripeAccount) {
                     $this->context->buildViolation($constraint->stripeAccountMessage)
                         ->atPath('stripeAccounts')
                         ->addViolation();
                 }
-
-                if (!$object->hasMenu()) {
-                    $this->context->buildViolation($constraint->menuMessage)
-                        ->atPath('activeMenuTaxon')
-                        ->addViolation();
-                }
             }
+        }
 
-            $hasErrors = count($this->context->getViolations()) > 0;
+        $hasErrors = count($this->context->getViolations()) > 0;
 
-            if ($hasErrors) {
-                $this->context->buildViolation($constraint->enabledMessage)
-                    ->atPath('enabled')
-                    ->addViolation();
-            }
+        if ($hasErrors) {
+            $this->context->buildViolation($constraint->enabledMessage)
+                ->atPath('enabled')
+                ->addViolation();
         }
     }
 }

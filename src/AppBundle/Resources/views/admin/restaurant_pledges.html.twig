@@ -22,6 +22,8 @@
             <button class="btn btn-success" type="submit" name="accept" onclick="return confirm('Are you sure?')">{{ 'pledge.accept'|trans }}</button>
             <button class="btn btn-danger" type="submit" name="reject" onclick="return confirm('Are you sure?')">{{ 'pledge.reject'|trans }}</button>
           </form>
+          {% else %}
+            {{ pledge.state }}
           {% endif %}
         </td>
         <td class="text-right">{{ pledge.createdAt|ago }}</td>

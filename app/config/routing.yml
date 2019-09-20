@@ -26,6 +26,14 @@ web:
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
+# Override FOSUserBundle route
+fos_user_profile_show:
+    path:     /profile/
+    methods:  [ GET ]
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::indexAction
+        layout: '@App/profile.html.twig'
+
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 

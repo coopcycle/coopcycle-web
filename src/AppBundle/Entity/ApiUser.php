@@ -292,7 +292,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
     /**
      * @return mixed
      */
-    public function getQuotesAllowed()
+    public function isQuotesAllowed()
     {
         return $this->quotesAllowed;
     }

@@ -486,6 +486,11 @@ trikoder_oauth2:
         encryption_key: "%trikoder_encryption_key%"
         access_token_ttl: PT1H
         refresh_token_ttl: P1M
+        enable_client_credentials_grant: true
+        enable_password_grant: false
+        enable_refresh_token_grant: false
+        enable_auth_code_grant: false
+        enable_implicit_grant: false
     resource_server:
         public_key: "%jwt_public_key_path%"
     scopes:

@@ -93,8 +93,9 @@ class OrderController extends AbstractController
             }
 
             $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+            $isQuote = $order->getRestaurant()->isCaterer();
 
-            if ($isFreeOrder) {
+            if ($isFreeOrder || $isQuote) {
                 $orderManager->checkout($order);
             }
 
@@ -104,7 +105,7 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($isFreeOrder) {
+            if ($isFreeOrder || $isQuote) {
                  $this->addFlash('track_goal', true);
 
                 return $this->redirectToRoute('profile_order', [

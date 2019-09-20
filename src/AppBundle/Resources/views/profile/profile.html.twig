@@ -1,3 +1,12 @@
+<h2 class="page-header">
+  {% trans from 'messages' %}profile.myAccount{% endtrans %}
+  <span class="pull-right">
+    <a class="btn btn-sm btn-success" href="{{ path('profile_edit') }}">
+      <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}basics.edit{%  endtrans %}
+    </a>
+  </span>
+</h2>
+
 <p><strong>{% trans %}profile.username{%  endtrans %}</strong>: {{ user.username }}</p>
 <p><strong>{% trans %}profile.email{%  endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
 <p><strong>{% trans %}profile.familyName{%  endtrans %}</strong>: {{ user.familyName }}</p>

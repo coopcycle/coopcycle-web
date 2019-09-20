@@ -862,7 +862,7 @@ class Restaurant extends FoodEstablishment
      *
      * @return self
      */
-    public function setIsCaterer($caterer)
+    public function setCaterer($caterer)
     {
         $this->caterer = $caterer;
 
