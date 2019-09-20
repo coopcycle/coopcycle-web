@@ -298,6 +298,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             $needsUpdate = true;
         }
 
+        if (isset($data['passwordRequestAge'])) {
+            $ageInSeconds = new DateInterval('PT'.$data['passwordRequestAge']."S");
+
+            $timestamp = new DateTime();
+            $timestamp->sub($ageInSeconds);
+
+            $user->setPasswordRequestedAt($timestamp);
+            $needsUpdate = true;
+        }
+
         if ($needsUpdate) {
             $manager->updateUser($user);
         }
