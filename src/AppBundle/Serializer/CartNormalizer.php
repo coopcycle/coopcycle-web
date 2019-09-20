@@ -56,25 +56,26 @@ class CartNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['shippingAddress'] = null;
         }
 
-        $deliveryAdjustments = array_map(function (BaseAdjustmentInterface $adjustment) {
-            return [
-                'id' => $adjustment->getId(),
-                'label' => $adjustment->getLabel(),
-                'amount' => $adjustment->getAmount(),
-            ];
-        }, $object->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
+        $serializeAdjustments = function (BaseAdjustmentInterface $adjustment) {
 
-        $deliveryPromotionAdjustments = array_map(function (BaseAdjustmentInterface $adjustment) {
             return [
                 'id' => $adjustment->getId(),
                 'label' => $adjustment->getLabel(),
                 'amount' => $adjustment->getAmount(),
             ];
-        }, $object->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+        };
+
+        $deliveryAdjustments =
+            array_map($serializeAdjustments, $object->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
+        $deliveryPromotionAdjustments =
+            array_map($serializeAdjustments, $object->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+        $reusablePackagingAdjustments =
+            array_map($serializeAdjustments, $object->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
 
         $data['adjustments'] = [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
-            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments)
+            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments)
         ];
 
         $shippedAt = $object->getShippedAt();
