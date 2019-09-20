@@ -39,6 +39,10 @@ class RestaurantType extends LocalBusinessType
             ->add('orderingDelayHours', IntegerType::class, [
                 'label' => 'localBusiness.form.orderingDelayHours',
                 'mapped' => false
+            ])
+            ->add('depositRefundEnabled', CheckboxType::class, [
+                'label' => 'restaurant.form.deposit_refund_enabled.label',
+                'required' => false
             ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
