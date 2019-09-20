@@ -70,7 +70,7 @@
 
   {% if form.pricingRuleSet is defined or form.prefillPickupAddress is defined or form.createOrders is defined %}
     {% if form.pricingRuleSet is defined and form.pricingRuleSet.vars.choices|length == 0 %}
-      <div class="alert alert-warning">{% trans with {'%editPricingRule%':admin_deliveries_pricing} %}restaurant.form.noPrincingRule{% endtrans %}</div>
+      <div class="alert alert-warning">{% trans with {'%editPricingRule%':admin_deliveries_pricing} %}restaurant.form.noPricingRule{% endtrans %}</div>
       <div class="hidden">
         {{ form_row(form.pricingRuleSet) }}
         {% if form.prefillPickupAddress is defined %}

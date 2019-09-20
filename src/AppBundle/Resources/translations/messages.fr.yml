@@ -123,7 +123,7 @@ restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%da
 restaurant.noMenuWarning: 'Ce restaurant n''a pas de menu pour l''instant
 
   '
-restaurant.form.noPrincingRule: 'Aucune règle de tarification n''a été instaurée, <a href="%editPricingRule%">cliquez-ici pour en créer une</a>.
+restaurant.form.noPricingRule: 'Aucune règle de tarification n''a été instaurée, <a href="%editPricingRule%">cliquez-ici pour en créer une</a>.
   '
 restaurant.form.enabled.tooltip: 'Un restaurant désactivé n''est ni visible ni référencé
   sur le site. Il n''apparaît pas dans les résultats de recherche. Sa page dédiée
