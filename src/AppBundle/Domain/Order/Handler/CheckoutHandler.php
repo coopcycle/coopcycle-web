@@ -46,8 +46,9 @@ class CheckoutHandler
 
         $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
         $isFreeOrder = null === $stripePayment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+        $isQuote = $order->getRestaurant()->isCaterer();
 
-        if ($isFreeOrder) {
+        if ($isFreeOrder || $isQuote) {
             $this->orderNumberAssigner->assignNumber($order);
             $this->setShippingDate($order);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
