@@ -141,6 +141,7 @@ restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date
 restaurant.noMenuWarning: 'This restaurant has no menu for now
 
   '
+restaurant.form.noPrincingRule: 'No pricing rules have been implemented, <a href="%editPricingRule%">click here to create one</a>.'
 restaurant.form.enabled.tooltip: 'When disabled, a restaurant is not visible on the
   website. It doesn''t show in search results and its own page is not accessible by
   visitors.
