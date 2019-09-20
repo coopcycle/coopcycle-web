@@ -59,19 +59,22 @@ class IsActivableRestaurantValidator extends ConstraintValidator
         }
 
         // The validations below only make sense when the restaurant is created
-        if (null !== $object->getId() && !$object->isCaterer()) {
-
-            $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-            if (null === $stripeAccount) {
-                $this->context->buildViolation($constraint->stripeAccountMessage)
-                    ->atPath('stripeAccounts')
-                    ->addViolation();
-            }
+        if (null !== $object->getId()) {
 
             if (!$object->hasMenu()) {
                 $this->context->buildViolation($constraint->menuMessage)
                     ->atPath('activeMenuTaxon')
                     ->addViolation();
+            }
+
+            // Restaurants with caterer = true don't need a Stripe account
+            if (!$object->isCaterer()) {
+                $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+                if (null === $stripeAccount) {
+                    $this->context->buildViolation($constraint->stripeAccountMessage)
+                        ->atPath('stripeAccounts')
+                        ->addViolation();
+                }
             }
         }
 

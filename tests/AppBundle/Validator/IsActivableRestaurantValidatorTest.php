@@ -2,11 +2,12 @@
 
 namespace AppBundle\Validator;
 
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use AppBundle\Service\SettingsManager;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Validator\Constraints\IsActivableRestaurant;
 use AppBundle\Validator\Constraints\IsActivableRestaurantValidator;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
 {
@@ -43,7 +44,6 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-
     public function testRestaurantInStatePledgeNoErrors()
     {
         $restaurant = new Restaurant();
@@ -56,4 +56,23 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
+    public function testCatererNoErrors()
+    {
+        $contract = new Contract();
+        $contract->setFeeRate(20.00);
+        $contract->setCustomerAmount(350);
+        $contract->setMinimumCartAmount(1500);
+        $contract->setFlatDeliveryPrice(350);
+
+        $restaurant = new Restaurant();
+        $restaurant->setName('lorem ipsum');
+        $restaurant->setTelephone('+33612345678');
+        $restaurant->setOpeningHours(['Mo-Fr 10:45-13:30']);
+        $restaurant->setContract($contract);
+
+        $constraint = new IsActivableRestaurant();
+        $violations = $this->validator->validate($restaurant, $constraint);
+
+        $this->assertNoViolation();
+    }
 }
