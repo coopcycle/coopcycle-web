@@ -8,7 +8,9 @@ class CartErrors extends React.Component {
     return (
       <div className="cart-wrapper__messages">
         { this.props.errors.map((message, key) => (
-          <div key={ key } className="alert alert-warning">{ message }</div>
+          <div key={ key } className="alert alert-warning">
+            <span dangerouslySetInnerHTML={{ __html: message }}></span>
+          </div>
         )) }
       </div>
     )
