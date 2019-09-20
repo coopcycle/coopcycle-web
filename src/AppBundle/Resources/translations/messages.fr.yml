@@ -119,6 +119,8 @@ restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Co
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
   Vous pouvez commander pour plus tard !
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
+restaurant.quotes_only_warning.authenticated: Ce restaurant accepte uniquement des commandes sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
+restaurant.quotes_only_warning.not_authenticated: Ce restaurant accepte uniquement des commandes sur devis. Si vous êtes un client référencé, <a href="%login%">identifiez-vous</a> pour créer un devis.
 restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
   \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
   \ n'est pas accessible par les visiteurs.\n"
