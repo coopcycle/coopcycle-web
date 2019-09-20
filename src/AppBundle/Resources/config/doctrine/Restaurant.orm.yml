@@ -45,6 +45,10 @@ AppBundle\Entity\Restaurant:
             type: boolean
             options:
                 default: false
+        depositRefundOptin:
+            type: boolean
+            options:
+                default: 't'
         orderingDelayMinutes:
             type: integer
             unique: false

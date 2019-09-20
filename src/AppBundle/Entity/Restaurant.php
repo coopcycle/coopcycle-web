@@ -127,6 +127,8 @@ class Restaurant extends FoodEstablishment
 
     protected $depositRefundEnabled = false;
 
+    protected $depositRefundOptin = true;
+
     /**
      * @var integer Additional time to delay ordering
      *
@@ -848,6 +850,26 @@ class Restaurant extends FoodEstablishment
     public function setDepositRefundEnabled($depositRefundEnabled)
     {
         $this->depositRefundEnabled = $depositRefundEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDepositRefundOptin(): bool
+    {
+        return $this->depositRefundOptin;
+    }
+
+    /**
+     * @param mixed $depositRefundOptin
+     *
+     * @return self
+     */
+    public function setDepositRefundOptin(bool $depositRefundOptin)
+    {
+        $this->depositRefundOptin = $depositRefundOptin;
 
         return $this;
     }
