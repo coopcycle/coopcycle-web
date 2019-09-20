@@ -124,6 +124,8 @@ restaurant.quotes_only_warning.not_authenticated: Ce restaurant accepte uniqueme
 restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
   \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
   \ n'est pas accessible par les visiteurs.\n"
+restaurant.form.noPricingRule: 'Aucune règle de tarification n''a été instaurée, <a href="%editPricingRule%">cliquez-ici pour en créer une</a>.
+  '
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre

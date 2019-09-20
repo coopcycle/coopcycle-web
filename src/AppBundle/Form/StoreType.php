@@ -67,6 +67,7 @@ class StoreType extends LocalBusinessType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $store = $event->getData();
+
             if (null !== $store && null !== $store->getId()) {
                 foreach ($store->getAddresses() as $address) {
                     if ($address !== $store->getAddress()) {
@@ -83,6 +84,7 @@ class StoreType extends LocalBusinessType
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+
             $form = $event->getForm();
             $store = $event->getData();
 

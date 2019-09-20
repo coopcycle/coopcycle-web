@@ -143,6 +143,7 @@ restaurant.noMenuWarning: 'This restaurant has no menu for now
   '
 restaurant.quotes_only_warning.authenticated: This restaurant only accepts orders on quotation. To create quotes, you must be a referenced customer. <a href="%contact_us%">Contact us</a> for more information.
 restaurant.quotes_only_warning.not_authenticated: This restaurant only accepts orders on quotation. If you are a referenced customer, <a href="%login%">login</a> to create a quote.
+restaurant.form.noPricingRule: 'No pricing rules have been implemented, <a href="%editPricingRule%">click here to create one</a>.'
 restaurant.form.enabled.tooltip: 'When disabled, a restaurant is not visible on the
   website. It doesn''t show in search results and its own page is not accessible by
   visitors.
