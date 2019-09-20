@@ -15,16 +15,26 @@ class RestaurantModal extends Component {
   closeModal() {
   }
 
-  render() {
+  renderQuotesOnlyModalContent() {
 
     return (
-      <Modal
-        isOpen={ this.props.isOpen }
-        onAfterOpen={ this.afterOpenModal.bind(this) }
-        onRequestClose={ this.closeModal.bind(this) }
-        shouldCloseOnOverlayClick={ false }
-        contentLabel={ this.props.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
-        className="ReactModal__Content--restaurant">
+      <div>
+        <div className="text-center">
+          <p dangerouslySetInnerHTML={{ __html: this.props.errorMessage }}></p>
+        </div>
+      </div>
+    )
+  }
+
+  renderModalContent() {
+
+    if (this.props.isQuotesOnlyError) {
+
+      return this.renderQuotesOnlyModalContent()
+    }
+
+    return (
+      <div>
         <div className="text-center">
           <p>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1') }
@@ -40,6 +50,21 @@ class RestaurantModal extends Component {
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_YES') }
           </button>
         </div>
+      </div>
+    )
+  }
+
+  render() {
+
+    return (
+      <Modal
+        isOpen={ this.props.isOpen }
+        onAfterOpen={ this.afterOpenModal.bind(this) }
+        onRequestClose={ this.closeModal.bind(this) }
+        shouldCloseOnOverlayClick={ false }
+        contentLabel={ this.props.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
+        className="ReactModal__Content--restaurant">
+        { this.renderModalContent() }
       </Modal>
     )
   }
@@ -48,9 +73,16 @@ class RestaurantModal extends Component {
 function mapStateToProps(state) {
 
   const hasError = state.errors.hasOwnProperty('restaurant')
+  let quotesOnlyError = null
+
+  if (hasError) {
+    quotesOnlyError = _.find(state.errors.restaurant, err => err.hasOwnProperty('code') && err.code === 'Restaurant::QUOTES_ONLY')
+  }
 
   return {
     isOpen: hasError,
+    isQuotesOnlyError: !!quotesOnlyError,
+    errorMessage: !!quotesOnlyError ? quotesOnlyError.message : ''
   }
 }
 
