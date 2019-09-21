@@ -286,10 +286,20 @@ admin_restaurant_stats:
             restaurant: admin_restaurant
     methods: [ GET, POST ]
 
-admin_restaurant_deposit_refund:
-    path: /admin/restaurants/{id}/deposit-refund
+admin_restaurant_new_reusable_packaging:
+    path: /admin/restaurants/{id}/reusable-packagings/new
     defaults:
-        _controller: AppBundle\Controller\AdminController::restaurantDepositRefundAction
+        _controller: AppBundle\Controller\AdminController::restaurantNewReusablePackagingAction
+        layout: '@App/admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
+admin_restaurant_reusable_packagings:
+    path: /admin/restaurants/{id}/reusable-packagings
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantReusablePackagingsAction
         layout: '@App/admin.html.twig'
         routes:
             restaurants: admin_restaurants

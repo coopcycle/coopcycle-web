@@ -114,7 +114,7 @@ class AdminController extends Controller
             'stripe_oauth_redirect' => 'admin_restaurant_stripe_oauth_redirect',
             'preparation_time' => 'admin_restaurant_preparation_time',
             'stats' => 'admin_restaurant_stats',
-            'deposit_refund' => 'admin_restaurant_deposit_refund',
+            'reusable_packagings' => 'admin_restaurant_reusable_packagings',
         ];
     }
 

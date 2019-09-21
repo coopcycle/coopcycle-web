@@ -63,7 +63,7 @@ class ProfileController extends Controller
             'stripe_oauth_redirect' => 'profile_restaurant_stripe_oauth_redirect',
             // 'preparation_time' => '',
             'stats' => 'profile_restaurant_stats',
-            'deposit_refund' => 'profile_restaurant_deposit_refund',
+            'reusable_packagings' => 'profile_restaurant_reusable_packagings',
         ];
     }
 

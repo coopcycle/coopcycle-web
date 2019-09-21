@@ -947,7 +947,12 @@ trait RestaurantTrait
         ]));
     }
 
-    public function restaurantDepositRefundAction($id, Request $request)
+    public function restaurantNewReusablePackagingAction(Request $request)
+    {
+        // TODO
+    }
+
+    public function restaurantReusablePackagingsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -972,7 +977,7 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['deposit_refund'], ['id' => $id]);
         }
 
-        return $this->render('@App/restaurant/deposit_refund.html.twig', $this->withRoutes([
+        return $this->render('@App/restaurant/reusable_packagings.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),

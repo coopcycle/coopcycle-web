@@ -72,10 +72,20 @@ profile_restaurant_stats:
             restaurant: profile_restaurant
     methods: [ GET, POST ]
 
-profile_restaurant_deposit_refund:
-    path: /profile/restaurants/{id}/deposit-refund
+profile_restaurant_new_reusable_packaging:
+    path: /profile/restaurants/{id}/reusable-packagings/new
     defaults:
-        _controller: AppBundle\Controller\ProfileController::restaurantDepositRefundAction
+        _controller: AppBundle\Controller\ProfileController::restaurantNewReusablePackagingAction
+        layout: '@App/profile.html.twig'
+        routes:
+            restaurants: profile_restaurants
+            restaurant: profile_restaurant
+    methods: [ GET, POST ]
+
+profile_restaurant_reusable_packagings:
+    path: /profile/restaurants/{id}/reusable-packagings
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::restaurantReusablePackagingsAction
         layout: '@App/profile.html.twig'
         routes:
             restaurants: profile_restaurants
