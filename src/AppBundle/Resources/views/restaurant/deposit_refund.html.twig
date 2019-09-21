@@ -1,0 +1,52 @@
+{% extends '@App/restaurant/layout.html.twig' %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{% trans %}restaurant.list.depositRefund{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+{{ form_end(form) }}
+
+<table class="table">
+  <thead>
+    <th>{{ 'form.reusable_packaging.name.label'|trans }}</th>
+    <th>{{ 'form.reusable_packaging.is_tracked.label'|trans }}</th>
+    <th class="text-right">{{ 'form.reusable_packaging.price.label'|trans }}</th>
+    <th class="text-right">{{ 'form.reusable_packaging.on_hand.label'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for reusablePackaging in restaurant.reusablePackagings %}
+    <tr>
+      <td>
+        {{ reusablePackaging.name }}
+      </td>
+      <td>
+        {% if reusablePackaging.isTracked %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-times"></i>{% endif %}
+      </td>
+      <td class="text-right">
+        {{ reusablePackaging.price|price_format }}
+      </td>
+      <td class="text-right">
+        {{ reusablePackaging.onHand }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#deposit_refund_settings_depositRefundOptin').on('change', function() {
+  $(this).closest('form').submit();
+});
+</script>
+{% endblock %}

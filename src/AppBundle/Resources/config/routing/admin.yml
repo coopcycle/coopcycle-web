@@ -281,6 +281,16 @@ admin_restaurant_stats:
             restaurant: admin_restaurant
     methods: [ GET, POST ]
 
+admin_restaurant_deposit_refund:
+    path: /admin/restaurants/{id}/deposit-refund
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantDepositRefundAction
+        layout: '@App/admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:

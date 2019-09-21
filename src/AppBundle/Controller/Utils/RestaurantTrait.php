@@ -18,6 +18,7 @@ use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Utils\MenuEditor;
@@ -67,7 +68,7 @@ trait RestaurantTrait
         ]);
     }
 
-    protected function withRoutes($params, $routes)
+    protected function withRoutes($params, array $routes = [])
     {
         $routes = array_merge($routes, $this->getRestaurantRoutes());
 
@@ -870,7 +871,7 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'show_defaults_warning' => !$hasRules,
             'form' => $form->createView(),
-        ], []));
+        ]));
     }
 
     public function statsAction($id, Request $request, SlugifyInterface $slugify)
@@ -938,6 +939,38 @@ trait RestaurantTrait
             'stats' => $stats,
             'start' => $start,
             'end' => $end
-        ], []));
+        ]));
+    }
+
+    public function restaurantDepositRefundAction($id, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(Restaurant::class)
+            ->find($id);
+
+        $this->accessControl($restaurant);
+
+        $form = $this->createForm(DepositRefundSettingsType::class, $restaurant);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->getDoctrine()->getManagerForClass(Restaurant::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['deposit_refund'], ['id' => $id]);
+        }
+
+        return $this->render('@App/restaurant/deposit_refund.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ]));
     }
 }

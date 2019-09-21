@@ -200,6 +200,7 @@ restaurant.list.norestaurant: There are no restaurants yet
 restaurant.list.createNewRestaurant: Create a new restaurant
 restaurant.list.preparationTime: Preparation
 restaurant.list.stats: Statistics
+restaurant.list.depositRefund: Deposit-refund
 restaurant.product_options.help: 'Options all products to be <strong>configurable</strong>
 
   <br>
@@ -639,6 +640,11 @@ form.package_set.packages.label: Packages
 form.package.name.label: Name
 form.package.volume_units.label: Volume units
 form.stripe_payment.cardholder_name.label: Cardholder name
+form.reusable_packaging.name.label: Name
+form.reusable_packaging.is_tracked.label: Tracking enabled
+form.reusable_packaging.price.label: Price
+form.reusable_packaging.on_hand.label: Stock
+form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is optional
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
