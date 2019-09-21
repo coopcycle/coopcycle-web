@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
+use AppBundle\Entity\ReusablePackaging\Unit as ReusablePackagingUnit;
 use AppBundle\Sylius\Order\OrderInterface;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -340,11 +341,15 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
         return $this;
     }
 
-    public function addReusablePackagingUnit($reusablePackagingUnit)
+    public function addReusablePackagingOperation(ReusablePackaging $stockable, $operation, $value)
     {
-        $reusablePackagingUnit->setUser($this);
+        $unit = new ReusablePackagingUnit();
+        $unit->setStockable($stockable);
+        $unit->setUser($this);
+        $unit->setOperation($operation);
+        $unit->setValue($value);
 
-        $this->reusablePackagingUnits->add($reusablePackagingUnit);
+        $this->reusablePackagingUnits->add($unit);
 
         return $this;
     }
@@ -362,15 +367,25 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
 
     public function countReusablePackagingUnitsForRestaurant(Restaurant $restaurant)
     {
-        $units = 0;
-
+        $packagingUnits = [];
         foreach ($this->getReusablePackagingUnits() as $reusablePackagingUnit) {
             if ($reusablePackagingUnit->getStockable()->getRestaurant() === $restaurant) {
-                ++$units;
+                $packagingUnits[] = $reusablePackagingUnit;
             }
         }
 
-        return $units;
+        $balance = 0;
+
+        foreach ($packagingUnits as $packagingUnit) {
+            if ($packagingUnit->getOperation() === 'increase') {
+                $balance += $packagingUnit->getValue();
+            }
+            if ($packagingUnit->getOperation() === 'decrease') {
+                $balance -= $packagingUnit->getValue();
+            }
+        }
+
+        return $balance;
     }
 
     public function hasReusablePackagingUnitsForOrder(OrderInterface $order)

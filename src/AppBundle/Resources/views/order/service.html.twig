@@ -125,6 +125,12 @@
     </div>
     {% endif %}
 
+    {% if order.giveBackUnits > 0 %}
+    <div class="alert alert-warning">
+      {{ 'order.reusable_packaging.give_back.alert'|trans({ '%units%': order.giveBackUnits }) }}
+    </div>
+    {% endif %}
+
   </div>
 </div>
 

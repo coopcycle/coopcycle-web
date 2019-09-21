@@ -85,6 +85,7 @@ services:
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
   League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
   AppBundle\Service\RoutingInterface: '@routing_service'
+  Sylius\Component\Inventory\Checker\AvailabilityCheckerInterface: '@Sylius\Component\Inventory\Checker\AvailabilityChecker'
 
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
 
@@ -754,4 +755,13 @@ services:
 
   AppBundle\MessageHandler\ImportTasksHandler:
     arguments:
+<<<<<<< HEAD
       $secret: '%secret%'
+=======
+      - '@session.handler.native_file'
+      - '@snc_redis.session.handler'
+
+  AppBundle\ReusablePackaging\InventoryOperator: ~
+
+  Sylius\Component\Inventory\Checker\AvailabilityChecker: ~
+>>>>>>> WIP Give back.

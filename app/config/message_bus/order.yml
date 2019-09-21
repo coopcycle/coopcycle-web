@@ -193,6 +193,15 @@ services:
         - name: event_subscriber
           subscribes_to: task:done
 
+  AppBundle\Domain\Order\Reactor\UpdateReusablePackaging:
+    arguments:
+      - '@AppBundle\ReusablePackaging\InventoryOperator'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:picked
+        - name: event_subscriber
+          subscribes_to: order:dropped
+
   coopcycle.domain.order.reactor.capture_payment:
     class: AppBundle\Domain\Order\Reactor\CapturePayment
     arguments:

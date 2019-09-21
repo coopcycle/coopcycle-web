@@ -105,4 +105,6 @@ interface OrderInterface extends
      * @return boolean
      */
     public function containsDisabledProduct(): bool;
+
+    public function countReusablePackagingUnits(): int;
 }
