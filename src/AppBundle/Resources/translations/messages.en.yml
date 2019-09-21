@@ -275,6 +275,8 @@ order.state.cancelled: Cancelled
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
 order.reusable_packaging.title: Reusable packaging
+order.reusable_packaging.redeem_alert: You have %units% packagings
+order.reusable_packaging.give_back.alert: The customer will give back %units% packagings
 payment.state.cart: Cart
 payment.state.new: New
 payment.state.authorized: Authorized
@@ -286,6 +288,7 @@ payment.state.refunded_partially: Partially Refunded
 order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
+order.adjustment_type.give_back: Give back
 order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time

@@ -26,6 +26,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     public function process(BaseOrderInterface $order): void
     {
         $order->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
+        $order->removeAdjustmentsRecursively(AdjustmentInterface::GIVE_BACK_ADJUSTMENT);
 
         $restaurant = $order->getRestaurant();
 
@@ -80,6 +81,15 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                 $totalAmount,
                 $neutral = false
             ));
+
+            if ($order->getGiveBackUnits() > 0) {
+                $order->addAdjustment($this->adjustmentFactory->createWithData(
+                    AdjustmentInterface::GIVE_BACK_ADJUSTMENT,
+                    $this->translator->trans('order.adjustment_type.give_back'),
+                    $reusablePackaging->getPrice() * ($order->getGiveBackUnits() * -1),
+                    $neutral = false
+                ));
+            }
         }
     }
 }

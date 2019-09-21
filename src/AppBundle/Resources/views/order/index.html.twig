@@ -33,12 +33,21 @@
                 {% trans from 'validators' %}loopeat.insufficient_balance{% endtrans %}
               </div>
               {% endif %}
+            </div>
+
+            {% if form.reusablePackagingEnabled is defined or form.giveBackUnits is defined %}
+            <h4>{{ 'order.reusable_packaging.title'|trans }}</h4>
+            <div class="order-map__column-block">
               {% if form.reusablePackagingEnabled is defined %}
               <div class="alert alert-info py-0">
                 {{ form_widget(form.reusablePackagingEnabled) }}
               </div>
               {% endif %}
+              {% if form.giveBackUnits is defined %}
+                {{ form_row(form.giveBackUnits) }}
+              {% endif %}
             </div>
+            {% endif %}
 
             <div class="order-map__column-block">
               {{ form_row(form.promotionCoupon) }}

@@ -10,6 +10,7 @@ use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -23,6 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sylius\Component\Inventory\Checker\AvailabilityCheckerInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutAddressType extends AbstractType
@@ -35,12 +37,14 @@ class CheckoutAddressType extends AbstractType
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
         ValidatorInterface $validator,
+        AvailabilityCheckerInterface $availabilityChecker,
         $country)
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
         $this->validator = $validator;
+        $this->availabilityChecker = $availabilityChecker;
         $this->country = strtoupper($country);
     }
 
@@ -93,6 +97,7 @@ class CheckoutAddressType extends AbstractType
 
             $restaurant = $order->getRestaurant();
 
+<<<<<<< HEAD
             if ($order->isEligibleToReusablePackaging() && $restaurant->isDepositRefundOptin()) {
 
                 $isLoopEatValid = true;
@@ -105,6 +110,13 @@ class CheckoutAddressType extends AbstractType
                     $key = $restaurant->isLoopeatEnabled() ? 'reusable_packaging_loopeat_enabled' : 'reusable_packaging_enabled';
 
                     $packagingAmount = $order->getReusablePackagingAmount();
+=======
+            if ($restaurant->isDepositRefundEnabled()) {
+                foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
+                    if (!$this->availabilityChecker->isStockSufficient($reusablePackaging, $order->countReusablePackagingUnits())) {
+                        continue;
+                    }
+>>>>>>> WIP Give back
 
                     if ($packagingAmount > 0) {
                         $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
@@ -112,6 +124,7 @@ class CheckoutAddressType extends AbstractType
                         $packagingPrice = $this->translator->trans('basics.free');
                     }
 
+<<<<<<< HEAD
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => sprintf('form.checkout_address.%s.label', $key),
@@ -119,6 +132,32 @@ class CheckoutAddressType extends AbstractType
                             '%price%' => $packagingPrice,
                         ],
                     ]);
+=======
+                    if ($order->getCustomer()->hasReusablePackagingUnitsForOrder($order)) {
+
+                        // The customer can't give back more items
+                        $maxGiveBackUnits = min(
+                            $order->countReusablePackagingUnits(),
+                            $order->getCustomer()->countReusablePackagingUnitsForOrder($order)
+                        );
+
+                        $giveBackUnits = $order->getGiveBackUnits();
+                        if ($giveBackUnits > $maxGiveBackUnits || $giveBackUnits === 0 && $maxGiveBackUnits > 0) {
+                            $giveBackUnits = $maxGiveBackUnits;
+                        }
+
+                        $form->add('giveBackUnits', IntegerType::class, [
+                            'required' => false,
+                            'label' => 'form.checkout_address.give_back_units.label',
+                            'data' => $giveBackUnits,
+                            // TODO Add constraint
+                            'attr' => [
+                                'min' => 1,
+                                'max' => $maxGiveBackUnits
+                            ]
+                        ]);
+                    }
+>>>>>>> WIP Give back
                 }
             }
 
