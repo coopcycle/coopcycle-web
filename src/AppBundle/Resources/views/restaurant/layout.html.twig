@@ -1,7 +1,7 @@
 {% extends layout %}
 
 {% block subnav %}
-  <nav class="navbar">
+  <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#restaurant-navbar" aria-expanded="false">
@@ -56,6 +56,12 @@
             {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path(preparation_time_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
               <i class="fa fa-clock-o"></i>  {% trans %}restaurant.list.preparationTime{% endtrans %}
+            </a>
+            {% endif %}
+
+            {% if restaurant.depositRefundEnabled %}
+            <a href="{{ path(deposit_refund_route, { id: restaurant.id }) }}" class="btn btn-default navbar-btn">
+              <i class="fa fa-recycle"></i>  {% trans %}restaurant.list.depositRefund{% endtrans %}
             </a>
             {% endif %}
 
