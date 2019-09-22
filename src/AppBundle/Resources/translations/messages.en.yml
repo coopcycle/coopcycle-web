@@ -274,6 +274,7 @@ order.state.fulfilled: Delivered
 order.state.cancelled: Cancelled
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
+order.reusable_packaging.title: Reusable packaging
 payment.state.cart: Cart
 payment.state.new: New
 payment.state.authorized: Authorized
