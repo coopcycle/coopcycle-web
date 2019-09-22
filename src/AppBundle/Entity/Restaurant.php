@@ -898,13 +898,27 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * @param mixed $depositRefundEnabled
+     * @param mixed $reusablePackagings
      *
      * @return self
      */
     public function setReusablePackagings($reusablePackagings)
     {
         $this->reusablePackagings = $reusablePackagings;
+
+        return $this;
+    }
+
+    /**
+     * @param ReusablePackaging $reusablePackaging
+     *
+     * @return self
+     */
+    public function addReusablePackaging(ReusablePackaging $reusablePackaging)
+    {
+        $reusablePackaging->setRestaurant($this);
+
+        $this->reusablePackagings->add($reusablePackaging);
 
         return $this;
     }

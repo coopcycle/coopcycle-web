@@ -73,11 +73,18 @@ class CheckoutAddressType extends AbstractType
                 ]);
             }
 
-            if ($order->isEligibleToReusablePackaging()) {
-                $form->add('reusablePackagingEnabled', CheckboxType::class, [
-                    'required' => false,
-                    'label' => 'form.checkout_address.reusable_packaging_enabled.label',
-                ]);
+            $restaurant = $order->getRestaurant();
+
+            if ($restaurant->getDepositRefundEnabled()) {
+                foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
+
+                    if ($restaurant->isDepositRefundOptin() && $order->isEligibleToReusablePackaging()) {
+                        $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                            'required' => false,
+                            'label' => 'form.checkout_address.reusable_packaging_enabled.label',
+                        ]);
+                    }
+                }
             }
         });
 

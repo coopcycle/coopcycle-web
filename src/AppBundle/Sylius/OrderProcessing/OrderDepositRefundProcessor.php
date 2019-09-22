@@ -12,7 +12,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
-
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator)
@@ -34,12 +33,13 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
             return;
         }
 
-        if (!$restaurant->getDepositRefundEnabled()) {
-            return;
-        }
-
-        if (!$order->isReusablePackagingEnabled()) {
-            return;
+        if ($restaurant->isDepositRefundOptin()) {
+            if (!$restaurant->getDepositRefundEnabled()) {
+                return;
+            }
+            if (!$order->isReusablePackagingEnabled()) {
+                return;
+            }
         }
 
         $totalUnits = 0;
@@ -54,23 +54,26 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                     '%quantity%' => $item->getQuantity()
                 ]);
 
-                $item->addAdjustment($this->adjustmentFactory->createWithData(
-                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                    $label,
-                    $units * 100,
-                    $neutral = true
-                ));
+                foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
+                    $item->addAdjustment($this->adjustmentFactory->createWithData(
+                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                        $label,
+                        $reusablePackaging->getPrice() * $units,
+                        $neutral = true
+                    ));
+                }
 
                 $totalUnits += $units;
             }
         }
 
-        $deliveryAdjustment = $this->adjustmentFactory->createWithData(
-            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-            $this->translator->trans('order.adjustment_type.reusable_packaging'),
-            $totalUnits * 100,
-            $neutral = false
-        );
-        $order->addAdjustment($deliveryAdjustment);
+        foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
+            $order->addAdjustment($this->adjustmentFactory->createWithData(
+                AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                $this->translator->trans('order.adjustment_type.reusable_packaging'),
+                $reusablePackaging->getPrice() * $totalUnits,
+                $neutral = false
+            ));
+        }
     }
 }

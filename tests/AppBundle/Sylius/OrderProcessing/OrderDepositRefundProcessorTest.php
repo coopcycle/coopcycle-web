@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor;
@@ -121,8 +122,12 @@ class OrderDepositRefundProcessorTest extends TestCase
 
     public function testOrderDepositRefundEnabledAddAdjustment()
     {
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(100);
+
         $restaurant = new Restaurant();
         $restaurant->setDepositRefundEnabled(true);
+        $restaurant->addReusablePackaging($reusablePackaging);
 
         $order = $this->prophesize(Order::class);
         $order
