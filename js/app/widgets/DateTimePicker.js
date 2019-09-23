@@ -8,12 +8,12 @@ const FormItem = Form.Item
 import Button from 'antd/lib/button'
 import DatePicker from 'antd/lib/date-picker'
 import TimePicker from 'antd/lib/time-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
+import ConfigProvider from 'antd/lib/config-provider'
 
-import de_DE from 'antd/lib/locale-provider/de_DE'
-import en_US from 'antd/lib/locale-provider/en_US'
-import es_ES from 'antd/lib/locale-provider/es_ES'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
+import de_DE from 'antd/es/locale/de_DE'
+import en_US from 'antd/es/locale/en_US'
+import es_ES from 'antd/es/locale/es_ES'
+import fr_FR from 'antd/es/locale/fr_FR'
 
 const localeMap = {
   'de': de_DE,
@@ -113,7 +113,7 @@ class DateTimePicker extends React.Component {
     return (
       <div>
         <FormItem {...formItemProps}>
-          <LocaleProvider locale={ antdLocale }>
+          <ConfigProvider locale={ antdLocale }>
             <DatePicker
               disabledDate={this.disabledDate}
               onChange={this.onDateChange.bind(this)}
@@ -122,8 +122,8 @@ class DateTimePicker extends React.Component {
               defaultValue={this.props.defaultValue}
               { ...datePickerProps }
             />
-          </LocaleProvider>
-          <LocaleProvider locale={ antdLocale }>
+          </ConfigProvider>
+          <ConfigProvider locale={ antdLocale }>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onTimeChange.bind(this)}
@@ -136,7 +136,7 @@ class DateTimePicker extends React.Component {
               )}
               { ...timePickerProps }
             />
-          </LocaleProvider>
+          </ConfigProvider>
         </FormItem>
       </div>
     )

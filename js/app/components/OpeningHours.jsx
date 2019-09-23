@@ -4,8 +4,8 @@ import _ from 'lodash'
 import i18n from '../i18n'
 import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
-import frBE from 'antd/lib/locale-provider/fr_BE'
+import ConfigProvider from 'antd/lib/config-provider'
+import frBE from 'antd/es/locale/fr_BE'
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
 import TimeRange from '../utils/TimeRange'
 
@@ -165,7 +165,7 @@ export default class extends React.Component {
     return (
       <tr key={key} className={rowClasses.join(' ')}>
         <td>
-          <LocaleProvider locale={frBE}>
+          <ConfigProvider locale={frBE}>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onStartChange.bind(this, key)}
@@ -177,8 +177,8 @@ export default class extends React.Component {
                 <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
               )}
             />
-          </LocaleProvider>
-          <LocaleProvider locale={frBE}>
+          </ConfigProvider>
+          <ConfigProvider locale={frBE}>
             <TimePicker
               disabledMinutes={this.disabledMinutes}
               onChange={this.onEndChange.bind(this, key)}
@@ -190,7 +190,7 @@ export default class extends React.Component {
                 <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
               )}
             />
-          </LocaleProvider>
+          </ConfigProvider>
         </td>
         {_.map(weekdays, (weekday) => (
           <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>

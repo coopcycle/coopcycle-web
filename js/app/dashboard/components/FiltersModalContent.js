@@ -3,12 +3,12 @@ import _ from 'lodash'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import LocaleProvider from 'antd/lib/locale-provider'
+import ConfigProvider from 'antd/lib/config-provider'
 import Switch from 'antd/lib/switch'
 import Slider from 'antd/lib/slider'
 import Form from 'antd/lib/form'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
-import en_GB from 'antd/lib/locale-provider/en_GB'
+import fr_FR from 'antd/es/locale/fr_FR'
+import en_GB from 'antd/es/locale/en_GB'
 import { Formik } from 'formik'
 import Select from 'react-select'
 
@@ -82,7 +82,7 @@ class FiltersModalContent extends React.Component {
           setFieldValue,
           setFieldTouched,
         }) => (
-          <LocaleProvider locale={ antdLocale }>
+          <ConfigProvider locale={ antdLocale }>
             <form onSubmit={ handleSubmit } autoComplete="off" className="form-horizontal">
               <ul className="nav nav-tabs" role="tablist">
                 <li role="presentation" className="active">
@@ -173,7 +173,7 @@ class FiltersModalContent extends React.Component {
                 { this.props.t('ADMIN_DASHBOARD_FILTERS_APPLY') }
               </button>
             </form>
-          </LocaleProvider>
+          </ConfigProvider>
         )}
       </Formik>
     )

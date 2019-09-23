@@ -1,9 +1,9 @@
 import React from 'react'
 import { render } from 'react-dom'
 import DatePicker from 'antd/lib/date-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
-import en_GB from 'antd/lib/locale-provider/en_GB'
+import ConfigProvider from 'antd/lib/config-provider'
+import fr_FR from 'antd/es/locale/fr_FR'
+import en_GB from 'antd/es/locale/en_GB'
 import moment from 'moment'
 
 const locale = $('html').attr('lang')
@@ -17,10 +17,10 @@ export default function(el, options) {
   }
 
   render(
-    <LocaleProvider locale={ antdLocale }>
+    <ConfigProvider locale={ antdLocale }>
       <DatePicker.MonthPicker
         defaultValue={ moment(options.defaultValue) }
         onChange={ options.onChange } />
-    </LocaleProvider>, el)
+    </ConfigProvider>, el)
 
 }
