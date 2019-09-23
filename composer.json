@@ -48,7 +48,6 @@
         "stripe/stripe-php": "^6.0",
         "vich/uploader-bundle": "~1.8",
         "doctrine/doctrine-migrations-bundle": "^1.0",
-        "symfony/web-server-bundle": "4.3.*",
         "guzzlehttp/guzzle": "~6.0",
         "csa/guzzle-bundle": "^3.0",
         "myclabs/php-enum": "^1.6",
