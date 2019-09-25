@@ -2,9 +2,9 @@ import React from 'react'
 import { render } from 'react-dom'
 import Calendar from 'antd/lib/calendar'
 import moment from 'moment'
-import LocaleProvider from 'antd/lib/locale-provider'
-import frFR from 'antd/lib/locale-provider/fr_FR'
-import enGB from 'antd/lib/locale-provider/en_GB'
+import ConfigProvider from 'antd/lib/config-provider'
+import frFR from 'antd/es/locale/fr_FR'
+import enGB from 'antd/es/locale/en_GB'
 import DatePicker from 'antd/lib/date-picker'
 import _ from 'lodash'
 import axios from 'axios'
@@ -66,7 +66,7 @@ class ClosingRuleRangePicker extends React.Component {
 
   render () {
     return (
-      <LocaleProvider locale={antdLocale}>
+      <ConfigProvider locale={antdLocale}>
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
           showTime={{format: 'HH:mm'}}
@@ -74,7 +74,7 @@ class ClosingRuleRangePicker extends React.Component {
           style={rangeInputStyle}
           onChange={onChange}
         />
-      </LocaleProvider>
+      </ConfigProvider>
     )
   }
 }
@@ -153,9 +153,9 @@ class ClosingRulesCalendar extends React.Component {
 
   render () {
     return (
-      <LocaleProvider locale={antdLocale}>
+      <ConfigProvider locale={antdLocale}>
         <Calendar dateCellRender={this.dateCellRender.bind(this)} />
-      </LocaleProvider>
+      </ConfigProvider>
     )
   }
 }

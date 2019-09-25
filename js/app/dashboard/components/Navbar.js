@@ -5,9 +5,9 @@ import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
 import _ from 'lodash'
 import DatePicker from 'antd/lib/date-picker'
-import LocaleProvider from 'antd/lib/locale-provider'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
-import en_GB from 'antd/lib/locale-provider/en_GB'
+import ConfigProvider from 'antd/lib/config-provider'
+import fr_FR from 'antd/es/locale/fr_FR'
+import en_GB from 'antd/es/locale/en_GB'
 
 import { openFiltersModal, resetFilters, openSettings } from '../redux/actions'
 
@@ -96,7 +96,7 @@ class Navbar extends React.Component {
                     <i className="fa fa-caret-left"></i>
                   </a>
                   <div className="dashboard__date-picker">
-                    <LocaleProvider locale={antdLocale}>
+                    <ConfigProvider locale={antdLocale}>
                       <DatePicker
                         format={ 'll' }
                         defaultValue={ this.props.date }
@@ -108,7 +108,7 @@ class Navbar extends React.Component {
                             })
                           }
                         }} />
-                    </LocaleProvider>
+                    </ConfigProvider>
                   </div>
                   <a className="dashboard__date-link" href={ this.props.next }>
                     <i className="fa fa-caret-right"></i>

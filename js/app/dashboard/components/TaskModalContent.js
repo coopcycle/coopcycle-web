@@ -3,13 +3,13 @@ import _ from 'lodash'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import LocaleProvider from 'antd/lib/locale-provider'
+import ConfigProvider from 'antd/lib/config-provider'
 import DatePicker from 'antd/lib/date-picker'
 import Form from 'antd/lib/form'
 import Radio from 'antd/lib/radio'
 import Timeline from 'antd/lib/timeline'
-import fr_FR from 'antd/lib/locale-provider/fr_FR'
-import en_GB from 'antd/lib/locale-provider/en_GB'
+import fr_FR from 'antd/es/locale/fr_FR'
+import en_GB from 'antd/es/locale/en_GB'
 import { Formik } from 'formik'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
@@ -284,7 +284,7 @@ class TaskModalContent extends React.Component {
           setFieldTouched,
           /* and other goodies */
         }) => (
-          <LocaleProvider locale={ antdLocale }>
+          <ConfigProvider locale={ antdLocale }>
             <form name="task" onSubmit={ handleSubmit } autoComplete="off">
               { this.renderHeader(values) }
               <div className="modal-body">
@@ -434,7 +434,7 @@ class TaskModalContent extends React.Component {
               </div>
               { this.renderFooter(values) }
             </form>
-          </LocaleProvider>
+          </ConfigProvider>
         )}
       </Formik>
     )
