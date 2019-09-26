@@ -7,7 +7,7 @@
   {% if order.foodtech %}
   <br>
   <br>
-  {{ 'order.foodtech.cancelled' | trans({}, 'emails') | raw }}
+  {{ 'order.foodtech.cancelled' | trans({ '%order.number%': order.number }, 'emails') | raw }}
   {% endif %}
   </mj-text>
 </mj-column>
