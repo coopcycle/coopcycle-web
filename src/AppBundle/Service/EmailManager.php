@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Bridge\Twig\TwigEngine;

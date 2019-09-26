@@ -6,7 +6,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;

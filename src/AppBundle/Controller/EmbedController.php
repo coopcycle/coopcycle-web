@@ -6,7 +6,6 @@ use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Task;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;

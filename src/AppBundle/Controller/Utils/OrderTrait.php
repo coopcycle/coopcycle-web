@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\OrdersExportType;
 use AppBundle\Service\OrderManager;

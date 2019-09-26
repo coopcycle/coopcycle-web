@@ -3,7 +3,6 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
-use AppBundle\Service\StripeManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Payment\Model\PaymentInterface;
