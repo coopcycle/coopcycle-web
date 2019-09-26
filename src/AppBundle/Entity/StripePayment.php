@@ -15,8 +15,6 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
 
     protected $order;
 
-    protected $charge;
-
     protected $currencyCode;
 
     protected $amount = 0;
@@ -46,12 +44,15 @@ class StripePayment implements PaymentInterface, OrderAwareInterface
 
     public function getCharge()
     {
-        return $this->charge;
+        if (isset($this->details['charge'])) {
+
+            return $this->details['charge'];
+        }
     }
 
     public function setCharge($charge)
     {
-        $this->charge = $charge;
+        $this->details = array_merge($this->details, ['charge' => $charge]);
 
         return $this;
     }

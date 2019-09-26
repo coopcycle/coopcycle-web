@@ -8,9 +8,6 @@ AppBundle\Entity\StripePayment:
             generator:
                 strategy: IDENTITY
     fields:
-        charge:
-            type: string
-            nullable: true
         currencyCode:
             type: string
             length: 3
