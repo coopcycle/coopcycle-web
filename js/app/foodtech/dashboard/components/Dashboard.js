@@ -23,6 +23,12 @@ function sortByShippedAt(a, b) {
 
 class Dashboard extends React.Component {
 
+  componentDidMount() {
+    $(function () {
+    $('[data-toggle="popover"]').tooltip()
+  })
+}
+
   afterOpenModal() {
   }
 
@@ -50,8 +56,8 @@ class Dashboard extends React.Component {
     return (
       <div className="FoodtechDashboard">
         <div className="FoodtechDashboard__Navbar">
-          <div>
-            { this.props.showSettings && (
+          { this.props.showSettings && (
+            <div>
               <Row type="flex" align="middle">
                 <Col span={ 6 }>
                   <span>
@@ -68,23 +74,23 @@ class Dashboard extends React.Component {
                     onChange={ delay => this.props.setPreparationDelay(delay) } />
                 </Col>
               </Row>
-            )}
-          </div>
+            </div>
+          )}
+          { this.props.restaurant && (
+            <div>
+            <Switch
+              unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+              checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+              onChange={ checked => {
+                this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+              }}
+              defaultChecked={ this.props.isRushEnabled }
+            />
+            <div className="glyphicon glyphicon-question-sign rushInfoSize" data-toggle="popover" data-placement="right" title={ this.props.t('RESTAURANT_DASHBOARD_INFO_RUSH') }>
+            </div>
+            </div>
+          )}
           <div>
-
-            { this.props.restaurant &&
-
-              <Switch
-                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
-                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
-                onChange={ checked => {
-                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
-                }}
-                defaultChecked={ this.props.isRushEnabled }
-              />
-
-            }
-
             <DatePicker
               format={ 'll' }
               defaultValue={ moment(this.props.date) }
@@ -109,7 +115,6 @@ class Dashboard extends React.Component {
       </div>
     )
   }
-
 }
 
 function mapStateToProps(state) {

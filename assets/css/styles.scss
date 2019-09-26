@@ -7,6 +7,20 @@ html, body {
   }
 }
 
+.rushInfoSize {
+  font-size: 1.5em;
+  margin-left: 0.2em;
+  top: 6px;
+}
+
+.FoodtechDashboard__Navbar > div > .ant-switch {
+  background-color: green;
+}
+
+.FoodtechDashboard__Navbar > div > .ant-switch-checked {
+  background-color: red;
+}
+
 .content {
   flex: 1;
 }
