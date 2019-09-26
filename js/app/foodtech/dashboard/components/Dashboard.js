@@ -72,14 +72,14 @@ class Dashboard extends React.Component {
           </div>
           <div>
 
-             <Switch
-                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
-                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
-                onChange={ checked => {
-                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
-                }}
-                defaultChecked={ this.props.isRushEnabled }
-              />
+            <Switch
+              unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+              checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+              onChange={ checked => {
+                this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+              }}
+              defaultChecked={ this.props.isRushEnabled }
+            />
 
             <DatePicker
               format={ 'll' }

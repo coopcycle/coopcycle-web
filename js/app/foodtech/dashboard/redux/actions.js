@@ -133,13 +133,12 @@ export function setPreparationDelay(delay) {
 export function changeStatus(restaurant, state) {
 
   return (dispatch, getState) => {
-    const { jwt } = getState();
-    console.log(restaurant, state);
+    const { jwt } = getState()
     axios.put(restaurant['@id'], { state }, { headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-        }
-      });
+      'Authorization': `Bearer ${jwt}`,
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json'
+    }
+    })
   }
 }
