@@ -19,6 +19,8 @@
     "cancelled":  "Cancelled",
     "ready":  "Ready",
     "DASHBOARD_ASSIGNED": "Assigned",
+    "ADMIN_DASHBOARD_NORMAL": "Normal",
+    "ADMIN_DASHBOARD_RUSH" : "Rush",
     "ADMIN_DASHBOARD_COURIER": "Courier",
     "ADMIN_DASHBOARD_CANCEL": "Cancel",
     "ADMIN_DASHBOARD_CANCEL_TASK": "Cancel",

@@ -7,11 +7,11 @@ import DatePicker from 'antd/lib/date-picker'
 import Slider from 'antd/lib/slider'
 import { Row, Col, } from 'antd/lib/grid'
 import moment from 'moment'
-
+import Switch from 'antd/lib/switch'
 import Column from './Column'
 import ModalContent from './ModalContent'
 
-import { setCurrentOrder, orderCreated, setPreparationDelay } from '../redux/actions'
+import { setCurrentOrder, orderCreated, setPreparationDelay, changeStatus } from '../redux/actions'
 
 function sortByShippedAt(a, b) {
   if (moment(a.shippedAt).isSame(moment(b.shippedAt))) {
@@ -71,6 +71,16 @@ class Dashboard extends React.Component {
             )}
           </div>
           <div>
+
+             <Switch
+                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+                onChange={ checked => {
+                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+                }}
+                defaultChecked={ this.props.isRushEnabled }
+              />
+
             <DatePicker
               format={ 'll' }
               defaultValue={ moment(this.props.date) }
@@ -124,6 +134,8 @@ function mapStateToProps(state) {
     cancelledOrders: cancelledOrders.sort(sortByShippedAt),
     preparationDelay: state.preparationDelay,
     showSettings: state.showSettings,
+    isRushEnabled: state.restaurant.state === 'rush',
+    restaurant: state.restaurant,
   }
 }
 
@@ -132,6 +144,7 @@ function mapDispatchToProps(dispatch) {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
     setPreparationDelay: delay => dispatch(setPreparationDelay(delay)),
     orderCreated: order => dispatch(orderCreated(order)),
+    changeStatus: (restaurant, state) => dispatch(changeStatus(restaurant, state)),
   }
 }
 
