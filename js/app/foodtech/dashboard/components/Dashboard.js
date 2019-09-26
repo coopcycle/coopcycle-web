@@ -72,14 +72,18 @@ class Dashboard extends React.Component {
           </div>
           <div>
 
-            <Switch
-              unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
-              checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
-              onChange={ checked => {
-                this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
-              }}
-              defaultChecked={ this.props.isRushEnabled }
-            />
+            { this.props.restaurant &&
+
+              <Switch
+                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+                onChange={ checked => {
+                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+                }}
+                defaultChecked={ this.props.isRushEnabled }
+              />
+
+            }
 
             <DatePicker
               format={ 'll' }
@@ -124,6 +128,8 @@ function mapStateToProps(state) {
   const cancelledOrders =
     _.filter(orders, order => order.state === 'refused' || order.state === 'cancelled')
 
+  const isRushEnabled = state.restaurant && state.restaurant.state === 'rush'
+
   return {
     date: state.date,
     order: state.order,
@@ -134,7 +140,7 @@ function mapStateToProps(state) {
     cancelledOrders: cancelledOrders.sort(sortByShippedAt),
     preparationDelay: state.preparationDelay,
     showSettings: state.showSettings,
-    isRushEnabled: state.restaurant.state === 'rush',
+    isRushEnabled: isRushEnabled,
     restaurant: state.restaurant,
   }
 }
