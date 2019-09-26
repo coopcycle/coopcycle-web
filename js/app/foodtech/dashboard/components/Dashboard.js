@@ -25,9 +25,9 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     $(function () {
-    $('[data-toggle="popover"]').tooltip()
-  })
-}
+      $('[data-toggle="popover"]').tooltip()
+    })
+  }
 
   afterOpenModal() {
   }
@@ -78,16 +78,16 @@ class Dashboard extends React.Component {
           )}
           { this.props.restaurant && (
             <div>
-            <Switch
-              unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
-              checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
-              onChange={ checked => {
-                this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
-              }}
-              defaultChecked={ this.props.isRushEnabled }
-            />
-            <div className="glyphicon glyphicon-question-sign rushInfoSize" data-toggle="popover" data-placement="right" title={ this.props.t('RESTAURANT_DASHBOARD_INFO_RUSH') }>
-            </div>
+              <Switch
+                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+                onChange={ checked => {
+                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+                }}
+                defaultChecked={ this.props.isRushEnabled }
+              />
+              <div className="glyphicon glyphicon-question-sign rushInfoSize" data-toggle="popover" data-placement="right" title={ this.props.t('RESTAURANT_DASHBOARD_INFO_RUSH') }>
+              </div>
             </div>
           )}
           <div>
