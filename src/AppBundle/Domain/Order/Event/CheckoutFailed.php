@@ -4,8 +4,8 @@ namespace AppBundle\Domain\Order\Event;
 
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Sylius\Order\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 class CheckoutFailed extends Event implements DomainEvent
 {
@@ -17,7 +17,7 @@ class CheckoutFailed extends Event implements DomainEvent
         return 'order:checkout_failed';
     }
 
-    public function __construct(OrderInterface $order, StripePayment $payment, $reason = null)
+    public function __construct(OrderInterface $order, PaymentInterface $payment, $reason = null)
     {
         parent::__construct($order);
 

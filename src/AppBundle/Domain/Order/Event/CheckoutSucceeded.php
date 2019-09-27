@@ -4,8 +4,8 @@ namespace AppBundle\Domain\Order\Event;
 
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Sylius\Order\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 class CheckoutSucceeded extends Event implements DomainEvent
 {
@@ -16,7 +16,7 @@ class CheckoutSucceeded extends Event implements DomainEvent
         return 'order:checkout_succeeded';
     }
 
-    public function __construct(OrderInterface $order, ?StripePayment $payment = null)
+    public function __construct(OrderInterface $order, ?PaymentInterface $payment = null)
     {
         parent::__construct($order);
 

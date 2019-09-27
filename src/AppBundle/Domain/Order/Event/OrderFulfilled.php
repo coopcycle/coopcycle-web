@@ -5,8 +5,8 @@ namespace AppBundle\Domain\Order\Event;
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Sylius\Order\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
 {
@@ -17,7 +17,7 @@ class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
         return 'order:fulfilled';
     }
 
-    public function __construct(OrderInterface $order, ?StripePayment $payment = null)
+    public function __construct(OrderInterface $order, ?PaymentInterface $payment = null)
     {
         parent::__construct($order);
 
