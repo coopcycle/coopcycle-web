@@ -32,13 +32,13 @@ class Pay
             throw new BadRequestHttpException('Stripe token is missing');
         }
 
-        $stripePayment = $data->getLastPayment(PaymentInterface::STATE_CART);
+        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
         $this->orderManager->checkout($data, $body['stripeToken']);
         $this->doctrine->getManagerForClass(Order::class)->flush();
 
-        if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
-            throw new BadRequestHttpException($stripePayment->getLastError());
+        if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+            throw new BadRequestHttpException($payment->getLastError());
         }
 
         return $data;

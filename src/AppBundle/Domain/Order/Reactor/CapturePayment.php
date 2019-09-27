@@ -25,8 +25,8 @@ class CapturePayment
     {
         $order = $event->getOrder();
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
-        $isFreeOrder = null === $stripePayment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+        $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+        $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
         if ($isFreeOrder) {
             $this->eventBus->handle(new OrderFulfilled($order));
@@ -37,8 +37,8 @@ class CapturePayment
 
         try {
 
-            $this->stripeManager->capture($stripePayment);
-            $this->eventBus->handle(new OrderFulfilled($order, $stripePayment));
+            $this->stripeManager->capture($payment);
+            $this->eventBus->handle(new OrderFulfilled($order, $payment));
 
         } catch (\Exception $e) {
             // FIXME

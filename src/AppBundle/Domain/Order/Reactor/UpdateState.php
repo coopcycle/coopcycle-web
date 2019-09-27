@@ -80,13 +80,13 @@ class UpdateState
 
     private function handleCheckoutEvent(Event $event)
     {
-        $stripePayment = $event->getPayment();
+        $payment = $event->getPayment();
 
         if ($event instanceof Event\CheckoutSucceeded) {
 
-            if (null !== $stripePayment) {
+            if (null !== $payment) {
                 // TODO Create class constant for "authorize" transition
-                $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
                 $stateMachine->apply('authorize');
             }
 
@@ -96,9 +96,9 @@ class UpdateState
         }
 
         if ($event instanceof Event\CheckoutFailed) {
-            $stripePayment->setLastError($event->getReason());
+            $payment->setLastError($event->getReason());
 
-            $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
             $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
 
             // Call OrderProcessor to create a new payment

@@ -167,16 +167,16 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
+            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
             $orderManager->checkout($order, $form->get('stripePayment')->get('stripeToken')->getData());
 
             $this->objectManager->flush();
 
-            if (PaymentInterface::STATE_FAILED === $stripePayment->getState()) {
+            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
                 return array_merge($parameters, [
                     'form' => $form->createView(),
-                    'error' => $stripePayment->getLastError()
+                    'error' => $payment->getLastError()
                 ]);
             }
 

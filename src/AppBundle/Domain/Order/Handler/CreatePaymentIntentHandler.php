@@ -31,21 +31,21 @@ class CreatePaymentIntentHandler
         $order = $command->getOrder();
         $paymentMethodId = $command->getPaymentMethodId();
 
-        $stripePayment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $stripePayment->setPaymentMethod($paymentMethodId);
+        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $payment->setPaymentMethod($paymentMethodId);
 
-        // TODO Check if $stripePayment !== null
+        // TODO Check if $payment !== null
 
         // Assign order number now because it is needed for Stripe
         $this->orderNumberAssigner->assignNumber($order);
 
         try {
 
-            $intent = $this->stripeManager->createIntent($stripePayment);
-            $stripePayment->setPaymentIntent($intent);
+            $intent = $this->stripeManager->createIntent($payment);
+            $payment->setPaymentIntent($intent);
 
         } catch (StripeException $e) {
-            $this->eventRecorder->record(new Event\CheckoutFailed($order, $stripePayment, $e->getMessage()));
+            $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }
     }
 }
