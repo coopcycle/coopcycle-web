@@ -327,6 +327,12 @@ sylius_promotion:
             classes:
                 model: AppBundle\Entity\Sylius\PromotionCoupon
 
+sylius_payment:
+    resources:
+        payment_method:
+            classes:
+                repository: Sylius\Bundle\PaymentBundle\Doctrine\ORM\PaymentMethodRepository
+
 m6_statsd:
     servers:
         default:

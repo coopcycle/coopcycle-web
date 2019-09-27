@@ -16,6 +16,7 @@ use Sylius\Component\Channel\Factory\ChannelFactoryInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Payment\Model\PaymentMethod;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
@@ -135,6 +136,9 @@ class SetupCommand extends Command
         $this->promotionRepository = $promotionRepository;
         $this->promotionFactory = $promotionFactory;
 
+        $this->paymentMethodRepository =
+            $doctrine->getRepository(PaymentMethod::class);
+
         $this->slugify = $slugify;
 
         $this->locale = $locale;
@@ -167,6 +171,9 @@ class SetupCommand extends Command
         foreach ($this->currencies as $currencyCode) {
             $this->createSyliusCurrency($currencyCode, $output);
         }
+
+        $output->writeln('<info>Checking Sylius payment methods are present…</info>');
+        $this->createSyliusPaymentMethods($output);
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
         $this->createOnDemandDeliveryProduct($output);
@@ -231,6 +238,33 @@ class SetupCommand extends Command
         $this->currencyRepository->add($currency);
 
         $output->writeln(sprintf('Sylius currency "%s" created', $code));
+    }
+
+    private function createSyliusPaymentMethods(OutputInterface $output)
+    {
+        $paymentMethod = $this->paymentMethodRepository->findOneByCode('STRIPE');
+
+        if (null === $paymentMethod) {
+
+            $paymentMethod = new PaymentMethod();
+
+            $paymentMethod->setCode('STRIPE');
+            $paymentMethod->enable();
+
+            foreach ($this->locales as $locale) {
+
+                $paymentMethod->setFallbackLocale($locale);
+                $translation = $paymentMethod->getTranslation($locale);
+
+                $translation->setName('Stripe');
+            }
+
+            $this->paymentMethodRepository->add($paymentMethod);
+
+            $output->writeln('Creating payment method « Stripe »');
+        } else {
+            $output->writeln('Payment method « Stripe » already exists');
+        }
     }
 
     private function createOnDemandDeliveryProduct(OutputInterface $output)
