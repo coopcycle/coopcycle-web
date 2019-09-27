@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions'
+import axios from 'axios'
 
 export const SET_CURRENT_ORDER = 'SET_CURRENT_ORDER'
 export const ORDER_CREATED = 'ORDER_CREATED'
@@ -16,6 +17,8 @@ export const DELAY_ORDER_REQUEST_SUCCESS = 'DELAY_ORDER_REQUEST_SUCCESS'
 export const DELAY_ORDER_REQUEST_FAILURE = 'DELAY_ORDER_REQUEST_FAILURE'
 export const CANCEL_ORDER_REQUEST_SUCCESS = 'CANCEL_ORDER_REQUEST_SUCCESS'
 export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
+
+export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
@@ -124,5 +127,18 @@ export function setPreparationDelay(delay) {
   return (dispatch, getState) => {
     const url = window.Routing.generate('admin_foodtech_settings')
     $.post(url, { 'preparation_delay': delay })
+  }
+}
+
+export function changeStatus(restaurant, state) {
+
+  return (dispatch, getState) => {
+    const { jwt } = getState()
+    axios.put(restaurant['@id'], { state }, { headers: {
+      'Authorization': `Bearer ${jwt}`,
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json'
+    }
+    })
   }
 }

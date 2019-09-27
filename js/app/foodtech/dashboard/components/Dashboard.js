@@ -7,11 +7,11 @@ import DatePicker from 'antd/lib/date-picker'
 import Slider from 'antd/lib/slider'
 import { Row, Col, } from 'antd/lib/grid'
 import moment from 'moment'
-
+import Switch from 'antd/lib/switch'
 import Column from './Column'
 import ModalContent from './ModalContent'
 
-import { setCurrentOrder, orderCreated, setPreparationDelay } from '../redux/actions'
+import { setCurrentOrder, orderCreated, setPreparationDelay, changeStatus } from '../redux/actions'
 
 function sortByShippedAt(a, b) {
   if (moment(a.shippedAt).isSame(moment(b.shippedAt))) {
@@ -22,6 +22,12 @@ function sortByShippedAt(a, b) {
 }
 
 class Dashboard extends React.Component {
+
+  componentDidMount() {
+    $(function () {
+      $('[data-toggle="popover"]').tooltip()
+    })
+  }
 
   afterOpenModal() {
   }
@@ -50,8 +56,8 @@ class Dashboard extends React.Component {
     return (
       <div className="FoodtechDashboard">
         <div className="FoodtechDashboard__Navbar">
-          <div>
-            { this.props.showSettings && (
+          { this.props.showSettings && (
+            <div>
               <Row type="flex" align="middle">
                 <Col span={ 6 }>
                   <span>
@@ -68,8 +74,22 @@ class Dashboard extends React.Component {
                     onChange={ delay => this.props.setPreparationDelay(delay) } />
                 </Col>
               </Row>
-            )}
-          </div>
+            </div>
+          )}
+          { this.props.restaurant && (
+            <div>
+              <Switch
+                unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_NORMAL') }
+                checkedChildren={ this.props.t('ADMIN_DASHBOARD_RUSH') }
+                onChange={ checked => {
+                  this.props.changeStatus(this.props.restaurant, checked ? 'rush' : 'normal')
+                }}
+                defaultChecked={ this.props.isRushEnabled }
+              />
+              <div className="glyphicon glyphicon-question-sign rushInfoSize" data-toggle="popover" data-placement="right" title={ this.props.t('RESTAURANT_DASHBOARD_INFO_RUSH') }>
+              </div>
+            </div>
+          )}
           <div>
             <DatePicker
               format={ 'll' }
@@ -95,7 +115,6 @@ class Dashboard extends React.Component {
       </div>
     )
   }
-
 }
 
 function mapStateToProps(state) {
@@ -114,6 +133,8 @@ function mapStateToProps(state) {
   const cancelledOrders =
     _.filter(orders, order => order.state === 'refused' || order.state === 'cancelled')
 
+  const isRushEnabled = state.restaurant && state.restaurant.state === 'rush'
+
   return {
     date: state.date,
     order: state.order,
@@ -124,6 +145,8 @@ function mapStateToProps(state) {
     cancelledOrders: cancelledOrders.sort(sortByShippedAt),
     preparationDelay: state.preparationDelay,
     showSettings: state.showSettings,
+    isRushEnabled: isRushEnabled,
+    restaurant: state.restaurant,
   }
 }
 
@@ -132,6 +155,7 @@ function mapDispatchToProps(dispatch) {
     setCurrentOrder: order => dispatch(setCurrentOrder(order)),
     setPreparationDelay: delay => dispatch(setPreparationDelay(delay)),
     orderCreated: order => dispatch(orderCreated(order)),
+    changeStatus: (restaurant, state) => dispatch(changeStatus(restaurant, state)),
   }
 }
 
