@@ -132,8 +132,6 @@ class StripeManager
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
 
-        $livemode = $this->settingsManager->isStripeLivemode();
-
         $stripeToken = $stripePayment->getStripeToken();
 
         if (null === $stripeToken) {
@@ -141,7 +139,6 @@ class StripeManager
         }
 
         $order = $stripePayment->getOrder();
-        $stripeAccount = $order->getRestaurant()->getStripeAccount($livemode);
 
         $stripeParams = [
             'amount' => $stripePayment->getAmount(),
@@ -156,21 +153,27 @@ class StripeManager
 
         $stripeOptions = [];
 
-        if (!is_null($stripeAccount)) {
+        if (null !== $order->getRestaurant()) {
 
-            $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
-            $applicationFee = $order->getFeeTotal();
+            $livemode = $this->settingsManager->isStripeLivemode();
+            $stripeAccount = $order->getRestaurant()->getStripeAccount($livemode);
 
-            if ($restaurantPaysStripeFee) {
-                // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
-                $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
-                $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
-                $stripeParams['application_fee'] = $applicationFee;
-            } else {
-                $stripeParams['destination'] = array(
-                    'account' => $stripeAccount->getStripeUserId(),
-                    'amount' => $order->getTotal() - $applicationFee
-                );
+            if (!is_null($stripeAccount)) {
+
+                $restaurantPaysStripeFee = $order->getRestaurant()->getContract()->isRestaurantPaysStripeFee();
+                $applicationFee = $order->getFeeTotal();
+
+                if ($restaurantPaysStripeFee) {
+                    // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
+                    $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+                    $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
+                    $stripeParams['application_fee'] = $applicationFee;
+                } else {
+                    $stripeParams['destination'] = array(
+                        'account' => $stripeAccount->getStripeUserId(),
+                        'amount' => $order->getTotal() - $applicationFee
+                    );
+                }
             }
         }
 
