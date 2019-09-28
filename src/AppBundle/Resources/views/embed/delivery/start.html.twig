@@ -39,13 +39,11 @@
       {{ form_widget(form.billingAddress) }}
     </div>
 
-    {{ form_widget(form._token) }}
-
     <hr>
 
     <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
 
-  {{ form_end(form, { render_rest: false }) }}
+  {{ form_end(form) }}
 
   {% include "@App/embed/delivery/footer.html.twig" %}
 
