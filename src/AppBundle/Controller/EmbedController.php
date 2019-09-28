@@ -6,7 +6,7 @@ use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Task;
+use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -140,8 +140,9 @@ class EmbedController extends Controller
                     'form' => $form->createView(),
                 ]);
 
-            } catch (\Exception $e) {
-                $form->addError(new FormError($e->getMessage()));
+            } catch (NoRuleMatchedException $e) {
+                $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
             }
 
         }
