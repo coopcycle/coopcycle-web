@@ -15,7 +15,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +81,6 @@ class EmbedController extends Controller
 
     /**
      * @Route("/embed/delivery/start", name="embed_delivery_start")
-     * @Template
      */
     public function deliveryStartAction(Request $request)
     {
@@ -105,7 +103,6 @@ class EmbedController extends Controller
 
     /**
      * @Route("/embed/delivery/summary", name="embed_delivery_summary")
-     * @Template
      */
     public function deliverySummaryAction(Request $request, DeliveryManager $deliveryManager, SettingsManager $settingsManager)
     {
@@ -154,7 +151,6 @@ class EmbedController extends Controller
 
     /**
      * @Route("/embed/delivery/process", name="embed_delivery_process")
-     * @Template
      */
     public function deliveryProcessAction(
         Request $request,
