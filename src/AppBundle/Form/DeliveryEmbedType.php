@@ -72,6 +72,13 @@ class DeliveryEmbedType extends DeliveryType
                 'extended' => true,
             ]);
 
+        if ($options['with_payment']) {
+            $builder->add('stripePayment', StripePaymentType::class, [
+                'mapped' => false,
+                'label' => false
+            ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
@@ -85,5 +92,12 @@ class DeliveryEmbedType extends DeliveryType
             $form->get('pickup')->add('address', AddressType::class);
             $form->get('dropoff')->add('address', AddressType::class);
         });
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault('with_payment', false);
     }
 }
