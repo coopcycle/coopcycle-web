@@ -31,17 +31,20 @@ trait DeliveryTrait
      *
      * @return Sylius\Component\Order\Model\OrderInterface
      */
-    protected function createOrderForDelivery(Delivery $delivery, int $price, UserInterface $user)
+    protected function createOrderForDelivery(Delivery $delivery, int $price, ?UserInterface $user = null)
     {
         $orderFactory = $this->container->get('sylius.factory.order');
         $orderItemFactory = $this->container->get('sylius.factory.order_item');
         $productVariantFactory = $this->get('sylius.factory.product_variant');
 
         $order = $orderFactory->createNew();
-        $order->setCustomer($user);
         $order->setDelivery($delivery);
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
         $order->setShippedAt($delivery->getDropoff()->getDoneBefore());
+
+        if (null !== $user) {
+            $order->setCustomer($user);
+        }
 
         $variant = $productVariantFactory->createForDelivery($delivery, $price);
 
