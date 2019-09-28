@@ -15,9 +15,21 @@ var style = {
   }
 }
 
+function disableBtn(btn) {
+  btn.setAttribute('disabled', '')
+  btn.disabled = true
+}
+
+function enableBtn(btn) {
+  btn.disabled = false
+  btn.removeAttribute('disabled')
+}
+
 export default function(form, options) {
 
-  $('.btn-payment').attr('disabled', true)
+  const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
+
+  disableBtn(submitButton)
 
   const stripe = Stripe(options.publishableKey)
   var elements = stripe.elements()
@@ -27,7 +39,7 @@ export default function(form, options) {
   card.mount('#card-element')
 
   card.on('ready', function() {
-    $('.btn-payment').attr('disabled', false)
+    enableBtn(submitButton)
   })
 
   card.addEventListener('change', function(event) {
@@ -42,12 +54,12 @@ export default function(form, options) {
   form.addEventListener('submit', function(event) {
     event.preventDefault()
     $('.btn-payment').addClass('btn-payment__loading')
-    $('.btn-payment').attr('disabled', true)
+    disableBtn(submitButton)
 
     stripe.createToken(card).then(function(result) {
       if (result.error) {
         $('.btn-payment').removeClass('btn-payment__loading')
-        $('.btn-payment').attr('disabled', false)
+        enableBtn(submitButton)
         var errorElement = document.getElementById('card-errors')
         errorElement.textContent = result.error.message
       } else {
