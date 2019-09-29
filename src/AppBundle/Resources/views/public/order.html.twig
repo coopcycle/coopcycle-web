@@ -1,9 +1,5 @@
 {% extends "@App/base.html.twig" %}
 
-{% if form is defined %}
-  {% form_theme form 'bootstrap_3_layout.html.twig' %}
-{% endif %}
-
 {% block menu %}
 <nav class="navbar navbar-default">
   <div class="container">
@@ -19,6 +15,13 @@
 
 {% block body %}
 <div class="container">
+
+  {% for message in app.flashes('embed_delivery') %}
+    <div class="alert alert-success">
+      {{ message|raw }}
+    </div>
+  {% endfor %}
+
   <div class="row">
     <div class="col-md-6">
       <section>
@@ -46,45 +49,14 @@
         {% include "@App/_partials/order/items.html.twig" %}
       </div>
 
-      {% if stripe_payment.state == 'failed' %}
-        <div class="alert alert-danger">{{ stripe_payment.lastError }}</div>
+      {% if last_payment.state == 'failed' %}
+        <div class="alert alert-danger">{{ last_payment.lastError }}</div>
       {% endif %}
 
-      {% if stripe_payment.state == 'completed' %}
+      {% if last_payment.state == 'completed' %}
         <div class="alert alert-success">
-          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': stripe_payment.updatedAt|localizeddate('medium', 'short') }) }}
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|localizeddate('medium', 'short') }) }}
         </div>
-      {% endif %}
-
-      {% if order.state != 'new' and form is defined %}
-
-        {{ form_start(form) }}
-
-          {{ form_widget(form.stripeToken) }}
-
-          <div class="alert alert-info">
-            {{ 'embed.delivery.use_form_below'|trans }}
-          </div>
-
-          {{ form_row(form.cardholderName) }}
-
-          <div class="form-group">
-            <label class="control-label" for="card-element">
-              {% trans %}order.payment.title{% endtrans %}
-            </label>
-            <div id="card-element">
-              <!-- a Stripe Element will be inserted here. -->
-            </div>
-            <!-- Used to display form errors -->
-            <div id="card-errors" role="alert"></div>
-          </div>
-
-          <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-            <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': stripe_payment.amount|price_format } %}order.payment.total{% endtrans %}
-          </button>
-
-        {{ form_end(form) }}
-
       {% endif %}
 
     </div>
@@ -110,13 +82,6 @@ new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ order.delivery.pickup.address.geo.latitude }}, {{ order.delivery.pickup.address.geo.longitude }} ],
   dropoff: [ {{ order.delivery.dropoff.address.geo.latitude }}, {{ order.delivery.dropoff.address.geo.longitude }} ],
   polyline: "{{ order.delivery.polyline|e('js') }}"
-})
-{% if stripe_payment.state == 'new' %}
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
-  publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
-  tokenElement: document.querySelector('#stripe_payment_stripeToken'),
-  cardholderNameElement: document.querySelector('#stripe_payment_cardholderName')
-})
-{% endif %}
+});
 </script>
 {% endblock %}

@@ -154,11 +154,6 @@ services:
       $objectManager: '@sylius.manager.order'
       $commandBus: '@command_bus'
 
-  AppBundle\Controller\PublicController:
-    arguments:
-      $stateMachineFactory: '@sm.factory'
-      $orderRepository: '@sylius.repository.order'
-
   AppBundle\Controller\RestaurantController:
     arguments:
       $orderManager: '@sylius.manager.order'
