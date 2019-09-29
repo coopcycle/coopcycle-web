@@ -48,6 +48,10 @@ class PublicController extends AbstractController
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
+        if (null !== $order->getRestaurant()) {
+            throw $this->createAccessDeniedException();
+        }
+
         $stripePayment = $order->getLastPayment();
         $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
 
