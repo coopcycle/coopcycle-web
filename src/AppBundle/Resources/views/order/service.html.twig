@@ -18,19 +18,19 @@
 {% endif %}
 
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-7" data-change-state>
     {% include '@App/_partials/order/items.html.twig' %}
     <div class="form-group">
       <label class="control-label">Notes</label>
       <textarea class="form-control" disabled>{{ order.notes }}</textarea>
     </div>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-xs-6">
         {% if form.cancel is defined %}
           {{ form_widget(form.cancel, { attr: { class: 'btn btn-block btn-danger' } }) }}
         {% endif %}
       </div>
-      <div class="col-md-6">
+      <div class="col-xs-6">
       {% if is_granted('ROLE_ADMIN') %}
         {% if form.accept is defined %}
           {{ form_widget(form.accept, { attr: { class: 'btn btn-block btn-success' } }) }}
@@ -42,6 +42,7 @@
       </div>
     </div>
   </div>
+  <hr class="visible-xs visible-sm">
   <div class="col-md-5">
 
     {% if is_granted('ROLE_ADMIN') %}
@@ -274,5 +275,10 @@ new CoopCycle.DeliveryMap('map', {
   dropoff: [ {{ dropoff_address.geo.latitude }}, {{ dropoff_address.geo.longitude }} ]
 });
 {% endif %}
+$('[data-change-state] button[type="submit"]').on('click', function(e) {
+  if (!window.confirm('{{ 'basics.are_you_sure'|trans }}')) {
+    e.preventDefault();
+  }
+});
 </script>
 {% endblock %}
