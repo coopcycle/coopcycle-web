@@ -486,12 +486,6 @@ services:
       - { name: monolog.logger, channel: mailer }
       - { name: "swiftmailer.default.plugin" }
 
-  coopcycle.metrics_helper:
-    class: AppBundle\Utils\MetricsHelper
-    arguments:
-      - "%database_name%"
-      - "@m6_statsd"
-
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']

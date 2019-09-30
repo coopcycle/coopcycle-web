@@ -28,10 +28,6 @@ snc_redis:
             options:
                 prefix: "%database_name%_test:"
 
-m6_statsd:
-    servers: {}
-    clients: {}
-
 services:
     AppBundle\EventListener\CarbonListener:
         arguments:

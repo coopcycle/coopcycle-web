@@ -333,15 +333,6 @@ sylius_payment:
             classes:
                 repository: Sylius\Bundle\PaymentBundle\Doctrine\ORM\PaymentMethodRepository
 
-m6_statsd:
-    servers:
-        default:
-            address: 'udp://%statsd_host%'
-            port: "%statsd_port%"
-    clients:
-        default:
-            servers: ["default"]
-
 knp_paginator:
     template:
         pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig'

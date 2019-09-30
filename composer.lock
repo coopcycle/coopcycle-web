@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ccfafa52ba3673428bcf3e3d582df69",
+    "content-hash": "facd4557635ba17cb7db66fcf2694149",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5801,97 +5801,6 @@
             ],
             "description": "bundle sf easing creating daemon commands",
             "time": "2018-06-18T08:15:42+00:00"
-        },
-        {
-            "name": "m6web/statsd",
-            "version": "v1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/M6Web/Statsd.git",
-                "reference": "dbc7e320e94640bd9787f1498a9eb6ba6909845d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/Statsd/zipball/dbc7e320e94640bd9787f1498a9eb6ba6909845d",
-                "reference": "dbc7e320e94640bd9787f1498a9eb6ba6909845d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "atoum/atoum": "~2.0",
-                "m6web/coke": "~1.2",
-                "m6web/symfony2-coding-standard": "~1.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "M6Web\\Component\\Statsd\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Component easing the statsd usage",
-            "keywords": [
-                "m6web",
-                "php",
-                "statsd"
-            ],
-            "time": "2017-02-03T08:22:10+00:00"
-        },
-        {
-            "name": "m6web/statsd-bundle",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/M6Web/StatsdBundle.git",
-                "reference": "a4b43ff77280f64500e58cfc3934a1b84765a017"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/StatsdBundle/zipball/a4b43ff77280f64500e58cfc3934a1b84765a017",
-                "reference": "a4b43ff77280f64500e58cfc3934a1b84765a017",
-                "shasum": ""
-            },
-            "require": {
-                "m6web/statsd": "^1.3",
-                "php": "^7.1.3",
-                "symfony/property-access": "^3.4 || ^4.0"
-            },
-            "require-dev": {
-                "atoum/atoum": "^2.8|^3.0",
-                "m6web/coke": "~1.2",
-                "m6web/symfony2-coding-standard": "~1.2",
-                "symfony/symfony": "^3.4 || ^4.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "M6Web\\Bundle\\StatsdBundle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "M6Web",
-                    "email": "opensource@m6web.fr",
-                    "homepage": "http://tech.m6web.fr/"
-                }
-            ],
-            "description": "Add statds metrics in your symfony app. Allow you to bind metrics on any symfony event.",
-            "keywords": [
-                "bundle",
-                "m6web",
-                "statsd",
-                "symfony"
-            ],
-            "time": "2018-04-17T11:50:46+00:00"
         },
         {
             "name": "mailjet/mailjet-apiv3-php",
