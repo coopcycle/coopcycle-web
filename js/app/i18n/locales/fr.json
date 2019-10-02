@@ -89,6 +89,8 @@
     "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "Identifiant, adresse…",
     "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Affichage des trajets",
     "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "À vol d'oiseau",
+    "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Annuler {{count}} tâche(s)",
+    "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "Aucune action disponible",
     "USER_EDIT_ENABLED_LABEL": "Activé",
     "USER_EDIT_DISABLED_LABEL": "Désactivé",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Livraison prévue à {{deliveryTime}}.",

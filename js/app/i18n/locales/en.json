@@ -93,6 +93,8 @@
     "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "Identifier, address…",
     "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualización de rutas",
     "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "As the crow flies",
+    "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Cancel {{count}} task(s)",
+    "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "No action available",
     "USER_EDIT_ENABLED_LABEL": "Enabled",
     "USER_EDIT_DISABLED_LABEL": "Disabled",
     "ORDER_FOLLOW_DELIVERY_EXPECTED_AT": "Delivery expected at {{deliveryTime}}.",

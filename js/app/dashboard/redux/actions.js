@@ -413,7 +413,7 @@ function createTask(task) {
       }
     })
       .then(response => {
-        dispatch(createTaskSuccess(response.data))
+        dispatch(createTaskSuccess())
         dispatch(updateTask(response.data))
         dispatch(closeNewTaskModal())
       })
@@ -442,7 +442,7 @@ function completeTask(task, notes = '', success = true) {
       }
     })
       .then(response => {
-        dispatch(createTaskSuccess(response.data))
+        dispatch(createTaskSuccess())
         dispatch(updateTask(response.data))
         dispatch(closeNewTaskModal())
       })
@@ -471,9 +471,42 @@ function cancelTask(task) {
       }
     })
       .then(response => {
-        dispatch(createTaskSuccess(response.data))
+        dispatch(createTaskSuccess())
         dispatch(updateTask(response.data))
         dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+function cancelTasks(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: `${task['@id']}/cancel`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
   }
@@ -542,4 +575,5 @@ export {
   openSettings,
   closeSettings,
   setPolylineStyle,
+  cancelTasks,
 }
