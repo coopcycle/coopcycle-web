@@ -44,10 +44,6 @@ abstract class LocalBusinessType extends AbstractType
             ->add('legalName', TextType::class, ['required' => false, 'label' => 'localBusiness.form.legalName',])
             ->add('website', UrlType::class, ['required' => false, 'label' => 'localBusiness.form.website',])
             ->add('address', AddressType::class)
-            ->add('imageFile', VichImageType::class, [
-                'required' => false,
-                'download_uri' => false,
-            ])
             ->add('telephone',
                 PhoneNumbertype::class,
                 [   'default_region' => strtoupper($this->countryIso),
@@ -80,6 +76,13 @@ abstract class LocalBusinessType extends AbstractType
 
             if (in_array('siret', $options['additional_properties'])) {
                 $form->get('siret')->setData($localBusiness->getAdditionalPropertyValue('siret'));
+            }
+
+            if (null !== $localBusiness->getId()) {
+                $form->add('imageFile', VichImageType::class, [
+                    'required' => false,
+                    'download_uri' => false,
+                ]);
             }
         });
 

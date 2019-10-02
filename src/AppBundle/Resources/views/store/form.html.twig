@@ -48,7 +48,9 @@
 
   <div class="row">
     <div class="col-sm-4">
-      {{ form_row(form.imageFile) }}
+      {% if form.imageFile is defined %}
+        {{ form_row(form.imageFile) }}
+      {% endif %}
     </div>
     <div class="col-sm-8">
       {{ form_row(form.name) }}
