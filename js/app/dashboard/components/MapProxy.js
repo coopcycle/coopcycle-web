@@ -159,7 +159,9 @@ export default class MapProxy {
   enableConnect(task, active = false) {
     let circle = this.taskConnectCircles.get(task['id'])
     if (!circle) {
-      circle = L.circle(this.toLatLng(task), { radius: 40, opacity: 1.0, fillOpacity: 1.0 })
+      // Use CircleMarker to keep size independent of zoom level
+      // @see https://stackoverflow.com/a/24335153
+      circle = L.circleMarker(this.toLatLng(task), { radius: 4, opacity: 1.0, fillOpacity: 1.0 })
       this.taskConnectCircles.set(task['id'], circle)
     }
     if (active) {
