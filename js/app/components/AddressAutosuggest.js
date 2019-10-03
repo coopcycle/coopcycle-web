@@ -278,7 +278,7 @@ class AddressAutosuggest extends Component {
     const { value, suggestions } = this.state
 
     const inputProps = {
-      placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
+      placeholder: this.props.placeholder,
       value,
       onChange: this.onChange.bind(this),
       type: "search",
@@ -319,7 +319,8 @@ AddressAutosuggest.defaultProps = {
   addresses: [],
   required: false,
   reportValidity: false,
-  preciseOnly: false
+  preciseOnly: false,
+  placeholder: i18n.t('ENTER_YOUR_ADDRESS')
 }
 
 AddressAutosuggest.propTypes = {
@@ -330,6 +331,7 @@ AddressAutosuggest.propTypes = {
   required: PropTypes.bool,
   reportValidity: PropTypes.bool,
   preciseOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
 }
 
 export default AddressAutosuggest
