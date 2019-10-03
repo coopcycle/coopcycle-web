@@ -97,7 +97,7 @@ class AddressType extends AbstractType
                 ->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => strtoupper($this->country),
-                    'required' => false,
+                    'required' => $options['telephone_required'],
                 ]);
         }
 
@@ -164,6 +164,7 @@ class AddressType extends AbstractType
             'with_telephone' => false,
             'with_name' => false,
             'placeholder' => null,
+            'telephone_required' => false,
         ));
     }
 }
