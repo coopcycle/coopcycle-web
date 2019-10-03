@@ -36,6 +36,8 @@ export default function(el, options) {
     }
   })
 
+  let autosuggestProps = {}
+
   // Replace the existing address dropdown by a hidden input with the same name & value
   const existingAddressControlHidden = document.createElement('input')
 
@@ -55,6 +57,13 @@ export default function(el, options) {
 
   const newAddressControlName = newAddressControl.name
   const newAddressControlValue = newAddressControl.value
+
+  if (newAddressControl.hasAttribute('placeholder')) {
+    autosuggestProps = {
+      ...autosuggestProps,
+      placeholder: newAddressControl.getAttribute('placeholder')
+    }
+  }
 
   newAddressControlHidden.setAttribute('type', 'hidden')
   newAddressControlHidden.setAttribute('name', newAddressControlName)
@@ -117,7 +126,8 @@ export default function(el, options) {
 
         options.onChange(address)
 
-      } } />,
+      } }
+      { ...autosuggestProps } />,
     reactContainer
   )
 }

@@ -29,6 +29,15 @@ class TaskType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $addressBookOptions = [
+            'label' => 'form.task.address.label',
+            'with_addresses' => $options['with_addresses']
+        ];
+
+        if (isset($options['address_placeholder']) && !empty($options['address_placeholder'])) {
+            $addressBookOptions['new_address_placeholder'] = $options['address_placeholder'];
+        }
+
         $builder
             ->add('type', ChoiceType::class, [
                 'choices' => [
@@ -39,10 +48,7 @@ class TaskType extends AbstractType
                 'multiple' => false,
                 'disabled' => !$options['can_edit_type']
             ])
-            ->add('address', AddressBookType::class, [
-                'label' => 'form.task.address.label',
-                'with_addresses' => $options['with_addresses']
-            ])
+            ->add('address', AddressBookType::class, $addressBookOptions)
             ->add('comments', TextareaType::class, [
                 'label' => 'form.task.comments.label',
                 'required' => false,
@@ -111,6 +117,7 @@ class TaskType extends AbstractType
             'can_edit_type' => true,
             'with_tags' => true,
             'with_addresses' => [],
+            'address_placeholder' => null,
         ));
     }
 }

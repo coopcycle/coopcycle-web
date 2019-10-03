@@ -39,6 +39,18 @@ class AddressBookType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $newAddressOptions = [
+            'label' => false,
+            'required' => false,
+            'mapped' => false,
+            'with_name' => true,
+            'with_telephone' => true,
+        ];
+
+        if (isset($options['new_address_placeholder']) && !empty($options['new_address_placeholder'])) {
+            $newAddressOptions['placeholder'] = $options['new_address_placeholder'];
+        }
+
         $builder
             ->add('existingAddress', EntityType::class, [
                 'class' => Address::class,
@@ -57,13 +69,7 @@ class AddressBookType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ])
-            ->add('newAddress', AddressType::class, [
-                'label' => false,
-                'required' => false,
-                'mapped' => false,
-                'with_name' => true,
-                'with_telephone' => true,
-            ])
+            ->add('newAddress', AddressType::class, $newAddressOptions)
             ->add('isNewAddress', CheckboxType::class, [
                 'label' => false,
                 'required' => false,
@@ -121,7 +127,8 @@ class AddressBookType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Address::class,
-            'with_addresses' => []
+            'with_addresses' => [],
+            'new_address_placeholder' => null,
         ));
     }
 

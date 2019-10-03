@@ -35,16 +35,22 @@ class AddressType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $streetAddressOptions = [
+            'label' => 'form.address.streetAddress.label',
+            'attr' => [
+                // autocomplete="off" doesn't work in Chrome
+                // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=468153#c164
+                'autocomplete' => uniqid()
+            ],
+        ];
+
+        if (isset($options['placeholder']) && !empty($options['placeholder'])) {
+            $streetAddressOptions['attr']['placeholder'] = $options['placeholder'];
+        }
+
         $builder
-            ->add('streetAddress', SearchType::class, [
-                'label' => 'form.address.streetAddress.label',
-                'attr' => [
-                    // autocomplete="off" doesn't work in Chrome
-                    // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
-                    // https://bugs.chromium.org/p/chromium/issues/detail?id=468153#c164
-                    'autocomplete' => uniqid()
-                ]
-            ])
+            ->add('streetAddress', SearchType::class, $streetAddressOptions)
             ->add('postalCode', HiddenType::class, [
                 'required' => false,
                 'label' => 'form.address.postalCode.label'
@@ -156,7 +162,8 @@ class AddressType extends AbstractType
             'data_class' => Address::class,
             'extended' => false,
             'with_telephone' => false,
-            'with_name' => false
+            'with_name' => false,
+            'placeholder' => null,
         ));
     }
 }

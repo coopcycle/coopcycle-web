@@ -324,7 +324,9 @@ form.store_type.defaultAddress.label: Adresse par défaut
 form.store_type.time_slot.label: Tranche horaire
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.pickup.label: Retrait
+form.delivery.pickup.address_placeholder: Entrez l'adresse de retrait
 form.delivery.dropoff.label: Dépôt
+form.delivery.dropoff.address_placeholder: Entrez l'adresse de dépôt
 form.delivery.weight.label: Poids
 form.delivery.weight.help: Veuillez indiquer le poids en grammes (1kg = 1000g)
 form.delivery.vehicle.label: Type de véhicule
