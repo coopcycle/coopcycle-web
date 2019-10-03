@@ -300,7 +300,8 @@ form.store_type.defaultAddress.label: Dirección predeterminada
 form.delivery.vehicle.placeholder: Escoge un vehículo
 form.delivery.pickup.label: Recogida
 form.delivery.dropoff.label: Entrega
-form.delivery.weight.label: Peso (g)
+form.delivery.weight.label: Peso
+form.delivery.weight.help: Por favor, indique el peso en gramos (1kg = 1000g)
 form.delivery.vehicle.label: Vehículo
 form.delivery.pickup.doneBefore.label: Horario de recogida
 form.delivery.dropoff.doneBefore.label: Horario de entrega

@@ -325,7 +325,8 @@ form.store_type.time_slot.label: Tranche horaire
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.pickup.label: Retrait
 form.delivery.dropoff.label: Dépôt
-form.delivery.weight.label: Poids (en grammes)
+form.delivery.weight.label: Poids
+form.delivery.weight.help: Veuillez indiquer le poids en grammes (1kg = 1000g)
 form.delivery.vehicle.label: Type de véhicule
 form.delivery.pickup.doneBefore.label: Heure de retrait
 form.delivery.dropoff.doneBefore.label: Heure de dépôt

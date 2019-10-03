@@ -52,7 +52,9 @@ class DeliveryType extends AbstractType
         $builder
             ->add('weight', NumberType::class, [
                 'required' => false,
-                'label' => 'form.delivery.weight.label'
+                'html5' => true,
+                'label' => 'form.delivery.weight.label',
+                'help' => 'form.delivery.weight.help'
             ]);
 
         if (true === $options['with_vehicle']) {
