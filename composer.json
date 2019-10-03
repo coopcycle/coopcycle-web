@@ -102,7 +102,8 @@
         "hashids/hashids": "^4.0",
         "sylius/inventory": "^1.6",
         "oneup/flysystem-bundle": "^3.1",
-        "drupal/core-vendor-hardening": "9.0.x-dev"
+        "drupal/core-vendor-hardening": "9.0.x-dev",
+        "league/flysystem-aws-s3-v3": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.3",
