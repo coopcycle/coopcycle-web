@@ -99,34 +99,7 @@ trait StoreTrait
             throw new AccessDeniedHttpException('Access denied');
         }
 
-        $routes = $request->attributes->get('routes');
-
-        $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $address = $form->getData();
-
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
-        }
-
-        return $this->render('@App/store/new_address.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'form' => $form->createView(),
-        ]);
+        return $this->renderStoreAddressForm($store, $address, $request);
     }
 
     public function newStoreAddressAction($id, Request $request)
@@ -137,36 +110,7 @@ trait StoreTrait
 
         $address = new Address();
 
-        $routes = $request->attributes->get('routes');
-
-        $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $address = $form->getData();
-
-            $store->addAddress($address);
-
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->get('translator')->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute($routes['store'], ['id' => $id]);
-        }
-
-        return $this->render('@App/store/new_address.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'form' => $form->createView(),
-        ]);
+        return $this->renderStoreAddressForm($store, $address, $request);
     }
 
     protected function renderStoreForm(Store $store, Request $request)
@@ -202,6 +146,47 @@ trait StoreTrait
             'store_deliveries_route' => $routes['store_deliveries'],
             'store_address_new_route' => $routes['store_address_new'],
             'store_address_route' => $routes['store_address'],
+        ]);
+    }
+
+    protected function renderStoreAddressForm(Store $store, Address $address, Request $request)
+    {
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(AddressType::class, $address, [
+            'with_name' => true
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $address = $form->getData();
+
+            if (!$store->getAddresses()->contains($address)) {
+                $store->addAddress($address);
+            }
+
+            // Set as default if no default address is defined yet
+            if (null === $store->getAddress()) {
+                $store->setAddress($address);
+            }
+
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
+        }
+
+        return $this->render('@App/store/address_form.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'form' => $form->createView(),
         ]);
     }
 
