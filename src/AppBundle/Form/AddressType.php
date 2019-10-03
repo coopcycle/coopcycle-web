@@ -92,9 +92,6 @@ class AddressType extends AbstractType
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => strtoupper($this->country),
                     'required' => false,
-                    'constraints' => [
-                        new AssertPhoneNumber()
-                    ],
                 ]);
         }
 
