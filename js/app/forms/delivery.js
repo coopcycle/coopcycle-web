@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
+import _ from 'lodash'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -101,6 +102,15 @@ function createTagsWidget(name, type, tags) {
   })
 }
 
+function parseWeight(value) {
+  const intValue = parseInt((value || 0), 10)
+  if (NaN === intValue) {
+    return 0
+  }
+
+  return intValue
+}
+
 function reducer(state = {}, action) {
   switch (action.type) {
   case 'SET_ADDRESS':
@@ -127,6 +137,11 @@ function reducer(state = {}, action) {
         before: action.value
       }
     }
+  case 'SET_WEIGHT':
+    return {
+      ...state,
+      weight: action.value
+    }
   default:
     return state
   }
@@ -143,6 +158,8 @@ export default function(name, options) {
 
   if (el) {
 
+    const weightEl = document.querySelector(`#${name}_weight`)
+
     // Intialize Redux store
     let storeId
     if (el.dataset.store) {
@@ -150,6 +167,7 @@ export default function(name, options) {
     }
     let preloadedState = {
       store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
+      weight: parseWeight(weightEl.value),
       pickup: {
         address: null,
         [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
@@ -170,6 +188,13 @@ export default function(name, options) {
 
     onReady(preloadedState)
     const unsubscribe = store.subscribe(() => onChange(store.getState()))
+
+    weightEl.addEventListener('input', _.debounce(e => {
+      store.dispatch({
+        type: 'SET_WEIGHT',
+        value: parseWeight(e.target.value)
+      })
+    }, 350))
 
     const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
     const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
