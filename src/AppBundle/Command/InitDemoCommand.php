@@ -448,6 +448,7 @@ class InitDemoCommand extends Command
 
         $shop->setEnabled(true);
         $shop->setTelephone($phoneNumber);
+        $shop->addAddress($address);
         $shop->setAddress($address);
         $shop->setName($this->faker->storeName);
         $shop->addOpeningHour('Mo-Fr ' . $this->createRandomTimeRange('09:30', '14:30'));
