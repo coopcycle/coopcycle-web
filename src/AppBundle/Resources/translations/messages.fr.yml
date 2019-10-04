@@ -292,6 +292,9 @@ form.task.comments.label: Commentaires
 form.task.comments.placeholder: Précisez tous les détails utiles à l'exécution de
   la tâche
 form.task.status.label: Status
+form.task.telephone.label: Téléphone
+form.task.recipient.label: Contact
+form.task.recipient.help: Spécifiez le nom de la personne à contacter
 form.task_event.notes.placeholder: 'Ex : adresse introuvable, aucun problème…'
 form.task_event.notes.help: Vous pouvez modifier le commentaire
 form.task_upload.file: Fichier

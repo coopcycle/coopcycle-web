@@ -186,7 +186,9 @@ trait StoreTrait
 
         $delivery = $store->createDelivery();
 
-        $form = $this->createDeliveryForm($delivery);
+        $form = $this->createDeliveryForm($delivery, [
+            'with_dropoff_recipient_details' => true
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

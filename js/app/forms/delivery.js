@@ -9,6 +9,23 @@ import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
 
+// @see https://developer.mozilla.org/fr/docs/Web/API/Element/closest#Polyfill
+if (!Element.prototype.matches)
+  Element.prototype.matches = Element.prototype.msMatchesSelector ||
+                              Element.prototype.webkitMatchesSelector
+
+if (!Element.prototype.closest)
+  Element.prototype.closest = function(s) {
+    var el = this
+    if (!document.documentElement.contains(el)) return null
+    do {
+      if (el.matches(s)) return el
+      el = el.parentElement || el.parentNode
+    } while (el !== null && el.nodeType == 1)
+
+    return null
+  }
+
 class DeliveryForm {
   disable() {
     $('#delivery-submit').attr('disabled', true)
@@ -24,6 +41,12 @@ let store
 
 function createAddressWidget(name, type, cb) {
 
+  const telephone = document.querySelector(`#${name}_${type}_telephone`)
+  const recipient = document.querySelector(`#${name}_${type}_recipient`)
+
+  const isTelephoneRequired = telephone && telephone.hasAttribute('required')
+  const isRecipientRequired = recipient && recipient.hasAttribute('required')
+
   new AddressBook(document.querySelector(`#${name}_${type}_address`), {
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
@@ -32,6 +55,29 @@ function createAddressWidget(name, type, cb) {
       cb(address)
     },
     onChange: address => {
+
+      if (address.hasOwnProperty('@id')) {
+        if (telephone) {
+          telephone.value = ''
+          telephone.removeAttribute('required')
+          telephone.closest('.form-group').classList.add('hidden')
+        }
+        if (recipient) {
+          recipient.value = ''
+          recipient.removeAttribute('required')
+          recipient.closest('.form-group').classList.add('hidden')
+        }
+      } else {
+        if (telephone) {
+          telephone.setAttribute('required', isTelephoneRequired)
+          telephone.closest('.form-group').classList.remove('hidden')
+        }
+        if (recipient) {
+          recipient.setAttribute('required', isRecipientRequired)
+          recipient.closest('.form-group').classList.remove('hidden')
+        }
+      }
+
       store.dispatch({
         type: 'SET_ADDRESS',
         taskType: type,

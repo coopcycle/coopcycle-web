@@ -6,6 +6,8 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -21,10 +23,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TaskType extends AbstractType
 {
     private $tagManager;
+    private $country;
 
-    public function __construct(TagManager $tagManager)
+    public function __construct(TagManager $tagManager, string $country)
     {
         $this->tagManager = $tagManager;
+        $this->country = $country;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -73,6 +77,21 @@ class TaskType extends AbstractType
             ]);
         }
 
+        if ($options['with_recipient_details']) {
+            $builder
+                ->add('telephone', PhoneNumberType::class, [
+                    'label' => 'form.task.telephone.label',
+                    'mapped' => false,
+                    'format' => PhoneNumberFormat::NATIONAL,
+                    'default_region' => strtoupper($this->country),
+                ])
+                ->add('recipient', TextType::class, [
+                    'label' => 'form.task.recipient.label',
+                    'help' => 'form.task.recipient.help',
+                    'mapped' => false,
+                ]);
+        }
+
         if ($builder->has('tagsAsString')) {
             $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -107,6 +126,14 @@ class TaskType extends AbstractType
                 $timeSlot = $form->get('timeSlot')->getData();
                 $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
             }
+
+            if ($form->has('telephone')) {
+                $task->getAddress()->setTelephone($form->get('telephone')->getData());
+            }
+
+            if ($form->has('recipient')) {
+                $task->getAddress()->setFirstName($form->get('recipient')->getData());
+            }
         });
     }
 
@@ -118,6 +145,7 @@ class TaskType extends AbstractType
             'with_tags' => true,
             'with_addresses' => [],
             'address_placeholder' => null,
+            'with_recipient_details' => false,
         ));
     }
 }

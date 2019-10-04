@@ -87,6 +87,8 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
+    arguments:
+      $country: '%country_iso%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
