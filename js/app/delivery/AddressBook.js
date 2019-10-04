@@ -25,8 +25,7 @@ export default function(el, options) {
   const {
     existingAddressControl,
     newAddressControl,
-    isNewAddressControl,
-    moreOptionsContainer
+    isNewAddressControl
   } = options
 
   const addresses = []
@@ -109,15 +108,12 @@ export default function(el, options) {
         if (address.id) {
           existingAddressControlHidden.value = address['@id']
           isNewAddressControlHidden.remove()
-          moreOptionsContainer.classList.add('hidden')
         } else {
           newAddressControlHidden.value = address.streetAddress
           el.querySelector('[data-address-prop="postalCode"]').value = address.postalCode
           el.querySelector('[data-address-prop="addressLocality"]').value = address.addressLocality
           el.querySelector('[data-address-prop="latitude"]').value = address.latitude
           el.querySelector('[data-address-prop="longitude"]').value = address.longitude
-
-          moreOptionsContainer.classList.remove('hidden')
 
           if (!document.documentElement.contains(isNewAddressControlHidden)) {
             el.appendChild(isNewAddressControlHidden)

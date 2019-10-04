@@ -43,8 +43,6 @@ class AddressBookType extends AbstractType
             'label' => false,
             'required' => false,
             'mapped' => false,
-            'with_name' => true,
-            'with_telephone' => true,
         ];
 
         if (isset($options['new_address_placeholder']) && !empty($options['new_address_placeholder'])) {

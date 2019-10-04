@@ -28,7 +28,6 @@ function createAddressWidget(name, type, cb) {
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
     isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
-    moreOptionsContainer: document.querySelector(`#${name}_${type}_address_more_options`),
     onReady: address => {
       cb(address)
     },
