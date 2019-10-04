@@ -413,16 +413,6 @@ admin_store_address:
             store: admin_store
     methods:  [ GET, POST ]
 
-admin_store_addresses:
-    path: /admin/stores/{id}/addresses
-    defaults:
-        _controller: AppBundle\Controller\AdminController::storeAddressesAction
-        layout: '@App/admin.html.twig'
-        routes:
-            stores: admin_stores
-            store: admin_store
-    methods:  [ GET, POST ]
-
 admin_tag_new:
     path: /admin/settings/tags/new
     defaults:

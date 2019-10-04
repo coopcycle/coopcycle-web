@@ -71,22 +71,6 @@ trait StoreTrait
         ]);
     }
 
-    public function storeAddressesAction($id, Request $request)
-    {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
-
-        $this->accessControl($store);
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->render('@App/store/addresses.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-        ]);
-    }
-
     public function storeAddressAction($storeId, $addressId, Request $request)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);

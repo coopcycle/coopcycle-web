@@ -31,9 +31,6 @@
         <a href="{{ path('admin_store_users', { id: store.id }) }}" class="btn btn-default navbar-btn">
           <i class="fa fa-user"></i>  {% trans %}stores.users{% endtrans %}
         </a>
-        <a href="{{ path('admin_store_addresses', { id: store.id }) }}" class="btn btn-default navbar-btn">
-          <i class="fa fa-map-marker"></i>  {% trans %}stores.addresses{% endtrans %}
-        </a>
         {% endif %}
         <a href="{{ path(store_delivery_new_route, { id: store.id }) }}" class="btn btn-success navbar-btn">
           <i class="fa fa-plus"></i>  {% trans %}delivery.createNew{% endtrans %}
