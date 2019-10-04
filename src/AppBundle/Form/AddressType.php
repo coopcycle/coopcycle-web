@@ -93,11 +93,18 @@ class AddressType extends AbstractType
         }
 
         if (true === $options['with_telephone']) {
+
+            $attr = [];
+            if ($options['telephone_required']) {
+                $attr['required'] = true;
+            }
+
             $builder
                 ->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
                     'default_region' => strtoupper($this->country),
-                    'required' => $options['telephone_required'],
+                    // FIXME option "required" doesn't work
+                    'attr' => $attr
                 ]);
         }
 

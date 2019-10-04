@@ -45,6 +45,7 @@ class AddressBookType extends AbstractType
             'mapped' => false,
             'with_name' => true,
             'with_telephone' => true,
+            'telephone_required' => $options['telephone_required'],
         ];
 
         if (isset($options['new_address_placeholder']) && !empty($options['new_address_placeholder'])) {
@@ -129,6 +130,7 @@ class AddressBookType extends AbstractType
             'data_class' => Address::class,
             'with_addresses' => [],
             'new_address_placeholder' => null,
+            'telephone_required' => false,
         ));
     }
 

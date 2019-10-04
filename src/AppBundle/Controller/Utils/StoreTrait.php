@@ -154,7 +154,9 @@ trait StoreTrait
         $routes = $request->attributes->get('routes');
 
         $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true
+            'with_name' => true,
+            'with_telephone' => true,
+            'telephone_required' => true,
         ]);
 
         $form->handleRequest($request);
@@ -202,7 +204,9 @@ trait StoreTrait
 
         $delivery = $store->createDelivery();
 
-        $form = $this->createDeliveryForm($delivery);
+        $form = $this->createDeliveryForm($delivery, [
+            'dropoff_telephone_required' => true
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

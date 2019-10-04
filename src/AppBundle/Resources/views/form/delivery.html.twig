@@ -38,6 +38,13 @@ col-sm-9
 
   {{ form_row(form.address) }}
 
+  {% if form.address.newAddress is defined and form.address.newAddress.telephone is defined and not form.address.newAddress.telephone.rendered %}
+    {% set is_telephone_required = form.address.newAddress.telephone.vars.required or form.address.newAddress.telephone.vars.attr.required is defined %}
+    {% if is_telephone_required %}
+      {{ form_row(form.address.newAddress.telephone) }}
+    {% endif %}
+  {% endif %}
+
   {% if form.doneBefore is defined %}
     {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
   {% endif %}

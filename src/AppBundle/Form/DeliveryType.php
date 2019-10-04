@@ -104,7 +104,8 @@ class DeliveryType extends AbstractType
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.pickup.address_placeholder',
             ]);
-            $form->add('dropoff', TaskType::class, [
+
+            $dropoffOptions = [
                 'mapped' => false,
                 'label' => 'form.delivery.dropoff.label',
                 'constraints' => [
@@ -114,7 +115,13 @@ class DeliveryType extends AbstractType
                 'with_tags' => $options['with_tags'],
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.dropoff.address_placeholder',
-            ]);
+            ];
+
+            if (isset($options['dropoff_telephone_required']) && $options['dropoff_telephone_required']) {
+                $dropoffOptions['telephone_required'] = $options['dropoff_telephone_required'];
+            }
+
+            $form->add('dropoff', TaskType::class, $dropoffOptions);
 
             if (null === $store) {
                 return;
@@ -236,6 +243,7 @@ class DeliveryType extends AbstractType
             'data_class' => Delivery::class,
             'with_vehicle' => false,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            'dropoff_telephone_required' => false,
         ));
     }
 
