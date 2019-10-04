@@ -7,7 +7,10 @@
     {% endif %}
     <th>{% trans %}order.list.state{% endtrans %}</th>
     <th>{% trans %}order.list.summary{% endtrans %}</th>
-    <th class="text-right">{% trans %}order.list.total{% endtrans %}</th>
+    {% if is_granted('ROLE_ADMIN') %}
+    <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+    {% endif %}
+    <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.invoice{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.shippedAt{% endtrans %}</th>
   </thead>
@@ -59,6 +62,11 @@
         {% endfor %}
       {% endif %}
     </td>
+    {% if is_granted('ROLE_ADMIN') %}
+    <td class="text-right">
+      <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
+    </td>
+    {% endif %}
     <td class="text-right">
       <span>{{ order.total|price_format }}</span>
     </td>

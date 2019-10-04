@@ -89,6 +89,14 @@
       </tr>
       {% endfor %}
     {% endif %}
+    {% if with_total_excluding_tax is defined and with_total_excluding_tax %}
+      <tr>
+        <th>{% trans %}order.total_excluding_tax{% endtrans %}</th>
+        <td class="text-right">
+          {{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}
+        </td>
+      </tr>
+    {% endif %}
     <tr>
       <th>{% trans %}order.total_including_tax{% endtrans %}</th>
       <td class="text-right">
