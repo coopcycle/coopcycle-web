@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
+use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -18,7 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={
- *     "post"={"method"="POST"}
+ *     "post"={"method"="POST"},
+ *     "check"={
+ *         "method"="POST",
+ *         "path"="/deliveries/check",
+ *         "write"=false,
+ *         "status"=200,
+ *         "validation_groups"={"Default", "delivery_check"}
+ *     }
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"}
@@ -30,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * )
  *
  * @AssertDelivery
+ * @AssertCheckDelivery(groups={"delivery_check"})
  */
 class Delivery extends TaskCollection implements TaskCollectionInterface
 {
