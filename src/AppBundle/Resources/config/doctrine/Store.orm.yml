@@ -60,6 +60,10 @@ AppBundle\Entity\Store:
         createOrders:
             type: boolean
             column: create_orders
+        checkExpression:
+            type: string
+            nullable: true
+            column: check_expression
     manyToOne:
         address:
             targetEntity: AppBundle\Entity\Address
