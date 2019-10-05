@@ -17,7 +17,7 @@ class PickupExpressionLanguageProviderTest extends TestCase
         $this->language = new ExpressionLanguage();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Carbon::setTestNow();
     }

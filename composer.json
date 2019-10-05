@@ -104,7 +104,7 @@
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.3",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^8.0",
         "behat/behat": "^3.1",
         "behat/symfony2-extension": "dev-master",
         "behat/mink": "dev-master",

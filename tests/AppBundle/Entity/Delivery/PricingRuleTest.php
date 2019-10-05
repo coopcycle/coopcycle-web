@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Task;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class PricingRuleTest extends TestCase
 {
@@ -43,11 +44,10 @@ class PricingRuleTest extends TestCase
         $this->assertFalse($rule->matches($delivery));
     }
 
-    /**
-     * @expectedException Symfony\Component\ExpressionLanguage\SyntaxError
-     */
     public function testUnknownVariable()
     {
+        $this->expectException(SyntaxError::class);
+
         $rule = new PricingRule();
         $rule->setExpression('foo == 1');
 

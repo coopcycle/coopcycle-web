@@ -17,7 +17,7 @@ class TaskTest extends TestCase
     private $task;
     private $courier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->task = new Task();
         $this->courier = new ApiUser();

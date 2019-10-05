@@ -22,7 +22,7 @@ class UpdateStateTest extends KernelTestCase
 
     private $updateState;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

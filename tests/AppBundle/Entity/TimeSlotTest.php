@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class TimeSlotTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Carbon::setTestNow();
     }
