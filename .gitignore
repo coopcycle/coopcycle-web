@@ -16,6 +16,7 @@
 !var/SymfonyRequirements.php
 !var/sql
 /vendor/
+/.phpunit.result.cache
 
 # Build with webpack
 /web/bundles/
