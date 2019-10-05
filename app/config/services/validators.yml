@@ -32,3 +32,7 @@ services:
       - '@doctrine'
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\CheckDeliveryValidator:
+    tags:
+      - { name: validator.constraint_validator }
