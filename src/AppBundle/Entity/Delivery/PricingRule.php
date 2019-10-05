@@ -120,7 +120,7 @@ class PricingRule
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), self::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getPrice(), Delivery::toExpressionLanguageValues($delivery));
     }
 
     public function matches(Delivery $delivery, ExpressionLanguage $language = null)
@@ -129,32 +129,6 @@ class PricingRule
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getExpression(), self::toExpressionLanguageValues($delivery));
-    }
-
-    private static function createTaskObject(?Task $task)
-    {
-        $taskObject = new \stdClass();
-        if ($task) {
-            $taskObject->address = $task->getAddress();
-            $taskObject->createdAt = $task->getCreatedAt();
-            $taskObject->before = $task->getDoneBefore();
-        }
-
-        return $taskObject;
-    }
-
-    public static function toExpressionLanguageValues(Delivery $delivery)
-    {
-        $pickup = self::createTaskObject($delivery->getPickup());
-        $dropoff = self::createTaskObject($delivery->getDropoff());
-
-        return [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'vehicle' => $delivery->getVehicle(),
-            'pickup' => $pickup,
-            'dropoff' => $dropoff,
-        ];
+        return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
     }
 }

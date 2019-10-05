@@ -251,4 +251,30 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
         return 0;
     }
+
+    private static function createTaskObject(?Task $task)
+    {
+        $taskObject = new \stdClass();
+        if ($task) {
+            $taskObject->address = $task->getAddress();
+            $taskObject->createdAt = $task->getCreatedAt();
+            $taskObject->before = $task->getDoneBefore();
+        }
+
+        return $taskObject;
+    }
+
+    public static function toExpressionLanguageValues(Delivery $delivery)
+    {
+        $pickup = self::createTaskObject($delivery->getPickup());
+        $dropoff = self::createTaskObject($delivery->getDropoff());
+
+        return [
+            'distance' => $delivery->getDistance(),
+            'weight' => $delivery->getWeight(),
+            'vehicle' => $delivery->getVehicle(),
+            'pickup' => $pickup,
+            'dropoff' => $dropoff,
+        ];
+    }
 }
