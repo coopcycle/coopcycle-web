@@ -702,3 +702,5 @@ services:
 
   AppBundle\Twig\CoopCycleExtension:
     $secret: '%secret%'
+
+  AppBundle\Security\TokenStoreExtractor: ~
