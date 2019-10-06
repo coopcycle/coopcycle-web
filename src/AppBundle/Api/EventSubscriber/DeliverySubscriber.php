@@ -9,8 +9,8 @@ use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -46,7 +46,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function accessControl(GetResponseEvent $event)
+    public function accessControl(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -78,7 +78,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
         throw new AccessDeniedException();
     }
 
-    public function setDefaults(GetResponseForControllerResultEvent $event)
+    public function setDefaults(ViewEvent $event)
     {
         $request = $event->getRequest();
 
@@ -119,7 +119,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
         }
     }
 
-    public function addToStore(GetResponseForControllerResultEvent $event)
+    public function addToStore(ViewEvent $event)
     {
         $request = $event->getRequest();
 
