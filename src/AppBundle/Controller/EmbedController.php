@@ -7,13 +7,16 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
+use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Util\UserManipulator;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -35,11 +38,11 @@ class EmbedController extends Controller
         return [];
     }
 
-    private function createDeliveryForm()
+    private function createDeliveryForm(array $options = [])
     {
         $delivery = Delivery::create();
 
-        return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, $delivery);
+        return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, $delivery, $options);
     }
 
     private function getPricingRuleSet()
@@ -115,7 +118,7 @@ class EmbedController extends Controller
             throw new NotFoundHttpException('Pricing rule set not configured');
         }
 
-        $form = $this->createDeliveryForm();
+        $form = $this->createDeliveryForm(['with_payment' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -155,7 +158,9 @@ class EmbedController extends Controller
     public function deliveryProcessAction(
         Request $request,
         SlugifyInterface $slugify,
+        OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
+        ObjectManager $objectManager,
         DeliveryManager $deliveryManager,
         UserManipulator $userManipulator)
     {
@@ -168,12 +173,14 @@ class EmbedController extends Controller
             throw new NotFoundHttpException('Pricing rule set not configured');
         }
 
-        $form = $this->createDeliveryForm();
+        $form = $this->createDeliveryForm(['with_payment' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
+
+            $stripeToken = $form->get('stripePayment')->get('stripeToken')->getData();
 
             $email = $form->get('email')->getData();
             $telephone = $form->get('telephone')->getData();
@@ -188,9 +195,9 @@ class EmbedController extends Controller
             $name = $form->get('name')->getData();
             $order->setNotes($name);
 
-            $this->get('sylius.repository.order')->add($order);
-            $orderManager->onDemand($order);
-            $this->get('sylius.manager.order')->flush();
+            $orderRepository->add($order);
+            $orderManager->checkout($order, $stripeToken);
+            $objectManager->flush();
 
             $this->addFlash(
                 'embed_delivery',

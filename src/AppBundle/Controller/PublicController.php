@@ -3,16 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\StripePayment;
-use AppBundle\Form\StripePaymentType;
-use AppBundle\Service\SettingsManager;
 use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Stripe;
-use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -24,11 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PublicController extends AbstractController
 {
-    public function __construct(
-        $stateMachineFactory,
-        $orderRepository)
+    public function __construct(OrderRepositoryInterface $orderRepository)
     {
-        $this->stateMachineFactory = $stateMachineFactory;
         $this->orderRepository = $orderRepository;
     }
 
@@ -36,10 +30,8 @@ class PublicController extends AbstractController
      * @Route("/o/{number}", name="public_order")
      * @Template
      */
-    public function orderAction($number, Request $request, SettingsManager $settingsManager)
+    public function orderAction($number, Request $request)
     {
-        Stripe\Stripe::setApiKey($settingsManager->get('stripe_secret_key'));
-
         $order = $this->orderRepository->findOneBy([
             'number' => $number
         ]);
@@ -52,56 +44,12 @@ class PublicController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $stripePayment = $order->getLastPayment();
-        $stateMachine = $this->stateMachineFactory->get($stripePayment, PaymentTransitions::GRAPH);
+        $lastPayment = $order->getLastPayment();
 
-        $parameters = [
+        return [
             'order' => $order,
-            'stripe_payment' => $stripePayment,
+            'last_payment' => $lastPayment,
         ];
-
-        if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-
-            $form = $this->createForm(StripePaymentType::class, $stripePayment);
-
-            $form->handleRequest($request);
-
-            // TODO : handle this with orderManager
-            if ($form->isSubmitted() && $form->isValid()) {
-
-                try {
-
-                    $stripeToken = $form->get('stripeToken')->getData();
-
-                    $charge = Stripe\Charge::create([
-                      'amount' => $stripePayment->getAmount(),
-                      'currency' => strtolower($stripePayment->getCurrencyCode()),
-                      'description' => sprintf('Order %s', $order->getNumber()),
-                      'metadata' => [
-                        'order_id' => $order->getId()
-                      ],
-                      'source' => $stripeToken,
-                    ]);
-
-                    $stripePayment->setCharge($charge->id);
-                    $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
-
-                } catch (\Exception $e) {
-
-                    $stripePayment->setLastError($e->getMessage());
-                    $stateMachine->apply(PaymentTransitions::TRANSITION_FAIL);
-
-                } finally {
-                    $this->getDoctrine()->getManagerForClass(StripePayment::class)->flush();
-                }
-
-                return $this->redirectToRoute('public_order', ['number' => $number]);
-            }
-
-            $parameters = array_merge($parameters, ['form' => $form->createView()]);
-        }
-
-        return $parameters;
     }
 
     /**
@@ -144,7 +92,6 @@ class PublicController extends AbstractController
      * @Template
      */
     public function deliveryAction($hashid, Request $request,
-        SettingsManager $settingsManager,
         JWTEncoderInterface $jwtEncoder,
         JWSProviderInterface $jwsProvider)
     {

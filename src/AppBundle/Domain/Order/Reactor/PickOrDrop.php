@@ -35,10 +35,6 @@ class PickOrDrop
             return;
         }
 
-        if (!$order->isFoodtech()) {
-            return;
-        }
-
         $this->eventBus->handle($task->isDropoff() ? new OrderDropped($order) : new OrderPicked($order));
     }
 }

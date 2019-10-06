@@ -26,6 +26,13 @@ class CapturePayment
         $order = $event->getOrder();
 
         $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+
+        // This happens when a B2B customer has placed an order
+        if (null === $payment && null === $order->getRestaurant()) {
+            $this->eventBus->handle(new OrderFulfilled($order));
+            return;
+        }
+
         $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
 
         if ($isFreeOrder) {

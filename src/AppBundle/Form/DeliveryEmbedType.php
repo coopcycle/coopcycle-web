@@ -79,7 +79,18 @@ class DeliveryEmbedType extends DeliveryType
             ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            if (!$options['with_payment'] && isset($data['stripePayment'])) {
+                unset($data['stripePayment']);
+                $event->setData($data);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
 

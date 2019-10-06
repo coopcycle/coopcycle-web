@@ -23,6 +23,15 @@
       {{ form_row(form.vehicle) }}
     {% endif %}
 
+    {# FIXME #}
+    {# If the price can't be calculated, do not show payment field #}
+    {% if form.stripePayment is defined %}
+      <div class="hidden">
+        {{ form_widget(form.stripePayment.cardholderName, { required: false }) }}
+        {{ form_widget(form.stripePayment.stripeToken) }}
+      </div>
+    {% endif %}
+
     <h3>{{ 'embed.delivery.contact_heading'|trans }}</h3>
 
     {{ form_row(form.name) }}
