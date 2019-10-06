@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Task;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class PricingRuleTest extends TestCase
 {
