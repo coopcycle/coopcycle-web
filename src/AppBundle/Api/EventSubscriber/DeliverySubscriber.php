@@ -2,8 +2,8 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
-use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Store;
+use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -15,25 +15,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
-use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
     private $tokenStorage;
-    private $accessTokenManager;
+    private $storeExtractor;
     private $routing;
 
     public function __construct(
         DoctrineRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager,
+        TokenStoreExtractor $storeExtractor,
         RoutingInterface $routing)
     {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
-        $this->accessTokenManager = $accessTokenManager;
+        $this->storeExtractor = $storeExtractor;
         $this->routing = $routing;
     }
 
@@ -46,23 +44,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
                 ['addToStore', EventPriorities::POST_WRITE],
             ],
         ];
-    }
-
-    private function getStore($token)
-    {
-        if ($token instanceof OAuth2Token) {
-
-            $accessToken = $this->accessTokenManager->find($token->getCredentials());
-            $client = $accessToken->getClient();
-
-            $apiApp = $this->doctrine->getRepository(ApiApp::class)
-                ->findOneByOauth2Client($client);
-
-            return $apiApp->getStore();
-        } else if ($token->hasAttribute('store')) {
-
-            return $token->getAttribute('store');
-        }
     }
 
     public function accessControl(GetResponseEvent $event)
@@ -105,36 +86,35 @@ final class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (null !== ($token = $this->tokenStorage->getToken())) {
+        $store = $this->storeExtractor->extractStore();
 
-            $delivery = $event->getControllerResult();
-            $store = $this->getStore($token);
+        if (null === $store) {
+            return;
+        }
 
-            if (null !== $store) {
+        $delivery = $event->getControllerResult();
 
-                $pickup = $delivery->getPickup();
-                $dropoff = $delivery->getDropoff();
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
 
-                // If no pickup address is specified, use the store address
-                if (null === $pickup->getAddress()) {
-                    $pickup->setAddress($store->getAddress());
-                }
+        // If no pickup address is specified, use the store address
+        if (null === $pickup->getAddress()) {
+            $pickup->setAddress($store->getAddress());
+        }
 
-                // If no pickup time is specified, calculate it
-                if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
-                    if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
+        // If no pickup time is specified, calculate it
+        if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
+            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
 
-                        $duration = $this->routing->getDuration(
-                            $pickup->getAddress()->getGeo(),
-                            $dropoff->getAddress()->getGeo()
-                        );
+                $duration = $this->routing->getDuration(
+                    $pickup->getAddress()->getGeo(),
+                    $dropoff->getAddress()->getGeo()
+                );
 
-                        $pickupDoneBefore = clone $dropoff->getDoneBefore();
-                        $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+                $pickupDoneBefore = clone $dropoff->getDoneBefore();
+                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
 
-                        $pickup->setDoneBefore($pickupDoneBefore);
-                    }
-                }
+                $pickup->setDoneBefore($pickupDoneBefore);
             }
         }
     }
@@ -147,15 +127,15 @@ final class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (null !== ($token = $this->tokenStorage->getToken())) {
+        $store = $this->storeExtractor->extractStore();
 
-            $delivery = $event->getControllerResult();
-            $store = $this->getStore($token);
-
-            if (null !== $store) {
-                $store->addDelivery($delivery);
-                $this->doctrine->getManagerForClass(Store::class)->flush();
-            }
+        if (null === $store) {
+            return;
         }
+
+        $delivery = $event->getControllerResult();
+
+        $store->addDelivery($delivery);
+        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 }
