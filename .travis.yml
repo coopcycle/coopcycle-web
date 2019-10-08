@@ -17,6 +17,7 @@ addons:
     packages:
       - nginx
       - libgconf-2-4
+      - postgresql-9.4-postgis-2.4
   hosts:
     - test.coopcycle.org
 
@@ -48,12 +49,8 @@ env:
     - secure: "RZfHMstvpZ+yO8FMBo1ceNdNCBW/eSA1REUGpHSpAHoGxLw+2v/RBn6THcxWPT0LEDU4Q0s5Nz2vQ3k46qi8fOmJiidHY8y30vVLoC2n0R/KEtXUcq81WryVeHDUSLWnOSHM4Sc+1IUiRpVIn7mI3GNScb4Lx8mdw9focx/oCaWxONNVzOsTgxl6g+uTGBfeU+opytgW62jl1kO8OWnH38gB5zGoeoETXG7sK6mRmqRJtTK5X4jfgbcU44fW/EBqFRnFtjwz8JHhyWcNzgt4lEa8Lo/9aQSQEWJOy5ex10Yi+xVLOvTxBKEyBl/lDDr6vxsC5btbDL0PJ9RP2U44gTuUvzrh6kRLYesx2iNt/M51/fb6O/xDApMqIz6KcbPF6F7YNPgaiNd/n+hj1qs4PSc4BATon400fH/N3VpD4AB+ptRIgW5lF67q40dtjkN2cRu454lvxUcSJPhMl0QHttlY59cyuh7N4Gi9QP9+kHdkElDOk5KseJ5NkHwpw3dvK7YAYduYqz2CSLgxq6I5HSSVPqXOSmBiEMfPWJj9NWgcnCq0Fffebbnhq6NYlmSl4olhelyiH7bnZxDbm6x5xLqo72RJR7L3D3hQFGN3cyR1E96JRti3phkK/1nc1/T2LeV+n97zVmpFVQyNoYQIS1B1smiQ1R0AyjHu6gjVxbA="
 
 before_install:
-  - sudo apt-get update -qq
   - nvm install 8
 install:
-  # Remove error could not access file "$libdir/postgis-2.3": No such file or directory
-  - sudo apt-get install -y $(apt-cache search postgis | awk '/^postgresql-9\.[2-5]-postgis-2.3/{printf " "$1}' )
-  - sudo service postgresql restart
   - npm ci
   - npm install -g pm2
   # Install OSRM
