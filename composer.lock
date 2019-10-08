@@ -12901,16 +12901,16 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "1.8.6",
+            "version": "1.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "5cd1b931a3acc2fcb5cf51e4a2ff4559b19ab0c6"
+                "reference": "759bf0e6d8ceb4bcfb066da9b2789ab3dfea0d9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/5cd1b931a3acc2fcb5cf51e4a2ff4559b19ab0c6",
-                "reference": "5cd1b931a3acc2fcb5cf51e4a2ff4559b19ab0c6",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/759bf0e6d8ceb4bcfb066da9b2789ab3dfea0d9c",
+                "reference": "759bf0e6d8ceb4bcfb066da9b2789ab3dfea0d9c",
                 "shasum": ""
             },
             "require": {
@@ -12990,7 +12990,7 @@
                 "file uploads",
                 "upload"
             ],
-            "time": "2018-12-21T17:27:08+00:00"
+            "time": "2019-04-28T17:16:03+00:00"
         },
         {
             "name": "webmozart/assert",
