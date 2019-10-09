@@ -90,7 +90,7 @@
         "liip/imagine-bundle": "^2.1",
         "oneup/uploader-bundle": "^2.1",
         "trikoder/oauth2-bundle": "^2.0.1",
-        "sylius/promotion-bundle": "1.5.4",
+        "sylius/promotion-bundle": "1.6.0",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.1",
         "hautelook/alice-bundle": "^2.3",
