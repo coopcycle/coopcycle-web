@@ -86,7 +86,7 @@
         "predicthq/address-formatter": "^1.1",
         "nmure/crawler-detect-bundle": "^2.0",
         "symfony/webpack-encore-bundle": "^1.6",
-        "sylius/channel-bundle": "1.5.*",
+        "sylius/channel-bundle": "1.6.*",
         "liip/imagine-bundle": "^2.1",
         "oneup/uploader-bundle": "^2.1",
         "trikoder/oauth2-bundle": "^2.0.1",

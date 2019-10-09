@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3631f766f153bd855b67dc5da0b7bd9b",
+    "content-hash": "c6d7e91359bd7b8fe48c82b73587b475",
     "packages": [
         {
             "name": "api-platform/core",
@@ -10079,23 +10079,23 @@
         },
         {
             "name": "sylius/channel",
-            "version": "v1.5.4",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Channel.git",
-                "reference": "1ba97bcbda9616c8d705fe0957b9d61a8cc41767"
+                "reference": "acb02f9951bf7cc5d34ce59eea00af6b904e1c49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Channel/zipball/1ba97bcbda9616c8d705fe0957b9d61a8cc41767",
-                "reference": "1ba97bcbda9616c8d705fe0957b9d61a8cc41767",
+                "url": "https://api.github.com/repos/Sylius/Channel/zipball/acb02f9951bf7cc5d34ce59eea00af6b904e1c49",
+                "reference": "acb02f9951bf7cc5d34ce59eea00af6b904e1c49",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2",
                 "sylius/resource": "^1.2",
-                "symfony/form": "^3.4|^4.1.1",
-                "symfony/http-foundation": "^3.4|^4.1.1",
+                "symfony/form": "^3.4|^4.3",
+                "symfony/http-foundation": "^3.4|^4.3",
                 "zendframework/zend-stdlib": "^3.1"
             },
             "require-dev": {
@@ -10105,7 +10105,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -10141,27 +10141,27 @@
                 "stores",
                 "sylius"
             ],
-            "time": "2019-02-08T13:20:09+00:00"
+            "time": "2019-06-25T08:09:35+00:00"
         },
         {
             "name": "sylius/channel-bundle",
-            "version": "v1.5.4",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusChannelBundle.git",
-                "reference": "a17b1a6877fb16010dc0f2891a2c3d66458abe33"
+                "reference": "db2e322d127e765bef758ddcea1c3c702dcfb29e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/a17b1a6877fb16010dc0f2891a2c3d66458abe33",
-                "reference": "a17b1a6877fb16010dc0f2891a2c3d66458abe33",
+                "url": "https://api.github.com/repos/Sylius/SyliusChannelBundle/zipball/db2e322d127e765bef758ddcea1c3c702dcfb29e",
+                "reference": "db2e322d127e765bef758ddcea1c3c702dcfb29e",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2",
                 "sylius/channel": "^1.2",
                 "sylius/resource-bundle": "^1.2",
-                "symfony/framework-bundle": "^3.4|^4.1.1"
+                "symfony/framework-bundle": "^3.4|^4.3"
             },
             "require-dev": {
                 "doctrine/orm": "^2.5",
@@ -10169,15 +10169,15 @@
                 "phpspec/phpspec": "^5.0",
                 "phpunit/phpunit": "^7.0",
                 "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-                "symfony/browser-kit": "^3.4|^4.1.1",
-                "symfony/dependency-injection": "^3.4|^4.1.1",
-                "symfony/form": "^3.4|^4.1.1",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/dependency-injection": "^3.4|^4.3",
+                "symfony/form": "^3.4|^4.3",
                 "twig/twig": "^2.0"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -10211,7 +10211,7 @@
                 "currencies",
                 "currency"
             ],
-            "time": "2019-06-20T09:27:36+00:00"
+            "time": "2019-06-25T08:09:35+00:00"
         },
         {
             "name": "sylius/currency",
@@ -11239,16 +11239,16 @@
         },
         {
             "name": "sylius/resource-bundle",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusResourceBundle.git",
-                "reference": "1eb55aa25d96e140989464c012f6e1c954f5d223"
+                "reference": "862fbfea9e310646232c97d907b04df9d99b42d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/1eb55aa25d96e140989464c012f6e1c954f5d223",
-                "reference": "1eb55aa25d96e140989464c012f6e1c954f5d223",
+                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/862fbfea9e310646232c97d907b04df9d99b42d4",
+                "reference": "862fbfea9e310646232c97d907b04df9d99b42d4",
                 "shasum": ""
             },
             "require": {
@@ -11259,15 +11259,15 @@
                 "stof/doctrine-extensions-bundle": "^1.2",
                 "sylius/registry": "^1.2",
                 "sylius/resource": "^1.2",
-                "symfony/config": "^3.4|^4.1.1",
-                "symfony/expression-language": "^3.4|^4.1.1",
-                "symfony/form": "^3.4|^4.1.1",
-                "symfony/framework-bundle": "^3.4|^4.1.1",
-                "symfony/security-csrf": "^3.4|^4.1.1",
-                "symfony/templating": "^3.4|^4.1.1",
-                "symfony/twig-bundle": "^3.4|^4.1.1",
-                "symfony/validator": "^3.4|^4.1.1",
-                "symfony/yaml": "^3.4|^4.1.1",
+                "symfony/config": "^3.4|^4.2",
+                "symfony/expression-language": "^3.4|^4.2",
+                "symfony/form": "^3.4|^4.2",
+                "symfony/framework-bundle": "^3.4|^4.2",
+                "symfony/security-csrf": "^3.4|^4.2",
+                "symfony/templating": "^3.4|^4.2",
+                "symfony/twig-bundle": "^3.4|^4.2",
+                "symfony/validator": "^3.4|^4.2",
+                "symfony/yaml": "^3.4|^4.2",
                 "white-october/pagerfanta-bundle": "^1.0",
                 "willdurand/hateoas-bundle": "^1.2",
                 "winzou/state-machine-bundle": "^0.3"
@@ -11284,18 +11284,20 @@
             "require-dev": {
                 "akeneo/phpspec-skip-example-extension": "^4.0",
                 "doctrine/orm": "^2.5",
+                "gedmo/doctrine-extensions": "^2.4",
                 "lakion/api-test-case": "^3.1.0",
                 "matthiasnoback/symfony-dependency-injection-test": "^3.0",
                 "phpspec/phpspec": "^5.0",
+                "phpstan/phpstan": "^0.11",
                 "phpstan/phpstan-phpunit": "^0.11",
-                "phpstan/phpstan-shim": "^0.11",
                 "phpstan/phpstan-webmozart-assert": "^0.11",
                 "phpunit/phpunit": "^7.0",
                 "sylius-labs/coding-standard": "^3.0",
                 "sylius/grid-bundle": "^1.2",
                 "sylius/locale": "^1.2",
-                "symfony/dependency-injection": "^3.4|^4.1.1",
-                "twig/twig": "^2.0"
+                "symfony/dependency-injection": "^3.4|^4.2",
+                "twig/twig": "^2.0",
+                "vimeo/psalm": "^3.5"
             },
             "suggest": {
                 "doctrine/orm": "^2.5",
@@ -11304,7 +11306,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -11319,16 +11321,16 @@
             ],
             "authors": [
                 {
-                    "name": "Community contributions",
-                    "homepage": "http://github.com/Sylius/Sylius/contributors"
-                },
-                {
                     "name": "Paweł Jędrzejewski",
                     "homepage": "http://pjedrzejewski.com"
                 },
                 {
                     "name": "Sylius project",
                     "homepage": "http://sylius.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "http://github.com/Sylius/Sylius/contributors"
                 }
             ],
             "description": "Resource component for Sylius.",
@@ -11339,7 +11341,7 @@
                 "storage",
                 "sylius"
             ],
-            "time": "2019-05-07T09:20:14+00:00"
+            "time": "2019-10-07T11:29:12+00:00"
         },
         {
             "name": "sylius/taxation",
