@@ -152,26 +152,30 @@
         },
         {
             "name": "azuyalabs/yasumi",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azuyalabs/yasumi.git",
-                "reference": "5a086db23204e8ec45d874839ad9b1bb783dcbb8"
+                "reference": "87cde7fd22e3e6e3ace9830b145b6a77338757e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/5a086db23204e8ec45d874839ad9b1bb783dcbb8",
-                "reference": "5a086db23204e8ec45d874839ad9b1bb783dcbb8",
+                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/87cde7fd22e3e6e3ace9830b145b6a77338757e6",
+                "reference": "87cde7fd22e3e6e3ace9830b145b6a77338757e6",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "php": ">=7.1"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.14",
                 "fzaninotto/faker": "~1.8",
                 "mikey179/vfsstream": "~1.6",
-                "phpunit/phpunit": "~7.5"
+                "phpunit/phpunit": "~8.4"
+            },
+            "suggest": {
+                "ext-calendar": "For calculating the date of Easter"
             },
             "type": "library",
             "autoload": {
@@ -201,7 +205,7 @@
                 "national",
                 "time"
             ],
-            "time": "2019-03-29T03:04:45+00:00"
+            "time": "2019-10-06T03:09:18+00:00"
         },
         {
             "name": "beberlei/assert",
