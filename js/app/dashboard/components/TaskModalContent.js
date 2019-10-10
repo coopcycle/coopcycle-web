@@ -248,8 +248,8 @@ class TaskModalContent extends React.Component {
       address: {
         streetAddress: ''
       },
-      after: moment().add(1, 'hours').format(),
-      before: moment().add(2, 'hours').format(),
+      after: moment(this.props.date).add(1, 'hours').format(),
+      before: moment(this.props.date).add(2, 'hours').format(),
       comments: '',
       tags: [],
       assignedTo: null
@@ -464,7 +464,8 @@ function mapStateToProps (state) {
     tags: state.tags,
     completeTaskErrorMessage: state.completeTaskErrorMessage,
     country,
-    phoneNumberExample: phoneNumber.formatNational()
+    phoneNumberExample: phoneNumber.formatNational(),
+    date: state.date,
   }
 }
 
