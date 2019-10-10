@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SoftDeletedSubscriber implements EventSubscriberInterface
@@ -28,7 +28,7 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function enableSoftDeleted(GetResponseEvent $event)
+    public function enableSoftDeleted(RequestEvent $event)
     {
         $request = $event->getRequest();
 

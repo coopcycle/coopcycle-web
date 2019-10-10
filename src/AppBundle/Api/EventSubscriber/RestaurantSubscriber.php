@@ -7,7 +7,7 @@ use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Security\EventListener\DenyAccessListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -22,8 +22,8 @@ final class RestaurantSubscriber implements EventSubscriberInterface
 
     public function __construct(
         ItemDataProviderInterface $itemDataProvider,
-        DenyAccessListener $denyAccessListener)
-    {
+        DenyAccessListener $denyAccessListener
+    ) {
         $this->itemDataProvider = $itemDataProvider;
         $this->denyAccessListener = $denyAccessListener;
     }
@@ -35,7 +35,7 @@ final class RestaurantSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function accessControl(GetResponseEvent $event)
+    public function accessControl(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -51,7 +51,7 @@ final class RestaurantSubscriber implements EventSubscriberInterface
         $newRequest->attributes->set('_api_resource_class', Restaurant::class);
         $newRequest->attributes->set('_api_subresource_operation_name', 'orders_get_subresource');
 
-        $newEvent = new GetResponseEvent($event->getKernel(), $newRequest, $event->getRequestType());
+        $newEvent = new RequestEvent($event->getKernel(), $newRequest, $event->getRequestType());
 
         $this->denyAccessListener->onKernelRequest($newEvent);
     }

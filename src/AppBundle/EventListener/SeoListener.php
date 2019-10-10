@@ -4,7 +4,7 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Service\SettingsManager;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -17,8 +17,8 @@ class SeoListener
     public function __construct(
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        SeoPageInterface $seoPage)
-    {
+        SeoPageInterface $seoPage
+    ) {
         $this->translator = $translator;
         $this->settingsManager = $settingsManager;
         $this->seoPage = $seoPage;
@@ -27,7 +27,7 @@ class SeoListener
     /**
      * Sets defaults that can be overriden by controllers.
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -52,13 +52,11 @@ class SeoListener
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:type', 'website')
             ->addMeta('property', 'og:image', 'https://coopcycle.org/images/homepage-banner.jpg')
-            ->addMeta('property', 'og:url', $request->getUri())
-            ;
+            ->addMeta('property', 'og:url', $request->getUri());
 
         // @see http://ogp.me/#optional
         $this->seoPage
             ->addMeta('property', 'og:locale', $locale)
-            ->addMeta('property', 'og:site_name', 'CoopCycle')
-            ;
+            ->addMeta('property', 'og:site_name', 'CoopCycle');
     }
 }

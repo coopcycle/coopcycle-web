@@ -7,7 +7,7 @@ use Predis\Client as Redis;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -18,8 +18,8 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
 
     public function __construct(
         Redis $redis,
-        TranslatorInterface $translator)
-    {
+        TranslatorInterface $translator
+    ) {
         $this->redis = $redis;
         $this->translator = $translator;
     }
@@ -31,7 +31,7 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function checkMaintenance(GetResponseEvent $event)
+    public function checkMaintenance(RequestEvent $event)
     {
         if (!$this->isApiRequest($event->getRequest())) {
             return;

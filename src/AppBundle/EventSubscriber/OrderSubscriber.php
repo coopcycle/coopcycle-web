@@ -10,7 +10,7 @@ use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -24,8 +24,8 @@ final class OrderSubscriber implements EventSubscriberInterface
         ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         EventBus $eventBus,
-        LoggerInterface $logger)
-    {
+        LoggerInterface $logger
+    ) {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->eventBus = $eventBus;
@@ -56,7 +56,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         return $user;
     }
 
-    public function preValidate(GetResponseForControllerResultEvent $event)
+    public function preValidate(ViewEvent $event)
     {
         $result = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
@@ -80,7 +80,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         $event->setControllerResult($order);
     }
 
-    public function postWrite(GetResponseForControllerResultEvent $event)
+    public function postWrite(ViewEvent $event)
     {
         $result = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
