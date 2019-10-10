@@ -165,7 +165,7 @@ class TaskSpreadsheetParser
         $mimeType = mime_content_type($filename);
 
         if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return ReaderEntityFactory::createCSVReader();
+            return $this->createCsvReader($filename);
         }
 
         if (in_array($mimeType, self::MIME_TYPE_ODS)) {
@@ -177,6 +177,34 @@ class TaskSpreadsheetParser
         }
 
         throw new \Exception('Unsupported file type');
+    }
+
+    private function createCsvReader($filename)
+    {
+        $csvReader = ReaderEntityFactory::createCSVReader();
+        $csvReader->setFieldDelimiter($this->getCsvDelimiter($filename));
+
+        return $csvReader;
+    }
+
+    private function getCsvDelimiter($filename)
+    {
+        $delimiters = array(
+            ';' => 0,
+            ',' => 0,
+            "\t" => 0,
+            '|' => 0,
+        );
+
+        $handle = fopen($filename, "r");
+        $firstLine = fgets($handle);
+        fclose($handle);
+
+        foreach ($delimiters as $delimiter => &$count) {
+            $count = count(str_getcsv($firstLine, $delimiter));
+        }
+
+        return array_search(max($delimiters), $delimiters);
     }
 
     private function validateHeader(array $header)

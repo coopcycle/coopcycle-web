@@ -60,6 +60,16 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->assertCount(5, $tasks);
     }
 
+    public function testCsvSemicolon()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.semicolon.csv');
+        $tasks = $this->parser->parse($filename);
+
+        $this->assertCount(5, $tasks);
+    }
+
     public function testCsvWithGeocoderError()
     {
         $this->expectException(\Exception::class);
