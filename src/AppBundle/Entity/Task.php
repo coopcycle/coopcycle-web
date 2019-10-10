@@ -426,7 +426,7 @@ class Task implements TaggableInterface
 
     public function addImage($image)
     {
-        $this->images->add($images);
+        $this->images->add($image);
 
         return $this;
     }
@@ -448,5 +448,12 @@ class Task implements TaggableInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $dateTime)
+    {
+        $this->createdAt = $dateTime;
+
+        return $this;
     }
 }

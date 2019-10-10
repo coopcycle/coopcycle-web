@@ -14,6 +14,8 @@ use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
+use Cocur\Slugify\SlugifyInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,6 +29,10 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
 {
+
+    /** @var SlugifyInterface */
+    protected $slugify;
+
     protected function redirectToDashboard(Request $request)
     {
         $nav = $request->query->getBoolean('nav', true);
@@ -302,6 +308,7 @@ trait AdminDashboardTrait
     public function downloadTaskImage($taskId, $imageId, StorageInterface $storage)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
+        $task = $this->getDoctrine()->getRepository(Task::class)->find($taskId);
 
         if (!$image) {
             throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));
@@ -320,9 +327,37 @@ trait AdminDashboardTrait
 
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            basename($imagePath)
+            $this->getImageDownloadFileName($task, $image)
         );
 
         return $response;
+    }
+
+    protected function getImageDownloadFileName(Task $task, TaskImage $taskImage)
+    {
+        $fileExtension = pathinfo($taskImage->getImageName(), PATHINFO_EXTENSION);
+
+        /** @var \AppBundle\Entity\Address $address */
+        $address = $task->getAddress();
+        $addressName = $address && $address->getName() ? $this->slugify->slugify($address->getName()) : "";
+
+        $fileName = sprintf(
+            "%d_%s_%s.%s",
+            $taskImage->getId(),
+            $addressName,
+            $task->getCreatedAt()->format('Y-m-d'),
+            $fileExtension
+        );
+
+        return $fileName;
+    }
+
+    /**
+     * @required
+     * @param SlugifyInterface $slugify
+     */
+    public function setSlugify(SlugifyInterface $slugify)
+    {
+        $this->slugify = $slugify;
     }
 }
