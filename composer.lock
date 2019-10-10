@@ -3297,12 +3297,12 @@
             "version": "v0.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/gesdinet/JWTRefreshTokenBundle.git",
+                "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
                 "reference": "ad475378b278719bebe4062c50b6135c5bcdd4e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gesdinet/JWTRefreshTokenBundle/zipball/ad475378b278719bebe4062c50b6135c5bcdd4e7",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/ad475378b278719bebe4062c50b6135c5bcdd4e7",
                 "reference": "ad475378b278719bebe4062c50b6135c5bcdd4e7",
                 "shasum": ""
             },
@@ -11356,16 +11356,16 @@
         },
         {
             "name": "sylius/taxation",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxation.git",
-                "reference": "d7b2c0290e53b5749d215c3f3e814d2bba948f73"
+                "reference": "012e9452bf3db60dfd8de11884aea05ab7a36cf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Taxation/zipball/d7b2c0290e53b5749d215c3f3e814d2bba948f73",
-                "reference": "d7b2c0290e53b5749d215c3f3e814d2bba948f73",
+                "url": "https://api.github.com/repos/Sylius/Taxation/zipball/012e9452bf3db60dfd8de11884aea05ab7a36cf2",
+                "reference": "012e9452bf3db60dfd8de11884aea05ab7a36cf2",
                 "shasum": ""
             },
             "require": {
@@ -11416,11 +11416,11 @@
                 "taxes",
                 "vat"
             ],
-            "time": "2019-05-07T12:44:46+00:00"
+            "time": "2019-10-07T14:51:38+00:00"
         },
         {
             "name": "sylius/taxation-bundle",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxationBundle.git",
