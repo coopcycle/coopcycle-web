@@ -36,6 +36,14 @@ const itemColor = event => {
   }
 }
 
+const isTaskTypeEditable = task => {
+  if (task && (!!task.previous || !!task.next)) {
+    return false
+  }
+
+  return true
+}
+
 class TaskModalContent extends React.Component {
 
   constructor (props) {
@@ -290,7 +298,7 @@ class TaskModalContent extends React.Component {
               <div className="modal-body">
                 <div className="form-group text-center">
                   <Radio.Group name="type" defaultValue={ values.type } onChange={ (e) => setFieldValue('type', e.target.value) } size="large"
-                    disabled={ values.hasOwnProperty('@id') }>
+                    disabled={ this.props.isTaskTypeEditable }>
                     <Radio.Button value="PICKUP">Pickup</Radio.Button>
                     <Radio.Button value="DROPOFF">Dropoff</Radio.Button>
                   </Radio.Group>
@@ -466,6 +474,7 @@ function mapStateToProps (state) {
     country,
     phoneNumberExample: phoneNumber.formatNational(),
     date: state.date,
+    isTakTypeEditable: isTaskTypeEditable(state.currentTask)
   }
 }
 

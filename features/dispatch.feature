@@ -112,7 +112,7 @@ Feature: Dispatch
         "@id":"/api/tasks/4",
         "@type":"Task",
         "id":4,
-        "type":"DROPOFF",
+        "type":"PICKUP",
         "status":"TODO",
         "address":@...@,
         "doneAfter":"@string@.isDateTime()",

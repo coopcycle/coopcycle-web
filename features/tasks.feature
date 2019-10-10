@@ -719,12 +719,12 @@ Feature: Tasks
         ],
         "hydra:totalItems":1,
         "hydra:view":{
-          "@id":"\/api\/tasks?date=2018-12-01\u0026assigned=no",
+          "@id":"/api/tasks?date=2018-12-01\u0026assigned=no",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"\/api\/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
         }
@@ -769,3 +769,52 @@ Feature: Tasks
         "tags":@array@
       }
       """
+
+  Scenario: Cannot edit task type
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/5" with body:
+      """
+      {
+        "type": "PICKUP"
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"type",
+            "message":@string@
+          }
+        ]
+      }
+      """
+
+  Scenario: Can edit task type
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/1" with body:
+      """
+      {
+        "type": "PICKUP"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON

@@ -67,12 +67,15 @@ AppBundle\Entity\Task:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:30:00'))>
+    type: PICKUP
+    next: "@task_5"
     __calls:
       - assignTo: [ "@bob" ]
   task_5:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-12-01 13:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 13:30:00'))>
+    previous: "@task_4"
     __calls:
       - assignTo: [ "@bob" ]
   task_6:

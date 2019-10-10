@@ -16,6 +16,7 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Validator\Constraints\Task as AssertTask;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -94,6 +95,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   }
  * )
+ * @AssertTask()
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
@@ -116,7 +118,7 @@ class Task implements TaggableInterface
     private $id;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "task_edit"})
      */
     private $type = self::TYPE_DROPOFF;
 
