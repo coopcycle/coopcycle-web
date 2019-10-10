@@ -38,7 +38,7 @@ class ImageDownloadTest extends TestCase
 
         $this->assertEquals(
             sprintf('122_test-name_%s.png', $dateFormatted),
-            $method->invoke($adminController, $task, $taskImage)
+            $method->invoke($adminController, $taskImage)
         );
     }
 }

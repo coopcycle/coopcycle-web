@@ -308,7 +308,6 @@ trait AdminDashboardTrait
     public function downloadTaskImage($taskId, $imageId, StorageInterface $storage)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
-        $task = $this->getDoctrine()->getRepository(Task::class)->find($taskId);
 
         if (!$image) {
             throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));
@@ -327,14 +326,15 @@ trait AdminDashboardTrait
 
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $this->getImageDownloadFileName($task, $image)
+            $this->getImageDownloadFileName($image)
         );
 
         return $response;
     }
 
-    protected function getImageDownloadFileName(Task $task, TaskImage $taskImage)
+    protected function getImageDownloadFileName(TaskImage $taskImage)
     {
+        $task = $taskImage->getTask();
         $fileExtension = pathinfo($taskImage->getImageName(), PATHINFO_EXTENSION);
 
         /** @var \AppBundle\Entity\Address $address */
