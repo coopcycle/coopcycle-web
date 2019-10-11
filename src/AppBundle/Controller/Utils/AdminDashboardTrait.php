@@ -14,8 +14,8 @@ use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
+use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -29,10 +29,6 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
 {
-
-    /** @var SlugifyInterface */
-    protected $slugify;
-
     protected function redirectToDashboard(Request $request)
     {
         $nav = $request->query->getBoolean('nav', true);
@@ -305,7 +301,7 @@ trait AdminDashboardTrait
     /**
      * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
      */
-    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage)
+    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage, SlugifyInterface $slugify)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
 
@@ -326,38 +322,16 @@ trait AdminDashboardTrait
 
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $this->getImageDownloadFileName($image)
+            $this->getImageDownloadFileName($image, $slugify)
         );
 
         return $response;
     }
 
-    protected function getImageDownloadFileName(TaskImage $taskImage)
+    protected function getImageDownloadFileName(TaskImage $taskImage, SlugifyInterface $slugify)
     {
-        $task = $taskImage->getTask();
-        $fileExtension = pathinfo($taskImage->getImageName(), PATHINFO_EXTENSION);
+        $taskImageNamer = new TaskImageNamer();
 
-        /** @var \AppBundle\Entity\Address $address */
-        $address = $task->getAddress();
-        $addressName = $address && $address->getName() ? $this->slugify->slugify($address->getName()) : "";
-
-        $fileName = sprintf(
-            "%d_%s_%s.%s",
-            $taskImage->getId(),
-            $addressName,
-            $task->getCreatedAt()->format('Y-m-d'),
-            $fileExtension
-        );
-
-        return $fileName;
-    }
-
-    /**
-     * @required
-     * @param SlugifyInterface $slugify
-     */
-    public function setSlugify(SlugifyInterface $slugify)
-    {
-        $this->slugify = $slugify;
+        return $taskImageNamer->getImageDownloadFileName($taskImage, $slugify);
     }
 }
