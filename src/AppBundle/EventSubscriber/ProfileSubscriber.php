@@ -62,18 +62,21 @@ class ProfileSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (0 === count($user->getStores()) && 0 === count($user->getRestaurants())) {
+        $stores = $user->getStores();
+        $restaurants = $user->getRestaurants();
+
+        if (0 === count($stores) && 0 === count($restaurants)) {
 
             return;
         }
 
-        if ($user->hasRole('ROLE_STORE')) {
-            $request->attributes->set('_store', $this->findResourceInSession($request, $user->getStores(), '_store'));
+        if (count($stores) > 0 && $user->hasRole('ROLE_STORE')) {
+            $request->attributes->set('_store', $this->findResourceInSession($request, $stores, '_store'));
         }
 
 
-        if ($user->hasRole('ROLE_RESTAURANT')) {
-            $request->attributes->set('_restaurant', $this->findResourceInSession($request, $user->getRestaurants(), '_restaurant'));
+        if (count($restaurants) > 0 && $user->hasRole('ROLE_RESTAURANT')) {
+            $request->attributes->set('_restaurant', $this->findResourceInSession($request, $restaurants, '_restaurant'));
         }
     }
 
