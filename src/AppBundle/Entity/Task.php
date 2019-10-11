@@ -428,7 +428,7 @@ class Task implements TaggableInterface
 
     public function addImage($image)
     {
-        $this->images->add($images);
+        $this->images->add($image);
 
         return $this;
     }

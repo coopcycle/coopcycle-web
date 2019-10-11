@@ -14,6 +14,8 @@ use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TaskManager;
+use AppBundle\Utils\TaskImageNamer;
+use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -299,7 +301,7 @@ trait AdminDashboardTrait
     /**
      * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
      */
-    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage)
+    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage, SlugifyInterface $slugify)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
 
@@ -320,9 +322,16 @@ trait AdminDashboardTrait
 
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            basename($imagePath)
+            $this->getImageDownloadFileName($image, $slugify)
         );
 
         return $response;
+    }
+
+    protected function getImageDownloadFileName(TaskImage $taskImage, SlugifyInterface $slugify)
+    {
+        $taskImageNamer = new TaskImageNamer();
+
+        return $taskImageNamer->getImageDownloadFileName($taskImage, $slugify);
     }
 }
