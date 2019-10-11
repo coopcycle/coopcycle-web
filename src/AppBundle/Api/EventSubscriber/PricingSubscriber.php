@@ -17,7 +17,7 @@ use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -40,8 +40,8 @@ final class PricingSubscriber implements EventSubscriberInterface
         Geocoder $geocoder,
         TokenStorageInterface $tokenStorage,
         DoctrineRegistry $doctrine,
-        AccessTokenManagerInterface $accessTokenManager)
-    {
+        AccessTokenManagerInterface $accessTokenManager
+    ) {
         $this->deliveryManager = $deliveryManager;
         $this->routing = $routing;
         $this->geocoder = $geocoder;
@@ -57,7 +57,7 @@ final class PricingSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function calculatePrice(GetResponseForControllerResultEvent $event)
+    public function calculatePrice(ViewEvent $event)
     {
         $request = $event->getRequest();
 
@@ -81,7 +81,7 @@ final class PricingSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function handleCalculatePriceLegacy(GetResponseForControllerResultEvent $event)
+    private function handleCalculatePriceLegacy(ViewEvent $event)
     {
         $request = $event->getRequest();
 
@@ -138,7 +138,7 @@ final class PricingSubscriber implements EventSubscriberInterface
         $event->setResponse(new JsonResponse($price));
     }
 
-    private function handleCalculatePrice(GetResponseForControllerResultEvent $event)
+    private function handleCalculatePrice(ViewEvent $event)
     {
         $result = $event->getControllerResult();
 

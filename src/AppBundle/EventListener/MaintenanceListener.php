@@ -6,7 +6,7 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Predis\Client as Redis;
 use Symfony\Bridge\Twig\TwigEngine;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -29,8 +29,8 @@ class MaintenanceListener
         CrawlerDetect $crawlerDetect,
         Redis $redis,
         TranslatorInterface $translator,
-        TwigEngine $templating)
-    {
+        TwigEngine $templating
+    ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
         $this->crawlerDetect = $crawlerDetect;
@@ -39,7 +39,7 @@ class MaintenanceListener
         $this->templating = $templating;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;

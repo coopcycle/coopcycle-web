@@ -8,7 +8,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Psr\Log\LoggerInterface;
@@ -35,7 +35,7 @@ final class RemotePushTokenSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function createRemotePushToken(GetResponseForControllerResultEvent $event)
+    public function createRemotePushToken(ViewEvent $event)
     {
         $request = $event->getRequest();
 
@@ -58,7 +58,6 @@ final class RemotePushTokenSubscriber implements EventSubscriberInterface
             $remotePushToken->setToken($createRemotePushTokenRequest->token);
 
             $event->setResponse(new JsonResponse(null, 204));
-
         } else {
 
             $remotePushToken = new RemotePushToken();

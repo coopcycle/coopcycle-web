@@ -4,7 +4,7 @@ namespace AppBundle\EventListener;
 
 use Carbon\Carbon;
 use Predis\Client as Redis;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class CarbonListener
 {
@@ -15,14 +15,14 @@ class CarbonListener
         $this->redis = $redis;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
         }
 
         if (!$this->redis->exists('datetime:now')) {
-        	return;
+            return;
         }
 
         $now = $this->redis->get('datetime:now');
