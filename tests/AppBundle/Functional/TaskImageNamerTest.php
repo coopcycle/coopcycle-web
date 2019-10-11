@@ -13,8 +13,7 @@ class TaskImageNamerTest extends TestCase
 {
     public function testGetImageDownloadFileName()
     {
-        $taskImageNamer = new TaskImageNamer();
-        $slugify = new Slugify();
+        $taskImageNamer = new TaskImageNamer(new Slugify());
 
         $date = new \DateTime();
         $dateFormatted = $date->format('Y-m-d');
@@ -37,7 +36,7 @@ class TaskImageNamerTest extends TestCase
         $taskImage->getId()
             ->willReturn(122);
 
-        $taskImageName = $taskImageNamer->getImageDownloadFileName($taskImage->reveal(), $slugify);
+        $taskImageName = $taskImageNamer->getImageDownloadFileName($taskImage->reveal());
 
         $this->assertEquals(
             sprintf('122_test-name_%s.png', $dateFormatted),

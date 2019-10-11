@@ -7,14 +7,24 @@ use Cocur\Slugify\SlugifyInterface;
 
 class TaskImageNamer
 {
-    public function getImageDownloadFileName(TaskImage $taskImage, SlugifyInterface $slugify)
+    /**
+     * @var \Cocur\Slugify\SlugifyInterface
+     */
+    protected $slugify;
+
+    public function __construct(SlugifyInterface $slugify)
+    {
+        $this->slugify = $slugify;
+    }
+
+    public function getImageDownloadFileName(TaskImage $taskImage)
     {
         $task = $taskImage->getTask();
         $fileExtension = pathinfo($taskImage->getImageName(), PATHINFO_EXTENSION);
 
         /** @var \AppBundle\Entity\Address $address */
         $address = $task->getAddress();
-        $addressName = $address && $address->getName() ? $slugify->slugify($address->getName()) : "";
+        $addressName = $address && $address->getName() ? $this->slugify->slugify($address->getName()) : "";
 
         $fileName = sprintf(
             "%d_%s_%s.%s",

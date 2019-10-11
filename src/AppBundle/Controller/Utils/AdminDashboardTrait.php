@@ -330,8 +330,8 @@ trait AdminDashboardTrait
 
     protected function getImageDownloadFileName(TaskImage $taskImage, SlugifyInterface $slugify)
     {
-        $taskImageNamer = new TaskImageNamer();
+        $taskImageNamer = new TaskImageNamer($slugify);
 
-        return $taskImageNamer->getImageDownloadFileName($taskImage, $slugify);
+        return $taskImageNamer->getImageDownloadFileName($taskImage);
     }
 }
