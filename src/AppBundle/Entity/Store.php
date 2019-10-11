@@ -104,6 +104,8 @@ class Store extends LocalBusiness
 
     private $packageSet;
 
+    private $checkExpression;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -351,5 +353,17 @@ class Store extends LocalBusiness
         }
 
         return $delivery;
+    }
+
+    public function setCheckExpression($checkExpression)
+    {
+        $this->checkExpression = $checkExpression;
+
+        return $this;
+    }
+
+    public function getCheckExpression()
+    {
+        return $this->checkExpression;
     }
 }

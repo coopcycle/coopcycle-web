@@ -25,6 +25,8 @@ delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à
 
 delivery.date.restaurantClosed: Le restaurant est fermé à cette date
 
+delivery.check.notValid: Votre demande n'est pas réalisable
+
 time_range.empty: Vous n'avez sélectionné aucune valeur
 time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine
 

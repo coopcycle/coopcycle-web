@@ -821,4 +821,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->oAuthTokens[$name] = $data['access_token'];
     }
+
+    /**
+     * @Given the store with name :storeName has check expression :expression
+     */
+    public function storeHasCheckExpression($storeName, $expression)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $store->setCheckExpression($expression);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
 }
