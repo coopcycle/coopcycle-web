@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "post"={"method"="POST"},
  *     "check"={
  *         "method"="POST",
- *         "path"="/deliveries/check",
+ *         "path"="/deliveries/assert",
  *         "write"=false,
  *         "status"=200,
  *         "validation_groups"={"Default", "delivery_check"}

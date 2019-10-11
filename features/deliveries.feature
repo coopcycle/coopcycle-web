@@ -542,7 +542,7 @@ Feature: Deliveries
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/check" with body:
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/assert" with body:
       """
       {
         "dropoff": {
@@ -581,7 +581,7 @@ Feature: Deliveries
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/check" with body:
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/assert" with body:
       """
       {
         "dropoff": {
