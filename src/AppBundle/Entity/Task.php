@@ -449,11 +449,4 @@ class Task implements TaggableInterface
     {
         return $this->createdAt;
     }
-
-    public function setCreatedAt(\DateTime $dateTime)
-    {
-        $this->createdAt = $dateTime;
-
-        return $this;
-    }
 }
