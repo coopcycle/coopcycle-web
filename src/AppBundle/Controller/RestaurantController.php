@@ -16,11 +16,7 @@ use AppBundle\Entity\RestaurantRepository;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\Order\CartType;
-use AppBundle\Utils\OrderTimeHelperTrait;
-use AppBundle\Utils\OrderTimelineCalculator;
-use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingTimeCalculator;
-use AppBundle\Utils\ShippingDateFilter;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use Carbon\Carbon;
@@ -54,7 +50,6 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 class RestaurantController extends AbstractController
 {
     use UserTrait;
-    use OrderTimeHelperTrait;
 
     const ITEMS_PER_PAGE = 21;
 
@@ -66,7 +61,6 @@ class RestaurantController extends AbstractController
         ObjectManager $orderManager,
         SeoPageInterface $seoPage,
         UploaderHelper $uploaderHelper,
-        ShippingDateFilter $shippingDateFilter,
         ValidatorInterface $validator,
         RepositoryInterface $productRepository,
         RepositoryInterface $orderItemRepository,
@@ -75,13 +69,11 @@ class RestaurantController extends AbstractController
         RepositoryInterface $productOptionValueRepository,
         $orderItemQuantityModifier,
         $orderModifier,
-        PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator)
+        OrderTimeHelper $orderTimeHelper)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
         $this->uploaderHelper = $uploaderHelper;
-        $this->shippingDateFilter = $shippingDateFilter;
         $this->validator = $validator;
         $this->productRepository = $productRepository;
         $this->orderItemRepository = $orderItemRepository;
@@ -90,8 +82,7 @@ class RestaurantController extends AbstractController
         $this->productOptionValueRepository = $productOptionValueRepository;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
-        $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
+        $this->orderTimeHelper = $orderTimeHelper;
     }
 
     private function matchNonExistingOption(ProductInterface $product, array $optionValues)
@@ -109,12 +100,12 @@ class RestaurantController extends AbstractController
             'groups' => ['order']
         ];
 
-        $availabilities = $this->getAvailabilities($cart);
+        $availabilities = $this->orderTimeHelper->getAvailabilities($cart);
 
         return new JsonResponse([
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
             'availabilities' => $availabilities,
-            'times' => $this->getTimeInfo($cart, $availabilities),
+            'times' => $this->orderTimeHelper->getTimeInfo($cart, $availabilities),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
     }
@@ -387,13 +378,13 @@ class RestaurantController extends AbstractController
                 ->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
-        $availabilities = $this->getAvailabilities($cart);
+        $availabilities = $this->orderTimeHelper->getAvailabilities($cart);
 
         return array(
             'restaurant' => $restaurant,
             'structured_data' => $structuredData,
             'availabilities' => $availabilities,
-            'times' => $this->getTimeInfo($cart, $availabilities),
+            'times' => $this->orderTimeHelper->getTimeInfo($cart, $availabilities),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),

@@ -159,7 +159,6 @@ services:
       $orderManager: '@sylius.manager.order'
       $seoPage: '@sonata.seo.page'
       $uploaderHelper: '@vich_uploader.templating.helper.uploader_helper'
-      $shippingDateFilter: '@coopcycle.shipping_date_filter'
       $validator: '@validator'
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'
