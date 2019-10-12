@@ -40,6 +40,13 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"order_create", "address_create"}}
  *     },
+ *     "timing"={
+ *       "method"="POST",
+ *       "path"="/orders/timing",
+ *       "write"=false,
+ *       "status"=200,
+ *       "denormalization_context"={"groups"={"order_create", "address_create"}}
+ *     },
  *     "my_orders"={
  *       "method"="GET",
  *       "path"="/me/orders",

@@ -111,6 +111,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/orders/timing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -115,6 +115,61 @@ Feature: Orders
     }
     """
 
+  Scenario: Calculate order timing
+    Given the current time is "2017-09-02 11:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/orders/timing" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress": {
+          "streetAddress": "190 Rue de Rivoli, Paris",
+          "postalCode": "75001",
+          "addressLocality": "Paris",
+          "geo": {
+            "latitude": 48.863814,
+            "longitude": 2.3329
+          }
+        },
+        "shippedAt": "2017-09-02 12:30:00",
+        "items": [{
+          "product": "PIZZA",
+          "quantity": 1,
+          "options": [
+            "PIZZA_TOPPING_PEPPERONI"
+          ]
+        }, {
+          "product": "HAMBURGER",
+          "quantity": 2
+        }]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "preparation":"15 minutes",
+      "shipping":"1 minutes",
+      "asap":"2017-09-02T12:00:00+02:00",
+      "today":true,
+      "fast":false,
+      "diff":"60 - 65",
+      "choices":@array@
+    }
+    """
+
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
