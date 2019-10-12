@@ -16,6 +16,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -30,6 +31,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function __construct(
         ItemNormalizer $normalizer,
+        ObjectNormalizer $objectNormalizer,
         ChannelContextInterface $channelContext,
         ProductRepositoryInterface $productRepository,
         RepositoryInterface $productOptionValueRepository,
@@ -46,6 +48,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
+        $this->objectNormalizer = $objectNormalizer;
     }
 
     public function normalizeAdjustments(Order $order)
@@ -75,7 +78,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data = $this->normalizer->normalize($object, $format, $context);
+        if (null === $object->getId()) {
+            $data = $this->objectNormalizer->normalize($object, $format, $context);
+        } else {
+            $data = $this->normalizer->normalize($object, $format, $context);
+        }
 
         if (isset($data['restaurant']) && is_array($data['restaurant'])) {
             unset($data['restaurant']['availabilities']);
@@ -84,6 +91,57 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $data['adjustments'] = $this->normalizeAdjustments($object);
+
+        if (isset($context['is_web']) && $context['is_web']) {
+
+            // Make sure the array is zero-indexed
+            $data['items'] = array_values($data['items']);
+
+            $restaurant = $object->getRestaurant();
+            if (null === $restaurant) {
+                $data['restaurant'] = null;
+            } else {
+                $data['restaurant'] = [
+                    'id' => $restaurant->getId(),
+                    'address' => [
+                        'latlng' => [
+                            $restaurant->getAddress()->getGeo()->getLatitude(),
+                            $restaurant->getAddress()->getGeo()->getLongitude(),
+                        ]
+                    ]
+                ];
+            }
+
+            $shippingAddress = $object->getShippingAddress();
+
+            if (null !== $shippingAddress && null !== $shippingAddress->getGeo()) {
+                $data['shippingAddress'] = [
+                    'latlng' => [
+                        $shippingAddress->getGeo()->getLatitude(),
+                        $shippingAddress->getGeo()->getLongitude(),
+                    ],
+                    'streetAddress' => $shippingAddress->getStreetAddress()
+                ];
+            } else {
+                $data['shippingAddress'] = null;
+            }
+
+            $shippedAt = $object->getShippedAt();
+            if (null === $shippedAt) {
+                $data['shippedAt'] = $data['date'] = null;
+            } else {
+                $data['shippedAt'] = $data['date'] = $shippedAt->format(\DateTime::ATOM);
+            }
+
+            $customer = $object->getCustomer();
+            if (null === $customer) {
+                $data['customer'] = null;
+            } else {
+                $data['customer'] = [
+                    'username' => $customer->getUsername()
+                ];
+            }
+        }
 
         return $data;
     }

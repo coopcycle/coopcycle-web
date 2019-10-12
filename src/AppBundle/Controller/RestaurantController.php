@@ -97,11 +97,12 @@ class RestaurantController extends AbstractController
     private function jsonResponse(OrderInterface $cart, array $errors)
     {
         $serializerContext = [
+            'is_web' => true,
             'groups' => ['order']
         ];
 
         return new JsonResponse([
-            'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
+            'cart'   => $this->get('serializer')->normalize($cart, 'jsonld', $serializerContext),
             'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,

@@ -32,12 +32,6 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.normalizer.cart:
-    class: AppBundle\Serializer\CartNormalizer
-    arguments:
-      - "@serializer.normalizer.object"
-    tags: [ { name: serializer.normalizer, priority: 128 } ]
-
   coopcycle.api.normalizer.closing_rule:
     class: AppBundle\Serializer\ClosingRuleNormalizer
     arguments:
@@ -48,6 +42,7 @@ services:
     class: AppBundle\Serializer\JsonLd\OrderNormalizer
     arguments:
       - "@api_platform.jsonld.normalizer.item"
+      - "@serializer.normalizer.object"
       - "@sylius.context.channel"
       - "@sylius.repository.product"
       - "@sylius.repository.product_option_value"

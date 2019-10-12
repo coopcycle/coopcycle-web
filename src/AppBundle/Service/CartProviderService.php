@@ -25,7 +25,8 @@ class CartProviderService
 
     public function normalize(OrderInterface $cart)
     {
-        return $this->serializer->normalize($cart, 'json', [
+        return $this->serializer->normalize($cart, 'jsonld', [
+            'is_web' => true,
             'groups' => ['order']
         ]);
     }

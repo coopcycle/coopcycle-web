@@ -202,7 +202,7 @@ class ProfileController extends Controller
                 'layout' => '@App/profile.html.twig',
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
-                'order_normalized' => $this->get('serializer')->normalize($order, 'json', ['groups' => ['order']]),
+                'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', ['groups' => ['order'], 'is_web' => true]),
                 'breadcrumb_path' => 'profile_orders',
                 'reset' => $reset,
                 'track_goal' => $trackGoal,
