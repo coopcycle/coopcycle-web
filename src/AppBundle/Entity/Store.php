@@ -265,6 +265,8 @@ class Store extends LocalBusiness
 
     public function addDelivery(Delivery $delivery)
     {
+        $delivery->setStore($this);
+
         $this->deliveries->add($delivery);
     }
 
