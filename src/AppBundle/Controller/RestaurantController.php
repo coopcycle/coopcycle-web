@@ -100,12 +100,10 @@ class RestaurantController extends AbstractController
             'groups' => ['order']
         ];
 
-        $availabilities = $this->orderTimeHelper->getAvailabilities($cart);
-
         return new JsonResponse([
             'cart'   => $this->get('serializer')->normalize($cart, 'json', $serializerContext),
-            'availabilities' => $availabilities,
-            'times' => $this->orderTimeHelper->getTimeInfo($cart, $availabilities),
+            'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
+            'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,
         ], count($errors) > 0 ? 400 : 200);
     }
@@ -378,13 +376,11 @@ class RestaurantController extends AbstractController
                 ->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]);
         }
 
-        $availabilities = $this->orderTimeHelper->getAvailabilities($cart);
-
         return array(
             'restaurant' => $restaurant,
             'structured_data' => $structuredData,
-            'availabilities' => $availabilities,
-            'times' => $this->orderTimeHelper->getTimeInfo($cart, $availabilities),
+            'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
+            'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'delay' => $delay,
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),

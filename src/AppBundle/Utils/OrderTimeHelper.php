@@ -13,6 +13,7 @@ class OrderTimeHelper
     private $shippingDateFilter;
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;
+    private $choicesCache = [];
 
     public function __construct(
         ShippingDateFilter $shippingDateFilter,
@@ -26,21 +27,28 @@ class OrderTimeHelper
 
     public function getAvailabilities(OrderInterface $cart)
     {
-        $restaurant = $cart->getRestaurant();
+        $hash = spl_object_hash($cart);
 
-        $availabilities = $restaurant->getAvailabilities();
+        if (!isset($this->choicesCache[$hash])) {
 
-        $availabilities = array_filter($availabilities, function ($date) use ($cart) {
-            $shippingDate = new \DateTime($date);
+            $restaurant = $cart->getRestaurant();
 
-            return $this->shippingDateFilter->accept($cart, $shippingDate);
-        });
+            $availabilities = $restaurant->getAvailabilities();
 
-        // Make sure to return a zero-indexed array
-        return array_values($availabilities);
+            $availabilities = array_filter($availabilities, function ($date) use ($cart) {
+                $shippingDate = new \DateTime($date);
+
+                return $this->shippingDateFilter->accept($cart, $shippingDate);
+            });
+
+            // Make sure to return a zero-indexed array
+            $this->choicesCache[$hash] = array_values($availabilities);
+        }
+
+        return $this->choicesCache[$hash];
     }
 
-    public function getTimeInfo(OrderInterface $cart, array $availabilities)
+    public function getTimeInfo(OrderInterface $cart)
     {
         $preparationTime = $this->preparationTimeCalculator
             ->createForRestaurant($cart->getRestaurant())
@@ -48,7 +56,7 @@ class OrderTimeHelper
 
         $shippingTime = $this->shippingTimeCalculator->calculate($cart);
 
-        $asap = $this->getAsap($availabilities);
+        $asap = $this->getAsap($cart);
 
         if (null !== $cart->getShippedAt()) {
             $today = $cart->getShippedAt()->format('Y-m-d') === Carbon::now()->format('Y-m-d');
@@ -78,9 +86,11 @@ class OrderTimeHelper
         ];
     }
 
-    public function getAsap(array $availabilities)
+    public function getAsap(OrderInterface $cart)
     {
+        $choices = $this->getAvailabilities($cart);
+
         // TODO Use sort
-        return $availabilities[0];
+        return $choices[0];
     }
 }

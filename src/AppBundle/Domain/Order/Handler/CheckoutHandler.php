@@ -32,9 +32,7 @@ class CheckoutHandler
     private function setShippingDate(OrderInterface $order)
     {
         if (null === $order->getShippedAt()) {
-            $availabilities = $this->orderTimeHelper->getAvailabilities($order);
-            $asap = $this->orderTimeHelper->getAsap($availabilities);
-
+            $asap = $this->orderTimeHelper->getAsap($order);
             $order->setShippedAt(new \DateTime($asap));
         }
     }

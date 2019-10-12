@@ -116,14 +116,9 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
-        $timeInfo = $this->orderTimeHelper->getTimeInfo(
-            $order,
-            $this->orderTimeHelper->getAvailabilities($order)
-        );
-
         return array(
             'order' => $order,
-            'asap' => $timeInfo['asap'],
+            'asap' => $this->orderTimeHelper->getAsap($order),
             'form' => $form->createView(),
         );
     }
@@ -152,16 +147,11 @@ class OrderController extends AbstractController
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
-        $timeInfo = $this->orderTimeHelper->getTimeInfo(
-            $order,
-            $this->orderTimeHelper->getAvailabilities($order)
-        );
-
         $parameters =  [
             'order' => $order,
             'deliveryAddress' => $order->getShippingAddress(),
             'restaurant' => $order->getRestaurant(),
-            'asap' => $timeInfo['asap'],
+            'asap' => $this->orderTimeHelper->getAsap($order),
         ];
 
         $form->handleRequest($request);

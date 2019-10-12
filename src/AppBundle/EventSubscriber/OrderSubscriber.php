@@ -78,8 +78,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         if ($order->isFoodtech() && null === $order->getId() && null === $order->getShippedAt()) {
-            $choices = $this->orderTimeHelper->getAvailabilities($order);
-            $asap = $this->orderTimeHelper->getAsap($choices);
+            $asap = $this->orderTimeHelper->getAsap($order);
             $order->setShippedAt(new \DateTime($asap));
         }
 
