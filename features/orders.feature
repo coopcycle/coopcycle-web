@@ -99,6 +99,7 @@ Feature: Orders
           "adjustments":@...@
         }
       ],
+      "adjustments":@...@,
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -217,6 +218,7 @@ Feature: Orders
           "adjustments":@...@
         }
       ],
+      "adjustments":@...@,
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -342,6 +344,7 @@ Feature: Orders
           "adjustments":@...@
         }
       ],
+      "adjustments":@...@,
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -455,6 +458,7 @@ Feature: Orders
           }
         }
       ],
+      "adjustments":@...@,
       "id":@integer@,
       "number":null,
       "total":@integer@,

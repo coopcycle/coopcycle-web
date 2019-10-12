@@ -5,8 +5,10 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -46,6 +48,31 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderModifier = $orderModifier;
     }
 
+    public function normalizeAdjustments(Order $order)
+    {
+        $serializeAdjustment = function (BaseAdjustmentInterface $adjustment) {
+
+            return [
+                'id' => $adjustment->getId(),
+                'label' => $adjustment->getLabel(),
+                'amount' => $adjustment->getAmount(),
+            ];
+        };
+
+        $deliveryAdjustments =
+            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
+        $deliveryPromotionAdjustments =
+            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+        $reusablePackagingAdjustments =
+            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
+
+        return [
+            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
+            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments)
+        ];
+    }
+
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -55,6 +82,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['restaurant']['minimumCartAmount']);
             unset($data['restaurant']['flatDeliveryPrice']);
         }
+
+        $data['adjustments'] = $this->normalizeAdjustments($object);
 
         return $data;
     }
