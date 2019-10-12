@@ -26,6 +26,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private $routing;
 
     private static $matchingRoutes = [
+        'api_deliveries_get_item',
         'api_deliveries_post_collection',
         'api_deliveries_check_collection'
     ];
@@ -44,9 +45,10 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
+        // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
             KernelEvents::REQUEST => [
-                ['accessControl', EventPriorities::PRE_READ],
+                ['accessControl', EventPriorities::POST_DESERIALIZE],
             ],
             KernelEvents::VIEW => [
                 ['setDefaults', EventPriorities::PRE_VALIDATE],
@@ -65,27 +67,38 @@ final class DeliverySubscriber implements EventSubscriberInterface
     public function accessControl(RequestEvent $event)
     {
         $request = $event->getRequest();
-
         if (!$this->matchRoute($request)) {
             return;
         }
 
+        $delivery = $request->attributes->get('data');
+
         if (null !== ($token = $this->tokenStorage->getToken())) {
 
-            if ($token instanceof JWTUserToken && $token->hasAttribute('store')) {
+            if ($token instanceof JWTUserToken) {
+
                 $user = $token->getUser();
-                $store = $token->getAttribute('store');
+                $store = $delivery->getStore();
 
-                if ($user->getStores()->contains($store)) {
-
+                if ($store && $user->ownsStore($store)) {
                     return;
                 }
+
             } else {
                 // TODO Move this to Delivery entity access_control
                 $roles = $token->getRoles();
                 foreach ($roles as $role) {
                     if ($role->getRole() === 'ROLE_OAUTH2_DELIVERIES') {
-                        return;
+
+                        $store = $this->storeExtractor->extractStore();
+
+                        if (null === $delivery->getStore()) {
+                            return;
+                        }
+
+                        if ($delivery->getStore() === $store) {
+                            return;
+                        }
                     }
                 }
             }
@@ -101,18 +114,15 @@ final class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $store = $this->storeExtractor->extractStore();
-        if (null === $store) {
-            return;
-        }
-
         $delivery = $event->getControllerResult();
 
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
+        $store = $this->storeExtractor->extractStore();
+
         // If no pickup address is specified, use the store address
-        if (null === $pickup->getAddress()) {
+        if (null === $pickup->getAddress() && null !== $store) {
             $pickup->setAddress($store->getAddress());
         }
 

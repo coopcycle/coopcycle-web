@@ -1,0 +1,10 @@
+include:
+  - stores.yml
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithAddress:
+        - "@address_1"
+        - "@address_2"
+    store: "@store_1"

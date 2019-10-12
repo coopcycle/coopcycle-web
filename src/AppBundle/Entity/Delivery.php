@@ -19,17 +19,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={
- *     "post"={"method"="POST"},
+ *     "post"={
+ *       "method"="POST"
+ *     },
  *     "check"={
- *         "method"="POST",
- *         "path"="/deliveries/assert",
- *         "write"=false,
- *         "status"=200,
- *         "validation_groups"={"Default", "delivery_check"}
+ *       "method"="POST",
+ *       "path"="/deliveries/assert",
+ *       "write"=false,
+ *       "status"=200,
+ *       "validation_groups"={"Default", "delivery_check"}
  *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={
+ *       "method"="GET"
+ *     }
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -158,6 +162,16 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     public static function create()
     {
         return new self();
+    }
+
+    public static function createWithAddress($pickupAddress, $dropoffAddress)
+    {
+        $delivery = self::createWithDefaults();
+
+        $delivery->getPickup()->setAddress($pickupAddress);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
+
+        return $delivery;
     }
 
     public static function createWithDefaults()

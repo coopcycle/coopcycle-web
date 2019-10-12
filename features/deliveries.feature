@@ -25,13 +25,21 @@ Feature: Deliveries
       """
     Then the response status code should be 403
 
+  Scenario: Not authorized to read delivery
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the store with name "Acme2" has an OAuth client named "Acme2"
+    And the OAuth client with name "Acme2" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme2" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 403
+
   Scenario: Missing time window
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -70,9 +78,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -135,14 +140,13 @@ Feature: Deliveries
         "color":@string@
       }
       """
+    Given the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
 
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -208,9 +212,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -277,9 +278,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -342,9 +340,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -411,9 +406,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -480,9 +472,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -534,9 +523,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has check expression "distance < 4000"
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -573,9 +559,6 @@ Feature: Deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
-    And the user "bob" is loaded:
-      | email      | bob@coopcycle.org |
-      | password   | 123456            |
     And the store with name "Acme" has check expression "distance < 10000"
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token

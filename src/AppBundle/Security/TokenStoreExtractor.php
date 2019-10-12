@@ -35,9 +35,6 @@ class TokenStoreExtractor
                 ->findOneByOauth2Client($client);
 
             return $apiApp->getStore();
-        } else if ($token->hasAttribute('store')) {
-
-            return $token->getAttribute('store');
         }
     }
 }
