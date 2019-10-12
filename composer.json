@@ -66,7 +66,7 @@
         "twig/twig": "^2.0",
         "sylius/order-bundle": "1.6.*",
         "sylius/payment-bundle": "1.6.*",
-        "laravolt/avatar": "^2.0",
+        "laravolt/avatar": "^3.0",
         "sylius/product-bundle": "1.6.*",
         "duccio/apns-php": "^1.0",
         "sylius/taxonomy-bundle": "1.6.*",
