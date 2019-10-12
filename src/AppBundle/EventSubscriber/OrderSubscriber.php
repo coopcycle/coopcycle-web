@@ -3,10 +3,10 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,17 +18,18 @@ final class OrderSubscriber implements EventSubscriberInterface
 {
     private $doctrine;
     private $tokenStorage;
+    private $orderTimeHelper;
     private $logger;
 
     public function __construct(
         ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
-        EventBus $eventBus,
+        OrderTimeHelper $orderTimeHelper,
         LoggerInterface $logger
     ) {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
-        $this->eventBus = $eventBus;
+        $this->orderTimeHelper = $orderTimeHelper;
         $this->logger = $logger;
     }
 
@@ -37,7 +38,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
-                ['postWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -77,19 +77,11 @@ final class OrderSubscriber implements EventSubscriberInterface
             $order->setCustomer($this->getUser());
         }
 
-        $event->setControllerResult($order);
-    }
-
-    public function postWrite(ViewEvent $event)
-    {
-        $result = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
-
-        if (!($result instanceof Order && Request::METHOD_POST === $method)) {
-            return;
+        if ($order->isFoodtech() && null === $order->getId() && null === $order->getShippedAt()) {
+            $choices = $this->orderTimeHelper->getAvailabilities($order);
+            $asap = $this->orderTimeHelper->getAsap($choices);
+            $order->setShippedAt(new \DateTime($asap));
         }
-
-        $order = $result;
 
         $event->setControllerResult($order);
     }
