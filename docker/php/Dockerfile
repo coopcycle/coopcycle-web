@@ -79,13 +79,19 @@ WORKDIR /srv/coopcycle
 COPY composer.json ./
 COPY composer.lock ./
 
-RUN mkdir -p var/cache var/logs var/sessions vendor \
+RUN mkdir -p var/cache var/logs var/sessions web/images/products web/images/restaurants web/images/tasks vendor \
     # Permissions hack because setfacl does not work on Mac and Windows
     && chown -R www-data var/cache \
     && chown -R www-data var/logs \
     && chown -R www-data var/sessions \
+    && chown -R www-data web/images/products \
+    && chown -R www-data web/images/restaurants \
+    && chown -R www-data web/images/tasks \
     && chmod -R +w var/cache \
     && chmod a+w var \
+    && chmod a+w web/images/products \
+    && chmod a+w web/images/restaurants \
+    && chmod a+w web/images/tasks \
     && chown -R www-data vendor
 
 COPY app app/
