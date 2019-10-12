@@ -48,7 +48,7 @@ class CheckoutHandlerTest extends TestCase
             ->willReturn([]);
 
         $this->orderTimeHelper
-            ->getAsap(Argument::type('array'))
+            ->getAsap(Argument::type(OrderInterface::class))
             ->willReturn($this->asap);
 
         $this->handler = new CheckoutHandler(
