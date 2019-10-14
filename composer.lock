@@ -9421,16 +9421,16 @@
         },
         {
             "name": "snc/redis-bundle",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/snc/SncRedisBundle.git",
-                "reference": "ff2a3aa6e9933f0347e9fea0ffa367643d779c5c"
+                "reference": "21d9d6fdb0d38d751d02b3fe875cb19a5641ce64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/ff2a3aa6e9933f0347e9fea0ffa367643d779c5c",
-                "reference": "ff2a3aa6e9933f0347e9fea0ffa367643d779c5c",
+                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/21d9d6fdb0d38d751d02b3fe875cb19a5641ce64",
+                "reference": "21d9d6fdb0d38d751d02b3fe875cb19a5641ce64",
                 "shasum": ""
             },
             "require": {
@@ -9494,7 +9494,7 @@
                 "redis",
                 "symfony"
             ],
-            "time": "2019-08-01T05:51:05+00:00"
+            "time": "2019-10-09T07:21:37+00:00"
         },
         {
             "name": "sonata-project/exporter",
