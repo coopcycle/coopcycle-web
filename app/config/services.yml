@@ -648,10 +648,6 @@ services:
       - '@doctrine'
       - '@vich_uploader.property_mapping_factory'
       - '@vich_uploader.upload_handler'
-      - '@liip_imagine.filter.manager'
-      - '@liip_imagine.binary.loader.restaurant_thumbnail'
-      - '@liip_imagine.binary.loader.product_thumbnail'
-      - '@filesystem'
       - '@logger'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }

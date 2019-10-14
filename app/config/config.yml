@@ -495,7 +495,8 @@ oneup_uploader:
         restaurant:
             frontend: dropzone
             storage:
-                directory: '%kernel.root_dir%/../web/images/restaurants'
+                type: flysystem
+                filesystem: oneup_flysystem.restaurant_images_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
@@ -503,7 +504,8 @@ oneup_uploader:
         product:
             frontend: dropzone
             storage:
-                directory: '%kernel.root_dir%/../web/images/products'
+                type: flysystem
+                filesystem: oneup_flysystem.product_images_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
