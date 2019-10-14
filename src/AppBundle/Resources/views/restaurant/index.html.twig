@@ -95,8 +95,6 @@
         <h2>{{ child.name }}</h2>
         <div class="restaurant-menu-section">
           {% for product in child.products %}
-            {% set variant = product|sylius_resolve_variant %}
-            {% set product_image = vich_uploader_asset(product, 'imageFile') %}
             {# TODO Skip if no variant is defined #}
             {% if not product.enabled %}
               <div class="restaurant-menu-section-item">
