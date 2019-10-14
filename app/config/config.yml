@@ -206,12 +206,45 @@ snc_redis:
                 # https://github.com/nrk/predis/issues/33
                 read_write_timeout: 0
 
+oneup_flysystem:
+    adapters:
+        product_images_local:
+            local:
+                directory: '%kernel.root_dir%/../web/images/products'
+        restaurant_images_local:
+            local:
+                directory: '%kernel.root_dir%/../web/images/restaurants'
+        store_images_local:
+            local:
+                directory: '%kernel.root_dir%/../web/images/stores'
+        task_images_local:
+            local:
+                directory: '%kernel.root_dir%/../web/images/tasks'
+    filesystems:
+        product_images:
+            adapter: product_images_local
+            alias: product_images_filesystem
+            mount: product_images_filesystem
+        restaurant_images:
+            adapter: restaurant_images_local
+            alias: restaurant_images_filesystem
+            mount: restaurant_images_filesystem
+        store_images:
+            adapter: store_images_local
+            alias: store_images_filesystem
+            mount: store_images_filesystem
+        task_images:
+            adapter: task_images_local
+            alias: task_images_filesystem
+            mount: task_images_filesystem
+
 vich_uploader:
     db_driver: orm
+    storage: flysystem
     mappings:
         restaurant_image:
             uri_prefix: /images/restaurants
-            upload_destination: '%kernel.root_dir%/../web/images/restaurants'
+            upload_destination: restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -220,7 +253,7 @@ vich_uploader:
                     dirs: 2
         store_image:
             uri_prefix: /images/stores
-            upload_destination: '%kernel.root_dir%/../web/images/stores'
+            upload_destination: store_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -229,7 +262,7 @@ vich_uploader:
                     dirs: 2
         task_image:
             uri_prefix: /images/tasks
-            upload_destination: '%kernel.project_dir%/web/images/tasks'
+            upload_destination: task_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -238,7 +271,7 @@ vich_uploader:
                     dirs: 2
         product_image:
             uri_prefix: /images/products
-            upload_destination: '%kernel.project_dir%/web/images/products'
+            upload_destination: product_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
