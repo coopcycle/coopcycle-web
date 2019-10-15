@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Restaurant;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,7 @@ class IndexController extends AbstractController
 
     /**
      * @Template
+     * @HideSoftDeleted
      */
     public function indexAction()
     {
