@@ -486,7 +486,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "Common classes for PSR-6 adapters",
@@ -554,7 +554,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "A PSR-6 cache implementation using a php array. This implementation supports tags",
@@ -616,7 +616,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "A helper trait and interface to your PSR-6 cache to support hierarchical keys.",
@@ -666,7 +666,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 },
                 {
                     "name": "Nicolas Grekas",
@@ -3175,7 +3175,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -5564,15 +5564,15 @@
             "authors": [
                 {
                     "name": "Alex Bilbie",
-                    "role": "Developer",
                     "email": "hello@alexbilbie.com",
-                    "homepage": "http://www.alexbilbie.com"
+                    "homepage": "http://www.alexbilbie.com",
+                    "role": "Developer"
                 },
                 {
                     "name": "Andy Millington",
-                    "role": "Developer",
                     "email": "andrew@noexceptions.io",
-                    "homepage": "https://www.noexceptions.io"
+                    "homepage": "https://www.noexceptions.io",
+                    "role": "Developer"
                 }
             ],
             "description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
@@ -5985,8 +5985,8 @@
             "authors": [
                 {
                     "name": "Martin Georgiev",
-                    "role": "author",
-                    "email": "martin.georgiev@gmail.com"
+                    "email": "martin.georgiev@gmail.com",
+                    "role": "author"
                 }
             ],
             "description": "Adds PostgreSQL 9 and 10 enhancements to Doctrine. Provides support for JSON, JSONB and some array data types. Provides functions, operators and common expressions used when working with JSON data, arrays and features related to text search.",
@@ -10904,16 +10904,16 @@
         },
         {
             "name": "sylius/payment",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Payment.git",
-                "reference": "b08a8975ccde45b775ddcac04bc4d415bf7f47c9"
+                "reference": "c209a36746f59b370ae0779224603a64529f6d48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Payment/zipball/b08a8975ccde45b775ddcac04bc4d415bf7f47c9",
-                "reference": "b08a8975ccde45b775ddcac04bc4d415bf7f47c9",
+                "url": "https://api.github.com/repos/Sylius/Payment/zipball/c209a36746f59b370ae0779224603a64529f6d48",
+                "reference": "c209a36746f59b370ae0779224603a64529f6d48",
                 "shasum": ""
             },
             "require": {
@@ -10962,11 +10962,11 @@
                 "shop",
                 "webshop"
             ],
-            "time": "2019-05-07T12:44:46+00:00"
+            "time": "2019-10-07T14:51:38+00:00"
         },
         {
             "name": "sylius/payment-bundle",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPaymentBundle.git",
@@ -11377,16 +11377,16 @@
         },
         {
             "name": "sylius/resource-bundle",
-            "version": "v1.6.0",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusResourceBundle.git",
-                "reference": "862fbfea9e310646232c97d907b04df9d99b42d4"
+                "reference": "a18fd0ecfa66dc5b5f76402c0ebb0c636740a54a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/862fbfea9e310646232c97d907b04df9d99b42d4",
-                "reference": "862fbfea9e310646232c97d907b04df9d99b42d4",
+                "url": "https://api.github.com/repos/Sylius/SyliusResourceBundle/zipball/a18fd0ecfa66dc5b5f76402c0ebb0c636740a54a",
+                "reference": "a18fd0ecfa66dc5b5f76402c0ebb0c636740a54a",
                 "shasum": ""
             },
             "require": {
@@ -11397,24 +11397,18 @@
                 "stof/doctrine-extensions-bundle": "^1.2",
                 "sylius/registry": "^1.2",
                 "sylius/resource": "^1.2",
-                "symfony/config": "^3.4|^4.2",
-                "symfony/expression-language": "^3.4|^4.2",
-                "symfony/form": "^3.4|^4.2",
-                "symfony/framework-bundle": "^3.4|^4.2",
-                "symfony/security-csrf": "^3.4|^4.2",
-                "symfony/templating": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2",
-                "symfony/yaml": "^3.4|^4.2",
+                "symfony/config": "^3.4|^4.3",
+                "symfony/expression-language": "^3.4|^4.3",
+                "symfony/form": "^3.4|^4.3",
+                "symfony/framework-bundle": "^3.4|^4.3",
+                "symfony/security-csrf": "^3.4|^4.3",
+                "symfony/templating": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3",
+                "symfony/yaml": "^3.4|^4.3",
                 "white-october/pagerfanta-bundle": "^1.0",
                 "willdurand/hateoas-bundle": "^1.2",
                 "winzou/state-machine-bundle": "^0.3"
-            },
-            "conflict": {
-                "symfony/browser-kit": "4.1.8",
-                "symfony/dependency-injection": "4.1.8",
-                "symfony/dom-crawler": "4.1.8",
-                "symfony/routing": "4.1.8 || 4.1.9"
             },
             "replace": {
                 "sylius/resource": "self.version"
@@ -11433,7 +11427,7 @@
                 "sylius-labs/coding-standard": "^3.0",
                 "sylius/grid-bundle": "^1.2",
                 "sylius/locale": "^1.2",
-                "symfony/dependency-injection": "^3.4|^4.2",
+                "symfony/dependency-injection": "^3.4|^4.3",
                 "twig/twig": "^2.0",
                 "vimeo/psalm": "^3.5"
             },
@@ -11479,7 +11473,7 @@
                 "storage",
                 "sylius"
             ],
-            "time": "2019-10-07T11:29:12+00:00"
+            "time": "2019-10-10T15:32:56+00:00"
         },
         {
             "name": "sylius/taxation",
@@ -13284,7 +13278,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -13355,7 +13349,7 @@
                     "email": "adrien.brault@gmail.com"
                 },
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -13405,7 +13399,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
