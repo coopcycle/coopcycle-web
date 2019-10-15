@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2472da0eb82d008504c091698ea561e",
+    "content-hash": "c9c55b7883a29601572b30a45ac2d94b",
     "packages": [
         {
             "name": "api-platform/core",
@@ -11240,16 +11240,16 @@
         },
         {
             "name": "sylius/promotion-bundle",
-            "version": "v1.5.4",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPromotionBundle.git",
-                "reference": "8677098047024c6d8e41fbaf11f9ea1e5edf76e0"
+                "reference": "f95838c556cc22a678bce3a7f9dd2997b3a2705c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/SyliusPromotionBundle/zipball/8677098047024c6d8e41fbaf11f9ea1e5edf76e0",
-                "reference": "8677098047024c6d8e41fbaf11f9ea1e5edf76e0",
+                "url": "https://api.github.com/repos/Sylius/SyliusPromotionBundle/zipball/f95838c556cc22a678bce3a7f9dd2997b3a2705c",
+                "reference": "f95838c556cc22a678bce3a7f9dd2997b3a2705c",
                 "shasum": ""
             },
             "require": {
@@ -11259,7 +11259,7 @@
                 "sylius/promotion": "^1.2",
                 "sylius/registry": "^1.2",
                 "sylius/resource-bundle": "^1.2",
-                "symfony/framework-bundle": "^3.4|^4.1.1"
+                "symfony/framework-bundle": "^3.4|^4.3"
             },
             "require-dev": {
                 "doctrine/orm": "^2.5",
@@ -11267,15 +11267,15 @@
                 "phpspec/phpspec": "^5.0",
                 "phpunit/phpunit": "^7.0",
                 "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-                "symfony/browser-kit": "^3.4|^4.1.1",
-                "symfony/dependency-injection": "^3.4|^4.1.1",
-                "symfony/form": "^3.4|^4.1.1",
-                "symfony/validator": "^3.4|^4.1.1"
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/dependency-injection": "^3.4|^4.3",
+                "symfony/form": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -11311,7 +11311,7 @@
                 "shop",
                 "sylius"
             ],
-            "time": "2019-02-11T15:28:39+00:00"
+            "time": "2019-10-05T13:44:11+00:00"
         },
         {
             "name": "sylius/registry",
