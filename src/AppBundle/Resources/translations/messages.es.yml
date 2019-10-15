@@ -720,3 +720,11 @@ order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Esta orden debe estar empacada en un paquete reutilizable
 form.user.quotes_allowed.label: Permitir a este cliente solicitar una cita
+restaurant.form.caterer.label: 'Este restaurante solo accepta pedidos en citas (ej
+  : catering)'
+restaurant.form.exclusive.label: Este restaurante es exclusivo
+restaurant.form.noPricingRule: Ninguna tarificación ha sido implementada, <a href="%editPricingRule%">haga
+  clic aquí para crear una</a>.
+restaurant.quotes_only_warning.not_authenticated: Éste restaurante solamente accepta
+  pedidos en cita. Si usted es un cliente referenciado.  <a href="%contact_us%">Conéctese
+  </a> para crear una cita.
