@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9c55b7883a29601572b30a45ac2d94b",
+    "content-hash": "c9eee59b6e4307a7bb5b67a1a913d0ee",
     "packages": [
         {
             "name": "api-platform/core",
@@ -486,7 +486,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "Common classes for PSR-6 adapters",
@@ -554,7 +554,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "A PSR-6 cache implementation using a php array. This implementation supports tags",
@@ -616,7 +616,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 }
             ],
             "description": "A helper trait and interface to your PSR-6 cache to support hierarchical keys.",
@@ -666,7 +666,7 @@
                 {
                     "name": "Tobias Nyholm",
                     "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
+                    "homepage": "https://github.com/Nyholm"
                 },
                 {
                     "name": "Nicolas Grekas",
@@ -3175,7 +3175,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -5564,15 +5564,15 @@
             "authors": [
                 {
                     "name": "Alex Bilbie",
-                    "role": "Developer",
                     "email": "hello@alexbilbie.com",
-                    "homepage": "http://www.alexbilbie.com"
+                    "homepage": "http://www.alexbilbie.com",
+                    "role": "Developer"
                 },
                 {
                     "name": "Andy Millington",
-                    "role": "Developer",
                     "email": "andrew@noexceptions.io",
-                    "homepage": "https://www.noexceptions.io"
+                    "homepage": "https://www.noexceptions.io",
+                    "role": "Developer"
                 }
             ],
             "description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
@@ -5985,8 +5985,8 @@
             "authors": [
                 {
                     "name": "Martin Georgiev",
-                    "role": "author",
-                    "email": "martin.georgiev@gmail.com"
+                    "email": "martin.georgiev@gmail.com",
+                    "role": "author"
                 }
             ],
             "description": "Adds PostgreSQL 9 and 10 enhancements to Doctrine. Provides support for JSON, JSONB and some array data types. Provides functions, operators and common expressions used when working with JSON data, arrays and features related to text search.",
@@ -9964,29 +9964,30 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v6.41.0",
+            "version": "v7.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "abd52aed846b52db9365b470be696d0905c08b01"
+                "reference": "96c59742329c4a9b3f531e91d64e432c82654b91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/abd52aed846b52db9365b470be696d0905c08b01",
-                "reference": "abd52aed846b52db9365b470be696d0905c08b01",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/96c59742329c4a9b3f531e91d64e432c82654b91",
+                "reference": "96c59742329c4a9b3f531e91d64e432c82654b91",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=5.4.0"
+                "php": ">=5.6.0"
             },
             "require-dev": {
-                "php-coveralls/php-coveralls": "1.*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~2.0",
-                "symfony/process": "~2.8"
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^3.3",
+                "symfony/process": "~3.4"
             },
             "type": "library",
             "extra": {
@@ -10016,7 +10017,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2019-08-01T01:41:19+00:00"
+            "time": "2019-10-16T00:23:34+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -13278,7 +13279,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -13349,7 +13350,7 @@
                     "email": "adrien.brault@gmail.com"
                 },
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -13399,7 +13400,7 @@
             ],
             "authors": [
                 {
-                    "name": "William Durand",
+                    "name": "William DURAND",
                     "email": "william.durand1@gmail.com"
                 }
             ],
