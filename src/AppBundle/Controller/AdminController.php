@@ -1026,6 +1026,7 @@ class AdminController extends Controller
 
         $pricingRuleSetId = $settingsManager->get('embed.delivery.pricingRuleSet');
         $withVehicle = $settingsManager->getBoolean('embed.delivery.withVehicle');
+        $withWeight = $settingsManager->getBoolean('embed.delivery.withWeight');
 
         if ($pricingRuleSetId) {
             $pricingRuleSet = $this->getDoctrine()
@@ -1036,15 +1037,18 @@ class AdminController extends Controller
         $form = $this->createForm(EmbedSettingsType::class);
         $form->get('pricingRuleSet')->setData($pricingRuleSet);
         $form->get('withVehicle')->setData($withVehicle);
+        $form->get('withWeight')->setData($withWeight);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $pricingRuleSet = $form->get('pricingRuleSet')->getData();
             $withVehicle = $form->get('withVehicle')->getData();
+            $withWeight = $form->get('withWeight')->getData();
 
             $settingsManager->set('embed.delivery.pricingRuleSet', $pricingRuleSet ? $pricingRuleSet->getId() : null, 'embed');
             $settingsManager->set('embed.delivery.withVehicle', $withVehicle ? 'yes' : 'no', 'embed');
+            $settingsManager->set('embed.delivery.withWeight', $withWeight ? 'yes' : 'no', 'embed');
             $settingsManager->flush();
 
             return $this->redirect($request->headers->get('referer'));

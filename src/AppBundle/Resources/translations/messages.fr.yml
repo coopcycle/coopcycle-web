@@ -550,6 +550,7 @@ form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
 form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
+form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email
 form.time_slot.name.label: Nom
 form.time_slot.choices.label: Plages horaires

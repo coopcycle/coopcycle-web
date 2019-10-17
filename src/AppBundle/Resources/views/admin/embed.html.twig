@@ -21,8 +21,7 @@
 {% endif %}
 
 {{ form_start(embed_settings_form) }}
-  {{ form_row(embed_settings_form.pricingRuleSet) }}
-  {{ form_row(embed_settings_form.withVehicle) }}
+  {{ form_widget(embed_settings_form) }}
   <hr>
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
 {{ form_end(embed_settings_form) }}

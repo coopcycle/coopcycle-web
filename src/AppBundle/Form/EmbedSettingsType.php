@@ -33,6 +33,10 @@ class EmbedSettingsType extends AbstractType
             ->add('withVehicle', CheckboxType::class, [
                 'label' => 'form.embed_settings.with_vehicle.label',
                 'required' => false
+            ])
+            ->add('withWeight', CheckboxType::class, [
+                'label' => 'form.embed_settings.with_weight.label',
+                'required' => false
             ]);
     }
 }
