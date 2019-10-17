@@ -20,4 +20,8 @@ AppBundle\Entity\Cuisine:
             unique: false
             nullable: true
             precision: 0
+    manyToMany:
+      owners:
+        targetEntity: AppBundle\Entity\Restaurant
+        mappedBy: servesCuisine
     lifecycleCallbacks: {  }

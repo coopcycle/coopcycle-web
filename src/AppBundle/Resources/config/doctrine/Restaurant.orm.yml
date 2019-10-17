@@ -224,12 +224,12 @@ AppBundle\Entity\Restaurant:
             fetch: LAZY
             mappedBy: restaurant
             inversedBy: null
-    manyToOne:
         address:
-            targetEntity: AppBundle\Entity\Address
-            cascade:
-                - all
-            fetch: EAGER
+          targetEntity: AppBundle\Entity\Address
+          cascade:
+            - all
+          fetch: EAGER
+    manyToOne:
         activeMenuTaxon:
             targetEntity: Sylius\Component\Taxonomy\Model\TaxonInterface
             joinColumns:
