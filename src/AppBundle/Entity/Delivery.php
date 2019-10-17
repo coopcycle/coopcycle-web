@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -298,6 +299,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             'vehicle' => $delivery->getVehicle(),
             'pickup' => $pickup,
             'dropoff' => $dropoff,
+            'packages' => new PackagesResolver($delivery),
         ];
     }
 }

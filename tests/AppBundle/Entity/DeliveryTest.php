@@ -5,7 +5,9 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\ExpressionLanguage\PackagesResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -40,10 +42,18 @@ class DeliveryTest extends TestCase
         $dropoffAddress = new Address();
         $dropoffAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
 
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $mediumPackage = new Package();
+        $mediumPackage->setName('M');
+
         $delivery = new Delivery();
         $delivery->setDistance(2500);
         $delivery->getPickup()->setAddress($pickupAddress);
         $delivery->getDropoff()->setAddress($dropoffAddress);
+        $delivery->addPackageWithQuantity($smallPackage, 1);
+        $delivery->addPackageWithQuantity($mediumPackage, 2);
 
         $values = Delivery::toExpressionLanguageValues($delivery);
 
@@ -52,10 +62,16 @@ class DeliveryTest extends TestCase
         $this->assertArrayHasKey('vehicle', $values);
         $this->assertArrayHasKey('pickup', $values);
         $this->assertArrayHasKey('dropoff', $values);
+        $this->assertArrayHasKey('packages', $values);
 
         $language = new ExpressionLanguage();
 
         $this->assertEquals($pickupAddress, $language->evaluate('pickup.address', $values));
         $this->assertEquals($dropoffAddress, $language->evaluate('dropoff.address', $values));
+
+        $this->assertInstanceOf(PackagesResolver::class, $language->evaluate('packages', $values));
+        $this->assertEquals(1, $language->evaluate('packages.quantity("S")', $values));
+        $this->assertEquals(2, $language->evaluate('packages.quantity("M")', $values));
+        $this->assertEquals(0, $language->evaluate('packages.quantity("XL")', $values));
     }
 }
