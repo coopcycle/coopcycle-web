@@ -17,7 +17,7 @@
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {% trans %}adminDashboard.pricing.manage{% endtrans %}   <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-right">
               <li>
                 <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
                   {% trans %}adminDashboard.pricing.settings{% endtrans %}
