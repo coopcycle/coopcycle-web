@@ -47,6 +47,8 @@ class RulePickerLine extends React.Component {
     this.handleSecondBoundChange = this.handleSecondBoundChange.bind(this)
     this.handleValueChange = this.handleValueChange.bind(this)
     this.delete = this.delete.bind(this)
+
+    console.log(this.props.rulePicker.props.packages)
   }
 
   componentDidUpdate (prevProps, prevState) {

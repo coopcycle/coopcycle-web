@@ -672,11 +672,21 @@ class AdminController extends Controller
             $originalRules->add($rule);
         }
 
-        $zoneRepo = $this->getDoctrine()->getRepository(Zone::class);
-        $zones = $zoneRepo->findAll();
+        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
         $zoneNames = [];
         foreach ($zones as $zone) {
             array_push($zoneNames, $zone->getName());
+        }
+
+        $packages = [];
+        $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+        foreach ($packageSets as $packageSet) {
+            foreach ($packageSet->getPackages() as $package) {
+                $packages[] = [
+                    'name' => $package->getName(),
+                    'parent' => $packageSet->getName(),
+                ];
+            }
         }
 
         $form = $this->createForm(PricingRuleSetType::class, $ruleSet);
@@ -708,7 +718,8 @@ class AdminController extends Controller
 
         return [
             'form' => $form->createView(),
-            'zoneNames' => json_encode($zoneNames)
+            'zoneNames' => $zoneNames,
+            'packages' => $packages,
         ];
     }
 
