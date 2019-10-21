@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9c55b7883a29601572b30a45ac2d94b",
+    "content-hash": "c0f94ef41d83335071050d03b9a2c961",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2389,6 +2389,44 @@
                 "reflection"
             ],
             "time": "2018-06-14T14:45:07+00:00"
+        },
+        {
+            "name": "drupal/core-vendor-hardening",
+            "version": "9.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/drupal/core-vendor-hardening.git",
+                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/bffecffdb777c57c11d8870cafc0b9d7177616fa",
+                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1",
+                "php": ">=7.2.3"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Drupal\\Composer\\Plugin\\VendorHardening\\VendorHardeningPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Drupal\\Composer\\Plugin\\VendorHardening\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Hardens the vendor directory for when it's in the docroot.",
+            "homepage": "https://www.drupal.org/project/drupal",
+            "keywords": [
+                "drupal"
+            ],
+            "time": "2019-10-16T22:35:03+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -15560,6 +15598,7 @@
         "league/geotools": 0,
         "mailjet/mailjet-swiftmailer": 20,
         "hwi/oauth-bundle": 20,
+        "drupal/core-vendor-hardening": 20,
         "behat/symfony2-extension": 20,
         "behat/mink": 20
     },
