@@ -90,6 +90,7 @@ class SetupCommand extends Command
     ];
 
     private $currencies = [
+        'CAD',
         'EUR',
         'GBP',
     ];
