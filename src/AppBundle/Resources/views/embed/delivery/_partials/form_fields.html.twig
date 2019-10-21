@@ -6,6 +6,9 @@
   {% if form.vehicle is defined %}
     {{ form_row(form.vehicle) }}
   {% endif %}
+  {% if form.weight is defined %}
+    {{ form_row(form.weight) }}
+  {% endif %}
 
   {{ form_row(form.name) }}
   {{ form_row(form.email) }}

@@ -43,8 +43,10 @@ class DeliveryEmbedType extends DeliveryType
 
         parent::buildForm($builder, $options);
 
-        // Remove weight
-        $builder->remove('weight');
+        $withWeight = $this->settingsManager->getBoolean('embed.delivery.withWeight');
+        if (!$withWeight) {
+            $builder->remove('weight');
+        }
 
         $builder
             ->add('name', TextType::class, [
