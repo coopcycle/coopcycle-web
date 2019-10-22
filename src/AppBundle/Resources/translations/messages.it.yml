@@ -1,13 +1,13 @@
-global.changesSaved: ''
-navbar.login: ''
-navbar.myAccount: ''
-base.footer.contactUs: ''
-base.footer.help: ''
-base.footer.legal: ''
-base.footer.suggest: ''
-adminDashboard.title: ''
-adminDashboard.configuration: ''
-adminDashboard.tooltip.orders: ''
+global.changesSaved: Le tue modfiche sono state salvate.
+navbar.login: Accesso
+navbar.myAccount: Il mio account
+base.footer.contactUs: Contattaci
+base.footer.help: Aiuto
+base.footer.legal: Notizie Legali
+base.footer.suggest: Suggerisci un ristorante
+adminDashboard.title: Pannello di amministrazione
+adminDashboard.configuration: Configurazione
+adminDashboard.tooltip.orders: Gestisci gli ordini dei ristoranti
 adminDashboard.tooltip.deliveries: ''
 adminDashboard.tooltip.stores: ''
 adminDashboard.tooltip.restaurants: ''
