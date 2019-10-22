@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\TimeSlot;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,6 +26,10 @@ class TimeSlotType extends AbstractType
                     '3 days' => '3 days',
                     '1 week' => '1 week',
                 ],
+            ])
+            ->add('workingDaysOnly', CheckboxType::class, [
+                'label' => 'form.time_slot.working_days_only.label',
+                'required' => false,
             ])
             ->add('choices', CollectionType::class, [
                 'entry_type' => TimeSlotChoiceType::class,

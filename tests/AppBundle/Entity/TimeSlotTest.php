@@ -142,4 +142,35 @@ class TimeSlotTest extends TestCase
         $this->assertEquals($start, $choiceWithDateStart);
         $this->assertEquals($end, $choiceWithDateEnd);
     }
+
+    public function testGetChoicesWithDatesOnFridayNotOnlyWorkingDays()
+    {
+        $choice1 = new TimeSlotChoice();
+        $choice1->setStartTime('11:00:00');
+        $choice1->setEndTime('12:00:00');
+
+        $slot = new TimeSlot();
+        $slot->setWorkingDaysOnly(false);
+        $slot->addChoice($choice1);
+
+        // Friday
+        Carbon::setTestNow(Carbon::parse('2019-10-25 19:00:00'));
+
+        $choicesWithDates = $slot->getChoicesWithDates('fr');
+
+        $this->assertCount(2, $choicesWithDates);
+
+        [ $choicesWithDate1, $choicesWithDate2 ] = $choicesWithDates;
+
+        $this->assertTimeSlotChoices(
+            new \DateTime('2019-10-26 11:00:00'),
+            new \DateTime('2019-10-26 12:00:00'),
+            $choicesWithDate1
+        );
+        $this->assertTimeSlotChoices(
+            new \DateTime('2019-10-27 11:00:00'),
+            new \DateTime('2019-10-27 12:00:00'),
+            $choicesWithDate2
+        );
+    }
 }

@@ -12,6 +12,11 @@ AppBundle\Entity\TimeSlot:
             type: string
         interval:
             type: string
+        workingDaysOnly:
+            type: boolean
+            column: working_days_only
+            options:
+                default: 't'
         createdAt:
             type: datetime
             column: created_at

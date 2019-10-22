@@ -16,6 +16,7 @@ class TimeSlot
     private $name;
     private $choices;
     private $interval = '2 days';
+    private $workingDaysOnly = true;
 
     public function __construct()
     {
@@ -110,7 +111,7 @@ class TimeSlot
         $choices = $now->diffInDays($now->copy()->add($this->interval));
 
         $providers = Yasumi::getProviders();
-        if (isset($providers[strtoupper($country)])) {
+        if ($this->workingDaysOnly && isset($providers[strtoupper($country)])) {
             $providerClass = $providers[strtoupper($country)];
             $provider = Yasumi::create($providerClass, date('Y'));
             if ($provider->isWorkingDay($now)) {
@@ -139,7 +140,7 @@ class TimeSlot
                 $items[] = new TimeSlotChoiceWithDate($choice, clone $nextWorkingDay);
             }
 
-            if (isset($providers[strtoupper($country)])) {
+            if ($this->workingDaysOnly && isset($providers[strtoupper($country)])) {
                 $provider = $providers[strtoupper($country)];
                 $nextWorkingDay = Yasumi::nextWorkingDay($provider, $nextWorkingDay);
             } else {
@@ -169,6 +170,26 @@ class TimeSlot
     public function setInterval($interval)
     {
         $this->interval = $interval;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isWorkingDaysOnly(): bool
+    {
+        return $this->workingDaysOnly;
+    }
+
+    /**
+     * @param mixed $workingDaysOnly
+     *
+     * @return self
+     */
+    public function setWorkingDaysOnly(bool $workingDaysOnly)
+    {
+        $this->workingDaysOnly = $workingDaysOnly;
 
         return $this;
     }
