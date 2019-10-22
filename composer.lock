@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0f94ef41d83335071050d03b9a2c961",
+    "content-hash": "e28c8d1f3403362bc9375eb08b1973f2",
     "packages": [
         {
             "name": "api-platform/core",
@@ -10002,29 +10002,30 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v6.41.0",
+            "version": "v7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "abd52aed846b52db9365b470be696d0905c08b01"
+                "reference": "85876d9a2189ef6db03e9d27c1e0bf234ea89e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/abd52aed846b52db9365b470be696d0905c08b01",
-                "reference": "abd52aed846b52db9365b470be696d0905c08b01",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/85876d9a2189ef6db03e9d27c1e0bf234ea89e54",
+                "reference": "85876d9a2189ef6db03e9d27c1e0bf234ea89e54",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=5.4.0"
+                "php": ">=5.6.0"
             },
             "require-dev": {
-                "php-coveralls/php-coveralls": "1.*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~2.0",
-                "symfony/process": "~2.8"
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^3.3",
+                "symfony/process": "~3.4"
             },
             "type": "library",
             "extra": {
@@ -10054,7 +10055,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2019-08-01T01:41:19+00:00"
+            "time": "2019-10-18T17:20:19+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
