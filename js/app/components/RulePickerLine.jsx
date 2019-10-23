@@ -85,7 +85,7 @@ class RulePickerLine extends React.Component {
     case 'out_zone':
       return `${state.operator}(${state.type}, "${state.value}")`
     case '==':
-      return `${state.type}  == "${state.value}"`
+      return `${state.type} == "${state.value}"`
     }
   }
 

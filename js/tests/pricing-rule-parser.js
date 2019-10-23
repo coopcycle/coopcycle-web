@@ -45,6 +45,16 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should parse vehicle with extra space', function() {
+    const expression = 'vehicle  == "cargo_bike"'
+    const result = parsePricingRule(expression)
+    expect(result).to.deep.equal([{
+      left: 'vehicle',
+      operator: '==',
+      right: 'cargo_bike'
+    }])
+  })
+
   it('should parse distance with bounds', function() {
     const expression = 'distance in 0..3000'
     const result = parsePricingRule(expression)

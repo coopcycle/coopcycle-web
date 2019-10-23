@@ -1,6 +1,6 @@
 const zoneRegexp = /(in_zone|out_zone)\(([^,]+), ['|"](.+)['|"]\)/
 const diffDaysRegexp = /diff_days\(pickup\) (<|>|==) ([\d]+)/
-const vehicleRegexp = /(vehicle) == "(cargo_bike|bike)"/
+const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
 const inRegexp = /([\w]+) in ([\d]+)\.\.([\d]+)/
 const comparatorRegexp = /([\w]+) (<|>) ([\d]+)/
 
