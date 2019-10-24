@@ -122,7 +122,7 @@ class TaskType extends AbstractType
             $form = $event->getForm();
             $task = $event->getData();
 
-            if ($form->has('timeSlot')) {
+            if ($form->has('timeSlot') && !$form->get('timeSlot')->isDisabled()) {
                 $timeSlot = $form->get('timeSlot')->getData();
                 $timeSlot->getChoice()->apply($task, $timeSlot->getDate());
             }
