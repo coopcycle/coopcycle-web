@@ -1,6 +1,6 @@
 import React from 'react'
 import i18n from '../i18n'
-import parsePricingRule from '../delivery/pricing-rule-parser'
+import _ from 'lodash'
 
 /*
 
@@ -29,27 +29,15 @@ const typeToOperators = {
   'diff_days(pickup)': ['==', '<', '>', 'in'],
 }
 
-
 class RulePickerLine extends React.Component {
 
   constructor (props) {
     super(props)
 
-    const { line } = this.props
-
-    let type, operator, value
-
-    if (line) {
-      const [ result ] = parsePricingRule(line)
-      type = result.left
-      operator = result.operator
-      value = result.right
-    }
-
     this.state = {
-      type: type || '',         // the variable the rule is built upon
-      operator: operator || '', // the operator/function used to build the rule
-      value: value || '',       // the value(s) which complete the rule
+      type: props.type || '',         // the variable the rule is built upon
+      operator: props.operator || '', // the operator/function used to build the rule
+      value: props.value || '',       // the value(s) which complete the rule
     }
 
     this.onTypeSelect = this.onTypeSelect.bind(this)
@@ -58,42 +46,16 @@ class RulePickerLine extends React.Component {
     this.handleFirstBoundChange = this.handleFirstBoundChange.bind(this)
     this.handleSecondBoundChange = this.handleSecondBoundChange.bind(this)
     this.handleValueChange = this.handleValueChange.bind(this)
-    this.buildLine = this.buildLine.bind(this)
     this.delete = this.delete.bind(this)
   }
 
-  buildLine (state) {
-    /*
-      Build the expression line from the user's input stored in state.
-
-      We pass explicitely the  state so we can compare previous & next state. Returns nothing if we can't build the line.
-     */
-
-    if (state.operator === 'in' && Array.isArray(state.value) && state.value.length === 2) {
-      return `${state.type} in ${state.value[0]}..${state.value[1]}`
-    }
-
-    if (state.type === 'diff_days(pickup)') {
-      return `diff_days(pickup) ${state.operator} ${state.value}`
-    }
-
-    switch (state.operator) {
-    case '<':
-    case '>':
-      return `${state.type} ${state.operator} ${state.value}`
-    case 'in_zone':
-    case 'out_zone':
-      return `${state.operator}(${state.type}, "${state.value}")`
-    case '==':
-      return `${state.type} == "${state.value}"`
-    }
-  }
-
   componentDidUpdate (prevProps, prevState) {
-    let line = this.buildLine(this.state)
-
-    if (this.buildLine(prevState) !== line) {
-      this.props.rulePicker.updateLine(this.props.index, line)
+    if (!_.isEqual(this.state, prevState)) {
+      this.props.onUpdate(this.props.index, {
+        left: this.state.type,
+        operator: this.state.operator,
+        right: this.state.value
+      })
     }
   }
 
@@ -139,7 +101,7 @@ class RulePickerLine extends React.Component {
 
   delete (evt) {
     evt.preventDefault()
-    this.props.rulePicker.deleteLine(this.props.index)
+    this.props.onDelete(this.props.index)
   }
 
   renderNumberInput() {
@@ -160,7 +122,7 @@ class RulePickerLine extends React.Component {
       return (
         <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
           <option value="">-</option>
-          { this.props.rulePicker.props.zones.map((item, index) => {
+          { this.props.zones.map((item, index) => {
             return (<option value={item} key={index}>{item}</option>)
           })}
         </select>
