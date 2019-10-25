@@ -38,7 +38,10 @@ class RulePicker extends React.Component {
     super(props)
 
     this.state = {
-      lines: parsePricingRule(this.props.expression)
+      lines: parsePricingRule(this.props.expression),
+      // This is used as a "revision counter",
+      // to create an accurate React key prop
+      rev: 0
     }
 
     this.addLine = this.addLine.bind(this)
@@ -54,13 +57,19 @@ class RulePicker extends React.Component {
       operator: '',
       value: ''
     })
-    this.setState({ lines })
+    this.setState({
+      lines,
+      rev: ++this.state.rev
+    })
   }
 
   deleteLine(index) {
     let lines = this.state.lines.slice()
     lines.splice(index, 1)
-    this.setState({ lines })
+    this.setState({
+      lines,
+      rev: ++this.state.rev
+    })
   }
 
   updateLine(index, line) {
@@ -79,7 +88,7 @@ class RulePicker extends React.Component {
       <div className="rule-picker">
         { this.state.lines.map((line, index) => (
           <RulePickerLine
-            key={ `${index} - ${lineToString(line)}` }
+            key={ `${index}-${this.state.rev}` }
             index={ index }
             type={ line.left }
             operator={ line.operator }
