@@ -55,5 +55,13 @@ const parseToken = token => {
   }
 }
 
-export default expression =>
-  expression.split(' and ').map(token => token.trim()).map(token => parseToken(token))
+export default expression => {
+
+  const lines = expression.split(' and ').map(token => token.trim())
+
+  if (lines.length === 1 && !lines[0]) {
+    return []
+  }
+
+  return lines.map(token => parseToken(token))
+}

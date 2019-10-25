@@ -95,4 +95,9 @@ describe('Pricing rule parser', function() {
     }])
   })
 
+  it('should return empty array', function() {
+    const result = parsePricingRule('')
+    expect(result).to.deep.equal([])
+  })
+
 })

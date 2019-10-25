@@ -24,8 +24,8 @@ class RulePicker extends React.Component {
 
   deleteLine(index) {
     let lines = this.state.lines.slice()
-    lines = lines.slice(0, index).concat(lines.slice(index + 1))
-    this.setState({lines})
+    lines.splice(index, 1)
+    this.setState({ lines })
   }
 
   updateLine(index, line) {
