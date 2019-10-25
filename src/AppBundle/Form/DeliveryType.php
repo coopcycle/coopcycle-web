@@ -296,10 +296,13 @@ class DeliveryType extends AbstractType
     {
         // FIXME What if the task spans over several days?
         $carbon = Carbon::instance($task->getDoneBefore());
+
         $calendar = $carbon->locale($this->locale)->calendar(null, [
             'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
             'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
             'nextWeek' => 'dddd',
+            'lastDay' => sprintf('[%s]', $carbon->translate('diff_yesterday')),
+            'lastWeek' => 'dddd',
         ]);
 
         return $this->translator->trans('time_slot.human_readable', [
