@@ -753,6 +753,7 @@ embed.delivery.confirm_message: We have registered your request. Your race is wa
   a second mail as soon as the race is confirmed.
 pagination.previous: Previous
 pagination.next: Next
+basics.view: View
 basics.save: Save
 basics.next: Next
 basics.continue: Continue
