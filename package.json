@@ -36,11 +36,11 @@
     "promise": "^8.0.3",
     "redis": "^2.8.0",
     "redux": "^4.0.4",
-    "sequelize": "^5.19.0",
+    "sequelize": "^5.21.1",
     "socket.io": "2.0.3",
     "whatwg-fetch": "^2.0.4",
     "winston": "^2.4.4",
-    "ws": "^7.1.2",
+    "ws": "^7.2.0",
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
