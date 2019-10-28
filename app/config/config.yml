@@ -208,6 +208,9 @@ snc_redis:
 
 oneup_flysystem:
     adapters:
+        assets_local:
+            local:
+                directory: '%kernel.root_dir%/../web/images/assets'
         product_images_local:
             local:
                 directory: '%kernel.root_dir%/../web/images/products'
@@ -221,6 +224,10 @@ oneup_flysystem:
             local:
                 directory: '%kernel.root_dir%/../web/images/tasks'
     filesystems:
+        assets:
+            adapter: assets_local
+            alias: assets_filesystem
+            mount: assets_filesystem
         product_images:
             adapter: product_images_local
             alias: product_images_filesystem
@@ -509,6 +516,14 @@ oneup_uploader:
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
+                image/png: []
+        logo:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.assets_filesystem
+            namer: AppBundle\Utils\LogoNamer
+            allowed_mimetypes:
                 image/png: []
 
 trikoder_oauth2:

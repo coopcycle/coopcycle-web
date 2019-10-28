@@ -648,6 +648,7 @@ services:
       - '@doctrine'
       - '@vich_uploader.property_mapping_factory'
       - '@vich_uploader.upload_handler'
+      - '@coopcycle.settings_manager'
       - '@logger'
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
@@ -689,3 +690,6 @@ services:
     $secret: '%secret%'
 
   AppBundle\Security\TokenStoreExtractor: ~
+
+  AppBundle\Utils\LogoNamer:
+    public: true

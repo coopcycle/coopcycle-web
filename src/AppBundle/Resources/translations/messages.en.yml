@@ -466,6 +466,8 @@ form.settings.administrator_email.help: Notifications will be sent to this email
 form.settings.phone_number.label: Phone number
 form.settings.phone_number.help: This number will be displayed to customers
 form.settings.enable_restaurant_pledges.label: Allow customers to suggest restaurants
+form.settings.company_logo.label: Company logo
+form.settings.company_logo.help: This logo will be used invoices & proofs of delivery
 form.suggest.name.label: Name
 form.suggest.name.help: Please indicate the exact name so that we can find it
 form.suggest.submit.label: Suggest now

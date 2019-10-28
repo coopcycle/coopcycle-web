@@ -19,11 +19,19 @@
 </div>
 
 {{ form_start(form) }}
-  {{ form_row(form.brand_name) }}
-  {{ form_row(form.administrator_email) }}
-  {{ form_row(form.phone_number) }}
-  {{ form_row(form.enable_restaurant_pledges) }}
-
+  <div class="row">
+    <div class="col-sm-3">
+      <label class="control-label">{{ 'form.settings.company_logo.label'|trans }}</label>
+      <div id="logo-dropzone"></div>
+      <p class="help-block">{{ 'form.settings.company_logo.help'|trans }}</p>
+    </div>
+    <div class="col-sm-9">
+      {{ form_row(form.brand_name) }}
+      {{ form_row(form.administrator_email) }}
+      {{ form_row(form.phone_number) }}
+      {{ form_row(form.enable_restaurant_pledges) }}
+    </div>
+  </div>
   <div class="alert alert-danger">
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
@@ -333,6 +341,19 @@
 
     stripeLiveModeSwitch = new CoopCycle.Switch(document.querySelector('#stripe_livemode_switch'), stripeLiveModeSwitchOptions);
 
+    new window.CoopCycle.Dropzone($('#logo-dropzone'), {
+      dropzone: {
+        url: "{{ oneup_uploader_endpoint('logo') }}",
+        params: {
+          type: 'logo',
+        }
+      },
+      image: "{{ coopcycle_logo() }}",
+      size: [ 256, 256 ],
+      croppie: {
+        format: 'png'
+      }
+    })
 
   })();
 

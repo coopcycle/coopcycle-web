@@ -4,6 +4,7 @@ namespace AppBundle\EventListener\Upload;
 
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Service\SettingsManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
@@ -21,11 +22,13 @@ final class UploadListener
         ManagerRegistry $doctrine,
         PropertyMappingFactory $mappingFactory,
         UploadHandler $uploadHandler,
+        SettingsManager $settingsManager,
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
         $this->mappingFactory = $mappingFactory;
         $this->uploadHandler = $uploadHandler;
+        $this->settingsManager = $settingsManager;
         $this->logger = $logger;
     }
 
@@ -36,7 +39,10 @@ final class UploadListener
         $file = $event->getFile();
 
         $type = $request->get('type');
-        $id = $request->get('id');
+
+        if ($type === 'logo') {
+            return $this->onLogoUpload($event);
+        }
 
         $objectClass = null;
         if ($type === 'restaurant') {
@@ -47,6 +53,7 @@ final class UploadListener
             return;
         }
 
+        $id = $request->get('id');
         $object = $this->doctrine->getRepository($objectClass)->find($id);
 
         // Remove previous file
@@ -66,5 +73,13 @@ final class UploadListener
             $file->getPath(),
             sprintf('%s/%s', $directoryName, $file->getBasename())
         );
+    }
+
+    private function onLogoUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+
+        $this->settingsManager->set('company_logo', $file->getBasename());
+        $this->settingsManager->flush();
     }
 }

@@ -56,6 +56,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('stripe_is_livemode', array(StripeResolver::class, 'isLivemode')),
             new TwigFunction('stripe_can_enable_livemode', array(StripeResolver::class, 'canEnableLivemode')),
             new TwigFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),
+            new TwigFunction('coopcycle_logo', array(AppearanceRuntime::class, 'logo')),
         );
     }
 
