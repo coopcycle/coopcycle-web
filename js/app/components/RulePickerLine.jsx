@@ -27,6 +27,7 @@ const typeToOperators = {
   'pickup.address': ['in_zone', 'out_zone'],
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
+  'packages.quantity(%name%)': ['==', '<', '>', 'in'],
 }
 
 class RulePickerLine extends React.Component {
@@ -48,7 +49,7 @@ class RulePickerLine extends React.Component {
     this.handleValueChange = this.handleValueChange.bind(this)
     this.delete = this.delete.bind(this)
 
-    console.log(this.props.rulePicker.props.packages)
+    console.log(this.props.packages)
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -117,6 +118,25 @@ class RulePickerLine extends React.Component {
     /*
      * Return the displayed input for bound selection
      */
+
+    console.log(this.state.type)
+
+    if (this.state.type === 'packages.quantity(%name%)') {
+      return (
+        <div className="row">
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+            <option value="">-</option>
+            { this.props.packages.map((p, index) => {
+              return (<option value={ p.name } key={ index }>{ p.name }</option>)
+            })}
+          </select>
+          <div className="col-md-6">
+            <input className="form-control input-sm" value={this.state.value[1]} onChange={this.handleSecondBoundChange} type="number"></input>
+          </div>
+        </div>
+      )
+    }
+
     switch (this.state.operator) {
     // zone
     case 'in_zone':
@@ -173,6 +193,7 @@ class RulePickerLine extends React.Component {
             <option value="pickup.address">{ i18n.t('RULE_PICKER_LINE_PICKUP_ADDRESS') }</option>
             <option value="dropoff.address">{ i18n.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
             <option value="diff_days(pickup)">{ i18n.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
+            <option value="packages.quantity(%name%)">{ i18n.t('RULE_PICKER_LINE_PACKAGES_QUANTITY') }</option>
           </select>
         </div>
         <div className="col-md-3">

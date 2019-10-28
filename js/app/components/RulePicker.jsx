@@ -94,6 +94,7 @@ class RulePicker extends React.Component {
             operator={ line.operator }
             value={ line.right }
             zones={ this.props.zones }
+            packages={ this.props.packages }
             onUpdate={ this.updateLine }
             onDelete={ this.deleteLine } />
         )) }
