@@ -2794,12 +2794,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "1cb1efb207385b575c05b83ac4629a431d0d9ebd"
+                "reference": "1e932f6fb58c56a41adc4186169d98fdd5f1e71e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/1cb1efb207385b575c05b83ac4629a431d0d9ebd",
-                "reference": "1cb1efb207385b575c05b83ac4629a431d0d9ebd",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/1e932f6fb58c56a41adc4186169d98fdd5f1e71e",
+                "reference": "1e932f6fb58c56a41adc4186169d98fdd5f1e71e",
                 "shasum": ""
             },
             "require": {
@@ -2863,7 +2863,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2019-10-03T20:46:43+00:00"
+            "time": "2019-10-24T10:15:01+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -9859,16 +9859,16 @@
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "b0d586a6f52283c2f2abd85eb5c43e5f3d07662c"
+                "reference": "19a24dbcf5bd5880394d343584dd1b20675f8237"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/b0d586a6f52283c2f2abd85eb5c43e5f3d07662c",
-                "reference": "b0d586a6f52283c2f2abd85eb5c43e5f3d07662c",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/19a24dbcf5bd5880394d343584dd1b20675f8237",
+                "reference": "19a24dbcf5bd5880394d343584dd1b20675f8237",
                 "shasum": ""
             },
             "require": {
@@ -9881,7 +9881,7 @@
                 "symfony/http-foundation": "^2.8 || ^3.2 || ^4.0",
                 "symfony/http-kernel": "^2.8 || ^3.2 || ^4.0",
                 "symfony/options-resolver": "^2.8 || ^3.2 || ^4.0",
-                "twig/twig": "^1.35 || ^2.0"
+                "twig/twig": "^1.40 || ^2.9"
             },
             "conflict": {
                 "sonata-project/block-bundle": "<3.11"
@@ -9918,13 +9918,13 @@
             ],
             "authors": [
                 {
-                    "name": "Sonata Community",
-                    "homepage": "https://github.com/sonata-project/SonataSeoBundle/contributors"
-                },
-                {
                     "name": "Thomas Rabaix",
                     "email": "thomas.rabaix@sonata-project.org",
                     "homepage": "https://sonata-project.org"
+                },
+                {
+                    "name": "Sonata Community",
+                    "homepage": "https://github.com/sonata-project/SonataSeoBundle/contributors"
                 }
             ],
             "description": "Symfony SonataSeoBundle",
@@ -9933,7 +9933,7 @@
                 "seo",
                 "sonata"
             ],
-            "time": "2019-01-23T21:59:32+00:00"
+            "time": "2019-10-28T22:41:49+00:00"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
