@@ -239,7 +239,6 @@ class InitDemoCommand extends Command
 
         $em->flush();
 
-        $apiKey = $this->craueConfig->get('google_api_key');
         $addressProvider = new AddressProvider($this->faker, $this->geocoder);
 
         $this->faker->addProvider($addressProvider);
