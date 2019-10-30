@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -38,6 +39,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
+                ['timingResponse', EventPriorities::PRE_VALIDATE],
             ],
         ];
     }
@@ -72,8 +74,10 @@ final class OrderSubscriber implements EventSubscriberInterface
         //     $delivery->setDate(new \DateTime($delivery->getDate()));
         // }
 
+        $user = $this->getUser();
+
         // Make sure customer is set
-        if (null === $order->getCustomer()) {
+        if (null === $order->getCustomer() && null !== $user) {
             $order->setCustomer($this->getUser());
         }
 
@@ -83,5 +87,30 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         $event->setControllerResult($order);
+    }
+
+    // FIXME Remove this listener once https://github.com/api-platform/core/pull/3150 is merged
+    public function timingResponse(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+        if ('api_orders_timing_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $order = $event->getControllerResult();
+
+        $restaurant = $order->getRestaurant();
+
+        if (null == $restaurant) {
+            return;
+        }
+
+        $choices = $this->orderTimeHelper->getAvailabilities($order);
+        $timing = $this->orderTimeHelper->getTimeInfo($order);
+
+        unset($timing['availabilities']);
+        $timing['choices'] = $choices;
+
+        $event->setControllerResult(new JsonResponse($timing));
     }
 }
