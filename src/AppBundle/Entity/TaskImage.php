@@ -108,4 +108,9 @@ class TaskImage
 
         return $this;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 }
