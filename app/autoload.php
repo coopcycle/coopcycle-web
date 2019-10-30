@@ -1,6 +1,5 @@
 <?php
 
-use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\Dotenv\Dotenv;
 
