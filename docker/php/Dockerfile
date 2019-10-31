@@ -97,8 +97,4 @@ ENV APP_DEBUG 1
 # Needed to fix permissions error
 USER 82
 
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
-RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
-    && composer clear-cache
-
 ENTRYPOINT ["docker-app-start"]
