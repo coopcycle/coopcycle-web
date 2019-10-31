@@ -20,10 +20,12 @@ use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -309,21 +311,29 @@ trait AdminDashboardTrait
             throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));
         }
 
+        // @see https://symfonycasts.com/screencast/symfony-uploads/file-streaming
+
         $imagePath = $storage->resolvePath($image, 'file');
 
-        $response = new BinaryFileResponse($imagePath);
+        $fs = $this->get('task_images_filesystem');
 
-        $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
-        if ($mimeTypeGuesser->isSupported()) {
-            $response->headers->set('Content-Type', $mimeTypeGuesser->guess($imagePath));
-        } else {
-            $response->headers->set('Content-Type', 'text/plain');
+        if (!$fs->has($imagePath)) {
+            throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $$imagePath));
         }
 
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $response = new StreamedResponse(function() use ($storage, $image) {
+            $outputStream = fopen('php://output', 'wb');
+            $fileStream = $storage->resolveStream($image, 'file');
+            stream_copy_to_stream($fileStream, $outputStream);
+        });
+
+        $response->headers->set('Content-Type', $fs->getMimetype($imagePath));
+
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
             $this->getImageDownloadFileName($image, $slugify)
         );
+        $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
     }
