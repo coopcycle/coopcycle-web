@@ -149,6 +149,15 @@ services:
       $projectDir: '%kernel.project_dir%'
       $environment: '%kernel.environment%'
 
+  AppBundle\Command\UploadImagesCommand:
+    arguments:
+      $localProductImagesFilesystem: '@product_images_filesystem'
+      $remoteProductImagesFilesystem: '@product_images_s3_filesystem'
+      $localRestaurantImagesFilesystem: '@restaurant_images_filesystem'
+      $remoteRestaurantImagesFilesystem: '@restaurant_images_s3_filesystem'
+      $localTaskImagesFilesystem: '@task_images_filesystem'
+      $remoteTaskImagesFilesystem: '@task_images_s3_filesystem'
+
   AppBundle\Controller\OrderController:
     arguments:
       $objectManager: '@sylius.manager.order'
