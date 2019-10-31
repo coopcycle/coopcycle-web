@@ -60,14 +60,6 @@ RUN set -xe \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --optimize-autoloader --classmap-authoritative \
-    && composer clear-cache
-
-ENV COMPOSER_ALLOW_SUPERUSER 0
-
 WORKDIR /srv/coopcycle
 
 COPY composer.json ./
@@ -96,5 +88,7 @@ ENV APP_DEBUG 1
 
 # Needed to fix permissions error
 USER 82
+
+RUN composer global require "hirak/prestissimo"
 
 ENTRYPOINT ["docker-app-start"]
