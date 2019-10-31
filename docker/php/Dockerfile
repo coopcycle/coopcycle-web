@@ -23,8 +23,6 @@ RUN set -xe \
         freetype-dev \
     && apk add --no-cache \
         unzip \
-        chromium \
-        chromium-chromedriver \
     && apk add --no-cache \
         jpegoptim \
         optipng \
@@ -69,10 +67,6 @@ RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress
     && composer clear-cache
 
 ENV COMPOSER_ALLOW_SUPERUSER 0
-
-ENV PANTHER_CHROME_BINARY /usr/bin/chromium-browser
-ENV PANTHER_CHROME_DRIVER_BINARY /usr/lib/chromium/chromedriver
-ENV PANTHER_NO_SANDBOX 1
 
 WORKDIR /srv/coopcycle
 
