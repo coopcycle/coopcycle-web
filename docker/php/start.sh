@@ -33,7 +33,4 @@ php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --en
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 
-# Permissions hack because setfacl does not work on Mac and Windows
-chown -R www-data var/cache && chown -R www-data var/logs && chown -R www-data var/sessions
-
 exec php-fpm
