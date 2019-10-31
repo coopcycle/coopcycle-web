@@ -223,6 +223,26 @@ oneup_flysystem:
         task_images_local:
             local:
                 directory: '%kernel.root_dir%/../web/images/tasks'
+        product_images_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: products
+        restaurant_images_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: restaurants
+        store_images_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: stores
+        task_images_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: tasks
     filesystems:
         assets:
             adapter: assets_local
@@ -244,6 +264,22 @@ oneup_flysystem:
             adapter: task_images_local
             alias: task_images_filesystem
             mount: task_images_filesystem
+        product_images_s3:
+            adapter: product_images_s3
+            alias: product_images_s3_filesystem
+            mount: product_images_s3_filesystem
+        restaurant_images_s3:
+            adapter: restaurant_images_s3
+            alias: restaurant_images_s3_filesystem
+            mount: restaurant_images_s3_filesystem
+        store_images_s3:
+            adapter: store_images_s3
+            alias: store_images_s3_filesystem
+            mount: store_images_s3_filesystem
+        task_images_s3:
+            adapter: task_images_s3
+            alias: task_images_s3_filesystem
+            mount: task_images_s3_filesystem
 
 vich_uploader:
     db_driver: orm
