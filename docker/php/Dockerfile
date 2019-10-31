@@ -23,8 +23,6 @@ RUN set -xe \
         freetype-dev \
     && apk add --no-cache \
         unzip \
-        chromium \
-        chromium-chromedriver \
     && apk add --no-cache \
         jpegoptim \
         optipng \
@@ -62,18 +60,6 @@ RUN set -xe \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --optimize-autoloader --classmap-authoritative \
-    && composer clear-cache
-
-ENV COMPOSER_ALLOW_SUPERUSER 0
-
-ENV PANTHER_CHROME_BINARY /usr/bin/chromium-browser
-ENV PANTHER_CHROME_DRIVER_BINARY /usr/lib/chromium/chromedriver
-ENV PANTHER_NO_SANDBOX 1
-
 WORKDIR /srv/coopcycle
 
 COPY composer.json ./
@@ -81,17 +67,10 @@ COPY composer.lock ./
 
 RUN mkdir -p var/cache var/logs var/sessions web/images/products web/images/restaurants web/images/tasks vendor \
     # Permissions hack because setfacl does not work on Mac and Windows
-    && chown -R www-data var/cache \
-    && chown -R www-data var/logs \
-    && chown -R www-data var/sessions \
-    && chown -R www-data web/images/products \
-    && chown -R www-data web/images/restaurants \
-    && chown -R www-data web/images/tasks \
-    && chmod -R +w var/cache \
-    && chmod a+w var \
-    && chmod a+w web/images/products \
-    && chmod a+w web/images/restaurants \
-    && chmod a+w web/images/tasks \
+    && chown -R www-data var \
+    && chown -R www-data web/images \
+    && chmod -R a+w var \
+    && chmod -R a+w web/images \
     && chown -R www-data vendor
 
 COPY app app/
@@ -110,8 +89,6 @@ ENV APP_DEBUG 1
 # Needed to fix permissions error
 USER 82
 
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
-RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
-    && composer clear-cache
+RUN composer global require "hirak/prestissimo"
 
 ENTRYPOINT ["docker-app-start"]
