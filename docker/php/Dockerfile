@@ -104,6 +104,9 @@ COPY docker/php/start.sh /usr/local/bin/docker-app-start
 RUN chmod +x /usr/local/bin/docker-app-start
 RUN chmod +x bin/demo
 
+ENV APP_ENV dev
+ENV APP_DEBUG 1
+
 # Needed to fix permissions error
 USER 82
 
