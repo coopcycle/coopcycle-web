@@ -84,9 +84,6 @@ RUN chmod +x bin/demo
 ENV APP_ENV dev
 ENV APP_DEBUG 1
 
-# Needed to fix permissions error
-USER 82
-
 RUN composer global require "hirak/prestissimo"
 
 ENTRYPOINT ["docker-app-start"]
