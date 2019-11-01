@@ -60,8 +60,6 @@ RUN set -xe \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
-WORKDIR /srv/coopcycle
-
 COPY composer.json ./
 COPY composer.lock ./
 
