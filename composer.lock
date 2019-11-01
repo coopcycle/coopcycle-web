@@ -6925,16 +6925,16 @@
         },
         {
             "name": "notfloran/mjml-bundle",
-            "version": "v3.1.2",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/notFloran/mjml-bundle.git",
-                "reference": "4cdd69c046f518db55f2a4e9284dc0e6b46f18c7"
+                "reference": "59cf1662680457e0104cf13e2135483f8183f33a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/4cdd69c046f518db55f2a4e9284dc0e6b46f18c7",
-                "reference": "4cdd69c046f518db55f2a4e9284dc0e6b46f18c7",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/59cf1662680457e0104cf13e2135483f8183f33a",
+                "reference": "59cf1662680457e0104cf13e2135483f8183f33a",
                 "shasum": ""
             },
             "require": {
@@ -6973,7 +6973,7 @@
                 "email",
                 "mjml"
             ],
-            "time": "2019-09-16T18:49:04+00:00"
+            "time": "2019-10-09T11:34:08+00:00"
         },
         {
             "name": "nyholm/psr7",
