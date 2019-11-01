@@ -149,6 +149,15 @@ services:
       $projectDir: '%kernel.project_dir%'
       $environment: '%kernel.environment%'
 
+  AppBundle\Command\UploadImagesCommand:
+    arguments:
+      $localProductImagesFilesystem: '@product_images_filesystem'
+      $remoteProductImagesFilesystem: '@product_images_s3_filesystem'
+      $localRestaurantImagesFilesystem: '@restaurant_images_filesystem'
+      $remoteRestaurantImagesFilesystem: '@restaurant_images_s3_filesystem'
+      $localTaskImagesFilesystem: '@task_images_filesystem'
+      $remoteTaskImagesFilesystem: '@task_images_s3_filesystem'
+
   AppBundle\Controller\OrderController:
     arguments:
       $objectManager: '@sylius.manager.order'
@@ -693,3 +702,16 @@ services:
 
   AppBundle\Utils\LogoNamer:
     public: true
+
+  # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
+  # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  s3_client:
+    class: Aws\S3\S3Client
+    arguments:
+        - endpoint: '%env(S3_ENDPOINT)%'
+          version: latest
+          region: '%env(S3_REGION)%'
+          credentials:
+            key: '%env(S3_CREDENTIALS_KEY)%'
+            secret: '%env(S3_CREDENTIALS_SECRET)%'
+          use_path_style_endpoint: true

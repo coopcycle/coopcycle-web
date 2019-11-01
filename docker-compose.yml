@@ -122,7 +122,33 @@ services:
     ports:
       - 8889:80
 
+  minio:
+    image: minio/minio
+    command: server /data
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: coopcycle
+      MINIO_REGION: fr-fr
+
+  # https://github.com/minio/minio/issues/4882
+  # https://docs.min.io/docs/minio-client-complete-guide#policy
+  minio_client:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add coopcycle http://minio:9000 minio coopcycle;
+      /usr/bin/mc mb --region fr-fr --ignore-existing coopcycle/images;
+      /usr/bin/mc policy set public coopcycle/images;
+      "
+
 volumes:
   node_modules:
   pg_data:
   php_cache:
+  minio_data:
