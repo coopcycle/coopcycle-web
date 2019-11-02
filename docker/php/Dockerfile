@@ -60,6 +60,21 @@ RUN set -xe \
     && mv composer.phar /usr/local/bin/composer \
     && apk del .fetch-deps
 
+# Add healthcheck for PHP-FPM
+# https://github.com/docker-library/php/issues/366
+# https://github.com/renatomefi/php-fpm-healthcheck
+
+RUN apk add --no-cache fcgi
+
+RUN set -xe && echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
+RUN wget -O /usr/local/bin/php-fpm-healthcheck \
+    https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck \
+    && chmod +x /usr/local/bin/php-fpm-healthcheck
+
+HEALTHCHECK \
+  CMD php-fpm-healthcheck || exit 1
+
 COPY composer.json ./
 COPY composer.lock ./
 
