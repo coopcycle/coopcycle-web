@@ -229,6 +229,8 @@ class Restaurant extends FoodEstablishment
 
     private $reusablePackagings;
 
+    private $loopeatEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -921,5 +923,10 @@ class Restaurant extends FoodEstablishment
         $this->reusablePackagings->add($reusablePackaging);
 
         return $this;
+    }
+
+    public function isLoopeatEnabled()
+    {
+        return $this->loopeatEnabled;
     }
 }

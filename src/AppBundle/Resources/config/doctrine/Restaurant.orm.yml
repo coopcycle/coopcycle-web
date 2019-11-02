@@ -139,6 +139,11 @@ AppBundle\Entity\Restaurant:
             type: boolean
             options:
                 default: false
+        loopeatEnabled:
+            column: loopeat_enabled
+            type: boolean
+            options:
+                default: f
     manyToMany:
         servesCuisine:
             targetEntity: AppBundle\Entity\Cuisine
