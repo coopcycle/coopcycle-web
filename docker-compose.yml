@@ -72,8 +72,8 @@ services:
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
     volumes:
-      - 'php_cache:/srv/coopcycle/var/cache'
-      - './:/srv/coopcycle:cached'
+      - 'php_cache:/var/www/html/var/cache'
+      - './:/var/www/html:cached'
     cap_add:
       - SYS_ADMIN
 
@@ -86,8 +86,8 @@ services:
       - '80:80'
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/srv/coopcycle/web:ro'
-      - './vendor:/srv/coopcycle/vendor:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
 
   nginx_test:
     image: 'nginx:1.11-alpine'
@@ -98,8 +98,8 @@ services:
       - '9080:80'
     volumes:
       - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/srv/coopcycle/web:ro'
-      - './vendor:/srv/coopcycle/vendor:ro'
+      - './web:/var/www/html/web:ro'
+      - './vendor:/var/www/html/vendor:ro'
 
   smtp:
     image: namshi/smtp

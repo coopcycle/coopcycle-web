@@ -7,11 +7,10 @@ install:
 	@docker-compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
 osrm:
-	@[ -d var/osrm ] || mkdir -p var/osrm
-	@wget https://coopcycle.org/osm/paris-france.osm.pbf -O var/osrm/data.osm.pbf
-	@docker-compose run osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
-	@docker-compose run osrm osrm-partition /data/data.osrm
-	@docker-compose run osrm osrm-customize /data/data.osrm
+	@docker-compose run --rm osrm wget --no-check-certificate https://coopcycle.org/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+	@docker-compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+	@docker-compose run --rm osrm osrm-partition /data/data.osrm
+	@docker-compose run --rm osrm osrm-customize /data/data.osrm
 
 phpunit:
 	@docker-compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
