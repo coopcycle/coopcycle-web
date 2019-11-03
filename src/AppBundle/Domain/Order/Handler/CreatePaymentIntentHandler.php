@@ -6,7 +6,7 @@ use AppBundle\Domain\Order\Command\CreatePaymentIntent;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Service\StripeManager;
 use SimpleBus\Message\Recorder\RecordsMessages;
-use Stripe\Error\Base as StripeException;
+use Stripe\Exception\ApiErrorException;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
@@ -44,7 +44,7 @@ class CreatePaymentIntentHandler
             $intent = $this->stripeManager->createIntent($payment);
             $payment->setPaymentIntent($intent);
 
-        } catch (StripeException $e) {
+        } catch (ApiErrorException $e) {
             $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }
     }
