@@ -35,7 +35,7 @@ class RestaurantRepository extends EntityRepository
         $qb->innerJoin($qb->getRootAlias() . '.address', 'a', Expr\Join::WITH);
 
         $geomFromText = new Expr\Func('ST_GeomFromText', array(
-            $qb->expr()->literal("POINT({$latitude} {$longitude})"),
+            $qb->expr()->literal("POINT({$longitude} {$latitude})"),
             '4326'
         ));
 
