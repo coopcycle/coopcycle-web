@@ -715,3 +715,11 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+
+  AppBundle\Partner\LoopEat\Client:
+    arguments:
+      $client: '@csa_guzzle.client.loopeat'
+      $username: '%env(LOOPEAT_USERNAME)%'
+      $password: '%env(LOOPEAT_PASSWORD)%'
+      $clientId: '%env(LOOPEAT_CLIENT_ID)%'
+      $clientSecret: '%env(LOOPEAT_CLIENT_SECRET)%'
