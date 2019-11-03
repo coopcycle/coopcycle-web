@@ -13,6 +13,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
 use Doctrine\Common\Persistence\ObjectManager;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Order\Context\CartContextInterface;
@@ -31,15 +32,18 @@ class OrderController extends AbstractController
     private $objectManager;
     private $commandBus;
     private $orderTimeHelper;
+    private $logger;
 
     public function __construct(
         ObjectManager $objectManager,
         MessageBus $commandBus,
-        OrderTimeHelper $orderTimeHelper)
+        OrderTimeHelper $orderTimeHelper,
+        LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
         $this->commandBus = $commandBus;
         $this->orderTimeHelper = $orderTimeHelper;
+        $this->logger = $logger;
     }
 
     /**

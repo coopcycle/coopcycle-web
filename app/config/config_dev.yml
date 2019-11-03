@@ -20,7 +20,7 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
             max_files: 3
-            channels: ["!event", "!api"]
+            channels: ["!event", "!api", "!stripe"]
         console:
             type:   console
             channels: ["!event", "!doctrine"]
@@ -31,6 +31,12 @@ monolog:
             formatter: AppBundle\Monolog\Formatter\ApiFormatter
             max_files: 3
             channels: [api]
+        stripe:
+            type: rotating_file
+            path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [stripe]
         mailer:
             level:    debug
             type:     stream

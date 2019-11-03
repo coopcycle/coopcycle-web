@@ -162,6 +162,8 @@ services:
     arguments:
       $objectManager: '@sylius.manager.order'
       $commandBus: '@command_bus'
+    tags:
+      - { name: monolog.logger, channel: stripe }
 
   AppBundle\Controller\RestaurantController:
     arguments:
@@ -715,3 +717,7 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+
+  AppBundle\Service\StripeManager:
+    tags:
+      - { name: monolog.logger, channel: stripe }

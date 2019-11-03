@@ -9,12 +9,16 @@ use Stripe;
 class StripeManager
 {
     private $settingsManager;
+    private $logger;
 
     const STRIPE_API_VERSION = '2019-09-09';
 
-    public function __construct(SettingsManager $settingsManager)
+    public function __construct(
+        SettingsManager $settingsManager,
+        LoggerInterface $logger)
     {
         $this->settingsManager = $settingsManager;
+        $this->logger = $logger;
     }
 
     public function configure()
@@ -44,9 +48,18 @@ class StripeManager
     {
         $options = [];
 
-        $stripeAccount = $stripePayment->getStripeUserId();
-        if (null !== $stripeAccount) {
-            $options['stripe_account'] = $stripeAccount;
+        $order = $stripePayment->getOrder();
+
+        $restaurant = $order->getRestaurant();
+        if (null === $restaurant) {
+            return $options;
+        }
+
+        $livemode = $this->settingsManager->isStripeLivemode();
+        $stripeAccount = $restaurant->getStripeAccount($livemode);
+
+        if (null !== $stripeAccount && $restaurant->getContract()->isRestaurantPaysStripeFee()) {
+            $options['stripe_account'] = $stripeAccount->getStripeUserId();
         }
 
         return $options;
@@ -64,17 +77,20 @@ class StripeManager
 
         $attrs = [];
 
-        $stripeAccount = $stripePayment->getStripeUserId();
+        $livemode = $this->settingsManager->isStripeLivemode();
+        $stripeAccount = $restaurant->getStripeAccount($livemode);
+
         if (null !== $stripeAccount) {
 
             $restaurantPaysStripeFee = $restaurant->getContract()->isRestaurantPaysStripeFee();
             $applicationFee = $order->getFeeTotal();
 
+            // @see https://stripe.com/docs/payments/payment-intents/use-cases#connected-accounts
             if ($restaurantPaysStripeFee) {
                 $attrs['application_fee_amount'] = $applicationFee;
             } else {
                 $attrs['transfer_data'] = array(
-                    'destination' => $stripeAccount,
+                    'destination' => $stripeAccount->getStripeUserId(),
                     'amount' => $order->getTotal() - $applicationFee
                 );
             }
@@ -99,15 +115,20 @@ class StripeManager
             'payment_method' => $stripePayment->getPaymentMethod(),
             'confirmation_method' => 'manual',
             'confirm' => true,
-            // 'statement_descriptor' => '...',
             // @see https://stripe.com/docs/payments/payment-intents/use-cases#separate-auth-capture
+            // @see https://stripe.com/docs/payments/payment-intents/creating-payment-intents#separate-authorization-and-capture
             'capture_method' => 'manual'
+            // 'statement_descriptor' => '...',
         ];
 
         $this->configurePayment($stripePayment);
 
         $payload = $this->configureCreateIntentPayload($stripePayment, $payload);
         $stripeOptions = $this->getStripeOptions($stripePayment);
+
+        $this->logger->info(
+            sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
+        );
 
         $intent = Stripe\PaymentIntent::create($payload, $stripeOptions);
 
@@ -126,6 +147,10 @@ class StripeManager
         $intent = Stripe\PaymentIntent::retrieve(
             $stripePayment->getPaymentIntent(),
             $stripeOptions
+        );
+
+        $this->logger->info(
+            sprintf('Order #%d | StripeManager::confirmIntent | %s', $stripePayment->getOrder()->getId(), $intent->id)
         );
 
         $intent->confirm();
