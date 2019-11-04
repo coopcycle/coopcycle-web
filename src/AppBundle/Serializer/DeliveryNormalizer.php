@@ -5,10 +5,12 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -17,17 +19,20 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $geocoder;
+    private $packageRepository;
     private $logger;
 
     public function __construct(
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
+        ManagerRegistry $doctrine,
         LoggerInterface $logger)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
+        $this->packageRepository = $doctrine->getRepository(Package::class);
         $this->logger = $logger;
     }
 
@@ -155,6 +160,15 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['pickup'])) {
             $this->denormalizeTask($data['pickup'], $pickup, $format);
+        }
+
+        if (isset($data['packages'])) {
+            foreach ($data['packages'] as $p) {
+                $package = $this->packageRepository->findOneByName($p['type']);
+                if ($package) {
+                    $delivery->addPackageWithQuantity($package, $p['quantity']);
+                }
+            }
         }
 
         return $delivery;

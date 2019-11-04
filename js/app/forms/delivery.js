@@ -139,6 +139,21 @@ function parseWeight(value) {
   return intValue
 }
 
+function setPackages(name) {
+  const packages = []
+  $(`#${name}_packages_list`).children().each(function() {
+    packages.push({
+      type: $(this).find('select').val(),
+      quantity: $(this).find('input[type="number"]').val()
+    })
+  })
+
+  store.dispatch({
+    type: 'SET_PACKAGES',
+    packages
+  })
+}
+
 function reducer(state = {}, action) {
   switch (action.type) {
   case 'SET_ADDRESS':
@@ -169,6 +184,11 @@ function reducer(state = {}, action) {
     return {
       ...state,
       weight: action.value
+    }
+  case 'SET_PACKAGES':
+    return {
+      ...state,
+      packages: action.packages
     }
   default:
     return state
@@ -203,7 +223,8 @@ export default function(name, options) {
       dropoff: {
         address: null,
         [ getDatePickerKey(name, 'dropoff') ]: getDatePickerValue(name, 'dropoff')
-      }
+      },
+      packages: []
     }
 
     createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
@@ -260,7 +281,10 @@ export default function(name, options) {
 
         var newElem = $(newWidget)
         newElem.find('input[type="number"]').val(1)
+        newElem.find('input[type="number"]').on('change', () => setPackages(name))
         newElem.appendTo(list)
+
+        setPackages(name)
       })
 
       $(`#${name}_packages`).on('click', '[data-delete]', function(e) {
@@ -268,6 +292,8 @@ export default function(name, options) {
         if ($target.length > 0) {
           $target.remove()
         }
+
+        setPackages(name)
       })
     }
 
