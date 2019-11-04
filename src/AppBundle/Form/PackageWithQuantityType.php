@@ -28,6 +28,7 @@ class PackageWithQuantityType extends AbstractType
                 },
                 'label' => 'form.package_with_quantity.package.label',
                 'choice_label' => 'name',
+                'choice_value' => 'name',
             ])
             ->add('quantity', IntegerType::class, [
                 'label' => 'form.package_with_quantity.quantity.label',
