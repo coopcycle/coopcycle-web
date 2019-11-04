@@ -4,11 +4,13 @@ namespace AppBundle\Api\Dto;
 
 final class DeliveryInput
 {
-	public $store;
+    public $store;
 
-	public $weight;
+    public $weight;
 
-	public $pickup;
+    public $pickup;
 
-	public $dropoff;
+    public $dropoff;
+
+    public $packages;
 }

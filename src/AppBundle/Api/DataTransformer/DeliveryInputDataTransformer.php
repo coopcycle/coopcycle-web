@@ -29,6 +29,8 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
         $deliveryData = [
             'pickup' => $data->pickup,
             'dropoff' => $data->dropoff,
+            'weight' => $data->weight,
+            'packages' => $data->packages,
         ];
         $delivery = $this->deliveryNormalizer->denormalize($deliveryData, Delivery::class);
 
