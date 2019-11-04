@@ -31,8 +31,6 @@ class ImportStripeFeeCommand extends Command
         $this->orderManager = $orderManager;
         $this->adjustmentFactory = $adjustmentFactory;
 
-        $this->stripeLiveMode = $settingsManager->isStripeLivemode();
-
         $stripeManager->configure();
 
         parent::__construct();
