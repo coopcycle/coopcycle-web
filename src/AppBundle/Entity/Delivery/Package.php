@@ -9,7 +9,7 @@ class Package
     protected $id;
     protected $package;
     protected $delivery;
-    protected $quantity;
+    protected $quantity = 0;
 
     public function __construct(Delivery $delivery = null)
     {

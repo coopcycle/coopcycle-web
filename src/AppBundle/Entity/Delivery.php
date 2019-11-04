@@ -247,9 +247,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             return;
         }
 
-        $deliveryPackage = new DeliveryPackage($this);
-        $deliveryPackage->setPackage($package);
-        $deliveryPackage->setQuantity($quantity);
+        $deliveryPackage = null;
+        foreach ($this->packages as $deliveryPackage) {
+            if ($deliveryPackage->getPackage() === $package) {
+                break;
+            }
+        }
+
+        if (null === $deliveryPackage) {
+            $deliveryPackage = new DeliveryPackage($this);
+            $deliveryPackage->setPackage($package);
+        }
+
+        $deliveryPackage->setQuantity($deliveryPackage->getQuantity() + $quantity);
 
         $this->packages->add($deliveryPackage);
     }
