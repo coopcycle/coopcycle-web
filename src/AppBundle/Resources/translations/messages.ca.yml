@@ -22,7 +22,6 @@ adminDashboard.dashboard.displayByGroups: Visualització per grups
 adminDashboard.dashboard.displayAll: Mostra tot
 adminDashboard.dashboard.cancel: Cancel · lar
 adminDashboard.deliveries.title: Entregues
-adminDashboard.deliveries.createNew: Crea una nova entrega
 adminDashboard.deliveries.type: Tipus
 adminDashboard.deliveries.dueDate: Data de venciment
 adminDashboard.deliveries.courier: Repartidor

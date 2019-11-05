@@ -22,7 +22,6 @@ adminDashboard.dashboard.displayByGroups: Display by groups
 adminDashboard.dashboard.displayAll: Display all
 adminDashboard.dashboard.cancel: Cancel
 adminDashboard.deliveries.title: Deliveries
-adminDashboard.deliveries.createNew: Create new delivery
 adminDashboard.deliveries.type: Type
 adminDashboard.deliveries.dueDate: Due date
 adminDashboard.deliveries.courier: Courier

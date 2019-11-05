@@ -22,7 +22,6 @@ adminDashboard.dashboard.displayByGroups: Mostrar por grupo
 adminDashboard.dashboard.displayAll: Mostrar todas
 adminDashboard.dashboard.cancel: Cancelar
 adminDashboard.deliveries.title: Entregas
-adminDashboard.deliveries.createNew: Crear nueva entrega
 adminDashboard.deliveries.type: Tipo
 adminDashboard.deliveries.dueDate: Fecha de entrega
 adminDashboard.deliveries.courier: Mensajero

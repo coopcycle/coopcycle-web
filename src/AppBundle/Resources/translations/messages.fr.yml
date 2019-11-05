@@ -23,7 +23,6 @@ adminDashboard.dashboard.displayByGroups: Afficher par groupe
 adminDashboard.dashboard.displayAll: Afficher tout
 adminDashboard.dashboard.cancel: Annuler
 adminDashboard.deliveries.title: Livraisons
-adminDashboard.deliveries.createNew: Créer une livraison
 adminDashboard.deliveries.type: Type
 adminDashboard.deliveries.dueDate: Échéance
 adminDashboard.deliveries.courier: Coursier
