@@ -33,7 +33,7 @@ class Task extends React.Component {
               e.stopPropagation()
               this.props.onRemove(task)
             }}
-            data-toggle="tooltip" data-placement="right" title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: task.id }) }
+            title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: task.id }) }
           ><i className="fa fa-times"></i></a>
         )
       }
