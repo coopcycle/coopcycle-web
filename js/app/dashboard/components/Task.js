@@ -18,7 +18,7 @@ class Task extends React.Component {
     this.prevent = false
   }
 
-  renderStatusIcon() {
+  renderIconRight() {
 
     const { assigned, task } = this.props
 
@@ -75,16 +75,30 @@ class Task extends React.Component {
     this.props.setCurrentTask(task)
   }
 
+  renderAttrs() {
+    const { task } = this.props
+
+    if (task.images && task.images.length > 0) {
+      return (
+        <span className="task__attrs">
+          <i className="fa fa-camera"></i>
+        </span>
+      )
+    }
+  }
+
   renderTags() {
     const { task } = this.props
 
-    return (
-      <span className="task__tags">
-        { task.tags.map(tag => (
-          <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
-        )) }
-      </span>
-    )
+    if (task.tags.length > 0) {
+      return (
+        <span className="task__tags">
+          { task.tags.map(tag => (
+            <i key={ tag.slug } className="fa fa-circle" style={{ color: tag.color }}></i>
+          )) }
+        </span>
+      )
+    }
   }
 
   render() {
@@ -143,8 +157,9 @@ class Task extends React.Component {
             date: moment(task.doneBefore).format('LT')
           }) }
         </span>
+        { this.renderAttrs() }
         { this.renderTags() }
-        { this.renderStatusIcon() }
+        { this.renderIconRight() }
       </ContextMenuTrigger>
     )
 

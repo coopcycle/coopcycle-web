@@ -251,22 +251,16 @@ html, body {
 }
 
 .task__icon {
-  font-size: 14px;
-  line-height: 14px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-
   &--right {
+    font-size: 14px;
+    line-height: 14px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     right: 12px;
   }
-  &--left {
-    right: 40px;
-  }
   &--type {
-    position: static;
     padding-right: 5px;
-    transform: none;
   }
 }
 
@@ -288,11 +282,11 @@ html, body {
   background-color: $yellow!important;
 }
 
-.task__tags {
+.task__tags,
+.task__attrs {
   > i {
     margin-left: 5px;
   }
-
 }
 
 .dashboard__task-modal__complete-form {
