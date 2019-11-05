@@ -11,6 +11,12 @@
 @import "~font-awesome/scss/_mixins.scss";
 @import "~font-awesome/scss/_animated.scss";
 
+// Bootstrap 4.x
+// https://getbootstrap.com/docs/4.1/getting-started/webpack/
+// @see https://getbootstrap.com/docs/4.1/getting-started/theming/
+@import "bootstrap-utilities.css";
+
+// Bootstrap 3.x
 @import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
 @import "circle.css";
