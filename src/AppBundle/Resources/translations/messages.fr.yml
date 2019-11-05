@@ -769,3 +769,6 @@ form.delivery.package.label: Emballage
 order_item.adjustment_type.reusable_packaging: '%quantity% × emballage(s)'
 order.reusable_packaging.alert: Cette commande doit être conditionnée dans des emballages
   réutilisables
+deliveries.sort.newest: Les plus récentes
+deliveries.sort.oldest: Les plus anciennes
+deliveries.filter.clear: Afficher tout

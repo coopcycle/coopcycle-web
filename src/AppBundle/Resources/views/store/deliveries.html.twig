@@ -7,10 +7,16 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
-    <i class="fa fa-plus"></i>  {{ 'delivery.createNew'|trans }}
+<div class="text-right mb-4">
+  <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success pull-right">
+    <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
   </a>
+  <div class="dropdown pull-right mr-4">
+    {% include '@App/_partials/delivery/sort.html.twig' %}
+  </div>
+</div>
+<p class="text-right">
+
 </p>
 {% include '@App/_partials/delivery/list.html.twig' %}
 <nav class="text-center">

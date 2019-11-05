@@ -22,7 +22,9 @@
       {% if with_store is defined and with_store %}
       <td>
         {% if delivery.store is not empty %}
-          <a href="{{ path(routes.list, { store: delivery.store.id }) }}">
+          <a href="{{ path(deliveries.route, deliveries.params|merge({
+            (deliveries.paginatorOptions.filterFieldParameterName): 's.id',
+            (deliveries.paginatorOptions.filterValueParameterName): delivery.store.id })) }}">
             {{ delivery.store.name }}
           </a>
         {% endif %}

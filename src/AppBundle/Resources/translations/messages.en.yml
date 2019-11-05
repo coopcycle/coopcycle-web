@@ -833,3 +833,6 @@ resend_confirmation_email.disclaimer: If you have not received the confirmation 
   click on the button.
 sylius.ui.code: Code
 sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit
+deliveries.sort.newest: Newest first
+deliveries.sort.oldest: Oldest first
+deliveries.filter.clear: Show all

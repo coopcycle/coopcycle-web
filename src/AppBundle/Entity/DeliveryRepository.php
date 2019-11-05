@@ -93,18 +93,4 @@ class DeliveryRepository extends EntityRepository
 
         return '0min';
     }
-
-    public function createFindByStoreQuery(Store $store)
-    {
-        $qb = $this->createQueryBuilder('d');
-        $qb->where('d.store = :store');
-        $qb->setParameter('store', $store);
-
-        return $qb->getQuery();
-    }
-
-    public function findByStore(Store $store)
-    {
-        return $this->createFindByStoreQuery($store)->getResult();
-    }
 }

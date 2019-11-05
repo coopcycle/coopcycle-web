@@ -12,6 +12,7 @@ use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -256,15 +257,22 @@ trait StoreTrait
 
         $this->accessControl($store);
 
-        $query = $this->getDoctrine()
+        $qb = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->createFindByStoreQuery($store);
+            ->createQueryBuilder('d')
+            ->andWhere('d.store = :store')
+            ->setParameter('store', $store);
 
-        $paginator  = $this->get('knp_paginator');
-        $deliveries = $paginator->paginate(
-            $query,
+        $deliveries = $this->get('knp_paginator')->paginate(
+            $qb,
             $request->query->getInt('page', 1),
-            6
+            6,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['d.createdAt'],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => []
+            ]
         );
 
         $routes = $request->attributes->get('routes');

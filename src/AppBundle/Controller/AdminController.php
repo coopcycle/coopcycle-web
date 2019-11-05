@@ -54,7 +54,9 @@ use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Predis\Client as Redis;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -478,38 +480,27 @@ class AdminController extends Controller
      */
     public function deliveriesAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Delivery::class);
+        $qb = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->createQueryBuilder('d');
 
-        $qb = $repository->createQueryBuilder('d')->orderBy('d.createdAt', 'DESC');
-
-        $filters = [];
-
-        if ($request->query->has('store')) {
-            $store = $this->getDoctrine()
-                ->getRepository(Store::class)
-                ->find($request->query->get('store'));
-
-            if ($store) {
-                $qb
-                    ->andWhere('d.store = :store')
-                    ->setParameter('store', $store);
-                $filters[] = [
-                    'name' => 'store',
-                    'value' => $store->getId(),
-                    'label' => $store->getName()
-                ];
-            }
-        }
+        // Allow filtering by store with KnpPaginator
+        $qb->leftJoin(Store::class, 's', Expr\Join::WITH, 'd.store = s.id');
 
         $deliveries = $this->get('knp_paginator')->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'd.createdAt',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_WHITELIST => ['d.createdAt'],
+                PaginatorInterface::FILTER_FIELD_WHITELIST => ['s.id']
+            ]
         );
 
         return [
             'deliveries' => $deliveries,
-            'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC'])
         ];

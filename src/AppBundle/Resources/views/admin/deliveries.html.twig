@@ -6,22 +6,26 @@
 
 {% block content %}
 
-  <p class="text-right">
-    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
+  <div class="text-right mb-4">
+    <a href="#" class="btn btn-success pull-right" data-toggle="modal" data-target="#choose-store-modal">
       <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
     </a>
-  </p>
-
-  {% if filters|length > 0 %}
-  <div>
-    {% for f in filters %}
-    <a class="btn btn-default" href="{{ path(routes.list, {}) }}">
-      {{ f.label }} <i class="fa fa-times"></i>
-    </a>
-    {% endfor %}
-    <hr>
+    <div class="dropdown pull-right mr-4">
+      {% include '@App/_partials/delivery/sort.html.twig' %}
+    </div>
+    {# Filter is active #}
+    {% if deliveries.paginatorOptions.filterFieldParameterName in deliveries.params|keys %}
+      {% set params_without_filters = {} %}
+      {% for key, value in deliveries.params %}
+        {% if key not in [ deliveries.paginatorOptions.filterFieldParameterName, deliveries.paginatorOptions.filterValueParameterName ] %}
+          {% set params_without_filters = params_without_filters|merge({ (key): value }) %}
+        {% endif %}
+      {% endfor %}
+      <a class="btn btn-default mr-4" href="{{ path(deliveries.route, params_without_filters) }}">
+        {{ 'deliveries.filter.clear'|trans }} <i class="fa fa-times"></i>
+      </a>
+    {% endif %}
   </div>
-  {% endif %}
 
   {% include '@App/_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
 
