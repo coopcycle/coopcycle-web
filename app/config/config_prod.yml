@@ -59,6 +59,11 @@ fos_user:
 
 sentry:
     dsn: '%sentry_public_dsn%'
+    options:
+        # https://github.com/getsentry/sentry-symfony#step-3-configure-the-sdk
+        # https://docs.sentry.io/platforms/php/#php-specific-options
+        excluded_exceptions:
+            - Symfony\Component\Security\Core\Exception\AccessDeniedException
 
 # see
 # https://github.com/liip/LiipImagineBundle/issues/1018
