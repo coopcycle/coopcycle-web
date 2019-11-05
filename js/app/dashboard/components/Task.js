@@ -75,14 +75,6 @@ class Task extends React.Component {
     this.props.setCurrentTask(task)
   }
 
-  renderLinkedIcon() {
-
-    const { assigned } = this.props
-    const classNames = ['task__icon']
-    classNames.push(assigned ? 'task__icon--left' : 'task__icon--right')
-
-  }
-
   renderTags() {
     const { task } = this.props
 
@@ -152,7 +144,6 @@ class Task extends React.Component {
           }) }
         </span>
         { this.renderTags() }
-        { this.renderLinkedIcon() }
         { this.renderStatusIcon() }
       </ContextMenuTrigger>
     )
