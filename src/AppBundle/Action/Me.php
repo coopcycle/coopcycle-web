@@ -6,6 +6,7 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Service\SocketIoManager;
@@ -185,5 +186,19 @@ class Me
     public function restaurantsAction(Request $request)
     {
         return $this->getUser()->getRestaurants();
+    }
+
+    /**
+     * @Route(path="/me/stores", name="me_stores",
+     *   defaults={
+     *     "_api_resource_class"=Store::class,
+     *     "_api_collection_operation_name"="me_stores",
+     *   },
+     *   methods={"GET"}
+     * )
+     */
+    public function storesAction(Request $request)
+    {
+        return $this->getUser()->getStores();
     }
 }
