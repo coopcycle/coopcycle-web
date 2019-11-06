@@ -7,6 +7,12 @@ services:
   AppBundle\Twig\:
     resource: '../../../src/AppBundle/Twig/*'
 
+  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
+
+  AppBundle\Twig\AppearanceRuntime:
+    arguments:
+      $logoFallback: '%kernel.project_dir%/web/img/logo.png'
+
   AppBundle\Twig\TaxRateRuntime:
     arguments:
       $taxRateRepository: '@sylius.repository.tax_rate'
