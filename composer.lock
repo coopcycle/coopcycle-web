@@ -2479,12 +2479,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa"
+                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/bffecffdb777c57c11d8870cafc0b9d7177616fa",
-                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
+                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
                 "shasum": ""
             },
             "require": {
@@ -2509,7 +2509,7 @@
             "keywords": [
                 "drupal"
             ],
-            "time": "2019-10-16T22:35:03+00:00"
+            "time": "2019-11-02T06:51:59+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -3942,6 +3942,7 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
@@ -10192,16 +10193,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.7.1",
+            "version": "v7.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "2e351f7a66ae6dc2503e32e23dff275cf58376ae"
+                "reference": "e4da443d8f0df7d7a3a07b77edcaa6292d050b4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/2e351f7a66ae6dc2503e32e23dff275cf58376ae",
-                "reference": "2e351f7a66ae6dc2503e32e23dff275cf58376ae",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/e4da443d8f0df7d7a3a07b77edcaa6292d050b4b",
+                "reference": "e4da443d8f0df7d7a3a07b77edcaa6292d050b4b",
                 "shasum": ""
             },
             "require": {
@@ -10245,7 +10246,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2019-10-25T18:45:29+00:00"
+            "time": "2019-11-06T03:37:46+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
