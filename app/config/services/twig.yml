@@ -9,7 +9,7 @@ services:
 
   AppBundle\Twig\TaxRateRuntime:
     arguments:
-      - "@sylius.repository.tax_rate"
+      $taxRateRepository: '@sylius.repository.tax_rate'
 
   Twig_Extensions_Extension_Text:
     class: Twig_Extensions_Extension_Text
