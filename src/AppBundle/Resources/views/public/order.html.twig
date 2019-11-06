@@ -38,13 +38,6 @@
           <p class="nomargin text-right">
             <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|localizeddate('medium', 'short') }) }}
           </p>
-          {#
-          <p class="nomargin">
-            <a href="{{ path('public_invoice', { number: order.number }) }}">
-              <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Télécharger la facture
-            </a>
-          </p>
-          #}
         </div>
         {% include "@App/_partials/order/items.html.twig" %}
       </div>

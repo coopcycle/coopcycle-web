@@ -53,41 +53,6 @@ class PublicController extends AbstractController
     }
 
     /**
-     * @Route("/i/{number}", name="public_invoice")
-     * @Template
-     */
-    public function invoiceAction($number, Request $request)
-    {
-        $order = $this->orderRepository->findOneBy([
-            'number' => $number
-        ]);
-
-        if (null === $order) {
-            throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
-        }
-
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->findOneByOrder($order);
-
-        $html = $this->renderView('@App/pdf/delivery.html.twig', [
-            'order' => $order,
-            'delivery' => $delivery,
-            'customer' => $order->getCustomer()
-        ]);
-
-        $httpClient = $this->get('csa_guzzle.client.browserless');
-
-        $response = $httpClient->request('POST', '/pdf', ['json' => ['html' => $html]]);
-
-        // TODO Check status
-
-        return new Response((string) $response->getBody(), 200, [
-            'Content-Type' => 'application/pdf',
-        ]);
-    }
-
-    /**
      * @Route("/d/{hashid}", name="public_delivery")
      * @Template
      */
