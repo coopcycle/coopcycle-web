@@ -4,39 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.min.css">
+    <link rel="stylesheet" href="//unpkg.com/gutenberg-css@0.5.0" media="print" charset="utf-8">
+    {# <link rel="stylesheet" href="//unpkg.com/gutenberg-css@0.5.0/dist/themes/modern.min.css" media="print" charset="utf-8"> #}
     <style>
-    @page {
-      size: A4;
-    }
     header {
       display: flex;
       justify-content: space-between;
       margin-bottom: 5mm;
     }
     ul {
-      list-style-type: none;
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
     </style>
     {% block styles %}{% endblock %}
   </head>
-  <body class="A4">
-    <section class="sheet padding-10mm">
-      {% block header %}
-      <header>
-        <div>
-          <img src="{{ coopcycle_company_logo() }}" style="width: 25mm; height: 25mm;">
-        </div>
-        <div>
-          <ul style="text-align: right;">
-            <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
-            <li>{{ 'now'|localizeddate('short', 'short') }}</li>
-          </ul>
-        </div>
-      </header>
-      {% endblock %}
-      {% block content %}{% endblock %}
-    </section>
+  <body>
+    {% block header %}
+    <header>
+      <div>
+        <img src="{{ coopcycle_company_logo() }}" style="width: 25mm; height: 25mm;">
+      </div>
+      <div>
+        <ul style="text-align: right;">
+          <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
+          <li>{{ 'now'|localizeddate('short', 'short') }}</li>
+        </ul>
+      </div>
+    </header>
+    {% endblock %}
+    {% block content %}{% endblock %}
   </body>
 </html>
