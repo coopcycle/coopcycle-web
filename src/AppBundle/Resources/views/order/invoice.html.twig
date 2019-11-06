@@ -1,19 +1,10 @@
 {% extends "@App/pdf/layout.html.twig" %}
 
-{% block header %}
-
-<table style="width: 100%;">
-  <tbody>
-    <tr>
-      <td><h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.number }}</h1></td>
-      <td style="text-align: right;">{{ order.createdAt|localizeddate('full', 'none') }}</td>
-    </tr>
-  </tbody>
-</table>
-
-{% endblock %}
-
 {% block content %}
+
+<div style="text-align: center;">
+  <h1>{% trans %}adminDashboard.orders.invoice.title{% endtrans %} #{{ order.number }}</h1>
+</div>
 
 <div>
   <div style="margin-bottom: 30px; width: 50%; float: left;">

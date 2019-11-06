@@ -10,12 +10,32 @@
     @page {
       size: A4;
     }
+    header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5mm;
+    }
+    ul {
+      list-style-type: none;
+    }
     </style>
     {% block styles %}{% endblock %}
   </head>
   <body class="A4">
     <section class="sheet padding-10mm">
-      {% block header %}{% endblock %}
+      {% block header %}
+      <header>
+        <div>
+          <img src="{{ coopcycle_company_logo() }}" style="width: 25mm; height: 25mm;">
+        </div>
+        <div>
+          <ul style="text-align: right;">
+            <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
+            <li>{{ 'now'|localizeddate('short', 'short') }}</li>
+          </ul>
+        </div>
+      </header>
+      {% endblock %}
       {% block content %}{% endblock %}
     </section>
   </body>
