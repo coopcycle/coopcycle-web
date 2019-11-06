@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.min.css">
+    <style>
+    @page {
+      size: A4;
+    }
+    </style>
+    {% block styles %}{% endblock %}
+  </head>
+  <body class="A4">
+    <section class="sheet padding-10mm">
+      {% block header %}{% endblock %}
+      {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>
