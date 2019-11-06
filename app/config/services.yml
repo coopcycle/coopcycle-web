@@ -29,9 +29,6 @@ services:
   AppBundle\Service\:
     resource: '../../src/AppBundle/Service/*'
 
-  AppBundle\Twig\:
-    resource: '../../src/AppBundle/Twig/*'
-
   AppBundle\Controller\:
     resource: '../../src/AppBundle/Controller'
     tags: ['controller.service_arguments']

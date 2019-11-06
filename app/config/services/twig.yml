@@ -4,6 +4,9 @@ services:
     autowire: true
     autoconfigure: true
 
+  AppBundle\Twig\:
+    resource: '../../../src/AppBundle/Twig/*'
+
   AppBundle\Twig\TaxRateRuntime:
     arguments:
       - "@sylius.repository.tax_rate"
