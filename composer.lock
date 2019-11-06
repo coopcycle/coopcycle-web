@@ -2479,12 +2479,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa"
+                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/bffecffdb777c57c11d8870cafc0b9d7177616fa",
-                "reference": "bffecffdb777c57c11d8870cafc0b9d7177616fa",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
+                "reference": "43a46dd8d9836781e8da4a34de7aaa4092cd4acf",
                 "shasum": ""
             },
             "require": {
@@ -2509,7 +2509,7 @@
             "keywords": [
                 "drupal"
             ],
-            "time": "2019-10-16T22:35:03+00:00"
+            "time": "2019-11-02T06:51:59+00:00"
         },
         {
             "name": "duccio/apns-php",
@@ -3942,6 +3942,7 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
@@ -6807,16 +6808,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.25.3",
+            "version": "2.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "d07636581795383e2fea2d711212d30f941f2039"
+                "reference": "e01ecc0b71168febb52ae1fdc1cfcc95428e604e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d07636581795383e2fea2d711212d30f941f2039",
-                "reference": "d07636581795383e2fea2d711212d30f941f2039",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e01ecc0b71168febb52ae1fdc1cfcc95428e604e",
+                "reference": "e01ecc0b71168febb52ae1fdc1cfcc95428e604e",
                 "shasum": ""
             },
             "require": {
@@ -6870,7 +6871,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2019-10-20T11:05:44+00:00"
+            "time": "2019-10-21T21:32:25+00:00"
         },
         {
             "name": "nmure/crawler-detect-bundle",
