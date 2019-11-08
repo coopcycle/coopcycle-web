@@ -3,11 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Form\StripePaymentType;
+use AppBundle\Service\StripeManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +34,7 @@ class PublicController extends AbstractController
      * @Route("/o/{number}", name="public_order")
      * @Template
      */
-    public function orderAction($number, Request $request)
+    public function orderAction($number, Request $request, ObjectManager $objectManager, StripeManager $stripeManager)
     {
         $order = $this->orderRepository->findOneBy([
             'number' => $number
@@ -59,10 +63,57 @@ class PublicController extends AbstractController
 
         $lastPayment = $order->getLastPayment();
 
-        return [
+        $parameters = [
             'order' => $order,
             'last_payment' => $lastPayment,
         ];
+
+        $paymentStates = [
+            PaymentInterface::STATE_CART,
+            PaymentInterface::STATE_NEW,
+        ];
+
+        if (in_array($lastPayment->getState(), $paymentStates)) {
+
+            $paymentForm = $this->createForm(StripePaymentType::class, $lastPayment);
+
+            $paymentForm->handleRequest($request);
+            if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
+
+                $stripeToken = $paymentForm->get('stripeToken')->getData();
+
+                try {
+
+                    $stripeManager->configure();
+
+                    $charge = Stripe\Charge::create([
+                      'amount' => $lastPayment->getAmount(),
+                      'currency' => strtolower($lastPayment->getCurrencyCode()),
+                      'description' => sprintf('Order %s', $order->getNumber()),
+                      'source' => $stripeToken,
+                    ]);
+
+                    $lastPayment->setCharge($charge->id);
+                    $lastPayment->setState(PaymentInterface::STATE_COMPLETED);
+
+                } catch (Stripe\Exception\ApiErrorException $e) {
+
+                    $lastPayment->setLastError($e->getMessage());
+                    // TODO Create another payment
+
+                } finally {
+                    $objectManager->flush();
+                }
+
+                return $this->redirectToRoute('public_order', [
+                    'number' => $number
+                ]);
+            }
+
+            $parameters['payment_form'] = $paymentForm->createView();
+        }
+
+        return $parameters;
     }
 
     /**

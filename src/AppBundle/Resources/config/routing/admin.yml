@@ -32,6 +32,11 @@ admin_foodtech_settings:
         _controller: AppBundle\Controller\AdminController::foodtechSettingsAction
     methods:  [ POST ]
 
+admin_order_new:
+    path:     /admin/orders/new
+    defaults: { _controller: AppBundle\Controller\AdminController::newOrderAction }
+    methods:  [ GET, POST ]
+
 admin_order:
     path:     /admin/orders/{id}
     defaults: { _controller: AppBundle\Controller\AdminController::orderAction }

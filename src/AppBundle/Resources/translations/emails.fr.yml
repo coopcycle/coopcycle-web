@@ -117,3 +117,11 @@ task.failed.body: |
   Bonjour,
   <br>
   La tâche #%task.id% n'a pas pu être réalisée.
+
+order.payment.subject: "Paiement de votre commande %order.number%"
+order.payment.body: |
+  Bonjour,
+  <br>
+  Nous avons réalisé une livraison que vous avez commandée auprès de nos services.
+  <br>
+  Vous trouverez ci-dessous un lien vous permettant de payer par carte bleue.

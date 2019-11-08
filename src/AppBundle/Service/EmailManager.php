@@ -128,6 +128,16 @@ class EmailManager
         return $this->createHtmlMessage($subject, $body);
     }
 
+    public function createOrderPaymentMessage(OrderInterface $order)
+    {
+        $subject = $this->translator->trans('order.payment.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->mjml->render($this->templating->render('@App/emails/order/payment.mjml.twig', [
+            'order' => $order
+        ]));
+
+        return $this->createHtmlMessage($subject, $body);
+    }
+
     public function createOrderCancelledMessage(OrderInterface $order)
     {
         $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');

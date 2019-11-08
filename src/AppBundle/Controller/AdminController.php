@@ -30,6 +30,7 @@ use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CreateUserType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\NewOrderType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\UpdateProfileType;
@@ -47,6 +48,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
@@ -60,8 +62,8 @@ use Knp\Component\Pager\PaginatorInterface;
 use Predis\Client as Redis;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
-use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Promotion\Model\Promotion;
@@ -69,6 +71,7 @@ use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Sylius\Component\Taxation\Model\TaxRate;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -166,12 +169,34 @@ class AdminController extends Controller
      * @Route("/admin/orders/{id}", name="admin_order")
      * @Template
      */
-    public function orderAction($id, Request $request, OrderManager $orderManager)
+    public function orderAction($id, Request $request, OrderManager $orderManager, EmailManager $emailManager)
     {
         $order = $this->container->get('sylius.repository.order')->find($id);
 
         if (!$order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $emailForm = $this->createFormBuilder([])
+            ->add('email', EmailType::class)
+            ->getForm();
+
+        $emailForm->handleRequest($request);
+
+        if ($emailForm->isSubmitted() && $emailForm->isValid()) {
+
+            $email = $emailForm->get('email')->getData();
+
+            $message = $emailManager->createOrderPaymentMessage($order);
+
+            $emailManager->sendTo($message, $email);
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('orders.payment_link.sent')
+            );
+
+            return $this->redirectToRoute('admin_order', ['id' => $id]);
         }
 
         $form = $this->createForm(OrderType::class, $order);
@@ -245,6 +270,7 @@ class AdminController extends Controller
             'pickup_at' => $pickupAt,
             'dropoff_at' => $dropoffAt,
             'form' => $form->createView(),
+            'email_form' => $emailForm->createView(),
         ]);
     }
 
@@ -1533,5 +1559,44 @@ class AdminController extends Controller
         }
 
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
+    }
+
+    public function newOrderAction(Request $request,
+        ObjectManager $objectManager,
+        OrderNumberAssignerInterface $orderNumberAssigner)
+    {
+        $delivery = new Delivery();
+        $form = $this->createForm(NewOrderType::class, $delivery);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $delivery = $form->getData();
+
+            $variantName = $form->get('variantName')->getData();
+            $variantPrice = $form->get('variantPrice')->getData();
+
+            $order = $this->createOrderForDelivery($delivery, $variantPrice);
+
+            $variant = $order->getItems()->get(0)->getVariant();
+
+            $variant->setName($variantName);
+            $variant->setCode(Uuid::uuid4()->toString());
+
+            $order->setState(OrderInterface::STATE_ACCEPTED);
+
+            $objectManager->persist($order);
+            $objectManager->flush();
+
+            $orderNumberAssigner->assignNumber($order);
+
+            $objectManager->flush();
+
+            return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
+        }
+
+        return $this->render('@App/admin/new_order.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

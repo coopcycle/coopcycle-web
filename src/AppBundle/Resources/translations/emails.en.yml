@@ -119,3 +119,11 @@ task.failed.body: |
   Hello,
   <br>
   Task #%task.id% could not be completed.
+
+order.payment.subject: "Payment of your order %order.number%"
+order.payment.body: |
+  Hello,
+  <br>
+  We have finished a delivery that you have ordered from us.
+  <br>
+  You will find below a link allowing you to pay by credit card.

@@ -656,6 +656,9 @@ form.reusable_packaging.is_tracked.label: Tracking enabled
 form.reusable_packaging.price.label: Price
 form.reusable_packaging.on_hand.label: Stock
 form.deposit_refund_settings.deposit_refund_optin.label: Deposit-refund system is optional
+form.new_order.variant_name.label: Product name
+form.new_order.variant_name.help: The name that will appear in the order summary and invoice
+form.new_order.variant_price.label: Price
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option: Fixed price whatever the choice
@@ -837,3 +840,7 @@ sylius.form.promotion_coupon.per_customer_usage_limit: Per customer usage limit
 deliveries.sort.newest: Newest first
 deliveries.sort.oldest: Oldest first
 deliveries.filter.clear: Show all
+orders.new: New order
+basics.copy: Copy
+orders.payment_link.send_by_email: Send payment link by email
+orders.payment_link.sent: Email sent successfully

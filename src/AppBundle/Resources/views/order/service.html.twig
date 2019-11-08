@@ -1,5 +1,7 @@
 {% extends layout %}
 
+{% form_theme email_form 'bootstrap_3_horizontal_layout.html.twig' %}
+
 {% block breadcrumb %}
 <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
 <li>#{{ order.id }}</li>
@@ -48,17 +50,34 @@
     {% if is_granted('ROLE_ADMIN') %}
 
       {% if not order.foodtech %}
-      <div class="mb-4">
-        <label class="control-label">{{ 'order.public_link'|trans }}</label>
-        <div class="input-group">
-          <input id="order-public-url" type="text" class="form-control" value="{{ url('public_order', { number: order.number }) }}">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button" data-clipboard-target="#order-public-url" id="copy">
-              <i class="fa fa-copy"></i>
-            </button>
-          </span>
+
+        {% set order_public_link = url('public_order', { number: order|hashid }) %}
+
+        <div class="row mb-4">
+          <div class="col-xs-6">
+            <strong>{{ 'order.public_link'|trans }}</strong>
+          </div>
+          <div class="col-xs-6 text-right">
+            <a href="{{ order_public_link }}" target="_blank">
+              {{ order_public_link }}
+            </a>
+          </div>
         </div>
-      </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <button type="button" class="btn btn-default btn-sm"
+              id="copy" data-clipboard-text="{{ order_public_link }}">
+              <i class="fa fa-copy"></i> {{ 'basics.copy'|trans }}
+            </button>
+          </div>
+          <div class="col-xs-6 text-right">
+            <button type="button" class="btn btn-default btn-sm"
+              data-toggle="modal" data-target="#send-payment-link-modal">
+              <i class="fa fa-envelope"></i> {{ 'orders.payment_link.send_by_email'|trans }}
+            </button>
+          </div>
+        </div>
+
       {% endif %}
 
       {% if order.customer is not empty %}
@@ -265,6 +284,24 @@
   </div>
 
 {% endfor %}
+
+<div class="modal fade" id="send-payment-link-modal" tabindex="-1" role="dialog" aria-labelledby="send-payment-link-modal-label">
+  <div class="modal-dialog" role="document">
+    {{ form_start(email_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="send-payment-link-modal-label">{{ 'orders.payment_link.send_by_email'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_widget(email_form) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'orders.payment_link.send_by_email'|trans }}</button>
+      </div>
+    {{ form_end(email_form) }}
+  </div>
+</div>
 
 {% endblock %}
 
