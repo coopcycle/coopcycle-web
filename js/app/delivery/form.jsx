@@ -7,7 +7,6 @@ import DeliveryForm from '../forms/delivery'
 import PricePreview from './PricePreview'
 
 let map
-let jwt
 let form
 let pricePreview
 
@@ -16,16 +15,17 @@ let markers = {
   dropoff: null,
 }
 
-function route() {
+function route(delivery) {
 
-  // We need to have 2 markers
-  if (_.filter(markers).length < 2) return
+  const { pickup, dropoff } = delivery
 
-  const { pickup, dropoff } = markers
+  if (!pickup.address || !dropoff.address) {
+    return Promise.reject('new PermissionDenied()')
+  }
 
   return MapHelper.route([
-    [ pickup.getLatLng().lat, pickup.getLatLng().lng ],
-    [ dropoff.getLatLng().lat, dropoff.getLatLng().lng ]
+    [ pickup.address.latitude, pickup.address.longitude ],
+    [ dropoff.address.latitude, dropoff.address.longitude ]
   ])
     .then(route => {
 
@@ -55,6 +55,11 @@ const addressTypeSelector = {
 }
 
 function createMarker(location, addressType) {
+
+  if (!map) {
+    return
+  }
+
   const { icon, color } = markerIcons[addressType]
   if (markers[addressType]) {
     map.removeLayer(markers[addressType])
@@ -129,7 +134,7 @@ window.initMap = function() {
 
         this.disable()
 
-        route()
+        route(delivery)
           .then((infos) => {
 
             $('#delivery_distance').text(`${infos.kms} Km`)
@@ -154,26 +159,26 @@ window.initMap = function() {
 
             form.enable()
           })
+          .catch(e => console.log(e))
       }
     }
   })
 
 }
 
-$.getJSON(window.Routing.generate('profile_jwt'))
-  .then(tok => {
-    $('form[name="delivery"]').LoadingOverlay('hide')
-    jwt = tok
-    let el = document.getElementById('delivery-price')
-    if (el) {
-      pricePreview = new PricePreview(document.getElementById('delivery-price'), {
-        token: tok
-      })
-    }
+const priceEl = document.getElementById('delivery-price')
+
+if (priceEl) {
+  $('form[name="delivery"]').LoadingOverlay('show', {
+    image: false,
   })
+  $.getJSON(window.Routing.generate('profile_jwt'))
+    .then(token => {
+      $('form[name="delivery"]').LoadingOverlay('hide')
+      pricePreview = new PricePreview(priceEl, { token })
+    })
+}
 
-map = MapHelper.init('map')
-
-$('form[name="delivery"]').LoadingOverlay('show', {
-  image: false,
-})
+if (document.getElementById('map')) {
+  map = MapHelper.init('map')
+}
