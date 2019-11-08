@@ -47,37 +47,40 @@
 
     {% if is_granted('ROLE_ADMIN') %}
 
-    {% if not order.foodtech %}
-    <div class="form-group">
-      <label class="control-label">Lien public</label>
-      <div class="input-group">
-        <input id="order-public-url" type="text" class="form-control" value="{{ url('public_order', { number: order.number }) }}">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="button" data-clipboard-target="#order-public-url" id="copy">
-            <i class="fa fa-copy"></i>
-          </button>
-        </span>
+      {% if not order.foodtech %}
+      <div class="form-group">
+        <label class="control-label">Lien public</label>
+        <div class="input-group">
+          <input id="order-public-url" type="text" class="form-control" value="{{ url('public_order', { number: order.number }) }}">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" data-clipboard-target="#order-public-url" id="copy">
+              <i class="fa fa-copy"></i>
+            </button>
+          </span>
+        </div>
       </div>
-    </div>
-    {% endif %}
+      {% endif %}
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">Client</h4>
+      {% if order.customer is not empty %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">Client</h4>
+        </div>
+        <div class="panel-body">
+          <i class="fa fa-user"></i>  
+          <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
+            {{ order.customer.username }}
+          </a>
+          <br>
+          <i class="fa fa-envelope"></i>  {{ order.customer.email }}
+          {% if order.customer.telephone is not empty %}
+          <br>
+          <i class="fa fa-phone"></i>  {{ order.customer.telephone|phone_number_format('NATIONAL') }}
+          {% endif %}
+        </div>
       </div>
-      <div class="panel-body">
-        <i class="fa fa-user"></i>  
-        <a href="{{ path('admin_user_details', { username: order.customer.username }) }}">
-          {{ order.customer.username }}
-        </a>
-        <br>
-        <i class="fa fa-envelope"></i>  {{ order.customer.email }}
-        {% if order.customer.telephone is not empty %}
-        <br>
-        <i class="fa fa-phone"></i>  {{ order.customer.telephone|phone_number_format('NATIONAL') }}
-        {% endif %}
-      </div>
-    </div>
+      {% endif %}
+
     {% endif %}
 
     {% if order.billingAddress is not null %}
