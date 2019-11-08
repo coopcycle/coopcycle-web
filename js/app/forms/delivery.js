@@ -215,7 +215,7 @@ export default function(name, options) {
     }
     let preloadedState = {
       store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
-      weight: parseWeight(weightEl.value),
+      weight: weightEl ? parseWeight(weightEl.value) : 0,
       pickup: {
         address: null,
         [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
@@ -238,12 +238,14 @@ export default function(name, options) {
     onReady(preloadedState)
     const unsubscribe = store.subscribe(() => onChange(store.getState()))
 
-    weightEl.addEventListener('input', _.debounce(e => {
-      store.dispatch({
-        type: 'SET_WEIGHT',
-        value: parseWeight(e.target.value)
-      })
-    }, 350))
+    if (weightEl) {
+      weightEl.addEventListener('input', _.debounce(e => {
+        store.dispatch({
+          type: 'SET_WEIGHT',
+          value: parseWeight(e.target.value)
+        })
+      }, 350))
+    }
 
     const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
     const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
