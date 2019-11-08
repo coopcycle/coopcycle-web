@@ -20,7 +20,7 @@
 <div class="row">
   <div class="col-md-7" data-change-state>
     {% include '@App/_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}
-    <div class="form-group">
+    <div class="mb-4">
       <label class="control-label">Notes</label>
       <textarea class="form-control" disabled>{{ order.notes }}</textarea>
     </div>
@@ -48,8 +48,8 @@
     {% if is_granted('ROLE_ADMIN') %}
 
       {% if not order.foodtech %}
-      <div class="form-group">
-        <label class="control-label">Lien public</label>
+      <div class="mb-4">
+        <label class="control-label">{{ 'order.public_link'|trans }}</label>
         <div class="input-group">
           <input id="order-public-url" type="text" class="form-control" value="{{ url('public_order', { number: order.number }) }}">
           <span class="input-group-btn">
