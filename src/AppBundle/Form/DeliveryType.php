@@ -327,4 +327,9 @@ class DeliveryType extends AbstractType
 
         return '';
     }
+
+    public function getBlockPrefix()
+    {
+        return 'delivery';
+    }
 }

@@ -50,6 +50,7 @@ twig:
     strict_variables: "%kernel.debug%"
     form_themes:
         - '@App/form/address_book.html.twig'
+        - '@App/form/delivery.html.twig'
         - 'VichUploaderBundle:Form:fields.html.twig'
     globals:
         is_demo: "%is_demo%"
