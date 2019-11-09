@@ -2,8 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -37,11 +39,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  *   },
  *   attributes={
+ *     "order"={"createdAt": "DESC"},
  *     "denormalization_context"={"groups"={"order_create"}},
  *     "normalization_context"={"groups"={"delivery", "place", "order"}}
  *   }
  * )
- *
+ * @ApiFilter(OrderFilter::class, properties={"createdAt"})
  * @AssertDelivery
  * @AssertCheckDelivery(groups={"delivery_check"})
  */
