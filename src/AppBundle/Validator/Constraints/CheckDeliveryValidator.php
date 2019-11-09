@@ -30,15 +30,24 @@ class CheckDeliveryValidator extends ConstraintValidator
         // TODO Also resolve store from getStore() method
         $store = $this->storeExtractor->extractStore();
 
+        if (null === $store) {
+            $store = $object->getStore();
+            if (null === $store) {
+                $this->context->buildViolation($constraint->noStoreMessage)
+                    ->atPath('store')
+                    ->addViolation();
+            }
+        }
+
         $checkExpression = $store->getCheckExpression();
         if (null === $checkExpression) {
             return;
         }
 
         if (!$this->expressionLanguage->evaluate($checkExpression, Delivery::toExpressionLanguageValues($object))) {
-            $this->context->buildViolation($constraint->message)
-                 ->atPath('items')
-                 ->addViolation();
+            $this->context->buildViolation($constraint->notValidMessage)
+                ->atPath('items')
+                ->addViolation();
         }
     }
 }

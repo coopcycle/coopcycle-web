@@ -9,7 +9,8 @@ use Symfony\Component\Validator\Constraint;
  */
 class CheckDelivery extends Constraint
 {
-    public $message = 'delivery.check.notValid';
+    public $notValidMessage = 'delivery.check.notValid';
+    public $noStoreMessage = 'delivery.check.noStore';
 
     public function validatedBy()
     {

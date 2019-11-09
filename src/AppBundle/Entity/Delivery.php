@@ -24,7 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(iri="http://schema.org/ParcelDelivery",
  *   collectionOperations={
  *     "post"={
- *       "method"="POST"
+ *       "method"="POST",
+ *       "denormalization_context"={"groups"={"delivery_create"}}
  *     },
  *     "check"={
  *       "method"="POST",
@@ -67,6 +68,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $vehicle = self::VEHICLE_BIKE;
 
+    /**
+     * @Groups({"delivery_create"})
+     */
     private $store;
 
     private $packages;

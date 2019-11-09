@@ -119,7 +119,9 @@ final class DeliverySubscriber implements EventSubscriberInterface
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
-        $store = $this->storeExtractor->extractStore();
+        if (null === $store = $delivery->getStore()) {
+            $store = $this->storeExtractor->extractStore();
+        }
 
         // If no pickup address is specified, use the store address
         if (null === $pickup->getAddress() && null !== $store) {
