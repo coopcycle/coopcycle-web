@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Entity\Base\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
@@ -25,6 +26,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"}
+ *   },
+ *   subresourceOperations={
+ *     "deliveries_get_subresource"={
+ *       "security"="is_granted('ROLE_STORE') and user.ownsStore(object)"
+ *     }
  *   }
  * )
  * @Vich\Uploadable
@@ -90,6 +96,9 @@ class Store extends LocalBusiness
 
     private $pricingRuleSet;
 
+    /**
+     * @ApiSubresource
+     */
     private $deliveries;
 
     private $owners;

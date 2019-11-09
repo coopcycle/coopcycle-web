@@ -469,6 +469,14 @@ services:
     arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
+  AppBundle\Api\Filter\DeliveryOrderFilter:
+    autowire: false
+    autoconfigure: false
+    public: true
+    parent: ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter
+    arguments:
+      $properties: []
+
   swiftmailer.transport.eventdispatcher.mailjet:
     class: Swift_Events_SimpleEventDispatcher
 
@@ -557,10 +565,9 @@ services:
         - '@trikoder.oauth2.manager.doctrine.access_token_manager'
     tags: [ 'kernel.event_subscriber' ]
 
-  AppBundle\Api\EventSubscriber\RestaurantSubscriber:
+  AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
-        - '@api_platform.item_data_provider'
-        - '@api_platform.security.listener.request.deny_access'
+        $denyAccessListener: '@api_platform.security.listener.request.deny_access'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:

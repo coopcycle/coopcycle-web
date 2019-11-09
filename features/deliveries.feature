@@ -36,6 +36,21 @@ Feature: Deliveries
     And the OAuth client "Acme2" sends a "GET" request to "/api/deliveries/1"
     Then the response status code should be 403
 
+  Scenario: Not authorized to list store deliveries
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme2" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/1/deliveries?order[dropoff.before]=asc"
+    Then the response status code should be 403
+
   Scenario: Missing time window
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -516,6 +531,128 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')"
         },
         "color":"#b2213a"
+      }
+      """
+
+  Scenario: Retrieve store deliveries with JWT, ordered by dropoff desc
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/1/deliveries?order[dropoff.before]=desc"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/stores/1/deliveries",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/deliveries/2",
+            "@type":"http://schema.org/ParcelDelivery",
+            "id":2,
+            "pickup":{
+              "id":3,
+              "address":@...@,
+              "doneBefore":"2019-11-12T18:30:00+01:00"
+            },
+            "dropoff":{
+              "id":4,
+              "address":@...@,
+              "doneBefore":"2019-11-12T20:30:00+01:00"
+            },
+            "color":"#5221b2"
+          },
+          {
+            "@id":"/api/deliveries/1",
+            "@type":"http://schema.org/ParcelDelivery",
+            "id":1,
+            "pickup":{
+              "id":1,
+              "address":@...@,
+              "doneBefore":"2019-11-12T18:30:00+01:00"
+            },
+            "dropoff":{
+              "id":2,
+              "address":@...@,
+              "doneBefore":"2019-11-12T19:30:00+01:00"
+            },
+            "color":"#b2213a"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":@...@,
+        "hydra:search":@...@
+      }
+      """
+
+  Scenario: Retrieve store deliveries with JWT, ordered by dropoff asc
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/1/deliveries?order[dropoff.before]=asc"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/stores/1/deliveries",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/deliveries/1",
+            "@type":"http://schema.org/ParcelDelivery",
+            "id":1,
+            "pickup":{
+              "id":1,
+              "address":@...@,
+              "doneBefore":"2019-11-12T18:30:00+01:00"
+            },
+            "dropoff":{
+              "id":2,
+              "address":@...@,
+              "doneBefore":"2019-11-12T19:30:00+01:00"
+            },
+            "color":"#b2213a"
+          },
+          {
+            "@id":"/api/deliveries/2",
+            "@type":"http://schema.org/ParcelDelivery",
+            "id":2,
+            "pickup":{
+              "id":3,
+              "address":@...@,
+              "doneBefore":"2019-11-12T18:30:00+01:00"
+            },
+            "dropoff":{
+              "id":4,
+              "address":@...@,
+              "doneBefore":"2019-11-12T20:30:00+01:00"
+            },
+            "color":"#5221b2"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":@...@,
+        "hydra:search":@...@
       }
       """
 

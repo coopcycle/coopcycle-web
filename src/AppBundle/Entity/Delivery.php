@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -45,6 +46,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   }
  * )
  * @ApiFilter(OrderFilter::class, properties={"createdAt"})
+ * @ApiFilter(DeliveryOrderFilter::class, properties={"dropoff.before"})
  * @AssertDelivery
  * @AssertCheckDelivery(groups={"delivery_check"})
  */
@@ -315,5 +317,23 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             'dropoff' => $dropoff,
             'packages' => new PackagesResolver($delivery),
         ];
+    }
+
+    public function setPickupRange(\DateTime $after, \DateTime $before)
+    {
+        $this->getPickup()
+            ->setDoneAfter($after)
+            ->setDoneBefore($before);
+
+        return $this;
+    }
+
+    public function setDropoffRange(\DateTime $after, \DateTime $before)
+    {
+        $this->getDropoff()
+            ->setDoneAfter($after)
+            ->setDoneBefore($before);
+
+        return $this;
     }
 }
