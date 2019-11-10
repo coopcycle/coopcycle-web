@@ -98,8 +98,12 @@ class TaskCollectionSubscriber implements EventSubscriber
                 $taskCollection = $oldValue;
             }
 
-            if (false === array_search($taskCollection, $taskCollections)) {
-                $taskCollections[] = $taskCollection;
+            // WARNING
+            // Do not use in_array() or array_search()
+            // It causes error "Nesting level too deep - recursive dependency?"
+            $oid = spl_object_hash($taskCollection);
+            if (!isset($taskCollections[$oid])) {
+                $taskCollections[$oid] = $taskCollection;
             }
         }
 
