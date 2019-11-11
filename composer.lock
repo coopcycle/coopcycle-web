@@ -8837,16 +8837,16 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2"
+                "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2",
-                "reference": "bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/446d54b4cb6bf489fc9d75f55843658e6f25d801",
+                "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801",
                 "shasum": ""
             },
             "require": {
@@ -8880,7 +8880,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2019-10-25T08:06:51+00:00"
+            "time": "2019-11-01T11:05:21+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -12838,16 +12838,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v4.3.5",
+            "version": "v4.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "931fecb0887b6d580b2dd5425833bee06d97ed24"
+                "reference": "7e98605f0e11979e6735dfefc6dad11977d8f5e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/931fecb0887b6d580b2dd5425833bee06d97ed24",
-                "reference": "931fecb0887b6d580b2dd5425833bee06d97ed24",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/7e98605f0e11979e6735dfefc6dad11977d8f5e7",
+                "reference": "7e98605f0e11979e6735dfefc6dad11977d8f5e7",
                 "shasum": ""
             },
             "require": {
@@ -13002,7 +13002,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-10-07T15:14:38+00:00"
+            "time": "2019-11-01T10:00:21+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
