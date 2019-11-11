@@ -26,20 +26,17 @@ services:
       $normalizer: '@api_platform.jsonld.normalizer.item'
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.api.normalizer.task_list:
-    class: AppBundle\Serializer\TaskListNormalizer
+  AppBundle\Serializer\TaskListNormalizer:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.api.normalizer.closing_rule:
-    class: AppBundle\Serializer\ClosingRuleNormalizer
+  AppBundle\Serializer\ClosingRuleNormalizer:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.normalizer.order.jsonld:
-    class: AppBundle\Serializer\JsonLd\OrderNormalizer
+  AppBundle\Serializer\JsonLd\OrderNormalizer:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
       - "@serializer.normalizer.object"
@@ -53,22 +50,19 @@ services:
       - "@coopcycle.shipping_date_filter"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.normalizer.order_item.json:
-    class: AppBundle\Serializer\Json\OrderItemNormalizer
+  AppBundle\Serializer\Json\OrderItemNormalizer:
     arguments:
       - "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.normalizer.notification.json:
-    class: AppBundle\Serializer\Json\NotificationNormalizer
+  AppBundle\Serializer\Json\NotificationNormalizer:
     arguments:
       - "@serializer.normalizer.object"
       - "@router"
       - "@translator"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  coopcycle.normalizer.restaurant_menu.jsonld:
-    class: AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer
+  AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
       - "@sylius.locale_provider"
