@@ -394,7 +394,6 @@ function createTask(task) {
       '@id',
       '@type',
       'events',
-      'deliveryColor',
       'isAssigned',
       'id',
       'status',
