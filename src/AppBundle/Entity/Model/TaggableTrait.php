@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Model;
 use AppBundle\Entity\Tag;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait TaggableTrait
 {
@@ -21,6 +22,7 @@ trait TaggableTrait
 
     /**
      * {@inheritdoc}
+     * @Groups({"task"})
      */
     public function getTags()
     {

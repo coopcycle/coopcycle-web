@@ -120,25 +120,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
-            "@id":"@string@.startsWith('/api/addresses')",
-            "@type":"http://schema.org/Place",
-            "geo":{
-              "latitude":@double@,
-              "longitude":@double@
-            },
-            "streetAddress":@string@,
-            "telephone": null,
-            "name":null
-          },
-          "doneBefore":"@string@.isDateTime()"
-        },
-        "dropoff":{
-          "id":@integer@,
-          "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -150,9 +135,28 @@ Feature: Deliveries
             "name":null
           },
           "doneBefore":"@string@.isDateTime()",
-          "comments": "Beware of the dog\nShe bites"
+          "before":"@string@.isDateTime()",
+          "comments": ""
         },
-        "color":@string@
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null
+          },
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites"
+        }
       }
       """
     Given the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
@@ -188,9 +192,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -201,12 +206,15 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.isDateTime()"
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -217,9 +225,10 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.isDateTime()"
-        },
-        "color":@string@
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": ""
+        }
       }
       """
 
@@ -254,9 +263,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -267,12 +277,15 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.isDateTime()"
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -283,9 +296,10 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.isDateTime()"
-        },
-        "color":@string@
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": ""
+        }
       }
       """
 
@@ -316,9 +330,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -329,12 +344,15 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29')"
+          "before":"@string@.startsWith('2018-08-29')",
+          "doneBefore":"@string@.startsWith('2018-08-29')",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -345,9 +363,10 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')"
-        },
-        "color":@string@
+          "before":"@string@.startsWith('2018-08-29T13:30:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
+          "comments": ""
+        }
       }
       """
 
@@ -382,9 +401,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -395,12 +415,15 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29')"
+          "before":"@string@.startsWith('2018-08-29')",
+          "doneBefore":"@string@.startsWith('2018-08-29')",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -411,9 +434,10 @@ Feature: Deliveries
             "telephone": "+33612345678",
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')"
-        },
-        "color":@string@
+          "before":"@string@.startsWith('2018-08-29T13:30:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
+          "comments": ""
+        }
       }
       """
 
@@ -448,9 +472,10 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -461,12 +486,15 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29')"
+          "before":"@string@.startsWith('2018-08-29')",
+          "doneBefore":"@string@.startsWith('2018-08-29')",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -477,9 +505,10 @@ Feature: Deliveries
             "telephone": "+33612345678",
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29T11:00')"
-        },
-        "color":@string@
+          "before":"@string@.startsWith('2018-08-29T11:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
+          "comments": ""
+        }
       }
       """
 
@@ -510,14 +539,19 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":@...@,
-          "doneBefore":"@string@.startsWith('2018-08-29T11:00')"
+          "before":"@string@.startsWith('2018-08-29T11:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
+          "comments": ""
         },
         "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
           "id":@integer@,
           "address":{
-            "@context":"/api/contexts/Address",
             "@id":"/api/addresses/2",
             "@type":"http://schema.org/Place",
             "geo":{
@@ -528,9 +562,10 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
-          "doneBefore":"@string@.startsWith('2018-08-29T11:00')"
-        },
-        "color":"#b2213a"
+          "before":"@string@.startsWith('2018-08-29T11:00')",
+          "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
+          "comments": ""
+        }
       }
       """
 
@@ -561,32 +596,46 @@ Feature: Deliveries
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
             "pickup":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":3,
               "address":@...@,
-              "doneBefore":"2019-11-12T18:30:00+01:00"
+              "before":"2019-11-12T18:30:00+01:00",
+              "doneBefore":"2019-11-12T18:30:00+01:00",
+              "comments": ""
             },
             "dropoff":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":4,
               "address":@...@,
-              "doneBefore":"2019-11-12T20:30:00+01:00"
-            },
-            "color":"#5221b2"
+              "before":"2019-11-12T20:30:00+01:00",
+              "doneBefore":"2019-11-12T20:30:00+01:00",
+              "comments": ""
+            }
           },
           {
             "@id":"/api/deliveries/1",
             "@type":"http://schema.org/ParcelDelivery",
             "id":1,
             "pickup":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":1,
               "address":@...@,
-              "doneBefore":"2019-11-12T18:30:00+01:00"
+              "before":"2019-11-12T18:30:00+01:00",
+              "doneBefore":"2019-11-12T18:30:00+01:00",
+              "comments": ""
             },
             "dropoff":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":2,
               "address":@...@,
-              "doneBefore":"2019-11-12T19:30:00+01:00"
-            },
-            "color":"#b2213a"
+              "before":"2019-11-12T19:30:00+01:00",
+              "doneBefore":"2019-11-12T19:30:00+01:00",
+              "comments": ""
+            }
           }
         ],
         "hydra:totalItems":2,
@@ -622,32 +671,46 @@ Feature: Deliveries
             "@type":"http://schema.org/ParcelDelivery",
             "id":1,
             "pickup":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":1,
               "address":@...@,
-              "doneBefore":"2019-11-12T18:30:00+01:00"
+              "before":"2019-11-12T18:30:00+01:00",
+              "doneBefore":"2019-11-12T18:30:00+01:00",
+              "comments": ""
             },
             "dropoff":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":2,
               "address":@...@,
-              "doneBefore":"2019-11-12T19:30:00+01:00"
-            },
-            "color":"#b2213a"
+              "before":"2019-11-12T19:30:00+01:00",
+              "doneBefore":"2019-11-12T19:30:00+01:00",
+              "comments": ""
+            }
           },
           {
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
             "pickup":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":3,
               "address":@...@,
-              "doneBefore":"2019-11-12T18:30:00+01:00"
+              "before":"2019-11-12T18:30:00+01:00",
+              "doneBefore":"2019-11-12T18:30:00+01:00",
+              "comments": ""
             },
             "dropoff":{
+              "@id":"@string@.startsWith('/api/tasks')",
+              "@type":"Task",
               "id":4,
               "address":@...@,
-              "doneBefore":"2019-11-12T20:30:00+01:00"
-            },
-            "color":"#5221b2"
+              "before":"2019-11-12T20:30:00+01:00",
+              "doneBefore":"2019-11-12T20:30:00+01:00",
+              "comments": ""
+            }
           }
         ],
         "hydra:totalItems":2,

@@ -36,29 +36,6 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->logger = $logger;
     }
 
-    private function normalizeTask(Task $task)
-    {
-        $address = $this->normalizer->normalize($task->getAddress(), 'jsonld', [
-            'resource_class' => Address::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['place']
-        ]);
-
-        $data = [
-            'id' => $task->getId(),
-            'address' => $address,
-            'doneBefore' => $task->getDoneBefore()->format(\DateTime::ATOM),
-            'comments' => $task->getComments()
-        ];
-
-        if (empty($data['comments'])) {
-            unset($data['comments']);
-        }
-
-        return $data;
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
@@ -66,11 +43,6 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['items'])) {
             unset($data['items']);
         }
-
-        $data['pickup'] = $this->normalizeTask($object->getPickup());
-        $data['dropoff'] = $this->normalizeTask($object->getDropoff());
-
-        $data['color'] = $object->getColor();
 
         return $data;
     }

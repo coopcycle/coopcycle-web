@@ -18,8 +18,10 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -113,7 +115,7 @@ class Task implements TaggableInterface
     const STATUS_CANCELLED = 'CANCELLED';
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "delivery"})
      */
     private $id;
 
@@ -145,12 +147,12 @@ class Task implements TaggableInterface
      *     "this.getDoneAfter() == null or this.getDoneAfter() <= this.getDoneBefore()",
      *     message="task.before.mustBeGreaterThanAfter"
      * )
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task", "task_edit", "delivery"})
      */
     private $doneBefore;
 
     /**
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task", "task_edit", "delivery"})
      */
     private $comments;
 
@@ -170,6 +172,9 @@ class Task implements TaggableInterface
 
     private $next;
 
+    /**
+     * @Groups({"task"})
+     */
     private $group;
 
     /**
@@ -178,7 +183,8 @@ class Task implements TaggableInterface
     private $assignedTo;
 
     /**
-     * @Groups({"task_edit"})
+     * @var TaskImage[]|Collection<TaskImage>
+     * @Groups({"task", "task_edit"})
      */
     private $images;
 
@@ -351,6 +357,10 @@ class Task implements TaggableInterface
         return $this->next !== null;
     }
 
+    /**
+     * @Groups({"task"})
+     * @SerializedName("isAssigned")
+     */
     public function isAssigned()
     {
         return null !== $this->assignedTo;
