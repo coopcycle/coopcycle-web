@@ -29,6 +29,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class TaskImage
 {
+    /**
+     * @Groups({"task"})
+     */
     private $id;
 
     private $task;

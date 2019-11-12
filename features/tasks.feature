@@ -29,6 +29,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-03-02T11:30:00+00:00",
+            "before":"2018-03-02T12:00:00+00:00",
             "doneAfter":"2018-03-02T11:30:00+00:00",
             "doneBefore":"2018-03-02T12:00:00+00:00",
             "comments":"#bob",
@@ -47,6 +49,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"DONE",
             "address":@...@,
+            "after":"2018-03-02T12:00:00+00:00",
+            "before":"2018-03-02T12:30:00+00:00",
             "doneAfter":"2018-03-02T12:00:00+00:00",
             "doneBefore":"2018-03-02T12:30:00+00:00",
             "comments":"#bob",
@@ -97,6 +101,8 @@ Feature: Tasks
         "type":"DROPOFF",
         "status":"DONE",
         "address":@...@,
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
         "doneAfter":"2018-03-02T11:30:00+01:00",
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "comments":@string@,
@@ -105,7 +111,15 @@ Feature: Tasks
         "isAssigned":true,
         "assignedTo":"bob",
         "previous":null,
-        "group":null,
+        "group":{
+          "id":@integer@,
+          "name":"Group #1",
+          "tags":[{
+            "name":"Important",
+            "slug":"important",
+            "color":"#FF0000"
+          }]
+        },
         "tags":@array@
       }
       """
@@ -140,6 +154,8 @@ Feature: Tasks
         "type":"DROPOFF",
         "status":"FAILED",
         "address":@...@,
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
         "doneAfter":"2018-03-02T11:30:00+01:00",
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "comments":@string@,
@@ -363,6 +379,8 @@ Feature: Tasks
           "telephone":"+33612345678",
           "name":null
         },
+        "after":"2018-12-24T23:30:00+01:00",
+        "before":"2018-12-24T23:59:59+01:00",
         "doneAfter":"2018-12-24T23:30:00+01:00",
         "doneBefore":"2018-12-24T23:59:59+01:00",
         "comments":"",
@@ -372,9 +390,9 @@ Feature: Tasks
         "assignedTo":null,
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "images":@array@
       }
       """
 
@@ -431,6 +449,8 @@ Feature: Tasks
           "telephone":null,
           "name":null
         },
+        "after":"2018-12-24T23:30:00+01:00",
+        "before":"2018-12-24T23:59:59+01:00",
         "doneAfter":"2018-12-24T23:30:00+01:00",
         "doneBefore":"2018-12-24T23:59:59+01:00",
         "comments":"Hello, world",
@@ -440,11 +460,11 @@ Feature: Tasks
         "assignedTo":null,
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags": [
           {"name":"Important","slug":"important","color":"#000000"}
-        ]
+        ],
+        "images":@array@
       }
       """
 
@@ -519,6 +539,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T10:30:00+01:00",
+            "before":"2018-12-01T11:00:00+01:00",
             "doneAfter":"2018-12-01T10:30:00+01:00",
             "doneBefore":"2018-12-01T11:00:00+01:00",
             "comments":null,
@@ -528,7 +550,6 @@ Feature: Tasks
             "assignedTo":"sarah",
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":[]
           },
@@ -539,6 +560,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T11:30:00+01:00",
+            "before":"2018-12-01T12:00:00+01:00",
             "doneAfter":"2018-12-01T11:30:00+01:00",
             "doneBefore":"2018-12-01T12:00:00+01:00",
             "comments":null,
@@ -548,7 +571,6 @@ Feature: Tasks
             "assignedTo":"sarah",
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":[]
           }
@@ -591,6 +613,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T10:30:00+01:00",
+            "before":"2018-12-01T11:00:00+01:00",
             "doneAfter":"2018-12-01T10:30:00+01:00",
             "doneBefore":"2018-12-01T11:00:00+01:00",
             "comments":null,
@@ -600,7 +624,6 @@ Feature: Tasks
             "assignedTo":"sarah",
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":@array@
           },
@@ -611,6 +634,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T11:30:00+01:00",
+            "before":"2018-12-01T12:00:00+01:00",
             "doneAfter":"2018-12-01T11:30:00+01:00",
             "doneBefore":"2018-12-01T12:00:00+01:00",
             "comments":null,
@@ -620,7 +645,6 @@ Feature: Tasks
             "assignedTo":"sarah",
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":@array@
           },
@@ -631,6 +655,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T13:00:00+01:00",
+            "before":"2018-12-01T13:30:00+01:00",
             "doneAfter":"2018-12-01T13:00:00+01:00",
             "doneBefore":"2018-12-01T13:30:00+01:00",
             "comments":null,
@@ -640,7 +666,6 @@ Feature: Tasks
             "assignedTo":"bob",
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":@array@
           },
@@ -653,6 +678,8 @@ Feature: Tasks
             "address":@...@,
             "doneAfter":"2018-12-01T12:00:00+01:00",
             "doneBefore":"2018-12-01T12:30:00+01:00",
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
             "comments":null,
             "events":@array@,
             "updatedAt":"@string@.isDateTime()",
@@ -660,7 +687,6 @@ Feature: Tasks
             "assignedTo":null,
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":@array@
           }
@@ -703,6 +729,8 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
             "doneAfter":"2018-12-01T12:00:00+01:00",
             "doneBefore":"2018-12-01T12:30:00+01:00",
             "comments":null,
@@ -712,7 +740,6 @@ Feature: Tasks
             "assignedTo":null,
             "previous":null,
             "next":null,
-            "deliveryColor":null,
             "group":null,
             "tags":@array@
           }
@@ -755,6 +782,8 @@ Feature: Tasks
         "type":"DROPOFF",
         "status":"TODO",
         "address":@...@,
+        "after":"2018-12-01T10:30:00+01:00",
+        "before":"2018-12-01T11:00:00+01:00",
         "doneAfter":"2018-12-01T10:30:00+01:00",
         "doneBefore":"2018-12-01T11:00:00+01:00",
         "comments":"",
@@ -764,7 +793,6 @@ Feature: Tasks
         "assignedTo":null,
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }

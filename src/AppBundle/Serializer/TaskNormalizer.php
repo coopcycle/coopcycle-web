@@ -7,10 +7,8 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use FOS\UserBundle\Model\UserManagerInterface;
-use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -21,83 +19,47 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         ItemNormalizer $normalizer,
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
-        UserManagerInterface $userManager,
-        UploaderHelper $uploaderHelper,
-        FilterService $imagineFilter)
+        UserManagerInterface $userManager)
     {
         $this->normalizer = $normalizer;
         $this->iriConverter = $iriConverter;
         $this->tagManager = $tagManager;
         $this->userManager = $userManager;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->imagineFilter = $imagineFilter;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data =  $this->normalizer->normalize($object, $format, $context);
+        $data = $this->normalizer->normalize($object, $format, $context);
 
-        $data['isAssigned'] = $object->isAssigned();
-        $data['assignedTo'] = null;
-        if ($object->isAssigned()) {
-            $data['assignedTo'] = $object->getAssignedCourier()->getUsername();
+        if (isset($data['doneAfter'])) {
+            $data['after'] = $data['doneAfter'];
+        }
+        if (isset($data['doneBefore'])) {
+            $data['before'] = $data['doneBefore'];
         }
 
-        $data['previous'] = null;
-        if ($object->hasPrevious()) {
-            $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
-        }
-
-        $data['next'] = null;
-        if ($object->hasNext()) {
-            $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
-        }
-
-        $data['deliveryColor'] = null;
-        if (!is_null($object->getDelivery())) {
-            $data['deliveryColor'] = $object->getDelivery()->getColor();
-        }
-
-        $data['group'] = null;
-        if (null !== $object->getGroup()) {
-
-            $groupTags = [];
-            foreach ($object->getGroup()->getTags() as $tag) {
-                $groupTags[] = [
-                    'name' => $tag->getName(),
-                    'slug' => $tag->getSlug(),
-                    'color' => $tag->getColor(),
-                ];
-            }
-
-            $data['group'] = [
-                'id' => $object->getGroup()->getId(),
-                'name' => $object->getGroup()->getName(),
-                'tags' => $groupTags
-            ];
-        }
-
-        $data['tags'] = [];
-        foreach ($object->getTags() as $tag) {
-            $data['tags'][] = [
-                'name' => $tag->getName(),
-                'slug' => $tag->getSlug(),
-                'color' => $tag->getColor(),
-            ];
-        }
-
-        if (null === $object->getComments()) {
+        // Make sure "comments" is a string
+        if (array_key_exists('comments', $data) && null === $data['comments']) {
             $data['comments'] = '';
         }
 
-        if (count($object->getImages()) > 0) {
-            $data['images'] = [];
-            foreach ($object->getImages() as $taskImage) {
-                $imagePath = $this->uploaderHelper->asset($taskImage, 'file');
-                $data['images'][] = [
-                    'id' => $taskImage->getId(),
-                    'thumbnail' => $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail')
-                ];
+        // FIXME Avoid coupling normalizer with groups
+        // https://medium.com/@rebolon/the-symfony-serializer-a-great-but-complex-component-fbc09baa65a0
+        if (in_array('task', $context['groups'])) {
+
+            $data['assignedTo'] = null;
+            if ($object->isAssigned()) {
+                $data['assignedTo'] = $object->getAssignedCourier()->getUsername();
+            }
+
+            $data['previous'] = null;
+            if ($object->hasPrevious()) {
+                $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
+            }
+
+            $data['next'] = null;
+            if ($object->hasNext()) {
+                $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
             }
         }
 

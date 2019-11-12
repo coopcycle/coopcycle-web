@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
+import { createTaskList, integerToColor, groupLinkedTasks } from './utils'
 import {
   ASSIGN_TASKS,
   ADD_CREATED_TASK,
@@ -42,8 +43,6 @@ import {
   CLOSE_SETTINGS,
   SET_POLYLINE_STYLE,
 } from './actions'
-
-import { createTaskList } from './utils'
 
 const moment = extendMoment(Moment)
 
@@ -103,7 +102,8 @@ const initialState = {
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
   polylineStyle: 'normal',
-  searchIsOn: false
+  searchIsOn: false,
+  tasksWithColor: {}
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -322,6 +322,12 @@ function _allTasks(state = [], action, date = initialState.date) {
   return state
 }
 
+function _tasksWithColor(state = initialState.tasksWithColor) {
+  const groups = groupLinkedTasks(state.allTasks)
+
+  return _.mapValues(groups, taskIds => integerToColor(taskIds.reduce((accumulator, value) => accumulator + value)))
+}
+
 export const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_ADD_USER:
@@ -517,7 +523,8 @@ export const combinedTasks = (state = initialState, action) => {
     ...state,
     unassignedTasks: _unassignedTasks(state.unassignedTasks, action),
     taskLists: _taskLists(state.taskLists, action),
-    allTasks: _allTasks(state.allTasks, action)
+    allTasks: _allTasks(state.allTasks, action),
+    tasksWithColor: _tasksWithColor(state),
   }
 }
 
@@ -684,7 +691,7 @@ export const polylineStyle = (state = initialState.polylineStyle, action) => {
 
 export default (state = initialState, action) => {
 
-  const { allTasks, unassignedTasks, taskLists } = combinedTasks(state, action)
+  const { allTasks, unassignedTasks, taskLists, tasksWithColor } = combinedTasks(state, action)
   const { filters, isDefaultFilters } = combinedFilters(state, action)
 
   return {
@@ -714,5 +721,6 @@ export default (state = initialState, action) => {
     searchIsOn: searchIsOn(state.searchIsOn, action),
     settingsModalIsOpen: settingsModalIsOpen(state.settingsModalIsOpen, action),
     polylineStyle: polylineStyle(state.polylineStyle, action),
+    tasksWithColor,
   }
 }

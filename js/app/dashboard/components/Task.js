@@ -103,7 +103,7 @@ class Task extends React.Component {
 
   render() {
 
-    const { task, selected } = this.props
+    const { color, task, selected } = this.props
 
     const classNames = [
       'list-group-item',
@@ -131,7 +131,7 @@ class Task extends React.Component {
       ...taskAttributes,
       style: {
         display: 'block',
-        borderLeft: `6px solid ${task.deliveryColor}`
+        borderLeft: `6px solid ${color}`
       },
       key: task['@id'],
       className: classNames.join(' '),
@@ -167,8 +167,13 @@ class Task extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
+
+  const color = state.tasksWithColor.hasOwnProperty(ownProps.task['@id']) ?
+    state.tasksWithColor[ownProps.task['@id']] : '#ffffff'
+
   return {
     selected: -1 !== state.selectedTasks.indexOf(ownProps.task),
+    color,
   }
 }
 

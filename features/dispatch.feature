@@ -137,7 +137,6 @@ Feature: Dispatch
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
@@ -188,7 +187,6 @@ Feature: Dispatch
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
@@ -265,7 +263,6 @@ Feature: Dispatch
         "assignedTo":null,
         "previous":null,
         "next":null,
-        "deliveryColor":null,
         "group":null,
         "tags":@array@
       }
