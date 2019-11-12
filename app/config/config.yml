@@ -98,6 +98,10 @@ doctrine:
         # https://github.com/doctrine/dbal/pull/2671
         server_version: 9.4
 
+        # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
+        # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
+        schema_filter: ~^(?!(tiger|topology)\.)~
+
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
