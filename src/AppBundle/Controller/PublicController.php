@@ -37,6 +37,19 @@ class PublicController extends AbstractController
         ]);
 
         if (null === $order) {
+
+            $hashids = new Hashids($this->getParameter('secret'), 8);
+            $decoded = $hashids->decode($number);
+
+            if (count($decoded) !== 1) {
+                throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+            }
+
+            $id = current($decoded);
+            $order = $this->orderRepository->find($id);
+        }
+
+        if (null === $order) {
             throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
         }
 
