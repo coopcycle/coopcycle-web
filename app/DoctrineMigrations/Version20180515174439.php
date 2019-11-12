@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -40,7 +40,7 @@ class Version20180515174439 extends AbstractMigration
         ]);
     }
 
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         $this->stmt = [];
         $this->stmt['setting'] = $this->connection->prepare('SELECT * FROM craue_config_setting WHERE name = :name');
@@ -80,7 +80,7 @@ class Version20180515174439 extends AbstractMigration
         $this->addSetting('stripe_livemode', ($isLivePublishableKey && $isLiveSecretKey) ? 'yes' : 'no');
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
 

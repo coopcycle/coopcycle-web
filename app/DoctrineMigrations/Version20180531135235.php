@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberFormat;
@@ -16,7 +16,7 @@ class Version20180531135235 extends AbstractMigration implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $stmt = $this->connection->prepare("SELECT * FROM store where telephone is not null");
@@ -39,7 +39,7 @@ class Version20180531135235 extends AbstractMigration implements ContainerAwareI
         }
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
 

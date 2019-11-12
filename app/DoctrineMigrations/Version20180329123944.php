@@ -3,7 +3,7 @@
 namespace Application\Migrations;
 
 use AppBundle\Entity\Restaurant;
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -17,7 +17,7 @@ class Version20180329123944 extends AbstractMigration implements ContainerAwareI
 
     const BATCH_SIZE = 20;
 
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
 
@@ -58,7 +58,7 @@ class Version20180329123944 extends AbstractMigration implements ContainerAwareI
         $this->container->get('sylius.manager.product_variant')->flush();
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
 

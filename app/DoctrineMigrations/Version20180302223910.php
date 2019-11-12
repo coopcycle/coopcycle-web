@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\Yaml\Yaml;
 
@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Version20180302223910 extends AbstractMigration
 {
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
 
@@ -46,7 +46,7 @@ class Version20180302223910 extends AbstractMigration
 
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
 

@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version20180622100900 extends AbstractMigration
 {
-    public function up(Schema $schema)
+    public function up(Schema $schema) : void
     {
         $stmt = $this->connection->prepare("SELECT id, expression FROM pricing_rule");
         $stmt->execute();
@@ -39,7 +39,7 @@ class Version20180622100900 extends AbstractMigration
         }
     }
 
-    public function down(Schema $schema)
+    public function down(Schema $schema) : void
     {
         $stmt = $this->connection->prepare("SELECT id, expression FROM pricing_rule");
         $stmt->execute();
