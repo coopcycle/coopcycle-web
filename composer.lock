@@ -3976,6 +3976,7 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
@@ -10229,16 +10230,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.11.0",
+            "version": "v7.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "05d5f7c9db139ea8f9896a607772f5142ac1a6f3"
+                "reference": "0e24d89888e4bf051003c45c447b32e5298df55c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/05d5f7c9db139ea8f9896a607772f5142ac1a6f3",
-                "reference": "05d5f7c9db139ea8f9896a607772f5142ac1a6f3",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/0e24d89888e4bf051003c45c447b32e5298df55c",
+                "reference": "0e24d89888e4bf051003c45c447b32e5298df55c",
                 "shasum": ""
             },
             "require": {
@@ -10282,7 +10283,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2019-11-06T23:46:34+00:00"
+            "time": "2019-11-09T00:23:22+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
