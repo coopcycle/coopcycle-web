@@ -140,6 +140,7 @@
         },
         "drupal-core-vendor-hardening": {
             "api-platform/core": ["features", "tests"],
+            "aws/aws-sdk-php": [".changes"],
             "azuyalabs/yasumi": ["tests"],
             "clue/stream-filter": ["tests"],
             "coduo/php-matcher": ["tests"],
@@ -162,7 +163,14 @@
             "predicthq/address-formatter-templates": ["testcases"],
             "predis/predis": ["examples"],
             "swiftmailer/swiftmailer": ["doc", "tests"],
+            "sylius/product-bundle": ["spec", "test"],
+            "sylius/promotion-bundle": ["spec", "Tests", "test"],
             "sylius/resource-bundle": ["src/Bundle/spec", "src/Bundle/test", "src/Bundle/Tests"],
+            "symfony/symfony": [
+                "src/Symfony/Component/DependencyInjection/Tests",
+                "src/Symfony/Component/Form/Tests",
+                "src/Symfony/Component/Validator/Tests"
+            ],
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
         }
