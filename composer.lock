@@ -3944,6 +3944,7 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
@@ -11982,16 +11983,16 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v1.1.7",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "9cb52490dd60e0f50dbcdbdb3a6dbcb31f3a363e"
+                "reference": "f51bca9de06b7a25b19a4155da7bebad099a5def"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/9cb52490dd60e0f50dbcdbdb3a6dbcb31f3a363e",
-                "reference": "9cb52490dd60e0f50dbcdbdb3a6dbcb31f3a363e",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/f51bca9de06b7a25b19a4155da7bebad099a5def",
+                "reference": "f51bca9de06b7a25b19a4155da7bebad099a5def",
                 "shasum": ""
             },
             "require": {
@@ -12055,7 +12056,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-10-04T21:43:27+00:00"
+            "time": "2019-11-07T12:44:51+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -12937,16 +12938,16 @@
         },
         {
             "name": "symfony/webpack-encore-bundle",
-            "version": "v1.7.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/webpack-encore-bundle.git",
-                "reference": "10acbc01d5653cdaf6169d9ee7034155fd9b731c"
+                "reference": "8a5ba96bbec60bf04e2a70e45d2e953c94c4edc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/10acbc01d5653cdaf6169d9ee7034155fd9b731c",
-                "reference": "10acbc01d5653cdaf6169d9ee7034155fd9b731c",
+                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/8a5ba96bbec60bf04e2a70e45d2e953c94c4edc5",
+                "reference": "8a5ba96bbec60bf04e2a70e45d2e953c94c4edc5",
                 "shasum": ""
             },
             "require": {
@@ -12955,7 +12956,7 @@
                 "symfony/config": "^3.4 || ^4.0 || ^5.0",
                 "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0",
                 "symfony/http-kernel": "^3.4 || ^4.0 || ^5.0",
-                "symfony/service-contracts": "^1.0"
+                "symfony/service-contracts": "^1.0 || ^2.0"
             },
             "require-dev": {
                 "fig/link-util": "^1.0",
@@ -12987,7 +12988,7 @@
                 }
             ],
             "description": "Integration with your Symfony app & Webpack Encore!",
-            "time": "2019-10-22T13:35:56+00:00"
+            "time": "2019-11-10T13:02:28+00:00"
         },
         {
             "name": "theofidry/alice-data-fixtures",
