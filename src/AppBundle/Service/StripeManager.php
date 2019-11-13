@@ -2,9 +2,9 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\StripePayment;
 use Psr\Log\LoggerInterface;
 use Stripe;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 class StripeManager
 {
@@ -27,9 +27,9 @@ class StripeManager
         Stripe\Stripe::setApiVersion(self::STRIPE_API_VERSION);
     }
 
-    public function configurePayment(StripePayment $stripePayment)
+    public function configurePayment(PaymentInterface $payment)
     {
-        $order = $stripePayment->getOrder();
+        $order = $payment->getOrder();
 
         $restaurant = $order->getRestaurant();
         if (null === $restaurant) {
@@ -40,15 +40,15 @@ class StripeManager
         $stripeAccount = $restaurant->getStripeAccount($livemode);
 
         if (null !== $stripeAccount && $restaurant->getContract()->isRestaurantPaysStripeFee()) {
-            $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+            $payment->setStripeUserId($stripeAccount->getStripeUserId());
         }
     }
 
-    private function getStripeOptions(StripePayment $stripePayment)
+    private function getStripeOptions(PaymentInterface $payment)
     {
         $options = [];
 
-        $order = $stripePayment->getOrder();
+        $order = $payment->getOrder();
 
         $restaurant = $order->getRestaurant();
         if (null === $restaurant) {
@@ -65,9 +65,9 @@ class StripeManager
         return $options;
     }
 
-    private function configureCreateIntentPayload(StripePayment $stripePayment, array $payload)
+    private function configureCreateIntentPayload(PaymentInterface $payment, array $payload)
     {
-        $order = $stripePayment->getOrder();
+        $order = $payment->getOrder();
 
         $restaurant = $order->getRestaurant();
         if (null === $restaurant) {
@@ -102,17 +102,17 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(StripePayment $stripePayment): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
         $this->configure();
 
-        $order = $stripePayment->getOrder();
+        $order = $payment->getOrder();
 
         $payload = [
-            'amount' => $stripePayment->getAmount(),
-            'currency' => strtolower($stripePayment->getCurrencyCode()),
+            'amount' => $payment->getAmount(),
+            'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
-            'payment_method' => $stripePayment->getPaymentMethod(),
+            'payment_method' => $payment->getPaymentMethod(),
             'confirmation_method' => 'manual',
             'confirm' => true,
             // @see https://stripe.com/docs/payments/payment-intents/use-cases#separate-auth-capture
@@ -121,10 +121,10 @@ class StripeManager
             // 'statement_descriptor' => '...',
         ];
 
-        $this->configurePayment($stripePayment);
+        $this->configurePayment($payment);
 
-        $payload = $this->configureCreateIntentPayload($stripePayment, $payload);
-        $stripeOptions = $this->getStripeOptions($stripePayment);
+        $payload = $this->configureCreateIntentPayload($payment, $payload);
+        $stripeOptions = $this->getStripeOptions($payment);
 
         $this->logger->info(
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
@@ -138,19 +138,19 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function confirmIntent(StripePayment $stripePayment): Stripe\PaymentIntent
+    public function confirmIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
         $this->configure();
 
-        $stripeOptions = $this->getStripeOptions($stripePayment);
+        $stripeOptions = $this->getStripeOptions($payment);
 
         $intent = Stripe\PaymentIntent::retrieve(
-            $stripePayment->getPaymentIntent(),
+            $payment->getPaymentIntent(),
             $stripeOptions
         );
 
         $this->logger->info(
-            sprintf('Order #%d | StripeManager::confirmIntent | %s', $stripePayment->getOrder()->getId(), $intent->id)
+            sprintf('Order #%d | StripeManager::confirmIntent | %s', $payment->getOrder()->getId(), $intent->id)
         );
 
         $intent->confirm();
@@ -161,21 +161,21 @@ class StripeManager
     /**
      * @return Stripe\Charge
      */
-    public function authorize(StripePayment $stripePayment)
+    public function authorize(PaymentInterface $payment)
     {
         $this->configure();
 
-        $stripeToken = $stripePayment->getStripeToken();
+        $stripeToken = $payment->getStripeToken();
 
         if (null === $stripeToken) {
             throw new \Exception('No Stripe token provided');
         }
 
-        $order = $stripePayment->getOrder();
+        $order = $payment->getOrder();
 
         $stripeParams = [
-            'amount' => $stripePayment->getAmount(),
-            'currency' => strtolower($stripePayment->getCurrencyCode()),
+            'amount' => $payment->getAmount(),
+            'currency' => strtolower($payment->getCurrencyCode()),
             'source' => $stripeToken,
             'description' => sprintf('Order %s', $order->getNumber()),
             // To authorize a payment without capturing it,
@@ -198,7 +198,7 @@ class StripeManager
 
                 if ($restaurantPaysStripeFee) {
                     // needed only when using direct charges (the charge is linked to the restaurant's Stripe account)
-                    $stripePayment->setStripeUserId($stripeAccount->getStripeUserId());
+                    $payment->setStripeUserId($stripeAccount->getStripeUserId());
                     $stripeOptions['stripe_account'] = $stripeAccount->getStripeUserId();
                     $stripeParams['application_fee'] = $applicationFee;
                 } else {
@@ -219,19 +219,19 @@ class StripeManager
     /**
      * @return Stripe\Charge|Stripe\PaymentIntent
      */
-    public function capture(StripePayment $stripePayment)
+    public function capture(PaymentInterface $payment)
     {
         $this->configure();
 
-        if (null !== $stripePayment->getPaymentIntent()) {
+        if (null !== $payment->getPaymentIntent()) {
             // TODO Exception
             $intent = Stripe\PaymentIntent::retrieve(
-                $stripePayment->getPaymentIntent(),
-                $this->getStripeOptions($stripePayment)
+                $payment->getPaymentIntent(),
+                $this->getStripeOptions($payment)
             );
 
             $intent->capture([
-                'amount_to_capture' => $stripePayment->getAmount()
+                'amount_to_capture' => $payment->getAmount()
             ]);
 
             // TODO Return charge
@@ -239,8 +239,8 @@ class StripeManager
         }
 
         $charge = Stripe\Charge::retrieve(
-            $stripePayment->getCharge(),
-            $this->getStripeOptions($stripePayment)
+            $payment->getCharge(),
+            $this->getStripeOptions($payment)
         );
 
         if ($charge->captured) {
@@ -257,7 +257,7 @@ class StripeManager
     /**
      * @return Stripe\Refund
      */
-    public function refund(StripePayment $stripePayment, $amount = null, $refundApplicationFee = false)
+    public function refund(PaymentInterface $payment, $amount = null, $refundApplicationFee = false)
     {
         // FIXME
         // Check if the charge was made in test or live mode
@@ -265,7 +265,7 @@ class StripeManager
 
         $this->configure();
 
-        $stripeAccount = $stripePayment->getStripeUserId();
+        $stripeAccount = $payment->getStripeUserId();
         $stripeOptions = array();
 
         if (null !== $stripeAccount) {
@@ -273,12 +273,12 @@ class StripeManager
         }
 
         $args = [
-            'charge' => $stripePayment->getCharge(),
+            'charge' => $payment->getCharge(),
         ];
 
         if (null !== $amount) {
             $amount = (int) $amount;
-            if ($amount !== $stripePayment->getAmount()) {
+            if ($amount !== $payment->getAmount()) {
                 $args['amount'] = $amount;
             }
         }

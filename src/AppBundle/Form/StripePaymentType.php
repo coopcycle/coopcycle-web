@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\StripePayment;
+use AppBundle\Entity\Sylius\Payment;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -29,7 +29,7 @@ class StripePaymentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => StripePayment::class,
+            'data_class' => Payment::class,
         ]);
     }
 }

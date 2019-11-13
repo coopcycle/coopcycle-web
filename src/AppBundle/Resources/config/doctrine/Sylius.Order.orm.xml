@@ -23,7 +23,7 @@
         <cascade-persist/>
       </cascade>
     </one-to-one>
-    <one-to-many field="payments" target-entity="AppBundle\Entity\StripePayment" mapped-by="order" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="payments" target-entity="AppBundle\Entity\Sylius\Payment" mapped-by="order" orphan-removal="true" fetch="LAZY">
       <cascade>
         <cascade-all/>
       </cascade>

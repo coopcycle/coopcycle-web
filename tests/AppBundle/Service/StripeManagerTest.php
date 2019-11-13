@@ -2,10 +2,10 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
-use AppBundle\Entity\StripePayment;
-use AppBundle\Entity\Contract;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -83,10 +83,10 @@ class StripeManagerTest extends TestCase
 
     public function testAuthorizeCreatesDirectChargeWithNoConnectAccount()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setAmount(900);
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setCurrencyCode('EUR');
+        $payment = new Payment();
+        $payment->setAmount(900);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
@@ -102,7 +102,7 @@ class StripeManagerTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant);
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequest('POST', '/v1/charges', [
             'amount' => 900,
@@ -112,15 +112,15 @@ class StripeManagerTest extends TestCase
             'capture' => 'false',
         ]);
 
-        $this->stripeManager->authorize($stripePayment);
+        $this->stripeManager->authorize($payment);
     }
 
     public function testAuthorizeCreatesDirectChargeWithConnectAccount()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setAmount(3000);
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setCurrencyCode('EUR');
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
@@ -139,7 +139,7 @@ class StripeManagerTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant);
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('POST', '/v1/charges', 'acct_123', [
             'amount' => 3000,
@@ -150,15 +150,15 @@ class StripeManagerTest extends TestCase
             'application_fee' => 750
         ]);
 
-        $this->stripeManager->authorize($stripePayment);
+        $this->stripeManager->authorize($payment);
     }
 
     public function testAuthorizeCreatesDirectChargeWithOwnAccount()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setAmount(3000);
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setCurrencyCode('EUR');
+        $payment = new Payment();
+        $payment->setAmount(3000);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
 
         $stripeAccount = $this->prophesize(StripeAccount::class);
         $order = $this->prophesize(OrderInterface::class);
@@ -180,7 +180,7 @@ class StripeManagerTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant);
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequest('POST', '/v1/charges', [
             'amount' => 3000,
@@ -194,15 +194,15 @@ class StripeManagerTest extends TestCase
             ]
         ]);
 
-        $this->stripeManager->authorize($stripePayment);
+        $this->stripeManager->authorize($payment);
     }
 
     public function testAuthorizeAddsApplicationFee()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setAmount(900);
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setCurrencyCode('EUR');
+        $payment = new Payment();
+        $payment->setAmount(900);
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
 
         $restaurant = $this->createRestaurant('acct_123');
 
@@ -212,7 +212,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getLastPayment(PaymentInterface::STATE_NEW)
-            ->willReturn($stripePayment);
+            ->willReturn($payment);
         $order
             ->getTotal()
             ->willReturn(900);
@@ -223,7 +223,7 @@ class StripeManagerTest extends TestCase
             ->getNumber()
             ->willReturn('000001');
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('POST', '/v1/charges', 'acct_123', [
             'amount' => 900,
@@ -234,55 +234,55 @@ class StripeManagerTest extends TestCase
             'application_fee' => 250
         ]);
 
-        $this->stripeManager->authorize($stripePayment);
+        $this->stripeManager->authorize($payment);
     }
 
     public function testCaptureWithOwnAccount()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setCurrencyCode('EUR');
-        $stripePayment->setCharge('ch_123456');
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
 
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
             ->willReturn($this->createRestaurant('acct_123456', $paysStripeFee = false));
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequest('GET', '/v1/charges/ch_123456');
         $this->shouldSendStripeRequest('POST', '/v1/charges/ch_123456/capture');
 
-        $this->stripeManager->capture($stripePayment);
+        $this->stripeManager->capture($payment);
     }
 
     public function testCaptureWithConnectAccount()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeUserId('acct_123456');
-        $stripePayment->setCurrencyCode('EUR');
-        $stripePayment->setCharge('ch_123456');
+        $payment = new Payment();
+        $payment->setStripeUserId('acct_123456');
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
 
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
             ->willReturn($this->createRestaurant('acct_123456', $paysStripeFee = true));
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('GET', '/v1/charges/ch_123456', 'acct_123456');
         $this->shouldSendStripeRequestForAccount('POST', '/v1/charges/ch_123456/capture', 'acct_123456');
 
-        $this->stripeManager->capture($stripePayment);
+        $this->stripeManager->capture($payment);
     }
 
     public function testCaptureWithPaymentIntent()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeUserId('acct_123456');
-        $stripePayment->setAmount(3000);
-        $stripePayment->setCurrencyCode('EUR');
+        $payment = new Payment();
+        $payment->setStripeUserId('acct_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
             'status' => 'requires_source_action',
@@ -291,28 +291,28 @@ class StripeManagerTest extends TestCase
             ],
             'client_secret' => ''
         ]);
-        $stripePayment->setPaymentIntent($paymentIntent);
+        $payment->setPaymentIntent($paymentIntent);
 
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getRestaurant()
             ->willReturn($this->createRestaurant('acct_123456'));
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('GET', '/v1/payment_intents/pi_12345678', 'acct_123456');
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/capture', 'acct_123456', ["amount_to_capture" => 3000]);
 
-        $this->stripeManager->capture($stripePayment);
+        $this->stripeManager->capture($payment);
     }
 
     public function testCreateIntent()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setAmount(3000);
-        $stripePayment->setCurrencyCode('EUR');
-        $stripePayment->setCharge('ch_123456');
-        $stripePayment->setPaymentMethod('pm_123456');
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
+        $payment->setPaymentMethod('pm_123456');
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -328,7 +328,7 @@ class StripeManagerTest extends TestCase
             ->getFeeTotal()
             ->willReturn(750);
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents', 'acct_123456', [
             "amount" => 3000,
@@ -341,17 +341,17 @@ class StripeManagerTest extends TestCase
             "application_fee_amount" => 750
         ]);
 
-        $this->stripeManager->createIntent($stripePayment);
+        $this->stripeManager->createIntent($payment);
     }
 
     public function testCreateIntentWithTransferData()
     {
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeToken('tok_123456');
-        $stripePayment->setAmount(3000);
-        $stripePayment->setCurrencyCode('EUR');
-        $stripePayment->setCharge('ch_123456');
-        $stripePayment->setPaymentMethod('pm_123456');
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setCharge('ch_123456');
+        $payment->setPaymentMethod('pm_123456');
 
         $order = $this->prophesize(OrderInterface::class);
         $order
@@ -370,7 +370,7 @@ class StripeManagerTest extends TestCase
             ->getFeeTotal()
             ->willReturn(750);
 
-        $stripePayment->setOrder($order->reveal());
+        $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
             "amount" => 3000,
@@ -386,7 +386,7 @@ class StripeManagerTest extends TestCase
             ]
         ]);
 
-        $this->stripeManager->createIntent($stripePayment);
+        $this->stripeManager->createIntent($payment);
     }
 
     public function testConfirmIntent()
@@ -399,9 +399,9 @@ class StripeManagerTest extends TestCase
             ->getRestaurant()
             ->willReturn($this->createRestaurant('acct_123456'));
 
-        $stripePayment = new StripePayment();
-        $stripePayment->setStripeUserId('acct_123456');
-        $stripePayment->setOrder($order->reveal());
+        $payment = new Payment();
+        $payment->setStripeUserId('acct_123456');
+        $payment->setOrder($order->reveal());
 
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
@@ -411,11 +411,11 @@ class StripeManagerTest extends TestCase
             ],
             'client_secret' => ''
         ]);
-        $stripePayment->setPaymentIntent($paymentIntent);
+        $payment->setPaymentIntent($paymentIntent);
 
         $this->shouldSendStripeRequestForAccount('GET',  '/v1/payment_intents/pi_12345678', 'acct_123456');
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents/pi_12345678/confirm', 'acct_123456');
 
-        $this->stripeManager->confirmIntent($stripePayment);
+        $this->stripeManager->confirmIntent($payment);
     }
 }

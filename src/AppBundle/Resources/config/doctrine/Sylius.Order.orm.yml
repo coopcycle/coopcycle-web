@@ -55,7 +55,7 @@ AppBundle\Entity\Sylius\Order:
                 - persist
     oneToMany:
         payments:
-            targetEntity: AppBundle\Entity\StripePayment
+            targetEntity: AppBundle\Entity\Sylius\Payment
             mappedBy: order
             orphanRemoval: true
             cascade:

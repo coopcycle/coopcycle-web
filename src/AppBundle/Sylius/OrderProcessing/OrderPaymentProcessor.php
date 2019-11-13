@@ -2,25 +2,28 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\StripePayment;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderPaymentProcessor implements OrderProcessorInterface
 {
-    private $doctrine;
+    private $paymentMethodRepository;
+    private $paymentFactory;
     private $currencyContext;
 
     public function __construct(
-        ManagerRegistry $doctrine,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        PaymentFactoryInterface $paymentFactory,
         CurrencyContextInterface $currencyContext)
     {
-        $this->doctrine = $doctrine;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->paymentFactory = $paymentFactory;
         $this->currencyContext = $currencyContext;
     }
 
@@ -63,9 +66,15 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
-        $payment = new StripePayment();
-        $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
-        $payment->setAmount($order->getTotal());
+        // FIXME
+        // Do not hardcode this here
+        $stripe = $this->paymentMethodRepository->findOneByCode('STRIPE');
+
+        $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
+            $order->getTotal(),
+            $this->currencyContext->getCurrencyCode()
+        );
+        $payment->setMethod($stripe);
         $payment->setState($targetState);
 
         $order->addPayment($payment);

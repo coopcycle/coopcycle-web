@@ -32,7 +32,7 @@ winzou_state_machine:
                 from: [accepted]
                 to: ready
     sylius_payment:
-        class: AppBundle\Entity\StripePayment
+        class: "%sylius.model.payment.class%"
         property_path: state
         graph: sylius_payment
         state_machine_class: "%sylius.state_machine.class%"

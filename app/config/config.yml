@@ -460,6 +460,9 @@ sylius_promotion:
 
 sylius_payment:
     resources:
+        payment:
+            classes:
+                model: AppBundle\Entity\Sylius\Payment
         payment_method:
             classes:
                 repository: Sylius\Bundle\PaymentBundle\Doctrine\ORM\PaymentMethodRepository
