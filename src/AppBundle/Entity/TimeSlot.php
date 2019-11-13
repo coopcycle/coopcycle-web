@@ -2,20 +2,50 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Utils\TimeSlotChoiceWithDate;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Yasumi\Yasumi;
 
+/**
+ * @ApiResource(
+ *   normalizationContext={"groups"={"time_slot"}},
+ *   itemOperations={
+ *     "get"={"method"="GET"}
+ *   }
+ * )
+ */
 class TimeSlot
 {
     use Timestampable;
 
     private $id;
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $name;
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $choices;
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $interval = '2 days';
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $workingDaysOnly = true;
 
     public function __construct()

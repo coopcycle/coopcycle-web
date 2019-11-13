@@ -109,6 +109,9 @@ class Store extends LocalBusiness
 
     private $addresses;
 
+    /**
+     * @Groups({"store"})
+     */
     private $timeSlot;
 
     private $packageSet;

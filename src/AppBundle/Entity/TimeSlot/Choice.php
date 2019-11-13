@@ -5,6 +5,7 @@ namespace AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Task;
 use Carbon\Carbon;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class Choice
 {
@@ -12,7 +13,17 @@ class Choice
 
     private $id;
     private $timeSlot;
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $startTime;
+
+    /**
+     * @var string
+     * @Groups({"time_slot"})
+     */
     private $endTime;
 
     /**
