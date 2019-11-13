@@ -123,7 +123,7 @@ class Restaurant extends FoodEstablishment
      */
     protected $enabled = false;
 
-    protected $caterer = false;
+    protected $quotesAllowed = false;
 
     protected $depositRefundEnabled = false;
 
@@ -877,19 +877,19 @@ class Restaurant extends FoodEstablishment
     /**
      * @return mixed
      */
-    public function isCaterer()
+    public function isQuotesAllowed()
     {
-        return $this->caterer;
+        return $this->quotesAllowed;
     }
 
     /**
-     * @param mixed $caterer
+     * @param mixed $quotesAllowed
      *
      * @return self
      */
-    public function setCaterer($caterer)
+    public function setQuotesAllowed($quotesAllowed)
     {
-        $this->caterer = $caterer;
+        $this->quotesAllowed = $quotesAllowed;
     }
 
     public function getReusablePackagings()

@@ -15,23 +15,7 @@ class RestaurantModal extends Component {
   closeModal() {
   }
 
-  renderQuotesOnlyModalContent() {
-
-    return (
-      <div>
-        <div className="text-center">
-          <p dangerouslySetInnerHTML={{ __html: this.props.errorMessage }}></p>
-        </div>
-      </div>
-    )
-  }
-
   renderModalContent() {
-
-    if (this.props.isQuotesOnlyError) {
-
-      return this.renderQuotesOnlyModalContent()
-    }
 
     return (
       <div>
@@ -73,16 +57,9 @@ class RestaurantModal extends Component {
 function mapStateToProps(state) {
 
   const hasError = state.errors.hasOwnProperty('restaurant')
-  let quotesOnlyError = null
-
-  if (hasError) {
-    quotesOnlyError = _.find(state.errors.restaurant, err => err.hasOwnProperty('code') && err.code === 'Restaurant::QUOTES_ONLY')
-  }
 
   return {
     isOpen: hasError,
-    isQuotesOnlyError: !!quotesOnlyError,
-    errorMessage: !!quotesOnlyError ? quotesOnlyError.message : ''
   }
 }
 

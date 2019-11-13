@@ -6,7 +6,6 @@ use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Domain\Order\Handler\CheckoutHandler;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\StripeManager;
@@ -24,7 +23,6 @@ class CheckoutHandlerTest extends TestCase
     private $eventRecorder;
     private $orderNumberAssigner;
     private $stripeManager;
-    private $restaurant;
 
     private $handler;
     private $asap;
@@ -36,10 +34,6 @@ class CheckoutHandlerTest extends TestCase
         $this->stripeManager = $this->prophesize(StripeManager::class);
 
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
-        $this->restaurant = $this->prophesize(Restaurant::class);
-        $this->restaurant
-            ->isCaterer()
-            ->willReturn(false);
 
         $this->asap = (new \DateTime())->format(\DateTime::ATOM);
 
@@ -70,7 +64,6 @@ class CheckoutHandlerTest extends TestCase
 
         $order = new Order();
         $order->addPayment($stripePayment);
-        $order->setRestaurant($this->restaurant->reveal());
 
         $this->stripeManager
             ->authorize($stripePayment)
@@ -106,7 +99,6 @@ class CheckoutHandlerTest extends TestCase
 
         $order = new Order();
         $order->addPayment($stripePayment);
-        $order->setRestaurant($this->restaurant->reveal());
 
         $this->stripeManager
             ->confirmIntent($stripePayment)
@@ -141,7 +133,6 @@ class CheckoutHandlerTest extends TestCase
 
         $order = new Order();
         $order->addPayment($stripePayment);
-        $order->setRestaurant($this->restaurant->reveal());
 
         $this->stripeManager
             ->confirmIntent($stripePayment)
@@ -166,55 +157,6 @@ class CheckoutHandlerTest extends TestCase
     {
         $order = $this->prophesize(Order::class);
 
-        $order
-            ->getRestaurant()
-            ->willReturn($this->restaurant->reveal());
-        $order
-            ->getLastPayment(PaymentInterface::STATE_CART)
-            ->willReturn(null);
-        $order
-            ->isEmpty()
-            ->willReturn(false);
-        $order
-            ->getItemsTotal()
-            ->willReturn(1000);
-        $order
-            ->getTotal()
-            ->willReturn(0);
-        $order
-            ->getShippedAt()
-            ->willReturn(null);
-
-        $this->stripeManager
-            ->confirmIntent(Argument::type(StripePayment::class))
-            ->shouldNotBeCalled();
-        $this->stripeManager
-            ->authorize(Argument::type(StripePayment::class))
-            ->shouldNotBeCalled();
-
-        $order
-            ->setShippedAt(new \DateTime($this->asap))
-            ->shouldBeCalled();
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
-
-        $command = new Checkout($order->reveal());
-
-        call_user_func_array($this->handler, [$command]);
-    }
-
-    public function testCheckoutWithCateringOrder()
-    {
-        $order = $this->prophesize(Order::class);
-
-        $this->restaurant
-            ->isCaterer()
-            ->willReturn(true);
-
-        $order
-            ->getRestaurant()
-            ->willReturn($this->restaurant->reveal());
         $order
             ->getLastPayment(PaymentInterface::STATE_CART)
             ->willReturn(null);

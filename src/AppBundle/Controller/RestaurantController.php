@@ -37,6 +37,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -352,8 +353,6 @@ class RestaurantController extends AbstractController
                 // The cart is valid, and the user clicked on the submit button
                 if ($cartForm->isValid()) {
 
-                    // TODO Check if isCaterer = true, then user.isQuotesAllowed = true
-
                     $this->orderManager->flush();
 
                     return $this->redirectToRoute('order');
@@ -468,29 +467,6 @@ class RestaurantController extends AbstractController
             $cart->clearItems();
             $cart->setShippedAt(null);
             $cart->setRestaurant($restaurant);
-        }
-
-        if ($restaurant->isCaterer()) {
-            $user = $this->getUser();
-            if (!$user || !$user->isQuotesAllowed()) {
-
-                $transKey = 'restaurant.quotes_only_warning.' . ($user ? 'authenticated' : 'not_authenticated');
-                $transParams = [
-                    '%contact_us%' => sprintf('mailto:%s', $settingsManager->get('administrator_email')),
-                    '%login%' => $this->generateUrl('fos_user_security_login')
-                ];
-
-                $error = [
-                    'message' => $translator->trans($transKey, $transParams),
-                    'code' => 'Restaurant::QUOTES_ONLY'
-                ];
-
-                $errors = [
-                    'restaurant' => [ $error ]
-                ];
-
-                return $this->jsonResponse($cart, $errors);
-            }
         }
 
         $quantity = $request->request->getInt('quantity', 1);

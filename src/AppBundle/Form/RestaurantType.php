@@ -48,8 +48,8 @@ class RestaurantType extends LocalBusinessType
                     'mapped' => false,
                     'required' => false,
                 ])
-                ->add('caterer', CheckboxType::class, [
-                    'label' => 'restaurant.form.caterer.label',
+                ->add('quotesAllowed', CheckboxType::class, [
+                    'label' => 'restaurant.form.quotes_allowed.label',
                     'required' => false
                 ])
                 ->add('delete', SubmitType::class, [

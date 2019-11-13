@@ -7,25 +7,29 @@ use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
 use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 class CheckoutAddressType extends AbstractType
 {
+    private $tokenStorage;
     private $country;
 
-    public function __construct($country)
+    public function __construct(TokenStorageInterface $tokenStorage, $country)
     {
+        $this->tokenStorage = $tokenStorage;
         $this->country = strtoupper($country);
     }
 
@@ -55,12 +59,12 @@ class CheckoutAddressType extends AbstractType
             $this->disableChildForm($form, 'addressLocality');
         });
 
-        // This listener adds a "telephone" field when the customer does not have telephone
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
             $order = $event->getData();
 
+            // Add a "telephone" field when the customer does not have telephone
             if (empty($order->getCustomer()->getTelephone())) {
                 $form->add('telephone', PhoneNumberType::class, [
                     'format' => PhoneNumberFormat::NATIONAL,
@@ -85,6 +89,15 @@ class CheckoutAddressType extends AbstractType
                         ]);
                     }
                 }
+            }
+
+            // When the restaurant accepts quotes and the customer is allowed,
+            // we add another submit button
+            $user = $this->tokenStorage->getToken()->getUser();
+            if ($restaurant->isQuotesAllowed() && $user->isQuotesAllowed()) {
+                $form->add('quote', SubmitType::class, [
+                    'label' => 'form.checkout_address.quote.label'
+                ]);
             }
         });
 

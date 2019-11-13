@@ -135,8 +135,9 @@ AppBundle\Entity\Restaurant:
             type: boolean
             options:
                 default: false
-        caterer:
+        quotesAllowed:
             type: boolean
+            column: quotes_allowed
             options:
                 default: false
     manyToMany:

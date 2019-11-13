@@ -39,22 +39,22 @@
     {% endif %}
   {% endif %}
 
-  {% if restaurant.isCaterer %}
+  {% if restaurant.quotesAllowed %}
     {% set trans_params = {
       '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
       '%login%': path('fos_user_security_login')
     } %}
     {% if app.user %}
-      {% if not app.user.isQuotesAllowed %}
-        <div class="alert alert-warning">
-          <i class="fa fa-warning"></i> 
-          {% trans with trans_params %}restaurant.quotes_only_warning.authenticated{% endtrans %}
+      {% if not app.user.quotesAllowed %}
+        <div class="alert alert-info">
+          <i class="fa fa-info-circle"></i> 
+          {% trans with trans_params %}restaurant.quotes_disclaimer.authenticated{% endtrans %}
         </div>
       {% endif %}
     {% else %}
-      <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> 
-        {% trans with trans_params %}restaurant.quotes_only_warning.not_authenticated{% endtrans %}
+      <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> 
+        {% trans with trans_params %}restaurant.quotes_disclaimer.not_authenticated{% endtrans %}
       </div>
     {% endif %}
   {% endif %}

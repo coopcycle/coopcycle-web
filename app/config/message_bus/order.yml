@@ -35,6 +35,16 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Checkout
 
+  coopcycle.domain.order.handler.quote:
+    class: AppBundle\Domain\Order\Handler\QuoteHandler
+    arguments:
+      - '@event_recorder'
+      - '@sylius.order_number_assigner'
+      - '@AppBundle\Utils\OrderTimeHelper'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\Quote
+
   coopcycle.domain.order.handler.accept_order:
     class: AppBundle\Domain\Order\Handler\AcceptOrderHandler
     arguments:

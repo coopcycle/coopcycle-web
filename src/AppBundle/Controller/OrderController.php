@@ -95,10 +95,12 @@ class OrderController extends AbstractController
                 );
             }
 
+            $isQuote = $form->getClickedButton() && 'quote' === $form->getClickedButton()->getName();
             $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
-            $isQuote = $order->getRestaurant()->isCaterer();
 
-            if ($isFreeOrder || $isQuote) {
+            if ($isQuote) {
+                $orderManager->quote($order);
+            } elseif ($isFreeOrder) {
                 $orderManager->checkout($order);
             }
 

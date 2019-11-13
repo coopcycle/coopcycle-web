@@ -43,6 +43,11 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\Checkout($order, $stripeToken));
     }
 
+    public function quote(OrderInterface $order)
+    {
+        $this->commandBus->handle(new OrderCommand\Quote($order));
+    }
+
     public function ready(OrderInterface $order)
     {
         $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);

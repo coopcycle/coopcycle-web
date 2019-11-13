@@ -118,8 +118,8 @@ restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Co
 restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
   Vous pouvez commander pour plus tard !
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
-restaurant.quotes_only_warning.authenticated: Ce restaurant accepte uniquement des commandes sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
-restaurant.quotes_only_warning.not_authenticated: Ce restaurant accepte uniquement des commandes sur devis. Si vous êtes un client référencé, <a href="%login%">identifiez-vous</a> pour créer un devis.
+restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
+restaurant.quotes_disclaimer.not_authenticated: Ce restaurant accepte également des commandes sur devis. Si vous êtes un client référencé, <a href="%login%">identifiez-vous</a> pour créer un devis. <a href="%contact_us%">Contactez-nous</a> pour en savoir plus.
 restaurant.form.enabled.tooltip: "Un restaurant désactivé n'est ni visible ni référencé\
   \ sur le site. Il n'apparaît pas dans les résultats de recherche. Sa page dédiée\
   \ n'est pas accessible par les visiteurs.\n"
@@ -132,7 +132,7 @@ restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement vo
 restaurant.form.accessPlanning: Accéder au planning
 restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
-restaurant.form.caterer.label: "Ce restaurant accepte uniquement des commandes sur devis (ex : traiteur)"
+restaurant.form.quotes_allowed.label: "Ce restaurant accepte également des commandes sur devis (ex : traiteur)"
 restaurant.form.save: Enregistrer
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
@@ -539,6 +539,7 @@ form.checkout_address.notes.help: Votre remarque sera transmise au restaurant
 form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
+form.checkout_address.quote.label: Demander un devis
 form.task_export.start.label: Début
 form.task_export.end.label: Fin
 form.api_app.name.label: Nom de l'application

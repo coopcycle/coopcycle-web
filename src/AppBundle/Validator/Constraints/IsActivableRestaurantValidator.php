@@ -67,14 +67,11 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            // Restaurants with caterer = true don't need a Stripe account
-            if (!$object->isCaterer()) {
-                $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-                if (null === $stripeAccount) {
-                    $this->context->buildViolation($constraint->stripeAccountMessage)
-                        ->atPath('stripeAccounts')
-                        ->addViolation();
-                }
+            $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+            if (null === $stripeAccount) {
+                $this->context->buildViolation($constraint->stripeAccountMessage)
+                    ->atPath('stripeAccounts')
+                    ->addViolation();
             }
         }
 
