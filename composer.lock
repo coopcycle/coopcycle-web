@@ -3395,16 +3395,16 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.8.2",
+            "version": "v0.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "04db09a7f92ebebcc9d6582e487c7ee31d070db4"
+                "reference": "e3b2db2563982629a77ed4521df60a0e8ac2df64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/04db09a7f92ebebcc9d6582e487c7ee31d070db4",
-                "reference": "04db09a7f92ebebcc9d6582e487c7ee31d070db4",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/e3b2db2563982629a77ed4521df60a0e8ac2df64",
+                "reference": "e3b2db2563982629a77ed4521df60a0e8ac2df64",
                 "shasum": ""
             },
             "require": {
@@ -3444,7 +3444,7 @@
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
-            "time": "2019-10-14T13:23:10+00:00"
+            "time": "2019-11-12T16:03:22+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
@@ -3976,6 +3976,7 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
