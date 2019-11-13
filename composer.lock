@@ -3976,7 +3976,6 @@
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
                 "symfony/browser-kit": "^3.4|^4.2",
-                "symfony/css-selector": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
                 "symfony/phpunit-bridge": "^3.4|^4.2",
                 "symfony/property-access": "^3.4|^4.2",
@@ -12805,16 +12804,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v4.3.6",
+            "version": "v4.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "7e98605f0e11979e6735dfefc6dad11977d8f5e7"
+                "reference": "fb4065ac95f08ca26ee605936e537ba2cd4a6bb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/7e98605f0e11979e6735dfefc6dad11977d8f5e7",
-                "reference": "7e98605f0e11979e6735dfefc6dad11977d8f5e7",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/fb4065ac95f08ca26ee605936e537ba2cd4a6bb7",
+                "reference": "fb4065ac95f08ca26ee605936e537ba2cd4a6bb7",
                 "shasum": ""
             },
             "require": {
@@ -12969,7 +12968,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-11-01T10:00:21+00:00"
+            "time": "2019-11-11T16:39:14+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
@@ -15714,7 +15713,7 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v4.3.6",
+            "version": "v4.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
