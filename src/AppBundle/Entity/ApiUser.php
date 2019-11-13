@@ -294,7 +294,7 @@ class ApiUser extends BaseUser implements JWTUserInterface, ChannelAwareInterfac
      */
     public function isQuotesAllowed()
     {
-        return $this->quotesAllowed;
+        return $this->quotesAllowed || $this->hasRole('ROLE_ADMIN');
     }
 
     /**
