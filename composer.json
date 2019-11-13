@@ -31,7 +31,7 @@
         "symfony/monolog-bundle": "^3.4",
         "sensio/framework-extra-bundle": "^5.4",
         "incenteev/composer-parameter-handler": "^2.0",
-        "nelmio/cors-bundle": "~1.5",
+        "nelmio/cors-bundle": "~2.0",
         "phpdocumentor/reflection-docblock": "~4.0",
         "lexik/jwt-authentication-bundle": "^2.6.2",
         "jsor/doctrine-postgis": "^1.1",
