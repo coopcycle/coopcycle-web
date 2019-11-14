@@ -77,7 +77,7 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
      */
     public function addTask(Task $task, $position = null)
     {
-        $task->assignTo($this->getCourier());
+        $task->assignTo($this->getCourier(), $this->getDate());
 
         return parent::addTask($task, $position);
     }

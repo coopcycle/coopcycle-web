@@ -50,19 +50,19 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-12-01 10:30:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 11:00:00'))>
     __calls:
-      - assignTo: [ "@sarah" ]
+      - assignTo: [ "@sarah", <identity(new \DateTime('2018-12-01'))> ]
   task_2:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-11-30 11:30:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:00:00'))>
     __calls:
-      - assignTo: [ "@sarah" ]
+      - assignTo: [ "@sarah", <identity(new \DateTime('2018-12-02'))> ]
   task_3:
     address: "@address_1"
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:30:00'))>
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_4:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
@@ -70,18 +70,24 @@ AppBundle\Entity\Task:
     type: PICKUP
     next: "@task_5"
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_5:
     address: "@address_2"
-    doneAfter: <identity(new \DateTime('2018-12-01 13:00:00'))>
-    doneBefore: <identity(new \DateTime('2018-12-01 13:30:00'))>
+    doneAfter: <identity(new \DateTime('2018-12-02 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 13:30:00'))>
     previous: "@task_4"
     __calls:
-      - assignTo: [ "@bob" ]
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_6:
     address: "@address_3"
     doneAfter: <identity(new \DateTime('2018-12-01 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-01 12:30:00'))>
+  task_7:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-12-01 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 12:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2018-12-01'))> ]
 
 AppBundle\Entity\Tag:
   tag_important:

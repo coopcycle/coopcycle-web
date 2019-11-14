@@ -103,6 +103,10 @@ class TaskSubscriber implements EventSubscriber
         $usersByDate = new \SplObjectStorage();
         foreach ($allMessages as $message) {
             if ($message instanceof TaskAssigned || $message instanceof TaskUnassigned) {
+                // FIXME
+                // Using $task->getDoneBefore() causes problems with tasks spanning over several days
+                // Here it would send a notification for the wrong day
+                // @see https://github.com/coopcycle/coopcycle-web/issues/874
                 $date = $task->getDoneBefore();
                 $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
                 $usersByDate[$date] = array_merge($users, [ $message->getUser() ]);

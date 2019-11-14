@@ -21,7 +21,11 @@ class TaskListProvider
 
     public function getTaskList(Task $task, UserInterface $courier)
     {
-        $date = $task->getDoneBefore();
+        // FIXME
+        // Using $task->getDoneBefore() causes problems with tasks spanning over several days
+        // Here it would assign the task to 2 distinct task lists
+        // @see https://github.com/coopcycle/coopcycle-web/issues/874
+        $date = null !== $task->getAssignedOn() ? $task->getAssignedOn() : $task->getDoneBefore();
 
         $taskListCacheKey = sprintf('%s-%s', $date->format('Y-m-d'), $courier->getUsername());
 

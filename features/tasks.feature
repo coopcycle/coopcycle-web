@@ -649,27 +649,6 @@ Feature: Tasks
             "tags":@array@
           },
           {
-            "@id":"/api/tasks/5",
-            "@type":"Task",
-            "id":5,
-            "type":"DROPOFF",
-            "status":"TODO",
-            "address":@...@,
-            "after":"2018-12-01T13:00:00+01:00",
-            "before":"2018-12-01T13:30:00+01:00",
-            "doneAfter":"2018-12-01T13:00:00+01:00",
-            "doneBefore":"2018-12-01T13:30:00+01:00",
-            "comments":null,
-            "events":@array@,
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
-            "previous":null,
-            "next":null,
-            "group":null,
-            "tags":@array@
-          },
-          {
             "@id":"/api/tasks/6",
             "@type":"Task",
             "id":6,
@@ -689,6 +668,28 @@ Feature: Tasks
             "next":null,
             "group":null,
             "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/7",
+            "@type":"Task",
+            "id":7,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "comments":"",
+            "events":@array@,
+            "updatedAt":"2019-11-14T18:48:59+01:00",
+            "group":null,
+            "images":@array@,
+            "tags":@array@,
+            "isAssigned":true,
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
+            "assignedTo":"bob",
+            "previous":null,
+            "next":null
           }
         ],
         "hydra:totalItems":4,
@@ -776,9 +777,9 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/7",
+        "@id":"@string@.startsWith('/api/tasks')",
         "@type":"Task",
-        "id":7,
+        "id":@integer@,
         "type":"DROPOFF",
         "status":"TODO",
         "address":@...@,

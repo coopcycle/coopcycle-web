@@ -183,6 +183,11 @@ class Task implements TaggableInterface
     private $assignedTo;
 
     /**
+     * @var DateTime
+     */
+    private $assignedOn;
+
+    /**
      * @var TaskImage[]|Collection<TaskImage>
      * @Groups({"task", "task_edit"})
      */
@@ -371,19 +376,34 @@ class Task implements TaggableInterface
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
 
+    public function getAssignedOn()
+    {
+        return $this->assignedOn;
+    }
+
     public function getAssignedCourier()
     {
         return $this->assignedTo;
     }
 
-    public function assignTo(ApiUser $courier)
+    /**
+     * @param ApiUser $courier
+     * @param DateTime $date
+     */
+    public function assignTo(ApiUser $courier, \DateTime $date = null)
     {
+        if (null === $date) {
+            @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
+        }
+
         $this->assignedTo = $courier;
+        $this->assignedOn = $date;
     }
 
     public function unassign()
     {
         $this->assignedTo = null;
+        $this->assignedOn = null;
     }
 
     public function hasEvent($name)
