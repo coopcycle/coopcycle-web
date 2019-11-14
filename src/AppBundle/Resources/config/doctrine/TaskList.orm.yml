@@ -1,6 +1,7 @@
 AppBundle\Entity\TaskList:
     type: entity
     table: task_list
+    repositoryClass: AppBundle\Entity\TaskListRepository
     uniqueConstraints:
         task_list_unique:
             columns:
