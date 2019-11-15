@@ -19,16 +19,24 @@ How to run a local instance
 
 ### Prerequisites
 
-* Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
+Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
 
-    - On OSX : use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`. It doesn't rely on Virtualbox as Docker used to.
+#### OSX
 
-    - On Windows : use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`. Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations. If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
+Use [Docker for Mac](https://www.docker.com/docker-mac) which will provide you both `docker` and `docker-compose`.
 
-    You will need to [download openssl](http://gnuwin32.sourceforge.net/packages/openssl.htm) to generate certificates.
-    The make script suppose that both are found [in your Path environment variable](https://www.computerhope.com/issues/ch000549.htm).
+#### Windows
 
-    - On Linux : follow [the instructions for your distribution](https://docs.docker.com/install/). `docker-compose` binary is to be installed independently. Make sure to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**. You can use CoopCycle without root privileges, to do so run `sudo usermod -aG docker your-user` (will add you to the `docker` group).
+Use [Docker for Windows](https://www.docker.com/docker-windows) which will provide you both `docker` and `docker-compose`.
+Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations.
+If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
+
+#### Linux
+
+Follow [the instructions for your distribution](https://docs.docker.com/install/). `docker-compose` binary is to be installed independently.
+Make sure:
+- to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**.
+- to follow the [post-installation steps](https://docs.docker.com/install/linux/linux-postinstall/).
 
 * Setup Google Maps API
 
@@ -38,18 +46,6 @@ enable the Google Maps API. GCP will give you an API token that you will need
 later.  By default, the Geocoding and Places API will not be enabled, so you
 need to enable them as well (`Maps API dashboard > APIs > Geocoding API >
 Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
-
-* (Linux) Setup permissions
-
-If you are using Linux, you will need to allow the user `www-data` used by the
-php docker container to write files to your local disk. You can do this by running
-the following commands in the directory containing your local clone of the
-repository:
-
-```
-sudo chown -R $(id -u):82 coopcycle-web
-sudo chmod -R g+w coopcycle-web
-```
 
 ### Run the application
 
