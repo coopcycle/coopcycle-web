@@ -33,6 +33,7 @@ function resetForm($form) {
     $(this).prop('disabled', false)
     $(this).val($(this).attr('min'))
   })
+  $form.find('[data-product-options-group]').children().removeClass('disabled')
 }
 
 function asRange($el) {
@@ -48,8 +49,13 @@ function asRange($el) {
 function asOptionsCount($el) {
   const radios = $el.find('input[type="radio"]:checked').length
   const checkboxes = $el.find('input[type="checkbox"]:checked').length
+  const numbers = $el
+    .find('input[type="number"]')
+    .map((index, el) => parseInt($(el).val(), 10))
+    .get()
+    .reduce((acc, val) => acc + val, 0)
 
-  return radios + checkboxes
+  return radios + checkboxes + numbers
 }
 
 function validateRange($el) {
@@ -100,6 +106,48 @@ window.initMap = function() {
     if (direction === 'up') {
       $input[0].stepUp()
       $input.trigger('change')
+    }
+  })
+
+  $('label[data-step-up]').on('click', function(e) {
+    e.preventDefault()
+    const $input = $('#' + $(this).attr('for'))
+    $input[0].stepUp()
+    $input.trigger('change')
+  })
+
+  $('form[data-product-options] [data-product-options-group] input[type="number"]').on('change', function(e) {
+
+    window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
+
+    const $form = $(this).closest('form')
+    const $optionsGroup = $(this).closest('[data-product-options-group]')
+
+    if (isValid($form)) {
+      $form.find('button[type="submit"]').removeAttr('disabled')
+    } else {
+      $form.find('button[type="submit"]').prop('disabled', true)
+    }
+
+    const optionsCount = asOptionsCount($optionsGroup)
+    const [ min, max ] = asRange($optionsGroup)
+
+    if (max !== Infinity && optionsCount === max) {
+      $optionsGroup.children().each(function (e) {
+        const $input = $(this).find('input[type="number"]')
+        if (parseInt($input.val(), 10) === 0) {
+          $input.prop('disabled', true)
+          $(this).addClass('disabled')
+        } else {
+          $(this).find('[data-stepper][data-direction="up"]').prop('disabled', true)
+        }
+      })
+    } else {
+      $optionsGroup.children().each(function (e) {
+        $(this).find('input[type="number"]').prop('disabled', false)
+        $(this).find('[data-stepper][data-direction="up"]').prop('disabled', false)
+        $(this).removeClass('disabled')
+      })
     }
   })
 
