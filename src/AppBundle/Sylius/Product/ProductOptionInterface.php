@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Product;
 
+use AppBundle\DataType\NumRange;
 use Sylius\Component\Product\Model\ProductOptionInterface as BaseProductOptionInterface;
 
 interface ProductOptionInterface extends BaseProductOptionInterface
@@ -39,4 +40,9 @@ interface ProductOptionInterface extends BaseProductOptionInterface
      * @return boolean
      */
     public function isAdditional(): bool;
+
+    /**
+     * @return NumRange
+     */
+    public function getValuesRange(): ?NumRange;
 }

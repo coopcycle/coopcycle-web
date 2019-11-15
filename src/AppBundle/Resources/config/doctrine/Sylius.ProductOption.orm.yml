@@ -19,3 +19,6 @@ AppBundle\Entity\Sylius\ProductOption:
         deletedAt:
             type: datetime
             nullable: true
+        valuesRange:
+            type: numrange
+            nullable: true

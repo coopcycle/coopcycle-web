@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\DataType\NumRange;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
@@ -22,6 +23,8 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
      * @var boolean
      */
     protected $additional = false;
+
+    protected $valuesRange;
 
     protected $deletedAt;
 
@@ -76,5 +79,20 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     public function setRestaurant(Restaurant $restaurant)
     {
         $restaurant->addProductOption($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValuesRange(): ?NumRange
+    {
+        return $this->valuesRange;
+    }
+
+    public function setValuesRange($range)
+    {
+        $this->valuesRange = $range;
+
+        return $this;
     }
 }
