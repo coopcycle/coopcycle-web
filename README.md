@@ -38,7 +38,7 @@ Make sure:
 - to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**.
 - to follow the [post-installation steps](https://docs.docker.com/install/linux/linux-postinstall/).
 
-* Setup Google Maps API
+#### Setup Google Maps API (optional)
 
 CoopCycle uses the Google Maps API for Geocoding, as well as the Places API.
 You will need to create a project in the Google Cloud Platform Console, and
