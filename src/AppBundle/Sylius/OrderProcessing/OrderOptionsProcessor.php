@@ -35,20 +35,21 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
             foreach ($variant->getOptionValues() as $optionValue) {
 
                 $option = $optionValue->getOption();
+                $quantity = $variant->getQuantityForOptionValue($optionValue);
 
                 $amount = 0;
                 switch ($option->getStrategy()) {
                     case ProductOptionInterface::STRATEGY_OPTION:
-                        $amount = $option->getPrice() * $orderItem->getQuantity();
+                        $amount = ($option->getPrice() * $quantity) * $orderItem->getQuantity();
                         break;
                     case ProductOptionInterface::STRATEGY_OPTION_VALUE:
-                        $amount = $optionValue->getPrice() * $orderItem->getQuantity();
+                        $amount = ($optionValue->getPrice() * $quantity) * $orderItem->getQuantity();
                         break;
                 }
 
                 $adjustment = $this->adjustmentFactory->createWithData(
                     AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
-                    $optionValue->getValue(),
+                    sprintf('%d × %s', $quantity, $optionValue->getValue()),
                     $amount,
                     $neutral = false
                 );

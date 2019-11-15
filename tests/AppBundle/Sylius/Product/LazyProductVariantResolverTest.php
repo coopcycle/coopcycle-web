@@ -196,6 +196,142 @@ class LazyProductVariantResolverTest extends TestCase
         $this->assertSame($variantWithNoOptions, $variant);
     }
 
+    public function testNonExistingVariantWithAdditionalOptionsWithQuantity()
+    {
+        $product = new Product();
+        $product->setCurrentLocale('en');
+
+        $ingredients = new ProductOption();
+        $ingredients->setAdditional(true);
+        // setValuesRange
+
+        $avocado = new ProductOptionValue();
+        $avocado->setOption($ingredients);
+
+        $bacon = new ProductOptionValue();
+        $bacon->setOption($ingredients);
+
+        $defaultVariant = new ProductVariant();
+        $defaultVariant->setPrice(900);
+
+        $product->addVariant($defaultVariant);
+
+        $this->variantFactory
+            ->createForProduct($product)
+            ->will(function ($args) use ($product) {
+                $variant = new ProductVariant();
+                $variant->setCurrentLocale('en');
+                $variant->setProduct($product);
+
+                return $variant;
+            });
+
+        $this->defaultVariantResolver
+            ->getVariant($product)
+            ->willReturn($defaultVariant);
+
+        $optionValues = new \SplObjectStorage();
+        $optionValues->attach($avocado, 2);
+        $optionValues->attach($bacon, 3);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, $optionValues);
+
+        $this->assertEquals(900, $variant->getPrice());
+        $this->assertTrue($variant->hasOptionValue($avocado));
+        $this->assertTrue($variant->hasOptionValue($bacon));
+    }
+
+    public function testExistingVariantWithAdditionalOptionsWithQuantity()
+    {
+        $product = new Product();
+        $product->setCurrentLocale('en');
+
+        $ingredients = new ProductOption();
+        $ingredients->setAdditional(true);
+        // setValuesRange
+
+        $avocado = new ProductOptionValue();
+        $avocado->setOption($ingredients);
+
+        $bacon = new ProductOptionValue();
+        $bacon->setOption($ingredients);
+
+        $defaultVariant = new ProductVariant();
+        $defaultVariant->setPrice(900);
+
+        $doubleAvocadoDoubleBacon = new ProductVariant();
+        $doubleAvocadoDoubleBacon->addOptionValueWithQuantity($avocado, 2);
+        $doubleAvocadoDoubleBacon->addOptionValueWithQuantity($bacon, 2);
+
+        $product->addVariant($defaultVariant);
+        $product->addVariant($doubleAvocadoDoubleBacon);
+
+        $optionValues = new \SplObjectStorage();
+        $optionValues->attach($avocado, 2);
+        $optionValues->attach($bacon, 2);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, $optionValues);
+
+        $this->assertSame($doubleAvocadoDoubleBacon, $variant);
+    }
+
+    public function testExistingVariantMatchesWithQuantity()
+    {
+        $product = new Product();
+        $product->setCurrentLocale('en');
+
+        $ingredients = new ProductOption();
+        $ingredients->setAdditional(true);
+        // setValuesRange
+
+        $avocado = new ProductOptionValue();
+        $avocado->setOption($ingredients);
+
+        $bacon = new ProductOptionValue();
+        $bacon->setOption($ingredients);
+
+        $defaultVariant = new ProductVariant();
+        $defaultVariant->setPrice(900);
+
+        $doubleAvocadoDoubleBacon = new ProductVariant();
+        $doubleAvocadoDoubleBacon->addOptionValueWithQuantity($avocado, 2);
+        $doubleAvocadoDoubleBacon->addOptionValueWithQuantity($bacon, 2);
+
+        $product->addVariant($defaultVariant);
+        $product->addVariant($doubleAvocadoDoubleBacon);
+
+        $this->variantFactory
+            ->createForProduct($product)
+            ->will(function ($args) use ($product) {
+                $variant = new ProductVariant();
+                $variant->setCurrentLocale('en');
+                $variant->setProduct($product);
+
+                return $variant;
+            });
+
+        $this->defaultVariantResolver
+            ->getVariant($product)
+            ->willReturn($defaultVariant);
+
+        $optionValues = new \SplObjectStorage();
+        $optionValues->attach($avocado, 3); // TRIPLE avocado
+        $optionValues->attach($bacon, 2);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariantForOptionValues($product, $optionValues);
+
+        $this->assertNotSame($doubleAvocadoDoubleBacon, $variant);
+
+        $this->assertEquals(900, $variant->getPrice());
+        $this->assertTrue($variant->hasOptionValue($avocado));
+        $this->assertTrue($variant->hasOptionValue($bacon));
+        $this->assertTrue($variant->hasOptionValueWithQuantity($avocado, 3));
+        $this->assertTrue($variant->hasOptionValueWithQuantity($bacon, 2));
+    }
+
     public function testNonExistingVariantWithMandatoryOptions()
     {
         $product = new Product();

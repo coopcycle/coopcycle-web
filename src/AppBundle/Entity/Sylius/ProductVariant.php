@@ -106,4 +106,50 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
     {
         return $this->getOptionValues()->contains($optionValue);
     }
+
+    public function addOptionValueWithQuantity(ProductOptionValueInterface $optionValue, int $quantity = 1): void
+    {
+        if ($quantity < 1) {
+            return;
+        }
+
+        if ($this->hasOptionValue($optionValue)) {
+            foreach ($this->optionValues as $variantOptionValue) {
+                if ($variantOptionValue->getOptionValue() === $optionValue) {
+                    $variantOptionValue->setQuantity($quantity);
+                }
+            }
+        } else {
+            $variantOptionValue = new ProductVariantOptionValue();
+            $variantOptionValue->setVariant($this);
+            $variantOptionValue->setOptionValue($optionValue);
+            $variantOptionValue->setQuantity($quantity);
+
+            $this->optionValues->add($variantOptionValue);
+        }
+    }
+
+    public function getQuantityForOptionValue(ProductOptionValueInterface $optionValue): int
+    {
+        foreach ($this->optionValues as $variantOptionValue) {
+            if ($variantOptionValue->getOptionValue() === $optionValue) {
+                return $variantOptionValue->getQuantity();
+            }
+        }
+
+        return 0;
+    }
+
+    public function hasOptionValueWithQuantity(ProductOptionValueInterface $optionValue, int $quantity = 1): bool
+    {
+        if ($this->hasOptionValue($optionValue)) {
+            foreach ($this->optionValues as $variantOptionValue) {
+                if ($variantOptionValue->getOptionValue() === $optionValue && $variantOptionValue->getQuantity() === $quantity) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

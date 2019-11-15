@@ -50,7 +50,17 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         $variant = $this->variantFactory->createForProduct($product);
         $values = [];
         foreach ($optionValues as $optionValue) {
-            $variant->addOptionValue($optionValue);
+
+            $quantity = null;
+            if ($optionValues instanceof \SplObjectStorage) {
+                $quantity = $optionValues->getInfo();
+            }
+
+            if (null !== $quantity) {
+                $variant->addOptionValueWithQuantity($optionValue, (int) $quantity);
+            } else {
+                $variant->addOptionValue($optionValue);
+            }
         }
 
         $variant->setName($product->getName());
@@ -68,8 +78,20 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     private function matchOptions(ProductVariantInterface $variant, \Traversable $optionValues)
     {
         foreach ($optionValues as $optionValue) {
-            if (!$variant->hasOptionValue($optionValue)) {
-                return false;
+
+            $quantity = null;
+            if ($optionValues instanceof \SplObjectStorage) {
+                $quantity = $optionValues->getInfo();
+            }
+
+            if (null !== $quantity) {
+                if (!$variant->hasOptionValueWithQuantity($optionValue, (int) $quantity)) {
+                    return false;
+                }
+            } else {
+                if (!$variant->hasOptionValue($optionValue)) {
+                    return false;
+                }
             }
         }
 
