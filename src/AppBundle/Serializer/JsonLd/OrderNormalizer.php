@@ -169,10 +169,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                     if (!$product->hasNonAdditionalOptions() && (!isset($item['options']) || empty($item['options']))) {
                         $productVariant = $this->variantResolver->getVariant($product);
                     } else {
-                        $optionValues = [];
+                        $optionValues = new \SplObjectStorage();
                         foreach ($item['options'] as $optionValueCode) {
                             $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                            $optionValues[] = $optionValue;
+                            $optionValues->attach($optionValue);
                         }
                         $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
                     }

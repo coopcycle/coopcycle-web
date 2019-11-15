@@ -25,7 +25,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
-use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
@@ -86,7 +85,7 @@ class RestaurantController extends AbstractController
         $this->orderTimeHelper = $orderTimeHelper;
     }
 
-    private function matchNonExistingOption(ProductInterface $product, array $optionValues)
+    private function matchNonExistingOption(ProductInterface $product, \Traversable $optionValues)
     {
         foreach ($optionValues as $optionValue) {
             if (!$product->hasOption($optionValue->getOption())) {
@@ -482,7 +481,7 @@ class RestaurantController extends AbstractController
             } else {
                 $options = $request->request->get('options');
 
-                $optionValues = [];
+                $optionValues = new \SplObjectStorage();
                 foreach ($options as $optionCode => $optionValueCode) {
 
                     $optionValueCodes = [];
@@ -494,7 +493,7 @@ class RestaurantController extends AbstractController
 
                     foreach ($optionValueCodes as $optionValueCode) {
                         $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                        $optionValues[] = $optionValue;
+                        $optionValues->attach($optionValue);
                     }
                 }
 

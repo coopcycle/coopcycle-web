@@ -14,5 +14,5 @@ interface LazyProductVariantResolverInterface extends BaseProductVariantResolver
      *
      * @return ProductVariantInterface|null
      */
-    public function getVariantForOptionValues(ProductInterface $product, array $optionValues): ?ProductVariantInterface;
+    public function getVariantForOptionValues(ProductInterface $product, \Traversable $optionValues): ?ProductVariantInterface;
 }

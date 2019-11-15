@@ -28,6 +28,16 @@ class LazyProductVariantResolverTest extends TestCase
         );
     }
 
+    private function toSplObjectStorage(array $productOptionValues)
+    {
+        $storage = new \SplObjectStorage();
+        foreach ($productOptionValues as $productOptionValue) {
+            $storage->attach($productOptionValue);
+        }
+
+        return $storage;
+    }
+
     public function testExistingVariantWithMandatoryOptions()
     {
         $product = new Product();
@@ -69,22 +79,22 @@ class LazyProductVariantResolverTest extends TestCase
         $product->addVariant($variantWithBeerAndFries);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$soda, $salad]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$soda, $salad]));
 
         $this->assertSame($variantWithSodaAndSalad, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$soda, $fries]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$soda, $fries]));
 
         $this->assertSame($variantWithSodaAndFries, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$beer, $salad]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$beer, $salad]));
 
         $this->assertSame($variantWithBeerAndSalad, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$beer, $fries]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$beer, $fries]));
 
         $this->assertSame($variantWithBeerAndFries, $variant);
     }
@@ -123,17 +133,17 @@ class LazyProductVariantResolverTest extends TestCase
         $product->addVariant($variantWithDrinksOnly);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$soda]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$soda]));
 
         $this->assertSame($variantWithDrinksOnly, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$soda, $ketchup]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$soda, $ketchup]));
 
         $this->assertSame($variantWithDrinksAndOneSauce, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$soda, $ketchup, $mustard]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$soda, $ketchup, $mustard]));
 
         $this->assertSame($variantWithDrinksAndTwoSauces, $variant);
     }
@@ -171,17 +181,17 @@ class LazyProductVariantResolverTest extends TestCase
         $product->addVariant($variantWithNoOptions);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$kingSize]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$kingSize]));
 
         $this->assertSame($variantWithKingSize, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$kingSize, $ketchup]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$kingSize, $ketchup]));
 
         $this->assertSame($variantWithKingSizeAndOneSauce, $variant);
 
         $variant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, []);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([]));
 
         $this->assertSame($variantWithNoOptions, $variant);
     }
@@ -240,7 +250,7 @@ class LazyProductVariantResolverTest extends TestCase
             ->willReturn($defaultVariant);
 
         $actualVariant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$optionValue3, $optionValue4]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$optionValue3, $optionValue4]));
 
         $this->assertEquals(900, $actualVariant->getPrice());
         $this->assertTrue($actualVariant->hasOptionValue($optionValue3));
@@ -301,7 +311,7 @@ class LazyProductVariantResolverTest extends TestCase
             ->willReturn($defaultVariant);
 
         $actualVariant = $this->lazyVariantResolver
-            ->getVariantForOptionValues($product, [$optionValue3, $optionValue4]);
+            ->getVariantForOptionValues($product, $this->toSplObjectStorage([$optionValue3, $optionValue4]));
 
         $this->assertEquals(900, $actualVariant->getPrice());
         $this->assertTrue($actualVariant->hasOptionValue($optionValue3));

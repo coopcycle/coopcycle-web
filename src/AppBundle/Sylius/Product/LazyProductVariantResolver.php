@@ -33,7 +33,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getVariantForOptionValues(ProductInterface $product, array $optionValues): ?ProductVariantInterface
+    public function getVariantForOptionValues(ProductInterface $product, \Traversable $optionValues): ?ProductVariantInterface
     {
         foreach ($product->getVariants() as $variant) {
 
@@ -65,7 +65,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         return $variant;
     }
 
-    private function matchOptions(ProductVariantInterface $variant, array $optionValues)
+    private function matchOptions(ProductVariantInterface $variant, \Traversable $optionValues)
     {
         foreach ($optionValues as $optionValue) {
             if (!$variant->hasOptionValue($optionValue)) {
