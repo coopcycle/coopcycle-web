@@ -16,6 +16,19 @@ window._paq = window._paq || []
 
 let store
 
+function isValid($form) {
+  const $options = $form.find('[data-product-option]')
+
+  let checkedOptionsCount = 0
+  $options.each(function(index, el) {
+    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length
+  })
+
+  const allOptionsChecked = $options.length === checkedOptionsCount
+
+  return allOptionsChecked
+}
+
 window.initMap = function() {
 
   $('[data-quantity-decrement]').on('click', function(e) {
@@ -41,17 +54,10 @@ window.initMap = function() {
 
   // Make sure all (non-additional) options have been checked
   $('form[data-product-options] input[type="radio"]').on('change', function() {
-
-    var $options = $(this).closest('form').find('[data-product-option]')
-    var checkedOptionsCount = 0
-    $options.each(function(index, el) {
-      checkedOptionsCount += $(el).find('input[type="radio"]:checked').length
-    })
-
+    const $form = $(this).closest('form')
     window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
-
-    if ($options.length === checkedOptionsCount) {
-      $(this).closest('form').find('button[type="submit"]').removeAttr('disabled')
+    if (isValid($form)) {
+      $form.find('button[type="submit"]').removeAttr('disabled')
     }
   })
 
@@ -80,12 +86,10 @@ window.initMap = function() {
   })
 
   $('.modal').on('shown.bs.modal', function() {
-    window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
     var $form = $(this).find('form[data-product-options]')
     if ($form.length === 1) {
-      var $options = $form.find('[data-product-option]')
-      var disabled = $options.length > 0
-      $form.find('button[type="submit"]').prop('disabled', disabled)
+      window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
+      $form.find('button[type="submit"]').prop('disabled', !isValid($form))
     }
   })
 
