@@ -17,16 +17,42 @@ window._paq = window._paq || []
 let store
 
 function isValid($form) {
-  const $options = $form.find('[data-product-option]')
+  const $optionGroups = $form.find('[data-product-options-group]')
+  const $validOptionGroups = $optionGroups.filter((index, el) => validateRange($(el)))
 
-  let checkedOptionsCount = 0
-  $options.each(function(index, el) {
-    checkedOptionsCount += $(el).find('input[type="radio"]:checked').length
-  })
+  return $optionGroups.length === $validOptionGroups.length
+}
 
-  const allOptionsChecked = $options.length === checkedOptionsCount
+function asRange($el) {
+  let min = $el.attr('data-product-options-group-min')
+  let max = $el.attr('data-product-options-group-max')
 
-  return allOptionsChecked
+  min = min ? parseInt(min, 10) : 0
+  max = max ? parseInt(max, 10) : Infinity
+
+  return [ min, max ]
+}
+
+function asOptionsCount($el) {
+  const radios = $el.find('input[type="radio"]:checked').length
+  const checkboxes = $el.find('input[type="checkbox"]:checked').length
+
+  return radios + checkboxes
+}
+
+function validateRange($el) {
+  const [ min, max ] = asRange($el)
+  const optionsCount = asOptionsCount($el)
+
+  if (optionsCount < min) {
+    return false
+  }
+
+  if (max !== Infinity && optionsCount > max) {
+    return false
+  }
+
+  return true
 }
 
 window.initMap = function() {

@@ -177,7 +177,14 @@
                   {{ option.name }}
                   {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}
                 </h4>
-                <div class="list-group" {% if not option.additional %}data-product-option{% endif %}>
+                <div class="list-group"
+                  data-product-options-group
+                  {% if not option.additional %}
+                  data-product-options-group-min="1"
+                  data-product-options-group-max="1"
+                  {% else %}
+                  data-product-options-group-min="0"
+                  {% endif %}>
                   {% for option_value in option.values %}
                     <div class="list-group-item product-option-item">
                       {% if option.additional %}
