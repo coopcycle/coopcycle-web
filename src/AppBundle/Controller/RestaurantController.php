@@ -85,15 +85,6 @@ class RestaurantController extends AbstractController
         $this->orderTimeHelper = $orderTimeHelper;
     }
 
-    private function matchNonExistingOption(ProductInterface $product, \Traversable $optionValues)
-    {
-        foreach ($optionValues as $optionValue) {
-            if (!$product->hasOption($optionValue->getOption())) {
-                return $optionValue->getOption();
-            }
-        }
-    }
-
     private function jsonResponse(OrderInterface $cart, array $errors)
     {
         $serializerContext = [
@@ -420,7 +411,6 @@ class RestaurantController extends AbstractController
      */
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
-        SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
         $restaurant = $this->getDoctrine()
@@ -482,30 +472,13 @@ class RestaurantController extends AbstractController
                 $options = $request->request->get('options');
 
                 $optionValues = new \SplObjectStorage();
-                foreach ($options as $optionCode => $optionValueCode) {
-
-                    $optionValueCodes = [];
-                    if (is_array($optionValueCode)) {
-                        $optionValueCodes = $optionValueCode;
-                    } else {
-                        $optionValueCodes[] = $optionValueCode;
+                foreach ($options as $option) {
+                    if (isset($option['code'])) {
+                        $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
+                        if ($optionValue && $product->hasOptionValue($optionValue)) {
+                            $optionValues->attach($optionValue);
+                        }
                     }
-
-                    foreach ($optionValueCodes as $optionValueCode) {
-                        $optionValue = $this->productOptionValueRepository->findOneByCode($optionValueCode);
-                        $optionValues->attach($optionValue);
-                    }
-                }
-
-                $nonExistingOption = $this->matchNonExistingOption($product, $optionValues);
-                if (null !== $nonExistingOption) {
-                    $errors = [
-                        'items' => [
-                            [ 'message' => sprintf('Product %s does not have option %s', $product->getCode(), $nonExistingOption->getCode()) ]
-                        ]
-                    ];
-
-                    return $this->jsonResponse($cart, $errors);
                 }
 
                 $productVariant = $this->productVariantResolver->getVariantForOptionValues($product, $optionValues);

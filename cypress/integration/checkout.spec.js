@@ -35,13 +35,13 @@ context('Checkout', () => {
       .should('be.visible')
 
     // Make sure to use a precise selector, because 2 products have same options
-    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_ACCOMPANIMENT]"]')
-      .check('HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES')
-    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_DRINK]"]')
-      .check('HAMBURGER_DRINK_COLA')
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES"]')
+      .check()
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_DRINK_COLA"]')
+      .check()
 
-    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_ACCOMPANIMENT]"]').should('be.checked')
-    cy.get('#CHEESEBURGER-options input[name="options[HAMBURGER_DRINK]"]').should('be.checked')
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES"]').should('be.checked')
+    cy.get('#CHEESEBURGER-options input[value="HAMBURGER_DRINK_COLA"]').should('be.checked')
 
     cy.get('#CHEESEBURGER-options button[type="submit"]')
       .should('not.be.disabled')

@@ -191,7 +191,7 @@
                         <div class="checkbox nomargin">
                           <label>
                             <input
-                              name="options[{{ option.code }}][]"
+                              name="options[{{ option_index|default(0) }}][code]"
                               value="{{ option_value.code }}" type="checkbox">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
@@ -199,11 +199,12 @@
                             {% endif %}
                           </label>
                         </div>
+                        {% set option_index = (option_index|default(0)) + 1 %}
                       {% else %}
                         <div class="radio nomargin">
                           <label>
                             <input
-                              name="options[{{ option.code }}]"
+                              name="options[{{ option_index|default(0) }}][code]"
                               value="{{ option_value.code }}" type="radio">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
@@ -215,6 +216,7 @@
                     </div>
                   {% endfor %}
                 </div>
+                {% set option_index = (option_index|default(0)) + 1 %}
                 {% endfor %}
                 {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
                 <div class="row">

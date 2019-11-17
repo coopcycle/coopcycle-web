@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Restaurant;
 use Sylius\Component\Product\Model\ProductInterface as BaseProductInterface;
+use Sylius\Component\Product\Model\ProductOptionValueInterface;
 
 interface ProductInterface extends BaseProductInterface
 {
@@ -20,4 +21,6 @@ interface ProductInterface extends BaseProductInterface
      * @param Restaurant $restaurant
      */
     public function setRestaurant(?Restaurant $restaurant): void;
+
+    public function hasOptionValue(ProductOptionValueInterface $optionValue): bool;
 }

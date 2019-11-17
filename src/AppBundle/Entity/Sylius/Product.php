@@ -8,6 +8,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Product\Model\Product as BaseProduct;
+use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -150,6 +151,11 @@ class Product extends BaseProduct implements ProductInterface
         }
 
         return false;
+    }
+
+    public function hasOptionValue(ProductOptionValueInterface $optionValue): bool
+    {
+        return $this->hasOption($optionValue->getOption());
     }
 
     /**
