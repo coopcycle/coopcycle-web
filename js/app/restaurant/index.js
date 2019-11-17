@@ -23,6 +23,18 @@ function isValid($form) {
   return $optionGroups.length === $validOptionGroups.length
 }
 
+function resetForm($form) {
+  $form.find('input[type="radio"]:checked').prop('checked', false)
+  $form.find('input[type="checkbox"]:checked').prop('checked', false)
+
+  $form.find('[data-stepper]').prop('disabled', false)
+
+  $form.find('input[type="number"]').each(function (e) {
+    $(this).prop('disabled', false)
+    $(this).val($(this).attr('min'))
+  })
+}
+
 function asRange($el) {
   let min = $el.attr('data-product-options-group-min')
   let max = $el.attr('data-product-options-group-max')
@@ -57,22 +69,6 @@ function validateRange($el) {
 
 window.initMap = function() {
 
-  $('[data-quantity-decrement]').on('click', function(e) {
-    e.preventDefault()
-    const $quantity = $(this).closest('.quantity-input-group').find('[data-quantity]')
-    const currentQuantity = parseInt($quantity.val(), 10)
-    if (currentQuantity > 1) {
-      $quantity.val(currentQuantity - 1)
-    }
-  })
-
-  $('[data-quantity-increment]').on('click', function(e) {
-    e.preventDefault()
-    const $quantity = $(this).closest('.quantity-input-group').find('[data-quantity]')
-    const currentQuantity = parseInt($quantity.val(), 10)
-    $quantity.val(currentQuantity + 1)
-  })
-
   $('form[data-product-simple]').on('submit', function(e) {
     e.preventDefault()
     store.dispatch(queueAddItem($(this).attr('action'), 1))
@@ -91,11 +87,26 @@ window.initMap = function() {
     window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
   })
 
+  $('button[data-stepper]').on('click', function(e) {
+    e.preventDefault()
+
+    const $input = $($(this).data('target'))
+    const direction = $(this).data('direction')
+
+    if (direction === 'down') {
+      $input[0].stepDown()
+      $input.trigger('change')
+    }
+    if (direction === 'up') {
+      $input[0].stepUp()
+      $input.trigger('change')
+    }
+  })
+
   $('form[data-product-options]').on('submit', function(e) {
     e.preventDefault()
     const data = $(this).serializeArray()
-    const $quantity = $(this).find('[data-quantity]')
-    const quantity = $quantity.val() || 1
+    const quantity = $(this).find('[data-product-quantity]').val() || 1
 
     if (data.length > 0) {
       store.dispatch(addItemWithOptions($(this).attr('action'), data, quantity))
@@ -104,11 +115,7 @@ window.initMap = function() {
     }
 
     $(this).closest('.modal').modal('hide')
-    // Uncheck all options
-    $(this).closest('form').find('input[type="radio"]:checked').prop('checked', false)
-    $(this).closest('form').find('input[type="checkbox"]:checked').prop('checked', false)
-    // Reset quantity
-    $quantity.val(1)
+    resetForm($(this).closest('form'))
   })
 
   $('.modal').on('shown.bs.modal', function() {

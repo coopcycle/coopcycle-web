@@ -216,15 +216,18 @@
                   {% endfor %}
                 </div>
                 {% endfor %}
+                {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
                 <div class="row">
                   <div class="col-xs-12 col-sm-6 col-sm-offset-3">
                     <div class="form-group">
                       <div class="quantity-input-group">
-                        <button class="quantity-input-group__decrement" type="button" data-quantity-decrement>
+                        <button class="quantity-input-group__decrement" type="button"
+                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="down">
                           <i class="fa fa-2x fa-minus-circle"></i>
                         </button>
-                        <input type="number" min="1" step="1" value="1" data-quantity>
-                        <button class="quantity-input-group__increment" type="button" data-quantity-increment>
+                        <input type="number" min="1" step="1" value="1" id="{{ product_quantity_input_id }}" data-product-quantity>
+                        <button class="quantity-input-group__increment" type="button"
+                          data-stepper data-target="#{{ product_quantity_input_id }}" data-direction="up">
                           <i class="fa fa-2x fa-plus-circle"></i>
                         </button>
                       </div>
