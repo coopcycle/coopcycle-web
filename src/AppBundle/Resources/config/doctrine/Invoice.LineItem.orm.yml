@@ -1,0 +1,31 @@
+AppBundle\Entity\Invoice\LineItem:
+    type: entity
+    table: invoice_line_item
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        description:
+            type: text
+            nullable: true
+        quantity:
+            type: integer
+        unitPrice:
+            type: integer
+            column: unit_price
+        subtotal:
+            type: integer
+        taxTotal:
+            type: integer
+            column: tax_total
+        total:
+            type: integer
+    manyToOne:
+        invoice:
+            targetEntity: AppBundle\Entity\Invoice
+            inversedBy: lineItems

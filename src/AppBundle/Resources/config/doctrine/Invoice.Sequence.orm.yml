@@ -1,0 +1,16 @@
+AppBundle\Entity\Invoice\Sequence:
+    type: entity
+    table: invoice_sequence
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        index:
+            type: integer
+            column: idx
+        version:
+            type: integer
+            version: true

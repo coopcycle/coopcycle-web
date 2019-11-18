@@ -65,6 +65,11 @@ AppBundle\Entity\Sylius\Order:
             mappedBy: order
             cascade:
                 - all
+        invoices:
+            targetEntity: AppBundle\Entity\Invoice
+            mappedBy: order
+            cascade:
+                - all
     oneToOne:
         delivery:
             targetEntity: AppBundle\Entity\Delivery

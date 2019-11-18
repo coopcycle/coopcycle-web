@@ -1,0 +1,29 @@
+AppBundle\Entity\Invoice\Stakeholder:
+    type: entity
+    table: invoice_stakeholder
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        streetAddress:
+            type: string
+        # quantity:
+        #     type: integer
+        # unitPrice:
+        #     type: integer
+        #     column: unit_price
+        # subtotal:
+        #     type: integer
+        # taxTotal:
+        #     type: integer
+        #     column: tax_total
+        # total:
+        #     type: integer
+    manyToOne:
+        invoice:
+            targetEntity: AppBundle\Entity\Invoice

@@ -1,0 +1,24 @@
+AppBundle\Entity\Invoice\FooterItem:
+    type: entity
+    table: invoice_footer_item
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+        total:
+            type: integer
+        position:
+            type: integer
+            gedmo:
+                - sortablePosition
+    manyToOne:
+        invoice:
+            targetEntity: AppBundle\Entity\Invoice
+            inversedBy: lineItems
+            gedmo:
+                - sortableGroup

@@ -130,6 +130,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $reusablePackagingEnabled = false;
 
+    protected $invoices;
+
     public function __construct()
     {
         parent::__construct();
@@ -137,6 +139,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->payments = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     /**
@@ -552,5 +555,27 @@ class Order extends BaseOrder implements OrderInterface
         $this->reusablePackagingEnabled = $reusablePackagingEnabled;
 
         return $this;
+    }
+
+    public function getInvoices()
+    {
+        return $this->invoices;
+    }
+
+    public function addInvoice($invoice)
+    {
+        $invoice->setOrder($this);
+
+        return $this->invoices->add($invoice);
+    }
+
+    public function hasInvoices()
+    {
+        return count($this->invoices) > 0;
+    }
+
+    public function hasInvoice($invoice)
+    {
+        return $this->invoices->contains($invoice);
     }
 }
