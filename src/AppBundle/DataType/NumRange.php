@@ -4,7 +4,7 @@ namespace AppBundle\DataType;
 
 class NumRange
 {
-    private $lower = 1;
+    private $lower = 0;
     private $upper = INF;
 
     /**
