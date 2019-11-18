@@ -76,6 +76,12 @@ AppBundle\Entity\Sylius\Order:
             mappedBy: order
             cascade:
                 - all
+        receipt:
+            targetEntity: AppBundle\Entity\Sylius\OrderReceipt
+            mappedBy: order
+            cascade:
+                - persist
+                - remove
     manyToMany:
         promotions:
             targetEntity: Sylius\Component\Promotion\Model\PromotionInterface

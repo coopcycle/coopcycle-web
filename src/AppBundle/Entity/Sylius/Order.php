@@ -130,6 +130,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $reusablePackagingEnabled = false;
 
+    protected $receipt;
+
     public function __construct()
     {
         parent::__construct();
@@ -552,5 +554,36 @@ class Order extends BaseOrder implements OrderInterface
         $this->reusablePackagingEnabled = $reusablePackagingEnabled;
 
         return $this;
+    }
+
+    public function getReceipt()
+    {
+        return $this->receipt;
+    }
+
+    public function setReceipt($receipt)
+    {
+        $receipt->setOrder($this);
+
+        $this->receipt = $receipt;
+    }
+
+    public function hasReceipt()
+    {
+        return null !== $this->receipt;
+    }
+
+    public function removeReceipt()
+    {
+        if ($this->hasReceipt()) {
+
+            $receipt = $this->receipt;
+
+            $this->receipt = null;
+
+            $receipt->setOrder(null);
+
+            return $receipt;
+        }
     }
 }
