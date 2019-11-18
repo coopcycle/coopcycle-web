@@ -551,7 +551,7 @@ class InitDemoCommand extends Command
 
     private function createStores()
     {
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 1; $i <= 25; $i++) {
             $store = $this->createStore($this->faker->randomAddress);
             $pricingRuleSet = $this->createPricingRuleSet($store);
             $store->setPricingRuleSet($pricingRuleSet);
