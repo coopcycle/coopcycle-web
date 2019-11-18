@@ -19,7 +19,6 @@ use FOS\UserBundle\Util\UserManipulator;
 use libphonenumber\PhoneNumberUtil;
 use Predis\Client as Redis;
 use Sylius\Component\Locale\Model\Locale;
-use Sylius\Component\Product\Generator\ProductVariantGeneratorInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -40,7 +39,6 @@ class InitDemoCommand extends Command
     private $ormPurger;
     private $craueConfig;
     private $lockFactory;
-    private $productVariantGenerator;
     private $taxonFactory;
     private $phoneNumberUtil;
     private $batchSize = 10;
@@ -71,7 +69,6 @@ class InitDemoCommand extends Command
         Redis $redis,
         Config $craueConfig,
         string $configEntityName,
-        ProductVariantGeneratorInterface $productVariantGenerator,
         FactoryInterface $taxonFactory,
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
@@ -88,7 +85,6 @@ class InitDemoCommand extends Command
         $this->redis = $redis;
         $this->craueConfig = $craueConfig;
         $this->configEntityName = $configEntityName;
-        $this->productVariantGenerator = $productVariantGenerator;
         $this->taxonFactory = $taxonFactory;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->taxCategoryRepository = $taxCategoryRepository;
@@ -353,17 +349,15 @@ class InitDemoCommand extends Command
 
         for ($i = 0; $i < 5; $i++) {
 
-            $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml');
+            $dish = $this->loadFixtures(__DIR__ . '/Resources/dish.yml', [
+                'taxCategory' => $taxCategory,
+            ]);
+
+            $dish['variant']->setName($dish['product']->getName());
 
             $dish['product']->addOption($options['accompaniments']);
             $dish['product']->addOption($options['drinks']);
 
-            $this->productVariantGenerator->generate($dish['product']);
-            foreach ($dish['product']->getVariants() as $variant) {
-                $variant->setPrice($this->faker->numberBetween(499, 999));
-                $variant->setTaxCategory($taxCategory);
-                $variant->setCode($this->faker->uuid);
-            }
             $products[] = $dish['product'];
         }
 

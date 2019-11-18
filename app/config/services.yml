@@ -108,7 +108,6 @@ services:
       $faker: '@nelmio_alice.faker.generator'
       $craueConfig: '@craue_config'
       $configEntityName: '%craue_config.entity_name%'
-      $productVariantGenerator: '@sylius.generator.product_variant'
       $taxonFactory: '@sylius.factory.taxon'
       $phoneNumberUtil: '@libphonenumber.phone_number_util'
       $taxCategoryRepository: '@sylius.repository.tax_category'
