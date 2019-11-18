@@ -135,6 +135,12 @@ services:
       $filterManager: '@liip_imagine.filter.manager'
       $filesystem: '@filesystem'
 
+  AppBundle\Command\GenerateInvoicesCommand:
+    arguments:
+      $httpClient: '@csa_guzzle.client.browserless'
+      $invoicesFilesystem: '@invoices_filesystem'
+      $taxRateRepository: '@sylius.repository.tax_rate'
+
   AppBundle\Command\BotCommand:
     arguments:
       $apiClient: '@csa_guzzle.client.api'
