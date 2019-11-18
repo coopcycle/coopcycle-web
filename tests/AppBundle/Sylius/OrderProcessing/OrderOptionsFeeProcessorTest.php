@@ -119,6 +119,9 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         $productVariant
             ->getOptionValues()
             ->willReturn(new ArrayCollection($optionValues));
+        $productVariant
+            ->getQuantityForOptionValue(Argument::type(ProductOptionValueInterface::class))
+            ->willReturn(1);
 
         return $productVariant->reveal();
     }

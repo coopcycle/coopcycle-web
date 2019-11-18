@@ -5,8 +5,12 @@ namespace AppBundle\Entity\Sylius;
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
+/**
+ * @AssertProductOption
+ */
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {
     /**

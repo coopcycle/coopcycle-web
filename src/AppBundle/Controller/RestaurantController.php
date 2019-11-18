@@ -472,14 +472,19 @@ class RestaurantController extends AbstractController
             if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
                 $productVariant = $this->productVariantResolver->getVariant($product);
             } else {
-                $options = $request->request->get('options');
 
                 $optionValues = new \SplObjectStorage();
-                foreach ($options as $option) {
+                foreach ($request->request->get('options') as $option) {
                     if (isset($option['code'])) {
                         $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
                         if ($optionValue && $product->hasOptionValue($optionValue)) {
-                            $optionValues->attach($optionValue);
+                            $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
+                            if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
+                                $quantity = 1;
+                            }
+                            if ($quantity > 0) {
+                                $optionValues->attach($optionValue, $quantity);
+                            }
                         }
                     }
                 }

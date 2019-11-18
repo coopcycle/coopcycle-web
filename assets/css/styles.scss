@@ -700,6 +700,27 @@ button.menu-item:active {
   }
 }
 
+.product-option-item-range {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  input[type="number"] {
+    @extend .form-control;
+    width: 44px;
+    padding: 3px 6px;
+    margin-right: 5px;
+  }
+  label {
+    flex-grow: 1;
+    margin: 0;
+    font-weight: 400;
+    padding: 6px 0;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .order-map__wrapper {
   height: 100%;
   position: relative;
@@ -1432,6 +1453,16 @@ div.pac-container {
   &__increment {
     border: none;
     background-color: transparent;
+  }
+}
+
+.button-icon--decrement,
+.button-icon--increment {
+  border: none;
+  background-color: transparent;
+  &[disabled] {
+    cursor: $cursor-disabled;
+    @include opacity(.65);
   }
 }
 

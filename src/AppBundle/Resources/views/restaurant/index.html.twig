@@ -183,11 +183,46 @@
                   data-product-options-group-min="1"
                   data-product-options-group-max="1"
                   {% else %}
-                  data-product-options-group-min="0"
+                    {% if option.valuesRange is not null %}
+                    data-product-options-group-min="{{ option.valuesRange.lower }}"
+                      {% if not option.valuesRange.upperInfinite %}
+                        data-product-options-group-max="{{ option.valuesRange.upper }}"
+                      {% endif %}
+                    {% else %}
+                    data-product-options-group-min="0"
+                    {% endif %}
                   {% endif %}>
                   {% for option_value in option.values %}
+                    {% set option_value_input_id = ('product-' ~ product.code ~ '-option-' ~ option.code ~ '-value-' ~ option_value.code) %}
                     <div class="list-group-item product-option-item">
                       {% if option.additional %}
+                        {% if option.valuesRange is not null %}
+                        <div class="product-option-item-range">
+                          <input type="hidden" name="options[{{ option_index|default(0) }}][code]" value="{{ option_value.code }}">
+                          <input
+                            id="{{ option_value_input_id }}"
+                            name="options[{{ option_index|default(0) }}][quantity]"
+                            type="number"
+                            step="1"
+                            min="0"
+                            {% if not option.valuesRange.upperInfinite %}
+                            max="{{ option.valuesRange.upper }}"
+                            {% endif %}
+                            value="0">
+                          <label for="{{ option_value_input_id }}" data-step-up>{{ option_value.value }}</label>
+                          {% if option.strategy == 'option_value' and option_value.price > 0 %}
+                            +{{ option_value.price|price_format }}
+                          {% endif %}
+                          <div>
+                            <button class="button-icon--decrement" data-stepper data-target="#{{ option_value_input_id }}" data-direction="down">
+                              <i class="fa fa-lg fa-minus-circle"></i>
+                            </button>
+                            <button class="button-icon--decrement" data-stepper data-target="#{{ option_value_input_id }}" data-direction="up">
+                              <i class="fa fa-lg fa-plus-circle"></i>
+                            </button>
+                          </div>
+                        </div>
+                        {% else %}
                         <div class="checkbox nomargin">
                           <label>
                             <input
@@ -199,6 +234,7 @@
                             {% endif %}
                           </label>
                         </div>
+                        {% endif %}
                         {% set option_index = (option_index|default(0)) + 1 %}
                       {% else %}
                         <div class="radio nomargin">

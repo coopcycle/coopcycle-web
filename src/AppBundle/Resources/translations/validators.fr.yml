@@ -33,3 +33,5 @@ time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine
 product.name.modified: Vous avez modifié le nom du produit
 
 task.before.mustBeGreaterThanAfter: La plage horaire n'est pas valide
+
+product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle pour une option obligatoire

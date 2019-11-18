@@ -11,3 +11,11 @@ AppBundle\Entity\Sylius\ProductVariant:
                 tax_category_id:
                     referencedColumnName: id
                     nullable: false
+    oneToMany:
+        optionValues:
+            targetEntity: AppBundle\Entity\Sylius\ProductVariantOptionValue
+            mappedBy: variant
+            cascade:
+                - persist
+                - remove
+            orphanRemoval: true

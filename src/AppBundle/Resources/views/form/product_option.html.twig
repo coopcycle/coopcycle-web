@@ -34,3 +34,15 @@
     <i class="fa fa-plus"></i> {{ 'form.product_option.add_value.label'|trans }}
   </button>
 {% endblock %}
+
+{% block _product_option_valuesRange_row %}
+  <div class="row" {{ block('widget_container_attributes') }}>
+    <div class="col-xs-6">
+      {{ form_row(form.lower, { attr: { class: 'input-sm' } }) }}
+    </div>
+    <div class="col-xs-6">
+      {{ form_row(form.upper, { attr: { class: 'input-sm' } }) }}
+      {{ form_widget(form.infinity) }}
+    </div>
+  </div>
+{% endblock %}

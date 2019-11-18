@@ -24,15 +24,26 @@
 
 {{ form_start(form) }}
 
+  {{ form_errors(form) }}
+
   {{ form_row(form.name) }}
   {{ form_row(form.strategy) }}
   {{ form_row(form.additional) }}
   {{ form_row(form.price) }}
   <hr>
 
-  <h4>{{ 'form.product_option.values.title'|trans }}</h4>
-  <p class="help-block">{{ 'form.product_option.values.help'|trans }}</p>
-  {{ form_widget(form.values) }}
+  <div>
+    <div class="row">
+      <div class="col-sm-9">
+        <h4>{{ 'form.product_option.values.title'|trans }}</h4>
+        <p class="help-block">{{ 'form.product_option.values.help'|trans }}</p>
+      </div>
+      <div class="col-sm-3">
+        {{ form_row(form.valuesRange, { label: false }) }}
+      </div>
+    </div>
+    {{ form_widget(form.values) }}
+  </div>
   <hr>
 
   <div class="row">
@@ -94,6 +105,27 @@ $('#add-option-value').on('click', function(e) {
   $('#product_option_values').append($form);
 
 });
+
+$('#product_option_valuesRange_infinity').on('change', function(e) {
+  $('#product_option_valuesRange_upper').prop('disabled', $(this).is(':checked'));
+});
+
+$('#product_option_additional').on('change', function(e) {
+  var $valuesRange = $('#product_option_valuesRange');
+  if ($(this).is(':checked')) {
+    $valuesRange.show();
+  } else {
+    $valuesRange.hide();
+  }
+});
+
+if (!$('#product_option_additional').is(':checked')) {
+  $('#product_option_valuesRange').hide();
+}
+
+if ($('#product_option_valuesRange_infinity').is(':checked')) {
+  $('#product_option_valuesRange_upper').prop('disabled', true);
+}
 
 </script>
 {% endblock %}

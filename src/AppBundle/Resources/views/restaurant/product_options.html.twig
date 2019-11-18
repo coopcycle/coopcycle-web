@@ -20,6 +20,7 @@
     <th></th>
     <th>{{ 'form.product_option.name.label'|trans }}</th>
     <th>{{ 'form.product_option.strategy.label'|trans }}</th>
+    <th>{{ 'form.product_option.additional.label'|trans }}</th>
     <th class="text-right">{{ 'restaurant.product_options.list.values'|trans }}</th>
     <th></th>
   </thead>
@@ -27,12 +28,17 @@
     {% for option in options %}
     <tr>
       <td width="1%">
-        {% if option.values|length == 0 %}
-          <span title="{{ 'form.product_option.values.help'|trans }}"><i class="fa fa-warning"></i></span>
-        {% endif %}
+      {% if option.values|length == 0 %}
+        <span title="{{ 'form.product_option.values.help'|trans }}"><i class="fa fa-warning"></i></span>
+      {% endif %}
       </td>
       <td>{{ option.name }}</td>
       <td>{{ ('product_option.strategy.' ~ option.strategy)|trans }}</td>
+      <td>
+      {% if option.additional %}
+        <i class="fa fa-check"></i>
+      {% endif %}
+      </td>
       <td class="text-right">{{ option.values|length }}</td>
       <td class="text-right">
         <a href="{{ path(product_option_route, { restaurantId: restaurant.id, optionId: option.id }) }}"
