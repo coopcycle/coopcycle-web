@@ -230,6 +230,9 @@ oneup_flysystem:
         task_images_local:
             local:
                 directory: '%kernel.root_dir%/../web/images/tasks'
+        invoices_local:
+            local:
+                directory: '%kernel.root_dir%/../web/invoices'
         product_images_s3:
             awss3v3:
                 client: s3_client
@@ -287,6 +290,10 @@ oneup_flysystem:
             adapter: task_images_s3
             alias: task_images_s3_filesystem
             mount: task_images_s3_filesystem
+        invoices:
+            adapter: invoices_local
+            alias: invoices_filesystem
+            mount: invoices_filesystem
 
 vich_uploader:
     db_driver: orm

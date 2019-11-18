@@ -29,6 +29,8 @@
 !web/media/.gitkeep
 /web/media/cache/*
 !web/media/cache/.gitkeep
+/web/invoices/*
+!web/invoices/.gitkeep
 /web/img/build/
 /web/js/
 /web/manifest.json
