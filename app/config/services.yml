@@ -175,6 +175,7 @@ services:
       $productOptionValueRepository: '@sylius.repository.product_option_value'
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
+      $serializer: '@serializer'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']

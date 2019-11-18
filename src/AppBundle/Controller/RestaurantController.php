@@ -39,6 +39,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
@@ -69,7 +70,8 @@ class RestaurantController extends AbstractController
         RepositoryInterface $productOptionValueRepository,
         $orderItemQuantityModifier,
         $orderModifier,
-        OrderTimeHelper $orderTimeHelper)
+        OrderTimeHelper $orderTimeHelper,
+        SerializerInterface $serializer)
     {
         $this->orderManager = $orderManager;
         $this->seoPage = $seoPage;
@@ -83,6 +85,7 @@ class RestaurantController extends AbstractController
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
+        $this->serializer = $serializer;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -93,7 +96,7 @@ class RestaurantController extends AbstractController
         ];
 
         return new JsonResponse([
-            'cart'   => $this->get('serializer')->normalize($cart, 'jsonld', $serializerContext),
+            'cart'   => $this->serializer->normalize($cart, 'jsonld', $serializerContext),
             'availabilities' => $this->orderTimeHelper->getAvailabilities($cart),
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'errors' => $errors,
@@ -351,7 +354,7 @@ class RestaurantController extends AbstractController
         }
         $this->customizeSeoPage($restaurant, $request);
 
-        $structuredData = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+        $structuredData = $this->serializer->normalize($restaurant, 'jsonld', [
             'resource_class' => Restaurant::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
@@ -606,7 +609,7 @@ class RestaurantController extends AbstractController
         }, $this->getDoctrine()->getRepository(Restaurant::class)->findAll());
 
         return [
-            'restaurants' => $this->get('serializer')->serialize($restaurants, 'json'),
+            'restaurants' => $this->serializer->serialize($restaurants, 'json'),
         ];
     }
 
