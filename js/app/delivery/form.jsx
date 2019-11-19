@@ -20,12 +20,12 @@ function route(delivery) {
   const { pickup, dropoff } = delivery
 
   if (!pickup.address || !dropoff.address) {
-    return Promise.reject('new PermissionDenied()')
+    return Promise.reject('Missing pickup.address and/or dropoff.address')
   }
 
   return MapHelper.route([
-    [ pickup.address.latitude, pickup.address.longitude ],
-    [ dropoff.address.latitude, dropoff.address.longitude ]
+    [ pickup.address.geo.latitude, pickup.address.geo.longitude ],
+    [ dropoff.address.geo.latitude, dropoff.address.geo.longitude ]
   ])
     .then(route => {
 
@@ -159,7 +159,7 @@ window.initMap = function() {
 
             form.enable()
           })
-          .catch(e => console.log(e))
+          .catch(e => console.error(e))
       }
     }
   })
