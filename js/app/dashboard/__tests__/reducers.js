@@ -307,4 +307,46 @@ describe('combinedTasks reducer', () => {
 
   })
 
+  it('should handle new task already assigned', () => {
+
+    const date = moment('2019-11-20')
+    const task = {
+      '@id': 1,
+      status: 'TODO',
+      isAssigned: true,
+      assignedTo: 'bob',
+      doneAfter: '2019-11-19 09:00:00',
+      doneBefore: '2019-11-21 19:00:00',
+    }
+
+    expect(
+      combinedTasks({
+        date,
+        allTasks: [],
+        unassignedTasks: [],
+        taskLists: []
+      }, {
+        type: 'ADD_CREATED_TASK',
+        task
+      })
+    ).toMatchObject({
+      date,
+      allTasks: [ task ],
+      unassignedTasks: [],
+      taskLists: [{
+        '@context': '/api/contexts/TaskList',
+        '@id': null,
+        '@type': 'TaskList',
+        distance: 0,
+        duration: 0,
+        polyline: '',
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        username: 'bob',
+        items:[ task ],
+      }]
+    })
+
+  })
+
 })

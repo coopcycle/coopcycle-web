@@ -251,12 +251,14 @@ function _taskLists(state = [], action, date = initialState.date) {
     if (action.task.isAssigned) {
       taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
 
-      if (taskListIndex && !_.find(taskList.items, (task) => { task['id'] === action.task.id })) {
-        taskList = newTaskLists[taskListIndex]
-        taskListItems = Array.prototype.concat(taskList.items, [action.task])
-        newTaskLists.splice(taskListIndex, 1,
-          Object.assign({}, taskList, { items: taskListItems })
-        )
+      if (-1 !== taskListIndex) {
+        if (!_.find(taskList.items, (task) => { task['id'] === action.task.id })) {
+          taskList = newTaskLists[taskListIndex]
+          taskListItems = Array.prototype.concat(taskList.items, [action.task])
+          newTaskLists.splice(taskListIndex, 1,
+            Object.assign({}, taskList, { items: taskListItems })
+          )
+        }
       } else {
         let newTaskList = createTaskList(action.task.assignedTo)
         newTaskList.items.push(action.task)
