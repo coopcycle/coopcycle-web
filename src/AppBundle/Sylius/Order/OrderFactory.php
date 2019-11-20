@@ -2,7 +2,9 @@
 
 namespace AppBundle\Sylius\Order;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -45,6 +47,18 @@ class OrderFactory implements FactoryInterface
     {
         $order = $this->createNew();
         $order->setRestaurant($restaurant);
+
+        return $order;
+    }
+
+    public function createForDelivery(Delivery $delivery): OrderInterface
+    {
+        foreach ($delivery->getTasks() as $task) {
+            $task->setStatus(Task::STATUS_VIRTUAL);
+        }
+
+        $order = $this->createNew();
+        $order->setDelivery($delivery);
 
         return $order;
     }

@@ -37,8 +37,7 @@ trait DeliveryTrait
         $orderItemFactory = $this->container->get('sylius.factory.order_item');
         $productVariantFactory = $this->get('sylius.factory.product_variant');
 
-        $order = $orderFactory->createNew();
-        $order->setDelivery($delivery);
+        $order = $orderFactory->createForDelivery($delivery);
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
         $order->setShippedAt($delivery->getDropoff()->getDoneBefore());
 
