@@ -4,15 +4,18 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Reactor\CreateTasks;
+use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Task;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use SimpleBus\Message\Bus\MessageBus;
 
 class CreateTasksTest extends TestCase
 {
@@ -22,6 +25,7 @@ class CreateTasksTest extends TestCase
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->orderTextEncoder = $this->prophesize(OrderTextEncoder::class);
+        $this->eventBus = $this->prophesize(MessageBus::class);
 
         $this->orderTextEncoder
             ->encode(Argument::type(OrderInterface::class), 'txt')
@@ -29,7 +33,8 @@ class CreateTasksTest extends TestCase
 
         $this->createTasks = new CreateTasks(
             $this->routing->reveal(),
-            $this->orderTextEncoder->reveal()
+            $this->orderTextEncoder->reveal(),
+            $this->eventBus->reveal()
         );
     }
 
@@ -45,6 +50,28 @@ class CreateTasksTest extends TestCase
         $order
             ->setDelivery(Argument::type(Delivery::class))
             ->shouldNotBeCalled();
+
+        $this->eventBus
+            ->handle(Argument::type(TaskCreated::class))
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
+    }
+
+    public function testVirtualTasksAreUpdated()
+    {
+        $delivery = new Delivery();
+        $delivery->getPickup()->setStatus(Task::STATUS_VIRTUAL);
+        $delivery->getDropoff()->setStatus(Task::STATUS_VIRTUAL);
+
+        $this->eventBus
+            ->handle(Argument::type(TaskCreated::class))
+            ->shouldBeCalledTimes(2);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getDelivery()
+            ->willReturn($delivery);
 
         call_user_func_array($this->createTasks, [ new OrderAccepted($order->reveal()) ]);
     }
