@@ -1,4 +1,5 @@
 import { combinedTasks, unassignedTasks, taskLists } from '../redux/reducers'
+import moment from 'moment'
 
 describe('combinedTasks reducer', () => {
 
@@ -243,6 +244,65 @@ describe('combinedTasks reducer', () => {
         }] },
         { username: 'steve', items: [] }
       ]
+    })
+
+  })
+
+  it('should skip task out of range', () => {
+
+    const date = moment('2019-11-20')
+
+    expect(
+      combinedTasks({
+        date,
+        allTasks: [],
+        unassignedTasks: [],
+        taskLists: []
+      }, {
+        type: 'ADD_CREATED_TASK',
+        task: {
+          '@id': 1,
+          status: 'TODO',
+          isAssigned: false,
+          doneAfter: '2019-11-21 09:00:00',
+          doneBefore: '2019-11-21 13:00:00',
+        }
+      })
+    ).toEqual({
+      date,
+      allTasks: [],
+      unassignedTasks: [],
+      taskLists: []
+    })
+
+  })
+
+  it('should handle task inside range', () => {
+
+    const date = moment('2019-11-20')
+    const task = {
+      '@id': 1,
+      status: 'TODO',
+      isAssigned: false,
+      doneAfter: '2019-11-19 09:00:00',
+      doneBefore: '2019-11-21 19:00:00',
+    }
+
+    expect(
+      combinedTasks({
+        date,
+        allTasks: [],
+        unassignedTasks: [],
+        taskLists: []
+      }, {
+        type: 'ADD_CREATED_TASK',
+        task
+      })
+    ).toEqual({
+      date,
+      allTasks: [ task ],
+      unassignedTasks: [ task ],
+      taskLists: []
     })
 
   })

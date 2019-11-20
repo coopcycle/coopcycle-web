@@ -44,7 +44,7 @@ class TaskExportType extends AbstractType
 
             $data = $event->getData();
 
-            $tasks = $this->taskRepository->findTasksByDateRange(
+            $tasks = $this->taskRepository->findByDateRange(
                 new \DateTime($data['start']),
                 new \DateTime($data['end'])
             );

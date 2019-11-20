@@ -65,6 +65,21 @@ const replaceOrAddTask = (tasks, task) => {
 
 const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'])
 
+const acceptTask = (task, date) => {
+
+  const dateAsRange = moment.range(
+    moment(date).set({ hour:  0, minute:  0, second:  0 }),
+    moment(date).set({ hour: 23, minute: 59, second: 59 })
+  )
+
+  const range = moment.range(
+    moment(task.doneAfter),
+    moment(task.doneBefore)
+  )
+
+  return range.overlaps(dateAsRange)
+}
+
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
@@ -110,18 +125,7 @@ const rootReducer = (state = initialState, action) => {
   switch (action.type) {
   case UPDATE_TASK:
 
-    const dateAsRange = moment.range(
-      moment(state.date).set({ hour:  0, minute:  0, second:  0 }),
-      moment(state.date).set({ hour: 23, minute: 59, second: 59 })
-    )
-
-    const range = moment.range(
-      moment(action.task.doneAfter),
-      moment(action.task.doneBefore)
-    )
-
-    if (!range.overlaps(dateAsRange)) {
-
+    if (!acceptTask(action.task, state.date)) {
       return state
     }
 
@@ -240,8 +244,8 @@ function _taskLists(state = [], action, date = initialState.date) {
 
   case ADD_CREATED_TASK:
 
-    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
-      return newTaskLists
+    if (!acceptTask(action.task, date)) {
+      return state
     }
 
     if (action.task.isAssigned) {
@@ -277,9 +281,11 @@ function _unassignedTasks(state = [], action, date = initialState.date) {
   switch (action.type) {
 
   case ADD_CREATED_TASK:
-    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
+
+    if (!acceptTask(action.task, date)) {
       return state
     }
+
     if (!_.find(state, (task) => { task['id'] === action.task.id })) {
       newState = state.slice(0)
       return Array.prototype.concat(newState, [ action.task ])
@@ -308,7 +314,8 @@ function _allTasks(state = [], action, date = initialState.date) {
   switch (action.type) {
 
   case ADD_CREATED_TASK:
-    if (!moment(action.task.doneBefore).isSame(date, 'day')) {
+
+    if (!acceptTask(action.task, date)) {
       return state
     }
 
