@@ -113,6 +113,7 @@ class Task implements TaggableInterface
     const STATUS_FAILED = 'FAILED';
     const STATUS_DONE = 'DONE';
     const STATUS_CANCELLED = 'CANCELLED';
+    const STATUS_VIRTUAL = 'VIRTUAL';
 
     /**
      * @Groups({"task", "delivery"})
@@ -258,6 +259,11 @@ class Task implements TaggableInterface
     public function isFailed()
     {
         return $this->status === self::STATUS_FAILED;
+    }
+
+    public function isVirtual()
+    {
+        return $this->status === self::STATUS_VIRTUAL;
     }
 
     public function isCompleted()
