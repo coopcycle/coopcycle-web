@@ -277,7 +277,7 @@ describe('combinedTasks reducer', () => {
 
   })
 
-  it('should handle task inside range', () => {
+  it('should handle tasks inside range', () => {
 
     const date = moment('2019-11-20')
     const task = {
@@ -345,6 +345,53 @@ describe('combinedTasks reducer', () => {
         username: 'bob',
         items:[ task ],
       }]
+    })
+
+  })
+
+  it('should skip virtual tasks', () => {
+
+    expect(
+      combinedTasks({
+        allTasks: [],
+        unassignedTasks: [],
+        taskLists: []
+      }, {
+        type: 'ADD_CREATED_TASK',
+        task: {
+          '@id': 1,
+          status: 'VIRTUAL',
+          isAssigned: false,
+        }
+      })
+    ).toEqual({
+      allTasks: [],
+      unassignedTasks: [],
+      taskLists: []
+    })
+
+    expect(
+      combinedTasks({
+        allTasks: [],
+        unassignedTasks: [],
+        taskLists: [
+          { username: 'bob', items: [] }
+        ]
+      }, {
+        type: 'ADD_CREATED_TASK',
+        task: {
+          '@id': 2,
+          status: 'VIRTUAL',
+          isAssigned: true,
+          assignedTo: 'bob',
+        }
+      })
+    ).toEqual({
+      allTasks: [],
+      unassignedTasks: [],
+      taskLists: [
+        { username: 'bob', items: [] }
+      ]
     })
 
   })

@@ -67,6 +67,10 @@ const removeTask = (tasks, task) => _.filter(tasks, t => t['@id'] !== task['@id'
 
 const acceptTask = (task, date) => {
 
+  if ('VIRTUAL' === task.status) {
+    return false
+  }
+
   const dateAsRange = moment.range(
     moment(date).set({ hour:  0, minute:  0, second:  0 }),
     moment(date).set({ hour: 23, minute: 59, second: 59 })

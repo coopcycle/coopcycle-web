@@ -23,7 +23,9 @@ class TaskRepository extends EntityRepository
 
         return $this->createQueryBuilder('t')
             ->andWhere('OVERLAPS(TSRANGE(t.doneAfter, t.doneBefore), CAST(:range AS tsrange)) = TRUE')
+            ->andWhere('t.status != :virtual')
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')))
+            ->setParameter('virtual', Task::STATUS_VIRTUAL)
             ->getQuery()
             ->getResult();
     }
