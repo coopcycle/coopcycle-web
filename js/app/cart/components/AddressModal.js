@@ -27,7 +27,10 @@ class AddressModal extends Component {
         onRequestClose={ this.closeModal.bind(this) }
         shouldCloseOnOverlayClick={ false }
         contentLabel={ this.props.t('ENTER_YOUR_ADDRESS') }
-        className="ReactModal__Content--enter-address">
+        overlayClassName="ReactModal__Overlay--overflow"
+        className="ReactModal__Content--enter-address"
+        htmlOpenClassName="ReactModal__Html--open"
+        bodyOpenClassName="ReactModal__Body--open">
         <h4 className="text-center">{ this.props.titleText }</h4>
         <AddressAutosuggest
           addresses={ this.props.addresses }

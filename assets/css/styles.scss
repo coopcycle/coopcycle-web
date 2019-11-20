@@ -864,6 +864,28 @@ form[name="store"] #store_imageFile_file {
 
 // ------------------ React Modal ------------------
 
+// Copy default styles to be able to use overlayClassName prop
+// @see https://github.com/reactjs/react-modal/tree/master/docs/styles
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+// Custom class to allow scrolling inside modal
+// @see https://github.com/reactjs/react-modal/issues/283
+.ReactModal__Overlay--overflow {
+  @media (max-width: $screen-xs-max) {
+    height: 100vh;
+    .ReactModal__Content {
+      overflow-y: auto;
+    }
+  }
+}
+
 .ReactModal__Content {
   position: absolute;
   top: 50%;
@@ -959,6 +981,13 @@ form[name="store"] #store_imageFile_file {
   .ant-timeline-item-last .ant-timeline-item-content {
     min-height: inherit;
   }
+}
+
+// Prevent scroll on html/body
+// https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
+.ReactModal__Html--open,
+.ReactModal__Body--open {
+  overflow: hidden;
 }
 
 // ------------------ Order Timeline ------------------
