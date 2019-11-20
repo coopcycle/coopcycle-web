@@ -123,6 +123,10 @@ class TaskSubscriber implements EventSubscriber
     public function postFlush(PostFlushEventArgs $args)
     {
         foreach ($this->createdTasks as $task) {
+            // Ignore virtual tasks
+            if ($task->isVirtual()) {
+                continue;
+            }
             $this->eventBus->handle(new TaskCreated($task));
         }
 

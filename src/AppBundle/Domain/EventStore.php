@@ -52,9 +52,10 @@ class EventStore extends ArrayCollection
 
         if ($event instanceof TaskDomainEvent) {
 
-            if ($event instanceof TaskDomainEvent\TaskCreated) {
-                return;
-            }
+            // FIXME Why? Make sure event is not created twice
+            // if ($event instanceof TaskDomainEvent\TaskCreated) {
+            //     return;
+            // }
 
             $domainEvent = $this->createTaskEvent($event);
 

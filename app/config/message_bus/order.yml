@@ -128,6 +128,7 @@ services:
     arguments:
       - '@routing_service'
       - '@coopcycle.utils.order_text_encoder'
+      - '@event_bus'
     tags:
         - name: event_subscriber
           subscribes_to: order:accepted
