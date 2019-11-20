@@ -32,7 +32,7 @@ const theme = {
   sectionTitle:             'react-autosuggest__section-title address-autosuggest__section-title'
 }
 
-const fuseOptions = {
+const defaultFuseOptions = {
   shouldSort: true,
   includeScore: true,
   threshold: 1.0, // We want all addresses, sorted by score
@@ -68,7 +68,8 @@ class AddressAutosuggest extends Component {
 
     this.state = {
       value: props.address,
-      suggestions: []
+      suggestions: [],
+      multiSection: false,
     }
 
     this.onSuggestionsFetchRequested = debounce(this.onSuggestionsFetchRequested.bind(this), 350)
@@ -99,6 +100,14 @@ class AddressAutosuggest extends Component {
       ...address,
       isPrecise: true, // Let's suppose saved addresses are precise
     }))
+
+    let fuseOptions = { ...defaultFuseOptions }
+    if (this.props.fuseOptions) {
+      fuseOptions = {
+        ...defaultFuseOptions,
+        ...this.props.fuseOptions
+      }
+    }
 
     this.fuse = new Fuse(addresses, fuseOptions)
 
@@ -144,42 +153,51 @@ class AddressAutosuggest extends Component {
       }))
     }
 
+    let multiSection = false
+
     if (this.props.addresses.length > 0) {
 
       const { value } = this.state
 
-      const fuseResults = this.fuse.search(value)
+      const fuseResults = this.fuse.search(value, this.props.fuseSearchOptions || {})
 
-      const addressesAsSuggestions = fuseResults.map((fuseResult, idx) => ({
-        type: 'address',
-        value: fuseResult.item.streetAddress,
-        address: fuseResult.item,
-        index: idx,
-      }))
+      if (fuseResults.length > 0) {
 
-      const addressesValues = addressesAsSuggestions.map(suggestion => suggestion.value)
+        multiSection = true
 
-      suggestions.push({
-        title: i18n.t('SAVED_ADDRESSES'),
-        suggestions: addressesAsSuggestions
-      })
+        const addressesAsSuggestions = fuseResults.map((fuseResult, idx) => ({
+          type: 'address',
+          value: fuseResult.item.streetAddress,
+          address: fuseResult.item,
+          index: idx,
+        }))
 
-      predictionsAsSuggestions =
-        filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
+        const addressesValues = addressesAsSuggestions.map(suggestion => suggestion.value)
 
-      if (predictionsAsSuggestions.length > 0) {
         suggestions.push({
-          title: i18n.t('ADDRESS_SUGGESTIONS'),
-          suggestions: filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
+          title: i18n.t('SAVED_ADDRESSES'),
+          suggestions: addressesAsSuggestions
         })
-      }
 
+        predictionsAsSuggestions =
+          filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
+
+        if (predictionsAsSuggestions.length > 0) {
+          suggestions.push({
+            title: i18n.t('ADDRESS_SUGGESTIONS'),
+            suggestions: filter(predictionsAsSuggestions, suggestion => !includes(addressesValues, suggestion.value))
+          })
+        }
+      } else {
+        suggestions = predictionsAsSuggestions
+      }
     } else {
       suggestions = predictionsAsSuggestions
     }
 
     this.setState({
       suggestions,
+      multiSection,
     })
   }
 
@@ -277,7 +295,7 @@ class AddressAutosuggest extends Component {
 
   render() {
 
-    const { value, suggestions } = this.state
+    const { value, suggestions, multiSection } = this.state
 
     const inputProps = {
       placeholder: this.props.placeholder,
@@ -285,15 +303,6 @@ class AddressAutosuggest extends Component {
       onChange: this.onChange.bind(this),
       type: "search",
       required: this.props.required
-    }
-
-    let autosuggestProps = {}
-
-    if (this.props.addresses.length > 0) {
-      autosuggestProps = {
-        multiSection: true,
-        getSectionSuggestions: getSectionSuggestions,
-      }
     }
 
     return (
@@ -310,9 +319,9 @@ class AddressAutosuggest extends Component {
         renderSuggestion={ renderSuggestion }
         shouldRenderSuggestions={ shouldRenderSuggestions }
         renderSectionTitle={ renderSectionTitle }
-        inputProps={ inputProps }
-        { ...autosuggestProps }
-      />
+        getSectionSuggestions={ getSectionSuggestions }
+        multiSection={ multiSection }
+        inputProps={ inputProps } />
     )
   }
 }
@@ -334,6 +343,8 @@ AddressAutosuggest.propTypes = {
   reportValidity: PropTypes.bool,
   preciseOnly: PropTypes.bool,
   placeholder: PropTypes.string,
+  fuseOptions: PropTypes.object,
+  fuseSearchOptions: PropTypes.object,
 }
 
 export default AddressAutosuggest
