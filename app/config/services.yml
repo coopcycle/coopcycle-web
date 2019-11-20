@@ -421,9 +421,6 @@ services:
   AppBundle\Utils\OrderTimeHelper: ~
 
   AppBundle\Entity\Listener\TaskListener:
-    arguments:
-      - "@event_bus"
-      - "@logger"
     tags:
       - { name: doctrine.orm.entity_listener }
 
