@@ -5,11 +5,13 @@ import reducer from './reducers'
 
 const middlewares = [ thunk, ReduxAsyncQueue ]
 
+const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(
     reducer,
     preloadedState,
-    compose(
+    composeEnhancers(
       applyMiddleware(...middlewares)
     )
   )
