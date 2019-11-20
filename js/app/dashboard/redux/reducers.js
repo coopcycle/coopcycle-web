@@ -282,6 +282,10 @@ function _unassignedTasks(state = [], action, date = initialState.date) {
 
   case ADD_CREATED_TASK:
 
+    if (action.task.isAssigned) {
+      return state
+    }
+
     if (!acceptTask(action.task, date)) {
       return state
     }
