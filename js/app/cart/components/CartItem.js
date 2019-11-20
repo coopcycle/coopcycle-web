@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import InputNumber from 'antd/lib/input-number'
 
 const truncateText = text => {
   if (text.length > 24) {
@@ -11,18 +10,6 @@ const truncateText = text => {
 }
 
 class CartItem extends React.Component {
-
-  _setInputNumberRef(el) {
-    this.inputNumber = el
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!this.props.loading && prevProps.loading) {
-      // https://github.com/facebook/react/issues/9142
-      this.inputNumber.focus()
-      this.inputNumber.blur()
-    }
-  }
 
   renderAdjustments() {
     const { adjustments } = this.props
@@ -43,16 +30,37 @@ class CartItem extends React.Component {
     }
   }
 
+  decrement() {
+    const quantity = this.props.quantity - 1
+    this.props.onChangeQuantity(quantity)
+  }
+
+  increment() {
+    const quantity = this.props.quantity + 1
+    this.props.onChangeQuantity(quantity)
+  }
+
   render() {
+
+    const btnProps = {
+      disabled: this.props.loading
+    }
 
     return (
       <div className="cart__item">
         <div className="cart__item__content">
           <div className="cart__item__content__left">
-            <InputNumber min={ 0 } defaultValue={ 1 } value={ this.props.quantity }
-              disabled={ this.props.loading }
-              onChange={ value => this.props.onChangeQuantity(value) }
-              ref={ this._setInputNumberRef.bind(this) } />
+            <div className="cart__item__quantity">
+              <button type="button" className="cart__item__quantity__decrement"
+                onClick={ this.decrement.bind(this) } { ...btnProps }>
+                <i className="fa fa-lg fa-minus-circle"></i>
+              </button>
+              <span>{ this.props.quantity }</span>
+              <button type="button" className="cart__item__quantity__increment"
+                onClick={ this.increment.bind(this) } { ...btnProps }>
+                <i className="fa fa-lg fa-plus-circle"></i>
+              </button>
+            </div>
           </div>
           <div className="cart__item__content__body">
             <span>{ truncateText(this.props.name) }</span>

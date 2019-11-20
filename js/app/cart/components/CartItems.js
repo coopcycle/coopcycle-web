@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
 
 import CartItem from './CartItem'
 import { removeItem, updateItemQuantity } from '../redux/actions'
@@ -8,6 +9,10 @@ import { removeItem, updateItemQuantity } from '../redux/actions'
 class CartItems extends React.Component {
 
   _onChangeQuantity(itemID, quantity) {
+    if (!_.isNumber(quantity)) {
+      return
+    }
+
     if (quantity === 0) {
       this.props.removeItem(itemID)
       return

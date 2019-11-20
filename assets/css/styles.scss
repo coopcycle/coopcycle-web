@@ -506,9 +506,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       &__left {
         min-width: 60px;
         max-width: 60px;
-        .ant-input-number {
-          width: 100%;
-        }
       }
       &__body {
         flex-grow: 1;
@@ -516,6 +513,28 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       }
       &__right {
         text-align: right;
+      }
+    }
+    &__quantity {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      &__decrement,
+      &__increment {
+        border: none;
+        outline: none;
+        background-color: transparent;
+        &[disabled] {
+          cursor: $cursor-disabled;
+          @include opacity(.65);
+        }
+      }
+      &__decrement {
+        padding: 0 5px 0 0;
+      }
+      &__increment {
+        padding: 0 0 0 5px;
       }
     }
   }
