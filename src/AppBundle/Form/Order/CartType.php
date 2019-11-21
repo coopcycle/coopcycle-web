@@ -4,6 +4,7 @@ namespace AppBundle\Form\Order;
 
 use AppBundle\Form\AddressType;
 use AppBundle\Sylius\Order\OrderInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -15,6 +16,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CartType extends AbstractType
 {
+    private $orderProcessor;
+
+    public function __construct(OrderProcessorInterface $orderProcessor)
+    {
+        $this->orderProcessor = $orderProcessor;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -90,6 +98,8 @@ class CartType extends AbstractType
             if ($date && $time) {
                 $order->setShippedAt(new \DateTime(sprintf('%s %s', $date->format('Y-m-d'), $time->format('H:i:00'))));
             }
+
+            $this->orderProcessor->process($order);
         });
     }
 
