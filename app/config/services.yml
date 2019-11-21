@@ -740,3 +740,5 @@ services:
     arguments:
       - '@snc_redis.session.handler'
       - '@session.handler.native_file'
+
+  AppBundle\Invoice\NumberGenerator: ~
