@@ -144,7 +144,7 @@ class Task implements TaggableInterface
     /**
      * @Assert\NotBlank()
      * @Assert\Expression(
-     *     "this.getDoneAfter() == null or this.getDoneAfter() <= this.getDoneBefore()",
+     *     "this.getDoneAfter() == null or this.getDoneAfter() < this.getDoneBefore()",
      *     message="task.before.mustBeGreaterThanAfter"
      * )
      * @Groups({"task", "task_edit", "delivery"})

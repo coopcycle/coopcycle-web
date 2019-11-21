@@ -181,7 +181,14 @@ class TaskTest extends TestCase
         $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
 
         $violations = $validator->validate($task);
+        $this->assertCount(1, $violations);
+        $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
 
+        $task = new Task();
+        $task->setDoneAfter(new \DateTime('2019-08-18 12:00'));
+        $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
+
+        $violations = $validator->validate($task);
         $this->assertCount(1, $violations);
         $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
 
