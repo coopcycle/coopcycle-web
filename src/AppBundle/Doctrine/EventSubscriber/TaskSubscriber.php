@@ -24,6 +24,7 @@ class TaskSubscriber implements EventSubscriber
     private $remotePushNotificationManager;
     private $logger;
     private $createdTasks = [];
+    private $usersToNotify;
 
     public function __construct(
         MessageBus $eventBus,
@@ -35,6 +36,7 @@ class TaskSubscriber implements EventSubscriber
         $this->eventStore = $eventStore;
         $this->remotePushNotificationManager = $remotePushNotificationManager;
         $this->logger = $logger;
+        $this->usersToNotify = new \SplObjectStorage();
     }
 
     public function getSubscribedEvents()
@@ -104,7 +106,7 @@ class TaskSubscriber implements EventSubscriber
             $allMessages = array_merge($allMessages, $messages);
         }
 
-        $usersByDate = new \SplObjectStorage();
+        $this->usersToNotify = new \SplObjectStorage();
         foreach ($allMessages as $message) {
             if ($message instanceof TaskAssigned || $message instanceof TaskUnassigned) {
                 // FIXME
@@ -112,16 +114,23 @@ class TaskSubscriber implements EventSubscriber
                 // Here it would send a notification for the wrong day
                 // @see https://github.com/coopcycle/coopcycle-web/issues/874
                 $date = $task->getDoneBefore();
-                $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
-                $usersByDate[$date] = array_merge($users, [ $message->getUser() ]);
+                $users = isset($this->usersToNotify[$date]) ? $this->usersToNotify[$date] : [];
+                $this->usersToNotify[$date] = array_merge($users, [ $message->getUser() ]);
             }
         }
+    }
 
-        if (count($usersByDate) > 0) {
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        foreach ($this->createdTasks as $task) {
+            $this->eventBus->handle(new TaskCreated($task));
+        }
 
-            foreach ($usersByDate as $date) {
+        if (count($this->usersToNotify) > 0) {
 
-                $users = $usersByDate[$date];
+            foreach ($this->usersToNotify as $date) {
+
+                $users = $this->usersToNotify[$date];
                 $users = array_unique($users);
 
                 $data = [
@@ -138,13 +147,6 @@ class TaskSubscriber implements EventSubscriber
 
                 $this->remotePushNotificationManager->send($message, $users, $data);
             }
-        }
-    }
-
-    public function postFlush(PostFlushEventArgs $args)
-    {
-        foreach ($this->createdTasks as $task) {
-            $this->eventBus->handle(new TaskCreated($task));
         }
     }
 }
