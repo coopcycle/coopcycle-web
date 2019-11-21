@@ -71,8 +71,8 @@
       <span>{{ order.total|price_format }}</span>
     </td>
     <td width="10%" class="text-right">
-      {% if order.foodtech %}
-      <a target="_blank" href="{{ path(routes.order_invoice, { number: order.number }) }}">
+      {% if order.hasInvoices() %}
+      <a target="_blank" href="{{ path(routes.order_invoice, order|order_invoice_params) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
       {% endif %}

@@ -43,6 +43,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('tax_rate_name', array(TaxRateRuntime::class, 'name')),
             new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
             new TwigFilter('hashid', array($this, 'hashid')),
+            new TwigFilter('order_invoice_params', array($this, 'orderInvoiceParams')),
         );
     }
 
@@ -149,5 +150,15 @@ class CoopCycleExtension extends AbstractExtension
         }
 
         throw new \InvalidArgumentException(sprintf('Object of class %s has no method getId()', get_class($object)));
+    }
+
+    public function orderInvoiceParams($order)
+    {
+        $invoice = $order->getInvoices()->first();
+
+        return [
+            'orderNumber' => $order->getNumber(),
+            'invoiceNumber' => $invoice->getNumber(),
+        ];
     }
 }

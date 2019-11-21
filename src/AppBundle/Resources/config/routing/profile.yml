@@ -1,5 +1,5 @@
 profile_order_invoice:
-    path:     /profile/orders/CPCCL-{number}.pdf
+    path:     /profile/orders/{orderNumber}/invoices/{invoiceNumber}.pdf
     defaults: { _controller: AppBundle\Controller\ProfileController::orderInvoiceAction }
     methods:  [ GET ]
 

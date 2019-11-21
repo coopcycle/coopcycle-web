@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\OrdersExportType;
 use AppBundle\Service\OrderManager;
@@ -53,25 +54,35 @@ trait OrderTrait
         ], $response);
     }
 
-    public function orderInvoiceAction($number, Request $request)
+    public function orderInvoiceAction($orderNumber, $invoiceNumber, Request $request)
     {
         $order = $this->get('sylius.repository.order')->findOneBy([
-            'number'=> $number
+            'number'=> $orderNumber
         ]);
 
         $this->accessControl($order);
 
-        $html = $this->renderView('@App/order/invoice.html.twig', [
-            'order' => $order
+        $invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy([
+            'number'=> $invoiceNumber
         ]);
 
-        $httpClient = $this->get('csa_guzzle.client.browserless');
+        if (!$invoice) {
+            throw $this->createNotFoundException(sprintf('Invoice %s does not exist', $invoiceNumber));
+        }
 
-        $response = $httpClient->request('POST', '/pdf', ['json' => ['html' => $html]]);
+        if (!$order->hasInvoice($invoice)) {
+            throw $this->createAccessDeniedException(sprintf('Invoice %s does not belong to order %s', $invoiceNumber, $orderNumber));
+        }
 
-        // TODO Check status
+        $fileSystem = $this->get('invoices_filesystem');
 
-        return new Response((string) $response->getBody(), 200, [
+        $filename = sprintf('%s.pdf', $invoiceNumber);
+
+        if (!$fileSystem->has($filename)) {
+            throw $this->createNotFoundException(sprintf('File %s.pdf does not exist', $invoiceNumber));
+        }
+
+        return new Response((string) $fileSystem->read($filename), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }
