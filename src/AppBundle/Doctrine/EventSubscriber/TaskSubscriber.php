@@ -78,6 +78,10 @@ class TaskSubscriber implements EventSubscriber
 
         $tasks = array_merge($tasksToInsert, $tasksToUpdate);
 
+        if (count($tasks) === 0) {
+            return;
+        }
+
         $provider = new TaskListProvider($em);
 
         $allMessages = [];
@@ -139,9 +143,6 @@ class TaskSubscriber implements EventSubscriber
 
     public function postFlush(PostFlushEventArgs $args)
     {
-        $em = $args->getEntityManager();
-        $uow = $em->getUnitOfWork();
-
         foreach ($this->createdTasks as $task) {
             $this->eventBus->handle(new TaskCreated($task));
         }
