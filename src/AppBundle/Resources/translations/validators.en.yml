@@ -17,6 +17,7 @@ order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%€
 order.shippedAt.expired: The delivery date is expired
 order.shippedAt.notAvailable: The delivery date is no longer available
 order.shippedAt.notEmpty: The delivery date can't be empty
+order.items.containsDisabledProduct: The order contains a disabled product
 
 delivery.price.error.priceCalculation: The delivery price could not be calculated.
 

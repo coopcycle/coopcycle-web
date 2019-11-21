@@ -17,6 +17,7 @@ order.totalIncludingTax.tooLow: El pedido mínimo es de %minimum_amount%€
 order.shippedAt.expired: El horario de entrega ya ha pasado
 order.shippedAt.notAvailable: El horario de entrega ya no está disponible
 order.shippedAt.notEmpty: El horario de entrega no puede ser vacío
+order.items.containsDisabledProduct: El pedido contiene un producto desactivado
 
 delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calculado.
 
