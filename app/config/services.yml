@@ -235,6 +235,10 @@ services:
       - "@sylius.factory.adjustment"
       - "@translator"
 
+  AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: 96 }
+
   sylius.order_processing.order_promotion_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
     arguments:
