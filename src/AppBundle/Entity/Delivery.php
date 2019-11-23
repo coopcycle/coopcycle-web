@@ -42,7 +42,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   attributes={
  *     "order"={"createdAt": "DESC"},
  *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"delivery", "place", "order"}}
+ *     "normalization_context"={"groups"={"delivery", "place", "order"}},
+ *     "pagination_items_per_page"=15
  *   }
  * )
  * @ApiFilter(OrderFilter::class, properties={"createdAt"})
