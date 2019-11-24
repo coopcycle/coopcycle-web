@@ -53,7 +53,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="object.isReadableBy(user)"
+ *     },
  *     "put"={
  *       "method"="PUT",
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
@@ -480,5 +483,24 @@ class Task implements TaggableInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function isReadableBy(ApiUser $user)
+    {
+        if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_COURIER')) {
+            return true;
+        }
+
+        if ($user->hasRole('ROLE_STORE')) {
+            $delivery = $this->getDelivery();
+            if (null !== $delivery) {
+                $store = $delivery->getStore();
+                if (null !== $store) {
+                    return $user->ownsStore($store);
+                }
+            }
+        }
+
+        return false;
     }
 }
