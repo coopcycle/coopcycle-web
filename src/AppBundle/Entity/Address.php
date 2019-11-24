@@ -47,6 +47,11 @@ class Address extends BaseAddress
     private $company;
 
     /**
+     * @Groups({"delivery", "delivery_create"})
+     */
+    private $contactName;
+
+    /**
      * Gets id.
      *
      * @return int
@@ -88,6 +93,26 @@ class Address extends BaseAddress
     public function setCompany($company)
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContactName()
+    {
+        return $this->contactName;
+    }
+
+    /**
+     * @param mixed $contactName
+     *
+     * @return self
+     */
+    public function setContactName($contactName)
+    {
+        $this->contactName = $contactName;
 
         return $this;
     }

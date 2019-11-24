@@ -377,7 +377,8 @@ Feature: Tasks
           },
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":"+33612345678",
-          "name":null
+          "name":null,
+          "contactName": null
         },
         "after":"2018-12-24T23:30:00+01:00",
         "before":"2018-12-24T23:59:59+01:00",
@@ -447,7 +448,8 @@ Feature: Tasks
           },
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":null,
-          "name":null
+          "name":null,
+          "contactName": null
         },
         "after":"2018-12-24T23:30:00+01:00",
         "before":"2018-12-24T23:59:59+01:00",

@@ -132,7 +132,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone": null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -153,7 +154,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone": null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -208,7 +210,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -229,7 +232,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -283,7 +287,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -304,7 +309,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -354,7 +360,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -375,7 +382,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -401,7 +409,8 @@ Feature: Deliveries
           "address": {
             "streetAddress": "48, Rue de Rivoli Paris",
             "latLng": [48.857127, 2.354766],
-            "telephone": "+33612345678"
+            "telephone": "+33612345678",
+            "contactName": "John Doe"
           },
           "before": "2018-08-29 13:30:00"
         }
@@ -429,7 +438,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -450,7 +460,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone": "+33612345678",
-            "name":null
+            "name":null,
+            "contactName": "John Doe"
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -504,7 +515,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -525,7 +537,8 @@ Feature: Deliveries
             },
             "streetAddress":@string@,
             "telephone": "+33612345678",
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -586,7 +599,8 @@ Feature: Deliveries
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",

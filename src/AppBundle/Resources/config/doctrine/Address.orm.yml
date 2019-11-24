@@ -67,3 +67,7 @@ AppBundle\Entity\Address:
         telephone:
             type: phone_number
             nullable: true
+        contactName:
+            type: string
+            nullable: true
+            column: contact_name
