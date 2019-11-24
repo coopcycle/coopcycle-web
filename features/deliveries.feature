@@ -134,6 +134,8 @@ Feature: Deliveries
             "telephone": null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "comments": ""
@@ -153,6 +155,8 @@ Feature: Deliveries
             "telephone": null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "comments": "Beware of the dog\nShe bites"
@@ -206,6 +210,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "comments": ""
@@ -225,6 +231,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "comments": ""
@@ -277,6 +285,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "comments": ""
@@ -296,6 +306,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "comments": ""
@@ -344,6 +356,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": ""
@@ -363,6 +377,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T13:30:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
           "comments": ""
@@ -415,6 +431,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": ""
@@ -434,6 +452,8 @@ Feature: Deliveries
             "telephone": "+33612345678",
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T13:30:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
           "comments": ""
@@ -486,6 +506,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": ""
@@ -505,6 +527,8 @@ Feature: Deliveries
             "telephone": "+33612345678",
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": ""
@@ -543,6 +567,8 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "address":@...@,
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": ""
@@ -562,6 +588,8 @@ Feature: Deliveries
             "telephone":null,
             "name":null
           },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": ""
@@ -600,6 +628,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":3,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
               "comments": ""
@@ -609,6 +639,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":4,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
@@ -623,6 +655,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":1,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
               "comments": ""
@@ -632,6 +666,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":2,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
@@ -675,6 +711,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":1,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
               "comments": ""
@@ -684,6 +722,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":2,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
@@ -698,6 +738,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":3,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
               "comments": ""
@@ -707,6 +749,8 @@ Feature: Deliveries
               "@type":"Task",
               "id":4,
               "address":@...@,
+              "doneAfter":"@string@.isDateTime()",
+              "after":"@string@.isDateTime()",
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""

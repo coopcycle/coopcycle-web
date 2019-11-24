@@ -137,7 +137,7 @@ class Task implements TaggableInterface
     private $address;
 
     /**
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task", "task_edit", "delivery"})
      */
     private $doneAfter;
 
