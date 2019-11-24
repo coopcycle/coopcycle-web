@@ -32,7 +32,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "path"="/deliveries/assert",
  *       "write"=false,
  *       "status"=200,
- *       "validation_groups"={"Default", "delivery_check"}
+ *       "validation_groups"={"Default", "delivery_check"},
+ *       "denormalization_context"={"groups"={"delivery_create"}}
  *     }
  *   },
  *   itemOperations={
