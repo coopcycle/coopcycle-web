@@ -22,10 +22,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "normalization_context"={"groups"={"store", "place"}}
  *   },
  *   collectionOperations={
- *     "get"={"method"="GET"}
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user.ownsStore(object)"
+ *     }
  *   },
  *   subresourceOperations={
  *     "deliveries_get_subresource"={

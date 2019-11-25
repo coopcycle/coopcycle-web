@@ -35,7 +35,10 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *
  * @ApiResource(iri="http://schema.org/Order",
  *   collectionOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "post"={
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"order_create", "address_create"}}
@@ -54,7 +57,10 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())) or object.getCustomer() == user"
+ *     },
  *     "pay"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",

@@ -1,5 +1,29 @@
 Feature: Dispatch
 
+  Scenario: Not authorized to list task lists
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists"
+    Then the response status code should be 403
+
+  Scenario: Not authorized to retrieve task list
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists/1"
+    Then the response status code should be 403
+
   Scenario: Retrieve task lists
     Given the fixtures files are loaded:
       | dispatch.yml        |

@@ -12,12 +12,18 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *
  * @ApiResource(iri="http://schema.org/Place",
  *   collectionOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "create_address"={"route_name"="create_address"}
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"},
- *   },
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     }
+ *   }
  * )
  */
 class Address extends BaseAddress

@@ -26,7 +26,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         }}
  *       }
  *     },
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "post"={
  *       "method"="POST",
  *       "controller"=CreateTaskListController::class,
@@ -34,7 +37,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  *   },
  *   itemOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     }
  *   },
  *   attributes={
  *     "normalization_context"={"groups"={"task_collection", "task", "place"}}

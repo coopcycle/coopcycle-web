@@ -20,10 +20,16 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * @ApiResource(
  *   shortName="User",
  *   itemOperations={
- *     "get"={"method"="GET"},
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN') or user == object"
+ *     }
  *   },
  *   collectionOperations={
- *     "me"={ "route_name"="me", "normalization_context"={ "groups"={"user", "place"} } },
+ *     "me"={
+ *       "route_name"="me",
+ *       "normalization_context"={"groups"={"user", "place"}}
+ *     },
  *     "get"={"access_control"="is_granted('ROLE_ADMIN')"}
  *   },
  *   attributes={

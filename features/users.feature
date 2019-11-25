@@ -1,5 +1,44 @@
 Feature: Users
 
+  Scenario: Not authorized to list users
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/users?roles[]=ROLE_COURIER"
+    Then the response status code should be 403
+
+  Scenario: Not authorized to retrieve user
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/users/2"
+    Then the response status code should be 403
+
+  Scenario: User can retrieve himself
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | users.yml           |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/users/1"
+    Then the response status code should be 200
+
   Scenario: Retrieve users filtered by role
     Given the fixtures files are loaded:
       | sylius_channels.yml |
