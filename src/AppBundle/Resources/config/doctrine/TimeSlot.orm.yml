@@ -33,5 +33,7 @@ AppBundle\Entity\TimeSlot:
         choices:
             targetEntity: AppBundle\Entity\TimeSlot\Choice
             mappedBy: timeSlot
+            orderBy:
+                startTime: ASC
             cascade:
                 - all
