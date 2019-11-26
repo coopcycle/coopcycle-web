@@ -59,6 +59,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Predis\Client as Redis;
 use Ramsey\Uuid\Uuid;
@@ -342,6 +343,7 @@ class AdminController extends Controller
      */
     public function inviteUserAction(Request $request,
         EmailManager $emailManager,
+        UserManagerInterface $userManager,
         TokenGeneratorInterface $tokenGenerator,
         ObjectManager $objectManager)
     {
@@ -356,8 +358,7 @@ class AdminController extends Controller
             $user->setPlainPassword($randomPassword);
             $user->setEnabled(true);
 
-            $objectManager->persist($user);
-            $objectManager->flush();
+            $userManager->updateUser($user);
 
             $invitation = new Invitation();
             $invitation->setUser($user);
@@ -393,7 +394,7 @@ class AdminController extends Controller
      * @Template
      */
     public function userAddAction(Request $request,
-        ObjectManager $objectManager)
+        UserManagerInterface $userManager)
     {
         $form = $this->createForm(CreateUserType::class);
         $form->handleRequest($request);
@@ -403,8 +404,7 @@ class AdminController extends Controller
             $user = $form->getData();
             $user->setEnabled(true);
 
-            $objectManager->persist($user);
-            $objectManager->flush();
+            $userManager->updateUser($user);
 
             return $this->redirectToRoute('admin_users');
         }

@@ -8,6 +8,7 @@ use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Mailer\MailerInterface;
+use FOS\UserBundle\Util\UserManipulator;
 use Laravolt\Avatar\Avatar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -104,7 +105,7 @@ class UserController extends AbstractController
      */
     public function confirmInvitationAction(Request $request, string $code,
         ObjectManager $objectManager,
-        UserManagerInterface $userManager,
+        UserManipulator $userManipulator,
         EventDispatcherInterface $eventDispatcher)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
@@ -120,12 +121,9 @@ class UserController extends AbstractController
 
             $user = $invitation->getUser();
 
-            $user->setPassword($form->get('plainPassword')->getData());
-            $user->setEnabled(true);
+            $userManipulator->changePassword($user->getUsername(), $form->get('plainPassword')->getData());
 
-            $userManager->updateUser($user);
             $objectManager->remove($invitation);
-
             $objectManager->flush();
 
             $response = new RedirectResponse($this->generateUrl('fos_user_registration_confirmed'));
