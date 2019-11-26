@@ -103,7 +103,7 @@
                 </a>
               </div>
             {% else %}
-              {% if product.simple %}
+              {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
                 <form method="post"
                   action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
@@ -158,7 +158,7 @@
 {% if restaurant.menuTaxon is not null %}
   {% for child in restaurant.menuTaxon.children %}
     {% for product in child.products %}
-      {% if product.enabled and not product.simple %}
+      {% if product.enabled and product.hasOptions() %}
       <div id="{{ product.code }}-options" class="modal fade">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
