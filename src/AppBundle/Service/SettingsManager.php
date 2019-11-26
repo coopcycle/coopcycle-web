@@ -41,10 +41,11 @@ class SettingsManager
 
     public function __construct(
         CraueConfig $craueConfig,
-        $configEntityName,
+        string $configEntityName,
         ManagerRegistry $doctrine,
         PhoneNumberUtil $phoneNumberUtil,
-        $country,
+        string $country,
+        bool $foodtechEnabled,
         LoggerInterface $logger)
     {
         $this->craueConfig = $craueConfig;
@@ -52,6 +53,7 @@ class SettingsManager
         $this->doctrine = $doctrine;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
+        $this->foodtechEnabled = $foodtechEnabled;
         $this->logger = $logger;
     }
 
@@ -74,6 +76,8 @@ class SettingsManager
                 break;
             case 'timezone':
                 return ini_get('date.timezone');
+            case 'foodtech_enabled':
+                return $this->foodtechEnabled;
         }
 
         if (isset($this->cache[$name])) {

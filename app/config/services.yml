@@ -515,6 +515,7 @@ services:
       - "@doctrine"
       - "@libphonenumber.phone_number_util"
       - "%country_iso%"
+      - "%foodtech_enabled%"
       - "@logger"
 
   AppBundle\Service\EmailManager:
