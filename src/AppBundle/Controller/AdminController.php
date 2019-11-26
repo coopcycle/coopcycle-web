@@ -30,6 +30,7 @@ use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CreateUserType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\InviteUserType;
 use AppBundle\Form\NewOrderType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
@@ -336,12 +337,62 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/users/invite", name="admin_users_invite")
+     * @Template
+     */
+    public function inviteUserAction(Request $request,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        ObjectManager $objectManager)
+    {
+        $form = $this->createForm(InviteUserType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $randomPassword = random_bytes(24);
+
+            $user = $form->getData();
+            $user->setPlainPassword($randomPassword);
+            $user->setEnabled(true);
+
+            $objectManager->persist($user);
+            $objectManager->flush();
+
+            $invitation = new Invitation();
+            $invitation->setUser($user);
+            $invitation->setCode($tokenGenerator->generateToken());
+
+            $objectManager->persist($invitation);
+            $objectManager->flush();
+
+            // Send invitation email
+            $message = $emailManager->createInvitationMessage($invitation);
+            $emailManager->sendTo($message, $user->getEmail());
+            $invitation->setSentAt(new \DateTime());
+
+            $objectManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('basics.send_invitation.confirm')
+            );
+
+            return $this->redirectToRoute('admin_user_edit', array(
+                'username' => $user->getUsername(),
+            ));
+        }
+
+        return $this->render('@App/admin/user_invite.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/admin/users/add", name="admin_users_add")
      * @Template
      */
     public function userAddAction(Request $request,
-        EmailManager $emailManager,
-        TokenGeneratorInterface $tokenGenerator,
         ObjectManager $objectManager)
     {
         $form = $this->createForm(CreateUserType::class);
@@ -354,32 +405,6 @@ class AdminController extends Controller
 
             $objectManager->persist($user);
             $objectManager->flush();
-
-            if ($form->get('sendInvitation')->isClicked()) {
-
-                $invitation = new Invitation();
-                $invitation->setUser($user);
-                $invitation->setCode($tokenGenerator->generateToken());
-
-                $objectManager->persist($invitation);
-                $objectManager->flush();
-
-                // Send invitation email
-                $message = $emailManager->createInvitationMessage($invitation);
-                $emailManager->sendTo($message, $user->getEmail());
-                $invitation->setSentAt(new \DateTime());
-
-                $objectManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    $this->get('translator')->trans('basics.send_invitation.confirm')
-                );
-
-                return $this->redirectToRoute('admin_user_edit', array(
-                    'username' => $user->getUsername(),
-                ));
-            }
 
             return $this->redirectToRoute('admin_users');
         }

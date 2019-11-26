@@ -4,14 +4,15 @@
 
 {% block breadcrumb %}
   <li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
-  <li>{% trans %}adminDashboard.users.createNew{% endtrans %}</li>
+  <li>{% trans %}adminDashboard.users.invite{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
+
   <div class="row">
     <div class="col-md-offset-2 col-md-8">
       <h2 class="page-header">
-        {% trans %}adminDashboard.users.createNew{%  endtrans %}
+        {% trans %}adminDashboard.users.invite{%  endtrans %}
       </h2>
       {{ form_start(form) }}
 
@@ -22,10 +23,9 @@
         {{ form_row(form.familyName) }}
         {{ form_row(form.telephone) }}
 
-        {{ form_row(form.plainPassword) }}
         {{ form_row(form.quotesAllowed) }}
         <hr>
-        <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.save'|trans }}</button>
+        <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.send_invitation'|trans }}</button>
       {{ form_end(form) }}
     </div>
   </div>
