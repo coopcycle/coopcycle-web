@@ -56,6 +56,10 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
+                ->add('depositRefundOptin', CheckboxType::class, [
+                    'label' => 'form.deposit_refund_settings.deposit_refund_optin.label',
+                    'required' => false,
+                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
