@@ -922,4 +922,14 @@ class Restaurant extends FoodEstablishment
 
         return $this;
     }
+
+    /**
+     * @param ReusablePackaging $reusablePackaging
+     *
+     * @return self
+     */
+    public function hasReusablePackaging(ReusablePackaging $reusablePackaging)
+    {
+        return $this->reusablePackagings->contains($reusablePackaging);
+    }
 }
