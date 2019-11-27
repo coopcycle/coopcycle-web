@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Product\Model\Product as BaseProduct;
@@ -55,6 +56,8 @@ class Product extends BaseProduct implements ProductInterface
     protected $reusablePackagingEnabled = false;
 
     protected $reusablePackagingUnit;
+
+    protected $reusablePackaging;
 
     public function __construct()
     {
@@ -194,6 +197,37 @@ class Product extends BaseProduct implements ProductInterface
     public function setReusablePackagingUnit($reusablePackagingUnit)
     {
         $this->reusablePackagingUnit = $reusablePackagingUnit;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReusablePackaging()
+    {
+        return $this->reusablePackaging;
+    }
+
+    /**
+     * @param mixed $reusablePackaging
+     *
+     * @return self
+     */
+    public function setReusablePackaging(?ReusablePackaging $reusablePackaging)
+    {
+        if (null !== $reusablePackaging) {
+            $restaurant = $this->getRestaurant();
+
+            if (!$restaurant->hasReusablePackaging($reusablePackaging)) {
+                throw new \LogicException(
+                    sprintf('Product #%d belongs to restaurant #%d, but reusable packaging #%d is not associated to this restaurant',
+                        $this->getId(), $restaurant->getId(), $reusablePackaging->getId())
+                );
+            }
+        }
+
+        $this->reusablePackaging = $reusablePackaging;
 
         return $this;
     }
