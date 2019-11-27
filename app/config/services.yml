@@ -727,3 +727,8 @@ services:
   AppBundle\Service\StripeManager:
     tags:
       - { name: monolog.logger, channel: stripe }
+
+  Symfony\Component\HttpFoundation\Session\Storage\Handler\MigratingSessionHandler:
+    arguments:
+      - '@session.handler.native_file'
+      - '@snc_redis.session.handler'
