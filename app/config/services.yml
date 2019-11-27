@@ -756,11 +756,6 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  Symfony\Component\HttpFoundation\Session\Storage\Handler\MigratingSessionHandler:
-    arguments:
-      - '@snc_redis.session.handler'
-      - '@session.handler.native_file'
-
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
       $httpClient: '@csa_guzzle.client.browserless'
