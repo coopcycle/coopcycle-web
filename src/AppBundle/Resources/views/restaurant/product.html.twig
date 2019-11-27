@@ -36,12 +36,24 @@
       {{ form_row(form.name) }}
       {{ form_row(form.description) }}
       {{ form_row(form.enabled) }}
-      {% if form.reusablePackagingEnabled is defined and form.reusablePackagingUnit is defined %}
-        {{ form_row(form.reusablePackagingEnabled) }}
-        {{ form_row(form.reusablePackagingUnit) }}
-      {% endif %}
     </div>
   </div>
+
+  {% if form.reusablePackagingEnabled is defined and form.reusablePackaging is defined and form.reusablePackagingUnit is defined %}
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {{ form_widget(form.reusablePackagingEnabled) }}
+      <div class="row">
+        <div class="col-sm-6">
+          {{ form_row(form.reusablePackaging) }}
+        </div>
+        <div class="col-sm-6">
+          {{ form_row(form.reusablePackagingUnit) }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <hr>
 

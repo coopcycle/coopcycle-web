@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
@@ -130,6 +131,12 @@ class ProductType extends AbstractType
                     ->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.product.reusable_packaging_enabled.label',
+                    ])
+                    ->add('reusablePackaging', EntityType::class, [
+                        'label' => 'form.product.reusable_packaging.label',
+                        'class' => ReusablePackaging::class,
+                        'choices' => $product->getRestaurant()->getReusablePackagings(),
+                        'choice_label' => 'name',
                     ])
                     ->add('reusablePackagingUnit', NumberType::class, [
                         'label' => 'form.product.reusable_packaging_unit.label',

@@ -589,6 +589,11 @@ trait RestaurantTrait
 
             $product = $form->getData();
 
+            if (!$product->isReusablePackagingEnabled()) {
+                $product->setReusablePackaging(null);
+                $product->setReusablePackagingUnit(0);
+            }
+
             if ($form->getClickedButton()) {
                 if ('delete' === $form->getClickedButton()->getName()) {
                     $this->get('sylius.manager.product')->remove($product);
