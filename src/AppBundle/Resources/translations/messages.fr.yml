@@ -524,6 +524,7 @@ form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'
   \ href=\"%link%\">créer un nouveau produit</a>, afin de pouvoir distinguer les produits\
   \ vendus et conserver un historique.\n"
 form.product.reusable_packaging_enabled.label: 'Activer les emballages réutilisables pour ce produit'
+form.product.reusable_packaging.label: Type d'emballage réutilisable
 form.product.reusable_packaging_unit.label: Nombre d'unités
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Calcul du prix

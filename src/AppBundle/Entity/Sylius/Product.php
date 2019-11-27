@@ -55,6 +55,9 @@ class Product extends BaseProduct implements ProductInterface
 
     protected $reusablePackagingEnabled = false;
 
+    /**
+     * @Assert\GreaterThan(0)
+     */
     protected $reusablePackagingUnit;
 
     protected $reusablePackaging;

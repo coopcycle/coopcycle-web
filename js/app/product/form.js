@@ -22,8 +22,15 @@ $(function() {
 
 $('#product_reusablePackagingEnabled').click(function() {
   if ($(this).is(":checked")) {
+    $('#product_reusablePackaging').closest('.form-group').show()
     $('#product_reusablePackagingUnit').closest('.form-group').show()
   } else {
+    $('#product_reusablePackaging').closest('.form-group').hide()
     $('#product_reusablePackagingUnit').closest('.form-group').hide()
   }
 })
+
+if (!$('#product_reusablePackagingEnabled').is(":checked")) {
+  $('#product_reusablePackaging').closest('.form-group').hide()
+  $('#product_reusablePackagingUnit').closest('.form-group').hide()
+}

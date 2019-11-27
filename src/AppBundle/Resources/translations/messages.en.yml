@@ -609,6 +609,7 @@ form.product.confirm.help: 'You have changed the product name. If it is a <stron
   the products you sell and maintain history.
   '
 form.product.reusable_packaging_enabled.label: 'Enable reusable packaging for this product'
+form.product.reusable_packaging.label: 'Type of reusable packaging'
 form.product.reusable_packaging_unit.label: 'Number of units'
 form.product_option.name.label: Name
 form.product_option.strategy.label: Price calculation
