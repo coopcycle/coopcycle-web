@@ -212,6 +212,17 @@ snc_redis:
                 prefix: "%database_name%:"
                 # https://github.com/nrk/predis/issues/33
                 read_write_timeout: 0
+        session:
+            type: predis
+            alias: session
+            dsn: "%redis_dsn%"
+            options:
+                prefix: "%database_name%:"
+                # https://github.com/nrk/predis/issues/33
+                read_write_timeout: 0
+    session:
+        client: session
+        prefix: "session:"
 
 oneup_flysystem:
     adapters:
