@@ -128,6 +128,7 @@ restaurant.form.noPricingRule: 'Aucune règle de tarification n''a été instaur
   '
 restaurant.form.allow_stripe_connect.label: Autoriser le restaurant à gérer lui-même
   son compte Stripe
+restaurant.form.deposit_refund_enabled.label: Activer le système de consignes
 restaurant.form.temporaryClosingRule: Si vous souhaitez fermer temporairement votre
   restaurant
 restaurant.form.accessPlanning: Accéder au planning
@@ -522,6 +523,8 @@ form.product.confirm.help: "Vous avez modifié le nom du produit. S'il s'agit d'
   \ sur « Confirmer la modification ».\n<br>\nDans le cas contraire, vous devez <a\
   \ href=\"%link%\">créer un nouveau produit</a>, afin de pouvoir distinguer les produits\
   \ vendus et conserver un historique.\n"
+form.product.reusable_packaging_enabled.label: 'Activer les emballages réutilisables pour ce produit'
+form.product.reusable_packaging_unit.label: Nombre d'unités
 form.product_option.name.label: Nom
 form.product_option.strategy.label: Calcul du prix
 form.product_option.price.label: Prix
