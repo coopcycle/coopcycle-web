@@ -42,36 +42,42 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
             }
         }
 
-        $totalUnits = 0;
+        $totalAmount = 0;
         foreach ($order->getItems() as $item) {
 
             $product = $item->getVariant()->getProduct();
 
             if ($product->isReusablePackagingEnabled()) {
 
+                $reusablePackaging = $product->getReusablePackaging();
+
+                if (null === $reusablePackaging) {
+                    continue;
+                }
+
                 $units = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
                 $label = $this->translator->trans('order_item.adjustment_type.reusable_packaging', [
                     '%quantity%' => $item->getQuantity()
                 ]);
 
-                foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
-                    $item->addAdjustment($this->adjustmentFactory->createWithData(
-                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                        $label,
-                        $reusablePackaging->getPrice() * $units,
-                        $neutral = true
-                    ));
-                }
+                $amount = $reusablePackaging->getPrice() * $units;
 
-                $totalUnits += $units;
+                $item->addAdjustment($this->adjustmentFactory->createWithData(
+                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                    $label,
+                    $amount,
+                    $neutral = true
+                ));
+
+                $totalAmount += $amount;
             }
         }
 
-        foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
+        if ($totalAmount > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.reusable_packaging'),
-                $reusablePackaging->getPrice() * $totalUnits,
+                $totalAmount,
                 $neutral = false
             ));
         }
