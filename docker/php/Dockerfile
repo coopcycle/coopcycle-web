@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.3-fpm-alpine
 
 RUN apk update
 
@@ -7,7 +7,7 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.8
+ENV APCU_VERSION 5.1.18
 
 RUN set -xe \
     && apk add --no-cache \
@@ -23,6 +23,7 @@ RUN set -xe \
         freetype-dev \
     && apk add --no-cache \
         unzip \
+        libzip-dev \
     && apk add --no-cache \
         jpegoptim \
         optipng \

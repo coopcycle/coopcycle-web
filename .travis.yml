@@ -23,7 +23,7 @@ addons:
 
 language: php
 php:
-  - '7.2.11'
+  - '7.3.12'
 
 cache:
   apt: true
