@@ -79,16 +79,11 @@ class CheckoutAddressType extends AbstractType
 
             $restaurant = $order->getRestaurant();
 
-            if ($restaurant->isDepositRefundEnabled()) {
-                foreach ($restaurant->getReusablePackagings() as $reusablePackaging) {
-
-                    if ($restaurant->isDepositRefundOptin() && $order->isEligibleToReusablePackaging()) {
-                        $form->add('reusablePackagingEnabled', CheckboxType::class, [
-                            'required' => false,
-                            'label' => 'form.checkout_address.reusable_packaging_enabled.label',
-                        ]);
-                    }
-                }
+            if ($order->isEligibleToReusablePackaging() && $restaurant->isDepositRefundOptin()) {
+                $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'form.checkout_address.reusable_packaging_enabled.label',
+                ]);
             }
 
             // When the restaurant accepts quotes and the customer is allowed,

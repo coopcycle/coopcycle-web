@@ -513,6 +513,16 @@ class Order extends BaseOrder implements OrderInterface
 
     public function isEligibleToReusablePackaging(): bool
     {
+        $restaurant = $this->getRestaurant();
+
+        if (null === $restaurant) {
+            return false;
+        }
+
+        if (!$restaurant->isDepositRefundEnabled()) {
+            return false;
+        }
+
         foreach ($this->getItems() as $item) {
             if ($item instanceof OrderItemInterface
             &&  $item->getVariant()->getProduct()->isReusablePackagingEnabled()) {

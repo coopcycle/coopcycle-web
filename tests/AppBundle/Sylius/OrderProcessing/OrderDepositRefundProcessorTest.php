@@ -51,7 +51,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         return $contract;
     }
 
-    private function createOrderItem($quantity, $units, $enabled)
+    private function createOrderItem(ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariant::class);
@@ -59,6 +59,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $product = new Product();
         $product->setReusablePackagingEnabled($enabled);
         $product->setReusablePackagingUnit($units);
+        $product->setReusablePackaging($reusablePackaging);
 
         $variant->getProduct()->willReturn($product);
         $orderItem->getVariant()->willReturn($variant->reveal());
@@ -157,14 +158,14 @@ class OrderDepositRefundProcessorTest extends TestCase
                 return $adjustment;
             });
 
-        $item1 = $this->createOrderItem($quantity = 1, $units = 0.5, $enabled = true);
+        $item1 = $this->createOrderItem($reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true);
         $item1
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 100;
             }))
             ->shouldBeCalled();
 
-        $item2 = $this->createOrderItem($quantity = 2, $units = 1, $enabled = true);
+        $item2 = $this->createOrderItem($reusablePackaging, $quantity = 2, $units = 1, $enabled = true);
         $item2
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 200;
