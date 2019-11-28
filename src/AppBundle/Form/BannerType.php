@@ -14,6 +14,7 @@ class BannerType extends AbstractType
         $builder
             ->add('message', TextareaType::class, [
                 'label' => 'form.banner.message.label',
+                'help' => 'mardown_formatting.help',
                 'required' => false,
             ])
             ->add('enable', SubmitType::class, [

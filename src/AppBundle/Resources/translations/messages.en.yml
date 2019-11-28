@@ -511,7 +511,7 @@ form.maintenance.enable.alert: You are going to enable maintenance mode.<br>Only
   will have access to the site.
 form.maintenance.disable.alert: You are going to disable maintenance mode
 form.maintenance.message.label: Message
-form.maintenance.message.help: You can format text using Markdown syntax
+mardown_formatting.help: You can format text using Markdown syntax
 form.banner.enable.label: Enable banner
 form.banner.disable.label: Disable banner
 form.banner.enable.alert: You are going to enable banner

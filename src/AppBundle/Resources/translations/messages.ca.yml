@@ -486,7 +486,7 @@ form.maintenance.enable.alert: Activareu el mode de manteniment. <br>Només els 
   tindran accés al lloc.
 form.maintenance.disable.alert: Inhabilitareu el mode de manteniment
 form.maintenance.message.label: Missatge
-form.maintenance.message.help: Podeu formatar el text mitjançant la sintaxi de Markdown
+mardown_formatting.help: Podeu formatar el text mitjançant la sintaxi de Markdown
 form.banner.enable.label: Activa el banner
 form.banner.disable.label: Desactiva el banner
 form.banner.enable.alert: Heu d'activar el banner

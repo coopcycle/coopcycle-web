@@ -382,7 +382,7 @@ form.maintenance.enable.alert: Estás a punto de activar el mantenimiento.<br>So
   los administradores tendrán acceso al sitio.
 form.maintenance.disable.alert: Estás a punto de desactivar el mantenimiento
 form.maintenance.message.label: Mensaje
-form.maintenance.message.help: Puedes formatear texto usando la sintaxis Markdown
+mardown_formatting.help: Puedes formatear texto usando la sintaxis Markdown
 form.banner.enable.label: Activar la bandera
 form.banner.disable.label: Desactivar la bandera
 form.banner.enable.alert: Estás a punto de activar la bandera
