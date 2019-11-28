@@ -58,8 +58,9 @@ twig:
         country_iso: "%country_iso%"
         cart_provider: '@AppBundle\Service\CartProviderService'
         settings_manager: "@coopcycle.settings_manager"
-        piwik_site_id: "%piwik_site_id%"
-        piwik_disabled: "%kernel.debug%"
+        matomo_hostname: "%env(COOPCYCLE_MATOMO_HOSTNAME)%"
+        matomo_site_id: "%env(COOPCYCLE_MATOMO_SITE_ID)%"
+        matomo_disabled: "%kernel.debug%"
         currency_context: "@sylius.context.currency"
 
 # Doctrine Configuration
