@@ -592,7 +592,6 @@ services:
       - '@coopcycle.settings_manager'
       - '%country_iso%'
       - '%kernel.default_locale%'
-      - '%piwik_site_id%'
 
   AppBundle\Action\Register:
     public: true
