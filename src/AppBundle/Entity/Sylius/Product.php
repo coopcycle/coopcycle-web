@@ -12,6 +12,7 @@ use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -105,7 +106,7 @@ class Product extends BaseProduct implements ProductInterface
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
      *
-     * @param File|Symfony\Component\HttpFoundation\File\UploadedFile $image
+     * @param File|UploadedFile|null $image
      */
     public function setImageFile(File $image = null)
     {
@@ -213,7 +214,7 @@ class Product extends BaseProduct implements ProductInterface
     }
 
     /**
-     * @param mixed $reusablePackaging
+     * @param ReusablePackaging|null $reusablePackaging
      *
      * @return self
      */

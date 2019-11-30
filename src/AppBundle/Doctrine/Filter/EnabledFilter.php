@@ -3,7 +3,7 @@
 namespace AppBundle\Doctrine\Filter;
 
 use AppBundle\Annotation\Enabled;
-use Doctrine\ORM\Mapping\ClassMetaData;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\DBAL\Types\Type;

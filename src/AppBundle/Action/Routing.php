@@ -18,7 +18,7 @@ class Routing
     private $routing;
 
     /**
-     * @param Client $client
+     * @param RoutingInterface $routing
      */
     public function __construct(RoutingInterface $routing)
     {

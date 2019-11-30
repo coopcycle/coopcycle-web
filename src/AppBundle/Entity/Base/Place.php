@@ -24,7 +24,7 @@ abstract class Place extends PostalAddress
     /**
      * Sets geo.
      *
-     * @param GeoCoordinates $geo
+     * @param GeoCoordinates $coords
      *
      * @return $this
      */

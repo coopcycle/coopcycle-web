@@ -46,7 +46,7 @@ class PublicController extends AbstractController
             $decoded = $hashids->decode($number);
 
             if (count($decoded) !== 1) {
-                throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+                throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $number));
             }
 
             $id = current($decoded);

@@ -21,7 +21,7 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
     {
         $zoneRepository = $this->zoneRepository;
 
-        $inZoneCompiler = function (Address $address, $zoneName) use ($zoneRepository) {
+        $inZoneCompiler = function (Address $address, $zoneName) {
             // FIXME Need to test compilation
             return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && $zone->containsAddress($address))', $zoneName);
         };
@@ -35,7 +35,7 @@ class ZoneExpressionLanguageProvider implements ExpressionFunctionProviderInterf
             return false;
         };
 
-        $outZoneCompiler = function (Address $address, $zoneName) use ($zoneRepository) {
+        $outZoneCompiler = function (Address $address, $zoneName) {
             // FIXME Need to test compilation
             return sprintf('($zone = $zoneRepository->findOneBy([\'name\' => %1$s]) && !$zone->containsAddress($address))', $zoneName);
         };

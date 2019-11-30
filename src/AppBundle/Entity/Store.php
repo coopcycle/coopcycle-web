@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Entity\Base\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -226,7 +227,7 @@ class Store extends LocalBusiness
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
      *
-     * @param File|Symfony\Component\HttpFoundation\File\UploadedFile $image
+     * @param File|UploadedFile|null $image
      */
     public function setImageFile(File $image = null)
     {

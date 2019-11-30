@@ -67,7 +67,7 @@ interface OrderInterface extends
     public function getBillingAddress(): ?Address;
 
     /**
-     * @return DateTime|null
+     * @return \DateTime|null
      */
     public function getShippedAt(): ?\DateTime;
 
@@ -89,7 +89,7 @@ interface OrderInterface extends
     public function getDelivery(): ?Delivery;
 
     /**
-     * @param Delivery
+     * @param Delivery $delivery
      */
     public function setDelivery(Delivery $delivery): void;
 

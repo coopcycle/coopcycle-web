@@ -72,7 +72,7 @@ class ProductOptionType extends AbstractType
                 'label' => 'basics.delete',
             ]);
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $productOption = $event->getForm()->getData();
             if (!$productOption->isAdditional()) {
                 $productOption->setValuesRange(null);

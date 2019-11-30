@@ -36,7 +36,7 @@ class GeoJSONUploadType extends AbstractType
                 'label' => 'form.geojson_upload.file'
             ));
 
-        $builder->get('file')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->get('file')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $file = $event->getData();
 
             $contents = file_get_contents($file->getPathname());

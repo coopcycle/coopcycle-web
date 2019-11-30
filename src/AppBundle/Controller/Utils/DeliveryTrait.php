@@ -10,6 +10,7 @@ use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +30,7 @@ trait DeliveryTrait
      * @param int $price
      * @param UserInterface $user
      *
-     * @return Sylius\Component\Order\Model\OrderInterface
+     * @return OrderInterface
      */
     protected function createOrderForDelivery(Delivery $delivery, int $price, ?UserInterface $user = null)
     {

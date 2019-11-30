@@ -26,7 +26,7 @@ class PricingRuleType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options) {
+            function (FormEvent $event) {
 
                 $form = $event->getForm();
                 $pricingRule = $form->getData();
@@ -39,7 +39,7 @@ class PricingRuleType extends AbstractType
 
         $builder->addEventListener(
           FormEvents::POST_SUBMIT,
-          function (FormEvent $event) use ($options) {
+          function (FormEvent $event) {
               $pricingRule = $event->getForm()->getData();
               $price = $pricingRule->getPrice();
               $price = str_replace(',', '.', $price);

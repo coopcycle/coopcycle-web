@@ -186,7 +186,7 @@ class Task implements TaggableInterface
     private $assignedTo;
 
     /**
-     * @var DateTime
+     * @var \DateTime|null
      */
     private $assignedOn;
 
@@ -391,7 +391,7 @@ class Task implements TaggableInterface
 
     /**
      * @param ApiUser $courier
-     * @param DateTime $date
+     * @param \DateTime|null $date
      */
     public function assignTo(ApiUser $courier, \DateTime $date = null)
     {

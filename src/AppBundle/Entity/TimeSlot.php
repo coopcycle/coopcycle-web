@@ -31,7 +31,6 @@ class TimeSlot
     private $name;
 
     /**
-     * @var string
      * @Groups({"time_slot"})
      */
     private $choices;
@@ -43,7 +42,7 @@ class TimeSlot
     private $interval = '2 days';
 
     /**
-     * @var string
+     * @var bool
      * @Groups({"time_slot"})
      */
     private $workingDaysOnly = true;
@@ -193,7 +192,7 @@ class TimeSlot
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $interval
      *
      * @return self
      */
@@ -205,7 +204,7 @@ class TimeSlot
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function isWorkingDaysOnly(): bool
     {
@@ -213,7 +212,7 @@ class TimeSlot
     }
 
     /**
-     * @param mixed $workingDaysOnly
+     * @param bool $workingDaysOnly
      *
      * @return self
      */

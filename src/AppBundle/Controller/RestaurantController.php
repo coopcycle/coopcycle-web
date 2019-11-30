@@ -162,7 +162,7 @@ class RestaurantController extends AbstractController
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
 
-            $matches = $repository->findAll([]);
+            $matches = $repository->findAll();
 
             // 1 - opened restaurants
             // 2 - closed restaurants

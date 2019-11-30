@@ -197,6 +197,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new JsonResponse([]), 200);
+        $event->setResponse(new JsonResponse([], 200));
     }
 }

@@ -23,6 +23,7 @@ use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -348,7 +349,7 @@ class Restaurant extends FoodEstablishment
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
      *
-     * @param File|Symfony\Component\HttpFoundation\File\UploadedFile $image
+     * @param File|UploadedFile|null $image
      */
     public function setImageFile(File $image = null)
     {
@@ -380,7 +381,7 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * @param mixed $closingRules
+     * @param ClosingRule $closingRule
      */
     public function addClosingRule(ClosingRule $closingRule)
     {
@@ -388,7 +389,7 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * @param DateTime $now
+     * @param \DateTime|null $now
      * @return boolean
      */
     public function hasClosingRuleForNow(\DateTime $now = null)
@@ -863,7 +864,7 @@ class Restaurant extends FoodEstablishment
     }
 
     /**
-     * @param mixed $depositRefundOptin
+     * @param bool $depositRefundOptin
      *
      * @return self
      */

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Model;
 
+use Doctrine\Common\Collections\Collection;
+
 interface TaggableInterface
 {
     /**
@@ -10,8 +12,12 @@ interface TaggableInterface
     public function getTaggableResourceClass();
 
     /**
-     * @return Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getTags();
 
+    /**
+     * @param mixed $tags
+     */
+    public function setTags($tags);
 }

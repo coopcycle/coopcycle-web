@@ -105,7 +105,7 @@ abstract class LocalBusinessType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($options) {
+            function (FormEvent $event) {
 
                 $localBusiness = $event->getForm()->getData();
                 $address = $localBusiness->getAddress();

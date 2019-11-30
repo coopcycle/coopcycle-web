@@ -70,7 +70,7 @@ class Package
     }
 
     /**
-     * @param mixed $volumeUnits
+     * @param PackageSet $packageSet
      *
      * @return self
      */

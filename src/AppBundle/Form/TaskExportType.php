@@ -38,7 +38,7 @@ class TaskExportType extends AbstractType
                 'format' => 'yyyy-MM-dd',
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
             $taskExport = $event->getForm()->getData();
 
