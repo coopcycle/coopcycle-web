@@ -44,8 +44,6 @@ class Bot
     }
 
     /**
-     * @return GeoCoordinates $lastPosition
-     *
      * @return self
      */
     public function setLastPosition(GeoCoordinates $coords)

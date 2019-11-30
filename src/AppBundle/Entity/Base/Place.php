@@ -40,7 +40,7 @@ abstract class Place extends PostalAddress
     /**
      * Gets geo.
      *
-     * @return GeoCoordinates
+     * @return GeoCoordinates|null
      */
     public function getGeo()
     {

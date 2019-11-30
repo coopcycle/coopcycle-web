@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Model;
 
 use AppBundle\Entity\Tag;
+use AppBundle\Service\TagManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -66,7 +67,7 @@ trait TaggableTrait
         $this->tags = $newTags;
     }
 
-    public function setTagManager($tagManager)
+    public function setTagManager(TagManager $tagManager)
     {
         $this->tagManager = $tagManager;
 

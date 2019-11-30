@@ -6,7 +6,7 @@ use AppBundle\Domain\Event as BaseEvent;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class Event extends BaseEvent implements SerializableEventInterface
@@ -23,7 +23,7 @@ abstract class Event extends BaseEvent implements SerializableEventInterface
         return $this->order;
     }
 
-    public function normalize(SerializerInterface $serializer)
+    public function normalize(NormalizerInterface $serializer)
     {
         $normalized = $serializer->normalize($this->getOrder(), 'jsonld', [
             'groups' => ['order', 'address', 'place']

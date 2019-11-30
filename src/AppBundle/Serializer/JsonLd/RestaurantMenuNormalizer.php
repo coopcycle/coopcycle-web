@@ -149,7 +149,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        return null;
+        return [];
     }
 
     public function supportsDenormalization($data, $type, $format = null)

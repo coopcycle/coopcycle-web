@@ -104,6 +104,8 @@ class TaskSpreadsheetParser
 
             [ $doneAfter, $doneBefore ] = $this->parseTimeWindow($record, $defaultDate);
 
+            $address = null;
+
             if (isset($record['address'])) {
                 if (!$address = $this->geocoder->geocode($record['address'])) {
                     // TODO Translate

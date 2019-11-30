@@ -22,9 +22,8 @@ class TaskImageNamer
         $task = $taskImage->getTask();
         $fileExtension = pathinfo($taskImage->getImageName(), PATHINFO_EXTENSION);
 
-        /** @var \AppBundle\Entity\Address $address */
         $address = $task->getAddress();
-        $addressName = $address && $address->getName() ? $this->slugify->slugify($address->getName()) : "";
+        $addressName = !empty($address->getName()) ? $this->slugify->slugify($address->getName()) : '';
 
         $fileName = sprintf(
             "%d_%s_%s.%s",

@@ -19,7 +19,7 @@ class ValidationUtils
     {
         $validationsArray = [];
 
-        foreach ($errors->getIterator()->getArrayCopy() as $violation) {
+        foreach ($errors as $violation) {
             $validationsArray[$violation->getPropertyPath()][] = $violation->getMessage();
         }
 

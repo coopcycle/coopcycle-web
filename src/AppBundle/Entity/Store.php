@@ -206,7 +206,7 @@ class Store extends LocalBusiness
     }
 
     /**
-     * @return Address
+     * @return Address|null
      */
     public function getAddress()
     {

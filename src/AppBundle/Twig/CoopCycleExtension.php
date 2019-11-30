@@ -138,14 +138,16 @@ class CoopCycleExtension extends AbstractExtension
         return strtolower($carbon->locale($locale)->calendar());
     }
 
-    public function hashid($object)
+    public function hashid(object $object)
     {
         $hashids = new Hashids($this->secret, 8);
 
-        if (is_object($object) && is_callable([$object, 'getId'])) {
+        if (is_callable([$object, 'getId'])) {
             $id = $object->getId();
+
+            return $hashids->encode($id);
         }
 
-        return $hashids->encode($id);
+        throw new \InvalidArgumentException(sprintf('Object of class %s has no method getId()', get_class($object)));
     }
 }

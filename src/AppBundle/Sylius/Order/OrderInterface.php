@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\Order;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\Sylius\OrderEvent;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
