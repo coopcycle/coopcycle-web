@@ -49,6 +49,6 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof TaskList;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === TaskList::class;
     }
 }

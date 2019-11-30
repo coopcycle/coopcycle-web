@@ -41,6 +41,6 @@ class ClosingRuleNormalizer implements NormalizerInterface, DenormalizerInterfac
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type instanceof ClosingRule;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === ClosingRule::class;
     }
 }
