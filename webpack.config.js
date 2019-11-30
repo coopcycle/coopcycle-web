@@ -4,7 +4,7 @@ var webpack = require('webpack')
 Encore
 
   .setOutputPath(__dirname + '/web/build')
-  .setPublicPath('/')
+  .setPublicPath('/build')
 
   .addEntry('common', './js/app/common.js')
   .addEntry('dashboard', './js/app/dashboard/index.jsx')
