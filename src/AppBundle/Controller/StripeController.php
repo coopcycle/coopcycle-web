@@ -7,6 +7,8 @@ use AppBundle\Entity\StripeAccount;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use FOS\UserBundle\Model\UserManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,25 +24,28 @@ class StripeController extends AbstractController
      */
     public function connectStandardAccountAction(
         Request $request,
+        JWTEncoderInterface $jwtEncoder,
         SettingsManager $settingsManager,
-        StripeManager $stripeManager,
         UserManagerInterface $userManager)
     {
-        $flashBag = $request->getSession()->getFlashBag();
-
-        // Something should have been stored in FlashBag previously
-        if (!$flashBag->has('stripe_connect_livemode')) {
-            return $this->redirectToRoute('homepage');
+        if (!$request->query->has('state')) {
+            throw $this->createAccessDeniedException();
         }
 
-        $messages = $flashBag->get('stripe_connect_livemode');
+        $state = $request->query->get('state');
 
-        if (count($messages) !== 1) {
-            $flashBag->clear();
-            return $this->redirectToRoute('homepage');
+        try {
+            $payload = $jwtEncoder->decode($state);
+        } catch (JWTDecodeFailureException $e) {
+            throw $this->createAccessDeniedException();
         }
 
-        $livemode = filter_var(current($messages), FILTER_VALIDATE_BOOLEAN);
+        if (!isset($payload['iss']) || !isset($payload['slm'])) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $redirect = $payload['iss'];
+        $livemode = filter_var($payload['slm'], FILTER_VALIDATE_BOOLEAN);
 
         $secretKey = $livemode ? $settingsManager->get('stripe_live_secret_key') : $settingsManager->get('stripe_test_secret_key');
 
@@ -89,40 +94,33 @@ class StripeController extends AbstractController
                 'error',
                 $res['error_description']
             );
-        } else {
 
-            $stripeManager->configure();
-
-            $account = Stripe\Account::retrieve($res['stripe_user_id']);
-
-            // FIXME Why is display_name empty sometimes?
-            $displayName = !empty($account->display_name) ? $account->display_name : 'N/A';
-
-            $stripeAccount = new StripeAccount();
-            $stripeAccount
-                ->setType($account->type)
-                ->setDisplayName($displayName)
-                ->setPayoutsEnabled($account->payouts_enabled)
-                ->setStripeUserId($res['stripe_user_id'])
-                ->setRefreshToken($res['refresh_token'])
-                ->setLivemode($res['livemode'])
-                ;
-
-            $this->getUser()->addStripeAccount($stripeAccount);
-            $userManager->updateUser($this->getUser());
-
-            if ($request->query->has('state')) {
-
-                $state = $request->query->get('state');
-
-                $url = base64_decode($state);
-
-                $this->addFlash('stripe_account', $stripeAccount->getId());
-
-                return $this->redirect($url);
-            }
+            return $this->redirectToRoute('homepage');
         }
 
-        return $this->redirectToRoute('homepage');
+        Stripe\Stripe::setApiKey($secretKey);
+        Stripe\Stripe::setApiVersion(StripeManager::STRIPE_API_VERSION);
+
+        $account = Stripe\Account::retrieve($res['stripe_user_id']);
+
+        // FIXME Why is display_name empty sometimes?
+        $displayName = !empty($account->display_name) ? $account->display_name : 'N/A';
+
+        $stripeAccount = new StripeAccount();
+        $stripeAccount
+            ->setType($account->type)
+            ->setDisplayName($displayName)
+            ->setPayoutsEnabled($account->payouts_enabled)
+            ->setStripeUserId($res['stripe_user_id'])
+            ->setRefreshToken($res['refresh_token'])
+            ->setLivemode($res['livemode'])
+            ;
+
+        $this->getUser()->addStripeAccount($stripeAccount);
+        $userManager->updateUser($this->getUser());
+
+        $this->addFlash('stripe_account', $stripeAccount->getId());
+
+        return $this->redirect($redirect);
     }
 }

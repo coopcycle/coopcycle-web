@@ -28,6 +28,7 @@ use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -754,7 +755,9 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function stripeOAuthRedirectAction($id, Request $request, SettingsManager $settingsManager)
+    public function stripeOAuthRedirectAction($id, Request $request,
+        SettingsManager $settingsManager,
+        JWTEncoderInterface $jwtEncoder)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(Restaurant::class)
@@ -787,7 +790,7 @@ trait RestaurantTrait
             'stripe_user[shipping_days]' => 1,
             'stripe_user[product_category]' => 'Food',
             'stripe_user[product_description]' => 'Food',
-            'stripe_user[currency]' => 'EUR' // TODO Get configured currency
+            'stripe_user[currency]' => $settingsManager->get('currency_code'),
         ];
 
         // @see https://stripe.com/docs/connect/standard-accounts#integrating-oauth
@@ -795,17 +798,21 @@ trait RestaurantTrait
         $key = $livemode ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
         $clientId = $settingsManager->get($key);
 
-        // Store livemode in FlashBag for later
-        $request->getSession()->getFlashBag()->set('stripe_connect_livemode', [ $livemode ? 'yes' : 'no' ]);
-
-        // Encode the current URL as base64
-        // FIXME Use encryption instead of base64
         $redirectAfterUri = $this->generateUrl(
             $request->attributes->get('redirect_after'),
             ['id' => $restaurant->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
-        $state = base64_encode($redirectAfterUri);
+
+        // Use a JWT as the "state" parameter
+        // @see https://stripe.com/docs/connect/oauth-reference#get-authorize-request
+        $state = $jwtEncoder->encode([
+            'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+            // The "iss" (Issuer) claim contains a redirect URL
+            'iss' => $redirectAfterUri,
+            // The custom "slm" (Stripe livemode) contains a boolean
+            'slm' => $livemode ? 'yes' : 'no',
+        ]);
 
         $queryString = http_build_query(array_merge(
             $prefillingData,
