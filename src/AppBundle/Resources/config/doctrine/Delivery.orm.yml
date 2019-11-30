@@ -1,7 +1,6 @@
 AppBundle\Entity\Delivery:
     type: entity
     table: delivery
-    repositoryClass: AppBundle\Entity\DeliveryRepository
     fields:
         weight:
             type: integer
