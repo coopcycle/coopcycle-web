@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
     {{ sonata_seo_metadatas() }}
-    {{ encore_entry_link_tags('js/common') }}
+    {{ encore_entry_link_tags('common') }}
     {% block styles %}{% endblock %}
     {% block structured_data %}{% endblock %}
   </head>
@@ -98,8 +98,8 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {{ encore_entry_script_tags('js/common') }}
-    {{ encore_entry_script_tags('js/widgets') }}
+    {{ encore_entry_script_tags('common') }}
+    {{ encore_entry_script_tags('widgets') }}
 
     <script>
       {# Set global timezone used in Moment.js #}
@@ -107,7 +107,7 @@
     </script>
 
     {% if app.user %}
-      {{ encore_entry_script_tags('js/notifications') }}
+      {{ encore_entry_script_tags('notifications') }}
     {% endif %}
 
     {% block scripts_common %}

@@ -19,10 +19,12 @@
 /.phpunit.result.cache
 
 # Build with webpack
+/web/build/
+
+# Symfony bundles
 /web/bundles/
-/web/css/
-/web/entrypoints.json
-/web/fonts/
+
+# Files stored on disk
 /web/images/*
 !web/images/.gitkeep
 /web/media/*
@@ -31,12 +33,6 @@
 !web/media/cache/.gitkeep
 /web/invoices/*
 !web/invoices/.gitkeep
-/web/img/build/
-/web/js/
-/web/manifest.json
-/web/manifest.js
-/web/manifest.*.js
-/web/runtime.js
 
 /node_modules/
 .DS_Store

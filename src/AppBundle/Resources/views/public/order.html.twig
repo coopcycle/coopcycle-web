@@ -99,7 +99,7 @@
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('js/delivery-map') }}
+{{ encore_entry_script_tags('delivery-map') }}
 <script>
 new CoopCycle.DeliveryMap('map', {
   pickup: [ {{ order.delivery.pickup.address.geo.latitude }}, {{ order.delivery.pickup.address.geo.longitude }} ],

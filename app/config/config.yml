@@ -497,7 +497,7 @@ fos_js_routing:
         - user_avatar
 
 webpack_encore:
-    output_path: '%kernel.project_dir%/web'
+    output_path: '%kernel.project_dir%/web/build'
 
 liip_imagine:
     resolvers:

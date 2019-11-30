@@ -100,7 +100,7 @@
 {% endblock %}
 
 {% block styles %}
-{{ encore_entry_link_tags('js/dashboard') }}
+{{ encore_entry_link_tags('dashboard') }}
 {% endblock %}
 
 {% block scripts %}
@@ -123,7 +123,7 @@ window.AppData.Dashboard = {
   nav: "{{ nav ? 'on' : 'off' }}"
 };
 </script>
-{{ encore_entry_script_tags('js/dashboard') }}
+{{ encore_entry_script_tags('dashboard') }}
 <script>
 
   new CoopCycle.DatePicker(document.querySelector('#task_export_start_widget'), {

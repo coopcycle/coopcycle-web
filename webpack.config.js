@@ -3,29 +3,29 @@ var webpack = require('webpack')
 
 Encore
 
-  .setOutputPath(__dirname + '/web')
+  .setOutputPath(__dirname + '/web/build')
   .setPublicPath('/')
 
-  .addEntry('js/common', './js/app/common.js')
-  .addEntry('js/dashboard', './js/app/dashboard/index.jsx')
-  .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
-  .addEntry('js/delivery-map', './js/app/delivery/map.js')
-  .addEntry('js/delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
-  .addEntry('js/delivery-tracking', './js/app/delivery/tracking.js')
-  .addEntry('js/notifications', './js/app/notifications/index.js')
-  .addEntry('js/foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
-  .addEntry('js/product-form', './js/app/product/form.js')
-  .addEntry('js/restaurant', './js/app/restaurant/index.js')
-  .addEntry('js/restaurant-form', './js/app/restaurant/form.jsx')
-  .addEntry('js/restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
-  .addEntry('js/restaurant-planning', './js/app/restaurant/planning.jsx')
-  .addEntry('js/restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
-  .addEntry('js/restaurants-map', './js/app/restaurants-map/index.jsx')
-  .addEntry('js/user-tracking', './js/app/user/tracking.jsx')
-  .addEntry('js/user-form', './js/app/user/form.jsx')
-  .addEntry('js/widgets', './js/app/widgets/index.js')
-  .addEntry('js/widgets-admin', './js/app/widgets/admin.js')
-  .addEntry('js/zone-preview', './js/app/zone/preview.jsx')
+  .addEntry('common', './js/app/common.js')
+  .addEntry('dashboard', './js/app/dashboard/index.jsx')
+  .addEntry('delivery-form', './js/app/delivery/form.jsx')
+  .addEntry('delivery-map', './js/app/delivery/map.js')
+  .addEntry('delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
+  .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
+  .addEntry('notifications', './js/app/notifications/index.js')
+  .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
+  .addEntry('product-form', './js/app/product/form.js')
+  .addEntry('restaurant', './js/app/restaurant/index.js')
+  .addEntry('restaurant-form', './js/app/restaurant/form.jsx')
+  .addEntry('restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
+  .addEntry('restaurant-planning', './js/app/restaurant/planning.jsx')
+  .addEntry('restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
+  .addEntry('restaurants-map', './js/app/restaurants-map/index.jsx')
+  .addEntry('user-tracking', './js/app/user/tracking.jsx')
+  .addEntry('user-form', './js/app/user/form.jsx')
+  .addEntry('widgets', './js/app/widgets/index.js')
+  .addEntry('widgets-admin', './js/app/widgets/admin.js')
+  .addEntry('zone-preview', './js/app/zone/preview.jsx')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373
@@ -41,10 +41,6 @@ Encore
   .enablePostCssLoader()
   .enableSassLoader(function(sassOptions) {}, {
     resolveUrlLoader: false
-  })
-
-  .configureFilenames({
-    images: 'img/build/[name].[hash:8].[ext]'
   })
 
   .autoProvidejQuery()

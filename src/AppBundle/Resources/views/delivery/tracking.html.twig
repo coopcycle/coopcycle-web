@@ -5,7 +5,7 @@
     {{ sonata_seo_link_canonical() }}
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     {{ sonata_seo_metadatas() }}
-    {{ encore_entry_link_tags('js/common') }}
+    {{ encore_entry_link_tags('common') }}
     {% block styles %}{% endblock %}
     {% block structured_data %}{% endblock %}
   </head>
@@ -52,7 +52,7 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {{ encore_entry_script_tags('js/common') }}
+    {{ encore_entry_script_tags('common') }}
 
     <script>
       {# Set global timezone used in Moment.js #}
@@ -66,7 +66,7 @@
       data-is-completed="{{ delivery.completed|json_encode|e('html_attr') }}"
       data-token="{{ token|json_encode|e('html_attr') }}"></div>
 
-    {{ encore_entry_script_tags('js/delivery-tracking') }}
+    {{ encore_entry_script_tags('delivery-tracking') }}
 
     {% include "@App/_partials/matomo.html.twig" %}
   </body>

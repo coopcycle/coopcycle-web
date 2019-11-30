@@ -8,7 +8,7 @@
 
 {% block scripts %}
 {% set current_route = app.request.attributes.get('_route') %}
-{{ encore_entry_script_tags('js/foodtech-dashboard') }}
+{{ encore_entry_script_tags('foodtech-dashboard') }}
 <script>
 var orders = {{ orders_normalized|json_encode()|raw }};
 new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {
