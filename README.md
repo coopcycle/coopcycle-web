@@ -15,7 +15,7 @@ Coopcycle-web is the main repo, containing the web API, the front-end for the we
 You can find a comprehensive list of our repos here : [Our repos comprehensive list](https://github.com/coopcycle/coopcycle-web/wiki/Our-repos-comprehensive-list).
 
 How to run a local instance
---------------
+---------------------------
 
 ### Prerequisites
 
@@ -49,7 +49,8 @@ Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
 
 ### Run the application
 
-* Start the Docker containers
+#### Start the Docker containers
+
 ```
 docker-compose up
 ```
@@ -60,16 +61,7 @@ To create the schema & initialize the platform with demo data, run:
 make install
 ```
 
-* Or if needed with an additional UI to help you manage the containers environment
-
-Use the below command to get the [portainer](https://portainer.io/) UI:
-```
-docker-compose -f docker-compose.yml -f docker-compose-portainer.yml up
-```
-open http://localhost:9000 to access portainer
-Setup and confirm the admin password the first time you use it.
-
-* Open the platform in your browser
+#### Open the platform in your browser
 ```
 open http://localhost
 ```
@@ -77,32 +69,32 @@ open http://localhost
 Testing
 -------
 
-* Create the test database
+#### Create the test database
 
 ```
 docker-compose run php bin/console doctrine:schema:create --env=test
 ```
 
-* Launch the PHPUnit tests
+#### Launch the PHPUnit tests
 
 ```
 make phpunit
 ```
 
-* Launch the Behat tests
+#### Launch the Behat tests
 
 ```
 make behat
 ```
 
-* Launch the Mocha tests
+#### Launch the Mocha tests
 
 ```
 make mocha
 ```
 
 Running migrations
--------
+------------------
 
 When pulling change from the remote, the database models may have changed. To apply the changes, you will need to run a database migration.
 
@@ -113,7 +105,7 @@ make migrations-migrate
 License
 -------
 
-The code is licensed under the [Coopyright License](https://wiki.coopcycle.org/en:license), meaning you can use this software provided:
+The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en:license), meaning you can use this software provided:
 
 - You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
 - You are using a cooperative model in which workers are employees
