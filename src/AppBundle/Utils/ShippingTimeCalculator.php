@@ -32,7 +32,7 @@ class ShippingTimeCalculator
         );
 
         $now = Carbon::now();
-        $dateWithPadding = Carbon::now()->addSecond($seconds);
+        $dateWithPadding = Carbon::now()->addSeconds($seconds);
 
         $hours = $dateWithPadding->diffInHours($now);
         $minutes = $dateWithPadding->diffInMinutes($now);
