@@ -461,8 +461,6 @@ class RestaurantController extends AbstractController
             $cart->setRestaurant($restaurant);
         }
 
-        $quantity = $request->request->getInt('quantity', 1);
-
         $cartItem = $this->orderItemFactory->createNew();
 
         if (!$product->hasOptions()) {
@@ -496,7 +494,7 @@ class RestaurantController extends AbstractController
         $cartItem->setVariant($productVariant);
         $cartItem->setUnitPrice($productVariant->getPrice());
 
-        $this->orderItemQuantityModifier->modify($cartItem, $quantity);
+        $this->orderItemQuantityModifier->modify($cartItem, $request->request->getInt('quantity', 1));
         $this->orderModifier->addToOrder($cart, $cartItem);
 
         $this->orderManager->persist($cart);
