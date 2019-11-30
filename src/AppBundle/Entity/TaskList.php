@@ -15,17 +15,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @ApiResource(
  *   collectionOperations={
- *     "my_tasks" = {
- *       "route_name" = "my_tasks",
- *       "swagger_context" = {
- *         "parameters" = {{
- *           "name" = "date",
- *           "in" = "path",
- *           "required" = "true",
- *           "type" = "string"
- *         }}
- *       }
- *     },
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"

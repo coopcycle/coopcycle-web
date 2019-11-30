@@ -2,10 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\CreateAddress;
 use AppBundle\Entity\Base\BaseAddress;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
-
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
@@ -16,7 +16,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     },
- *     "create_address"={"route_name"="create_address"}
+ *     "create_address"={
+ *       "method"="POST",
+ *       "path"="/me/addresses",
+ *       "controller"=CreateAddress::class
+ *     }
  *   },
  *   itemOperations={
  *     "get"={

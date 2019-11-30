@@ -3,10 +3,9 @@
 namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Entity\Address;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class CreateAddress
+class MyRestaurants
 {
     use TokenStorageTrait;
 
@@ -15,14 +14,8 @@ class CreateAddress
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function __invoke($data): Address
+    public function __invoke()
     {
-        $user = $this->getUser();
-
-        $address = $data;
-
-        $user->addAddress($address);
-
-        return $data;
+        return $this->getUser()->getRestaurants();
     }
 }

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseRestaurant;
 use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Action\Restaurant\Menus;
@@ -42,7 +43,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   },
  *   collectionOperations={
  *     "get"={"method"="GET"},
- *     "me_restaurants"={"route_name"="me_restaurants"}
+ *     "me_restaurants"={
+ *       "method"="GET",
+ *       "path"="/me/restaurants",
+ *       "controller"=MyRestaurants::class
+ *     }
  *   },
  *   itemOperations={
  *     "get"={"method"="GET"},

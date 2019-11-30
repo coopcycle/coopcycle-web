@@ -4,11 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiUser;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskList;
 use AppBundle\Service\SocketIoManager;
 use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
 use Predis\Client as Redis;
@@ -39,64 +35,6 @@ class Me
         $this->redis = $redis;
         $this->socketIoManager = $socketIoManager;
         $this->logger = $logger;
-    }
-
-    /**
-     * @Route(
-     *   name="my_tasks_list",
-     *   path="/me/task_list/{date}",
-     *   defaults={
-     *     "_api_resource_class"=TaskList::class,
-     *     "_api_collection_operation_name"="my_tasks_list"
-     *   },
-     *   methods={"GET"}
-     * )
-     */
-    public function taskListAction($date)
-    {
-        $date = new \DateTime($date);
-
-        $taskList = $this->doctrine
-            ->getRepository(TaskList::class)
-            ->findOneBy([
-                'courier' => $this->getUser(),
-                'date' => $date
-            ]);
-
-        return $taskList;
-    }
-
-    /**
-     * @Route(
-     *   name="my_tasks",
-     *   path="/me/tasks/{date}",
-     *   defaults={
-     *     "_api_resource_class"=Task::class,
-     *     "_api_collection_operation_name"="my_tasks"
-     *   },
-     *   methods={"GET"}
-     * )
-     */
-    public function tasksAction($date)
-    {
-        $date = new \DateTime($date);
-
-        $taskList = $this->doctrine
-            ->getRepository(TaskList::class)
-            ->findOneBy([
-                'courier' => $this->getUser(),
-                'date' => $date
-            ]);
-
-        $tasks = [];
-        if ($taskList) {
-            $tasks = $taskList->getTasks();
-            $tasks = array_filter($tasks, function (Task $task) {
-                return !$task->isCancelled();
-            });
-        }
-
-        return $tasks;
     }
 
     /**
@@ -172,20 +110,6 @@ class Me
         ]);
 
         return new JsonResponse([]);
-    }
-
-    /**
-     * @Route(path="/me/restaurants", name="me_restaurants",
-     *   defaults={
-     *     "_api_resource_class"=Restaurant::class,
-     *     "_api_collection_operation_name"="me_restaurants",
-     *   },
-     *   methods={"GET"}
-     * )
-     */
-    public function restaurantsAction(Request $request)
-    {
-        return $this->getUser()->getRestaurants();
     }
 
     /**

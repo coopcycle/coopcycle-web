@@ -40,14 +40,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task", "place"}},
  *     },
- *     "my_tasks" = {
- *       "route_name" = "my_tasks",
- *       "swagger_context" = {
- *         "parameters" = {{
- *           "name" = "date",
- *           "in" = "path",
- *           "required" = "true",
- *           "type" = "string"
+ *     "my_tasks"={
+ *       "method"="GET",
+ *       "path"="/me/tasks/{date}",
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "swagger_context"={
+ *         "parameters"={{
+ *           "name"="date",
+ *           "in"="path",
+ *           "required"="true",
+ *           "type"="string"
  *         }}
  *       }
  *     }
