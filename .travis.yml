@@ -106,6 +106,7 @@ before_script:
 
 script:
   # - curl 'http://localhost:5000/route/v1/bicycle/2.3706188,48.877821;2.385706,48.887031?overview=full'
+  - php vendor/bin/phpstan analyse
   - phpunit
   - $(npm bin)/cypress run
   - php vendor/bin/behat -f progress
