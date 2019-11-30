@@ -12,11 +12,13 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentsSubjectInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponAwarePromotionSubjectInterface;
+use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 
 interface OrderInterface extends
     BaseOrderInterface,
     PaymentsSubjectInterface,
     ChannelAwareInterface,
+    PromotionSubjectInterface,
     PromotionCouponAwarePromotionSubjectInterface
 {
     public const STATE_ACCEPTED = 'accepted';
