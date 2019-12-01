@@ -38,7 +38,7 @@ class EmbedController extends Controller
         return [];
     }
 
-    private function createDeliveryForm(array $options = [])
+    private function doCreateDeliveryForm(array $options = [])
     {
         $delivery = Delivery::create();
 
@@ -96,7 +96,7 @@ class EmbedController extends Controller
             throw new NotFoundHttpException('Pricing rule set not configured');
         }
 
-        $form = $this->createDeliveryForm();
+        $form = $this->doCreateDeliveryForm();
         $form->handleRequest($request);
 
         return $this->render('@App/embed/delivery/start.html.twig', [
@@ -118,7 +118,7 @@ class EmbedController extends Controller
             throw new NotFoundHttpException('Pricing rule set not configured');
         }
 
-        $form = $this->createDeliveryForm(['with_payment' => true]);
+        $form = $this->doCreateDeliveryForm(['with_payment' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -173,7 +173,7 @@ class EmbedController extends Controller
             throw new NotFoundHttpException('Pricing rule set not configured');
         }
 
-        $form = $this->createDeliveryForm(['with_payment' => true]);
+        $form = $this->doCreateDeliveryForm(['with_payment' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
