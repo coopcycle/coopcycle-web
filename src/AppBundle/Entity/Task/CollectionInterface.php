@@ -37,4 +37,19 @@ interface CollectionInterface
      * @return array
      */
     public function getTasks();
+
+    /**
+     * @param int $distance
+     */
+    public function setDistance($distance);
+
+    /**
+     * @param int $duration
+     */
+    public function setDuration($duration);
+
+    /**
+     * @param string $polyline
+     */
+    public function setPolyline($polyline);
 }
