@@ -86,7 +86,6 @@ doctrine:
                 commented: true
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
-            date_string: AppBundle\Doctrine\DBAL\Types\DateStringType
             numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
         mapping_types:
             _text: string
