@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Me as MeController;
 use AppBundle\Api\Filter\UserRoleFilter;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,7 +28,9 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  *   },
  *   collectionOperations={
  *     "me"={
- *       "route_name"="me",
+ *       "method"="GET",
+ *       "path"="/me",
+ *       "controller"=MeController::class,
  *       "normalization_context"={"groups"={"user", "place"}}
  *     },
  *     "get"={"access_control"="is_granted('ROLE_ADMIN')"}
