@@ -63,13 +63,7 @@ Feature: Tasks
             "tags":@array@
           }
         ],
-        "hydra:totalItems":2,
-        "hydra:search":{
-          "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/me/tasks/2018-03-02{?date,assigned}",
-          "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":@array@
-        }
+        "hydra:totalItems":2
       }
       """
 

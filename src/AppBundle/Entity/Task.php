@@ -44,6 +44,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "pagination_enabled"=false,
+ *       "filters"={},
  *       "swagger_context"={
  *         "parameters"={{
  *           "name"="date",
