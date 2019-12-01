@@ -610,3 +610,7 @@ mjml:
     renderer: 'service'
     options:
         service_id: 'AppBundle\Mjml\MjmlServerRenderer'
+
+sensio_framework_extra:
+    router:
+        annotations: false
