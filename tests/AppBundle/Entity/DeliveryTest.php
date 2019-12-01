@@ -74,4 +74,24 @@ class DeliveryTest extends TestCase
         $this->assertEquals(2, $language->evaluate('packages.quantity("M")', $values));
         $this->assertEquals(0, $language->evaluate('packages.quantity("XL")', $values));
     }
+
+    public function testAddPackageWithQuantity()
+    {
+        $delivery = new Delivery();
+
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $mediumPackage = new Package();
+        $mediumPackage->setName('M');
+
+        $delivery->addPackageWithQuantity($smallPackage, 1);
+        $this->assertEquals(1, $delivery->getQuantityForPackage($smallPackage));
+
+        $delivery->addPackageWithQuantity($smallPackage, 1);
+        $this->assertEquals(2, $delivery->getQuantityForPackage($smallPackage));
+
+        $delivery->addPackageWithQuantity($mediumPackage, 0);
+        $this->assertEquals(0, $delivery->getQuantityForPackage($mediumPackage));
+    }
 }
