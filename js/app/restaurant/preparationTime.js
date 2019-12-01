@@ -1,5 +1,7 @@
 import dragula from 'dragula'
 
+import '../../../assets/css/dragula.scss'
+
 const preparationTimeRules = $('#preparation_time_rules_preparationTimeRules')
 
 const onListChange = () => {

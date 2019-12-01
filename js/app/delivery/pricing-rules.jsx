@@ -1,5 +1,7 @@
 import dragula from 'dragula'
 
+import '../../../assets/css/dragula.scss'
+
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
 

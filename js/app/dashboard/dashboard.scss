@@ -1,6 +1,9 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 
+@import "../../../assets/css/dragula.scss";
+@import "../../../assets/css/contextmenu.scss";
+
 html, body {
   width: 100%;
   height: 100%;

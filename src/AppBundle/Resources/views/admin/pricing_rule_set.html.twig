@@ -48,6 +48,10 @@
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-pricing-rules') }}
+{% endblock %}
+
 {% block scripts %}
   <script>
     window.AppData = window.AppData || {};

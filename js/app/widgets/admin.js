@@ -6,6 +6,8 @@ import Switch from './Switch'
 import RulePicker from './RulePicker'
 import DeliveryZonePicker from './DeliveryZonePicker'
 
+import './admin.scss'
+
 window.CoopCycle = window.CoopCycle || {}
 
 window.CoopCycle.ColorPicker = ColorPicker
