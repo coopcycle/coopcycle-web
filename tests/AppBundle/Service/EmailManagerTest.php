@@ -6,15 +6,15 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Twig\TwigEngine;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment as TwigEnvironment;
 
 class EmailManagerTest extends TestCase
 {
     public function setUp(): void
     {
         $this->mailer = $this->prophesize(\Swift_Mailer::class);
-        $this->twig = $this->prophesize(TwigEngine::class);
+        $this->twig = $this->prophesize(TwigEnvironment::class);
         $this->mjml = $this->prophesize(RendererInterface::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);

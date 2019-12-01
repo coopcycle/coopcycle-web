@@ -197,7 +197,7 @@ services:
       - '@crawler_detect'
       - '@snc_redis.default'
       - '@translator'
-      - '@templating'
+      - '@twig'
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
@@ -521,7 +521,7 @@ services:
   AppBundle\Service\EmailManager:
     arguments:
       - "@mailer"
-      - "@templating"
+      - "@twig"
       - "@mjml"
       - "@translator"
       - "@coopcycle.settings_manager"
@@ -645,7 +645,7 @@ services:
 
   AppBundle\Utils\OrderTextEncoder:
     arguments:
-      - '@templating'
+      - '@twig'
 
   AppBundle\Utils\PriceFormatter:
     arguments:

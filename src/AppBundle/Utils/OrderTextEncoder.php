@@ -2,12 +2,12 @@
 
 namespace AppBundle\Utils;
 
-use Symfony\Bridge\Twig\TwigEngine;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
+use Twig\Environment as TwigEnvironment;
 
 class OrderTextEncoder implements EncoderInterface
 {
-    public function __construct(TwigEngine $templating)
+    public function __construct(TwigEnvironment $templating)
     {
         $this->templating = $templating;
     }

@@ -5,11 +5,11 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
-use Symfony\Bridge\Twig\TwigEngine;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use AppBundle\Entity\Restaurant\Pledge;
-use AppBundle\Entity\Invitation ;
+use AppBundle\Entity\Invitation;
+use Twig\Environment as TwigEnvironment;
 
 class EmailManager
 {
@@ -22,7 +22,7 @@ class EmailManager
 
     public function __construct(
         \Swift_Mailer $mailer,
-        TwigEngine $templating,
+        TwigEnvironment $templating,
         RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
