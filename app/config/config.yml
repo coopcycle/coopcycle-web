@@ -49,7 +49,7 @@ twig:
     form_themes:
         - '@App/form/address_book.html.twig'
         - '@App/form/delivery.html.twig'
-        - 'VichUploaderBundle:Form:fields.html.twig'
+        - '@VichUploader/Form/fields.html.twig'
     globals:
         is_demo: "%is_demo%"
         sentry_public_dsn: "%sentry_public_dsn%"
