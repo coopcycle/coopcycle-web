@@ -52,6 +52,41 @@ Feature: Stores
     And the OAuth client "Acme2" sends a "GET" request to "/api/stores/1/deliveries?order[dropoff.before]=desc"
     Then the response status code should be 403
 
+  Scenario: List my stores
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/me/stores"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Store",
+        "@id":"/api/stores",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/stores/1",
+            "@type":"http://schema.org/Store",
+            "name":"Acme",
+            "enabled":true,
+            "address":@...@,
+            "timeSlot":"/api/time_slots/1"
+          }
+        ],
+        "hydra:totalItems":1
+      }
+      """
+
   Scenario: Retrieve store
     Given the fixtures files are loaded:
       | sylius_channels.yml |

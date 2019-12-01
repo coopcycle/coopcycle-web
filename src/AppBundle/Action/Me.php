@@ -111,18 +111,4 @@ class Me
 
         return new JsonResponse([]);
     }
-
-    /**
-     * @Route(path="/me/stores", name="me_stores",
-     *   defaults={
-     *     "_api_resource_class"=Store::class,
-     *     "_api_collection_operation_name"="me_stores",
-     *   },
-     *   methods={"GET"}
-     * )
-     */
-    public function storesAction(Request $request)
-    {
-        return $this->getUser()->getStores();
-    }
 }
