@@ -57,15 +57,20 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         // If there is no target path, redirect depending on role
         if (!$targetPath) {
 
-            if ($token->getUser()->hasRole('ROLE_ADMIN')) {
-                return new RedirectResponse($this->router->generate('admin_index'));
-            }
+            $user = $token->getUser();
 
-            if ($token->getUser()->hasRole('ROLE_STORE') || $token->getUser()->hasRole('ROLE_RESTAURANT') || $token->getUser()->hasRole('ROLE_COURIER')) {
-                return new RedirectResponse($this->router->generate('fos_user_profile_show'));
-            }
+            if (is_object($user) && is_callable([ $user, 'hasRole' ])) {
 
-            return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);
+                if ($user->hasRole('ROLE_ADMIN')) {
+                    return new RedirectResponse($this->router->generate('admin_index'));
+                }
+
+                if ($user->hasRole('ROLE_STORE') || $user->hasRole('ROLE_RESTAURANT') || $user->hasRole('ROLE_COURIER')) {
+                    return new RedirectResponse($this->router->generate('fos_user_profile_show'));
+                }
+
+                return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);
+            }
         }
 
         return new RedirectResponse($targetPath);
