@@ -83,7 +83,6 @@ doctrine:
                 commented: false
             geojson:
                 class: 'AppBundle\Doctrine\DBAL\Types\GeoJSONType'
-                commented: false
             uuid:  Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
             numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
