@@ -17,6 +17,10 @@ AppBundle\Entity\TimeSlot:
             column: working_days_only
             options:
                 default: 't'
+        openingHours:
+            type: json_array
+            nullable: true
+            column: opening_hours
         createdAt:
             type: datetime
             column: created_at

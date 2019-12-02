@@ -47,6 +47,11 @@ class TimeSlot
      */
     private $workingDaysOnly = true;
 
+    /**
+     * @var array
+     */
+    private $openingHours = [];
+
     public function __construct()
     {
     	$this->choices = new ArrayCollection();
@@ -199,6 +204,26 @@ class TimeSlot
     public function setInterval($interval)
     {
         $this->interval = $interval;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOpeningHours()
+    {
+        return $this->openingHours;
+    }
+
+    /**
+     * @param array $openingHours
+     *
+     * @return self
+     */
+    public function setOpeningHours($openingHours)
+    {
+        $this->openingHours = $openingHours;
 
         return $this;
     }
