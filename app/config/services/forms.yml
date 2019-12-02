@@ -153,3 +153,9 @@ services:
 
   AppBundle\Form\Order\CartType:
     tags: [ form.type ]
+
+  AppBundle\Form\Type\TimeSlotChoiceType:
+    arguments:
+      $country: '%country_iso%'
+      $locale: '%kernel.default_locale%'
+    tags: [ form.type ]

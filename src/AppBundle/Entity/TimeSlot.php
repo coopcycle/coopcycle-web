@@ -3,12 +3,9 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Utils\TimeSlotChoiceWithDate;
-use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Yasumi\Yasumi;
 
 /**
  * @ApiResource(
@@ -90,18 +87,7 @@ class TimeSlot
      */
     public function getChoices()
     {
-        $iterator = $this->choices->getIterator();
-        $iterator->uasort(function ($a, $b) {
-
-            $date = new \DateTime();
-
-            [ $startA ] = $a->toDateTime($date);
-            [ $startB ] = $b->toDateTime($date);
-
-            return ($startA < $startB) ? -1 : 1;
-        });
-
-        return new ArrayCollection(iterator_to_array($iterator));
+        return $this->choices;
     }
 
     /**
@@ -128,66 +114,6 @@ class TimeSlot
         $this->choices->removeElement($choice);
     }
 
-    private function countNumberOfDays(array $items)
-    {
-        $days = [];
-        foreach ($items as $item) {
-            $days[] = $item->getDate()->format('Y-m-d');
-        }
-
-        return count(array_unique($days));
-    }
-
-    public function getChoicesWithDates($country)
-    {
-        $now = Carbon::now();
-
-        $choices = $now->diffInDays($now->copy()->add($this->interval));
-
-        $providers = Yasumi::getProviders();
-        if ($this->workingDaysOnly && isset($providers[strtoupper($country)])) {
-            $providerClass = $providers[strtoupper($country)];
-            $provider = Yasumi::create($providerClass, date('Y'));
-            if ($provider->isWorkingDay($now)) {
-                $nextWorkingDay = clone $now;
-            } else {
-                $nextWorkingDay = Yasumi::nextWorkingDay($providerClass, $now);
-            }
-
-
-        } else {
-            $nextWorkingDay = clone $now;
-        }
-
-        $items = [];
-
-        $numberOfDays = 0;
-        while ($numberOfDays < $choices) {
-
-            foreach ($this->getChoices() as $choice) {
-                [ $start, $end ] = $choice->toDateTime($nextWorkingDay);
-
-                if ($end <= $now) {
-                    continue;
-                }
-
-                $items[] = new TimeSlotChoiceWithDate($choice, clone $nextWorkingDay);
-            }
-
-            if ($this->workingDaysOnly && isset($providers[strtoupper($country)])) {
-                $provider = $providers[strtoupper($country)];
-                $nextWorkingDay = Yasumi::nextWorkingDay($provider, $nextWorkingDay);
-            } else {
-                $nextWorkingDay = clone $nextWorkingDay;
-                $nextWorkingDay->modify('+1 day');
-            }
-
-            $numberOfDays = $this->countNumberOfDays($items);
-        }
-
-        return $items;
-    }
-
     /**
      * @return mixed
      */
@@ -209,7 +135,7 @@ class TimeSlot
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getOpeningHours()
     {
@@ -226,6 +152,14 @@ class TimeSlot
         $this->openingHours = $openingHours;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOpeningHours()
+    {
+        return null !== $this->openingHours && !empty($this->openingHours);
     }
 
     /**

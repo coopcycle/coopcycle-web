@@ -94,29 +94,16 @@ class Choice
         return $this;
     }
 
-    public function apply(Task $task, \DateTime $date = null)
+    private function withoutSeconds($time)
     {
-        [ $start, $end ] = $this->toDateTime($date);
-
-        $task->setDoneAfter($start);
-        $task->setDoneBefore($end);
+        return substr($time, 0, 5);
     }
 
-    public function toDateTime(\DateTime $date = null)
+    public function toTimeRange(): string
     {
-        if (null === $date) {
-            $date = Carbon::now();
-        }
-
-        [ $startHour, $startMinute ] = explode(':', $this->getStartTime());
-        [ $endHour, $endMinute ] = explode(':', $this->getEndTime());
-
-        $after = clone $date;
-        $before = clone $date;
-
-        $after->setTime($startHour, $startMinute);
-        $before->setTime($endHour, $endMinute);
-
-        return [ $after, $before ];
+        return sprintf('%s-%s',
+            $this->withoutSeconds($this->startTime),
+            $this->withoutSeconds($this->endTime)
+        );
     }
 }

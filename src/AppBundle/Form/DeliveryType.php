@@ -5,10 +5,11 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\TimeSlot\Choice as TimeSlotChoice;
 use AppBundle\Form\Entity\PackageWithQuantity;
+use AppBundle\Form\Type\TimeSlotChoice;
+use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Utils\TimeSlotChoiceWithDate;
+use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -123,23 +124,8 @@ class DeliveryType extends AbstractType
 
             if (null !== $store->getTimeSlot()) {
 
-                $timeSlot = $store->getTimeSlot();
-                $choicesWithDates = $timeSlot->getChoicesWithDates($this->country);
-
                 $timeSlotOptions = [
-                    'choices' => $choicesWithDates,
-                    'choice_label' => [ $this, 'getTimeSlotChoiceLabel' ],
-                    'choice_value' => function (TimeSlotChoiceWithDate $choiceWithDate = null) {
-                        if (!$choiceWithDate) {
-                            return '';
-                        }
-
-                        return sprintf('%s %s-%s',
-                            $choiceWithDate->getDate()->format('Y-m-d'),
-                            $choiceWithDate->getChoice()->getStartTime(),
-                            $choiceWithDate->getChoice()->getEndTime()
-                        );
-                    },
+                    'time_slot' => $store->getTimeSlot(),
                     'label' => 'form.delivery.time_slot.label',
                     'mapped' => false
                 ];
@@ -148,32 +134,20 @@ class DeliveryType extends AbstractType
 
                 if (null !== $delivery->getId()) {
 
-                    unset(
-                        $pickupTimeSlotOptions['choice_label'],
-                        $pickupTimeSlotOptions['choice_value']
-                    );
                     $pickupTimeSlotOptions['disabled'] = true;
-                    $pickupTimeSlotOptions['choices'] = [
-                        $this->asTimeSlotChoiceLabel($delivery->getPickup()) => $this->asTimeSlotChoiceValue($delivery->getPickup())
-                    ];
+                    $pickupTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getPickup());
 
-                    unset(
-                        $dropoffTimeSlotOptions['choice_label'],
-                        $dropoffTimeSlotOptions['choice_value']
-                    );
                     $dropoffTimeSlotOptions['disabled'] = true;
-                    $dropoffTimeSlotOptions['choices'] = [
-                        $this->asTimeSlotChoiceLabel($delivery->getDropoff()) => $this->asTimeSlotChoiceValue($delivery->getDropoff())
-                    ];
+                    $dropoffTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getDropoff());
                 }
 
                 $form->get('pickup')->remove('doneAfter');
                 $form->get('pickup')->remove('doneBefore');
-                $form->get('pickup')->add('timeSlot', ChoiceType::class, $pickupTimeSlotOptions);
+                $form->get('pickup')->add('timeSlot', TimeSlotChoiceType::class, $pickupTimeSlotOptions);
 
                 $form->get('dropoff')->remove('doneAfter');
                 $form->get('dropoff')->remove('doneBefore');
-                $form->get('dropoff')->add('timeSlot', ChoiceType::class, $dropoffTimeSlotOptions);
+                $form->get('dropoff')->add('timeSlot', TimeSlotChoiceType::class, $dropoffTimeSlotOptions);
             }
 
             if (null !== $store->getPackageSet()) {
@@ -270,62 +244,6 @@ class DeliveryType extends AbstractType
             $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
             $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
         ];
-    }
-
-    /**
-     * Needs to be public to be used as callable.
-     */
-    public function getTimeSlotChoiceLabel(TimeSlotChoiceWithDate $choiceWithDate)
-    {
-        [ $start, $end ] = $choiceWithDate->getChoice()->toDateTime();
-        $carbon = Carbon::instance($choiceWithDate->getDate());
-        $calendar = $carbon->locale($this->locale)->calendar(null, [
-            'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-            'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-            'nextWeek' => 'dddd',
-        ]);
-
-        return $this->translator->trans('time_slot.human_readable', [
-            '%day%' => ucfirst(strtolower($calendar)),
-            '%start%' => $start->format('H:i'),
-            '%end%' => $end->format('H:i'),
-        ]);
-    }
-
-    protected function asTimeSlotChoiceLabel(Task $task)
-    {
-        // FIXME What if the task spans over several days?
-        $carbon = Carbon::instance($task->getDoneBefore());
-
-        $calendar = $carbon->locale($this->locale)->calendar(null, [
-            'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-            'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-            'nextWeek' => 'dddd',
-            'lastDay' => sprintf('[%s]', $carbon->translate('diff_yesterday')),
-            'lastWeek' => 'dddd',
-        ]);
-
-        return $this->translator->trans('time_slot.human_readable', [
-            '%day%' => ucfirst(strtolower($calendar)),
-            '%start%' => $task->getDoneAfter()->format('H:i'),
-            '%end%' => $task->getDoneBefore()->format('H:i'),
-        ]);
-    }
-
-    protected function asTimeSlotChoiceValue(Task $task)
-    {
-        $after = Carbon::instance($task->getDoneAfter());
-        $before = Carbon::instance($task->getDoneBefore());
-
-        if ($after->isSameDay($before)) {
-            return sprintf('%s %s-%s',
-                $before->format('Y-m-d'),
-                $after->format('H:i'),
-                $before->format('H:i')
-            );
-        }
-
-        return '';
     }
 
     public function getBlockPrefix()
