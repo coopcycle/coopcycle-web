@@ -112,6 +112,8 @@ class TimeSlot
     public function removeChoice($choice)
     {
         $this->choices->removeElement($choice);
+
+        $choice->setTimeSlot(null);
     }
 
     /**
