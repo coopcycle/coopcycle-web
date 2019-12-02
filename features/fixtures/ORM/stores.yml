@@ -40,6 +40,13 @@ AppBundle\Entity\TimeSlot:
   time_slot_1:
     name: 'Acme time slot'
     choices: ['@time_slot_choice_1', '@time_slot_choice_2']
+  time_slot_2:
+    name: 'Time slot with opening hours'
+    workingDaysOnly: false
+    openingHours:
+      - 'Mo-Sa 10:00-11:00'
+      - 'Mo-Sa 11:00-13:00'
+      - 'Su 14:00-15:00'
 
 AppBundle\Entity\PackageSet:
   package_set_1:

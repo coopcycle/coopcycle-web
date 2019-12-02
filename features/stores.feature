@@ -125,7 +125,7 @@ Feature: Stores
       }
       """
 
-  Scenario: Retrieve time slot
+  Scenario: Retrieve time slot with choices
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -156,7 +156,71 @@ Feature: Stores
           }
         ],
         "interval":"2 days",
-        "workingDaysOnly":true
+        "workingDaysOnly":true,
+        "openingHoursSpecification":[]
+      }
+      """
+
+  Scenario: Retrieve time slot with opening hours
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/time_slots/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And print last response
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TimeSlot",
+        "@id":"/api/time_slots/2",
+        "@type":"TimeSlot",
+        "name":"Time slot with opening hours",
+        "choices":[],
+        "interval":"2 days",
+        "workingDaysOnly":false,
+        "openingHoursSpecification":[
+          {
+            "@type":"OpeningHoursSpecification",
+            "opens":"10:00",
+            "closes":"11:00",
+            "dayOfWeek":[
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ]
+          },
+          {
+            "@type":"OpeningHoursSpecification",
+            "opens":"11:00",
+            "closes":"13:00",
+            "dayOfWeek":[
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ]
+          },
+          {
+            "@type":"OpeningHoursSpecification",
+            "opens":"14:00",
+            "closes":"15:00",
+            "dayOfWeek":[
+              "Sunday"
+            ]
+          }
+        ]
       }
       """
 

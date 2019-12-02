@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\OpeningHoursSpecification;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -182,5 +183,19 @@ class TimeSlot
         $this->workingDaysOnly = $workingDaysOnly;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"time_slot"})
+     */
+    public function getOpeningHoursSpecification()
+    {
+        if ($this->hasOpeningHours()) {
+            return array_map(function (OpeningHoursSpecification $spec) {
+                return $spec->jsonSerialize();
+            }, OpeningHoursSpecification::fromOpeningHours($this->getOpeningHours()));
+        }
+
+        return [];
     }
 }
