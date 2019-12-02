@@ -14,7 +14,27 @@
 
 {% block content %}
 {{ form_start(form) }}
-  {{ form_widget(form) }}
+  {{ form_row(form.name) }}
+  {{ form_row(form.interval) }}
+  {% set time_slot = form.vars.data %}
+  {% set is_advanced = (time_slot.id is not null and time_slot.hasOpeningHours()) %}
+  <div class="text-right">
+    <div class="btn-group">
+      <label class="btn btn-default {% if not is_advanced %}active{% endif %}">
+        <input type="radio" data-name="mode" data-mode="simple" {% if not is_advanced %}checked{% endif %}> Mode simple
+      </label>
+      <label class="btn btn-default {% if is_advanced %}active{% endif %}">
+        <input type="radio" data-name="mode" data-mode="advanced" {% if is_advanced %}checked{% endif %}> Mode avancé
+      </label>
+    </div>
+  </div>
+  <div id="simple" {% if is_advanced %}class="hidden"{% endif %}>
+    {{ form_row(form.workingDaysOnly) }}
+    {{ form_row(form.choices) }}
+  </div>
+  <div id="advanced" {% if not is_advanced %}class="hidden"{% endif %}>
+    {{ form_row(form.openingHours) }}
+  </div>
   <button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
@@ -28,7 +48,7 @@ var $collectionHolder;
 var $addTagButton = $('<button type="button" class="btn btn-success"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>');
 var $newLinkLi = $('<div></div>').append($addTagButton);
 
-function addTagForm($collectionHolder, $newLinkLi) {
+function addChoiceForm($collectionHolder, $newLinkLi) {
     var prototype = $collectionHolder.data('prototype');
 
     var index = $collectionHolder.data('index');
@@ -43,6 +63,25 @@ function addTagForm($collectionHolder, $newLinkLi) {
     $newLinkLi.before($newFormLi);
 }
 
+$('input[data-name="mode"]').on('click', function() {
+  var mode = $(this).attr('data-mode');
+  if (mode === 'advanced') {
+    $('#simple').addClass('hidden');
+    $('input[data-mode="simple"]').prop('checked', false);
+    $('input[data-mode="simple"]').closest('btn').removeClass('active');
+
+    $('#advanced').removeClass('hidden');
+    $('input[data-mode="advanced"]').closest('btn').addClass('active');
+  } else {
+    $('#advanced').addClass('hidden');
+    $('input[data-mode="advanced"]').prop('checked', false);
+    $('input[data-mode="advanced"]').closest('btn').removeClass('active');
+
+    $('#simple').removeClass('hidden');
+    $('input[data-mode="simple"]').closest('btn').addClass('active');
+  }
+});
+
 $(document).ready(function() {
     $collectionHolder = $('#time_slot_choices');
 
@@ -51,8 +90,14 @@ $(document).ready(function() {
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
 
     $addTagButton.on('click', function(e) {
-        addTagForm($collectionHolder, $newLinkLi);
+        addChoiceForm($collectionHolder, $newLinkLi);
     });
+
+    new CoopCycle.OpeningHoursInput(document.querySelector('#time_slot_openingHours'), {
+      locale: $('html').attr('lang'),
+      rowsWithErrors: []
+    });
+
 });
 </script>
 {% endblock %}

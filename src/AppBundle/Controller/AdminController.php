@@ -1495,6 +1495,13 @@ class AdminController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
+            if ($timeSlot->hasOpeningHours()) {
+                foreach ($timeSlot->getChoices() as $choice) {
+                    $timeSlot->removeChoice($choice);
+                }
+                $timeSlot->setWorkingDaysOnly(false);
+            }
+
             $objectManager->persist($timeSlot);
             $objectManager->flush();
 
