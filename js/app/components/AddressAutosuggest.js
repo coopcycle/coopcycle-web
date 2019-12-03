@@ -3,7 +3,7 @@ import Autosuggest from 'react-autosuggest'
 import PropTypes from 'prop-types'
 import ngeohash from 'ngeohash'
 import Fuse from 'fuse.js'
-import { includes, filter } from 'lodash'
+import { includes, filter, debounce } from 'lodash'
 
 import i18n from '../i18n'
 import { placeToAddress } from '../utils/GoogleMaps'
@@ -70,6 +70,8 @@ class AddressAutosuggest extends Component {
       value: props.address,
       suggestions: []
     }
+
+    this.onSuggestionsFetchRequested = debounce(this.onSuggestionsFetchRequested.bind(this), 350)
   }
 
   componentDidMount() {
@@ -299,7 +301,7 @@ class AddressAutosuggest extends Component {
         ref={ autosuggest => this.autosuggest = autosuggest }
         theme={ theme }
         suggestions={ suggestions }
-        onSuggestionsFetchRequested={ this.onSuggestionsFetchRequested.bind(this) }
+        onSuggestionsFetchRequested={ this.onSuggestionsFetchRequested }
         onSuggestionsClearRequested={ this.onSuggestionsClearRequested.bind(this) }
         onSuggestionSelected={ this.onSuggestionSelected.bind(this) }
         getSuggestionValue={ getSuggestionValue }
