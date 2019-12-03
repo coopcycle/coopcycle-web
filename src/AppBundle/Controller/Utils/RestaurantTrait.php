@@ -83,9 +83,7 @@ trait RestaurantTrait
 
     protected function renderRestaurantForm(Restaurant $restaurant, Request $request)
     {
-        $form = $this->createForm(RestaurantType::class, $restaurant, [
-            'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
-        ]);
+        $form = $this->createForm(RestaurantType::class, $restaurant);
 
         // Associate Stripe account with restaurant
         if ($request->getSession()->getFlashBag()->has('stripe_account')) {

@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
-use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
@@ -94,7 +93,6 @@ class AdminController extends Controller
     use OrderTrait {
         orderListAction as baseOrderListAction;
     }
-    use LocalBusinessTrait;
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;

@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
-use AppBundle\Controller\Utils\LocalBusinessTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
@@ -42,7 +41,6 @@ class ProfileController extends Controller
 
     use AccessControlTrait;
     use DeliveryTrait;
-    use LocalBusinessTrait;
     use OrderTrait;
     use RestaurantTrait;
     use StoreTrait;

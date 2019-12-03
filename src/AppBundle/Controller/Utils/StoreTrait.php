@@ -100,9 +100,7 @@ trait StoreTrait
 
     protected function renderStoreForm(Store $store, Request $request)
     {
-        $form = $this->createForm(StoreType::class, $store, [
-            'additional_properties' => $this->getLocalizedLocalBusinessProperties(),
-        ]);
+        $form = $this->createForm(StoreType::class, $store);
 
         $routes = $request->attributes->get('routes');
 

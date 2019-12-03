@@ -26,11 +26,11 @@ abstract class LocalBusinessType extends AbstractType
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
-        $countryIso)
+        string $country)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
-        $this->countryIso = $countryIso;
+        $this->country = $country;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -46,7 +46,7 @@ abstract class LocalBusinessType extends AbstractType
             ->add('address', AddressType::class)
             ->add('telephone',
                 PhoneNumbertype::class,
-                [   'default_region' => strtoupper($this->countryIso),
+                [   'default_region' => strtoupper($this->country),
                     'format' => PhoneNumberFormat::NATIONAL,
                     'required' => false,
                     'label' => 'localBusiness.form.telephone',])
@@ -128,8 +128,18 @@ abstract class LocalBusinessType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        $additionalProperties = [];
+
+        switch ($this->country) {
+            case 'fr':
+                $additionalProperties[] = 'siret';
+                break;
+            default:
+                break;
+        }
+
         $resolver->setDefaults(array(
-            'additional_properties' => [],
+            'additional_properties' => $additionalProperties,
         ));
     }
 }
