@@ -57,7 +57,10 @@ class Product extends BaseProduct implements ProductInterface
     protected $reusablePackagingEnabled = false;
 
     /**
-     * @Assert\GreaterThan(0)
+     * @Assert\Expression(
+     *   "!this.isReusablePackagingEnabled() or (this.isReusablePackagingEnabled() and this.getReusablePackagingUnit() > 0)",
+     *   message="product.reusablePackagingUnit.mustBeGreaterThanZero"
+     * )
      */
     protected $reusablePackagingUnit;
 

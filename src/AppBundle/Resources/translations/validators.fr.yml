@@ -36,3 +36,5 @@ product.name.modified: Vous avez modifié le nom du produit
 task.before.mustBeGreaterThanAfter: La plage horaire n'est pas valide
 
 product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle pour une option obligatoire
+
+product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
