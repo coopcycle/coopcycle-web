@@ -100,6 +100,10 @@
 </div>
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('widgets-admin') }}
+{% endblock %}
+
 {% block scripts_common %}
   {{ encore_entry_script_tags('widgets-admin') }}
   {% block scripts %}{% endblock %}
