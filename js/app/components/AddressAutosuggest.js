@@ -45,6 +45,10 @@ const defaultFuseOptions = {
   ]
 }
 
+const defaultFuseSearchOptions = {
+  limit: 5
+}
+
 const getSuggestionValue = suggestion => suggestion.value
 
 const renderSuggestion = suggestion => (
@@ -159,7 +163,10 @@ class AddressAutosuggest extends Component {
 
       const { value } = this.state
 
-      const fuseResults = this.fuse.search(value, this.props.fuseSearchOptions || {})
+      const fuseResults = this.fuse.search(value, {
+        ...defaultFuseSearchOptions,
+        ...this.props.fuseSearchOptions,
+      })
 
       if (fuseResults.length > 0) {
 
@@ -331,7 +338,8 @@ AddressAutosuggest.defaultProps = {
   required: false,
   reportValidity: false,
   preciseOnly: false,
-  placeholder: i18n.t('ENTER_YOUR_ADDRESS')
+  placeholder: i18n.t('ENTER_YOUR_ADDRESS'),
+  fuseSearchOptions: {},
 }
 
 AddressAutosuggest.propTypes = {
