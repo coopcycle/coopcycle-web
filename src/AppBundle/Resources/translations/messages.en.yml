@@ -851,3 +851,6 @@ orders.payment_link.sent: Email sent successfully
 form.min_max.lower.label: Min. number
 form.min_max.upper.label: Max. number
 form.min_max.infinity.label: No maximum
+form.local_business.iso_code.fr.siret: SIRET number
+form.local_business.iso_code.fr.vat_number: VAT number
+form.local_business.iso_code.fr.rcs_number: RCS number

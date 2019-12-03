@@ -63,10 +63,12 @@ abstract class LocalBusinessType extends AbstractType
                 'error_bubbling' => false
             ]);
 
-        if (in_array('siret', $options['additional_properties'])) {
-            $builder->add('siret', TextType::class, [
-                'required' => false,
+        foreach ($options['additional_properties'] as $key) {
+            $builder->add($key, TextType::class, [
+                'required' => true,
                 'mapped' => false,
+                'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
+                // TODO Add constraints
             ]);
         }
 
@@ -74,8 +76,10 @@ abstract class LocalBusinessType extends AbstractType
             $form = $event->getForm();
             $localBusiness = $event->getData();
 
-            if (in_array('siret', $options['additional_properties'])) {
-                $form->get('siret')->setData($localBusiness->getAdditionalPropertyValue('siret'));
+            foreach ($options['additional_properties'] as $key) {
+                if ($form->has($key)) {
+                    $form->get($key)->setData($localBusiness->getAdditionalPropertyValue($key));
+                }
             }
 
             if (null !== $localBusiness->getId()) {
@@ -96,9 +100,9 @@ abstract class LocalBusinessType extends AbstractType
                 $openingHours = array_filter($localBusiness->getOpeningHours());
                 $localBusiness->setOpeningHours($openingHours);
 
-                if (in_array('siret', $options['additional_properties'])) {
-                    $value = $event->getForm()->get('siret')->getData();
-                    $localBusiness->setAdditionalProperty('siret', $value);
+                foreach ($options['additional_properties'] as $key) {
+                    $value = $event->getForm()->get($key)->getData();
+                    $localBusiness->setAdditionalProperty($key, $value);
                 }
             }
         );
@@ -133,6 +137,8 @@ abstract class LocalBusinessType extends AbstractType
         switch ($this->country) {
             case 'fr':
                 $additionalProperties[] = 'siret';
+                $additionalProperties[] = 'vat_number';
+                $additionalProperties[] = 'rcs_number';
                 break;
             default:
                 break;

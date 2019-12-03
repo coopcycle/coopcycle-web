@@ -789,3 +789,6 @@ orders.payment_link.sent: L'email a été envoyé
 form.min_max.lower.label: Valeur min.
 form.min_max.upper.label: Valeur max.
 form.min_max.infinity.label: Pas de maximum
+form.local_business.iso_code.fr.siret: Numéro de SIRET
+form.local_business.iso_code.fr.vat_number: Numéro d'identification à la TVA
+form.local_business.iso_code.fr.rcs_number: Numéro RCS
