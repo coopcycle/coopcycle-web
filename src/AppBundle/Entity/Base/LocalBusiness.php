@@ -209,17 +209,17 @@ abstract class LocalBusiness
 
     public function setAdditionalProperty($name, $value)
     {
-        $propertyValue = [
-            'name' => $name,
-            'value' => $value,
-        ];
+        $found = false;
+        foreach ($this->additionalProperties as $index => $property) {
+            if ($property['name'] === $name) {
+                $this->additionalProperties[$index]['value'] = $value;
+                $found = true;
+                break;
+            }
+        }
 
-        $key = array_search($propertyValue, $this->additionalProperties);
-
-        if (false === $key) {
+        if (!$found) {
             $this->addAdditionalProperty($name, $value);
-        } else {
-            $this->additionalProperties[$key]['value'] = $value;
         }
 
         return $this;
