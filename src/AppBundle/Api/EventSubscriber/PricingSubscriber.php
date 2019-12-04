@@ -89,6 +89,7 @@ final class PricingSubscriber implements EventSubscriberInterface
             throw new AccessDeniedException();
         }
 
+        $store = null;
         if ($token instanceof OAuth2Token) {
 
             $accessToken = $this->accessTokenManager->find($token->getCredentials());

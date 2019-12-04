@@ -44,21 +44,15 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         }
 
         $targetStates = [
-            OrderInterface::STATE_CART,
-            OrderInterface::STATE_NEW
+            OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
+            OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW
         ];
 
-        if (!in_array($order->getState(), $targetStates)) {
+        if (!in_array($order->getState(), array_keys($targetStates))) {
             return;
         }
 
-        if (OrderInterface::STATE_CART === $order->getState()) {
-            $targetState = PaymentInterface::STATE_CART;
-        }
-
-        if (OrderInterface::STATE_NEW === $order->getState()) {
-            $targetState = PaymentInterface::STATE_NEW;
-        }
+        $targetState = $targetStates[$order->getState()];
 
         $lastPayment = $order->getLastPayment($targetState);
 

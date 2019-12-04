@@ -66,7 +66,7 @@ class EventStore extends ArrayCollection
         }
     }
 
-    private function createOrderEvent(Event $event)
+    private function createOrderEvent(OrderDomainEvent $event)
     {
         return new OrderEvent(
             $event->getOrder(),
@@ -77,7 +77,7 @@ class EventStore extends ArrayCollection
         );
     }
 
-    private function createTaskEvent(Event $event)
+    private function createTaskEvent(TaskDomainEvent $event)
     {
         return new TaskEvent(
             $event->getTask(),

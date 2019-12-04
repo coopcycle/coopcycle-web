@@ -28,7 +28,7 @@ class PostSoftDeleteSubscriber implements EventSubscriber
     public function postSoftDelete(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        $objectManager = $args->getObjectManager();
+        $objectManager = $args->getEntityManager();
         $unitOfWork = $objectManager->getUnitOfWork();
 
         if ($entity instanceof ProductInterface) {

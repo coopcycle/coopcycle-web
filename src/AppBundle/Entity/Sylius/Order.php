@@ -142,7 +142,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
-     * @return ApiUser
+     * @return ApiUser|null
      */
     public function getCustomer()
     {

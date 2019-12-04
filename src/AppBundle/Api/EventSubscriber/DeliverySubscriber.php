@@ -80,7 +80,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
                 $user = $token->getUser();
                 $store = $delivery->getStore();
 
-                if ($store && $user->ownsStore($store)) {
+                if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
                     return;
                 }
 

@@ -49,7 +49,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createNew(): ProductVariantInterface
+    public function createNew()
     {
         return $this->factory->createNew();
     }
