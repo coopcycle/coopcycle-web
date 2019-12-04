@@ -241,6 +241,9 @@ oneup_flysystem:
         invoices_local:
             local:
                 directory: '%kernel.root_dir%/../web/invoices'
+        receipts_local:
+            local:
+                directory: '%kernel.root_dir%/../web/receipts'
         product_images_s3:
             awss3v3:
                 client: s3_client
@@ -302,6 +305,10 @@ oneup_flysystem:
             adapter: invoices_local
             alias: invoices_filesystem
             mount: invoices_filesystem
+        receipts:
+            adapter: receipts_local
+            alias: receipts_filesystem
+            mount: receipts_filesystem
 
 vich_uploader:
     db_driver: orm
