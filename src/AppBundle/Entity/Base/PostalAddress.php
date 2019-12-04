@@ -246,7 +246,7 @@ abstract class PostalAddress
     /**
      * Gets streetAddress.
      *
-     * @return string
+     * @return string|null
      */
     public function getStreetAddress()
     {

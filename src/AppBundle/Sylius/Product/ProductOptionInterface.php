@@ -17,7 +17,7 @@ interface ProductOptionInterface extends BaseProductOptionInterface
     public function getStrategy(): string;
 
     /**
-     * @param string|null $strategy
+     * @param string $strategy
      */
     public function setStrategy(string $strategy): void;
 

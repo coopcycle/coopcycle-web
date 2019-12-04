@@ -217,7 +217,7 @@ class StripeManager
     }
 
     /**
-     * @return Stripe\Charge
+     * @return Stripe\Charge|Stripe\PaymentIntent
      */
     public function capture(StripePayment $stripePayment)
     {

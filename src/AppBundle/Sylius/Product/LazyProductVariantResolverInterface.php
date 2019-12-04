@@ -10,7 +10,7 @@ interface LazyProductVariantResolverInterface extends BaseProductVariantResolver
 {
     /**
      * @param ProductInterface $product
-     * @param ProductOptionValueInterface[] $optionValues
+     * @param \Traversable $optionValues
      *
      * @return ProductVariantInterface|null
      */

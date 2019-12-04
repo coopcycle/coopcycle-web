@@ -112,7 +112,7 @@ class Restaurant extends FoodEstablishment
     protected $description;
 
     /**
-     * @var string The cuisine of the restaurant.
+     * @var mixed The cuisine of the restaurant.
      *
      * @ApiProperty(iri="https://schema.org/servesCuisine")
      * @Groups({"restaurant"})
@@ -214,7 +214,7 @@ class Restaurant extends FoodEstablishment
     private $state = self::STATE_NORMAL;
 
     /**
-     * @var Contract
+     * @var Contract|null
      * @Groups({"order_create"})
      */
     private $contract;
@@ -663,13 +663,15 @@ class Restaurant extends FoodEstablishment
         $contract->setRestaurant($this);
     }
 
-    public function getFlatDeliveryPrice() {
+    public function getFlatDeliveryPrice()
+    {
         if ($this->contract) {
             return $this->contract->getFlatDeliveryPrice();
         }
     }
 
-    public function getMinimumCartAmount() {
+    public function getMinimumCartAmount()
+    {
         if ($this->contract) {
             return $this->contract->getMinimumCartAmount();
         }
@@ -932,7 +934,7 @@ class Restaurant extends FoodEstablishment
     /**
      * @param ReusablePackaging $reusablePackaging
      *
-     * @return self
+     * @return bool
      */
     public function hasReusablePackaging(ReusablePackaging $reusablePackaging)
     {

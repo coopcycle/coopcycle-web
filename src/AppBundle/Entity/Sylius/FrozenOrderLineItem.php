@@ -85,7 +85,7 @@ abstract class FrozenOrderLineItem
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $description
      *
      * @return self
      */

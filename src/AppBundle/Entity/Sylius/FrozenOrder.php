@@ -53,7 +53,7 @@ abstract class FrozenOrder
     }
 
     /**
-     * @return mixed
+     * @return Collection|FrozenOrderLineItem[]
      */
     public function getLineItems(): ?Collection
     {
@@ -73,7 +73,7 @@ abstract class FrozenOrder
     }
 
     /**
-     * @return mixed
+     * @return Collection|FrozenOrderLineItem[]
      */
     public function getFooterItems(): ?Collection
     {
