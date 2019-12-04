@@ -135,6 +135,8 @@ services:
       $filterManager: '@liip_imagine.filter.manager'
       $filesystem: '@filesystem'
 
+  AppBundle\Command\GenerateReceiptsCommand: ~
+
   AppBundle\Command\BotCommand:
     arguments:
       $apiClient: '@csa_guzzle.client.api'
