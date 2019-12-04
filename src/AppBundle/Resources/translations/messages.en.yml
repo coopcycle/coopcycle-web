@@ -56,12 +56,6 @@ adminDashboard.stores.form.uploadImage: Upload an image
 adminDashboard.orders.title: Orders
 adminDashboard.orders.previousOrders: Previous orders
 adminDashboard.orders.showCanceled: Show canceled orders
-adminDashboard.orders.invoice.title: Invoice
-adminDashboard.orders.invoice.totalExcludingTax: Total excluding tax
-adminDashboard.orders.invoice.productsTotal: Products total
-adminDashboard.orders.invoice.deliveryTotal: Delivery total
-adminDashboard.orders.invoice.totalTax: Total tax
-adminDashboard.orders.invoice.totalIncludingTax: Total including tax
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.restaurants.exclusive: Exclusive
@@ -307,7 +301,8 @@ order.list.summary: Summary
 order.list.summary.restaurant.text: Delivery at restaurant <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Delivery at restaurant %restaurant_name%
 order.list.summary.delivery.text: Delivery %distance%, %vehicle%
-order.list.invoice: Invoice
+order.list.receipt: Receipt
+order.list.generate_receipt: Generate
 vehicle.bike: Bike
 vehicle.cargo_bike: Cargo bike
 task.form.create: Create task
@@ -854,3 +849,14 @@ form.min_max.infinity.label: No maximum
 form.local_business.iso_code.fr.siret: SIRET number
 form.local_business.iso_code.fr.vat_number: VAT number
 form.local_business.iso_code.fr.rcs_number: RCS number
+receipt.title: 'Receipt of your order #%number%'
+receipt.line_item.name: Product
+receipt.line_item.unit_price: Unit price
+receipt.line_item.quantity: Quantity
+receipt.line_item.total: Total
+receipt.line_item.total_products: Total products
+receipt.footer_item.total_excl_tax: Total excl. tax
+receipt.footer_item.total_incl_tax: Total incl. tax
+receipt.total: Total including tax
+receipt.billing_details: Order paid by credit card on %date%
+receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>

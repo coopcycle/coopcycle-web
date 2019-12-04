@@ -20,7 +20,6 @@ embed.breadcrumb.confirm: Bestätigung
 adminDashboard.menuCategories.save: Speichern
 adminDashboard.stores.form.uploadImage: Bild hochladen
 adminDashboard.orders.title: Bestellungen
-adminDashboard.orders.invoice.title: Rechnung
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
 adminDashboard.settings.title: Einstellungen
@@ -118,9 +117,6 @@ embed.delivery.submit.help: Klicken Sie hier um die Anfrage zu bestätigen und d
 pagination.next: Nächste
 basics.next: Nächste
 embed.delivery.summary.title: Zusammenfassung von deine Bestellung
-adminDashboard.orders.invoice.totalExcludingTax: Nettobetrag
-adminDashboard.orders.invoice.productsTotal: Gesamtbetrag
-adminDashboard.orders.invoice.totalIncludingTax: Gesamtbetrag
 adminDashboard.users.edit: Bearbeiten
 order.items.products_with_count: Produkten (%count%)
 order.total_including_tax: Gesamtbetrag
@@ -162,8 +158,6 @@ adminDashboard.stores.title: Läden
 adminDashboard.stores.createNew: Neuen Laden erstellen
 adminDashboard.orders.previousOrders: Vorherige Bestellung
 adminDashboard.orders.showCanceled: Zeige stornierte Bestellungen
-adminDashboard.orders.invoice.deliveryTotal: Summe Lieferungen
-adminDashboard.orders.invoice.totalTax: Summe Steuern
 adminDashboard.restaurants.createNew: Neues Restaurant erstellen
 adminDashboard.users.title: Benutzer
 adminDashboard.users.roles: Funktion
@@ -271,7 +265,7 @@ restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
 restaurant.list.preparationTime: Vorbereitung
 restaurant.list.stats: Statistiken
 adminDashboard.dashboard.cancel: Abbrechen
-order.list.invoice: Rechnung
+order.list.receipt: Empfangsbestätigung
 restaurant.product_options.help: "Die Auswahl ermöglicht es Ihnen, die Produkte <strong>individuell\
   \ anzupassen</strong>\n<br>\nSie ermöglichen es Ihnen beispielsweise, Zusatzartikel\
   \ hinzuzufügen oder die einzelnen Zutaten eines Menüs (Beilage, Getränk....) auszuwählen.\n\
@@ -471,3 +465,6 @@ order.adjustment_type.reusable_packaging: Verpackung
 order.reusable_packaging.alert: Diese Bestellung muss in einem wiederverwendbaren
   Behälter verpackt werden
 form.user.quotes_allowed.label: Erlaube diesem Kunden, ein Angebot anzufordern
+receipt.line_item.total_products: Gesamtbetrag
+receipt.footer_item.total_excl_tax: Nettobetrag
+receipt.footer_item.total_incl_tax: Gesamtbetrag

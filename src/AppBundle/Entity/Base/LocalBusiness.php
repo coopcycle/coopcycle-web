@@ -197,6 +197,17 @@ abstract class LocalBusiness
         return $this;
     }
 
+    public function hasAdditionalProperty($name)
+    {
+        foreach ($this->additionalProperties as $property) {
+            if ($property['name'] === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function addAdditionalProperty($name, $value)
     {
         $this->additionalProperties[] = [
