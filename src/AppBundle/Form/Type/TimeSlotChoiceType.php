@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\TimeSlot;
+use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -48,11 +49,13 @@ class TimeSlotChoiceType extends AbstractType
 
                 [ $start, $end ] = $choice->getTimeRange();
 
-                $calendar = $choice->getDate()->locale($this->locale)->calendar(null, [
-                    'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-                    'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-                    'nextWeek' => 'dddd',
-                ]);
+                $calendar = Carbon::instance($choice->getDate())
+                    ->locale($this->locale)
+                    ->calendar(null, [
+                        'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
+                        'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
+                        'nextWeek' => 'dddd',
+                    ]);
 
                 return $this->translator->trans('time_slot.human_readable', [
                     '%day%' => ucfirst(strtolower($calendar)),

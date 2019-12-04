@@ -79,7 +79,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
         return clone $now;
     }
 
-    private function moveCursor(\DateTimeInterface $cursor)
+    private function moveCursor(\DateTime $cursor)
     {
         $newCursor = clone $cursor;
 
@@ -99,7 +99,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     public function loadChoiceList($value = null)
     {
         if ($this->expectedCount <= 0) {
-            return [];
+            return new ArrayChoiceList([], $value);
         }
 
         $cursor = $this->getCursor($this->now);
