@@ -12,6 +12,9 @@
       justify-content: space-between;
       margin-bottom: 5mm;
     }
+    header > * {
+      flex: 1;
+    }
     ul {
       list-style: none;
       padding: 0;
@@ -27,10 +30,12 @@
         <img src="{{ coopcycle_company_logo() }}" style="width: 25mm; height: 25mm;">
       </div>
       <div>
+        {% block header_right %}
         <ul style="text-align: right;">
           <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
           <li>{{ 'now'|localizeddate('short', 'short') }}</li>
         </ul>
+        {% endblock %}
       </div>
     </header>
     {% endblock %}

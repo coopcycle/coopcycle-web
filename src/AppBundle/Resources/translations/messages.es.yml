@@ -41,12 +41,6 @@ adminDashboard.stores.form.uploadImage: Subir una imagen
 adminDashboard.orders.title: Pedidos
 adminDashboard.orders.previousOrders: Pedidos anteriores
 adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
-adminDashboard.orders.invoice.title: Factura
-adminDashboard.orders.invoice.totalExcludingTax: Total sin impuestos
-adminDashboard.orders.invoice.totalTax: Total impuestos
-adminDashboard.orders.invoice.totalIncludingTax: Total con impuestos
-adminDashboard.orders.invoice.productsTotal: Total productos
-adminDashboard.orders.invoice.deliveryTotal: Total entrega
 adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.createNew: Crear restaurante
 adminDashboard.users.title: Usuarios
@@ -254,7 +248,8 @@ order.list.summary: Resumen
 order.list.summary.restaurant.text: Entrega en restaurante <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Entrega en restaurante %restaurant_name%
 order.list.summary.delivery.text: Entrega %distance%, %vehicle%
-order.list.invoice: Factura
+order.list.receipt: Recibo
+order.list.generate_receipt: Generar
 vehicle.bike: Bicicleta
 vehicle.cargo_bike: Bicicleta cargo
 task.form.dateRange: Rango de fechas
@@ -727,3 +722,14 @@ restaurant.form.noPricingRule: Ninguna tarificación ha sido implementada, <a hr
 restaurant.quotes_disclaimer.not_authenticated: Éste restaurante tabmien accepta
   pedidos en cita. Si usted es un cliente referenciado, <a href="%login%">Conéctese
   </a> para crear una cita. <a href="%contact_us%">Contáctenos</a> para más información.
+receipt.title: 'Recibo del pedido #%number%'
+receipt.line_item.name: Producto
+receipt.line_item.unit_price: Precio unitario
+receipt.line_item.quantity: Cantidad
+receipt.line_item.total: Total
+receipt.line_item.total_products: Total productos
+receipt.footer_item.total_excl_tax: Total excl. impuestos
+receipt.footer_item.total_incl_tax: Total incl. impuestos
+receipt.total: Total incl. impuestos
+receipt.billing_details: Pedido pagado con tarjeta de crédito el %date%
+receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>

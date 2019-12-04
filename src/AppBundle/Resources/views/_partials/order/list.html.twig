@@ -11,7 +11,7 @@
     <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
-    <th class="text-right">{% trans %}order.list.invoice{% endtrans %}</th>
+    <th class="text-center">{% trans %}order.list.receipt{% endtrans %}</th>
     <th class="text-right">{% trans %}order.list.shippedAt{% endtrans %}</th>
   </thead>
   <tbody>
@@ -70,11 +70,15 @@
     <td class="text-right">
       <span>{{ order.total|price_format }}</span>
     </td>
-    <td width="10%" class="text-right">
-      {% if order.foodtech %}
-      <a target="_blank" href="{{ path(routes.order_invoice, { number: order.number }) }}">
+    <td width="10%" class="text-center">
+      {% if order.hasReceipt() %}
+      <a target="_blank" href="{{ path(routes.order_receipt, { orderNumber: order.number }) }}">
         <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
       </a>
+      {% elseif order.foodtech and order.state == 'fulfilled' %}
+        <form method="post" action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">
+          <button type="submit" class="btn btn-xs btn-default">{{ 'order.list.generate_receipt'|trans }}</button>
+        </form>
       {% endif %}
     </td>
     <td class="text-right">{{ order.shippedAt|localizeddate('short', 'short') }}</td>

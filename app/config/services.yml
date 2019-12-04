@@ -740,3 +740,10 @@ services:
     arguments:
       - '@snc_redis.session.handler'
       - '@session.handler.native_file'
+
+  AppBundle\Sylius\Order\ReceiptGenerator:
+    arguments:
+      $httpClient: '@csa_guzzle.client.browserless'
+      $filesystem: '@receipts_filesystem'
+      $taxRateRepository: '@sylius.repository.tax_rate'
+      $locale: '%kernel.default_locale%'

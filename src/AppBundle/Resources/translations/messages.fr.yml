@@ -45,12 +45,6 @@ adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
 adminDashboard.restaurants.exclusive: Exclusif
-adminDashboard.orders.invoice.title: Facture
-adminDashboard.orders.invoice.totalExcludingTax: Total HT
-adminDashboard.orders.invoice.totalTax: Total TVA
-adminDashboard.orders.invoice.totalIncludingTax: Total TTC
-adminDashboard.orders.invoice.productsTotal: Total des produits
-adminDashboard.orders.invoice.deliveryTotal: Total de la livraison
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Créer un restaurant
 adminDashboard.users.title: Utilisateurs
@@ -282,7 +276,8 @@ order.list.summary: Résumé
 order.list.summary.restaurant.text: Livraison au restaurant <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Livraison au restaurant %restaurant_name%
 order.list.summary.delivery.text: Livraison %distance%, %vehicle%
-order.list.invoice: Facture
+order.list.receipt: Reçu
+order.list.generate_receipt: Générer
 vehicle.bike: Vélo
 vehicle.cargo_bike: Vélo cargo
 task.form.dateRange: Créneau pour la réalisation
@@ -792,3 +787,14 @@ form.min_max.infinity.label: Pas de maximum
 form.local_business.iso_code.fr.siret: Numéro de SIRET
 form.local_business.iso_code.fr.vat_number: Numéro d'identification à la TVA
 form.local_business.iso_code.fr.rcs_number: Numéro RCS
+receipt.title: 'Reçu pour votre commande n° %number%'
+receipt.line_item.name: Produit
+receipt.line_item.unit_price: Prix unitaire
+receipt.line_item.quantity: Quantité
+receipt.line_item.total: Total
+receipt.footer_item.total_products: Total produits
+receipt.footer_item.total_excl_tax: Total HT
+receipt.footer_item.total_incl_tax: Total TTC
+receipt.total: Total TTC
+receipt.billing_details: Commande payée par carte de crédit le %date%
+receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>

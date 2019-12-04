@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\OrdersExportType;
 use AppBundle\Service\OrderManager;
+use AppBundle\Sylius\Order\ReceiptGenerator;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,27 +54,47 @@ trait OrderTrait
         ], $response);
     }
 
-    public function orderInvoiceAction($number, Request $request)
+    public function orderReceiptAction($orderNumber, Request $request)
     {
         $order = $this->get('sylius.repository.order')->findOneBy([
-            'number'=> $number
+            'number'=> $orderNumber
         ]);
 
         $this->accessControl($order);
 
-        $html = $this->renderView('@App/order/invoice.html.twig', [
-            'order' => $order
-        ]);
+        if (!$order->hasReceipt()) {
+            throw $this->createNotFoundException(sprintf('Receipt for order "%s" does not exist', $orderNumber));
+        }
 
-        $httpClient = $this->get('csa_guzzle.client.browserless');
+        $fileSystem = $this->get('receipts_filesystem');
 
-        $response = $httpClient->request('POST', '/pdf', ['json' => ['html' => $html]]);
+        $filename = sprintf('%s.pdf', $orderNumber);
 
-        // TODO Check status
+        if (!$fileSystem->has($filename)) {
+            throw $this->createNotFoundException(sprintf('File %s.pdf does not exist', $orderNumber));
+        }
 
-        return new Response((string) $response->getBody(), 200, [
+        return new Response((string) $fileSystem->read($filename), 200, [
             'Content-Type' => 'application/pdf',
         ]);
+    }
+
+    public function generateOrderReceiptAction($orderNumber, Request $request, ReceiptGenerator $generator)
+    {
+        $order = $this->get('sylius.repository.order')->findOneBy([
+            'number'=> $orderNumber
+        ]);
+
+        $this->accessControl($order);
+
+        $receipt = $generator->create($order);
+        $order->setReceipt($receipt);
+
+        $this->getDoctrine()->getManager()->flush();
+
+        $generator->generate($receipt, sprintf('%s.pdf', $order->getNumber()));
+
+        return $this->redirect($request->headers->get('referer'));
     }
 
     public function acceptOrderAction($id, Request $request, OrderManager $orderManager)

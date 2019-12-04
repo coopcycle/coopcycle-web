@@ -57,12 +57,6 @@ adminDashboard.stores.form.uploadImage: Carregueu una imatge
 adminDashboard.orders.title: Comandes
 adminDashboard.orders.previousOrders: Comandes anteriors
 adminDashboard.orders.showCanceled: Mostra les comandes cancel·lades
-adminDashboard.orders.invoice.title: Factura
-adminDashboard.orders.invoice.totalExcludingTax: Total sense impostos
-adminDashboard.orders.invoice.productsTotal: Productes totals
-adminDashboard.orders.invoice.deliveryTotal: Entregues total
-adminDashboard.orders.invoice.totalTax: Impost total
-adminDashboard.orders.invoice.totalIncludingTax: Total amb impostos
 adminDashboard.restaurants.title: Restaurants
 adminDashboard.restaurants.createNew: Crea un nou restaurant
 adminDashboard.restaurants.exclusive: Exclusiu
@@ -292,7 +286,7 @@ order.list.summary: Resum
 order.list.summary.restaurant.text: Lliurament al restaurant<a href="%restaurant_url%">%restaurant_name%</a>
 order.list.summary.deleted_restaurant.text: Lliurament al restaurant %restaurant_name%
 order.list.summary.delivery.text: Entrega %distance%, %vehicle%
-order.list.invoice: Factura
+order.list.receipt: Recibo
 vehicle.bike: Bicicleta
 vehicle.cargo_bike: Bicicleta de càrrega
 task.form.create: Crear tasca

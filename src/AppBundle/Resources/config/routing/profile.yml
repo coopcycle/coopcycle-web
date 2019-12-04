@@ -1,7 +1,12 @@
-profile_order_invoice:
-    path:     /profile/orders/CPCCL-{number}.pdf
-    defaults: { _controller: AppBundle\Controller\ProfileController::orderInvoiceAction }
+profile_order_receipt:
+    path:     /profile/orders/{orderNumber}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\ProfileController::orderReceiptAction }
     methods:  [ GET ]
+
+profile_order_receipt_generate:
+    path:     /profile/orders/{orderNumber}/generate-receipt
+    defaults: { _controller: AppBundle\Controller\ProfileController::generateOrderReceiptAction }
+    methods:  [ POST ]
 
 profile_order:
     path:     /profile/orders/{id}
@@ -16,7 +21,8 @@ profile_orders:
         template: '@App/profile/orders.html.twig'
         routes:
             restaurant: restaurant
-            order_invoice: profile_order_invoice
+            order_receipt: profile_order_receipt
+            order_receipt_generate: profile_order_receipt_generate
             order: profile_order
     methods:  [ GET ]
 

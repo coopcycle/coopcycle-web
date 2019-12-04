@@ -7,10 +7,15 @@ admin_delivery:
           success: admin_deliveries
   methods:  [ GET, POST ]
 
-admin_order_invoice:
-    path:     /admin/orders/CPCCL-{number}.pdf
-    defaults: { _controller: AppBundle\Controller\AdminController::orderInvoiceAction }
+admin_order_receipt:
+    path:     /admin/orders/{orderNumber}/receipt.pdf
+    defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptAction }
     methods:  [ GET ]
+
+admin_order_receipt_generate:
+    path:     /admin/orders/{orderNumber}/generate-receipt
+    defaults: { _controller: AppBundle\Controller\AdminController::generateOrderReceiptAction }
+    methods:  [ POST ]
 
 admin_foodtech_dashboard:
     path:     /admin/foodtech/dashboard/{date}
@@ -22,7 +27,8 @@ admin_foodtech_dashboard:
         template: '@App/admin/orders.html.twig'
         routes:
             restaurant: admin_restaurant
-            order_invoice: admin_order_invoice
+            order_receipt: admin_order_receipt
+            order_receipt_generate: admin_order_receipt_generate
             order: admin_order
     methods:  [ GET ]
 
@@ -50,7 +56,8 @@ admin_orders:
         template: '@App/admin/orders.html.twig'
         routes:
             restaurant: admin_restaurant
-            order_invoice: admin_order_invoice
+            order_receipt: admin_order_receipt
+            order_receipt_generate: admin_order_receipt_generate
             order: admin_order
     methods:  [ GET, POST ]
 
