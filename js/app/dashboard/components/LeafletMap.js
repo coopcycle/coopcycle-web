@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask, assignTasks } from '../redux/actions'
+import { setCurrentTask, assignAfter } from '../redux/actions'
 import { selectTasks, selectFilteredTasks } from '../redux/selectors'
 
 class LeafletMap extends Component {
@@ -61,7 +61,7 @@ class LeafletMap extends Component {
       onMouseUp: () => {
 
         if (!!this.fromTask && !!this.toTask) {
-          this.props.assignTasks(this.fromTask.assignedTo, [ this.toTask ])
+          this.props.assignAfter(this.fromTask.assignedTo, this.toTask, this.fromTask)
         }
 
         if (!!this.fromTask) {
@@ -172,7 +172,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
   return {
     setCurrentTask: task => dispatch(setCurrentTask(task)),
-    assignTasks: (username, tasks) => dispatch(assignTasks(username, tasks)),
+    assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
   }
 }
 

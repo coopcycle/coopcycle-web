@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
+import Sortable from 'react-sortablejs'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
@@ -10,6 +11,11 @@ import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch
 import { selectFilteredTasks } from '../redux/selectors'
 
 class UnassignedTasks extends React.Component {
+
+  constructor (props) {
+    super(props)
+    this.listRef = React.createRef()
+  }
 
   componentDidMount() {
 
@@ -104,14 +110,23 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <div className="list-group nomargin">
+          <Sortable
+            className="list-group nomargin"
+            onChange={ (/*order, sortable, e*/) => {
+              // console.log('UnassignedTasks.Sortable.onChange', order, e)
+            }}
+            options={{
+              sort: false,
+              dataIdAttr: 'data-task-id',
+              group: { name: 'unassigned' },
+            }}>
             { groups }
             { _.map(standaloneTasks, (task, key) => {
               return (
                 <Task key={ key } task={ task } />
               )
             })}
-          </div>
+          </Sortable>
         </div>
       </div>
     )

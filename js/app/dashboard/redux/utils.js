@@ -72,3 +72,57 @@ export function groupLinkedTasks(tasks) {
 
   return groups
 }
+
+export function taskComparator(a, b) {
+  return a['@id'] === b['@id']
+}
+
+export function withoutTasks(state, tasks) {
+
+  return _.differenceWith(
+    state,
+    _.intersectionWith(state, tasks, taskComparator),
+    taskComparator
+  )
+}
+
+export function removedTasks(state, tasks) {
+
+  return _.differenceWith(
+    state,
+    tasks,
+    taskComparator
+  )
+}
+
+export function withLinkedTasks(tasks, allTasks) {
+
+  if (!Array.isArray(tasks)) {
+    tasks = [ tasks ]
+  }
+
+  const newTasks = []
+  tasks.forEach(task => {
+    // FIXME
+    // Make it work when more than 2 tasks are linked together
+    if (task.previous) {
+      // If previous task is another day, will be null
+      const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
+      if (previousTask) {
+        newTasks.push(previousTask)
+      }
+      newTasks.push(task)
+    } else if (task.next) {
+      // If next task is another day, will be null
+      const nextTask = _.find(allTasks, t => t['@id'] === task.next)
+      newTasks.push(task)
+      if (nextTask) {
+        newTasks.push(nextTask)
+      }
+    } else {
+      newTasks.push(task)
+    }
+  })
+
+  return newTasks
+}

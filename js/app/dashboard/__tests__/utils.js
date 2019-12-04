@@ -1,4 +1,4 @@
-import { groupLinkedTasks } from '../redux/utils'
+import { groupLinkedTasks, removedTasks, withoutTasks, withLinkedTasks } from '../redux/utils'
 
 describe('groupLinkedTasks', () => {
 
@@ -115,4 +115,115 @@ describe('groupLinkedTasks', () => {
     })
   })
 
+})
+
+describe('removedTasks', () => {
+
+  it('should return expected results', () => {
+    const tasks = [
+      { '@id': '/api/tasks/1' },
+      { '@id': '/api/tasks/2' },
+      { '@id': '/api/tasks/3' },
+      { '@id': '/api/tasks/4' },
+      { '@id': '/api/tasks/5' }
+    ]
+
+    const actual = removedTasks(tasks, [
+      { '@id': '/api/tasks/1'},
+      { '@id': '/api/tasks/2'},
+      { '@id': '/api/tasks/5'}
+    ])
+
+    expect(actual).toEqual([
+      { '@id': '/api/tasks/3'},
+      { '@id': '/api/tasks/4'},
+    ])
+  })
+})
+
+describe('withoutTasks', () => {
+
+  it('should return expected results', () => {
+    const tasks = [
+      { '@id': '/api/tasks/1' },
+      { '@id': '/api/tasks/2' },
+      { '@id': '/api/tasks/3' },
+      { '@id': '/api/tasks/4' },
+      { '@id': '/api/tasks/5' }
+    ]
+
+    const actual = withoutTasks(tasks, [
+      { '@id': '/api/tasks/3'},
+      { '@id': '/api/tasks/4'}
+    ])
+
+    expect(actual).toEqual([
+      { '@id': '/api/tasks/1'},
+      { '@id': '/api/tasks/2'},
+      { '@id': '/api/tasks/5'}
+    ])
+  })
+})
+
+describe('withLinkedTasks', () => {
+
+  const allTasks = [
+    {
+      '@id': '/api/tasks/1',
+      next: '/api/tasks/2',
+    }, {
+      '@id': '/api/tasks/2',
+      previous: '/api/tasks/1',
+    }, {
+      '@id': '/api/tasks/3',
+    }, {
+      '@id': '/api/tasks/4',
+      next: '/api/tasks/5',
+    }, {
+      '@id': '/api/tasks/5',
+      previous: '/api/tasks/4',
+    }
+  ]
+
+  it('should return expected results with one task', () => {
+
+    const actual = withLinkedTasks([
+      { '@id': '/api/tasks/4', next: '/api/tasks/5' }
+    ], allTasks)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5'
+      }, {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      }
+    ])
+  })
+
+  it('should return expected results with multiple tasks', () => {
+
+    const actual = withLinkedTasks([
+      { '@id': '/api/tasks/4', next: '/api/tasks/5' },
+      { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
+    ], allTasks)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5'
+      }, {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      },
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2'
+      }, {
+        '@id': '/api/tasks/2',
+        previous: '/api/tasks/1',
+      }
+    ])
+  })
 })

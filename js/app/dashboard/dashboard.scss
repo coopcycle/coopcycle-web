@@ -1,7 +1,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 
-@import "../../../assets/css/dragula.scss";
 @import "../../../assets/css/contextmenu.scss";
 
 html, body {
@@ -190,40 +189,6 @@ html, body {
       flex-direction: column;
       max-height: 100%;
     }
-
-    .dropzone {
-      box-sizing: border-box;
-      background-color: lighten(#F39C12, 30%);
-      border: 3px dashed #F1C40F;
-      margin-bottom: 0;
-
-      // Override Dropzone.js styles
-      min-height: inherit;
-      padding: inherit;
-
-      &--over {
-        background-color: lighten(#F39C12, 30%);
-        border: 3px dashed #E74C3C;
-
-        .dropzone-item {
-          display: none;
-        }
-
-      }
-      &--loading {
-        background-color: lighten(#F39C12, 30%);
-        border: 3px dashed #E74C3C;
-        .dropzone-item {
-          display: none;
-        }
-      }
-      .list-group-item {
-        background-color: transparent;
-      }
-      .dropzone-item {
-        border-width: 0;
-      }
-    }
   }
 }
 
@@ -250,6 +215,12 @@ html, body {
 .taskList__tasks {
   .list-group-item {
     padding: 8px 32px 8px 8px;
+  }
+  &--empty {
+    box-sizing: border-box;
+    background-color: lighten(#F39C12, 30%);
+    border: 3px dashed #F1C40F;
+    min-height: ($line-height-computed * 2) + (6 * 2);
   }
 }
 

@@ -1,11 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import dragula from 'react-dragula'
+import Sortable from 'react-sortablejs'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
+
 import Task from './Task'
-import { removeTasks, modifyTaskList, togglePolyline, drakeDrag, drakeDragEnd } from '../redux/actions'
+import { removeTasks, modifyTaskList, togglePolyline } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
@@ -17,11 +18,9 @@ class TaskList extends React.Component {
     this.state = {
       collapsed: props.collapsed
     }
-    this.taskListRef = React.createRef()
   }
 
   componentDidMount() {
-    this.props.taskListDidMount(this)
 
     const { username, collapsed } = this.props
 
@@ -36,90 +35,10 @@ class TaskList extends React.Component {
     if (!collapsed) {
       $('#collapse-' + username).collapse('show')
     }
-
-    // handler to change the task order within a courier tasklist
-    dragula([ this.taskListRef.current ], {
-      // You can set accepts to a method with the following signature: (el, target, source, sibling).
-      // It'll be called to make sure that an element el, that came from container source,
-      // can be dropped on container target before a sibling element.
-      // The sibling can be null, which would mean that the element would be placed as the last element in the container.
-      accepts: (el, target, source, sibling) => {
-
-        if (el === sibling) {
-          return true
-        }
-
-        const { tasks } = this.props
-
-        const draggedTask = _.find(tasks, task => task['@id'] === el.getAttribute('data-task-id'))
-
-        if (!draggedTask.previous && !draggedTask.next) {
-          return true
-        }
-
-        const taskOrder = _.map(tasks, task => task['@id'])
-
-        let siblingTaskIndex
-        if (sibling === null) {
-          siblingTaskIndex = tasks.length - 1
-        } else {
-          const siblingTask = _.find(tasks, task => task['@id'] === sibling.getAttribute('data-task-id'))
-          siblingTaskIndex  = taskOrder.indexOf(siblingTask['@id'])
-        }
-
-        if (draggedTask.previous) {
-          const previousTaskIndex = taskOrder.indexOf(draggedTask.previous)
-          if (siblingTaskIndex <= previousTaskIndex) {
-            return false
-          }
-        }
-
-        if (draggedTask.next) {
-          const nextTaskIndex = taskOrder.indexOf(draggedTask.next)
-          if (siblingTaskIndex >= nextTaskIndex) {
-            return false
-          }
-        }
-
-        return true
-      }
-    }).on('drop', (element, target) => {
-
-      const { tasks } = this.props
-
-      const elements = target.querySelectorAll('.list-group-item')
-      const tasksOrder = _.map(elements, element => element.getAttribute('data-task-id'))
-
-      let newTasks = tasks.slice()
-      newTasks.sort((a, b) => {
-        const keyA = tasksOrder.indexOf(a['@id'])
-        const keyB = tasksOrder.indexOf(b['@id'])
-
-        return keyA > keyB ? 1 : -1
-      })
-
-      this.props.modifyTaskList(this.props.username, newTasks)
-
-    }).on('drag', () => {
-      this.props.drakeDrag()
-    }).on('dragend', () => {
-      this.props.drakeDragEnd()
-    })
-
   }
 
-  remove(taskToRemove) {
-
-    // Check if we need to remove another linked task
-    // FIXME
-    // Make it work when more than 2 tasks are linked together
-    let tasksToRemove = [ taskToRemove ]
-    if (taskToRemove.previous || taskToRemove.next) {
-      const linkedTasks = _.filter(this.props.tasks, task => task['@id'] === (taskToRemove.previous || taskToRemove.next))
-      tasksToRemove = tasksToRemove.concat(linkedTasks)
-    }
-
-    this.props.removeTasks(this.props.username, tasksToRemove)
+  remove(task) {
+    this.props.removeTasks(this.props.username, task)
   }
 
   render() {
@@ -152,6 +71,11 @@ class TaskList extends React.Component {
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
 
+    const taskListClasslist = ['taskList__tasks', 'list-group', 'nomargin']
+    if (tasks.length === 0) {
+      taskListClasslist.push('taskList__tasks--empty')
+    }
+
     return (
       <div className="panel panel-default nomargin noradius noborder">
         <div className="panel-heading  dashboard__panel__heading">
@@ -183,12 +107,61 @@ class TaskList extends React.Component {
               </a>
             </div>
           )}
-          <div className="list-group dropzone" data-username={ username }>
-            <div className="list-group-item text-center dropzone-item">
-              { this.props.t('ADMIN_DASHBOARD_DROP_DELIVERIES') }
-            </div>
-          </div>
-          <div ref={ this.taskListRef } className="taskList__tasks list-group nomargin">
+          <Sortable
+            className={ taskListClasslist.join(' ') }
+            onChange={ (order, sortable, e) => {
+
+              if (e.type === 'add' || e.type === 'update') {
+
+                const isTask = e.item.hasAttribute('data-task-id')
+
+                let tasks = []
+                if (isTask) {
+
+                  tasks = order.map(id => ({ '@id': id }))
+
+                  if (e.type === 'add') {
+                    const task = _.find(this.props.allTasks, t => t['@id'] === e.item.getAttribute('data-task-id'))
+
+                    if (task.previous) {
+                      // If previous task is another day, will be null
+                      const previousTask = _.find(this.props.allTasks, t => t['@id'] === task.previous)
+                      if (previousTask) {
+                        Array.prototype.splice.apply(tasks,
+                          Array.prototype.concat([ e.newIndex, 0 ], previousTask))
+                      }
+                    } else if (task.next) {
+                      // If next task is another day, will be null
+                      const nextTask = _.find(this.props.allTasks, t => t['@id'] === task.next)
+                      if (nextTask) {
+                        Array.prototype.splice.apply(tasks,
+                          Array.prototype.concat([ e.newIndex + 1, 0 ], nextTask))
+                      }
+                    }
+                  }
+
+                } else {
+
+                  const tasksFromGroup = Array
+                    .from(e.item.querySelectorAll('[data-task-id]'))
+                    .map(el => _.find(this.props.allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+
+                  tasks = this.props.items.slice()
+
+                  Array.prototype.splice.apply(tasks,
+                    Array.prototype.concat([ e.newIndex, 0 ], tasksFromGroup))
+                }
+
+                this.props.modifyTaskList(this.props.username, tasks)
+              }
+            }}
+            options={{
+              dataIdAttr: 'data-task-id',
+              group: {
+                name: 'assigned',
+                put: ['unassigned'],
+              },
+            }}>
             { tasks.map(task => (
               <Task
                 key={ task['@id'] }
@@ -197,7 +170,7 @@ class TaskList extends React.Component {
                 onRemove={ task => this.remove(task) }
               />
             ))}
-          </div>
+          </Sortable>
         </div>
       </div>
     )
@@ -207,6 +180,7 @@ class TaskList extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     polylineEnabled: state.polylineEnabled[ownProps.username],
+    allTasks: state.allTasks,
     tasks: selectFilteredTasks({
       tasks: ownProps.items,
       filters: state.filters,
@@ -223,8 +197,6 @@ function mapDispatchToProps(dispatch) {
     removeTasks: (username, tasks) => { dispatch(removeTasks(username, tasks)) },
     modifyTaskList: (username, tasks) => { dispatch(modifyTaskList(username, tasks)) },
     togglePolyline: (username) => { dispatch(togglePolyline(username)) },
-    drakeDrag: () => dispatch(drakeDrag()),
-    drakeDragEnd: () => dispatch(drakeDragEnd()),
   }
 }
 

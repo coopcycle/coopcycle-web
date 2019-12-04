@@ -7,7 +7,6 @@ import { withTranslation } from 'react-i18next'
 import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
-import autoScroll from 'dom-autoscroller'
 
 class TaskLists extends React.Component {
 
@@ -15,11 +14,9 @@ class TaskLists extends React.Component {
     super(props)
     this.state = {
       selectedCourier: '',
-      isDragging: false
     }
 
     this.addUser = this.addUser.bind(this)
-    this.scrollableRef = React.createRef()
   }
 
   componentDidMount() {
@@ -27,25 +24,6 @@ class TaskLists extends React.Component {
     $('#accordion').on('show.bs.collapse', '.collapse', () => {
       $('#accordion').find('.collapse.in').collapse('hide')
     })
-
-    const self = this
-
-    autoScroll([ this.scrollableRef.current ], {
-      margin: 20,
-      maxSpeed: 5,
-      scrollWhenOutside: false,
-      // Can't use an arrow function, because "this" would be wrong
-      autoScroll: function() {
-        // Only scroll when the pointer is down, and there is a child being dragged.
-        return this.down && self.state.isDragging
-      }
-    })
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.isDragging !== prevProps.isDragging) {
-      this.setState({ isDragging: this.props.isDragging })
-    }
   }
 
   addUser() {
@@ -102,7 +80,6 @@ class TaskLists extends React.Component {
           </div>
         </Modal>
         <div
-          ref={ this.scrollableRef }
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -116,9 +93,7 @@ class TaskLists extends React.Component {
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
-                  items={ taskList.items }
-                  taskListDidMount={ this.props.taskListDidMount }
-                />
+                  items={ taskList.items } />
               )
             })
           }
@@ -129,16 +104,17 @@ class TaskLists extends React.Component {
 }
 
 function mapStateToProps (state) {
+
   return {
     addModalIsOpen: state.addModalIsOpen,
     taskLists: state.taskLists,
     taskListsLoading: state.taskListsLoading,
-    isDragging: state.isDragging,
-    taskModalIsOpen: state.taskModalIsOpen
+    taskModalIsOpen: state.taskModalIsOpen,
   }
 }
 
 function mapDispatchToProps (dispatch) {
+
   return {
     addTaskList: (date, username) => dispatch(addTaskList(date, username)),
     openAddUserModal: () => { dispatch(openAddUserModal()) },
