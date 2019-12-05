@@ -56,6 +56,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),
             new TwigFunction('coopcycle_logo', array(AppearanceRuntime::class, 'logo')),
             new TwigFunction('coopcycle_company_logo', array(AppearanceRuntime::class, 'companyLogo')),
+            new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
         );
     }
 
