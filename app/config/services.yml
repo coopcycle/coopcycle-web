@@ -128,13 +128,6 @@ services:
       $orderManager: '@sylius.manager.order'
       $adjustmentFactory: '@sylius.factory.adjustment'
 
-  AppBundle\Command\OptimizeImagesCommand:
-    arguments:
-      $restaurantImagesDir: '%kernel.project_dir%/web/images/restaurants'
-      $restaurantImagesLoader: '@liip_imagine.binary.loader.restaurant_thumbnail'
-      $filterManager: '@liip_imagine.filter.manager'
-      $filesystem: '@filesystem'
-
   AppBundle\Command\BotCommand:
     arguments:
       $apiClient: '@csa_guzzle.client.api'
