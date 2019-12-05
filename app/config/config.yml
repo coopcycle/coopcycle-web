@@ -264,6 +264,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: tasks
+        receipts_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: receipts
     filesystems:
         assets:
             adapter: assets_local
@@ -309,6 +314,10 @@ oneup_flysystem:
             adapter: receipts_local
             alias: receipts_filesystem
             mount: receipts_filesystem
+        receipts_s3:
+            adapter: receipts_s3
+            alias: receipts_s3_filesystem
+            mount: receipts_s3_filesystem
 
 vich_uploader:
     db_driver: orm
