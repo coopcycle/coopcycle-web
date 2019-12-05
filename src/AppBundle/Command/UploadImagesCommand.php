@@ -41,8 +41,8 @@ class UploadImagesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('coopcycle:images:upload')
-            ->setDescription('Upload images.');
+            ->setName('coopcycle:s3:upload_files')
+            ->setDescription('Upload files stored locally to S3.');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
