@@ -1,8 +1,6 @@
-{% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
+{% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
 {% if restaurant_image is empty %}
   {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
-{% else %}
-  {% set restaurant_image = restaurant_image|imagine_filter('restaurant_thumbnail') %}
 {% endif %}
 
 {% set restaurant_path_params = {

@@ -60,9 +60,9 @@
   {% endif %}
 
   <header class="restaurant-header">
-    {% set restaurant_image = vich_uploader_asset(restaurant, 'imageFile') %}
+    {% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
     {% if restaurant_image is not empty %}
-      <img class="restaurant-image" src="{{ restaurant_image|imagine_filter('restaurant_thumbnail') }}">
+      <img class="restaurant-image" src="{{ restaurant_image }}">
     {% endif %}
     <section class="restaurant-header-body">
       <h1>{{ restaurant.name }}</h1>

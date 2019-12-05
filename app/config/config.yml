@@ -342,8 +342,8 @@ vich_uploader:
     storage: flysystem
     mappings:
         restaurant_image:
-            uri_prefix: /images/restaurants
-            upload_destination: restaurant_images_filesystem
+            uri_prefix: ''
+            upload_destination: restaurant_images_s3_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -351,8 +351,8 @@ vich_uploader:
                     chars_per_dir: 2
                     dirs: 2
         store_image:
-            uri_prefix: /images/stores
-            upload_destination: store_images_filesystem
+            uri_prefix: ''
+            upload_destination: store_images_s3_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -360,8 +360,8 @@ vich_uploader:
                     chars_per_dir: 2
                     dirs: 2
         task_image:
-            uri_prefix: /images/tasks
-            upload_destination: task_images_filesystem
+            uri_prefix: ''
+            upload_destination: task_images_s3_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -369,8 +369,8 @@ vich_uploader:
                     chars_per_dir: 2
                     dirs: 2
         product_image:
-            uri_prefix: /images/products
-            upload_destination: product_images_filesystem
+            uri_prefix: ''
+            upload_destination: product_images_s3_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -537,6 +537,7 @@ liip_imagine:
     filter_sets:
         cache: ~
         restaurant_thumbnail:
+            data_loader: restaurant_images
             filters:
                 upscale:
                     min: [ 512, 512 ]
@@ -553,6 +554,7 @@ liip_imagine:
                     strip_all: true
                     level: 4
         task_image_thumbnail:
+            data_loader: task_images
             filters:
                 thumbnail:
                     size: [ 128, 128 ]
@@ -563,6 +565,7 @@ liip_imagine:
                     max: 80
                     progressive: true
         product_thumbnail:
+            data_loader: product_images
             filters:
                 upscale:
                     min: [ 256, 256 ]
@@ -578,16 +581,52 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        store_thumbnail:
+            data_loader: store_images
+            filters:
+                upscale:
+                    min: [ 512, 512 ]
+                thumbnail:
+                    size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+        logo_thumbnail:
+            data_loader: assets
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
                 data_root: '%kernel.project_dir%/web'
-        restaurant_thumbnail:
-            filesystem:
-                data_root: '%kernel.project_dir%/web/images/restaurants'
-        product_thumbnail:
-            filesystem:
-                data_root: '%kernel.project_dir%/web/images/products'
+        restaurant_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.restaurant_images_s3_filesystem
+        product_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.product_images_s3_filesystem
+        store_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.store_images_s3_filesystem
+        task_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.task_images_s3_filesystem
+        assets:
+            flysystem:
+                filesystem_service: oneup_flysystem.assets_s3_filesystem
 
 oneup_uploader:
     mappings:
@@ -595,7 +634,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.restaurant_images_filesystem
+                filesystem: oneup_flysystem.restaurant_images_s3_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
@@ -604,7 +643,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.product_images_filesystem
+                filesystem: oneup_flysystem.product_images_s3_filesystem
             allowed_mimetypes:
                 image/jpg: []
                 image/jpeg: []
@@ -613,7 +652,7 @@ oneup_uploader:
             frontend: dropzone
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.assets_filesystem
+                filesystem: oneup_flysystem.assets_s3_filesystem
             namer: AppBundle\Utils\LogoNamer
             allowed_mimetypes:
                 image/png: []

@@ -1,9 +1,3 @@
-{#
-{% set restaurant_image = vich_uploader_asset(order.restaurant, 'imageFile') %}
-{% if restaurant_image is not empty %}
-  <img src="{{ vich_uploader_asset(order.restaurant, 'imageFile') }}" class="img-responsive order-map__image">
-{% endif %}
-#}
 {{ order.restaurant.address.streetAddress }}
 <br>
 {{ order.restaurant.address.postalCode }} {{ order.restaurant.address.addressLocality }}

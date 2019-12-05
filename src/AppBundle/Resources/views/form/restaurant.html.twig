@@ -14,9 +14,10 @@
 {% endblock %}
 
 {% block _restaurant_imageFile_row %}
+  {% set image_url = coopcycle_asset(form.parent.vars.value, 'imageFile', 'restaurant_thumbnail') %}
   <div class="form-group {% if not form.vars.valid %}has-error{% endif %}">
     <div class="image-uploader"
-      {% if image_uri is defined and image_uri %}style="background-image: url({{ image_uri }})"{% endif %}>
+      {% if image_url is not empty %}style="background-image: url({{ image_url }})"{% endif %}>
       <label for="{{ form.file.vars.id }}" class="btn btn-danger">
         <i class="fa fa-upload"></i> {% trans %}restaurant.form.uploadImage{% endtrans %}
       </label>
