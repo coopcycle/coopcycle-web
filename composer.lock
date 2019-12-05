@@ -7212,16 +7212,16 @@
         },
         {
             "name": "oneup/flysystem-bundle",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupFlysystemBundle.git",
-                "reference": "697cb9bdf86b578ac77932511375ab8f29f3c5d8"
+                "reference": "a0582fb6af7262fd803de43605709d1ce2e48b27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/697cb9bdf86b578ac77932511375ab8f29f3c5d8",
-                "reference": "697cb9bdf86b578ac77932511375ab8f29f3c5d8",
+                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/a0582fb6af7262fd803de43605709d1ce2e48b27",
+                "reference": "a0582fb6af7262fd803de43605709d1ce2e48b27",
                 "shasum": ""
             },
             "require": {
@@ -7232,6 +7232,7 @@
             "require-dev": {
                 "jenko/flysystem-gaufrette": "^1.0",
                 "league/flysystem-aws-s3-v2": "^1.0",
+                "league/flysystem-azure-blob-storage": "^0.1",
                 "league/flysystem-cached-adapter": "^1.0",
                 "league/flysystem-gridfs": "^1.0",
                 "league/flysystem-memory": "^1.0",
@@ -7257,6 +7258,7 @@
                 "jenko/flysystem-gaufrette": "Allows you to use gaufrette adapter",
                 "league/flysystem-aws-s3-v2": "Use S3 storage with AWS SDK v2",
                 "league/flysystem-aws-s3-v3": "Use S3 storage with AWS SDK v3",
+                "league/flysystem-azure-blob-storage": "Allows you to use Azure Blob Storage adapter",
                 "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
                 "league/flysystem-gridfs": "Allows you to use GridFS adapter",
                 "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
@@ -7304,7 +7306,7 @@
                 "abstraction",
                 "filesystem"
             ],
-            "time": "2019-04-26T13:11:17+00:00"
+            "time": "2019-11-23T14:19:43+00:00"
         },
         {
             "name": "oneup/uploader-bundle",
