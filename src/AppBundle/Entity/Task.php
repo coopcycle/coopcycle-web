@@ -132,7 +132,7 @@ class Task implements TaggableInterface
     private $type = self::TYPE_DROPOFF;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "delivery"})
      */
     private $status = self::STATUS_TODO;
 

@@ -108,6 +108,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -130,6 +131,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -186,6 +188,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -208,6 +211,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -263,6 +267,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -285,6 +290,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -336,6 +342,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -358,6 +365,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -414,6 +422,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -436,6 +445,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -491,6 +501,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -513,6 +524,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -564,6 +576,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":@...@,
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -575,6 +588,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
             "@type":"http://schema.org/Place",
