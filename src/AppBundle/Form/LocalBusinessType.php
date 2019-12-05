@@ -65,7 +65,7 @@ abstract class LocalBusinessType extends AbstractType
 
         foreach ($options['additional_properties'] as $key) {
             $builder->add($key, TextType::class, [
-                'required' => true,
+                'required' => false,
                 'mapped' => false,
                 'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
                 // TODO Add constraints
