@@ -6,7 +6,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserInterface;
-use JMose\CommandSchedulerBundle\Entity\ScheduledCommand;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -33,9 +32,6 @@ class SetupCommand extends Command
 
     private $productAttributeRepository;
     private $productAttributeManager;
-
-    private $scheduledCommandRepository;
-    private $scheduledCommandManager;
 
     private $localeRepository;
     private $localeFactory;
@@ -120,11 +116,6 @@ class SetupCommand extends Command
         $this->productAttributeRepository = $productAttributeRepository;
         $this->productAttributeManager = $productAttributeManager;
 
-        $this->scheduledCommandRepository =
-            $doctrine->getRepository(ScheduledCommand::class);
-        $this->scheduledCommandManager =
-            $doctrine->getManagerForClass(ScheduledCommand::class);
-
         $this->localeRepository = $localeRepository;
         $this->localeFactory = $localeFactory;
 
@@ -185,9 +176,6 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
         $this->createFreeDeliveryPromotion($output);
-
-        $output->writeln('<info>Checking commands are scheduled…</info>');
-        $this->createScheduledCommands($output);
     }
 
     private function createSyliusLocale($code, OutputInterface $output)
@@ -386,50 +374,6 @@ class SetupCommand extends Command
 
         } else {
             $output->writeln('Promotion « FREE_DELIVERY » already exists');
-        }
-    }
-
-    private function createScheduledCommands(OutputInterface $output)
-    {
-        $flushTracking = $this->scheduledCommandRepository
-            ->findOneByCommand('coopcycle:tracking:flush');
-
-        if (!$flushTracking) {
-            $flushTracking = new ScheduledCommand();
-            $flushTracking
-                ->setName('Flush tracking')
-                ->setCommand('coopcycle:tracking:flush')
-                ->setCronExpression('*/10 * * * *')
-                ->setPriority(1)
-                ->setExecuteImmediately(false)
-                ->setDisabled(false);
-
-            $this->scheduledCommandManager->persist($flushTracking);
-            $this->scheduledCommandManager->flush();
-            $output->writeln('Adding scheduled command « coopcycle:tracking:flush »');
-        } else {
-            $output->writeln('Scheduled command « coopcycle:tracking:flush » already exists');
-        }
-
-        $importStripeFee = $this->scheduledCommandRepository
-            ->findOneByCommand('coopcycle:orders:import-stripe-fee');
-
-        if (!$importStripeFee) {
-            $importStripeFee = new ScheduledCommand();
-            $importStripeFee
-                ->setName('Import Stripe fees')
-                ->setCommand('coopcycle:orders:import-stripe-fee')
-                // Every day at 01:00 AM
-                ->setCronExpression('0 1 * * *')
-                ->setPriority(1)
-                ->setExecuteImmediately(false)
-                ->setDisabled(false);
-
-            $this->scheduledCommandManager->persist($importStripeFee);
-            $this->scheduledCommandManager->flush();
-            $output->writeln('Adding scheduled command « coopcycle:orders:import-stripe-fee »');
-        } else {
-            $output->writeln('Scheduled command « coopcycle:orders:import-stripe-fee » already exists');
         }
     }
 }
