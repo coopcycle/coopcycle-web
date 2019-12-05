@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Restaurant;
@@ -81,7 +82,9 @@ trait RestaurantTrait
         return array_merge($params, $routeParams);
     }
 
-    protected function renderRestaurantForm(Restaurant $restaurant, Request $request)
+    protected function renderRestaurantForm(Restaurant $restaurant, Request $request,
+        JWTEncoderInterface $jwtEncoder,
+        IriConverterInterface $iriConverter)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant);
 
@@ -163,6 +166,36 @@ trait RestaurantTrait
             array_push($zoneNames, $zone->getName());
         }
 
+        $loopeatAuthorizeUrl = '';
+        if ($this->getParameter('loopeat_enabled') && $restaurant->isLoopeatEnabled()) {
+
+            $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            $redirectAfterUri = $this->generateUrl(
+                $routes['success'],
+                ['id' => $restaurant->getId()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            // Use a JWT as the "state" parameter
+            $state = $jwtEncoder->encode([
+                'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
+                'sub' => $iriConverter->getIriFromItem($restaurant),
+                // The "iss" (Issuer) claim contains a redirect URL
+                'iss' => $redirectAfterUri,
+            ]);
+
+            $queryString = http_build_query([
+                'client_id' => $this->getParameter('loopeat_client_id'),
+                'response_type' => 'code',
+                'state' => $state,
+                // FIXME redirect_uri doesn't work yet
+                // 'redirect_uri' => $redirectUri,
+            ]);
+
+            $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'zoneNames' => json_encode($zoneNames),
             'restaurant' => $restaurant,
@@ -170,11 +203,12 @@ trait RestaurantTrait
             'formErrors' => $formErrors,
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
-            'deliveryPerimeterExpression' => json_encode($restaurant->getDeliveryPerimeterExpression())
+            'deliveryPerimeterExpression' => json_encode($restaurant->getDeliveryPerimeterExpression()),
+            'loopeat_authorize_url' => $loopeatAuthorizeUrl,
         ], $routes));
     }
 
-    public function restaurantAction($id, Request $request)
+    public function restaurantAction($id, Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
     {
         $repository = $this->getDoctrine()->getRepository(Restaurant::class);
 
@@ -182,15 +216,15 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        return $this->renderRestaurantForm($restaurant, $request);
+        return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
     }
 
-    public function newRestaurantAction(Request $request)
+    public function newRestaurantAction(Request $request, JWTEncoderInterface $jwtEncoder, IriConverterInterface $iriConverter)
     {
         // TODO Check roles
         $restaurant = new Restaurant();
 
-        return $this->renderRestaurantForm($restaurant, $request);
+        return $this->renderRestaurantForm($restaurant, $request, $jwtEncoder, $iriConverter);
     }
 
     protected function renderRestaurantDashboard(

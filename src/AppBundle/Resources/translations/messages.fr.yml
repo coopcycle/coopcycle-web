@@ -802,3 +802,5 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
+profile.loopeat.connect: Connecter mon compte LoopEat
+profile.loopeat.connected: Compte LoopEat connecté

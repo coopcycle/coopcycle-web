@@ -202,6 +202,12 @@ services:
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
 
+  AppBundle\Controller\LoopEatController:
+    arguments:
+      $loopeatBaseUrl: '%loopeat_base_url%'
+      $loopeatClientId: '%loopeat_client_id%'
+      $loopeatClientSecret: '%loopeat_client_secret%'
+
   AppBundle\EventListener\LocaleListener:
     arguments: ['%kernel.default_locale%']
     tags:

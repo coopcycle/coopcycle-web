@@ -772,3 +772,5 @@ delivery.import.success_message: Your file was successfully processed, %count% d
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
+profile.loopeat.connect: Connect my LoopEat account
+profile.loopeat.connected: LoopEat account connected
