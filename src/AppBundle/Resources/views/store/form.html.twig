@@ -63,6 +63,12 @@
       {% if form.siret is defined %}
         {{ form_row(form.siret) }}
       {% endif %}
+      {% if form.vat_number is defined %}
+        {{ form_row(form.vat_number) }}
+      {% endif %}
+      {% if form.rcs_number is defined %}
+        {{ form_row(form.rcs_number) }}
+      {% endif %}
     </div>
   </div>
   <hr>
