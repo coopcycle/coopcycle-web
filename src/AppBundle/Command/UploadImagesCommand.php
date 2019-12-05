@@ -53,46 +53,40 @@ class UploadImagesCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io->text('Uploading product images');
-
-        $files = $this->localProductImagesFilesystem->listContents('', true);
-        foreach ($files as $file) {
-            if ($file['type'] === 'file') {
-                $this->io->text(sprintf('Uploading file %s', $file['path']));
-                $stream = $this->localProductImagesFilesystem->readStream($file['path']);
-                $this->remoteProductImagesFilesystem->putStream($file['path'], $stream);
-            }
-        }
+        $this->synchronize(
+            $this->localProductImagesFilesystem,
+            $this->remoteProductImagesFilesystem
+        );
 
         $this->io->text('Uploading restaurant images');
-
-        $files = $this->localRestaurantImagesFilesystem->listContents('', true);
-        foreach ($files as $file) {
-            if ($file['type'] === 'file') {
-                $this->io->text(sprintf('Uploading file %s', $file['path']));
-                $stream = $this->localRestaurantImagesFilesystem->readStream($file['path']);
-                $this->remoteRestaurantImagesFilesystem->putStream($file['path'], $stream);
-            }
-        }
+        $this->synchronize(
+            $this->localRestaurantImagesFilesystem,
+            $this->remoteRestaurantImagesFilesystem
+        );
 
         $this->io->text('Uploading task images');
-
-        $files = $this->localTaskImagesFilesystem->listContents('', true);
-        foreach ($files as $file) {
-            if ($file['type'] === 'file') {
-                $this->io->text(sprintf('Uploading file %s', $file['path']));
-                $stream = $this->localTaskImagesFilesystem->readStream($file['path']);
-                $this->remoteTaskImagesFilesystem->putStream($file['path'], $stream);
-            }
-        }
+        $this->synchronize(
+            $this->localTaskImagesFilesystem,
+            $this->remoteTaskImagesFilesystem
+        );
 
         $this->io->text('Uploading receipts files');
+        $this->synchronize(
+            $this->localReceiptsFilesystem,
+            $this->remoteReceiptsFilesystem
+        );
+    }
 
-        $files = $this->localReceiptsFilesystem->listContents('', true);
+    private function synchronize($localFilesystem, $remoteFilesystem)
+    {
+        $files = $localFilesystem->listContents('', true);
+        $this->io->text(sprintf('Found %d files to synchronize', count($files)));
+
         foreach ($files as $file) {
-            if ($file['type'] === 'file') {
+            if ($file['type'] === 'file' && '.' !== substr($file['basename'], 0, 1)) {
                 $this->io->text(sprintf('Uploading file %s', $file['path']));
-                $stream = $this->localReceiptsFilesystem->readStream($file['path']);
-                $this->remoteReceiptsFilesystem->putStream($file['path'], $stream);
+                $stream = $localFilesystem->readStream($file['path']);
+                $remoteFilesystem->putStream($file['path'], $stream);
             }
         }
     }
