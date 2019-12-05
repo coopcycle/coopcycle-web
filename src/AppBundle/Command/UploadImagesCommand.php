@@ -19,7 +19,9 @@ class UploadImagesCommand extends ContainerAwareCommand
         Filesystem $localRestaurantImagesFilesystem,
         Filesystem $remoteRestaurantImagesFilesystem,
         Filesystem $localTaskImagesFilesystem,
-        Filesystem $remoteTaskImagesFilesystem)
+        Filesystem $remoteTaskImagesFilesystem,
+        Filesystem $localReceiptsFilesystem,
+        Filesystem $remoteReceiptsFilesystem)
     {
         $this->localProductImagesFilesystem = $localProductImagesFilesystem;
         $this->remoteProductImagesFilesystem = $remoteProductImagesFilesystem;
@@ -29,6 +31,9 @@ class UploadImagesCommand extends ContainerAwareCommand
 
         $this->localTaskImagesFilesystem = $localTaskImagesFilesystem;
         $this->remoteTaskImagesFilesystem = $remoteTaskImagesFilesystem;
+
+        $this->localReceiptsFilesystem = $localReceiptsFilesystem;
+        $this->remoteReceiptsFilesystem = $remoteReceiptsFilesystem;
 
         parent::__construct();
     }
@@ -77,6 +82,17 @@ class UploadImagesCommand extends ContainerAwareCommand
                 $this->io->text(sprintf('Uploading file %s', $file['path']));
                 $stream = $this->localTaskImagesFilesystem->readStream($file['path']);
                 $this->remoteTaskImagesFilesystem->putStream($file['path'], $stream);
+            }
+        }
+
+        $this->io->text('Uploading receipts files');
+
+        $files = $this->localReceiptsFilesystem->listContents('', true);
+        foreach ($files as $file) {
+            if ($file['type'] === 'file') {
+                $this->io->text(sprintf('Uploading file %s', $file['path']));
+                $stream = $this->localReceiptsFilesystem->readStream($file['path']);
+                $this->remoteReceiptsFilesystem->putStream($file['path'], $stream);
             }
         }
     }

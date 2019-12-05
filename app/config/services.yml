@@ -153,6 +153,8 @@ services:
       $remoteRestaurantImagesFilesystem: '@restaurant_images_s3_filesystem'
       $localTaskImagesFilesystem: '@task_images_filesystem'
       $remoteTaskImagesFilesystem: '@task_images_s3_filesystem'
+      $localReceiptsFilesystem: '@receipts_filesystem'
+      $remoteReceiptsFilesystem: '@receipts_s3_filesystem'
 
   AppBundle\Controller\OrderController:
     arguments:
