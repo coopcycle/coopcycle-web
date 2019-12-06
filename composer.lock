@@ -5099,27 +5099,27 @@
         },
         {
             "name": "knplabs/knp-markdown-bundle",
-            "version": "1.7.1",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpMarkdownBundle.git",
-                "reference": "c055def2e67fe0d3b3d2e993584f01ff222eff86"
+                "reference": "7238cc264eab9c42d1a5b71950b55fe3dd78ab38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpMarkdownBundle/zipball/c055def2e67fe0d3b3d2e993584f01ff222eff86",
-                "reference": "c055def2e67fe0d3b3d2e993584f01ff222eff86",
+                "url": "https://api.github.com/repos/KnpLabs/KnpMarkdownBundle/zipball/7238cc264eab9c42d1a5b71950b55fe3dd78ab38",
+                "reference": "7238cc264eab9c42d1a5b71950b55fe3dd78ab38",
                 "shasum": ""
             },
             "require": {
                 "michelf/php-markdown": "~1.4",
-                "php": ">=5.5.9",
-                "symfony/dependency-injection": "~2.8|~3.0|^4.0",
-                "symfony/framework-bundle": "~2.8|~3.0|^4.0"
+                "php": "^7.1.3",
+                "symfony/dependency-injection": "~3.4|^4.0|^5.0",
+                "symfony/framework-bundle": "~3.4|^4.0|^5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.5",
-                "symfony/templating": "~2.8|~3.0|^4.0"
+                "symfony/phpunit-bridge": "^4.4.0 || ^5.0",
+                "symfony/templating": "~3.4|^4.0|^5.0"
             },
             "suggest": {
                 "ext-sundown": "to use optional support for php-sundown extension instead of php implementation",
@@ -5158,7 +5158,7 @@
                 "knplabs",
                 "markdown"
             ],
-            "time": "2019-01-03T19:47:10+00:00"
+            "time": "2019-11-26T13:18:52+00:00"
         },
         {
             "name": "knplabs/knp-paginator-bundle",
@@ -6224,20 +6224,23 @@
         },
         {
             "name": "michelf/php-markdown",
-            "version": "1.8.0",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/michelf/php-markdown.git",
-                "reference": "01ab082b355bf188d907b9929cd99b2923053495"
+                "reference": "c83178d49e372ca967d1a8c77ae4e051b3a3c75c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/01ab082b355bf188d907b9929cd99b2923053495",
-                "reference": "01ab082b355bf188d907b9929cd99b2923053495",
+                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/c83178d49e372ca967d1a8c77ae4e051b3a3c75c",
+                "reference": "c83178d49e372ca967d1a8c77ae4e051b3a3c75c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.3 <5.8"
             },
             "type": "library",
             "autoload": {
@@ -6266,7 +6269,7 @@
             "keywords": [
                 "markdown"
             ],
-            "time": "2018-01-15T00:49:33+00:00"
+            "time": "2019-12-02T02:32:27+00:00"
         },
         {
             "name": "misd/phone-number-bundle",
