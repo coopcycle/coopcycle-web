@@ -48,13 +48,10 @@ map.fitBounds(group.getBounds())
 if (!isCompleted && token) {
   let socket = io(`//${window.location.hostname}`, {
     path: '/tracking/socket.io',
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    }
+    transports: [ 'websocket' ],
+    query: {
+      token,
+    },
   })
 
   socket.on('tracking', data => {

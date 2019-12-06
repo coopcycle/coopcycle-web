@@ -49,13 +49,10 @@ function bootstrap($popover, options) {
 
   const socket = io(hostname, {
     path: '/tracking/socket.io',
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          Authorization: `Bearer ${options.jwt}`
-        }
-      }
-    }
+    query: {
+      token: options.jwt,
+    },
+    transports: [ 'websocket' ],
   })
 
   socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))

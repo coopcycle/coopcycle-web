@@ -49,9 +49,9 @@ const authMiddleware = function(socket, next) {
 
   // @see https://stackoverflow.com/questions/36788831/authenticating-socket-io-connections
 
-  if (socket.handshake.headers && socket.handshake.headers.authorization) {
+  if (socket.handshake.query && socket.handshake.query.token) {
 
-    tokenVerifier.verify(socket.handshake.headers)
+    tokenVerifier.verify(socket.handshake.query.token)
       .then(user => {
         if (user instanceof db.User) {
           socket.user = user;

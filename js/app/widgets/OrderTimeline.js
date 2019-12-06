@@ -26,13 +26,10 @@ export default function(el, options) {
 
     const socket = io(`//${window.location.hostname}`, {
       path: '/tracking/socket.io',
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            Authorization: `Bearer ${options.jwt}`
-          }
-        }
-      }
+      transports: [ 'websocket' ],
+      query: {
+        token: options.jwt,
+      },
     })
 
     socket.on('order:accepted',  event => handleEvent('order:accepted', event, options.order, timeline))

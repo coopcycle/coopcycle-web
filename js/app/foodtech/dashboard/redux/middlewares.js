@@ -14,13 +14,10 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket = io(`//${window.location.hostname}`, {
       path: '/tracking/socket.io',
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            Authorization: `Bearer ${getState().jwt}`
-          }
-        }
-      }
+      query: {
+        token: getState().jwt,
+      },
+      transports: [ 'websocket' ],
     })
 
     socket.on('order:created', event => {

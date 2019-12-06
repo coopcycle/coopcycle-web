@@ -44,8 +44,8 @@ function createSocket(username) {
     path: '/tracking/socket.io',
     forceNew: true,
     transports: ['websocket'],
-    extraHeaders: {
-      Authorization: `Bearer ${utils.createJWT(username)}`
+    query: {
+      token: utils.createJWT(username),
     }
   })
 }

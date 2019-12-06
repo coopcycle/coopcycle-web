@@ -10,18 +10,22 @@ const AUTHENTICATION_NOT_FOUND = 'AUTHENTICATION_NOT_FOUND';
 const USER_NOT_FOUND = 'USER_NOT_FOUND';
 const TOKEN_NOT_VALID = 'TOKEN_NOT_VALID'
 
-TokenVerifier.prototype.verify = function(headers) {
+TokenVerifier.prototype.verify = function(token) {
 
   return new Promise((resolve, reject) => {
 
-    var token = headers.authorization;
-    if (!token) {
-      console.log('No JWT found in request');
+    const isString = typeof token === 'string' || token instanceof String;
 
-      return reject(AUTHENTICATION_NOT_FOUND)
+    if (!isString) {
+      token = token.authorization;
+      if (!token) {
+        console.log('No JWT found in request');
+
+        return reject(AUTHENTICATION_NOT_FOUND)
+      }
     }
 
-    token = token.substring('Bearer '.length);
+    token = token.replace('Bearer ', '');
 
     // var self = this;
     jwt.verify(token, this.cert, (err, decoded) => {

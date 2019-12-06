@@ -46,13 +46,10 @@ export const socketIO = ({ dispatch, getState }) => {
 
     socket = io(`//${window.location.hostname}`, {
       path: '/tracking/socket.io',
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            Authorization: `Bearer ${getState().jwt}`
-          }
-        }
-      }
+      transports: [ 'websocket' ],
+      query: {
+        token: getState().jwt,
+      },
     })
 
     socket.on('task:done', data => dispatch(updateTask(data.task)))
