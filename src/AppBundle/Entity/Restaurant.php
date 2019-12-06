@@ -20,6 +20,7 @@ use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
+use AppBundle\LoopEat\OAuthCredentialsTrait as LoopEatOAuthCredentialsTrait;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -91,6 +92,7 @@ class Restaurant extends FoodEstablishment
 {
     use Timestampable;
     use SoftDeleteableEntity;
+    use LoopEatOAuthCredentialsTrait;
 
     const STATE_NORMAL = 'normal';
     const STATE_RUSH = 'rush';
@@ -891,6 +893,11 @@ class Restaurant extends FoodEstablishment
      */
     public function isDepositRefundOptin(): bool
     {
+        if ($this->isLoopeatEnabled()) {
+
+            return true;
+        }
+
         return $this->depositRefundOptin;
     }
 
