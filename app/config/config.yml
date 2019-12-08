@@ -244,6 +244,11 @@ oneup_flysystem:
         receipts_local:
             local:
                 directory: '%kernel.root_dir%/../web/receipts'
+        assets_s3:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: assets
         product_images_s3:
             awss3v3:
                 client: s3_client
@@ -290,6 +295,10 @@ oneup_flysystem:
             adapter: task_images_local
             alias: task_images_filesystem
             mount: task_images_filesystem
+        assets_s3:
+            adapter: assets_s3
+            alias: assets_s3_filesystem
+            mount: assets_s3_filesystem
         product_images_s3:
             adapter: product_images_s3
             alias: product_images_s3_filesystem
