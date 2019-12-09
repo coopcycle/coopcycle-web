@@ -3956,19 +3956,19 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
+                "php": "^7.2",
                 "php-http/client-common": "^2.0",
                 "php-http/client-implementation": "^1.0",
                 "php-http/discovery": "^1.0",
                 "php-http/httplug": "^2.0",
                 "php-http/message-factory": "^1.0",
                 "psr/http-message": "^1.0",
-                "symfony/form": "^3.4|^4.2",
-                "symfony/framework-bundle": "^3.4.26|^4.2.7",
-                "symfony/options-resolver": "^3.4|^4.2",
-                "symfony/security-bundle": "^3.4|^4.2",
-                "symfony/templating": "^3.4|^4.2",
-                "symfony/yaml": "^3.4|^4.2"
+                "symfony/form": "^3.4|^4.3",
+                "symfony/framework-bundle": "^3.4.26|^4.3",
+                "symfony/options-resolver": "^3.4|^4.3",
+                "symfony/security-bundle": "^3.4|^4.3",
+                "symfony/templating": "^3.4|^4.3",
+                "symfony/yaml": "^3.4|^4.3"
             },
             "conflict": {
                 "twig/twig": "<1.34"
@@ -3981,15 +3981,15 @@
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
-                "symfony/css-selector": "^3.4|^4.2",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/css-selector": "^3.4|^4.3",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/translation": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/property-access": "^3.4|^4.3",
+                "symfony/stopwatch": "^3.4|^4.3",
+                "symfony/translation": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -15787,16 +15787,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "7.0.8",
+            "version": "7.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "aa0d179a13284c7420fc281fc32750e6cc7c9e2f"
+                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/aa0d179a13284c7420fc281fc32750e6cc7c9e2f",
-                "reference": "aa0d179a13284c7420fc281fc32750e6cc7c9e2f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/f1884187926fbb755a9aaf0b3836ad3165b478bf",
+                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf",
                 "shasum": ""
             },
             "require": {
@@ -15846,7 +15846,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-09-17T06:24:36+00:00"
+            "time": "2019-11-20T13:55:58+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -16039,16 +16039,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.4.3",
+            "version": "8.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "67f9e35bffc0dd52d55d565ddbe4230454fd6a4e"
+                "reference": "3ee1c1fd6fc264480c25b6fb8285edefe1702dab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/67f9e35bffc0dd52d55d565ddbe4230454fd6a4e",
-                "reference": "67f9e35bffc0dd52d55d565ddbe4230454fd6a4e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3ee1c1fd6fc264480c25b6fb8285edefe1702dab",
+                "reference": "3ee1c1fd6fc264480c25b6fb8285edefe1702dab",
                 "shasum": ""
             },
             "require": {
@@ -16092,7 +16092,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "8.4-dev"
+                    "dev-master": "8.5-dev"
                 }
             },
             "autoload": {
@@ -16118,7 +16118,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-11-06T09:42:23+00:00"
+            "time": "2019-12-06T05:41:38+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -16167,16 +16167,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "4.2.2",
+            "version": "4.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "f2a2c8e1c97c11ace607a7a667d73d47c19fe404"
+                "reference": "464c90d7bdf5ad4e8a6aea15c091fec0603d4368"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/f2a2c8e1c97c11ace607a7a667d73d47c19fe404",
-                "reference": "f2a2c8e1c97c11ace607a7a667d73d47c19fe404",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/464c90d7bdf5ad4e8a6aea15c091fec0603d4368",
+                "reference": "464c90d7bdf5ad4e8a6aea15c091fec0603d4368",
                 "shasum": ""
             },
             "require": {
@@ -16216,7 +16216,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2019-05-05T09:05:15+00:00"
+            "time": "2019-11-20T08:46:58+00:00"
         },
         {
             "name": "sebastian/global-state",
