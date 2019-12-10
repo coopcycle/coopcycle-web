@@ -3974,19 +3974,22 @@
                 "twig/twig": "<1.34"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "^1.11",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.0",
+                "friendsofsymfony/user-bundle": "^2.1",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/css-selector": "^3.4|^4.3",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/property-access": "^3.4|^4.3",
+                "symfony/stopwatch": "^3.4|^4.3",
+                "symfony/translation": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -10113,29 +10116,29 @@
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "2.8.0",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "19a24dbcf5bd5880394d343584dd1b20675f8237"
+                "reference": "6db1e45f3f70e002f867774a3cb0dddf7c313942"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/19a24dbcf5bd5880394d343584dd1b20675f8237",
-                "reference": "19a24dbcf5bd5880394d343584dd1b20675f8237",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/6db1e45f3f70e002f867774a3cb0dddf7c313942",
+                "reference": "6db1e45f3f70e002f867774a3cb0dddf7c313942",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1",
                 "sonata-project/exporter": "^1.11 || ^2.0",
-                "symfony/config": "^2.8 || ^3.2 || ^4.0",
-                "symfony/dependency-injection": "^2.8 || ^3.2 || ^4.0",
-                "symfony/form": "^2.8 || ^3.2 || ^4.0",
-                "symfony/framework-bundle": "^2.8 || ^3.2 || ^4.0",
-                "symfony/http-foundation": "^2.8 || ^3.2 || ^4.0",
-                "symfony/http-kernel": "^2.8 || ^3.2 || ^4.0",
-                "symfony/options-resolver": "^2.8 || ^3.2 || ^4.0",
-                "twig/twig": "^1.40 || ^2.9"
+                "symfony/config": "^3.4 || ^4.2 || ^5.0",
+                "symfony/dependency-injection": "^3.4 || ^4.2 || ^5.0",
+                "symfony/form": "^3.4 || ^4.2 || ^5.0",
+                "symfony/framework-bundle": "^3.4 || ^4.2 || ^5.0",
+                "symfony/http-foundation": "^3.4 || ^4.2 || ^5.0",
+                "symfony/http-kernel": "^3.4 || ^4.2 || ^5.0",
+                "symfony/options-resolver": "^3.4 || ^4.2 || ^5.0",
+                "twig/twig": "^1.40 || ^2.9 || ^3.0"
             },
             "conflict": {
                 "sonata-project/block-bundle": "<3.11"
@@ -10145,11 +10148,11 @@
                 "sonata-project/admin-bundle": "^3.31",
                 "sonata-project/block-bundle": "^3.11",
                 "sonata-project/core-bundle": "^3.9",
-                "symfony/console": "^2.8 || ^3.2 || ^4.0",
-                "symfony/filesystem": "^2.8 || ^3.2 || ^4.0",
-                "symfony/finder": "^2.8 || ^3.2 || ^4.0",
-                "symfony/phpunit-bridge": "^4.1",
-                "symfony/yaml": "^2.8 || ^3.2 || ^4.0"
+                "symfony/console": "^3.4 || ^4.2 || ^5.0",
+                "symfony/filesystem": "^3.4 || ^4.2 || ^5.0",
+                "symfony/finder": "^3.4 || ^4.2 || ^5.0",
+                "symfony/phpunit-bridge": "^4.1 || ^5.0",
+                "symfony/yaml": "^3.4 || ^4.2 || ^5.0"
             },
             "suggest": {
                 "guzzle/guzzle": "3.*",
@@ -10187,7 +10190,7 @@
                 "seo",
                 "sonata"
             ],
-            "time": "2019-10-28T22:41:49+00:00"
+            "time": "2019-11-29T18:28:52+00:00"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
