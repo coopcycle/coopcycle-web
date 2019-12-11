@@ -42,6 +42,9 @@ import {
   OPEN_SETTINGS,
   CLOSE_SETTINGS,
   SET_POLYLINE_STYLE,
+  LOAD_TASK_EVENTS_REQUEST,
+  LOAD_TASK_EVENTS_SUCCESS,
+  LOAD_TASK_EVENTS_FAILURE,
 } from './actions'
 
 const moment = extendMoment(Moment)
@@ -118,7 +121,9 @@ const initialState = {
   settingsModalIsOpen: false,
   polylineStyle: 'normal',
   searchIsOn: false,
-  tasksWithColor: {}
+  tasksWithColor: {},
+  isLoadingTaskEvents: false,
+  taskEvents: {},
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -702,6 +707,32 @@ export const polylineStyle = (state = initialState.polylineStyle, action) => {
 
 }
 
+export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
+  switch (action.type) {
+  case LOAD_TASK_EVENTS_REQUEST:
+
+    return true
+  case LOAD_TASK_EVENTS_SUCCESS:
+  case LOAD_TASK_EVENTS_FAILURE:
+
+    return false
+  }
+
+  return state
+}
+
+export const taskEvents = (state = initialState.taskEvents, action) => {
+  switch (action.type) {
+  case LOAD_TASK_EVENTS_SUCCESS:
+    return {
+      ...state,
+      [action.task['@id']]: action.events
+    }
+  }
+
+  return state
+}
+
 export default (state = initialState, action) => {
 
   const { allTasks, unassignedTasks, taskLists, tasksWithColor } = combinedTasks(state, action)
@@ -735,5 +766,7 @@ export default (state = initialState, action) => {
     settingsModalIsOpen: settingsModalIsOpen(state.settingsModalIsOpen, action),
     polylineStyle: polylineStyle(state.polylineStyle, action),
     tasksWithColor,
+    isLoadingTaskEvents: isLoadingTaskEvents(state.isLoadingTaskEvents, action),
+    taskEvents: taskEvents(state.taskEvents, action),
   }
 }

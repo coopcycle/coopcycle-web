@@ -19,7 +19,7 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 
-import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask } from '../redux/actions'
+import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
 
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -219,32 +219,57 @@ class TaskModalContent extends React.Component {
     )
   }
 
-  renderTimeline(task) {
+  renderTimelineContent() {
+    if (this.props.isLoadingEvents) {
+      return (
+        <div className="text-center">
+          <i className="fa fa-spinner fa-spin"></i>
+        </div>
+      )
+    }
 
-    const events = task.events.slice(0)
+    const { events } = this.props
 
     events.sort((a, b) => {
       return moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1
     })
 
     return (
+      <Timeline>
+        { events.map(event => (
+          <Timeline.Item key={ event.createdAt + '-' + event.name } color={ itemColor(event) }>
+            <p>{ moment(event.createdAt).format('lll') } { event.name }</p>
+            { event.data.notes && (
+              <p>{ event.data.notes }</p>
+            ) }
+          </Timeline.Item>
+        )) }
+      </Timeline>
+    )
+  }
+
+  renderTimeline(task) {
+
+    let anchorProps = {}
+    if (this.props.events.length === 0) {
+      anchorProps = {
+        ...anchorProps,
+        onClick: e => {
+          e.preventDefault()
+          this.props.loadTaskEvents(task)
+        }
+      }
+    }
+
+    return (
       <div>
         <div className="text-center">
-          <a className="help-block" role="button" data-toggle="collapse" href="#task_history" aria-expanded="false">
+          <a className="help-block" role="button" data-toggle="collapse" href="#task_history" aria-expanded="false" { ...anchorProps }>
             <small>{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY') }</small>
           </a>
         </div>
         <div className="collapse" id="task_history" aria-expanded="false">
-          <Timeline>
-            { events.map(event => (
-              <Timeline.Item key={ event.createdAt + '-' + event.name } color={ itemColor(event) }>
-                <p>{ moment(event.createdAt).format('lll') } { event.name }</p>
-                { event.data.notes && (
-                  <p>{ event.data.notes }</p>
-                ) }
-              </Timeline.Item>
-            )) }
-          </Timeline>
+          { this.renderTimelineContent() }
         </div>
       </div>
     )
@@ -465,6 +490,8 @@ function mapStateToProps (state) {
   const country = (window.AppData.countryIso || 'fr').toUpperCase()
   const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
+  const events = state.taskEvents.hasOwnProperty(state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
+
   return {
     task: state.currentTask,
     token: state.jwt,
@@ -474,7 +501,9 @@ function mapStateToProps (state) {
     country,
     phoneNumberExample: phoneNumber.formatNational(),
     date: state.date,
-    isTakTypeEditable: isTaskTypeEditable(state.currentTask)
+    isTaskTypeEditable: isTaskTypeEditable(state.currentTask),
+    isLoadingEvents: state.isLoadingTaskEvents,
+    events,
   }
 }
 
@@ -485,7 +514,8 @@ function mapDispatchToProps(dispatch) {
     createTask: (task) => dispatch(createTask(task)),
     completeTask: (task, notes, success) => dispatch(completeTask(task, notes, success)),
     cancelTask: (task) => dispatch(cancelTask(task)),
-    duplicateTask: (task) => dispatch(duplicateTask(task))
+    duplicateTask: (task) => dispatch(duplicateTask(task)),
+    loadTaskEvents: (task) => dispatch(loadTaskEvents(task)),
   }
 }
 

@@ -114,6 +114,10 @@ export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
 export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
 
+export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
+export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
+export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
+
 import { createTaskList } from './utils'
 
 function assignTasks(username, tasks) {
@@ -371,6 +375,18 @@ function setPolylineStyle(style) {
   return {type: SET_POLYLINE_STYLE, style}
 }
 
+function loadTaskEventsRequest() {
+  return { type: LOAD_TASK_EVENTS_REQUEST }
+}
+
+function loadTaskEventsSuccess(task, events) {
+  return { type: LOAD_TASK_EVENTS_SUCCESS, task, events }
+}
+
+function loadTaskEventsFailure(error) {
+  return { type: LOAD_TASK_EVENTS_FAILURE, error }
+}
+
 function createTask(task) {
 
   return function(dispatch, getState) {
@@ -540,6 +556,32 @@ function duplicateTask(task) {
   }
 }
 
+function loadTaskEvents(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(loadTaskEventsRequest())
+
+    const url = `${task['@id']}/events`
+
+    createClient(dispatch).request({
+      method: 'get',
+      url,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(loadTaskEventsSuccess(task, response.data['hydra:member']))
+      })
+      .catch(error => dispatch(loadTaskEventsFailure(error)))
+  }
+}
+
 export {
   updateTask,
   addTaskList,
@@ -575,4 +617,5 @@ export {
   closeSettings,
   setPolylineStyle,
   cancelTasks,
+  loadTaskEvents,
 }
