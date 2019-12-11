@@ -70,7 +70,7 @@ class TaskSubscriber implements EventSubscriber
         $this->createdTasks = [];
         foreach ($tasksToInsert as $task) {
             $event = $this->eventStore->createEvent(new TaskCreated($task));
-            $task->getEvents()->add($event);
+            $task->addEvent($event);
             $this->createdTasks[] = $task;
         }
 

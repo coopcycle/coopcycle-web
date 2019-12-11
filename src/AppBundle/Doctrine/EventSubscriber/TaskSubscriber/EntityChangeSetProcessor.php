@@ -4,6 +4,8 @@ namespace AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
+use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Entity\Task;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -30,11 +32,22 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
     public function process(Task $task, array $entityChangeSet)
     {
-        if (!isset($entityChangeSet['assignedTo'])) {
+        if (!isset($entityChangeSet['assignedTo']) && !isset($entityChangeSet['status'])) {
 
             return;
         }
 
+        if (isset($entityChangeSet['assignedTo'])) {
+            $this->processAssignedTo($task, $entityChangeSet);
+        }
+
+        if (isset($entityChangeSet['status'])) {
+            $this->processStatus($task, $entityChangeSet);
+        }
+    }
+
+    private function processAssignedTo(Task $task, array $entityChangeSet)
+    {
         [ $oldValue, $newValue ] = $entityChangeSet['assignedTo'];
 
         if ($newValue !== null) {
@@ -121,6 +134,20 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // No need to add an event for linked tasks,
                 // Another event will be trigerred
                 $this->record(new TaskUnassigned($task, $oldValue));
+            }
+        }
+    }
+
+    private function processStatus(Task $task, array $entityChangeSet)
+    {
+        [ $oldValue, $newValue ] = $entityChangeSet['status'];
+
+        if ($oldValue === Task::STATUS_TODO && in_array($newValue, [ Task::STATUS_DONE, Task::STATUS_FAILED ])) {
+            if ($newValue === Task::STATUS_DONE) {
+                $this->record(new TaskDone($task));
+            }
+            if ($newValue === Task::STATUS_FAILED) {
+                $this->record(new TaskFailed($task));
             }
         }
     }

@@ -51,18 +51,11 @@ class EventStore extends ArrayCollection
         }
 
         if ($event instanceof TaskDomainEvent) {
-
-            if ($event instanceof TaskDomainEvent\TaskCreated) {
-                return;
-            }
-
             $domainEvent = $this->createTaskEvent($event);
 
             $this->add($domainEvent);
 
-            $event->getTask()
-                ->getEvents()
-                ->add($domainEvent);
+            $event->getTask()->addEvent($domainEvent);
         }
     }
 
