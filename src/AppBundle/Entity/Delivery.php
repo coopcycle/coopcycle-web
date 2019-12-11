@@ -39,6 +39,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   itemOperations={
  *     "get"={
  *       "method"="GET"
+ *     },
+ *     "put"={
+ *        "method"="PUT",
+ *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
  *     }
  *   },
  *   attributes={

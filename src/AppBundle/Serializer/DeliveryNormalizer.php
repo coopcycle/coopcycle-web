@@ -105,6 +105,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['comments'])) {
             $task->setComments($data['comments']);
         }
+
+        if (isset($data['status']) && in_array($data['status'], [ Task::STATUS_DONE, Task::STATUS_FAILED ])) {
+            $task->setStatus($data['status']);
+        }
     }
 
     private function denormalizeAddress($data, $format = null)

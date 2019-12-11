@@ -875,3 +875,23 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
+
+  Scenario: Can edit task status
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+      | deliveries.yml      |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5" with body:
+      """
+      {
+        "pickup": {
+          "status": "DONE"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON

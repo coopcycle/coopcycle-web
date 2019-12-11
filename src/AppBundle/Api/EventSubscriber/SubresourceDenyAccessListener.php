@@ -46,7 +46,10 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['security', EventPriorities::PRE_READ],
+            KernelEvents::REQUEST => [
+                [ 'addOAuthContext', 4 ],
+                [ 'security', 4 ],
+            ],
         ];
     }
 
@@ -55,7 +58,31 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
         return in_array($request->attributes->get('_route'), [
             'api_restaurants_orders_get_subresource',
             'api_stores_deliveries_get_subresource',
+            'api_deliveries_put_item',
         ]);
+    }
+
+    public function addOAuthContext(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if (!$this->supportsRequest($request)) {
+            return;
+        }
+
+        $oAuth2Context = new \stdClass();
+        if (null !== ($token = $this->tokenStorage->getToken()) && $token instanceof OAuth2Token) {
+
+            $accessToken = $this->accessTokenManager->find($token->getCredentials());
+            $client = $accessToken->getClient();
+
+            $apiApp = $this->doctrine->getRepository(ApiApp::class)
+                ->findOneByOauth2Client($client);
+
+            $oAuth2Context->store = $apiApp->getStore();
+        }
+
+        $request->attributes->set('oauth2_context', $oAuth2Context);
     }
 
     public function security(RequestEvent $event)
@@ -66,42 +93,32 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
             return;
         }
 
-        $subresourceContext = $request->attributes->get('_api_subresource_context');
+        if ($request->attributes->has('_api_subresource_context')) {
 
-        $parent = null;
-        foreach ($subresourceContext['identifiers'] as $key => [$id, $resourceClass]) {
-            if (null !== $parent = $this->itemDataProvider->getItem($resourceClass, $request->attributes->get($id), 'get')) {
-                break;
+            $subresourceContext = $request->attributes->get('_api_subresource_context');
+
+            $parent = null;
+            foreach ($subresourceContext['identifiers'] as $key => [$id, $resourceClass]) {
+                if (null !== $parent = $this->itemDataProvider->getItem($resourceClass, $request->attributes->get($id), 'get')) {
+                    break;
+                }
             }
-        }
 
-        if (null !== $parent) {
+            if (null !== $parent) {
 
-            $operationName = sprintf('%s_get_subresource', $subresourceContext['property']);
+                $operationName = sprintf('%s_get_subresource', $subresourceContext['property']);
+                $resourceClass = $this->doctrine->getManager()->getClassMetadata(get_class($parent))->name;
 
-            // Trick DenyAccessListener to make subresourceOperations work on parent resource
-            $newRequest = $request->duplicate();
-            $newRequest->attributes->set('data', $parent);
-            $newRequest->attributes->set('_api_resource_class', get_class($parent));
-            $newRequest->attributes->set('_api_subresource_operation_name', $operationName);
+                // Trick DenyAccessListener to make subresourceOperations work on parent resource
+                $newRequest = $request->duplicate();
+                $newRequest->attributes->set('data', $parent);
+                $newRequest->attributes->set('_api_resource_class', $resourceClass);
+                $newRequest->attributes->set('_api_subresource_operation_name', $operationName);
 
-            // TODO Generalize to all API requests
-            $oAuth2Context = new \stdClass();
-            if (null !== ($token = $this->tokenStorage->getToken()) && $token instanceof OAuth2Token) {
+                $newEvent = new RequestEvent($event->getKernel(), $newRequest, $event->getRequestType());
 
-                $accessToken = $this->accessTokenManager->find($token->getCredentials());
-                $client = $accessToken->getClient();
-
-                $apiApp = $this->doctrine->getRepository(ApiApp::class)
-                    ->findOneByOauth2Client($client);
-
-                $oAuth2Context->store = $apiApp->getStore();
+                $this->denyAccessListener->onSecurity($newEvent);
             }
-            $newRequest->attributes->set('oauth2_context', $oAuth2Context);
-
-            $newEvent = new RequestEvent($event->getKernel(), $newRequest, $event->getRequestType());
-
-            $this->denyAccessListener->onSecurity($newEvent);
         }
     }
 }
