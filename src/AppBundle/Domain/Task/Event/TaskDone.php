@@ -11,7 +11,7 @@ class TaskDone extends Event implements DomainEvent, HasIconInterface
 {
     private $notes;
 
-    public function __construct(Task $task, $notes)
+    public function __construct(Task $task, $notes = '')
     {
         parent::__construct($task);
 
