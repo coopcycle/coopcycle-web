@@ -34,7 +34,6 @@ Feature: Tasks
             "doneAfter":"2018-03-02T11:30:00+00:00",
             "doneBefore":"2018-03-02T12:00:00+00:00",
             "comments":"#bob",
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"bob",
@@ -54,7 +53,6 @@ Feature: Tasks
             "doneAfter":"2018-03-02T12:00:00+00:00",
             "doneBefore":"2018-03-02T12:30:00+00:00",
             "comments":"#bob",
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"bob",
@@ -66,6 +64,75 @@ Feature: Tasks
         "hydra:totalItems":2
       }
       """
+
+  Scenario: Retrieve task events
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/2/events"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskEvent",
+        "@id":"/api/tasks/2/events",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_events/2",
+            "@type":"TaskEvent",
+            "id":@integer@,
+            "task":"/api/tasks/2",
+            "name":"task:created",
+            "data":[],
+            "metadata":[],
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"/api/task_events/7",
+            "@type":"TaskEvent",
+            "id":@integer@,
+            "task":"/api/tasks/2",
+            "name":"task:assigned",
+            "data":{
+              "username":"bob"
+            },
+            "metadata":[],
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":2
+      }
+      """
+
+  Scenario: Not authorized to retrieve task events
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the courier "sarah" is loaded:
+      | email     | sarah@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345678       |
+    And the user "sarah" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks/2/events"
+    Then the response status code should be 403
+    And the response should be in JSON
 
   Scenario: Mark task as done
     Given the fixtures files are loaded:
@@ -100,7 +167,6 @@ Feature: Tasks
         "doneAfter":"2018-03-02T11:30:00+01:00",
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "comments":@string@,
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"bob",
@@ -153,23 +219,6 @@ Feature: Tasks
         "doneAfter":"2018-03-02T11:30:00+01:00",
         "doneBefore":"2018-03-02T12:00:00+01:00",
         "comments":@string@,
-        "events":[
-          {
-            "name":"ASSIGN",
-            "notes":null,
-            "createdAt":@string@
-          },
-          {
-            "name":"CREATE",
-            "notes":null,
-            "createdAt":@string@
-          },
-          {
-            "name":"FAILED",
-            "notes":"Address not found",
-            "createdAt":@string@
-          }
-        ],
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"bob",
@@ -379,7 +428,6 @@ Feature: Tasks
         "doneAfter":"2018-12-24T23:30:00+01:00",
         "doneBefore":"2018-12-24T23:59:59+01:00",
         "comments":"",
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,
@@ -450,7 +498,6 @@ Feature: Tasks
         "doneAfter":"2018-12-24T23:30:00+01:00",
         "doneBefore":"2018-12-24T23:59:59+01:00",
         "comments":"Hello, world",
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,
@@ -572,7 +619,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T10:30:00+01:00",
             "doneBefore":"2018-12-01T11:00:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -593,7 +639,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T11:30:00+01:00",
             "doneBefore":"2018-12-01T12:00:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -646,7 +691,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T10:30:00+01:00",
             "doneBefore":"2018-12-01T11:00:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -667,7 +711,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T11:30:00+01:00",
             "doneBefore":"2018-12-01T12:00:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -688,7 +731,6 @@ Feature: Tasks
             "after":"2018-12-01T12:00:00+01:00",
             "before":"2018-12-01T12:30:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":false,
             "assignedTo":null,
@@ -707,7 +749,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T12:00:00+01:00",
             "doneBefore":"2018-12-01T12:30:00+01:00",
             "comments":"",
-            "events":@array@,
             "updatedAt":"2019-11-14T18:48:59+01:00",
             "group":null,
             "images":@array@,
@@ -763,7 +804,6 @@ Feature: Tasks
             "doneAfter":"2018-12-01T12:00:00+01:00",
             "doneBefore":"2018-12-01T12:30:00+01:00",
             "comments":null,
-            "events":@array@,
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":false,
             "assignedTo":null,
@@ -816,7 +856,6 @@ Feature: Tasks
         "doneAfter":"2018-12-01T10:30:00+01:00",
         "doneBefore":"2018-12-01T11:00:00+01:00",
         "comments":"",
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,

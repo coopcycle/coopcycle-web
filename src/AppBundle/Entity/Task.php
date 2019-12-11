@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
@@ -102,6 +103,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskDuplicate::class,
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     }
+ *   },
+ *   subresourceOperations={
+ *     "events_get_subresource"={
+ *       "security"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *     }
  *   }
  * )
  * @AssertTask()
@@ -164,7 +170,7 @@ class Task implements TaggableInterface
     private $comments;
 
     /**
-     * @Groups({"task"})
+     * @ApiSubresource
      */
     private $events;
 

@@ -142,20 +142,6 @@ Feature: Dispatch
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":[
-          {
-            "name":"task:assigned",
-            "data":{
-              "username":"sarah"
-            },
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
@@ -192,20 +178,6 @@ Feature: Dispatch
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":[
-          {
-            "name":"task:assigned",
-            "data":{
-              "username":"sarah"
-            },
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
@@ -281,7 +253,6 @@ Feature: Dispatch
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
         "comments":null,
-        "events":@array@,
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,

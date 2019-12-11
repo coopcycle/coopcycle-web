@@ -58,6 +58,7 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
         return in_array($request->attributes->get('_route'), [
             'api_restaurants_orders_get_subresource',
             'api_stores_deliveries_get_subresource',
+            'api_tasks_events_get_subresource',
             'api_deliveries_put_item',
         ]);
     }

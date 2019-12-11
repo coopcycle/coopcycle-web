@@ -2,8 +2,20 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/**
+ * @ApiResource(
+ *   collectionOperations={
+ *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *     }
+ *   }
+ * )
+ */
 class TaskEvent
 {
     private $id;
