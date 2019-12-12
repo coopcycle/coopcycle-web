@@ -490,7 +490,7 @@ function mapStateToProps (state) {
   const country = (window.AppData.countryIso || 'fr').toUpperCase()
   const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
-  const events = state.taskEvents.hasOwnProperty(state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
+  const events = state.currentTask && state.taskEvents.hasOwnProperty(state.currentTask['@id']) ? state.taskEvents[state.currentTask['@id']] : []
 
   return {
     task: state.currentTask,
