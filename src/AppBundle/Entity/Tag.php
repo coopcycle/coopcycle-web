@@ -29,6 +29,13 @@ class Tag
 
     private $updatedAt;
 
+    public function __construct($slug = null)
+    {
+        if (null !== $slug) {
+            $this->slug = $slug;
+        }
+    }
+
     public function getId()
     {
         return $this->id;
