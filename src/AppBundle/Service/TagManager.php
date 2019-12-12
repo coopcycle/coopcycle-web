@@ -8,14 +8,21 @@ use AppBundle\Entity\Tagging;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class TagManager
 {
     private $doctrine;
+    private $cache;
+    private $defaultGetTagsOptions = [
+        'cache' => false,
+    ];
 
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(ManagerRegistry $doctrine, CacheInterface $cache)
     {
         $this->doctrine = $doctrine;
+        $this->cache = $cache;
     }
 
     public function getAllTags()
@@ -23,18 +30,32 @@ class TagManager
         return $this->doctrine->getRepository(Tag::class)->findAll();
     }
 
-    public function getTags(TaggableInterface $taggable)
+    public function getTags(TaggableInterface $taggable, array $options = [])
     {
         $tagRepository = $this->doctrine->getRepository(Tag::class);
 
-        $qb = $tagRepository
-            ->createQueryBuilder('tag')
-            ->join(Tagging::class, 'tagging', Expr\Join::WITH, 'tagging.resourceClass = :resourceClass AND tagging.tag = tag.id')
-            ->andWhere('tagging.resourceId = :resourceId')
-            ->setParameter('resourceClass', $taggable->getTaggableResourceClass())
-            ->setParameter('resourceId', $taggable->getId());
+        $opts = array_merge($this->defaultGetTagsOptions, $options);
 
-        return $qb->getQuery()->getResult();
+        if ($opts['cache'] === true) {
+
+            return $this->cache->get($this->getCacheKey($taggable), function (ItemInterface $item) use ($taggable) {
+
+                $item->expiresAfter(300);
+
+                $tags = [];
+                foreach ($this->getTagsForTaggable($taggable) as $tag) {
+                    $tags[] = [
+                        'name' => $tag->getName(),
+                        'slug' => $tag->getSlug(),
+                        'color' => $tag->getColor(),
+                    ];
+                }
+
+                return $tags;
+            });
+        }
+
+        return $this->getTagsForTaggable($taggable);
     }
 
     public function addTagsAndFlush(TaggableInterface $taggable, $tags)
@@ -58,6 +79,8 @@ class TagManager
         $tagging->setTag($tag);
 
         $taggingEntityManager->persist($tagging);
+
+        $this->cache->delete($this->getCacheKey($taggable));
     }
 
     public function removeTag(TaggableInterface $taggable, Tag $tag)
@@ -72,6 +95,8 @@ class TagManager
         ]);
 
         $taggingEntityManager->remove($tagging);
+
+        $this->cache->delete($this->getCacheKey($taggable));
     }
 
     public function untagAll(Tag $tag)
@@ -85,9 +110,10 @@ class TagManager
 
         foreach ($taggings as $tagging) {
             $taggingEntityManager->remove($tagging);
+            $this->cache->delete($this->getCacheKey($tagging));
         }
     }
- 
+
     public function fromSlugs(array $slugs)
     {
         if (count($slugs) === 0) {
@@ -99,6 +125,36 @@ class TagManager
 
         $qb = $tagRepository->createQueryBuilder('tag');
         $qb->andWhere($qb->expr()->in('tag.slug', $slugs));
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function getCacheKey($taggableOrTagging)
+    {
+        if ($taggableOrTagging instanceof Tagging) {
+            $resourceClass = $taggableOrTagging->getResourceClass();
+            $resourceId = $taggableOrTagging->getResourceId();
+        } elseif ($taggableOrTagging instanceof TaggableInterface) {
+            $resourceClass = $taggableOrTagging->getTaggableResourceClass();
+            $resourceId = $taggableOrTagging->getId();
+        } else {
+            throw new \InvalidArgumentException(sprintf('$taggableOrTagging must be an instance of %s or %s',
+                Tagging::class, TaggableInterface::class));
+        }
+
+        return sha1(sprintf('%s|%d', $resourceClass, $resourceId));
+    }
+
+    private function getTagsForTaggable(TaggableInterface $taggable)
+    {
+        $tagRepository = $this->doctrine->getRepository(Tag::class);
+
+        $qb = $tagRepository
+            ->createQueryBuilder('tag')
+            ->join(Tagging::class, 'tagging', Expr\Join::WITH, 'tagging.resourceClass = :resourceClass AND tagging.tag = tag.id')
+            ->andWhere('tagging.resourceId = :resourceId')
+            ->setParameter('resourceClass', $taggable->getTaggableResourceClass())
+            ->setParameter('resourceId', $taggable->getId());
 
         return $qb->getQuery()->getResult();
     }

@@ -744,3 +744,7 @@ services:
       $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%kernel.default_locale%'
+
+  AppBundle\Service\TagManager:
+    arguments:
+      $cache: '@tag_manager.cache'
