@@ -65,18 +65,9 @@ class TokenBearerListener implements ListenerInterface
             $authToken = $this->authenticationManager->authenticate($token);
             $this->tokenStorage->setToken($authToken);
 
-            return;
-
         } catch (AuthenticationException $e) {
-
             $response = $this->jwtTokenAuthenticator->onAuthenticationFailure($request, $e);
-
             $event->setResponse($response);
-            return;
         }
-
-        $response = new Response();
-        $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-        $event->setResponse($response);
     }
 }

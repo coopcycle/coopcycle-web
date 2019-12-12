@@ -56,12 +56,14 @@ class Bot
     }
 
     /**
-     * @return GeoCoordinates
+     * @return GeoCoordinates|null
      */
     public function getLastPosition()
     {
         if (null !== $this->lastPosition) {
             return GeoUtils::asGeoCoordinates($this->lastPosition);
         }
+
+        return null;
     }
 }

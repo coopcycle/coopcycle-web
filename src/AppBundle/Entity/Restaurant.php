@@ -898,6 +898,8 @@ class Restaurant extends FoodEstablishment
     public function setQuotesAllowed($quotesAllowed)
     {
         $this->quotesAllowed = $quotesAllowed;
+
+        return $this;
     }
 
     public function getReusablePackagings()

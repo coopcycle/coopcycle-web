@@ -56,7 +56,7 @@ class Geocoder
     }
 
     /**
-     * @return Address
+     * @return Address|null
      */
     public function geocode($value)
     {
@@ -75,6 +75,8 @@ class Geocoder
 
             return $address;
         }
+
+        return null;
     }
 
     public function reverse(float $latitude, float $longitude)

@@ -92,7 +92,7 @@ abstract class TaskCollection
                     $i->setPosition($i->getPosition() + 1);
                 }
             }
-        } else if (!$created) {
+        } else {
             $position = is_null($position) ? $this->getMaxPosition() : $position;
             // moving up : decrement positions between the old one (inf) and the new one (sup)
             if ($item->getPosition() > $position) {

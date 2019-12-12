@@ -47,5 +47,7 @@ abstract class Place extends PostalAddress
         if (null !== $this->geo) {
             return GeoUtils::asGeoCoordinates($this->geo);
         }
+
+        return null;
     }
 }
