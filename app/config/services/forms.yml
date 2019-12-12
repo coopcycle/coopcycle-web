@@ -13,6 +13,14 @@ services:
       - "@libphonenumber.phone_number_util"
       - "%country_iso%"
 
+  AppBundle\Utils\DeliverySpreadsheetParser:
+    arguments:
+      - "@coopcycle.geocoder"
+      - "@coopcycle.tag_manager"
+      - "@slugify"
+      - "@libphonenumber.phone_number_util"
+      - "%country_iso%"
+
   AppBundle\Form\ApiRegistrationType:
     arguments: ['%country_iso%']
     tags:
@@ -160,4 +168,7 @@ services:
     arguments:
       $country: '%country_iso%'
       $locale: '%kernel.default_locale%'
+    tags: [ form.type ]
+
+  AppBundle\Form\DeliveryImportType:
     tags: [ form.type ]

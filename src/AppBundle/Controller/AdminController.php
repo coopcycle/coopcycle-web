@@ -28,6 +28,7 @@ use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
 use AppBundle\Form\CreateUserType;
+use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\NewOrderType;
@@ -79,6 +80,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use AppBundle\Service\TagManager;
 use AppBundle\Entity\Invitation;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
@@ -527,8 +529,32 @@ class AdminController extends Controller
      * @Route("/admin/deliveries", name="admin_deliveries")
      * @Template()
      */
-    public function deliveriesAction(Request $request)
+    public function deliveriesAction(Request $request, TranslatorInterface $translator)
     {
+        $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
+            'with_store' => true
+        ]);
+
+        $deliveryImportForm->handleRequest($request);
+        if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+
+            $store = $deliveryImportForm->get('store')->getData();
+
+            $deliveries = $deliveryImportForm->getData();
+            foreach ($deliveries as $delivery) {
+                $store->addDelivery($delivery);
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
+            }
+            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+            );
+
+            return $this->redirectToRoute('admin_deliveries');
+        }
+
         $qb = $this->getDoctrine()
             ->getRepository(Delivery::class)
             ->createQueryBuilder('d');
@@ -551,7 +577,8 @@ class AdminController extends Controller
         return [
             'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
-            'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC'])
+            'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
+            'delivery_import_form' => $deliveryImportForm->createView(),
         ];
     }
 

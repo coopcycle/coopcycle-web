@@ -29,7 +29,7 @@ fos_user:
 # Override FOSUserBundle route
 fos_user_profile_show:
     path:     /profile/
-    methods:  [ GET ]
+    methods:  [ GET, POST ]
     defaults:
         _controller: AppBundle\Controller\ProfileController::indexAction
         layout: '@App/profile.html.twig'

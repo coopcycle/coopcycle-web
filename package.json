@@ -80,6 +80,8 @@
     "leaflet": "^1.5.1",
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-providers": "^1.9.0",
+    "less": "^3.10.3",
+    "less-loader": "^4.1.0",
     "libphonenumber-js": "^1.7.24",
     "lottie-web": "^5.5.9",
     "mocha": "^6.2.2",
@@ -105,6 +107,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "sass-loader": "^7.1.0",
-    "sortablejs": "^1.10.1"
+    "sortablejs": "^1.10.1",
+    "x-data-spreadsheet": "^1.0.27"
   }
 }

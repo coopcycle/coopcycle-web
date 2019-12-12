@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProfileController extends Controller
 {
@@ -80,7 +81,7 @@ class ProfileController extends Controller
         }
     }
 
-    public function indexAction(Request $request, SlugifyInterface $slugify)
+    public function indexAction(Request $request, SlugifyInterface $slugify, TranslatorInterface $translator)
     {
         $user = $this->getUser();
 
@@ -93,7 +94,19 @@ class ProfileController extends Controller
 
             $store = $request->attributes->get('_store');
 
-            return $this->storeDeliveriesAction($store->getId(), $request);
+            $routes = $request->attributes->has('routes') ? $request->attributes->get('routes') : [];
+            $routes['import_success'] = 'fos_user_profile_show';
+            $routes['stores'] = 'fos_user_profile_show';
+            $routes['store'] = 'profile_store';
+
+            $request->attributes->set('routes', $routes);
+
+            return $this->storeDeliveriesAction($store->getId(), $request, $translator);
+
+            // FIXME Forward doesn't copy request attributes
+            // return $this->forward('AppBundle\Controller\ProfileController::storeDeliveriesAction', [
+            //     'id'  => $store->getId(),
+            // ]);
         }
 
         if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {

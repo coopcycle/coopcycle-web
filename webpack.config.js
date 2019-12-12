@@ -9,6 +9,7 @@ Encore
   .addEntry('common', './js/app/common.js')
   .addEntry('dashboard', './js/app/dashboard/index.jsx')
   .addEntry('delivery-form', './js/app/delivery/form.jsx')
+  .addEntry('delivery-list', './js/app/delivery/list.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
@@ -42,6 +43,7 @@ Encore
   .enableSassLoader(function(sassOptions) {}, {
     resolveUrlLoader: false
   })
+  .enableLessLoader()
 
   .autoProvidejQuery()
 

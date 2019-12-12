@@ -10,6 +10,7 @@ use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\DeliveryImportType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use Knp\Component\Pager\PaginatorInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait StoreTrait
 {
@@ -247,13 +249,35 @@ trait StoreTrait
         return $this->renderStoreForm($store, $request);
     }
 
-    public function storeDeliveriesAction($id, Request $request)
+    public function storeDeliveriesAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
             ->find($id);
 
         $this->accessControl($store);
+
+        $routes = $request->attributes->get('routes');
+
+        $deliveryImportForm = $this->createForm(DeliveryImportType::class);
+
+        $deliveryImportForm->handleRequest($request);
+        if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+
+            $deliveries = $deliveryImportForm->getData();
+            foreach ($deliveries as $delivery) {
+                $store->addDelivery($delivery);
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
+            }
+            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+            );
+
+            return $this->redirectToRoute($routes['import_success']);
+        }
 
         $qb = $this->getDoctrine()
             ->getRepository(Delivery::class)
@@ -273,8 +297,6 @@ trait StoreTrait
             ]
         );
 
-        $routes = $request->attributes->get('routes');
-
         return $this->render('@App/store/deliveries.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
@@ -282,6 +304,7 @@ trait StoreTrait
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'delivery_import_form' => $deliveryImportForm->createView(),
         ]);
     }
 }

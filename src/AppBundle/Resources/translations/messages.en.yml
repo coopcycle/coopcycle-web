@@ -771,6 +771,7 @@ basics.tomorrow: Tomorrow
 basics.price: Price
 basics.tax_category: VAT
 basics.export: Export
+basics.import: Import
 basics.name: Name
 basics.today: Today
 basics.are_you_sure: Are you sure?
@@ -860,3 +861,6 @@ receipt.footer_item.total_incl_tax: Total incl. tax
 receipt.total: Total including tax
 receipt.billing_details: Order paid by credit card on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
+delivery.import.success_message: 'Your file was successfully processed, %count% deliveries have been created'
+form.delivery_import.store.label: Store
+basics.view_example: View example
