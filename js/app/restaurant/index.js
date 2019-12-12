@@ -112,8 +112,10 @@ window.initMap = function() {
   $('label[data-step-up]').on('click', function(e) {
     e.preventDefault()
     const $input = $('#' + $(this).attr('for'))
-    $input[0].stepUp()
-    $input.trigger('change')
+    if (!$input.prop('disabled')) {
+      $input[0].stepUp()
+      $input.trigger('change')
+    }
   })
 
   $('form[data-product-options] [data-product-options-group] input[type="number"]').on('change', function(e) {
@@ -138,13 +140,16 @@ window.initMap = function() {
         if (parseInt($input.val(), 10) === 0) {
           $input.prop('disabled', true)
           $(this).addClass('disabled')
-        } else {
-          $(this).find('[data-stepper][data-direction="up"]').prop('disabled', true)
         }
+        $(this).find('[data-stepper][data-direction="up"]').prop('disabled', true)
       })
     } else {
       $optionsGroup.children().each(function (e) {
-        $(this).find('input[type="number"]').prop('disabled', false)
+        const $input = $(this).find('input[type="number"]')
+        $input.prop('disabled', false)
+        if (max !== Infinity) {
+          $input.attr('max', max - (optionsCount - parseInt($input.val(), 10)))
+        }
         $(this).find('[data-stepper][data-direction="up"]').prop('disabled', false)
         $(this).removeClass('disabled')
       })
