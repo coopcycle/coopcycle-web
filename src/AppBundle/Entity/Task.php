@@ -201,7 +201,7 @@ class Task implements TaggableInterface
     private $assignedOn;
 
     /**
-     * @var TaskImage[]|Collection<int, TaskImage>
+     * @var Collection<int,TaskImage>
      * @Groups({"task", "task_edit"})
      */
     private $images;
