@@ -323,7 +323,7 @@ class TaskModalContent extends React.Component {
               <div className="modal-body">
                 <div className="form-group text-center">
                   <Radio.Group name="type" defaultValue={ values.type } onChange={ (e) => setFieldValue('type', e.target.value) } size="large"
-                    disabled={ this.props.isTaskTypeEditable }>
+                    disabled={ !this.props.isTaskTypeEditable }>
                     <Radio.Button value="PICKUP">Pickup</Radio.Button>
                     <Radio.Button value="DROPOFF">Dropoff</Radio.Button>
                   </Radio.Group>
