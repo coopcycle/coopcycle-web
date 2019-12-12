@@ -7,11 +7,13 @@ use AppBundle\Service\TagManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 trait TaggableTrait
 {
     protected $tags;
     protected $tagManager;
+    protected $tagsFast;
 
     /**
      * {@inheritdoc}
@@ -23,7 +25,6 @@ trait TaggableTrait
 
     /**
      * {@inheritdoc}
-     * @Groups({"task"})
      */
     public function getTags()
     {
@@ -37,6 +38,24 @@ trait TaggableTrait
         }
 
         return $this->tags;
+    }
+
+    /**
+     * @SerializedName("tags")
+     * @Groups({"task"})
+     */
+    public function getTagsFast()
+    {
+        if ($this->tagsFast === null) {
+            $this->tagsFast = new ArrayCollection();
+            if ($this->tagManager) {
+                foreach ($this->tagManager->getTags($this, [ 'cache' => true ]) as $tag) {
+                    $this->tagsFast->add($tag);
+                }
+            }
+        }
+
+        return $this->tagsFast;
     }
 
     public function setTags($tags)
