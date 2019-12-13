@@ -341,32 +341,6 @@ class Task implements TaggableInterface
         return $this->events;
     }
 
-    public function containsEventWithName($name)
-    {
-        foreach ($this->events as $e) {
-            if ($e->getName() === $name) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function addEvent(TaskEvent $event)
-    {
-        if ($event->getName() === 'task:created' && $this->containsEventWithName('task:created')) {
-            return;
-        }
-        if ($event->getName() === 'task:done' && $this->containsEventWithName('task:done')) {
-            return;
-        }
-        if ($event->getName() === 'task:failed' && $this->containsEventWithName('task:failed')) {
-            return;
-        }
-
-        $this->events->add($event);
-    }
-
     public function getPrevious()
     {
         return $this->previous;
