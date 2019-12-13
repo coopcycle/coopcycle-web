@@ -2,12 +2,14 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use AppBundle\Utils\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
+use FOS\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\TestCase;
@@ -25,12 +27,23 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->tagManager = $this->prophesize(TagManager::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
+        $this->userManager = $this->prophesize(UserManagerInterface::class);
+
+        $this->bob = new ApiUser();
+        $this->bob->addRole('ROLE_COURIER');
+
+        $this->userManager->findUserByUsername('bob')
+            ->willReturn($this->bob);
+
+        $this->userManager->findUserByUsername('sarah')
+            ->willReturn(null);
 
         $this->parser = new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             $this->tagManager->reveal(),
             new Slugify(),
             $this->phoneNumberUtil->reveal(),
+            $this->userManager->reveal(),
             'fr'
         );
     }
@@ -127,5 +140,23 @@ class TaskSpreadsheetParserTest extends TestCase
 
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks.ods');
         $tasks = $this->parser->parse($filename);
+    }
+
+    public function testCsvWithAssignColumn()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks_assign.csv');
+        $tasks = $this->parser->parse($filename);
+
+        $this->assertCount(5, $tasks);
+
+        foreach ($tasks as $task) {
+            if ($task->getAddress()->getName() === 'Fleurs Express') {
+                $this->assertTrue($task->isAssigned());
+                $this->assertTrue($task->isAssignedTo($this->bob));
+                break;
+            }
+        }
     }
 }

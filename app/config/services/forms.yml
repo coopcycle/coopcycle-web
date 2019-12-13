@@ -4,14 +4,9 @@ services:
     autowire: true
     autoconfigure: true
 
-  coopcycle.utils.task_spreadsheet_parser:
-    class: AppBundle\Utils\TaskSpreadsheetParser
+  AppBundle\Utils\TaskSpreadsheetParser:
     arguments:
-      - "@coopcycle.geocoder"
-      - "@coopcycle.tag_manager"
-      - "@slugify"
-      - "@libphonenumber.phone_number_util"
-      - "%country_iso%"
+      $countryCode: '%country_iso%'
 
   AppBundle\Utils\DeliverySpreadsheetParser:
     arguments:
@@ -77,9 +72,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskUploadType:
-    arguments:
-      - '@coopcycle.utils.task_spreadsheet_parser'
-      - '@validator'
     tags: [ form.type ]
 
   AppBundle\Form\AddUserType:

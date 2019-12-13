@@ -8,11 +8,12 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use Cocur\Slugify\SlugifyInterface;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
+use Cocur\Slugify\SlugifyInterface;
+use FOS\UserBundle\Model\UserManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -36,6 +37,7 @@ class TaskSpreadsheetParser
     private $geocoder;
     private $tagManager;
     private $slugify;
+    private $userManager;
     private $phoneNumberUtil;
     private $countryCode;
 
@@ -44,11 +46,13 @@ class TaskSpreadsheetParser
         TagManager $tagManager,
         SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
-        $countryCode)
+        UserManagerInterface $userManager,
+        string $countryCode)
     {
         $this->geocoder = $geocoder;
         $this->tagManager = $tagManager;
         $this->slugify = $slugify;
+        $this->userManager = $userManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
     }
@@ -154,6 +158,11 @@ class TaskSpreadsheetParser
 
             if (isset($record['comments']) && !empty($record['comments'])) {
                 $task->setComments($record['comments']);
+            }
+
+            if (isset($record['assign']) && !empty(trim($record['assign']))) {
+                [ $user, $assignAt ] = $this->extractAssign($record['assign']);
+                $task->assignTo($user, $assignAt);
             }
 
             $tasks[] = $task;
@@ -285,5 +294,40 @@ class TaskSpreadsheetParser
             $tags = $this->tagManager->fromSlugs($slugs);
             $task->setTags($tags);
         }
+    }
+
+    private function matchesDatePattern($text)
+    {
+        $hyphen = preg_match(self::DATE_PATTERN_HYPHEN, $text);
+        $slash = preg_match(self::DATE_PATTERN_SLASH, $text);
+
+        return $hyphen === 1 || $slash === 1;
+    }
+
+    private function extractAssign($text)
+    {
+        if (false === strpos($text, ':')) {
+            throw new \Exception('The column "assign" should contain a username and a date, separated by a colon');
+        }
+
+        [ $username, $date ] = explode(':', $text, 2);
+
+        $user = $this->userManager->findUserByUsername($username);
+        if (!$user) {
+            throw new \Exception(sprintf('User with username "%s" does not exist', $username));
+        }
+
+        if (!$user->hasRole('ROLE_COURIER')) {
+            throw new \Exception(sprintf('Can\'t assign tasks to user with username "%s"', $username));
+        }
+
+        if (!$this->matchesDatePattern($date)) {
+            throw new \Exception(sprintf('Date "%s" is not valid', $date));
+        }
+
+        $assignAt = new \DateTime();
+        $this->parseDate($assignAt, $date);
+
+        return [ $user, $assignAt ];
     }
 }
