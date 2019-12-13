@@ -37,14 +37,14 @@ var appName = config.parameters['app.name'] || 'default';
 
 var apps = [{
   name: "coopcycle-dispatch-" + appName,
-  instances : "max",
+  instances : 2,
   exec_mode : "cluster",
   script: "./js/api/dispatch/index.js",
   watch: ["./js/api/dispatch/index.js", "./js/api/models/*.js", "./js/api/*.js"],
   port: config.parameters['app.dispatch_port'] || 8000
 }, {
   name: "coopcycle-tracking-" + appName,
-  instances : "max",
+  instances : 2,
   exec_mode : "cluster",
   script: "./js/api/tracking/index.js",
   watch: ["./js/api/tracking/index.js", "./js/api/tracking/index.html"],
