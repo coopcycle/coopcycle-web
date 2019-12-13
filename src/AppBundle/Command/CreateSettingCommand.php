@@ -70,7 +70,7 @@ Class CreateSettingCommand extends ContainerAwareCommand
         try {
             $value = $this->craueConfig->get($name);
             $output->writeln(sprintf('<comment>Setting %s already exists</comment>', $name));
-            return;
+            return 1;
         } catch (\RuntimeException $e) {}
 
         $className = $this->entityName;
@@ -84,5 +84,7 @@ Class CreateSettingCommand extends ContainerAwareCommand
         $this->entityManager->flush();
 
         $output->writeln('<info>Setting created.</info>');
+
+        return 0;
     }
 }

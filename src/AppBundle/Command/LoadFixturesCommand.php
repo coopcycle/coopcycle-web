@@ -66,5 +66,7 @@ class LoadFixturesCommand extends Command
             'STRIPE_PUBLISHABLE_KEY' => getenv('STRIPE_PUBLISHABLE_KEY'),
             'STRIPE_SECRET_KEY' => getenv('STRIPE_SECRET_KEY')
         ]);
+
+        return 0;
     }
 }

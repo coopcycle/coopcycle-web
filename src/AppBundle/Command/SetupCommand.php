@@ -176,6 +176,8 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius free delivery promotion is present…</info>');
         $this->createFreeDeliveryPromotion($output);
+
+        return 0;
     }
 
     private function createSyliusLocale($code, OutputInterface $output)

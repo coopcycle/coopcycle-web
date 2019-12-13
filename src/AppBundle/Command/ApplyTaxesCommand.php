@@ -76,5 +76,7 @@ class ApplyTaxesCommand extends Command
             $this->orderManager->flush();
             $this->orderManager->clear();
         }
+
+        return 0;
     }
 }

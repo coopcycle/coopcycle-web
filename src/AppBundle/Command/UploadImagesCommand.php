@@ -86,6 +86,8 @@ class UploadImagesCommand extends ContainerAwareCommand
             $this->localAssetsFilesystem,
             $this->remoteAssetsFilesystem
         );
+
+        return 0;
     }
 
     private function synchronize($localFilesystem, $remoteFilesystem)

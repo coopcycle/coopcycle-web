@@ -52,14 +52,14 @@ class FlushTrackingCommand extends Command
 
         if (!$lock->acquire()) {
             $output->writeln('<error>Database is being purged, aborting.</error>');
-            return;
+            return 1;
         }
 
         $keys = $this->redis->keys('tracking:*');
 
         if (count($keys) === 0) {
             $output->writeln('<info>Nothing to do!</info>');
-            return;
+            return 0;
         }
 
         $usernames = [];
@@ -72,6 +72,8 @@ class FlushTrackingCommand extends Command
                 $output->writeln(sprintf('<error>User %s does not exist</error>', $username));
             }
         }
+
+        return 0;
     }
 
     private function flushTracking(UserInterface $user, $key, OutputInterface $output)

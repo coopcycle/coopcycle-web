@@ -158,6 +158,8 @@ class InitDemoCommand extends Command
 
             $lock->release();
         }
+
+        return 0;
     }
 
     private function resetSequences()

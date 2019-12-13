@@ -177,6 +177,8 @@ class ImportStripeFeeCommand extends Command
                 $this->io->caution($e->getMessage());
             }
         }
+
+        return 0;
     }
 
     private function getDate($input)
