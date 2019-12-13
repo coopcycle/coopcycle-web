@@ -915,7 +915,7 @@ Feature: Tasks
     Then the response status code should be 200
     And the response should be in JSON
 
-  Scenario: Can edit task status
+  Scenario: Can't edit task status
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
@@ -934,3 +934,36 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/5",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":5,
+        "pickup":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "id":1,
+          "status":"TODO",
+          "address":@...@,
+          "doneAfter":"2019-11-12T18:00:00+01:00",
+          "doneBefore":"2019-11-12T18:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T18:00:00+01:00",
+          "before":"2019-11-12T18:30:00+01:00"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "id":2,
+          "status":"TODO",
+          "address":@...@,
+          "doneAfter":"2019-11-12T19:00:00+01:00",
+          "doneBefore":"2019-11-12T19:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T19:00:00+01:00",
+          "before":"2019-11-12T19:30:00+01:00"
+        }
+      }
+      """
