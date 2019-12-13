@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2TokenFactory;
 
 class TokenBearerListener implements ListenerInterface
 {
@@ -19,18 +20,20 @@ class TokenBearerListener implements ListenerInterface
     protected $authenticationManager;
     protected $jwtTokenAuthenticator;
     protected $httpMessageFactory;
+    protected $oAuth2TokenFactory;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         AuthenticationManagerInterface $authenticationManager,
         JWTTokenAuthenticator $jwtTokenAuthenticator,
-        HttpMessageFactoryInterface $httpMessageFactory
-    )
+        HttpMessageFactoryInterface $httpMessageFactory,
+        OAuth2TokenFactory $oauth2TokenFactory)
     {
         $this->tokenStorage = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
         $this->httpMessageFactory = $httpMessageFactory;
+        $this->oauth2TokenFactory = $oauth2TokenFactory;
     }
 
     public function handle(GetResponseEvent $event)
@@ -55,7 +58,10 @@ class TokenBearerListener implements ListenerInterface
             return;
         }
 
-        $trikoderToken = new OAuth2Token($this->httpMessageFactory->createRequest($event->getRequest()), null);
+        $trikoderToken = $this->oauth2TokenFactory->createOAuth2Token(
+            $this->httpMessageFactory->createRequest($request),
+            null
+        );
 
         // We create a "composed" token
         $token = new BearerToken($lexikToken, $trikoderToken);

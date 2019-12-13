@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67786c2cb7f2bb911a0c4c4b45f42d75",
+    "content-hash": "0221baf23912d70a94f4d0d7b53af842",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3983,22 +3983,19 @@
                 "twig/twig": "<1.34"
             },
             "require-dev": {
-                "doctrine/doctrine-bundle": "^1.11",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.1",
+                "friendsofsymfony/user-bundle": "^2.0",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.3",
-                "symfony/css-selector": "^3.4|^4.3",
+                "symfony/browser-kit": "^3.4|^4.2",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.3",
-                "symfony/property-access": "^3.4|^4.3",
-                "symfony/stopwatch": "^3.4|^4.3",
-                "symfony/translation": "^3.4|^4.3",
-                "symfony/twig-bundle": "^3.4|^4.3",
-                "symfony/validator": "^3.4|^4.3"
+                "symfony/phpunit-bridge": "^3.4|^4.2",
+                "symfony/property-access": "^3.4|^4.2",
+                "symfony/stopwatch": "^3.4|^4.2",
+                "symfony/twig-bundle": "^3.4|^4.2",
+                "symfony/validator": "^3.4|^4.2"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -13150,20 +13147,20 @@
         },
         {
             "name": "trikoder/oauth2-bundle",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/trikoder/oauth2-bundle.git",
-                "reference": "72e9465a408c9fa5d25b0f124d96e9c55afb58b3"
+                "reference": "fbaa1f68b9272ebeb129915e6fb79f7a3e76bae8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/trikoder/oauth2-bundle/zipball/72e9465a408c9fa5d25b0f124d96e9c55afb58b3",
-                "reference": "72e9465a408c9fa5d25b0f124d96e9c55afb58b3",
+                "url": "https://api.github.com/repos/trikoder/oauth2-bundle/zipball/fbaa1f68b9272ebeb129915e6fb79f7a3e76bae8",
+                "reference": "fbaa1f68b9272ebeb129915e6fb79f7a3e76bae8",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "^1.8",
+                "doctrine/doctrine-bundle": "^1.8|^2.0",
                 "doctrine/orm": "^2.6",
                 "league/oauth2-server": "^7.2",
                 "php": ">=7.2",
@@ -13176,11 +13173,11 @@
             "require-dev": {
                 "ext-timecop": "*",
                 "ext-xdebug": "*",
-                "friendsofphp/php-cs-fixer": "^2.15",
+                "friendsofphp/php-cs-fixer": "2.16.0",
                 "nyholm/psr7": "^1.1",
-                "phpunit/phpunit": "~8.2.0",
+                "phpunit/phpunit": "^8.4",
                 "symfony/browser-kit": "^3.4|^4.2",
-                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/phpunit-bridge": "^3.4|^4.4",
                 "zendframework/zend-diactoros": "^2.1"
             },
             "suggest": {
@@ -13192,6 +13189,9 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "3.x-dev"
+                },
+                "symfony": {
+                    "require": "4.4.*"
                 }
             },
             "autoload": {
@@ -13217,7 +13217,7 @@
             "keywords": [
                 "oauth2"
             ],
-            "time": "2019-08-13T09:14:17+00:00"
+            "time": "2019-12-09T09:34:35+00:00"
         },
         {
             "name": "twig/extensions",

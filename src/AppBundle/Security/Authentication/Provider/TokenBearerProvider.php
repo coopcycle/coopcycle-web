@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Provider\OAuth2Provider;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2TokenFactory;
 
 class TokenBearerProvider implements AuthenticationProviderInterface
 {
@@ -23,13 +24,14 @@ class TokenBearerProvider implements AuthenticationProviderInterface
         UserProviderInterface $userProvider,
         ResourceServer $resourceServer,
         JWTTokenAuthenticator $jwtTokenAuthenticator,
+        OAuth2TokenFactory $oauth2TokenFactory,
         string $providerKey)
     {
         $this->userProvider = $userProvider;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
         $this->providerKey = $providerKey;
         // FIXME Inject directly OAuth2Provider
-        $this->oauth2Provider = new OAuth2Provider($userProvider, $resourceServer);
+        $this->oauth2Provider = new OAuth2Provider($userProvider, $resourceServer, $oauth2TokenFactory);
     }
 
     public function authenticate(TokenInterface $token)
