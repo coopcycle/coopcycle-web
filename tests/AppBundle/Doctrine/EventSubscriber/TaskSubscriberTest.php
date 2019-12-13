@@ -8,6 +8,7 @@ use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,8 @@ use Psr\Log\NullLogger;
 use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 // Avoid error "Returning by reference not supported" with Prophecy
@@ -42,11 +45,17 @@ class TaskSubscriberTest extends TestCase
     {
         $this->eventBus = $this->prophesize(MessageBus::class);
 
-        $this->remotePushNotificationManager = $this->prophesize(RemotePushNotificationManager::class);
-
         $this->taskListRepository = $this->prophesize(ObjectRepository::class);
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+
+        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+
+        $this->messageBus
+            ->dispatch(Argument::type(PushNotification::class))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+            });
 
         $this->entityManager
             ->getRepository(TaskList::class)
@@ -60,7 +69,7 @@ class TaskSubscriberTest extends TestCase
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
-            $this->remotePushNotificationManager->reveal(),
+            $this->messageBus->reveal(),
             new NullLogger()
         );
     }
@@ -106,6 +115,8 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
         $user = new ApiUser();
+        $user->setUsername('bob');
+
         $task = new Task();
         $task->setDoneBefore(new \DateTime('2019-11-21 19:00:00'));
 
@@ -140,13 +151,17 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this
-            ->remotePushNotificationManager
-            ->send('Tasks for 2019-11-21 changed!', [ $user ], [
-                'event' => [
-                    'name' => 'tasks:changed',
-                    'data' => ['date' => '2019-11-21']
+            ->messageBus
+            ->dispatch(new PushNotification(
+                'Tasks for 2019-11-21 changed!',
+                [ 'bob' ],
+                [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => ['date' => '2019-11-21']
+                    ]
                 ]
-            ])
+            ))
             ->shouldHaveBeenCalled();
 
         $this->assertCount(0, $task->getEvents());
@@ -160,6 +175,7 @@ class TaskSubscriberTest extends TestCase
         $unitOfWork = $this->prophesize(UnitOfWork::class);
 
         $user = new ApiUser();
+        $user->setUsername('bob');
 
         $task1 = new Task();
         $task1->setDoneBefore(new \DateTime('2019-11-21 19:00:00'));
@@ -204,13 +220,17 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this
-            ->remotePushNotificationManager
-            ->send('Tasks for 2019-11-21 changed!', [ $user ], [
-                'event' => [
-                    'name' => 'tasks:changed',
-                    'data' => ['date' => '2019-11-21']
+            ->messageBus
+            ->dispatch(new PushNotification(
+                'Tasks for 2019-11-21 changed!',
+                [ 'bob' ],
+                [
+                    'event' => [
+                        'name' => 'tasks:changed',
+                        'data' => ['date' => '2019-11-21']
+                    ]
                 ]
-            ])
+            ))
             ->shouldHaveBeenCalledTimes(1);
 
         $this->assertCount(0, $task1->getEvents());

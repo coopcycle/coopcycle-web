@@ -9,19 +9,20 @@ use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
-use AppBundle\Service\RemotePushNotificationManager;
+use AppBundle\Message\PushNotification;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class TaskSubscriber implements EventSubscriber
 {
     private $eventBus;
     private $eventStore;
-    private $remotePushNotificationManager;
+    private $messageBus;
     private $logger;
     private $createdTasks = [];
     private $usersToNotify;
@@ -29,12 +30,12 @@ class TaskSubscriber implements EventSubscriber
     public function __construct(
         MessageBus $eventBus,
         EventStore $eventStore,
-        RemotePushNotificationManager $remotePushNotificationManager,
+        MessageBusInterface $messageBus,
         LoggerInterface $logger)
     {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
-        $this->remotePushNotificationManager = $remotePushNotificationManager;
+        $this->messageBus = $messageBus;
         $this->logger = $logger;
         $this->usersToNotify = new \SplObjectStorage();
     }
@@ -132,6 +133,9 @@ class TaskSubscriber implements EventSubscriber
 
                 $users = $this->usersToNotify[$date];
                 $users = array_unique($users);
+                $users = array_map(function ($user) {
+                    return $user->getUsername();
+                }, $users);
 
                 $data = [
                     'event' => [
@@ -145,7 +149,9 @@ class TaskSubscriber implements EventSubscriber
                 // TODO Translate
                 $message = sprintf('Tasks for %s changed!', $date->format('Y-m-d'));
 
-                $this->remotePushNotificationManager->send($message, $users, $data);
+                $this->messageBus->dispatch(
+                    new PushNotification($message, $users, $data)
+                );
             }
         }
     }
