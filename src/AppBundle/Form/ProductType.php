@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
@@ -10,7 +11,6 @@ use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
-use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttributeValue;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,6 +42,7 @@ class ProductType extends AbstractType
     private $productAttributeValueFactory;
     private $localeProvider;
     private $hasChangedName = false;
+
     public function __construct(
         ProductVariantFactoryInterface $variantFactory,
         ProductVariantResolverInterface $variantResolver,
@@ -112,18 +114,11 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $product = $event->getData();
 
-            $form->add('options', EntityType::class, [
-                'class' => ProductOption::class,
-                'choices' => $product->getRestaurant()->getProductOptions(),
-                'expanded' => true,
-                'multiple' => true,
-                'choice_attr' => function(ProductOption $productOption, $key, $value) {
-                    // Disable options with no value
-                    if (count($productOption->getValues()) === 0) {
-                        return ['disabled' => true];
-                    }
-                    return [];
-                }
+            $form->add('options', CollectionType::class, [
+                'entry_type' => ProductOptionWithPositionType::class,
+                'entry_options' => [ 'label' => false ],
+                'mapped' => false,
+                'data' => $this->getSortedOptions($product),
             ]);
 
             if ($product->getRestaurant()->isDepositRefundEnabled()) {
@@ -218,6 +213,15 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $product = $event->getData();
 
+            $opts = $form->get('options')->getData();
+            foreach ($opts as $opt) {
+                if ($opt['enabled']) {
+                    $product->addOptionAt($opt['option'], $opt['position']);
+                } else {
+                    $product->removeOption($opt['option']);
+                }
+            }
+
             // This is a delete button
             if (!$form->has('price') && !$form->has('taxCategory')) {
 
@@ -298,6 +302,27 @@ class ProductType extends AbstractType
         $attributeValue->setValue($data);
 
         $product->addAttribute($attributeValue);
+    }
+
+    private function getSortedOptions(Product $product)
+    {
+        $opts = [];
+        foreach ($product->getRestaurant()->getProductOptions() as $opt) {
+            $opts[] = [
+                'product'  => $product,
+                'option'   => $opt,
+                'position' => $product->getPositionForOption($opt)
+            ];
+        }
+
+        uasort($opts, function ($a, $b) {
+            if ($a['position'] === $b['position']) return 0;
+            if ($a['position'] === -1) return 1;
+            if ($b['position'] === -1) return -1;
+            return $a['position'] < $b['position'] ? -1 : 1;
+        });
+
+        return $opts;
     }
 
     public function configureOptions(OptionsResolver $resolver)
