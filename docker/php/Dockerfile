@@ -8,6 +8,7 @@ RUN apk add --no-cache \
         zlib
 
 ENV APCU_VERSION 5.1.18
+ENV PHPREDIS_VERSION 5.1.1
 
 RUN set -xe \
     && apk add --no-cache \
@@ -44,8 +45,10 @@ RUN set -xe \
         pcntl \
     && pecl install \
         apcu-${APCU_VERSION} \
+        redis-${PHPREDIS_VERSION} \
     && docker-php-ext-enable --ini-name 20-apcu.ini apcu \
     && docker-php-ext-enable --ini-name 05-opcache.ini opcache \
+    && docker-php-ext-enable redis \
     && apk del .build-deps
 
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
