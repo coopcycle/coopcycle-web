@@ -172,7 +172,7 @@
               <form
                 action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
                 data-product-options>
-                {% for option in product.options|sort_options %}
+                {% for option in product.options %}
                 <h4>
                   {{ option.name }}
                   {% if option.strategy == 'option' %} - {{ option.price|price_format }}{% endif %}

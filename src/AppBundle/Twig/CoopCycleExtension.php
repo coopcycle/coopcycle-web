@@ -6,7 +6,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -36,7 +35,6 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('latlng', array($this, 'latLng')),
             new TwigFilter('coopcycle_markup', array(MarkupRuntime::class, 'parse')),
             new TwigFilter('floatval', 'floatval'),
-            new TwigFilter('sort_options', array($this, 'sortOptions')),
             new TwigFilter('coopcycle_normalize', array($this, 'normalize')),
             new TwigFilter('split_tax_rates', array(TaxRateRuntime::class, 'split')),
             new TwigFilter('split_items_tax_rates', array(TaxRateRuntime::class, 'splitItems')),
@@ -79,29 +77,6 @@ class CoopCycleExtension extends AbstractExtension
                 $address->getGeo()->getLongitude(),
             ];
         }
-    }
-
-    public function sortOptions($options)
-    {
-        // FIXME Make sure $options is an array of ProductOptionInterface
-        if ($options instanceof Collection) {
-
-            $iterator = $options->getIterator();
-
-            // Mandatory options first, then sort by priority
-            $iterator->uasort(function (ProductOptionInterface $a, ProductOptionInterface $b) {
-                if ($a->isAdditional() === $b->isAdditional()) {
-
-                    return $a->getPosition() - $b->getPosition();
-                }
-
-                return $a->isAdditional() - $b->isAdditional();
-            });
-
-            return new ArrayCollection(iterator_to_array($iterator));
-        }
-
-        return $options;
     }
 
     public function normalize($object)
