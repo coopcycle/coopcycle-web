@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Tag;
@@ -18,6 +19,7 @@ use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -234,7 +236,9 @@ trait AdminDashboardTrait
      *   methods={"PUT"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
      */
-    public function modifyTaskListAction($date, $username, Request $request, IriConverterInterface $iriConverter)
+    public function modifyTaskListAction($date, $username, Request $request,
+        IriConverterInterface $iriConverter,
+        LoggerInterface $logger)
     {
         $date = new \DateTime($date);
         $user = $this->get('fos_user.user_manager')->findUserByUsername($username);
@@ -252,7 +256,13 @@ trait AdminDashboardTrait
 
         $tasksToAssign = [];
         foreach ($data as $item) {
-            $tasksToAssign[$item['position']] = $iriConverter->getItemFromIri($item['task']);
+            // Sometimes $item['task'] is "/api/tasks/"
+            // @see https://github.com/coopcycle/coopcycle-web/issues/976
+            try {
+                $tasksToAssign[$item['position']] = $iriConverter->getItemFromIri($item['task']);
+            } catch (InvalidArgumentException $e) {
+                $logger->error($e->getMessage());
+            }
         }
 
         $taskList->setTasks($tasksToAssign);
