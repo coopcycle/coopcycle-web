@@ -6,6 +6,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use AppBundle\Action\Delivery\Drop as DropDelivery;
+use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
@@ -42,6 +44,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *        "method"="PUT",
+ *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *     },
+ *     "pick"={
+ *        "method"="PUT",
+ *        "path"="/deliveries/{id}/pick",
+ *        "controller"=PickDelivery::class,
+ *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *     },
+ *     "drop"={
+ *        "method"="PUT",
+ *        "path"="/deliveries/{id}/drop",
+ *        "controller"=DropDelivery::class,
  *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
  *     }
  *   },

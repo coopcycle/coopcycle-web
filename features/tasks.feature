@@ -967,3 +967,97 @@ Feature: Tasks
         }
       }
       """
+
+  Scenario: Can complete pickup & dropoff
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+      | deliveries.yml      |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5/pick" with body:
+      """
+      {
+        "comments": "no problem"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/5",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":5,
+        "pickup":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "id":1,
+          "status":"DONE",
+          "address":@...@,
+          "doneAfter":"2019-11-12T18:00:00+01:00",
+          "doneBefore":"2019-11-12T18:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T18:00:00+01:00",
+          "before":"2019-11-12T18:30:00+01:00"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "id":2,
+          "status":"TODO",
+          "address":@...@,
+          "doneAfter":"2019-11-12T19:00:00+01:00",
+          "doneBefore":"2019-11-12T19:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T19:00:00+01:00",
+          "before":"2019-11-12T19:30:00+01:00"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5/drop" with body:
+      """
+      {
+        "comments": "no problem"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/5",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":5,
+        "pickup":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "id":1,
+          "status":"DONE",
+          "address":@...@,
+          "doneAfter":"2019-11-12T18:00:00+01:00",
+          "doneBefore":"2019-11-12T18:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T18:00:00+01:00",
+          "before":"2019-11-12T18:30:00+01:00"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "id":2,
+          "status":"DONE",
+          "address":@...@,
+          "doneAfter":"2019-11-12T19:00:00+01:00",
+          "doneBefore":"2019-11-12T19:30:00+01:00",
+          "comments":"",
+          "after":"2019-11-12T19:00:00+01:00",
+          "before":"2019-11-12T19:30:00+01:00"
+        }
+      }
+      """
