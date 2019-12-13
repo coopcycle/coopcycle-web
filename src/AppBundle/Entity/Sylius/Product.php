@@ -8,8 +8,10 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
+use Sylius\Component\Product\Model\ProductOptionInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -237,5 +239,97 @@ class Product extends BaseProduct implements ProductInterface
         $this->reusablePackaging = $reusablePackaging;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptions(): Collection
+    {
+        $options = $this->options->toArray();
+
+        uasort($options, function ($a, $b) {
+            if ($a->getPosition() === $b->getPosition()) return 0;
+            return $a->getPosition() < $b->getPosition() ? -1 : 1;
+        });
+
+        $values = array_map(
+            function (ProductOptions $options) {
+                return $options->getOption();
+            },
+            $options
+        );
+
+        return new ArrayCollection($values);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addOption(ProductOptionInterface $option): void
+    {
+        if (!$this->hasOption($option)) {
+
+            $productOptions = new ProductOptions();
+            $productOptions->setProduct($this);
+            $productOptions->setOption($option);
+
+            $this->options->add($productOptions);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeOption(ProductOptionInterface $option): void
+    {
+        if ($this->hasOption($option)) {
+            foreach ($this->options as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    $this->options->removeElement($productOptions);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOption(ProductOptionInterface $option): bool
+    {
+        return $this->getOptions()->contains($option);
+    }
+
+    public function getPositionForOption(ProductOptionInterface $option): int
+    {
+        if ($this->hasOption($option)) {
+            foreach ($this->options as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    return $productOptions->getPosition();
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    public function addOptionAt(ProductOptionInterface $option, int $position): void
+    {
+        if (!$this->hasOption($option)) {
+            $productOptions = new ProductOptions();
+            $productOptions->setProduct($this);
+            $productOptions->setOption($option);
+            $productOptions->setPosition($position);
+
+            $this->options->add($productOptions);
+        } else {
+            foreach ($this->options as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    $productOptions->setPosition($position);
+                    break;
+                }
+            }
+        }
     }
 }
