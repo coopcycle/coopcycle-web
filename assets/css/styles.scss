@@ -1657,3 +1657,13 @@ form[name="restaurant"] {
     }
   }
 }
+
+.product__form__options {
+  &--sortable {
+    > * {
+      border: 1px solid #ebebeb;
+      padding: 10px;
+      background-color: #fff;
+    }
+  }
+}
