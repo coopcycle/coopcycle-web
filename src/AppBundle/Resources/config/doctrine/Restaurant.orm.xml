@@ -11,12 +11,12 @@
     <field name="description" type="text" column="description" nullable="true"/>
     <field name="enabled" type="boolean" column="enabled" precision="0" scale="0" nullable="false">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <field name="depositRefundEnabled" type="boolean" column="deposit_refund_enabled">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <field name="depositRefundOptin" type="boolean" column="deposit_refund_optin">
@@ -48,12 +48,12 @@
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="exclusive" type="boolean" column="exclusive">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <field name="quotesAllowed" type="boolean" column="quotes_allowed">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant" fetch="LAZY">

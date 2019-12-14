@@ -5,7 +5,7 @@
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="reusablePackagingEnabled" type="boolean" column="reusable_packaging_enabled">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>

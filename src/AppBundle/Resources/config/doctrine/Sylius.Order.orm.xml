@@ -4,7 +4,7 @@
     <field name="shippedAt" type="datetime" column="shipped_at" nullable="true"/>
     <field name="reusablePackagingEnabled" type="boolean" column="reusable_packaging_enabled">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <one-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" mapped-by="order" fetch="LAZY">

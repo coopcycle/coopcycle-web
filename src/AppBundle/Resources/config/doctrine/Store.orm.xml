@@ -7,7 +7,7 @@
     <field name="name" type="string" column="name" nullable="true"/>
     <field name="enabled" type="boolean" column="enabled">
       <options>
-        <option name="default"/>
+        <option name="default">false</option>
       </options>
     </field>
     <field name="imageName" type="string" column="image_name" precision="0" nullable="true"/>
