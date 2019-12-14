@@ -346,7 +346,7 @@ function _tasksWithColor(state = initialState.tasksWithColor) {
   return _.mapValues(groups, taskIds => integerToColor(taskIds.reduce((accumulator, value) => accumulator + value)))
 }
 
-export const addModalIsOpen = (state = false, action) => {
+const addModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_ADD_USER:
     return true
@@ -357,7 +357,7 @@ export const addModalIsOpen = (state = false, action) => {
   }
 }
 
-export const taskListsLoading = (state = false, action) => {
+const taskListsLoading = (state = false, action) => {
   switch(action.type) {
   case ADD_TASK_LIST_REQUEST:
   case MODIFY_TASK_LIST_REQUEST:
@@ -370,7 +370,7 @@ export const taskListsLoading = (state = false, action) => {
   }
 }
 
-export const polylineEnabled = (state = {}, action) => {
+const polylineEnabled = (state = {}, action) => {
   switch (action.type) {
   case TOGGLE_POLYLINE:
     let newState = { ...state }
@@ -383,7 +383,7 @@ export const polylineEnabled = (state = {}, action) => {
   }
 }
 
-export const selectedTasks = (state = [], action) => {
+const selectedTasks = (state = [], action) => {
 
   let newState = state.slice(0)
 
@@ -417,7 +417,7 @@ export const selectedTasks = (state = [], action) => {
   return state
 }
 
-export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
+const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   switch (action.type) {
   case SET_TASK_LIST_GROUP_MODE:
     return action.mode
@@ -426,9 +426,9 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-export const tags = (state = initialState.tags, action) => state
+const tags = (state = initialState.tags, action) => state
 
-export const jwt = (state = '', action) => {
+const jwt = (state = '', action) => {
   switch (action.type) {
   case TOKEN_REFRESH_SUCCESS:
 
@@ -440,11 +440,11 @@ export const jwt = (state = '', action) => {
   }
 }
 
-export const date = (state = moment(), action) => state
+const date = (state = moment(), action) => state
 
-export const couriersList = (state = [], action) => state
+const couriersList = (state = [], action) => state
 
-export const positions = (state = [], action) => {
+const positions = (state = [], action) => {
   switch (action.type) {
   case SET_GEOLOCATION:
 
@@ -470,7 +470,7 @@ export const positions = (state = [], action) => {
   }
 }
 
-export const offline = (state = [], action) => {
+const offline = (state = [], action) => {
   let index
 
   switch (action.type) {
@@ -498,7 +498,7 @@ export const offline = (state = [], action) => {
   }
 }
 
-export const isDragging = (state = false, action) => {
+const isDragging = (state = false, action) => {
   switch (action.type) {
   case DRAKE_DRAG:
 
@@ -546,7 +546,7 @@ export const combinedTasks = (state = initialState, action) => {
   }
 }
 
-export const taskModalIsOpen = (state = false, action) => {
+const taskModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_NEW_TASK_MODAL:
     return true
@@ -564,7 +564,7 @@ export const taskModalIsOpen = (state = false, action) => {
   }
 }
 
-export const currentTask = (state = null, action) => {
+const currentTask = (state = null, action) => {
   switch(action.type) {
   case OPEN_NEW_TASK_MODAL:
     return null
@@ -575,7 +575,7 @@ export const currentTask = (state = null, action) => {
   }
 }
 
-export const isTaskModalLoading = (state = false, action) => {
+const isTaskModalLoading = (state = false, action) => {
   switch(action.type) {
   case CREATE_TASK_REQUEST:
     return true
@@ -589,7 +589,7 @@ export const isTaskModalLoading = (state = false, action) => {
   }
 }
 
-export const completeTaskErrorMessage = (state = null, action) => {
+const completeTaskErrorMessage = (state = null, action) => {
   switch(action.type) {
   case CREATE_TASK_REQUEST:
   case CREATE_TASK_SUCCESS:
@@ -618,7 +618,7 @@ export const completeTaskErrorMessage = (state = null, action) => {
   }
 }
 
-export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
+const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
   switch (action.type) {
   case OPEN_FILTERS_MODAL:
     return true
@@ -629,7 +629,7 @@ export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, acti
   }
 }
 
-export const searchIsOn = (state = initialState.searchIsOn, action) => {
+const searchIsOn = (state = initialState.searchIsOn, action) => {
   switch (action.type) {
   case TOGGLE_SEARCH:
 
@@ -645,7 +645,7 @@ export const searchIsOn = (state = initialState.searchIsOn, action) => {
   }
 }
 
-export const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) => {
+const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, action) => {
   switch (action.type) {
   case OPEN_SETTINGS:
 
@@ -658,7 +658,7 @@ export const settingsModalIsOpen = (state = initialState.settingsModalIsOpen, ac
   }
 }
 
-export const combinedFilters = (state = initialState, action) => {
+const combinedFilters = (state = initialState, action) => {
 
   switch (action.type) {
 
@@ -696,7 +696,7 @@ export const combinedFilters = (state = initialState, action) => {
   }
 }
 
-export const polylineStyle = (state = initialState.polylineStyle, action) => {
+const polylineStyle = (state = initialState.polylineStyle, action) => {
   switch (action.type) {
   case SET_POLYLINE_STYLE:
 
@@ -707,7 +707,7 @@ export const polylineStyle = (state = initialState.polylineStyle, action) => {
 
 }
 
-export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
+const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_REQUEST:
 
@@ -721,7 +721,7 @@ export const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, ac
   return state
 }
 
-export const taskEvents = (state = initialState.taskEvents, action) => {
+const taskEvents = (state = initialState.taskEvents, action) => {
   switch (action.type) {
   case LOAD_TASK_EVENTS_SUCCESS:
     return {
