@@ -55,30 +55,34 @@ function bootstrap($popover, options) {
     transports: [ 'websocket' ],
   })
 
-  socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))
-  socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
+  Promise.all([
+    $.getJSON(options.unreadCountURL),
+    $.getJSON(options.notificationsURL, { format: 'json' })
+  ]).then(values => {
 
-  $.getJSON(options.unreadCountURL)
-    .then(count => options.elements.count.innerHTML = count)
+    const [ count, notifications ] = values
 
-  $.getJSON(options.notificationsURL, { format: 'json' })
-    .then(notifications => {
-      render(
-        <I18nextProvider i18n={ i18n }>
-          <NotificationList
-            ref={ notificationsListRef }
-            notifications={ notifications }
-            url={ options.notificationsURL }
-            emptyMessage={ options.emptyMessage }
-            onUpdate={ () => setPopoverContent() } />
-        </I18nextProvider>,
-        template,
-        () => {
-          setPopoverContent()
-          initPopover()
-        }
-      )
-    })
+    options.elements.count.innerHTML = count
+
+    render(
+      <I18nextProvider i18n={ i18n }>
+        <NotificationList
+          ref={ notificationsListRef }
+          notifications={ notifications }
+          url={ options.notificationsURL }
+          emptyMessage={ options.emptyMessage }
+          onUpdate={ () => setPopoverContent() } />
+      </I18nextProvider>,
+      template,
+      () => {
+        setPopoverContent()
+        initPopover()
+
+        socket.on(`notifications`, notification => notificationsListRef.current.unshift(notification))
+        socket.on(`notifications:count`, count => options.elements.count.innerHTML = count)
+      }
+    )
+  })
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
