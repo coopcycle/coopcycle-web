@@ -5,7 +5,7 @@
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="reusablePackagingEnabled" type="boolean" column="reusable_packaging_enabled">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>
@@ -42,7 +42,7 @@
     <many-to-many field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="products" fetch="LAZY">
       <join-table name="restaurant_product">
         <join-columns>
-          <join-column name="product_id" referenced-column-name="id"/>
+          <join-column name="product_id" referenced-column-name="id" unique="true"/>
         </join-columns>
         <inverse-join-columns>
           <join-column name="restaurant_id" referenced-column-name="id"/>

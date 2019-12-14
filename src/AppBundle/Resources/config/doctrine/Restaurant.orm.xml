@@ -11,12 +11,12 @@
     <field name="description" type="text" column="description" nullable="true"/>
     <field name="enabled" type="boolean" column="enabled" nullable="false">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <field name="depositRefundEnabled" type="boolean" column="deposit_refund_enabled">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <field name="depositRefundOptin" type="boolean" column="deposit_refund_optin">
@@ -52,12 +52,12 @@
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="exclusive" type="boolean" column="exclusive">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <field name="quotesAllowed" type="boolean" column="quotes_allowed">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
@@ -129,6 +129,14 @@
       <cascade>
         <cascade-persist/>
       </cascade>
+      <join-table name="restaurant_product">
+        <join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="product_id" referenced-column-name="id" unique="true"/>
+        </inverse-join-columns>
+      </join-table>
     </many-to-many>
     <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption" fetch="LAZY">
       <cascade>

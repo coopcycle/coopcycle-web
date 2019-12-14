@@ -11,7 +11,7 @@
     <field name="facebookAccessToken" type="string" column="facebook_access_token" nullable="true"/>
     <field name="quotesAllowed" type="boolean" column="quotes_allowed">
       <options>
-        <option name="default">false</option>
+        <option name="default">0</option>
       </options>
     </field>
     <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user" fetch="LAZY"/>
