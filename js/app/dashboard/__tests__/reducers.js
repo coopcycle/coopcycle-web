@@ -1,4 +1,4 @@
-import { combinedTasks, unassignedTasks, taskLists } from '../redux/reducers'
+import reducers from '../redux/reducers'
 import moment from 'moment'
 
 describe('combinedTasks reducer', () => {
@@ -6,7 +6,7 @@ describe('combinedTasks reducer', () => {
   it('should handle assigned task', () => {
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [
           { '@id': 1, isAssigned: false }
@@ -22,7 +22,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: 'bob'
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [],
       taskLists: [
@@ -39,7 +39,7 @@ describe('combinedTasks reducer', () => {
   it('should handle assigned task (not existing)', () => {
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [],
         taskLists: [
@@ -53,7 +53,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: 'bob'
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [],
       taskLists: [
@@ -66,7 +66,7 @@ describe('combinedTasks reducer', () => {
     })
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [],
         taskLists: [
@@ -84,7 +84,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: 'bob'
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [],
       taskLists: [
@@ -105,7 +105,7 @@ describe('combinedTasks reducer', () => {
   it('should handle unassigned task', () => {
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [],
         taskLists: [
@@ -123,7 +123,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: null
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [{
         '@id': 1,
@@ -140,7 +140,7 @@ describe('combinedTasks reducer', () => {
   it('should handle unassigned task (not existing)', () => {
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [],
         taskLists: [
@@ -154,7 +154,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: null
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [{
         '@id': 1,
@@ -167,7 +167,7 @@ describe('combinedTasks reducer', () => {
     })
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [{
           '@id': 1,
@@ -185,7 +185,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: null
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [{
         '@id': 1,
@@ -206,7 +206,7 @@ describe('combinedTasks reducer', () => {
   it('should handle reassigned task', () => {
 
     expect(
-      combinedTasks({
+      reducers({
         allTasks: [],
         unassignedTasks: [],
         taskLists: [
@@ -229,7 +229,7 @@ describe('combinedTasks reducer', () => {
           assignedTo: 'bob'
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       allTasks: [],
       unassignedTasks: [],
       taskLists: [
@@ -253,7 +253,7 @@ describe('combinedTasks reducer', () => {
     const date = moment('2019-11-20')
 
     expect(
-      combinedTasks({
+      reducers({
         date,
         allTasks: [],
         unassignedTasks: [],
@@ -268,7 +268,7 @@ describe('combinedTasks reducer', () => {
           doneBefore: '2019-11-21 13:00:00',
         }
       })
-    ).toEqual({
+    ).toMatchObject({
       date,
       allTasks: [],
       unassignedTasks: [],
@@ -289,7 +289,7 @@ describe('combinedTasks reducer', () => {
     }
 
     expect(
-      combinedTasks({
+      reducers({
         date,
         allTasks: [],
         unassignedTasks: [],
@@ -298,7 +298,7 @@ describe('combinedTasks reducer', () => {
         type: 'ADD_CREATED_TASK',
         task
       })
-    ).toEqual({
+    ).toMatchObject({
       date,
       allTasks: [ task ],
       unassignedTasks: [ task ],
@@ -320,7 +320,7 @@ describe('combinedTasks reducer', () => {
     }
 
     expect(
-      combinedTasks({
+      reducers({
         date,
         allTasks: [],
         unassignedTasks: [],

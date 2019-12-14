@@ -508,7 +508,7 @@ const isDragging = (state = false, action) => {
   }
 }
 
-export const combinedTasks = (state = initialState, action) => {
+const combinedTasks = (state = initialState, action) => {
 
   switch (action.type) {
 
