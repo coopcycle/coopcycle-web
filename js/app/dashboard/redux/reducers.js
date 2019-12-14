@@ -426,8 +426,6 @@ const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
   }
 }
 
-const tags = (state = initialState.tags, action) => state
-
 const jwt = (state = '', action) => {
   switch (action.type) {
   case TOKEN_REFRESH_SUCCESS:
@@ -439,10 +437,6 @@ const jwt = (state = '', action) => {
     return state
   }
 }
-
-const date = (state = moment(), action) => state
-
-const couriersList = (state = [], action) => state
 
 const positions = (state = [], action) => {
   switch (action.type) {
@@ -747,17 +741,14 @@ export default (state = initialState, action) => {
     addModalIsOpen: addModalIsOpen(state.addModalIsOpen, action),
     polylineEnabled: polylineEnabled(state.polylineEnabled, action),
     taskListGroupMode: taskListGroupMode(state.taskListGroupMode, action),
-    tags: tags(state.tags, action),
     selectedTasks: selectedTasks(state.selectedTasks, action),
     jwt: jwt(state.jwt, action),
-    date: date(state.date, action),
     positions: positions(state.positions, action),
     offline: offline(state.offline, action),
     isDragging: isDragging(state.isDragging, action),
     taskModalIsOpen: taskModalIsOpen(state.taskModalIsOpen, action),
     currentTask: currentTask(state.currentTask, action),
     isTaskModalLoading: isTaskModalLoading(state.isTaskModalLoading, action),
-    couriersList: couriersList(state.couriersList, action),
     completeTaskErrorMessage: completeTaskErrorMessage(state.completeTaskErrorMessage, action),
     filtersModalIsOpen: filtersModalIsOpen(state.filtersModalIsOpen, action),
     filters,
