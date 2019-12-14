@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
   <entity repository-class="AppBundle\Entity\Sylius\ProductRepository" name="AppBundle\Entity\Sylius\Product" table="sylius_product">
     <field name="imageName" type="string" column="image_name" length="255" precision="0" scale="0" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
@@ -9,6 +9,7 @@
       </options>
     </field>
     <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-many field="options" target-entity="AppBundle\Entity\Sylius\ProductOptions" mapped-by="product" orphan-removal="true" fetch="LAZY">
       <cascade>
         <cascade-remove/>

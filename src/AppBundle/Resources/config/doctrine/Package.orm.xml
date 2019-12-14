@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
   <entity name="AppBundle\Entity\Package" table="package">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
     <field name="volumeUnits" type="integer" column="volume_units"/>
-    <field name="createdAt" type="datetime" column="created_at"/>
-    <field name="updatedAt" type="datetime" column="updated_at"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
     <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" inversed-by="packages" fetch="LAZY">
       <join-columns>
         <join-column name="package_set_id" referenced-column-name="id" on-delete="SET NULL"/>
