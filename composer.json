@@ -61,7 +61,7 @@
         "mailjet/mailjet-swiftmailer": "dev-upgradeToSwiftmailer6",
         "knplabs/knp-markdown-bundle": "^1.6",
         "craue/config-bundle": "~2.0",
-        "knplabs/knp-paginator-bundle": "^4.0",
+        "knplabs/knp-paginator-bundle": "^5.0",
         "league/csv": "^9.3",
         "twig/twig": "^2.0",
         "sylius/order-bundle": "1.6.*",
