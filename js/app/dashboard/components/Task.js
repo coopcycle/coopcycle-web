@@ -5,6 +5,7 @@ import moment from 'moment'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
+import { selectTasksWithColor } from '../redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -168,8 +169,10 @@ class Task extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
-  const color = state.tasksWithColor.hasOwnProperty(ownProps.task['@id']) ?
-    state.tasksWithColor[ownProps.task['@id']] : '#ffffff'
+  const tasksWithColor = selectTasksWithColor(state)
+
+  const color = tasksWithColor.hasOwnProperty(ownProps.task['@id']) ?
+    tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
   return {
     selected: -1 !== state.selectedTasks.indexOf(ownProps.task),

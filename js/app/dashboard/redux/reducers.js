@@ -3,7 +3,7 @@ import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
-import { createTaskList, integerToColor, groupLinkedTasks } from './utils'
+import { createTaskList } from './utils'
 import {
   ASSIGN_TASKS,
   ADD_CREATED_TASK,
@@ -261,9 +261,9 @@ const rootReducer = (state = initialState, action) => {
           items: replaceOrAddTask(state.taskLists[targetTaskListsIndex].items, action.task)
         })
       } else {
-        let newTaskList = createTaskList(action.task.assignedTo)
-        newTaskList.items.push(action.task)
-        newTaskLists.push(newTaskList)
+        newTaskLists.push(
+          createTaskList(action.task.assignedTo, [ action.task ])
+        )
       }
 
     } else {
@@ -283,12 +283,6 @@ const rootReducer = (state = initialState, action) => {
   }
 
   return state
-}
-
-function _tasksWithColor(state = initialState.tasksWithColor) {
-  const groups = groupLinkedTasks(state.allTasks)
-
-  return _.mapValues(groups, taskIds => integerToColor(taskIds.reduce((accumulator, value) => accumulator + value)))
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -462,7 +456,6 @@ const combinedTasks = (state = initialState, action) => {
     unassignedTasks,
     taskLists,
     allTasks,
-    tasksWithColor: _tasksWithColor(state),
   }
 }
 
