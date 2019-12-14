@@ -83,6 +83,14 @@ const acceptTask = (task, date) => {
   return range.overlaps(dateAsRange)
 }
 
+const withoutTasks = (state, tasks) => {
+  return _.differenceWith(
+    state,
+    _.intersectionWith(state, tasks, taskComparator),
+    taskComparator
+  )
+}
+
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
@@ -127,7 +135,89 @@ const initialState = {
 }
 
 const rootReducer = (state = initialState, action) => {
+  let newTaskLists = state.taskLists.slice(0)
+  let taskListIndex
+
   switch (action.type) {
+  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
+    taskListIndex = _.findIndex(state.taskLists, taskList => taskList['@id'] === action.taskList['@id'])
+    newTaskLists.splice(taskListIndex, 1, {
+      ...action.taskList,
+      items: action.taskList.items,
+    })
+
+    return {
+      ...state,
+      taskLists: newTaskLists,
+    }
+
+  case ADD_TASK_LIST_REQUEST_SUCCESS:
+
+    return {
+      ...state,
+      taskLists: Array.prototype.concat(state.taskLists, action.taskList),
+    }
+
+  case ASSIGN_TASKS:
+
+    taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.username)
+    newTaskLists.splice(taskListIndex, 1, {
+      ...state.taskLists[taskListIndex],
+      items: Array.prototype.concat(state.taskLists[taskListIndex].items, action.tasks),
+    })
+
+    return {
+      ...state,
+      unassignedTasks: withoutTasks(state.unassignedTasks, action.tasks),
+      taskLists: newTaskLists,
+    }
+
+  case REMOVE_TASKS:
+
+    taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.username)
+    newTaskLists.splice(taskListIndex, 1, {
+      ...state.taskLists[taskListIndex],
+      items: withoutTasks(state.taskLists[taskListIndex].items, action.tasks),
+    })
+
+    return {
+      ...state,
+      taskLists: newTaskLists,
+      unassignedTasks: Array.prototype.concat(state.unassignedTasks, action.tasks)
+    }
+
+  case ADD_CREATED_TASK:
+
+    if (!acceptTask(action.task, state.date)) {
+      return state
+    }
+
+    const pushToUnassignedTasks =
+      !action.task.isAssigned && !_.find(state.unassignedTasks, t => taskComparator(t, action.task))
+
+    if (action.task.isAssigned) {
+      taskListIndex = _.findIndex(state.taskLists, taskList => taskList.username === action.task.assignedTo)
+      if (-1 !== taskListIndex) {
+        if (!_.find(state.taskLists[taskListIndex].items, t => taskComparator(t, action.task))) {
+          newTaskLists.splice(taskListIndex, 1, {
+            ...state.taskLists[taskListIndex],
+            items: Array.prototype.concat(taskList.items, action.task)
+          })
+        }
+      } else {
+        newTaskLists.push(
+          createTaskList(action.task.assignedTo, [ action.task ])
+        )
+      }
+    }
+
+    return {
+      ...state,
+      unassignedTasks: pushToUnassignedTasks ? Array.prototype.concat(state.unassignedTasks, action.task) : state.unassignedTasks,
+      taskLists: action.task.isAssigned ? newTaskLists : state.taskLists,
+      allTasks: Array.prototype.concat(state.allTasks, action.task),
+    }
+
   case UPDATE_TASK:
 
     if (!acceptTask(action.task, state.date)) {
@@ -135,8 +225,6 @@ const rootReducer = (state = initialState, action) => {
     }
 
     let newUnassignedTasks = state.unassignedTasks.slice(0)
-    let newTaskLists = state.taskLists.slice(0)
-
     let unassignedTasksIndex = _.findIndex(state.unassignedTasks, task => task['@id'] === action.task['@id'])
     let taskListsIndex = _.findIndex(state.taskLists, taskList => {
       return _.includes(_.map(taskList.items, task => task['@id']), action.task['@id'])
@@ -192,149 +280,6 @@ const rootReducer = (state = initialState, action) => {
       unassignedTasks: newUnassignedTasks,
       taskLists: newTaskLists,
     }
-  }
-
-  return state
-}
-
-function _taskLists(state = [], action, date = initialState.date) {
-
-  let newTaskLists = state.slice(0)
-  let taskListIndex
-  let taskList
-  let taskListItems
-  let targetTaskListIndex
-
-  switch (action.type) {
-
-  case ASSIGN_TASKS:
-
-    taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
-    taskList = newTaskLists[taskListIndex]
-
-    newTaskLists.splice(taskListIndex, 1,
-      Object.assign({}, taskList, { items: taskList.items.concat(action.tasks) }))
-
-    return newTaskLists
-
-  case REMOVE_TASKS:
-
-    taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.username)
-    taskList = newTaskLists[taskListIndex]
-
-    taskListItems = _.differenceWith(
-      taskList.items,
-      _.intersectionWith(taskList.items, action.tasks, taskComparator),
-      taskComparator
-    )
-    newTaskLists.splice(taskListIndex, 1,
-      Object.assign({}, taskList, { items: taskListItems }))
-
-    return newTaskLists
-
-  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-
-    taskListIndex = _.findIndex(newTaskLists, taskList => taskList['@id'] === action.taskList['@id'])
-
-    newTaskLists.splice(taskListIndex, 1,
-      Object.assign({}, action.taskList, { items: action.taskList.items }))
-
-    return newTaskLists
-
-  case ADD_TASK_LIST_REQUEST_SUCCESS:
-
-    newTaskLists.push(action.taskList)
-
-    return newTaskLists
-
-  case ADD_CREATED_TASK:
-
-    if (!acceptTask(action.task, date)) {
-      return state
-    }
-
-    if (action.task.isAssigned) {
-      taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
-
-      if (-1 !== taskListIndex) {
-        taskList = newTaskLists[taskListIndex]
-        if (!_.find(taskList.items, (task) => { task['id'] === action.task.id })) {
-          taskListItems = Array.prototype.concat(taskList.items, [action.task])
-          newTaskLists.splice(taskListIndex, 1,
-            Object.assign({}, taskList, { items: taskListItems })
-          )
-        }
-      } else {
-        let newTaskList = createTaskList(action.task.assignedTo)
-        newTaskList.items.push(action.task)
-        newTaskLists.push(newTaskList)
-      }
-
-      return newTaskLists
-    }
-
-    break
-  }
-
-  return state
-}
-
-/*
-  Store for all unassigned tasks
- */
-function _unassignedTasks(state = [], action, date = initialState.date) {
-  let newState
-
-  switch (action.type) {
-
-  case ADD_CREATED_TASK:
-
-    if (action.task.isAssigned) {
-      return state
-    }
-
-    if (!acceptTask(action.task, date)) {
-      return state
-    }
-
-    if (!_.find(state, (task) => { task['id'] === action.task.id })) {
-      newState = state.slice(0)
-      return Array.prototype.concat(newState, [ action.task ])
-    }
-    break
-
-  case ASSIGN_TASKS:
-    newState = state.slice(0)
-    newState = _.differenceWith(
-      newState,
-      _.intersectionWith(newState, action.tasks, taskComparator),
-      taskComparator
-    )
-    return newState
-
-  case REMOVE_TASKS:
-    return Array.prototype.concat(state, action.tasks)
-  }
-
-  return state
-}
-
-function _allTasks(state = [], action, date = initialState.date) {
-  let newState
-
-  switch (action.type) {
-
-  case ADD_CREATED_TASK:
-
-    if (!acceptTask(action.task, date)) {
-      return state
-    }
-
-    newState = state.slice(0)
-    return Array.prototype.concat(newState, [ action.task ])
-
-  // case 'UPDATE_TASK':
-  //   break;
   }
 
   return state
@@ -510,32 +455,13 @@ const isDragging = (state = false, action) => {
 
 const combinedTasks = (state = initialState, action) => {
 
-  switch (action.type) {
-
-  case ADD_CREATED_TASK:
-
-    return {
-      ...state,
-      unassignedTasks: _unassignedTasks(state.unassignedTasks, action, state.date),
-      taskLists: _taskLists(state.taskLists, action, state.date),
-      allTasks: _allTasks(state.allTasks, action, state.date)
-    }
-  case UPDATE_TASK:
-
-    const { unassignedTasks, taskLists } = rootReducer(state, action)
-
-    return {
-      ...state,
-      unassignedTasks,
-      taskLists,
-    }
-  }
+  const { unassignedTasks, taskLists, allTasks } = rootReducer(state, action)
 
   return {
     ...state,
-    unassignedTasks: _unassignedTasks(state.unassignedTasks, action),
-    taskLists: _taskLists(state.taskLists, action),
-    allTasks: _allTasks(state.allTasks, action),
+    unassignedTasks,
+    taskLists,
+    allTasks,
     tasksWithColor: _tasksWithColor(state),
   }
 }
@@ -698,7 +624,6 @@ const polylineStyle = (state = initialState.polylineStyle, action) => {
   default:
     return state
   }
-
 }
 
 const isLoadingTaskEvents = (state = initialState.isLoadingTaskEvents, action) => {
