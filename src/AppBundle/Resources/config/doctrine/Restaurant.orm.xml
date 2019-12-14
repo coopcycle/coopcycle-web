@@ -7,9 +7,9 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="name" type="string" column="name" precision="0" scale="0" nullable="true"/>
+    <field name="name" type="string" column="name" nullable="true"/>
     <field name="description" type="text" column="description" nullable="true"/>
-    <field name="enabled" type="boolean" column="enabled" precision="0" scale="0" nullable="false">
+    <field name="enabled" type="boolean" column="enabled" nullable="false">
       <options>
         <option name="default">false</option>
       </options>
@@ -29,8 +29,8 @@
         <option name="default">0</option>
       </options>
     </field>
-    <field name="imageName" type="string" column="image_name" length="255" precision="0" scale="0" nullable="true"/>
-    <field name="website" type="string" column="website" precision="0" scale="0" nullable="true"/>
+    <field name="imageName" type="string" column="image_name" length="255" nullable="true"/>
+    <field name="website" type="string" column="website" nullable="true"/>
     <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
@@ -38,15 +38,15 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <field name="legalName" type="string" column="legal_name" precision="0" scale="0" nullable="true"/>
+    <field name="legalName" type="string" column="legal_name" nullable="true"/>
     <field name="deliveryPerimeterExpression" type="string" column="delivery_perimeter_expression" nullable="false">
       <options>
         <option name="default">distance &lt; 3000</option>
       </options>
     </field>
-    <field name="openingHours" type="json_array" column="opening_hours" precision="0" scale="0" nullable="true"/>
-    <field name="vatID" type="string" column="vat_id" precision="0" scale="0" nullable="true"/>
-    <field name="additionalProperties" type="json_array" column="additional_properties" precision="0" scale="0" nullable="true"/>
+    <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
+    <field name="vatID" type="string" column="vat_id" nullable="true"/>
+    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
     <field name="state" type="string" column="state"/>
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>

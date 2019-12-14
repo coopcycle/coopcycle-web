@@ -4,9 +4,9 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="startDate" type="datetime" column="start_date" precision="0" scale="0" nullable="false"/>
-    <field name="endDate" type="datetime" column="end_date" precision="0" scale="0" nullable="false"/>
-    <field name="reason" type="string" column="reason" precision="0" scale="0" nullable="true"/>
+    <field name="startDate" type="datetime" column="start_date" nullable="false"/>
+    <field name="endDate" type="datetime" column="end_date" nullable="false"/>
+    <field name="reason" type="string" column="reason" nullable="true"/>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="closingRules" fetch="LAZY">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id"/>

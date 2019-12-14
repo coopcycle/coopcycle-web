@@ -9,9 +9,9 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="distance" type="integer" column="distance" precision="0" scale="0" nullable="false"/>
-    <field name="duration" type="integer" column="duration" precision="0" scale="0" nullable="false"/>
-    <field name="polyline" type="text" column="polyline" precision="0" scale="0" nullable="false"/>
+    <field name="distance" type="integer" column="distance" nullable="false"/>
+    <field name="duration" type="integer" column="duration" nullable="false"/>
+    <field name="polyline" type="text" column="polyline" nullable="false"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="name" type="string" column="name" precision="0" scale="0" nullable="false"/>
+    <field name="name" type="string" column="name" nullable="false"/>
     <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="ruleSet" fetch="LAZY">
       <cascade>
         <cascade-all/>

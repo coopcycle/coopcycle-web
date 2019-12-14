@@ -7,13 +7,13 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="coordinates" type="geography" column="coordinates" precision="0" scale="0" nullable="false">
+    <field name="coordinates" type="geography" column="coordinates" nullable="false">
       <options>
         <option name="geometry_type">GEOMETRY</option>
         <option name="srid">4326</option>
       </options>
     </field>
-    <field name="date" type="datetime" column="date" precision="0" scale="0" nullable="false"/>
+    <field name="date" type="datetime" column="date" nullable="false"/>
     <many-to-one field="courier" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
       <join-columns>
         <join-column name="courier_id" referenced-column-name="id"/>

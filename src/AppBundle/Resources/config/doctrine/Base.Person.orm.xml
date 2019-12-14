@@ -4,9 +4,9 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="birthDate" type="date" column="birth_date" precision="0" scale="0" nullable="true"/>
-    <field name="familyName" type="string" column="family_name" precision="0" scale="0" nullable="true"/>
-    <field name="gender" type="string" column="gender" precision="0" scale="0" nullable="true"/>
-    <field name="name" type="string" column="name" precision="0" scale="0" nullable="true"/>
+    <field name="birthDate" type="date" column="birth_date" nullable="true"/>
+    <field name="familyName" type="string" column="family_name" nullable="true"/>
+    <field name="gender" type="string" column="gender" nullable="true"/>
+    <field name="name" type="string" column="name" nullable="true"/>
   </mapped-superclass>
 </doctrine-mapping>
