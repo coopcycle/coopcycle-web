@@ -172,6 +172,7 @@
               <form
                 action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
                 data-product-options>
+                {% set option_index = 0 %}
                 {% for option in product.options %}
                 <h4>
                   {{ option.name }}
@@ -198,10 +199,10 @@
                       {% if option.additional %}
                         {% if option.valuesRange is not null %}
                         <div class="product-option-item-range">
-                          <input type="hidden" name="options[{{ option_index|default(0) }}][code]" value="{{ option_value.code }}">
+                          <input type="hidden" name="options[{{ option_index }}][code]" value="{{ option_value.code }}">
                           <input
                             id="{{ option_value_input_id }}"
-                            name="options[{{ option_index|default(0) }}][quantity]"
+                            name="options[{{ option_index }}][quantity]"
                             type="number"
                             step="1"
                             min="0"
@@ -226,7 +227,7 @@
                         <div class="checkbox nomargin">
                           <label>
                             <input
-                              name="options[{{ option_index|default(0) }}][code]"
+                              name="options[{{ option_index }}][code]"
                               value="{{ option_value.code }}" type="checkbox">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
@@ -235,12 +236,12 @@
                           </label>
                         </div>
                         {% endif %}
-                        {% set option_index = (option_index|default(0)) + 1 %}
+                        {% set option_index = option_index + 1 %}
                       {% else %}
                         <div class="radio nomargin">
                           <label>
                             <input
-                              name="options[{{ option_index|default(0) }}][code]"
+                              name="options[{{ option_index }}][code]"
                               value="{{ option_value.code }}" type="radio">
                             {{ option_value.value }}
                             {% if option.strategy == 'option_value' and option_value.price > 0 %}
@@ -252,7 +253,9 @@
                     </div>
                   {% endfor %}
                 </div>
-                {% set option_index = (option_index|default(0)) + 1 %}
+                {% if not option.additional %}
+                  {% set option_index = option_index + 1 %}
+                {% endif %}
                 {% endfor %}
                 {% set product_quantity_input_id = ('product-' ~ product.code ~ '-quantity') %}
                 <div class="row">

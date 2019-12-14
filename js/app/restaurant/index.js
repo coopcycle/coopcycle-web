@@ -136,19 +136,23 @@ window.initMap = function() {
 
     if (max !== Infinity && optionsCount === max) {
       $optionsGroup.children().each(function (e) {
-        const $input = $(this).find('input[type="number"]')
-        if (parseInt($input.val(), 10) === 0) {
-          $input.prop('disabled', true)
+        const $code = $(this).find('input[type="hidden"]')
+        const $quantity = $(this).find('input[type="number"]')
+        if (parseInt($quantity.val(), 10) === 0) {
+          $code.prop('disabled', true)
+          $quantity.prop('disabled', true)
           $(this).addClass('disabled')
         }
         $(this).find('[data-stepper][data-direction="up"]').prop('disabled', true)
       })
     } else {
       $optionsGroup.children().each(function (e) {
-        const $input = $(this).find('input[type="number"]')
-        $input.prop('disabled', false)
+        const $code = $(this).find('input[type="hidden"]')
+        const $quantity = $(this).find('input[type="number"]')
+        $code.prop('disabled', false)
+        $quantity.prop('disabled', false)
         if (max !== Infinity) {
-          $input.attr('max', max - (optionsCount - parseInt($input.val(), 10)))
+          $quantity.attr('max', max - (optionsCount - parseInt($quantity.val(), 10)))
         }
         $(this).find('[data-stepper][data-direction="up"]').prop('disabled', false)
         $(this).removeClass('disabled')
