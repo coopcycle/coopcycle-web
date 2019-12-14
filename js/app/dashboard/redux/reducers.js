@@ -257,8 +257,8 @@ function _taskLists(state = [], action, date = initialState.date) {
       taskListIndex = _.findIndex(newTaskLists, taskList => taskList.username === action.task.assignedTo)
 
       if (-1 !== taskListIndex) {
+        taskList = newTaskLists[taskListIndex]
         if (!_.find(taskList.items, (task) => { task['id'] === action.task.id })) {
-          taskList = newTaskLists[taskListIndex]
           taskListItems = Array.prototype.concat(taskList.items, [action.task])
           newTaskLists.splice(taskListIndex, 1,
             Object.assign({}, taskList, { items: taskListItems })
