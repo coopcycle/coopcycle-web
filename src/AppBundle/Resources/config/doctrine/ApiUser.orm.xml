@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="AppBundle\Entity\ApiUserRepository" name="AppBundle\Entity\ApiUser" table="api_user">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="givenName" type="string" column="given_name" nullable="true"/>
+    <field name="familyName" type="string" column="family_name" nullable="true"/>
+    <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
+    <field name="facebookId" type="string" column="facebook_id" nullable="true"/>
+    <field name="facebookAccessToken" type="string" column="facebook_access_token" nullable="true"/>
+    <field name="quotesAllowed" type="boolean" column="quotes_allowed">
+      <options>
+        <option name="default"/>
+      </options>
+    </field>
+    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user" fetch="LAZY"/>
+    <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel" fetch="LAZY">
+      <join-columns>
+        <join-column name="channel_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="restaurants" target-entity="AppBundle\Entity\Restaurant" inversed-by="owners" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_restaurant">
+        <join-columns>
+          <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="restaurant_id" referenced-column-name="id" nullable="1"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="stores" target-entity="AppBundle\Entity\Store" inversed-by="owners" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_store">
+        <join-columns>
+          <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="store_id" referenced-column-name="id" nullable="1"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_address">
+        <join-columns>
+          <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="address_id" referenced-column-name="id" nullable="1"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <many-to-many field="stripeAccounts" target-entity="AppBundle\Entity\StripeAccount" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-table name="api_user_stripe_account">
+        <join-columns>
+          <join-column name="user_id" referenced-column-name="id"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="stripe_account_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

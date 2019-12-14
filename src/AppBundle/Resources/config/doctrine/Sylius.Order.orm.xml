@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="AppBundle\Entity\Sylius\OrderRepository" name="AppBundle\Entity\Sylius\Order" table="sylius_order">
+    <field name="shippedAt" type="datetime" column="shipped_at" nullable="true"/>
+    <field name="reusablePackagingEnabled" type="boolean" column="reusable_packaging_enabled">
+      <options>
+        <option name="default"/>
+      </options>
+    </field>
+    <one-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" mapped-by="order" fetch="LAZY">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="timeline" target-entity="AppBundle\Entity\Sylius\OrderTimeline" mapped-by="order" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="receipt" target-entity="AppBundle\Entity\Sylius\OrderReceipt" mapped-by="order" fetch="LAZY">
+      <cascade>
+        <cascade-remove/>
+        <cascade-persist/>
+      </cascade>
+    </one-to-one>
+    <one-to-many field="payments" target-entity="AppBundle\Entity\StripePayment" mapped-by="order" orphan-removal="true" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="events" target-entity="AppBundle\Entity\Sylius\OrderEvent" mapped-by="order" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="items" target-entity="AppBundle\Entity\Sylius\OrderItem" mapped-by="order" orphan-removal="true" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="adjustments" target-entity="Sylius\Component\Order\Model\Adjustment" mapped-by="order" orphan-removal="true" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="customer" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
+      <join-columns>
+        <join-column name="customer_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="orders" fetch="LAZY">
+      <join-columns>
+        <join-column name="restaurant_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="shippingAddress" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="shipping_address_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="billingAddress" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <join-columns>
+        <join-column name="billing_address_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel" fetch="LAZY">
+      <join-columns>
+        <join-column name="channel_id" referenced-column-name="id" nullable="1"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="promotionCoupon" target-entity="AppBundle\Entity\Sylius\PromotionCoupon" fetch="LAZY">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="promotion_coupon_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="promotions" target-entity="Sylius\Component\Promotion\Model\Promotion" fetch="LAZY">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="sylius_promotion_order">
+        <join-columns>
+          <join-column name="order_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="promotion_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>
