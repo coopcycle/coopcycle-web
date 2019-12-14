@@ -10,7 +10,7 @@
     <field name="votedAt" type="datetime" column="voted_at">
       <gedmo:timestampable on="create"/>
     </field>
-    <many-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" inversed-by="votes" fetch="LAZY">
+    <many-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" inversed-by="votes">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -18,7 +18,7 @@
         <join-column name="pledge_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
+    <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser">
       <join-columns>
         <join-column name="user_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

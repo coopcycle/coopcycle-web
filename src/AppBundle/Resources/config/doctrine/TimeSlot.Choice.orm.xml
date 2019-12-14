@@ -12,7 +12,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" fetch="LAZY">
+    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot">
       <join-columns>
         <join-column name="time_slot_id" referenced-column-name="id" nullable="true"/>
       </join-columns>

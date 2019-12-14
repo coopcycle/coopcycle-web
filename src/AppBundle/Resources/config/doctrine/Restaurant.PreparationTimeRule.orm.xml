@@ -9,7 +9,7 @@
       <gedmo:sortable-position/>
     </field>
     <field name="time" type="string" column="time"/>
-    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="preparationTimeRules" fetch="LAZY">
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="preparationTimeRules">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>

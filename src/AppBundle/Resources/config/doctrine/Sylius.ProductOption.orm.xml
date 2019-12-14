@@ -11,7 +11,7 @@
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="valuesRange" type="numrange" column="values_range" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <one-to-many field="values" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" mapped-by="option" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="values" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" mapped-by="option" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>

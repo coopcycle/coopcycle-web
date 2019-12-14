@@ -5,12 +5,12 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="quantity" type="integer" column="quantity"/>
-    <many-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" inversed-by="packages" fetch="LAZY">
+    <many-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" inversed-by="packages">
       <join-columns>
         <join-column name="delivery_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="package" target-entity="AppBundle\Entity\Package" fetch="LAZY">
+    <many-to-one field="package" target-entity="AppBundle\Entity\Package">
       <join-columns>
         <join-column name="package_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

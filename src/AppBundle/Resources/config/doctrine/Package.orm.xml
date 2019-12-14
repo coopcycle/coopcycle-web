@@ -12,7 +12,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" inversed-by="packages" fetch="LAZY">
+    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" inversed-by="packages">
       <join-columns>
         <join-column name="package_set_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>

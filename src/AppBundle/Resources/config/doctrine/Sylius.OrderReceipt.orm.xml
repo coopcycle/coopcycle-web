@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="receipt" fetch="LAZY">
+    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="receipt">
       <cascade>
         <cascade-remove/>
         <cascade-persist/>
@@ -13,12 +13,12 @@
         <join-column name="order_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-many field="lineItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptLineItem" mapped-by="parent" fetch="LAZY">
+    <one-to-many field="lineItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptLineItem" mapped-by="parent">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="footerItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptFooterItem" mapped-by="parent" fetch="LAZY">
+    <one-to-many field="footerItems" target-entity="AppBundle\Entity\Sylius\OrderReceiptFooterItem" mapped-by="parent">
       <cascade>
         <cascade-all/>
       </cascade>

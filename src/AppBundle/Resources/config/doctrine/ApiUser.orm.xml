@@ -14,13 +14,13 @@
         <option name="default">0</option>
       </options>
     </field>
-    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user" fetch="LAZY"/>
-    <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel" fetch="LAZY">
+    <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user"/>
+    <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel">
       <join-columns>
         <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="restaurants" target-entity="AppBundle\Entity\Restaurant" inversed-by="owners" fetch="LAZY">
+    <many-to-many field="restaurants" target-entity="AppBundle\Entity\Restaurant" inversed-by="owners">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -33,7 +33,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="stores" target-entity="AppBundle\Entity\Store" inversed-by="owners" fetch="LAZY">
+    <many-to-many field="stores" target-entity="AppBundle\Entity\Store" inversed-by="owners">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -46,7 +46,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -59,7 +59,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="stripeAccounts" target-entity="AppBundle\Entity\StripeAccount" fetch="LAZY">
+    <many-to-many field="stripeAccounts" target-entity="AppBundle\Entity\StripeAccount">
       <cascade>
         <cascade-all/>
       </cascade>

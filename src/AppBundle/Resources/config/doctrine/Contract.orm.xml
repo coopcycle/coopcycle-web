@@ -17,7 +17,7 @@
         <option name="default">0</option>
       </options>
     </field>
-    <one-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="contract" fetch="LAZY">
+    <one-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="contract">
       <cascade>
         <cascade-persist/>
       </cascade>

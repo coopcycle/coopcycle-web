@@ -26,12 +26,12 @@
     <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>
     <field name="createOrders" type="boolean" column="create_orders"/>
     <field name="checkExpression" type="string" column="check_expression" nullable="true"/>
-    <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store" fetch="LAZY">
+    <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>
       </cascade>
     </one-to-many>
-    <many-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -39,12 +39,12 @@
         <join-column name="default_address_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount" fetch="LAZY">
+    <many-to-one field="stripeAccount" target-entity="AppBundle\Entity\StripeAccount">
       <join-columns>
         <join-column name="stripe_account_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" fetch="LAZY">
+    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -52,7 +52,7 @@
         <join-column name="pricing_rule_set_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" fetch="LAZY">
+    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -60,13 +60,13 @@
         <join-column name="time_slot_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" fetch="LAZY">
+    <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet">
       <join-columns>
         <join-column name="package_set_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="stores" fetch="LAZY"/>
-    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="stores"/>
+    <many-to-many field="addresses" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-persist/>
       </cascade>

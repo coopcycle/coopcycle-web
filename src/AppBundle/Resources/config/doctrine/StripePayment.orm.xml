@@ -14,7 +14,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="payments" fetch="LAZY">
+    <many-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="payments">
       <join-columns>
         <join-column name="order_id" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
       </join-columns>

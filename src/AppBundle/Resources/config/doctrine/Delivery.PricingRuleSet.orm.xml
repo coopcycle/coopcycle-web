@@ -5,7 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name" nullable="false"/>
-    <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="ruleSet" fetch="LAZY">
+    <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="ruleSet">
       <cascade>
         <cascade-all/>
       </cascade>

@@ -9,7 +9,7 @@
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
-    <one-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="LAZY">
+    <one-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -17,7 +17,7 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="pledge" fetch="LAZY">
+    <one-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="pledge">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -25,12 +25,12 @@
         <join-column name="restaurant_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-many field="votes" target-entity="AppBundle\Entity\Restaurant\PledgeVote" mapped-by="pledge" fetch="LAZY">
+    <one-to-many field="votes" target-entity="AppBundle\Entity\Restaurant\PledgeVote" mapped-by="pledge">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
+    <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser">
       <join-columns>
         <join-column name="user_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

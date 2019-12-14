@@ -5,7 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name" nullable="false"/>
-    <one-to-many field="tasks" target-entity="AppBundle\Entity\Task" mapped-by="group" fetch="LAZY">
+    <one-to-many field="tasks" target-entity="AppBundle\Entity\Task" mapped-by="group">
       <cascade>
         <cascade-persist/>
       </cascade>

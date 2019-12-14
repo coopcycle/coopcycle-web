@@ -10,13 +10,13 @@
     <field name="position" type="integer" column="position">
       <gedmo:sortable-position/>
     </field>
-    <many-to-one field="product" target-entity="AppBundle\Entity\Sylius\Product" inversedBy="options" fetch="LAZY">
+    <many-to-one field="product" target-entity="AppBundle\Entity\Sylius\Product" inversedBy="options">
       <join-columns>
         <join-column name="product_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
       </join-columns>
       <gedmo:sortable-group />
     </many-to-one>
-    <many-to-one field="option" target-entity="AppBundle\Entity\Sylius\ProductOption" fetch="LAZY">
+    <many-to-one field="option" target-entity="AppBundle\Entity\Sylius\ProductOption">
       <join-columns>
         <join-column name="option_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
       </join-columns>

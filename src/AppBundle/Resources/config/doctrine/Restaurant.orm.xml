@@ -61,22 +61,22 @@
       </options>
     </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant" fetch="LAZY">
+    <one-to-one field="contract" target-entity="AppBundle\Entity\Contract" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
     </one-to-one>
-    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant" fetch="LAZY">
+    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-one>
-    <one-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule" mapped-by="restaurant" fetch="LAZY">
+    <one-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="preparationTimeRules" target-entity="AppBundle\Entity\Restaurant\PreparationTimeRule" mapped-by="restaurant" fetch="LAZY">
+    <one-to-many field="preparationTimeRules" target-entity="AppBundle\Entity\Restaurant\PreparationTimeRule" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -84,17 +84,17 @@
         <order-by-field name="position" direction="ASC"/>
       </order-by>
     </one-to-many>
-    <one-to-many field="stripeAccounts" target-entity="AppBundle\Entity\RestaurantStripeAccount" mapped-by="restaurant" fetch="LAZY">
+    <one-to-many field="stripeAccounts" target-entity="AppBundle\Entity\RestaurantStripeAccount" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="reusablePackagings" target-entity="AppBundle\Entity\ReusablePackaging" mapped-by="restaurant" fetch="LAZY">
+    <one-to-many field="reusablePackagings" target-entity="AppBundle\Entity\ReusablePackaging" mapped-by="restaurant">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="orders" target-entity="AppBundle\Entity\Sylius\Order" mapped-by="restaurant" fetch="LAZY"/>
+    <one-to-many field="orders" target-entity="AppBundle\Entity\Sylius\Order" mapped-by="restaurant"/>
     <many-to-one field="address" target-entity="AppBundle\Entity\Address" fetch="EAGER">
       <cascade>
         <cascade-all/>
@@ -103,12 +103,12 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="activeMenuTaxon" target-entity="AppBundle\Entity\Sylius\Taxon" fetch="LAZY">
+    <many-to-one field="activeMenuTaxon" target-entity="AppBundle\Entity\Sylius\Taxon">
       <join-columns>
         <join-column name="active_menu_taxon_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine" fetch="LAZY">
+    <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -124,8 +124,8 @@
         <order-by-field name="name" direction="ASC"/>
       </order-by>
     </many-to-many>
-    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="restaurants" fetch="LAZY"/>
-    <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant" fetch="LAZY">
+    <many-to-many field="owners" target-entity="AppBundle\Entity\ApiUser" mapped-by="restaurants"/>
+    <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -138,7 +138,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption" fetch="LAZY">
+    <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -151,7 +151,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="taxons" target-entity="AppBundle\Entity\Sylius\Taxon" fetch="LAZY">
+    <many-to-many field="taxons" target-entity="AppBundle\Entity\Sylius\Taxon">
       <cascade>
         <cascade-persist/>
       </cascade>

@@ -10,18 +10,18 @@
     </field>
     <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <one-to-many field="options" target-entity="AppBundle\Entity\Sylius\ProductOptions" mapped-by="product" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="options" target-entity="AppBundle\Entity\Sylius\ProductOptions" mapped-by="product" orphan-removal="true">
       <cascade>
         <cascade-remove/>
         <cascade-persist/>
       </cascade>
     </one-to-many>
-    <one-to-many field="attributes" target-entity="Sylius\Component\Product\Model\ProductAttributeValue" mapped-by="subject" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="attributes" target-entity="Sylius\Component\Product\Model\ProductAttributeValue" mapped-by="subject" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="variants" target-entity="AppBundle\Entity\Sylius\ProductVariant" mapped-by="product" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="variants" target-entity="AppBundle\Entity\Sylius\ProductVariant" mapped-by="product" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -29,17 +29,17 @@
         <order-by-field name="position" direction="ASC"/>
       </order-by>
     </one-to-many>
-    <one-to-many field="associations" target-entity="Sylius\Component\Product\Model\ProductAssociation" mapped-by="owner" orphan-removal="true" fetch="LAZY">
+    <one-to-many field="associations" target-entity="Sylius\Component\Product\Model\ProductAssociation" mapped-by="owner" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <many-to-one field="reusablePackaging" target-entity="AppBundle\Entity\ReusablePackaging" fetch="LAZY">
+    <many-to-one field="reusablePackaging" target-entity="AppBundle\Entity\ReusablePackaging">
       <join-columns>
         <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="products" fetch="LAZY">
+    <many-to-many field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="products">
       <join-table name="restaurant_product">
         <join-columns>
           <join-column name="product_id" referenced-column-name="id" unique="true"/>
