@@ -149,4 +149,42 @@ class RestaurantRepository extends EntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    public function findAllSorted()
+    {
+        $matches = $this->findAll();
+
+        // 1 - opened restaurants
+        // 2 - closed restaurants
+        // 3 - disabled restaurants
+        usort($matches, function (Restaurant $a, Restaurant $b) {
+
+            $isAEnabled = $a->isEnabled();
+            $isBEnabled = $b->isEnabled();
+
+            $compareIsEnabled = intval($isBEnabled) - intval($isAEnabled);
+
+            if ($compareIsEnabled !== 0) {
+                return $compareIsEnabled;
+            }
+
+            $isAOpen = $a->isOpen();
+            $isBOpen = $b->isOpen();
+
+            $compareIsOpen = intval($isBOpen) - intval($isAOpen);
+
+            if ($compareIsOpen !== 0) {
+                return $compareIsOpen;
+            }
+
+            $aNextOpening = $a->getNextOpeningDate();
+            $bNextOpening = $b->getNextOpeningDate();
+
+            $compareNextOpening = $aNextOpening === $bNextOpening ? 0 : ($aNextOpening < $bNextOpening ? -1 : 1);
+
+            return $compareNextOpening;
+        });
+
+        return $matches;
+    }
 }
