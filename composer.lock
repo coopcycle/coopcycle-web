@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7ce70d774b4f0fe28dfd8c77944bfed",
+    "content-hash": "4520979cd8c454a01a1dfb1c0f18ac3e",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3410,29 +3410,29 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.8.3",
+            "version": "v0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "e3b2db2563982629a77ed4521df60a0e8ac2df64"
+                "reference": "fd0e4290ff74d545149d389976a9027b1a5baf66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/e3b2db2563982629a77ed4521df60a0e8ac2df64",
-                "reference": "e3b2db2563982629a77ed4521df60a0e8ac2df64",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/fd0e4290ff74d545149d389976a9027b1a5baf66",
+                "reference": "fd0e4290ff74d545149d389976a9027b1a5baf66",
                 "shasum": ""
             },
             "require": {
                 "lexik/jwt-authentication-bundle": "^1.1|^2.0@dev",
                 "php": "^5.5.9|>=7.0.8",
-                "symfony/framework-bundle": "~3.4|~4.0",
-                "symfony/validator": "~3.4|~4.0"
+                "symfony/framework-bundle": "~3.4|~4.0|~5.0",
+                "symfony/validator": "~3.4|~4.0|~5.0"
             },
             "require-dev": {
-                "doctrine/doctrine-bundle": "~1.4",
+                "doctrine/doctrine-bundle": "~1.4|~2.0",
                 "doctrine/mongodb-odm-bundle": "^3.4|^4.0",
                 "doctrine/orm": "^2.4.8",
-                "phpspec/phpspec": "^3.0|^4.0"
+                "phpspec/phpspec": "^3.0|^4.0|^5.0|^6.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -3459,7 +3459,7 @@
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
-            "time": "2019-11-12T16:03:22+00:00"
+            "time": "2019-12-05T09:07:22+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
@@ -3984,19 +3984,22 @@
                 "twig/twig": "<1.34"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "^1.11",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.0",
+                "friendsofsymfony/user-bundle": "^2.1",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/css-selector": "^3.4|^4.3",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/property-access": "^3.4|^4.3",
+                "symfony/stopwatch": "^3.4|^4.3",
+                "symfony/translation": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
