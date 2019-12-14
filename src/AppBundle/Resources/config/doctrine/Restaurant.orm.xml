@@ -105,7 +105,7 @@
     </many-to-one>
     <many-to-one field="activeMenuTaxon" target-entity="AppBundle\Entity\Sylius\Taxon" fetch="LAZY">
       <join-columns>
-        <join-column name="active_menu_taxon_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="active_menu_taxon_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine" fetch="LAZY">
@@ -117,7 +117,7 @@
           <join-column name="restaurant_id" referenced-column-name="id" on-delete="CASCADE"/>
         </join-columns>
         <inverse-join-columns>
-          <join-column name="cuisine_id" referenced-column-name="id" nullable="1"/>
+          <join-column name="cuisine_id" referenced-column-name="id" nullable="true"/>
         </inverse-join-columns>
       </join-table>
       <order-by>

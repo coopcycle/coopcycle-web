@@ -16,12 +16,12 @@
         <cascade-persist/>
       </cascade>
       <join-columns>
-        <join-column name="oauth2_client_id" referenced-column-name="identifier" nullable=""/>
+        <join-column name="oauth2_client_id" referenced-column-name="identifier" nullable="false"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store" fetch="LAZY">
       <join-columns>
-        <join-column name="store_id" referenced-column-name="id" nullable=""/>
+        <join-column name="store_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

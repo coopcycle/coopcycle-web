@@ -16,7 +16,7 @@
     </field>
     <many-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="payments" fetch="LAZY">
       <join-columns>
-        <join-column name="order_id" referenced-column-name="id" on-delete="CASCADE" nullable=""/>
+        <join-column name="order_id" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

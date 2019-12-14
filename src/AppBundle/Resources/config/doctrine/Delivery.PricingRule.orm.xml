@@ -12,7 +12,7 @@
         <cascade-persist/>
       </cascade>
       <join-columns>
-        <join-column name="rule_set_id" referenced-column-name="id" nullable=""/>
+        <join-column name="rule_set_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

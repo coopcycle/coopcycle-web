@@ -10,12 +10,12 @@
     <field name="quantity" type="integer" column="quantity"/>
     <many-to-one field="variant" target-entity="AppBundle\Entity\Sylius\ProductVariant" inversedBy="optionValues" fetch="LAZY">
       <join-columns>
-        <join-column name="variant_id" referenced-column-name="id" nullable=""/>
+        <join-column name="variant_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="optionValue" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" fetch="LAZY">
       <join-columns>
-        <join-column name="option_value_id" referenced-column-name="id" nullable=""/>
+        <join-column name="option_value_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

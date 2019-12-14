@@ -20,7 +20,7 @@
     </many-to-one>
     <many-to-one field="user" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
       <join-columns>
-        <join-column name="user_id" referenced-column-name="id" nullable=""/>
+        <join-column name="user_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

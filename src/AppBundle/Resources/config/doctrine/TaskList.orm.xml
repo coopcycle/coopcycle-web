@@ -7,7 +7,7 @@
     <field name="date" type="date" column="date"/>
     <many-to-one field="courier" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
       <join-columns>
-        <join-column name="courier_id" referenced-column-name="id" nullable=""/>
+        <join-column name="courier_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
   </entity>

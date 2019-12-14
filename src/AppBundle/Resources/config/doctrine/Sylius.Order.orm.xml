@@ -45,12 +45,12 @@
     </one-to-many>
     <many-to-one field="customer" target-entity="AppBundle\Entity\ApiUser" fetch="LAZY">
       <join-columns>
-        <join-column name="customer_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="customer_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="orders" fetch="LAZY">
       <join-columns>
-        <join-column name="restaurant_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="restaurant_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="shippingAddress" target-entity="AppBundle\Entity\Address" fetch="LAZY">
@@ -58,7 +58,7 @@
         <cascade-all/>
       </cascade>
       <join-columns>
-        <join-column name="shipping_address_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="shipping_address_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="billingAddress" target-entity="AppBundle\Entity\Address" fetch="LAZY">
@@ -66,12 +66,12 @@
         <cascade-all/>
       </cascade>
       <join-columns>
-        <join-column name="billing_address_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="billing_address_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel" fetch="LAZY">
       <join-columns>
-        <join-column name="channel_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="promotionCoupon" target-entity="AppBundle\Entity\Sylius\PromotionCoupon" fetch="LAZY">

@@ -14,7 +14,7 @@
     </field>
     <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" fetch="LAZY">
       <join-columns>
-        <join-column name="time_slot_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="time_slot_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
   </entity>

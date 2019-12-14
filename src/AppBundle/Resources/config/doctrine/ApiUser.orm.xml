@@ -17,7 +17,7 @@
     <one-to-many field="remotePushTokens" target-entity="AppBundle\Entity\RemotePushToken" mapped-by="user" fetch="LAZY"/>
     <many-to-one field="channel" target-entity="Sylius\Component\Channel\Model\Channel" fetch="LAZY">
       <join-columns>
-        <join-column name="channel_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="channel_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-many field="restaurants" target-entity="AppBundle\Entity\Restaurant" inversed-by="owners" fetch="LAZY">
@@ -29,7 +29,7 @@
           <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
         </join-columns>
         <inverse-join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id" nullable="1"/>
+          <join-column name="restaurant_id" referenced-column-name="id" nullable="true"/>
         </inverse-join-columns>
       </join-table>
     </many-to-many>
@@ -42,7 +42,7 @@
           <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
         </join-columns>
         <inverse-join-columns>
-          <join-column name="store_id" referenced-column-name="id" nullable="1"/>
+          <join-column name="store_id" referenced-column-name="id" nullable="true"/>
         </inverse-join-columns>
       </join-table>
     </many-to-many>
@@ -55,7 +55,7 @@
           <join-column name="api_user_id" referenced-column-name="id" on-delete="CASCADE"/>
         </join-columns>
         <inverse-join-columns>
-          <join-column name="address_id" referenced-column-name="id" nullable="1"/>
+          <join-column name="address_id" referenced-column-name="id" nullable="true"/>
         </inverse-join-columns>
       </join-table>
     </many-to-many>

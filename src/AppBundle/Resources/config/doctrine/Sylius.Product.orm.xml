@@ -36,7 +36,7 @@
     </one-to-many>
     <many-to-one field="reusablePackaging" target-entity="AppBundle\Entity\ReusablePackaging" fetch="LAZY">
       <join-columns>
-        <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-many field="restaurant" target-entity="AppBundle\Entity\Restaurant" inversed-by="products" fetch="LAZY">
