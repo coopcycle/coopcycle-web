@@ -12,6 +12,8 @@
 {% block content %}
 {{ form_start(form) }}
 
+  {% set product = form.vars.value %}
+
   {% if not form.vars.valid %}
     {{ form_errors(form) }}
   {% endif %}
@@ -30,7 +32,9 @@
 
   <div class="row">
     <div class="col-sm-3">
+      {% if product.id is not null %}
       <div id="product-image-dropzone"></div>
+      {% endif %}
     </div>
     <div class="col-sm-9">
       {{ form_row(form.name) }}
