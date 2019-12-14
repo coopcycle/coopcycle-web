@@ -471,9 +471,10 @@ class Restaurant extends FoodEstablishment
             $now = Carbon::now();
         }
 
-        $nextClosingDates = [
-            parent::getNextClosingDate($now)
-        ];
+        $nextClosingDates = [];
+        if ($nextClosingDate = parent::getNextClosingDate($now)) {
+            $nextClosingDates[] = $nextClosingDate;
+        }
 
         foreach ($this->getClosingRules() as $closingRule) {
             if ($closingRule->getEndDate() < $now) {
@@ -481,6 +482,10 @@ class Restaurant extends FoodEstablishment
             }
             $nextClosingDates[] = $closingRule->getStartDate();
         }
+
+        $nextClosingDates = array_filter($nextClosingDates, function (\DateTime $date) use ($now) {
+            return $date >= $now;
+        });
 
         sort($nextClosingDates);
 
