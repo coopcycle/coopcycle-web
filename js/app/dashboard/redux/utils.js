@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 
-export function createTaskList(username) {
+export function createTaskList(username, items = []) {
 
   return {
     '@context': '/api/contexts/TaskList',
@@ -13,7 +13,7 @@ export function createTaskList(username) {
     createdAt: moment().format(),
     updatedAt: moment().format(),
     username,
-    items:[],
+    items,
   }
 }
 
