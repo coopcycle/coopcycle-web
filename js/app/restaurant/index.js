@@ -132,7 +132,8 @@ window.initMap = function() {
     }
 
     const optionsCount = asOptionsCount($optionsGroup)
-    const [ min, max ] = asRange($optionsGroup)
+    const range = asRange($optionsGroup)
+    const max = range[1]
 
     if (max !== Infinity && optionsCount === max) {
       $optionsGroup.children().each(function () {

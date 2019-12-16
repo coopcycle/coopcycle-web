@@ -1,6 +1,5 @@
 import MapHelper from '../MapHelper'
 import _ from 'lodash'
-import moment from 'moment'
 require('gasparesganga-jquery-loading-overlay')
 
 import DeliveryForm from '../forms/delivery'
@@ -159,6 +158,7 @@ window.initMap = function() {
 
             form.enable()
           })
+          // eslint-disable-next-line no-console
           .catch(e => console.error(e))
       }
     }

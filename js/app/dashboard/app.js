@@ -1,3 +1,5 @@
+/* eslint-disable react/no-find-dom-node */
+
 import React from 'react'
 import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
@@ -172,7 +174,7 @@ class DashboardApp extends React.Component {
         <Modal
           appElement={ document.getElementById('dashboard') }
           isOpen={ this.props.filtersModalIsOpen }
-          onRequestClose={ _ => this.props.closeFiltersModal() }
+          onRequestClose={ () => this.props.closeFiltersModal() }
           className="ReactModal__Content--filters"
           shouldCloseOnOverlayClick={ true }>
           <FiltersModalContent />
@@ -180,7 +182,7 @@ class DashboardApp extends React.Component {
         <Modal
           appElement={ document.getElementById('dashboard') }
           isOpen={ this.props.settingsModalIsOpen }
-          onRequestClose={ _ => this.props.closeSettings() }
+          onRequestClose={ () => this.props.closeSettings() }
           className="ReactModal__Content--settings"
           shouldCloseOnOverlayClick={ true }>
           <SettingsModalContent />
@@ -204,15 +206,15 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
   return {
     assignTasks: (username, tasks) => dispatch(assignTasks(username, tasks)),
-    drakeDrag: _ => dispatch(drakeDrag()),
-    drakeDragEnd: _ => dispatch(drakeDragEnd()),
+    drakeDrag: () => dispatch(drakeDrag()),
+    drakeDragEnd: () => dispatch(drakeDragEnd()),
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
-    closeFiltersModal: _ => dispatch(closeFiltersModal()),
-    toggleSearch: _ => dispatch(toggleSearch()),
-    closeSearch: _ => dispatch(closeSearch()),
-    openSettings: _ => dispatch(openSettings()),
-    closeSettings: _ => dispatch(closeSettings()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
+    closeFiltersModal: () => dispatch(closeFiltersModal()),
+    toggleSearch: () => dispatch(toggleSearch()),
+    closeSearch: () => dispatch(closeSearch()),
+    openSettings: () => dispatch(openSettings()),
+    closeSettings: () => dispatch(closeSettings()),
   }
 }
 

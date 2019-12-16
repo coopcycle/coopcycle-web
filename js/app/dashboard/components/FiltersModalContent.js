@@ -1,6 +1,5 @@
 import React from 'react'
 import _ from 'lodash'
-import moment from 'moment'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import ConfigProvider from 'antd/lib/config-provider'
@@ -10,16 +9,11 @@ import Form from 'antd/lib/form'
 import fr_FR from 'antd/es/locale/fr_FR'
 import en_GB from 'antd/es/locale/en_GB'
 import { Formik } from 'formik'
-import Select from 'react-select'
 
 import TagsSelect from '../../components/TagsSelect'
 import Avatar from './Avatar'
 import {
   closeFiltersModal,
-  showFinishedTasks,
-  hideFinishedTasks,
-  showCancelledTasks,
-  hideCancelledTasks,
   setFilterValue } from '../redux/actions'
 import { selectBookedUsernames } from '../redux/selectors'
 
@@ -42,7 +36,7 @@ const timeSteps = {
 
 class FiltersModalContent extends React.Component {
 
-  _onSubmit(values, { setSubmitting }) {
+  _onSubmit(values) {
 
     this.props.setFilterValue('showFinishedTasks', values.showFinishedTasks)
     this.props.setFilterValue('showCancelledTasks', values.showCancelledTasks)
@@ -72,15 +66,8 @@ class FiltersModalContent extends React.Component {
       >
         {({
           values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
           handleSubmit,
-          isSubmitting,
-          isValidating,
           setFieldValue,
-          setFieldTouched,
         }) => (
           <ConfigProvider locale={ antdLocale }>
             <form onSubmit={ handleSubmit } autoComplete="off" className="form-horizontal">
@@ -196,7 +183,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    closeFiltersModal: _ => dispatch(closeFiltersModal()),
+    closeFiltersModal: () => dispatch(closeFiltersModal()),
     setFilterValue: (key, value) => dispatch(setFilterValue(key, value)),
   }
 }

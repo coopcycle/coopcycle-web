@@ -1,7 +1,6 @@
 import React from 'react'
-import { render, findDOMNode } from 'react-dom'
+import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import moment from 'moment'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 
@@ -16,16 +15,16 @@ import './dashboard.scss'
 
 let mapLoadedResolve, navbarLoadedResolve, dashboardLoadedResolve, initMapResolve
 
-const mapLoaded = new Promise((resolve, reject) => mapLoadedResolve = resolve)
-const mapInitialized = new Promise((resolve, reject) => initMapResolve = resolve)
-const navbarLoaded = new Promise((resolve, reject) => navbarLoadedResolve = resolve)
-const dashboardLoaded = new Promise((resolve, reject) => dashboardLoadedResolve = resolve)
+const mapLoaded = new Promise((resolve) => mapLoadedResolve = resolve)
+const mapInitialized = new Promise((resolve) => initMapResolve = resolve)
+const navbarLoaded = new Promise((resolve) => navbarLoadedResolve = resolve)
+const dashboardLoaded = new Promise((resolve) => dashboardLoadedResolve = resolve)
 
 function start() {
 
   Promise
     .all([ mapLoaded, mapInitialized, navbarLoaded, dashboardLoaded ])
-    .then((values) => {
+    .then(() => {
       anim.stop()
       anim.destroy()
       document.querySelector('.dashboard__loader').remove()

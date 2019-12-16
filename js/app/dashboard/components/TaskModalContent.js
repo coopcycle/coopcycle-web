@@ -71,21 +71,16 @@ class TaskModalContent extends React.Component {
       <Formik
         ref={ ref => this.completeForm = ref }
         initialValues={ initialValues }
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={(values) => {
+          // TODO Use setSubmitting
           this.props.completeTask(this.props.task, values.notes, this.success)
         }}
       >
         {({
           values,
-          errors,
-          touched,
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
-          onSubmit,
-          submitForm,
-          setFieldValue,
         }) => (
           <form name="task_complete" onSubmit={ handleSubmit }>
             { this.renderHeader(values) }
@@ -159,7 +154,9 @@ class TaskModalContent extends React.Component {
     return errors
   }
 
-  _onSubmit(values, { setSubmitting }) {
+  _onSubmit(values) {
+
+    // TODO Use setSubmitting
 
     const { task } = this.props
 
@@ -197,14 +194,14 @@ class TaskModalContent extends React.Component {
       <div className="modal-footer">
         { (!!task && task.status === 'TODO') && (
           <button type="button" className="btn pull-left"
-            onClick={ e => this.props.cancelTask(task) }
+            onClick={ () => this.props.cancelTask(task) }
             disabled={ this.props.loading }>
             <span className="text-danger">{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
           </button>
         )}
         { (!!task && task.hasOwnProperty('@id')) && (
           <button type="button" className="btn pull-left"
-            onClick={ e => this.props.duplicateTask(task) }
+            onClick={ () => this.props.duplicateTask(task) }
             disabled={ this.props.loading }>
             <span className="text-success">{ this.props.t('ADMIN_DASHBOARD_DUPLICATE_TASK') }</span>
           </button>
@@ -311,8 +308,6 @@ class TaskModalContent extends React.Component {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
-          isValidating,
           setFieldValue,
           setFieldTouched,
           /* and other goodies */

@@ -124,17 +124,17 @@ const lastAddItemRequest = (state = initialState.lastAddItemRequest, action = {}
   }
 }
 
-const restaurant = (state = initialState.restaurant, action = {}) => state
+const restaurant = (state = initialState.restaurant) => state
 
-const addressFormElements = (state = initialState.addressFormElements, action = {}) => state
+const addressFormElements = (state = initialState.addressFormElements) => state
 
-const isNewAddressFormElement = (state = initialState.isNewAddressFormElement, action = {}) => state
+const isNewAddressFormElement = (state = initialState.isNewAddressFormElement) => state
 
-const datePickerDateInputName = (state = initialState.datePickerDateInputName, action = {}) => state
+const datePickerDateInputName = (state = initialState.datePickerDateInputName) => state
 
-const datePickerTimeInputName = (state = initialState.datePickerTimeInputName, action = {}) => state
+const datePickerTimeInputName = (state = initialState.datePickerTimeInputName) => state
 
-const addresses = (state = initialState.addresses, action = {}) => state
+const addresses = (state = initialState.addresses) => state
 
 const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = {}) => {
   switch (action.type) {

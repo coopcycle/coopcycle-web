@@ -58,7 +58,7 @@ class LeafletMap extends Component {
           this.proxy.enableConnect(this.fromTask, !!this.toTask)
         }
       },
-      onMouseUp: (e) => {
+      onMouseUp: () => {
 
         if (!!this.fromTask && !!this.toTask) {
           this.props.assignTasks(this.fromTask.assignedTo, [ this.toTask ])

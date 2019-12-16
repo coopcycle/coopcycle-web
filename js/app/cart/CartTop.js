@@ -1,5 +1,4 @@
 import React from 'react'
-import { findDOMNode } from 'react-dom'
 import i18n from '../i18n'
 
 class CartTop extends React.Component
@@ -11,12 +10,13 @@ class CartTop extends React.Component
       itemsTotal: props.itemsTotal,
       restaurant: props.restaurant
     }
+    this.anchorRef = React.createRef()
   }
 
   componentDidMount() {
     // When the component is mounted, we add a listener on the DOM element
     // The main cart (on the restaurant page) will trigger events on the DOM element
-    findDOMNode(this).addEventListener('cart:change', e => this._onCartChange(e.detail))
+    this.anchorRef.current.addEventListener('cart:change', e => this._onCartChange(e.detail))
   }
 
   _onCartChange(cart) {
@@ -36,7 +36,7 @@ class CartTop extends React.Component
     const amount = itemsTotal > 0 ? total : itemsTotal
 
     return (
-      <a href={ anchorURL } className="btn btn-default" data-cart-listener>
+      <a ref={ this.anchorRef } href={ anchorURL } className="btn btn-default" data-cart-listener>
         { i18n.t('CART_TITLE') } <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>  { (amount / 100).formatMoney(2, window.AppData.currencySymbol) }
       </a>
     )

@@ -39,7 +39,7 @@ class AddressModal extends Component {
           autofocus
           address={ '' }
           geohash={ '' }
-          onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
+          onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
         { this.props.isAddressTooFar && (
           <div className="text-center">
             <a className="text-success" href={ window.Routing.generate('restaurants') }>

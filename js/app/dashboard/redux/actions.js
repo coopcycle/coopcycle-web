@@ -20,7 +20,8 @@ function createClient(dispatch) {
   }
 
   function refreshToken() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+      // TODO Check response is OK, reject promise
       $.getJSON(window.Routing.generate('profile_jwt')).then(token => resolve(token))
     })
   }

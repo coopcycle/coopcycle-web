@@ -97,7 +97,8 @@ class ClosingRulesCalendar extends React.Component {
           Authorization: `Bearer ${token}`
         }
       })
-        .then(response => {
+        .then(() => {
+          // TODO Check if response is OK
           this.setState({
             rules: _.filter(this.state.rules, function(oneClosingRule) {
               return oneClosingRule.id !== closingRule.id
@@ -140,7 +141,7 @@ class ClosingRulesCalendar extends React.Component {
             return (
               <ol key={index} className="calendar-close">
                 <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
-                <span>Fermé jusqu'à {item.endDate.format('HH:mm')}</span>
+                <span>{ `Fermé jusqu'à ${item.endDate.format('HH:mm')}` }</span>
                 {item.reason && <span><br/>{item.reason}</span>}
               </ol>
             )

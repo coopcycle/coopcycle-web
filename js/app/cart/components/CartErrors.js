@@ -22,7 +22,7 @@ class CartErrors extends React.Component {
 function mapStateToProps(state) {
 
   let allMessages = []
-  _.forEach(state.errors, (errors, key) => {
+  _.forEach(state.errors, (errors) => {
     allMessages = allMessages.concat(errors.map(error => error.message))
   })
 

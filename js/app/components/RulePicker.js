@@ -59,7 +59,7 @@ class RulePicker extends React.Component {
     })
     this.setState({
       lines,
-      rev: ++this.state.rev
+      rev: this.state.rev + 1
     })
   }
 
@@ -68,7 +68,7 @@ class RulePicker extends React.Component {
     lines.splice(index, 1)
     this.setState({
       lines,
-      rev: ++this.state.rev
+      rev: this.state.rev - 1
     })
   }
 

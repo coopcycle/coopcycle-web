@@ -5,7 +5,7 @@ const baseURL = location.protocol + '//' + location.hostname
 // @see https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
 
 function asyncFunc(item, payload, token) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
 
     $(item.element).find('.fa-spinner').removeClass('hidden')
 
@@ -18,6 +18,7 @@ function asyncFunc(item, payload, token) {
       }
     })
       .then(response => {
+        // TODO Check response is OK, reject promise
         $(item.element).find('.fa-spinner').addClass('hidden')
         if (response.data.result === true) {
           $(item.element).addClass('list-group-item-success')
@@ -39,6 +40,7 @@ function workMyCollection(items, payload, token) {
 
         return asyncFunc(current, payload, token)
       })
+      // eslint-disable-next-line no-console
       .catch(console.error)
   }, Promise.resolve())
 }
@@ -61,7 +63,7 @@ class PricePreview {
       .removeClass('list-group-item-success')
       .removeClass('list-group-item-danger')
 
-    const pricingPromise = new Promise((resolve, reject) => {
+    const pricingPromise = new Promise((resolve) => {
       axios({
         method: 'post',
         url: baseURL + '/api/pricing/deliveries',
@@ -90,7 +92,7 @@ class PricePreview {
       .all([ pricingPromise, debugPromise ])
       .then(values => {
 
-        let [ priceResult, debugResult ] = values
+        const priceResult = values[0]
 
         if (priceResult.success) {
           $('#delivery_price').text((priceResult.price / 100).formatMoney(2, window.AppData.currencySymbol))

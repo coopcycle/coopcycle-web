@@ -81,7 +81,7 @@ function getKey(state) {
   return state.date.format('YYYY-MM-DD')
 }
 
-export const persistFilters = ({ dispatch, getState }) => (next) => (action) => {
+export const persistFilters = ({ getState }) => (next) => (action) => {
 
   const result = next(action)
 
