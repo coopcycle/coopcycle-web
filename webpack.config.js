@@ -50,7 +50,14 @@ Encore
   .enableVersioning(Encore.isProduction())
 
 if (!Encore.isProduction()) {
-  Encore.enableEslintLoader()
+  Encore.enableEslintLoader((options) => {
+    options.rules = {
+      'no-case-declarations': 'off',
+      'no-extra-boolean-cast': 'off',
+      'react/prop-types': 'off',
+      'react/display-name': 'off',
+    }
+  })
 }
 
 let webpackConfig = Encore.getWebpackConfig()
