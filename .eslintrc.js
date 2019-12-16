@@ -35,9 +35,10 @@ module.exports = {
     },
   },
   rules: {
-    'no-case-declarations': 0,
-    'no-extra-boolean-cast': 0,
-    'react/prop-types': 0,
-    'react/display-name': 0,
+    'no-console': 'warn',
+    'no-case-declarations': 'off',
+    'no-extra-boolean-cast': 'off',
+    'react/prop-types': 'off',
+    'react/display-name': 'off',
   }
 };

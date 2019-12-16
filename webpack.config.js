@@ -52,6 +52,7 @@ Encore
 if (!Encore.isProduction()) {
   Encore.enableEslintLoader((options) => {
     options.rules = {
+      'no-console': 'warn',
       'no-case-declarations': 'off',
       'no-extra-boolean-cast': 'off',
       'react/prop-types': 'off',
