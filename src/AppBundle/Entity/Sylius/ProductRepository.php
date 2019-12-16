@@ -11,7 +11,7 @@ class ProductRepository extends BaseProductRepository
     {
         $qb = $this->createQueryBuilder('p');
         $qb->innerJoin('p.options', 'o');
-        $qb->where('o.id = :option');
+        $qb->where('o.option = :option');
         $qb->setParameter('option', $productOption);
 
         return $qb->getQuery()->getResult();
