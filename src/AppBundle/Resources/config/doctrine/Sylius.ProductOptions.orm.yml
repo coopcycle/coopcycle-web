@@ -20,6 +20,7 @@ AppBundle\Entity\Sylius\ProductOptions:
     manyToOne:
         product:
             targetEntity: Sylius\Component\Product\Model\ProductInterface
+            inversedBy: options
             joinColumns:
                 product_id:
                     referencedColumnName: id

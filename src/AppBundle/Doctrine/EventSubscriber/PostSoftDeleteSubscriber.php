@@ -56,7 +56,9 @@ class PostSoftDeleteSubscriber implements EventSubscriber
 
             $products = $productRepository->findByOption($entity);
             foreach ($products as $product) {
-                $product->removeOption($entity);
+                foreach ($product->getProductOptions() as $productOption) {
+                    $unitOfWork->scheduleForDelete($productOption);
+                }
             }
 
             $unitOfWork->computeChangeSets();

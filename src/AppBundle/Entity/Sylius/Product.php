@@ -332,4 +332,9 @@ class Product extends BaseProduct implements ProductInterface
             }
         }
     }
+
+    public function getProductOptions()
+    {
+        return $this->options;
+    }
 }
