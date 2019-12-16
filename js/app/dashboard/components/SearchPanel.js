@@ -136,7 +136,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    toggleSearch: _ => dispatch(toggleSearch())
+    toggleSearch: () => dispatch(toggleSearch())
   }
 }
 

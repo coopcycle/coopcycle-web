@@ -19,7 +19,7 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
 import CourierSelect from './CourierSelect'
 
-import { openNewTaskModal, closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
+import { closeNewTaskModal, createTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
 
 const locale = $('html').attr('lang')
 const antdLocale = locale === 'fr' ? fr_FR : en_GB
@@ -336,7 +336,7 @@ class TaskModalContent extends React.Component {
                     address={ values.address.streetAddress }
                     addresses={ [] }
                     geohash={ '' }
-                    onAddressSelected={ (value, address, type) => {
+                    onAddressSelected={ (value, address) => {
                       const cleanAddress =
                         _.omit(address, ['isPrecise', 'latitude', 'longitude', 'addressRegion', 'geohash'])
 
@@ -411,7 +411,7 @@ class TaskModalContent extends React.Component {
                         showTime={{ hideDisabledOptions: true, format: 'HH:mm' }}
                         format="YYYY-MM-DD HH:mm"
                         defaultValue={[ moment(values.after), moment(values.before) ]}
-                        onChange={(value, dateString) => {
+                        onChange={(value) => {
                           setFieldValue('after', value[0].format())
                           setFieldValue('before', value[1].format())
                         }} />
@@ -510,7 +510,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     createTask: (task) => dispatch(createTask(task)),
     completeTask: (task, notes, success) => dispatch(completeTask(task, notes, success)),
     cancelTask: (task) => dispatch(cancelTask(task)),

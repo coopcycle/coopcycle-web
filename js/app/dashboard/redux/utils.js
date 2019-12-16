@@ -44,7 +44,7 @@ export function groupLinkedTasks(tasks) {
   const tasksWithPreviousOrNext = _.filter(tasks, t => t.previous || t.next)
 
   const lookup = (groups, task) => {
-    return _.find(groups, (tasks, key) => _.includes(tasks, task.id)) || [ task.id ]
+    return _.find(groups, (tasks) => _.includes(tasks, task.id)) || [ task.id ]
   }
 
   const groups = {}

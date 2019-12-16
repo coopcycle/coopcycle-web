@@ -162,7 +162,7 @@ sectionContainers.forEach(container => {
   new Sortable(container, {
     group: 'sections',
     animation: 250,
-    onUpdate: function(e) {
+    onUpdate: function() {
       reorderSections()
     },
   })

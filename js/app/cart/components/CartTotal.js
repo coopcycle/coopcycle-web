@@ -2,8 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 
-import CartItem from './CartItem'
-
 class CartTotal extends React.Component {
 
   renderAdjustments() {

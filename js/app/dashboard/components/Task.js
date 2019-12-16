@@ -68,7 +68,7 @@ class Task extends React.Component {
     }, 250)
   }
 
-  onDoubleClick(e) {
+  onDoubleClick() {
     clearTimeout(this.timer)
     this.prevent = true
 

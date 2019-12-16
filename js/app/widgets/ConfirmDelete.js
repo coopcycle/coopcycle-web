@@ -1,7 +1,6 @@
 export default function(selector) {
 
   $(selector).each(function() {
-    const text = $(this).text()
     const message = $(this).data('confirm-message')
 
     const $iconWrapper = $('<div>').addClass('icon')

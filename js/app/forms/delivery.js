@@ -1,5 +1,3 @@
-import React from 'react'
-import { render } from 'react-dom'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
@@ -71,7 +69,6 @@ function createAddressWidget(name, type, cb) {
 }
 
 function getDatePickerValue(name, type) {
-  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
   if (timeSlotEl) {
@@ -132,7 +129,7 @@ function createTagsWidget(name, type, tags) {
 
 function parseWeight(value) {
   const intValue = parseInt((value || 0), 10)
-  if (NaN === intValue) {
+  if (isNaN(intValue)) {
     return 0
   }
 
@@ -236,7 +233,7 @@ export default function(name, options) {
     store = createStore(reducer, preloadedState)
 
     onReady(preloadedState)
-    const unsubscribe = store.subscribe(() => onChange(store.getState()))
+    store.subscribe(() => onChange(store.getState()))
 
     if (weightEl) {
       weightEl.addEventListener('input', _.debounce(e => {
@@ -258,7 +255,7 @@ export default function(name, options) {
     }
 
     new ClipboardJS('#copy', {
-      text: function(trigger) {
+      text: function() {
         return document.getElementById('tracking_link').getAttribute('href')
       }
     })
@@ -266,10 +263,7 @@ export default function(name, options) {
     const packages = document.querySelector(`#${name}_packages`)
 
     if (packages) {
-
-      const addPackageBtn = document.querySelector(`#${name}_packages_add`)
-
-      $(`#${name}_packages_add`).click(function(e) {
+      $(`#${name}_packages_add`).click(function() {
 
         var list = $($(this).attr('data-target'))
 
@@ -289,7 +283,7 @@ export default function(name, options) {
         setPackages(name)
       })
 
-      $(`#${name}_packages`).on('click', '[data-delete]', function(e) {
+      $(`#${name}_packages`).on('click', '[data-delete]', function() {
         const $target = $($(this).attr('data-target'))
         if ($target.length > 0) {
           $target.remove()

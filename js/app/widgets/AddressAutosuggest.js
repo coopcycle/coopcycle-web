@@ -6,7 +6,7 @@ const defaultOptions = {
   address: '',
   addresses: [],
   geohash: '',
-  onAddressSelected: (value, address) => {},
+  onAddressSelected: () => {},
   required: false,
   preciseOnly: false,
   reportValidity: false,

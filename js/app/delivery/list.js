@@ -18,7 +18,7 @@ const opts = {
 
 let s
 
-$('#export-deliveries-modal').on('show.bs.modal', function (e) {
+$('#export-deliveries-modal').on('show.bs.modal', function () {
 
   if (!s) {
     s = new Spreadsheet("#spreadsheet", opts)
@@ -55,11 +55,6 @@ $('#export-deliveries-modal').on('show.bs.modal', function (e) {
             }
           }
         }
-      }) // load data
-      .change(data => {
-        // console.log(data)
-        console.log(JSON.stringify(data.cols))
-        // save data to db
       })
   }
 

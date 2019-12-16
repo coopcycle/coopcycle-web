@@ -3,12 +3,10 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
-import Modal from 'react-modal'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import TaskModalContent from './TaskModalContent'
-import { setTaskListGroupMode, selectTask, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
 import { selectFilteredTasks } from '../redux/selectors'
 
 class UnassignedTasks extends React.Component {
@@ -43,7 +41,7 @@ class UnassignedTasks extends React.Component {
 
   render() {
 
-    const { taskListGroupMode, selectedTags, showUntaggedTasks } = this.props
+    const { taskListGroupMode } = this.props
     let { unassignedTasks } = this.props
     const groupsMap = new Map()
     const groups = []
@@ -136,9 +134,9 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
   return {
     setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
-    openNewTaskModal: _ => dispatch(openNewTaskModal()),
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
-    toggleSearch: _ => dispatch(toggleSearch())
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
+    toggleSearch: () => dispatch(toggleSearch())
   }
 }
 

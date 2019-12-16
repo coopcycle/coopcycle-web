@@ -79,7 +79,7 @@ class DateModal extends Component {
           <hr />
           <div className="row" >
             <div className="col-sm-4 col-xs-6">
-              <button type="button" className="btn btn-block btn-default" onClick={ _ => this.props.setDateModalOpen(false) }>
+              <button type="button" className="btn btn-block btn-default" onClick={ () => this.props.setDateModalOpen(false) }>
                 { this.props.t('CART_DELIVERY_TIME_CANCEL') }
               </button>
             </div>
@@ -112,7 +112,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    clearDate: _ => dispatch(clearDate()),
+    clearDate: () => dispatch(clearDate()),
     changeDate: date => dispatch(changeDate(date)),
     setDateModalOpen: isOpen => dispatch(setDateModalOpen(isOpen)),
   }

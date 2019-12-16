@@ -2,7 +2,7 @@ import { createSelector } from 'reselect'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 import { integerToColor, groupLinkedTasks } from './utils'
-import { differenceWith, filter, forEach, includes, intersectionWith, isEqual, mapValues } from 'lodash'
+import { filter, forEach, includes, intersectionWith, isEqual, mapValues } from 'lodash'
 
 const moment = extendMoment(Moment)
 

@@ -43,7 +43,7 @@ class Time extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
 
   const { asap, fast, today, diff } = state.times
 

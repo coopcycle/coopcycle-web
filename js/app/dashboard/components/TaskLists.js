@@ -7,7 +7,6 @@ import { withTranslation } from 'react-i18next'
 import { addTaskList, closeAddUserModal, openAddUserModal, openNewTaskModal, closeNewTaskModal, setCurrentTask } from '../redux/actions'
 import CourierSelect from './CourierSelect'
 import TaskList from './TaskList'
-import TaskModalContent from './TaskModalContent'
 import autoScroll from 'dom-autoscroller'
 
 class TaskLists extends React.Component {
@@ -56,14 +55,10 @@ class TaskLists extends React.Component {
 
   render() {
 
-    const { addModalIsOpen, taskListsLoading, couriersList } = this.props
+    const { addModalIsOpen, taskListsLoading } = this.props
     let { taskLists } = this.props
-    let { selectedCourier } = this.state
 
     taskLists = _.orderBy(taskLists, 'username')
-
-    // filter out couriers that are already in planning
-    const availableCouriers = _.filter(couriersList, (courier) => !_.find(taskLists, (tL) => tL.username === courier.username))
 
     const classNames = ['dashboard__panel', 'dashboard__panel--assignees']
     if (this.props.hidden) {
@@ -148,8 +143,8 @@ function mapDispatchToProps (dispatch) {
     addTaskList: (date, username) => dispatch(addTaskList(date, username)),
     openAddUserModal: () => { dispatch(openAddUserModal()) },
     closeAddUserModal: () => { dispatch(closeAddUserModal()) },
-    openNewTaskModal: _ => dispatch(openNewTaskModal()),
-    closeNewTaskModal: _ => dispatch(closeNewTaskModal()),
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
   }
 }

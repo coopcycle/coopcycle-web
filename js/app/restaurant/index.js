@@ -29,7 +29,7 @@ function resetForm($form) {
 
   $form.find('[data-stepper]').prop('disabled', false)
 
-  $form.find('input[type="number"]').each(function (e) {
+  $form.find('input[type="number"]').each(function () {
     $(this).prop('disabled', false)
     $(this).val($(this).attr('min'))
   })
@@ -118,7 +118,7 @@ window.initMap = function() {
     }
   })
 
-  $('form[data-product-options] [data-product-options-group] input[type="number"]').on('change', function(e) {
+  $('form[data-product-options] [data-product-options-group] input[type="number"]').on('change', function() {
 
     window._paq.push(['trackEvent', 'Checkout', 'addExtra'])
 
@@ -135,7 +135,7 @@ window.initMap = function() {
     const [ min, max ] = asRange($optionsGroup)
 
     if (max !== Infinity && optionsCount === max) {
-      $optionsGroup.children().each(function (e) {
+      $optionsGroup.children().each(function () {
         const $code = $(this).find('input[type="hidden"]')
         const $quantity = $(this).find('input[type="number"]')
         if (parseInt($quantity.val(), 10) === 0) {
@@ -146,7 +146,7 @@ window.initMap = function() {
         $(this).find('[data-stepper][data-direction="up"]').prop('disabled', true)
       })
     } else {
-      $optionsGroup.children().each(function (e) {
+      $optionsGroup.children().each(function () {
         const $code = $(this).find('input[type="hidden"]')
         const $quantity = $(this).find('input[type="number"]')
         $code.prop('disabled', false)

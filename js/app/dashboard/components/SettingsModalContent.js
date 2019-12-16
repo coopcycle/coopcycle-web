@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Radio from 'antd/lib/radio'
@@ -67,7 +66,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     setPolylineStyle: style => dispatch(setPolylineStyle(style)),
-    closeSettings: _ => dispatch(closeSettings())
+    closeSettings: () => dispatch(closeSettings())
   }
 }
 

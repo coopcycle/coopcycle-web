@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import ReactDOMServer from 'react-dom/server'
 import moment from 'moment'
-import _ from 'lodash'
 import DatePicker from 'antd/lib/date-picker'
 import ConfigProvider from 'antd/lib/config-provider'
 import fr_FR from 'antd/es/locale/fr_FR'
@@ -178,9 +177,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    openFiltersModal: _ => dispatch(openFiltersModal()),
-    resetFilters: _ => dispatch(resetFilters()),
-    openSettings: _ => dispatch(openSettings())
+    openFiltersModal: () => dispatch(openFiltersModal()),
+    resetFilters: () => dispatch(resetFilters()),
+    openSettings: () => dispatch(openSettings())
   }
 }
 

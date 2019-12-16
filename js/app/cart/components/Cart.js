@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
-import _ from 'lodash'
 
 import AddressModal from './AddressModal'
 import DateModal from './DateModal'
@@ -13,10 +12,9 @@ import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
-import DatePicker from './DatePicker'
 import Time from './Time'
 
-import { changeAddress, changeDate, sync, geocodeAndSync } from '../redux/actions'
+import { changeAddress, sync, geocodeAndSync } from '../redux/actions'
 
 let isXsDevice = $('.visible-xs').is(':visible')
 
@@ -35,7 +33,7 @@ class Cart extends Component {
 
   render() {
 
-    const { items, isMobileCartVisible } = this.props
+    const { isMobileCartVisible } = this.props
 
     const panelClasses = ['panel', 'panel-default', 'cart-wrapper']
     if (isMobileCartVisible) {
@@ -54,7 +52,7 @@ class Cart extends Component {
                 address={ this.props.streetAddress }
                 geohash={ '' }
                 key={ this.props.streetAddress }
-                onAddressSelected={ (value, address, type) => this.props.changeAddress(address) } />
+                onAddressSelected={ (value, address) => this.props.changeAddress(address) } />
               <Time />
               <CartItems />
               <CartTotal />

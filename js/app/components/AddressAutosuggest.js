@@ -286,7 +286,7 @@ class AddressAutosuggest extends Component {
     )
   }
 
-  renderSuggestionsContainer({ containerProps , children, query }) {
+  renderSuggestionsContainer({ containerProps , children }) {
 
     return (
       <div { ...containerProps }>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import _ from 'lodash'
 import Modal from 'react-modal'
 
 import { goBackToRestaurant, retryLastAddItemRequest } from '../redux/actions'

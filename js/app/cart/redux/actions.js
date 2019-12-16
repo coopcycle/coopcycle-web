@@ -90,7 +90,7 @@ export function queueAddItem(itemURL, quantity = 1) {
 
   return {
     queue: QUEUE_CART_ITEMS,
-    callback: (next, dispatch, getState) => {
+    callback: (next, dispatch) => {
 
       dispatch(fetchRequest())
       dispatch(setLastAddItemRequest(itemURL, { quantity }))
@@ -172,7 +172,7 @@ export function removeItem(itemID) {
 
 export function sync() {
 
-  return (dispatch, getState) => {
+  return (dispatch) => {
 
     dispatch(fetchRequest())
 
@@ -208,9 +208,9 @@ export function geocodeAndSync() {
   }
 }
 
-export function changeDate(dateString) {
+export function changeDate() {
 
-  return (dispatch, getState) => {
+  return (dispatch) => {
 
     window._paq.push(['trackEvent', 'Checkout', 'changeDate'])
 

@@ -124,7 +124,7 @@ export default class MapProxy {
       render(<LeafletPopupContent
         task={ task }
         ref={ popupComponent }
-        onEditClick={ _ => this.onEditClick(task) } />, el, cb)
+        onEditClick={ () => this.onEditClick(task) } />, el, cb)
 
       const popup = L.popup()
         .setContent(el)
@@ -144,8 +144,8 @@ export default class MapProxy {
 
     }
 
-    marker.off('mouseover').on('mouseover', e => this.onTaskMouseOver(task))
-    marker.off('mouseout').on('mouseout', e => this.onTaskMouseOut(task))
+    marker.off('mouseover').on('mouseover', () => this.onTaskMouseOver(task))
+    marker.off('mouseout').on('mouseout', () => this.onTaskMouseOut(task))
     marker.off('mousedown').on('mousedown', e => {
       // Make sure the element is not dragged
       // @see https://javascript.info/mouse-drag-and-drop
@@ -355,7 +355,7 @@ export default class MapProxy {
     this.drawPolylineLayerGroup.addLayer(layer)
   }
 
-  clearDrawPolyline(origin, dest) {
+  clearDrawPolyline() {
     const layer = L.polyline([], polylineOptions)
     this.drawPolylineLayerGroup.clearLayers()
     this.drawPolylineLayerGroup.addLayer(layer)
