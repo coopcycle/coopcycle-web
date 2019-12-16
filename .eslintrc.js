@@ -8,6 +8,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
+    'plugin:jest/recommended',
   ],
   parser: 'babel-eslint',
   parserOptions: {
@@ -18,7 +19,8 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react'
+    'react',
+    'jest',
   ],
   globals: {
     '$': true,
@@ -33,6 +35,8 @@ module.exports = {
     },
   },
   rules: {
+    'no-case-declarations': 0,
+    'no-extra-boolean-cast': 0,
     'react/prop-types': 0,
     'react/display-name': 0,
   }
