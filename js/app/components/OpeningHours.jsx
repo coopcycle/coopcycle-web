@@ -6,7 +6,7 @@ import Button from 'antd/lib/button'
 import TimePicker from 'antd/lib/time-picker'
 import ConfigProvider from 'antd/lib/config-provider'
 import frBE from 'antd/es/locale/fr_BE'
-import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
+import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
 
 const timeFormat = 'HH:mm'

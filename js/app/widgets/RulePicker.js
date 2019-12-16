@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import RulePicker from '../components/RulePicker.jsx'
+import RulePicker from '../components/RulePicker'
 
 export default function(el, options) {
 

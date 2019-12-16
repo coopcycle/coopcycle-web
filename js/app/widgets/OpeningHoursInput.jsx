@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import OpeningHours from '../components/OpeningHours.jsx'
+import OpeningHours from '../components/OpeningHours'
 import _ from 'lodash'
 
 export default function(el, options) {

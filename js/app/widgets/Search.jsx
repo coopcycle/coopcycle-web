@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Autocomplete from '../components/Autocomplete.jsx'
+import Autocomplete from '../components/Autocomplete'
 
 export default function(el, options) {
   render(

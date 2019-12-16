@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import i18n from '../i18n'
-import RulePickerLine from './RulePickerLine.jsx'
+import RulePickerLine from './RulePickerLine'
 import parsePricingRule from '../delivery/pricing-rule-parser'
 
 const lineToString = state => {

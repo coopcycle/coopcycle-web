@@ -10,7 +10,7 @@ import '../../assets/css/main.scss'
 require('bootstrap-sass')
 
 import { setTimezone } from './i18n'
-import CartTop from './cart/CartTop.jsx'
+import CartTop from './cart/CartTop'
 
 global.ClipboardJS = require('clipboard')
 

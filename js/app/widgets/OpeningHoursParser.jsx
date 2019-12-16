@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import openingHourIntervalToReadable from '../restaurant/parseOpeningHours.jsx'
+import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 
 class OpeningHoursDisplay extends React.Component {
   render () {
