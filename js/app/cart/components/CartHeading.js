@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
+import _ from 'lodash'
 
 import { toggleMobileCart } from '../redux/actions'
 

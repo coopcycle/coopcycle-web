@@ -3,6 +3,7 @@ import thunk from 'redux-thunk'
 import reducer from './reducers'
 import { socketIO, persistFilters } from './middlewares'
 import moment from 'moment'
+import _ from 'lodash'
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 

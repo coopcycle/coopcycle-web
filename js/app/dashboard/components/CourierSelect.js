@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Select, { components } from 'react-select'
+import _ from 'lodash'
 
 import Avatar from './Avatar'
 

@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux'
 import _ from 'lodash'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
@@ -201,7 +200,7 @@ const rootReducer = (state = initialState, action) => {
         if (!_.find(state.taskLists[taskListIndex].items, t => taskComparator(t, action.task))) {
           newTaskLists.splice(taskListIndex, 1, {
             ...state.taskLists[taskListIndex],
-            items: Array.prototype.concat(taskList.items, action.task)
+            items: Array.prototype.concat(state.taskLists[taskListIndex].items, action.task)
           })
         }
       } else {
@@ -425,10 +424,10 @@ const offline = (state = [], action) => {
       return state.concat([ action.username ])
     }
 
-  default:
-
-    return state
+    break
   }
+
+  return state
 }
 
 const isDragging = (state = false, action) => {
@@ -526,9 +525,11 @@ const completeTaskErrorMessage = (state = null, action) => {
     } else {
       // Something happened in setting up the request that triggered an Error
     }
-  default:
-    return state
+
+    break
   }
+
+  return state
 }
 
 const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {

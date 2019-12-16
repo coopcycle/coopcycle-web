@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions'
+import _ from 'lodash'
 
 import i18n from '../../i18n'
 import { placeToAddress } from '../../utils/GoogleMaps'

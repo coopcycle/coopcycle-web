@@ -228,7 +228,7 @@ class TaskModalContent extends React.Component {
       )
     }
 
-    const { events } = this.props
+    const { events } = this.props
 
     events.sort((a, b) => {
       return moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1
