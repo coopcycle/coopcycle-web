@@ -64,7 +64,7 @@ class Product extends BaseProduct implements ProductInterface
      *   message="product.reusablePackagingUnit.mustBeGreaterThanZero"
      * )
      */
-    protected $reusablePackagingUnit;
+    protected $reusablePackagingUnit = 0;
 
     protected $reusablePackaging;
 
