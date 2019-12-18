@@ -37,7 +37,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or user.ownsStore(object)"
+ *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_STORE') and user.ownsStore(object)) or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object)"
  *     }
  *   },
  *   subresourceOperations={
