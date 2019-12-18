@@ -15,6 +15,7 @@ class Settings
     private $locale;
 
     private $keys = [
+        'brand_name',
         'stripe_publishable_key',
         'google_api_key',
         'latlng',
