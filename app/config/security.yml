@@ -62,6 +62,13 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_time_slots:
+            pattern:   ^/api/time_slots/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
         api_pricing_calculate_price:
             pattern:   ^/api/pricing/calculate-price
             methods: [ GET ]
