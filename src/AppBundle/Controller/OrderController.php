@@ -12,7 +12,7 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use Carbon\Carbon;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use SimpleBus\Message\Bus\MessageBus;
@@ -35,7 +35,7 @@ class OrderController extends AbstractController
     private $logger;
 
     public function __construct(
-        ObjectManager $objectManager,
+        EntityManagerInterface $objectManager,
         MessageBus $commandBus,
         OrderTimeHelper $orderTimeHelper,
         LoggerInterface $logger)

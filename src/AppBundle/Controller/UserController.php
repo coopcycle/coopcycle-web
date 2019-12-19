@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ApiUser;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -104,7 +104,7 @@ class UserController extends AbstractController
      * @Route("/invitation/define-password/{code}", name="invitation_define_password")
      */
     public function confirmInvitationAction(Request $request, string $code,
-        ObjectManager $objectManager,
+        EntityManagerInterface $objectManager,
         UserManipulator $userManipulator,
         EventDispatcherInterface $eventDispatcher)
     {

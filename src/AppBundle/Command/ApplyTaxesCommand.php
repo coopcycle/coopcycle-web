@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,7 +23,7 @@ class ApplyTaxesCommand extends Command
     public function __construct(
         OrderTaxesProcessor $orderTaxesProcessor,
         RepositoryInterface $orderRepository,
-        ObjectManager $orderManager)
+        EntityManagerInterface $orderManager)
     {
         $this->orderTaxesProcessor = $orderTaxesProcessor;
         $this->orderRepository = $orderRepository;

@@ -3,13 +3,13 @@
 namespace AppBundle\Action\TaskList;
 
 use AppBundle\Entity\TaskList;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class Create
 {
     private $objectManager;
 
-    public function __construct(ObjectManager $objectManager)
+    public function __construct(EntityManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }

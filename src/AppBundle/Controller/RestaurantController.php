@@ -22,7 +22,7 @@ use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -59,7 +59,7 @@ class RestaurantController extends AbstractController
     private $uploaderHelper;
 
     public function __construct(
-        ObjectManager $orderManager,
+        EntityManagerInterface $orderManager,
         SeoPageInterface $seoPage,
         UploaderHelper $uploaderHelper,
         ValidatorInterface $validator,
@@ -589,7 +589,7 @@ class RestaurantController extends AbstractController
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function suggestRestaurantAction(Request $request,
-        ObjectManager $manager,
+        EntityManagerInterface $manager,
         EmailManager $emailManager,
         SettingsManager $settingsManager,
         TranslatorInterface $translator)

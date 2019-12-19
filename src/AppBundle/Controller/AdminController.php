@@ -56,7 +56,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Utils\MessageLoggingTwigSwiftMailer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -345,7 +345,7 @@ class AdminController extends Controller
         EmailManager $emailManager,
         UserManagerInterface $userManager,
         TokenGeneratorInterface $tokenGenerator,
-        ObjectManager $objectManager)
+        EntityManagerInterface $objectManager)
     {
         $form = $this->createForm(InviteUserType::class);
         $form->handleRequest($request);
@@ -1452,7 +1452,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/restaurants/pledges", name="admin_restaurants_pledges")
      */
-    public function restaurantsPledgesListAction(Request $request, ObjectManager $manager)
+    public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
     {
         $pledges = $this->getDoctrine()->getRepository(Pledge::class)->findAll();
 
@@ -1515,7 +1515,7 @@ class AdminController extends Controller
         ]);
     }
 
-    private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, ObjectManager $objectManager)
+    private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, EntityManagerInterface $objectManager)
     {
         $form = $this->createForm(TimeSlotType::class, $timeSlot);
 
@@ -1543,7 +1543,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
      */
-    public function newTimeSlotAction(Request $request, ObjectManager $objectManager)
+    public function newTimeSlotAction(Request $request, EntityManagerInterface $objectManager)
     {
         $timeSlot = new TimeSlot();
 
@@ -1553,7 +1553,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/settings/time-slots/{id}", name="admin_time_slot")
      */
-    public function timeSlotAction($id, Request $request, ObjectManager $objectManager)
+    public function timeSlotAction($id, Request $request, EntityManagerInterface $objectManager)
     {
         $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
 
@@ -1576,7 +1576,7 @@ class AdminController extends Controller
         ]);
     }
 
-    private function renderPackageSetForm(Request $request, PackageSet $packageSet, ObjectManager $objectManager)
+    private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
     {
         $form = $this->createForm(PackageSetType::class, $packageSet);
 
@@ -1597,7 +1597,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/settings/packages/new", name="admin_new_package")
      */
-    public function newPackageSetAction(Request $request, ObjectManager $objectManager)
+    public function newPackageSetAction(Request $request, EntityManagerInterface $objectManager)
     {
         $packageSet = new PackageSet();
 
@@ -1607,7 +1607,7 @@ class AdminController extends Controller
     /**
      * @Route("/admin/settings/packages/{id}", name="admin_package")
      */
-    public function packageSetAction($id, Request $request, ObjectManager $objectManager)
+    public function packageSetAction($id, Request $request, EntityManagerInterface $objectManager)
     {
         $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
 
@@ -1619,7 +1619,7 @@ class AdminController extends Controller
     }
 
     public function newOrderAction(Request $request,
-        ObjectManager $objectManager,
+        EntityManagerInterface $objectManager,
         OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $delivery = new Delivery();

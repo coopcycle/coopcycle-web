@@ -9,7 +9,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\DBAL\Types\Type;
 
@@ -22,7 +22,7 @@ class EnabledFilterConfigurator
     protected $cache;
 
     public function __construct(
-        ObjectManager $em,
+        EntityManagerInterface $em,
         TokenStorageInterface $tokenStorage,
         RestaurantRepository $restaurantRepository,
         Reader $reader,

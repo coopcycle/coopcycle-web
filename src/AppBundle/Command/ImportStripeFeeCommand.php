@@ -5,7 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Stripe;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -23,7 +23,7 @@ class ImportStripeFeeCommand extends Command
 
     public function __construct(
         RepositoryInterface $orderRepository,
-        ObjectManager $orderManager,
+        EntityManagerInterface $orderManager,
         FactoryInterface $adjustmentFactory,
         StripeManager $stripeManager)
     {

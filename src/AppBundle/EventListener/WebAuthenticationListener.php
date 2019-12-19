@@ -3,7 +3,7 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Model\UserInterface;
@@ -23,7 +23,7 @@ final class WebAuthenticationListener implements EventSubscriberInterface
     private $cartManager;
     private $cartContext;
 
-    public function __construct(ObjectManager $cartManager, CartContextInterface $cartContext)
+    public function __construct(EntityManagerInterface $cartManager, CartContextInterface $cartContext)
     {
         $this->cartManager = $cartManager;
         $this->cartContext = $cartContext;

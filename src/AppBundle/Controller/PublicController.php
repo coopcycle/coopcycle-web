@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Delivery;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\StripeManager;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
@@ -34,7 +34,7 @@ class PublicController extends AbstractController
      * @Route("/o/{number}", name="public_order")
      * @Template
      */
-    public function orderAction($number, Request $request, ObjectManager $objectManager, StripeManager $stripeManager)
+    public function orderAction($number, Request $request, EntityManagerInterface $objectManager, StripeManager $stripeManager)
     {
         $order = $this->orderRepository->findOneBy([
             'number' => $number

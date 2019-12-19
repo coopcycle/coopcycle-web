@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
@@ -94,9 +94,9 @@ class SetupCommand extends Command
     public function __construct(
         ProductRepositoryInterface $productRepository,
         ProductFactoryInterface $productFactory,
-        ObjectManager $productManager,
+        EntityManagerInterface $productManager,
         RepositoryInterface $productAttributeRepository,
-        ObjectManager $productAttributeManager,
+        EntityManagerInterface $productAttributeManager,
         RepositoryInterface $localeRepository,
         FactoryInterface $localeFactory,
         ChannelRepositoryInterface $channelRepository,

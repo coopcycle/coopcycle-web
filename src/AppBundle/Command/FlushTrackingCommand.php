@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\TrackingPosition;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Predis\Client as Redis;
@@ -24,7 +24,7 @@ class FlushTrackingCommand extends Command
     private $batchSize = 50;
     private $lockFactory;
 
-    public function __construct(ObjectManager $doctrine, UserManagerInterface $userManager, Redis $redis)
+    public function __construct(EntityManagerInterface $doctrine, UserManagerInterface $userManager, Redis $redis)
     {
         parent::__construct();
 

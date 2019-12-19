@@ -10,7 +10,7 @@ use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
 use Fidry\AliceDataFixtures\LoaderInterface;
@@ -73,9 +73,9 @@ class InitDemoCommand extends Command
         PhoneNumberUtil $phoneNumberUtil,
         RepositoryInterface $taxCategoryRepository,
         FactoryInterface $taxCategoryFactory,
-        ObjectManager $taxCategoryManager,
+        EntityManagerInterface $taxCategoryManager,
         FactoryInterface $taxRateFactory,
-        ObjectManager $taxRateManager,
+        EntityManagerInterface $taxRateManager,
         Geocoder $geocoder)
     {
         $this->doctrine = $doctrine;

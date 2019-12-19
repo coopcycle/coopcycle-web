@@ -16,8 +16,8 @@ use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Service\SettingsManager;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
@@ -58,7 +58,7 @@ class RestaurantControllerTest extends WebTestCase
         // Find out why env is not test sometimes
         self::bootKernel(['environment' => 'test']);
 
-        $this->objectManager = $this->prophesize(ObjectManager::class);
+        $this->objectManager = $this->prophesize(EntityManagerInterface::class);
         $this->seoPage = $this->prophesize(SeoPageInterface::class);
         $this->uploaderHelper = $this->prophesize(UploaderHelper::class);
         $this->validator = $this->prophesize(ValidatorInterface::class);

@@ -14,7 +14,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -160,7 +160,7 @@ class EmbedController extends Controller
         SlugifyInterface $slugify,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
-        ObjectManager $objectManager,
+        EntityManagerInterface $objectManager,
         DeliveryManager $deliveryManager,
         UserManipulator $userManipulator)
     {
