@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86f271adfa6125c651a77337c8687920",
+    "content-hash": "23cdf4677e5414f77c016f1ee12db4ac",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3988,19 +3988,22 @@
                 "twig/twig": "<1.34"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "^1.11",
                 "doctrine/orm": "^2.3",
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "friendsofsymfony/user-bundle": "^2.0",
+                "friendsofsymfony/user-bundle": "^2.1",
                 "php-http/guzzle6-adapter": "^2.0",
                 "php-http/httplug-bundle": "^1.7",
                 "phpunit/phpunit": "^6.5|^7.5",
-                "symfony/browser-kit": "^3.4|^4.2",
+                "symfony/browser-kit": "^3.4|^4.3",
+                "symfony/css-selector": "^3.4|^4.3",
                 "symfony/monolog-bundle": "^3.4",
-                "symfony/phpunit-bridge": "^3.4|^4.2",
-                "symfony/property-access": "^3.4|^4.2",
-                "symfony/stopwatch": "^3.4|^4.2",
-                "symfony/twig-bundle": "^3.4|^4.2",
-                "symfony/validator": "^3.4|^4.2"
+                "symfony/phpunit-bridge": "^3.4|^4.3",
+                "symfony/property-access": "^3.4|^4.3",
+                "symfony/stopwatch": "^3.4|^4.3",
+                "symfony/translation": "^3.4|^4.3",
+                "symfony/twig-bundle": "^3.4|^4.3",
+                "symfony/validator": "^3.4|^4.3"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "to use Doctrine user provider",
@@ -6021,28 +6024,33 @@
         },
         {
             "name": "m6web/daemon-bundle",
-            "version": "v4.1.0",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/M6Web/DaemonBundle.git",
-                "reference": "9db55b0a28802f7ef0a3041d222e74803145b194"
+                "reference": "1c9da9fa2f9c0a48fcad728aa175684ab757e28f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/M6Web/DaemonBundle/zipball/9db55b0a28802f7ef0a3041d222e74803145b194",
-                "reference": "9db55b0a28802f7ef0a3041d222e74803145b194",
+                "url": "https://api.github.com/repos/M6Web/DaemonBundle/zipball/1c9da9fa2f9c0a48fcad728aa175684ab757e28f",
+                "reference": "1c9da9fa2f9c0a48fcad728aa175684ab757e28f",
                 "shasum": ""
             },
             "require": {
                 "ext-pcntl": "*",
-                "php": ">=7.1",
+                "php": ">=7.2",
+                "psr/event-dispatcher": "^1.0",
                 "react/event-loop": "@stable",
-                "symfony/console": "~3.0 || ~4.0",
-                "symfony/framework-bundle": "~3.0 || ~4.0",
-                "symfony/yaml": "~3.0 || ~4.0"
+                "symfony/console": "~4.3",
+                "symfony/framework-bundle": "~4.3",
+                "symfony/yaml": "~4.3"
+            },
+            "conflict": {
+                "symfony/event-dispatcher": "<4.3"
             },
             "require-dev": {
-                "atoum/atoum": "^2.8||^3.0"
+                "phpunit/phpunit": "^8.4",
+                "sensiolabs/security-checker": "^5.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -6051,8 +6059,9 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "": "src/"
+                "psr-4": {
+                    "M6Web\\Bundle\\DaemonBundle\\": "src/",
+                    "M6Web\\Bundle\\DaemonBundle\\Tests\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6063,7 +6072,7 @@
                 }
             ],
             "description": "bundle sf easing creating daemon commands",
-            "time": "2018-06-18T08:15:42+00:00"
+            "time": "2019-11-18T13:22:21+00:00"
         },
         {
             "name": "mailjet/mailjet-apiv3-php",
@@ -8709,6 +8718,52 @@
                 "psr"
             ],
             "time": "2017-02-14T16:28:37+00:00"
+        },
+        {
+            "name": "psr/event-dispatcher",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/event-dispatcher.git",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/event-dispatcher/zipball/dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\EventDispatcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Standard interfaces for event handling.",
+            "keywords": [
+                "events",
+                "psr",
+                "psr-14"
+            ],
+            "time": "2019-01-08T18:20:26+00:00"
         },
         {
             "name": "psr/http-client",
