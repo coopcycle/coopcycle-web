@@ -76,6 +76,13 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_me:
+            pattern:   ^/api/me$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true

@@ -2,10 +2,27 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Store;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 
+/**
+ * @see https://schema.org/SoftwareApplication Documentation on Schema.org
+ *
+ * @ApiResource(iri="http://schema.org/SoftwareApplication",
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     }
+ *   },
+ *   attributes={
+ *     "normalization_context"={"groups"={"api_app"}},
+ *   }
+ * )
+ */
 class ApiApp
 {
     use Timestampable;
@@ -13,6 +30,10 @@ class ApiApp
     private $id;
     private $name;
     private $oauth2Client;
+
+    /**
+     * @Groups({"api_app"})
+     */
     private $store;
 
     public function getId()
