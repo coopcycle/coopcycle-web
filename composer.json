@@ -26,7 +26,6 @@
         "api-platform/core": "2.5.3",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/doctrine-cache-bundle": "^1.2",
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/monolog-bundle": "^3.4",
         "sensio/framework-extra-bundle": "^5.4",
