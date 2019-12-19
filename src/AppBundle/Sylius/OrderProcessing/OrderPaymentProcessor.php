@@ -4,7 +4,7 @@ namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\StripePayment;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;

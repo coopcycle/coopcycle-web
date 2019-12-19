@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;

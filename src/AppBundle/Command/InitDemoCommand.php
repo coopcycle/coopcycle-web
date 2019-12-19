@@ -9,7 +9,7 @@ use AppBundle\Service\Geocoder;
 use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;

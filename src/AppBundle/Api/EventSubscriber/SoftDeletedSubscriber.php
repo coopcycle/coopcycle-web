@@ -2,7 +2,7 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -16,7 +16,7 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
         'api_restaurants_products_get_subresource'
     ];
 
-    public function __construct(DoctrineRegistry $doctrine)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
     }

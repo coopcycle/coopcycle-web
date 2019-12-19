@@ -4,7 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;

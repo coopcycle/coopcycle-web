@@ -5,7 +5,7 @@ namespace AppBundle\EventListener\Upload;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Service\SettingsManager;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;

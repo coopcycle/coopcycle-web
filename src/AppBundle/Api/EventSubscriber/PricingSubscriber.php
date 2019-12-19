@@ -13,7 +13,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +39,7 @@ final class PricingSubscriber implements EventSubscriberInterface
         RoutingInterface $routing,
         Geocoder $geocoder,
         TokenStorageInterface $tokenStorage,
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         AccessTokenManagerInterface $accessTokenManager
     ) {
         $this->deliveryManager = $deliveryManager;

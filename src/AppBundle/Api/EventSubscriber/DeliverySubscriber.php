@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Entity\Store;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,7 +32,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     ];
 
     public function __construct(
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         TokenStoreExtractor $storeExtractor,
         RoutingInterface $routing)

@@ -6,7 +6,7 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Tagging;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

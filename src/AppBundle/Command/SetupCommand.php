@@ -3,7 +3,7 @@
 namespace AppBundle\Command;
 
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;

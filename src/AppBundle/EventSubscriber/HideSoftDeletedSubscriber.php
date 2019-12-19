@@ -4,7 +4,7 @@ namespace AppBundle\EventSubscriber;
 
 use AppBundle\Annotation\HideSoftDeleted;
 use Doctrine\Common\Annotations\Reader as AnnotationReader;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;

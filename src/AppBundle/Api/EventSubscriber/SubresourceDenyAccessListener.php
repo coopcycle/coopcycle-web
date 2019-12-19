@@ -7,7 +7,7 @@ use AppBundle\Entity\Restaurant;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Security\EventListener\DenyAccessListener;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -31,7 +31,7 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
 
     public function __construct(
         ItemDataProviderInterface $itemDataProvider,
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         AccessTokenManagerInterface $accessTokenManager,
         DenyAccessListener $denyAccessListener)

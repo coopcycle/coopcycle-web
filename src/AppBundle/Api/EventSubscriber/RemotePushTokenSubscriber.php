@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\RemotePushToken;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -21,7 +21,7 @@ final class RemotePushTokenSubscriber implements EventSubscriberInterface
     protected $doctrine;
     protected $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage, DoctrineRegistry $doctrine, LoggerInterface $logger)
+    public function __construct(TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine, LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;

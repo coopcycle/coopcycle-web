@@ -6,7 +6,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Utils\RestaurantFilter;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 final class RestaurantCollectionDataProvider extends CollectionDataProvider
 {

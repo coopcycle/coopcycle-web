@@ -4,7 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Service\SocketIoManager;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Predis\Client as Redis;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -23,7 +23,7 @@ class UpdateLocation
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         Redis $redis,
         SocketIoManager $socketIoManager,
         LoggerInterface $logger)

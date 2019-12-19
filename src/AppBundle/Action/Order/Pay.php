@@ -4,7 +4,7 @@ namespace AppBundle\Action\Order;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\OrderManager;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

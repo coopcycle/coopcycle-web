@@ -3,7 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Task;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;

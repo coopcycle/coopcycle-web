@@ -5,7 +5,7 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

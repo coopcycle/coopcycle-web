@@ -5,7 +5,7 @@ namespace AppBundle\Action\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Form\TaskImageType;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

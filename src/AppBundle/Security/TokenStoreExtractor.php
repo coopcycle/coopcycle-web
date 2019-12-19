@@ -3,7 +3,7 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\ApiApp;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
 use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
@@ -11,7 +11,7 @@ use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 class TokenStoreExtractor
 {
     public function __construct(
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         AccessTokenManagerInterface $accessTokenManager)
     {

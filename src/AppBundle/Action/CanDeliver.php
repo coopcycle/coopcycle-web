@@ -6,7 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\Persistence\ManagerRegistry as DoctrineRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class CanDeliver
     private $routing;
 
     public function __construct(
-        DoctrineRegistry $doctrine,
+        ManagerRegistry $doctrine,
         RoutingInterface $routing,
         ExpressionLanguage $expressionLanguage)
     {

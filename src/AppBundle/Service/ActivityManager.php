@@ -7,7 +7,7 @@ use AppBundle\Domain\Order\Event as OrderEvents;
 use AppBundle\Domain\Task\Event as TaskEvents;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Symfony\Component\Translation\TranslatorInterface;
