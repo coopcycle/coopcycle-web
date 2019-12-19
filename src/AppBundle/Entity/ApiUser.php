@@ -24,13 +24,6 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN') or user == object"
- *     },
- *     "me"={
- *       "method"="GET",
- *       "path"="/me",
- *       "controller"=MeController::class,
- *       "read"=false,
- *       "normalization_context"={"groups"={"user", "place"}}
  *     }
  *   },
  *   collectionOperations={
