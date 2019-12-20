@@ -55,7 +55,7 @@ class BotCommand extends DaemonCommand
             ->setDescription('Run bots.');
     }
 
-    protected function setup(InputInterface $input, OutputInterface $output)
+    protected function setup(InputInterface $input, OutputInterface $output): void
     {
         // Set up your daemon here
         $this->io = new SymfonyStyle($input, $output);
@@ -64,7 +64,7 @@ class BotCommand extends DaemonCommand
     /**
      * Execute is called at every loop
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $bots = $this->doctrine->getRepository(Bot::class)->findAll();
 
