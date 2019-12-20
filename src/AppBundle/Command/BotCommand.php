@@ -64,7 +64,7 @@ class BotCommand extends DaemonCommand
     /**
      * Execute is called at every loop
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $bots = $this->doctrine->getRepository(Bot::class)->findAll();
 
