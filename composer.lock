@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23cdf4677e5414f77c016f1ee12db4ac",
+    "content-hash": "631f3b94e32dbef3ad1af72ab5fc2841",
     "packages": [
         {
             "name": "api-platform/core",
@@ -14574,16 +14574,16 @@
         },
         {
             "name": "behatch/contexts",
-            "version": "3.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behatch/contexts.git",
-                "reference": "cbda31e1f83423f267ebb56d0d45e849ecac6dc2"
+                "reference": "bab9597f70a97d0b56779d681e37d3ddab07ddd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behatch/contexts/zipball/cbda31e1f83423f267ebb56d0d45e849ecac6dc2",
-                "reference": "cbda31e1f83423f267ebb56d0d45e849ecac6dc2",
+                "url": "https://api.github.com/repos/Behatch/contexts/zipball/bab9597f70a97d0b56779d681e37d3ddab07ddd9",
+                "reference": "bab9597f70a97d0b56779d681e37d3ddab07ddd9",
                 "shasum": ""
             },
             "require": {
@@ -14627,7 +14627,7 @@
                 "Context",
                 "Symfony2"
             ],
-            "time": "2018-08-13T16:31:50+00:00"
+            "time": "2019-01-15T10:31:54+00:00"
         },
         {
             "name": "coduo/php-matcher",
@@ -16101,7 +16101,8 @@
         "hwi/oauth-bundle": 20,
         "drupal/core-vendor-hardening": 20,
         "behat/symfony2-extension": 20,
-        "behat/mink": 20
+        "behat/mink": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
