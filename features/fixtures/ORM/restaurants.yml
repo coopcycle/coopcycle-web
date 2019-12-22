@@ -27,14 +27,17 @@ AppBundle\Entity\Contract:
   contract_1:
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
   contract_2:
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
   contract_3:
     minimumCartAmount: 1500
     flatDeliveryPrice: 350
+    customerAmount: 350
     feeRate: 0.00
 
 AppBundle\Entity\Restaurant:
