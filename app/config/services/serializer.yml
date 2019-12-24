@@ -43,16 +43,11 @@ services:
 
   AppBundle\Serializer\JsonLd\OrderNormalizer:
     arguments:
-      - "@api_platform.jsonld.normalizer.item"
-      - "@serializer.normalizer.object"
-      - "@sylius.context.channel"
-      - "@sylius.repository.product"
-      - "@sylius.repository.product_option_value"
-      - "@coopcycle.sylius.product_variant_resolver.lazy"
-      - "@sylius.factory.order_item"
-      - "@sylius.order_item_quantity_modifier"
-      - "@sylius.order_modifier"
-      - "@coopcycle.shipping_date_filter"
+      $normalizer: "@api_platform.jsonld.normalizer.item"
+      $objectNormalizer: "@serializer.normalizer.object"
+      $productOptionValueRepository: "@sylius.repository.product_option_value"
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+      $orderItemFactory: "@sylius.factory.order_item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\Json\OrderItemNormalizer:
