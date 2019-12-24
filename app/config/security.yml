@@ -76,6 +76,41 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_carts_session:
+            pattern:   ^/api/carts/session$
+            methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_carts:
+            pattern:   ^/api/orders/[0-9]+$
+            methods: [ PUT ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_items:
+            pattern:   ^/api/orders/[0-9]+/items$
+            methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_item:
+            pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
+            methods: [ PUT, DELETE ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
+        api_cart_operations:
+            pattern:   ^/api/orders/[0-9]+/(timing|validate)$
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            cart_session: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
@@ -146,4 +181,5 @@ security:
         - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
+        - { path: ^/api/carts/session$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

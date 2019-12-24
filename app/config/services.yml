@@ -690,6 +690,18 @@ services:
       $providerKey: ~
     public: false
 
+  AppBundle\Security\Firewall\CartSessionListener:
+    arguments:
+      - '@security.token_storage'
+      - '@security.authentication.manager'
+      - '@lexik_jwt_authentication.jwt_token_authenticator'
+    public: false
+
+  AppBundle\Security\Authentication\Provider\CartSessionProvider:
+    arguments:
+      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
+    public: false
+
   AppBundle\Mjml\MjmlServerRenderer:
     arguments:
       $client: '@csa_guzzle.client.mjml_server'
@@ -707,11 +719,16 @@ services:
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
+
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
       $productOptionValueRepository: "@sylius.repository.product_option_value"
       $orderItemFactory: "@sylius.factory.order_item"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+
+  AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
+    arguments:
+      $orderFactory: "@sylius.factory.order"
 
   AppBundle\Twig\CoopCycleExtension:
     $secret: '%secret%'

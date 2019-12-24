@@ -1,5 +1,6 @@
 <?php
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Order;
@@ -101,7 +102,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         OrderTimelineCalculator $orderTimelineCalculator,
         UserManipulator $userManipulator,
         AuthorizationServer $authorizationServer,
-        Redis $redis)
+        Redis $redis,
+        IriConverterInterface $iriConverter)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -116,6 +118,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $this->userManipulator = $userManipulator;
         $this->authorizationServer = $authorizationServer;
         $this->redis = $redis;
+        $this->iriConverter = $iriConverter;
     }
 
     public function setKernel(KernelInterface $kernel)
@@ -851,5 +854,100 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->getContainer()->get('sylius.manager.order')->persist($cart);
         $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
+     * @Given there is a cart at restaurant with id :id
+     */
+    public function createCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $cart = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($cart);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+
+        return $cart;
+    }
+
+    /**
+     * @Given there is a token for the last cart at restaurant with id :id
+     */
+    public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $carts = $this->getContainer()->get('sylius.repository.order')
+            ->findCartsByRestaurant($restaurant);
+
+        uasort($carts, function ($a, $b) {
+            if ($a->getCreatedAt() === $b->getCreatedAt()) {
+                return $a->getId() < $b->getId() ? -1 : 1;
+            }
+            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
+        });
+
+        $cart = array_pop($carts);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+        ];
+        $this->jwt = $jwtEncoder->encode($payload);
+    }
+
+    /**
+     * @Given there is an expired token for the last cart at restaurant with id :id
+     */
+    public function thereIsAnExpiredTokenForTheLastCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $carts = $this->getContainer()->get('sylius.repository.order')
+            ->findCartsByRestaurant($restaurant);
+
+        uasort($carts, function ($a, $b) {
+            if ($a->getCreatedAt() === $b->getCreatedAt()) {
+                return $a->getId() < $b->getId() ? -1 : 1;
+            }
+            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
+        });
+
+        $cart = array_pop($carts);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'exp' => time() - (60 * 60),
+        ];
+        $this->jwt = $jwtEncoder->encode($payload);
+    }
+
+    /**
+     * @Given the client is authenticated with last response token
+     */
+    public function theClientIsAuthenticatedWithLastResponseToken()
+    {
+        $content = $this->minkContext->getSession()->getPage()->getContent();
+
+        $data = json_decode($content, true);
+
+        $this->jwt = $data['token'];
+    }
+
+    /**
+     * @When the :headerName header contains last response token
+     */
+    public function theHeaderContainsLastResponseToken($headerName)
+    {
+        $content = $this->minkContext->getSession()->getPage()->getContent();
+
+        $data = json_decode($content, true);
+
+        $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $data['token']));
     }
 }

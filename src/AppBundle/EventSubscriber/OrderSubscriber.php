@@ -8,11 +8,13 @@ use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -45,6 +47,9 @@ final class OrderSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            KernelEvents::REQUEST => [
+                ['addCartSessionContext', EventPriorities::PRE_READ],
+            ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
@@ -66,6 +71,21 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         return $user;
+    }
+
+    public function addCartSessionContext(RequestEvent $event)
+    {
+        if (null === $token = $this->tokenStorage->getToken()) {
+            return;
+        }
+
+        $cartSession = new \stdClass();
+        if ($token instanceof JWTUserToken && $token->hasAttribute('cart')) {
+            $cartSession->cart = $token->getAttribute('cart');
+        }
+
+        $request = $event->getRequest();
+        $request->attributes->set('cart_session', $cartSession);
     }
 
     public function preValidate(ViewEvent $event)

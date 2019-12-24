@@ -13,6 +13,7 @@ default:
             userManipulator: "@fos_user.util.user_manipulator"
             authorizationServer: "@league.oauth2.server.authorization_server"
             redis: "@snc_redis.default"
+            iriConverter: "@api_platform.iri_converter"
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Behatch\Context\JsonContext
