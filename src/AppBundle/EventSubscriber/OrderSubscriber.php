@@ -5,6 +5,7 @@ namespace AppBundle\EventSubscriber;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Core\Validator\ValidatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
@@ -20,17 +21,20 @@ final class OrderSubscriber implements EventSubscriberInterface
     private $doctrine;
     private $tokenStorage;
     private $orderTimeHelper;
+    private $validator;
     private $logger;
 
     public function __construct(
         ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         OrderTimeHelper $orderTimeHelper,
+        ValidatorInterface $validator,
         LoggerInterface $logger
     ) {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->orderTimeHelper = $orderTimeHelper;
+        $this->validator = $validator;
         $this->logger = $logger;
     }
 
@@ -40,6 +44,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
+                ['validateResponse', EventPriorities::POST_VALIDATE],
             ],
         ];
     }
@@ -119,5 +124,18 @@ final class OrderSubscriber implements EventSubscriberInterface
         $timing['choices'] = $choices;
 
         $event->setControllerResult(new JsonResponse($timing));
+    }
+
+    public function validateResponse(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ($request->attributes->get('_route') !== 'api_orders_validate_item') {
+            return;
+        }
+
+        $controllerResult = $event->getControllerResult();
+
+        $this->validator->validate($controllerResult);
     }
 }

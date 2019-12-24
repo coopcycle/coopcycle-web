@@ -96,6 +96,12 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
  *       "access_control"="object.getCustomer() == user"
+ *     },
+ *     "validate"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/validate",
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "access_control"="object.getCustomer() == user"
  *     }
  *   },
  *   attributes={
