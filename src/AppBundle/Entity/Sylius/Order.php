@@ -91,6 +91,11 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *     "get_cart_timing"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/timing",
+ *       "access_control"="object.getCustomer() == user"
  *     }
  *   },
  *   attributes={

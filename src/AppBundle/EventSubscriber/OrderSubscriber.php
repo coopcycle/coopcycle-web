@@ -94,7 +94,13 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function timingResponse(ViewEvent $event)
     {
         $request = $event->getRequest();
-        if ('api_orders_timing_collection' !== $request->attributes->get('_route')) {
+
+        $routes = [
+            'api_orders_get_cart_timing_item',
+            'api_orders_timing_collection',
+        ];
+
+        if (!in_array($request->attributes->get('_route'), $routes)) {
             return;
         }
 
