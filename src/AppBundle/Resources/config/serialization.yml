@@ -23,27 +23,27 @@ Sylius\Component\Order\Model\Order:
     id:
       groups: ['order']
     restaurant:
-      groups: ['order', 'order_create']
+      groups: ['order', 'order_create', 'cart', 'order_update']
     shippingAddress:
-      groups: ['order', 'order_create']
+      groups: ['order', 'order_create', 'cart', 'order_update']
     shippedAt:
-      groups: ['order', 'order_create']
+      groups: ['order', 'order_create', 'cart']
     customer:
-      groups: ['order']
+      groups: ['order', 'cart']
     items:
-      groups: ['order', 'order_create']
+      groups: ['order', 'order_create', 'cart']
     total:
-      groups: ['order']
+      groups: ['order', 'cart']
     number:
       groups: ['order']
     itemsTotal:
-      groups: ['order']
+      groups: ['order', 'cart']
     taxTotal:
       groups: ['order']
     state:
       groups: ['order']
     notes:
-      groups: ['order']
+      groups: ['order', 'cart']
     createdAt:
       groups: ['order']
     timeline:
@@ -53,18 +53,18 @@ Sylius\Component\Order\Model\Order:
     pickupExpectedAt:
       groups: ['order']
     reusablePackagingEnabled:
-      groups: ['order']
+      groups: ['order', 'cart']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
     id:
-      groups: ['order']
+      groups: ['order', 'cart']
     quantity:
-      groups: ['order']
+      groups: ['order', 'cart']
     total:
-      groups: ['order']
+      groups: ['order', 'cart']
     unitPrice:
-      groups: ['order']
+      groups: ['order', 'cart']
 
 AppBundle\Entity\Sylius\OrderTimeline:
   attributes:

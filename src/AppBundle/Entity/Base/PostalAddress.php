@@ -27,7 +27,7 @@ abstract class PostalAddress
     /**
      * @var string The locality. For example, Mountain View.
      *
-     * @Groups({"postal_address", "address_create"})
+     * @Groups({"postal_address", "address_create", "order_update"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
@@ -54,7 +54,7 @@ abstract class PostalAddress
     /**
      * @var string The postal code. For example, 94043.
      *
-     * @Groups({"postal_address", "address_create"})
+     * @Groups({"postal_address", "address_create", "order_update"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/postalCode")
      */
@@ -71,7 +71,7 @@ abstract class PostalAddress
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
      *
-     * @Groups({"place", "postal_address", "address_create", "task_edit"})
+     * @Groups({"place", "postal_address", "address_create", "task_edit", "order_update", "cart"})
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      * @ApiProperty(iri="https://schema.org/streetAddress")
@@ -79,7 +79,7 @@ abstract class PostalAddress
     protected $streetAddress;
 
     /**
-     * @Groups({"place", "address_create", "task_edit"})
+     * @Groups({"place", "address_create", "task_edit", "order_update"})
      * @ApiProperty(iri="https://schema.org/telephone")
      * @AssertPhoneNumber
      */
