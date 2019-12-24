@@ -833,4 +833,23 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
+
+    /**
+     * @Given the user :username has created a cart at restaurant with id :id
+     */
+    public function theUserHasCreatedACartAtRestaurantWithId($username, $id)
+    {
+        $userManager = $this->getContainer()->get('fos_user.user_manager');
+        $user = $userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+
+        $cart = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $cart->setCustomer($user);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($cart);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
 }
