@@ -4,6 +4,7 @@ namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Utils\OrderTimeHelper;
+use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,6 +23,7 @@ final class OrderSubscriber implements EventSubscriberInterface
     private $tokenStorage;
     private $orderTimeHelper;
     private $validator;
+    private $dataPersister;
     private $logger;
 
     public function __construct(
@@ -29,12 +31,14 @@ final class OrderSubscriber implements EventSubscriberInterface
         TokenStorageInterface $tokenStorage,
         OrderTimeHelper $orderTimeHelper,
         ValidatorInterface $validator,
+        DataPersisterInterface $dataPersister,
         LoggerInterface $logger
     ) {
         $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->validator = $validator;
+        $this->dataPersister = $dataPersister;
         $this->logger = $logger;
     }
 
@@ -45,6 +49,7 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
                 ['validateResponse', EventPriorities::POST_VALIDATE],
+                ['deleteItemPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -137,5 +142,18 @@ final class OrderSubscriber implements EventSubscriberInterface
         $controllerResult = $event->getControllerResult();
 
         $this->validator->validate($controllerResult);
+    }
+
+    public function deleteItemPostWrite(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ($request->attributes->get('_route') !== 'api_orders_delete_item_item') {
+            return;
+        }
+
+        $controllerResult = $event->getControllerResult();
+        $persistResult = $this->dataPersister->persist($controllerResult);
+        $event->setControllerResult($persistResult);
     }
 }

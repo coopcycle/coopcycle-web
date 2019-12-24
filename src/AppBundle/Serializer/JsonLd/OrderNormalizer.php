@@ -38,7 +38,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         LazyProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
-        OrderModifierInterface $orderModifier)
+        OrderModifierInterface $orderModifier,
+        IriConverterInterface $iriConverter)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -49,6 +50,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
         $this->orderModifier = $orderModifier;
         $this->objectNormalizer = $objectNormalizer;
+        $this->iriConverter = $iriConverter;
     }
 
     public function normalizeAdjustments(Order $order)
@@ -78,7 +80,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        if (null === $object->getId()) {
+        // TODO Document why we use ObjectNormalizer for unsaved orders (?)
+        if (null === $object->getId() && !in_array('cart', $context['groups'])) {
             $data = $this->objectNormalizer->normalize($object, $format, $context);
         } else {
             $data = $this->normalizer->normalize($object, $format, $context);
@@ -160,7 +163,15 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['items'])) {
             $orderItems = array_map(function ($item) {
 
-                $product = $this->productRepository->findOneByCode($item['product']);
+                if (!isset($item['product'])) {
+                    return null;
+                }
+
+                if (is_array($item['product']) && isset($item['product']['@id'])) {
+                    $product = $this->iriConverter->getItemFromIri($item['product']['@id']);
+                } else {
+                    $product = $this->productRepository->findOneByCode($item['product']);
+                }
 
                 if (!$product->hasOptions()) {
                     $productVariant = $this->variantResolver->getVariant($product);

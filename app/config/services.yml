@@ -707,6 +707,11 @@ services:
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
+    arguments:
+      $productOptionValueRepository: "@sylius.repository.product_option_value"
+      $orderItemFactory: "@sylius.factory.order_item"
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
 
   AppBundle\Twig\CoopCycleExtension:
     $secret: '%secret%'

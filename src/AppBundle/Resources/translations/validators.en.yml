@@ -39,3 +39,5 @@ task.before.mustBeGreaterThanAfter: The time frame is not valid
 product_option.valuesRange.notAllowed: You can't define a range for a mandatory option
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity greater than 0
+
+order.state.notModifiable: Order can't be modified anymore
