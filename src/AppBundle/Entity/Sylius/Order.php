@@ -105,7 +105,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
  *
- * @AssertOrder
+ * @AssertOrder(groups={"Default"})
  */
 class Order extends BaseOrder implements OrderInterface
 {
