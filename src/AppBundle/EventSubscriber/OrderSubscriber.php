@@ -60,10 +60,10 @@ final class OrderSubscriber implements EventSubscriberInterface
 
     public function preValidate(ViewEvent $event)
     {
+        $request = $event->getRequest();
         $result = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
 
-        if (!($result instanceof Order && Request::METHOD_POST === $method)) {
+        if (!($result instanceof Order && Request::METHOD_POST === $request->getMethod())) {
             return;
         }
 
@@ -81,7 +81,8 @@ final class OrderSubscriber implements EventSubscriberInterface
             $order->setCustomer($this->getUser());
         }
 
-        if ($order->isFoodtech() && null === $order->getId() && null === $order->getShippedAt()) {
+        if ($request->attributes->get('_route') === 'api_orders_post_collection'
+            && $order->isFoodtech() && null === $order->getId() && null === $order->getShippedAt()) {
             $asap = $this->orderTimeHelper->getAsap($order);
             $order->setShippedAt(new \DateTime($asap));
         }
