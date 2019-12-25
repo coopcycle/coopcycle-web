@@ -209,7 +209,6 @@ Feature: Orders
             "longitude": 2.3329
           }
         },
-        "shippedAt": "2017-09-02 12:30:00",
         "items": [{
           "product": "PIZZA",
           "quantity": 1,
