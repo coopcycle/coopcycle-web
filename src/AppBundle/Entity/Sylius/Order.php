@@ -10,6 +10,7 @@ use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\Order\Accept as OrderAccept;
+use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Pay as OrderPay;
@@ -96,6 +97,13 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
  *       "access_control"="is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object.getRestaurant())"
+ *     },
+ *     "assign"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/assign",
+ *       "controller"=OrderAssign::class,
+ *       "validation_groups"={"cart"},
+ *       "normalization_context"={"groups"={"cart"}}
  *     },
  *     "get_cart_timing"={
  *       "method"="GET",

@@ -105,8 +105,8 @@ security:
             cart_session: true
 
         api_cart_operations:
-            pattern:   ^/api/orders/[0-9]+/(timing|validate)$
-            methods: [ GET ]
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
+            methods: [ GET, PUT ]
             stateless: true
             anonymous: ~
             cart_session: true

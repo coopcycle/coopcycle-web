@@ -872,13 +872,8 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         return $cart;
     }
 
-    /**
-     * @Given there is a token for the last cart at restaurant with id :id
-     */
-    public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
+    private function getLastCartFromRestaurant(Restaurant $restaurant)
     {
-        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
-
         $carts = $this->getContainer()->get('sylius.repository.order')
             ->findCartsByRestaurant($restaurant);
 
@@ -889,7 +884,16 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
             return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
         });
 
-        $cart = array_pop($carts);
+        return array_pop($carts);
+    }
+
+    /**
+     * @Given there is a token for the last cart at restaurant with id :id
+     */
+    public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
 
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
@@ -905,18 +909,7 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
     public function thereIsAnExpiredTokenForTheLastCartAtRestaurantWithId($id)
     {
         $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
-
-        $carts = $this->getContainer()->get('sylius.repository.order')
-            ->findCartsByRestaurant($restaurant);
-
-        uasort($carts, function ($a, $b) {
-            if ($a->getCreatedAt() === $b->getCreatedAt()) {
-                return $a->getId() < $b->getId() ? -1 : 1;
-            }
-            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
-        });
-
-        $cart = array_pop($carts);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
 
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
@@ -949,5 +942,22 @@ class FeatureContext implements Context, SnippetAcceptingContext, KernelAwareCon
         $data = json_decode($content, true);
 
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $data['token']));
+    }
+
+    /**
+     * @When the :headerName header contains a token for the last cart at restaurant with id :id
+     */
+    public function theHeaderContainsATokenForTheLastCartAtRestaurantWithId($headerName, $id)
+    {
+        $restaurant = $this->doctrine->getRepository(Restaurant::class)->find($id);
+        $cart = $this->getLastCartFromRestaurant($restaurant);
+
+        $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
+
+        $payload = [
+            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+        ];
+
+        $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));
     }
 }
