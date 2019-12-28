@@ -21,8 +21,6 @@ class Assign
         }
 
         if (!$token->hasAttribute('cart')) {
-            // var_dump($token->getAttribute('cart')->getId());
-            // if ($token->getAttribute('cart'))
 
             return $data;
         }
@@ -32,10 +30,6 @@ class Assign
         if ($cart && $data !== $cart) {
             throw new AccessDeniedException();
         }
-
-        var_dump($data->getId());
-        var_dump($token->getAttribute('cart')->getId());
-        // var_dump($token->hasAttribute('cart'));
 
         if (is_object($user = $token->getUser())) {
             $data->setCustomer($user);
