@@ -80,6 +80,7 @@ services:
     alias: 'libphonenumber.phone_number_util'
     public: true
   Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
+  League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -763,7 +764,7 @@ services:
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
       $httpClient: '@csa_guzzle.client.browserless'
-      $filesystem: '@receipts_filesystem'
+      $filesystem: '@receipts_s3_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%kernel.default_locale%'
 

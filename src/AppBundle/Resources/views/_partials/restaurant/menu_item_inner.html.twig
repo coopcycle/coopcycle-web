@@ -1,5 +1,5 @@
 {% set variant = product|sylius_resolve_variant %}
-{% set product_image = vich_uploader_asset(product, 'imageFile') %}
+{% set product_image = coopcycle_asset(product, 'imageFile', 'product_thumbnail') %}
 
 <span class="menu-item-inner">
   <span class="menu-item-content-wrapper">
@@ -12,7 +12,7 @@
   </span>
   <span class="menu-item-image-wrapper">
   {% if product_image is not empty %}
-    <img src="{{ product_image|imagine_filter('product_thumbnail') }}">
+    <img src="{{ product_image }}">
   {% endif %}
   </span>
 </span>

@@ -5,24 +5,23 @@ namespace AppBundle\Twig;
 use AppBundle\Service\SettingsManager;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Asset\Packages;
+use Liip\ImagineBundle\Service\FilterService;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class AppearanceRuntime implements RuntimeExtensionInterface
 {
     private $settingsManager;
-    private $packages;
     private $assetsFilesystem;
 
     public function __construct(
         SettingsManager $settingsManager,
-        Packages $packages,
         Filesystem $assetsFilesystem,
+        FilterService $imagineFilter,
         string $logoFallback)
     {
         $this->settingsManager = $settingsManager;
-        $this->packages = $packages;
         $this->assetsFilesystem = $assetsFilesystem;
+        $this->imagineFilter = $imagineFilter;
         $this->logoFallback = $logoFallback;
     }
 
@@ -30,8 +29,9 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     {
         $companyLogo = $this->settingsManager->get('company_logo');
 
-        if (!empty($companyLogo)) {
-            return $this->packages->getUrl(sprintf('images/assets/%s', $companyLogo));
+        if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+
+            return $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
         }
     }
 
