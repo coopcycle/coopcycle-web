@@ -28,12 +28,15 @@ module.exports = function(rootDir) {
     url: config.snc_redis.clients.default.dsn
   });
 
+  const port = parseInt(config.doctrine.dbal.port, 10)
+
   var sequelize = new Sequelize(
     config.doctrine.dbal.dbname,
     config.doctrine.dbal.user,
     config.doctrine.dbal.password,
     {
       host: config.doctrine.dbal.host,
+      port: isNaN(port) ? 5432 : port,
       dialect: 'postgres',
       logging: false,
     }
